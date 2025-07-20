@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+use bash proj_restart.sh to kill and restart the servers
