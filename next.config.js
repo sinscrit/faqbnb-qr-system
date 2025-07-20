@@ -7,7 +7,9 @@ const nextConfig = {
   },
   // Enable server-side features
   experimental: {
-    serverActions: true
+    serverActions: {
+      allowedOrigins: ["localhost:3000", "127.0.0.1:3000"]
+    }
   }
 }
 
