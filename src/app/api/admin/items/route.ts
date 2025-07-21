@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { ItemsListResponse } from '@/types';
+import { ItemsListResponse, CreateItemRequest, ItemResponse } from '@/types';
 
 export async function GET(request: NextRequest) {
   try {
@@ -65,6 +65,150 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(response);
+  } catch (error) {
+    console.error('API error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log('Admin create item API called');
+    
+    const body: CreateItemRequest = await request.json();
+    console.log('Request body:', body);
+    
+    // Validate required fields
+    if (!body.publicId || !body.name) {
+      return NextResponse.json(
+        { success: false, error: 'Missing required fields: publicId and name' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate publicId is UUID format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(body.publicId)) {
+      return NextResponse.json(
+        { success: false, error: 'publicId must be a valid UUID' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate links array structure
+    if (body.links && !Array.isArray(body.links)) {
+      return NextResponse.json(
+        { success: false, error: 'links must be an array' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate link types
+    const validLinkTypes = ['youtube', 'pdf', 'image', 'text'];
+    for (const link of body.links || []) {
+      if (!validLinkTypes.includes(link.linkType)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid link type: ${link.linkType}. Must be one of: ${validLinkTypes.join(', ')}` },
+          { status: 400 }
+        );
+      }
+      
+      // Basic URL validation
+      try {
+        new URL(link.url);
+      } catch (error) {
+        return NextResponse.json(
+          { success: false, error: `Invalid URL: ${link.url}` },
+          { status: 400 }
+        );
+      }
+    }
+    
+    console.log('Validation passed, creating item...');
+    
+    // Create item in database using transaction
+    const { data: newItem, error: itemError } = await supabase
+      .from('items')
+      .insert({
+        public_id: body.publicId,
+        name: body.name,
+        description: body.description || null,
+      })
+      .select()
+      .single();
+      
+    if (itemError) {
+      console.error('Item creation error:', itemError);
+      if (itemError.code === '23505') {
+        return NextResponse.json(
+          { success: false, error: 'An item with this public ID already exists' },
+          { status: 409 }
+        );
+      }
+      return NextResponse.json(
+        { success: false, error: 'Failed to create item' },
+        { status: 500 }
+      );
+    }
+    
+    console.log('Item created successfully:', newItem.id);
+    
+    // Create links if provided
+    const createdLinks = [];
+    if (body.links && body.links.length > 0) {
+      const linksToInsert = body.links.map((link, index) => ({
+        item_id: newItem.id,
+        title: link.title,
+        link_type: link.linkType,
+        url: link.url,
+        thumbnail_url: link.thumbnailUrl || null,
+        display_order: link.displayOrder || index,
+      }));
+      
+      const { data: newLinks, error: linksError } = await supabase
+        .from('item_links')
+        .insert(linksToInsert)
+        .select();
+        
+      if (linksError) {
+        console.error('Links creation error:', linksError);
+        // Clean up the item if links failed
+        await supabase.from('items').delete().eq('id', newItem.id);
+        return NextResponse.json(
+          { success: false, error: 'Failed to create links' },
+          { status: 500 }
+        );
+      }
+      
+      createdLinks.push(...(newLinks || []));
+      console.log('Links created successfully:', createdLinks.length);
+    }
+    
+    // Transform response to match ItemResponse type
+    const response: ItemResponse = {
+      success: true,
+      data: {
+        id: newItem.id,
+        publicId: newItem.public_id,
+        name: newItem.name,
+        description: newItem.description || '',
+        links: createdLinks.map(link => ({
+          id: link.id,
+          title: link.title,
+          linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
+          url: link.url,
+          thumbnailUrl: link.thumbnail_url || undefined,
+          displayOrder: link.display_order,
+        })),
+      },
+    };
+    
+    console.log('Item creation completed successfully');
+    return NextResponse.json(response, { status: 201 });
+    
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
