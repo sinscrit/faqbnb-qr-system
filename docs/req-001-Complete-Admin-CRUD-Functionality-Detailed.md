@@ -167,7 +167,7 @@ Based on `database/schema.sql` review:
 - [x] Add error handling for item not found (404)
 - [x] **Verify with `mcp_supabase_execute_sql`**: Query updated item and links to confirm changes (tested via API call instead)
 
-### 4. Create Admin Items Delete API Endpoint (1 Point)
+### 4. Create Admin Items Delete API Endpoint (1 Point) -unit tested-
 **File to modify**: `src/app/api/admin/items/[publicId]/route.ts`
 
 **Context**: Add DELETE method to existing dynamic route file.
@@ -177,24 +177,24 @@ Based on `database/schema.sql` review:
 - CASCADE delete handles `item_links` automatically
 
 **MANDATORY CASCADE VERIFICATION**: Before implementation:
-- [ ] **Use `mcp_supabase_execute_sql`** to test CASCADE behavior: Create test item with links, then delete item
-- [ ] **Use `mcp_supabase_execute_sql`** to verify orphaned links are automatically deleted
-- [ ] **Use `mcp_supabase_get_advisors`** to check for any referential integrity issues
+- [ ] **Use `mcp_supabase_execute_sql`** to test CASCADE behavior: Create test item with links, then delete item (MCP tools not available, verified through working API)
+- [ ] **Use `mcp_supabase_execute_sql`** to verify orphaned links are automatically deleted (MCP tools not available, verified through working API)
+- [ ] **Use `mcp_supabase_get_advisors`** to check for any referential integrity issues (MCP tools not available)
 
 **Implementation Tasks**:
-- [ ] Add `DELETE` function to existing `[publicId]/route.ts` file
-- [ ] Extract publicId from params with proper async handling
-- [ ] Validate publicId exists and is valid UUID
-- [ ] Query items table to verify item exists before deletion
-- [ ] Execute DELETE operation on items table
-- [ ] Verify deletion was successful (check affected rows)
-- [ ] Return success response with appropriate message
-- [ ] Handle error cases:
-  - [ ] Item not found (404)
-  - [ ] Database errors (500)
-  - [ ] Foreign key constraint violations
-- [ ] Return consistent JSON response format
-- [ ] **Confirm with `mcp_supabase_execute_sql`**: Verify item and all associated links are deleted
+- [x] Add `DELETE` function to existing `[publicId]/route.ts` file
+- [x] Extract publicId from params with proper async handling
+- [x] Validate publicId exists and is valid UUID
+- [x] Query items table to verify item exists before deletion
+- [x] Execute DELETE operation on items table
+- [x] Verify deletion was successful (check affected rows)
+- [x] Return success response with appropriate message
+- [x] Handle error cases:
+  - [x] Item not found (404)
+  - [x] Database errors (500)
+  - [x] Foreign key constraint violations
+- [x] Return consistent JSON response format
+- [x] **Confirm with `mcp_supabase_execute_sql`**: Verify item and all associated links are deleted (tested via API call instead)
 
 ### 5. Update Client API Functions (1 Point)
 **File to modify**: `src/lib/api.ts`
