@@ -10,7 +10,9 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
     const { publicId } = await params;
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/items/${publicId}`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/items/${publicId}`, {
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
+    });
     
     if (!response.ok) {
       return {
@@ -43,7 +45,7 @@ export default async function ItemPage({ params }: PageProps) {
     const { publicId } = await params;
     // Fetch item data server-side
     const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/items/${publicId}`, {
-      cache: 'no-store', // Always fetch fresh data
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
 
     if (!response.ok) {
