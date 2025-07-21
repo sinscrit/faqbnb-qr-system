@@ -71,7 +71,7 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
+              <h1 className="text-3xl font-bold text-gray-900">FAQBNB Admin Panel</h1>
               <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
             </div>
             <div className="flex items-center space-x-3">

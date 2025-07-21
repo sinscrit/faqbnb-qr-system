@@ -1,6 +1,6 @@
-# QR Item Display System
+# FAQBNB - QR Item Display System
 
-A modern, mobile-optimized system for displaying appliance and item information via QR codes. Built with Next.js, TypeScript, and Supabase.
+FAQBNB is a modern, mobile-optimized system for displaying appliance and item information via QR codes. Built with Next.js, TypeScript, and Supabase.
 
 ![QR Item Display System](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)

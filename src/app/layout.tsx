@@ -13,8 +13,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QR Item Display System",
-  description: "A Next.js application for displaying item information and links via QR codes",
+  title: "FAQBNB - QR Item Display System",
+  description: "FAQBNB provides instant access to detailed instructions, manuals, and resources for any appliance or item via QR codes",
 };
 
 export default function RootLayout({

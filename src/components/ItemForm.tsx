@@ -200,7 +200,7 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
                 <p className="text-gray-500 text-sm mt-1">
                   {item 
                     ? 'Public ID cannot be changed after creation'
-                    : 'This UUID will be used in the QR code URL (e.g., /item/8d678bd0-e4f7-495f-b4cd-43756813e23a)'
+                    : 'This UUID will be used in the QR code URL (e.g., faqbnb.com/item/8d678bd0-e4f7-495f-b4cd-43756813e23a)'
                   }
                 </p>
               </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { QrCode, Smartphone, Zap, Shield } from 'lucide-react';
 
 export default function HomePage() {
@@ -9,10 +10,14 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <QrCode className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-xl font-bold text-gray-900">QR Item Display</h1>
+              <Image
+                src="/faqbnb_logoshort.png"
+                alt="FAQBNB Logo"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
+              <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
             </div>
             <Link
               href="/admin"
@@ -27,13 +32,23 @@ export default function HomePage() {
       {/* Hero Section */}
       <main className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/faqbnb_logolong_alt.png"
+              alt="FAQBNB - Instant Access to Item Instructions"
+              width={600}
+              height={200}
+              className="max-w-full h-auto"
+              priority
+            />
+          </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             Instant Access to
             <span className="text-blue-600"> Item Instructions</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Scan QR codes to instantly access detailed instructions, manuals, videos, and resources 
-            for any appliance or item. No apps, no logins, just instant information.
+            FAQBNB makes it easy to scan QR codes and instantly access detailed instructions, manuals, videos, and resources 
+            for any appliance or item. No apps, no logins, just instant information at faqbnb.com.
           </p>
         </div>
 
@@ -103,9 +118,9 @@ export default function HomePage() {
         {/* CTA Section */}
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-          <p className="text-gray-600 mb-8">
-            Set up your own QR code system and provide instant access to item information.
-          </p>
+                      <p className="text-gray-600 mb-8">
+              Set up your own FAQBNB QR code system and provide instant access to item information.
+            </p>
           <Link
             href="/admin"
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
@@ -120,7 +135,7 @@ export default function HomePage() {
       <footer className="bg-white border-t border-gray-200 mt-16">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="text-center text-gray-600">
-            <p>&copy; 2024 QR Item Display System. Built with Next.js and Supabase.</p>
+            <p>&copy; 2024 FAQBNB.com - QR Item Display System. Built with Next.js and Supabase.</p>
           </div>
         </div>
       </footer>
