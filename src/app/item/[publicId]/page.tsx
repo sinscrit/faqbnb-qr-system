@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { data: item } = await response.json();
     
     return {
-      title: `${item.name} - QR Item Display`,
+      title: `${item.name} - FAQBNB`,
       description: item.description || `View instructions and resources for ${item.name}`,
       openGraph: {
         title: item.name,
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   } catch (error) {
     return {
-      title: 'QR Item Display',
+      title: 'FAQBNB',
       description: 'View item instructions and resources',
     };
   }

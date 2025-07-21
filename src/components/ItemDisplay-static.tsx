@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ExternalLink } from 'lucide-react';
 import { ItemDisplayProps } from '@/types';
 import LinkCard from './LinkCard-static';
@@ -24,9 +25,13 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">QR</span>
-              </div>
+              <Image
+                src="/faqbnb_logoshort.png"
+                alt="FAQBNB Logo"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
                 <p className="text-sm text-gray-600">ID: {item.publicId}</p>
@@ -92,7 +97,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500">
-            Scan the QR code to access this information instantly
+            Powered by FAQBNB.com - Scan QR codes to access information instantly
           </p>
         </div>
       </div>

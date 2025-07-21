@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${item.name} - QR Item Display`,
+    title: `${item.name} - FAQBNB`,
     description: item.description || `Information and resources for ${item.name}`,
     openGraph: {
       title: item.name,

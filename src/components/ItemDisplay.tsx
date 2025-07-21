@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ExternalLink, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 import { ItemDisplayProps } from '@/types';
 import LinkCard from './LinkCard';
 
@@ -43,9 +44,13 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">QR</span>
-              </div>
+              <Image
+                src="/faqbnb_logoshort.png"
+                alt="FAQBNB Logo"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
                 <p className="text-sm text-gray-500">ID: {item.publicId}</p>
@@ -104,7 +109,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
         {/* Footer */}
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
-            Powered by QR Item Display System
+            Powered by FAQBNB.com
           </p>
         </div>
       </div>
