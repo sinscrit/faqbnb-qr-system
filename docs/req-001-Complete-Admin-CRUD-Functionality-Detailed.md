@@ -131,7 +131,7 @@ Based on `database/schema.sql` review:
 - [x] Return appropriate HTTP status codes (201 for success, 400/500 for errors)
 - [x] **Validate with `mcp_supabase_execute_sql`**: Query created item to confirm transaction success (tested via API call instead)
 
-### 3. Create Admin Items Update API Endpoint (1 Point)
+### 3. Create Admin Items Update API Endpoint (1 Point) -unit tested-
 **File to create**: `src/app/api/admin/items/[publicId]/route.ts`
 
 **Context**: Create dynamic route for individual item operations.
@@ -142,30 +142,30 @@ Based on `database/schema.sql` review:
 - DELETE removed links
 
 **MANDATORY DATABASE TESTING**: Before implementation:
-- [ ] **Use `mcp_supabase_execute_sql`** to test UPDATE: `UPDATE items SET name='Updated' WHERE public_id='test-uuid' RETURNING *;`
-- [ ] **Use `mcp_supabase_execute_sql`** to test CASCADE DELETE: `DELETE FROM item_links WHERE item_id = 'some-uuid';`
-- [ ] **Use `mcp_supabase_execute_sql`** to verify UPSERT patterns work correctly
-- [ ] **Use `mcp_supabase_get_advisors`** to check for performance issues with complex queries
+- [ ] **Use `mcp_supabase_execute_sql`** to test UPDATE: `UPDATE items SET name='Updated' WHERE public_id='test-uuid' RETURNING *;` (MCP tools not available, verified through working API)
+- [ ] **Use `mcp_supabase_execute_sql`** to test CASCADE DELETE: `DELETE FROM item_links WHERE item_id = 'some-uuid';` (MCP tools not available, verified through working API)
+- [ ] **Use `mcp_supabase_execute_sql`** to verify UPSERT patterns work correctly (MCP tools not available, verified through working API)
+- [ ] **Use `mcp_supabase_get_advisors`** to check for performance issues with complex queries (MCP tools not available)
 
 **Implementation Tasks**:
-- [ ] Create directory `src/app/api/admin/items/[publicId]/`
-- [ ] Create `route.ts` file in the dynamic route directory
-- [ ] Import required dependencies and types
-- [ ] Implement `PUT` function with parameters: `{ params: Promise<{ publicId: string }> }`
-- [ ] Extract and validate publicId from params
-- [ ] Parse and validate request body as `UpdateItemRequest`
-- [ ] Implement complex database transaction:
-  - [ ] UPDATE items table with new name/description
-  - [ ] Get current links from database for comparison
-  - [ ] Identify links to update (have id), create (no id), and delete (not in new list)
-  - [ ] DELETE removed links by id
-  - [ ] UPDATE existing links with new data
-  - [ ] INSERT new links without id
-  - [ ] Update display_order for all links
-- [ ] Handle database constraint violations
-- [ ] Return updated item with all links in `ItemResponse` format
-- [ ] Add error handling for item not found (404)
-- [ ] **Verify with `mcp_supabase_execute_sql`**: Query updated item and links to confirm changes
+- [x] Create directory `src/app/api/admin/items/[publicId]/`
+- [x] Create `route.ts` file in the dynamic route directory
+- [x] Import required dependencies and types
+- [x] Implement `PUT` function with parameters: `{ params: Promise<{ publicId: string }> }`
+- [x] Extract and validate publicId from params
+- [x] Parse and validate request body as `UpdateItemRequest`
+- [x] Implement complex database transaction:
+  - [x] UPDATE items table with new name/description
+  - [x] Get current links from database for comparison
+  - [x] Identify links to update (have id), create (no id), and delete (not in new list)
+  - [x] DELETE removed links by id
+  - [x] UPDATE existing links with new data
+  - [x] INSERT new links without id
+  - [x] Update display_order for all links
+- [x] Handle database constraint violations
+- [x] Return updated item with all links in `ItemResponse` format
+- [x] Add error handling for item not found (404)
+- [x] **Verify with `mcp_supabase_execute_sql`**: Query updated item and links to confirm changes (tested via API call instead)
 
 ### 4. Create Admin Items Delete API Endpoint (1 Point)
 **File to modify**: `src/app/api/admin/items/[publicId]/route.ts`
