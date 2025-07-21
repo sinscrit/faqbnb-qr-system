@@ -81,11 +81,11 @@ export default function HomePage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { id: '12345', name: 'Washing Machine', desc: 'Samsung front-loading washer' },
-              { id: 'tv-001', name: 'Smart TV', desc: '65" QLED with streaming' },
-              { id: 'coffee-maker', name: 'Coffee Maker', desc: 'Keurig single-serve' },
-              { id: 'thermostat', name: 'Smart Thermostat', desc: 'Nest learning thermostat' },
-              { id: 'dishwasher', name: 'Dishwasher', desc: 'Bosch 800 series' },
+              { id: '8d678bd0-e4f7-495f-b4cd-43756813e23a', name: 'Washing Machine', desc: 'Samsung front-loading washer' },
+              { id: '9659f771-6f3b-40cc-a906-57bbb451788f', name: 'Smart TV', desc: '65" QLED with streaming' },
+              { id: 'f2b82987-a2a4-4de2-94db-f8924dc096d5', name: 'Coffee Maker', desc: 'Keurig single-serve' },
+              { id: '0d92cbeb-a61f-4492-9346-6ab03363fdab', name: 'Smart Thermostat', desc: 'Nest learning thermostat' },
+              { id: '1c8e4723-5186-41f3-b4bd-11b614a77bdb', name: 'Dishwasher', desc: 'Bosch 800 series' },
             ].map((item) => (
               <Link
                 key={item.id}
@@ -94,7 +94,7 @@ export default function HomePage() {
               >
                 <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
                 <p className="text-sm text-gray-600">{item.desc}</p>
-                <p className="text-xs text-blue-600 mt-2">ID: {item.id}</p>
+                <p className="text-xs text-blue-600 mt-2">ID: {item.id.substring(0, 8)}...</p>
               </Link>
             ))}
           </div>
