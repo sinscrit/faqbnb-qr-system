@@ -1,8 +1,9 @@
 // Demo data for static deployment
+// NOTE: These publicIds are UUIDs from the actual database
 export const demoItems = [
   {
     id: '1',
-    publicId: '12345',
+    publicId: '8d678bd0-e4f7-495f-b4cd-43756813e23a', // Samsung Washing Machine
     name: 'Samsung Washing Machine',
     description: 'Front-loading washing machine with smart features and energy efficiency.',
     links: [
@@ -34,7 +35,7 @@ export const demoItems = [
   },
   {
     id: '2',
-    publicId: 'tv-001',
+    publicId: '9659f771-6f3b-40cc-a906-57bbb451788f', // Samsung Smart TV
     name: 'Smart TV',
     description: '65" QLED TV with streaming capabilities and voice control.',
     links: [
@@ -58,7 +59,7 @@ export const demoItems = [
   },
   {
     id: '3',
-    publicId: 'coffee-maker',
+    publicId: 'f2b82987-a2a4-4de2-94db-f8924dc096d5', // Keurig Coffee Maker
     name: 'Coffee Maker',
     description: 'Keurig single-serve coffee maker with multiple brew sizes.',
     links: [
@@ -82,7 +83,7 @@ export const demoItems = [
   },
   {
     id: '4',
-    publicId: 'thermostat',
+    publicId: '0d92cbeb-a61f-4492-9346-6ab03363fdab', // Nest Thermostat
     name: 'Smart Thermostat',
     description: 'Nest learning thermostat with energy-saving features.',
     links: [
@@ -106,7 +107,7 @@ export const demoItems = [
   },
   {
     id: '5',
-    publicId: 'dishwasher',
+    publicId: '1c8e4723-5186-41f3-b4bd-11b614a77bdb', // Bosch Dishwasher
     name: 'Dishwasher',
     description: 'Bosch 800 series dishwasher with quiet operation.',
     links: [

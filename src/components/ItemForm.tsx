@@ -1,9 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, GripVertical, Save, X } from 'lucide-react';
 import { CreateItemRequest, UpdateItemRequest, LinkType } from '@/types';
 import { getLinkTypeColor, isValidUrl } from '@/lib/utils';
+
+// Generate a random UUID v4
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 interface ItemFormProps {
   item?: UpdateItemRequest;
@@ -28,6 +37,16 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
     description: item?.description || '',
   });
 
+  // Generate UUID for new items
+  useEffect(() => {
+    if (!item && !formData.publicId) {
+      setFormData(prev => ({
+        ...prev,
+        publicId: generateUUID()
+      }));
+    }
+  }, [item, formData.publicId]);
+
   const [links, setLinks] = useState<LinkFormData[]>(
     item?.links?.map((link, index) => ({
       id: link.id || undefined,
@@ -46,8 +65,8 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
 
     if (!formData.publicId.trim()) {
       newErrors.publicId = 'Public ID is required';
-    } else if (!/^[a-zA-Z0-9-_]+$/.test(formData.publicId)) {
-      newErrors.publicId = 'Public ID can only contain letters, numbers, hyphens, and underscores';
+    } else if (!/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/.test(formData.publicId)) {
+      newErrors.publicId = 'Public ID must be a valid UUID format';
     }
 
     if (!formData.name.trim()) {
@@ -152,21 +171,37 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
                 <label htmlFor="publicId" className="block text-sm font-medium text-gray-700 mb-2">
                   Public ID *
                 </label>
-                <input
-                  type="text"
-                  id="publicId"
-                  value={formData.publicId}
-                  onChange={(e) => setFormData({ ...formData, publicId: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.publicId ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="e.g., 12345, washer-001"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    id="publicId"
+                    value={formData.publicId}
+                    readOnly={!!item}
+                    onChange={!item ? (e) => setFormData({ ...formData, publicId: e.target.value }) : undefined}
+                    className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.publicId ? 'border-red-300' : 'border-gray-300'
+                    } ${item ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                    placeholder="UUID will be generated automatically"
+                  />
+                  {!item && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, publicId: generateUUID() })}
+                      className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      title="Generate new UUID"
+                    >
+                      🔄
+                    </button>
+                  )}
+                </div>
                 {errors.publicId && (
                   <p className="text-red-600 text-sm mt-1">{errors.publicId}</p>
                 )}
                 <p className="text-gray-500 text-sm mt-1">
-                  This will be used in the QR code URL (e.g., /item/12345)
+                  {item 
+                    ? 'Public ID cannot be changed after creation'
+                    : 'This UUID will be used in the QR code URL (e.g., /item/8d678bd0-e4f7-495f-b4cd-43756813e23a)'
+                  }
                 </p>
               </div>
 
