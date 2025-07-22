@@ -112,28 +112,28 @@
 
 ## Phase 2: Authentication Infrastructure (4 tasks)
 
-### 4. Authentication Utilities Library
+### 4. Authentication Utilities Library -unit tested-
 **Story Points**: 1  
 **Priority**: Critical  
 **Dependencies**: Phase 1 complete
 
 **Actions**:
-- [ ] Create `src/lib/auth.ts` with Supabase Auth utilities
-  - [ ] `signInWithEmail(email, password)` - Admin login function
-  - [ ] `signOut()` - Admin logout function  
-  - [ ] `getSession()` - Current session validation
-  - [ ] `getUser()` - Current user information
-  - [ ] `requireAuth()` - Server-side auth requirement helper
-  - [ ] `isAdmin(user)` - Admin role validation helper
-- [ ] Add proper TypeScript types for auth functions
-- [ ] Add error handling for auth operations
-- [ ] Include session timeout configuration (30 minutes default)
-- [ ] Add auth state management utilities
+- [x] Create `src/lib/auth.ts` with Supabase Auth utilities
+  - [x] `signInWithEmail(email, password)` - Admin login function
+  - [x] `signOut()` - Admin logout function  
+  - [x] `getSession()` - Current session validation
+  - [x] `getUser()` - Current user information
+  - [x] `requireAuth()` - Server-side auth requirement helper
+  - [x] `isAdmin(user)` - Admin role validation helper
+- [x] Add proper TypeScript types for auth functions
+- [x] Add error handling for auth operations
+- [x] Include session timeout configuration (30 minutes default)
+- [x] Add auth state management utilities
 
 **Testing**:
-- [ ] Test auth utility functions with mock data
-- [ ] Verify TypeScript types are correct
-- [ ] Confirm error handling works properly
+- [x] Test auth utility functions with mock data
+- [x] Verify TypeScript types are correct
+- [x] Confirm error handling works properly
 
 ### 5. Authentication Context Provider
 **Story Points**: 1  
