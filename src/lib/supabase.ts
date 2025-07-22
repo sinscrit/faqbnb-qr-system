@@ -4,11 +4,17 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-// Client for browser/public operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Client for browser/public operations with auth
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 // Admin client for server-side operations
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false
@@ -26,6 +32,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          id: string
+          email: string
+          full_name: string | null
+          role: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id: string
+          email: string
+          full_name?: string | null
+          role?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          full_name?: string | null
+          role?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       item_links: {
         Row: {
           created_at: string | null
@@ -97,6 +130,27 @@ export type Database = {
           qr_code_url?: string | null
           qr_code_uploaded_at?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      mailing_list_subscribers: {
+        Row: {
+          id: string
+          email: string
+          subscribed_at: string | null
+          status: string | null
+        }
+        Insert: {
+          id?: string
+          email: string
+          subscribed_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          subscribed_at?: string | null
+          status?: string | null
         }
         Relationships: []
       }

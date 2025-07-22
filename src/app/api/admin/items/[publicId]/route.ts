@@ -232,14 +232,14 @@ export async function PUT(
         qrCodeUrl: updatedItem.qr_code_url || undefined,
         qrCodeUploadedAt: updatedItem.qr_code_uploaded_at || undefined,
         links: finalLinks
-          .sort((a, b) => a.display_order - b.display_order)
+          .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
           .map(link => ({
             id: link.id,
             title: link.title,
             linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
             url: link.url,
             thumbnailUrl: link.thumbnail_url || undefined,
-            displayOrder: link.display_order,
+            displayOrder: link.display_order || 0,
           })),
       },
     };

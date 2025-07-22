@@ -81,32 +81,32 @@
 - [x] Test public mailing list insert works without auth
 - [x] Confirm admin policies will work with authenticated users (prepare for future testing)
 
-### 3. Environment & Supabase Auth Configuration
+### 3. Environment & Supabase Auth Configuration -unit tested-
 **Story Points**: 1  
 **Priority**: Critical  
 **Dependencies**: Tasks 1-2 complete
 
 **Actions**:
-- [ ] Update `.env.example` with Supabase Auth configuration variables
-  - [ ] Add `NEXT_PUBLIC_SUPABASE_URL` (already exists)
-  - [ ] Add `NEXT_PUBLIC_SUPABASE_ANON_KEY` (already exists)  
-  - [ ] Add `SUPABASE_SERVICE_ROLE_KEY` (already exists)
-  - [ ] Add `NEXTAUTH_SECRET` for session security
-  - [ ] Add `NEXTAUTH_URL` for redirect handling
-- [ ] Update `src/lib/supabase.ts` to configure auth integration
-  - [ ] Import createClientComponentClient, createServerComponentClient
-  - [ ] Add auth configuration options
-  - [ ] Update database types to include new auth tables
-- [ ] Create initial admin user in database for testing
-  - [ ] Use supabaseMCP to insert test admin user
-  - [ ] Email: admin@faqbnb.com, role: admin
-  - [ ] Document credentials for testing
-- [ ] Update `database/seed-data.sql` with initial admin user
+- [x] Update `.env.example` with Supabase Auth configuration variables
+  - [x] Add `NEXT_PUBLIC_SUPABASE_URL` (already exists)
+  - [x] Add `NEXT_PUBLIC_SUPABASE_ANON_KEY` (already exists)  
+  - [x] Add `SUPABASE_SERVICE_ROLE_KEY` (already exists)
+  - [x] Add `NEXTAUTH_SECRET` for session security
+  - [x] Add `NEXTAUTH_URL` for redirect handling
+- [x] Update `src/lib/supabase.ts` to configure auth integration
+  - [x] Import createClientComponentClient, createServerComponentClient
+  - [x] Add auth configuration options
+  - [x] Update database types to include new auth tables
+- [x] Create initial admin user in database for testing
+  - [x] Use supabaseMCP to insert test admin user
+  - [x] Email: admin@faqbnb.com, role: admin
+  - [x] Document credentials for testing
+- [x] Update `database/seed-data.sql` with initial admin user
 
 **Testing**:
-- [ ] Verify Supabase client configuration works
-- [ ] Confirm initial admin user exists in database using supabaseMCP
-- [ ] Test environment variables are properly loaded
+- [x] Verify Supabase client configuration works
+- [x] Confirm initial admin user exists in database using supabaseMCP
+- [x] Test environment variables are properly loaded
 
 ---
 

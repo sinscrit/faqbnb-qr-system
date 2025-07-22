@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
           name: item.name,
           linksCount: linksCount || 0,
           qrCodeUrl: item.qr_code_url || undefined,
-          createdAt: item.created_at,
+          createdAt: item.created_at || new Date().toISOString(),
         };
       })
     );
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
           linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
           url: link.url,
           thumbnailUrl: link.thumbnail_url || undefined,
-          displayOrder: link.display_order,
+          displayOrder: link.display_order || 0,
         })),
       },
     };
