@@ -157,27 +157,27 @@
 - [x] Verify useAuth hook returns correct state
 - [x] Test session persistence across page reloads
 
-### 6. Route Protection Middleware
+### 6. Route Protection Middleware -unit tested-
 **Story Points**: 1  
 **Priority**: Critical  
 **Dependencies**: Tasks 4-5 complete
 
 **Actions**:
-- [ ] Create `src/middleware.ts` with Next.js middleware for route protection
-  - [ ] Import `createMiddlewareClient` from Supabase auth helpers
-  - [ ] Check authentication for all `/admin/*` routes
-  - [ ] Validate admin role from admin_users table
-  - [ ] Redirect unauthenticated users to `/login`
-  - [ ] Handle session validation and refresh
-- [ ] Add proper error handling for auth failures
-- [ ] Configure middleware to run on admin routes only
-- [ ] Add logging for security events
-- [ ] Include session timeout validation
+- [x] Create `src/middleware.ts` with Next.js middleware for route protection
+  - [x] Import `createMiddlewareClient` from Supabase auth helpers
+  - [x] Check authentication for all `/admin/*` routes
+  - [x] Validate admin role from admin_users table
+  - [x] Redirect unauthenticated users to `/login`
+  - [x] Handle session validation and refresh
+- [x] Add proper error handling for auth failures
+- [x] Configure middleware to run on admin routes only
+- [x] Add logging for security events
+- [x] Include session timeout validation
 
 **Testing**:
-- [ ] Test middleware redirects unauthenticated users
-- [ ] Verify admin role validation works
-- [ ] Confirm authenticated admin users can access admin routes
+- [x] Test middleware redirects unauthenticated users
+- [x] Verify admin role validation works
+- [x] Confirm authenticated admin users can access admin routes
 
 ### 7. Authentication API Routes
 **Story Points**: 1  
