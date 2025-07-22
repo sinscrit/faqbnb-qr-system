@@ -34,7 +34,7 @@
 
 ## Phase 1: Database Schema & Authentication Setup (3 tasks)
 
-### 1. Database Schema Enhancement
+### 1. Database Schema Enhancement -unit tested-
 **Story Points**: 1  
 **Priority**: Critical  
 **Dependencies**: None
@@ -53,33 +53,33 @@
 - [x] Add table comments for documentation
 
 **Testing**:
-- [ ] Verify new tables created successfully using supabaseMCP
-- [ ] Confirm foreign key constraints work properly
-- [ ] Test email uniqueness constraint on mailing_list_subscribers
+- [x] Verify new tables created successfully using supabaseMCP
+- [x] Confirm foreign key constraints work properly
+- [x] Test email uniqueness constraint on mailing_list_subscribers
 
-### 2. Row Level Security (RLS) Policies Update
+### 2. Row Level Security (RLS) Policies Update -unit tested-
 **Story Points**: 1  
 **Priority**: Critical  
 **Dependencies**: Task 1 complete
 
 **Actions**:
-- [ ] Use supabaseMCP to review current RLS policies on items and item_links tables
-- [ ] Update existing placeholder admin policies to use proper auth validation
-- [ ] Create RLS policies for `admin_users` table
-  - [ ] Policy: "Admin users can read own data" - `FOR SELECT USING (auth.uid() = id)`
-- [ ] Create RLS policies for `mailing_list_subscribers` table
-  - [ ] Policy: "Public can insert subscriptions" - `FOR INSERT TO public`
-  - [ ] Policy: "Admins can manage mailing list" - `FOR ALL TO authenticated`
-- [ ] Update items table policies to require admin authentication
-  - [ ] Replace placeholder policy with proper admin role check
-- [ ] Update item_links table policies to require admin authentication
-- [ ] Enable RLS on all new tables
-- [ ] Update `database/schema.sql` with new policies
+- [x] Use supabaseMCP to review current RLS policies on items and item_links tables
+- [x] Update existing placeholder admin policies to use proper auth validation
+- [x] Create RLS policies for `admin_users` table
+  - [x] Policy: "Admin users can read own data" - `FOR SELECT USING (auth.uid() = id)`
+- [x] Create RLS policies for `mailing_list_subscribers` table
+  - [x] Policy: "Public can insert subscriptions" - `FOR INSERT TO public`
+  - [x] Policy: "Admins can manage mailing list" - `FOR ALL TO authenticated`
+- [x] Update items table policies to require admin authentication
+  - [x] Replace placeholder policy with proper admin role check
+- [x] Update item_links table policies to require admin authentication
+- [x] Enable RLS on all new tables
+- [x] Update `database/schema.sql` with new policies
 
 **Testing**:
-- [ ] Verify RLS policies prevent unauthorized access using supabaseMCP
-- [ ] Test public mailing list insert works without auth
-- [ ] Confirm admin policies will work with authenticated users (prepare for future testing)
+- [x] Verify RLS policies prevent unauthorized access using supabaseMCP
+- [x] Test public mailing list insert works without auth
+- [x] Confirm admin policies will work with authenticated users (prepare for future testing)
 
 ### 3. Environment & Supabase Auth Configuration
 **Story Points**: 1  
