@@ -74,6 +74,8 @@ export type Database = {
           id: string
           name: string
           public_id: string
+          qr_code_url: string | null
+          qr_code_uploaded_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -82,6 +84,8 @@ export type Database = {
           id?: string
           name: string
           public_id: string
+          qr_code_url?: string | null
+          qr_code_uploaded_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -90,6 +94,8 @@ export type Database = {
           id?: string
           name?: string
           public_id?: string
+          qr_code_url?: string | null
+          qr_code_uploaded_at?: string | null
           updated_at?: string | null
         }
         Relationships: []

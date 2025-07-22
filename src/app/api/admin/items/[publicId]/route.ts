@@ -40,6 +40,18 @@ export async function PUT(
       );
     }
     
+    // Validate QR code URL if provided
+    if (body.qrCodeUrl) {
+      try {
+        new URL(body.qrCodeUrl);
+      } catch (error) {
+        return NextResponse.json(
+          { success: false, error: `Invalid QR code URL: ${body.qrCodeUrl}` },
+          { status: 400 }
+        );
+      }
+    }
+    
     // Validate link types and URLs
     const validLinkTypes = ['youtube', 'pdf', 'image', 'text'];
     for (const link of body.links || []) {
@@ -78,13 +90,27 @@ export async function PUT(
     console.log('Item found, updating...');
     
     // Update item basic info
+    const updateData: {
+      name: string;
+      description: string | null;
+      updated_at: string;
+      qr_code_url?: string | null;
+      qr_code_uploaded_at?: string | null;
+    } = {
+      name: body.name,
+      description: body.description || null,
+      updated_at: new Date().toISOString(),
+    };
+    
+    // Update QR code URL if provided or explicitly set to null
+    if (body.qrCodeUrl !== undefined) {
+      updateData.qr_code_url = body.qrCodeUrl || null;
+      updateData.qr_code_uploaded_at = body.qrCodeUrl ? new Date().toISOString() : null;
+    }
+    
     const { data: updatedItem, error: updateError } = await supabase
       .from('items')
-      .update({
-        name: body.name,
-        description: body.description || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('public_id', publicId)
       .select()
       .single();
@@ -203,6 +229,8 @@ export async function PUT(
         publicId: updatedItem.public_id,
         name: updatedItem.name,
         description: updatedItem.description || '',
+        qrCodeUrl: updatedItem.qr_code_url || undefined,
+        qrCodeUploadedAt: updatedItem.qr_code_uploaded_at || undefined,
         links: finalLinks
           .sort((a, b) => a.display_order - b.display_order)
           .map(link => ({

@@ -4,6 +4,8 @@ export interface Item {
   public_id: string;
   name: string;
   description: string | null;
+  qr_code_url: string | null;
+  qr_code_uploaded_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -29,6 +31,8 @@ export interface ItemResponse {
     publicId: string;
     name: string;
     description: string;
+    qrCodeUrl?: string;
+    qrCodeUploadedAt?: string;
     links: {
       id: string;
       title: string;
@@ -48,6 +52,7 @@ export interface ItemsListResponse {
     publicId: string;
     name: string;
     linksCount: number;
+    qrCodeUrl?: string;
     createdAt: string;
   }[];
   error?: string;
@@ -58,6 +63,7 @@ export interface CreateItemRequest {
   publicId: string;
   name: string;
   description: string;
+  qrCodeUrl?: string;
   links: {
     title: string;
     linkType: LinkType;
@@ -69,6 +75,7 @@ export interface CreateItemRequest {
 
 export interface UpdateItemRequest extends CreateItemRequest {
   id: string;
+  qrCodeUrl?: string;
   links: {
     id?: string;
     title: string;

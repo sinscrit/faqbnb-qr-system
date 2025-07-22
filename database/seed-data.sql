@@ -1,13 +1,19 @@
 -- Sample data for QR Item Display System
 -- Run this after creating the schema
 
+-- NOTE: Admin user creation requires manual setup in Supabase Auth Dashboard
+-- After creating a user with email admin@faqbnb.com in Supabase Auth,
+-- get the UUID and insert into admin_users table manually:
+-- INSERT INTO admin_users (id, email, full_name, role) VALUES 
+-- ('<uuid-from-auth-users>', 'admin@faqbnb.com', 'Admin User', 'admin');
+
 -- Insert sample items
-INSERT INTO items (public_id, name, description) VALUES
-('12345', 'Samsung WF45T6000AW Washing Machine', 'Front-loading washing machine with steam cleaning and smart features. Located in the laundry room next to the dryer.'),
-('tv-001', 'Samsung 65" QLED Smart TV', 'Living room smart TV with 4K resolution and streaming capabilities. Includes voice remote and smart home integration.'),
-('coffee-maker', 'Keurig K-Elite Coffee Maker', 'Single-serve coffee maker in the kitchen. Supports K-Cup pods and has programmable settings for different cup sizes.'),
-('thermostat', 'Nest Learning Thermostat', 'Smart thermostat that learns your schedule and preferences. Controls heating and cooling throughout the house.'),
-('dishwasher', 'Bosch 800 Series Dishwasher', 'Quiet dishwasher with multiple wash cycles. Located under the kitchen counter next to the sink.');
+INSERT INTO items (public_id, name, description, qr_code_url, qr_code_uploaded_at) VALUES
+('12345', 'Samsung WF45T6000AW Washing Machine', 'Front-loading washing machine with steam cleaning and smart features. Located in the laundry room next to the dryer.', 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://faqbnb.com/item/12345', NOW()),
+('tv-001', 'Samsung 65" QLED Smart TV', 'Living room smart TV with 4K resolution and streaming capabilities. Includes voice remote and smart home integration.', 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://faqbnb.com/item/tv-001', NOW()),
+('coffee-maker', 'Keurig K-Elite Coffee Maker', 'Single-serve coffee maker in the kitchen. Supports K-Cup pods and has programmable settings for different cup sizes.', NULL, NULL),
+('thermostat', 'Nest Learning Thermostat', 'Smart thermostat that learns your schedule and preferences. Controls heating and cooling throughout the house.', 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://faqbnb.com/item/thermostat', NOW()),
+('dishwasher', 'Bosch 800 Series Dishwasher', 'Quiet dishwasher with multiple wash cycles. Located under the kitchen counter next to the sink.', NULL, NULL);
 
 -- Get item IDs for linking (using CTEs for cleaner queries)
 WITH item_ids AS (

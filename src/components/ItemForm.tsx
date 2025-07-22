@@ -35,6 +35,7 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
     publicId: item?.publicId || '',
     name: item?.name || '',
     description: item?.description || '',
+    qrCodeUrl: item?.qrCodeUrl || '',
   });
 
   // Generate UUID for new items
@@ -73,6 +74,10 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
       newErrors.name = 'Name is required';
     }
 
+    if (formData.qrCodeUrl && !isValidUrl(formData.qrCodeUrl)) {
+      newErrors.qrCodeUrl = 'Please enter a valid QR code image URL';
+    }
+
     links.forEach((link, index) => {
       if (!link.title.trim()) {
         newErrors[`link-${index}-title`] = 'Title is required';
@@ -100,6 +105,7 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
 
     const itemData = {
       ...formData,
+      qrCodeUrl: formData.qrCodeUrl || undefined,
       links: links.map((link, index) => ({
         id: link.id,
         title: link.title,
@@ -238,6 +244,41 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Describe the item, its location, or any important details..."
               />
+            </div>
+
+            {/* QR Code URL */}
+            <div>
+              <label htmlFor="qrCodeUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                QR Code Image URL (optional)
+              </label>
+              <input
+                type="url"
+                id="qrCodeUrl"
+                value={formData.qrCodeUrl}
+                onChange={(e) => setFormData({ ...formData, qrCodeUrl: e.target.value })}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.qrCodeUrl ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="https://example.com/qr-code.png"
+              />
+              {errors.qrCodeUrl && (
+                <p className="text-red-600 text-sm mt-1">{errors.qrCodeUrl}</p>
+              )}
+              <p className="text-gray-500 text-sm mt-1">
+                URL to the QR code image for this item. Leave empty if no QR code is available.
+              </p>
+              {formData.qrCodeUrl && (
+                <div className="mt-2">
+                  <img
+                    src={formData.qrCodeUrl}
+                    alt="QR Code Preview"
+                    className="w-24 h-24 object-contain border border-gray-200 rounded"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Links Section */}

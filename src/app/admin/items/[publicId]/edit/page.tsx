@@ -47,6 +47,7 @@ export default function EditItemPage({ params }: EditItemPageProps) {
             publicId: response.data.publicId,
             name: response.data.name,
             description: response.data.description,
+            qrCodeUrl: response.data.qrCodeUrl,
             links: response.data.links.map(link => ({
               id: link.id,
               title: link.title,

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     // Build query with search filtering
     let query = supabase
       .from('items')
-      .select('id, public_id, name, created_at')
+      .select('id, public_id, name, qr_code_url, created_at')
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
 
@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
           publicId: item.public_id,
           name: item.name,
           linksCount: linksCount || 0,
+          qrCodeUrl: item.qr_code_url || undefined,
           createdAt: item.created_at,
         };
       })
@@ -106,6 +107,18 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Validate QR code URL if provided
+    if (body.qrCodeUrl) {
+      try {
+        new URL(body.qrCodeUrl);
+      } catch (error) {
+        return NextResponse.json(
+          { success: false, error: `Invalid QR code URL: ${body.qrCodeUrl}` },
+          { status: 400 }
+        );
+      }
+    }
+    
     // Validate link types
     const validLinkTypes = ['youtube', 'pdf', 'image', 'text'];
     for (const link of body.links || []) {
@@ -136,6 +149,8 @@ export async function POST(request: NextRequest) {
         public_id: body.publicId,
         name: body.name,
         description: body.description || null,
+        qr_code_url: body.qrCodeUrl || null,
+        qr_code_uploaded_at: body.qrCodeUrl ? new Date().toISOString() : null,
       })
       .select()
       .single();
@@ -195,6 +210,8 @@ export async function POST(request: NextRequest) {
         publicId: newItem.public_id,
         name: newItem.name,
         description: newItem.description || '',
+        qrCodeUrl: newItem.qr_code_url || undefined,
+        qrCodeUploadedAt: newItem.qr_code_uploaded_at || undefined,
         links: createdLinks.map(link => ({
           id: link.id,
           title: link.title,
