@@ -285,8 +285,8 @@
 ### 11. Create Item Reactions Query API Endpoint
 **Story Point Value**: 1
 
-- [ ] Create new file: `src/app/api/items/[publicId]/reactions/route.ts` with GET endpoint
-- [ ] Implement reaction count aggregation:
+- [x] Create new file: `src/app/api/items/[publicId]/reactions/route.ts` with GET endpoint
+- [x] Implement reaction count aggregation:
   ```sql
   SELECT 
     reaction_type,
@@ -295,10 +295,10 @@
   JOIN items i ON ir.item_id = i.id
   WHERE i.public_id = $1
   GROUP BY reaction_type
-  ```
-- [ ] Return ReactionCounts interface format
-- [ ] Test with items that have no reactions (return zeros)
-- [ ] Test with items that have all reaction types
+  ``` -unit tested-
+- [x] Return ReactionCounts interface format -unit tested-
+- [x] Test with items that have no reactions (return zeros) -unit tested-
+- [x] Test with items that have all reaction types -unit tested-
 
 ### 12. Create Admin Analytics API Endpoint
 **Story Point Value**: 1
