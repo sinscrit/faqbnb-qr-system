@@ -57,10 +57,17 @@ export async function middleware(req: NextRequest) {
       }
 
       // Check if user is an admin
+      if (!session.user.email) {
+        console.log('Access denied - no email in session');
+        const loginUrl = new URL('/login', req.url);
+        loginUrl.searchParams.set('error', 'access_denied');
+        return NextResponse.redirect(loginUrl);
+      }
+
       const { data: adminUser, error: adminError } = await supabase
         .from('admin_users')
         .select('role')
-        .eq('id', session.user.id)
+        .eq('email', session.user.email)
         .single();
 
       if (adminError || !adminUser || adminUser.role !== 'admin') {
@@ -88,10 +95,14 @@ export async function middleware(req: NextRequest) {
     // Handle auth paths (like login page)
     if (isAuthPath && session) {
       // User is already authenticated - check if they're an admin
+      if (!session.user.email) {
+        return res; // Skip redirect if no email
+      }
+
       const { data: adminUser, error: adminError } = await supabase
         .from('admin_users')
         .select('role')
-        .eq('id', session.user.id)
+        .eq('email', session.user.email)
         .single();
 
       if (!adminError && adminUser && adminUser.role === 'admin') {

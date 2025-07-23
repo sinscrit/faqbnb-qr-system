@@ -37,10 +37,15 @@ export async function signInWithEmail(
     }
 
     // Verify user is an admin
+    if (!data.user.email) {
+      await supabase.auth.signOut();
+      return { error: 'Access denied - no email in user data' };
+    }
+
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
-      .eq('id', data.user.id)
+      .eq('email', data.user.email)
       .single();
 
     if (adminError || !adminUser) {
@@ -134,10 +139,14 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
     }
 
     // Get admin user details
+    if (!user.email) {
+      return { data: null };
+    }
+
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
-      .eq('id', user.id)
+      .eq('email', user.email)
       .single();
 
     if (adminError || !adminUser) {
