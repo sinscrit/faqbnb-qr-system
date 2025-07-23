@@ -155,7 +155,13 @@ export default function AdminPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Links
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Views (24h/Total)
+                    </th>
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Reactions
+                    </th>
+                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       QR Code
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -220,7 +226,62 @@ export default function AdminPage() {
                           {item.linksCount} {item.linksCount === 1 ? 'link' : 'links'}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      {/* Views Column */}
+                      <td className="hidden sm:table-cell px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          <div className="flex items-center space-x-1">
+                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span className="font-medium">
+                              {item.visitCounts?.last24Hours || 0}
+                            </span>
+                            <span className="text-gray-500">/</span>
+                            <span className="text-gray-600">
+                              {item.visitCounts?.allTime || 0}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      {/* Reactions Column */}
+                      <td className="hidden md:table-cell px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {item.reactionCounts && item.reactionCounts.total > 0 ? (
+                            <div className="flex items-center space-x-2">
+                              <div className="flex space-x-1">
+                                {item.reactionCounts.like > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    👍 {item.reactionCounts.like}
+                                  </span>
+                                )}
+                                {item.reactionCounts.love > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                    ❤️ {item.reactionCounts.love}
+                                  </span>
+                                )}
+                                {item.reactionCounts.confused > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    😕 {item.reactionCounts.confused}
+                                  </span>
+                                )}
+                                {item.reactionCounts.dislike > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                    👎 {item.reactionCounts.dislike}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                ({item.reactionCounts.total} total)
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400">No reactions</span>
+                          )}
+                        </div>
+                      </td>
+                      {/* QR Code Column */}
+                      <td className="hidden lg:table-cell px-6 py-4">
                         {item.qrCodeUrl ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             QR
