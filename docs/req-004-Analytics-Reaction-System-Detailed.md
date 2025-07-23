@@ -340,7 +340,7 @@
 ### 15. Extend API Utilities Library
 **Story Point Value**: 1
 
-- [ ] Modify `src/lib/api.ts` to add new API functions:
+- [x] Modify `src/lib/api.ts` to add new API functions -unit tested-:
   ```typescript
   export const analyticsApi = {
     recordVisit: (itemId: string, sessionId: string) => Promise<void>,
@@ -354,9 +354,9 @@
     getReactionCounts: (publicId: string) => Promise<ReactionResponse>
   };
   ```
-- [ ] Implement error handling and retry logic
-- [ ] Add TypeScript return type annotations
-- [ ] Test all API functions with valid and invalid data
+- [x] Implement error handling and retry logic -unit tested-
+- [x] Add TypeScript return type annotations -unit tested-
+- [x] Test all API functions with valid and invalid data -unit tested-
 
 ---
 
