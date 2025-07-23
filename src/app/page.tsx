@@ -5,6 +5,7 @@ import MailingListSignup from '@/components/MailingListSignup';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
   title: 'FAQBNB - Instant Access to Product Information via QR Codes | SaaS Platform',
   description: 'Transform customer support with FAQBNB. Provide instant access to manuals, videos, and product information through QR codes. No apps required.',
   keywords: 'QR code platform, product support, customer service, digital manuals, SaaS, product information, mobile support',

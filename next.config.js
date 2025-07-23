@@ -11,9 +11,7 @@ const nextConfig = {
       allowedOrigins: ["localhost:3000", "127.0.0.1:3000"]
     }
   },
-  // Optimize fonts and reduce layout shift
-  optimizeFonts: true,
-  // Add font preloading
+  // Add font preloading headers
   async headers() {
     return [
       {

@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { data: item } = await response.json();
     
     return {
+      metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
       title: `${item.name} - FAQBNB`,
       description: item.description || `View instructions and resources for ${item.name}`,
       openGraph: {

@@ -18,6 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
   title: "FAQBNB - QR Item Display System",
   description: "FAQBNB provides instant access to detailed instructions, manuals, and resources for any appliance or item via QR codes",
 };
