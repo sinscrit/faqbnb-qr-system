@@ -4,13 +4,17 @@ import { useState, useEffect } from 'react';
 import { ExternalLink, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { ItemDisplayProps } from '@/types';
+import { ReactionCounts } from '@/types/reactions';
 import LinkCard from './LinkCard';
+import ReactionButtons from './ReactionButtons';
 import { getSessionId } from '@/lib/session';
 import { analyticsApi } from '@/lib/api';
 
 export default function ItemDisplay({ item }: ItemDisplayProps) {
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [visitRecorded, setVisitRecorded] = useState<boolean>(false);
+  const [reactionCounts, setReactionCounts] = useState<ReactionCounts | undefined>(undefined);
+  const [reactionError, setReactionError] = useState<string | null>(null);
 
   // Visit tracking with client-side deduplication
   useEffect(() => {
@@ -56,6 +60,24 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
 
     recordVisit();
   }, [item?.id, visitRecorded]); // Re-run if item changes, but not if visitRecorded changes
+
+  // Reaction change handler with error boundary
+  const handleReactionChange = (newCounts: ReactionCounts) => {
+    try {
+      setReactionCounts(newCounts);
+      setReactionError(null);
+      console.info('Reaction counts updated:', newCounts);
+    } catch (error) {
+      console.error('Failed to handle reaction change:', error);
+      setReactionError('Failed to update reaction counts');
+    }
+  };
+
+  // Error boundary for reaction system
+  const handleReactionError = (error: Error) => {
+    console.error('Reaction system error:', error);
+    setReactionError('Reaction system temporarily unavailable');
+  };
 
   if (!item) {
     return (
@@ -119,6 +141,44 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
             </p>
           </div>
         )}
+
+        {/* Reaction Section */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            How helpful was this?
+          </h2>
+          
+          {/* Error Message */}
+          {reactionError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{reactionError}</p>
+              <button 
+                onClick={() => setReactionError(null)}
+                className="text-xs text-red-500 hover:text-red-700 mt-1"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+
+          {/* Reaction Buttons */}
+          <div className="reaction-section-wrapper">
+            <ReactionButtons 
+              itemId={item.id} 
+              initialCounts={reactionCounts}
+              onReactionChange={handleReactionChange}
+            />
+          </div>
+          
+          {/* Reaction Summary */}
+          {reactionCounts && reactionCounts.total > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-500 text-center">
+                {reactionCounts.total} {reactionCounts.total === 1 ? 'person' : 'people'} found this helpful
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Links Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
