@@ -74,20 +74,20 @@ export default function HomePage() {
       />
       
       <div className="min-h-screen bg-white">
-        {/* Header */}
+      {/* Header */}
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-3">
-                <Image
-                  src="/faqbnb_logoshort.png"
-                  alt="FAQBNB Logo"
+            <div className="flex items-center space-x-3">
+              <Image
+                src="/faqbnb_logoshort.png"
+                alt="FAQBNB Logo"
                   width={32}
                   height={32}
-                  className="rounded-lg"
-                />
+                className="rounded-lg"
+              />
                 <div className="text-xl font-bold text-gray-900">FAQBNB</div>
-              </div>
+            </div>
               <nav className="hidden md:flex items-center space-x-8">
                 <Link href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">
                   Features
@@ -102,17 +102,17 @@ export default function HomePage() {
                   Beta Access
                 </Link>
               </nav>
-              <Link
+            <Link
                 href="/login"
                 className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-              >
+            >
                 Log In
-              </Link>
-            </div>
+            </Link>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Hero Section */}
+      {/* Hero Section */}
         <section className="relative pt-16 pb-32 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
@@ -145,14 +145,14 @@ export default function HomePage() {
 
               {/* Hero Image/Logo */}
               <div className="flex justify-center mb-16">
-                <Image
-                  src="/faqbnb_logolong_alt.png"
+            <Image
+              src="/faqbnb_logolong_alt.png"
                   alt="FAQBNB Platform Preview"
                   width={500}
                   height={167}
                   className="max-w-full h-auto opacity-90"
-                  priority
-                />
+              priority
+            />
               </div>
             </div>
           </div>
@@ -209,8 +209,8 @@ export default function HomePage() {
               </h2>
               <p className="text-xl text-gray-600">
                 See what our beta partners are saying about FAQBNB
-              </p>
-            </div>
+          </p>
+        </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
@@ -317,10 +317,10 @@ export default function HomePage() {
                   <Clock className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">24/7 Access</h3>
-                <p className="text-gray-600">
+            <p className="text-gray-600">
                   Your customers get instant support anytime, anywhere, reducing helpdesk calls.
-                </p>
-              </div>
+            </p>
+          </div>
 
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -376,7 +376,7 @@ export default function HomePage() {
                   <li>• Version control</li>
                   <li>• Instant updates</li>
                 </ul>
-              </div>
+        </div>
 
               <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
@@ -405,8 +405,8 @@ export default function HomePage() {
               </h2>
               <p className="text-xl text-gray-600 mb-8">
                 Experience the instant access your customers will enjoy with these live examples
-              </p>
-            </div>
+            </p>
+          </div>
 
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -416,10 +416,10 @@ export default function HomePage() {
                   { id: 'f2b82987-a2a4-4de2-94db-f8924dc096d5', name: 'Coffee Maker', desc: 'Keurig single-serve system', category: 'Kitchen' },
                   { id: '0d92cbeb-a61f-4492-9346-6ab03363fdab', name: 'Smart Thermostat', desc: 'Nest learning thermostat', category: 'Home' },
                   { id: '1c8e4723-5186-41f3-b4bd-11b614a77bdb', name: 'Dishwasher', desc: 'Bosch 800 series built-in', category: 'Appliances' },
-                ].map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/item/${item.id}`}
+            ].map((item) => (
+              <Link
+                key={item.id}
+                href={`/item/${item.id}`}
                     className="block p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-200 hover:border-gray-300 hover:shadow-sm"
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -431,10 +431,10 @@ export default function HomePage() {
                     <h3 className="font-semibold text-gray-900 mb-2">{item.name}</h3>
                     <p className="text-sm text-gray-600 mb-3">{item.desc}</p>
                     <p className="text-xs text-blue-600 font-mono">ID: {item.id.substring(0, 8)}...</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
+              </Link>
+            ))}
+          </div>
+        </div>
           </div>
         </section>
 
@@ -485,8 +485,8 @@ export default function HomePage() {
                   <Link href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
                     <span className="sr-only">Twitter</span>
                     {/* Social icons would go here */}
-                  </Link>
-                </div>
+          </Link>
+        </div>
               </div>
 
               {/* Product */}
@@ -533,9 +533,9 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-          </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
+    </div>
     </>
   );
 }

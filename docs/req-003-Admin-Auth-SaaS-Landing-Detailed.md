@@ -98,6 +98,36 @@
   - [x] Add auth configuration options
   - [x] Update database types to include new auth tables
 - [x] Create initial admin user in database for testing
+
+### 3.1. **BUG FIX**: Database Migration Execution -critical bug- -unit tested-
+**Story Points**: 1  
+**Priority**: CRITICAL - BLOCKING  
+**Dependencies**: Task 1 complete  
+**Bug**: Database schema files exist but actual tables not created in Supabase database
+
+**Issue Evidence**:
+- Error: `relation "public.mailing_list_subscribers" does not exist`
+- Mailing list API returns HTTP 500
+- Authentication system cannot function without database tables
+
+**Actions**:
+- [x] Execute database migration using Supabase MCP tools
+- [x] Verify admin_users table creation with proper auth.users foreign key
+- [x] Verify mailing_list_subscribers table creation with constraints
+- [x] Add missing ip_address and user_agent columns to match API expectations
+- [x] Fix RLS policies for public mailing list access
+- [x] Update TypeScript types for new columns
+
+**Files Modified**:
+- Database: Created admin_users and mailing_list_subscribers tables via MCP
+- `src/app/api/mailing-list/route.ts`: Fixed client configuration
+- `src/lib/supabase.ts`: Updated TypeScript types with new columns
+
+**Testing**:
+- [x] Confirm mailing list API returns 201 instead of 500
+- [x] Verified subscription creation with ID: ee5b1d21-1940-4698-a7dc-06ddc1ff70ec
+- [x] Test RLS policies allow public mailing list subscriptions
+- [x] Verified IP tracking and analytics data capture
   - [x] Use supabaseMCP to insert test admin user
   - [x] Email: admin@faqbnb.com, role: admin
   - [x] Document credentials for testing
@@ -204,6 +234,33 @@
 - [x] Test login API rejects invalid credentials
 - [x] Test logout API clears session properly
 - [x] Test session validation API returns correct status
+
+### 7.1. **BUG FIX**: Google Fonts Loading Failures -performance bug-
+**Story Points**: 1  
+**Priority**: MEDIUM  
+**Dependencies**: None  
+**Bug**: Google Fonts (Inter, JetBrains Mono) failing to load causing console warnings
+
+**Issue Evidence**:
+- Warning: `Failed to download 'Inter' from Google Fonts. Using fallback font instead.`
+- Warning: `Failed to download 'JetBrains Mono' from Google Fonts. Using fallback font instead.`
+- Multiple 404 errors for font requests in development console
+
+**Actions**:
+- [ ] Update `src/app/layout.tsx` to use local font fallbacks or fix Google Fonts integration
+- [ ] Add proper font display strategy with fallback handling
+- [ ] Implement font preloading for better performance
+- [ ] Update Tailwind configuration for consistent font stack
+
+**Files to Modify**:
+- `src/app/layout.tsx` - Fix font imports and fallback strategy
+- `tailwind.config.js` - Update font family configuration
+- `next.config.js` - Add font optimization settings if needed
+
+**Testing**:
+- [ ] Verify no font loading errors in browser console
+- [ ] Confirm text renders with appropriate fonts
+- [ ] Test font loading performance in development and production
 
 ---
 
@@ -529,6 +586,62 @@
 - [x] Test user journey from landing to admin access
 - [x] Verify SEO meta tags and schema markup
 - [x] Test page performance and loading speed
+
+### 20.1. **BUG FIX**: SEO MetadataBase Property Missing -seo bug-
+**Story Points**: 1  
+**Priority**: LOW  
+**Dependencies**: Task 20 complete  
+**Bug**: Missing metadataBase property causing SEO warnings for social media images
+
+**Issue Evidence**:
+- Warning: `metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000"`
+- Impact on production social media sharing with relative URLs
+
+**Actions**:
+- [ ] Add metadataBase property to metadata export in `src/app/page.tsx`
+- [ ] Configure production URL for social media image resolution
+- [ ] Update all metadata exports to use proper base URL
+- [ ] Test social media sharing with absolute URLs
+
+**Files to Modify**:
+- `src/app/page.tsx` - Add metadataBase to metadata export
+- `src/app/login/page.tsx` - Update metadata configuration
+- `src/app/admin/page.tsx` - Add metadataBase if needed
+- Any other pages with metadata exports
+
+**Testing**:
+- [ ] Verify no metadataBase warnings in development console
+- [ ] Test social media sharing URLs resolve correctly
+- [ ] Confirm production URLs work for OpenGraph images
+
+### 20.2. **BUG FIX**: Supabase MCP Connection Validation -testing bug-
+**Story Points**: 1  
+**Priority**: MEDIUM  
+**Dependencies**: Database migration complete  
+**Bug**: Cannot validate database operations due to missing Supabase MCP connection
+
+**Issue Evidence**:
+- No Supabase MCP tools available for database validation
+- Cannot verify table creation or RLS policies
+- Unable to test database operations through MCP interface
+
+**Actions**:
+- [ ] Verify Supabase MCP connection is properly configured
+- [ ] Test database connection with `mcp_supabase_list_tables`
+- [ ] Validate new tables exist using `mcp_supabase_execute_sql`
+- [ ] Test RLS policies with MCP queries
+- [ ] Document proper MCP setup for future validation
+
+**Files to Modify**:
+- Configuration: Ensure Supabase MCP is connected and available
+- Test: Use MCP tools to validate database state
+- Document: Update validation procedures with MCP usage
+
+**Testing**:
+- [ ] Confirm Supabase MCP connection is active
+- [ ] Verify can query admin_users and mailing_list_subscribers tables
+- [ ] Test RLS policies prevent unauthorized access
+- [ ] Validate all database operations work through MCP
 
 ---
 

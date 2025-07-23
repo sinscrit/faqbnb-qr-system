@@ -139,18 +139,24 @@ export type Database = {
           email: string
           subscribed_at: string | null
           status: string | null
+          ip_address: string | null
+          user_agent: string | null
         }
         Insert: {
           id?: string
           email: string
           subscribed_at?: string | null
           status?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
         }
         Update: {
           id?: string
           email?: string
           subscribed_at?: string | null
           status?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
