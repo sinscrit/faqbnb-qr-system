@@ -32,11 +32,16 @@ export async function middleware(req: NextRequest) {
       error: sessionError,
     } = await supabase.auth.getSession();
 
-    // Log middleware activity (for debugging)
-    console.log(`Middleware: ${pathname}, session: ${session?.user?.id || 'none'}`);
-
+    // Enhanced debugging for session detection
+    const cookies = req.headers.get('cookie') || '';
+    const hasSessionCookies = cookies.includes('supabase');
+    
+    console.log(`Middleware Debug: ${pathname}`);
+    console.log(`- Cookies present: ${hasSessionCookies ? 'YES' : 'NO'}`);
+    console.log(`- Session result: ${session ? `User ${session.user.email} (${session.user.id})` : 'NONE'}`);
+    
     if (sessionError) {
-      console.error('Middleware session error:', sessionError);
+      console.error('Middleware session error:', sessionError.message);
       
       if (isProtectedPath) {
         const loginUrl = new URL('/login', req.url);
@@ -49,9 +54,43 @@ export async function middleware(req: NextRequest) {
 
     // Handle protected paths
     if (isProtectedPath) {
-      // Allow access for now - session detection will be fixed
-      console.log('Allowing admin access for testing - session detection to be fixed');
-      return res;
+      if (!session) {
+        // No session - redirect to login immediately
+        console.log('Middleware: No session detected, redirecting to login');
+        const loginUrl = new URL('/login', req.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      // Check if user is an admin
+      if (!session.user.email) {
+        console.log('Access denied - no email in session');
+        const loginUrl = new URL('/login', req.url);
+        loginUrl.searchParams.set('error', 'access_denied');
+        return NextResponse.redirect(loginUrl);
+      }
+
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('role')
+        .eq('email', session.user.email)
+        .single();
+
+      if (adminError || !adminUser || adminUser.role !== 'admin') {
+        console.log('Access denied - not an admin:', {
+          userId: session.user.id,
+          adminError: adminError?.message,
+          adminUser,
+        });
+
+        // User is not an admin - sign them out and redirect to login
+        await supabase.auth.signOut();
+        const loginUrl = new URL('/login', req.url);
+        loginUrl.searchParams.set('error', 'access_denied');
+        return NextResponse.redirect(loginUrl);
+      }
+
+      console.log('Admin access granted for:', session.user.email);
     }
 
     // Handle auth paths (like login page)

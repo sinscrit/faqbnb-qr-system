@@ -8,7 +8,31 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+    storage: {
+      getItem: (key: string) => {
+        if (typeof window !== 'undefined') {
+          return window.localStorage.getItem(key);
+        }
+        return null;
+      },
+      setItem: (key: string, value: string) => {
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(key, value);
+          // Also set as HTTP cookie for server-side access
+          const maxAge = 60 * 60 * 24 * 30; // 30 days
+          document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=lax; secure=${window.location.protocol === 'https:'}`;
+        }
+      },
+      removeItem: (key: string) => {
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem(key);
+          // Also remove cookie
+          document.cookie = `${key}=; path=/; max-age=0; SameSite=lax`;
+        }
+      }
+    }
   }
 });
 
