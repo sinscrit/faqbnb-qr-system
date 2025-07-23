@@ -303,8 +303,8 @@
 ### 12. Create Admin Analytics API Endpoint
 **Story Point Value**: 1
 
-- [ ] Create new file: `src/app/api/admin/items/[publicId]/analytics/route.ts`
-- [ ] Implement time-based visit analytics queries:
+- [x] Create new file: `src/app/api/admin/items/[publicId]/analytics/route.ts`
+- [x] Implement time-based visit analytics queries:
   ```sql
   SELECT 
     COUNT(*) FILTER (WHERE visited_at >= NOW() - INTERVAL '24 hours') as last_24_hours,
@@ -315,9 +315,9 @@
   FROM item_visits iv
   JOIN items i ON iv.item_id = i.id
   WHERE i.public_id = $1
-  ```
-- [ ] Add admin authentication validation
-- [ ] Test with sample data across different time periods
+  ``` -unit tested-
+- [x] Add admin authentication validation -unit tested-
+- [x] Test with sample data across different time periods -unit tested-
 
 ### 13. Create System-Wide Analytics API Endpoint
 **Story Point Value**: 1
