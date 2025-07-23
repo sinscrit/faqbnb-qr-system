@@ -361,28 +361,28 @@
 
 ## Phase 5: Admin API Authentication Integration (3 tasks)
 
-### 14. Update Admin Items API with Authentication
+### 14. Update Admin Items API with Authentication -unit tested-
 **Story Points**: 1  
 **Priority**: High  
 **Dependencies**: Phases 1-4 complete
 
 **Actions**:
-- [ ] Update `src/app/api/admin/items/route.ts`
-  - [ ] Add authentication validation at start of GET and POST handlers
-  - [ ] Verify admin role using session and admin_users table
-  - [ ] Return 401 for unauthenticated requests
-  - [ ] Return 403 for non-admin authenticated users
-  - [ ] Add proper auth error responses
-- [ ] Include session validation and refresh logic
-- [ ] Add audit logging for admin operations
-- [ ] Update error handling for auth failures
-- [ ] Test with both authenticated and unauthenticated requests
+- [x] Update `src/app/api/admin/items/route.ts`
+  - [x] Add authentication validation at start of GET and POST handlers
+  - [x] Verify admin role using session and admin_users table
+  - [x] Return 401 for unauthenticated requests
+  - [x] Return 403 for non-admin authenticated users
+  - [x] Add proper auth error responses
+- [x] Include session validation and refresh logic
+- [x] Add audit logging for admin operations
+- [x] Update error handling for auth failures
+- [x] Test with both authenticated and unauthenticated requests
 
 **Testing**:
-- [ ] Test API rejects unauthenticated requests (401)
-- [ ] Test API rejects non-admin users (403)
-- [ ] Test API works correctly for authenticated admins
-- [ ] Verify error responses are properly formatted
+- [x] Test API rejects unauthenticated requests (401)
+- [x] Test API rejects non-admin users (403)
+- [x] Test API works correctly for authenticated admins
+- [x] Verify error responses are properly formatted
 
 ### 15. Update Admin Item Management API with Authentication
 **Story Points**: 1  

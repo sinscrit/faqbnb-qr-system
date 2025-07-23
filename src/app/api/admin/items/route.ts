@@ -1,10 +1,71 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { ItemsListResponse, CreateItemRequest, ItemResponse } from '@/types';
+import { getUser, isAdmin } from '@/lib/auth';
+
+// Helper function to validate authentication for admin operations
+async function validateAdminAuth(request: NextRequest) {
+  try {
+    // Get the current user from the session
+    const userResult = await getUser();
+    
+    if (userResult.error || !userResult.data) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Validate admin role
+    const userIsAdmin = isAdmin(userResult.data);
+    
+    if (!userIsAdmin) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Admin privileges required',
+            code: 'FORBIDDEN' 
+          },
+          { status: 403 }
+        )
+      };
+    }
+
+    return { user: userResult.data, isAdmin: true };
+  } catch (error) {
+    console.error('Admin auth validation error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Authentication validation failed',
+          code: 'AUTH_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('Admin items API called');
+    console.log('Admin items API called - validating authentication...');
+    
+    // Validate authentication and admin role
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      console.log('Authentication failed for admin items GET request');
+      return authResult.error;
+    }
+    
+    console.log('Authentication successful for user:', authResult.user?.email);
     
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
@@ -65,6 +126,9 @@ export async function GET(request: NextRequest) {
       data: itemsWithCounts,
     };
 
+    // Add audit log for admin operations
+    console.log(`Admin items list accessed by: ${authResult.user?.email}, found ${itemsWithCounts.length} items`);
+
     return NextResponse.json(response);
   } catch (error) {
     console.error('API error:', error);
@@ -77,7 +141,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Admin create item API called');
+    console.log('Admin create item API called - validating authentication...');
+    
+    // Validate authentication and admin role
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      console.log('Authentication failed for admin item creation request');
+      return authResult.error;
+    }
+    
+    console.log('Authentication successful for user:', authResult.user?.email);
     
     const body: CreateItemRequest = await request.json();
     console.log('Request body:', body);
@@ -222,6 +295,9 @@ export async function POST(request: NextRequest) {
         })),
       },
     };
+    
+    // Add audit log for admin operations
+    console.log(`Item created by admin: ${authResult.user?.email}, item: ${newItem.name} (${newItem.public_id})`);
     
     console.log('Item creation completed successfully');
     return NextResponse.json(response, { status: 201 });
