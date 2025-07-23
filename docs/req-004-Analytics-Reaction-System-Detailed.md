@@ -270,17 +270,17 @@
 ### 10. Create Reaction Submission API Endpoint
 **Story Point Value**: 1
 
-- [ ] Create new file: `src/app/api/reactions/route.ts` with POST and DELETE endpoints:
+- [x] Create new file: `src/app/api/reactions/route.ts` with POST and DELETE endpoints:
   ```typescript
   // POST: Submit new reaction
   // DELETE: Remove existing reaction
   // Handle UNIQUE constraint for preventing duplicate reactions
   // Return updated reaction counts
   ```
-- [ ] Implement duplicate reaction handling (update vs insert)
-- [ ] Add validation for reaction types against CHECK constraint
-- [ ] Test all 4 reaction types: like, dislike, love, confused
-- [ ] Verify UNIQUE constraint prevents duplicates
+- [x] Implement duplicate reaction handling (update vs insert) -unit tested-
+- [x] Add validation for reaction types against CHECK constraint -unit tested-
+- [x] Test all 4 reaction types: like, dislike, love, confused -unit tested-
+- [x] Verify UNIQUE constraint prevents duplicates -unit tested-
 
 ### 11. Create Item Reactions Query API Endpoint
 **Story Point Value**: 1
