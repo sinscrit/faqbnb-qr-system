@@ -82,20 +82,20 @@
 - [x] Verify CHECK constraint by testing invalid reaction_type
 - [x] Test UNIQUE constraint with duplicate reaction attempts
 
-### 3. Create Performance Indexes for Analytics
+### 3. Create Performance Indexes for Analytics -unit tested-
 **Story Point Value**: 1
 
-- [ ] Use `mcp_supabase_apply_migration` to create visit tracking indexes:
+- [x] Use `mcp_supabase_apply_migration` to create visit tracking indexes:
   ```sql
   CREATE INDEX idx_item_visits_item_time ON item_visits(item_id, visited_at);
   CREATE INDEX idx_item_visits_time ON item_visits(visited_at);
   ```
-- [ ] Create reaction tracking indexes:
+- [x] Create reaction tracking indexes:
   ```sql
   CREATE INDEX idx_item_reactions_item ON item_reactions(item_id);
   CREATE INDEX idx_item_reactions_type ON item_reactions(item_id, reaction_type);
   ```
-- [ ] Verify all indexes were created using `mcp_supabase_execute_sql` with:
+- [x] Verify all indexes were created using `mcp_supabase_execute_sql` with:
   ```sql
   SELECT indexname, tablename FROM pg_indexes WHERE tablename IN ('item_visits', 'item_reactions');
   ```
