@@ -100,27 +100,27 @@
   SELECT indexname, tablename FROM pg_indexes WHERE tablename IN ('item_visits', 'item_reactions');
   ```
 
-### 4. Set Up Row Level Security for New Tables
+### 4. Set Up Row Level Security for New Tables -unit tested-
 **Story Point Value**: 1
 
-- [ ] Enable RLS on new tables using `mcp_supabase_apply_migration`:
+- [x] Enable RLS on new tables using `mcp_supabase_apply_migration`:
   ```sql
   ALTER TABLE item_visits ENABLE ROW LEVEL SECURITY;
   ALTER TABLE item_reactions ENABLE ROW LEVEL SECURITY;
   ```
-- [ ] Create public read policy for item_visits (anonymous analytics):
+- [x] Create public read policy for item_visits (anonymous analytics):
   ```sql
   CREATE POLICY "Allow public insert on item_visits" ON item_visits
       FOR INSERT WITH CHECK (true);
   ```
-- [ ] Create policies for item_reactions:
+- [x] Create policies for item_reactions:
   ```sql
   CREATE POLICY "Allow public read access on item_reactions" ON item_reactions
       FOR SELECT USING (true);
   CREATE POLICY "Allow public insert on item_reactions" ON item_reactions
       FOR INSERT WITH CHECK (true);
   ```
-- [ ] Test policies by attempting operations from different user contexts
+- [x] Test policies by attempting operations from different user contexts
 
 ### 5. Create Admin Analytics Policies
 **Story Point Value**: 1
