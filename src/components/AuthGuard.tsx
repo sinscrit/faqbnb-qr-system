@@ -166,10 +166,40 @@ export function AdminOnly({ children, fallback }: { children: ReactNode; fallbac
  * Session timeout warning component
  */
 export function SessionTimeoutWarning() {
-  const { user, refreshSession } = useAuth();
-  const [isVisible, setIsVisible] = useState(true);
+  const { user, session, refreshSession } = useAuth();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isExpiringSoon, setIsExpiringSoon] = useState(false);
 
-  if (!user || !isVisible) return null;
+  // Check if session is expiring soon
+  useEffect(() => {
+    if (!session || !user) {
+      setIsExpiringSoon(false);
+      setIsVisible(false);
+      return;
+    }
+
+    const checkExpiry = () => {
+      if (!session.expires_at) return false;
+
+      const expiresAt = new Date(session.expires_at * 1000);
+      const now = new Date();
+      const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+
+      return expiresAt <= fiveMinutesFromNow;
+    };
+
+    const expiring = checkExpiry();
+    setIsExpiringSoon(expiring);
+    
+    // Show warning only when session is expiring soon
+    if (expiring) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  }, [session, user]);
+
+  if (!user || !session || !isExpiringSoon || !isVisible) return null;
 
   const handleRefreshSession = async () => {
     try {
@@ -182,6 +212,7 @@ export function SessionTimeoutWarning() {
 
   const handleClose = () => {
     setIsVisible(false);
+    setIsExpiringSoon(false); // Don't show again until next check
   };
 
   return (
