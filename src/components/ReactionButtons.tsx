@@ -217,16 +217,21 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
               disabled={isLoading || !sessionId}
               className={`
                 group relative flex flex-col items-center justify-center
-                min-h-[60px] p-3 rounded-lg border-2 transition-all duration-200
+                min-h-[44px] min-w-[44px] p-2 rounded-lg border-2 transition-all duration-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                touch-manipulation select-none
+                sm:min-h-[60px] sm:min-w-[60px] sm:p-3
                 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 ${isActive 
-                  ? button.activeColor
-                  : `bg-white border-gray-200 ${button.hoverColor} hover:border-gray-300 hover:scale-105`
+                  ? 'bg-blue-100 text-blue-600 border-blue-300 shadow-md'
+                  : 'bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200 hover:border-gray-300 hover:scale-105 hover:shadow-md'
                 }
                 ${!sessionId ? 'opacity-50 cursor-not-allowed' : ''}
               `}
               title={`${isActive ? 'Remove' : 'Add'} ${button.label} reaction`}
+              aria-label={`React with ${button.label}, currently ${count} reactions`}
+              role="button"
+              tabIndex={0}
             >
               {/* Loading Spinner */}
               {isLoading && (
@@ -236,7 +241,8 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
               )}
 
               {/* Reaction Icon */}
-              <span className="text-xl mb-1 group-hover:scale-110 transition-transform duration-200">
+              <span className="text-lg sm:text-xl mb-1 group-hover:scale-110 transition-transform duration-200" 
+                    style={{ fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", "EmojiSymbols"' }}>
                 {button.icon}
               </span>
 
