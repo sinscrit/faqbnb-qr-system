@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthGuardProps {
@@ -77,17 +76,14 @@ export default function AuthGuard({
   redirectTo = '/login',
 }: AuthGuardProps) {
   const { user, loading, isAdmin: userIsAdmin } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
-    // Only redirect if not loading and no user
+    // Note: Redirect logic removed - middleware handles authentication
+    // This prevents redirect loops between client and server auth
     if (!loading && !user) {
-      console.log('AuthGuard: Redirecting unauthenticated user to login');
-      const currentPath = window.location.pathname;
-      const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(currentPath)}`;
-      router.push(redirectUrl);
+      console.log('AuthGuard: User not authenticated (middleware should handle redirect)');
     }
-  }, [user, loading, router, redirectTo]);
+  }, [user, loading]);
 
   // Show loading state
   if (loading) {

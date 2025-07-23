@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, EyeOff, LogIn, Loader2, AlertCircle } from 'lucide-react';
 
@@ -24,7 +24,6 @@ interface FormErrors {
 }
 
 export default function LoginForm({ onSuccess, onError, className = '' }: LoginFormProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn } = useAuth();
   
@@ -140,8 +139,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       // Call success callback
       onSuccess?.();
       
-      // Redirect to intended page or admin panel
-      router.push(redirectTo);
+      // Note: Redirect removed - let LoginPageContent handle redirect once user state updates
+      // This prevents race conditions between login success and auth context update
       
     } catch (error) {
       console.error('Login error:', error);
