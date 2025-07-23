@@ -55,47 +55,35 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading admin panel...</p>
+          <p className="text-gray-600">Loading items...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">FAQBNB Admin Panel</h1>
-              <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Link
-                href="/"
-                className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ExternalLink className="w-4 h-4 inline mr-2" />
-                View Site
-              </Link>
-              <Link
-                href="/admin/items/new"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Item
-              </Link>
-            </div>
+    <div>
+      {/* Page Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
+            <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
           </div>
+          <Link
+            href="/admin/items/new"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Item
+          </Link>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div>
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-800">{error}</p>
