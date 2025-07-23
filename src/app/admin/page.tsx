@@ -173,9 +173,47 @@ export default function AdminPage() {
                         <div className="font-medium text-gray-900">{item.name}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <code className="px-2 py-1 bg-gray-100 rounded text-sm font-mono">
-                          {item.publicId}
-                        </code>
+                        <div className="group relative">
+                          <code 
+                            className="px-2 py-1 bg-gray-100 rounded text-sm font-mono cursor-pointer hover:bg-gray-200 transition-colors"
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.publicId).then(() => {
+                                // Show brief feedback
+                                const element = document.activeElement;
+                                if (element) {
+                                  const originalText = element.textContent;
+                                  element.textContent = 'Copied!';
+                                  setTimeout(() => {
+                                    element.textContent = originalText;
+                                  }, 1000);
+                                }
+                              }).catch(() => {
+                                // Fallback for older browsers
+                                const textArea = document.createElement('textarea');
+                                textArea.value = item.publicId;
+                                document.body.appendChild(textArea);
+                                textArea.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(textArea);
+                                
+                                const element = document.activeElement;
+                                if (element) {
+                                  const originalText = element.textContent;
+                                  element.textContent = 'Copied!';
+                                  setTimeout(() => {
+                                    element.textContent = originalText;
+                                  }, 1000);
+                                }
+                              });
+                            }}
+                            title="Click to copy full UUID"
+                          >
+                            {item.publicId.substring(0, 8)}...
+                          </code>
+                          <div className="invisible group-hover:visible absolute z-10 bg-black text-white text-xs rounded py-1 px-2 bottom-full left-0 whitespace-nowrap pointer-events-none">
+                            {item.publicId}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
