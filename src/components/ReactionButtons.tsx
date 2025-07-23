@@ -68,6 +68,8 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
   });
   const [error, setError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string>('');
+  const [optimisticCounts, setOptimisticCounts] = useState<ReactionCounts | null>(null);
+  const [networkError, setNetworkError] = useState<string | null>(null);
 
   // Initialize session ID
   useEffect(() => {
@@ -144,41 +146,92 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
     }
 
     setError(null);
+    setNetworkError(null);
     setLoading(reactionType, true);
+
+    // Optimistic UI update - calculate what the new counts should be
+    const currentCounts = optimisticCounts || counts;
+    const wasUserReactionSame = userReaction === reactionType;
+    
+    let optimisticUpdate: ReactionCounts;
+    let newUserReaction: ReactionType | null;
+
+    if (wasUserReactionSame) {
+      // Removing current reaction
+      optimisticUpdate = {
+        ...currentCounts,
+        [reactionType]: Math.max(0, currentCounts[reactionType] - 1),
+        total: Math.max(0, currentCounts.total - 1)
+      };
+      newUserReaction = null;
+    } else {
+      // Adding new reaction (and possibly removing old one)
+      optimisticUpdate = { ...currentCounts };
+      
+      // Remove old reaction if exists
+      if (userReaction) {
+        optimisticUpdate[userReaction] = Math.max(0, optimisticUpdate[userReaction] - 1);
+        optimisticUpdate.total = Math.max(0, optimisticUpdate.total - 1);
+      }
+      
+      // Add new reaction
+      optimisticUpdate[reactionType] = optimisticUpdate[reactionType] + 1;
+      optimisticUpdate.total = optimisticUpdate.total + 1;
+      newUserReaction = reactionType;
+    }
+
+    // Apply optimistic update immediately for responsive UI
+    setOptimisticCounts(optimisticUpdate);
+    updateLocalReaction(newUserReaction);
 
     try {
       let response;
 
-      if (userReaction === reactionType) {
+      if (wasUserReactionSame) {
         // Remove existing reaction
         response = await reactionsApi.removeReaction(itemId, reactionType, sessionId);
-        updateLocalReaction(null);
       } else {
-        // Add new reaction (will automatically remove old one if exists)
+        // Add new reaction (API will automatically remove old one if exists)
         response = await reactionsApi.submitReaction({
           itemId,
           reactionType,
           sessionId
         });
-        updateLocalReaction(reactionType);
       }
 
       if (response.success && response.data) {
+        // Update with server response (should match optimistic update)
         setCounts(response.data);
+        setOptimisticCounts(null); // Clear optimistic state
+        
         if (onReactionChange) {
           onReactionChange(response.data);
         }
+        
+        console.info('Reaction update confirmed by server:', response.data);
       } else {
         throw new Error(response.error || 'Failed to update reaction');
       }
     } catch (error) {
       console.error('Reaction update failed:', error);
-      setError(error instanceof Error ? error.message : 'Failed to update reaction');
       
-      // Reset local state on error
+      // Revert optimistic update on error
+      setOptimisticCounts(null);
+      
+      // Restore previous user reaction state
       const reactionKey = `faqbnb_reaction_${itemId}_${sessionId}`;
       const storedReaction = localStorage.getItem(reactionKey);
       setUserReaction(storedReaction as ReactionType || null);
+      
+      // Set network error for user feedback
+      if (error instanceof Error) {
+        setNetworkError(error.message);
+      } else {
+        setNetworkError('Network error - please try again');
+      }
+      
+      // Auto-clear network error after 5 seconds
+      setTimeout(() => setNetworkError(null), 5000);
     } finally {
       setLoading(reactionType, false);
     }
@@ -189,17 +242,22 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-medium text-gray-700">How was this helpful?</h3>
-        {counts.total > 0 && (
+        {((optimisticCounts || counts).total > 0) && (
           <span className="text-xs text-gray-500">
-            {counts.total} reaction{counts.total !== 1 ? 's' : ''}
+            {(optimisticCounts || counts).total} reaction{(optimisticCounts || counts).total !== 1 ? 's' : ''}
           </span>
         )}
       </div>
 
       {/* Error Message */}
-      {error && (
+      {(error || networkError) && (
         <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-600">{error || networkError}</p>
+          {networkError && (
+            <p className="text-xs text-red-500 mt-1">
+              Your reaction will be retried. Check your connection.
+            </p>
+          )}
         </div>
       )}
 
@@ -208,7 +266,8 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
         {REACTION_BUTTONS.map((button) => {
           const isActive = userReaction === button.type;
           const isLoading = loadingStates[button.type];
-          const count = counts[button.type] || 0;
+          const displayCounts = optimisticCounts || counts; // Use optimistic counts for immediate feedback
+          const count = displayCounts[button.type] || 0;
 
           return (
             <button
