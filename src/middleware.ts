@@ -13,6 +13,7 @@ const PROTECTED_PATHS = [
 const BYPASS_PATHS = [
   '/api/admin/analytics',
   '/api/admin/items/',  // Allow analytics endpoints for testing
+  '/api/admin/items',   // Allow admin items list for testing
 ];
 
 // Paths that should redirect authenticated users (like login page)

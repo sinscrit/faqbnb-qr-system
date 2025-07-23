@@ -114,13 +114,49 @@ export async function GET(request: NextRequest) {
 
     console.log('Query successful, found items:', items?.length || 0);
 
-    // Get link counts for each item
+    // Get link counts and analytics data for each item
     const itemsWithCounts = await Promise.all(
       (items || []).map(async (item) => {
+        // Get links count
         const { count: linksCount } = await supabase
           .from('item_links')
           .select('*', { count: 'exact', head: true })
           .eq('item_id', item.id);
+
+        // Get visit analytics
+        const now = new Date();
+        const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        const { data: visitData } = await supabase
+          .from('item_visits')
+          .select('visited_at')
+          .eq('item_id', item.id);
+
+        const visits = visitData || [];
+        const visitCounts = {
+          last24Hours: visits.filter(v => new Date(v.visited_at) >= last24Hours).length,
+          last7Days: visits.filter(v => new Date(v.visited_at) >= last7Days).length,
+          allTime: visits.length,
+        };
+
+        // Get reaction analytics
+        const { data: reactionData } = await supabase
+          .from('item_reactions')
+          .select('reaction_type')
+          .eq('item_id', item.id);
+
+        const reactions = reactionData || [];
+        const reactionCounts = {
+          total: reactions.length,
+          byType: {
+            like: reactions.filter(r => r.reaction_type === 'like').length,
+            dislike: reactions.filter(r => r.reaction_type === 'dislike').length,
+            love: reactions.filter(r => r.reaction_type === 'love').length,
+            confused: reactions.filter(r => r.reaction_type === 'confused').length,
+            total: reactions.length,
+          },
+        };
 
         return {
           id: item.id,
@@ -129,6 +165,8 @@ export async function GET(request: NextRequest) {
           linksCount: linksCount || 0,
           qrCodeUrl: item.qr_code_url || undefined,
           createdAt: item.created_at || new Date().toISOString(),
+          visitCounts,
+          reactionCounts,
         };
       })
     );
@@ -138,8 +176,10 @@ export async function GET(request: NextRequest) {
       data: itemsWithCounts,
     };
 
-    // Add audit log for admin operations
-    console.log(`Admin items list accessed by: ${authResult.user.email}, found ${itemsWithCounts.length} items`);
+    // Add audit log for admin operations with analytics summary
+    const totalVisits = itemsWithCounts.reduce((sum, item) => sum + (item.visitCounts?.allTime || 0), 0);
+    const totalReactions = itemsWithCounts.reduce((sum, item) => sum + (item.reactionCounts?.total || 0), 0);
+    console.log(`Admin items list accessed by: ${authResult.user.email}, found ${itemsWithCounts.length} items (${totalVisits} total visits, ${totalReactions} total reactions)`);
 
     return NextResponse.json(response);
   } catch (error) {
