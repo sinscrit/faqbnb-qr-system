@@ -1,3 +1,5 @@
+import { ReactionCounts } from './reactions';
+
 // Database types
 export interface Item {
   id: string;
@@ -54,6 +56,16 @@ export interface ItemsListResponse {
     linksCount: number;
     qrCodeUrl?: string;
     createdAt: string;
+    // NEW: Analytics data
+    visitCounts?: {
+      last24Hours: number;
+      last7Days: number;
+      allTime: number;
+    };
+    reactionCounts?: {
+      total: number;
+      byType: ReactionCounts;
+    };
   }[];
   error?: string;
 }

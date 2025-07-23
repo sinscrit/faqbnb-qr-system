@@ -216,10 +216,10 @@
 - [x] Add export to main types file: `export * from './reactions';` 
 - [x] Verify compilation and type checking
 
-### 8. Update Existing ItemsListResponse Type for Analytics
+### 8. Update Existing ItemsListResponse Type for Analytics -unit tested-
 **Story Point Value**: 1
 
-- [ ] Modify `src/types/index.ts` to extend `ItemsListResponse` interface:
+- [x] Modify `src/types/index.ts` to extend `ItemsListResponse` interface:
   ```typescript
   export interface ItemsListResponse {
     success: boolean;
@@ -244,8 +244,8 @@
     error?: string;
   }
   ```
-- [ ] Update imports to include new analytics types
-- [ ] Verify no breaking changes in existing code
+- [x] Update imports to include new analytics types
+- [x] Verify no breaking changes in existing code
 
 ### 9. Create Visit Tracking API Endpoint
 **Story Point Value**: 1
