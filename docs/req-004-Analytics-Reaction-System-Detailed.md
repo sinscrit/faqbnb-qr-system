@@ -122,10 +122,10 @@
   ```
 - [x] Test policies by attempting operations from different user contexts
 
-### 5. Create Admin Analytics Policies
+### 5. Create Admin Analytics Policies -unit tested-
 **Story Point Value**: 1
 
-- [ ] Create admin-only policies for analytics management using `mcp_supabase_apply_migration`:
+- [x] Create admin-only policies for analytics management using `mcp_supabase_apply_migration`:
   ```sql
   CREATE POLICY "Allow admin full access to item_visits" ON item_visits
       FOR ALL USING (
@@ -136,9 +136,9 @@
           )
       );
   ```
-- [ ] Create similar policy for item_reactions admin access
-- [ ] Test admin access by querying analytics data with admin user
-- [ ] Verify non-admin users cannot perform admin operations
+- [x] Create similar policy for item_reactions admin access
+- [x] Test admin access by querying analytics data with admin user
+- [x] Verify non-admin users cannot perform admin operations
 
 ---
 
