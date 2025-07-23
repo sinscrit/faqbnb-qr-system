@@ -1,13 +1,61 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ExternalLink, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { ItemDisplayProps } from '@/types';
 import LinkCard from './LinkCard';
+import { getSessionId } from '@/lib/session';
+import { analyticsApi } from '@/lib/api';
 
 export default function ItemDisplay({ item }: ItemDisplayProps) {
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
+  const [visitRecorded, setVisitRecorded] = useState<boolean>(false);
+
+  // Visit tracking with client-side deduplication
+  useEffect(() => {
+    const recordVisit = async () => {
+      try {
+        // Skip if no item or visit already recorded in this component instance
+        if (!item?.id || visitRecorded) {
+          return;
+        }
+
+        const sessionId = getSessionId();
+        
+        // Check if we've already recorded a visit for this item in this session
+        const visitKey = `faqbnb_visit_${item.id}_${sessionId}`;
+        const lastVisitTime = localStorage.getItem(visitKey);
+        
+        // Only record visit if we haven't visited this item in this session
+        // or if last visit was more than 1 minute ago (to handle page refreshes)
+        const now = Date.now();
+        const oneMinute = 60 * 1000;
+        
+        if (lastVisitTime && (now - parseInt(lastVisitTime)) < oneMinute) {
+          console.info('Visit already recorded for this item in current session');
+          setVisitRecorded(true);
+          return;
+        }
+
+        // Record the visit
+        await analyticsApi.recordVisit(item.id, sessionId);
+        
+        // Mark as recorded in localStorage to prevent duplicate visits
+        localStorage.setItem(visitKey, now.toString());
+        setVisitRecorded(true);
+        
+        console.info('Visit recorded successfully for item:', item.name);
+      } catch (error) {
+        console.error('Visit tracking failed:', error);
+        // Fail silently - don't disrupt user experience
+        // Still mark as recorded to prevent retries
+        setVisitRecorded(true);
+      }
+    };
+
+    recordVisit();
+  }, [item?.id, visitRecorded]); // Re-run if item changes, but not if visitRecorded changes
 
   if (!item) {
     return (
