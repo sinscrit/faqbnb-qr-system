@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, ReactNode } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AuthGuardProps {
@@ -167,19 +167,25 @@ export function AdminOnly({ children, fallback }: { children: ReactNode; fallbac
  */
 export function SessionTimeoutWarning() {
   const { user, refreshSession } = useAuth();
+  const [isVisible, setIsVisible] = useState(true);
 
-  if (!user) return null;
+  if (!user || !isVisible) return null;
 
   const handleRefreshSession = async () => {
     try {
       await refreshSession();
+      setIsVisible(false); // Hide after refreshing
     } catch (error) {
       console.error('Failed to refresh session:', error);
     }
   };
 
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
   return (
-    <div className="fixed top-4 right-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 shadow-lg z-50">
+    <div className="fixed top-4 right-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4 shadow-lg z-50 max-w-sm">
       <div className="flex items-start">
         <div className="flex-shrink-0">
           <svg
@@ -195,17 +201,34 @@ export function SessionTimeoutWarning() {
             />
           </svg>
         </div>
-        <div className="ml-3">
-          <h3 className="text-sm font-medium text-yellow-800">Session Expiring Soon</h3>
+        <div className="ml-3 flex-1">
+          <div className="flex items-start justify-between">
+            <h3 className="text-sm font-medium text-yellow-800">Session Expiring Soon</h3>
+            <button
+              onClick={handleClose}
+              className="ml-2 flex-shrink-0 text-yellow-400 hover:text-yellow-600 transition-colors"
+              aria-label="Close notification"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
           <p className="text-sm text-yellow-700 mt-1">
             Your session will expire soon. Would you like to extend it?
           </p>
-          <div className="mt-3">
+          <div className="mt-3 flex gap-2">
             <button
               onClick={handleRefreshSession}
               className="text-sm bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-1 rounded-md transition-colors"
             >
               Extend Session
+            </button>
+            <button
+              onClick={handleClose}
+              className="text-sm text-yellow-600 hover:text-yellow-800 px-3 py-1 transition-colors"
+            >
+              Dismiss
             </button>
           </div>
         </div>
