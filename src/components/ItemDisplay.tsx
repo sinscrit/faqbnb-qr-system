@@ -7,6 +7,7 @@ import { ItemDisplayProps } from '@/types';
 import { ReactionCounts } from '@/types/reactions';
 import LinkCard from './LinkCard';
 import ReactionButtons from './ReactionButtons';
+import VisitCounter from './VisitCounter';
 import { getSessionId } from '@/lib/session';
 import { analyticsApi } from '@/lib/api';
 
@@ -113,18 +114,21 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 min-w-0 flex-1">
               <Image
                 src="/faqbnb_logoshort.png"
                 alt="FAQBNB Logo"
                 width={40}
                 height={40}
-                className="rounded-lg"
+                className="rounded-lg flex-shrink-0"
               />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{item.name}</h1>
                 <p className="text-sm text-gray-500">ID: {item.publicId}</p>
               </div>
+            </div>
+            <div className="ml-4 flex-shrink-0">
+              <VisitCounter publicId={item.publicId} />
             </div>
           </div>
         </div>
