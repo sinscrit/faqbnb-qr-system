@@ -407,28 +407,28 @@
 - [x] Verify proper error responses for auth failures
 - [x] Test API works correctly with valid authentication
 
-### 16. Update API Client with Authentication Headers
+### 16. Update API Client with Authentication Headers -unit tested-
 **Story Points**: 1  
 **Priority**: High  
 **Dependencies**: Tasks 14-15 complete
 
 **Actions**:
-- [ ] Update `src/lib/api.ts` to include authentication
-  - [ ] Add session token to all admin API requests
-  - [ ] Handle 401/403 responses by redirecting to login
-  - [ ] Add automatic session refresh logic
-  - [ ] Include auth error handling
-  - [ ] Update `adminApi` functions with auth headers
-- [ ] Add retry logic for expired sessions
-- [ ] Include proper error messages for auth failures
-- [ ] Add logging for API authentication events
-- [ ] Test with various auth scenarios
+- [x] Update `src/lib/api.ts` to include authentication
+  - [x] Add session token to all admin API requests
+  - [x] Handle 401/403 responses by redirecting to login
+  - [x] Add automatic session refresh logic
+  - [x] Include auth error handling
+  - [x] Update `adminApi` functions with auth headers
+- [x] Add retry logic for expired sessions
+- [x] Include proper error messages for auth failures
+- [x] Add logging for API authentication events
+- [x] Test with various auth scenarios
 
 **Testing**:
-- [ ] Test API client includes auth headers
-- [ ] Test automatic redirect on 401/403 responses
-- [ ] Test session refresh works correctly
-- [ ] Verify error handling for auth failures
+- [x] Test API client includes auth headers
+- [x] Test automatic redirect on 401/403 responses
+- [x] Test session refresh works correctly
+- [x] Verify error handling for auth failures
 
 ---
 
