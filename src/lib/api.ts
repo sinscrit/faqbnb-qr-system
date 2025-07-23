@@ -1,4 +1,6 @@
 import { ItemResponse, ItemsListResponse, CreateItemRequest, UpdateItemRequest } from '@/types';
+import { AnalyticsResponse, SystemAnalyticsResponse } from '@/types/analytics';
+import { ReactionResponse, ReactionSubmissionRequest, ReactionType } from '@/types/reactions';
 import { getSession, refreshSession } from '@/lib/auth';
 
 // Base API configuration
@@ -269,6 +271,181 @@ export const adminApi = {
     return apiRequest(`/admin/items/${encodeURIComponent(publicId)}`, {
       method: 'DELETE',
     }, true);
+  },
+};
+
+// Analytics API functions
+export const analyticsApi = {
+  /**
+   * Record a visit for an item
+   * @param itemId The internal ID of the item
+   * @param sessionId The user's session ID
+   * @returns Promise resolving when the visit is recorded
+   */
+  async recordVisit(itemId: string, sessionId: string): Promise<void> {
+    if (!itemId || typeof itemId !== 'string') {
+      throw new ApiError('Invalid itemId: must be a non-empty string');
+    }
+    
+    if (!sessionId || typeof sessionId !== 'string') {
+      throw new ApiError('Invalid sessionId: must be a non-empty string');
+    }
+
+    try {
+      await apiRequest('/visits', {
+        method: 'POST',
+        body: JSON.stringify({ itemId, sessionId }),
+      }, false);
+    } catch (error) {
+      // For visits, we don't want to fail the page load if recording fails
+      console.warn('Failed to record visit:', error);
+      if (error instanceof ApiError && !error.isRetryable()) {
+        // Don't retry for client errors (4xx)
+        return;
+      }
+      
+      // Retry once for server errors
+      try {
+        await apiRequest('/visits', {
+          method: 'POST',
+          body: JSON.stringify({ itemId, sessionId }),
+        }, false);
+      } catch (retryError) {
+        console.warn('Failed to record visit after retry:', retryError);
+      }
+    }
+  },
+
+  /**
+   * Get analytics data for a specific item (admin only)
+   * @param publicId The public UUID of the item
+   * @returns Promise resolving to item analytics response
+   */
+  async getItemAnalytics(publicId: string): Promise<AnalyticsResponse> {
+    if (!publicId || typeof publicId !== 'string') {
+      throw new ApiError('Invalid publicId: must be a non-empty string');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(publicId)) {
+      throw new ApiError('Invalid publicId: must be a valid UUID format');
+    }
+
+    return apiRequest<AnalyticsResponse>(`/admin/items/${encodeURIComponent(publicId)}/analytics`, {}, true);
+  },
+
+  /**
+   * Get system-wide analytics data (admin only)
+   * @param page Page number for pagination (default: 1)
+   * @param limit Number of items per page (default: 10)
+   * @param timeRange Time range for analytics in days (default: 30)
+   * @returns Promise resolving to system analytics response
+   */
+  async getSystemAnalytics(page: number = 1, limit: number = 10, timeRange: number = 30): Promise<SystemAnalyticsResponse> {
+    if (page < 1 || limit < 1 || limit > 100 || timeRange < 1) {
+      throw new ApiError('Invalid parameters: page and limit must be positive, limit max 100, timeRange must be positive');
+    }
+
+    const params = new URLSearchParams();
+    if (page !== 1) params.set('page', page.toString());
+    if (limit !== 10) params.set('limit', limit.toString());
+    if (timeRange !== 30) params.set('timeRange', timeRange.toString());
+    
+    const queryString = params.toString();
+    const endpoint = queryString ? `/admin/analytics?${queryString}` : '/admin/analytics';
+    
+    return apiRequest<SystemAnalyticsResponse>(endpoint, {}, true);
+  },
+};
+
+// Reactions API functions
+export const reactionsApi = {
+  /**
+   * Submit a reaction for an item
+   * @param data The reaction submission data
+   * @returns Promise resolving to reaction response with updated counts
+   */
+  async submitReaction(data: ReactionSubmissionRequest): Promise<ReactionResponse> {
+    if (!data || !data.itemId || !data.reactionType || !data.sessionId) {
+      throw new ApiError('Invalid reaction data: itemId, reactionType, and sessionId are required');
+    }
+
+    if (!['like', 'dislike', 'love', 'confused'].includes(data.reactionType)) {
+      throw new ApiError('Invalid reactionType: must be one of like, dislike, love, confused');
+    }
+
+    try {
+      return await apiRequest<ReactionResponse>('/reactions', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }, false);
+    } catch (error) {
+      if (error instanceof ApiError && error.isRetryable()) {
+        // Retry once for server errors
+        return await apiRequest<ReactionResponse>('/reactions', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }, false);
+      }
+      throw error;
+    }
+  },
+
+  /**
+   * Remove a reaction for an item
+   * @param itemId The internal ID of the item
+   * @param reactionType The type of reaction to remove
+   * @param sessionId The user's session ID
+   * @returns Promise resolving to reaction response with updated counts
+   */
+  async removeReaction(itemId: string, reactionType: ReactionType, sessionId: string): Promise<ReactionResponse> {
+    if (!itemId || typeof itemId !== 'string') {
+      throw new ApiError('Invalid itemId: must be a non-empty string');
+    }
+    
+    if (!sessionId || typeof sessionId !== 'string') {
+      throw new ApiError('Invalid sessionId: must be a non-empty string');
+    }
+
+    if (!['like', 'dislike', 'love', 'confused'].includes(reactionType)) {
+      throw new ApiError('Invalid reactionType: must be one of like, dislike, love, confused');
+    }
+
+    try {
+      return await apiRequest<ReactionResponse>('/reactions', {
+        method: 'DELETE',
+        body: JSON.stringify({ itemId, reactionType, sessionId }),
+      }, false);
+    } catch (error) {
+      if (error instanceof ApiError && error.isRetryable()) {
+        // Retry once for server errors
+        return await apiRequest<ReactionResponse>('/reactions', {
+          method: 'DELETE',
+          body: JSON.stringify({ itemId, reactionType, sessionId }),
+        }, false);
+      }
+      throw error;
+    }
+  },
+
+  /**
+   * Get reaction counts for an item
+   * @param publicId The public UUID of the item
+   * @returns Promise resolving to reaction response with counts
+   */
+  async getReactionCounts(publicId: string): Promise<ReactionResponse> {
+    if (!publicId || typeof publicId !== 'string') {
+      throw new ApiError('Invalid publicId: must be a non-empty string');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(publicId)) {
+      throw new ApiError('Invalid publicId: must be a valid UUID format');
+    }
+
+    return apiRequest<ReactionResponse>(`/items/${encodeURIComponent(publicId)}/reactions`, {}, false);
   },
 };
 
