@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import LogoutButton from '@/components/LogoutButton';
@@ -15,6 +16,24 @@ interface AdminLayoutProps {
 
 function AdminHeader() {
   const { user } = useAuth();
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === '/admin') {
+      return pathname === '/admin';
+    }
+    return pathname.startsWith(path);
+  };
+
+  const getNavLinkClasses = (path: string, isMobile = false) => {
+    const baseClasses = 'transition-colors flex items-center';
+    const mobileClasses = isMobile ? 'text-sm' : '';
+    const activeClasses = isActive(path) 
+      ? 'text-blue-600 font-medium' 
+      : 'text-gray-600 hover:text-gray-900';
+    
+    return `${baseClasses} ${mobileClasses} ${activeClasses}`.trim();
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -41,9 +60,16 @@ function AdminHeader() {
           <nav className="hidden md:flex items-center space-x-6">
             <Link
               href="/admin"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className={getNavLinkClasses('/admin')}
             >
               Items
+            </Link>
+            <Link
+              href="/admin/analytics"
+              className={getNavLinkClasses('/admin/analytics')}
+            >
+              <BarChart className="w-4 h-4 mr-1" />
+              Analytics
             </Link>
             <Link
               href="/"
@@ -79,9 +105,16 @@ function AdminHeader() {
           <div className="flex justify-center space-x-6">
             <Link
               href="/admin"
-              className="text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              className={getNavLinkClasses('/admin', true)}
             >
               Items
+            </Link>
+            <Link
+              href="/admin/analytics"
+              className={getNavLinkClasses('/admin/analytics', true)}
+            >
+              <BarChart className="w-3 h-3 mr-1" />
+              Analytics
             </Link>
             <Link
               href="/"
