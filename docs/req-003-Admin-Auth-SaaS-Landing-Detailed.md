@@ -384,28 +384,28 @@
 - [x] Test API works correctly for authenticated admins
 - [x] Verify error responses are properly formatted
 
-### 15. Update Admin Item Management API with Authentication
+### 15. Update Admin Item Management API with Authentication -unit tested-
 **Story Points**: 1  
 **Priority**: High  
 **Dependencies**: Task 14 complete
 
 **Actions**:
-- [ ] Update `src/app/api/admin/items/[publicId]/route.ts`
-  - [ ] Add authentication validation to PUT and DELETE handlers
-  - [ ] Verify admin role for both update and delete operations
-  - [ ] Add proper auth error responses
-  - [ ] Include audit logging for item modifications
-  - [ ] Test auth validation works for all operations
-- [ ] Update error handling for authentication failures
-- [ ] Add session timeout handling in API
-- [ ] Include security headers in responses
-- [ ] Document auth requirements in API
+- [x] Update `src/app/api/admin/items/[publicId]/route.ts`
+  - [x] Add authentication validation to PUT and DELETE handlers
+  - [x] Verify admin role for both update and delete operations
+  - [x] Add proper auth error responses
+  - [x] Include audit logging for item modifications
+  - [x] Test auth validation works for all operations
+- [x] Update error handling for authentication failures
+- [x] Add session timeout handling in API
+- [x] Include security headers in responses
+- [x] Document auth requirements in API
 
 **Testing**:
-- [ ] Test item update requires authentication
-- [ ] Test item deletion requires authentication
-- [ ] Verify proper error responses for auth failures
-- [ ] Test API works correctly with valid authentication
+- [x] Test item update requires authentication
+- [x] Test item deletion requires authentication
+- [x] Verify proper error responses for auth failures
+- [x] Test API works correctly with valid authentication
 
 ### 16. Update API Client with Authentication Headers
 **Story Points**: 1  

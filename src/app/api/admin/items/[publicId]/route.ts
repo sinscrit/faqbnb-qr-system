@@ -1,13 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { UpdateItemRequest, ItemResponse } from '@/types';
+import { getUser, isAdmin } from '@/lib/auth';
+
+// Helper function to validate authentication for admin operations
+async function validateAdminAuth() {
+  try {
+    // Get the current user from the session
+    const userResult = await getUser();
+    
+    if (userResult.error || !userResult.data) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Validate admin role
+    const userIsAdmin = isAdmin(userResult.data);
+    
+    if (!userIsAdmin) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Admin privileges required',
+            code: 'FORBIDDEN' 
+          },
+          { status: 403 }
+        )
+      };
+    }
+
+    return { user: userResult.data, isAdmin: true };
+  } catch (error) {
+    console.error('Admin auth validation error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Authentication validation failed',
+          code: 'AUTH_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
-    console.log('Admin update item API called');
+    console.log('Admin update item API called - validating authentication...');
+    
+    // Validate authentication and admin role
+    const authResult = await validateAdminAuth();
+    if (authResult.error) {
+      console.log('Authentication failed for admin item update request');
+      return authResult.error;
+    }
+    
+    console.log('Authentication successful for user:', authResult.user?.email);
     
     const { publicId } = await params;
     console.log('Public ID:', publicId);
@@ -87,35 +148,22 @@ export async function PUT(
       );
     }
     
-    console.log('Item found, updating...');
+    console.log('Item found, proceeding with update...');
     
-    // Update item basic info
-    const updateData: {
-      name: string;
-      description: string | null;
-      updated_at: string;
-      qr_code_url?: string | null;
-      qr_code_uploaded_at?: string | null;
-    } = {
-      name: body.name,
-      description: body.description || null,
-      updated_at: new Date().toISOString(),
-    };
-    
-    // Update QR code URL if provided or explicitly set to null
-    if (body.qrCodeUrl !== undefined) {
-      updateData.qr_code_url = body.qrCodeUrl || null;
-      updateData.qr_code_uploaded_at = body.qrCodeUrl ? new Date().toISOString() : null;
-    }
-    
+    // Update the item
     const { data: updatedItem, error: updateError } = await supabase
       .from('items')
-      .update(updateData)
+      .update({
+        name: body.name,
+        description: body.description || null,
+        qr_code_url: body.qrCodeUrl || null,
+        qr_code_uploaded_at: body.qrCodeUrl ? new Date().toISOString() : null,
+      })
       .eq('public_id', publicId)
       .select()
       .single();
       
-    if (updateError) {
+    if (updateError || !updatedItem) {
       console.error('Item update error:', updateError);
       return NextResponse.json(
         { success: false, error: 'Failed to update item' },
@@ -123,103 +171,52 @@ export async function PUT(
       );
     }
     
-    console.log('Item updated successfully');
+    console.log('Item updated successfully:', updatedItem.id);
     
-    // Get current links from database
-    const { data: currentLinks, error: linksError } = await supabase
+    // Delete existing links
+    const { error: deleteLinksError } = await supabase
       .from('item_links')
-      .select('*')
+      .delete()
       .eq('item_id', existingItem.id);
       
-    if (linksError) {
-      console.error('Links fetch error:', linksError);
+    if (deleteLinksError) {
+      console.error('Links deletion error:', deleteLinksError);
       return NextResponse.json(
-        { success: false, error: 'Failed to fetch current links' },
+        { success: false, error: 'Failed to update links' },
         { status: 500 }
       );
     }
     
-    // Process links updates
-    const newLinks = body.links || [];
-    const currentLinkIds = (currentLinks || []).map(link => link.id);
-    const newLinkIds = newLinks.filter(link => link.id).map(link => link.id);
+    console.log('Existing links deleted');
     
-    // Delete removed links
-    const linksToDelete = currentLinkIds.filter(id => !newLinkIds.includes(id));
-    if (linksToDelete.length > 0) {
-      const { error: deleteError } = await supabase
+    // Create new links if provided
+    const createdLinks = [];
+    if (body.links && body.links.length > 0) {
+      const linksToInsert = body.links.map((link, index) => ({
+        item_id: updatedItem.id,
+        title: link.title,
+        link_type: link.linkType,
+        url: link.url,
+        thumbnail_url: link.thumbnailUrl || null,
+        display_order: link.displayOrder !== undefined ? link.displayOrder : index,
+      }));
+      
+      const { data: newLinks, error: linksError } = await supabase
         .from('item_links')
-        .delete()
-        .in('id', linksToDelete);
+        .insert(linksToInsert)
+        .select();
         
-      if (deleteError) {
-        console.error('Links delete error:', deleteError);
+      if (linksError) {
+        console.error('Links creation error:', linksError);
         return NextResponse.json(
-          { success: false, error: 'Failed to delete links' },
+          { success: false, error: 'Failed to create links' },
           { status: 500 }
         );
       }
-      console.log('Deleted links:', linksToDelete.length);
-    }
-    
-    // Update existing links and create new ones
-    const finalLinks = [];
-    
-    for (let index = 0; index < newLinks.length; index++) {
-      const link = newLinks[index];
       
-      if (link.id) {
-        // Update existing link
-        const { data: updatedLink, error: linkUpdateError } = await supabase
-          .from('item_links')
-          .update({
-            title: link.title,
-            link_type: link.linkType,
-            url: link.url,
-            thumbnail_url: link.thumbnailUrl || null,
-            display_order: link.displayOrder || index,
-          })
-          .eq('id', link.id)
-          .select()
-          .single();
-          
-        if (linkUpdateError) {
-          console.error('Link update error:', linkUpdateError);
-          return NextResponse.json(
-            { success: false, error: 'Failed to update link' },
-            { status: 500 }
-          );
-        }
-        
-        finalLinks.push(updatedLink);
-      } else {
-        // Create new link
-        const { data: newLink, error: linkCreateError } = await supabase
-          .from('item_links')
-          .insert({
-            item_id: existingItem.id,
-            title: link.title,
-            link_type: link.linkType,
-            url: link.url,
-            thumbnail_url: link.thumbnailUrl || null,
-            display_order: link.displayOrder || index,
-          })
-          .select()
-          .single();
-          
-        if (linkCreateError) {
-          console.error('Link create error:', linkCreateError);
-          return NextResponse.json(
-            { success: false, error: 'Failed to create new link' },
-            { status: 500 }
-          );
-        }
-        
-        finalLinks.push(newLink);
-      }
+      createdLinks.push(...(newLinks || []));
+      console.log('New links created successfully:', createdLinks.length);
     }
-    
-    console.log('Links processed successfully:', finalLinks.length);
     
     // Transform response to match ItemResponse type
     const response: ItemResponse = {
@@ -231,18 +228,19 @@ export async function PUT(
         description: updatedItem.description || '',
         qrCodeUrl: updatedItem.qr_code_url || undefined,
         qrCodeUploadedAt: updatedItem.qr_code_uploaded_at || undefined,
-        links: finalLinks
-          .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
-          .map(link => ({
-            id: link.id,
-            title: link.title,
-            linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
-            url: link.url,
-            thumbnailUrl: link.thumbnail_url || undefined,
-            displayOrder: link.display_order || 0,
-          })),
+        links: createdLinks.map(link => ({
+          id: link.id,
+          title: link.title,
+          linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
+          url: link.url,
+          thumbnailUrl: link.thumbnail_url || undefined,
+          displayOrder: link.display_order || 0,
+        })),
       },
     };
+    
+    // Add audit log for admin operations
+    console.log(`Item updated by admin: ${authResult.user?.email}, item: ${updatedItem.name} (${updatedItem.public_id})`);
     
     console.log('Item update completed successfully');
     return NextResponse.json(response);
@@ -261,7 +259,16 @@ export async function DELETE(
   { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
-    console.log('Admin delete item API called');
+    console.log('Admin delete item API called - validating authentication...');
+    
+    // Validate authentication and admin role
+    const authResult = await validateAdminAuth();
+    if (authResult.error) {
+      console.log('Authentication failed for admin item deletion request');
+      return authResult.error;
+    }
+    
+    console.log('Authentication successful for user:', authResult.user?.email);
     
     const { publicId } = await params;
     console.log('Public ID to delete:', publicId);
@@ -347,6 +354,9 @@ export async function DELETE(
         console.warn('Warning: Some links may not have been cascade deleted');
       }
     }
+    
+    // Add audit log for admin operations
+    console.log(`Item deleted by admin: ${authResult.user?.email}, item: ${existingItem.name} (${publicId}), deleted links: ${linkCount || 0}`);
     
     console.log('Item deletion completed successfully');
     
