@@ -231,30 +231,30 @@
 - [x] Verify loading states display correctly
 - [x] Test redirect to login page works
 
-### 9. Admin Layout with Authentication
+### 9. Admin Layout with Authentication -unit tested-
 **Story Points**: 1  
 **Priority**: High  
 **Dependencies**: Task 8 complete
 
 **Actions**:
-- [ ] Create `src/app/admin/layout.tsx` with authentication wrapper
-  - [ ] Wrap all admin content with AuthGuard component
-  - [ ] Add admin navigation with logout functionality
-  - [ ] Include user information display (email, role)
-  - [ ] Add session timeout warning
-- [ ] Create `src/components/LogoutButton.tsx`
-  - [ ] Logout functionality using auth context
-  - [ ] Confirmation dialog (optional)
-  - [ ] Proper session cleanup
-- [ ] Update admin header with logout button
-- [ ] Add responsive design for mobile admin interface
-- [ ] Include loading states for auth checks
+- [x] Create `src/app/admin/layout.tsx` with authentication wrapper
+  - [x] Wrap all admin content with AuthGuard component
+  - [x] Add admin navigation with logout functionality
+  - [x] Include user information display (email, role)
+  - [x] Add session timeout warning
+- [x] Create `src/components/LogoutButton.tsx`
+  - [x] Logout functionality using auth context
+  - [x] Confirmation dialog (optional)
+  - [x] Proper session cleanup
+- [x] Update admin header with logout button
+- [x] Add responsive design for mobile admin interface
+- [x] Include loading states for auth checks
 
 **Testing**:
-- [ ] Test admin layout wraps pages correctly
-- [ ] Verify logout button works and clears session
-- [ ] Test responsive design on mobile devices
-- [ ] Confirm user information displays correctly
+- [x] Test admin layout wraps pages correctly
+- [x] Verify logout button works and clears session
+- [x] Test responsive design on mobile devices
+- [x] Confirm user information displays correctly
 
 ### 10. Update Existing Admin Pages with Auth Protection
 **Story Points**: 1  
