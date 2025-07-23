@@ -250,7 +250,7 @@
 ### 9. Create Visit Tracking API Endpoint
 **Story Point Value**: 1
 
-- [ ] Create new file: `src/app/api/visits/route.ts` with POST endpoint:
+- [x] Create new file: `src/app/api/visits/route.ts` with POST endpoint:
   ```typescript
   import { NextRequest, NextResponse } from 'next/server';
   import { mcp_supabase_execute_sql } from '@supabase/supabase-js';
@@ -262,10 +262,10 @@
     // - Return success response
   }
   ```
-- [ ] Implement request validation for required fields
-- [ ] Add rate limiting to prevent spam (max 1 visit per session per item per minute)
-- [ ] Test endpoint with curl or Postman
-- [ ] Verify database entries are created correctly
+- [x] Implement request validation for required fields -unit tested-
+- [x] Add rate limiting to prevent spam (max 1 visit per session per item per minute) -unit tested-
+- [x] Test endpoint with curl or Postman -unit tested-
+- [x] Verify database entries are created correctly -unit tested-
 
 ### 10. Create Reaction Submission API Endpoint
 **Story Point Value**: 1
