@@ -74,14 +74,14 @@
 - [x] Test column addition without breaking existing data
 - [x] Verify foreign key constraint works properly
 
-### 5. Create Default Properties for Existing Items
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `create_default_properties_for_existing_items`
-- [ ] Insert a default property type if none exists (use 'house' as default)
-- [ ] Create a system user account for legacy items (email: system@faqbnb.local)
-- [ ] Create a default property owned by system user (nickname: "Legacy Items")
-- [ ] Update all existing items to reference the default property
-- [ ] Verify all items now have property_id assigned
-- [ ] Test that items can still be accessed publicly
+### 5. Create Default Properties for Existing Items -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `create_default_properties_for_existing_items`
+- [x] Insert a default property type if none exists (use 'house' as default)
+- [x] Create a system user account for legacy items (email: system@faqbnb.local)
+- [x] Create a default property owned by system user (nickname: "Legacy Items")
+- [x] Update all existing items to reference the default property
+- [x] Verify all items now have property_id assigned
+- [x] Test that items can still be accessed publicly
 
 ### 6. Update Items Table Property Constraint
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `make_property_id_required`
