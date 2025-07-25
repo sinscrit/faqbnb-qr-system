@@ -101,15 +101,15 @@
 - [x] Test policies by simulating user and admin access
 - [x] Verify policy isolation between different users
 
-### 8. Update Existing RLS Policies for Items and Links
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `update_items_rls_for_properties`
-- [ ] Drop existing admin-only policies for items and item_links
-- [ ] Create new policy allowing users to manage items in their own properties
-- [ ] Create new policy allowing admins to manage all items
-- [ ] Maintain public read access for items and item_links (for QR codes)
-- [ ] Create policy for analytics tables based on property ownership
-- [ ] Test that users can only access their property items
-- [ ] Test that admins can access all items
+### 8. Update Existing RLS Policies for Items and Links -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `update_items_rls_for_properties`
+- [x] Drop existing admin-only policies for items and item_links
+- [x] Create new policy allowing users to manage items in their own properties
+- [x] Create new policy allowing admins to manage all items
+- [x] Maintain public read access for items and item_links (for QR codes)
+- [x] Create policy for analytics tables based on property ownership
+- [x] Test that users can only access their property items
+- [x] Test that admins can access all items
 
 ---
 
