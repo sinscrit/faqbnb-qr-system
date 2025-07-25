@@ -3,17 +3,39 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import type { Database } from '@/lib/supabase';
 
+// Helper function to extract property ID from URL path
+function extractPropertyIdFromPath(pathname: string): string | null {
+  // Match patterns like /admin/properties/[propertyId] or /api/admin/properties/[propertyId]
+  const propertyMatch = pathname.match(/\/(?:admin|api\/admin)\/properties\/([a-f0-9-]{36})/);
+  if (propertyMatch) {
+    return propertyMatch[1];
+  }
+
+  // Match patterns like /admin/items/[publicId] where we need to get the property from the item
+  const itemMatch = pathname.match(/\/(?:admin|api\/admin)\/items\/([^\/]+)/);
+  if (itemMatch) {
+    // For item paths, we'll need to validate item ownership through property ownership
+    // Return the item ID and handle validation in the calling code
+    return itemMatch[1];
+  }
+
+  return null;
+}
+
 // Paths that require authentication
 const PROTECTED_PATHS = [
   '/admin',
   '/api/admin',
 ];
 
-// Temporary bypass for testing analytics endpoints
-const BYPASS_PATHS = [
-  '/api/admin/analytics',
-  '/api/admin/items/',  // Allow analytics endpoints for testing
-  '/api/admin/items',   // Allow admin items list for testing
+// Property-specific paths that require property ownership validation
+const PROPERTY_PATHS = [
+  '/admin/properties/',
+  '/admin/items/',
+  '/admin/analytics/',
+  '/api/admin/properties/',
+  '/api/admin/items/',
+  '/api/admin/analytics/',
 ];
 
 // Paths that should redirect authenticated users (like login page)
@@ -29,9 +51,9 @@ export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   
   // Check if this is a protected path
-  const isBypassPath = BYPASS_PATHS.some(path => pathname.startsWith(path));
-  const isProtectedPath = PROTECTED_PATHS.some(path => pathname.startsWith(path)) && !isBypassPath;
-  const isAuthPath = AUTH_PATHS.some(path => pathname.startsWith(path));
+  const isPropertyPath = PROPERTY_PATHS.some((path: string) => pathname.startsWith(path));
+  const isProtectedPath = PROTECTED_PATHS.some((path: string) => pathname.startsWith(path));
+  const isAuthPath = AUTH_PATHS.some((path: string) => pathname.startsWith(path));
 
   try {
     // Get the current session
@@ -70,7 +92,7 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
-      // Check if user is an admin
+      // Check if user is authenticated and valid
       if (!session.user.email) {
         console.log('Access denied - no email in session');
         const loginUrl = new URL('/login', req.url);
@@ -78,36 +100,106 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
+      // Check if user is an admin
       const { data: adminUser, error: adminError } = await supabase
         .from('admin_users')
         .select('role')
         .eq('email', session.user.email)
         .single();
 
-      if (adminError || !adminUser || adminUser.role !== 'admin') {
-        console.log('Access denied - not an admin:', {
-          userId: session.user.id,
-          adminError: adminError?.message,
-          adminUser,
-        });
+      let isAdmin = false;
+      if (!adminError && adminUser && adminUser.role === 'admin') {
+        isAdmin = true;
+        console.log('Admin access granted for:', session.user.email);
+      } else {
+        // Check if user is a regular user
+        const { data: regularUser, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
 
-        // User is not an admin - sign them out and redirect to login
-        await supabase.auth.signOut();
-        const loginUrl = new URL('/login', req.url);
-        loginUrl.searchParams.set('error', 'access_denied');
-        return NextResponse.redirect(loginUrl);
+        if (userError || !regularUser) {
+          console.log('Access denied - user not found in system:', {
+            userId: session.user.id,
+            adminError: adminError?.message,
+            userError: userError?.message,
+          });
+
+          // User is not in the system - sign them out and redirect to login
+          await supabase.auth.signOut();
+          const loginUrl = new URL('/login', req.url);
+          loginUrl.searchParams.set('error', 'access_denied');
+          return NextResponse.redirect(loginUrl);
+        }
+
+        console.log('Regular user access granted for:', session.user.email);
       }
 
-      console.log('Admin access granted for:', session.user.email);
+      // Handle property-specific path validation for regular users
+      if (!isAdmin && isPropertyPath) {
+        const resourceId = extractPropertyIdFromPath(pathname);
+        if (resourceId) {
+          // Check if this is a property path or item path
+          const isPropertyRoute = pathname.includes('/properties/');
+          
+          if (isPropertyRoute) {
+            // Direct property access - check ownership
+            const { data: property, error: propertyError } = await supabase
+              .from('properties')
+              .select('user_id')
+              .eq('id', resourceId)
+              .single();
+
+            if (propertyError || !property || property.user_id !== session.user.id) {
+              console.log('Access denied - property not owned by user:', {
+                userId: session.user.id,
+                propertyId: resourceId,
+                propertyError: propertyError?.message,
+              });
+
+              const loginUrl = new URL('/login', req.url);
+              loginUrl.searchParams.set('error', 'property_access_denied');
+              return NextResponse.redirect(loginUrl);
+            }
+          } else {
+            // Item path - check if user owns the property that owns the item
+            const { data: itemWithProperty, error: itemError } = await supabase
+              .from('items')
+              .select(`
+                id,
+                property_id,
+                properties!inner (
+                  user_id
+                )
+              `)
+              .eq('public_id', resourceId)
+              .single();
+
+            if (itemError || !itemWithProperty || itemWithProperty.properties.user_id !== session.user.id) {
+              console.log('Access denied - item not owned by user through property:', {
+                userId: session.user.id,
+                itemId: resourceId,
+                itemError: itemError?.message,
+              });
+
+              const loginUrl = new URL('/login', req.url);
+              loginUrl.searchParams.set('error', 'item_access_denied');
+              return NextResponse.redirect(loginUrl);
+            }
+          }
+        }
+      }
     }
 
     // Handle auth paths (like login page)
     if (isAuthPath && session) {
-      // User is already authenticated - check if they're an admin
+      // User is already authenticated - redirect to appropriate dashboard
       if (!session.user.email) {
         return res; // Skip redirect if no email
       }
 
+      // Check if user is an admin
       const { data: adminUser, error: adminError } = await supabase
         .from('admin_users')
         .select('role')
@@ -117,8 +209,20 @@ export async function middleware(req: NextRequest) {
       if (!adminError && adminUser && adminUser.role === 'admin') {
         // Admin user trying to access login page - redirect to admin panel
         const redirectUrl = req.nextUrl.searchParams.get('redirect') || '/admin';
-        
         return NextResponse.redirect(new URL(redirectUrl, req.url));
+      } else {
+        // Check if user is a regular user
+        const { data: regularUser, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!userError && regularUser) {
+          // Regular user trying to access login page - redirect to admin panel (they have access too)
+          const redirectUrl = req.nextUrl.searchParams.get('redirect') || '/admin';
+          return NextResponse.redirect(new URL(redirectUrl, req.url));
+        }
       }
     }
 

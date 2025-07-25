@@ -144,15 +144,15 @@
 - [x] Add user registration workflow functions
 - [x] Test context updates and property loading
 
-### 12. Update Middleware for Property-Based Access
-- [ ] Open `src/middleware.ts` file
-- [ ] Add property-based route protection for `/admin/properties/*`
-- [ ] Update existing admin checks to handle both admin and regular users
-- [ ] Add property ownership validation for property-specific routes
-- [ ] Update session validation to include property context
-- [ ] Add redirects for unauthorized property access
-- [ ] Remove temporary auth bypass for analytics endpoints
-- [ ] Test middleware with both user types and property access
+### 12. Update Middleware for Property-Based Access -unit tested-
+- [x] Open `src/middleware.ts` file
+- [x] Add property-based route protection for `/admin/properties/*`
+- [x] Update existing admin checks to handle both admin and regular users
+- [x] Add property ownership validation for property-specific routes
+- [x] Update session validation to include property context
+- [x] Add redirects for unauthorized property access
+- [x] Remove temporary auth bypass for analytics endpoints
+- [x] Test middleware with both user types and property access
 
 ### 13. Create User Registration API Endpoint
 - [ ] Create new file `src/app/api/auth/register/route.ts`
