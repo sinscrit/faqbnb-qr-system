@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { getSession } from '@/lib/session';
+import { getUser, isAdmin } from '@/lib/auth';
 
 // Property validation helper
 function validatePropertyData(data: any) {
@@ -24,15 +24,8 @@ function validatePropertyData(data: any) {
 }
 
 // Check if user can access specific property
-async function canAccessProperty(session: any, propertyId: string): Promise<{ canAccess: boolean; isAdmin: boolean; property?: any }> {
-  // Check if user is admin
-  const { data: adminUser, error: adminError } = await supabase
-    .from('admin_users')
-    .select('role')
-    .eq('email', session.user.email)
-    .single();
-
-  const isAdmin = !adminError && adminUser && adminUser.role === 'admin';
+async function canAccessProperty(user: any, propertyId: string): Promise<{ canAccess: boolean; isAdmin: boolean; property?: any }> {
+  const userIsAdmin = isAdmin(user);
 
   // Get property with owner information
   const { data: property, error: propertyError } = await supabase
@@ -52,13 +45,13 @@ async function canAccessProperty(session: any, propertyId: string): Promise<{ ca
     .single();
 
   if (propertyError || !property) {
-    return { canAccess: false, isAdmin: false };
+    return { canAccess: false, isAdmin: userIsAdmin };
   }
 
   // Admin can access any property, regular user can only access their own
-  const canAccess = isAdmin || property.user_id === session.user.id;
+  const canAccess = userIsAdmin || property.user_id === user.id;
 
-  return { canAccess, isAdmin, property };
+  return { canAccess, isAdmin: userIsAdmin, property };
 }
 
 // GET /api/admin/properties/[propertyId] - Get specific property
@@ -67,15 +60,16 @@ export async function GET(
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    // Get session and validate authentication
-    const session = await getSession();
-    if (!session) {
+    // Get user and validate authentication
+    const userResult = await getUser();
+    if (userResult.error || !userResult.data) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
 
+    const user = userResult.data;
     const { propertyId } = params;
 
     if (!propertyId) {
@@ -86,7 +80,7 @@ export async function GET(
     }
 
     // Check access permissions
-    const { canAccess, property } = await canAccessProperty(session, propertyId);
+    const { canAccess, property } = await canAccessProperty(user, propertyId);
 
     if (!canAccess) {
       return NextResponse.json(
@@ -115,15 +109,16 @@ export async function PUT(
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    // Get session and validate authentication
-    const session = await getSession();
-    if (!session) {
+    // Get user and validate authentication
+    const userResult = await getUser();
+    if (userResult.error || !userResult.data) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
 
+    const user = userResult.data;
     const { propertyId } = params;
 
     if (!propertyId) {
@@ -146,7 +141,7 @@ export async function PUT(
     }
 
     // Check access permissions
-    const { canAccess, property } = await canAccessProperty(session, propertyId);
+    const { canAccess, property } = await canAccessProperty(user, propertyId);
 
     if (!canAccess) {
       return NextResponse.json(

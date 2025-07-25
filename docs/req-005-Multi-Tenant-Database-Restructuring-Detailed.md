@@ -178,15 +178,15 @@
 - [x] Add error handling and appropriate HTTP status codes
 - [x] Test all property CRUD operations
 
-### 15. Create Property Type Definitions
-- [ ] Open `src/types/index.ts` file
-- [ ] Add `PropertyType` interface with id, name, displayName, description fields
-- [ ] Add `Property` interface with id, userId, propertyTypeId, nickname, address, timestamps
-- [ ] Add `User` interface for regular users (distinct from AuthUser)
-- [ ] Update `Item` interface to include propertyId field
-- [ ] Add property-related API response types
-- [ ] Add property form validation types
-- [ ] Test TypeScript compilation with new types
+### 15. Create Property Type Definitions -unit tested-
+- [x] Open `src/types/index.ts` file
+- [x] Add `PropertyType` interface with id, name, displayName, description fields
+- [x] Add `Property` interface with id, userId, propertyTypeId, nickname, address, timestamps
+- [x] Add `User` interface for regular users (distinct from AuthUser)
+- [x] Update `Item` interface to include propertyId field
+- [x] Add property-related API response types
+- [x] Add property form validation types
+- [x] Test TypeScript compilation with new types
 
 ### 16. Create Property Form Component
 - [ ] Create new file `src/components/PropertyForm.tsx`

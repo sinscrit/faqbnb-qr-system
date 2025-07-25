@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { getSession } from '@/lib/session';
+import { getUser, isAdmin } from '@/lib/auth';
 
 // Property validation helper
 function validatePropertyData(data: any) {
@@ -26,26 +26,20 @@ function validatePropertyData(data: any) {
 // GET /api/admin/properties - List properties based on user role
 export async function GET(request: NextRequest) {
   try {
-    // Get session and validate authentication
-    const session = await getSession();
-    if (!session) {
+    // Get user and validate authentication
+    const userResult = await getUser();
+    if (userResult.error || !userResult.data) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
 
-    // Check if user is admin or regular user
-    const { data: adminUser, error: adminError } = await supabase
-      .from('admin_users')
-      .select('role')
-      .eq('email', session.user.email)
-      .single();
-
-    const isAdmin = !adminError && adminUser && adminUser.role === 'admin';
+    const user = userResult.data;
+    const userIsAdmin = isAdmin(user);
 
     let propertiesQuery;
-    if (isAdmin) {
+    if (userIsAdmin) {
       // Admin can see all properties with user information
       propertiesQuery = supabase
         .from('properties')
@@ -74,7 +68,7 @@ export async function GET(request: NextRequest) {
           property_type_id,
           property_types!inner(id, name, display_name)
         `)
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
     }
 
@@ -106,14 +100,17 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/properties - Create new property
 export async function POST(request: NextRequest) {
   try {
-    // Get session and validate authentication
-    const session = await getSession();
-    if (!session) {
+    // Get user and validate authentication
+    const userResult = await getUser();
+    if (userResult.error || !userResult.data) {
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
+
+    const user = userResult.data;
+    const userIsAdmin = isAdmin(user);
 
     // Parse request body
     const body = await request.json();
@@ -126,21 +123,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Check if user is admin or regular user
-    const { data: adminUser, error: adminError } = await supabase
-      .from('admin_users')
-      .select('role')
-      .eq('email', session.user.email)
-      .single();
-
-    const isAdmin = !adminError && adminUser && adminUser.role === 'admin';
     
     // Determine user_id for the property
-    let targetUserId = session.user.id;
+    let targetUserId = user.id;
     
     // If admin is creating property for another user
-    if (isAdmin && body.userId) {
+    if (userIsAdmin && body.userId) {
       targetUserId = body.userId;
       
       // Verify the target user exists
@@ -156,7 +144,7 @@ export async function POST(request: NextRequest) {
           { status: 404 }
         );
       }
-    } else if (!isAdmin && body.userId) {
+    } else if (!userIsAdmin && body.userId) {
       // Regular users cannot create properties for other users
       return NextResponse.json(
         { success: false, error: 'Insufficient permissions' },

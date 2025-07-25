@@ -8,8 +8,40 @@ export interface Item {
   description: string | null;
   qr_code_url: string | null;
   qr_code_uploaded_at: string | null;
+  property_id: string; // NEW: Association with property
   created_at: string;
   updated_at: string;
+}
+
+// Multi-tenant user management types
+export interface User {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface PropertyType {
+  id: string;
+  name: string;
+  display_name: string;
+  description: string | null;
+  created_at: string | null;
+}
+
+export interface Property {
+  id: string;
+  user_id: string;
+  property_type_id: string;
+  nickname: string;
+  address: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  // Populated relationships
+  property_types?: PropertyType;
+  users?: User;
 }
 
 export interface ItemLink {
@@ -56,6 +88,8 @@ export interface ItemsListResponse {
     linksCount: number;
     qrCodeUrl?: string;
     createdAt: string;
+    propertyId?: string; // NEW: Property association
+    propertyNickname?: string; // NEW: Property info for display
     // NEW: Analytics data
     visitCounts?: {
       last24Hours: number;
@@ -70,11 +104,39 @@ export interface ItemsListResponse {
   error?: string;
 }
 
+// Property API Response types
+export interface PropertyResponse {
+  success: boolean;
+  data?: Property;
+  error?: string;
+  message?: string;
+}
+
+export interface PropertiesListResponse {
+  success: boolean;
+  data?: Property[];
+  isAdmin?: boolean;
+  error?: string;
+}
+
+export interface PropertyTypesResponse {
+  success: boolean;
+  data?: PropertyType[];
+  error?: string;
+}
+
+export interface UsersListResponse {
+  success: boolean;
+  data?: User[];
+  error?: string;
+}
+
 // Form types
 export interface CreateItemRequest {
   publicId: string;
   name: string;
   description: string;
+  propertyId: string; // NEW: Required property association
   qrCodeUrl?: string;
   links: {
     title: string;
@@ -98,6 +160,32 @@ export interface UpdateItemRequest extends CreateItemRequest {
   }[];
 }
 
+// Property Form types
+export interface CreatePropertyRequest {
+  nickname: string;
+  address?: string;
+  propertyTypeId: string;
+  userId?: string; // Optional for admin creating properties for other users
+}
+
+export interface UpdatePropertyRequest extends CreatePropertyRequest {
+  id: string;
+}
+
+// Property Form validation types
+export interface PropertyFormData {
+  nickname: string;
+  address: string;
+  propertyTypeId: string;
+}
+
+export interface PropertyValidationErrors {
+  nickname?: string;
+  address?: string;
+  propertyTypeId?: string;
+  general?: string;
+}
+
 // Component props types
 export interface LinkCardProps {
   title: string;
@@ -113,8 +201,34 @@ export interface ItemDisplayProps {
 
 export interface AdminItemFormProps {
   item?: ItemResponse['data'];
+  properties?: Property[]; // NEW: Available properties for selection
   onSave: (item: CreateItemRequest | UpdateItemRequest) => Promise<void>;
   onCancel: () => void;
+}
+
+// Property Component props types
+export interface PropertyFormProps {
+  property?: Property;
+  propertyTypes: PropertyType[];
+  users?: User[]; // For admin creating properties for other users
+  onSave: (property: CreatePropertyRequest | UpdatePropertyRequest) => Promise<void>;
+  onCancel: () => void;
+}
+
+export interface PropertyListProps {
+  properties: Property[];
+  isAdmin: boolean;
+  onEdit: (property: Property) => void;
+  onDelete: (propertyId: string) => void;
+  onCreate: () => void;
+}
+
+export interface PropertySelectorProps {
+  properties: Property[];
+  selectedPropertyId?: string;
+  onSelect: (propertyId: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 // Analytics types
