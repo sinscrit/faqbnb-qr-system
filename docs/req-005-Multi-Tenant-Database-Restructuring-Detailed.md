@@ -222,15 +222,15 @@
 
 ## Phase 4: Admin Interface Updates (3 tasks, 1 point each)
 
-### 19. Update Admin Layout for Property Management
-- [ ] Open `src/app/admin/layout.tsx` file
-- [ ] Add property context provider to layout
-- [ ] Add navigation links for property management (for both user types)
-- [ ] Update navigation to show different options based on user role
-- [ ] Add property selector for admins to filter views
-- [ ] Add user role indicator in header
-- [ ] Update layout styling for new navigation items
-- [ ] Test layout updates with both user types
+### 19. Update Admin Layout for Property Management -unit tested-
+- [x] Open `src/app/admin/layout.tsx` file
+- [x] Add property context provider to layout
+- [x] Add navigation links for property management (for both user types)
+- [x] Update navigation to show different options based on user role
+- [x] Add property selector for admins to filter views
+- [x] Add user role indicator in header
+- [x] Update layout styling for new navigation items
+- [x] Test layout updates with both user types
 
 ### 20. Update Admin Items Page for Property Filtering
 - [ ] Open `src/app/admin/page.tsx` file
