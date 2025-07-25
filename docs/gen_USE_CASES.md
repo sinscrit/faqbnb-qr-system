@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: July 25, 2025 12:36 CEST - UC-005 Multi-Tenant Property Management Added
+**Last Updated**: July 25, 2025 17:14 CEST - UC-006 Admin Items Management Interface Added (REQ-006)
 
 ---
 
@@ -188,6 +188,119 @@ The system supports multi-tenant architecture where users can register, manage m
 - ✅ All existing items preserved during migration
 - ✅ Backward compatibility maintained for public access
 - ✅ No breaking changes to existing QR code functionality
+
+---
+
+## UC006 - Admin Items Management Interface
+**Origin**: Request #006 from gen_requests.md (Quick Wins - Admin Panel Issues Resolution)  
+**Implementation Status**: Complete  
+**Date Implemented**: July 25, 2025 17:00 CEST
+
+### Description
+Administrators can access a dedicated items management interface that provides comprehensive listing, filtering, and management capabilities for all items in the system. This resolves the critical 404 error that occurred when navigating to `/admin/items`.
+
+### Actors
+- **Primary**: System Administrator
+- **Secondary**: Property Manager, Content Manager
+
+### Preconditions
+- User is authenticated and has admin access
+- User has navigated to `/admin/items` route
+- Supabase database connection is established
+
+### Main Flow
+
+#### UC006.1 - Access Items Management Interface
+1. Admin clicks "Items" navigation in admin panel
+2. System loads `/admin/items` page (previously returned 404)
+3. System displays authentication guard if not logged in
+4. System redirects to login if authentication fails
+5. System loads items management interface for authenticated admin
+
+#### UC006.2 - View Items Listing
+1. System fetches all items via `/api/admin/items` endpoint
+2. System displays items in card-based layout
+3. Each item card shows:
+   - Item name and description
+   - Public ID and property association
+   - Links count, visits count, reactions count
+   - Quick action buttons (Analytics, Edit, View)
+4. System shows loading state during data fetch
+5. System handles empty state with helpful messaging
+
+#### UC006.3 - Property-Specific Filtering
+1. Admin selects a property from property selector
+2. System filters items to show only those belonging to selected property
+3. System displays property information banner
+4. System updates item counts and statistics accordingly
+
+#### UC006.4 - Quick Item Actions
+1. **Analytics Action**: Admin clicks "📈 Analytics" button
+   - System navigates to `/admin/items/[publicId]/analytics`
+   - Shows detailed analytics for specific item
+2. **Edit Action**: Admin clicks "✏️ Edit" button
+   - System navigates to `/admin/items/[publicId]/edit`
+   - Opens item editing interface
+3. **View Action**: Admin clicks "👁️ View" button
+   - System navigates to `/item/[publicId]`
+   - Shows public view of the item
+
+#### UC006.5 - Navigation and Management
+1. **Add New Item**: Admin clicks "+ Add New Item" button
+   - System navigates to `/admin/items/new`
+   - Opens item creation interface
+2. **Back to Dashboard**: Admin clicks "← Back to Dashboard"
+   - System navigates to `/admin` main dashboard
+3. **Statistics Overview**: System displays aggregate statistics
+   - Total items count
+   - Total links across all items
+   - Total visits across all items
+   - Total reactions across all items
+
+### Error Handling
+
+#### UC006.E1 - API Connection Failure
+1. System detects API connection error
+2. System displays error banner with retry option
+3. Admin can click "Retry" to reload data
+4. System provides technical error details for debugging
+
+#### UC006.E2 - Authentication Failure
+1. System detects expired or invalid session
+2. System displays authentication required message
+3. System provides "Go to Login" button
+4. System redirects to login page maintaining return URL
+
+#### UC006.E3 - No Items Available
+1. System detects empty items list
+2. System displays empty state with helpful messaging
+3. System shows "Create Your First Item" call-to-action
+4. System differentiates between property-specific and global empty states
+
+### Success Criteria
+- [x] `/admin/items` route is accessible without 404 error
+- [x] Authentication protection is properly implemented
+- [x] Items listing loads and displays correctly
+- [x] Property filtering works with multi-tenant support
+- [x] Quick actions navigate to correct destinations
+- [x] Error states are handled gracefully
+- [x] Empty states provide helpful guidance
+- [x] Statistics are calculated and displayed accurately
+
+### Technical Implementation
+- **Component**: `AdminItemsPage` in `/src/app/admin/items/page.tsx`
+- **API Integration**: Uses `/api/admin/items` endpoint
+- **Authentication**: Integrated with `AuthContext` and `useAuth` hook
+- **Error Handling**: Comprehensive error states with user guidance
+- **Loading States**: Progressive loading with skeleton states
+- **Responsive Design**: Mobile-friendly card layout
+
+### Benefits
+- **Bug Resolution**: Fixed critical 404 error for admin items route
+- **User Experience**: Improved navigation flow in admin panel
+- **Productivity**: Quick access to item management actions
+- **Data Visibility**: Clear overview of item statistics and status
+- **Error Recovery**: Robust error handling with recovery options
 
 ---
 
