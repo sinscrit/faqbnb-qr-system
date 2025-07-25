@@ -117,6 +117,7 @@ export async function middleware(req: NextRequest) {
       if (!adminError && adminUser && adminUser.role === 'admin') {
         // Admin user trying to access login page - redirect to admin panel
         const redirectUrl = req.nextUrl.searchParams.get('redirect') || '/admin';
+        
         return NextResponse.redirect(new URL(redirectUrl, req.url));
       }
     }

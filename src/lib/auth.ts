@@ -138,11 +138,11 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       return { data: null };
     }
 
-    // Get admin user details
     if (!user.email) {
       return { data: null };
     }
 
+    // Check if user is an admin
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')

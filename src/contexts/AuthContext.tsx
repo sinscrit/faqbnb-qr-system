@@ -75,28 +75,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setLoading(true);
       
-      const sessionResponse = await getSession();
-      if (sessionResponse.error || !sessionResponse.data) {
-        setUser(null);
-        setSession(null);
-        setLoading(false);
-        return;
-      }
+      // Add timeout to prevent hanging
+      const authTimeout = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Auth timeout')), 10000)
+      );
+      
+      const authPromise = (async () => {
+        const sessionResponse = await getSession();
+        if (sessionResponse.error || !sessionResponse.data) {
+          setUser(null);
+          setSession(null);
+          return;
+        }
 
-      const userResponse = await getUser();
-      if (userResponse.error || !userResponse.data) {
-        // Session exists but user is not admin - sign out
-        await authSignOut();
-        setUser(null);
-        setSession(null);
-        setLoading(false);
-        return;
-      }
+        const userResponse = await getUser();
+        if (userResponse.error || !userResponse.data) {
+          // Session exists but user is not admin - just clear local state, don't sign out
+          console.log('User not found or not admin, clearing local auth state');
+          setUser(null);
+          setSession(null);
+          return;
+        }
 
-      setSession(sessionResponse.data);
-      setUser(userResponse.data);
+        setSession(sessionResponse.data);
+        setUser(userResponse.data);
+      })();
+
+      await Promise.race([authPromise, authTimeout]);
     } catch (error) {
       console.error('Failed to initialize auth:', error);
+      // Only clear local state on auth failure, don't force sign out
       setUser(null);
       setSession(null);
     } finally {

@@ -18,6 +18,31 @@ export default function LoginPageContent() {
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [loginMessage, setLoginMessage] = useState<LoginMessage | null>(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+
+  // Handle redirect loops by clearing sessions if we keep coming back to login
+  useEffect(() => {
+    const redirectParam = searchParams.get('redirect');
+    if (redirectParam && window.location.href.includes('redirect=')) {
+      // If we're on login page with a redirect param, just clean up the URL
+      // Don't clear sessions as this destroys valid Supabase authentication
+      console.log('Login page with redirect param detected, cleaning URL');
+      
+      // Only remove the redirect parameter to clean up URL, don't clear sessions
+      const url = new URL(window.location.href);
+      const cleanParams = new URLSearchParams();
+      
+      // Keep non-redirect parameters but remove redirect to clean up URL
+      url.searchParams.forEach((value, key) => {
+        if (key !== 'redirect') {
+          cleanParams.set(key, value);
+        }
+      });
+      
+      const cleanUrl = cleanParams.toString() ? `/login?${cleanParams.toString()}` : '/login';
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  }, [searchParams]);
 
   // Handle URL parameters for messages
   useEffect(() => {
@@ -73,11 +98,14 @@ export default function LoginPageContent() {
     }
   }, [searchParams]);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (with better validation)
   useEffect(() => {
-    if (!authLoading && user) {
+    // Only redirect if we're confident the user is properly authenticated
+    if (!authLoading && user && user.email && user.role) {
       const redirectTo = searchParams.get('redirect') || '/admin';
       console.log('User already authenticated, redirecting to:', redirectTo);
+      
+      // Use Next.js router for proper client-side navigation
       router.push(redirectTo);
     }
   }, [user, authLoading, router, searchParams]);
@@ -94,9 +122,16 @@ export default function LoginPageContent() {
     );
   }
 
-  // Don't render if user is authenticated (will redirect)
-  if (user) {
-    return null;
+  // Show redirecting message if user is authenticated (but not if we're forcing login form)
+  if (user && !showLoginForm) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Redirecting to admin panel...</p>
+        </div>
+      </div>
+    );
   }
 
   const handleLoginSuccess = () => {
@@ -201,6 +236,21 @@ export default function LoginPageContent() {
               <Home className="w-4 h-4 mr-1" />
               Back to Home
             </Link>
+            {/* Clear Session Button for stuck users */}
+            {(user || showLoginForm) && (
+              <button
+                onClick={() => {
+                  // Clear any stored sessions and force fresh login
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.reload();
+                }}
+                className="text-sm text-red-600 hover:text-red-700 underline"
+                title="Clear stored session and reload page"
+              >
+                Clear Session
+              </button>
+            )}
           </div>
           
           <div className="mt-4">

@@ -33,6 +33,8 @@ interface AnalyticsData {
 interface AnalyticsOverviewCardsProps {
   timeRange?: '24h' | '7d' | '30d' | '1y';
   className?: string;
+  data?: any; // Accept analytics data as props
+  loading?: boolean; // Accept loading state from parent
 }
 
 function OverviewCard({ 
@@ -144,79 +146,56 @@ function LoadingSkeleton() {
 
 export default function AnalyticsOverviewCards({ 
   timeRange = '30d', 
-  className = '' 
+  className = '',
+  data: propData,
+  loading: propLoading = false
 }: AnalyticsOverviewCardsProps) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch analytics data based on time range
+  // Use prop data if provided, otherwise use fallback
   useEffect(() => {
-    const fetchAnalyticsData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Fetch from the system analytics endpoint
-        const response = await fetch(`/api/admin/analytics?timeRange=${timeRange}`);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch analytics: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-          // Transform the API response to our component format
-          const transformedData: AnalyticsData = {
-            totalViews: result.data.timeBasedVisits?.last30Days || 0,
-            uniqueVisitors: Math.floor((result.data.timeBasedVisits?.last30Days || 0) * 0.7), // Estimate unique visitors
-            totalReactions: result.data.reactionTrends?.total || 0,
-            mostPopularItem: result.data.topItems && result.data.topItems.length > 0 
-              ? {
-                  name: result.data.topItems[0].name,
-                  views: result.data.topItems[0].visitCount
-                }
-              : null,
-            changes: {
-              views: { value: '+12.5%', type: 'increase' },
-              visitors: { value: '+8.3%', type: 'increase' },
-              reactions: { value: '+15.2%', type: 'increase' },
-              popular: { value: '+5.7%', type: 'increase' }
+    if (propData) {
+      // Transform the API response to our component format
+      const transformedData: AnalyticsData = {
+        totalViews: propData.timeBasedVisits?.last30Days || 0,
+        uniqueVisitors: Math.floor((propData.timeBasedVisits?.last30Days || 0) * 0.7), // Estimate unique visitors
+        totalReactions: propData.reactionTrends?.total || 0,
+        mostPopularItem: propData.topItems && propData.topItems.length > 0 
+          ? {
+              name: propData.topItems[0].name,
+              views: propData.topItems[0].visitCount
             }
-          };
-
-          setData(transformedData);
-        } else {
-          throw new Error(result.error || 'Invalid response format');
+          : null,
+        changes: {
+          views: { value: '+12.5%', type: 'increase' },
+          visitors: { value: '+8.3%', type: 'increase' },
+          reactions: { value: '+15.2%', type: 'increase' },
+          popular: { value: '+5.7%', type: 'increase' }
         }
-      } catch (error) {
-        console.error('Error fetching analytics data:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load analytics data');
-        
-        // Set fallback data for development
-        setData({
-          totalViews: 0,
-          uniqueVisitors: 0,
-          totalReactions: 0,
-          mostPopularItem: null,
-          changes: {
-            views: { value: '+0%', type: 'neutral' },
-            visitors: { value: '+0%', type: 'neutral' },
-            reactions: { value: '+0%', type: 'neutral' },
-            popular: { value: '+0%', type: 'neutral' }
-          }
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchAnalyticsData();
-  }, [timeRange]);
+      setData(transformedData);
+      setLoading(propLoading);
+      setError(null);
+    } else {
+      // Set fallback data if no prop data provided
+      setData({
+        totalViews: 0,
+        uniqueVisitors: 0,
+        totalReactions: 0,
+        mostPopularItem: null,
+        changes: {
+          views: { value: '+0%', type: 'neutral' },
+          visitors: { value: '+0%', type: 'neutral' },
+          reactions: { value: '+0%', type: 'neutral' },
+          popular: { value: '+0%', type: 'neutral' }
+        }
+      });
+      setLoading(false);
+    }
+  }, [propData, propLoading]);
 
   // Format numbers for display
   const formatNumber = (num: number): string => {

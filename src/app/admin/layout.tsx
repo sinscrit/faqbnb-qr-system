@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import LogoutButton from '@/components/LogoutButton';
-import { SessionTimeoutWarning } from '@/components/AuthGuard';
 import { Home, Settings, Users, BarChart } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -184,7 +183,7 @@ function AdminFooter() {
 
 function AdminLoadingFallback() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
         <h2 className="text-lg font-medium text-gray-900 mb-2">Loading Admin Panel</h2>
@@ -197,10 +196,7 @@ function AdminLoadingFallback() {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <AuthGuard fallback={<AdminLoadingFallback />}>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Session Timeout Warning */}
-        <SessionTimeoutWarning />
-        
+      <div className="min-h-screen flex flex-col">
         {/* Main Layout */}
         <div className="flex flex-1">
           {/* Sidebar */}
