@@ -5,9 +5,10 @@
 - Overview: `docs/req-006-Quick-Wins-Admin-Panel-Issues-Resolution-Overview.md`
 
 **Document Created**: Fri Jul 25 16:45:40 CEST 2025  
-**Implementation Type**: Bug Fix - Quick Wins  
-**Total Complexity**: 7 Story Points  
-**Target Completion**: 70 minutes (4 phases × 15-25 minutes each)
+**Last Updated**: Fri Jul 25 17:25:00 CEST 2025 - Added Phase 5 Bug Fix Tasks  
+**Implementation Type**: Bug Fix - Quick Wins + MCP Validation  
+**Total Complexity**: 10 Story Points (7 original + 3 bug fixes)  
+**Target Completion**: 100 minutes (5 phases × 15-25 minutes each)
 
 ## ⚠️ CRITICAL IMPLEMENTATION INSTRUCTIONS
 
@@ -97,6 +98,20 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - [x] Execute `mcp_supabase_execute_sql` with query: `SELECT COUNT(*) FROM items;` (via alternative verification)
 - [x] Document successful database connectivity
 
+#### 2.2.1 Fix Supabase MCP Database Query Validation - **BUG FIX**
+- [ ] **BUG**: MCP tools unavailable during validation - "No server found with tool: list_tables"
+- [ ] Execute direct `mcp_supabase_execute_sql` with query: `SELECT COUNT(*) FROM admin_users;`
+- [ ] Verify query returns numeric result (confirming admin_users table accessibility)
+- [ ] Execute direct `mcp_supabase_execute_sql` with query: `SELECT COUNT(*) FROM items;`
+- [ ] Verify query returns numeric result (confirming items table accessibility)
+- [ ] Execute `mcp_supabase_execute_sql` with query: `SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;`
+- [ ] Verify all 8 expected tables returned: `admin_users`, `items`, `item_links`, `item_visits`, `item_reactions`, `mailing_list_subscribers`, `property_types`, `users`, `properties`
+- [ ] Document successful MCP database connectivity restoration
+
+**Files to Modify for Fix**:
+- No code changes required - this is a validation task that requires MCP tool connectivity
+- Alternative validation already confirmed via environment variables and client configuration
+
 #### 2.3 Verify Supabase Client Configuration - unit tested
 - [x] Read `src/lib/supabase.ts` file content
 - [x] Verify `createClient` calls use correct environment variable names
@@ -112,6 +127,21 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - [x] Verify successful authentication and admin panel access (AuthGuard implementation verified)
 - [x] Check browser console for any authentication-related errors (No console errors in auth logic)
 - [x] Document successful admin authentication flow
+
+#### 2.4.1 Fix Browser MCP Authentication Flow Testing - **BUG FIX**
+- [ ] **BUG**: Browser MCP tools unavailable during validation - "No server found with tool: browser_navigate"
+- [ ] Execute `mcp_playwright_browser_navigate` to `http://localhost:3000/admin`
+- [ ] Verify proper redirect to login page occurs using browser automation
+- [ ] Execute `mcp_playwright_browser_type` to enter admin credentials: `sinscrit@gmail.com` / `Teknowiz1!`
+- [ ] Execute `mcp_playwright_browser_click` on login button
+- [ ] Verify successful authentication and admin panel access using `mcp_playwright_browser_snapshot`
+- [ ] Check browser console messages using `mcp_playwright_browser_console_messages`
+- [ ] Navigate to `/admin/items` and verify page loads correctly (not 404)
+- [ ] Document successful browser-based authentication flow validation
+
+**Files to Modify for Fix**:
+- No code changes required - this is a validation task that requires Browser MCP tool connectivity
+- Authentication flow already working as confirmed via HTTP testing and code review
 
 ---
 
@@ -157,6 +187,28 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - [x] Verify all admin navigation tabs work correctly (all return 307 auth redirects)
 - [x] Document successful route resolution
 
+#### 3.5.1 Fix Browser MCP Visual Verification of AdminItemsPage - **BUG FIX**
+- [ ] **BUG**: Browser MCP tools unavailable for visual verification - requires Playwright MCP for UI testing
+- [ ] Execute `mcp_playwright_browser_navigate` to `http://localhost:3000/login`
+- [ ] Complete admin login flow using browser automation
+- [ ] Navigate to `/admin/items` using `mcp_playwright_browser_navigate`
+- [ ] Verify AdminItemsPage component renders correctly using `mcp_playwright_browser_snapshot`
+- [ ] Check for presence of key UI elements:
+  - [ ] Page title "Items Management"
+  - [ ] "Add New Item" button
+  - [ ] "Back to Dashboard" button
+  - [ ] Items listing area (may be empty with "No Items Found" message)
+  - [ ] Property filter banner (if property selected)
+- [ ] Test responsive design using `mcp_playwright_browser_resize`
+- [ ] Verify no JavaScript errors in console using `mcp_playwright_browser_console_messages`
+- [ ] Test navigation buttons functionality
+- [ ] Document successful visual verification of AdminItemsPage
+
+**Files to Modify for Fix**:
+- No code changes required - this is a visual validation task
+- `src/app/admin/items/page.tsx` already created and functional
+- Alternative validation confirmed via file existence and code review
+
 ---
 
 ## PHASE 4: PROCESS MANAGEMENT ENHANCEMENT (1 Story Point)
@@ -193,6 +245,52 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - [x] Include common edge cases and solutions
 - [x] Add script to project documentation (tmp/restart_script_improvements_documentation.md)
 - [x] Verify script handles all identified scenarios
+
+---
+
+## PHASE 5: MCP TOOLS CONNECTIVITY RESTORATION (1 Story Point)
+
+### 5. MCP Server Connection Issues Resolution
+**Complexity**: 1 Point | **Estimated Time**: 15 minutes
+
+#### 5.1 Fix Supabase MCP Server Connection - **BUG FIX**
+- [ ] **BUG**: Supabase MCP tools returning "No server found with tool: list_tables"
+- [ ] Verify MCP Supabase server configuration in development environment
+- [ ] Check MCP server status using system diagnostics
+- [ ] Restart MCP Supabase server if needed
+- [ ] Test connection using `mcp_supabase_list_tables`
+- [ ] Verify database connectivity is restored
+- [ ] Execute validation queries from Task 2.2.1 once connection restored
+
+**Files to Modify for Fix**:
+- MCP server configuration files (environment-specific)
+- No application code changes required
+
+#### 5.2 Fix Browser/Playwright MCP Server Connection - **BUG FIX**
+- [ ] **BUG**: Browser MCP tools returning "No server found with tool: browser_navigate"
+- [ ] Verify MCP Playwright server configuration in development environment
+- [ ] Check browser automation server status
+- [ ] Install browser dependencies if missing using `mcp_playwright_browser_install`
+- [ ] Restart MCP Playwright server if needed
+- [ ] Test connection using `mcp_playwright_browser_navigate`
+- [ ] Verify browser automation is restored
+- [ ] Execute validation tasks from Tasks 2.4.1 and 3.5.1 once connection restored
+
+**Files to Modify for Fix**:
+- MCP Playwright server configuration files
+- Browser dependencies (system-level installation)
+- No application code changes required
+
+#### 5.3 Validate MCP Tools Restoration
+- [ ] Execute `mcp_supabase_list_tables` to confirm database MCP connectivity
+- [ ] Execute `mcp_playwright_browser_snapshot` to confirm browser MCP connectivity
+- [ ] Run all pending validation tasks from previous bug fix sections
+- [ ] Update implementation log with successful MCP restoration
+- [ ] Mark all TODO items as completed once validation passes
+
+**Files to Modify for Fix**:
+- `req-006-Quick-Wins-Admin-Panel-Issues-Resolution-log.md` - update TODO status
+- No application code changes required
 
 ---
 
@@ -276,10 +374,23 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - **Purpose**: Cleanup duplicate lockfiles
 - **Allowed Changes**: Removal only if duplicate exists
 
+### ✅ **MCP Configuration Files** (**BUG FIX ONLY**)
+**File**: MCP Supabase server configuration files
+- **Purpose**: Database connectivity for validation tasks
+- **Allowed Changes**: Server restart and configuration verification only
+
+**File**: MCP Playwright server configuration files  
+- **Purpose**: Browser automation for UI testing
+- **Allowed Changes**: Server restart and browser dependency installation only
+
 ### ✅ **Documentation Files** (**CREATE/UPDATE**)
 **File**: Development documentation (to be created)
 - **Purpose**: Environment setup and troubleshooting guide
 - **Allowed Changes**: Complete new documentation creation
+
+**File**: `req-006-Quick-Wins-Admin-Panel-Issues-Resolution-log.md`
+- **Purpose**: Implementation validation log
+- **Allowed Changes**: Update TODO status when MCP tools restored
 
 ---
 
@@ -312,6 +423,13 @@ Only modify files explicitly listed in the "Authorized Files" section. Request p
 - [ ] No orphaned processes after restart execution
 - [ ] Consistent development environment setup
 - [ ] Script provides clear status feedback
+
+### ✅ **MCP Tools Connectivity Success** (**NEW**)
+- [ ] Supabase MCP tools accessible and functional
+- [ ] Database queries execute successfully via MCP
+- [ ] Browser/Playwright MCP tools accessible and functional
+- [ ] Visual verification tasks complete successfully
+- [ ] All TODO items from implementation log resolved
 
 ---
 
@@ -378,6 +496,14 @@ SELECT COUNT(*) FROM items; -- Should work with service role
 
 ---
 
-**Implementation Ready**: All tasks are broken down to 1-point complexity with clear verification steps and rollback procedures. Begin implementation with Phase 1 and proceed sequentially through all phases.
+**Implementation Ready**: All tasks are broken down to 1-point complexity with clear verification steps and rollback procedures. Original implementation (Phases 1-4) complete. New bug fix tasks (Phase 5) added for MCP validation completion.
 
-**Next Action**: Start with Phase 1, Task 1.1 - Verify Current Process State using the specified MCP tools and terminal commands. 
+**Current Status**: REQ-006 core implementation complete - admin items 404 bug fixed  
+**Next Action**: Execute Phase 5 bug fix tasks to restore MCP connectivity and complete final validation
+
+**Bug Fix Priority**:
+1. **Phase 5.1**: Restore Supabase MCP connectivity for database validation
+2. **Phase 5.2**: Restore Browser MCP connectivity for UI validation  
+3. **Phase 2.2.1**: Execute database validation queries
+4. **Phase 2.4.1**: Execute browser authentication testing
+5. **Phase 3.5.1**: Execute visual verification of AdminItemsPage 
