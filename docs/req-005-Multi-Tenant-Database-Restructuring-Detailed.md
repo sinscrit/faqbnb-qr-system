@@ -91,15 +91,15 @@
 - [x] Verify existing items still function correctly
 - [x] Test foreign key cascade behavior
 
-### 7. Create Multi-Tenant RLS Policies for New Tables
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `setup_multitenant_rls_policies`
-- [ ] Enable RLS on users, properties, and property_types tables
-- [ ] Create policy for users to read/update their own record
-- [ ] Create policy for properties where users can manage their own properties
-- [ ] Create policy for admin users to access all properties and users
-- [ ] Create public read policy for property_types
-- [ ] Test policies by simulating user and admin access
-- [ ] Verify policy isolation between different users
+### 7. Create Multi-Tenant RLS Policies for New Tables -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `setup_multitenant_rls_policies`
+- [x] Enable RLS on users, properties, and property_types tables
+- [x] Create policy for users to read/update their own record
+- [x] Create policy for properties where users can manage their own properties
+- [x] Create policy for admin users to access all properties and users
+- [x] Create public read policy for property_types
+- [x] Test policies by simulating user and admin access
+- [x] Verify policy isolation between different users
 
 ### 8. Update Existing RLS Policies for Items and Links
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `update_items_rls_for_properties`
