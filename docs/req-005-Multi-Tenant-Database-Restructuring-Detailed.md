@@ -56,14 +56,14 @@
 - [x] Add trigger to update `updated_at` column automatically
 - [x] Test table creation and constraints
 
-### 3. Create Properties Table
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `create_properties_table`
-- [ ] Create table with columns: `id` (UUID, primary key), `user_id` (UUID, references users.id), `property_type_id` (UUID, references property_types.id), `nickname` (VARCHAR(100), not null), `address` (TEXT), `created_at` (TIMESTAMPTZ), `updated_at` (TIMESTAMPTZ)
-- [ ] Add foreign key constraints with CASCADE delete for user_id
-- [ ] Add foreign key constraint for property_type_id
-- [ ] Create indexes on user_id and property_type_id for performance
-- [ ] Add trigger to update `updated_at` column automatically
-- [ ] Test table creation and foreign key relationships
+### 3. Create Properties Table -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `create_properties_table`
+- [x] Create table with columns: `id` (UUID, primary key), `user_id` (UUID, references users.id), `property_type_id` (UUID, references property_types.id), `nickname` (VARCHAR(100), not null), `address` (TEXT), `created_at` (TIMESTAMPTZ), `updated_at` (TIMESTAMPTZ)
+- [x] Add foreign key constraints with CASCADE delete for user_id
+- [x] Add foreign key constraint for property_type_id
+- [x] Create indexes on user_id and property_type_id for performance
+- [x] Add trigger to update `updated_at` column automatically
+- [x] Test table creation and foreign key relationships
 
 ### 4. Modify Items Table to Add Property Association
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `add_property_to_items`
