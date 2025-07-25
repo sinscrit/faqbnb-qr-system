@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import {
   AuthUser,
   AuthResponse,
+  Property,
+  User,
   signInWithEmail as authSignIn,
   signOut as authSignOut,
   getUser,
@@ -13,6 +15,8 @@ import {
   refreshSession,
   isSessionExpiringSoon,
   isAdmin,
+  getUserProperties,
+  registerUser,
 } from '@/lib/auth';
 
 // Auth context types
@@ -21,9 +25,14 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  userProperties: Property[];
+  selectedProperty: Property | null;
   signIn: (email: string, password: string) => Promise<AuthResponse<{ user: AuthUser; session: Session }>>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  getUserProperties: () => Promise<void>;
+  setSelectedProperty: (property: Property | null) => void;
+  register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
 }
 
 interface AuthProviderProps {
@@ -41,6 +50,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userProperties, setUserProperties] = useState<Property[]>([]);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   // Initialize auth state
   useEffect(() => {
@@ -123,6 +134,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('✅ Auth successful:', userResponse.data);
         setSession(sessionResponse.data);
         setUser(userResponse.data);
+        
+        // Load user properties if user is a regular user or admin with properties
+        if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
+          try {
+            const properties = await getUserProperties(userResponse.data.id);
+            setUserProperties(properties);
+            
+            // Auto-select first property if available
+            if (properties.length > 0) {
+              setSelectedProperty(properties[0]);
+            }
+          } catch (propertyError) {
+            console.error('Failed to load properties during init:', propertyError);
+            setUserProperties([]);
+            setSelectedProperty(null);
+          }
+        }
       })();
 
       await Promise.race([authPromise, authTimeout]);
@@ -143,18 +171,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       const userResponse = await getUser();
       if (userResponse.error || !userResponse.data) {
-        // User is not admin - sign out
+        // User is not valid - sign out
         await authSignOut();
         setUser(null);
         setSession(null);
+        setUserProperties([]);
+        setSelectedProperty(null);
         return;
       }
 
       setUser(userResponse.data);
+      
+      // Load user properties for regular users (not for admin-only users)
+      if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
+        const properties = await getUserProperties(userResponse.data.id);
+        setUserProperties(properties);
+        
+        // Auto-select first property if available
+        if (properties.length > 0) {
+          setSelectedProperty(properties[0]);
+        }
+      }
     } catch (error) {
       console.error('Failed to handle sign in:', error);
       setUser(null);
       setSession(null);
+      setUserProperties([]);
+      setSelectedProperty(null);
     }
   };
 
@@ -162,6 +205,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const handleSignOut = () => {
     setUser(null);
     setSession(null);
+    setUserProperties([]);
+    setSelectedProperty(null);
   };
 
   // Handle session refresh
@@ -233,6 +278,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await authSignOut();
       setUser(null);
       setSession(null);
+      setUserProperties([]);
+      setSelectedProperty(null);
     } catch (error) {
       console.error('Sign out error:', error);
     } finally {
@@ -258,15 +305,82 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // Get user properties function
+  const loadUserProperties = async (): Promise<void> => {
+    if (!user?.id) {
+      setUserProperties([]);
+      setSelectedProperty(null);
+      return;
+    }
+
+    try {
+      const properties = await getUserProperties(user.id);
+      setUserProperties(properties);
+      
+      // Auto-select first property if none selected
+      if (properties.length > 0 && !selectedProperty) {
+        setSelectedProperty(properties[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load user properties:', error);
+      setUserProperties([]);
+    }
+  };
+
+  // User registration function
+  const register = async (
+    email: string, 
+    password: string, 
+    fullName?: string
+  ): Promise<AuthResponse<{ user: User; session: Session }>> => {
+    try {
+      setLoading(true);
+      
+      const result = await registerUser(email, password, fullName);
+      
+      if (result.error) {
+        return result;
+      }
+
+      if (result.data) {
+        // Convert User to AuthUser for context
+        const authUser: AuthUser = {
+          id: result.data.user.id,
+          email: result.data.user.email,
+          fullName: result.data.user.fullName,
+          role: result.data.user.role,
+        };
+        
+        setUser(authUser);
+        setSession(result.data.session);
+        
+        // Load properties for new user
+        await loadUserProperties();
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { error: 'An unexpected error occurred during registration' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Context value
   const contextValue: AuthContextType = {
     user,
     session,
     loading,
     isAdmin: user ? isAdmin(user) : false,
+    userProperties,
+    selectedProperty,
     signIn,
     signOut,
     refreshSession: handleRefreshSession,
+    getUserProperties: loadUserProperties,
+    setSelectedProperty,
+    register,
   };
 
   return (

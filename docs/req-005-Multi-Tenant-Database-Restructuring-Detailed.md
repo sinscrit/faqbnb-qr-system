@@ -134,15 +134,15 @@
 - [x] Update type definitions for new user and property types
 - [x] Test all new authentication functions
 
-### 11. Update Authentication Context
-- [ ] Open `src/contexts/AuthContext.tsx` file
-- [ ] Add `userProperties` state to track user's properties
-- [ ] Add `selectedProperty` state for current property context
-- [ ] Update `AuthContextType` interface with new properties
-- [ ] Add functions: `getUserProperties()`, `setSelectedProperty()`
-- [ ] Update session initialization to load user properties
-- [ ] Add user registration workflow functions
-- [ ] Test context updates and property loading
+### 11. Update Authentication Context -unit tested-
+- [x] Open `src/contexts/AuthContext.tsx` file
+- [x] Add `userProperties` state to track user's properties
+- [x] Add `selectedProperty` state for current property context
+- [x] Update `AuthContextType` interface with new properties
+- [x] Add functions: `getUserProperties()`, `setSelectedProperty()`
+- [x] Update session initialization to load user properties
+- [x] Add user registration workflow functions
+- [x] Test context updates and property loading
 
 ### 12. Update Middleware for Property-Based Access
 - [ ] Open `src/middleware.ts` file
