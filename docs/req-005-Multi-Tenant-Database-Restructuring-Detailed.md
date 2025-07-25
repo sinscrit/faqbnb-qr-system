@@ -208,15 +208,15 @@
 - [x] Add search and filtering capabilities
 - [x] Test property management workflow
 
-### 18. Update Item Form to Include Property Selection
-- [ ] Open `src/components/ItemForm.tsx` file
-- [ ] Add property selection dropdown for item creation/editing
-- [ ] Filter properties based on user role (own properties vs all properties)
-- [ ] Make property selection required for new items
-- [ ] Update form validation to include property validation
-- [ ] Add property context when editing existing items
-- [ ] Update save functionality to include property assignment
-- [ ] Test item creation with property assignment
+### 18. Update Item Form to Include Property Selection -unit tested-
+- [x] Open `src/components/ItemForm.tsx` file
+- [x] Add property selection dropdown for item creation/editing
+- [x] Filter properties based on user role (own properties vs all properties)
+- [x] Make property selection required for new items
+- [x] Update form validation to include property validation
+- [x] Add property context when editing existing items
+- [x] Update save functionality to include property assignment
+- [x] Test item creation with property assignment
 
 ---
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, GripVertical, Save, X } from 'lucide-react';
-import { CreateItemRequest, UpdateItemRequest, LinkType } from '@/types';
+import { CreateItemRequest, UpdateItemRequest, LinkType, Property } from '@/types';
 import { getLinkTypeColor, isValidUrl } from '@/lib/utils';
 
 // Generate a random UUID v4
@@ -16,6 +16,8 @@ function generateUUID(): string {
 
 interface ItemFormProps {
   item?: UpdateItemRequest;
+  properties?: Property[]; // Available properties for selection
+  selectedPropertyId?: string; // Pre-selected property (for create from property context)
   onSave: (item: CreateItemRequest | UpdateItemRequest) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
@@ -30,12 +32,13 @@ interface LinkFormData {
   displayOrder: number;
 }
 
-export default function ItemForm({ item, onSave, onCancel, loading = false }: ItemFormProps) {
+export default function ItemForm({ item, properties = [], selectedPropertyId, onSave, onCancel, loading = false }: ItemFormProps) {
   const [formData, setFormData] = useState({
     publicId: item?.publicId || '',
     name: item?.name || '',
     description: item?.description || '',
     qrCodeUrl: item?.qrCodeUrl || '',
+    propertyId: item?.propertyId || selectedPropertyId || '',
   });
 
   // Generate UUID for new items
@@ -74,6 +77,10 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
       newErrors.name = 'Name is required';
     }
 
+    if (!formData.propertyId.trim()) {
+      newErrors.propertyId = 'Property selection is required';
+    }
+
     if (formData.qrCodeUrl && !isValidUrl(formData.qrCodeUrl)) {
       newErrors.qrCodeUrl = 'Please enter a valid QR code image URL';
     }
@@ -105,6 +112,7 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
 
     const itemData = {
       ...formData,
+      propertyId: formData.propertyId, // Ensure propertyId is included
       qrCodeUrl: formData.qrCodeUrl || undefined,
       links: links.map((link, index) => ({
         id: link.id,
@@ -229,6 +237,40 @@ export default function ItemForm({ item, onSave, onCancel, loading = false }: It
                   <p className="text-red-600 text-sm mt-1">{errors.name}</p>
                 )}
               </div>
+            </div>
+
+            {/* Property Selection */}
+            <div>
+              <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700 mb-2">
+                Property *
+              </label>
+              <select
+                id="propertyId"
+                value={formData.propertyId}
+                onChange={(e) => setFormData({ ...formData, propertyId: e.target.value })}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.propertyId ? 'border-red-300' : 'border-gray-300'
+                }`}
+                disabled={loading}
+              >
+                <option value="">Select a property...</option>
+                {properties.map((property) => (
+                  <option key={property.id} value={property.id}>
+                    {property.nickname} ({property.property_types?.display_name || 'Unknown Type'})
+                  </option>
+                ))}
+              </select>
+              {errors.propertyId && (
+                <p className="text-red-600 text-sm mt-1">{errors.propertyId}</p>
+              )}
+              <p className="text-gray-500 text-sm mt-1">
+                Select the property where this item is located. Items must belong to a property.
+              </p>
+              {properties.length === 0 && (
+                <p className="text-yellow-600 text-sm mt-1">
+                  ⚠️ No properties available. Please create a property first before adding items.
+                </p>
+              )}
             </div>
 
             {/* Description */}
