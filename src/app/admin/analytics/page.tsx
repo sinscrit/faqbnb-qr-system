@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, TrendingUp, Eye, Heart, Users, Activity, RefreshCw } from 'lucide-react';
+import { Calendar, TrendingUp, Eye, Heart, Users, Activity, RefreshCw, Building } from 'lucide-react';
 import AnalyticsOverviewCards from '@/components/AnalyticsOverviewCards';
 import TimeRangeSelector from '@/components/TimeRangeSelector';
+import PropertySelector from '@/components/PropertySelector';
 // import ItemAnalyticsTable from '@/components/ItemAnalyticsTable'; // TODO: Create this component
 import ReactionAnalytics from '@/components/ReactionAnalytics';
 import AnalyticsExport from '@/components/AnalyticsExport';
 import AnalyticsSkeleton from '@/components/AnalyticsSkeleton';
 import { useAuth } from '@/contexts/AuthContext';
+import { adminApi } from '@/lib/api';
 
 interface AnalyticsData {
   timeBasedVisits: {
@@ -45,7 +47,35 @@ export default function AnalyticsPage() {
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState<'24h' | '7d' | '30d' | '1y'>('30d');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  const [properties, setProperties] = useState<any[]>([]);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+  // Load properties
+  useEffect(() => {
+    const loadProperties = async () => {
+      try {
+        setPropertiesLoading(true);
+        const response = await adminApi.listProperties();
+        if (response.success && response.data) {
+          setProperties(response.data);
+          setIsAdmin(response.isAdmin || false);
+        } else {
+          console.warn('Failed to load properties:', response.error);
+        }
+      } catch (err) {
+        console.warn('Failed to load properties:', err);
+      } finally {
+        setPropertiesLoading(false);
+      }
+    };
+
+    if (user) {
+      loadProperties();
+    }
+  }, [user]);
 
   // Fetch analytics data
   useEffect(() => {
@@ -54,7 +84,15 @@ export default function AnalyticsPage() {
       setError(null);
 
       try {
-        const response = await fetch(`/api/admin/analytics?timeRange=${selectedTimeRange}&detailed=true`);
+        // Construct API endpoint with property filtering
+        const params = new URLSearchParams();
+        params.set('timeRange', selectedTimeRange);
+        params.set('detailed', 'true');
+        if (selectedPropertyId) {
+          params.set('propertyId', selectedPropertyId);
+        }
+        
+        const response = await fetch(`/api/admin/analytics?${params.toString()}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch analytics: ${response.status}`);
@@ -103,11 +141,16 @@ export default function AnalyticsPage() {
     if (user) {
       fetchAnalyticsData();
     }
-  }, [user, selectedTimeRange]);
+  }, [user, selectedTimeRange, selectedPropertyId]);
 
   // Handle time range change
   const handleTimeRangeChange = (range: '24h' | '7d' | '30d' | '1y') => {
     setSelectedTimeRange(range);
+  };
+
+  // Handle property change
+  const handlePropertyChange = (propertyId: string) => {
+    setSelectedPropertyId(propertyId);
   };
 
   // Handle manual refresh
@@ -157,7 +200,22 @@ export default function AnalyticsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
-            <p className="text-gray-600 mt-1">View visit analytics and reaction data</p>
+            <p className="text-gray-600 mt-1">
+              View visit analytics and reaction data
+              {selectedPropertyId && properties.length > 0 && (
+                <span className="block mt-1">
+                  <Building className="w-4 h-4 inline mr-1 text-blue-600" />
+                  <span className="text-blue-600 font-medium">
+                    {properties.find(p => p.id === selectedPropertyId)?.nickname || 'Selected Property'}
+                  </span>
+                  {isAdmin && properties.find(p => p.id === selectedPropertyId)?.users?.email && (
+                    <span className="text-gray-500 ml-1">
+                      ({properties.find(p => p.id === selectedPropertyId)?.users?.email})
+                    </span>
+                  )}
+                </span>
+              )}
+            </p>
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -202,13 +260,24 @@ export default function AnalyticsPage() {
         </div>
       )}
 
-      {/* Time Range Selector */}
-      <div className="mb-6">
+      {/* Time Range and Property Selectors */}
+      <div className="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <TimeRangeSelector
           selectedRange={selectedTimeRange}
           onRangeChange={handleTimeRangeChange}
           variant="default"
           disabled={analyticsLoading}
+        />
+        
+        <PropertySelector
+          properties={properties}
+          selectedPropertyId={selectedPropertyId}
+          onPropertyChange={handlePropertyChange}
+          variant="default"
+          disabled={analyticsLoading}
+          loading={propertiesLoading}
+          isAdmin={isAdmin}
+          placeholder="All Properties"
         />
       </div>
 

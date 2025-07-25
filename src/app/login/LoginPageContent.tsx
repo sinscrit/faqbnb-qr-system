@@ -100,9 +100,18 @@ export default function LoginPageContent() {
 
   // Redirect if already authenticated (with better validation)
   useEffect(() => {
+    // If there's a redirect parameter, DON'T do client-side redirect
+    // Let middleware handle it to prevent loops
+    const hasRedirectParam = searchParams.get('redirect');
+    if (hasRedirectParam) {
+      console.log('Redirect param present - letting middleware handle navigation');
+      return;
+    }
+
     // Only redirect if we're confident the user is properly authenticated
+    // AND we're not on a page with redirect params
     if (!authLoading && user && user.email && user.role) {
-      const redirectTo = searchParams.get('redirect') || '/admin';
+      const redirectTo = '/admin'; // Always redirect to admin for authenticated users
       console.log('User already authenticated, redirecting to:', redirectTo);
       
       // Use Next.js router for proper client-side navigation

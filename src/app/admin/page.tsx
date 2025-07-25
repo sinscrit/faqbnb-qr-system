@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, ExternalLink, Search, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { ItemsListResponse } from '@/types';
 import { formatDate } from '@/lib/utils';
@@ -9,19 +9,28 @@ import Link from 'next/link';
 
 export default function AdminPage() {
   const [items, setItems] = useState<ItemsListResponse['data']>([]);
+  const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadItems();
+    loadProperties();
   }, []);
+
+  useEffect(() => {
+    loadItems();
+  }, [selectedPropertyId]);
 
   const loadItems = async () => {
     try {
       setLoading(true);
-      const response = await adminApi.listItems();
+      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined);
       if (response.success && response.data) {
         setItems(response.data);
       } else {
@@ -31,6 +40,23 @@ export default function AdminPage() {
       setError(err instanceof Error ? err.message : 'Failed to load items');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProperties = async () => {
+    try {
+      setPropertiesLoading(true);
+      const response = await adminApi.listProperties();
+      if (response.success && response.data) {
+        setProperties(response.data);
+        setIsAdmin(response.isAdmin || false);
+      } else {
+        console.warn('Failed to load properties:', response.error);
+      }
+    } catch (err) {
+      console.warn('Failed to load properties:', err);
+    } finally {
+      setPropertiesLoading(false);
     }
   };
 
@@ -74,7 +100,7 @@ export default function AdminPage() {
             <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
           </div>
           <Link
-            href="/admin/items/new"
+            href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -96,21 +122,52 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Search and Stats */}
+        {/* Search, Filter and Stats */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row gap-4 flex-1">
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              
+              {/* Property Filter */}
+              <div className="relative min-w-64">
+                <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <select
+                  value={selectedPropertyId}
+                  onChange={(e) => setSelectedPropertyId(e.target.value)}
+                  disabled={propertiesLoading}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white disabled:bg-gray-50 disabled:text-gray-500"
+                >
+                  <option value="">All Properties</option>
+                  {properties.map((property) => (
+                    <option key={property.id} value={property.id}>
+                      {property.nickname} {isAdmin && property.users ? `(${property.users.email})` : ''}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
+            
             <div className="text-sm text-gray-600">
               {filteredItems.length} of {items?.length || 0} items
+              {selectedPropertyId && (
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Filtered by Property
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -133,7 +190,7 @@ export default function AdminPage() {
               </p>
               {!searchTerm && (
                 <Link
-                  href="/admin/items/new"
+                  href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -151,6 +208,9 @@ export default function AdminPage() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Public ID
+                    </th>
+                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Property
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Links
@@ -221,6 +281,11 @@ export default function AdminPage() {
                           </div>
                         </div>
                       </td>
+                      <td className="hidden lg:table-cell px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {item.propertyNickname || 'Unknown Property'}
+                        </div>
+                      </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {item.linksCount} {item.linksCount === 1 ? 'link' : 'links'}
@@ -250,24 +315,24 @@ export default function AdminPage() {
                           {item.reactionCounts && item.reactionCounts.total > 0 ? (
                             <div className="flex items-center space-x-2">
                               <div className="flex space-x-1">
-                                {item.reactionCounts.like > 0 && (
+                                {item.reactionCounts.byType?.like > 0 && (
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                    👍 {item.reactionCounts.like}
+                                    👍 {item.reactionCounts.byType.like}
                                   </span>
                                 )}
-                                {item.reactionCounts.love > 0 && (
+                                {item.reactionCounts.byType?.love > 0 && (
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                    ❤️ {item.reactionCounts.love}
+                                    ❤️ {item.reactionCounts.byType.love}
                                   </span>
                                 )}
-                                {item.reactionCounts.confused > 0 && (
+                                {item.reactionCounts.byType?.confused > 0 && (
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    😕 {item.reactionCounts.confused}
+                                    😕 {item.reactionCounts.byType.confused}
                                   </span>
                                 )}
-                                {item.reactionCounts.dislike > 0 && (
+                                {item.reactionCounts.byType?.dislike > 0 && (
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                                    👎 {item.reactionCounts.dislike}
+                                    👎 {item.reactionCounts.byType.dislike}
                                   </span>
                                 )}
                               </div>

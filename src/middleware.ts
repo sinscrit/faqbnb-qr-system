@@ -199,6 +199,13 @@ export async function middleware(req: NextRequest) {
         return res; // Skip redirect if no email
       }
 
+      // PREVENT REDIRECT LOOPS: If already redirecting, don't redirect again
+      const existingRedirect = req.nextUrl.searchParams.get('redirect');
+      if (existingRedirect) {
+        console.log('Middleware: Redirect loop detected, allowing login page to handle');
+        return res; // Let the login page handle the redirect logic
+      }
+
       // Check if user is an admin
       const { data: adminUser, error: adminError } = await supabase
         .from('admin_users')
@@ -208,7 +215,8 @@ export async function middleware(req: NextRequest) {
 
       if (!adminError && adminUser && adminUser.role === 'admin') {
         // Admin user trying to access login page - redirect to admin panel
-        const redirectUrl = req.nextUrl.searchParams.get('redirect') || '/admin';
+        const redirectUrl = '/admin';
+        console.log('Middleware: Redirecting authenticated admin to:', redirectUrl);
         return NextResponse.redirect(new URL(redirectUrl, req.url));
       } else {
         // Check if user is a regular user
@@ -220,7 +228,8 @@ export async function middleware(req: NextRequest) {
 
         if (!userError && regularUser) {
           // Regular user trying to access login page - redirect to admin panel (they have access too)
-          const redirectUrl = req.nextUrl.searchParams.get('redirect') || '/admin';
+          const redirectUrl = '/admin';
+          console.log('Middleware: Redirecting authenticated user to:', redirectUrl);
           return NextResponse.redirect(new URL(redirectUrl, req.url));
         }
       }

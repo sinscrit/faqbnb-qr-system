@@ -179,15 +179,17 @@ export const publicApi = {
 // Admin API functions (authentication required)
 export const adminApi = {
   /**
-   * List all items with optional search and pagination
+   * List all items with optional search, property filtering and pagination
    * @param search Optional search query to filter items by name or public ID
+   * @param propertyId Optional property ID to filter items by property
    * @param page Page number for pagination (default: 1)
    * @param limit Number of items per page (default: 20)
    * @returns Promise resolving to items list response
    */
-  async listItems(search?: string, page: number = 1, limit: number = 20): Promise<ItemsListResponse> {
+  async listItems(search?: string, propertyId?: string, page: number = 1, limit: number = 20): Promise<ItemsListResponse> {
     const params = new URLSearchParams();
     if (search) params.set('search', search);
+    if (propertyId) params.set('propertyId', propertyId);
     if (page !== 1) params.set('page', page.toString());
     if (limit !== 20) params.set('limit', limit.toString());
     
@@ -272,6 +274,34 @@ export const adminApi = {
       method: 'DELETE',
     }, true);
   },
+
+  /**
+   * List properties based on user role (admin sees all, users see their own)
+   * @returns Promise resolving to properties list response
+   */
+  async listProperties(): Promise<{ success: boolean; data?: any[]; isAdmin?: boolean; error?: string }> {
+    return apiRequest('/admin/properties', {}, true);
+  },
+
+  /**
+   * Create a new property
+   * @param property The property data to create
+   * @returns Promise resolving to the created property response
+   */
+  async createProperty(property: { nickname: string; address?: string; propertyTypeId: string; userId?: string }): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
+    return apiRequest('/admin/properties', {
+      method: 'POST',
+      body: JSON.stringify(property),
+    }, true);
+  },
+
+  /**
+   * Get property types for selection
+   * @returns Promise resolving to property types response
+   */
+  async getPropertyTypes(): Promise<{ success: boolean; data?: any[]; error?: string }> {
+    return apiRequest('/admin/property-types', {}, true);
+  },
 };
 
 // Analytics API functions
@@ -340,9 +370,10 @@ export const analyticsApi = {
    * @param page Page number for pagination (default: 1)
    * @param limit Number of items per page (default: 10)
    * @param timeRange Time range for analytics in days (default: 30)
+   * @param propertyId Optional property ID to filter analytics by property
    * @returns Promise resolving to system analytics response
    */
-  async getSystemAnalytics(page: number = 1, limit: number = 10, timeRange: number = 30): Promise<SystemAnalyticsResponse> {
+  async getSystemAnalytics(page: number = 1, limit: number = 10, timeRange: number = 30, propertyId?: string): Promise<SystemAnalyticsResponse> {
     if (page < 1 || limit < 1 || limit > 100 || timeRange < 1) {
       throw new ApiError('Invalid parameters: page and limit must be positive, limit max 100, timeRange must be positive');
     }
@@ -351,11 +382,29 @@ export const analyticsApi = {
     if (page !== 1) params.set('page', page.toString());
     if (limit !== 10) params.set('limit', limit.toString());
     if (timeRange !== 30) params.set('timeRange', timeRange.toString());
+    if (propertyId) params.set('propertyId', propertyId);
     
     const queryString = params.toString();
     const endpoint = queryString ? `/admin/analytics?${queryString}` : '/admin/analytics';
     
     return apiRequest<SystemAnalyticsResponse>(endpoint, {}, true);
+  },
+
+  /**
+   * Get reaction analytics data (admin only)
+   * @param timeRange Time range for analytics (default: '30d')
+   * @param propertyId Optional property ID to filter analytics by property
+   * @returns Promise resolving to reaction analytics response
+   */
+  async getReactionAnalytics(timeRange: string = '30d', propertyId?: string): Promise<any> {
+    const params = new URLSearchParams();
+    if (timeRange !== '30d') params.set('timeRange', timeRange);
+    if (propertyId) params.set('propertyId', propertyId);
+    
+    const queryString = params.toString();
+    const endpoint = queryString ? `/admin/analytics/reactions?${queryString}` : '/admin/analytics/reactions';
+    
+    return apiRequest(endpoint, {}, true);
   },
 };
 

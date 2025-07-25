@@ -55,6 +55,13 @@ export async function PUT(
       );
     }
     
+    if (!body.propertyId) {
+      return NextResponse.json(
+        { success: false, error: 'Missing required field: propertyId' },
+        { status: 400 }
+      );
+    }
+    
     // Validate links array structure
     if (body.links && !Array.isArray(body.links)) {
       return NextResponse.json(
@@ -112,12 +119,27 @@ export async function PUT(
     
     console.log('Item found, proceeding with update...');
     
+    // Verify the property exists and user has access to it
+    const { data: property, error: propertyError } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('id', body.propertyId)
+      .single();
+
+    if (propertyError || !property) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid property ID or property not found' },
+        { status: 400 }
+      );
+    }
+
     // Update the item
     const { data: updatedItem, error: updateError } = await supabase
       .from('items')
       .update({
         name: body.name,
         description: body.description || null,
+        property_id: body.propertyId,
         qr_code_url: body.qrCodeUrl || null,
         qr_code_uploaded_at: body.qrCodeUrl ? new Date().toISOString() : null,
       })

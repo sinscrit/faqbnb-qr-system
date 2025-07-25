@@ -81,20 +81,34 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
+    const propertyId = searchParams.get('propertyId') || '';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     
-    console.log('Query params:', { search, page, limit });
+    console.log('Query params:', { search, propertyId, page, limit });
     
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
     
-    // Build query with search filtering
+    // Build query with search and property filtering
     let query = supabase
       .from('items')
-      .select('id, public_id, name, qr_code_url, created_at')
+      .select(`
+        id, 
+        public_id, 
+        name, 
+        qr_code_url, 
+        created_at,
+        property_id,
+        properties!inner(id, nickname, user_id)
+      `)
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
+
+    // Add property filter if provided
+    if (propertyId) {
+      query = query.eq('property_id', propertyId);
+    }
 
     // Add search filter if provided
     if (search) {
@@ -165,6 +179,8 @@ export async function GET(request: NextRequest) {
           linksCount: linksCount || 0,
           qrCodeUrl: item.qr_code_url || undefined,
           createdAt: item.created_at || new Date().toISOString(),
+          propertyId: item.property_id,
+          propertyNickname: (item as any).properties?.nickname,
           visitCounts,
           reactionCounts,
         };
@@ -205,9 +221,9 @@ export async function POST(request: NextRequest) {
     console.log('Request body:', body);
     
     // Validate required fields
-    if (!body.publicId || !body.name) {
+    if (!body.publicId || !body.name || !body.propertyId) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields: publicId and name' },
+        { success: false, error: 'Missing required fields: publicId, name, and propertyId' },
         { status: 400 }
       );
     }
@@ -262,7 +278,23 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    console.log('Validation passed, creating item...');
+    console.log('Validation passed, checking property...');
+    
+    // Verify the property exists and user has access to it
+    const { data: property, error: propertyError } = await supabase
+      .from('properties')
+      .select('id')
+      .eq('id', body.propertyId)
+      .single();
+
+    if (propertyError || !property) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid property ID or property not found' },
+        { status: 400 }
+      );
+    }
+    
+    console.log('Property verified, creating item...');
     
     // Create item in database using transaction
     const { data: newItem, error: itemError } = await supabase
@@ -271,6 +303,7 @@ export async function POST(request: NextRequest) {
         public_id: body.publicId,
         name: body.name,
         description: body.description || null,
+        property_id: body.propertyId,
         qr_code_url: body.qrCodeUrl || null,
         qr_code_uploaded_at: body.qrCodeUrl ? new Date().toISOString() : null,
       })

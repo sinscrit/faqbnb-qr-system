@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get('timeRange') || '30d';
+    const propertyId = searchParams.get('propertyId') || '';
 
     // Calculate date filter based on time range
     const now = new Date();
@@ -27,11 +28,28 @@ export async function GET(request: NextRequest) {
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
-    // Get reaction data for the specified time range
-    const { data: reactions, error: reactionsError } = await supabase
-      .from('item_reactions')
-      .select('reaction_type, created_at')
-      .gte('created_at', startDate.toISOString());
+    // Get reaction data for the specified time range (with property filtering if specified)
+    let reactions = null;
+    let reactionsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { data, error } = await supabase
+        .from('item_reactions')
+        .select('reaction_type, created_at, items!inner(property_id)')
+        .eq('items.property_id', propertyId)
+        .gte('created_at', startDate.toISOString());
+      reactions = data;
+      reactionsError = error;
+    } else {
+      // Simple query without property filtering
+      const { data, error } = await supabase
+        .from('item_reactions')
+        .select('reaction_type, created_at')
+        .gte('created_at', startDate.toISOString());
+      reactions = data;
+      reactionsError = error;
+    }
 
     if (reactionsError) {
       console.error('Error fetching reactions:', reactionsError);

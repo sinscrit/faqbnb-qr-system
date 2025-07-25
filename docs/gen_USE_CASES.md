@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: July 25, 2025 03:30 CEST
+**Last Updated**: July 25, 2025 12:36 CEST - UC-005 Multi-Tenant Property Management Added
 
 ---
 
@@ -196,6 +196,79 @@ The system supports multi-tenant architecture where users can register, manage m
 ### UC002 - File Upload Management
 **Status**: Not Implemented  
 **Description**: Allow admins to upload and manage thumbnail images and PDF files directly through the admin interface.
+
+---
+
+## UC005 - Multi-Tenant Property Management
+**Origin**: Request #005 from gen_requests.md  
+**Implementation Status**: ✅ COMPLETED  
+**Date Implemented**: July 25, 2025
+
+### Description
+Users can manage multiple properties in a multi-tenant environment with complete data isolation. Each user can create, manage, and organize items by property while maintaining secure access control.
+
+### Actors
+- **Primary**: Property Manager/User
+- **Secondary**: System Administrator
+- **Tertiary**: Property Owner
+
+### Preconditions
+- User must be authenticated via Supabase Auth
+- User must have valid account in the system
+- Property types must be available in the system
+
+### Main Flow
+1. **User Registration/Login**
+   - User authenticates via Supabase Auth system
+   - System creates user profile in `users` table
+   - User gains access to property management dashboard
+
+2. **Property Creation**
+   - User navigates to property management interface
+   - User selects property type from predefined list (house, apartment, villa, etc.)
+   - User provides property nickname and optional address
+   - System validates property data and creates property record
+   - Property is automatically associated with the authenticated user
+
+3. **Item Management by Property**
+   - User selects a property from their property list
+   - User can create, edit, and delete items within that property
+   - All items are automatically associated with the selected property
+   - User can view analytics filtered by specific properties
+
+4. **Property-Based Analytics**
+   - User accesses analytics dashboard
+   - User can filter analytics data by specific properties
+   - System displays visit counts, reaction data, and engagement metrics per property
+   - Data is automatically isolated to user's own properties
+
+### Alternative Flows
+- **Admin Access**: System administrators can view and manage all properties and items across all users
+- **Property Transfer**: Future enhancement to transfer property ownership between users
+- **Bulk Property Operations**: Future enhancement for bulk property management
+
+### Postconditions
+- User has complete property management capabilities
+- All data is properly isolated between users
+- Analytics provide property-specific insights
+- Public QR code access remains unchanged for end users
+
+### Technical Implementation Details
+- **Database**: New tables `property_types`, `users`, `properties` with full relational integrity
+- **Security**: Row-Level Security (RLS) policies ensure complete data isolation
+- **APIs**: All admin endpoints support optional property filtering
+- **Frontend**: PropertySelector component enables property-based navigation
+- **Migration**: Existing items migrated to "Legacy Items" property with zero downtime
+
+### Business Value
+- **Multi-Tenant SaaS**: Enables FAQBNB to serve multiple business customers
+- **Data Isolation**: Ensures customer data privacy and security
+- **Scalability**: Supports unlimited users and properties
+- **Enterprise Ready**: Provides foundation for B2B customer acquisition
+
+---
+
+## Future Use Cases
 
 ### UC003 - Bulk Operations
 **Status**: Not Implemented  

@@ -72,8 +72,9 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const timeRange = searchParams.get('timeRange') || '30'; // days
+    const propertyId = searchParams.get('propertyId') || '';
 
-    console.log('System analytics request with params:', { page, limit, timeRange });
+    console.log('System analytics request with params:', { page, limit, timeRange, propertyId });
 
     // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
@@ -90,10 +91,16 @@ export async function GET(request: NextRequest) {
     // Get overview statistics
     console.log('Fetching overview statistics...');
     
-    // Total items count
-    const { count: totalItems, error: itemsError } = await supabase
+    // Total items count (with property filtering if specified)
+    let itemsQuery = supabase
       .from('items')
       .select('*', { count: 'exact', head: true });
+    
+    if (propertyId) {
+      itemsQuery = itemsQuery.eq('property_id', propertyId);
+    }
+    
+    const { count: totalItems, error: itemsError } = await itemsQuery;
 
     if (itemsError) {
       console.error('Error fetching items count:', itemsError);
@@ -107,10 +114,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Total visits count
-    const { count: totalVisits, error: visitsError } = await supabase
-      .from('item_visits')
-      .select('*', { count: 'exact', head: true });
+    // Total visits count (with property filtering if specified)
+    let totalVisits = 0;
+    let visitsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { count, error } = await supabase
+        .from('item_visits')
+        .select('*, items!inner(property_id)', { count: 'exact', head: true })
+        .eq('items.property_id', propertyId);
+      totalVisits = count || 0;
+      visitsError = error;
+    } else {
+      // Simple count without property filtering
+      const { count, error } = await supabase
+        .from('item_visits')
+        .select('*', { count: 'exact', head: true });
+      totalVisits = count || 0;
+      visitsError = error;
+    }
 
     if (visitsError) {
       console.error('Error fetching visits count:', visitsError);
@@ -124,10 +147,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Total reactions count
-    const { count: totalReactions, error: reactionsError } = await supabase
-      .from('item_reactions')
-      .select('*', { count: 'exact', head: true });
+    // Total reactions count (with property filtering if specified)
+    let totalReactions = 0;
+    let reactionsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { count, error } = await supabase
+        .from('item_reactions')
+        .select('*, items!inner(property_id)', { count: 'exact', head: true })
+        .eq('items.property_id', propertyId);
+      totalReactions = count || 0;
+      reactionsError = error;
+    } else {
+      // Simple count without property filtering
+      const { count, error } = await supabase
+        .from('item_reactions')
+        .select('*', { count: 'exact', head: true });
+      totalReactions = count || 0;
+      reactionsError = error;
+    }
 
     if (reactionsError) {
       console.error('Error fetching reactions count:', reactionsError);
@@ -141,14 +180,31 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Active items (with visits in last 30 days)
+    // Active items (with visits in last 30 days, with property filtering if specified)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    const { data: activeItemsData, error: activeItemsError } = await supabase
-      .from('item_visits')
-      .select('item_id')
-      .gte('visited_at', thirtyDaysAgo.toISOString());
+    let activeItemsData = null;
+    let activeItemsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { data, error } = await supabase
+        .from('item_visits')
+        .select('item_id, items!inner(property_id)')
+        .eq('items.property_id', propertyId)
+        .gte('visited_at', thirtyDaysAgo.toISOString());
+      activeItemsData = data;
+      activeItemsError = error;
+    } else {
+      // Simple query without property filtering
+      const { data, error } = await supabase
+        .from('item_visits')
+        .select('item_id')
+        .gte('visited_at', thirtyDaysAgo.toISOString());
+      activeItemsData = data;
+      activeItemsError = error;
+    }
 
     if (activeItemsError) {
       console.error('Error fetching active items:', activeItemsError);
@@ -182,10 +238,26 @@ export async function GET(request: NextRequest) {
       last365Days: 0,
     };
 
-    // Get all visits for time-based calculations
-    const { data: allVisitsData, error: allVisitsError } = await supabase
-      .from('item_visits')
-      .select('visited_at');
+    // Get all visits for time-based calculations (with property filtering if specified)
+    let allVisitsData = null;
+    let allVisitsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { data, error } = await supabase
+        .from('item_visits')
+        .select('visited_at, items!inner(property_id)')
+        .eq('items.property_id', propertyId);
+      allVisitsData = data;
+      allVisitsError = error;
+    } else {
+      // Simple query without property filtering
+      const { data, error } = await supabase
+        .from('item_visits')
+        .select('visited_at');
+      allVisitsData = data;
+      allVisitsError = error;
+    }
 
     if (allVisitsError) {
       console.error('Error fetching all visits:', allVisitsError);
@@ -214,15 +286,21 @@ export async function GET(request: NextRequest) {
       new Date(v.visited_at) >= timeRanges.last365Days
     ).length;
 
-    // Get top items with visit and reaction counts
+    // Get top items with visit and reaction counts (with property filtering if specified)
     console.log('Fetching top items...');
     const offset = (page - 1) * limit;
     
-    const { data: itemsData, error: topItemsError } = await supabase
+    let topItemsQuery = supabase
       .from('items')
       .select('id, public_id, name')
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
+    
+    if (propertyId) {
+      topItemsQuery = topItemsQuery.eq('property_id', propertyId);
+    }
+    
+    const { data: itemsData, error: topItemsError } = await topItemsQuery;
 
     if (topItemsError) {
       console.error('Error fetching top items:', topItemsError);
@@ -264,11 +342,27 @@ export async function GET(request: NextRequest) {
     // Sort top items by visit count (descending)
     topItems.sort((a, b) => b.visitCount - a.visitCount);
 
-    // Get reaction trends
+    // Get reaction trends (with property filtering if specified)
     console.log('Calculating reaction trends...');
-    const { data: reactionsData, error: reactionTrendsError } = await supabase
-      .from('item_reactions')
-      .select('reaction_type');
+    let reactionsData = null;
+    let reactionTrendsError = null;
+    
+    if (propertyId) {
+      // For property filtering, we need to join with items table
+      const { data, error } = await supabase
+        .from('item_reactions')
+        .select('reaction_type, items!inner(property_id)')
+        .eq('items.property_id', propertyId);
+      reactionsData = data;
+      reactionTrendsError = error;
+    } else {
+      // Simple query without property filtering
+      const { data, error } = await supabase
+        .from('item_reactions')
+        .select('reaction_type');
+      reactionsData = data;
+      reactionTrendsError = error;
+    }
 
     if (reactionTrendsError) {
       console.error('Error fetching reaction trends:', reactionTrendsError);
