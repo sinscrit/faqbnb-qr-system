@@ -198,15 +198,15 @@
 - [x] Style form consistently with existing UI
 - [x] Test form creation and editing functionality
 
-### 17. Create Property Management Pages
-- [ ] Create new directory `src/app/admin/properties/`
-- [ ] Create `page.tsx` for property listing with user role-based filtering
-- [ ] Create `new/page.tsx` for creating new properties
-- [ ] Create `[propertyId]/edit/page.tsx` for editing properties
-- [ ] Add property deletion with confirmation modal
-- [ ] Implement pagination for property listing
-- [ ] Add search and filtering capabilities
-- [ ] Test property management workflow
+### 17. Create Property Management Pages -unit tested-
+- [x] Create new directory `src/app/admin/properties/`
+- [x] Create `page.tsx` for property listing with user role-based filtering
+- [x] Create `new/page.tsx` for creating new properties
+- [x] Create `[propertyId]/edit/page.tsx` for editing properties
+- [x] Add property deletion with confirmation modal
+- [x] Implement pagination for property listing
+- [x] Add search and filtering capabilities
+- [x] Test property management workflow
 
 ### 18. Update Item Form to Include Property Selection
 - [ ] Open `src/components/ItemForm.tsx` file
