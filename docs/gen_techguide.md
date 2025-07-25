@@ -2,7 +2,7 @@
 
 This document provides technical implementation details for the FAQBNB QR Item Display System.
 
-**Last Updated**: July 21, 2025 10:08 CEST
+**Last Updated**: July 25, 2025 03:30 CEST
 
 ---
 
@@ -16,14 +16,47 @@ This document provides technical implementation details for the FAQBNB QR Item D
 - **Language**: TypeScript
 - **Deployment**: Railway
 
-### Database Schema
+### Database Schema (Multi-Tenant Architecture)
 ```sql
--- Items table
+-- Property types table
+property_types (
+  id UUID PRIMARY KEY,
+  name VARCHAR(50) UNIQUE,
+  display_name VARCHAR(100),
+  description TEXT,
+  created_at TIMESTAMP
+)
+
+-- Users table (multi-tenant)
+users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  role TEXT DEFAULT 'user',
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+)
+
+-- Properties table
+properties (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  property_type_id UUID NOT NULL REFERENCES property_types(id),
+  nickname VARCHAR(100) NOT NULL,
+  address TEXT,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+)
+
+-- Items table (updated for multi-tenant)
 items (
   id UUID PRIMARY KEY,
   public_id VARCHAR(50) UNIQUE,
   name VARCHAR(255),
   description TEXT,
+  property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  qr_code_url TEXT,
+  qr_code_uploaded_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 )
@@ -38,6 +71,26 @@ item_links (
   thumbnail_url TEXT,
   display_order INTEGER,
   created_at TIMESTAMP
+)
+
+-- Analytics tables
+item_visits (
+  id UUID PRIMARY KEY,
+  item_id UUID REFERENCES items(id),
+  visited_at TIMESTAMP DEFAULT NOW(),
+  ip_address INET,
+  user_agent TEXT,
+  session_id TEXT,
+  referrer TEXT
+)
+
+item_reactions (
+  id UUID PRIMARY KEY,
+  item_id UUID REFERENCES items(id),
+  reaction_type VARCHAR(50) CHECK (reaction_type IN ('like', 'dislike', 'love', 'confused')),
+  ip_address INET,
+  session_id TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
 )
 ```
 
@@ -297,12 +350,129 @@ src/
 - End-to-end testing for complete user journeys
 - Database state verification after operations
 
+---
+
+## UC005 - Multi-Tenant Property Management Implementation
+
+**Reference**: UC005 from gen_USE_CASES.md  
+**Implementation Date**: July 25, 2025  
+**Status**: Phase 1 Complete (Database Schema), Phase 2 In Progress
+
+### Architecture Changes
+
+#### Database Migrations Applied
+1. **create_property_types_table** - Standard property classifications
+2. **create_users_table** - Multi-tenant user management
+3. **create_properties_table** - Property ownership and organization
+4. **add_property_to_items** - Items-to-properties relationship
+5. **create_default_properties_for_existing_items** - Migration safety
+6. **make_property_id_required** - Enforce data integrity
+7. **setup_multitenant_rls_policies** - Security isolation
+8. **update_items_rls_for_properties** - Property-based access control
+
+#### Row Level Security (RLS) Implementation
+```sql
+-- Example RLS policies for multi-tenant isolation
+
+-- Users can only access their own properties
+CREATE POLICY "Users can manage own properties" ON properties
+    FOR ALL USING (user_id = auth.uid());
+
+-- Users can only access items in their properties
+CREATE POLICY "Users can manage own property items" ON items
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM properties p 
+            WHERE p.id = items.property_id 
+            AND p.user_id = auth.uid()
+        )
+    );
+
+-- Admins can access all data
+CREATE POLICY "Admins can manage all items" ON items
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM admin_users 
+            WHERE admin_users.id = auth.uid() 
+            AND admin_users.role = 'admin'
+        )
+    );
+```
+
+#### TypeScript Type Definitions
+```typescript
+// Updated Database interface in src/lib/supabase.ts
+export type Database = {
+  public: {
+    Tables: {
+      users: {
+        Row: {
+          id: string
+          email: string
+          full_name: string | null
+          role: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        // ... Insert/Update types
+      }
+      properties: {
+        Row: {
+          id: string
+          user_id: string
+          property_type_id: string
+          nickname: string
+          address: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      // ... other tables
+    }
+  }
+}
+```
+
+### Security Features
+
+#### Data Isolation
+- **Property Ownership**: Users can only access properties they own
+- **Item Isolation**: Items are accessible only through property ownership chain
+- **Analytics Filtering**: Visit and reaction data filtered by property ownership
+- **Admin Override**: System administrators can access all data for management
+
+#### Migration Safety
+- **Legacy Item Support**: Existing items assigned to default "Legacy Items" property
+- **Backward Compatibility**: Public QR code access maintained without authentication
+- **Zero Downtime**: Migrations applied without breaking existing functionality
+- **Data Integrity**: Foreign key constraints ensure referential integrity
+
+### Performance Considerations
+
+#### Database Optimizations
+- **Strategic Indexing**: Indexes on user_id, property_id for fast filtering
+- **Query Optimization**: Efficient JOINs for property ownership verification
+- **RLS Performance**: Policies designed to minimize database overhead
+
+#### Scalability
+- **Multi-Tenant Architecture**: Supports unlimited users and properties
+- **Property-Based Partitioning**: Logical data separation enables horizontal scaling
+- **Efficient Analytics**: Property-filtered analytics reduce query complexity
+
 ### Future Enhancements
-- Authentication and authorization
 - File upload capabilities
 - Bulk operations
 - Audit logging
 - Performance monitoring
+- Advanced user role management
 
 ---
 

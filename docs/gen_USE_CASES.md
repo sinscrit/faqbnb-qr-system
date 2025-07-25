@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: July 21, 2025 10:08 CEST
+**Last Updated**: July 25, 2025 03:30 CEST
 
 ---
 
@@ -92,6 +92,102 @@ Administrators can perform complete CRUD (Create, Read, Update, Delete) operatio
 ### Pages Implemented
 - `/admin/items/new` - Create item form
 - `/admin/items/[publicId]/edit` - Edit item form
+
+---
+
+## UC005 - Multi-Tenant Property Management System
+**Origin**: Request #005 from gen_requests.md  
+**Implementation Status**: Phase 1 Complete (Database Schema), Phase 2 In Progress  
+**Date Implemented**: July 25, 2025
+
+### Description
+The system supports multi-tenant architecture where users can register, manage multiple properties, and organize items by property location. Regular users can only access their own properties while admin users maintain system-wide access.
+
+### Actors
+- **Primary**: Property Owner (Regular User)
+- **Secondary**: System Administrator
+- **Tertiary**: Public QR Code Scanner
+
+### Preconditions
+- Multi-tenant database schema is implemented
+- Supabase authentication is configured
+- RLS (Row Level Security) policies are active
+- Property types are pre-configured
+
+### Main Flow
+
+#### UC005.1 - User Registration and Property Setup
+1. New user registers using Supabase authentication
+2. System creates user record in multi-tenant database
+3. User creates their first property with nickname, address, and type
+4. System associates property with user account
+5. User can create items assigned to their properties
+
+#### UC005.2 - Multi-Property Management
+1. User logs into system
+2. System displays only properties owned by the user
+3. User can create new properties (house, apartment, villa, etc.)
+4. User assigns items to specific properties during creation/editing
+5. System enforces property ownership isolation via RLS policies
+
+#### UC005.3 - Property-Based Item Organization
+1. User selects a property context
+2. System displays only items belonging to that property
+3. User creates/edits items within property scope
+4. Items maintain connection to properties via property_id foreign key
+5. Analytics are filtered by property ownership
+
+#### UC005.4 - Admin System-Wide Management
+1. Admin user logs in with elevated privileges
+2. System allows access to all properties across all users
+3. Admin can view/manage any property or item
+4. Admin can access system-wide analytics and reporting
+5. Admin can manage property types and system configuration
+
+#### UC005.5 - Public QR Code Access (Backwards Compatible)
+1. Anyone scans QR code or visits item URL
+2. System provides public read access to item regardless of property
+3. Item displays correctly without authentication required
+4. Analytics tracking continues to work for anonymous users
+
+### Alternative Flows
+- **Property Creation Errors**: System validates property data and shows specific errors
+- **Access Denied**: Users attempting to access other users' properties receive access denied
+- **Legacy Item Migration**: Existing items are automatically assigned to default "Legacy Items" property
+- **Admin Override**: Admin users can access any data for support purposes
+
+### Postconditions
+- **Success**: User data is properly isolated by property ownership
+- **Success**: Admin users maintain system-wide access for management
+- **Success**: Public QR code functionality remains unaffected
+- **Success**: Analytics are accurately filtered by property scope
+
+### Technical Implementation Completed
+
+#### Database Schema (Phase 1 Complete)
+- ✅ `property_types` table with standard property classifications
+- ✅ `users` table linked to Supabase authentication
+- ✅ `properties` table with user ownership and property type relationships
+- ✅ Updated `items` table with required `property_id` foreign key
+- ✅ Migrated existing items to default "Legacy Items" property
+- ✅ Multi-tenant RLS policies for data isolation
+- ✅ Updated analytics tables with property-based access control
+
+#### Type System Updates (Phase 2 Partial)
+- ✅ Complete Supabase TypeScript definitions for all new tables
+- ✅ Foreign key relationships properly typed
+- ✅ Multi-tenant type safety enabled
+
+### Security Features Implemented
+- ✅ Row Level Security (RLS) policies enforce property ownership
+- ✅ Admin bypass policies for system management
+- ✅ Public read access maintained for QR code functionality
+- ✅ Property-based analytics access control
+
+### Migration Safety
+- ✅ All existing items preserved during migration
+- ✅ Backward compatibility maintained for public access
+- ✅ No breaking changes to existing QR code functionality
 
 ---
 
