@@ -83,13 +83,13 @@
 - [x] Verify all items now have property_id assigned
 - [x] Test that items can still be accessed publicly
 
-### 6. Update Items Table Property Constraint
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `make_property_id_required`
-- [ ] Alter items table to make property_id NOT NULL (after migration is complete)
-- [ ] Add comment documenting that all items must belong to a property
-- [ ] Test constraint by attempting to insert item without property_id (should fail)
-- [ ] Verify existing items still function correctly
-- [ ] Test foreign key cascade behavior
+### 6. Update Items Table Property Constraint -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `make_property_id_required`
+- [x] Alter items table to make property_id NOT NULL (after migration is complete)
+- [x] Add comment documenting that all items must belong to a property
+- [x] Test constraint by attempting to insert item without property_id (should fail)
+- [x] Verify existing items still function correctly
+- [x] Test foreign key cascade behavior
 
 ### 7. Create Multi-Tenant RLS Policies for New Tables
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `setup_multitenant_rls_policies`
