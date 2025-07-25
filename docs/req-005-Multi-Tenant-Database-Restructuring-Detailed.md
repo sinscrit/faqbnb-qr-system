@@ -47,14 +47,14 @@
 - [x] Create index on `name` column for performance
 - [x] Test table creation by running `mcp_supabase_execute_sql` to select from property_types
 
-### 2. Create Users Table for Regular Users
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `create_users_table`
-- [ ] Create table with columns: `id` (UUID, primary key, references auth.users), `email` (TEXT, not null), `full_name` (TEXT), `role` (TEXT, default 'user'), `created_at` (TIMESTAMPTZ), `updated_at` (TIMESTAMPTZ)
-- [ ] Add unique constraint on email column
-- [ ] Add check constraint to validate role values ('user', 'admin')
-- [ ] Create index on email for performance
-- [ ] Add trigger to update `updated_at` column automatically
-- [ ] Test table creation and constraints
+### 2. Create Users Table for Regular Users -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `create_users_table`
+- [x] Create table with columns: `id` (UUID, primary key, references auth.users), `email` (TEXT, not null), `full_name` (TEXT), `role` (TEXT, default 'user'), `created_at` (TIMESTAMPTZ), `updated_at` (TIMESTAMPTZ)
+- [x] Add unique constraint on email column
+- [x] Add check constraint to validate role values ('user', 'admin')
+- [x] Create index on email for performance
+- [x] Add trigger to update `updated_at` column automatically
+- [x] Test table creation and constraints
 
 ### 3. Create Properties Table
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `create_properties_table`
