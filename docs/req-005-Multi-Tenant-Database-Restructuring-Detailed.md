@@ -154,15 +154,15 @@
 - [x] Remove temporary auth bypass for analytics endpoints
 - [x] Test middleware with both user types and property access
 
-### 13. Create User Registration API Endpoint
-- [ ] Create new file `src/app/api/auth/register/route.ts`
-- [ ] Implement POST endpoint for user registration
-- [ ] Add email validation and password requirements
-- [ ] Create user record in both auth.users and public.users tables
-- [ ] Add error handling for duplicate emails
-- [ ] Add rate limiting and validation
-- [ ] Return appropriate success/error responses
-- [ ] Test registration endpoint with valid and invalid data
+### 13. Create User Registration API Endpoint -unit tested-
+- [x] Create new file `src/app/api/auth/register/route.ts`
+- [x] Implement POST endpoint for user registration
+- [x] Add email validation and password requirements
+- [x] Create user record in both auth.users and public.users tables
+- [x] Add error handling for duplicate emails
+- [x] Add rate limiting and validation
+- [x] Return appropriate success/error responses
+- [x] Test registration endpoint with valid and invalid data
 
 ---
 
