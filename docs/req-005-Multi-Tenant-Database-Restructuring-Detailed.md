@@ -188,15 +188,15 @@
 - [x] Add property form validation types
 - [x] Test TypeScript compilation with new types
 
-### 16. Create Property Form Component
-- [ ] Create new file `src/components/PropertyForm.tsx`
-- [ ] Implement form with fields: nickname (required), address, property type dropdown
-- [ ] Add form validation using React Hook Form or similar
-- [ ] Add property type selection from database
-- [ ] Implement save/cancel functionality
-- [ ] Add loading states and error handling
-- [ ] Style form consistently with existing UI
-- [ ] Test form creation and editing functionality
+### 16. Create Property Form Component -unit tested-
+- [x] Create new file `src/components/PropertyForm.tsx`
+- [x] Implement form with fields: nickname (required), address, property type dropdown
+- [x] Add form validation using React Hook Form or similar
+- [x] Add property type selection from database
+- [x] Implement save/cancel functionality
+- [x] Add loading states and error handling
+- [x] Style form consistently with existing UI
+- [x] Test form creation and editing functionality
 
 ### 17. Create Property Management Pages
 - [ ] Create new directory `src/app/admin/properties/`
