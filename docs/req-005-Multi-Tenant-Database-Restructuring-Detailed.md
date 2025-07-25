@@ -168,15 +168,15 @@
 
 ## Phase 3: Property Management System (5 tasks, 1 point each)
 
-### 14. Create Property Management API Endpoints
-- [ ] Create new directory `src/app/api/admin/properties/`
-- [ ] Create `route.ts` with GET (list properties) and POST (create property) methods
-- [ ] Add property filtering based on user role (own properties vs all properties)
-- [ ] Create `[propertyId]/route.ts` with GET, PUT, DELETE for individual properties
-- [ ] Add proper authorization checks for property access
-- [ ] Add validation for property data (nickname, address, type)
-- [ ] Add error handling and appropriate HTTP status codes
-- [ ] Test all property CRUD operations
+### 14. Create Property Management API Endpoints -unit tested-
+- [x] Create new directory `src/app/api/admin/properties/`
+- [x] Create `route.ts` with GET (list properties) and POST (create property) methods
+- [x] Add property filtering based on user role (own properties vs all properties)
+- [x] Create `[propertyId]/route.ts` with GET, PUT, DELETE for individual properties
+- [x] Add proper authorization checks for property access
+- [x] Add validation for property data (nickname, address, type)
+- [x] Add error handling and appropriate HTTP status codes
+- [x] Test all property CRUD operations
 
 ### 15. Create Property Type Definitions
 - [ ] Open `src/types/index.ts` file
