@@ -117,17 +117,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
         
         if (userResponse.error || !userResponse.data) {
-          // TEMPORARY: If user verification fails, still allow basic auth
-          console.log('⚠️ User verification failed, but allowing basic auth');
-          const basicUser: AuthUser = {
-            id: sessionResponse.data.user.id,
-            email: sessionResponse.data.user.email || 'unknown@temp.com',
-            fullName: 'Temp Admin',
-            role: 'admin'
-          };
-          
-          setSession(sessionResponse.data);
-          setUser(basicUser);
+          console.log('❌ User verification failed:', userResponse.error);
+          // Clear invalid session state
+          setUser(null);
+          setSession(null);
+          setUserProperties([]);
+          setSelectedProperty(null);
           return;
         }
 
