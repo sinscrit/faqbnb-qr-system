@@ -124,15 +124,15 @@
 - [x] Test TypeScript compilation after changes
 - [x] Verify IntelliSense works correctly for new types
 
-### 10. Extend Authentication Library
-- [ ] Open `src/lib/auth.ts` file
-- [ ] Add function `canAccessProperty(userId: string, propertyId: string): Promise<boolean>`
-- [ ] Add function `getUserProperties(userId: string): Promise<Property[]>`
-- [ ] Add function `createUser(authUser: User): Promise<void>` for user registration
-- [ ] Update `getUser()` function to handle both regular users and admins
-- [ ] Add function `isPropertyOwner(userId: string, propertyId: string): Promise<boolean>`
-- [ ] Update type definitions for new user and property types
-- [ ] Test all new authentication functions
+### 10. Extend Authentication Library -unit tested-
+- [x] Open `src/lib/auth.ts` file
+- [x] Add function `canAccessProperty(userId: string, propertyId: string): Promise<boolean>`
+- [x] Add function `getUserProperties(userId: string): Promise<Property[]>`
+- [x] Add function `createUser(authUser: User): Promise<void>` for user registration
+- [x] Update `getUser()` function to handle both regular users and admins
+- [x] Add function `isPropertyOwner(userId: string, propertyId: string): Promise<boolean>`
+- [x] Update type definitions for new user and property types
+- [x] Test all new authentication functions
 
 ### 11. Update Authentication Context
 - [ ] Open `src/contexts/AuthContext.tsx` file

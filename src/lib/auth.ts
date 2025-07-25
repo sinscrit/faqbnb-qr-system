@@ -9,6 +9,26 @@ export interface AuthUser {
   role?: string;
 }
 
+// Property and user types for multi-tenant system
+export interface Property {
+  id: string;
+  userId: string;
+  propertyTypeId: string;
+  nickname: string;
+  address?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  fullName?: string;
+  role: 'user' | 'admin';
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuthResponse<T = unknown> {
   data?: T;
   error?: string;
@@ -122,7 +142,7 @@ export async function getSession(): Promise<AuthResponse<Session | null>> {
 }
 
 /**
- * Get current authenticated user information
+ * Get current authenticated user information (handles both regular users and admins)
  */
 export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
   try {
@@ -142,22 +162,40 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       return { data: null };
     }
 
-    // Check if user is an admin
+    // First check if user is an admin
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('email', user.email)
       .single();
 
-    if (adminError || !adminUser) {
+    if (!adminError && adminUser) {
+      // User is an admin
+      const authUser: AuthUser = {
+        id: user.id,
+        email: adminUser.email,
+        fullName: adminUser.full_name || undefined,
+        role: adminUser.role || undefined,
+      };
+      return { data: authUser };
+    }
+
+    // Check if user is a regular user
+    const { data: regularUser, error: userError } = await supabase
+      .from('users')
+      .select('email, full_name, role')
+      .eq('id', user.id)
+      .single();
+
+    if (userError || !regularUser) {
       return { data: null };
     }
 
     const authUser: AuthUser = {
       id: user.id,
-      email: adminUser.email,
-      fullName: adminUser.full_name || undefined,
-      role: adminUser.role || undefined,
+      email: regularUser.email,
+      fullName: regularUser.full_name || undefined,
+      role: regularUser.role || undefined,
     };
 
     return { data: authUser };
@@ -227,6 +265,186 @@ export function isSessionExpiringSoon(session: Session | null): boolean {
   const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
 
   return expiresAt <= fiveMinutesFromNow;
+}
+
+/**
+ * Check if a user can access a specific property
+ */
+export async function canAccessProperty(userId: string, propertyId: string): Promise<boolean> {
+  try {
+    // First check if user is an admin (admins can access all properties)
+    const { data: adminUser } = await supabase
+      .from('admin_users')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    if (adminUser && adminUser.role === 'admin') {
+      return true;
+    }
+
+    // Check if user owns the property
+    const { data: property, error } = await supabase
+      .from('properties')
+      .select('user_id')
+      .eq('id', propertyId)
+      .single();
+
+    if (error || !property) {
+      return false;
+    }
+
+    return property.user_id === userId;
+  } catch (error) {
+    console.error('Can access property error:', error);
+    return false;
+  }
+}
+
+/**
+ * Get all properties for a specific user
+ */
+export async function getUserProperties(userId: string): Promise<Property[]> {
+  try {
+    const { data: properties, error } = await supabase
+      .from('properties')
+      .select(`
+        id,
+        user_id,
+        property_type_id,
+        nickname,
+        address,
+        created_at,
+        updated_at
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Get user properties error:', error);
+      return [];
+    }
+
+    return (properties || []).map(p => ({
+      id: p.id,
+      userId: p.user_id,
+      propertyTypeId: p.property_type_id,
+      nickname: p.nickname,
+      address: p.address || undefined,
+      createdAt: p.created_at,
+      updatedAt: p.updated_at,
+    }));
+  } catch (error) {
+    console.error('Get user properties error:', error);
+    return [];
+  }
+}
+
+/**
+ * Create a new regular user in the multi-tenant system
+ */
+export async function createUser(authUser: Omit<User, 'createdAt' | 'updatedAt'>): Promise<AuthResponse<User>> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        id: authUser.id,
+        email: authUser.email,
+        full_name: authUser.fullName || null,
+        role: authUser.role || 'user',
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return { error: `Failed to create user: ${error.message}` };
+    }
+
+    const user: User = {
+      id: data.id,
+      email: data.email,
+      fullName: data.full_name || undefined,
+      role: data.role,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+
+    return { data: user };
+  } catch (error) {
+    console.error('Create user error:', error);
+    return { error: 'Failed to create user record' };
+  }
+}
+
+/**
+ * Check if a user owns a specific property
+ */
+export async function isPropertyOwner(userId: string, propertyId: string): Promise<boolean> {
+  try {
+    const { data: property, error } = await supabase
+      .from('properties')
+      .select('user_id')
+      .eq('id', propertyId)
+      .single();
+
+    if (error || !property) {
+      return false;
+    }
+
+    return property.user_id === userId;
+  } catch (error) {
+    console.error('Is property owner error:', error);
+    return false;
+  }
+}
+
+/**
+ * Register a new user with Supabase Auth and create user record
+ */
+export async function registerUser(
+  email: string,
+  password: string,
+  fullName?: string
+): Promise<AuthResponse<{ user: User; session: Session }>> {
+  try {
+    // Sign up with Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    if (!data.user || !data.session) {
+      return { error: 'Registration failed - no user or session returned' };
+    }
+
+    // Create user record in the users table
+    const userResult = await createUser({
+      id: data.user.id,
+      email: email,
+      fullName: fullName,
+      role: 'user',
+    });
+
+    if (userResult.error) {
+      // If user record creation fails, we should clean up the auth user
+      // but for now we'll just return the error
+      return { error: userResult.error };
+    }
+
+    return {
+      data: {
+        user: userResult.data!,
+        session: data.session,
+      },
+    };
+  } catch (error) {
+    console.error('Register user error:', error);
+    return { error: 'An unexpected error occurred during registration' };
+  }
 }
 
 /**
