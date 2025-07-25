@@ -22,9 +22,13 @@ function extractPropertyIdFromPath(pathname: string): string | null {
   return null;
 }
 
-// Paths that require authentication
+// Paths that require authentication (browser routes only)
 const PROTECTED_PATHS = [
   '/admin',
+];
+
+// API paths that should handle their own authentication
+const API_AUTH_PATHS = [
   '/api/admin',
 ];
 
@@ -53,6 +57,7 @@ export async function middleware(req: NextRequest) {
   // Check if this is a protected path
   const isPropertyPath = PROPERTY_PATHS.some((path: string) => pathname.startsWith(path));
   const isProtectedPath = PROTECTED_PATHS.some((path: string) => pathname.startsWith(path));
+  const isApiAuthPath = API_AUTH_PATHS.some((path: string) => pathname.startsWith(path));
   const isAuthPath = AUTH_PATHS.some((path: string) => pathname.startsWith(path));
 
   try {
@@ -79,6 +84,12 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
       
+      return res;
+    }
+
+    // Handle API auth paths - let them handle their own authentication
+    if (isApiAuthPath) {
+      console.log('Middleware: API route detected, allowing passthrough for JWT authentication');
       return res;
     }
 
