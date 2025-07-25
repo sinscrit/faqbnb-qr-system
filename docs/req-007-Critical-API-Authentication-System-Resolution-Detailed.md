@@ -109,11 +109,11 @@ Current database structure includes:
 #### 3.2 Fix API Request Authentication Headers
 **Objective**: Ensure API utility properly sends authentication headers
 
-- [ ] Modify `src/lib/api.ts` - Update `getAuthHeaders()` function to retrieve proper tokens
-- [ ] Fix `apiRequest()` function to correctly format Authorization headers
-- [ ] Improve error handling for 401/403 responses with automatic retry
-- [ ] Add session refresh logic when tokens expire
-- [ ] Test that all API calls include proper authentication headers
+- [x] Modify `src/lib/api.ts` - Update `getAuthHeaders()` function to retrieve proper tokens -unit tested-
+- [x] Fix `apiRequest()` function to correctly format Authorization headers -unit tested-
+- [x] Improve error handling for 401/403 responses with automatic retry -unit tested-
+- [x] Add session refresh logic when tokens expire -unit tested-
+- [x] Test that all API calls include proper authentication headers -unit tested-
 
 **Files modified**: `src/lib/api.ts`
 **Expected outcome**: All API requests include valid authentication headers
