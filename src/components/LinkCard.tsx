@@ -25,28 +25,45 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }
     }
   };
 
-  // Get the thumbnail URL based on link type
+  // Get the thumbnail URL based on link type with better fallback handling
   const getThumbnailUrl = () => {
-    if (thumbnailUrl && !imageError) {
+    // First try the provided thumbnailUrl if it exists and no error occurred
+    if (thumbnailUrl && thumbnailUrl.trim() !== '' && !imageError) {
       return thumbnailUrl;
     }
     
-    if (linkType === 'youtube') {
+    // For YouTube videos, try to extract thumbnail from URL
+    if (linkType === 'youtube' && !imageError) {
       const youtubeThumbnail = getYoutubeThumbnail(url);
-      if (youtubeThumbnail && !imageError) {
+      if (youtubeThumbnail) {
         return youtubeThumbnail;
       }
     }
     
+    // For images, use the URL directly as the thumbnail
     if (linkType === 'image' && !imageError) {
       return url;
     }
     
+    // Return null to show fallback icon
     return null;
   };
 
   const thumbnailSrc = getThumbnailUrl();
   const colorClasses = getLinkTypeColor(linkType);
+
+  // Handle image load error
+  const handleImageError = () => {
+    console.warn(`Failed to load thumbnail for: ${title}`, { thumbnailUrl, url, linkType });
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  // Handle successful image load
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
 
   return (
     <div
@@ -58,24 +75,34 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }
         {thumbnailSrc ? (
           <img
             src={thumbnailSrc}
-            alt={title}
-            className={`w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 ${
+            alt={`${title} preview`}
+            className={`w-full h-full object-cover transition-all duration-200 group-hover:scale-105 ${
               imageLoading ? 'opacity-0' : 'opacity-100'
             }`}
-            onLoad={() => setImageLoading(false)}
-            onError={() => {
-              setImageError(true);
-              setImageLoading(false);
-            }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            loading="lazy"
           />
         ) : null}
         
-        {/* Fallback icon when no thumbnail */}
+        {/* Fallback icon when no thumbnail or image failed to load */}
         {(!thumbnailSrc || imageError || imageLoading) && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            <div className="text-gray-400">
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className={`text-gray-400 transition-transform duration-200 group-hover:scale-110 ${
+              linkType === 'youtube' ? 'text-red-400' : 
+              linkType === 'pdf' ? 'text-blue-400' : 
+              linkType === 'image' ? 'text-green-400' : 
+              'text-purple-400'
+            }`}>
               {getIcon()}
             </div>
+          </div>
+        )}
+
+        {/* Loading state */}
+        {imageLoading && thumbnailSrc && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
           </div>
         )}
 

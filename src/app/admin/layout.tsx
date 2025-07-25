@@ -1,224 +1,123 @@
 'use client';
 
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import AuthGuard from '@/components/AuthGuard';
-import LogoutButton from '@/components/LogoutButton';
-import { Home, Settings, Users, BarChart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AuthProvider } from '@/contexts/AuthContext';
 
-interface AdminLayoutProps {
-  children: ReactNode;
+interface AdminUser {
+  email: string;
+  isAuthenticated: boolean;
 }
 
-function AdminHeader() {
-  const { user } = useAuth();
-  const pathname = usePathname();
+function SimpleAuthCheck({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const isActive = (path: string) => {
-    if (path === '/admin') {
-      return pathname === '/admin';
-    }
-    return pathname.startsWith(path);
-  };
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Check session via our API endpoint
+        const response = await fetch('/api/auth/session');
+        const data = await response.json();
+        
+        console.log('🔍 Simple auth check:', data);
+        
+        if (data.authenticated && data.user) {
+          setUser({
+            email: data.user.email,
+            isAuthenticated: true
+          });
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('❌ Auth check failed:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const getNavLinkClasses = (path: string, isMobile = false) => {
-    const baseClasses = 'transition-colors flex items-center';
-    const mobileClasses = isMobile ? 'text-sm' : '';
-    const activeClasses = isActive(path) 
-      ? 'text-blue-600 font-medium' 
-      : 'text-gray-600 hover:text-gray-900';
-    
-    return `${baseClasses} ${mobileClasses} ${activeClasses}`.trim();
-  };
+    checkAuth();
+  }, []);
 
-  return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo and Title */}
-          <div className="flex items-center space-x-3">
-            <Link href="/" className="flex items-center space-x-3">
-              <Image
-                src="/faqbnb_logoshort.png"
-                alt="FAQBNB Logo"
-                width={32}
-                height={32}
-                className="rounded-lg"
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user?.isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
               />
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">FAQBNB Admin</h1>
-                <p className="text-xs text-gray-500">Content Management System</p>
-              </div>
-            </Link>
+            </svg>
           </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">Please log in to access the admin panel.</p>
+          <button
+            onClick={() => window.location.href = '/login'}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/admin"
-              className={getNavLinkClasses('/admin')}
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Admin Panel - Welcome {user.email}
+            </h2>
+            <button
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/';
+              }}
+              className="text-sm text-gray-600 hover:text-gray-800"
             >
-              Items
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className={getNavLinkClasses('/admin/analytics')}
-            >
-              <BarChart className="w-4 h-4 mr-1" />
-              Analytics
-            </Link>
-            <Link
-              href="/"
-              target="_blank"
-              className="text-gray-600 hover:text-gray-900 transition-colors flex items-center"
-            >
-              <Home className="w-4 h-4 mr-1" />
-              View Site
-            </Link>
-          </nav>
-
-          {/* User Info and Actions */}
-          <div className="flex items-center space-x-4">
-            {/* User Info */}
-            <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-gray-900">
-                {user?.fullName || user?.email}
-              </p>
-              <p className="text-xs text-gray-500 capitalize">
-                {user?.role || 'Admin'}
-              </p>
-            </div>
-
-            {/* Logout Button */}
-            <LogoutButton variant="text" size="sm" />
+              Logout
+            </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex justify-center space-x-6">
-            <Link
-              href="/admin"
-              className={getNavLinkClasses('/admin', true)}
-            >
-              Items
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className={getNavLinkClasses('/admin/analytics', true)}
-            >
-              <BarChart className="w-3 h-3 mr-1" />
-              Analytics
-            </Link>
-            <Link
-              href="/"
-              target="_blank"
-              className="text-gray-600 hover:text-gray-900 transition-colors text-sm flex items-center"
-            >
-              <Home className="w-3 h-3 mr-1" />
-              View Site
-            </Link>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function AdminSidebar() {
-  return (
-    <aside className="hidden lg:block w-64 bg-gray-50 border-r border-gray-200 min-h-screen">
-      <div className="p-4">
-        <nav className="space-y-2">
-          <Link
-            href="/admin"
-            className="flex items-center px-3 py-2 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            <BarChart className="w-4 h-4 mr-3" />
-            Dashboard
-          </Link>
-          <Link
-            href="/admin"
-            className="flex items-center px-3 py-2 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            <Settings className="w-4 h-4 mr-3" />
-            Items Management
-          </Link>
-          <Link
-            href="/admin/items/new"
-            className="flex items-center px-3 py-2 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            <Users className="w-4 h-4 mr-3" />
-            Add New Item
-          </Link>
-        </nav>
-      </div>
-    </aside>
-  );
-}
-
-function AdminFooter() {
-  return (
-    <footer className="bg-white border-t border-gray-200 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500">
-            © 2024 FAQBNB Admin Panel. All rights reserved.
-          </p>
-          <div className="flex items-center space-x-4 mt-2 sm:mt-0">
-            <span className="text-xs text-gray-400">
-              Built with Next.js & Supabase
-            </span>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function AdminLoadingFallback() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <h2 className="text-lg font-medium text-gray-900 mb-2">Loading Admin Panel</h2>
-        <p className="text-gray-600">Verifying your admin credentials...</p>
-      </div>
+      {children}
     </div>
   );
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <AuthGuard fallback={<AdminLoadingFallback />}>
-      <div className="min-h-screen flex flex-col">
-        {/* Main Layout */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <AdminSidebar />
-          
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <AdminHeader />
-            
-            {/* Page Content */}
-            <main className="flex-1 p-4 sm:p-6 lg:p-8">
-              <div className="max-w-7xl mx-auto">
-                {children}
-              </div>
-            </main>
-            
-            {/* Footer */}
-            <AdminFooter />
-          </div>
-        </div>
-      </div>
-    </AuthGuard>
+    <AuthProvider>
+      <SimpleAuthCheck>
+        {children}
+      </SimpleAuthCheck>
+    </AuthProvider>
   );
 } 
