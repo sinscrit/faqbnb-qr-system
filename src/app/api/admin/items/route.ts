@@ -1,34 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { ItemsListResponse, CreateItemRequest, ItemResponse } from '@/types';
-import { getUser, isAdmin } from '@/lib/auth';
+import { createClient } from '@supabase/supabase-js';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
-  // TEMPORARY: Skip server-side auth validation until session sharing is fixed
-  // Client-side AuthGuard already validates admin access
-  console.log('TEMP: Skipping server-side auth validation - client-side AuthGuard handles it');
-  
-  return { 
-    user: { 
-      id: 'temp-admin', 
-      email: 'admin@temp.com', 
-      role: 'admin' 
-    }, 
-    isAdmin: true 
-  };
-  
-  /* Original auth validation - restore once session sharing is fixed
   try {
-    // Get the current user from the session
-    const userResult = await getUser();
-    
-    if (userResult.error || !userResult.data) {
+    // Extract JWT token from Authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return {
         error: NextResponse.json(
           { 
             success: false, 
-            error: 'Authentication required',
+            error: 'Authentication required - no valid Authorization header',
             code: 'UNAUTHORIZED' 
           },
           { status: 401 }
@@ -36,10 +21,86 @@ async function validateAdminAuth(request: NextRequest) {
       };
     }
 
-    // Validate admin role
-    const userIsAdmin = isAdmin(userResult.data);
+    const token = authHeader.substring(7);
+    if (!token) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required - no token provided',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Create a Supabase client to validate the token
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
-    if (!userIsAdmin) {
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase environment variables');
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Server configuration error',
+            code: 'SERVER_ERROR' 
+          },
+          { status: 500 }
+        )
+      };
+    }
+
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    // Set the session using the provided token
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.log('Token validation failed:', userError?.message);
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Invalid or expired token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    if (!user.email) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'User email not found in token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Check if user is an admin
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('email, full_name, role')
+      .eq('id', user.id)
+      .eq('email', user.email)
+      .single();
+
+    if (adminError || !adminUser || adminUser.role !== 'admin') {
+      console.log('Admin validation failed:', { 
+        userId: user.id, 
+        email: user.email, 
+        adminError: adminError?.message,
+        hasAdminUser: !!adminUser,
+        role: adminUser?.role 
+      });
       return {
         error: NextResponse.json(
           { 
@@ -52,7 +113,17 @@ async function validateAdminAuth(request: NextRequest) {
       };
     }
 
-    return { user: userResult.data, isAdmin: true };
+    // Return validated user data
+    const validatedUser = {
+      id: user.id,
+      email: adminUser.email,
+      fullName: adminUser.full_name || undefined,
+      role: adminUser.role
+    };
+
+    console.log('Authentication successful for admin:', validatedUser.email);
+    return { user: validatedUser, isAdmin: true };
+
   } catch (error) {
     console.error('Admin auth validation error:', error);
     return {
@@ -66,7 +137,6 @@ async function validateAdminAuth(request: NextRequest) {
       )
     };
   }
-  */
 }
 
 export async function GET(request: NextRequest) {
@@ -75,7 +145,9 @@ export async function GET(request: NextRequest) {
     
     // Validate authentication and admin role
     const authResult = await validateAdminAuth(request);
-    // authResult now always succeeds with temporary bypass
+    if (authResult.error) {
+      return authResult.error;
+    }
     
     console.log('Authentication successful for user:', authResult.user.email);
     
@@ -195,7 +267,7 @@ export async function GET(request: NextRequest) {
     // Add audit log for admin operations with analytics summary
     const totalVisits = itemsWithCounts.reduce((sum, item) => sum + (item.visitCounts?.allTime || 0), 0);
     const totalReactions = itemsWithCounts.reduce((sum, item) => sum + (item.reactionCounts?.total || 0), 0);
-    console.log(`Admin items list accessed by: ${authResult.user.email}, found ${itemsWithCounts.length} items (${totalVisits} total visits, ${totalReactions} total reactions)`);
+    console.log(`Admin items list accessed by: ${authResult.user?.email}, found ${itemsWithCounts.length} items (${totalVisits} total visits, ${totalReactions} total reactions)`);
 
     return NextResponse.json(response);
   } catch (error) {
@@ -213,7 +285,9 @@ export async function POST(request: NextRequest) {
     
     // Validate authentication and admin role
     const authResult = await validateAdminAuth(request);
-    // authResult now always succeeds with temporary bypass
+    if (authResult.error) {
+      return authResult.error;
+    }
     
     console.log('Authentication successful for user:', authResult.user.email);
     
@@ -379,7 +453,7 @@ export async function POST(request: NextRequest) {
     };
     
     // Add audit log for admin operations
-    console.log(`Item created by admin: ${authResult.user.email}, item: ${newItem.name} (${newItem.public_id})`);
+    console.log(`Item created by admin: ${authResult.user?.email}, item: ${newItem.name} (${newItem.public_id})`);
     
     console.log('Item creation completed successfully');
     return NextResponse.json(response, { status: 201 });
