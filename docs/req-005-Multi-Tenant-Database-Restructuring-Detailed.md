@@ -65,14 +65,14 @@
 - [x] Add trigger to update `updated_at` column automatically
 - [x] Test table creation and foreign key relationships
 
-### 4. Modify Items Table to Add Property Association
-- [ ] Create migration using `mcp_supabase_apply_migration` with name `add_property_to_items`
-- [ ] Add `property_id` column (UUID, nullable initially for migration)
-- [ ] Add foreign key constraint to reference properties.id with CASCADE delete
-- [ ] Create index on property_id for performance
-- [ ] Add comment to document the property relationship
-- [ ] Test column addition without breaking existing data
-- [ ] Verify foreign key constraint works properly
+### 4. Modify Items Table to Add Property Association -unit tested-
+- [x] Create migration using `mcp_supabase_apply_migration` with name `add_property_to_items`
+- [x] Add `property_id` column (UUID, nullable initially for migration)
+- [x] Add foreign key constraint to reference properties.id with CASCADE delete
+- [x] Create index on property_id for performance
+- [x] Add comment to document the property relationship
+- [x] Test column addition without breaking existing data
+- [x] Verify foreign key constraint works properly
 
 ### 5. Create Default Properties for Existing Items
 - [ ] Create migration using `mcp_supabase_apply_migration` with name `create_default_properties_for_existing_items`
