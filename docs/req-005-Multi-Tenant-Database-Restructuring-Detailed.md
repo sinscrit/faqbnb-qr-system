@@ -115,14 +115,14 @@
 
 ## Phase 2: Authentication & Authorization System (5 tasks, 1 point each)
 
-### 9. Update Supabase Type Definitions
-- [ ] Open `src/lib/supabase.ts` file
-- [ ] Add new table types to Database interface: `users`, `properties`, `property_types`
-- [ ] Update existing table types with new relationships (items.property_id)
-- [ ] Add proper foreign key relationship definitions
-- [ ] Update any exported types that reference the database schema
-- [ ] Test TypeScript compilation after changes
-- [ ] Verify IntelliSense works correctly for new types
+### 9. Update Supabase Type Definitions -unit tested-
+- [x] Open `src/lib/supabase.ts` file
+- [x] Add new table types to Database interface: `users`, `properties`, `property_types`
+- [x] Update existing table types with new relationships (items.property_id)
+- [x] Add proper foreign key relationship definitions
+- [x] Update any exported types that reference the database schema
+- [x] Test TypeScript compilation after changes
+- [x] Verify IntelliSense works correctly for new types
 
 ### 10. Extend Authentication Library
 - [ ] Open `src/lib/auth.ts` file

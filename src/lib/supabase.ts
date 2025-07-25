@@ -85,6 +85,102 @@ export type Database = {
         }
         Relationships: []
       }
+      users: {
+        Row: {
+          id: string
+          email: string
+          full_name: string | null
+          role: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id: string
+          email: string
+          full_name?: string | null
+          role?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          email?: string
+          full_name?: string | null
+          role?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      property_types: {
+        Row: {
+          id: string
+          name: string
+          display_name: string
+          description: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          display_name: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          display_name?: string
+          description?: string | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          id: string
+          user_id: string
+          property_type_id: string
+          nickname: string
+          address: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          property_type_id: string
+          nickname: string
+          address?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          property_type_id?: string
+          nickname?: string
+          address?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "properties_property_type_id_fkey"
+            columns: ["property_type_id"]
+            isOneToOne: false
+            referencedRelation: "property_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       item_links: {
         Row: {
           created_at: string | null
@@ -136,6 +232,7 @@ export type Database = {
           qr_code_url: string | null
           qr_code_uploaded_at: string | null
           updated_at: string | null
+          property_id: string
         }
         Insert: {
           created_at?: string | null
@@ -146,6 +243,7 @@ export type Database = {
           qr_code_url?: string | null
           qr_code_uploaded_at?: string | null
           updated_at?: string | null
+          property_id: string
         }
         Update: {
           created_at?: string | null
@@ -156,8 +254,90 @@ export type Database = {
           qr_code_url?: string | null
           qr_code_uploaded_at?: string | null
           updated_at?: string | null
+          property_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "items_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      item_visits: {
+        Row: {
+          id: string
+          item_id: string | null
+          visited_at: string | null
+          ip_address: string | null
+          user_agent: string | null
+          session_id: string | null
+          referrer: string | null
+        }
+        Insert: {
+          id?: string
+          item_id?: string | null
+          visited_at?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
+          session_id?: string | null
+          referrer?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string | null
+          visited_at?: string | null
+          ip_address?: string | null
+          user_agent?: string | null
+          session_id?: string | null
+          referrer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_visits_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      item_reactions: {
+        Row: {
+          id: string
+          item_id: string | null
+          reaction_type: string
+          ip_address: string | null
+          session_id: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          item_id?: string | null
+          reaction_type: string
+          ip_address?: string | null
+          session_id?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string | null
+          reaction_type?: string
+          ip_address?: string | null
+          session_id?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_reactions_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mailing_list_subscribers: {
         Row: {
