@@ -86,17 +86,17 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Enable RLS: `ALTER TABLE account_users ENABLE ROW LEVEL SECURITY`
 - [x] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM account_users LIMIT 1`
 
-### 4. Add Account Reference to Properties Table (1 point)
+### 4. Add Account Reference to Properties Table (1 point) -unit tested-
 
 **Goal**: Link properties to accounts while maintaining backward compatibility
 
 **Substeps**:
-- [ ] Use `mcp_supabase_apply_migration` to add account_id to properties with name: `add_account_id_to_properties`
-- [ ] Add column: `ALTER TABLE properties ADD COLUMN account_id UUID REFERENCES accounts(id)`
-- [ ] Add index: `CREATE INDEX idx_properties_account_id ON properties(account_id)`
-- [ ] Add comment: `COMMENT ON COLUMN properties.account_id IS 'Foreign key to accounts.id - which account owns this property'`
-- [ ] Verify column addition with `mcp_supabase_execute_sql` using `SELECT column_name FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'account_id'`
-- [ ] Test that existing properties are not affected with `mcp_supabase_execute_sql` using `SELECT id, user_id, account_id FROM properties`
+- [x] Use `mcp_supabase_apply_migration` to add account_id to properties with name: `add_account_id_to_properties`
+- [x] Add column: `ALTER TABLE properties ADD COLUMN account_id UUID REFERENCES accounts(id)`
+- [x] Add index: `CREATE INDEX idx_properties_account_id ON properties(account_id)`
+- [x] Add comment: `COMMENT ON COLUMN properties.account_id IS 'Foreign key to accounts.id - which account owns this property'`
+- [x] Verify column addition with `mcp_supabase_execute_sql` using `SELECT column_name FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'account_id'`
+- [x] Test that existing properties are not affected with `mcp_supabase_execute_sql` using `SELECT id, user_id, account_id FROM properties`
 
 ### 5. Create Basic RLS Policies for Accounts (1 point)
 
