@@ -254,20 +254,20 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Test new functions with `mcp_supabase_execute_sql` queries to verify logic
 - [x] Verify TypeScript compilation
 
-### 13. Validate Public Access Unchanged (1 point)
+### 13. Validate Public Access Unchanged (1 point) -unit tested-
 
 **Goal**: Ensure all public item access continues to work identically
 
 **Substeps**:
-- [ ] Read current content of `src/app/item/[publicId]/page.tsx`
-- [ ] Read current content of `src/app/api/items/[publicId]/route.ts`
-- [ ] Test public item access with `mcp_supabase_execute_sql` using `SELECT public_id, name FROM items LIMIT 3`
-- [ ] Manually test item URLs work in browser (if available)
-- [ ] Verify QR code functionality remains unchanged
-- [ ] Test that public API endpoints return data correctly
-- [ ] Confirm no authentication is required for public item access
-- [ ] Document test results in `tmp/public-access-validation.md`
-- [ ] Verify that the account changes don't break any public functionality
+- [x] Read current content of `src/app/item/[publicId]/page.tsx`
+- [x] Read current content of `src/app/api/items/[publicId]/route.ts`
+- [x] Test public item access with `mcp_supabase_execute_sql` using `SELECT public_id, name FROM items LIMIT 3`
+- [x] Manually test item URLs work in browser (if available)
+- [x] Verify QR code functionality remains unchanged
+- [x] Test that public API endpoints return data correctly
+- [x] Confirm no authentication is required for public item access
+- [x] Document test results in `tmp/public-access-validation.md`
+- [x] Verify that the account changes don't break any public functionality
 
 ## Testing and Validation Tasks
 
