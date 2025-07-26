@@ -141,19 +141,19 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Document migration results in `tmp/migration-execution-log.md`
 - [x] Confirm no data loss by verifying all users have accounts
 
-### 8. Link Existing Properties to Default Accounts (1 point)
+### 8. Link Existing Properties to Default Accounts (1 point) -unit tested-
 
 **Goal**: Migrate existing properties to their user's default account
 
 **Substeps**:
-- [ ] Create migration script in `tmp/link-properties-to-accounts.sql`
-- [ ] Add update query to link properties to default accounts:
-  - [ ] `UPDATE properties SET account_id = (SELECT id FROM accounts WHERE accounts.owner_id = properties.user_id) WHERE account_id IS NULL`
-- [ ] Add validation query: `SELECT p.nickname, u.email, a.name FROM properties p JOIN users u ON u.id = p.user_id JOIN accounts a ON a.id = p.account_id`
-- [ ] Test migration with `mcp_supabase_execute_sql` using `BEGIN; [migration content]; ROLLBACK;`
-- [ ] Execute migration with `mcp_supabase_execute_sql` using the update query
-- [ ] Verify all properties are linked with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as unlinked_properties FROM properties WHERE account_id IS NULL`
-- [ ] Validate property-account relationships with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as linked_properties FROM properties WHERE account_id IS NOT NULL`
+- [x] Create migration script in `tmp/link-properties-to-accounts.sql`
+- [x] Add update query to link properties to default accounts:
+  - [x] `UPDATE properties SET account_id = (SELECT id FROM accounts WHERE accounts.owner_id = properties.user_id) WHERE account_id IS NULL`
+- [x] Add validation query: `SELECT p.nickname, u.email, a.name FROM properties p JOIN users u ON u.id = p.user_id JOIN accounts a ON a.id = p.account_id`
+- [x] Test migration with `mcp_supabase_execute_sql` using `BEGIN; [migration content]; ROLLBACK;`
+- [x] Execute migration with `mcp_supabase_execute_sql` using the update query
+- [x] Verify all properties are linked with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as unlinked_properties FROM properties WHERE account_id IS NULL`
+- [x] Validate property-account relationships with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as linked_properties FROM properties WHERE account_id IS NOT NULL`
 
 ### 9. Create Account TypeScript Interfaces (1 point)
 
