@@ -2,19 +2,52 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
 // Helper function to validate authentication for admin operations
-async function validateAdminAuth() {
-  // TEMPORARY: Skip server-side auth validation until session sharing is fixed
-  // Client-side AuthGuard already validates admin access
-  console.log('TEMP: Skipping server-side auth validation - client-side AuthGuard handles it');
-  
-  return { 
-    user: { 
-      id: 'temp-admin', 
-      email: 'admin@temp.com', 
-      role: 'admin' 
-    }, 
-    isAdmin: true 
-  };
+async function validateAdminAuth(request: NextRequest) {
+  try {
+    // Extract JWT token from Authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ No valid authorization header found');
+      return { user: null, isAdmin: false, error: 'No authorization header' };
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    console.log('🔍 Validating JWT token for admin access...');
+
+    // Validate token with Supabase
+    const { data: authResult, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !authResult.user) {
+      console.log('❌ Token validation failed:', authError?.message || 'No user data');
+      return { user: null, isAdmin: false, error: 'Invalid or expired token' };
+    }
+
+    // Check if user exists in admin_users table with proper role
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('id', authResult.user.id)
+      .eq('role', 'admin')
+      .single();
+
+    if (adminError || !adminUser) {
+      console.log('❌ User not found in admin_users or insufficient privileges');
+      return { user: authResult.user, isAdmin: false, error: 'Insufficient privileges' };
+    }
+
+    console.log('✅ Admin authentication successful:', adminUser.email);
+    return { 
+      user: {
+        id: adminUser.id,
+        email: adminUser.email,
+        role: adminUser.role
+      }, 
+      isAdmin: true 
+    };
+  } catch (error) {
+    console.error('❌ Admin authentication error:', error);
+    return { user: null, isAdmin: false, error: 'Authentication failed' };
+  }
 }
 
 // Interface for system-wide analytics response
@@ -64,7 +97,20 @@ export async function GET(request: NextRequest) {
     console.log('System analytics API called - validating authentication...');
     
     // Validate authentication and admin role
-    const authResult = await validateAdminAuth();
+    const authResult = await validateAdminAuth(request);
+    
+    if (!authResult.isAdmin || !authResult.user) {
+      console.log('❌ Authentication failed:', authResult.error);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: authResult.error || 'Authentication required',
+          code: authResult.error === 'Insufficient privileges' ? 'FORBIDDEN' : 'UNAUTHORIZED'
+        },
+        { status: authResult.error === 'Insufficient privileges' ? 403 : 401 }
+      );
+    }
+    
     console.log('Authentication successful for user:', authResult.user.email);
 
     // Parse query parameters
@@ -426,7 +472,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add audit log for admin operations
-    console.log(`System analytics accessed by: ${authResult.user.email}, page: ${page}, limit: ${limit}`);
+    console.log(`System analytics accessed by: ${authResult.user?.email}, page: ${page}, limit: ${limit}`);
 
     return NextResponse.json(systemAnalytics);
 
