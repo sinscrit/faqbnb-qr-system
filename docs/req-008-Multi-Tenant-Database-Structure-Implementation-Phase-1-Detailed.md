@@ -128,18 +128,18 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Test migration script in safe mode with `mcp_supabase_execute_sql` using `BEGIN; [migration content]; ROLLBACK;`
 - [x] Document expected results in `tmp/migration-validation.md`
 
-### 7. Execute Data Migration for Default Accounts (1 point)
+### 7. Execute Data Migration for Default Accounts (1 point) -unit tested-
 
 **Goal**: Execute the migration to create accounts for existing users
 
 **Substeps**:
-- [ ] Verify current user count with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as user_count FROM users`
-- [ ] Execute migration with `mcp_supabase_execute_sql` using content from `tmp/migrate-users-to-accounts.sql`
-- [ ] Verify account creation with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as account_count FROM accounts`
-- [ ] Verify account-user relationships with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as membership_count FROM account_users WHERE role = 'owner'`
-- [ ] Validate data integrity with `mcp_supabase_execute_sql` using `SELECT u.email, a.name FROM users u LEFT JOIN accounts a ON a.owner_id = u.id WHERE a.id IS NULL`
-- [ ] Document migration results in `tmp/migration-execution-log.md`
-- [ ] Confirm no data loss by verifying all users have accounts
+- [x] Verify current user count with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as user_count FROM users`
+- [x] Execute migration with `mcp_supabase_execute_sql` using content from `tmp/migrate-users-to-accounts.sql`
+- [x] Verify account creation with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as account_count FROM accounts`
+- [x] Verify account-user relationships with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as membership_count FROM account_users WHERE role = 'owner'`
+- [x] Validate data integrity with `mcp_supabase_execute_sql` using `SELECT u.email, a.name FROM users u LEFT JOIN accounts a ON a.owner_id = u.id WHERE a.id IS NULL`
+- [x] Document migration results in `tmp/migration-execution-log.md`
+- [x] Confirm no data loss by verifying all users have accounts
 
 ### 8. Link Existing Properties to Default Accounts (1 point)
 
