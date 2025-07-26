@@ -213,24 +213,24 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Test endpoint with manual API call using `mcp_supabase_execute_sql` to verify data
 - [x] Verify endpoint responds correctly by testing in browser/Postman
 
-### 11. Create Individual Account API Routes (1 point)
+### 11. Create Individual Account API Routes (1 point) -unit tested-
 
 **Goal**: Implement GET /api/admin/accounts/[accountId] endpoint
 
 **Substeps**:
-- [ ] Create directory `src/app/api/admin/accounts/[accountId]`
-- [ ] Create file `src/app/api/admin/accounts/[accountId]/route.ts` 
-- [ ] Implement GET handler for individual account:
-  - [ ] Extract accountId from params
-  - [ ] Validate user has access to account
-  - [ ] Return account details with membership info
-- [ ] Implement PUT handler for account updates:
-  - [ ] Validate user is account owner or admin
-  - [ ] Update account name/description
-  - [ ] Return updated account data
-- [ ] Add proper authorization checks using RLS policies
-- [ ] Test both GET and PUT endpoints
-- [ ] Verify proper error handling for unauthorized access
+- [x] Create directory `src/app/api/admin/accounts/[accountId]`
+- [x] Create file `src/app/api/admin/accounts/[accountId]/route.ts` 
+- [x] Implement GET handler for individual account:
+  - [x] Extract accountId from params
+  - [x] Validate user has access to account
+  - [x] Return account details with membership info
+- [x] Implement PUT handler for account updates:
+  - [x] Validate user is account owner or admin
+  - [x] Update account name/description
+  - [x] Return updated account data
+- [x] Add proper authorization checks using RLS policies
+- [x] Test both GET and PUT endpoints
+- [x] Verify proper error handling for unauthorized access
 
 ### 12. Add Account Context to Authentication Library (1 point)
 
