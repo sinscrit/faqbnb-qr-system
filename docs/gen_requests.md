@@ -376,4 +376,239 @@ Resolve critical API authentication issues preventing data loading across the ad
 
 ---
 
-*Next Request: REQ-008* 
+## REQ-008: Multi-Tenant Database Structure Implementation (Phase 1)
+**Date**: January 28, 2025  
+**Type**: Major Feature Implementation (Architecture - Phase 1)  
+**Complexity**: 13 Points (High Complexity)
+
+### Request Summary
+Implement the foundational database structure for multi-tenant account system while preserving all existing public functionality. This phase establishes the core account architecture without breaking any existing features.
+
+### Detailed Requirements
+
+#### 1. Database Schema Creation (8 points)
+- **Create Accounts Table**: Primary tenant entity with owner relationship
+- **Create Account-Users Junction Table**: Many-to-many relationship between accounts and users
+- **Add Account Context to Properties**: Link properties to accounts instead of direct user ownership
+- **Files Affected**:
+  - `database/schema.sql` (new tables: accounts, account_users)
+  - `database/schema.sql` (modify properties table)
+  - New migration files for account structure
+
+#### 2. Data Migration Strategy (3 points)  
+- **Preserve Existing Data**: Create default accounts for existing users/properties
+- **Maintain Public Access**: Ensure item public URLs continue working unchanged
+- **Migration Scripts**: Safe migration with rollback capabilities
+- **Files Affected**:
+  - `database/migration-account-structure.sql` (new migration file)
+  - Migration validation scripts
+
+#### 3. Basic Account Management API (2 points)
+- **Account Creation**: Simple account creation for new users
+- **Account Listing**: Basic account retrieval for authenticated users
+- **Owner Validation**: Ensure account ownership rules
+- **Files Affected**:
+  - `src/app/api/admin/accounts/route.ts` (new API endpoint)
+  - `src/types/index.ts` (new account types)
+
+### Complexity Analysis
+
+#### Database Architecture Changes (8 points)
+- **New Table Creation**: Accounts and account_users with proper constraints
+- **Foreign Key Updates**: Modify existing property relationships
+- **Index Optimization**: Performance indexes for account-based queries
+- **RLS Foundation**: Basic security policies for new tables
+- **High Risk**: Database structure changes affecting existing data
+
+#### Data Migration Safety (3 points)
+- **Existing Data Preservation**: Zero data loss during migration
+- **Backward Compatibility**: Public item access must remain unchanged
+- **Migration Validation**: Comprehensive pre/post migration checks
+- **Medium Risk**: Data migration always carries some risk
+
+#### Basic API Infrastructure (2 points)
+- **Simple CRUD Operations**: Basic account management endpoints
+- **Type Definitions**: New TypeScript types for accounts
+- **Authentication Integration**: Account context in existing auth flow
+- **Low Risk**: New functionality doesn't affect existing features
+
+### Technical Challenges
+1. **Zero Downtime Migration**: Database changes without breaking existing functionality
+2. **Public Access Preservation**: Maintaining item accessibility via public URLs
+3. **Data Integrity**: Ensuring proper relationships during migration
+4. **Performance**: New account-based queries must be efficient
+
+### Implementation Priority
+**High Priority** - Foundation for entire multi-tenant system; must be stable before proceeding to Phase 2.
+
+### Related Files Reference
+- **Database**: `database/schema.sql`, new migration files
+- **API Routes**: `src/app/api/admin/accounts/route.ts` (new)
+- **Types**: `src/types/index.ts` (account type definitions)
+- **Migration**: New migration and validation scripts
+- **Public Access**: `src/app/item/[publicId]/` (verify unchanged)
+
+---
+
+## REQ-009: Account-Based Property Management System (Phase 2)
+**Date**: January 28, 2025  
+**Type**: Major Feature Implementation (Architecture - Phase 2)  
+**Complexity**: 15 Points (High Complexity)
+
+### Request Summary
+Transform the admin property management system to be account-based, implementing account context throughout the admin interface while maintaining all public functionality unchanged.
+
+### Detailed Requirements
+
+#### 1. Admin API Account Integration (8 points)
+- **Account Context in All Admin APIs**: Modify all `/api/admin/*` endpoints for account filtering
+- **Property Management Updates**: Account-based property CRUD operations
+- **Item Management Updates**: Ensure items respect account boundaries through properties
+- **Analytics Filtering**: Account-based analytics and reporting
+- **Files Affected**:
+  - `src/app/api/admin/properties/route.ts` (account filtering)
+  - `src/app/api/admin/properties/[propertyId]/route.ts` (account validation)
+  - `src/app/api/admin/items/route.ts` (account-based item filtering)
+  - `src/app/api/admin/analytics/route.ts` (account analytics)
+
+#### 2. Authentication & Session Updates (4 points)
+- **Account Context in Sessions**: Track current account in user sessions
+- **Account Switching Logic**: Allow users to switch between accounts they belong to
+- **Permission Validation**: Ensure users can only access accounts they're associated with
+- **Files Affected**:
+  - `src/lib/auth.ts` (account session management)
+  - `src/contexts/AuthContext.tsx` (account context)
+  - `src/app/api/auth/session/route.ts` (account in session data)
+  - `src/middleware.ts` (account-based route protection)
+
+#### 3. Admin Interface Updates (3 points)
+- **Account Selector Component**: UI for switching between accounts
+- **Property Management Updates**: Account-aware property forms and listings
+- **Admin Dashboard Updates**: Account context throughout admin interface
+- **Files Affected**:
+  - `src/components/AccountSelector.tsx` (new component)
+  - `src/app/admin/properties/page.tsx` (account filtering)
+  - `src/app/admin/page.tsx` (account-based item display)
+  - `src/app/admin/layout.tsx` (account selector integration)
+
+### Complexity Analysis
+
+#### Backend API Transformation (8 points)
+- **Multiple Endpoint Updates**: Comprehensive changes to admin API layer
+- **Account Filtering Logic**: Implement account-based data filtering throughout
+- **Performance Optimization**: Efficient account-based database queries
+- **Security Validation**: Ensure proper account access control
+- **High Risk**: Changes to core admin functionality
+
+#### Authentication System Enhancement (4 points)
+- **Session Management**: Complex account context integration
+- **Account Switching**: Secure account transition logic
+- **Permission Systems**: Multi-account access control
+- **Middleware Updates**: Route protection based on account membership
+- **Medium-High Risk**: Authentication changes affect security
+
+#### Frontend Admin Integration (3 points)
+- **Account-Aware Components**: Update existing admin components
+- **User Experience**: Seamless account switching interface
+- **State Management**: Account context throughout admin interface
+- **Medium Risk**: UI changes affecting admin workflow
+
+### Technical Challenges
+1. **Performance**: Efficient account-based filtering across large datasets
+2. **Security**: Robust account isolation and access control
+3. **User Experience**: Intuitive account switching without confusion
+4. **Data Consistency**: Ensuring account boundaries are properly enforced
+
+### Implementation Priority
+**High Priority** - Core admin functionality transformation; enables multi-tenant management.
+
+### Related Files Reference
+- **Admin APIs**: `src/app/api/admin/` (all endpoints)
+- **Authentication**: `src/lib/auth.ts`, `src/contexts/AuthContext.tsx`, `src/middleware.ts`
+- **Admin Interface**: `src/app/admin/` (all admin pages)
+- **Components**: `src/components/AccountSelector.tsx` (new), property/item forms
+- **Session Management**: `src/app/api/auth/session/route.ts`
+- **Public Access**: `src/app/item/[publicId]/` (verify unchanged)
+
+---
+
+## REQ-010: Multi-User Account Collaboration Features (Phase 3)
+**Date**: January 28, 2025  
+**Type**: Feature Implementation (Architecture - Phase 3)  
+**Complexity**: 11 Points (Medium-High Complexity)
+
+### Request Summary
+Complete the multi-tenant system with advanced collaboration features including user invitations, role-based permissions within accounts, and comprehensive account management interface.
+
+### Detailed Requirements
+
+#### 1. User Invitation & Management System (6 points)
+- **User Invitation Flow**: Invite users to join accounts with specific roles
+- **Role-Based Permissions**: Different permission levels within accounts (admin, member, viewer)
+- **Account User Management**: Add/remove users from accounts with proper validation
+- **Files Affected**:
+  - `src/app/api/admin/accounts/[accountId]/users/route.ts` (new user management API)
+  - `src/app/api/admin/invitations/route.ts` (new invitation system)
+  - `src/app/admin/accounts/[accountId]/users/page.tsx` (new user management interface)
+  - `src/components/UserInvitationForm.tsx` (new component)
+
+#### 2. Advanced Account Management Interface (3 points)
+- **Account Settings Page**: Comprehensive account configuration interface
+- **User Role Management**: Interface for managing user permissions within accounts
+- **Account Analytics**: Advanced account-level reporting and insights
+- **Files Affected**:
+  - `src/app/admin/accounts/[accountId]/page.tsx` (new account management page)
+  - `src/app/admin/accounts/[accountId]/settings/page.tsx` (new settings page)
+  - `src/components/AccountManagement.tsx` (new component)
+  - `src/components/UserRoleManager.tsx` (new component)
+
+#### 3. Enhanced Security & Validation (2 points)
+- **Role-Based Access Control**: Granular permissions within accounts
+- **Invitation Security**: Secure invitation tokens and validation
+- **Account Isolation Testing**: Comprehensive multi-account security validation
+- **Files Affected**:
+  - `src/lib/permissions.ts` (new permissions library)
+  - Database RLS policies updates
+  - Security validation utilities
+
+### Complexity Analysis
+
+#### Collaboration System (6 points)
+- **Invitation Infrastructure**: Complex invitation and acceptance flow
+- **Role Management**: Sophisticated permission system within accounts
+- **User Management**: Add/remove users with proper validation and security
+- **Email Integration**: Invitation emails and notifications
+- **Medium-High Risk**: Complex user management features
+
+#### Advanced Interface Development (3 points)
+- **Account Management UI**: Comprehensive administrative interface
+- **User Experience**: Intuitive collaboration and permission management
+- **Role-Based UI**: Interface elements based on user permissions
+- **Low-Medium Risk**: New UI features don't affect core functionality
+
+#### Security Enhancement (2 points)
+- **Permission Systems**: Granular access control implementation
+- **Security Testing**: Multi-account isolation validation
+- **Access Control**: Role-based feature access
+- **Medium Risk**: Security features require careful implementation
+
+### Technical Challenges
+1. **Permission Complexity**: Balancing simplicity with granular control
+2. **Invitation Security**: Secure token-based invitation system
+3. **User Experience**: Intuitive collaboration without overwhelming interface
+4. **Testing Complexity**: Multi-user, multi-account scenarios
+
+### Implementation Priority
+**Medium Priority** - Enhanced features that complete the multi-tenant vision; can be implemented after core system is stable.
+
+### Related Files Reference
+- **User Management**: `src/app/api/admin/accounts/[accountId]/users/` (new)
+- **Invitations**: `src/app/api/admin/invitations/` (new)
+- **Account Interface**: `src/app/admin/accounts/` (new pages)
+- **Components**: New collaboration components
+- **Security**: `src/lib/permissions.ts` (new), RLS policy updates
+- **Email**: Invitation and notification system
+
+---
+
+*Next Request: REQ-011* 
