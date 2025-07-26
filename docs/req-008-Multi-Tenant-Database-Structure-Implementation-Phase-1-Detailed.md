@@ -64,27 +64,27 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Enable RLS: `ALTER TABLE accounts ENABLE ROW LEVEL SECURITY`
 - [x] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM accounts LIMIT 1`
 
-### 3. Create Account-Users Junction Table Schema (1 point)
+### 3. Create Account-Users Junction Table Schema (1 point) -unit tested-
 
 **Goal**: Create many-to-many relationship table between accounts and users
 
 **Substeps**:
-- [ ] Use `mcp_supabase_apply_migration` to create account_users table with name: `create_account_users_table`
-- [ ] Include these columns in the migration:
-  - [ ] `account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE`
-  - [ ] `user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
-  - [ ] `role VARCHAR(50) NOT NULL DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member', 'viewer'))`
-  - [ ] `invited_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
-  - [ ] `joined_at TIMESTAMP WITH TIME ZONE`
-  - [ ] `created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
-- [ ] Add primary key: `PRIMARY KEY (account_id, user_id)`
-- [ ] Add indexes: 
-  - [ ] `CREATE INDEX idx_account_users_account_id ON account_users(account_id)`
-  - [ ] `CREATE INDEX idx_account_users_user_id ON account_users(user_id)`
-  - [ ] `CREATE INDEX idx_account_users_role ON account_users(account_id, role)`
-- [ ] Add comment: `COMMENT ON TABLE account_users IS 'Junction table for account membership and roles'`
-- [ ] Enable RLS: `ALTER TABLE account_users ENABLE ROW LEVEL SECURITY`
-- [ ] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM account_users LIMIT 1`
+- [x] Use `mcp_supabase_apply_migration` to create account_users table with name: `create_account_users_table`
+- [x] Include these columns in the migration:
+  - [x] `account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE`
+  - [x] `user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
+  - [x] `role VARCHAR(50) NOT NULL DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member', 'viewer'))`
+  - [x] `invited_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
+  - [x] `joined_at TIMESTAMP WITH TIME ZONE`
+  - [x] `created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
+- [x] Add primary key: `PRIMARY KEY (account_id, user_id)`
+- [x] Add indexes: 
+  - [x] `CREATE INDEX idx_account_users_account_id ON account_users(account_id)`
+  - [x] `CREATE INDEX idx_account_users_user_id ON account_users(user_id)`
+  - [x] `CREATE INDEX idx_account_users_role ON account_users(account_id, role)`
+- [x] Add comment: `COMMENT ON TABLE account_users IS 'Junction table for account membership and roles'`
+- [x] Enable RLS: `ALTER TABLE account_users ENABLE ROW LEVEL SECURITY`
+- [x] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM account_users LIMIT 1`
 
 ### 4. Add Account Reference to Properties Table (1 point)
 
