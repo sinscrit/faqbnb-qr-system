@@ -98,21 +98,21 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Verify column addition with `mcp_supabase_execute_sql` using `SELECT column_name FROM information_schema.columns WHERE table_name = 'properties' AND column_name = 'account_id'`
 - [x] Test that existing properties are not affected with `mcp_supabase_execute_sql` using `SELECT id, user_id, account_id FROM properties`
 
-### 5. Create Basic RLS Policies for Accounts (1 point)
+### 5. Create Basic RLS Policies for Accounts (1 point) -unit tested-
 
 **Goal**: Implement Row Level Security policies for account access control
 
 **Substeps**:
-- [ ] Use `mcp_supabase_apply_migration` with name: `create_accounts_rls_policies`
-- [ ] Create policy for account owners: 
-  - [ ] `CREATE POLICY "Account owners can manage their accounts" ON accounts FOR ALL USING (owner_id = auth.uid())`
-- [ ] Create policy for account members:
-  - [ ] `CREATE POLICY "Account members can view accounts" ON accounts FOR SELECT USING (EXISTS (SELECT 1 FROM account_users WHERE account_users.account_id = accounts.id AND account_users.user_id = auth.uid()))`
-- [ ] Create policy for account_users table:
-  - [ ] `CREATE POLICY "Account members can view membership" ON account_users FOR SELECT USING (user_id = auth.uid() OR EXISTS (SELECT 1 FROM accounts WHERE accounts.id = account_users.account_id AND accounts.owner_id = auth.uid()))`
-- [ ] Create policy for account owners to manage membership:
-  - [ ] `CREATE POLICY "Account owners can manage membership" ON account_users FOR ALL USING (EXISTS (SELECT 1 FROM accounts WHERE accounts.id = account_users.account_id AND accounts.owner_id = auth.uid()))`
-- [ ] Verify policies with `mcp_supabase_execute_sql` using `SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public' AND tablename IN ('accounts', 'account_users')`
+- [x] Use `mcp_supabase_apply_migration` with name: `create_accounts_rls_policies`
+- [x] Create policy for account owners: 
+  - [x] `CREATE POLICY "Account owners can manage their accounts" ON accounts FOR ALL USING (owner_id = auth.uid())`
+- [x] Create policy for account members:
+  - [x] `CREATE POLICY "Account members can view accounts" ON accounts FOR SELECT USING (EXISTS (SELECT 1 FROM account_users WHERE account_users.account_id = accounts.id AND account_users.user_id = auth.uid()))`
+- [x] Create policy for account_users table:
+  - [x] `CREATE POLICY "Account members can view membership" ON account_users FOR SELECT USING (user_id = auth.uid() OR EXISTS (SELECT 1 FROM accounts WHERE accounts.id = account_users.account_id AND accounts.owner_id = auth.uid()))`
+- [x] Create policy for account owners to manage membership:
+  - [x] `CREATE POLICY "Account owners can manage membership" ON account_users FOR ALL USING (EXISTS (SELECT 1 FROM accounts WHERE accounts.id = account_users.account_id AND accounts.owner_id = auth.uid()))`
+- [x] Verify policies with `mcp_supabase_execute_sql` using `SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public' AND tablename IN ('accounts', 'account_users')`
 
 ### 6. Create Data Migration Script for Default Accounts (1 point)
 
