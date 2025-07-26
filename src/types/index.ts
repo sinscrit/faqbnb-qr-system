@@ -13,7 +13,28 @@ export interface Item {
   updated_at: string;
 }
 
-// Multi-tenant user management types
+// Multi-tenant account and user management types
+export interface Account {
+  id: string;
+  owner_id: string;
+  name: string;
+  description: string | null;
+  settings: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AccountUser {
+  account_id: string;
+  user_id: string;
+  role: 'owner' | 'admin' | 'member' | 'viewer';
+  invited_at: string;
+  joined_at: string | null;
+  created_at: string;
+}
+
+export type AccountRole = 'owner' | 'admin' | 'member' | 'viewer';
+
 export interface User {
   id: string;
   email: string;
@@ -35,6 +56,7 @@ export interface Property {
   id: string;
   user_id: string;
   property_type_id: string;
+  account_id: string | null; // NEW: Account association
   nickname: string;
   address: string | null;
   created_at: string | null;

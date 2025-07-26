@@ -155,13 +155,13 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Verify all properties are linked with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as unlinked_properties FROM properties WHERE account_id IS NULL`
 - [x] Validate property-account relationships with `mcp_supabase_execute_sql` using `SELECT COUNT(*) as linked_properties FROM properties WHERE account_id IS NOT NULL`
 
-### 9. Create Account TypeScript Interfaces (1 point)
+### 9. Create Account TypeScript Interfaces (1 point) -unit tested-
 
 **Goal**: Add TypeScript type definitions for account structures
 
 **Substeps**:
-- [ ] Read current content of `src/types/index.ts`
-- [ ] Add Account interface:
+- [x] Read current content of `src/types/index.ts`
+- [x] Add Account interface:
   ```typescript
   export interface Account {
     id: string;
@@ -173,7 +173,7 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
     updated_at: string;
   }
   ```
-- [ ] Add AccountUser interface:
+- [x] Add AccountUser interface:
   ```typescript
   export interface AccountUser {
     account_id: string;
@@ -184,15 +184,15 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
     created_at: string;
   }
   ```
-- [ ] Add AccountRole enum:
+- [x] Add AccountRole enum:
   ```typescript
   export type AccountRole = 'owner' | 'admin' | 'member' | 'viewer';
   ```
-- [ ] Update existing Property interface to include account_id:
+- [x] Update existing Property interface to include account_id:
   ```typescript
   account_id: string | null; // Add this field
   ```
-- [ ] Verify TypeScript compilation with `run_terminal_cmd` using `npm run build`
+- [x] Verify TypeScript compilation with `run_terminal_cmd` using `npm run build`
 
 ### 10. Create Basic Account Management API Routes (1 point)
 
