@@ -1,5 +1,6 @@
 import { supabase, supabaseAdmin } from './supabase';
 import { Session } from '@supabase/supabase-js';
+import { Account } from '@/types';
 
 // Auth utility types
 export interface AuthUser {
@@ -485,5 +486,142 @@ export async function createAdminUser(
   } catch (error) {
     console.error('Create admin user error:', error);
     return { error: 'Failed to create admin user record' };
+  }
+}
+
+/**
+ * Get all accounts that a user has access to (owner or member)
+ */
+export async function getAccountsForUser(userId: string): Promise<Account[]> {
+  try {
+    const { data: userAccounts, error } = await supabase
+      .from('account_users')
+      .select(`
+        account_id,
+        role,
+        accounts(
+          id,
+          owner_id,
+          name,
+          description,
+          created_at,
+          updated_at
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false, referencedTable: 'accounts' });
+
+    if (error) {
+      console.error('Get accounts for user error:', error);
+      return [];
+    }
+
+    return (userAccounts || [])
+      .filter(ua => ua.accounts)
+      .map(ua => {
+        const account = ua.accounts as any;
+        return {
+          id: account.id,
+          owner_id: account.owner_id,
+          name: account.name,
+          description: account.description,
+          settings: {}, // Default empty settings for now
+          created_at: account.created_at,
+          updated_at: account.updated_at
+        };
+      });
+  } catch (error) {
+    console.error('Get accounts for user error:', error);
+    return [];
+  }
+}
+
+/**
+ * Check if a user has access to a specific account (owner or member)
+ */
+export async function canAccessAccount(userId: string, accountId: string): Promise<boolean> {
+  try {
+    const { data: membership, error } = await supabase
+      .from('account_users')
+      .select('role')
+      .eq('account_id', accountId)
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !membership) {
+      return false;
+    }
+
+    return true; // User has some role in the account
+  } catch (error) {
+    console.error('Can access account error:', error);
+    return false;
+  }
+}
+
+/**
+ * Check if a user is the owner of a specific account
+ */
+export async function validateAccountOwnership(userId: string, accountId: string): Promise<boolean> {
+  try {
+    const { data: membership, error } = await supabase
+      .from('account_users')
+      .select('role')
+      .eq('account_id', accountId)
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !membership) {
+      return false;
+    }
+
+    return membership.role === 'owner';
+  } catch (error) {
+    console.error('Validate account ownership error:', error);
+    return false;
+  }
+}
+
+/**
+ * Get the default account for a user (first owned account)
+ */
+export async function getDefaultAccountForUser(userId: string): Promise<Account | null> {
+  try {
+    const { data: userAccount, error } = await supabase
+      .from('account_users')
+      .select(`
+        account_id,
+        accounts(
+          id,
+          owner_id,
+          name,
+          description,
+          created_at,
+          updated_at
+        )
+      `)
+      .eq('user_id', userId)
+      .eq('role', 'owner')
+      .order('created_at', { ascending: true, referencedTable: 'accounts' })
+      .limit(1)
+      .single();
+
+    if (error || !userAccount || !userAccount.accounts) {
+      return null;
+    }
+
+    const account = userAccount.accounts as any;
+    return {
+      id: account.id,
+      owner_id: account.owner_id,
+      name: account.name,
+      description: account.description,
+      settings: {}, // Default empty settings for now
+      created_at: account.created_at,
+      updated_at: account.updated_at
+    };
+  } catch (error) {
+    console.error('Get default account for user error:', error);
+    return null;
   }
 } 

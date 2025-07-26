@@ -232,27 +232,27 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Test both GET and PUT endpoints
 - [x] Verify proper error handling for unauthorized access
 
-### 12. Add Account Context to Authentication Library (1 point)
+### 12. Add Account Context to Authentication Library (1 point) -unit tested-
 
 **Goal**: Extend auth.ts with account-related functions
 
 **Substeps**:
-- [ ] Read current content of `src/lib/auth.ts`
-- [ ] Add function `getAccountsForUser(userId: string): Promise<Account[]>`:
-  - [ ] Query accounts where user is owner or member
-  - [ ] Include role information from account_users
-  - [ ] Return array of accessible accounts
-- [ ] Add function `canAccessAccount(userId: string, accountId: string): Promise<boolean>`:
-  - [ ] Check if user is account owner or member
-  - [ ] Return boolean access result
-- [ ] Add function `validateAccountOwnership(userId: string, accountId: string): Promise<boolean>`:
-  - [ ] Check if user is account owner specifically
-  - [ ] Return boolean ownership result
-- [ ] Add function `getDefaultAccountForUser(userId: string): Promise<Account | null>`:
-  - [ ] Get user's default account (first owned account)
-  - [ ] Return account or null if none exists
-- [ ] Test new functions with `mcp_supabase_execute_sql` queries to verify logic
-- [ ] Verify TypeScript compilation
+- [x] Read current content of `src/lib/auth.ts`
+- [x] Add function `getAccountsForUser(userId: string): Promise<Account[]>`:
+  - [x] Query accounts where user is owner or member
+  - [x] Include role information from account_users
+  - [x] Return array of accessible accounts
+- [x] Add function `canAccessAccount(userId: string, accountId: string): Promise<boolean>`:
+  - [x] Check if user is account owner or member
+  - [x] Return boolean access result
+- [x] Add function `validateAccountOwnership(userId: string, accountId: string): Promise<boolean>`:
+  - [x] Check if user is account owner specifically
+  - [x] Return boolean ownership result
+- [x] Add function `getDefaultAccountForUser(userId: string): Promise<Account | null>`:
+  - [x] Get user's default account (first owned account)
+  - [x] Return account or null if none exists
+- [x] Test new functions with `mcp_supabase_execute_sql` queries to verify logic
+- [x] Verify TypeScript compilation
 
 ### 13. Validate Public Access Unchanged (1 point)
 
