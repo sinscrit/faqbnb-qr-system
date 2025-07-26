@@ -114,19 +114,19 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
   - [x] `CREATE POLICY "Account owners can manage membership" ON account_users FOR ALL USING (EXISTS (SELECT 1 FROM accounts WHERE accounts.id = account_users.account_id AND accounts.owner_id = auth.uid()))`
 - [x] Verify policies with `mcp_supabase_execute_sql` using `SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public' AND tablename IN ('accounts', 'account_users')`
 
-### 6. Create Data Migration Script for Default Accounts (1 point)
+### 6. Create Data Migration Script for Default Accounts (1 point) -unit tested-
 
 **Goal**: Create default accounts for existing users without data loss
 
 **Substeps**:
-- [ ] Create migration file `tmp/migrate-users-to-accounts.sql`
-- [ ] Add script content to create default account for each existing user:
-  - [ ] `INSERT INTO accounts (owner_id, name, description) SELECT id, 'Default Account', 'Auto-created default account' FROM users WHERE NOT EXISTS (SELECT 1 FROM accounts WHERE accounts.owner_id = users.id)`
-- [ ] Add script to link users to their default accounts:
-  - [ ] `INSERT INTO account_users (account_id, user_id, role, joined_at) SELECT a.id, a.owner_id, 'owner', NOW() FROM accounts a WHERE NOT EXISTS (SELECT 1 FROM account_users au WHERE au.account_id = a.id AND au.user_id = a.owner_id)`
-- [ ] Add validation query: `SELECT u.email, a.name, au.role FROM users u JOIN accounts a ON a.owner_id = u.id JOIN account_users au ON au.account_id = a.id AND au.user_id = u.id`
-- [ ] Test migration script in safe mode with `mcp_supabase_execute_sql` using `BEGIN; [migration content]; ROLLBACK;`
-- [ ] Document expected results in `tmp/migration-validation.md`
+- [x] Create migration file `tmp/migrate-users-to-accounts.sql`
+- [x] Add script content to create default account for each existing user:
+  - [x] `INSERT INTO accounts (owner_id, name, description) SELECT id, 'Default Account', 'Auto-created default account' FROM users WHERE NOT EXISTS (SELECT 1 FROM accounts WHERE accounts.owner_id = users.id)`
+- [x] Add script to link users to their default accounts:
+  - [x] `INSERT INTO account_users (account_id, user_id, role, joined_at) SELECT a.id, a.owner_id, 'owner', NOW() FROM accounts a WHERE NOT EXISTS (SELECT 1 FROM account_users au WHERE au.account_id = a.id AND au.user_id = a.owner_id)`
+- [x] Add validation query: `SELECT u.email, a.name, au.role FROM users u JOIN accounts a ON a.owner_id = u.id JOIN account_users au ON au.account_id = a.id AND au.user_id = u.id`
+- [x] Test migration script in safe mode with `mcp_supabase_execute_sql` using `BEGIN; [migration content]; ROLLBACK;`
+- [x] Document expected results in `tmp/migration-validation.md`
 
 ### 7. Execute Data Migration for Default Accounts (1 point)
 
