@@ -194,24 +194,24 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
   ```
 - [x] Verify TypeScript compilation with `run_terminal_cmd` using `npm run build`
 
-### 10. Create Basic Account Management API Routes (1 point)
+### 10. Create Basic Account Management API Routes (1 point) -unit tested-
 
 **Goal**: Implement GET /api/admin/accounts endpoint
 
 **Substeps**:
-- [ ] Create directory `src/app/api/admin/accounts` 
-- [ ] Create file `src/app/api/admin/accounts/route.ts`
-- [ ] Import required dependencies:
-  - [ ] `import { NextRequest, NextResponse } from 'next/server'`
-  - [ ] `import { supabase } from '@/lib/supabase'`
-  - [ ] `import { Account } from '@/types'`
-- [ ] Implement GET handler to list user's accessible accounts:
-  - [ ] Extract user from auth headers
-  - [ ] Query accounts where user is owner or member
-  - [ ] Return accounts with proper error handling
-- [ ] Add proper TypeScript types for request/response
-- [ ] Test endpoint with manual API call using `mcp_supabase_execute_sql` to verify data
-- [ ] Verify endpoint responds correctly by testing in browser/Postman
+- [x] Create directory `src/app/api/admin/accounts` 
+- [x] Create file `src/app/api/admin/accounts/route.ts`
+- [x] Import required dependencies:
+  - [x] `import { NextRequest, NextResponse } from 'next/server'`
+  - [x] `import { supabase } from '@/lib/supabase'`
+  - [x] `import { Account } from '@/types'`
+- [x] Implement GET handler to list user's accessible accounts:
+  - [x] Extract user from auth headers
+  - [x] Query accounts where user is owner or member
+  - [x] Return accounts with proper error handling
+- [x] Add proper TypeScript types for request/response
+- [x] Test endpoint with manual API call using `mcp_supabase_execute_sql` to verify data
+- [x] Verify endpoint responds correctly by testing in browser/Postman
 
 ### 11. Create Individual Account API Routes (1 point)
 
