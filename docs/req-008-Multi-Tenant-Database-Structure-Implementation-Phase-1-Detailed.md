@@ -44,25 +44,25 @@ Based on database inspection (July 26, 2025 17:24:51 CEST), the following tables
 - [x] Confirm no `accounts` or `account_users` tables exist
 - [x] Validate that items.property_id foreign key exists and is properly constrained
 
-### 2. Create Accounts Table Schema (1 point)
+### 2. Create Accounts Table Schema (1 point) -unit tested-
 
 **Goal**: Create the primary accounts table for multi-tenant architecture
 
 **Substeps**:
-- [ ] Use `mcp_supabase_apply_migration` to create accounts table with name: `create_accounts_table`
-- [ ] Include these columns in the migration:
-  - [ ] `id UUID PRIMARY KEY DEFAULT gen_random_uuid()`
-  - [ ] `owner_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
-  - [ ] `name VARCHAR(255) NOT NULL`
-  - [ ] `description TEXT`
-  - [ ] `settings JSONB DEFAULT '{}'::jsonb`
-  - [ ] `created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
-  - [ ] `updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
-- [ ] Add constraint: `CONSTRAINT accounts_name_owner_unique UNIQUE(owner_id, name)`
-- [ ] Add index: `CREATE INDEX idx_accounts_owner_id ON accounts(owner_id)`
-- [ ] Add comment: `COMMENT ON TABLE accounts IS 'Multi-tenant accounts - primary organizational entity'`
-- [ ] Enable RLS: `ALTER TABLE accounts ENABLE ROW LEVEL SECURITY`
-- [ ] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM accounts LIMIT 1`
+- [x] Use `mcp_supabase_apply_migration` to create accounts table with name: `create_accounts_table`
+- [x] Include these columns in the migration:
+  - [x] `id UUID PRIMARY KEY DEFAULT gen_random_uuid()`
+  - [x] `owner_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE`
+  - [x] `name VARCHAR(255) NOT NULL`
+  - [x] `description TEXT`
+  - [x] `settings JSONB DEFAULT '{}'::jsonb`
+  - [x] `created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
+  - [x] `updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`
+- [x] Add constraint: `CONSTRAINT accounts_name_owner_unique UNIQUE(owner_id, name)`
+- [x] Add index: `CREATE INDEX idx_accounts_owner_id ON accounts(owner_id)`
+- [x] Add comment: `COMMENT ON TABLE accounts IS 'Multi-tenant accounts - primary organizational entity'`
+- [x] Enable RLS: `ALTER TABLE accounts ENABLE ROW LEVEL SECURITY`
+- [x] Verify table creation with `mcp_supabase_execute_sql` using `SELECT * FROM accounts LIMIT 1`
 
 ### 3. Create Account-Users Junction Table Schema (1 point)
 
