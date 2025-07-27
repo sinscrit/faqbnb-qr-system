@@ -88,13 +88,13 @@
 
 **Files**: `src/app/api/admin/analytics/route.ts`, `src/app/api/admin/analytics/reactions/route.ts`
 
-- [ ] Review current analytics aggregation logic
-- [ ] Modify analytics queries to filter by account through item-property relationships
-- [ ] Update visit analytics to respect account boundaries
-- [ ] Update reaction analytics to respect account boundaries  
-- [ ] Add account-based data aggregation for admin analytics
-- [ ] Test analytics filtering with account context using Supabase MCP
-- [ ] Verify analytics data isolation between accounts
+- [x] Review current analytics aggregation logic -unit tested-
+- [x] Modify analytics queries to filter by account through item-property relationships -unit tested-
+- [x] Update visit analytics to respect account boundaries -unit tested-
+- [x] Update reaction analytics to respect account boundaries -unit tested-
+- [x] Add account-based data aggregation for admin analytics -unit tested-
+- [x] Test analytics filtering with account context using Supabase MCP -unit tested-
+- [x] Verify analytics data isolation between accounts -unit tested-
 
 ### 6. Create Basic Account Management API Endpoint (1 Point)
 
