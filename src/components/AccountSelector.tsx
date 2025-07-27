@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDownIcon, CheckIcon, BuildingOfficeIcon, UserIcon, CrownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, CheckIcon, BuildingOfficeIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { Account } from '@/types';
 
@@ -42,9 +42,7 @@ function AccountDisplay({ account, userRole, isOwner, isSelected, onClick, showI
             <p className={`text-sm font-medium truncate ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
               {account.name}
             </p>
-            {isOwner && (
-              <CrownIcon className={`h-4 w-4 ${isSelected ? 'text-blue-600' : 'text-yellow-500'}`} />
-            )}
+            {isOwner && <span className="text-yellow-500">👑</span>}
           </div>
           {showInfo && account.description && (
             <p className={`text-xs truncate ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
@@ -292,7 +290,7 @@ export function AccountInfo({ className = '' }: { className?: string }) {
             <p className="text-sm font-medium text-gray-900 truncate">
               {currentAccount.name}
             </p>
-            {isOwner && <CrownIcon className="h-4 w-4 text-yellow-500" />}
+            {isOwner && <span className="text-yellow-500">👑</span>}
           </div>
           {currentAccount.description && (
             <p className="text-xs text-gray-600 truncate">
