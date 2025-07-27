@@ -1,10 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAccountsForUser, getUserRoleInAccount, getDefaultAccountForUser } from '@/lib/auth';
 
-// GET: Validate current session and return user info
-export async function GET(request: NextRequest) {
+// Enhanced session response interface
+interface SessionResponse {
+  success: boolean;
+  authenticated: boolean;
+  user?: {
+    id: string;
+    email: string;
+    fullName?: string;
+    role: string;
+    currentAccount?: {
+      id: string;
+      name: string;
+      role: string;
+      isOwner: boolean;
+    } | null;
+    availableAccounts?: Array<{
+      id: string;
+      name: string;
+      description?: string;
+      owner_id: string;
+      created_at: string;
+      updated_at: string;
+    }>;
+  };
+  session?: {
+    access_token: string;
+    refresh_token: string;
+    expires_at: number;
+  };
+  accountContext?: {
+    currentAccountId: string | null;
+    totalAccounts: number;
+    userRole: string | null;
+  };
+  message?: string;
+  error?: string;
+  code?: string;
+}
+
+// GET: Validate current session and return user info with account context
+export async function GET(request: NextRequest): Promise<NextResponse<SessionResponse>> {
   try {
-    console.log('Session validation request');
+    console.log('Session validation request with account context...');
 
     // Get the session from the request headers
     const authHeader = request.headers.get('authorization');
@@ -80,7 +120,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if user is an admin
+    // Check if user is an admin first
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
@@ -88,56 +128,143 @@ export async function GET(request: NextRequest) {
       .eq('email', user.email)
       .single();
 
-    if (adminError || !adminUser) {
-      console.log('Admin user not found:', { 
-        userId: user.id, 
-        email: user.email, 
-        error: adminError?.message 
-      });
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'User not found in admin system',
-          code: 'NOT_ADMIN'
-        },
-        { status: 403 }
-      );
+    let validatedUser;
+    let isAdmin = false;
+
+    if (!adminError && adminUser) {
+      // User is an admin
+      validatedUser = {
+        id: user.id,
+        email: adminUser.email,
+        fullName: adminUser.full_name || undefined,
+        role: adminUser.role
+      };
+      isAdmin = adminUser.role === 'admin';
+      console.log('Session validation for admin user:', validatedUser.email);
+    } else {
+      // Check if user is a regular user
+      const { data: regularUser, error: userError } = await supabase
+        .from('users')
+        .select('email, full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      if (userError || !regularUser) {
+        console.log('User not found in system:', { 
+          userId: user.id, 
+          email: user.email, 
+          adminError: adminError?.message,
+          userError: userError?.message
+        });
+        return NextResponse.json(
+          { 
+            success: false, 
+            authenticated: false,
+            error: 'User not found in system',
+            code: 'USER_NOT_FOUND'
+          },
+          { status: 403 }
+        );
+      }
+
+      validatedUser = {
+        id: user.id,
+        email: regularUser.email,
+        fullName: regularUser.full_name || undefined,
+        role: regularUser.role
+      };
+      console.log('Session validation for regular user:', validatedUser.email);
     }
 
-    if (adminUser.role !== 'admin') {
-      console.log('User is not admin:', { 
-        userId: user.id, 
-        email: user.email, 
-        role: adminUser.role 
+    // Get account context for the user
+    try {
+      const accounts = await getAccountsForUser(user.id);
+      console.log(`Found ${accounts.length} accounts for user:`, user.email);
+
+      // Get current account from request header or localStorage hint
+      let currentAccount = null;
+      let currentAccountContext = null;
+      let userRole = null;
+
+      const requestedAccountId = request.headers.get('x-current-account') || 
+                                request.nextUrl.searchParams.get('account_id');
+
+      if (requestedAccountId && accounts.find(acc => acc.id === requestedAccountId)) {
+        // Use requested account if user has access
+        currentAccount = accounts.find(acc => acc.id === requestedAccountId);
+        userRole = await getUserRoleInAccount(user.id, requestedAccountId);
+      } else if (accounts.length > 0) {
+        // Get default account (first owned account or first available)
+        currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
+        if (currentAccount) {
+          userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        }
+      }
+
+      if (currentAccount && userRole) {
+        currentAccountContext = {
+          id: currentAccount.id,
+          name: currentAccount.name,
+          role: userRole,
+          isOwner: currentAccount.owner_id === user.id
+        };
+      }
+
+             // Build enhanced user response with account context
+       const enhancedUser = {
+         ...validatedUser,
+         currentAccount: currentAccountContext,
+         availableAccounts: accounts.map(acc => ({
+           id: acc.id,
+           name: acc.name,
+           description: acc.description || undefined,
+           owner_id: acc.owner_id,
+           created_at: acc.created_at,
+           updated_at: acc.updated_at
+         }))
+       };
+
+      const accountContext = {
+        currentAccountId: currentAccount?.id || null,
+        totalAccounts: accounts.length,
+        userRole: userRole
+      };
+
+      console.log('Session validation successful with account context:', {
+        userEmail: validatedUser.email,
+        isAdmin,
+        currentAccount: currentAccount?.name || 'none',
+        totalAccounts: accounts.length
       });
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'Admin privileges required',
-          code: 'INSUFFICIENT_PRIVILEGES'
+
+      return NextResponse.json({
+        success: true,
+        authenticated: true,
+        user: enhancedUser,
+        accountContext,
+        message: 'Session validation successful with account context'
+      });
+
+    } catch (accountError) {
+      console.error('Failed to load account context:', accountError);
+      
+      // Return user without account context if account loading fails
+      return NextResponse.json({
+        success: true,
+        authenticated: true,
+        user: {
+          ...validatedUser,
+          currentAccount: null,
+          availableAccounts: []
         },
-        { status: 403 }
-      );
+        accountContext: {
+          currentAccountId: null,
+          totalAccounts: 0,
+          userRole: null
+        },
+        message: 'Session validation successful (account context unavailable)'
+      });
     }
-
-    // Return validated user data
-    const validatedUser = {
-      id: user.id,
-      email: adminUser.email,
-      fullName: adminUser.full_name || undefined,
-      role: adminUser.role
-    };
-
-    console.log('Session validation successful for admin:', validatedUser.email);
-
-    return NextResponse.json({
-      success: true,
-      authenticated: true,
-      user: validatedUser,
-      message: 'Session validation successful'
-    });
 
   } catch (error) {
     console.error('Session validation error:', error);
@@ -153,14 +280,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Refresh the current session
-export async function POST(request: NextRequest) {
+// POST: Refresh the current session with account context preservation
+export async function POST(request: NextRequest): Promise<NextResponse<SessionResponse>> {
   try {
-    console.log('Session refresh request');
+    console.log('Session refresh request with account context...');
 
     // Get refresh token from request body
     const body = await request.json().catch(() => ({}));
     const refreshToken = body.refreshToken;
+    const currentAccountId = body.currentAccountId; // Preserve current account
 
     if (!refreshToken) {
       return NextResponse.json(
@@ -225,7 +353,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate admin status
+    // Validate user (admin or regular)
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
@@ -233,45 +361,145 @@ export async function POST(request: NextRequest) {
       .eq('email', user.email)
       .single();
 
-    if (adminError || !adminUser || adminUser.role !== 'admin') {
-      console.log('Admin validation failed during refresh:', { 
-        userId: user.id, 
-        email: user.email,
-        error: adminError?.message,
-        role: adminUser?.role
-      });
-      return NextResponse.json(
-        { 
-          success: false, 
-          authenticated: false,
-          error: 'Admin privileges required',
-          code: 'NOT_ADMIN'
-        },
-        { status: 403 }
-      );
+    let validatedUser;
+    let isAdmin = false;
+
+    if (!adminError && adminUser) {
+      // User is an admin
+      validatedUser = {
+        id: user.id,
+        email: adminUser.email,
+        fullName: adminUser.full_name || undefined,
+        role: adminUser.role
+      };
+      isAdmin = adminUser.role === 'admin';
+    } else {
+      // Check if user is a regular user
+      const { data: regularUser, error: userError } = await supabase
+        .from('users')
+        .select('email, full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      if (userError || !regularUser) {
+        console.log('User validation failed during refresh:', { 
+          userId: user.id, 
+          email: user.email,
+          adminError: adminError?.message,
+          userError: userError?.message
+        });
+        return NextResponse.json(
+          { 
+            success: false, 
+            authenticated: false,
+            error: 'User not found in system',
+            code: 'USER_NOT_FOUND'
+          },
+          { status: 403 }
+        );
+      }
+
+      validatedUser = {
+        id: user.id,
+        email: regularUser.email,
+        fullName: regularUser.full_name || undefined,
+        role: regularUser.role
+      };
     }
 
-    // Return refreshed session data
-    const validatedUser = {
-      id: user.id,
-      email: adminUser.email,
-      fullName: adminUser.full_name || undefined,
-      role: adminUser.role
-    };
+    // Get account context for the user
+    try {
+      const accounts = await getAccountsForUser(user.id);
+      
+      // Preserve current account if provided and valid, otherwise use default
+      let currentAccount = null;
+      let currentAccountContext = null;
+      let userRole = null;
 
-    console.log('Session refresh successful for admin:', validatedUser.email);
+      if (currentAccountId && accounts.find(acc => acc.id === currentAccountId)) {
+        currentAccount = accounts.find(acc => acc.id === currentAccountId);
+        userRole = await getUserRoleInAccount(user.id, currentAccountId);
+      } else if (accounts.length > 0) {
+        currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
+        if (currentAccount) {
+          userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        }
+      }
 
-    return NextResponse.json({
-      success: true,
-      authenticated: true,
-      user: validatedUser,
-      session: {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        expires_at: session.expires_at
-      },
-      message: 'Session refresh successful'
-    });
+      if (currentAccount && userRole) {
+        currentAccountContext = {
+          id: currentAccount.id,
+          name: currentAccount.name,
+          role: userRole,
+          isOwner: currentAccount.owner_id === user.id
+        };
+      }
+
+             // Build enhanced user response with account context
+       const enhancedUser = {
+         ...validatedUser,
+         currentAccount: currentAccountContext,
+         availableAccounts: accounts.map(acc => ({
+           id: acc.id,
+           name: acc.name,
+           description: acc.description || undefined,
+           owner_id: acc.owner_id,
+           created_at: acc.created_at,
+           updated_at: acc.updated_at
+         }))
+       };
+
+      const accountContext = {
+        currentAccountId: currentAccount?.id || null,
+        totalAccounts: accounts.length,
+        userRole: userRole
+      };
+
+      console.log('Session refresh successful with account context:', {
+        userEmail: validatedUser.email,
+        isAdmin,
+        currentAccount: currentAccount?.name || 'none',
+        totalAccounts: accounts.length
+      });
+
+      return NextResponse.json({
+        success: true,
+        authenticated: true,
+        user: enhancedUser,
+        session: {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at
+        },
+        accountContext,
+        message: 'Session refresh successful with account context'
+      });
+
+    } catch (accountError) {
+      console.error('Failed to load account context during refresh:', accountError);
+      
+      // Return refreshed session without account context if account loading fails
+      return NextResponse.json({
+        success: true,
+        authenticated: true,
+        user: {
+          ...validatedUser,
+          currentAccount: null,
+          availableAccounts: []
+        },
+        session: {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at
+        },
+        accountContext: {
+          currentAccountId: null,
+          totalAccounts: 0,
+          userRole: null
+        },
+        message: 'Session refresh successful (account context unavailable)'
+      });
+    }
 
   } catch (error) {
     console.error('Session refresh error:', error);
