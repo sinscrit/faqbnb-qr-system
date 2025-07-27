@@ -2,12 +2,37 @@ import { supabase, supabaseAdmin } from './supabase';
 import { Session } from '@supabase/supabase-js';
 import { Account } from '@/types';
 
-// Auth utility types
+// Auth utility types with account context
 export interface AuthUser {
   id: string;
   email: string;
   fullName?: string;
   role?: string;
+  // Account context for multi-tenant system
+  currentAccount?: {
+    id: string;
+    name: string;
+    role: string; // User's role in this specific account
+    isOwner: boolean;
+  } | null;
+  availableAccounts?: Account[];
+}
+
+// Enhanced auth response with account context
+export interface AuthContextResponse {
+  user: AuthUser | null;
+  accounts: Account[];
+  currentAccount: Account | null;
+  isLoading: boolean;
+  error?: string;
+}
+
+// Account switching response
+export interface AccountSwitchResponse {
+  success: boolean;
+  account?: Account;
+  userRole?: string;
+  error?: string;
 }
 
 // Property and user types for multi-tenant system
@@ -19,6 +44,7 @@ export interface Property {
   address?: string;
   createdAt: string;
   updatedAt: string;
+  accountId: string; // Added for multi-tenant support
 }
 
 export interface User {
@@ -36,12 +62,12 @@ export interface AuthResponse<T = unknown> {
 }
 
 /**
- * Sign in with email and password for admin users
+ * Enhanced sign in with email and password that includes account context
  */
 export async function signInWithEmail(
   email: string, 
   password: string
-): Promise<AuthResponse<{ user: AuthUser; session: Session }>> {
+): Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>> {
   try {
     // Sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -75,17 +101,40 @@ export async function signInWithEmail(
       return { error: 'Access denied - admin privileges required' };
     }
 
+    // Get user's available accounts
+    const accounts = await getAccountsForUser(data.user.id);
+    
+    // Get default account (first owned account or first available)
+    const defaultAccount = await getDefaultAccountForUser(data.user.id) || 
+                          (accounts.length > 0 ? accounts[0] : null);
+
+    // Get user's role in the default account
+    let currentAccountContext = null;
+    if (defaultAccount) {
+      const userRole = await getUserRoleInAccount(data.user.id, defaultAccount.id);
+      currentAccountContext = {
+        id: defaultAccount.id,
+        name: defaultAccount.name,
+        role: userRole || 'member',
+        isOwner: defaultAccount.owner_id === data.user.id
+      };
+    }
+
     const authUser: AuthUser = {
       id: data.user.id,
       email: adminUser.email,
       fullName: adminUser.full_name || undefined,
       role: adminUser.role || undefined,
+      currentAccount: currentAccountContext,
+      availableAccounts: accounts
     };
 
     return {
       data: {
         user: authUser,
         session: data.session,
+        accounts,
+        defaultAccount
       },
     };
   } catch (error) {
@@ -95,7 +144,7 @@ export async function signInWithEmail(
 }
 
 /**
- * Sign out the current user
+ * Enhanced sign out that clears account context
  */
 export async function signOut(): Promise<AuthResponse<null>> {
   try {
@@ -103,6 +152,12 @@ export async function signOut(): Promise<AuthResponse<null>> {
     
     if (error) {
       return { error: error.message };
+    }
+
+    // Clear any cached account context
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentAccount');
+      localStorage.removeItem('availableAccounts');
     }
 
     return { data: null };
@@ -113,7 +168,7 @@ export async function signOut(): Promise<AuthResponse<null>> {
 }
 
 /**
- * Get current session from Supabase
+ * Get current session from Supabase with enhanced validation
  */
 export async function getSession(): Promise<AuthResponse<Session | null>> {
   try {
@@ -129,7 +184,7 @@ export async function getSession(): Promise<AuthResponse<Session | null>> {
       const now = new Date();
       
       if (now > expiresAt) {
-        // Session expired
+        // Session expired - clear account context
         await signOut();
         return { data: null };
       }
@@ -143,7 +198,7 @@ export async function getSession(): Promise<AuthResponse<Session | null>> {
 }
 
 /**
- * Get current authenticated user information (handles both regular users and admins)
+ * Enhanced user information retrieval with account context
  */
 export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
   try {
@@ -171,12 +226,40 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       .single();
 
     if (!adminError && adminUser) {
-      // User is an admin
+      // User is an admin - get account context
+      const accounts = await getAccountsForUser(user.id);
+      
+      // Try to get current account from localStorage or use default
+      let currentAccount = null;
+      if (typeof window !== 'undefined') {
+        const storedAccountId = localStorage.getItem('currentAccount');
+        if (storedAccountId) {
+          currentAccount = accounts.find(acc => acc.id === storedAccountId) || null;
+        }
+      }
+      
+      if (!currentAccount && accounts.length > 0) {
+        currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
+      }
+
+      let currentAccountContext = null;
+      if (currentAccount) {
+        const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        currentAccountContext = {
+          id: currentAccount.id,
+          name: currentAccount.name,
+          role: userRole || 'member',
+          isOwner: currentAccount.owner_id === user.id
+        };
+      }
+
       const authUser: AuthUser = {
         id: user.id,
         email: adminUser.email,
         fullName: adminUser.full_name || undefined,
         role: adminUser.role || undefined,
+        currentAccount: currentAccountContext,
+        availableAccounts: accounts
       };
       return { data: authUser };
     }
@@ -192,11 +275,40 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       return { data: null };
     }
 
+    // Get account context for regular user
+    const accounts = await getAccountsForUser(user.id);
+    
+    // Regular users typically have access to fewer accounts
+    let currentAccount = null;
+    if (typeof window !== 'undefined') {
+      const storedAccountId = localStorage.getItem('currentAccount');
+      if (storedAccountId) {
+        currentAccount = accounts.find(acc => acc.id === storedAccountId) || null;
+      }
+    }
+    
+    if (!currentAccount && accounts.length > 0) {
+      currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
+    }
+
+    let currentAccountContext = null;
+    if (currentAccount) {
+      const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+      currentAccountContext = {
+        id: currentAccount.id,
+        name: currentAccount.name,
+        role: userRole || 'member',
+        isOwner: currentAccount.owner_id === user.id
+      };
+    }
+
     const authUser: AuthUser = {
       id: user.id,
       email: regularUser.email,
       fullName: regularUser.full_name || undefined,
       role: regularUser.role || undefined,
+      currentAccount: currentAccountContext,
+      availableAccounts: accounts
     };
 
     return { data: authUser };
@@ -207,8 +319,108 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
 }
 
 /**
- * Server-side auth requirement helper
- * Throws an error if the user is not authenticated or not an admin
+ * Switch user's current account context
+ */
+export async function switchAccount(accountId: string): Promise<AccountSwitchResponse> {
+  try {
+    const userResponse = await getUser();
+    
+    if (userResponse.error || !userResponse.data) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const user = userResponse.data;
+    
+    // Verify user has access to the requested account
+    const hasAccess = await canAccessAccount(user.id, accountId);
+    if (!hasAccess) {
+      return { success: false, error: 'Access denied to requested account' };
+    }
+
+    // Get account details
+    const { data: account, error: accountError } = await supabase
+      .from('accounts')
+      .select('*')
+      .eq('id', accountId)
+      .single();
+
+    if (accountError || !account) {
+      return { success: false, error: 'Account not found' };
+    }
+
+    // Get user's role in the account
+    const userRole = await getUserRoleInAccount(user.id, accountId);
+    
+    // Store current account in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currentAccount', accountId);
+    }
+
+    const accountData: Account = {
+      id: account.id,
+      owner_id: account.owner_id,
+      name: account.name,
+      description: account.description,
+      settings: account.settings || {},
+      created_at: account.created_at,
+      updated_at: account.updated_at
+    };
+
+    return {
+      success: true,
+      account: accountData,
+      userRole: userRole || 'member'
+    };
+  } catch (error) {
+    console.error('Switch account error:', error);
+    return { success: false, error: 'Failed to switch account' };
+  }
+}
+
+/**
+ * Get user's role in a specific account
+ */
+export async function getUserRoleInAccount(userId: string, accountId: string): Promise<string | null> {
+  try {
+    const { data: membership, error } = await supabase
+      .from('account_users')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('account_id', accountId)
+      .single();
+
+    if (error || !membership) {
+      return null;
+    }
+
+    return membership.role;
+  } catch (error) {
+    console.error('Get user role in account error:', error);
+    return null;
+  }
+}
+
+/**
+ * Clear current account context (useful for account switching)
+ */
+export function clearAccountContext(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('currentAccount');
+  }
+}
+
+/**
+ * Get stored current account ID from localStorage
+ */
+export function getStoredCurrentAccountId(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('currentAccount');
+  }
+  return null;
+}
+
+/**
+ * Server-side auth requirement helper with account context
  */
 export async function requireAuth(): Promise<AuthUser> {
   const userResponse = await getUser();
@@ -226,6 +438,63 @@ export async function requireAuth(): Promise<AuthUser> {
   }
 
   return userResponse.data;
+}
+
+/**
+ * Enhanced auth requirement with account context validation
+ */
+export async function requireAuthWithAccount(requiredAccountId?: string): Promise<{ user: AuthUser; account: Account | null }> {
+  const user = await requireAuth();
+  
+  let account = null;
+  if (requiredAccountId) {
+    // Verify user has access to required account
+    const hasAccess = await canAccessAccount(user.id, requiredAccountId);
+    if (!hasAccess) {
+      throw new Error('Access denied to required account');
+    }
+    
+    const { data: accountData, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .eq('id', requiredAccountId)
+      .single();
+      
+    if (error || !accountData) {
+      throw new Error('Required account not found');
+    }
+    
+    account = {
+      id: accountData.id,
+      owner_id: accountData.owner_id,
+      name: accountData.name,
+      description: accountData.description,
+      settings: accountData.settings || {},
+      created_at: accountData.created_at,
+      updated_at: accountData.updated_at
+    };
+  } else if (user.currentAccount) {
+    // Use user's current account context
+    const { data: accountData, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .eq('id', user.currentAccount.id)
+      .single();
+      
+    if (!error && accountData) {
+      account = {
+        id: accountData.id,
+        owner_id: accountData.owner_id,
+        name: accountData.name,
+        description: accountData.description,
+        settings: accountData.settings || {},
+        created_at: accountData.created_at,
+        updated_at: accountData.updated_at
+      };
+    }
+  }
+  
+  return { user, account };
 }
 
 /**
@@ -269,9 +538,9 @@ export function isSessionExpiringSoon(session: Session | null): boolean {
 }
 
 /**
- * Check if a user can access a specific property
+ * Enhanced property access check with account context
  */
-export async function canAccessProperty(userId: string, propertyId: string): Promise<boolean> {
+export async function canAccessProperty(userId: string, propertyId: string, accountId?: string): Promise<boolean> {
   try {
     // First check if user is an admin (admins can access all properties)
     const { data: adminUser } = await supabase
@@ -284,10 +553,10 @@ export async function canAccessProperty(userId: string, propertyId: string): Pro
       return true;
     }
 
-    // Check if user owns the property
+    // Check if property exists and get its account context
     const { data: property, error } = await supabase
       .from('properties')
-      .select('user_id')
+      .select('user_id, account_id')
       .eq('id', propertyId)
       .single();
 
@@ -295,7 +564,22 @@ export async function canAccessProperty(userId: string, propertyId: string): Pro
       return false;
     }
 
-    return property.user_id === userId;
+    // If account context is specified, property must belong to that account
+    if (accountId && property.account_id !== accountId) {
+      return false;
+    }
+
+    // Check if user owns the property
+    if (property.user_id === userId) {
+      return true;
+    }
+
+    // Check if user has access to the property's account
+    if (property.account_id) {
+      return await canAccessAccount(userId, property.account_id);
+    }
+
+    return false;
   } catch (error) {
     console.error('Can access property error:', error);
     return false;
@@ -303,11 +587,11 @@ export async function canAccessProperty(userId: string, propertyId: string): Pro
 }
 
 /**
- * Get all properties for a specific user
+ * Get all properties for a specific user with account filtering
  */
-export async function getUserProperties(userId: string): Promise<Property[]> {
+export async function getUserProperties(userId: string, accountId?: string): Promise<Property[]> {
   try {
-    const { data: properties, error } = await supabase
+    let query = supabase
       .from('properties')
       .select(`
         id,
@@ -315,11 +599,19 @@ export async function getUserProperties(userId: string): Promise<Property[]> {
         property_type_id,
         nickname,
         address,
+        account_id,
         created_at,
         updated_at
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
+
+    // Filter by account if specified
+    if (accountId) {
+      query = query.eq('account_id', accountId);
+    }
+
+    const { data: properties, error } = await query;
 
     if (error) {
       console.error('Get user properties error:', error);
@@ -332,6 +624,7 @@ export async function getUserProperties(userId: string): Promise<Property[]> {
       propertyTypeId: p.property_type_id,
       nickname: p.nickname,
       address: p.address || undefined,
+      accountId: p.account_id,
       createdAt: p.created_at,
       updatedAt: p.updated_at,
     }));
@@ -378,15 +671,20 @@ export async function createUser(authUser: Omit<User, 'createdAt' | 'updatedAt'>
 }
 
 /**
- * Check if a user owns a specific property
+ * Enhanced property ownership check with account context
  */
-export async function isPropertyOwner(userId: string, propertyId: string): Promise<boolean> {
+export async function isPropertyOwner(userId: string, propertyId: string, accountId?: string): Promise<boolean> {
   try {
-    const { data: property, error } = await supabase
+    let query = supabase
       .from('properties')
-      .select('user_id')
-      .eq('id', propertyId)
-      .single();
+      .select('user_id, account_id')
+      .eq('id', propertyId);
+
+    if (accountId) {
+      query = query.eq('account_id', accountId);
+    }
+
+    const { data: property, error } = await query.single();
 
     if (error || !property) {
       return false;

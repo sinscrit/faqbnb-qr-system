@@ -100,13 +100,13 @@
 
 **Files**: `src/app/api/admin/accounts/route.ts` (NEW)
 
-- [ ] Create new file `src/app/api/admin/accounts/route.ts`
-- [ ] Implement `GET()` function to list accounts user belongs to
-- [ ] Add account membership validation through `account_users` table
-- [ ] Include account role information in response
-- [ ] Add proper error handling and authentication validation
-- [ ] Test account listing for users with multiple account memberships
-- [ ] Test response includes proper account details and user roles
+- [x] Create new file `src/app/api/admin/accounts/route.ts` -unit tested-
+- [x] Implement `GET()` function to list accounts user belongs to -unit tested-
+- [x] Add account membership validation through `account_users` table -unit tested-
+- [x] Include account role information in response -unit tested-
+- [x] Add proper error handling and authentication validation -unit tested-
+- [x] Test account listing for users with multiple account memberships -unit tested-
+- [x] Test response includes proper account details and user roles -unit tested-
 
 ---
 
