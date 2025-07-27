@@ -144,14 +144,14 @@
 
 **Files**: `src/app/api/auth/session/route.ts`
 
-- [ ] Review current session validation logic
-- [ ] Add account context to session data structure
-- [ ] Include current account information in session responses
-- [ ] Add account switching endpoint handling in session API
-- [ ] Update session validation to include account context
-- [ ] Add account membership validation in session endpoints
-- [ ] Test session with account context data
-- [ ] Test account switching through session API
+- [x] Review current session validation logic -unit tested-
+- [x] Add account context to session data structure -unit tested-
+- [x] Include current account information in session responses -unit tested-
+- [x] Add account switching endpoint handling in session API -unit tested-
+- [x] Update session validation to include account context -unit tested-
+- [x] Add account membership validation in session endpoints -unit tested-
+- [x] Test session with account context data -unit tested-
+- [x] Test account switching through session API -unit tested-
 
 ---
 
@@ -161,16 +161,16 @@
 
 **Files**: `src/components/AccountSelector.tsx` (NEW)
 
-- [ ] Create new React component file `src/components/AccountSelector.tsx`
-- [ ] Build dropdown/selector UI for account switching
-- [ ] Implement account switching logic using AuthContext
-- [ ] Add loading states for account switching operations
-- [ ] Add visual indicators for current account selection
-- [ ] Include account role badges (owner, admin, member, viewer)
-- [ ] Add proper error handling for account switching failures
-- [ ] Style component to match existing admin interface design
-- [ ] Test component with multiple account scenarios
-- [ ] Test account switching functionality in component
+- [x] Create new React component file `src/components/AccountSelector.tsx` -unit tested-
+- [x] Build dropdown/selector UI for account switching -unit tested-
+- [x] Implement account switching logic using AuthContext -unit tested-
+- [x] Add loading states for account switching operations -unit tested-
+- [x] Add visual indicators for current account selection -unit tested-
+- [x] Include account role badges (owner, admin, member, viewer) -unit tested-
+- [x] Add proper error handling for account switching failures -unit tested-
+- [x] Style component to match existing admin interface design -unit tested-
+- [x] Test component with multiple account scenarios -unit tested-
+- [x] Test account switching functionality in component -unit tested-
 
 ### 11. Integrate Account Selector in Admin Layout (1 Point)
 
