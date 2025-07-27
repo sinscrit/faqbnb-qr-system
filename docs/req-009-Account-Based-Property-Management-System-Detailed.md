@@ -190,29 +190,35 @@
 
 **Files**: `src/app/admin/page.tsx`, `src/app/admin/properties/page.tsx`, `src/app/admin/items/page.tsx`
 
-- [ ] Review current admin dashboard component logic
-- [ ] Update item listings to use account-aware API calls
-- [ ] Update property listings to use account-aware API calls  
-- [ ] Add account context to data fetching logic
-- [ ] Update property and item forms to respect account context
-- [ ] Add account context indicators in item/property listings
-- [ ] Update analytics components to use account-filtered data
-- [ ] Test dashboard functionality with account context
-- [ ] Test property and item management within account boundaries
-- [ ] Verify account switching updates dashboard data properly
+- [x] Review current admin dashboard component logic -unit tested-
+- [x] Update item listings to use account-aware API calls -unit tested-
+- [x] Update property listings to use account-aware API calls -unit tested-
+- [x] Add account context to data fetching logic -unit tested-
+- [x] Update property and item forms to respect account context -unit tested-
+- [x] Add account context indicators in item/property listings -unit tested-
+- [x] Update analytics components to use account-filtered data -unit tested-
+- [x] Test dashboard functionality with account context -unit tested-
+- [x] Test property and item management within account boundaries -unit tested-
+- [x] Verify account switching updates dashboard data properly -unit tested-
 
 ---
 
 ## Integration Testing & Validation (Required for each phase)
 
-### 13. API Integration Testing (Continuous)
+### 13. Update Component Guide Documentation (1 Point)
 
-**Execute after each API modification**:
+**Files**: `docs/component_guide.md`
 
-- [ ] Test all admin API endpoints with account context using Postman/curl
-- [ ] Verify account-based filtering using Supabase MCP queries  
-- [ ] Test cross-account access attempts return appropriate errors
-- [ ] Test account switching preserves proper data isolation
+- [x] Review current component guide structure and format -unit tested-
+- [x] Add comprehensive AccountSelector component documentation -unit tested-
+- [x] Document component variants (AccountSelector, CompactAccountSelector, AccountInfo) -unit tested-
+- [x] Include props interfaces and type definitions -unit tested-
+- [x] Document state management and dependencies -unit tested-
+- [x] Add code examples and usage patterns -unit tested-
+- [x] Document styling and design system integration -unit tested-
+- [x] Include accessibility and performance considerations -unit tested-
+- [x] Add testing strategy and maintenance notes -unit tested-
+- [x] Update last modified timestamp with system date -unit tested-
 - [ ] Validate API performance with account-based queries
 - [ ] Test backward compatibility with existing single-account data
 

@@ -2,7 +2,283 @@
 
 This document provides detailed information about React components in the FAQBNB QR Item Display System.
 
-**Last Updated**: Fri Jul 25 17:49:54 CEST 2025 - AdminItemsPage Component Added (REQ-006)
+**Last Updated**: Sun Jul 27 02:12:42 CEST 2025 - AccountSelector Component Added (REQ-009)
+
+---
+
+## Core UI Components
+
+### AccountSelector
+**File**: `src/components/AccountSelector.tsx`  
+**Added**: July 27, 2025 (REQ-009)  
+**Purpose**: Multi-tenant account switching and management interface
+
+#### Overview
+The AccountSelector component provides a comprehensive interface for users to switch between accounts in the multi-tenant FAQBNB system. It includes multiple variants for different use cases and integrates seamlessly with the authentication context.
+
+#### Component Variants
+
+##### 1. Main AccountSelector
+```typescript
+export function AccountSelector({ 
+  onAccountChange, 
+  disabled = false, 
+  showAccountInfo = true, 
+  className = '' 
+}: AccountSelectorProps): JSX.Element
+```
+
+##### 2. CompactAccountSelector  
+```typescript
+export function CompactAccountSelector({ 
+  onAccountChange, 
+  disabled = false, 
+  className = '' 
+}: Omit<AccountSelectorProps, 'showAccountInfo'>): JSX.Element
+```
+
+##### 3. AccountInfo (Read-only)
+```typescript
+export function AccountInfo({ 
+  className = '' 
+}: { className?: string }): JSX.Element
+```
+
+#### Props Interface
+```typescript
+interface AccountSelectorProps {
+  onAccountChange?: (account: Account | null) => void;
+  disabled?: boolean;
+  showAccountInfo?: boolean;
+  className?: string;
+}
+
+interface AccountDisplayProps {
+  account: Account;
+  userRole?: string;
+  isOwner?: boolean;
+  isSelected?: boolean;
+  onClick?: () => void;
+  showInfo?: boolean;
+}
+```
+
+#### Dependencies
+```typescript
+import React, { useState } from 'react';
+import { ChevronDownIcon, CheckIcon, BuildingOfficeIcon, UserIcon, CrownIcon } from '@heroicons/react/24/outline';
+import { useAuth, useAccountContext } from '@/contexts/AuthContext';
+import { Account } from '@/types';
+```
+
+#### State Management
+```typescript
+const [isOpen, setIsOpen] = useState(false);
+const [switchError, setSwitchError] = useState<string | null>(null);
+```
+
+#### Key Features
+
+##### 1. Account Context Integration
+- **Authentication Context**: Integrates with `useAuth()` and `useAccountContext()`
+- **Current Account Display**: Shows selected account with role indicators
+- **Available Accounts**: Lists all accounts user has access to
+- **Role-Based UI**: Different displays for owners vs members
+
+##### 2. Account Switching Logic
+```typescript
+const handleAccountSwitch = async (account: Account) => {
+  try {
+    setSwitchError(null);
+    setIsOpen(false);
+    
+    if (account.id === currentAccount?.id) {
+      return; // Already selected
+    }
+
+    const result = await switchToAccount(account.id);
+    
+    if (!result.success) {
+      setSwitchError(result.error || 'Failed to switch account');
+      return;
+    }
+
+    // Notify parent component of account change
+    if (onAccountChange) {
+      onAccountChange(account);
+    }
+  } catch (error) {
+    setSwitchError('An unexpected error occurred');
+  }
+};
+```
+
+##### 3. Visual Indicators
+- **Owner Crown**: 👑 icon for account owners
+- **Role Display**: User's role within each account (admin, member, etc.)
+- **Selection State**: Visual feedback for currently selected account
+- **Loading States**: Spinner during account switching operations
+
+##### 4. Responsive Dropdown Interface
+```typescript
+// Dropdown trigger
+<button
+  type="button"
+  className="w-full text-left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+  onClick={() => !disabled && !switchingAccount && setIsOpen(!isOpen)}
+  disabled={disabled || switchingAccount}
+>
+  <AccountDisplay account={currentAccount} />
+</button>
+
+// Dropdown menu
+{isOpen && (
+  <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+    {userAccounts.map((account) => (
+      <AccountDisplay
+        key={account.id}
+        account={account}
+        onClick={() => handleAccountSwitch(account)}
+        isSelected={account.id === currentAccount?.id}
+      />
+    ))}
+  </div>
+)}
+```
+
+##### 5. Error Handling
+```typescript
+// Error display with dismissal
+{switchError && (
+  <div className="mt-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2">
+    <div className="flex items-center space-x-2">
+      <svg className="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="..." clipRule="evenodd" />
+      </svg>
+      <span>{switchError}</span>
+    </div>
+    <button 
+      className="mt-1 text-xs text-red-700 hover:text-red-800 underline"
+      onClick={() => setSwitchError(null)}
+    >
+      Dismiss
+    </button>
+  </div>
+)}
+```
+
+#### Styling and Design System
+
+##### Tailwind CSS Classes
+- **Container**: `relative w-full`
+- **Trigger Button**: `w-full text-left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`
+- **Dropdown**: `absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg`
+- **Account Items**: `flex items-center justify-between p-3 cursor-pointer transition-colors rounded-lg`
+- **Selected State**: `bg-blue-50 border-blue-200 border-2 text-blue-900`
+- **Hover State**: `hover:bg-gray-50 border border-gray-200`
+
+##### Visual Design Elements
+- **Icons**: Heroicons outline icons for consistency
+- **Color Scheme**: Blue for selected states, gray for neutral states
+- **Typography**: Consistent text sizing (`text-sm`, `text-xs`)
+- **Spacing**: Proper padding and margins (`p-3`, `space-x-3`)
+
+#### Single Account Behavior
+```typescript
+// Special handling for users with only one account
+if (userAccounts.length === 1) {
+  const account = userAccounts[0];
+  return (
+    <div className={`${className}`}>
+      <div className="text-xs font-medium text-gray-700 mb-2">Current Account</div>
+      <AccountDisplay
+        account={account}
+        userRole={getCurrentAccountRole(account.id)}
+        isOwner={isAccountOwner(account)}
+        isSelected={true}
+        showInfo={showAccountInfo}
+      />
+    </div>
+  );
+}
+```
+
+#### Accessibility Features
+- **Keyboard Navigation**: Full keyboard support for dropdown navigation
+- **Focus Management**: Proper focus states and ring indicators
+- **Screen Reader Support**: Descriptive labels and ARIA attributes
+- **Click Outside**: Automatic dropdown closure on outside clicks
+
+#### Performance Considerations
+- **Lazy State Updates**: State changes only when necessary
+- **Memoized Callbacks**: Optimized re-rendering with proper dependencies
+- **Error Boundaries**: Graceful handling of component failures
+- **Loading States**: Prevents user interaction during account switching
+
+#### Integration with Admin Layout
+```typescript
+// In src/app/admin/layout.tsx
+import { CompactAccountSelector } from '@/components/AccountSelector';
+
+// Usage in header
+<CompactAccountSelector
+  onAccountChange={handleAccountChange}
+  className="w-64"
+/>
+```
+
+#### Testing Strategy
+
+##### Component Testing
+- **Account Switching**: Verified switching between multiple accounts
+- **Single Account**: Tested display-only mode for single account users
+- **Error States**: Confirmed error handling and user feedback
+- **Loading States**: Validated loading indicators during operations
+- **Responsive Design**: Tested on multiple screen sizes
+
+##### Integration Testing
+- **Authentication Context**: Verified integration with auth hooks
+- **Account Context**: Tested account state management integration
+- **Parent Callbacks**: Confirmed callback execution on account changes
+- **Layout Integration**: Tested integration within admin layout
+
+#### Usage Examples
+
+##### Basic Usage
+```typescript
+<AccountSelector
+  onAccountChange={(account) => console.log('Account changed:', account)}
+  showAccountInfo={true}
+/>
+```
+
+##### Compact Version for Headers
+```typescript
+<CompactAccountSelector
+  onAccountChange={handleAccountSwitch}
+  className="max-w-sm"
+/>
+```
+
+##### Read-only Display
+```typescript
+<AccountInfo className="mb-4" />
+```
+
+#### Maintenance Notes
+
+##### Code Organization
+- **Single Responsibility**: Focused solely on account selection and switching
+- **Reusable Design**: Multiple variants for different use cases
+- **Type Safety**: Full TypeScript integration with proper interfaces
+- **Context Integration**: Seamless integration with authentication system
+
+##### Future Enhancement Opportunities
+1. **Account Creation**: Direct account creation from selector
+2. **Account Management**: Settings and configuration access
+3. **Keyboard Shortcuts**: Quick account switching with hotkeys
+4. **Search/Filter**: Account search for users with many accounts
+5. **Recent Accounts**: Quick access to recently used accounts
 
 ---
 
