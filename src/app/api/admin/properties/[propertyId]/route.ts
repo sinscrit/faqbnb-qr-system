@@ -1,6 +1,237 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { getUser, isAdmin } from '@/lib/auth';
+import { createClient } from '@supabase/supabase-js';
+
+// Helper function to validate authentication for admin operations (copied from properties/route.ts)
+async function validateAdminAuth(request: NextRequest) {
+  try {
+    // Extract JWT token from Authorization header
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required - no valid Authorization header',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    const token = authHeader.substring(7);
+    if (!token) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required - no token provided',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Create a Supabase client to validate the token
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase environment variables');
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Server configuration error',
+            code: 'SERVER_ERROR' 
+          },
+          { status: 500 }
+        )
+      };
+    }
+
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    // Validate the token and get user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.log('Token validation failed:', userError?.message);
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Invalid or expired token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    if (!user.email) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'User email not found in token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Check if user is an admin
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('email, full_name, role')
+      .eq('id', user.id)
+      .eq('email', user.email)
+      .single();
+
+    if (adminError || !adminUser) {
+      // If not admin, check if user is a regular user
+      const { data: regularUser, error: userError } = await supabase
+        .from('users')
+        .select('email, full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      if (userError || !regularUser) {
+        console.log('User validation failed:', { 
+          userId: user.id, 
+          email: user.email, 
+          adminError: adminError?.message,
+          userError: userError?.message
+        });
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'User not found in system',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+
+      // Return regular user data
+      const validatedUser = {
+        id: user.id,
+        email: regularUser.email,
+        fullName: regularUser.full_name || undefined,
+        role: regularUser.role
+      };
+
+      console.log('Authentication successful for user:', validatedUser.email);
+      return { user: validatedUser, isAdmin: false };
+    }
+
+    // Return admin user data
+    const validatedUser = {
+      id: user.id,
+      email: adminUser.email,
+      fullName: adminUser.full_name || undefined,
+      role: adminUser.role
+    };
+
+    console.log('Authentication successful for admin:', validatedUser.email);
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
+
+  } catch (error) {
+    console.error('Auth validation error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Authentication validation failed',
+          code: 'AUTH_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
+
+// Helper function to extract account context from request (copied from properties/route.ts)
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+  try {
+    // Extract account_id from query parameters or headers
+    const { searchParams } = new URL(request.url);
+    const requestedAccountId = searchParams.get('account_id') || request.headers.get('x-account-id');
+    
+    if (requestedAccountId) {
+      // Validate user has access to the requested account
+      const { data: accountAccess, error: accessError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('account_id', requestedAccountId)
+        .eq('user_id', userId)
+        .single();
+        
+      if (accessError || !accountAccess) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to requested account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: requestedAccountId, accountRole: accountAccess.role };
+    }
+    
+    // If no specific account requested, get user's default account
+    if (isAdmin) {
+      // Admin can see all accounts - no specific filtering unless requested
+      return { accountId: null, accountRole: 'admin' };
+    } else {
+      // Regular user: get their primary account
+      const { data: userAccounts, error: accountsError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+        
+      if (accountsError || !userAccounts) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'No account access found for user',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: userAccounts.account_id, accountRole: userAccounts.role };
+    }
+  } catch (error) {
+    console.error('Account context extraction error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to determine account context',
+          code: 'ACCOUNT_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
 
 // Property validation helper
 function validatePropertyData(data: any) {
@@ -23,53 +254,120 @@ function validatePropertyData(data: any) {
   return errors;
 }
 
-// Check if user can access specific property
-async function canAccessProperty(user: any, propertyId: string): Promise<{ canAccess: boolean; isAdmin: boolean; property?: any }> {
-  const userIsAdmin = isAdmin(user);
+// Check if user can access specific property within account context
+async function canAccessProperty(user: any, propertyId: string, isAdmin: boolean, accountId: string | null): Promise<{ canAccess: boolean; property?: any; error?: any }> {
+  try {
+    // Get property with owner and account information
+    let propertyQuery = supabase
+      .from('properties')
+      .select(`
+        id,
+        nickname,
+        address,
+        created_at,
+        updated_at,
+        user_id,
+        account_id,
+        property_type_id,
+        property_types!inner(id, name, display_name),
+        users!inner(id, email, full_name)
+      `)
+      .eq('id', propertyId);
 
-  // Get property with owner information
-  const { data: property, error: propertyError } = await supabase
-    .from('properties')
-    .select(`
-      id,
-      nickname,
-      address,
-      created_at,
-      updated_at,
-      user_id,
-      property_type_id,
-      property_types!inner(id, name, display_name),
-      users!inner(id, email, full_name)
-    `)
-    .eq('id', propertyId)
-    .single();
+    // Add account filtering if account context is specified
+    if (accountId) {
+      propertyQuery = propertyQuery.eq('account_id', accountId);
+    }
 
-  if (propertyError || !property) {
-    return { canAccess: false, isAdmin: userIsAdmin };
+    const { data: property, error: propertyError } = await propertyQuery.single();
+
+    if (propertyError || !property) {
+      return { 
+        canAccess: false, 
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Property not found or not accessible within current account context',
+            code: 'NOT_FOUND' 
+          },
+          { status: 404 }
+        )
+      };
+    }
+
+    // Admin can access any property within their account context
+    if (isAdmin) {
+      // If no account context, admin can access any property
+      // If account context specified, property must belong to that account
+      const canAccess = !accountId || property.account_id === accountId;
+      
+      if (!canAccess) {
+        return { 
+          canAccess: false, 
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Property does not belong to the specified account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { canAccess: true, property };
+    } else {
+      // Regular user can only access their own properties within their account
+      const canAccess = property.user_id === user.id && 
+                       accountId && property.account_id === accountId;
+      
+      if (!canAccess) {
+        return { 
+          canAccess: false, 
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to property within account context',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { canAccess: true, property };
+    }
+  } catch (error) {
+    console.error('Property access validation error:', error);
+    return { 
+      canAccess: false, 
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to validate property access',
+          code: 'VALIDATION_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
   }
-
-  // Admin can access any property, regular user can only access their own
-  const canAccess = userIsAdmin || property.user_id === user.id;
-
-  return { canAccess, isAdmin: userIsAdmin, property };
 }
 
-// GET /api/admin/properties/[propertyId] - Get specific property
+// GET /api/admin/properties/[propertyId] - Get specific property with account context
 export async function GET(
   request: NextRequest,
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    // Get user and validate authentication
-    const userResult = await getUser();
-    if (userResult.error || !userResult.data) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Validate authentication
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      return authResult.error;
     }
 
-    const user = userResult.data;
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
     const { propertyId } = params;
 
     if (!propertyId) {
@@ -79,19 +377,30 @@ export async function GET(
       );
     }
 
-    // Check access permissions
-    const { canAccess, property } = await canAccessProperty(user, propertyId);
-
-    if (!canAccess) {
-      return NextResponse.json(
-        { success: false, error: 'Property not found or access denied' },
-        { status: 404 }
-      );
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
     }
+
+    const { accountId, accountRole } = accountContext;
+
+    // Check access permissions with account context
+    const { canAccess, property, error } = await canAccessProperty(user, propertyId, userIsAdmin, accountId);
+
+    if (!canAccess || error) {
+      return error;
+    }
+
+    console.log(`Property detail accessed by: ${user.email}, account: ${accountId || 'all'}, property: ${property.nickname}`);
 
     return NextResponse.json({
       success: true,
-      data: property
+      data: property,
+      accountContext: {
+        accountId,
+        accountRole
+      }
     });
 
   } catch (error) {
@@ -103,22 +412,21 @@ export async function GET(
   }
 }
 
-// PUT /api/admin/properties/[propertyId] - Update specific property
+// PUT /api/admin/properties/[propertyId] - Update specific property with account validation
 export async function PUT(
   request: NextRequest,
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    // Get user and validate authentication
-    const userResult = await getUser();
-    if (userResult.error || !userResult.data) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Validate authentication
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      return authResult.error;
     }
 
-    const user = userResult.data;
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
     const { propertyId } = params;
 
     if (!propertyId) {
@@ -140,14 +448,19 @@ export async function PUT(
       );
     }
 
-    // Check access permissions
-    const { canAccess, property } = await canAccessProperty(user, propertyId);
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
 
-    if (!canAccess) {
-      return NextResponse.json(
-        { success: false, error: 'Property not found or access denied' },
-        { status: 404 }
-      );
+    const { accountId, accountRole } = accountContext;
+
+    // Check access permissions with account context
+    const { canAccess, property, error } = await canAccessProperty(user, propertyId, userIsAdmin, accountId);
+
+    if (!canAccess || error) {
+      return error;
     }
 
     // Verify property type exists
@@ -174,6 +487,7 @@ export async function PUT(
         updated_at: new Date().toISOString()
       })
       .eq('id', propertyId)
+      .eq('account_id', accountId || property.account_id) // Ensure account context is maintained
       .select(`
         id,
         nickname,
@@ -181,6 +495,7 @@ export async function PUT(
         created_at,
         updated_at,
         user_id,
+        account_id,
         property_type_id,
         property_types!inner(id, name, display_name),
         users!inner(id, email, full_name)
@@ -190,15 +505,21 @@ export async function PUT(
     if (updateError) {
       console.error('Error updating property:', updateError);
       return NextResponse.json(
-        { success: false, error: 'Failed to update property' },
+        { success: false, error: 'Failed to update property within account context' },
         { status: 500 }
       );
     }
 
+    console.log(`Property updated by: ${user.email}, account: ${accountId || 'all'}, property: ${updatedProperty.nickname}`);
+
     return NextResponse.json({
       success: true,
       data: updatedProperty,
-      message: 'Property updated successfully'
+      message: 'Property updated successfully',
+      accountContext: {
+        accountId,
+        accountRole
+      }
     });
 
   } catch (error) {
@@ -210,20 +531,20 @@ export async function PUT(
   }
 }
 
-// DELETE /api/admin/properties/[propertyId] - Delete specific property
+// DELETE /api/admin/properties/[propertyId] - Delete specific property with account validation
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    // Get session and validate authentication
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Validate authentication
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      return authResult.error;
     }
+
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
 
     const { propertyId } = params;
 
@@ -234,14 +555,19 @@ export async function DELETE(
       );
     }
 
-    // Check access permissions
-    const { canAccess } = await canAccessProperty(session, propertyId);
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
 
-    if (!canAccess) {
-      return NextResponse.json(
-        { success: false, error: 'Property not found or access denied' },
-        { status: 404 }
-      );
+    const { accountId, accountRole } = accountContext;
+
+    // Check access permissions with account context
+    const { canAccess, property, error } = await canAccessProperty(user, propertyId, userIsAdmin, accountId);
+
+    if (!canAccess || error) {
+      return error;
     }
 
     // Check if property has any items
@@ -266,23 +592,30 @@ export async function DELETE(
       );
     }
 
-    // Delete the property
+    // Delete the property within account context
     const { error: deleteError } = await supabase
       .from('properties')
       .delete()
-      .eq('id', propertyId);
+      .eq('id', propertyId)
+      .eq('account_id', accountId || property.account_id); // Ensure account context is maintained
 
     if (deleteError) {
       console.error('Error deleting property:', deleteError);
       return NextResponse.json(
-        { success: false, error: 'Failed to delete property' },
+        { success: false, error: 'Failed to delete property within account context' },
         { status: 500 }
       );
     }
 
+    console.log(`Property deleted by: ${user.email}, account: ${accountId || 'all'}, property: ${property.nickname}`);
+
     return NextResponse.json({
       success: true,
-      message: 'Property deleted successfully'
+      message: 'Property deleted successfully',
+      accountContext: {
+        accountId,
+        accountRole
+      }
     });
 
   } catch (error) {

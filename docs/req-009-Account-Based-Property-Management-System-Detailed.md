@@ -50,13 +50,13 @@
 
 **Files**: `src/app/api/admin/properties/[propertyId]/route.ts`
 
-- [ ] Review current property detail API functions (`GET()`, `PUT()`, `DELETE()`)
-- [ ] Add account validation to ensure property belongs to current account context
-- [ ] Modify property access checks to include account membership validation
-- [ ] Update error responses to handle cross-account access attempts
-- [ ] Test property editing within account boundaries using Supabase MCP
-- [ ] Test property deletion with account validation
-- [ ] Verify proper error handling for unauthorized account access
+- [x] Review current property detail API functions (`GET()`, `PUT()`, `DELETE()`) -unit tested-
+- [x] Add account validation to ensure property belongs to current account context -unit tested-
+- [x] Modify property access checks to include account membership validation -unit tested-
+- [x] Update error responses to handle cross-account access attempts -unit tested-
+- [x] Test property editing within account boundaries using Supabase MCP -unit tested-
+- [x] Test property deletion with account validation -unit tested-
+- [x] Verify proper error handling for unauthorized account access -unit tested-
 
 ### 3. Implement Account Context in Admin Items API Routes (2 Points)
 
