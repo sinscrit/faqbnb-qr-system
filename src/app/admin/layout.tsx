@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { Property } from '@/types';
+import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
+import { CompactAccountSelector } from '@/components/AccountSelector';
+import { Account } from '@/types';
+import { Property } from '@/lib/auth';
 
 // Property Context for admin layout
 interface PropertyContextType {
@@ -16,21 +18,32 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading, signOut, isAdmin, userProperties, selectedProperty, setSelectedProperty } = useAuth();
+  const { currentAccount, userAccounts } = useAccountContext();
   
   const [availableProperties, setAvailableProperties] = useState<Property[]>([]);
   const [loadingProperties, setLoadingProperties] = useState(false);
 
-  // Load properties for admin users
+  // Load properties for the current account context
   useEffect(() => {
     const loadProperties = async () => {
-      if (!user || !isAdmin) {
-        setAvailableProperties(userProperties as Property[]);
+      if (!user) {
+        setAvailableProperties([]);
         return;
       }
 
       setLoadingProperties(true);
       try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+
+        // Include current account in request if available
+        if (currentAccount) {
+          headers['x-current-account'] = currentAccount.id;
+        }
+
         const response = await fetch('/api/admin/properties', {
+          headers,
           credentials: 'include'
         });
 
@@ -38,7 +51,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           const data = await response.json();
           if (data.success) {
             setAvailableProperties(data.data || []);
+            
+            // Clear selected property if it's not available in current account
+            if (selectedProperty && data.data) {
+              const propertyExists = data.data.some((p: Property) => p.id === selectedProperty.id);
+              if (!propertyExists) {
+                setSelectedProperty(null);
+              }
+            }
+          } else {
+            console.warn('Failed to load properties:', data.error);
+            setAvailableProperties([]);
           }
+        } else {
+          console.warn('Properties request failed:', response.status);
+          setAvailableProperties([]);
         }
       } catch (error) {
         console.error('Error loading properties:', error);
@@ -51,9 +78,17 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     if (user) {
       loadProperties();
     }
-  }, [user, isAdmin, userProperties]);
+  }, [user, currentAccount, selectedProperty, setSelectedProperty]);
 
-  // Navigation items based on user role
+  // Handle account change
+  const handleAccountChange = (account: Account | null) => {
+    console.log('Account changed in admin layout:', account?.name || 'none');
+    // Properties will be reloaded automatically due to the useEffect dependency on currentAccount
+    // Clear current property selection since we're switching accounts
+    setSelectedProperty(null);
+  };
+
+  // Navigation items based on user role and account context
   const getNavigationItems = () => {
     const baseItems = [
       { name: 'Dashboard', href: '/admin', icon: '📊' },
@@ -126,7 +161,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="border-b border-gray-200 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Title and role */}
+            {/* Left side - Title and user info */}
             <div className="flex items-center space-x-4">
               <div>
                 <h1 className="text-xl font-bold text-gray-900">FAQBNB Admin</h1>
@@ -137,38 +172,65 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                     {isAdmin ? '👑 Admin' : '👤 User'}
                   </span>
                   <span className="text-sm text-gray-600">{user.email}</span>
+                  {currentAccount && (
+                    <span className="text-xs text-gray-500">
+                      • {currentAccount.name}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Center - Property Selector (for admins) */}
-            {isAdmin && availableProperties.length > 0 && (
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Filter by Property:</label>
-                <select
-                  value={selectedProperty?.id || ''}
-                  onChange={(e) => {
-                    const propertyId = e.target.value;
-                    const property = propertyId ? availableProperties.find(p => p.id === propertyId) : null;
-                    setSelectedProperty(property || null);
-                  }}
-                  className="block px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={loadingProperties}
-                >
-                  <option value="">All Properties</option>
-                  {availableProperties.map((property) => (
-                    <option key={property.id} value={property.id}>
-                      {property.nickname} ({property.property_types?.display_name || 'Unknown'})
+            {/* Center - Account Selector and Property Filter */}
+            <div className="flex items-center space-x-6">
+              {/* Account Selector */}
+              {userAccounts.length > 0 && (
+                <div className="min-w-0">
+                  <CompactAccountSelector
+                    onAccountChange={handleAccountChange}
+                    className="w-64"
+                  />
+                </div>
+              )}
+
+              {/* Property Filter (only show if properties are available) */}
+              {availableProperties.length > 0 && (
+                <div className="flex items-center space-x-2 min-w-0">
+                  <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Property:</label>
+                  <select
+                    value={selectedProperty?.id || ''}
+                    onChange={(e) => {
+                      const propertyId = e.target.value;
+                      const property = propertyId ? availableProperties.find(p => p.id === propertyId) : null;
+                      setSelectedProperty(property || null);
+                    }}
+                    className="block px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
+                    disabled={loadingProperties}
+                  >
+                    <option value="">
+                      {loadingProperties ? 'Loading...' : 'All Properties'}
                     </option>
-                  ))}
-                </select>
-              </div>
-            )}
+                    {availableProperties.map((property) => (
+                      <option key={property.id} value={property.id}>
+                        {property.nickname}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Account Context Info */}
+              {!currentAccount && userAccounts.length > 0 && (
+                <div className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+                  Please select an account
+                </div>
+              )}
+            </div>
 
             {/* Right side - Logout */}
             <button
               onClick={() => signOut()}
-              className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50"
+              className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 whitespace-nowrap"
             >
               Logout
             </button>
@@ -206,15 +268,44 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Property context info for users */}
-      {!isAdmin && selectedProperty && (
-        <div className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
-          <div className="text-sm">
-            <div className="font-medium">Current Property</div>
-            <div>{selectedProperty.nickname}</div>
+      {/* Status indicators */}
+      <div className="fixed bottom-4 right-4 space-y-2">
+        {/* Property context info for users */}
+        {!isAdmin && selectedProperty && (
+          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+            <div className="text-sm">
+              <div className="font-medium">Current Property</div>
+              <div>{selectedProperty.nickname}</div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Account context info */}
+        {currentAccount && (
+          <div className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
+            <div className="text-sm">
+              <div className="font-medium">Active Account</div>
+              <div className="flex items-center space-x-1">
+                <span>{currentAccount.name}</span>
+                {user?.currentAccount?.isOwner && <span>👑</span>}
+              </div>
+              <div className="text-xs opacity-90">
+                Role: {user?.currentAccount?.role || 'member'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Loading indicator */}
+        {loadingProperties && (
+          <div className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg">
+            <div className="text-sm flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-3 w-3 border-b border-white"></div>
+              <span>Loading properties...</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -231,4 +322,4 @@ export default function AdminLayout({
       </AdminLayoutContent>
     </AuthProvider>
   );
-} 
+}
