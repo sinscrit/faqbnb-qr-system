@@ -157,6 +157,82 @@ async function validateAdminAuth(request: NextRequest) {
   }
 }
 
+// Helper function to extract account context from request
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+  try {
+    // Extract account_id from query parameters or headers
+    const { searchParams } = new URL(request.url);
+    const requestedAccountId = searchParams.get('account_id') || request.headers.get('x-account-id');
+    
+    if (requestedAccountId) {
+      // Validate user has access to the requested account
+      const { data: accountAccess, error: accessError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('account_id', requestedAccountId)
+        .eq('user_id', userId)
+        .single();
+        
+      if (accessError || !accountAccess) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to requested account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: requestedAccountId, accountRole: accountAccess.role };
+    }
+    
+    // If no specific account requested, get user's default account
+    if (isAdmin) {
+      // Admin can see all accounts - no specific filtering unless requested
+      return { accountId: null, accountRole: 'admin' };
+    } else {
+      // Regular user: get their primary account
+      const { data: userAccounts, error: accountsError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+        
+      if (accountsError || !userAccounts) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'No account access found for user',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: userAccounts.account_id, accountRole: userAccounts.role };
+    }
+  } catch (error) {
+    console.error('Account context extraction error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to determine account context',
+          code: 'ACCOUNT_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
+
 // Property validation helper
 function validatePropertyData(data: any) {
   const errors: string[] = [];
@@ -178,7 +254,7 @@ function validatePropertyData(data: any) {
   return errors;
 }
 
-// GET /api/admin/properties - List properties based on user role
+// GET /api/admin/properties - List properties based on user role and account context
 export async function GET(request: NextRequest) {
   try {
     // Validate authentication
@@ -190,9 +266,17 @@ export async function GET(request: NextRequest) {
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
 
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
+
     let propertiesQuery;
-    if (userIsAdmin) {
-      // Admin can see all properties with user information
+    if (userIsAdmin && !accountId) {
+      // Admin can see all properties when no specific account is requested
       propertiesQuery = supabase
         .from('properties')
         .select(`
@@ -202,13 +286,32 @@ export async function GET(request: NextRequest) {
           created_at,
           updated_at,
           user_id,
+          account_id,
           property_type_id,
           property_types!inner(id, name, display_name),
           users!inner(id, email, full_name)
         `)
         .order('created_at', { ascending: false });
+    } else if (userIsAdmin && accountId) {
+      // Admin viewing specific account's properties
+      propertiesQuery = supabase
+        .from('properties')
+        .select(`
+          id,
+          nickname,
+          address,
+          created_at,
+          updated_at,
+          user_id,
+          account_id,
+          property_type_id,
+          property_types!inner(id, name, display_name),
+          users!inner(id, email, full_name)
+        `)
+        .eq('account_id', accountId)
+        .order('created_at', { ascending: false });
     } else {
-      // Regular user can only see their own properties
+      // Regular user can only see properties within their account context
       propertiesQuery = supabase
         .from('properties')
         .select(`
@@ -218,8 +321,10 @@ export async function GET(request: NextRequest) {
           created_at,
           updated_at,
           property_type_id,
+          account_id,
           property_types!inner(id, name, display_name)
         `)
+        .eq('account_id', accountId)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
     }
@@ -234,12 +339,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(`Properties list accessed by: ${user.email}, found ${properties?.length || 0} properties`);
+    console.log(`Properties list accessed by: ${user.email}, account: ${accountId || 'all'}, found ${properties?.length || 0} properties`);
 
     return NextResponse.json({
       success: true,
       data: properties || [],
-      isAdmin: userIsAdmin
+      isAdmin: userIsAdmin,
+      accountContext: {
+        accountId,
+        accountRole
+      }
     });
 
   } catch (error) {
@@ -251,7 +360,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/admin/properties - Create new property
+// POST /api/admin/properties - Create new property within account context
 export async function POST(request: NextRequest) {
   try {
     // Validate authentication
@@ -262,6 +371,22 @@ export async function POST(request: NextRequest) {
 
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
+
+    // Ensure we have an account context for property creation
+    if (!accountId) {
+      return NextResponse.json(
+        { success: false, error: 'Account context required for property creation' },
+        { status: 400 }
+      );
+    }
 
     // Parse request body
     const body = await request.json();
@@ -278,20 +403,21 @@ export async function POST(request: NextRequest) {
     // Determine user_id for the property
     let targetUserId = user.id;
     
-    // If admin is creating property for another user
+    // If admin is creating property for another user within the account
     if (userIsAdmin && body.userId) {
       targetUserId = body.userId;
       
-      // Verify the target user exists
-      const { data: targetUser, error: targetUserError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('id', body.userId)
+      // Verify the target user exists and has access to this account
+      const { data: targetUserAccess, error: targetUserError } = await supabase
+        .from('account_users')
+        .select('user_id')
+        .eq('account_id', accountId)
+        .eq('user_id', body.userId)
         .single();
         
-      if (targetUserError || !targetUser) {
+      if (targetUserError || !targetUserAccess) {
         return NextResponse.json(
-          { success: false, error: 'Target user not found' },
+          { success: false, error: 'Target user not found in account or does not have access' },
           { status: 404 }
         );
       }
@@ -317,11 +443,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the property
+    // Create the property within the account context
     const { data: newProperty, error: createError } = await supabase
       .from('properties')
       .insert({
         user_id: targetUserId,
+        account_id: accountId,
         property_type_id: body.propertyTypeId,
         nickname: body.nickname.trim(),
         address: body.address?.trim() || null
@@ -333,6 +460,7 @@ export async function POST(request: NextRequest) {
         created_at,
         updated_at,
         user_id,
+        account_id,
         property_type_id,
         property_types!inner(id, name, display_name)
       `)
@@ -346,12 +474,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`Property created by: ${user.email}, property: ${newProperty.nickname}`);
+    console.log(`Property created by: ${user.email}, account: ${accountId}, property: ${newProperty.nickname}`);
 
     return NextResponse.json({
       success: true,
       data: newProperty,
-      message: 'Property created successfully'
+      message: 'Property created successfully',
+      accountContext: {
+        accountId,
+        accountRole
+      }
     }, { status: 201 });
 
   } catch (error) {

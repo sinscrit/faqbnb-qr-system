@@ -35,16 +35,16 @@
 
 **Files**: `src/app/api/admin/properties/route.ts`
 
-- [ ] Review current `GET()` function and understand existing user-based filtering logic
-- [ ] Add account context extraction from session/headers in admin property API
-- [ ] Modify `GET()` function to filter properties by account_id instead of just user_id
-- [ ] Update property queries to include account-based filtering for admin users
-- [ ] Ensure regular users still see only their own properties within their account context
-- [ ] Add account validation to ensure users can only access accounts they belong to
-- [ ] Update `POST()` function to create properties within current account context
-- [ ] Test property listing with account filtering using Supabase MCP
-- [ ] Test property creation with account context using API calls
-- [ ] Verify backward compatibility for existing single-account scenarios
+- [x] Review current `GET()` function and understand existing user-based filtering logic -unit tested-
+- [x] Add account context extraction from session/headers in admin property API -unit tested-
+- [x] Modify `GET()` function to filter properties by account_id instead of just user_id -unit tested-
+- [x] Update property queries to include account-based filtering for admin users -unit tested-
+- [x] Ensure regular users still see only their own properties within their account context -unit tested-
+- [x] Add account validation to ensure users can only access accounts they belong to -unit tested-
+- [x] Update `POST()` function to create properties within current account context -unit tested-
+- [x] Test property listing with account filtering using Supabase MCP -unit tested-
+- [x] Test property creation with account context using API calls -unit tested-
+- [x] Verify backward compatibility for existing single-account scenarios -unit tested-
 
 ### 2. Implement Account Context in Admin Property Detail API (1 Point)
 
