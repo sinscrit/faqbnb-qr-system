@@ -38,7 +38,6 @@ async function validateAdminAuth(request: NextRequest) {
     // Create a Supabase client to validate the token
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseUrl || !supabaseKey) {
       console.error('Missing Supabase environment variables');
@@ -55,9 +54,8 @@ async function validateAdminAuth(request: NextRequest) {
     }
 
     const supabaseClient = createClient(supabaseUrl, supabaseKey);
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseKey);
 
-    // Set the session using the provided token
+    // Validate the token and get user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError || !user) {
@@ -88,33 +86,53 @@ async function validateAdminAuth(request: NextRequest) {
     }
 
     // Check if user is an admin
-    // Note: In production, this would use a service role key to bypass RLS
-    // For now, we'll validate based on the JWT token claims and known admin email
-    const isKnownAdmin = user.email === 'sinscrit@gmail.com' && user.id === 'fa5911d7-f7c5-4ed4-8179-594359453d7f';
-    const adminUser = isKnownAdmin ? { email: user.email, role: 'admin', full_name: null } : null;
-    const adminError = null;
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('email, full_name, role')
+      .eq('id', user.id)
+      .eq('email', user.email)
+      .single();
 
-    if (adminError || !adminUser || adminUser.role !== 'admin') {
-      console.log('Admin validation failed:', { 
-        userId: user.id, 
-        email: user.email, 
-        adminError: adminError || 'No admin access',
-        hasAdminUser: !!adminUser,
-        role: adminUser?.role 
-      });
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Admin privileges required',
-            code: 'FORBIDDEN' 
-          },
-          { status: 403 }
-        )
+    if (adminError || !adminUser) {
+      // If not admin, check if user is a regular user
+      const { data: regularUser, error: userError } = await supabase
+        .from('users')
+        .select('email, full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      if (userError || !regularUser) {
+        console.log('User validation failed:', { 
+          userId: user.id, 
+          email: user.email, 
+          adminError: adminError?.message,
+          userError: userError?.message
+        });
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'User not found in system',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+
+      // Return regular user data
+      const validatedUser = {
+        id: user.id,
+        email: regularUser.email,
+        fullName: regularUser.full_name || undefined,
+        role: regularUser.role
       };
+
+      console.log('Authentication successful for user:', validatedUser.email);
+      return { user: validatedUser, isAdmin: false };
     }
 
-    // Return validated user data
+    // Return admin user data
     const validatedUser = {
       id: user.id,
       email: adminUser.email,
@@ -123,16 +141,92 @@ async function validateAdminAuth(request: NextRequest) {
     };
 
     console.log('Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: true };
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
 
   } catch (error) {
-    console.error('Admin auth validation error:', error);
+    console.error('Auth validation error:', error);
     return {
       error: NextResponse.json(
         { 
           success: false, 
           error: 'Authentication validation failed',
           code: 'AUTH_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
+
+// Helper function to extract account context from request
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+  try {
+    // Extract account_id from query parameters or headers
+    const { searchParams } = new URL(request.url);
+    const requestedAccountId = searchParams.get('account_id') || request.headers.get('x-account-id');
+    
+    if (requestedAccountId) {
+      // Validate user has access to the requested account
+      const { data: accountAccess, error: accessError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('account_id', requestedAccountId)
+        .eq('user_id', userId)
+        .single();
+        
+      if (accessError || !accountAccess) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to requested account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: requestedAccountId, accountRole: accountAccess.role };
+    }
+    
+    // If no specific account requested, get user's default account
+    if (isAdmin) {
+      // Admin can see all accounts - no specific filtering unless requested
+      return { accountId: null, accountRole: 'admin' };
+    } else {
+      // Regular user: get their primary account
+      const { data: userAccounts, error: accountsError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+        
+      if (accountsError || !userAccounts) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'No account access found for user',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: userAccounts.account_id, accountRole: userAccounts.role };
+    }
+  } catch (error) {
+    console.error('Account context extraction error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to determine account context',
+          code: 'ACCOUNT_ERROR' 
         },
         { status: 500 }
       )
@@ -150,7 +244,18 @@ export async function GET(request: NextRequest) {
       return authResult.error;
     }
     
-    console.log('Authentication successful for user:', authResult.user.email);
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
+    
+    console.log('Authentication successful for user:', user.email, 'account:', accountId || 'all');
     
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
@@ -158,12 +263,12 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     
-    console.log('Query params:', { search, propertyId, page, limit });
+    console.log('Query params:', { search, propertyId, page, limit, accountId });
     
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
     
-    // Build query with search and property filtering
+    // Build query with search, property, and account filtering
     let query = supabase
       .from('items')
       .select(`
@@ -173,10 +278,24 @@ export async function GET(request: NextRequest) {
         qr_code_url, 
         created_at,
         property_id,
-        properties!inner(id, nickname, user_id)
+        properties!inner(id, nickname, user_id, account_id)
       `)
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
+
+    // Apply account-based filtering
+    if (userIsAdmin && !accountId) {
+      // Admin can see all items when no specific account is requested
+      // No additional filtering needed
+    } else if (userIsAdmin && accountId) {
+      // Admin viewing specific account's items
+      query = query.eq('properties.account_id', accountId);
+    } else {
+      // Regular user can only see items within their account context
+      query = query
+        .eq('properties.account_id', accountId)
+        .eq('properties.user_id', user.id);
+    }
 
     // Add property filter if provided
     if (propertyId) {
@@ -249,13 +368,15 @@ export async function GET(request: NextRequest) {
           id: item.id,
           publicId: item.public_id,
           name: item.name,
-          linksCount: linksCount || 0,
-          qrCodeUrl: item.qr_code_url || undefined,
-          createdAt: item.created_at || new Date().toISOString(),
+          qrCodeUrl: item.qr_code_url,
+          createdAt: item.created_at,
           propertyId: item.property_id,
-          propertyNickname: (item as any).properties?.nickname,
-          visitCounts,
-          reactionCounts,
+          property: item.properties,
+          linksCount: linksCount || 0,
+          analytics: {
+            visits: visitCounts,
+            reactions: reactionCounts,
+          },
         };
       })
     );
@@ -263,14 +384,21 @@ export async function GET(request: NextRequest) {
     const response: ItemsListResponse = {
       success: true,
       data: itemsWithCounts,
+      pagination: {
+        page,
+        limit,
+        total: itemsWithCounts.length,
+        hasMore: itemsWithCounts.length === limit,
+      },
+      accountContext: {
+        accountId,
+        accountRole
+      }
     };
 
-    // Add audit log for admin operations with analytics summary
-    const totalVisits = itemsWithCounts.reduce((sum, item) => sum + (item.visitCounts?.allTime || 0), 0);
-    const totalReactions = itemsWithCounts.reduce((sum, item) => sum + (item.reactionCounts?.total || 0), 0);
-    console.log(`Admin items list accessed by: ${authResult.user?.email}, found ${itemsWithCounts.length} items (${totalVisits} total visits, ${totalReactions} total reactions)`);
-
+    console.log(`Items list response prepared with ${itemsWithCounts.length} items for account: ${accountId || 'all'}`);
     return NextResponse.json(response);
+    
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
@@ -290,7 +418,18 @@ export async function POST(request: NextRequest) {
       return authResult.error;
     }
     
-    console.log('Authentication successful for user:', authResult.user.email);
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
+    
+    console.log('Authentication successful for user:', user.email, 'account:', accountId || 'all');
     
     const body: CreateItemRequest = await request.json();
     console.log('Request body:', body);
@@ -353,23 +492,42 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    console.log('Validation passed, checking property...');
+    console.log('Validation passed, checking property within account context...');
     
-    // Verify the property exists and user has access to it
-    const { data: property, error: propertyError } = await supabase
+    // Verify the property exists and belongs to the current account context
+    let propertyQuery = supabase
       .from('properties')
-      .select('id')
-      .eq('id', body.propertyId)
-      .single();
+      .select('id, account_id, user_id')
+      .eq('id', body.propertyId);
+
+    // Apply account filtering
+    if (accountId) {
+      propertyQuery = propertyQuery.eq('account_id', accountId);
+    }
+
+    // For regular users, also check user ownership
+    if (!userIsAdmin) {
+      propertyQuery = propertyQuery.eq('user_id', user.id);
+    }
+
+    const { data: property, error: propertyError } = await propertyQuery.single();
 
     if (propertyError || !property) {
       return NextResponse.json(
-        { success: false, error: 'Invalid property ID or property not found' },
+        { success: false, error: 'Invalid property ID, property not found, or property not accessible within current account context' },
         { status: 400 }
       );
     }
+
+    // Additional validation for account context
+    if (accountId && property.account_id !== accountId) {
+      return NextResponse.json(
+        { success: false, error: 'Property does not belong to the specified account' },
+        { status: 403 }
+      );
+    }
     
-    console.log('Property verified, creating item...');
+    console.log('Property verified within account context, creating item...');
     
     // Create item in database using transaction
     const { data: newItem, error: itemError } = await supabase
@@ -451,10 +609,14 @@ export async function POST(request: NextRequest) {
           displayOrder: link.display_order || 0,
         })),
       },
+      accountContext: {
+        accountId,
+        accountRole
+      }
     };
     
     // Add audit log for admin operations
-    console.log(`Item created by admin: ${authResult.user?.email}, item: ${newItem.name} (${newItem.public_id})`);
+    console.log(`Item created by: ${user.email}, account: ${accountId || 'all'}, item: ${newItem.name} (${newItem.public_id})`);
     
     console.log('Item creation completed successfully');
     return NextResponse.json(response, { status: 201 });

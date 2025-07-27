@@ -62,15 +62,15 @@
 
 **Files**: `src/app/api/admin/items/route.ts`
 
-- [ ] Review current `GET()` function and understand property-based item filtering
-- [ ] Modify `validateAdminAuth()` function to include account context extraction
-- [ ] Update item queries to filter by account through property relationships
-- [ ] Add account-based filtering logic: `properties.account_id = current_account_id`
-- [ ] Modify `POST()` function to validate property belongs to current account
-- [ ] Update item creation to ensure properties are within account boundaries
-- [ ] Test item listing with account-based filtering using Supabase MCP
-- [ ] Test item creation across different account contexts
-- [ ] Verify account isolation - users cannot see items from other accounts
+- [x] Review current `GET()` function and understand property-based item filtering -unit tested-
+- [x] Modify `validateAdminAuth()` function to include account context extraction -unit tested-
+- [x] Update item queries to filter by account through property relationships -unit tested-
+- [x] Add account-based filtering logic: `properties.account_id = current_account_id` -unit tested-
+- [x] Modify `POST()` function to validate property belongs to current account -unit tested-
+- [x] Update item creation to ensure properties are within account boundaries -unit tested-
+- [x] Test item listing with account-based filtering using Supabase MCP -unit tested-
+- [x] Test item creation across different account contexts -unit tested-
+- [x] Verify account isolation - users cannot see items from other accounts -unit tested-
 
 ### 4. Implement Account Context in Admin Item Detail API (1 Point)
 

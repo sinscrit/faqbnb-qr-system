@@ -99,6 +99,10 @@ export interface ItemResponse {
     }[];
   };
   error?: string;
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
 }
 
 export interface ItemsListResponse {
@@ -107,22 +111,39 @@ export interface ItemsListResponse {
     id: string;
     publicId: string;
     name: string;
-    linksCount: number;
     qrCodeUrl?: string;
     createdAt: string;
-    propertyId?: string; // NEW: Property association
-    propertyNickname?: string; // NEW: Property info for display
-    // NEW: Analytics data
-    visitCounts?: {
-      last24Hours: number;
-      last7Days: number;
-      allTime: number;
-    };
-    reactionCounts?: {
-      total: number;
-      byType: ReactionCounts;
+    propertyId: string;
+    property: any; // Property object with account info
+    linksCount: number;
+    analytics: {
+      visits: {
+        last24Hours: number;
+        last7Days: number;
+        allTime: number;
+      };
+      reactions: {
+        total: number;
+        byType: {
+          like: number;
+          dislike: number;
+          love: number;
+          confused: number;
+          total: number;
+        };
+      };
     };
   }[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    hasMore: boolean;
+  };
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
   error?: string;
 }
 
