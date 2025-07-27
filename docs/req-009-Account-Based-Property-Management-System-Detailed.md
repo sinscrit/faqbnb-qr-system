@@ -116,15 +116,15 @@
 
 **Files**: `src/lib/auth.ts`
 
-- [ ] Review current `getUser()` and `getSession()` functions
-- [ ] Add new function `getUserAccounts()` to retrieve user's account memberships
-- [ ] Add function `validateAccountAccess(userId, accountId)` for permission checking
-- [ ] Add function `getCurrentAccountContext()` to extract account from session
-- [ ] Update `validateAdminAuth()` to include account context validation
-- [ ] Add account switching logic functions for session management
-- [ ] Test account membership retrieval using Supabase MCP
-- [ ] Test account access validation with different user/account combinations
-- [ ] Verify account context extraction from session data
+- [x] Review current `getUser()` and `getSession()` functions -unit tested-
+- [x] Add new function `getUserAccounts()` to retrieve user's account memberships -unit tested-
+- [x] Add function `validateAccountAccess(userId, accountId)` for permission checking -unit tested-
+- [x] Add function `getCurrentAccountContext()` to extract account from session -unit tested-
+- [x] Update `validateAdminAuth()` to include account context validation -unit tested-
+- [x] Add account switching logic functions for session management -unit tested-
+- [x] Test account membership retrieval using Supabase MCP -unit tested-
+- [x] Test account access validation with different user/account combinations -unit tested-
+- [x] Verify account context extraction from session data -unit tested-
 
 ### 8. Update AuthContext with Account State Management (1 Point)
 

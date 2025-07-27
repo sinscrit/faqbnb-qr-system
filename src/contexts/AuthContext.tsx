@@ -1,8 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { Account } from '@/types';
 import {
   AuthUser,
   AuthResponse,
@@ -17,22 +18,44 @@ import {
   isAdmin,
   getUserProperties,
   registerUser,
+  switchAccount,
+  getAccountsForUser,
+  clearAccountContext,
+  AccountSwitchResponse,
 } from '@/lib/auth';
 
-// Auth context types
+// Enhanced auth context types with account support
 interface AuthContextType {
+  // Core authentication
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  
+  // Property management (legacy)
   userProperties: Property[];
   selectedProperty: Property | null;
-  signIn: (email: string, password: string) => Promise<AuthResponse<{ user: AuthUser; session: Session }>>;
+  
+  // Account management (multi-tenant)
+  currentAccount: Account | null;
+  userAccounts: Account[];
+  switchingAccount: boolean;
+  
+  // Authentication functions
+  signIn: (email: string, password: string) => Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
+  
+  // Property functions (legacy)
   getUserProperties: () => Promise<void>;
   setSelectedProperty: (property: Property | null) => void;
-  register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
+  
+  // Account functions (multi-tenant)
+  setCurrentAccount: (account: Account | null) => void;
+  switchToAccount: (accountId: string) => Promise<AccountSwitchResponse>;
+  refreshAccountContext: () => Promise<void>;
+  clearCurrentAccount: () => void;
 }
 
 interface AuthProviderProps {
@@ -45,15 +68,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Session refresh interval (5 minutes)
 const SESSION_CHECK_INTERVAL = 5 * 60 * 1000;
 
-// Authentication Provider Component
+// Authentication Provider Component with Account Support
 export function AuthProvider({ children }: AuthProviderProps) {
+  // Core authentication state
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  
+  // Account management state (multi-tenant)
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
+  const [userAccounts, setUserAccounts] = useState<Account[]>([]);
+  const [switchingAccount, setSwitchingAccount] = useState(false);
 
-  // Initialize auth state
+  // Initialize auth state with account context
   useEffect(() => {
     initializeAuth();
     
@@ -81,11 +112,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
-  // Initialize authentication state
+  // Initialize authentication state with account context
   const initializeAuth = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Initializing auth...');
+      console.log('🔍 Initializing auth with account context...');
       
       // Add timeout to prevent hanging
       const authTimeout = new Promise((_, reject) => 
@@ -103,37 +134,55 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (sessionResponse.error || !sessionResponse.data) {
           console.log('❌ No valid session found');
-          setUser(null);
-          setSession(null);
+          clearAuthState();
           return;
         }
 
-        console.log('👤 Getting user data...');
+        console.log('👤 Getting user data with account context...');
         const userResponse = await getUser();
         console.log('🔑 User response:', { 
           hasError: !!userResponse.error, 
           hasData: !!userResponse.data,
+          hasCurrentAccount: !!userResponse.data?.currentAccount,
+          availableAccountsCount: userResponse.data?.availableAccounts?.length || 0,
           error: userResponse.error 
         });
         
         if (userResponse.error || !userResponse.data) {
           console.log('❌ User verification failed:', userResponse.error);
-          // Clear invalid session state
-          setUser(null);
-          setSession(null);
-          setUserProperties([]);
-          setSelectedProperty(null);
+          clearAuthState();
           return;
         }
 
-        console.log('✅ Auth successful:', userResponse.data);
+        console.log('✅ Auth successful with account context:', {
+          userEmail: userResponse.data.email,
+          currentAccount: userResponse.data.currentAccount?.name,
+          accountCount: userResponse.data.availableAccounts?.length || 0
+        });
+        
         setSession(sessionResponse.data);
         setUser(userResponse.data);
         
-        // Load user properties if user is a regular user or admin with properties
-        if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
+        // Set account context from user data
+        if (userResponse.data?.availableAccounts) {
+          setUserAccounts(userResponse.data.availableAccounts);
+        }
+        
+        if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+          // Find the full account object from available accounts
+          const fullAccount = userResponse.data.availableAccounts.find(
+            acc => acc.id === userResponse.data.currentAccount?.id
+          );
+          if (fullAccount) {
+            setCurrentAccount(fullAccount);
+          }
+        }
+        
+        // Load user properties (legacy support)
+        if (userResponse.data && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
           try {
-            const properties = await getUserProperties(userResponse.data.id);
+            const accountId = userResponse.data.currentAccount?.id;
+            const properties = await getUserProperties(userResponse.data.id, accountId);
             setUserProperties(properties);
             
             // Auto-select first property if available
@@ -151,15 +200,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await Promise.race([authPromise, authTimeout]);
     } catch (error) {
       console.error('❌ Failed to initialize auth:', error);
-      // Only clear local state on auth failure, don't force sign out
-      setUser(null);
-      setSession(null);
+      clearAuthState();
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle successful sign in
+  // Clear all authentication and account state
+  const clearAuthState = useCallback(() => {
+    setUser(null);
+    setSession(null);
+    setUserProperties([]);
+    setSelectedProperty(null);
+    setCurrentAccount(null);
+    setUserAccounts([]);
+    setSwitchingAccount(false);
+  }, []);
+
+  // Handle successful sign in with account context
   const handleSignIn = async (session: Session) => {
     try {
       setSession(session);
@@ -168,18 +226,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (userResponse.error || !userResponse.data) {
         // User is not valid - sign out
         await authSignOut();
-        setUser(null);
-        setSession(null);
-        setUserProperties([]);
-        setSelectedProperty(null);
+        clearAuthState();
         return;
       }
 
       setUser(userResponse.data);
       
-      // Load user properties for regular users (not for admin-only users)
-      if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
-        const properties = await getUserProperties(userResponse.data.id);
+      // Set account context from user data
+      if (userResponse.data?.availableAccounts) {
+        setUserAccounts(userResponse.data.availableAccounts);
+      }
+      
+      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+        // Find the full account object from available accounts
+        const fullAccount = userResponse.data.availableAccounts.find(
+          acc => acc.id === userResponse.data.currentAccount?.id
+        );
+        if (fullAccount) {
+          setCurrentAccount(fullAccount);
+        }
+      }
+      
+      // Load user properties for the current account context
+      if (userResponse.data && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
+        const accountId = userResponse.data.currentAccount?.id;
+        const properties = await getUserProperties(userResponse.data.id, accountId);
         setUserProperties(properties);
         
         // Auto-select first property if available
@@ -189,41 +260,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     } catch (error) {
       console.error('Failed to handle sign in:', error);
-      setUser(null);
-      setSession(null);
-      setUserProperties([]);
-      setSelectedProperty(null);
+      clearAuthState();
     }
   };
 
-  // Handle sign out
+  // Handle sign out with account context clearing
   const handleSignOut = () => {
-    setUser(null);
-    setSession(null);
-    setUserProperties([]);
-    setSelectedProperty(null);
+    clearAccountContext(); // Clear localStorage account context
+    clearAuthState();
   };
 
-  // Handle session refresh
+  // Handle session refresh with account context preservation
   const handleSessionRefresh = async (session: Session) => {
     try {
       setSession(session);
       
-      // Re-verify user is still admin
+      // Re-verify user and preserve account context
       const userResponse = await getUser();
       if (userResponse.error || !userResponse.data) {
         await authSignOut();
-        setUser(null);
-        setSession(null);
+        clearAuthState();
         return;
       }
 
       setUser(userResponse.data);
+      
+      // Update account context if needed
+      if (userResponse.data?.availableAccounts) {
+        setUserAccounts(userResponse.data.availableAccounts);
+      }
+      
+      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+        const fullAccount = userResponse.data.availableAccounts.find(
+          acc => acc.id === userResponse.data.currentAccount?.id
+        );
+        if (fullAccount) {
+          setCurrentAccount(fullAccount);
+        }
+      }
     } catch (error) {
       console.error('Failed to handle session refresh:', error);
       await authSignOut();
-      setUser(null);
-      setSession(null);
+      clearAuthState();
     }
   };
 
@@ -241,8 +319,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Sign in function
-  const signIn = async (email: string, password: string): Promise<AuthResponse<{ user: AuthUser; session: Session }>> => {
+  // Enhanced sign in function with account context
+  const signIn = async (email: string, password: string): Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>> => {
     try {
       setLoading(true);
       
@@ -255,6 +333,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (result.data) {
         setUser(result.data.user);
         setSession(result.data.session);
+        setUserAccounts(result.data.accounts);
+        
+        if (result.data.defaultAccount) {
+          setCurrentAccount(result.data.defaultAccount);
+        }
       }
 
       return result;
@@ -266,15 +349,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Sign out function
+  // Enhanced sign out function with account context clearing
   const signOut = async (): Promise<void> => {
     try {
       setLoading(true);
-      await authSignOut();
-      setUser(null);
-      setSession(null);
-      setUserProperties([]);
-      setSelectedProperty(null);
+      await authSignOut(); // This also clears account context
+      clearAuthState();
     } catch (error) {
       console.error('Sign out error:', error);
     } finally {
@@ -300,7 +380,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Get user properties function
+  // Get user properties function with account filtering
   const loadUserProperties = async (): Promise<void> => {
     if (!user?.id) {
       setUserProperties([]);
@@ -309,7 +389,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
-      const properties = await getUserProperties(user.id);
+      const accountId = currentAccount?.id;
+      const properties = await getUserProperties(user.id, accountId);
       setUserProperties(properties);
       
       // Auto-select first property if none selected
@@ -321,6 +402,91 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUserProperties([]);
     }
   };
+
+  // Account switching function
+  const switchToAccount = async (accountId: string): Promise<AccountSwitchResponse> => {
+    if (!user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    try {
+      setSwitchingAccount(true);
+      
+      const result = await switchAccount(accountId);
+      
+      if (result.success && result.account) {
+        setCurrentAccount(result.account);
+        
+        // Update user's current account context
+        if (user) {
+          const updatedUser = {
+            ...user,
+            currentAccount: {
+              id: result.account.id,
+              name: result.account.name,
+              role: result.userRole || 'member',
+              isOwner: result.account.owner_id === user.id
+            }
+          };
+          setUser(updatedUser);
+        }
+        
+        // Reload properties for the new account context
+        await loadUserProperties();
+        
+        console.log('✅ Successfully switched to account:', result.account.name);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Account switching error:', error);
+      return { success: false, error: 'Failed to switch account' };
+    } finally {
+      setSwitchingAccount(false);
+    }
+  };
+
+  // Refresh account context (reload user's accounts and current account)
+  const refreshAccountContext = async (): Promise<void> => {
+    if (!user?.id) return;
+
+    try {
+      const accounts = await getAccountsForUser(user.id);
+      setUserAccounts(accounts);
+      
+      // Update current account if it's still valid
+      if (currentAccount) {
+        const updatedCurrentAccount = accounts.find(acc => acc.id === currentAccount.id);
+        if (updatedCurrentAccount) {
+          setCurrentAccount(updatedCurrentAccount);
+        } else {
+          // Current account no longer accessible, clear it
+          setCurrentAccount(null);
+          clearAccountContext();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh account context:', error);
+    }
+  };
+
+  // Clear current account context
+  const clearCurrentAccount = useCallback(() => {
+    setCurrentAccount(null);
+    clearAccountContext();
+    
+    // Update user's current account context
+    if (user) {
+      const updatedUser = {
+        ...user,
+        currentAccount: null
+      };
+      setUser(updatedUser);
+    }
+    
+    // Reload properties without account filtering
+    loadUserProperties();
+  }, [user]);
 
   // User registration function
   const register = async (
@@ -349,6 +515,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(authUser);
         setSession(result.data.session);
         
+        // Initialize account context for new user
+        await refreshAccountContext();
+        
         // Load properties for new user
         await loadUserProperties();
       }
@@ -362,20 +531,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Context value
+  // Enhanced context value with account management
   const contextValue: AuthContextType = {
+    // Core authentication
     user,
     session,
     loading,
     isAdmin: user ? isAdmin(user) : false,
+    
+    // Property management (legacy)
     userProperties,
     selectedProperty,
+    
+    // Account management (multi-tenant)
+    currentAccount,
+    userAccounts,
+    switchingAccount,
+    
+    // Authentication functions
     signIn,
     signOut,
     refreshSession: handleRefreshSession,
+    register,
+    
+    // Property functions (legacy)
     getUserProperties: loadUserProperties,
     setSelectedProperty,
-    register,
+    
+    // Account functions (multi-tenant)
+    setCurrentAccount,
+    switchToAccount,
+    refreshAccountContext,
+    clearCurrentAccount,
   };
 
   return (
@@ -394,6 +581,19 @@ export function useAuth(): AuthContextType {
   }
   
   return context;
+}
+
+// Hook to use account context specifically
+export function useAccountContext() {
+  const { currentAccount, userAccounts, switchingAccount, switchToAccount, clearCurrentAccount } = useAuth();
+  
+  return {
+    currentAccount,
+    userAccounts,
+    switchingAccount,
+    switchToAccount,
+    clearCurrentAccount,
+  };
 }
 
 // Higher-order component for authentication
@@ -421,6 +621,42 @@ export function withAuth<P extends object>(Component: React.ComponentType<P>) {
   };
 }
 
+// Higher-order component for account-aware authentication
+export function withAccountAuth<P extends object>(Component: React.ComponentType<P>) {
+  return function AccountAuthenticatedComponent(props: P) {
+    const { user, loading, currentAccount, userAccounts } = useAuth();
+    
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Authenticating...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (!user) {
+      return null;
+    }
+    
+    // Show account selection if user has accounts but none selected
+    if (userAccounts.length > 0 && !currentAccount) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Please select an account to continue</p>
+            {/* Account selector would be rendered here */}
+          </div>
+        </div>
+      );
+    }
+    
+    return <Component {...props} />;
+  };
+}
+
 // Hook to check if user is authenticated
 export function useRequireAuth(): AuthUser {
   const { user, loading } = useAuth();
@@ -434,4 +670,23 @@ export function useRequireAuth(): AuthUser {
   }
   
   return user;
+}
+
+// Hook to require account context
+export function useRequireAccount(): { user: AuthUser; account: Account } {
+  const { user, loading, currentAccount } = useAuth();
+  
+  if (loading) {
+    throw new Error('Authentication is still loading');
+  }
+  
+  if (!user) {
+    throw new Error('User must be authenticated');
+  }
+  
+  if (!currentAccount) {
+    throw new Error('Account context is required');
+  }
+  
+  return { user, account: currentAccount };
 } 
