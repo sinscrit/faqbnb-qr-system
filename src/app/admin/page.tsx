@@ -1,13 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter, Building } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { ItemsListResponse } from '@/types';
 import { formatDate } from '@/lib/utils';
+import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import Link from 'next/link';
 
 export default function AdminPage() {
+  const { user, isAdmin } = useAuth();
+  const { currentAccount, userAccounts } = useAccountContext();
+  
   const [items, setItems] = useState<ItemsListResponse['data']>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,45 +20,83 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [accountContext, setAccountContext] = useState<any>(null);
+  const [pagination, setPagination] = useState<any>(null);
 
   useEffect(() => {
-    loadItems();
-    loadProperties();
-  }, []);
+    if (user) {
+      loadItems();
+      loadProperties();
+    }
+  }, [user, currentAccount]);
 
   useEffect(() => {
-    loadItems();
+    if (user) {
+      loadItems();
+    }
   }, [selectedPropertyId]);
 
   const loadItems = async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
-      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined);
+      setError(null);
+      
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
+      }
+      
+      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, headers);
+      
       if (response.success && response.data) {
         setItems(response.data);
+        
+        // Set account context and pagination from response
+        if ('accountContext' in response) {
+          setAccountContext(response.accountContext);
+        }
+        if ('pagination' in response) {
+          setPagination(response.pagination);
+        }
       } else {
         setError(response.error || 'Failed to load items');
+        setItems([]);
       }
     } catch (err) {
+      console.error('Error loading items:', err);
       setError(err instanceof Error ? err.message : 'Failed to load items');
+      setItems([]);
     } finally {
       setLoading(false);
     }
   };
 
   const loadProperties = async () => {
+    if (!user) return;
+    
     try {
       setPropertiesLoading(true);
-      const response = await adminApi.listProperties();
+      
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
+      }
+      
+      const response = await adminApi.listProperties(headers);
+      
       if (response.success && response.data) {
         setProperties(response.data);
-        setIsAdmin(response.isAdmin || false);
       } else {
         console.warn('Failed to load properties:', response.error);
+        setProperties([]);
       }
     } catch (err) {
       console.warn('Failed to load properties:', err);
+      setProperties([]);
     } finally {
       setPropertiesLoading(false);
     }
@@ -62,7 +104,14 @@ export default function AdminPage() {
 
   const handleDelete = async (publicId: string) => {
     try {
-      const response = await adminApi.deleteItem(publicId);
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
+      }
+      
+      const response = await adminApi.deleteItem(publicId, headers);
+      
       if (response.success) {
         setItems(items?.filter(item => item.publicId !== publicId) || []);
         setDeleteConfirm(null);
@@ -85,6 +134,9 @@ export default function AdminPage() {
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading items...</p>
+          {currentAccount && (
+            <p className="text-sm text-gray-500 mt-2">Account: {currentAccount.name}</p>
+          )}
         </div>
       </div>
     );
@@ -92,12 +144,21 @@ export default function AdminPage() {
 
   return (
     <div>
-      {/* Page Header */}
+      {/* Page Header with Account Context */}
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
-            <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
+            <div className="flex items-center space-x-2 mt-1">
+              <p className="text-gray-600">Manage your QR code items and resources</p>
+              {currentAccount && (
+                <div className="flex items-center space-x-1 text-sm text-blue-600">
+                  <Building className="w-4 h-4" />
+                  <span>{currentAccount.name}</span>
+                  {user?.currentAccount?.isOwner && <span>👑</span>}
+                </div>
+              )}
+            </div>
           </div>
           <Link
             href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
@@ -107,6 +168,33 @@ export default function AdminPage() {
             Add Item
           </Link>
         </div>
+        
+        {/* Account Context Summary */}
+        {accountContext && (
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <h3 className="text-sm font-medium text-blue-900">Account Context</h3>
+                  <div className="flex items-center space-x-2 text-sm text-blue-700">
+                    <span>Current Account: {currentAccount?.name || 'None'}</span>
+                    {accountContext.userRole && (
+                      <span>• Role: {accountContext.userRole}</span>
+                    )}
+                    {accountContext.totalAccounts > 1 && (
+                      <span>• {accountContext.totalAccounts} accounts available</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {!currentAccount && userAccounts.length > 0 && (
+                <div className="text-sm text-amber-700 bg-amber-100 px-3 py-1 rounded">
+                  Select an account to view items
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div>
@@ -146,7 +234,9 @@ export default function AdminPage() {
                   disabled={propertiesLoading}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white disabled:bg-gray-50 disabled:text-gray-500"
                 >
-                  <option value="">All Properties</option>
+                  <option value="">
+                    {propertiesLoading ? 'Loading properties...' : 'All Properties'}
+                  </option>
                   {properties.map((property) => (
                     <option key={property.id} value={property.id}>
                       {property.nickname} {isAdmin && property.users ? `(${property.users.email})` : ''}
@@ -168,9 +258,38 @@ export default function AdminPage() {
                   Filtered by Property
                 </span>
               )}
+              {currentAccount && (
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Account: {currentAccount.name}
+                </span>
+              )}
             </div>
           </div>
+          
+          {/* Pagination Info */}
+          {pagination && (
+            <div className="mt-2 text-xs text-gray-500">
+              Page {pagination.page} of {pagination.totalPages} • {pagination.totalItems} total items
+            </div>
+          )}
         </div>
+
+        {/* No Account Warning */}
+        {!currentAccount && userAccounts.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="text-amber-600">
+                <Building className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-amber-900">No Account Selected</h3>
+                <p className="text-sm text-amber-700 mt-1">
+                  Please select an account from the header to view and manage items.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Items Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -185,10 +304,12 @@ export default function AdminPage() {
               <p className="text-gray-600 mb-6">
                 {searchTerm 
                   ? 'Try adjusting your search terms'
-                  : 'Get started by creating your first item'
+                  : currentAccount 
+                    ? 'Get started by creating your first item in this account'
+                    : 'Select an account to view items'
                 }
               </p>
-              {!searchTerm && (
+              {!searchTerm && currentAccount && (
                 <Link
                   href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -283,7 +404,8 @@ export default function AdminPage() {
                       </td>
                       <td className="hidden lg:table-cell px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {item.propertyNickname || 'Unknown Property'}
+                          {/* Updated to handle new data structure */}
+                          {item.property?.nickname || (item as any).propertyNickname || 'Unknown Property'}
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -300,11 +422,12 @@ export default function AdminPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                             </svg>
                             <span className="font-medium">
-                              {item.visitCounts?.last24Hours || 0}
+                              {/* Updated to handle new nested analytics structure */}
+                              {item.analytics?.visits?.last24Hours || (item as any).visitCounts?.last24Hours || 0}
                             </span>
                             <span className="text-gray-500">/</span>
                             <span className="text-gray-600">
-                              {item.visitCounts?.allTime || 0}
+                              {item.analytics?.visits?.allTime || (item as any).visitCounts?.allTime || 0}
                             </span>
                           </div>
                         </div>
@@ -312,37 +435,41 @@ export default function AdminPage() {
                       {/* Reactions Column */}
                       <td className="hidden md:table-cell px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          {item.reactionCounts && item.reactionCounts.total > 0 ? (
-                            <div className="flex items-center space-x-2">
-                              <div className="flex space-x-1">
-                                {item.reactionCounts.byType?.like > 0 && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                    👍 {item.reactionCounts.byType.like}
-                                  </span>
-                                )}
-                                {item.reactionCounts.byType?.love > 0 && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                    ❤️ {item.reactionCounts.byType.love}
-                                  </span>
-                                )}
-                                {item.reactionCounts.byType?.confused > 0 && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    😕 {item.reactionCounts.byType.confused}
-                                  </span>
-                                )}
-                                {item.reactionCounts.byType?.dislike > 0 && (
-                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                                    👎 {item.reactionCounts.byType.dislike}
-                                  </span>
-                                )}
+                          {/* Updated to handle new nested analytics structure */}
+                          {(() => {
+                            const reactions = item.analytics?.reactions || (item as any).reactionCounts;
+                            return reactions && reactions.total > 0 ? (
+                              <div className="flex items-center space-x-2">
+                                <div className="flex space-x-1">
+                                  {reactions.byType?.like > 0 && (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                      👍 {reactions.byType.like}
+                                    </span>
+                                  )}
+                                  {reactions.byType?.love > 0 && (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                      ❤️ {reactions.byType.love}
+                                    </span>
+                                  )}
+                                  {reactions.byType?.confused > 0 && (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                      😕 {reactions.byType.confused}
+                                    </span>
+                                  )}
+                                  {reactions.byType?.dislike > 0 && (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                      👎 {reactions.byType.dislike}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs text-gray-500">
+                                  ({reactions.total} total)
+                                </span>
                               </div>
-                              <span className="text-xs text-gray-500">
-                                ({item.reactionCounts.total} total)
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-gray-400">No reactions</span>
-                          )}
+                            ) : (
+                              <span className="text-xs text-gray-400">No reactions</span>
+                            );
+                          })()}
                         </div>
                       </td>
                       {/* QR Code Column */}

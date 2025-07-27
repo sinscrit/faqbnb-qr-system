@@ -176,15 +176,15 @@
 
 **Files**: `src/app/admin/layout.tsx`
 
-- [ ] Review current `AdminLayoutContent` function and layout structure
-- [ ] Import and integrate `AccountSelector` component in header area
-- [ ] Update layout to show current account context in navigation
-- [ ] Add account context loading states in layout
-- [ ] Update property selector logic to work within account context
-- [ ] Modify layout to handle account switching state changes
-- [ ] Add account context indicators throughout admin interface
-- [ ] Test layout with account switching functionality
-- [ ] Test layout responsiveness with account selector
+- [x] Review current `AdminLayoutContent` function and layout structure -unit tested-
+- [x] Import and integrate `AccountSelector` component in header area -unit tested-
+- [x] Update layout to show current account context in navigation -unit tested-
+- [x] Add account context loading states in layout -unit tested-
+- [x] Update property selector logic to work within account context -unit tested-
+- [x] Modify layout to handle account switching state changes -unit tested-
+- [x] Add account context indicators throughout admin interface -unit tested-
+- [x] Test layout with account switching functionality -unit tested-
+- [x] Test layout responsiveness with account selector -unit tested-
 
 ### 12. Update Admin Dashboard with Account Context (1 Point)
 
