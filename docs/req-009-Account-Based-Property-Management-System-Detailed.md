@@ -76,13 +76,13 @@
 
 **Files**: `src/app/api/admin/items/[publicId]/route.ts`
 
-- [ ] Review current item detail functions (`GET()`, `PUT()`, `DELETE()`)
-- [ ] Add account boundary validation through property relationships
-- [ ] Ensure item operations respect account context via property ownership
-- [ ] Update item access checks to validate account membership
-- [ ] Test item editing within account boundaries
-- [ ] Test item deletion with account validation
-- [ ] Verify cross-account item access is properly blocked
+- [x] Review current item detail functions (`GET()`, `PUT()`, `DELETE()`) -unit tested-
+- [x] Add account boundary validation through property relationships -unit tested-
+- [x] Ensure item operations respect account context via property ownership -unit tested-
+- [x] Update item access checks to validate account membership -unit tested-
+- [x] Test item editing within account boundaries -unit tested-
+- [x] Test item deletion with account validation -unit tested-
+- [x] Verify cross-account item access is properly blocked -unit tested-
 
 ### 5. Implement Account Context in Analytics APIs (1 Point)
 

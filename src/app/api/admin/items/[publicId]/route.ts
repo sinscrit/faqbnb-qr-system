@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { UpdateItemRequest, ItemResponse } from '@/types';
-import { getUser, isAdmin } from '@/lib/auth';
+import { createClient } from '@supabase/supabase-js';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
@@ -9,46 +9,319 @@ async function validateAdminAuth(request: NextRequest) {
     // Extract JWT token from Authorization header
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ No valid authorization header found');
-      return { user: null, isAdmin: false, error: 'Authentication required - no valid Authorization header' };
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required - no valid Authorization header',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    console.log('🔍 Validating JWT token for admin access...');
+    const token = authHeader.substring(7);
+    if (!token) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Authentication required - no token provided',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
 
-    // Validate token with Supabase
-    const { data: authResult, error: authError } = await supabase.auth.getUser(token);
+    // Create a Supabase client to validate the token
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
-    if (authError || !authResult.user) {
-      console.log('❌ Token validation failed:', authError?.message || 'No user data');
-      return { user: null, isAdmin: false, error: 'Invalid or expired token' };
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase environment variables');
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Server configuration error',
+            code: 'SERVER_ERROR' 
+          },
+          { status: 500 }
+        )
+      };
     }
 
-    // Check if user exists in admin_users table with proper role
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    // Validate the token and get user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.log('Token validation failed:', userError?.message);
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Invalid or expired token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    if (!user.email) {
+      return {
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'User email not found in token',
+            code: 'UNAUTHORIZED' 
+          },
+          { status: 401 }
+        )
+      };
+    }
+
+    // Check if user is an admin
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
-      .select('*')
-      .eq('id', authResult.user.id)
-      .eq('role', 'admin')
+      .select('email, full_name, role')
+      .eq('id', user.id)
+      .eq('email', user.email)
       .single();
 
     if (adminError || !adminUser) {
-      console.log('❌ User not found in admin_users or insufficient privileges');
-      return { user: authResult.user, isAdmin: false, error: 'Insufficient privileges' };
+      // If not admin, check if user is a regular user
+      const { data: regularUser, error: userError } = await supabase
+        .from('users')
+        .select('email, full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      if (userError || !regularUser) {
+        console.log('User validation failed:', { 
+          userId: user.id, 
+          email: user.email, 
+          adminError: adminError?.message,
+          userError: userError?.message
+        });
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'User not found in system',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+
+      // Return regular user data
+      const validatedUser = {
+        id: user.id,
+        email: regularUser.email,
+        fullName: regularUser.full_name || undefined,
+        role: regularUser.role
+      };
+
+      console.log('Authentication successful for user:', validatedUser.email);
+      return { user: validatedUser, isAdmin: false };
     }
 
-    console.log('✅ Admin authentication successful:', adminUser.email);
-    return { 
-      user: {
-        id: adminUser.id,
-        email: adminUser.email,
-        role: adminUser.role
-      }, 
-      isAdmin: true 
+    // Return admin user data
+    const validatedUser = {
+      id: user.id,
+      email: adminUser.email,
+      fullName: adminUser.full_name || undefined,
+      role: adminUser.role
     };
+
+    console.log('Authentication successful for admin:', validatedUser.email);
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
+
   } catch (error) {
-    console.error('❌ Admin authentication error:', error);
-    return { user: null, isAdmin: false, error: 'Authentication failed' };
+    console.error('Auth validation error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Authentication validation failed',
+          code: 'AUTH_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
+
+// Helper function to extract account context from request
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+  try {
+    // Extract account_id from query parameters or headers
+    const { searchParams } = new URL(request.url);
+    const requestedAccountId = searchParams.get('account_id') || request.headers.get('x-account-id');
+    
+    if (requestedAccountId) {
+      // Validate user has access to the requested account
+      const { data: accountAccess, error: accessError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('account_id', requestedAccountId)
+        .eq('user_id', userId)
+        .single();
+        
+      if (accessError || !accountAccess) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to requested account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: requestedAccountId, accountRole: accountAccess.role };
+    }
+    
+    // If no specific account requested, get user's default account
+    if (isAdmin) {
+      // Admin can see all accounts - no specific filtering unless requested
+      return { accountId: null, accountRole: 'admin' };
+    } else {
+      // Regular user: get their primary account
+      const { data: userAccounts, error: accountsError } = await supabase
+        .from('account_users')
+        .select('account_id, role')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+        
+      if (accountsError || !userAccounts) {
+        return {
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'No account access found for user',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { accountId: userAccounts.account_id, accountRole: userAccounts.role };
+    }
+  } catch (error) {
+    console.error('Account context extraction error:', error);
+    return {
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to determine account context',
+          code: 'ACCOUNT_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
+  }
+}
+
+// Helper function to validate item access within account context
+async function validateItemAccess(publicId: string, userId: string, isAdmin: boolean, accountId: string | null) {
+  try {
+    // Get item with property and account information
+    let itemQuery = supabase
+      .from('items')
+      .select(`
+        id, 
+        public_id, 
+        name, 
+        description,
+        property_id,
+        properties!inner(id, nickname, user_id, account_id)
+      `)
+      .eq('public_id', publicId);
+
+    const { data: item, error: itemError } = await itemQuery.single();
+
+    if (itemError || !item) {
+      return {
+        canAccess: false,
+        error: NextResponse.json(
+          { 
+            success: false, 
+            error: 'Item not found',
+            code: 'NOT_FOUND' 
+          },
+          { status: 404 }
+        )
+      };
+    }
+
+    // Apply account-based access control
+    const itemProperty = (item as any).properties;
+    
+    if (isAdmin && !accountId) {
+      // Admin can access any item when no specific account is requested
+      return { canAccess: true, item };
+    } else if (isAdmin && accountId) {
+      // Admin viewing specific account's item
+      if (itemProperty.account_id !== accountId) {
+        return {
+          canAccess: false,
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Item does not belong to the specified account',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      return { canAccess: true, item };
+    } else {
+      // Regular user can only access items within their account and owned by them
+      const canAccess = itemProperty.account_id === accountId && 
+                       itemProperty.user_id === userId;
+      
+      if (!canAccess) {
+        return {
+          canAccess: false,
+          error: NextResponse.json(
+            { 
+              success: false, 
+              error: 'Access denied to item within account context',
+              code: 'FORBIDDEN' 
+            },
+            { status: 403 }
+          )
+        };
+      }
+      
+      return { canAccess: true, item };
+    }
+  } catch (error) {
+    console.error('Item access validation error:', error);
+    return {
+      canAccess: false,
+      error: NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to validate item access',
+          code: 'VALIDATION_ERROR' 
+        },
+        { status: 500 }
+      )
+    };
   }
 }
 
@@ -59,22 +332,24 @@ export async function PUT(
   try {
     console.log('Admin update item API called - validating authentication...');
     
-    // Validate authentication and admin role
+    // Validate authentication
     const authResult = await validateAdminAuth(request);
-    
-    if (!authResult.isAdmin || !authResult.user) {
-      console.log('❌ Authentication failed:', authResult.error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: authResult.error || 'Authentication required',
-          code: authResult.error === 'Insufficient privileges' ? 'FORBIDDEN' : 'UNAUTHORIZED'
-        },
-        { status: authResult.error === 'Insufficient privileges' ? 403 : 401 }
-      );
+    if (authResult.error) {
+      return authResult.error;
     }
+
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
     
-    console.log('Authentication successful for user:', authResult.user.email);
+    console.log('Authentication successful for user:', user.email, 'account:', accountId || 'all');
     
     const { publicId } = await params;
     console.log('Public ID:', publicId);
@@ -86,6 +361,12 @@ export async function PUT(
         { success: false, error: 'Invalid publicId format' },
         { status: 400 }
       );
+    }
+
+    // Validate item access within account context
+    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId);
+    if (!canAccess || error) {
+      return error;
     }
     
     const body: UpdateItemRequest = await request.json();
@@ -146,36 +427,40 @@ export async function PUT(
       }
     }
     
-    // Check if item exists
-    const { data: existingItem, error: itemLookupError } = await supabase
-      .from('items')
-      .select('id, name, description')
-      .eq('public_id', publicId)
-      .single();
-      
-    if (itemLookupError || !existingItem) {
-      console.error('Item lookup error:', itemLookupError);
-      return NextResponse.json(
-        { success: false, error: 'Item not found' },
-        { status: 404 }
-      );
-    }
-    
-    console.log('Item found, proceeding with update...');
-    
-    // Verify the property exists and user has access to it
-    const { data: property, error: propertyError } = await supabase
+    // Verify the property exists and belongs to the current account context
+    let propertyQuery = supabase
       .from('properties')
-      .select('id')
-      .eq('id', body.propertyId)
-      .single();
+      .select('id, account_id, user_id')
+      .eq('id', body.propertyId);
+
+    // Apply account filtering
+    if (accountId) {
+      propertyQuery = propertyQuery.eq('account_id', accountId);
+    }
+
+    // For regular users, also check user ownership
+    if (!userIsAdmin) {
+      propertyQuery = propertyQuery.eq('user_id', user.id);
+    }
+
+    const { data: property, error: propertyError } = await propertyQuery.single();
 
     if (propertyError || !property) {
       return NextResponse.json(
-        { success: false, error: 'Invalid property ID or property not found' },
+        { success: false, error: 'Invalid property ID, property not found, or property not accessible within current account context' },
         { status: 400 }
       );
     }
+
+    // Additional validation for account context
+    if (accountId && property.account_id !== accountId) {
+      return NextResponse.json(
+        { success: false, error: 'Property does not belong to the specified account' },
+        { status: 403 }
+      );
+    }
+
+    console.log('Property verified within account context, updating item...');
 
     // Update the item
     const { data: updatedItem, error: updateError } = await supabase
@@ -194,7 +479,7 @@ export async function PUT(
     if (updateError || !updatedItem) {
       console.error('Item update error:', updateError);
       return NextResponse.json(
-        { success: false, error: 'Failed to update item' },
+        { success: false, error: 'Failed to update item within account context' },
         { status: 500 }
       );
     }
@@ -205,7 +490,7 @@ export async function PUT(
     const { error: deleteLinksError } = await supabase
       .from('item_links')
       .delete()
-      .eq('item_id', existingItem.id);
+      .eq('item_id', item.id);
       
     if (deleteLinksError) {
       console.error('Links deletion error:', deleteLinksError);
@@ -265,10 +550,13 @@ export async function PUT(
           displayOrder: link.display_order || 0,
         })),
       },
+      accountContext: {
+        accountId,
+        accountRole
+      }
     };
     
-    // Add audit log for admin operations
-    console.log(`Item updated by admin: ${authResult.user.email}, item: ${updatedItem.name} (${updatedItem.public_id})`);
+    console.log(`Item updated by: ${user.email}, account: ${accountId || 'all'}, item: ${updatedItem.name} (${updatedItem.public_id})`);
     
     console.log('Item update completed successfully');
     return NextResponse.json(response);
@@ -289,22 +577,24 @@ export async function DELETE(
   try {
     console.log('Admin delete item API called - validating authentication...');
     
-    // Validate authentication and admin role
+    // Validate authentication
     const authResult = await validateAdminAuth(request);
-    
-    if (!authResult.isAdmin || !authResult.user) {
-      console.log('❌ Authentication failed:', authResult.error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: authResult.error || 'Authentication required',
-          code: authResult.error === 'Insufficient privileges' ? 'FORBIDDEN' : 'UNAUTHORIZED'
-        },
-        { status: authResult.error === 'Insufficient privileges' ? 403 : 401 }
-      );
+    if (authResult.error) {
+      return authResult.error;
     }
+
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
     
-    console.log('Authentication successful for user:', authResult.user.email);
+    console.log('Authentication successful for user:', user.email, 'account:', accountId || 'all');
     
     const { publicId } = await params;
     console.log('Public ID to delete:', publicId);
@@ -317,29 +607,20 @@ export async function DELETE(
         { status: 400 }
       );
     }
-    
-    // Check if item exists before deletion
-    const { data: existingItem, error: itemLookupError } = await supabase
-      .from('items')
-      .select('id, name')
-      .eq('public_id', publicId)
-      .single();
-      
-    if (itemLookupError || !existingItem) {
-      console.error('Item lookup error:', itemLookupError);
-      return NextResponse.json(
-        { success: false, error: 'Item not found' },
-        { status: 404 }
-      );
+
+    // Validate item access within account context
+    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId);
+    if (!canAccess || error) {
+      return error;
     }
     
-    console.log('Item found, proceeding with deletion...');
+    console.log('Item found and access validated, proceeding with deletion...');
     
     // Count associated links before deletion for verification
     const { count: linkCount, error: linkCountError } = await supabase
       .from('item_links')
       .select('*', { count: 'exact', head: true })
-      .eq('item_id', existingItem.id);
+      .eq('item_id', item.id);
       
     if (linkCountError) {
       console.error('Link count error:', linkCountError);
@@ -356,7 +637,7 @@ export async function DELETE(
     if (deleteError) {
       console.error('Item deletion error:', deleteError);
       return NextResponse.json(
-        { success: false, error: 'Failed to delete item' },
+        { success: false, error: 'Failed to delete item within account context' },
         { status: 500 }
       );
     }
@@ -380,7 +661,7 @@ export async function DELETE(
     const { count: remainingLinks, error: linksVerifyError } = await supabase
       .from('item_links')
       .select('*', { count: 'exact', head: true })
-      .eq('item_id', existingItem.id);
+      .eq('item_id', item.id);
       
     if (linksVerifyError) {
       console.error('Links verification error:', linksVerifyError);
@@ -391,19 +672,22 @@ export async function DELETE(
       }
     }
     
-    // Add audit log for admin operations
-    console.log(`Item deleted by admin: ${authResult.user.email}, item: ${existingItem.name} (${publicId}), deleted links: ${linkCount || 0}`);
+    console.log(`Item deleted by: ${user.email}, account: ${accountId || 'all'}, item: ${item.name} (${publicId}), deleted links: ${linkCount || 0}`);
     
     console.log('Item deletion completed successfully');
     
     return NextResponse.json({
       success: true,
-      message: `Item "${existingItem.name}" and its ${linkCount || 0} associated links have been deleted successfully`,
+      message: `Item "${item.name}" and its ${linkCount || 0} associated links have been deleted successfully`,
       deletedItem: {
         publicId,
-        name: existingItem.name,
+        name: item.name,
         deletedLinks: linkCount || 0,
       },
+      accountContext: {
+        accountId,
+        accountRole
+      }
     });
     
   } catch (error) {
