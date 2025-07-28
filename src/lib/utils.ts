@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { LinkType } from '@/types';
+import { LinkType, QRPrintSettings } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,5 +60,160 @@ export function formatDate(dateString: string): string {
     month: 'short',
     day: 'numeric',
   });
+}
+
+/**
+ * Download a blob as a file with the specified filename
+ * @param blob - The blob data to download
+ * @param filename - The filename for the downloaded file
+ */
+export function downloadBlob(blob: Blob, filename: string): void {
+  try {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    
+    // Append to body temporarily to trigger download
+    document.body.appendChild(link);
+    link.click();
+    
+    // Clean up
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Failed to download blob:', error);
+    throw new Error(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Format a date for printing purposes
+ * @param date - Date string or Date object
+ * @returns Formatted date string suitable for printing
+ */
+export function formatPrintableDate(date: string | Date): string {
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid Date';
+    }
+    
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (error) {
+    console.error('Error formatting printable date:', error);
+    return 'Invalid Date';
+  }
+}
+
+/**
+ * Validate QR print settings
+ * @param settings - Print settings to validate
+ * @returns True if settings are valid
+ */
+export function validatePrintSettings(settings: QRPrintSettings): boolean {
+  try {
+    // Validate QR size
+    const validSizes = ['small', 'medium', 'large'] as const;
+    if (!validSizes.includes(settings.qrSize)) {
+      console.error('Invalid QR size: must be small, medium, or large');
+      return false;
+    }
+    
+    // Validate items per row
+    const validItemsPerRow = [2, 3, 4, 6] as const;
+    if (!validItemsPerRow.includes(settings.itemsPerRow)) {
+      console.error('Invalid items per row: must be 2, 3, 4, or 6');
+      return false;
+    }
+    
+    // Validate showLabels is boolean
+    if (typeof settings.showLabels !== 'boolean') {
+      console.error('Invalid showLabels: must be boolean');
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error validating print settings:', error);
+    return false;
+  }
+}
+
+/**
+ * Get CSS class names for QR size
+ * @param size - QR code size
+ * @returns CSS class string for the size
+ */
+export function getQRSizeClass(size: 'small' | 'medium' | 'large'): string {
+  switch (size) {
+    case 'small':
+      return 'w-24 h-24'; // 6rem = 96px ≈ 144px at print DPI
+    case 'medium':
+      return 'w-32 h-32'; // 8rem = 128px ≈ 216px at print DPI
+    case 'large':
+      return 'w-40 h-40'; // 10rem = 160px ≈ 288px at print DPI
+    default:
+      return 'w-32 h-32';
+  }
+}
+
+/**
+ * Get grid columns class for items per row setting
+ * @param itemsPerRow - Number of items per row
+ * @returns CSS grid columns class
+ */
+export function getGridColumnsClass(itemsPerRow: 2 | 3 | 4 | 6): string {
+  switch (itemsPerRow) {
+    case 2:
+      return 'grid-cols-2';
+    case 3:
+      return 'grid-cols-3';
+    case 4:
+      return 'grid-cols-4';
+    case 6:
+      return 'grid-cols-6';
+    default:
+      return 'grid-cols-3';
+  }
+}
+
+/**
+ * Calculate estimated print pages for given items and settings
+ * @param itemCount - Number of items to print
+ * @param itemsPerRow - Items per row setting
+ * @param itemsPerPage - Optional items per page (default: calculated based on layout)
+ * @returns Estimated number of pages
+ */
+export function calculatePrintPages(
+  itemCount: number, 
+  itemsPerRow: 2 | 3 | 4 | 6,
+  itemsPerPage?: number
+): number {
+  try {
+    if (itemCount <= 0) return 0;
+    
+    // Estimate rows per page based on QR size and page height
+    // Assuming standard 8.5x11" page with margins
+    const estimatedRowsPerPage = itemsPerPage ? Math.floor(itemsPerPage / itemsPerRow) : 
+      itemsPerRow === 2 ? 8 :  // 2 cols = larger QR codes = fewer rows
+      itemsPerRow === 3 ? 10 : // 3 cols = medium QR codes
+      itemsPerRow === 4 ? 12 : // 4 cols = smaller QR codes
+      14; // 6 cols = smallest QR codes
+    
+    const totalItemsPerPage = estimatedRowsPerPage * itemsPerRow;
+    
+    return Math.ceil(itemCount / totalItemsPerPage);
+  } catch (error) {
+    console.error('Error calculating print pages:', error);
+    return 1;
+  }
 }
 
