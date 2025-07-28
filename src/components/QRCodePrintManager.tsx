@@ -51,6 +51,8 @@ export function QRCodePrintManager({
     errors: []
   });
   const [currentStep, setCurrentStep] = useState<'select' | 'configure' | 'preview'>('select');
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'generate' | 'print' | null>(null);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -86,15 +88,101 @@ export function QRCodePrintManager({
   // Handle bulk deselection - clear all selections
   const handleDeselectAll = useCallback(() => {
     setSelectedItems([]);
-  });
+  }, []);
 
   // Handle print settings changes
   const handlePrintSettingsChange = useCallback((settings: Partial<QRPrintSettings>) => {
     setPrintSettings(prev => ({ ...prev, ...settings }));
   }, []);
 
-  // Generate QR codes for selected items
-  const handleGenerateQRCodes = useCallback(async () => {
+  // Check if confirmation is needed for large print jobs
+  const needsConfirmation = useCallback((action: 'generate' | 'print') => {
+    return selectedItems.length > 20;
+  }, [selectedItems.length]);
+
+  // Handle confirmation dialog
+  const handleConfirmLargeJob = useCallback((action: 'generate' | 'print') => {
+    if (needsConfirmation(action)) {
+      setPendingAction(action);
+      setShowConfirmDialog(true);
+      return true; // Confirmation needed
+    }
+    return false; // No confirmation needed
+  }, [needsConfirmation]);
+
+  // Perform print action
+  const performPrint = useCallback(() => {
+    // Add keyboard shortcut support
+    console.log('Initiating print with Ctrl+P shortcut support...');
+    window.print();
+  }, []);
+
+  // Execute pending action after confirmation
+  const executePendingAction = useCallback(async () => {
+    setShowConfirmDialog(false);
+    const action = pendingAction;
+    setPendingAction(null);
+    
+    if (action === 'generate') {
+      // Call QR generation logic directly
+      if (selectedItems.length === 0) return;
+
+      setIsGenerating(true);
+      setGenerationState({
+        isGenerating: true,
+        completed: 0,
+        total: selectedItems.length,
+        errors: []
+      });
+
+      try {
+        const selectedItemsData = items.filter(item => selectedItems.includes(item.id));
+        const itemsForGeneration = selectedItemsData.map(item => ({
+          id: item.id,
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://faqbnb.com'}/item/${item.public_id}`
+        }));
+
+        const onProgress = (completed: number, total: number) => {
+          setGenerationState(prev => ({
+            ...prev,
+            completed,
+            total
+          }));
+        };
+
+        const results = await generateBatchQRCodes(itemsForGeneration, onProgress, {
+          width: printSettings.qrSize === 'small' ? 144 : 
+                 printSettings.qrSize === 'large' ? 288 : 216,
+          margin: 2,
+          color: { dark: '#000000', light: '#FFFFFF' }
+        });
+
+        setGeneratedQRCodes(results);
+        setCurrentStep('preview');
+
+      } catch (error) {
+        console.error('QR code generation failed:', error);
+        setGenerationState(prev => ({
+          ...prev,
+          errors: [{ itemId: 'batch', error: error instanceof Error ? error.message : 'Unknown error' }]
+        }));
+      } finally {
+        setIsGenerating(false);
+        setGenerationState(prev => ({ ...prev, isGenerating: false }));
+      }
+    } else if (action === 'print') {
+      performPrint();
+    }
+  }, [pendingAction]);
+
+  // Cancel pending action
+  const cancelPendingAction = useCallback(() => {
+    setShowConfirmDialog(false);
+    setPendingAction(null);
+  }, []);
+
+  // Perform the actual QR code generation
+  const performQRGeneration = useCallback(async () => {
     if (selectedItems.length === 0) return;
 
     setIsGenerating(true);
@@ -142,6 +230,14 @@ export function QRCodePrintManager({
       setGenerationState(prev => ({ ...prev, isGenerating: false }));
     }
   }, [selectedItems, items, printSettings]);
+
+  // Wrapper function for QR generation with confirmation support
+  const handleGenerateQRCodes = useCallback(async () => {
+    if (handleConfirmLargeJob('generate')) {
+      return; // Confirmation dialog shown, wait for user response
+    }
+    await performQRGeneration();
+  }, [handleConfirmLargeJob, performQRGeneration]);
 
   // Handle modal close with cleanup
   const handleClose = useCallback(() => {
@@ -482,6 +578,58 @@ export function QRCodePrintManager({
           </div>
         </div>
       </div>
+
+      {/* Large Print Job Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full m-4">
+            <div className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Large Print Job Confirmation
+                </h3>
+              </div>
+              
+              <div className="mb-6">
+                <p className="text-gray-600 mb-2">
+                  You're about to {pendingAction === 'generate' ? 'generate QR codes for' : 'print'} <strong>{selectedItems.length} items</strong>.
+                </p>
+                <p className="text-sm text-gray-500">
+                  This may take some time and use significant resources. Are you sure you want to continue?
+                </p>
+                
+                {pendingAction === 'generate' && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-md">
+                    <p className="text-sm text-blue-800">
+                      💡 <strong>Performance Tip:</strong> QR codes will be generated in batches of 5 to ensure optimal performance.
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={cancelPendingAction}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={executePendingAction}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+                >
+                  Continue with {selectedItems.length} items
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
