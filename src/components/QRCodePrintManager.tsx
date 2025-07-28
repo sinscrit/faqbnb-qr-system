@@ -54,6 +54,8 @@ export function QRCodePrintManager({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingAction, setPendingAction] = useState<'generate' | 'print' | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [retryableErrors, setRetryableErrors] = useState<Map<string, number>>(new Map());
   
   // Refs for tracking component state
   const isComponentMountedRef = useRef(true);
@@ -276,18 +278,61 @@ export function QRCodePrintManager({
         completed: selectedItems.length
       }));
 
+      // TASK 18 BUG FIX: Success notification for better user feedback
+      setSuccessMessage(`Successfully generated ${selectedItems.length} QR code${selectedItems.length > 1 ? 's' : ''}! You can now preview and print them.`);
+      setLastError(null);
+      
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        if (isComponentMountedRef.current) {
+          setSuccessMessage(null);
+        }
+      }, 5000);
+
       setCurrentStep('preview');
       
     } catch (error: any) {
       if (!isComponentMountedRef.current) return;
       
-      // BUG FIX: Enhanced error handling with specific error messages
+      // TASK 18 BUG FIX: Enhanced error messaging for better user experience
+      let errorMessage = '';
+      let isRetryable = false;
+      
       if (error.name === 'AbortError') {
-        setLastError('QR generation was cancelled');
-      } else if (error.message?.includes('network')) {
-        setLastError('Network error during QR generation. Please check your connection and try again.');
+        errorMessage = 'QR code generation was cancelled by user';
+      } else if (error.message?.toLowerCase().includes('network') || error.code === 'NETWORK_ERROR') {
+        errorMessage = 'Network connection failed. Please check your internet connection and try again.';
+        isRetryable = true;
+      } else if (error.message?.toLowerCase().includes('timeout')) {
+        errorMessage = 'QR generation timed out. This may be due to a slow connection. Please try again.';
+        isRetryable = true;
+      } else if (error.message?.toLowerCase().includes('canvas')) {
+        errorMessage = 'QR code rendering failed. This may be a browser compatibility issue. Try refreshing the page.';
+        isRetryable = false;
+      } else if (error.message?.toLowerCase().includes('memory')) {
+        errorMessage = 'Not enough memory to generate QR codes. Try selecting fewer items or refresh the page.';
+        isRetryable = false;
+      } else if (error.status === 500) {
+        errorMessage = 'Server error occurred. Please try again in a few moments.';
+        isRetryable = true;
+      } else if (error.status === 429) {
+        errorMessage = 'Too many requests. Please wait a moment before trying again.';
+        isRetryable = true;
       } else {
-        setLastError(`QR generation failed: ${error.message || 'Unknown error'}`);
+        errorMessage = `QR generation failed: ${error.message || 'Unknown error occurred. Please try again.'}`;
+        isRetryable = true;
+      }
+      
+      setLastError(errorMessage);
+      
+      // TASK 18 BUG FIX: Track retryable errors for exponential backoff
+      if (isRetryable) {
+        setRetryableErrors(prev => {
+          const newMap = new Map(prev);
+          const currentRetries = newMap.get('batch') || 0;
+          newMap.set('batch', currentRetries + 1);
+          return newMap;
+        });
       }
       
              setGenerationState(prev => ({
@@ -358,12 +403,29 @@ export function QRCodePrintManager({
     onClose();
   }, [onClose, resetGenerationState]);
 
-  // BUG FIX: Enhanced retry mechanism
+  // TASK 18 BUG FIX: Enhanced retry mechanism with exponential backoff
   const handleRetryGeneration = useCallback(() => {
+    const retryCount = retryableErrors.get('batch') || 0;
+    
+    if (retryCount >= 3) {
+      setLastError('Maximum retry attempts reached. Please refresh the page and try again with fewer items.');
+      return;
+    }
+    
+    // Exponential backoff: 1s, 2s, 4s
+    const delay = Math.pow(2, retryCount) * 1000;
+    
     setLastError(null);
+    setSuccessMessage(`Retrying in ${delay / 1000} second${delay > 1000 ? 's' : ''}...`);
     resetGenerationState();
-    performQRGeneration();
-  }, [resetGenerationState, performQRGeneration]);
+    
+    setTimeout(() => {
+      if (isComponentMountedRef.current) {
+        setSuccessMessage(null);
+        performQRGeneration();
+      }
+    }, delay);
+  }, [retryableErrors, resetGenerationState, performQRGeneration]);
 
   // Handle step navigation
   const handleNextStep = useCallback(() => {
@@ -644,6 +706,65 @@ export function QRCodePrintManager({
             {renderStepIndicator()}
           </div>
 
+          {/* TASK 18 BUG FIX: Enhanced notification area for success and error feedback */}
+          {(successMessage || lastError) && (
+            <div className="px-6 py-3 border-b border-gray-200">
+              {successMessage && (
+                <div className="flex items-center p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="flex-shrink-0">
+                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-green-800">{successMessage}</p>
+                  </div>
+                  <div className="ml-auto pl-3">
+                    <button
+                      onClick={() => setSuccessMessage(null)}
+                      className="text-green-400 hover:text-green-600"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {lastError && (
+                <div className="flex items-center p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="flex-shrink-0">
+                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-sm font-medium text-red-800">{lastError}</p>
+                    {retryableErrors.has('batch') && retryableErrors.get('batch')! < 3 && (
+                      <button
+                        onClick={handleRetryGeneration}
+                        className="mt-2 text-xs bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded-md transition-colors font-medium"
+                      >
+                        🔄 Retry ({3 - (retryableErrors.get('batch') || 0)} attempts remaining)
+                      </button>
+                    )}
+                  </div>
+                  <div className="ml-auto pl-3">
+                    <button
+                      onClick={() => setLastError(null)}
+                      className="text-red-400 hover:text-red-600"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Content */}
           <div className="bg-white px-6 py-6">
             {renderStepContent()}
@@ -713,10 +834,34 @@ export function QRCodePrintManager({
               
               <div className="mb-6">
                 <p className="text-gray-600 mb-2">
-                  You're about to {pendingAction === 'generate' ? 'generate QR codes for' : 'print'} <strong>{selectedItems.length} items</strong>.
+                  You're about to {pendingAction === 'generate' ? 'generate QR codes for' : 'print'} <strong>{selectedItems.length} item{selectedItems.length !== 1 ? 's' : ''}</strong>.
                 </p>
+                
+                {/* TASK 18 BUG FIX: Enhanced item count details for better user feedback */}
+                <div className="mb-3 p-3 bg-gray-50 rounded-md text-sm">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-gray-600">Selected Items:</span>
+                    <span className="font-medium text-gray-900">{selectedItems.length}</span>
+                  </div>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-gray-600">Total Available:</span>
+                    <span className="font-medium text-gray-900">{items.length}</span>
+                  </div>
+                  {pendingAction === 'generate' && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Estimated Time:</span>
+                      <span className="font-medium text-gray-900">~{Math.ceil(selectedItems.length / 5)} minute{Math.ceil(selectedItems.length / 5) !== 1 ? 's' : ''}</span>
+                    </div>
+                  )}
+                </div>
+                
                 <p className="text-sm text-gray-500">
-                  This may take some time and use significant resources. Are you sure you want to continue?
+                  {pendingAction === 'generate' 
+                    ? selectedItems.length > 10 
+                      ? 'This is a large batch that may take some time to process. QR codes will be generated efficiently in smaller batches.'
+                      : 'QR codes will be generated quickly and you can preview them before printing.'
+                    : 'This will open your browser\'s print dialog. Make sure your printer is ready and configured correctly.'
+                  }
                 </p>
                 
                 {pendingAction === 'generate' && (

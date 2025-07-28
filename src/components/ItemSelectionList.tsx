@@ -120,6 +120,15 @@ export function ItemSelectionList({
               </div>
             ))}
           </div>
+          
+          {/* TASK 18 BUG FIX: Enhanced loading state with progress indicator */}
+          <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500">
+            <svg className="animate-spin h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+            </svg>
+            <span>Loading items...</span>
+          </div>
         </div>
       </div>
     );
@@ -192,7 +201,24 @@ export function ItemSelectionList({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <p className="text-lg font-medium mb-2">No items found</p>
-                <p>No items match your search for "{debouncedSearchTerm}"</p>
+                <p className="mb-4">No items match your search for "{debouncedSearchTerm}"</p>
+                
+                {/* TASK 18 BUG FIX: Enhanced user feedback with actionable suggestions */}
+                <div className="bg-blue-50 rounded-lg p-4 text-left">
+                  <p className="text-sm text-blue-800 font-medium mb-2">Try these suggestions:</p>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Check for typos in your search term</li>
+                    <li>• Try searching by item name or public ID</li>
+                    <li>• Use fewer or more general terms</li>
+                    <li>• Clear the search to see all {items.length} available items</li>
+                  </ul>
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="mt-3 text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded-md transition-colors font-medium"
+                  >
+                    Clear Search
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -200,7 +226,17 @@ export function ItemSelectionList({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
                 <p className="text-lg font-medium mb-2">No items available</p>
-                <p>There are no items to display for this property.</p>
+                <p className="mb-4">There are no items to display for this property.</p>
+                
+                {/* TASK 18 BUG FIX: Enhanced empty state with helpful guidance */}
+                <div className="bg-gray-50 rounded-lg p-4 text-left">
+                  <p className="text-sm text-gray-700 font-medium mb-2">Next steps:</p>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Add items to this property first</li>
+                    <li>• Make sure you have the correct property selected</li>
+                    <li>• Refresh the page if items were recently added</li>
+                  </ul>
+                </div>
               </>
             )}
           </div>

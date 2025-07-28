@@ -139,7 +139,7 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
     item: Item,
     retryCount: number = 0,
     signal?: AbortSignal
-  ): Promise<{ success: boolean; dataUrl?: string; error?: string }> => {
+  ): Promise<{ success: boolean; dataUrl?: string; error?: string; isRetryable?: boolean }> => {
     try {
       // BUG FIX: Check for abort signal before starting
       if (signal?.aborted) {
@@ -172,6 +172,30 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
+      // TASK 18 BUG FIX: Enhanced error classification for better user experience
+      let userFriendlyError = '';
+      let isRetryable = true;
+      
+      if (errorMessage.includes('abort')) {
+        userFriendlyError = 'QR generation was cancelled';
+        isRetryable = false;
+      } else if (errorMessage.includes('timeout')) {
+        userFriendlyError = 'QR generation timed out. This may be due to a slow connection.';
+        isRetryable = true;
+      } else if (errorMessage.includes('network')) {
+        userFriendlyError = 'Network error during QR generation. Please check your connection.';
+        isRetryable = true;
+      } else if (errorMessage.includes('canvas') || errorMessage.includes('Canvas')) {
+        userFriendlyError = 'QR code rendering failed. This may be a browser compatibility issue.';
+        isRetryable = false;
+      } else if (errorMessage.includes('memory') || errorMessage.includes('Memory')) {
+        userFriendlyError = 'Not enough memory to generate QR code. Try refreshing the page.';
+        isRetryable = false;
+      } else {
+        userFriendlyError = `Failed to generate QR code: ${errorMessage}`;
+        isRetryable = true;
+      }
+      
       // BUG FIX: Don't log aborted operations as errors
       if (!errorMessage.includes('abort')) {
         console.error(`Failed to generate QR code for ${item.name}:`, errorMessage);
@@ -179,7 +203,8 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
       
       return { 
         success: false, 
-        error: `Failed to generate QR code: ${errorMessage}` 
+        error: userFriendlyError,
+        isRetryable
       };
     }
   }, [baseUrl]);
