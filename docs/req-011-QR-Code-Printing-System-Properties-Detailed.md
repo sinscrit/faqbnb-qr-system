@@ -51,14 +51,14 @@ All file modifications are restricted to the "Authorized Files and Functions for
   - [x] Generate QR for `"https://faqbnb.com/item/test-uuid"` 
   - [x] Verify function returns valid data URL string starting with `"data:image/png;base64,"`
 
-### 2. QR Code Types and Interfaces Definition
+### 2. QR Code Types and Interfaces Definition -unit tested-
 **Story Points**: 1  
 **Dependencies**: Task 1 completed  
 **Files**: `src/types/qrcode.ts` (new), `src/types/index.ts`
 
 #### Task Checklist:
-- [ ] Create new file `src/types/qrcode.ts`:
-  - [ ] Define `QRCodeOptions` interface:
+- [x] Create new file `src/types/qrcode.ts`:
+  - [x] Define `QRCodeOptions` interface:
     ```typescript
     interface QRCodeOptions {
       width: number;
@@ -66,7 +66,7 @@ All file modifications are restricted to the "Authorized Files and Functions for
       color: { dark: string; light: string; };
     }
     ```
-  - [ ] Define `QRPrintSettings` interface:
+  - [x] Define `QRPrintSettings` interface:
     ```typescript
     interface QRPrintSettings {
       qrSize: 'small' | 'medium' | 'large';
@@ -74,12 +74,12 @@ All file modifications are restricted to the "Authorized Files and Functions for
       showLabels: boolean;
     }
     ```
-  - [ ] Define `QRPrintItem` interface extending base Item
-  - [ ] Define `PrintLayoutOptions` interface for grid configuration
-- [ ] Update `src/types/index.ts`:
-  - [ ] Export all new QR-related interfaces
-  - [ ] Verify no conflicts with existing Item interface
-  - [ ] Ensure proper import/export structure maintained
+  - [x] Define `QRPrintItem` interface extending base Item
+  - [x] Define `PrintLayoutOptions` interface for grid configuration
+- [x] Update `src/types/index.ts`:
+  - [x] Export all new QR-related interfaces
+  - [x] Verify no conflicts with existing Item interface
+  - [x] Ensure proper import/export structure maintained
 
 ### 3. Enhanced QR Code Utility Functions 
 **Story Points**: 1  

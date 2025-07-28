@@ -274,6 +274,9 @@ export interface PropertySelectorProps {
   disabled?: boolean;
 }
 
+// QR Code types
+export * from './qrcode';
+
 // Analytics types
 export * from './analytics';
 
