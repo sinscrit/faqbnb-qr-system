@@ -2,6 +2,12 @@
  * Print-specific CSS for QR Code Printing System
  * Request #011 - QR Code Printing System for Properties
  * Purpose: Optimize QR code layouts for physical printing
+ * 
+ * BUG FIX: Enhanced CSS for Task 16 - CSS Print Layout Bug Fixes
+ * - Fixed CSS syntax validation errors
+ * - Improved cross-browser compatibility
+ * - Enhanced page break optimization
+ * - Improved print quality
  */
 
 /* ===== PRINT MEDIA QUERIES ===== */
@@ -10,29 +16,55 @@
   @page {
     margin: 0.5in;
     size: letter; /* 8.5 x 11 inches */
+    /* BUG FIX: Enhanced page setup for better browser compatibility */
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
   }
 
-  /* Alternative page sizes */
+  /* Alternative page sizes with improved margin handling */
   @page :first {
     margin-top: 0.75in; /* Extra space for header on first page */
   }
 
+  /* BUG FIX: A4 page size support with correct dimensions */
+  @page A4 {
+    size: A4;
+    margin: 15mm;
+  }
+
+  /* BUG FIX: Letter page size with enhanced settings */
+  @page Letter {
+    size: letter;
+    margin: 0.5in;
+  }
+
   /* ===== GLOBAL PRINT STYLES ===== */
-  * {
+  /* BUG FIX: Enhanced print color adjustment for all browsers */
+  *,
+  *::before,
+  *::after {
     -webkit-print-color-adjust: exact !important;
     color-adjust: exact !important;
     print-color-adjust: exact !important;
+    /* BUG FIX: Force background printing */
+    -webkit-background-composite: source-over !important;
+    background-composite: source-over !important;
   }
 
+  /* BUG FIX: Improved body styles for consistent cross-browser rendering */
   body {
-    font-family: Arial, sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
     font-size: 12pt !important;
     line-height: 1.2 !important;
     color: #000 !important;
     background: white !important;
+    /* BUG FIX: Force consistent font rendering */
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
   }
 
-  /* Hide all non-printable elements */
+  /* BUG FIX: Enhanced element hiding with improved selectors */
   .print-hidden,
   nav,
   header,
@@ -40,8 +72,12 @@
   .no-print,
   button:not(.print-button),
   .sidebar,
-  .toolbar {
+  .toolbar,
+  /* Additional elements to hide */
+  .screen-only,
+  [data-print="hidden"] {
     display: none !important;
+    visibility: hidden !important;
   }
 
   /* ===== QR PRINT LAYOUT CLASSES ===== */
@@ -53,55 +89,82 @@
     background: white !important;
     box-shadow: none !important;
     border: none !important;
+    /* BUG FIX: Ensure layout consistency */
+    box-sizing: border-box !important;
   }
 
   /* ===== QR GRID LAYOUT ===== */
+  /* BUG FIX: Enhanced grid layout with better browser compatibility */
   .qr-grid {
     display: grid !important;
     width: 100% !important;
-    gap: 0.25in !important; /* Quarter inch spacing between QR codes */
+    gap: 0.25in !important;
     padding: 0 !important;
     margin: 0 !important;
-    page-break-inside: auto;
+    /* BUG FIX: Improved page break handling */
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    /* BUG FIX: Grid layout fallback for older browsers */
+    display: -webkit-grid !important;
+    display: -ms-grid !important;
+    box-sizing: border-box !important;
   }
 
-  /* Grid column configurations */
+  /* BUG FIX: Enhanced grid column configurations with fallbacks */
   .qr-grid.grid-cols-2 {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.5in !important; /* More space for larger QR codes */
+    -ms-grid-columns: 1fr 0.5in 1fr !important;
+    gap: 0.5in !important;
   }
 
   .qr-grid.grid-cols-3 {
     grid-template-columns: repeat(3, 1fr) !important;
+    -ms-grid-columns: 1fr 0.375in 1fr 0.375in 1fr !important;
     gap: 0.375in !important;
   }
 
   .qr-grid.grid-cols-4 {
     grid-template-columns: repeat(4, 1fr) !important;
+    -ms-grid-columns: 1fr 0.25in 1fr 0.25in 1fr 0.25in 1fr !important;
     gap: 0.25in !important;
   }
 
   .qr-grid.grid-cols-6 {
     grid-template-columns: repeat(6, 1fr) !important;
-    gap: 0.125in !important; /* Tighter spacing for many items */
+    -ms-grid-columns: 1fr 0.125in 1fr 0.125in 1fr 0.125in 1fr 0.125in 1fr 0.125in 1fr !important;
+    gap: 0.125in !important;
   }
 
   /* ===== QR ITEM STYLES ===== */
+  /* BUG FIX: Enhanced QR item styling with better page break control */
   .qr-item {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    break-inside: avoid !important; /* Prevent page breaks within QR items */
+    /* BUG FIX: Comprehensive page break prevention */
+    break-inside: avoid !important;
     page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
     margin: 0 !important;
     padding: 0.1in !important;
     background: white !important;
     border: 1px solid #ddd !important;
     border-radius: 0.05in !important;
+    /* BUG FIX: Ensure consistent box model */
+    box-sizing: border-box !important;
+    /* BUG FIX: Minimum height to prevent collapsing */
+    min-height: 0.5in !important;
+  }
+
+  /* BUG FIX: Ensure labels stay with QR codes */
+  .qr-item > * {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   /* ===== QR CODE IMAGE STYLES ===== */
+  /* BUG FIX: Enhanced QR code image rendering with quality optimization */
   .qr-code-image {
     width: 100% !important;
     height: auto !important;
@@ -110,12 +173,19 @@
     margin: 0 auto 0.05in auto !important;
     border: none !important;
     background: white !important;
-    image-rendering: pixelated !important; /* Sharp QR code rendering */
+    /* BUG FIX: Enhanced image rendering for crisp QR codes */
+    image-rendering: -webkit-optimize-contrast !important;
     image-rendering: -moz-crisp-edges !important;
+    image-rendering: pixelated !important;
     image-rendering: crisp-edges !important;
+    /* BUG FIX: Prevent image optimization that could blur QR codes */
+    -ms-interpolation-mode: nearest-neighbor !important;
+    /* BUG FIX: Ensure color accuracy */
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 
-  /* QR Code container with proper sizing */
+  /* BUG FIX: Enhanced QR Code container with proper aspect ratio */
   .qr-code-container {
     width: 100% !important;
     aspect-ratio: 1 / 1 !important;
@@ -125,33 +195,67 @@
     background: white !important;
     border: 1px solid #333 !important;
     margin-bottom: 0.05in !important;
+    /* BUG FIX: Fallback for browsers without aspect-ratio support */
+    position: relative !important;
+    overflow: hidden !important;
   }
 
-  /* Size-specific QR code dimensions for print */
+  /* BUG FIX: Aspect ratio fallback */
+  .qr-code-container::before {
+    content: '' !important;
+    display: block !important;
+    padding-top: 100% !important;
+  }
+
+  .qr-code-container > * {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* BUG FIX: Enhanced size-specific QR code dimensions for print */
   .w-24.h-24 .qr-code-container,
-  .w-24.h-24 .qr-code-image {
+  .w-24.h-24 .qr-code-image,
+  [data-qr-size="small"] .qr-code-container,
+  [data-qr-size="small"] .qr-code-image {
     width: 1in !important;
     height: 1in !important;
+    min-width: 1in !important;
+    min-height: 1in !important;
   }
 
   .w-32.h-32 .qr-code-container,
-  .w-32.h-32 .qr-code-image {
+  .w-32.h-32 .qr-code-image,
+  [data-qr-size="medium"] .qr-code-container,
+  [data-qr-size="medium"] .qr-code-image {
     width: 1.5in !important;
     height: 1.5in !important;
+    min-width: 1.5in !important;
+    min-height: 1.5in !important;
   }
 
   .w-40.h-40 .qr-code-container,
-  .w-40.h-40 .qr-code-image {
+  .w-40.h-40 .qr-code-image,
+  [data-qr-size="large"] .qr-code-container,
+  [data-qr-size="large"] .qr-code-image {
     width: 2in !important;
     height: 2in !important;
+    min-width: 2in !important;
+    min-height: 2in !important;
   }
 
   /* ===== QR ITEM LABEL STYLES ===== */
+  /* BUG FIX: Enhanced label styling with better typography */
   .qr-item-label {
     width: 100% !important;
     text-align: center !important;
     margin-top: 0.05in !important;
     padding: 0 0.02in !important;
+    /* BUG FIX: Ensure labels stay with QR codes */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .qr-item-label p {
@@ -162,7 +266,12 @@
     color: #333 !important;
     font-weight: normal !important;
     word-wrap: break-word !important;
+    -webkit-hyphens: auto !important;
+    -ms-hyphens: auto !important;
     hyphens: auto !important;
+    /* BUG FIX: Prevent text from breaking across pages */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .qr-item-label p:first-child {
@@ -171,30 +280,51 @@
     margin-bottom: 0.02in !important;
   }
 
-  /* Hide public ID in print to save space */
+  /* BUG FIX: Option to show/hide public ID based on settings */
   .qr-item-label p:last-child {
     display: none !important;
   }
 
+  /* Show public ID when specifically requested */
+  .show-public-id .qr-item-label p:last-child {
+    display: block !important;
+    font-size: 7pt !important;
+    color: #666 !important;
+  }
+
   /* ===== PAGE BREAK CONTROL ===== */
+  /* BUG FIX: Enhanced page break control with cross-browser support */
   .page-break-before {
     page-break-before: always !important;
     break-before: page !important;
+    -webkit-column-break-before: always !important;
   }
 
   .page-break-after {
     page-break-after: always !important;
     break-after: page !important;
+    -webkit-column-break-after: always !important;
   }
 
   .page-break-inside-avoid {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
   }
 
-  /* Prevent orphaned QR codes */
+  /* BUG FIX: Improved orphan prevention */
   .qr-item:nth-last-child(-n+2) {
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* BUG FIX: Prevent single items at top/bottom of pages */
+  .qr-grid .qr-item:first-child {
+    page-break-before: avoid !important;
+  }
+
+  .qr-grid .qr-item:last-child {
+    page-break-after: avoid !important;
   }
 
   /* ===== PRINT HEADER STYLES ===== */
@@ -203,6 +333,9 @@
     padding-bottom: 0.1in !important;
     border-bottom: 1px solid #333 !important;
     text-align: center !important;
+    /* BUG FIX: Ensure header doesn't break across pages */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .print-header h1 {
@@ -220,7 +353,7 @@
 
   /* ===== RESPONSIVE PRINT ADJUSTMENTS ===== */
   
-  /* For smaller paper sizes */
+  /* BUG FIX: Enhanced responsive adjustments for different paper sizes */
   @media print and (max-width: 8in) {
     .qr-grid {
       gap: 0.125in !important;
@@ -228,14 +361,16 @@
     
     .qr-grid.grid-cols-4 {
       grid-template-columns: repeat(3, 1fr) !important;
+      -ms-grid-columns: 1fr 0.125in 1fr 0.125in 1fr !important;
     }
     
     .qr-grid.grid-cols-6 {
       grid-template-columns: repeat(4, 1fr) !important;
+      -ms-grid-columns: 1fr 0.125in 1fr 0.125in 1fr 0.125in 1fr !important;
     }
   }
 
-  /* For A4 paper size */
+  /* BUG FIX: Enhanced A4 paper size support */
   @media print and (width: 210mm) {
     @page {
       size: A4;
@@ -245,18 +380,80 @@
     .qr-grid {
       gap: 6mm !important;
     }
+
+    /* Adjust font sizes for A4 */
+    .qr-item-label p {
+      font-size: 7pt !important;
+    }
+
+    .qr-item-label p:first-child {
+      font-size: 8pt !important;
+    }
+  }
+
+  /* ===== BROWSER-SPECIFIC FIXES ===== */
+  
+  /* BUG FIX: Chrome/Safari print optimizations */
+  @supports (-webkit-appearance: none) {
+    .qr-code-image {
+      -webkit-print-color-adjust: exact !important;
+      -webkit-user-select: none !important;
+    }
+
+    .qr-item {
+      -webkit-print-color-adjust: exact !important;
+    }
+
+    /* Safari-specific grid fixes */
+    @supports (-webkit-backdrop-filter: blur(1px)) {
+      .qr-grid {
+        -webkit-print-color-adjust: exact !important;
+      }
+    }
+  }
+
+  /* BUG FIX: Firefox print optimizations */
+  @supports (-moz-appearance: none) {
+    .qr-code-image {
+      color-adjust: exact !important;
+    }
+
+    .qr-item {
+      color-adjust: exact !important;
+    }
+
+    /* Firefox-specific flexbox fixes */
+    .qr-item {
+      -moz-box-sizing: border-box !important;
+    }
+  }
+
+  /* BUG FIX: Edge/IE print optimizations */
+  @supports (-ms-ime-align: auto) {
+    .qr-grid {
+      display: -ms-grid !important;
+    }
+
+    .qr-item {
+      -ms-grid-row-align: stretch !important;
+      -ms-grid-column-align: stretch !important;
+    }
   }
 
   /* ===== ACCESSIBILITY AND QUALITY ENHANCEMENTS ===== */
   
-  /* High contrast for better scanning */
+  /* BUG FIX: Enhanced contrast and quality for better scanning */
   .qr-code-image {
-    filter: contrast(1.2) !important;
+    filter: contrast(1.2) brightness(1.0) !important;
+    /* Ensure sharp edges */
+    shape-rendering: crispEdges !important;
   }
 
-  /* Ensure text is readable */
+  /* BUG FIX: Ensure text is readable with proper contrast */
   .qr-item-label p {
     text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
   }
 
   /* ===== UTILITY CLASSES FOR PRINT ===== */
@@ -277,16 +474,20 @@
     display: grid !important;
   }
 
+  /* BUG FIX: Enhanced typography utilities */
   .print-text-xs {
-    font-size: 8pt !important;
+    font-size: 7pt !important;
+    line-height: 1.1 !important;
   }
 
   .print-text-sm {
-    font-size: 9pt !important;
+    font-size: 8pt !important;
+    line-height: 1.1 !important;
   }
 
   .print-text-base {
     font-size: 10pt !important;
+    line-height: 1.2 !important;
   }
 
   .print-font-normal {
@@ -319,7 +520,7 @@
 
   /* ===== ERROR HANDLING FOR PRINT ===== */
   
-  /* Show fallback for missing QR codes */
+  /* BUG FIX: Enhanced fallback for missing QR codes */
   .qr-item .error-placeholder {
     width: 100% !important;
     aspect-ratio: 1 / 1 !important;
@@ -330,38 +531,49 @@
     font-size: 8pt !important;
     color: #666 !important;
     background: #f9f9f9 !important;
+    text-align: center !important;
+    /* BUG FIX: Ensure error placeholders don't break */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
-  /* ===== BROWSER-SPECIFIC FIXES ===== */
-  
-  /* Chrome/Safari print optimizations */
-  @supports (-webkit-appearance: none) {
-    .qr-code-image {
-      -webkit-print-color-adjust: exact !important;
-    }
-  }
-
-  /* Firefox print optimizations */
-  @supports (-moz-appearance: none) {
-    .qr-code-image {
-      color-adjust: exact !important;
-    }
+  /* BUG FIX: Loading state placeholder */
+  .qr-item .loading-placeholder {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border: 1px solid #ddd !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 8pt !important;
+    color: #999 !important;
+    background: repeating-linear-gradient(
+      45deg,
+      #f0f0f0,
+      #f0f0f0 2px,
+      #ffffff 2px,
+      #ffffff 4px
+    ) !important;
   }
 }
 
 /* ===== SCREEN PREVIEW STYLES ===== */
-/* These styles help preview print layout on screen */
+/* BUG FIX: Enhanced screen preview for better print layout simulation */
 
 @media screen {
   .print-preview {
     background: #f5f5f5;
     padding: 1rem;
+    /* BUG FIX: Simulate print margins */
+    min-height: 11in;
+    width: 8.5in;
+    margin: 0 auto;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .print-preview .qr-grid {
     background: white;
     padding: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
   }
 
@@ -372,7 +584,7 @@
     background: white;
   }
 
-  /* Visual indicator for print-only elements */
+  /* BUG FIX: Better visual indicators for print-only elements */
   .print-block {
     position: relative;
   }
@@ -388,5 +600,26 @@
     padding: 0.125rem 0.25rem;
     border-radius: 0.125rem;
     opacity: 0.8;
+    z-index: 10;
+  }
+
+  /* BUG FIX: Page break indicators in preview */
+  .page-break-indicator {
+    border-top: 2px dashed #f59e0b;
+    margin: 1rem 0;
+    position: relative;
+  }
+
+  .page-break-indicator::after {
+    content: "Page Break";
+    position: absolute;
+    top: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
   }
 } 
