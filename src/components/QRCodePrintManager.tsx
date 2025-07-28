@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Item, QRPrintSettings, QRGenerationState } from '@/types';
 import { ItemSelectionList } from './ItemSelectionList';
 import { generateBatchQRCodes, clearQRCache } from '@/lib/qrcode-utils';
@@ -53,10 +53,17 @@ export function QRCodePrintManager({
   const [currentStep, setCurrentStep] = useState<'select' | 'configure' | 'preview'>('select');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingAction, setPendingAction] = useState<'generate' | 'print' | null>(null);
+  const [lastError, setLastError] = useState<string | null>(null);
+  
+  // Refs for tracking component state
+  const isComponentMountedRef = useRef(true);
+  const generationAbortControllerRef = useRef<AbortController | null>(null);
+  const previousSelectedItemsRef = useRef<string[]>([]);
 
-  // Reset state when modal opens/closes
+  // BUG FIX: Enhanced modal state management with proper cleanup
   useEffect(() => {
     if (isOpen) {
+      // Reset all state when modal opens
       setSelectedItems([]);
       setGeneratedQRCodes(new Map());
       setCurrentStep('select');
@@ -66,8 +73,68 @@ export function QRCodePrintManager({
         total: 0,
         errors: []
       });
+      setIsGenerating(false);
+      setShowConfirmDialog(false);
+      setPendingAction(null);
+      setLastError(null);
+      // Clear any previous generation operation
+      if (generationAbortControllerRef.current) {
+        generationAbortControllerRef.current.abort();
+        generationAbortControllerRef.current = null;
+      }
+    } else {
+      // BUG FIX: Proper cleanup when modal closes
+      if (generationAbortControllerRef.current) {
+        generationAbortControllerRef.current.abort();
+        generationAbortControllerRef.current = null;
+      }
+      setIsGenerating(false);
+      setShowConfirmDialog(false);
+      setPendingAction(null);
+      clearQRCache();
     }
   }, [isOpen]);
+
+  // BUG FIX: Enhanced state synchronization for selected items
+  useEffect(() => {
+    // Sync selected items with available items (remove invalid selections)
+    if (items.length > 0) {
+      const validItemIds = new Set(items.map(item => item.id));
+      setSelectedItems(prev => {
+        const filtered = prev.filter(id => validItemIds.has(id));
+        // Only update if there's a change to prevent unnecessary re-renders
+        if (filtered.length !== prev.length) {
+          return filtered;
+        }
+        return prev;
+      });
+    }
+  }, [items]);
+
+  // BUG FIX: Track previous selected items for change detection
+  useEffect(() => {
+    const previousSelected = previousSelectedItemsRef.current;
+    const currentSelected = selectedItems;
+    
+    // If selection changed significantly, clear error state
+    if (previousSelected.length !== currentSelected.length || 
+        !previousSelected.every(id => currentSelected.includes(id))) {
+      setLastError(null);
+    }
+    
+    previousSelectedItemsRef.current = currentSelected;
+  }, [selectedItems]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isComponentMountedRef.current = false;
+      if (generationAbortControllerRef.current) {
+        generationAbortControllerRef.current.abort();
+      }
+      clearQRCache();
+    };
+  }, []);
 
   // Handle individual item selection changes
   const handleItemSelection = useCallback((itemId: string) => {
@@ -90,9 +157,31 @@ export function QRCodePrintManager({
     setSelectedItems([]);
   }, []);
 
-  // Handle print settings changes
+  // BUG FIX: Enhanced print settings change handler with persistence
   const handlePrintSettingsChange = useCallback((settings: Partial<QRPrintSettings>) => {
-    setPrintSettings(prev => ({ ...prev, ...settings }));
+    setPrintSettings(prev => {
+      const newSettings = { ...prev, ...settings };
+      // Persist settings in sessionStorage for user convenience
+      try {
+        sessionStorage.setItem('qr-print-settings', JSON.stringify(newSettings));
+      } catch (error) {
+        console.warn('Failed to persist print settings:', error);
+      }
+      return newSettings;
+    });
+  }, []);
+
+  // BUG FIX: Load persisted print settings on component mount
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('qr-print-settings');
+      if (stored) {
+        const parsedSettings = JSON.parse(stored);
+        setPrintSettings(prev => ({ ...prev, ...parsedSettings }));
+      }
+    } catch (error) {
+      console.warn('Failed to load persisted print settings:', error);
+    }
   }, []);
 
   // Check if confirmation is needed for large print jobs
@@ -110,82 +199,34 @@ export function QRCodePrintManager({
     return false; // No confirmation needed
   }, [needsConfirmation]);
 
-  // Perform print action
-  const performPrint = useCallback(() => {
-    // Add keyboard shortcut support
-    console.log('Initiating print with Ctrl+P shortcut support...');
-    window.print();
+  // BUG FIX: Enhanced progress tracking with proper reset
+  const resetGenerationState = useCallback(() => {
+    setGenerationState({
+      isGenerating: false,
+      completed: 0,
+      total: 0,
+      errors: []
+    });
+    setIsGenerating(false);
   }, []);
 
-  // Execute pending action after confirmation
-  const executePendingAction = useCallback(async () => {
-    setShowConfirmDialog(false);
-    const action = pendingAction;
-    setPendingAction(null);
-    
-    if (action === 'generate') {
-      // Call QR generation logic directly
-      if (selectedItems.length === 0) return;
-
-      setIsGenerating(true);
-      setGenerationState({
-        isGenerating: true,
-        completed: 0,
-        total: selectedItems.length,
-        errors: []
-      });
-
-      try {
-        const selectedItemsData = items.filter(item => selectedItems.includes(item.id));
-        const itemsForGeneration = selectedItemsData.map(item => ({
-          id: item.id,
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://faqbnb.com'}/item/${item.public_id}`
-        }));
-
-        const onProgress = (completed: number, total: number) => {
-          setGenerationState(prev => ({
-            ...prev,
-            completed,
-            total
-          }));
-        };
-
-        const results = await generateBatchQRCodes(itemsForGeneration, onProgress, {
-          width: printSettings.qrSize === 'small' ? 144 : 
-                 printSettings.qrSize === 'large' ? 288 : 216,
-          margin: 2,
-          color: { dark: '#000000', light: '#FFFFFF' }
-        });
-
-        setGeneratedQRCodes(results);
-        setCurrentStep('preview');
-
-      } catch (error) {
-        console.error('QR code generation failed:', error);
-        setGenerationState(prev => ({
-          ...prev,
-          errors: [{ itemId: 'batch', error: error instanceof Error ? error.message : 'Unknown error' }]
-        }));
-      } finally {
-        setIsGenerating(false);
-        setGenerationState(prev => ({ ...prev, isGenerating: false }));
-      }
-    } else if (action === 'print') {
-      performPrint();
-    }
-  }, [pendingAction]);
-
-  // Cancel pending action
-  const cancelPendingAction = useCallback(() => {
-    setShowConfirmDialog(false);
-    setPendingAction(null);
-  }, []);
-
-  // Perform the actual QR code generation
+  // BUG FIX: Enhanced QR generation with better error handling and progress tracking
   const performQRGeneration = useCallback(async () => {
-    if (selectedItems.length === 0) return;
+    if (selectedItems.length === 0) {
+      setLastError('No items selected for QR generation');
+      return;
+    }
+
+    // Create new abort controller for this generation
+    if (generationAbortControllerRef.current) {
+      generationAbortControllerRef.current.abort();
+    }
+    generationAbortControllerRef.current = new AbortController();
 
     setIsGenerating(true);
+    setLastError(null);
+    
+    // BUG FIX: Reset progress state at the start of generation
     setGenerationState({
       isGenerating: true,
       completed: 0,
@@ -200,8 +241,10 @@ export function QRCodePrintManager({
         url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://faqbnb.com'}/item/${item.public_id}`
       }));
 
-      // Progress callback for batch generation
+      // BUG FIX: Enhanced progress callback with error tracking
       const onProgress = (completed: number, total: number) => {
+        if (!isComponentMountedRef.current) return;
+        
         setGenerationState(prev => ({
           ...prev,
           completed,
@@ -209,45 +252,118 @@ export function QRCodePrintManager({
         }));
       };
 
-      const results = await generateBatchQRCodes(itemsForGeneration, onProgress, {
-        width: printSettings.qrSize === 'small' ? 144 : 
-               printSettings.qrSize === 'large' ? 288 : 216,
-        margin: 2,
-        color: { dark: '#000000', light: '#FFFFFF' }
+      const result = await generateBatchQRCodes(
+        itemsForGeneration,
+        onProgress,
+        { width: 256, margin: 2, color: { dark: '#000000', light: '#FFFFFF' } }
+      );
+
+      if (!isComponentMountedRef.current) return;
+
+      // BUG FIX: Update QR codes Map properly to trigger UI updates
+      setGeneratedQRCodes(prevMap => {
+        const newMap = new Map(prevMap);
+        result.forEach((dataUrl, itemId) => {
+          newMap.set(itemId, dataUrl);
+        });
+        return newMap;
       });
 
-      setGeneratedQRCodes(results);
-      setCurrentStep('preview');
-
-    } catch (error) {
-      console.error('QR code generation failed:', error);
+      // BUG FIX: Proper completion state management
       setGenerationState(prev => ({
         ...prev,
-        errors: [{ itemId: 'batch', error: error instanceof Error ? error.message : 'Unknown error' }]
+        isGenerating: false,
+        completed: selectedItems.length
       }));
-    } finally {
-      setIsGenerating(false);
-      setGenerationState(prev => ({ ...prev, isGenerating: false }));
-    }
-  }, [selectedItems, items, printSettings]);
 
-  // Wrapper function for QR generation with confirmation support
-  const handleGenerateQRCodes = useCallback(async () => {
-    if (handleConfirmLargeJob('generate')) {
-      return; // Confirmation dialog shown, wait for user response
+      setCurrentStep('preview');
+      
+    } catch (error: any) {
+      if (!isComponentMountedRef.current) return;
+      
+      // BUG FIX: Enhanced error handling with specific error messages
+      if (error.name === 'AbortError') {
+        setLastError('QR generation was cancelled');
+      } else if (error.message?.includes('network')) {
+        setLastError('Network error during QR generation. Please check your connection and try again.');
+      } else {
+        setLastError(`QR generation failed: ${error.message || 'Unknown error'}`);
+      }
+      
+             setGenerationState(prev => ({
+         ...prev,
+         isGenerating: false,
+         errors: [...(prev.errors || []), { itemId: 'batch', error: error.message || 'Generation failed' }]
+       }));
+    } finally {
+      if (isComponentMountedRef.current) {
+        setIsGenerating(false);
+      }
+      generationAbortControllerRef.current = null;
     }
-    await performQRGeneration();
+  }, [selectedItems, items]);
+
+  // Handle QR generation with confirmation
+  const handleGenerateQRCodes = useCallback(() => {
+    if (handleConfirmLargeJob('generate')) {
+      return; // Waiting for confirmation
+    }
+    performQRGeneration();
   }, [handleConfirmLargeJob, performQRGeneration]);
 
-  // Handle modal close with cleanup
+  // Perform print action
+  const performPrint = useCallback(() => {
+    console.log('Initiating print with Ctrl+P shortcut support...');
+    window.print();
+  }, []);
+
+  // Execute pending action after confirmation
+  const executePendingAction = useCallback(async () => {
+    setShowConfirmDialog(false);
+    const action = pendingAction;
+    setPendingAction(null);
+    
+    if (action === 'generate') {
+      await performQRGeneration();
+    } else if (action === 'print') {
+      performPrint();
+    }
+  }, [pendingAction, performQRGeneration, performPrint]);
+
+  // Cancel pending action
+  const cancelPendingAction = useCallback(() => {
+    setShowConfirmDialog(false);
+    setPendingAction(null);
+  }, []);
+
+  // BUG FIX: Enhanced modal close with proper cleanup
   const handleClose = useCallback(() => {
-    // Clear cache when closing
+    // Abort any ongoing generation
+    if (generationAbortControllerRef.current) {
+      generationAbortControllerRef.current.abort();
+      generationAbortControllerRef.current = null;
+    }
+    
+    // Clear all state
     clearQRCache();
     setSelectedItems([]);
     setGeneratedQRCodes(new Map());
     setCurrentStep('select');
+    setIsGenerating(false);
+    setShowConfirmDialog(false);
+    setPendingAction(null);
+    setLastError(null);
+    resetGenerationState();
+    
     onClose();
-  }, [onClose]);
+  }, [onClose, resetGenerationState]);
+
+  // BUG FIX: Enhanced retry mechanism
+  const handleRetryGeneration = useCallback(() => {
+    setLastError(null);
+    resetGenerationState();
+    performQRGeneration();
+  }, [resetGenerationState, performQRGeneration]);
 
   // Handle step navigation
   const handleNextStep = useCallback(() => {

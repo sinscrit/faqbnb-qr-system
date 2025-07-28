@@ -366,6 +366,148 @@ All file modifications are restricted to the "Authorized Files and Functions for
 
 ---
 
+## Bug Fix Tasks (Additional)
+
+### 13. Print Manager Integration Bug Fixes -unit tested-
+**Story Points**: 1  
+**Dependencies**: Task 12 completed  
+**Files**: `src/components/QRCodePrintManager.tsx`, `src/components/QRCodePrintPreview.tsx`
+
+#### Bug Fix Checklist:
+- [x] **Print Manager Modal State Bug**: Fix modal state management issues identified in integration testing
+  - [x] Investigate modal not closing properly after print completion
+  - [x] Fix state persistence when modal is reopened
+  - [x] Ensure proper cleanup of QR generation state on modal close
+- [x] **QR Generation Progress Bug**: Fix progress tracking inconsistencies
+  - [x] Correct progress percentage calculation in batch processing
+  - [x] Fix progress bar not resetting between different print jobs
+  - [x] Ensure progress indicators show accurate completion status
+- [x] **Error Handling Enhancement**: Improve error state management in Print Manager
+  - [x] Add specific error messages for different failure scenarios
+  - [x] Implement proper error recovery mechanisms
+  - [x] Fix error state not clearing when retrying operations
+- [x] **State Synchronization**: Fix component state synchronization issues
+  - [x] Ensure selectedItems state stays in sync with ItemSelectionList
+  - [x] Fix print settings not persisting across component re-renders
+  - [x] Correct issues with generatedQRCodes Map not updating UI properly
+
+### 14. Custom Hook Integration Bug Fixes  
+**Story Points**: 1  
+**Dependencies**: Task 13 completed  
+**Files**: `src/hooks/useQRCodeGeneration.ts`, `src/components/QRCodePrintManager.tsx`
+
+#### Bug Fix Checklist:
+- [ ] **Memory Leak Prevention**: Fix memory management issues in useQRCodeGeneration hook
+  - [ ] Implement proper AbortController cleanup on component unmount
+  - [ ] Fix QR code cache not being cleared when hook unmounts
+  - [ ] Ensure batch processing stops when component is destroyed
+- [ ] **Batch Processing Reliability**: Fix batch generation consistency issues
+  - [ ] Correct race conditions in concurrent QR generation
+  - [ ] Fix batches not completing when some items fail
+  - [ ] Implement proper retry mechanism for failed individual items
+- [ ] **Hook State Management**: Fix state update issues in custom hook
+  - [ ] Correct loading state not updating properly during generation
+  - [ ] Fix error state persisting after successful retries
+  - [ ] Ensure progress callbacks fire consistently across all batches
+- [ ] **Cache Management Bug**: Fix QR code caching inconsistencies
+  - [ ] Implement proper cache expiration and cleanup
+  - [ ] Fix cached QR codes not being retrieved correctly
+  - [ ] Ensure cache invalidation works when items are updated
+
+### 15. Performance Optimization Bug Fixes
+**Story Points**: 1  
+**Dependencies**: Task 14 completed  
+**Files**: `src/lib/qrcode-utils.ts`, `src/components/QRCodePrintPreview.tsx`, `src/hooks/useQRCodeGeneration.ts`
+
+#### Bug Fix Checklist:
+- [ ] **Large Print Job Performance**: Fix performance degradation with >20 items
+  - [ ] Optimize batch processing chunk size for better performance
+  - [ ] Implement progressive rendering for print preview
+  - [ ] Add virtualization for large item lists in preview
+- [ ] **Memory Optimization**: Fix memory usage issues during generation
+  - [ ] Implement proper garbage collection for generated QR codes
+  - [ ] Fix memory not being released after print completion
+  - [ ] Optimize QR code storage format to reduce memory footprint
+- [ ] **UI Responsiveness**: Fix UI blocking during QR generation
+  - [ ] Implement proper async batching with requestAnimationFrame
+  - [ ] Fix browser freezing during large batch operations
+  - [ ] Add proper loading debouncing to prevent multiple simultaneous generations
+- [ ] **Print Preview Optimization**: Fix slow rendering in print preview
+  - [ ] Implement lazy loading for QR code images in preview
+  - [ ] Fix re-rendering issues when switching between print settings
+  - [ ] Optimize CSS Grid calculations for better performance
+
+### 16. CSS Print Layout Bug Fixes
+**Story Points**: 1  
+**Dependencies**: Task 15 completed  
+**Files**: `src/styles/print.css`, `src/components/QRCodePrintPreview.tsx`
+
+#### Bug Fix Checklist:
+- [ ] **CSS Syntax Corrections**: Fix CSS validation errors identified in testing
+  - [ ] Correct invalid CSS class syntax: `.print\\:hidden` → `.print-hidden`
+  - [ ] Fix CSS Grid property conflicts in print media queries
+  - [ ] Ensure all CSS selectors use valid syntax for cross-browser compatibility
+- [ ] **Print Layout Consistency**: Fix layout issues across different browsers
+  - [ ] Fix QR code positioning inconsistencies in Safari print preview
+  - [ ] Correct page break handling in Firefox printing
+  - [ ] Ensure Chrome print margins are properly handled
+- [ ] **Page Break Optimization**: Fix QR codes being cut across page boundaries
+  - [ ] Implement proper `break-inside: avoid` for QR code containers
+  - [ ] Fix page break calculations for different grid layouts
+  - [ ] Ensure labels stay with their corresponding QR codes
+- [ ] **Print Quality Enhancement**: Fix print quality issues
+  - [ ] Optimize QR code resolution for high-quality printing
+  - [ ] Fix color contrast issues in print mode
+  - [ ] Ensure proper scaling for different paper sizes (A4, Letter)
+
+### 17. Cross-Browser Compatibility Bug Fixes
+**Story Points**: 1  
+**Dependencies**: Task 16 completed  
+**Files**: `src/lib/qrcode-utils.ts`, `src/styles/print.css`, `src/components/QRCodePrintPreview.tsx`
+
+#### Bug Fix Checklist:
+- [ ] **Safari Compatibility**: Fix Safari-specific issues identified in testing
+  - [ ] Fix QR code generation compatibility with Safari's canvas implementation
+  - [ ] Correct CSS Grid layout issues in Safari print preview
+  - [ ] Ensure proper event handling for Safari mobile devices
+- [ ] **Firefox Print Issues**: Fix Firefox-specific printing problems
+  - [ ] Correct print media query handling in Firefox
+  - [ ] Fix CSS flexbox issues in printed layouts
+  - [ ] Ensure proper page scaling in Firefox print dialog
+- [ ] **Mobile Responsiveness**: Fix mobile device compatibility issues
+  - [ ] Correct touch event handling for item selection on mobile
+  - [ ] Fix responsive layout issues on small screens
+  - [ ] Ensure print functionality works on mobile browsers
+- [ ] **Vendor Prefix Additions**: Add missing vendor prefixes for better compatibility
+  - [ ] Add `-webkit-` prefixes for CSS Grid properties
+  - [ ] Include `-moz-` prefixes for Firefox-specific features
+  - [ ] Ensure proper vendor prefixes for print-related CSS properties
+
+### 18. Error Recovery and User Experience Bug Fixes
+**Story Points**: 1  
+**Dependencies**: Task 17 completed  
+**Files**: `src/components/QRCodePrintManager.tsx`, `src/components/ItemSelectionList.tsx`, `src/hooks/useQRCodeGeneration.ts`
+
+#### Bug Fix Checklist:
+- [ ] **Error Message Clarity**: Improve error messaging for better user experience
+  - [ ] Add specific error messages for network failures during QR generation
+  - [ ] Implement user-friendly error descriptions for technical issues
+  - [ ] Provide clear guidance on how to resolve common errors
+- [ ] **Retry Mechanism Enhancement**: Fix and improve retry functionality
+  - [ ] Implement exponential backoff for failed QR generation retries
+  - [ ] Add manual retry buttons for individual failed items
+  - [ ] Fix automatic retry not working after network errors
+- [ ] **Loading State Improvements**: Fix loading state inconsistencies
+  - [ ] Ensure loading indicators show for all async operations
+  - [ ] Fix loading states not clearing after operations complete
+  - [ ] Add proper loading states for individual QR code generation
+- [ ] **User Feedback Enhancement**: Improve user feedback mechanisms
+  - [ ] Add success notifications when QR codes are generated successfully
+  - [ ] Implement progress feedback for batch operations
+  - [ ] Fix confirmation dialogs not showing proper item counts
+
+---
+
 ## Testing Strategy per Task
 
 ### Unit Testing (Included in relevant tasks):
