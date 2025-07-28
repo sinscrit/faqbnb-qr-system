@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
+import { QRCodePrintManager } from '@/components/QRCodePrintManager';
 import { 
   Property, 
-  PropertyResponse
+  PropertyResponse,
+  Item
 } from '@/types';
 
 const ViewPropertyPage: React.FC = () => {
@@ -15,10 +17,44 @@ const ViewPropertyPage: React.FC = () => {
   const { user } = useAuth();
 
   const propertyId = params.propertyId as string;
+  
+  // Early return if no propertyId
+  if (!propertyId) {
+    return (
+      <AuthGuard>
+        <div className="p-6">
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Invalid Property ID</h3>
+              <p className="mt-1 text-sm text-gray-500">No property ID provided in the URL.</p>
+              <div className="mt-6">
+                <button
+                  onClick={() => router.push('/admin/properties')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  Back to Properties
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
 
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // QR Print Modal State
+  const [showQRPrintModal, setShowQRPrintModal] = useState(false);
+  const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
+  const [qrPrintItems, setQRPrintItems] = useState<Item[]>([]);
 
   // Load property data
   useEffect(() => {
@@ -67,6 +103,47 @@ const ViewPropertyPage: React.FC = () => {
 
   const handleBack = () => {
     router.push('/admin/properties');
+  };
+
+  // QR Print Modal Handlers
+  const handleOpenQRPrint = async () => {
+    setShowQRPrintModal(true);
+    setIsQRPrintLoading(true);
+    setError(null);
+    
+    try {
+      console.log('Fetching items for property:', propertyId);
+      const response = await fetch(`/api/admin/items?property=${propertyId}`, {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch items for QR printing');
+      }
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load items');
+      }
+
+      console.log('Items loaded for QR printing:', data.data);
+      setQRPrintItems(data.data || []);
+      
+    } catch (error) {
+      console.error('Error loading items for QR printing:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load items');
+      // Keep modal open to show error state
+    } finally {
+      setIsQRPrintLoading(false);
+    }
+  };
+
+  const handleCloseQRPrint = () => {
+    setShowQRPrintModal(false);
+    setIsQRPrintLoading(false);
+    setQRPrintItems([]);
+    setError(null);
   };
 
   const formatDate = (dateString: string) => {
@@ -348,9 +425,31 @@ const ViewPropertyPage: React.FC = () => {
                 </svg>
                 View Items
               </button>
+              
+              <button
+                onClick={handleOpenQRPrint}
+                disabled={isQRPrintLoading}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                {isQRPrintLoading ? 'Loading...' : 'Print QR Codes'}
+              </button>
             </div>
           </div>
         </div>
+        
+        {/* QR Code Print Manager Modal */}
+        {showQRPrintModal && (
+          <QRCodePrintManager
+            propertyId={propertyId}
+            items={qrPrintItems}
+            isOpen={showQRPrintModal}
+            onClose={handleCloseQRPrint}
+            isLoadingItems={isQRPrintLoading}
+          />
+        )}
       </div>
     </AuthGuard>
   );
