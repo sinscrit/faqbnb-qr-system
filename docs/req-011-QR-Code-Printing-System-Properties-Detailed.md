@@ -460,28 +460,28 @@ All file modifications are restricted to the "Authorized Files and Functions for
   - [x] Fix color contrast issues in print mode
   - [x] Ensure proper scaling for different paper sizes (A4, Letter)
 
-### 17. Cross-Browser Compatibility Bug Fixes
+### 17. Cross-Browser Compatibility Bug Fixes -unit tested-
 **Story Points**: 1  
 **Dependencies**: Task 16 completed  
 **Files**: `src/lib/qrcode-utils.ts`, `src/styles/print.css`, `src/components/QRCodePrintPreview.tsx`
 
 #### Bug Fix Checklist:
-- [ ] **Safari Compatibility**: Fix Safari-specific issues identified in testing
-  - [ ] Fix QR code generation compatibility with Safari's canvas implementation
-  - [ ] Correct CSS Grid layout issues in Safari print preview
-  - [ ] Ensure proper event handling for Safari mobile devices
-- [ ] **Firefox Print Issues**: Fix Firefox-specific printing problems
-  - [ ] Correct print media query handling in Firefox
-  - [ ] Fix CSS flexbox issues in printed layouts
-  - [ ] Ensure proper page scaling in Firefox print dialog
-- [ ] **Mobile Responsiveness**: Fix mobile device compatibility issues
-  - [ ] Correct touch event handling for item selection on mobile
-  - [ ] Fix responsive layout issues on small screens
-  - [ ] Ensure print functionality works on mobile browsers
-- [ ] **Vendor Prefix Additions**: Add missing vendor prefixes for better compatibility
-  - [ ] Add `-webkit-` prefixes for CSS Grid properties
-  - [ ] Include `-moz-` prefixes for Firefox-specific features
-  - [ ] Ensure proper vendor prefixes for print-related CSS properties
+- [x] **Safari Compatibility**: Fix Safari-specific issues identified in testing
+  - [x] Fix QR code generation compatibility with Safari's canvas implementation
+  - [x] Correct CSS Grid layout issues in Safari print preview
+  - [x] Ensure proper event handling for Safari mobile devices
+- [x] **Firefox Print Issues**: Fix Firefox-specific printing problems
+  - [x] Correct print media query handling in Firefox
+  - [x] Fix CSS flexbox issues in printed layouts
+  - [x] Ensure proper page scaling in Firefox print dialog
+- [x] **Mobile Responsiveness**: Fix mobile device compatibility issues
+  - [x] Correct touch event handling for item selection on mobile
+  - [x] Fix responsive layout issues on small screens
+  - [x] Ensure print functionality works on mobile browsers
+- [x] **Vendor Prefix Additions**: Add missing vendor prefixes for better compatibility
+  - [x] Add `-webkit-` prefixes for CSS Grid properties
+  - [x] Include `-moz-` prefixes for Firefox-specific features
+  - [x] Ensure proper vendor prefixes for print-related CSS properties
 
 ### 18. Error Recovery and User Experience Bug Fixes
 **Story Points**: 1  
