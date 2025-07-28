@@ -189,6 +189,11 @@ const PropertiesPage: React.FC = () => {
     router.push('/admin/properties/new');
   };
 
+  // Handle view property
+  const handleViewProperty = (property: Property) => {
+    router.push(`/admin/properties/${property.id}`);
+  };
+
   // Handle edit property
   const handleEditProperty = (property: Property) => {
     router.push(`/admin/properties/${property.id}/edit`);
@@ -459,6 +464,12 @@ const PropertiesPage: React.FC = () => {
                         {property.created_at ? new Date(property.created_at).toLocaleDateString() : 'Unknown'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => handleViewProperty(property)}
+                          className="text-green-600 hover:text-green-900 mr-3"
+                        >
+                          View
+                        </button>
                         <button
                           onClick={() => handleEditProperty(property)}
                           className="text-blue-600 hover:text-blue-900 mr-3"

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { AnalyticsResponse, VisitAnalytics } from '@/types/analytics';
 
 // Helper function to validate authentication for admin operations
@@ -16,7 +16,7 @@ async function validateAdminAuth(request: NextRequest) {
     console.log('🔍 Validating JWT token for admin access...');
 
     // Validate token with Supabase
-    const { data: authResult, error: authError } = await supabase.auth.getUser(token);
+    const { data: authResult, error: authError } = await supabaseAdmin.auth.getUser(token);
     
     if (authError || !authResult.user) {
       console.log('❌ Token validation failed:', authError?.message || 'No user data');

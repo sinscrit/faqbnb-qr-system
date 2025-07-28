@@ -118,9 +118,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true);
       console.log('🔍 Initializing auth with account context...');
       
-      // Add timeout to prevent hanging
+      // Add timeout to prevent hanging (reduced from 30s to 15s)
       const authTimeout = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Auth timeout')), 10000)
+        setTimeout(() => reject(new Error('Auth timeout')), 15000)
       );
       
       const authPromise = (async () => {
@@ -139,7 +139,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         console.log('👤 Getting user data with account context...');
-        const userResponse = await getUser();
+        
+        // Add timeout specifically for user data retrieval
+        const userDataTimeout = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('User data timeout')), 10000)
+        );
+        
+        let userResponse: AuthResponse<AuthUser | null>;
+        try {
+          userResponse = await Promise.race([getUser(), userDataTimeout]);
+        } catch (userError) {
+          console.error('❌ User data retrieval failed or timed out:', userError);
+          // Continue with basic session data instead of failing completely
+          const basicUser: AuthUser = {
+            id: sessionResponse.data.user!.id,
+            email: sessionResponse.data.user!.email || '',
+            role: 'user',
+            currentAccount: null,
+            availableAccounts: []
+          };
+          setSession(sessionResponse.data);
+          setUser(basicUser);
+          return;
+        }
+        
         console.log('🔑 User response:', { 
           hasError: !!userResponse.error, 
           hasData: !!userResponse.data,
@@ -150,7 +173,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (userResponse.error || !userResponse.data) {
           console.log('❌ User verification failed:', userResponse.error);
-          clearAuthState();
+          // Instead of clearing completely, try to maintain basic session
+          const basicUser: AuthUser = {
+            id: sessionResponse.data.user!.id,
+            email: sessionResponse.data.user!.email || '',
+            role: 'user',
+            currentAccount: null,
+            availableAccounts: []
+          };
+          setSession(sessionResponse.data);
+          setUser(basicUser);
           return;
         }
 
@@ -164,11 +196,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(userResponse.data);
         
         // Set account context from user data
-        if (userResponse.data?.availableAccounts) {
+        if (userResponse.data && userResponse.data.availableAccounts) {
           setUserAccounts(userResponse.data.availableAccounts);
         }
         
-        if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+        if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
           // Find the full account object from available accounts
           const fullAccount = userResponse.data.availableAccounts.find(
             acc => acc.id === userResponse.data.currentAccount?.id
@@ -178,8 +210,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }
         
-        // Load user properties (legacy support)
-        if (userResponse.data && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
+        // Load user properties (legacy support) with error handling
+        if (userResponse.data && userResponse.data.id && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
           try {
             const accountId = userResponse.data.currentAccount?.id;
             const properties = await getUserProperties(userResponse.data.id, accountId);
@@ -200,7 +232,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await Promise.race([authPromise, authTimeout]);
     } catch (error) {
       console.error('❌ Failed to initialize auth:', error);
-      clearAuthState();
+      // Instead of clearing completely, try to recover with basic auth
+      try {
+        const sessionResponse = await getSession();
+        if (sessionResponse.data?.user) {
+          const basicUser: AuthUser = {
+            id: sessionResponse.data.user.id,
+            email: sessionResponse.data.user.email || '',
+            role: 'user',
+            currentAccount: null,
+            availableAccounts: []
+          };
+          setSession(sessionResponse.data);
+          setUser(basicUser);
+          console.log('🔄 Recovered with basic auth for user:', basicUser.email);
+        } else {
+          clearAuthState();
+        }
+      } catch (recoveryError) {
+        console.error('❌ Recovery also failed:', recoveryError);
+        clearAuthState();
+      }
     } finally {
       setLoading(false);
     }
@@ -233,11 +285,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(userResponse.data);
       
       // Set account context from user data
-      if (userResponse.data?.availableAccounts) {
+      if (userResponse.data && userResponse.data.availableAccounts) {
         setUserAccounts(userResponse.data.availableAccounts);
       }
       
-      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+      if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
         // Find the full account object from available accounts
         const fullAccount = userResponse.data.availableAccounts.find(
           acc => acc.id === userResponse.data.currentAccount?.id
@@ -286,11 +338,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(userResponse.data);
       
       // Update account context if needed
-      if (userResponse.data?.availableAccounts) {
+      if (userResponse.data && userResponse.data.availableAccounts) {
         setUserAccounts(userResponse.data.availableAccounts);
       }
       
-      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
+      if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
         const fullAccount = userResponse.data.availableAccounts.find(
           acc => acc.id === userResponse.data.currentAccount?.id
         );
@@ -519,7 +571,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await refreshAccountContext();
         
         // Load properties for new user
-        await loadUserProperties();
+        if (result.data) {
+          await loadUserProperties();
+        }
       }
 
       return result;

@@ -89,6 +89,7 @@ export async function signInWithEmail(
       return { error: 'Access denied - no email in user data' };
     }
 
+    // Check if user is an admin (using temporary policy)
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
@@ -217,6 +218,8 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
     if (!user.email) {
       return { data: null };
     }
+
+
 
     // First check if user is an admin
     const { data: adminUser, error: adminError } = await supabase
@@ -792,24 +795,23 @@ export async function createAdminUser(
  */
 export async function getAccountsForUser(userId: string): Promise<Account[]> {
   try {
-    // TEMPORARY FIX: Hard-code the known account for this user to bypass the 42P17 error
-    if (userId === 'fa5911d7-f7c5-4ed4-8179-594359453d7f') {
-      return [{
-        id: '5036a927-fb8c-4a11-a698-9e17f32d6d5c',
-        owner_id: 'fa5911d7-f7c5-4ed4-8179-594359453d7f',
-        name: 'Default Account',
-        description: null,
-        settings: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }];
-    }
+
+
+    // Add timeout for database operations to prevent hanging
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Database operation timeout')), 10000);
+    });
 
     // First get the account IDs the user has access to
-    const { data: userAccountRels, error: relError } = await supabase
+    const accountQuery = supabase
       .from('account_users')
       .select('account_id, role')
       .eq('user_id', userId);
+
+    const { data: userAccountRels, error: relError } = await Promise.race([
+      accountQuery,
+      timeoutPromise
+    ]);
 
     if (relError) {
       console.error('Get user account relationships error:', relError);
@@ -817,16 +819,20 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
     }
 
     if (!userAccountRels || userAccountRels.length === 0) {
+      console.log('No account relationships found for user:', userId);
       return [];
     }
 
     // Get the account details separately
     const accountIds = userAccountRels.map(rel => rel.account_id);
-    const { data: accounts, error: accountsError } = await supabase
-      .from('accounts')
-      .select('id, owner_id, name, description, created_at, updated_at')
-      .in('id', accountIds)
-      .order('created_at', { ascending: false });
+    const { data: accounts, error: accountsError } = await Promise.race([
+      supabase
+        .from('accounts')
+        .select('id, owner_id, name, description, created_at, updated_at')
+        .in('id', accountIds)
+        .order('created_at', { ascending: false }),
+      timeoutPromise
+    ]);
 
     if (accountsError) {
       console.error('Get accounts error:', accountsError);
@@ -844,6 +850,7 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
     }));
   } catch (error) {
     console.error('Get accounts for user error:', error);
+    // Return empty array instead of throwing to prevent auth context from getting stuck
     return [];
   }
 }

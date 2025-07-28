@@ -1,65 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { UpdateItemRequest, ItemResponse } from '@/types';
-import { createClient } from '@supabase/supabase-js';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import type { Database } from '@/lib/supabase';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    // Extract JWT token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Authentication required - no valid Authorization header',
-            code: 'UNAUTHORIZED' 
-          },
-          { status: 401 }
-        )
-      };
-    }
-
-    const token = authHeader.substring(7);
-    if (!token) {
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Authentication required - no token provided',
-            code: 'UNAUTHORIZED' 
-          },
-          { status: 401 }
-        )
-      };
-    }
-
-    // Create a Supabase client to validate the token
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Server configuration error',
-            code: 'SERVER_ERROR' 
-          },
-          { status: 500 }
-        )
-      };
-    }
+    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
-
-    // Validate the token and get user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    
     if (userError || !user) {
-      console.log('Token validation failed:', userError?.message);
+      console.log('User session not found:', userError?.message);
       return {
         error: NextResponse.json(
           { 
@@ -135,9 +89,9 @@ async function validateAdminAuth(request: NextRequest) {
     // Return admin user data
     const validatedUser = {
       id: user.id,
-      email: adminUser.email,
+        email: adminUser.email,
       fullName: adminUser.full_name || undefined,
-      role: adminUser.role
+        role: adminUser.role
     };
 
     console.log('Authentication successful for admin:', validatedUser.email);
@@ -607,7 +561,7 @@ export async function DELETE(
         { status: 400 }
       );
     }
-
+    
     // Validate item access within account context
     const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId);
     if (!canAccess || error) {

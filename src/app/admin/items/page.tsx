@@ -1,23 +1,49 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Item } from '@/types';
+import { Item, Property } from '@/types';
 
 interface ItemWithDetails extends Item {
-  links_count?: number;
-  visits_count?: number;
-  reactions_count?: number;
-  property_name?: string;
+  publicId: string;
+  linksCount?: number;
+  analytics?: {
+    visits: {
+      last24Hours: number;
+      last7Days: number;
+      allTime: number;
+    };
+    reactions: {
+      total: number;
+      byType: {
+        like: number;
+        dislike: number;
+        love: number;
+        confused: number;
+        total: number;
+      };
+    };
+  };
+  property?: {
+    id: string;
+    nickname: string;
+    user_id: string;
+    account_id: string | null;
+  };
 }
 
 export default function AdminItemsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading, isAdmin, selectedProperty } = useAuth();
   const [items, setItems] = useState<ItemWithDetails[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filteredProperty, setFilteredProperty] = useState<Property | null>(null);
+
+  // Get property ID from URL parameters
+  const propertyIdFromUrl = searchParams.get('property');
 
   // Load items
   useEffect(() => {
@@ -28,7 +54,15 @@ export default function AdminItemsPage() {
       setError(null);
 
       try {
-        const response = await fetch('/api/admin/items', {
+        // Build API URL with property filter if provided
+        // Priority: URL parameter > global selectedProperty > show all
+        let apiUrl = '/api/admin/items';
+        const effectivePropertyId = propertyIdFromUrl || selectedProperty?.id;
+        if (effectivePropertyId) {
+          apiUrl += `?property=${effectivePropertyId}`;
+        }
+
+        const response = await fetch(apiUrl, {
           credentials: 'include'
         });
 
@@ -51,7 +85,42 @@ export default function AdminItemsPage() {
     };
 
     loadItems();
-  }, [user, selectedProperty]);
+  }, [user, selectedProperty, propertyIdFromUrl]);
+
+  // Load filtered property details
+  useEffect(() => {
+    const loadPropertyDetails = async () => {
+      const effectivePropertyId = propertyIdFromUrl || selectedProperty?.id;
+      
+      if (!effectivePropertyId || !user) {
+        setFilteredProperty(null);
+        return;
+      }
+
+      // If using selectedProperty, don't fetch again since we already have the data
+      if (!propertyIdFromUrl && selectedProperty) {
+        setFilteredProperty(selectedProperty);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/admin/properties/${effectivePropertyId}`, {
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            setFilteredProperty(data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading property details:', error);
+      }
+    };
+
+    loadPropertyDetails();
+  }, [propertyIdFromUrl, selectedProperty, user]);
 
   // Authentication guard
   if (loading) {
@@ -84,10 +153,34 @@ export default function AdminItemsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
           <p className="text-gray-600 mt-1">
-            {isAdmin ? 'Manage all items in the system' : 'Manage your property items'}
+            {filteredProperty 
+              ? `Viewing items for ${filteredProperty.nickname}` 
+              : (isAdmin ? 'Manage all items in the system' : 'Manage your property items')
+            }
           </p>
+          {filteredProperty && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                🏠 Current Property: {filteredProperty.nickname}
+              </span>
+              <button
+                onClick={() => router.push('/admin/items')}
+                className="text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                Clear filter
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex gap-3">
+          {filteredProperty && (
+            <button
+              onClick={() => router.push(`/admin/properties/${filteredProperty.id}`)}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              ← Back to Property
+            </button>
+          )}
           <button
             onClick={() => router.push('/admin')}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -95,7 +188,12 @@ export default function AdminItemsPage() {
             ← Back to Dashboard
           </button>
           <button
-            onClick={() => router.push('/admin/items/new')}
+            onClick={() => {
+              const newItemUrl = filteredProperty 
+                ? `/admin/items/new?property=${filteredProperty.id}`
+                : '/admin/items/new';
+              router.push(newItemUrl);
+            }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             + Add New Item
@@ -104,11 +202,16 @@ export default function AdminItemsPage() {
       </div>
 
       {/* Property filter info */}
-      {selectedProperty && (
+      {(filteredProperty || selectedProperty) && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center gap-2">
             <span className="text-blue-800 font-medium">🏠 Current Property:</span>
-            <span className="text-blue-900">{selectedProperty.nickname}</span>
+            <span className="text-blue-900">
+              {filteredProperty ? filteredProperty.nickname : selectedProperty?.nickname}
+            </span>
+            {filteredProperty && (
+              <span className="text-blue-700 text-sm">(filtered by URL)</span>
+            )}
           </div>
         </div>
       )}
@@ -160,9 +263,12 @@ export default function AdminItemsPage() {
               <div className="text-gray-400 text-6xl mb-4">📦</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Items Found</h3>
               <p className="text-gray-600 mb-6">
-                {selectedProperty 
-                  ? `No items found for ${selectedProperty.nickname}` 
-                  : 'No items have been created yet'
+                {filteredProperty 
+                  ? `No items found for ${filteredProperty.nickname}` 
+                  : (selectedProperty 
+                    ? `No items found for ${selectedProperty.nickname}` 
+                    : 'No items have been created yet'
+                  )
                 }
               </p>
               <button
@@ -190,33 +296,33 @@ export default function AdminItemsPage() {
                         </p>
                       )}
                       <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>ID: {item.public_id}</span>
-                        {item.property_name && (
-                          <span>Property: {item.property_name}</span>
+                        <span>ID: {item.publicId}</span>
+                        {item.property && (
+                          <span>Property: {item.property.nickname}</span>
                         )}
-                        {item.links_count !== undefined && (
-                          <span>Links: {item.links_count}</span>
+                        {item.linksCount !== undefined && (
+                          <span>Links: {item.linksCount}</span>
                         )}
-                        {item.visits_count !== undefined && (
-                          <span>Visits: {item.visits_count}</span>
+                        {item.analytics?.visits?.allTime !== undefined && (
+                          <span>Visits: {item.analytics.visits.allTime}</span>
                         )}
                       </div>
                     </div>
                     <div className="flex gap-2 ml-4">
                       <button
-                        onClick={() => router.push(`/admin/items/${item.public_id}/analytics`)}
+                        onClick={() => router.push(`/admin/items/${item.publicId}/analytics`)}
                         className="px-3 py-1 bg-green-100 text-green-800 rounded text-sm hover:bg-green-200 transition-colors"
                       >
                         📈 Analytics
                       </button>
                       <button
-                        onClick={() => router.push(`/admin/items/${item.public_id}/edit`)}
+                        onClick={() => router.push(`/admin/items/${item.publicId}/edit`)}
                         className="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm hover:bg-blue-200 transition-colors"
                       >
                         ✏️ Edit
                       </button>
                       <button
-                        onClick={() => router.push(`/item/${item.public_id}`)}
+                        onClick={() => router.push(`/item/${item.publicId}`)}
                         className="px-3 py-1 bg-gray-100 text-gray-800 rounded text-sm hover:bg-gray-200 transition-colors"
                       >
                         👁️ View
@@ -240,19 +346,19 @@ export default function AdminItemsPage() {
             </div>
             <div>
               <div className="text-2xl font-bold text-green-600">
-                {items.reduce((sum, item) => sum + (item.links_count || 0), 0)}
+                {items.reduce((sum, item) => sum + (item.linksCount || 0), 0)}
               </div>
               <div className="text-sm text-gray-600">Total Links</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
-                {items.reduce((sum, item) => sum + (item.visits_count || 0), 0)}
+                {items.reduce((sum, item) => sum + (item.analytics?.visits?.allTime || 0), 0)}
               </div>
               <div className="text-sm text-gray-600">Total Visits</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-orange-600">
-                {items.reduce((sum, item) => sum + (item.reactions_count || 0), 0)}
+                {items.reduce((sum, item) => sum + (item.analytics?.reactions?.total || 0), 0)}
               </div>
               <div className="text-sm text-gray-600">Total Reactions</div>
             </div>

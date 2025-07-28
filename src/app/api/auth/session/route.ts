@@ -151,21 +151,21 @@ export async function GET(request: NextRequest): Promise<NextResponse<SessionRes
 
       if (userError || !regularUser) {
         console.log('User not found in system:', { 
-          userId: user.id, 
-          email: user.email, 
+        userId: user.id, 
+        email: user.email, 
           adminError: adminError?.message,
           userError: userError?.message
-        });
-        return NextResponse.json(
-          { 
-            success: false, 
-            authenticated: false,
+      });
+      return NextResponse.json(
+        { 
+          success: false, 
+          authenticated: false,
             error: 'User not found in system',
             code: 'USER_NOT_FOUND'
-          },
-          { status: 403 }
-        );
-      }
+        },
+        { status: 403 }
+      );
+    }
 
       validatedUser = {
         id: user.id,
@@ -237,9 +237,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<SessionRes
         totalAccounts: accounts.length
       });
 
-      return NextResponse.json({
-        success: true,
-        authenticated: true,
+    return NextResponse.json({
+      success: true,
+      authenticated: true,
         user: enhancedUser,
         accountContext,
         message: 'Session validation successful with account context'
@@ -383,24 +383,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<SessionRe
 
       if (userError || !regularUser) {
         console.log('User validation failed during refresh:', { 
-          userId: user.id, 
-          email: user.email,
+        userId: user.id, 
+        email: user.email,
           adminError: adminError?.message,
           userError: userError?.message
-        });
-        return NextResponse.json(
-          { 
-            success: false, 
-            authenticated: false,
+      });
+      return NextResponse.json(
+        { 
+          success: false, 
+          authenticated: false,
             error: 'User not found in system',
             code: 'USER_NOT_FOUND'
-          },
-          { status: 403 }
-        );
-      }
+        },
+        { status: 403 }
+      );
+    }
 
       validatedUser = {
-        id: user.id,
+      id: user.id,
         email: regularUser.email,
         fullName: regularUser.full_name || undefined,
         role: regularUser.role
@@ -462,15 +462,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<SessionRe
         totalAccounts: accounts.length
       });
 
-      return NextResponse.json({
-        success: true,
-        authenticated: true,
+    return NextResponse.json({
+      success: true,
+      authenticated: true,
         user: enhancedUser,
-        session: {
-          access_token: session.access_token,
-          refresh_token: session.refresh_token,
-          expires_at: session.expires_at
-        },
+      session: {
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_at: session.expires_at
+      },
         accountContext,
         message: 'Session refresh successful with account context'
       });

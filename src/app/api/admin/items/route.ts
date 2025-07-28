@@ -1,65 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { ItemsListResponse, CreateItemRequest, ItemResponse } from '@/types';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseServer } from '@/lib/supabase-server';
+import type { Database } from '@/lib/supabase';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    // Extract JWT token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Authentication required - no valid Authorization header',
-            code: 'UNAUTHORIZED' 
-          },
-          { status: 401 }
-        )
-      };
-    }
-
-    const token = authHeader.substring(7);
-    if (!token) {
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Authentication required - no token provided',
-            code: 'UNAUTHORIZED' 
-          },
-          { status: 401 }
-        )
-      };
-    }
-
-    // Create a Supabase client to validate the token
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    console.log('🔑 validateAdminAuth: Starting authentication validation...');
+    const supabase = await createSupabaseServer();
+    console.log('🔑 validateAdminAuth: Supabase server client created');
     
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
-      return {
-        error: NextResponse.json(
-          { 
-            success: false, 
-            error: 'Server configuration error',
-            code: 'SERVER_ERROR' 
-          },
-          { status: 500 }
-        )
-      };
-    }
-
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
-
-    // Validate the token and get user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log('🔑 validateAdminAuth: Got user from Supabase:', { user: user?.email, error: userError?.message });
     
     if (userError || !user) {
-      console.log('Token validation failed:', userError?.message);
+      console.log('🔑 validateAdminAuth: User session not found:', userError?.message);
       return {
         error: NextResponse.json(
           { 
@@ -73,6 +29,7 @@ async function validateAdminAuth(request: NextRequest) {
     }
 
     if (!user.email) {
+      console.log('🔑 validateAdminAuth: No email in user data');
       return {
         error: NextResponse.json(
           { 
@@ -84,25 +41,30 @@ async function validateAdminAuth(request: NextRequest) {
         )
       };
     }
+    console.log('🔑 validateAdminAuth: User email found:', user.email);
 
     // Check if user is an admin
+    console.log('🔑 validateAdminAuth: Checking if user is admin...');
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('id', user.id)
       .eq('email', user.email)
       .single();
+    console.log('🔑 validateAdminAuth: Admin check result:', { adminUser, adminError: adminError?.message });
 
     if (adminError || !adminUser) {
       // If not admin, check if user is a regular user
+      console.log('🔑 validateAdminAuth: Not admin, checking if regular user...');
       const { data: regularUser, error: userError } = await supabase
         .from('users')
         .select('email, full_name, role')
         .eq('id', user.id)
         .single();
+      console.log('🔑 validateAdminAuth: Regular user check result:', { regularUser, userError: userError?.message });
 
       if (userError || !regularUser) {
-        console.log('User validation failed:', { 
+        console.log('🔑 validateAdminAuth: User validation failed:', { 
           userId: user.id, 
           email: user.email, 
           adminError: adminError?.message,
@@ -128,8 +90,8 @@ async function validateAdminAuth(request: NextRequest) {
         role: regularUser.role
       };
 
-      console.log('Authentication successful for user:', validatedUser.email);
-      return { user: validatedUser, isAdmin: false };
+      console.log('🔑 validateAdminAuth: Authentication successful for user:', validatedUser.email);
+      return { user: validatedUser, isAdmin: false, supabase };
     }
 
     // Return admin user data
@@ -140,11 +102,11 @@ async function validateAdminAuth(request: NextRequest) {
       role: adminUser.role
     };
 
-    console.log('Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
+    console.log('🔑 validateAdminAuth: Authentication successful for admin:', validatedUser.email);
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin', supabase };
 
   } catch (error) {
-    console.error('Auth validation error:', error);
+    console.error('🔑 validateAdminAuth: Auth validation error:', error);
     return {
       error: NextResponse.json(
         { 
@@ -246,6 +208,7 @@ export async function GET(request: NextRequest) {
     
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase; // Get supabase client from authResult
 
     // Get account context
     const accountContext = await getAccountContext(request, user.id, userIsAdmin);
@@ -259,7 +222,7 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
-    const propertyId = searchParams.get('propertyId') || '';
+    const propertyId = searchParams.get('property') || ''; // Fixed: use 'property' parameter
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     

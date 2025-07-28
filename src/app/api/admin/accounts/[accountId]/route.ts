@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { Account } from '@/types';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import type { Database } from '@/lib/supabase';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    // Extract JWT token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ No valid authorization header found');
-      return { user: null, isAdmin: false, error: NextResponse.json(
-        { success: false, error: 'Authentication required - no valid Authorization header' },
-        { status: 401 }
-      )};
-    }
-
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    console.log('🔍 Validating JWT token for admin access...');
-
-    // Validate token with Supabase
-    const { data: authResult, error: authError } = await supabase.auth.getUser(token);
+    
+    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const { data: authResult, error: authError } = await supabase.auth.getUser();
     
     if (authError || !authResult.user) {
       console.log('❌ Token validation failed:', authError?.message || 'No user data');
