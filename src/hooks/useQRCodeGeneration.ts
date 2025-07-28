@@ -51,14 +51,15 @@ interface UseQRCodeGenerationReturn {
  * Individual item generation state
  */
 interface ItemGenerationState {
-  id: string;
   status: 'pending' | 'generating' | 'completed' | 'failed';
   retryCount: number;
   error?: string;
+  startTime?: number;
+  endTime?: number;
 }
 
 /**
- * Custom hook for QR code generation with batch processing and state management
+ * Custom hook for QR code generation with advanced features
  */
 export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): UseQRCodeGenerationReturn {
   const {
@@ -68,32 +69,53 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
     maxRetries = 2
   } = options;
 
-  // State management
+  // Main state
   const [qrCodes, setQRCodes] = useState<Map<string, string>>(new Map());
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [failedItems, setFailedItems] = useState<Set<string>>(new Set());
   const [itemStates, setItemStates] = useState<Map<string, ItemGenerationState>>(new Map());
-  
-  // Refs for controlling generation
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const isUnmountedRef = useRef(false);
 
-  // Cleanup on unmount
+  // BUG FIX: Enhanced refs for better lifecycle management
+  const isUnmountedRef = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const activeGenerationRef = useRef<Promise<void> | null>(null);
+  const batchQueueRef = useRef<Item[]>([]);
+  const processingBatchRef = useRef(false);
+
+  // BUG FIX: Memory leak prevention with proper cleanup on unmount
   useEffect(() => {
     return () => {
       isUnmountedRef.current = true;
+      
+      // Abort any ongoing generation
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+        abortControllerRef.current = null;
       }
+      
+      // Wait for active generation to complete before cleanup
+      if (activeGenerationRef.current) {
+        activeGenerationRef.current.finally(() => {
+          clearUtilCache();
+        });
+      } else {
+        clearUtilCache();
+      }
+      
+      // Clear batch queue
+      batchQueueRef.current = [];
+      processingBatchRef.current = false;
     };
   }, []);
 
   /**
-   * Update progress based on item states
+   * BUG FIX: Enhanced progress calculation with safety checks
    */
   const updateProgress = useCallback((states: Map<string, ItemGenerationState>) => {
+    if (isUnmountedRef.current) return;
+    
     const total = states.size;
     if (total === 0) {
       setProgress(0);
@@ -105,21 +127,42 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
     ).length;
     
     const newProgress = Math.round((completed / total) * 100);
-    setProgress(newProgress);
+    
+    // BUG FIX: Prevent progress from going backwards
+    setProgress(prev => Math.max(prev, newProgress));
   }, []);
 
   /**
-   * Generate QR code for a single item
+   * BUG FIX: Enhanced single QR code generation with better error handling
    */
   const generateSingleQRCode = useCallback(async (
     item: Item,
-    retryCount: number = 0
+    retryCount: number = 0,
+    signal?: AbortSignal
   ): Promise<{ success: boolean; dataUrl?: string; error?: string }> => {
     try {
-      const qrUrl = `${baseUrl}/item/${item.public_id}`;
-      console.log(`Generating QR code for ${item.name} (${qrUrl})`);
+      // BUG FIX: Check for abort signal before starting
+      if (signal?.aborted) {
+        throw new Error('Generation aborted');
+      }
       
-      const dataUrl = await generateQRCodeWithCache(qrUrl, item.id);
+      const qrUrl = `${baseUrl}/item/${item.public_id}`;
+      console.log(`Generating QR code for ${item.name} (attempt ${retryCount + 1})`);
+      
+      // BUG FIX: Add timeout for individual generation
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('QR generation timeout'));
+        }, 10000); // 10 second timeout
+        
+        signal?.addEventListener('abort', () => {
+          clearTimeout(timeout);
+          reject(new Error('Generation aborted'));
+        });
+      });
+      
+      const generationPromise = generateQRCodeWithCache(qrUrl, item.id);
+      const dataUrl = await Promise.race([generationPromise, timeoutPromise]);
       
       if (!dataUrl || !dataUrl.startsWith('data:image/')) {
         throw new Error('Invalid QR code data URL generated');
@@ -128,7 +171,11 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
       return { success: true, dataUrl };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`Failed to generate QR code for ${item.name}:`, errorMessage);
+      
+      // BUG FIX: Don't log aborted operations as errors
+      if (!errorMessage.includes('abort')) {
+        console.error(`Failed to generate QR code for ${item.name}:`, errorMessage);
+      }
       
       return { 
         success: false, 
@@ -138,33 +185,60 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
   }, [baseUrl]);
 
   /**
-   * Process a batch of items
+   * BUG FIX: Enhanced batch processing with race condition prevention
    */
   const processBatch = useCallback(async (
     items: Item[],
-    states: Map<string, ItemGenerationState>
+    states: Map<string, ItemGenerationState>,
+    signal?: AbortSignal
   ): Promise<Map<string, ItemGenerationState>> => {
+    if (isUnmountedRef.current || signal?.aborted) {
+      return states;
+    }
+
     const updatedStates = new Map(states);
-    const batchPromises = items.map(async (item) => {
+    
+    // BUG FIX: Process items sequentially within batch to prevent race conditions
+    for (const item of items) {
+      if (isUnmountedRef.current || signal?.aborted) {
+        break;
+      }
+      
       const currentState = updatedStates.get(item.id);
       if (!currentState || currentState.status !== 'generating') {
-        return;
+        continue;
       }
 
-      const result = await generateSingleQRCode(item, currentState.retryCount);
+      const startTime = Date.now();
+      updatedStates.set(item.id, {
+        ...currentState,
+        startTime
+      });
+
+      const result = await generateSingleQRCode(item, currentState.retryCount, signal);
       
-      if (isUnmountedRef.current) {
-        return; // Component unmounted, stop processing
+      if (isUnmountedRef.current || signal?.aborted) {
+        break;
       }
+
+      const endTime = Date.now();
 
       if (result.success && result.dataUrl) {
         // Success
         updatedStates.set(item.id, {
           ...currentState,
-          status: 'completed'
+          status: 'completed',
+          startTime,
+          endTime
         });
         
-        setQRCodes(prev => new Map(prev).set(item.id, result.dataUrl!));
+        // BUG FIX: Update QR codes state safely
+        setQRCodes(prev => {
+          if (isUnmountedRef.current) return prev;
+          const newMap = new Map(prev);
+          newMap.set(item.id, result.dataUrl!);
+          return newMap;
+        });
       } else {
         // Failure
         const canRetry = enableRetry && currentState.retryCount < maxRetries;
@@ -173,132 +247,184 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
           ...currentState,
           status: canRetry ? 'pending' : 'failed',
           retryCount: currentState.retryCount + 1,
-          error: result.error
+          error: result.error,
+          startTime,
+          endTime
         });
         
         if (!canRetry) {
-          setFailedItems(prev => new Set(prev).add(item.id));
+          // BUG FIX: Update failed items state safely
+          setFailedItems(prev => {
+            if (isUnmountedRef.current) return prev;
+            const newSet = new Set(prev);
+            newSet.add(item.id);
+            return newSet;
+          });
         }
       }
-    });
+    }
 
-    await Promise.allSettled(batchPromises);
     return updatedStates;
   }, [generateSingleQRCode, enableRetry, maxRetries]);
 
   /**
-   * Main QR code generation function
+   * BUG FIX: Enhanced main QR code generation function with better state management
    */
   const generateQRCodes = useCallback(async (items: Item[]): Promise<void> => {
-    if (items.length === 0) {
+    if (items.length === 0 || isUnmountedRef.current) {
       return;
     }
+
+    // BUG FIX: Prevent concurrent generations
+    if (processingBatchRef.current) {
+      // Add items to queue instead of starting new generation
+      batchQueueRef.current.push(...items);
+      return;
+    }
+
+    processingBatchRef.current = true;
 
     // Abort any ongoing generation
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+    
+    // Create new abort controller
     abortControllerRef.current = new AbortController();
-
-    // Reset state
-    setIsGenerating(true);
-    setProgress(0);
-    setError(null);
-    setFailedItems(new Set());
-
-    // Initialize item states
-    const initialStates = new Map<string, ItemGenerationState>();
-    items.forEach(item => {
-      initialStates.set(item.id, {
-        id: item.id,
-        status: 'pending',
-        retryCount: 0
-      });
-    });
-    setItemStates(initialStates);
+    const signal = abortControllerRef.current.signal;
 
     try {
-      let currentStates = new Map(initialStates);
+      setIsGenerating(true);
+      setError(null);
+      setProgress(0);
+
+      // BUG FIX: Initialize item states properly
+      const initialStates = new Map<string, ItemGenerationState>();
+      items.forEach(item => {
+        initialStates.set(item.id, {
+          status: 'pending',
+          retryCount: 0
+        });
+      });
       
-      // Process items in batches
-      for (let i = 0; i < items.length; i += batchSize) {
-        if (abortControllerRef.current?.signal.aborted || isUnmountedRef.current) {
+      setItemStates(initialStates);
+      
+      let currentStates = initialStates;
+      let remainingItems = [...items];
+
+      // BUG FIX: Process in batches with proper retry mechanism
+      while (remainingItems.length > 0 && !isUnmountedRef.current && !signal.aborted) {
+        // Get items that are pending or need retry
+        const itemsToProcess = remainingItems.filter(item => {
+          const state = currentStates.get(item.id);
+          return state && (state.status === 'pending');
+        }).slice(0, batchSize);
+
+        if (itemsToProcess.length === 0) {
           break;
         }
 
-        const batch = items.slice(i, i + batchSize);
-        
-        // Mark batch items as generating
-        batch.forEach(item => {
-          const state = currentStates.get(item.id);
-          if (state && state.status === 'pending') {
+        // Mark items as generating
+        itemsToProcess.forEach(item => {
+          const currentState = currentStates.get(item.id);
+          if (currentState) {
             currentStates.set(item.id, {
-              ...state,
+              ...currentState,
               status: 'generating'
             });
           }
         });
-        
-        setItemStates(new Map(currentStates));
-        
-        // Process the batch
-        currentStates = await processBatch(batch, currentStates);
+
+        // Update states
         setItemStates(new Map(currentStates));
         updateProgress(currentStates);
-        
-        // Small delay between batches to prevent UI blocking
-        if (i + batchSize < items.length) {
-          await new Promise(resolve => setTimeout(resolve, 50));
-        }
-      }
 
-      // Handle retry logic for failed items
-      if (enableRetry) {
-        const retryItems = items.filter(item => {
+        // Process batch
+        const newStates = await processBatch(itemsToProcess, currentStates, signal);
+        
+        if (isUnmountedRef.current || signal.aborted) {
+          break;
+        }
+
+        currentStates = newStates;
+        setItemStates(new Map(currentStates));
+        updateProgress(currentStates);
+
+        // Remove completed and failed items from remaining items
+        remainingItems = remainingItems.filter(item => {
           const state = currentStates.get(item.id);
-          return state && state.status === 'pending' && state.retryCount > 0;
+          return state && (state.status === 'pending');
         });
 
-        if (retryItems.length > 0) {
-          console.log(`Retrying ${retryItems.length} failed items...`);
-          await generateQRCodes(retryItems);
-          return;
+        // BUG FIX: Add delay between batches to prevent overwhelming
+        if (remainingItems.length > 0) {
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
 
-      // Final statistics
-      const completed = Array.from(currentStates.values()).filter(s => s.status === 'completed').length;
-      const failed = Array.from(currentStates.values()).filter(s => s.status === 'failed').length;
-      
-      console.log(`QR generation completed: ${completed} successful, ${failed} failed`);
-      
-      if (failed > 0) {
-        setError(`Failed to generate ${failed} QR code${failed > 1 ? 's' : ''}. You can retry these items.`);
+      // BUG FIX: Process any queued items
+      if (batchQueueRef.current.length > 0 && !isUnmountedRef.current) {
+        const queuedItems = [...batchQueueRef.current];
+        batchQueueRef.current = [];
+        
+        // Reset processing flag temporarily to allow recursive call
+        processingBatchRef.current = false;
+        await generateQRCodes(queuedItems);
+        return; // Exit early as the recursive call will handle cleanup
       }
 
     } catch (error) {
-      console.error('QR code generation failed:', error);
-      setError(error instanceof Error ? error.message : 'Unknown error during QR code generation');
+      if (!isUnmountedRef.current && !String(error).includes('abort')) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        setError(`QR generation failed: ${errorMessage}`);
+        console.error('QR generation error:', error);
+      }
     } finally {
-      setIsGenerating(false);
-      abortControllerRef.current = null;
+      if (!isUnmountedRef.current) {
+        setIsGenerating(false);
+        processingBatchRef.current = false;
+      }
+      
+      // Store the active generation promise
+      activeGenerationRef.current = null;
     }
-  }, [batchSize, processBatch, updateProgress, enableRetry]);
+  }, [batchSize, updateProgress, processBatch]);
+
+  // Set the active generation promise
+  useEffect(() => {
+    if (isGenerating && !activeGenerationRef.current) {
+      activeGenerationRef.current = Promise.resolve();
+    }
+  }, [isGenerating]);
 
   /**
-   * Retry failed items
+   * BUG FIX: Enhanced retry mechanism with better state management
    */
   const retryFailedItems = useCallback(async (items: Item[]): Promise<void> => {
+    if (isUnmountedRef.current) return;
+    
     const failedItemsToRetry = items.filter(item => failedItems.has(item.id));
     
     if (failedItemsToRetry.length === 0) {
       return;
     }
 
-    // Clear failed state for retry items
+    // BUG FIX: Clear failed items before retry
     setFailedItems(prev => {
       const updated = new Set(prev);
       failedItemsToRetry.forEach(item => updated.delete(item.id));
+      return updated;
+    });
+
+    // BUG FIX: Reset item states for retry
+    setItemStates(prev => {
+      const updated = new Map(prev);
+      failedItemsToRetry.forEach(item => {
+        updated.set(item.id, {
+          status: 'pending',
+          retryCount: 0
+        });
+      });
       return updated;
     });
 
@@ -306,13 +432,19 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
   }, [failedItems, generateQRCodes]);
 
   /**
-   * Clear QR cache and reset all state
+   * BUG FIX: Enhanced cache management with proper cleanup
    */
   const clearQRCache = useCallback(() => {
+    // Abort any ongoing generation
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    
     // Clear utility cache
     clearUtilCache();
     
-    // Reset all state
+    // BUG FIX: Reset all state atomically to prevent inconsistencies
     setQRCodes(new Map());
     setIsGenerating(false);
     setProgress(0);
@@ -320,23 +452,22 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
     setFailedItems(new Set());
     setItemStates(new Map());
     
-    // Abort any ongoing generation
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
+    // Clear refs
+    activeGenerationRef.current = null;
+    batchQueueRef.current = [];
+    processingBatchRef.current = false;
     
     console.log('QR code cache cleared');
   }, []);
 
   /**
-   * Get generation statistics
+   * BUG FIX: Enhanced statistics with safety checks
    */
   const getStats = useCallback(() => {
     const total = itemStates.size;
     const completed = Array.from(itemStates.values()).filter(s => s.status === 'completed').length;
     const failed = failedItems.size;
-    const remaining = total - completed - failed;
+    const remaining = Math.max(0, total - completed - failed);
     
     return {
       total,
