@@ -271,35 +271,35 @@ All file modifications are restricted to the "Authorized Files and Functions for
     - [x] Display user-friendly error messages
     - [x] Provide retry mechanisms where appropriate
 
-### 10. React Hook for QR Code Generation
+### 10. React Hook for QR Code Generation -unit tested-
 **Story Points**: 1  
 **Dependencies**: Tasks 1-9 completed  
 **Files**: `src/hooks/useQRCodeGeneration.ts` (new)
 
 #### Task Checklist:
-- [ ] Create new file `src/hooks/useQRCodeGeneration.ts`:
-  - [ ] Implement `useQRCodeGeneration` custom hook
-  - [ ] Define hook interface:
-    - [ ] Input: array of items to generate QR codes for
-    - [ ] Output: generated QR codes map, loading state, error state
-  - [ ] Implement `generateBatchQRCodes` function:
-    - [ ] Process items in batches to avoid blocking UI
-    - [ ] Generate QR codes for `${SITE_URL}/item/${item.public_id}` format
-    - [ ] Update progress state during generation
-    - [ ] Handle individual item failures gracefully
-  - [ ] Implement `clearQRCache` function:
-    - [ ] Clear generated QR codes from memory
-    - [ ] Reset loading and error states
-    - [ ] Cleanup function for component unmounting
-  - [ ] Add proper error handling:
-    - [ ] Catch QR generation failures
-    - [ ] Provide specific error messages for different failure types
-    - [ ] Allow retry for failed generations
-  - [ ] Use React hooks appropriately:
-    - [ ] `useState` for QR codes map and loading states
-    - [ ] `useEffect` for cleanup on unmount
-    - [ ] `useCallback` for memoized generation functions
-  - [ ] Add TypeScript types for all hook parameters and return values
+- [x] Create new file `src/hooks/useQRCodeGeneration.ts`:
+  - [x] Implement `useQRCodeGeneration` custom hook
+  - [x] Define hook interface:
+    - [x] Input: array of items to generate QR codes for
+    - [x] Output: generated QR codes map, loading state, error state
+  - [x] Implement `generateBatchQRCodes` function:
+    - [x] Process items in batches to avoid blocking UI
+    - [x] Generate QR codes for `${SITE_URL}/item/${item.public_id}` format
+    - [x] Update progress state during generation
+    - [x] Handle individual item failures gracefully
+  - [x] Implement `clearQRCache` function:
+    - [x] Clear generated QR codes from memory
+    - [x] Reset loading and error states
+    - [x] Cleanup function for component unmounting
+  - [x] Add proper error handling:
+    - [x] Catch QR generation failures
+    - [x] Provide specific error messages for different failure types
+    - [x] Allow retry for failed generations
+  - [x] Use React hooks appropriately:
+    - [x] `useState` for QR codes map and loading states
+    - [x] `useEffect` for cleanup on unmount
+    - [x] `useCallback` for memoized generation functions
+  - [x] Add TypeScript types for all hook parameters and return values
 
 ### 11. Integration Testing and Bug Fixes
 **Story Points**: 1  
