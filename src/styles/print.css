@@ -33,7 +33,7 @@
   }
 
   /* Hide all non-printable elements */
-  .print\\:hidden,
+  .print-hidden,
   nav,
   header,
   footer,
@@ -373,11 +373,11 @@
   }
 
   /* Visual indicator for print-only elements */
-  .print\\:block {
+  .print-block {
     position: relative;
   }
 
-  .print\\:block::after {
+  .print-block::after {
     content: "Print Only";
     position: absolute;
     top: 0;
