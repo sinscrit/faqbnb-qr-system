@@ -153,31 +153,31 @@ All file modifications are restricted to the "Authorized Files and Functions for
     - [x] Include proper close/cancel functionality
     - [x] Ensure accessibility with proper ARIA labels
 
-### 6. Print Layout Controls Component
+### 6. Print Layout Controls Component -unit tested-
 **Story Points**: 1  
 **Dependencies**: Task 5 completed  
 **Files**: `src/components/PrintLayoutControls.tsx` (new)
 
 #### Task Checklist:
-- [ ] Create new file `src/components/PrintLayoutControls.tsx`:
-  - [ ] Define props interface for print settings and change handlers
-  - [ ] Implement `PrintLayoutControls` functional component
-  - [ ] Add QR code size selector:
-    - [ ] Radio buttons or dropdown for Small/Medium/Large options
-    - [ ] Show dimension labels (1", 1.5", 2") for each size
-    - [ ] Implement `handleSizeChange(size: 'small' | 'medium' | 'large'): void`
-  - [ ] Add grid layout selector:
-    - [ ] Radio buttons or dropdown for 2, 3, 4, 6 items per row
-    - [ ] Visual preview of grid arrangement (optional enhancement)
-    - [ ] Implement `handleLayoutChange(itemsPerRow: number): void`
-  - [ ] Add additional print options:
-    - [ ] Toggle for showing/hiding item labels
-    - [ ] Option to include QR code URLs as text below codes
-  - [ ] Implement `renderSizeSelector(): JSX.Element` for reusable size UI
-  - [ ] Style with consistent design system:
-    - [ ] Use form styling patterns from existing components
-    - [ ] Ensure proper spacing and responsive design
-    - [ ] Add clear visual hierarchy for different control groups
+- [x] Create new file `src/components/PrintLayoutControls.tsx`:
+  - [x] Define props interface for print settings and change handlers
+  - [x] Implement `PrintLayoutControls` functional component
+  - [x] Add QR code size selector:
+    - [x] Radio buttons or dropdown for Small/Medium/Large options
+    - [x] Show dimension labels (1", 1.5", 2") for each size
+    - [x] Implement `handleSizeChange(size: 'small' | 'medium' | 'large'): void`
+  - [x] Add grid layout selector:
+    - [x] Radio buttons or dropdown for 2, 3, 4, 6 items per row
+    - [x] Visual preview of grid arrangement (optional enhancement)
+    - [x] Implement `handleLayoutChange(itemsPerRow: number): void`
+  - [x] Add additional print options:
+    - [x] Toggle for showing/hiding item labels
+    - [x] Option to include QR code URLs as text below codes
+  - [x] Implement `renderSizeSelector(): JSX.Element` for reusable size UI
+  - [x] Style with consistent design system:
+    - [x] Use form styling patterns from existing components
+    - [x] Ensure proper spacing and responsive design
+    - [x] Add clear visual hierarchy for different control groups
 
 ### 7. QR Code Print Preview Component
 **Story Points**: 1  
