@@ -210,38 +210,38 @@ All file modifications are restricted to the "Authorized Files and Functions for
     - [x] Display total QR codes being printed
     - [x] Loading indicators for QR generation progress
 
-### 8. Print-Specific CSS Styling
+### 8. Print-Specific CSS Styling -unit tested-
 **Story Points**: 1  
 **Dependencies**: Task 7 completed  
 **Files**: `src/styles/print.css` (new), `src/app/globals.css`
 
 #### Task Checklist:
-- [ ] Create new file `src/styles/print.css`:
-  - [ ] Define `@media print` rules for QR code printing
-  - [ ] Implement `.qr-print-layout` class:
-    - [ ] Remove margins, headers, footers from print view
-    - [ ] Set proper page size and orientation
-  - [ ] Implement `.qr-grid` class:
-    - [ ] CSS Grid with dynamic columns using CSS custom properties
-    - [ ] Proper gap spacing (0.25 inches between items)
-    - [ ] Page break handling to avoid cutting QR codes
-  - [ ] Implement `.qr-item` class:
-    - [ ] Flexbox layout for QR code and label
-    - [ ] Proper sizing based on print settings
-    - [ ] `break-inside: avoid` to prevent page breaks within items
-  - [ ] Implement `.qr-code-image` class:
-    - [ ] Fixed dimensions based on size setting
-    - [ ] High contrast for print quality
-    - [ ] Proper margins and centering
-  - [ ] Implement `.qr-item-label` class:
-    - [ ] Typography optimized for printing
-    - [ ] Proper font size and weight
-    - [ ] Text truncation for long item names
-  - [ ] Add responsive print rules for different paper sizes (A4, Letter)
-- [ ] Update `src/app/globals.css`:
-  - [ ] Import the new print.css file
-  - [ ] Add print-specific utility classes if needed
-  - [ ] Ensure no conflicts with existing styles
+- [x] Create new file `src/styles/print.css`:
+  - [x] Define `@media print` rules for QR code printing
+  - [x] Implement `.qr-print-layout` class:
+    - [x] Remove margins, headers, footers from print view
+    - [x] Set proper page size and orientation
+  - [x] Implement `.qr-grid` class:
+    - [x] CSS Grid with dynamic columns using CSS custom properties
+    - [x] Proper gap spacing (0.25 inches between items)
+    - [x] Page break handling to avoid cutting QR codes
+  - [x] Implement `.qr-item` class:
+    - [x] Flexbox layout for QR code and label
+    - [x] Proper sizing based on print settings
+    - [x] `break-inside: avoid` to prevent page breaks within items
+  - [x] Implement `.qr-code-image` class:
+    - [x] Fixed dimensions based on size setting
+    - [x] High contrast for print quality
+    - [x] Proper margins and centering
+  - [x] Implement `.qr-item-label` class:
+    - [x] Typography optimized for printing
+    - [x] Proper font size and weight
+    - [x] Text truncation for long item names
+  - [x] Add responsive print rules for different paper sizes (A4, Letter)
+- [x] Update `src/app/globals.css`:
+  - [x] Import the new print.css file
+  - [x] Add print-specific utility classes if needed
+  - [x] Ensure no conflicts with existing styles
 
 ### 9. Property Page Integration
 **Story Points**: 1  

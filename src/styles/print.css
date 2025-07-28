@@ -1,0 +1,392 @@
+/**
+ * Print-specific CSS for QR Code Printing System
+ * Request #011 - QR Code Printing System for Properties
+ * Purpose: Optimize QR code layouts for physical printing
+ */
+
+/* ===== PRINT MEDIA QUERIES ===== */
+@media print {
+  /* ===== PAGE SETUP ===== */
+  @page {
+    margin: 0.5in;
+    size: letter; /* 8.5 x 11 inches */
+  }
+
+  /* Alternative page sizes */
+  @page :first {
+    margin-top: 0.75in; /* Extra space for header on first page */
+  }
+
+  /* ===== GLOBAL PRINT STYLES ===== */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    font-family: Arial, sans-serif !important;
+    font-size: 12pt !important;
+    line-height: 1.2 !important;
+    color: #000 !important;
+    background: white !important;
+  }
+
+  /* Hide all non-printable elements */
+  .print\\:hidden,
+  nav,
+  header,
+  footer,
+  .no-print,
+  button:not(.print-button),
+  .sidebar,
+  .toolbar {
+    display: none !important;
+  }
+
+  /* ===== QR PRINT LAYOUT CLASSES ===== */
+  .qr-print-layout {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* ===== QR GRID LAYOUT ===== */
+  .qr-grid {
+    display: grid !important;
+    width: 100% !important;
+    gap: 0.25in !important; /* Quarter inch spacing between QR codes */
+    padding: 0 !important;
+    margin: 0 !important;
+    page-break-inside: auto;
+  }
+
+  /* Grid column configurations */
+  .qr-grid.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5in !important; /* More space for larger QR codes */
+  }
+
+  .qr-grid.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.375in !important;
+  }
+
+  .qr-grid.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.25in !important;
+  }
+
+  .qr-grid.grid-cols-6 {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 0.125in !important; /* Tighter spacing for many items */
+  }
+
+  /* ===== QR ITEM STYLES ===== */
+  .qr-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    break-inside: avoid !important; /* Prevent page breaks within QR items */
+    page-break-inside: avoid !important;
+    margin: 0 !important;
+    padding: 0.1in !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    border-radius: 0.05in !important;
+  }
+
+  /* ===== QR CODE IMAGE STYLES ===== */
+  .qr-code-image {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto 0.05in auto !important;
+    border: none !important;
+    background: white !important;
+    image-rendering: pixelated !important; /* Sharp QR code rendering */
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
+  }
+
+  /* QR Code container with proper sizing */
+  .qr-code-container {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    border: 1px solid #333 !important;
+    margin-bottom: 0.05in !important;
+  }
+
+  /* Size-specific QR code dimensions for print */
+  .w-24.h-24 .qr-code-container,
+  .w-24.h-24 .qr-code-image {
+    width: 1in !important;
+    height: 1in !important;
+  }
+
+  .w-32.h-32 .qr-code-container,
+  .w-32.h-32 .qr-code-image {
+    width: 1.5in !important;
+    height: 1.5in !important;
+  }
+
+  .w-40.h-40 .qr-code-container,
+  .w-40.h-40 .qr-code-image {
+    width: 2in !important;
+    height: 2in !important;
+  }
+
+  /* ===== QR ITEM LABEL STYLES ===== */
+  .qr-item-label {
+    width: 100% !important;
+    text-align: center !important;
+    margin-top: 0.05in !important;
+    padding: 0 0.02in !important;
+  }
+
+  .qr-item-label p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 8pt !important;
+    line-height: 1.1 !important;
+    color: #333 !important;
+    font-weight: normal !important;
+    word-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  .qr-item-label p:first-child {
+    font-weight: 600 !important;
+    font-size: 9pt !important;
+    margin-bottom: 0.02in !important;
+  }
+
+  /* Hide public ID in print to save space */
+  .qr-item-label p:last-child {
+    display: none !important;
+  }
+
+  /* ===== PAGE BREAK CONTROL ===== */
+  .page-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  .page-break-after {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Prevent orphaned QR codes */
+  .qr-item:nth-last-child(-n+2) {
+    page-break-inside: avoid !important;
+  }
+
+  /* ===== PRINT HEADER STYLES ===== */
+  .print-header {
+    margin-bottom: 0.25in !important;
+    padding-bottom: 0.1in !important;
+    border-bottom: 1px solid #333 !important;
+    text-align: center !important;
+  }
+
+  .print-header h1 {
+    font-size: 16pt !important;
+    font-weight: bold !important;
+    margin: 0 0 0.05in 0 !important;
+    color: #000 !important;
+  }
+
+  .print-header .print-subtitle {
+    font-size: 10pt !important;
+    color: #666 !important;
+    margin: 0 !important;
+  }
+
+  /* ===== RESPONSIVE PRINT ADJUSTMENTS ===== */
+  
+  /* For smaller paper sizes */
+  @media print and (max-width: 8in) {
+    .qr-grid {
+      gap: 0.125in !important;
+    }
+    
+    .qr-grid.grid-cols-4 {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .qr-grid.grid-cols-6 {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+  }
+
+  /* For A4 paper size */
+  @media print and (width: 210mm) {
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+    
+    .qr-grid {
+      gap: 6mm !important;
+    }
+  }
+
+  /* ===== ACCESSIBILITY AND QUALITY ENHANCEMENTS ===== */
+  
+  /* High contrast for better scanning */
+  .qr-code-image {
+    filter: contrast(1.2) !important;
+  }
+
+  /* Ensure text is readable */
+  .qr-item-label p {
+    text-rendering: optimizeLegibility !important;
+  }
+
+  /* ===== UTILITY CLASSES FOR PRINT ===== */
+  
+  .print-only {
+    display: block !important;
+  }
+
+  .print-inline {
+    display: inline !important;
+  }
+
+  .print-flex {
+    display: flex !important;
+  }
+
+  .print-grid {
+    display: grid !important;
+  }
+
+  .print-text-xs {
+    font-size: 8pt !important;
+  }
+
+  .print-text-sm {
+    font-size: 9pt !important;
+  }
+
+  .print-text-base {
+    font-size: 10pt !important;
+  }
+
+  .print-font-normal {
+    font-weight: normal !important;
+  }
+
+  .print-font-medium {
+    font-weight: 500 !important;
+  }
+
+  .print-font-bold {
+    font-weight: bold !important;
+  }
+
+  .print-mb-1 {
+    margin-bottom: 0.05in !important;
+  }
+
+  .print-mb-2 {
+    margin-bottom: 0.1in !important;
+  }
+
+  .print-p-1 {
+    padding: 0.05in !important;
+  }
+
+  .print-p-2 {
+    padding: 0.1in !important;
+  }
+
+  /* ===== ERROR HANDLING FOR PRINT ===== */
+  
+  /* Show fallback for missing QR codes */
+  .qr-item .error-placeholder {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border: 2px dashed #999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 8pt !important;
+    color: #666 !important;
+    background: #f9f9f9 !important;
+  }
+
+  /* ===== BROWSER-SPECIFIC FIXES ===== */
+  
+  /* Chrome/Safari print optimizations */
+  @supports (-webkit-appearance: none) {
+    .qr-code-image {
+      -webkit-print-color-adjust: exact !important;
+    }
+  }
+
+  /* Firefox print optimizations */
+  @supports (-moz-appearance: none) {
+    .qr-code-image {
+      color-adjust: exact !important;
+    }
+  }
+}
+
+/* ===== SCREEN PREVIEW STYLES ===== */
+/* These styles help preview print layout on screen */
+
+@media screen {
+  .print-preview {
+    background: #f5f5f5;
+    padding: 1rem;
+  }
+
+  .print-preview .qr-grid {
+    background: white;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+  }
+
+  .print-preview .qr-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    background: white;
+  }
+
+  /* Visual indicator for print-only elements */
+  .print\\:block {
+    position: relative;
+  }
+
+  .print\\:block::after {
+    content: "Print Only";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #3b82f6;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.125rem;
+    opacity: 0.8;
+  }
+} 
