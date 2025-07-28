@@ -128,30 +128,30 @@ All file modifications are restricted to the "Authorized Files and Functions for
   - [x] Add proper TypeScript types for all props and state
   - [x] Include loading states for when items are being fetched
 
-### 5. QR Code Print Manager Component (Core Logic)
+### 5. QR Code Print Manager Component (Core Logic) -unit tested-
 **Story Points**: 1  
 **Dependencies**: Tasks 1-4 completed  
 **Files**: `src/components/QRCodePrintManager.tsx` (new)
 
 #### Task Checklist:
-- [ ] Create new file `src/components/QRCodePrintManager.tsx`:
-  - [ ] Define props interface accepting propertyId and items data
-  - [ ] Implement main `QRCodePrintManager` component structure
-  - [ ] Add state management for:
-    - [ ] `selectedItems: string[]` (array of item IDs)
-    - [ ] `isGenerating: boolean` (QR generation loading state)
-    - [ ] `generatedQRCodes: Map<string, string>` (cache of generated QR codes)
-    - [ ] `printSettings: QRPrintSettings` (user print preferences)
-  - [ ] Implement core handler functions:
-    - [ ] `handleItemSelection(itemId: string): void` for individual item selection
-    - [ ] `handleSelectAll(): void` for bulk selection
-    - [ ] `handleDeselectAll(): void` for clearing selections
-    - [ ] `handlePrintSettingsChange(settings: Partial<QRPrintSettings>): void` for settings updates
-  - [ ] Integrate ItemSelectionList component with proper data flow
-  - [ ] Add modal/drawer structure for the interface:
-    - [ ] Use existing modal patterns from the codebase
-    - [ ] Include proper close/cancel functionality
-    - [ ] Ensure accessibility with proper ARIA labels
+- [x] Create new file `src/components/QRCodePrintManager.tsx`:
+  - [x] Define props interface accepting propertyId and items data
+  - [x] Implement main `QRCodePrintManager` component structure
+  - [x] Add state management for:
+    - [x] `selectedItems: string[]` (array of item IDs)
+    - [x] `isGenerating: boolean` (QR generation loading state)
+    - [x] `generatedQRCodes: Map<string, string>` (cache of generated QR codes)
+    - [x] `printSettings: QRPrintSettings` (user print preferences)
+  - [x] Implement core handler functions:
+    - [x] `handleItemSelection(itemId: string): void` for individual item selection
+    - [x] `handleSelectAll(): void` for bulk selection
+    - [x] `handleDeselectAll(): void` for clearing selections
+    - [x] `handlePrintSettingsChange(settings: Partial<QRPrintSettings>): void` for settings updates
+  - [x] Integrate ItemSelectionList component with proper data flow
+  - [x] Add modal/drawer structure for the interface:
+    - [x] Use existing modal patterns from the codebase
+    - [x] Include proper close/cancel functionality
+    - [x] Ensure accessibility with proper ARIA labels
 
 ### 6. Print Layout Controls Component
 **Story Points**: 1  
