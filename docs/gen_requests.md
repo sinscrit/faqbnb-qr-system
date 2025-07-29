@@ -715,3 +715,90 @@ Implement a QR code printing feature for the properties page that allows users t
 ---
 
 *Next Request: REQ-012* 
+
+## REQ-012: BUG FIX REQUEST - QR Code Print Manager UI Transition and Display
+**Date**: January 28, 2025  
+**Type**: Bug Fix Implementation  
+**Complexity**: 3 Points (Low-Medium Complexity)
+
+### Request Summary
+Fix critical UI bug in the QR Code Print Manager where QR codes are successfully generated in the backend but the interface fails to transition from the "Configure Print" step to the "Preview & Print" step, preventing users from viewing their generated QR codes.
+
+### Detailed Requirements
+
+#### 1. UI State Transition Bug Fix (1 point)
+- **Issue**: React component gets stuck on Step 2 (⚙️ Configure Print) after successful QR generation
+- **Symptom**: Console shows `✅ Generated 11 QR codes successfully` but UI never advances to Step 3
+- **Fix Required**: Proper state management to transition from Step 2 → Step 3 after QR generation completion
+- **Files Affected**:
+  - `src/components/QRCodePrintManager.tsx` (step transition logic)
+  - `src/hooks/useQRCodeGeneration.ts` (state management integration)
+
+#### 2. QR Code Preview Display Implementation (1 point)
+- **Issue**: Generated QR codes exist in memory but are never rendered in DOM
+- **Symptom**: DOM analysis shows `canvases: 0, dataImages: 0` despite successful generation
+- **Fix Required**: Implement Step 3 (🖨️ Preview & Print) content with actual QR code display
+- **Files Affected**:
+  - `src/components/QRCodePrintManager.tsx` (Step 3 rendering logic)
+  - `src/components/QRCodePrintPreview.tsx` (QR code grid display)
+
+#### 3. QR Code Layout Specification (1 point)
+- **Issue**: Need to implement specific layout requirements for QR code display
+- **Requirements**: 
+  - Each QR code container: 225x225 pixels
+  - QR code size: 200x200 pixels (centered in container)
+  - Item name displayed above each QR code within the 225x225 box
+  - Grid layout (appears to be 3 columns based on reference image)
+- **Files Affected**:
+  - `src/components/QRCodePrintPreview.tsx` (grid layout and styling)
+  - `src/styles/print.css` (print-specific layout styles)
+
+### Complexity Analysis
+
+#### React State Management (1 point)
+- **Component State Bug**: Simple state transition fix in existing component
+- **Hook Integration**: Ensure proper communication between QR generation hook and UI component
+- **Risk Level**: Low - isolated to component state management
+
+#### UI Rendering Implementation (1 point)
+- **QR Display Logic**: Connect existing generated QR data to visual rendering
+- **Step 3 Content**: Implement missing preview step UI content
+- **Risk Level**: Low - adding missing UI functionality without changing existing logic
+
+#### Layout & Styling (1 point)
+- **CSS Grid Implementation**: Create responsive grid layout for QR codes
+- **Precise Dimensions**: Apply specific 225x225 and 200x200 pixel requirements
+- **Print Optimization**: Ensure layout works for both screen preview and print
+- **Risk Level**: Low - CSS styling and layout work
+
+### Technical Challenges
+1. **Minimal Complexity**: Backend QR generation already works perfectly
+2. **UI-Only Fix**: All data and logic exists; only UI rendering needs implementation
+3. **Well-Defined Requirements**: Clear specifications for layout and dimensions
+4. **Existing Infrastructure**: QR generation hook and modal framework already functional
+
+### Implementation Priority
+**High Priority** - Blocks user access to generated QR codes; core functionality is unusable without this fix.
+
+### Related Files Reference
+- **Primary Component**: `src/components/QRCodePrintManager.tsx` (step transition and Step 3 implementation)
+- **QR Generation Hook**: `src/hooks/useQRCodeGeneration.ts` (state integration)
+- **Preview Component**: `src/components/QRCodePrintPreview.tsx` (QR display grid)
+- **Styling**: `src/styles/print.css` (layout and print optimization)
+- **Reference Implementation**: Request REQ-011 QR Code Printing System (base functionality)
+
+### Backend Status
+- ✅ **QR Generation**: Fully functional - `✅ Generated 11 QR codes successfully`
+- ✅ **Data Processing**: Working - `🚀 Processing 11 QR codes in batches of 5`
+- ✅ **Item Selection**: Functional - All 11 items properly selected
+- ✅ **Configuration**: Working - Settings applied correctly
+
+### Current Bug Evidence
+- **Console Logs**: Backend shows successful QR generation
+- **DOM Analysis**: No QR code elements rendered (`canvases: 0, dataImages: 0`)
+- **UI State**: Stuck on Configure Print step, buttons disabled but no progression
+- **User Impact**: Complete inability to view or use generated QR codes
+
+---
+
+*Next Request: REQ-013* 

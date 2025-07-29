@@ -246,6 +246,84 @@
     min-height: 2in !important;
   }
 
+  /* ===== REQ-012 QR CONTAINER LAYOUT ===== */
+  /* REQ-012 PHASE 3: 225x225 containers with 200x200 QR codes and labels above */
+  .qr-container {
+    width: 225px !important;
+    height: 225px !important;
+    min-width: 225px !important;
+    min-height: 225px !important;
+    /* Convert to print units for accurate sizing */
+    width: 3.125in !important; /* 225px / 72 DPI ≈ 3.125in */
+    height: 3.125in !important;
+    min-width: 3.125in !important;
+    min-height: 3.125in !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    border: 1px solid #333 !important;
+    background: white !important;
+    padding: 0.1in !important;
+    box-sizing: border-box !important;
+    /* Enhanced page break control */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  /* QR code area within the 225x225 container */
+  .qr-container .qr-code-container {
+    width: 200px !important;
+    height: 200px !important;
+    min-width: 200px !important;
+    min-height: 200px !important;
+    /* Convert to print units */
+    width: 2.778in !important; /* 200px / 72 DPI ≈ 2.778in */
+    height: 2.778in !important;
+    min-width: 2.778in !important;
+    min-height: 2.778in !important;
+    border: none !important;
+    background: white !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* QR code image within the 200x200 area */
+  .qr-container .qr-code-image {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* Label styling within the container (positioned above QR) */
+  .qr-container .qr-item-label {
+    width: 100% !important;
+    text-align: center !important;
+    margin-bottom: 0.05in !important;
+    margin-top: 0 !important;
+    padding: 0 0.02in !important;
+    flex-shrink: 0 !important;
+    /* Ensure label fits in available space above QR code */
+    max-height: 0.8in !important;
+    overflow: hidden !important;
+  }
+
+  .qr-container .qr-item-label p {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 9pt !important;
+    line-height: 1.1 !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    word-wrap: break-word !important;
+    /* Enhanced text rendering */
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+
   /* ===== QR ITEM LABEL STYLES ===== */
   /* BUG FIX: Enhanced label styling with better typography */
   .qr-item-label {

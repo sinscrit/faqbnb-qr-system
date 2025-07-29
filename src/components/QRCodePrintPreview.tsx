@@ -90,8 +90,8 @@ const VirtualizedQRItem = React.memo(({ item, qrSizeClass, showLabels, isVisible
   return (
     <div
       className={cn(
-        "qr-item flex flex-col items-center space-y-2",
-        "print:break-inside-avoid print:space-y-1",
+        "qr-item flex flex-col items-center",
+        "print:break-inside-avoid",
         // BUG FIX: Task 17 - Mobile-specific styling
         isMobile && "touch-manipulation select-none",
         touchStarted && "opacity-75 transform scale-95 transition-all duration-150"
@@ -99,14 +99,38 @@ const VirtualizedQRItem = React.memo(({ item, qrSizeClass, showLabels, isVisible
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* QR Code Display */}
+      {/* REQ-012 PHASE 3: 225x225 Container with Label Above QR Code */}
       <div className={cn(
-        "qr-code-container relative border border-gray-200 rounded bg-white flex items-center justify-center",
-        qrSizeClass,
+        "qr-container relative border border-gray-200 rounded bg-white flex flex-col items-center justify-start p-2",
+        // REQ-012: Fixed 225x225 container size (overrides qrSizeClass)
+        "w-56 h-56", // 14rem = 224px ≈ 225px
         "print:border-gray-400",
         // BUG FIX: Task 17 - Mobile responsive sizing
         isMobile && "min-w-0 min-h-0"
       )}>
+        {/* Item Label - Positioned Above QR Code */}
+        {showLabels && (
+          <div className={cn(
+            "qr-item-label text-center w-full mb-1",
+            // BUG FIX: Task 17 - Mobile label styling
+            isMobile && "px-1"
+          )}>
+            <p className={cn(
+              "text-sm font-medium text-gray-900 print:text-black truncate",
+              isMobile && "text-xs" // Smaller text on mobile
+            )}>
+              {item.item.name}
+            </p>
+          </div>
+        )}
+
+        {/* QR Code Display - 200x200 centered */}
+        <div className={cn(
+          "qr-code-container relative flex items-center justify-center flex-1",
+          // REQ-012: Fixed 200x200 QR code size
+          "w-50 h-50", // 12.5rem = 200px
+          "max-w-50 max-h-50"
+        )}>
         {item.isLoading ? (
           <div className="flex flex-col items-center justify-center space-y-2 p-4">
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent" />
@@ -151,29 +175,8 @@ const VirtualizedQRItem = React.memo(({ item, qrSizeClass, showLabels, isVisible
             )}>Failed to load</span>
           </div>
         )}
-      </div>
-
-      {/* Item Label */}
-      {showLabels && (
-        <div className={cn(
-          "qr-item-label text-center max-w-full",
-          // BUG FIX: Task 17 - Mobile label styling
-          isMobile && "px-1"
-        )}>
-          <p className={cn(
-            "text-sm font-medium text-gray-900 print:text-black truncate",
-            isMobile && "text-xs" // Smaller text on mobile
-          )}>
-            {item.item.name}
-          </p>
-          <p className={cn(
-            "text-xs text-gray-500 print:text-gray-700 font-mono",
-            isMobile && "text-xs hidden" // Hide public ID on mobile to save space
-          )}>
-            {item.item.public_id.slice(0, 8)}...
-          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 });
@@ -344,9 +347,9 @@ export function QRCodePrintPreview({
     Promise.all(imagePromises).then(() => {
       // BUG FIX: Task 17 - Browser-specific print timing
       const delay = isSafari ? 200 : 100;
-      setTimeout(() => {
+    setTimeout(() => {
         if (typeof window !== 'undefined' && window.print) {
-          window.print();
+      window.print();
         } else {
           console.warn('Print functionality not available in this browser');
         }
@@ -363,8 +366,8 @@ export function QRCodePrintPreview({
         ref={containerRef}
         className={cn(
           "qr-grid grid gap-4 p-4 max-h-96 overflow-y-auto",
-          gridClass,
-          // Print-specific classes
+        gridClass,
+        // Print-specific classes
           "print:gap-2 print:p-2 print:max-h-none print:overflow-visible",
           // BUG FIX: Task 17 - Mobile-specific styling
           isMobile && "max-h-80 gap-2 p-2 touch-pan-y",
@@ -401,8 +404,8 @@ export function QRCodePrintPreview({
 
     return { total, generated, loading, failed };
   }, [printItems]);
-
-  return (
+    
+    return (
     <div className={cn("qr-print-preview", className)}>
       {/* Header with stats and print button */}
       <div className={cn(
@@ -427,12 +430,12 @@ export function QRCodePrintPreview({
             {stats.failed > 0 && <span className="text-red-600">Failed: {stats.failed}</span>}
             <span>Pages: {totalPages}</span>
           </div>
-        </div>
-        
-        <button
-          onClick={handlePrint}
+          </div>
+          
+            <button
+              onClick={handlePrint}
           disabled={isGenerating || stats.generated === 0}
-          className={cn(
+              className={cn(
             "px-4 py-2 rounded-md font-medium transition-colors",
             "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
             isGenerating || stats.generated === 0
@@ -445,7 +448,7 @@ export function QRCodePrintPreview({
           style={isMobile ? { touchAction: 'manipulation' } : undefined}
         >
           {isGenerating ? 'Generating...' : isMobile ? 'Print / Share QR Codes' : 'Print QR Codes'}
-        </button>
+            </button>
       </div>
 
       {/* QR Grid */}
@@ -463,9 +466,9 @@ export function QRCodePrintPreview({
             "text-base",
             isMobile && "text-sm px-4" // Smaller text and padding on mobile
           )}>No items selected for QR code generation</p>
-        </div>
-      )}
-
+          </div>
+        )}
+      
       {/* Generation Progress */}
       {isGenerating && (
         <div className="mt-4 print:hidden">
@@ -485,7 +488,7 @@ export function QRCodePrintPreview({
                     style={{ width: `${(stats.generated / stats.total) * 100}%` }}
                   />
                 </div>
-              </div>
+          </div>
             </div>
           </div>
         </div>
@@ -497,7 +500,7 @@ export function QRCodePrintPreview({
           <p className="text-xs text-amber-800">
             📱 <strong>Mobile Tip:</strong> To save QR codes on mobile, long-press individual QR codes or use the Print/Share button above.
           </p>
-        </div>
+      </div>
       )}
     </div>
   );

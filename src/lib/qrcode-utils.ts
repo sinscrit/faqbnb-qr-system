@@ -140,9 +140,9 @@ export async function generateQRCode(
   url: string,
   options?: Partial<QRCodeOptions>
 ): Promise<string> {
-  if (!url || typeof url !== 'string') {
-    throw new Error('Invalid URL provided for QR code generation');
-  }
+    if (!url || typeof url !== 'string') {
+      throw new Error('Invalid URL provided for QR code generation');
+    }
 
   const mergedOptions = { ...DEFAULT_QR_OPTIONS, ...options };
   
@@ -190,7 +190,7 @@ export async function generateQRCode(
     if (!dataUrl || !dataUrl.startsWith('data:image/')) {
       throw new Error('Invalid QR code data URL generated - browser compatibility issue');
     }
-    
+
     return dataUrl;
   } catch (error) {
     console.error('QR code generation failed:', error);
@@ -268,10 +268,10 @@ export async function getQRCodeDataURL(
  * @param dataUrl - Generated QR code data URL
  */
 export function cacheQRCode(itemId: string, dataUrl: string): void {
-  const now = Date.now();
+    const now = Date.now();
   qrCodeCache.set(itemId, {
-    dataUrl,
-    timestamp: now,
+      dataUrl,
+      timestamp: now,
     expiresAt: now + CACHE_EXPIRATION_MS
   });
   
@@ -286,17 +286,17 @@ export function cacheQRCode(itemId: string, dataUrl: string): void {
  */
 export function getCachedQRCode(itemId: string): string | null {
   const entry = qrCodeCache.get(itemId);
-  
+    
   if (!entry) {
-    return null;
-  }
-  
+      return null;
+    }
+    
   // Check if entry has expired
   if (entry.expiresAt < Date.now()) {
-    qrCodeCache.delete(itemId);
-    return null;
-  }
-  
+      qrCodeCache.delete(itemId);
+      return null;
+    }
+    
   return entry.dataUrl;
 }
 
@@ -304,7 +304,7 @@ export function getCachedQRCode(itemId: string): string | null {
  * Clear QR code cache and stop garbage collection
  */
 export function clearQRCache(): void {
-  qrCodeCache.clear();
+    qrCodeCache.clear();
   stopGarbageCollection();
   console.log('QR code cache cleared');
 }
@@ -405,22 +405,22 @@ export async function generateBatchQRCodes(
           (callback: FrameRequestCallback) => setTimeout(callback, 16);
         
         frameFunction(async () => {
-          const batchPromises = batch.map(async (item) => {
-            try {
-              const dataUrl = await generateQRCodeWithCache(item.url, item.id, options);
-              results.set(item.id, dataUrl);
-              completed++;
-              
-              if (onProgress) {
-                onProgress(completed, total);
-              }
-            } catch (error) {
-              console.error(`Failed to generate QR code for item ${item.id}:`, error);
-              // Don't stop the entire batch for one failure
-            }
-          });
+      const batchPromises = batch.map(async (item) => {
+        try {
+          const dataUrl = await generateQRCodeWithCache(item.url, item.id, options);
+          results.set(item.id, dataUrl);
+          completed++;
           
-          await Promise.all(batchPromises);
+          if (onProgress) {
+            onProgress(completed, total);
+          }
+        } catch (error) {
+          console.error(`Failed to generate QR code for item ${item.id}:`, error);
+          // Don't stop the entire batch for one failure
+        }
+      });
+      
+      await Promise.all(batchPromises);
           resolve();
         });
       });

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Item, QRPrintSettings, QRGenerationState } from '@/types';
 import { ItemSelectionList } from './ItemSelectionList';
+import { QRCodePrintPreview } from './QRCodePrintPreview';
 import { generateBatchQRCodes, clearQRCache } from '@/lib/qrcode-utils';
 import { cn } from '@/lib/utils';
 
@@ -282,15 +283,21 @@ export function QRCodePrintManager({
       setSuccessMessage(`Successfully generated ${selectedItems.length} QR code${selectedItems.length > 1 ? 's' : ''}! You can now preview and print them.`);
       setLastError(null);
       
+      // REQ-012 PHASE 1 FIX: Auto-transition to preview step after successful generation
+      // Use setTimeout to ensure state updates are processed in order
+      setTimeout(() => {
+        if (isComponentMountedRef.current) {
+          console.log('🔄 REQ-012 FIX: Transitioning to preview step with', generatedQRCodes.size, 'QR codes');
+          setCurrentStep('preview');
+        }
+      }, 100);
+      
       // Clear success message after 5 seconds
       setTimeout(() => {
         if (isComponentMountedRef.current) {
           setSuccessMessage(null);
         }
       }, 5000);
-
-      setCurrentStep('preview');
-      
     } catch (error: any) {
       if (!isComponentMountedRef.current) return;
       
@@ -600,6 +607,14 @@ export function QRCodePrintManager({
         );
 
       case 'preview':
+        // REQ-012 DEBUG: Log the current state for debugging
+        console.log('🖨️ REQ-012 DEBUG: Preview step rendering with:', {
+          generatedQRCodesSize: generatedQRCodes.size,
+          isGenerating: generationState.isGenerating,
+          selectedItemsCount: selectedItems.length,
+          itemsCount: items.length
+        });
+        
         return (
           <div className="space-y-4">
             <div className="text-center">
@@ -607,7 +622,7 @@ export function QRCodePrintManager({
                 QR Codes Generated Successfully!
               </h3>
               <p className="text-gray-600">
-                Your QR codes are ready to print
+                Your QR codes are ready to print ({generatedQRCodes.size} codes ready)
               </p>
             </div>
 
@@ -633,7 +648,42 @@ export function QRCodePrintManager({
               </div>
             )}
 
-            {/* Generation Results */}
+            {/* REQ-012 PHASE 2: QR Code Preview Display */}
+            {!generationState.isGenerating && generatedQRCodes.size > 0 ? (
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                  <h4 className="font-medium text-gray-900">QR Code Preview</h4>
+                  <p className="text-sm text-gray-600">
+                    {generatedQRCodes.size} QR code{generatedQRCodes.size > 1 ? 's' : ''} • {printSettings.itemsPerRow} per row • {printSettings.showLabels ? 'Labels shown' : 'No labels'}
+                  </p>
+                </div>
+                <div className="p-4">
+                  <QRCodePrintPreview
+                    items={items.filter(item => selectedItems.includes(item.id))}
+                    qrCodes={generatedQRCodes}
+                    printSettings={printSettings}
+                    isGenerating={generationState.isGenerating}
+                  />
+                </div>
+              </div>
+            ) : !generationState.isGenerating ? (
+              <div className="border border-orange-200 rounded-lg overflow-hidden bg-orange-50">
+                <div className="px-4 py-3">
+                  <h4 className="font-medium text-orange-900">⚠️ No QR Codes Available</h4>
+                  <p className="text-sm text-orange-700 mt-1">
+                    QR codes were cleared (possibly by Fast Refresh). Please click "Generate QR Codes" again.
+                  </p>
+                  <button
+                    onClick={() => setCurrentStep('configure')}
+                    className="mt-3 px-3 py-1 bg-orange-600 text-white text-sm rounded hover:bg-orange-700"
+                  >
+                    ← Back to Configure
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {/* Generation Results Summary */}
             <div className="bg-green-50 rounded-lg p-4">
               <h4 className="font-medium text-green-900 mb-2">Generation Complete</h4>
               <div className="text-sm text-green-800 space-y-1">
