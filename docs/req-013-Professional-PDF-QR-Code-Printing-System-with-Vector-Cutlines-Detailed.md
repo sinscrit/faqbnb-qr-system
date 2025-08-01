@@ -167,21 +167,21 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 
 ## Phase 2: Vector Cutline System and Grid Calculations (5 points)
 
-### 7. Implement Vector Line Drawing Utilities (1 point)
+### 7. Implement Vector Line Drawing Utilities (1 point) -unit tested-
 
 **Context**: Create precise vector line drawing capabilities for PDF cutlines with configurable dash patterns.
 
 **Current State**: Need to draw dashed cutlines with 4pt on/4pt off pattern, 0.5-1pt stroke width, #999 color.
 
 **Task Actions**:
-- [ ] Create new file `src/lib/pdf-cutlines.ts`
-- [ ] Implement `drawDashedLine(doc: PDFDocument, startX: number, startY: number, endX: number, endY: number, options: LineOptions): void`
-- [ ] Add `configureDashPattern(pattern: number[]): DashPattern` function for 4pt on/4pt off
-- [ ] Implement stroke width configuration (0.5-1pt)
-- [ ] Add color configuration (#999999 gray)
-- [ ] Create line validation (valid coordinates, positive stroke width)
-- [ ] Test line drawing in sample PDF documents
-- [ ] Verify dashed patterns render correctly in PDF viewers
+- [x] Create new file `src/lib/pdf-cutlines.ts` -unit tested-
+- [x] Implement `drawDashedLine(doc: PDFDocument, startX: number, startY: number, endX: number, endY: number, options: LineOptions): void` -unit tested-
+- [x] Add `configureDashPattern(pattern: number[]): DashPattern` function for 4pt on/4pt off -unit tested-
+- [x] Implement stroke width configuration (0.5-1pt) -unit tested-
+- [x] Add color configuration (#999999 gray) -unit tested-
+- [x] Create line validation (valid coordinates, positive stroke width) -unit tested-
+- [x] Test line drawing in sample PDF documents -unit tested-
+- [x] Verify dashed patterns render correctly in PDF viewers -unit tested-
 
 **Files to Create**: 
 - `src/lib/pdf-cutlines.ts`
