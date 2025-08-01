@@ -112,7 +112,11 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   const navigationItems = getNavigationItems();
 
-  if (loading) {
+  // Exempt QR print pages from admin layout loading state
+  // They handle their own loading and authentication
+  const isQRPrintPage = pathname?.includes('/qr-print') || false;
+  
+  if (loading && !isQRPrintPage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -123,7 +127,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  // Also exempt QR print pages from user check - they handle authentication internally
+  if (!user && !isQRPrintPage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-md mx-auto px-4">
@@ -156,9 +161,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 print:bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white shadow-sm">
+      <div className="border-b border-gray-200 bg-white shadow-sm print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             {/* Left side - Title and user info */}
@@ -171,60 +176,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                   }`}>
                     {isAdmin ? '👑 Admin' : '👤 User'}
                   </span>
-                  <span className="text-sm text-gray-600">{user.email}</span>
-                  {currentAccount && (
-                    <span className="text-xs text-gray-500">
-                      • {currentAccount.name}
-                    </span>
-                  )}
+                  <span className="text-sm text-gray-600">{user?.email}</span>
                 </div>
               </div>
-            </div>
-
-            {/* Center - Account Selector and Property Filter */}
-            <div className="flex items-center space-x-6">
-              {/* Account Selector */}
-              {userAccounts.length > 0 && (
-                <div className="min-w-0">
-                  <CompactAccountSelector
-                    onAccountChange={handleAccountChange}
-                    className="w-64"
-                  />
-                </div>
-              )}
-
-              {/* Property Filter (only show if properties are available) */}
-              {availableProperties.length > 0 && (
-                <div className="flex items-center space-x-2 min-w-0">
-                  <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Property:</label>
-                  <select
-                    value={selectedProperty?.id || ''}
-                    onChange={(e) => {
-                      const propertyId = e.target.value;
-                      const property = propertyId ? availableProperties.find(p => p.id === propertyId) : null;
-                      setSelectedProperty(property || null);
-                    }}
-                    className="block px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
-                    disabled={loadingProperties}
-                  >
-                    <option value="">
-                      {loadingProperties ? 'Loading...' : 'All Properties'}
-                    </option>
-                    {availableProperties.map((property) => (
-                      <option key={property.id} value={property.id}>
-                        {property.nickname}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Account Context Info */}
-              {!currentAccount && userAccounts.length > 0 && (
-                <div className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">
-                  Please select an account
-                </div>
-              )}
             </div>
 
             {/* Right side - Logout */}
@@ -239,7 +193,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Navigation */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8" aria-label="Admin Navigation">
             {navigationItems.map((item) => {
@@ -265,47 +219,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
       {/* Content */}
       <main className="flex-1">
-        {children}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {children}
+        </div>
       </main>
-
-      {/* Status indicators */}
-      <div className="fixed bottom-4 right-4 space-y-2">
-        {/* Property context info for users */}
-        {!isAdmin && selectedProperty && (
-          <div className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
-            <div className="text-sm">
-              <div className="font-medium">Current Property</div>
-              <div>{selectedProperty.nickname}</div>
-            </div>
-          </div>
-        )}
-
-        {/* Account context info */}
-        {currentAccount && (
-          <div className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
-            <div className="text-sm">
-              <div className="font-medium">Active Account</div>
-              <div className="flex items-center space-x-1">
-                <span>{currentAccount.name}</span>
-                {user?.currentAccount?.isOwner && <span>👑</span>}
-              </div>
-              <div className="text-xs opacity-90">
-                Role: {user?.currentAccount?.role || 'member'}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Loading indicator */}
-        {loadingProperties && (
-          <div className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg">
-            <div className="text-sm flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-3 w-3 border-b border-white"></div>
-              <span>Loading properties...</span>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

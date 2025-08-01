@@ -15,6 +15,7 @@ export interface QRCodeOptions {
     dark: string;
     light: string;
   };
+  signal?: AbortSignal;
 }
 
 /**

@@ -100,22 +100,41 @@ export default function LoginPageContent() {
 
   // Redirect if already authenticated (with better validation)
   useEffect(() => {
+    console.log('[AUTH-RACE-DEBUG] LoginPageContent useEffect triggered');
+    
     // If there's a redirect parameter, DON'T do client-side redirect
     // Let middleware handle it to prevent loops
     const hasRedirectParam = searchParams.get('redirect');
     if (hasRedirectParam) {
-      console.log('Redirect param present - letting middleware handle navigation');
+      console.log('[AUTH-RACE-DEBUG] Redirect param present - letting middleware handle navigation');
       return;
     }
 
+    // Debug: log the current user state
+    console.log('[LOGIN-DEBUG] User state:', { 
+      authLoading, 
+      hasUser: !!user, 
+      userEmail: user?.email, 
+      userRole: user?.role,
+      userId: user?.id
+    });
+
     // Only redirect if we're confident the user is properly authenticated
     // AND we're not on a page with redirect params
-    if (!authLoading && user && user.email && user.role) {
+    // Simplified condition: just check for user with valid id and email
+    if (!authLoading && user && user.id && user.email) {
       const redirectTo = '/admin'; // Always redirect to admin for authenticated users
-      console.log('User already authenticated, redirecting to:', redirectTo);
+      console.log('[AUTH-RACE-DEBUG] LoginPageContent attempting redirect to:', redirectTo);
       
-      // Use Next.js router for proper client-side navigation
-      router.push(redirectTo);
+      // Use window.location.href for immediate redirect to avoid router conflicts
+      window.location.href = redirectTo;
+    } else {
+      console.log('[AUTH-RACE-DEBUG] LoginPageContent redirect conditions not met:', {
+        authLoading,
+        hasUser: !!user,
+        hasId: !!(user?.id),
+        hasEmail: !!(user?.email)
+      });
     }
   }, [user, authLoading, router, searchParams]);
 

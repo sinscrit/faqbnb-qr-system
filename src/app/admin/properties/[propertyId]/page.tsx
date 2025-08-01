@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
-import { QRCodePrintManager } from '@/components/QRCodePrintManager';
 import { 
   Property, 
   PropertyResponse,
@@ -16,10 +15,9 @@ const ViewPropertyPage: React.FC = () => {
   const params = useParams();
   const { user } = useAuth();
 
-  const propertyId = params.propertyId as string;
-  
-  // Early return if no propertyId
-  if (!propertyId) {
+  // Extract and validate propertyId
+  const rawPropertyId = params.propertyId;
+  if (!rawPropertyId || typeof rawPropertyId !== 'string') {
     return (
       <AuthGuard>
         <div className="p-6">
@@ -47,14 +45,15 @@ const ViewPropertyPage: React.FC = () => {
     );
   }
 
+  // propertyId is validated as string above
+  const propertyId = rawPropertyId as string;
+
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // QR Print Modal State
-  const [showQRPrintModal, setShowQRPrintModal] = useState(false);
+  // QR Print State
   const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
-  const [qrPrintItems, setQRPrintItems] = useState<Item[]>([]);
 
   // Load property data
   useEffect(() => {
@@ -105,48 +104,88 @@ const ViewPropertyPage: React.FC = () => {
     router.push('/admin/properties');
   };
 
-  // QR Print Modal Handlers
-  const handleOpenQRPrint = async () => {
-    setShowQRPrintModal(true);
+  // QR Print Window Handler
+  const handleOpenQRPrint = () => {
     setIsQRPrintLoading(true);
-    setError(null);
+    console.log('[QR-AUTH-DEBUG] Print QR Codes clicked, pre-fetching items...');
     
-    try {
-      console.log('Fetching items for property:', propertyId);
-      const response = await fetch(`/api/admin/items?property=${propertyId}`, {
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch items for QR printing');
-      }
-
-      const data = await response.json();
+    const preAuthAndOpenQRPrint = async () => {
+      try {
+        console.log('[QR-AUTH-DEBUG] Fetching items for property:', propertyId);
+        const fetchStart = Date.now();
+        
+        // Pre-fetch items in main window where auth is already working
+        const response = await fetch(`/api/admin/items?property=${propertyId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        console.log('[QR-AUTH-DEBUG] Items API response:', {
+          status: response.status,
+          duration: Date.now() - fetchStart
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch items: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('[QR-AUTH-DEBUG] Items data received:', {
+          success: data.success,
+          itemCount: data.data?.length || 0,
+          totalDuration: Date.now() - fetchStart
+        });
+        
+        if (!data.success || !data.data) {
+          throw new Error('No items data received');
+        }
+        
+        // Encode items data for URL hash (limit size to avoid URL length issues)
+        const itemsData = {
+          propertyId,
+          items: data.data,
+          authBypass: true,
+          timestamp: Date.now()
+        };
+        
+        const encodedData = btoa(JSON.stringify(itemsData));
+        console.log('[QR-AUTH-DEBUG] Data encoded for URL:', {
+          originalSize: JSON.stringify(itemsData).length,
+          encodedSize: encodedData.length
+        });
+        
+        // Open QR printing in a new window with pre-authenticated data
+      const windowFeatures = 'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no';
+        const qrPrintUrl = `/admin/properties/${propertyId}/qr-print#${encodedData}`;
       
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to load items');
+        console.log('[QR-AUTH-DEBUG] Opening QR Print window with pre-auth data');
+      const newWindow = window.open(qrPrintUrl, 'qr-print-window', windowFeatures);
+      
+      if (!newWindow) {
+        throw new Error('Unable to open new window. Please check your popup blocker settings.');
       }
-
-      console.log('Items loaded for QR printing:', data.data);
-      setQRPrintItems(data.data || []);
+      
+      newWindow.focus();
+        console.log('[QR-AUTH-DEBUG] QR Print window opened successfully');
       
     } catch (error) {
-      console.error('Error loading items for QR printing:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load items');
-      // Keep modal open to show error state
+        console.error('[QR-AUTH-DEBUG] Error in pre-auth QR print:', error);
+      setError(error instanceof Error ? error.message : 'Failed to open QR print window');
     } finally {
       setIsQRPrintLoading(false);
     }
+    };
+    
+    // Execute the pre-auth process
+    preAuthAndOpenQRPrint();
   };
 
-  const handleCloseQRPrint = () => {
-    setShowQRPrintModal(false);
-    setIsQRPrintLoading(false);
-    setQRPrintItems([]);
-    setError(null);
-  };
 
-  const formatDate = (dateString: string) => {
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -440,16 +479,7 @@ const ViewPropertyPage: React.FC = () => {
           </div>
         </div>
         
-        {/* QR Code Print Manager Modal */}
-        {showQRPrintModal && (
-          <QRCodePrintManager
-            propertyId={propertyId}
-            items={qrPrintItems}
-            isOpen={showQRPrintModal}
-            onClose={handleCloseQRPrint}
-            isLoadingItems={isQRPrintLoading}
-          />
-        )}
+
       </div>
     </AuthGuard>
   );

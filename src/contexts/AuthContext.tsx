@@ -24,6 +24,113 @@ import {
   AccountSwitchResponse,
 } from '@/lib/auth';
 
+// Global flag to prevent multiple auth initializations across all component instances
+// Use browser storage to persist across bundle chunks and module instances
+const GLOBAL_AUTH_KEY = 'faqbnb_auth_initialized';
+const GLOBAL_AUTH_PROGRESS_KEY = 'faqbnb_auth_in_progress';
+const AUTH_MUTEX_KEY = 'faqbnb_auth_mutex';
+const AUTH_MUTEX_TIMEOUT = 10000; // 10 seconds
+
+// Mutex lock system to prevent race conditions across multiple bundle instances
+const acquireAuthMutex = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  const now = Date.now();
+  const existingLock = localStorage.getItem(AUTH_MUTEX_KEY);
+  
+  // Check if there's an existing lock that hasn't expired
+  if (existingLock) {
+    const lockTime = parseInt(existingLock);
+    if (now - lockTime < AUTH_MUTEX_TIMEOUT) {
+      console.log('[AUTH-MUTEX-DEBUG] Auth lock held by another instance, timestamp:', lockTime);
+      return false; // Lock is still active
+    } else {
+      console.log('[AUTH-MUTEX-DEBUG] Expired lock found, cleaning up and acquiring new lock');
+    }
+  }
+  
+  // Acquire the lock
+  localStorage.setItem(AUTH_MUTEX_KEY, now.toString());
+  console.log('[AUTH-MUTEX-DEBUG] Auth mutex acquired at:', now);
+  
+  // Double-check we actually got the lock (race condition protection)
+  setTimeout(() => {
+    const currentLock = localStorage.getItem(AUTH_MUTEX_KEY);
+    if (currentLock !== now.toString()) {
+      console.log('[AUTH-MUTEX-DEBUG] Lost mutex race, another instance acquired it');
+      return false;
+    }
+  }, 50);
+  
+  return true;
+};
+
+const releaseAuthMutex = (): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(AUTH_MUTEX_KEY);
+  console.log('[AUTH-MUTEX-DEBUG] Auth mutex released');
+};
+
+const waitForAuthCompletion = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const maxRetries = 20; // 10 seconds total
+    let retries = 0;
+    
+    const checkAuth = () => {
+      retries++;
+      const isCompleted = getGlobalAuthInitialized();
+      const isInProgress = getGlobalAuthInProgress();
+      
+      console.log('[AUTH-MUTEX-DEBUG] Waiting for auth completion, attempt:', retries, 'completed:', isCompleted, 'inProgress:', isInProgress);
+      
+      if (isCompleted || retries >= maxRetries) {
+        resolve(isCompleted);
+        return;
+      }
+      
+      if (!isInProgress) {
+        // Auth failed or stopped, try to acquire lock
+        resolve(false);
+        return;
+      }
+      
+      setTimeout(checkAuth, 500);
+    };
+    
+    checkAuth();
+  });
+};
+
+const getGlobalAuthInitialized = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(GLOBAL_AUTH_KEY) === 'true';
+};
+
+const setGlobalAuthInitialized = (value: boolean) => {
+  if (typeof window === 'undefined') return;
+  if (value) {
+    localStorage.setItem(GLOBAL_AUTH_KEY, 'true');
+  } else {
+    localStorage.removeItem(GLOBAL_AUTH_KEY);
+  }
+};
+
+const getGlobalAuthInProgress = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(GLOBAL_AUTH_PROGRESS_KEY) === 'true';
+};
+
+const setGlobalAuthInProgress = (value: boolean) => {
+  if (typeof window === 'undefined') return;
+  if (value) {
+    localStorage.setItem(GLOBAL_AUTH_PROGRESS_KEY, 'true');
+  } else {
+    localStorage.removeItem(GLOBAL_AUTH_PROGRESS_KEY);
+  }
+};
+
+console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
+
 // Enhanced auth context types with account support
 interface AuthContextType {
   // Core authentication
@@ -84,200 +191,359 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [userAccounts, setUserAccounts] = useState<Account[]>([]);
   const [switchingAccount, setSwitchingAccount] = useState(false);
 
+  // Prevent multiple simultaneous auth initializations
+  const [authInitialized, setAuthInitialized] = useState(false);
+
+  console.log('[AUTH-RACE-DEBUG] AuthContext component rendered, authInitialized:', authInitialized, 'globalAuthInitialized:', getGlobalAuthInitialized());
+
   // Initialize auth state with account context
   useEffect(() => {
-    initializeAuth();
-    
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+    const initializeWithMutex = async () => {
+      console.log('[AUTH-RACE-DEBUG] useEffect triggered, globalAuthInitialized:', getGlobalAuthInitialized(), 'globalAuthInProgress:', getGlobalAuthInProgress());
+      
+      // If auth is already completed globally, skip everything
+      if (getGlobalAuthInitialized()) {
+        console.log('[AUTH-RACE-DEBUG] Auth already completed globally, clearing loading state and loading session');
+        setLoading(false); // Clear loading state for this instance
         
-        if (event === 'SIGNED_IN' && session) {
-          await handleSignIn(session);
-        } else if (event === 'SIGNED_OUT') {
-          handleSignOut();
-        } else if (event === 'TOKEN_REFRESHED' && session) {
-          await handleSessionRefresh(session);
+        // Load current session data for this instance since another instance completed auth
+        try {
+          const sessionResponse = await getSession();
+          if (sessionResponse.data?.user) {
+            console.log('[AUTH-RACE-DEBUG] Loading session data for this instance');
+            const quickUser = await getQuickUserAuth(sessionResponse.data);
+            if (quickUser) {
+              setSession(sessionResponse.data);
+              setUser(quickUser);
+              console.log('[AUTH-RACE-DEBUG] Session loaded successfully for this instance');
+            }
+          } else {
+            console.log('[AUTH-RACE-DEBUG] No session data available, auth may have failed globally');
+          }
+        } catch (error) {
+          console.error('[AUTH-RACE-DEBUG] Failed to load session for this instance:', error);
+        }
+        
+        return;
+      }
+      
+      // Try to acquire the mutex lock
+      if (!acquireAuthMutex()) {
+        console.log('[AUTH-RACE-DEBUG] Could not acquire mutex, waiting for other instance to complete');
+        
+        // Wait for the other instance to complete authentication
+        const authCompleted = await waitForAuthCompletion();
+        if (authCompleted) {
+          console.log('[AUTH-RACE-DEBUG] Other instance completed auth successfully, clearing loading state and loading session');
+          setLoading(false); // Clear loading state since auth is complete
+          
+          // Load current session data for this instance
+          try {
+            const sessionResponse = await getSession();
+            if (sessionResponse.data?.user) {
+              console.log('[AUTH-RACE-DEBUG] Loading session data after waiting for other instance');
+              const quickUser = await getQuickUserAuth(sessionResponse.data);
+              if (quickUser) {
+                setSession(sessionResponse.data);
+                setUser(quickUser);
+                console.log('[AUTH-RACE-DEBUG] Session loaded successfully after waiting');
+              }
+            } else {
+              console.log('[AUTH-RACE-DEBUG] No session data available after waiting');
+            }
+          } catch (error) {
+            console.error('[AUTH-RACE-DEBUG] Failed to load session after waiting:', error);
+          }
+          
+        } else {
+          console.log('[AUTH-RACE-DEBUG] Other instance failed or timed out, attempting to acquire lock again');
+          if (!acquireAuthMutex()) {
+            console.log('[AUTH-RACE-DEBUG] Still cannot acquire lock, giving up and clearing loading state');
+            setLoading(false); // Clear loading state to prevent indefinite loading
+            return;
+          }
+          // Fall through to initialize auth
         }
       }
-    );
-
-    // Set up session refresh interval
-    const intervalId = setInterval(checkAndRefreshSession, SESSION_CHECK_INTERVAL);
-
-    return () => {
-      subscription.unsubscribe();
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  // Initialize authentication state with account context
-  const initializeAuth = async () => {
-    try {
-      setLoading(true);
-      console.log('🔍 Initializing auth with account context...');
       
-      // Add timeout to prevent hanging (reduced from 30s to 15s)
-      const authTimeout = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Auth timeout')), 15000)
+      // Only initialize if we have the lock and auth isn't completed
+      if (!getGlobalAuthInitialized()) {
+        console.log('[AUTH-RACE-DEBUG] Setting up auth context - FIRST TIME GLOBALLY');
+        console.log('[AUTH-RACE-DEBUG] useEffect dependencies check passed, calling initializeAuth');
+        
+        setGlobalAuthInProgress(true); // Mark as in progress
+        
+        try {
+          await initializeAuth();
+        } catch (error) {
+          console.error('[AUTH-RACE-DEBUG] Auth initialization failed:', error);
+        } finally {
+          setGlobalAuthInProgress(false);
+          releaseAuthMutex(); // Always release the lock
+        }
+        
+        // Set up auth state change listener
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log('[AUTH-RACE-DEBUG] Auth state changed:', event, session?.user?.id);
+            
+            if (event === 'SIGNED_IN' && session) {
+              console.log('[AUTH-RACE-DEBUG] Handling SIGNED_IN event');
+              await handleSignIn(session);
+            } else if (event === 'SIGNED_OUT') {
+              console.log('[AUTH-RACE-DEBUG] Handling SIGNED_OUT event');
+              handleSignOut();
+            } else if (event === 'TOKEN_REFRESHED' && session) {
+              console.log('[AUTH-RACE-DEBUG] Handling TOKEN_REFRESHED event');
+              await handleSessionRefresh(session);
+            }
+          }
+        );
+
+        // Set up session refresh interval
+        const intervalId = setInterval(checkAndRefreshSession, SESSION_CHECK_INTERVAL);
+
+        return () => {
+          console.log('[AUTH-RACE-DEBUG] Cleaning up auth context');
+          subscription?.unsubscribe();
+          clearInterval(intervalId);
+          // Note: Don't reset globalAuthInitialized here as other instances might still need it
+        };
+      } else {
+        console.log('[AUTH-RACE-DEBUG] Auth completed while we were waiting, clearing loading state and loading session');
+        setLoading(false); // Clear loading state since auth is complete
+        
+        // Load current session data for this instance
+        try {
+          const sessionResponse = await getSession();
+          if (sessionResponse.data?.user) {
+            console.log('[AUTH-RACE-DEBUG] Loading session data after auth completed while waiting');
+            const quickUser = await getQuickUserAuth(sessionResponse.data);
+            if (quickUser) {
+              setSession(sessionResponse.data);
+              setUser(quickUser);
+              console.log('[AUTH-RACE-DEBUG] Session loaded successfully after auth completed while waiting');
+            }
+          } else {
+            console.log('[AUTH-RACE-DEBUG] No session data available after auth completed while waiting');
+          }
+        } catch (error) {
+          console.error('[AUTH-RACE-DEBUG] Failed to load session after auth completed while waiting:', error);
+        }
+        
+        releaseAuthMutex(); // Release the lock since we're not using it
+      }
+    };
+    
+    initializeWithMutex();
+  }, []); // Empty dependencies to prevent re-runs
+
+  // Quick authentication fallback - bypasses complex account context
+  const getQuickUserAuth = async (session: Session): Promise<AuthUser | null> => {
+    if (!session.user?.email) return null;
+    
+    try {
+      // Quick admin check with timeout
+      const adminCheckPromise = supabase
+        .from('admin_users')
+        .select('email, full_name, role')
+        .eq('email', session.user.email)
+        .single();
+      
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Quick auth timeout')), 3000)
       );
       
-      const authPromise = (async () => {
-        console.log('📞 Getting session...');
-        const sessionResponse = await getSession();
-        console.log('📱 Session response:', { 
-          hasError: !!sessionResponse.error, 
-          hasData: !!sessionResponse.data,
-          userId: sessionResponse.data?.user?.id 
-        });
-        
-        if (sessionResponse.error || !sessionResponse.data) {
-          console.log('❌ No valid session found');
-          clearAuthState();
-          return;
-        }
-
-        console.log('👤 Getting user data with account context...');
-        
-        // Add timeout specifically for user data retrieval
-        const userDataTimeout = new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('User data timeout')), 10000)
-        );
-        
-        let userResponse: AuthResponse<AuthUser | null>;
-        try {
-          userResponse = await Promise.race([getUser(), userDataTimeout]);
-        } catch (userError) {
-          console.error('❌ User data retrieval failed or timed out:', userError);
-          // Continue with basic session data instead of failing completely
-          const basicUser: AuthUser = {
-            id: sessionResponse.data.user!.id,
-            email: sessionResponse.data.user!.email || '',
-            role: 'user',
-            currentAccount: null,
-            availableAccounts: []
-          };
-          setSession(sessionResponse.data);
-          setUser(basicUser);
-          return;
-        }
-        
-        console.log('🔑 User response:', { 
-          hasError: !!userResponse.error, 
-          hasData: !!userResponse.data,
-          hasCurrentAccount: !!userResponse.data?.currentAccount,
-          availableAccountsCount: userResponse.data?.availableAccounts?.length || 0,
-          error: userResponse.error 
-        });
-        
-        if (userResponse.error || !userResponse.data) {
-          console.log('❌ User verification failed:', userResponse.error);
-          // Instead of clearing completely, try to maintain basic session
-          const basicUser: AuthUser = {
-            id: sessionResponse.data.user!.id,
-            email: sessionResponse.data.user!.email || '',
-            role: 'user',
-            currentAccount: null,
-            availableAccounts: []
-          };
-          setSession(sessionResponse.data);
-          setUser(basicUser);
-          return;
-        }
-
-        console.log('✅ Auth successful with account context:', {
-          userEmail: userResponse.data.email,
-          currentAccount: userResponse.data.currentAccount?.name,
-          accountCount: userResponse.data.availableAccounts?.length || 0
-        });
-        
-        setSession(sessionResponse.data);
-        setUser(userResponse.data);
-        
-        // Set account context from user data
-        if (userResponse.data && userResponse.data.availableAccounts) {
-          setUserAccounts(userResponse.data.availableAccounts);
-        }
-        
-        if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
-          // Find the full account object from available accounts
-          const fullAccount = userResponse.data.availableAccounts.find(
-            acc => acc.id === userResponse.data.currentAccount?.id
-          );
-          if (fullAccount) {
-            setCurrentAccount(fullAccount);
-          }
-        }
-        
-        // Load user properties (legacy support) with error handling
-        if (userResponse.data && userResponse.data.id && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
-          try {
-            const accountId = userResponse.data.currentAccount?.id;
-            const properties = await getUserProperties(userResponse.data.id, accountId);
-            setUserProperties(properties);
-            
-            // Auto-select first property if available
-            if (properties.length > 0) {
-              setSelectedProperty(properties[0]);
-            }
-          } catch (propertyError) {
-            console.error('Failed to load properties during init:', propertyError);
-            setUserProperties([]);
-            setSelectedProperty(null);
-          }
-        }
-      })();
-
-      await Promise.race([authPromise, authTimeout]);
-    } catch (error) {
-      console.error('❌ Failed to initialize auth:', error);
-      // Instead of clearing completely, try to recover with basic auth
-      try {
-        const sessionResponse = await getSession();
-        if (sessionResponse.data?.user) {
-          const basicUser: AuthUser = {
-            id: sessionResponse.data.user.id,
-            email: sessionResponse.data.user.email || '',
-            role: 'user',
-            currentAccount: null,
-            availableAccounts: []
-          };
-          setSession(sessionResponse.data);
-          setUser(basicUser);
-          console.log('🔄 Recovered with basic auth for user:', basicUser.email);
-        } else {
-          clearAuthState();
-        }
-      } catch (recoveryError) {
-        console.error('❌ Recovery also failed:', recoveryError);
-        clearAuthState();
+      const result = await Promise.race([adminCheckPromise, timeoutPromise]);
+      
+      if (result.data && !result.error) {
+        return {
+          id: session.user.id,
+          email: result.data.email,
+          fullName: result.data.full_name || undefined,
+          role: result.data.role || 'admin',
+          currentAccount: null, // Will be populated later if needed
+          availableAccounts: []
+        };
       }
-    } finally {
-      setLoading(false);
+      
+      return null;
+    } catch (error) {
+      console.log('Quick auth failed:', error);
+      return null;
     }
   };
 
-  // Clear all authentication and account state
+  // Initialize authentication state with account context
+  const initializeAuth = async () => {
+    console.log('[AUTH-RACE-DEBUG] initializeAuth called - starting authentication process');
+    
+    try {
+      setAuthInitialized(true); // Keep local state for compatibility
+      console.log('[AUTH-RACE-DEBUG] setAuthInitialized(true) called - this may trigger re-render');
+      setLoading(true);
+      
+      const isPopupWindow = window.location.pathname.includes('/qr-print');
+      console.log('[QR-AUTH-DEBUG] Auth init started:', {
+        url: window.location.href,
+        isPopupWindow,
+        timestamp: Date.now()
+      });
+      
+      // Simplified session check without complex timeouts
+      console.log('[QR-AUTH-DEBUG] Getting session...');
+      const sessionStart = Date.now();
+      const sessionResponse = await getSession();
+      console.log('[QR-AUTH-DEBUG] Session response:', { 
+        hasError: !!sessionResponse.error, 
+        hasData: !!sessionResponse.data, 
+        userId: sessionResponse.data?.user?.id,
+        duration: Date.now() - sessionStart
+      });
+      
+      if (sessionResponse.error) {
+        console.log('[QR-AUTH-DEBUG] No valid session found');
+        clearAuthState();
+        setGlobalAuthInitialized(true); // Mark as complete even if no session
+        return;
+      }
+      
+      if (!sessionResponse.data) {
+        console.log('[QR-AUTH-DEBUG] No session data');
+        clearAuthState();
+        setGlobalAuthInitialized(true); // Mark as complete even if no session
+        return;
+      }
+      
+      // Try quick auth first for better performance
+      console.log('[QR-AUTH-DEBUG] Getting user data...');
+      const quickStart = Date.now();
+      
+      try {
+        const [quickUserResponse] = await Promise.all([
+          getQuickUserAuth(sessionResponse.data)
+          // Note: Don't preload account context here since we don't have a user yet
+        ]);
+        
+        if (quickUserResponse) {
+          console.log('[QR-AUTH-DEBUG] Quick auth successful:', {
+            email: quickUserResponse.email,
+            duration: Date.now() - quickStart
+          });
+          setSession(sessionResponse.data);
+          setUser(quickUserResponse);
+          setLoading(false);
+          setGlobalAuthInitialized(true); // Mark as successfully completed
+          return;
+        }
+      } catch (quickError) {
+        console.log('[QR-AUTH-DEBUG] Quick auth failed, using basic auth:', quickError);
+      }
+      
+      // Fallback to basic auth if quick auth fails
+      console.log('[QR-AUTH-DEBUG] Using basic auth fallback');
+      const basicUser: AuthUser = {
+        id: sessionResponse.data.user!.id,
+        email: sessionResponse.data.user!.email || '',
+        role: 'user',
+        currentAccount: null,
+        availableAccounts: []
+      };
+      
+      setSession(sessionResponse.data);
+      setUser(basicUser);
+      setLoading(false);
+      
+      // Load account context in background without blocking
+      loadAccountContextInBackground(basicUser);
+      
+      setGlobalAuthInitialized(true); // Mark as successfully completed
+      
+    } catch (error) {
+      console.error('[QR-AUTH-DEBUG] Auth initialization failed:', error);
+      clearAuthState();
+      setGlobalAuthInitialized(true); // Mark as complete even on error to prevent retry loops
+    } finally {
+      setLoading(false); // Ensure loading is always cleared
+    }
+  };
+
+  const resetGlobalAuthFlags = () => {
+    console.log('[AUTH-RACE-DEBUG] Resetting global auth flags and cleaning up mutex');
+    setGlobalAuthInitialized(false);
+    setGlobalAuthInProgress(false);
+    releaseAuthMutex(); // Clean up any stale mutex locks
+  };
+
   const clearAuthState = useCallback(() => {
+    console.log('[AUTH-RACE-DEBUG] Clearing auth state and resetting global flags');
     setUser(null);
     setSession(null);
-    setUserProperties([]);
-    setSelectedProperty(null);
     setCurrentAccount(null);
     setUserAccounts([]);
-    setSwitchingAccount(false);
+    setSelectedProperty(null);
+    setLoading(false);
+    resetGlobalAuthFlags(); // Reset global flags so auth can be re-initialized
   }, []);
+
+  // Load account context in background without blocking main auth flow
+  const loadAccountContextInBackground = async (user: AuthUser) => {
+    try {
+      console.log('[QR-AUTH-DEBUG] Loading account context in background for:', user.email);
+      
+      // Get full user data with account context
+      const userResponse = await getUser();
+      if (userResponse.error || !userResponse.data) {
+        console.log('[QR-AUTH-DEBUG] Background account loading failed, keeping basic auth');
+        return;
+      }
+
+      // Update user with account context
+      setUser(userResponse.data);
+      
+      if (userResponse.data.availableAccounts) {
+        setUserAccounts(userResponse.data.availableAccounts);
+      }
+      
+      if (userResponse.data.currentAccount && userResponse.data.availableAccounts) {
+        const fullAccount = userResponse.data.availableAccounts.find(
+          acc => acc.id === userResponse.data?.currentAccount?.id
+        );
+        if (fullAccount) {
+          setCurrentAccount(fullAccount);
+        }
+      }
+      
+      // Load properties
+      if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
+        try {
+          const accountId = userResponse.data.currentAccount?.id;
+          const properties = await getUserProperties(userResponse.data.id, accountId);
+          setUserProperties(properties);
+          
+          if (properties.length > 0) {
+            setSelectedProperty(properties[0]);
+          }
+        } catch (propertyError) {
+          console.error('Background property loading failed:', propertyError);
+        }
+      }
+      
+      console.log('[QR-AUTH-DEBUG] Background account context loaded successfully');
+    } catch (error) {
+      console.error('[QR-AUTH-DEBUG] Background account loading failed:', error);
+    }
+  };
 
   // Handle successful sign in with account context
   const handleSignIn = async (session: Session) => {
     try {
       setSession(session);
       
+      // Get user data with account context
       const userResponse = await getUser();
       if (userResponse.error || !userResponse.data) {
-        // User is not valid - sign out
-        await authSignOut();
+        console.error('Failed to get user data after sign in');
         clearAuthState();
         return;
       }
@@ -285,14 +551,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(userResponse.data);
       
       // Set account context from user data
-      if (userResponse.data && userResponse.data.availableAccounts) {
+      if (userResponse.data?.availableAccounts) {
         setUserAccounts(userResponse.data.availableAccounts);
       }
       
-      if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
+      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
         // Find the full account object from available accounts
         const fullAccount = userResponse.data.availableAccounts.find(
-          acc => acc.id === userResponse.data.currentAccount?.id
+          acc => acc.id === userResponse.data?.currentAccount?.id
         );
         if (fullAccount) {
           setCurrentAccount(fullAccount);
@@ -344,7 +610,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
         const fullAccount = userResponse.data.availableAccounts.find(
-          acc => acc.id === userResponse.data.currentAccount?.id
+          acc => acc.id === userResponse.data?.currentAccount?.id
         );
         if (fullAccount) {
           setCurrentAccount(fullAccount);

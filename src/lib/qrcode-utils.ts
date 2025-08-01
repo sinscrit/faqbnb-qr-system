@@ -415,7 +415,7 @@ export async function generateBatchQRCodes(
             onProgress(completed, total);
           }
         } catch (error) {
-          console.error(`Failed to generate QR code for item ${item.id}:`, error);
+          console.error(`❌ Failed to generate QR code for item ${item.id} (URL: ${item.url}):`, error);
           // Don't stop the entire batch for one failure
         }
       });

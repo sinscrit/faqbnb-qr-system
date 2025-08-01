@@ -54,29 +54,29 @@ export function ItemSelectionList({
     const searchLower = debouncedSearchTerm.toLowerCase();
     return items.filter(item => 
       item.name.toLowerCase().includes(searchLower) ||
-      item.public_id.toLowerCase().includes(searchLower) ||
+      item.publicId.toLowerCase().includes(searchLower) ||
       (item.description && item.description.toLowerCase().includes(searchLower))
     );
   }, [items, debouncedSearchTerm]);
 
   // Check if all filtered items are selected
-  const allFilteredSelected = filteredItems.length > 0 && 
+  const allFilteredSelected = filteredItems.length > 0 && selectedItemIds && 
     filteredItems.every(item => selectedItemIds.includes(item.id));
 
   // Check if some filtered items are selected
-  const someFilteredSelected = filteredItems.some(item => 
+  const someFilteredSelected = selectedItemIds && filteredItems.some(item => 
     selectedItemIds.includes(item.id)
   );
 
   // Handle individual item selection toggle
   const handleItemToggle = (itemId: string) => {
-    const isSelected = selectedItemIds.includes(itemId);
+    const isSelected = selectedItemIds ? selectedItemIds.includes(itemId) : false;
     let newSelection: string[];
 
     if (isSelected) {
-      newSelection = selectedItemIds.filter(id => id !== itemId);
+      newSelection = selectedItemIds ? selectedItemIds.filter(id => id !== itemId) : [];
     } else {
-      newSelection = [...selectedItemIds, itemId];
+      newSelection = selectedItemIds ? [...selectedItemIds, itemId] : [itemId];
     }
 
     onSelectionChange(newSelection);
@@ -84,20 +84,20 @@ export function ItemSelectionList({
 
   // Handle select all filtered items
   const handleSelectAll = () => {
-    const filteredItemIds = filteredItems.map(item => item.id);
-    const otherSelectedIds = selectedItemIds.filter(id => 
+    const filteredItemIds = filteredItems.map(item => item.publicId);
+    const otherSelectedIds = selectedItemIds ? selectedItemIds.filter(id => 
       !filteredItemIds.includes(id)
-    );
+    ) : [];
     
     onSelectionChange([...otherSelectedIds, ...filteredItemIds]);
   };
 
   // Handle deselect all filtered items
   const handleDeselectAll = () => {
-    const filteredItemIds = filteredItems.map(item => item.id);
-    const newSelection = selectedItemIds.filter(id => 
+    const filteredItemIds = filteredItems.map(item => item.publicId);
+    const newSelection = selectedItemIds ? selectedItemIds.filter(id => 
       !filteredItemIds.includes(id)
-    );
+    ) : [];
     
     onSelectionChange(newSelection);
   };
@@ -175,7 +175,7 @@ export function ItemSelectionList({
             {allFilteredSelected ? 'Deselect All' : 'Select All'}
           </button>
           
-          {selectedItemIds.length > 0 && (
+          {selectedItemIds && selectedItemIds.length > 0 && (
             <button
               onClick={handleClearAll}
               className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
@@ -185,10 +185,10 @@ export function ItemSelectionList({
           )}
         </div>
 
-        <div className="text-sm text-gray-600">
-          {selectedItemIds.length} of {items.length} selected
-          {debouncedSearchTerm && ` · ${filteredItems.length} filtered`}
-        </div>
+                    <div className="text-sm text-gray-600">
+              {selectedItemIds ? selectedItemIds.length : 0} of {items.length} selected
+              {debouncedSearchTerm && ` · ${filteredItems.length} filtered`}
+            </div>
       </div>
 
       {/* Items List */}
@@ -243,11 +243,11 @@ export function ItemSelectionList({
         ) : (
           <div className="divide-y divide-gray-200 max-h-full overflow-y-auto">
             {filteredItems.map((item) => {
-              const isSelected = selectedItemIds.includes(item.id);
+              const isSelected = selectedItemIds ? selectedItemIds.includes(item.publicId) : false;
               
               return (
                 <label
-                  key={item.id}
+                  key={item.publicId}
                   className={cn(
                     "flex items-center p-4 cursor-pointer transition-all duration-200 hover:bg-gray-50",
                     isSelected && "bg-blue-50 border-l-4 border-l-blue-500"
@@ -256,7 +256,7 @@ export function ItemSelectionList({
                   <input
                     type="checkbox"
                     checked={isSelected}
-                    onChange={() => handleItemToggle(item.id)}
+                    onChange={() => handleItemToggle(item.publicId)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
                   />
                   
@@ -274,7 +274,7 @@ export function ItemSelectionList({
                           ? "bg-blue-100 text-blue-800" 
                           : "bg-gray-100 text-gray-600"
                       )}>
-                        {item.public_id}
+                        {item.publicId}
                       </span>
                     </div>
                     
@@ -288,8 +288,8 @@ export function ItemSelectionList({
                     )}
                     
                     <div className="flex items-center mt-2 text-xs text-gray-500">
-                      <span>Created {new Date(item.created_at).toLocaleDateString()}</span>
-                      {item.qr_code_url && (
+                      <span>Created {new Date(item.createdAt).toLocaleDateString()}</span>
+                      {item.qrCodeUrl && (
                         <>
                           <span className="mx-2">•</span>
                           <span className="text-green-600">QR Available</span>

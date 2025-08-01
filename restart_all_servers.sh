@@ -1,16 +1,18 @@
 #!/bin/bash
 
-# FAQBNB Server Management Script - Enhanced Version
-# Purpose: Kill and restart all development servers for the project
-# Enhanced with better process detection, port cleanup, and verification
+# FAQBNB Server Management Script - Production Mode (QR Code Validation)
+# Purpose: Kill and restart server in production mode with cache clearing
+# Enhanced to eliminate Fast Refresh issues for stable QR code validation
 
-echo "🔄 FAQBNB Server Management - Restart All Servers (Enhanced)"
-echo "============================================================="
+echo "🔄 FAQBNB Server Management - Production Mode Restart (QR Code Validation)"
+echo "============================================================================="
+echo "🎯 Purpose: Clean production build to eliminate Fast Refresh interference"
+echo ""
 
 # Enhanced function to display port information
 show_port_info() {
     echo "📋 Current port usage:"
-    echo "Port 3000: Next.js Development Server"
+    echo "Port 3000: Next.js Production Server"
     echo "Port 54321: Supabase Local (if running)"
     echo ""
     
@@ -22,15 +24,15 @@ show_port_info() {
     fi
 }
 
-# Enhanced function to kill existing processes with better detection
+# Enhanced function to kill existing processes (both dev and production)
 kill_existing_servers() {
     echo "🛑 Killing existing servers..."
     
-    # Enhanced Node.js process detection
-    echo "🔍 Detecting Node.js development processes..."
+    # Kill both development and production Next.js processes
+    echo "🔍 Detecting Next.js processes (dev and production)..."
     
-    # Find and kill Next.js processes more specifically
-    local next_pids=$(ps aux | grep -i "next dev\|next-server" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
+    # Find and kill all Next.js processes
+    local next_pids=$(ps aux | grep -E "next dev|next start|next-server" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
     if [ ! -z "$next_pids" ]; then
         echo "📝 Found Next.js processes: $next_pids"
         echo $next_pids | xargs kill -TERM 2>/dev/null || true
@@ -38,13 +40,13 @@ kill_existing_servers() {
         echo $next_pids | xargs kill -KILL 2>/dev/null || true
     fi
     
-    # Kill npm/node development processes
-    local dev_pids=$(ps aux | grep -E "npm run dev|node.*dev" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
-    if [ ! -z "$dev_pids" ]; then
-        echo "📝 Found npm/node dev processes: $dev_pids"
-        echo $dev_pids | xargs kill -TERM 2>/dev/null || true
+    # Kill npm/node processes (both dev and start)
+    local npm_pids=$(ps aux | grep -E "npm run dev|npm start|node.*dev|node.*start" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
+    if [ ! -z "$npm_pids" ]; then
+        echo "📝 Found npm/node processes: $npm_pids"
+        echo $npm_pids | xargs kill -TERM 2>/dev/null || true
         sleep 1
-        echo $dev_pids | xargs kill -KILL 2>/dev/null || true
+        echo $npm_pids | xargs kill -KILL 2>/dev/null || true
     fi
     
     # Enhanced port-based cleanup
@@ -59,12 +61,44 @@ kill_existing_servers() {
     
     # Additional cleanup patterns
     pkill -f "next dev" 2>/dev/null || true
+    pkill -f "next start" 2>/dev/null || true
     pkill -f "node.*next" 2>/dev/null || true
     pkill -f "npm run dev" 2>/dev/null || true
+    pkill -f "npm start" 2>/dev/null || true
     
     echo "✅ Server processes killed"
     echo "⏳ Waiting for cleanup to complete..."
     sleep 3
+}
+
+# NEW: Function to clear Next.js cache and build artifacts
+clear_cache_and_build() {
+    echo "🧹 Clearing Next.js cache and build artifacts..."
+    
+    # Remove .next directory to clear all cached data
+    if [ -d ".next" ]; then
+        echo "📁 Removing .next directory..."
+        rm -rf .next
+        echo "✅ .next directory cleared"
+    else
+        echo "ℹ️  .next directory not found (already clean)"
+    fi
+    
+    # Clear any other build artifacts
+    if [ -d "out" ]; then
+        echo "📁 Removing out directory..."
+        rm -rf out
+        echo "✅ out directory cleared"
+    fi
+    
+    echo "🏗️  Running production build..."
+    if npm run build; then
+        echo "✅ Production build completed successfully"
+        return 0
+    else
+        echo "❌ Production build failed"
+        return 1
+    fi
 }
 
 # Enhanced function to check what's running on ports with verification
@@ -96,9 +130,9 @@ check_ports() {
     return 1
 }
 
-# Enhanced function to start development server with better verification
-start_dev_server() {
-    echo "🚀 Starting Next.js development server..."
+# Modified function to start production server
+start_production_server() {
+    echo "🚀 Starting Next.js production server..."
     
     # Pre-start verification
     if lsof -i:3000 >/dev/null 2>&1; then
@@ -106,12 +140,22 @@ start_dev_server() {
         return 1
     fi
     
-    # Start the development server in background
-    echo "📝 Launching npm run dev..."
-    npm run dev &
-    DEV_PID=$!
+    # Verify build exists
+    if [ ! -d ".next" ]; then
+        echo "❌ No build found (.next directory missing)"
+        echo "🔄 Running build first..."
+        if ! npm run build; then
+            echo "❌ Build failed"
+            return 1
+        fi
+    fi
     
-    echo "📝 Development server started with PID: $DEV_PID"
+    # Start the production server in background
+    echo "📝 Launching npm start (production mode)..."
+    npm start &
+    PROD_PID=$!
+    
+    echo "📝 Production server started with PID: $PROD_PID"
     
     # Enhanced startup verification
     echo "⏳ Waiting for server initialization..."
@@ -119,9 +163,9 @@ start_dev_server() {
     local max_wait=10
     
     while [ $wait_count -lt $max_wait ]; do
-        if kill -0 $DEV_PID 2>/dev/null; then
+        if kill -0 $PROD_PID 2>/dev/null; then
             if lsof -i:3000 >/dev/null 2>&1; then
-                echo "✅ Next.js server is running on port 3000"
+                echo "✅ Next.js production server is running on port 3000"
                 echo "📊 Server status verified after $((wait_count + 1)) seconds"
                 return 0
             fi
@@ -136,22 +180,22 @@ start_dev_server() {
     done
     
     echo "⚠️  Server startup verification timeout"
-    if kill -0 $DEV_PID 2>/dev/null; then
+    if kill -0 $PROD_PID 2>/dev/null; then
         echo "📝 Process is running but port verification incomplete"
         return 0
     else
-        echo "❌ Failed to start Next.js server"
+        echo "❌ Failed to start Next.js production server"
         return 1
     fi
 }
 
-# Enhanced verification function
+# Enhanced verification function for production mode
 verify_system_state() {
     echo ""
     echo "🔍 Final system state verification:"
     
-    # Process count verification
-    local next_count=$(ps aux | grep -E "next dev|next-server" | grep -v grep | wc -l | tr -d ' ')
+    # Process count verification (production mode)
+    local next_count=$(ps aux | grep -E "next start|next-server" | grep -v grep | wc -l | tr -d ' ')
     echo "📊 Active Next.js processes: $next_count"
     
     # Port verification
@@ -172,7 +216,7 @@ verify_system_state() {
     fi
 }
 
-# Main execution with enhanced error handling
+# Main execution with cache clearing and production build
 main() {
     local start_time=$(date +%s)
     
@@ -186,24 +230,35 @@ main() {
         exit 1
     fi
     
-    if start_dev_server; then
+    # NEW: Clear cache and build production version
+    if ! clear_cache_and_build; then
+        echo "❌ Build process failed. Cannot continue."
+        exit 1
+    fi
+    
+    if start_production_server; then
         verify_system_state
         
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
         
         echo ""
-        echo "🎉 All servers restarted successfully!"
+        echo "🎉 Production server restarted successfully!"
         echo "⏱️  Total restart time: ${duration} seconds"
         echo "🌐 Next.js App: http://localhost:3000"
         echo "🔧 Admin Panel: http://localhost:3000/admin"
         echo ""
+        echo "🎯 QR Code Validation Ready:"
+        echo "   ✅ No Fast Refresh interference"
+        echo "   ✅ Stable React state persistence"
+        echo "   ✅ Clean production environment"
+        echo ""
         echo "💡 Management commands:"
         echo "   📊 Check status: lsof -i:3000"
-        echo "   🛑 Stop servers: pkill -f 'next dev'"
+        echo "   🛑 Stop servers: pkill -f 'npm start'"
         echo "   🔄 Restart again: bash restart_all_servers.sh"
     else
-        echo "❌ Failed to start development servers"
+        echo "❌ Failed to start production server"
         echo "🔍 Check logs above for specific error details"
         exit 1
     fi

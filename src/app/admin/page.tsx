@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter, Building } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { ItemsListResponse } from '@/types';
 import { formatDate } from '@/lib/utils';
@@ -49,7 +49,7 @@ export default function AdminPage() {
         headers['x-current-account'] = currentAccount.id;
       }
       
-      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, headers);
+      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, 1, 20, headers);
       
       if (response.success && response.data) {
         setItems(response.data);
@@ -134,9 +134,6 @@ export default function AdminPage() {
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading items...</p>
-          {currentAccount && (
-            <p className="text-sm text-gray-500 mt-2">Account: {currentAccount.name}</p>
-          )}
         </div>
       </div>
     );
@@ -144,21 +141,12 @@ export default function AdminPage() {
 
   return (
     <div>
-      {/* Page Header with Account Context */}
+      {/* Page Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
-            <div className="flex items-center space-x-2 mt-1">
-              <p className="text-gray-600">Manage your QR code items and resources</p>
-              {currentAccount && (
-                <div className="flex items-center space-x-1 text-sm text-blue-600">
-                  <Building className="w-4 h-4" />
-                  <span>{currentAccount.name}</span>
-                  {user?.currentAccount?.isOwner && <span>👑</span>}
-                </div>
-              )}
-            </div>
+            <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
           </div>
           <Link
             href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
@@ -168,33 +156,6 @@ export default function AdminPage() {
             Add Item
           </Link>
         </div>
-        
-        {/* Account Context Summary */}
-        {accountContext && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div>
-                  <h3 className="text-sm font-medium text-blue-900">Account Context</h3>
-                  <div className="flex items-center space-x-2 text-sm text-blue-700">
-                    <span>Current Account: {currentAccount?.name || 'None'}</span>
-                    {accountContext.userRole && (
-                      <span>• Role: {accountContext.userRole}</span>
-                    )}
-                    {accountContext.totalAccounts > 1 && (
-                      <span>• {accountContext.totalAccounts} accounts available</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              {!currentAccount && userAccounts.length > 0 && (
-                <div className="text-sm text-amber-700 bg-amber-100 px-3 py-1 rounded">
-                  Select an account to view items
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       <div>
@@ -258,11 +219,6 @@ export default function AdminPage() {
                   Filtered by Property
                 </span>
               )}
-              {currentAccount && (
-                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Account: {currentAccount.name}
-                </span>
-              )}
             </div>
           </div>
           
@@ -273,23 +229,6 @@ export default function AdminPage() {
             </div>
           )}
         </div>
-
-        {/* No Account Warning */}
-        {!currentAccount && userAccounts.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="text-amber-600">
-                <Building className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-amber-900">No Account Selected</h3>
-                <p className="text-sm text-amber-700 mt-1">
-                  Please select an account from the header to view and manage items.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Items Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -304,12 +243,10 @@ export default function AdminPage() {
               <p className="text-gray-600 mb-6">
                 {searchTerm 
                   ? 'Try adjusting your search terms'
-                  : currentAccount 
-                    ? 'Get started by creating your first item in this account'
-                    : 'Select an account to view items'
+                  : 'Get started by creating your first item'
                 }
               </p>
-              {!searchTerm && currentAccount && (
+              {!searchTerm && (
                 <Link
                   href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -330,22 +267,19 @@ export default function AdminPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Public ID
                     </th>
-                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40 min-w-40">
                       Property
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Links
                     </th>
-                    <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24 min-w-24">
                       Views (24h/Total)
                     </th>
                     <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Reactions
                     </th>
-                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      QR Code
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32 min-w-32">
                       Created
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -357,7 +291,9 @@ export default function AdminPage() {
                   {filteredItems.map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{item.name}</div>
+                        <div className="font-medium text-gray-900" title={item.name}>
+                          {item.name.length > 15 ? `${item.name.substring(0, 15)}...` : item.name}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="group relative">
@@ -402,19 +338,26 @@ export default function AdminPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="hidden lg:table-cell px-6 py-4">
+                      <td className="hidden lg:table-cell px-6 py-4 w-40 min-w-40">
                         <div className="text-sm text-gray-900">
                           {/* Updated to handle new data structure */}
-                          {item.property?.nickname || (item as any).propertyNickname || 'Unknown Property'}
+                          {(() => {
+                            const propertyName = item.property?.nickname || (item as any).propertyNickname || 'Unknown Property';
+                            return (
+                              <span title={propertyName}>
+                                {propertyName.length > 12 ? `${propertyName.substring(0, 12)}...` : propertyName}
+                              </span>
+                            );
+                          })()}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {item.linksCount} {item.linksCount === 1 ? 'link' : 'links'}
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                          {item.linksCount}
                         </span>
                       </td>
                       {/* Views Column */}
-                      <td className="hidden sm:table-cell px-6 py-4">
+                      <td className="hidden sm:table-cell px-6 py-4 w-24 min-w-24">
                         <div className="text-sm text-gray-900">
                           <div className="flex items-center space-x-1">
                             <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -462,9 +405,6 @@ export default function AdminPage() {
                                     </span>
                                   )}
                                 </div>
-                                <span className="text-xs text-gray-500">
-                                  ({reactions.total} total)
-                                </span>
                               </div>
                             ) : (
                               <span className="text-xs text-gray-400">No reactions</span>
@@ -472,19 +412,7 @@ export default function AdminPage() {
                           })()}
                         </div>
                       </td>
-                      {/* QR Code Column */}
-                      <td className="hidden lg:table-cell px-6 py-4">
-                        {item.qrCodeUrl ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            QR
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                            No QR
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
+                      <td className="px-6 py-4 text-sm text-gray-500 w-32 min-w-32">
                         {formatDate(item.createdAt)}
                       </td>
                       <td className="px-6 py-4 text-right">

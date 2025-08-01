@@ -184,19 +184,20 @@ export const adminApi = {
    * @param propertyId Optional property ID to filter items by property
    * @param page Page number for pagination (default: 1)
    * @param limit Number of items per page (default: 20)
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to items list response
    */
-  async listItems(search?: string, propertyId?: string, page: number = 1, limit: number = 20): Promise<ItemsListResponse> {
+  async listItems(search?: string, propertyId?: string, page: number = 1, limit: number = 20, headers?: Record<string, string>): Promise<ItemsListResponse> {
     const params = new URLSearchParams();
     if (search) params.set('search', search);
-    if (propertyId) params.set('propertyId', propertyId);
+    if (propertyId) params.set('property', propertyId); // Fixed: use 'property' parameter to match API
     if (page !== 1) params.set('page', page.toString());
     if (limit !== 20) params.set('limit', limit.toString());
     
     const queryString = params.toString();
     const endpoint = queryString ? `/admin/items?${queryString}` : '/admin/items';
     
-    return apiRequest<ItemsListResponse>(endpoint, {}, true);
+    return apiRequest<ItemsListResponse>(endpoint, { headers }, true);
   },
 
   /**
@@ -258,9 +259,10 @@ export const adminApi = {
   /**
    * Delete an item and all its associated links
    * @param publicId The public UUID of the item to delete
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to deletion confirmation response
    */
-  async deleteItem(publicId: string): Promise<{ 
+  async deleteItem(publicId: string, headers?: Record<string, string>): Promise<{ 
     success: boolean; 
     message?: string; 
     deletedItem?: { publicId: string; name: string; deletedLinks: number }; 
@@ -272,15 +274,17 @@ export const adminApi = {
     
     return apiRequest(`/admin/items/${encodeURIComponent(publicId)}`, {
       method: 'DELETE',
+      headers
     }, true);
   },
 
   /**
-   * List properties based on user role (admin sees all, users see their own)
+   * List all properties for the authenticated user
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to properties list response
    */
-  async listProperties(): Promise<{ success: boolean; data?: any[]; isAdmin?: boolean; error?: string }> {
-    return apiRequest('/admin/properties', {}, true);
+  async listProperties(headers?: Record<string, string>): Promise<{ success: boolean; data?: any[]; isAdmin?: boolean; error?: string }> {
+    return apiRequest('/admin/properties', { headers }, true);
   },
 
   /**

@@ -3,14 +3,14 @@ import { ReactionCounts } from './reactions';
 // Database types
 export interface Item {
   id: string;
-  public_id: string;
+  publicId: string;
   name: string;
   description: string | null;
-  qr_code_url: string | null;
-  qr_code_uploaded_at: string | null;
-  property_id: string; // NEW: Association with property
-  created_at: string;
-  updated_at: string;
+  qrCodeUrl: string | null;
+  qrCodeUploadedAt: string | null;
+  propertyId: string; // NEW: Association with property
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Multi-tenant account and user management types

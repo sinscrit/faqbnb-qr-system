@@ -121,7 +121,7 @@ async function validateAdminAuth(request: NextRequest) {
 }
 
 // Helper function to extract account context from request
-async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
   try {
     // Extract account_id from query parameters or headers
     const { searchParams } = new URL(request.url);
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
     const supabase = authResult.supabase; // Get supabase client from authResult
 
     // Get account context
-    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
     if (accountContext.error) {
       return accountContext.error;
     }
@@ -304,8 +304,8 @@ export async function GET(request: NextRequest) {
 
         const visits = visitData || [];
         const visitCounts = {
-          last24Hours: visits.filter(v => new Date(v.visited_at) >= last24Hours).length,
-          last7Days: visits.filter(v => new Date(v.visited_at) >= last7Days).length,
+          last24Hours: visits.filter(v => v.visited_at && new Date(v.visited_at) >= last24Hours).length,
+          last7Days: visits.filter(v => v.visited_at && new Date(v.visited_at) >= last7Days).length,
           allTime: visits.length,
         };
 
@@ -331,8 +331,8 @@ export async function GET(request: NextRequest) {
           id: item.id,
           publicId: item.public_id,
           name: item.name,
-          qrCodeUrl: item.qr_code_url,
-          createdAt: item.created_at,
+          qrCodeUrl: item.qr_code_url || undefined,
+          createdAt: item.created_at || new Date().toISOString(),
           propertyId: item.property_id,
           property: item.properties,
           linksCount: linksCount || 0,
@@ -383,9 +383,10 @@ export async function POST(request: NextRequest) {
     
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase; // Get supabase client from authResult
 
     // Get account context
-    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
     if (accountContext.error) {
       return accountContext.error;
     }

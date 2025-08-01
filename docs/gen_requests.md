@@ -802,3 +802,150 @@ Fix critical UI bug in the QR Code Print Manager where QR codes are successfully
 ---
 
 *Next Request: REQ-013* 
+
+## REQ-013: Professional PDF QR Code Printing System with Vector Cutlines
+**Date**: January 28, 2025  
+**Type**: Feature Implementation (Advanced)  
+**Complexity**: 17 Points (High Complexity)
+
+### Request Summary
+Implement a professional PDF generation system for QR codes with precise vector-based cutlines, replacing the current browser print functionality with a mathematically accurate PDF creation solution that ensures perfect alignment on any printer.
+
+### Detailed Requirements
+
+#### 1. PDF Generation Library Integration (3 points)
+- **PDF Library Selection**: Integrate `pdf-lib`, `pdfkit`, `jspdf`, or `@react-pdf/renderer` for vector-based PDF creation
+- **Library Configuration**: Configure build system and type definitions for chosen PDF library
+- **Vector Support**: Ensure selected library supports both bitmap QR codes and vector line drawing
+- **Files Affected**:
+  - `package.json` (new PDF library dependency)
+  - `next.config.js` (potential build configuration)
+  - `src/lib/pdf-generator.ts` (new PDF utility library)
+
+#### 2. Mathematical Page Geometry System (5 points)
+- **Page Size Support**: A4 (210 × 297 mm) and Letter (8.5 × 11 inch) format support
+- **Margin Calculations**: Configurable margins (default 10mm) with precise coordinate conversion
+- **Grid Mathematics**: 
+  - Calculate columns: `floor((page_width - 2 × margin) / qr_side)`
+  - Dynamic row calculations based on total items and column count
+  - Absolute positioning for each QR code cell
+- **Coordinate System**: Convert between millimeters, points, and pixels for different PDF libraries
+- **Files Affected**:
+  - `src/lib/pdf-geometry.ts` (new mathematical calculation library)
+  - `src/types/pdf.ts` (new PDF-specific type definitions)
+
+#### 3. Vector Cutline Drawing System (4 points)
+- **Dashed Line Implementation**: Vector-based dashed cutlines with 4pt on / 4pt off pattern
+- **Grid Boundary Detection**: Calculate exact positions for column and row boundaries
+- **Line Properties**: 
+  - Stroke width: 0.5-1 pt configurable
+  - Color: #999999 (light gray)
+  - Vector precision for perfect printer alignment
+- **Multi-page Support**: Cutlines on every page with consistent positioning
+- **Files Affected**:
+  - `src/lib/pdf-cutlines.ts` (new cutline drawing utilities)
+  - Vector drawing integration in PDF generation pipeline
+
+#### 4. QR Code Integration & Layout Engine (3 points)
+- **QR Code Processing**: Convert existing generated QR codes (PNG/SVG) to PDF-compatible format
+- **Absolute Positioning**: Place QR codes at calculated cell origins with pixel-perfect accuracy
+- **Label Integration**: Optional item labels positioned outside QR area within cell boundaries
+- **Size Consistency**: Ensure uniform QR code sizing (e.g., 40mm per specification)
+- **Files Affected**:
+  - `src/components/QRCodePrintManager.tsx` (add PDF export option)
+  - `src/components/QRCodePrintPreview.tsx` (PDF preview integration)
+  - `src/lib/qrcode-utils.ts` (PDF format conversion utilities)
+
+#### 5. User Interface & Export System (2 points)
+- **Export Options**: Add "Export PDF" button alongside existing print functionality
+- **Page Format Selection**: UI controls for A4 vs Letter page size selection
+- **Margin Customization**: User-configurable margin settings
+- **PDF Download**: Browser-based PDF download with proper filename generation
+- **Files Affected**:
+  - `src/components/QRCodePrintManager.tsx` (PDF export controls)
+  - `src/components/PDFExportOptions.tsx` (new configuration component)
+  - PDF export workflow integration
+
+### Complexity Analysis
+
+#### PDF Library Integration & Learning Curve (3 points)
+- **Library Selection**: Evaluation and integration of appropriate PDF library
+- **API Learning**: Understanding chosen library's API, coordinate systems, and limitations
+- **Build Configuration**: Potential Next.js build system modifications for PDF libraries
+- **Risk Level**: Medium - External library dependency with potential build complications
+
+#### Mathematical Precision System (5 points)
+- **Complex Calculations**: Multi-unit coordinate conversions (mm, pt, px)
+- **Page Layout Mathematics**: Dynamic grid calculations with edge case handling
+- **Precision Requirements**: Sub-pixel accuracy required for professional printing
+- **Cross-Format Support**: Different page sizes with consistent mathematical approach
+- **Risk Level**: High - Mathematical errors could cause misaligned prints
+
+#### Vector Graphics Implementation (4 points)
+- **Vector Drawing**: Precise dashed line drawing with configurable patterns
+- **Grid System**: Complex boundary detection and line placement calculations
+- **Multi-page Consistency**: Ensuring cutlines align perfectly across all pages
+- **PDF Standards**: Compliance with PDF vector drawing specifications
+- **Risk Level**: Medium-High - Vector graphics require precise implementation
+
+#### System Integration (3 points)
+- **Existing QR Flow**: Integration with current `QRCodePrintManager` workflow
+- **Data Pipeline**: Converting existing QR generation output to PDF format
+- **State Management**: Managing PDF generation state alongside existing print logic
+- **User Experience**: Seamless integration without disrupting existing functionality
+- **Risk Level**: Medium - Integration with existing complex QR generation system
+
+#### Testing & Quality Assurance (2 points)
+- **Cross-browser Testing**: PDF generation consistency across different browsers
+- **Print Validation**: Testing actual printed output for alignment accuracy
+- **Performance Testing**: Large QR code batches and PDF generation speed
+- **Device Testing**: Various printers and paper sizes for validation
+- **Risk Level**: Low-Medium - Testing complexity but well-defined requirements
+
+### Technical Challenges
+1. **Mathematical Precision**: Converting between measurement units while maintaining accuracy
+2. **PDF Library Limitations**: Working within constraints of chosen PDF library
+3. **Vector Graphics Complexity**: Implementing precise dashed line patterns
+4. **Cross-Browser Compatibility**: Ensuring consistent PDF generation across browsers
+5. **Performance Optimization**: Generating large PDFs with many QR codes efficiently
+6. **Print Validation**: Ensuring perfect alignment on physical printers
+
+### Implementation Priority
+**Medium-High Priority** - Professional printing solution that significantly enhances the QR code workflow, but existing browser print functionality provides basic coverage.
+
+### Implementation Phases
+1. **Phase 1**: PDF library integration and basic page geometry (6 points)
+2. **Phase 2**: Vector cutline system and grid calculations (5 points)
+3. **Phase 3**: QR code placement and layout engine (4 points)
+4. **Phase 4**: UI integration and export system (2 points)
+
+### Related Files Reference
+- **Existing QR System**: 
+  - `src/components/QRCodePrintManager.tsx` (main print management)
+  - `src/components/QRCodePrintPreview.tsx` (current preview system)
+  - `src/lib/qrcode-utils.ts` (QR generation utilities)
+  - `src/hooks/useQRCodeGeneration.ts` (QR generation hook)
+- **New PDF System**:
+  - `src/lib/pdf-generator.ts` (new - core PDF creation)
+  - `src/lib/pdf-geometry.ts` (new - mathematical calculations)
+  - `src/lib/pdf-cutlines.ts` (new - vector cutline drawing)
+  - `src/components/PDFExportOptions.tsx` (new - PDF configuration UI)
+  - `src/types/pdf.ts` (new - PDF type definitions)
+- **Configuration**: 
+  - `package.json` (PDF library dependency)
+  - `next.config.js` (potential build updates)
+- **Integration Points**:
+  - `src/app/admin/properties/[propertyId]/page.tsx` (property management integration)
+  - `src/types/index.ts` (QR print settings extension)
+
+### Technical Specifications
+- **Supported Page Formats**: A4 (210×297mm), Letter (8.5×11in)
+- **Default Margins**: 10mm configurable
+- **QR Code Size**: 40mm (configurable)
+- **Cutline Properties**: 0.5-1pt stroke, #999 color, 4pt dash pattern
+- **Output Format**: Vector PDF with embedded bitmap QR codes
+- **File Naming**: `qr-codes-{property-name}-{date}.pdf`
+
+---
+
+*Next Request: REQ-014* 

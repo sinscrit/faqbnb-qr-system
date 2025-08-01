@@ -101,10 +101,10 @@ const VirtualizedQRItem = React.memo(({ item, qrSizeClass, showLabels, isVisible
     >
       {/* REQ-012 PHASE 3: 225x225 Container with Label Above QR Code */}
       <div className={cn(
-        "qr-container relative border border-gray-200 rounded bg-white flex flex-col items-center justify-start p-2",
+        "qr-container relative flex flex-col items-center justify-start",
         // REQ-012: Fixed 225x225 container size (overrides qrSizeClass)
         "w-56 h-56", // 14rem = 224px ≈ 225px
-        "print:border-gray-400",
+        "print:border-0 print:bg-transparent print:shadow-none print:p-0",
         // BUG FIX: Task 17 - Mobile responsive sizing
         isMobile && "min-w-0 min-h-0"
       )}>
@@ -129,7 +129,8 @@ const VirtualizedQRItem = React.memo(({ item, qrSizeClass, showLabels, isVisible
           "qr-code-container relative flex items-center justify-center flex-1",
           // REQ-012: Fixed 200x200 QR code size
           "w-50 h-50", // 12.5rem = 200px
-          "max-w-50 max-h-50"
+          "max-w-50 max-h-50",
+          "print:border-0 print:bg-transparent print:shadow-none"
         )}>
         {item.isLoading ? (
           <div className="flex flex-col items-center justify-center space-y-2 p-4">
@@ -361,24 +362,14 @@ export function QRCodePrintPreview({
    * BUG FIX: Optimized QR grid rendering with virtualization
    */
   const renderQRGrid = useCallback(() => {
+    // Calculate grid dimensions for cutting lines
+    const itemsPerRow = gridClass.includes('grid-cols-3') ? 3 : gridClass.includes('grid-cols-2') ? 2 : 4;
+    
     return (
       <div 
         ref={containerRef}
-        className={cn(
-          "qr-grid grid gap-4 p-4 max-h-96 overflow-y-auto",
-        gridClass,
-        // Print-specific classes
-          "print:gap-2 print:p-2 print:max-h-none print:overflow-visible",
-          // BUG FIX: Task 17 - Mobile-specific styling
-          isMobile && "max-h-80 gap-2 p-2 touch-pan-y",
-          // BUG FIX: Safari-specific styling
-          isSafari && "webkit-overflow-scrolling-touch"
-        )}
-        // BUG FIX: Task 17 - Touch handling attributes for mobile
-        style={isMobile ? {
-          WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y'
-        } : undefined}
+        className="qr-grid grid gap-4 p-4 max-h-96 overflow-y-auto grid-cols-3"
+        data-cutting-grid="true"
       >
         {printItems.map((printItem) => (
           <VirtualizedQRItem
@@ -407,6 +398,20 @@ export function QRCodePrintPreview({
     
     return (
     <div className={cn("qr-print-preview", className)}>
+      {/* CONTINUOUS CUTTING GRID STYLES - Embedded to avoid CSS file issues */}
+      <style jsx>{`
+        @media print {
+          /* This ensures any remaining elements are properly hidden */
+          .qr-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+        }
+      `}</style>
+
       {/* Header with stats and print button */}
       <div className={cn(
         "flex justify-between items-center mb-4 print:hidden",
@@ -429,7 +434,7 @@ export function QRCodePrintPreview({
             {stats.loading > 0 && <span className="text-blue-600">Loading: {stats.loading}</span>}
             {stats.failed > 0 && <span className="text-red-600">Failed: {stats.failed}</span>}
             <span>Pages: {totalPages}</span>
-          </div>
+            </div>
           </div>
           
             <button
