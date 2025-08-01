@@ -518,6 +518,310 @@ export function getStandardPageLayout(format: PageFormat, margins?: number) {
 }
 
 /**
+ * Interface for grid layout configuration
+ */
+export interface GridLayout {
+  /** Number of columns in the grid */
+  columns: number;
+  /** Number of rows in the grid */
+  rows: number;
+  /** Width of each QR cell in points */
+  cellWidth: number;
+  /** Height of each QR cell in points */
+  cellHeight: number;
+  /** Total items that fit on one page */
+  itemsPerPage: number;
+  /** Starting X coordinate for the grid */
+  startX: number;
+  /** Starting Y coordinate for the grid */
+  startY: number;
+  /** QR code size within each cell in points */
+  qrSize: number;
+  /** Available width for the grid in points */
+  gridWidth: number;
+  /** Available height for the grid in points */
+  gridHeight: number;
+  /** Unit of measurement */
+  unit: 'pt';
+}
+
+/**
+ * Interface for cell position in grid
+ */
+export interface CellPosition {
+  /** X coordinate of cell origin */
+  x: number;
+  /** Y coordinate of cell origin */
+  y: number;
+  /** Column index (0-based) */
+  col: number;
+  /** Row index (0-based) */
+  row: number;
+  /** Cell index in sequence (0-based) */
+  index: number;
+  /** Unit of measurement */
+  unit: 'pt';
+}
+
+/**
+ * Calculates optimal grid layout for QR codes on a page
+ * 
+ * @param pageWidth - Page width in points
+ * @param pageHeight - Page height in points  
+ * @param margins - Margin size in millimeters
+ * @param qrSize - QR code size in millimeters
+ * @returns Grid layout configuration
+ * 
+ * @example
+ * ```typescript
+ * const layout = calculateGridLayout(595.28, 841.89, 10, 40);
+ * // Returns grid configuration for 40mm QR codes on A4 with 10mm margins
+ * ```
+ */
+export function calculateGridLayout(
+  pageWidth: number,
+  pageHeight: number,
+  margins: number,
+  qrSize: number
+): GridLayout {
+  // Validate inputs
+  const pageWidthValidation = validateNumericInput(pageWidth, 'page width');
+  if (!pageWidthValidation.isValid) {
+    throw new CoordinateConversionError(pageWidthValidation.error!);
+  }
+  
+  const pageHeightValidation = validateNumericInput(pageHeight, 'page height');
+  if (!pageHeightValidation.isValid) {
+    throw new CoordinateConversionError(pageHeightValidation.error!);
+  }
+  
+  const marginsValidation = validateMarginInput(margins);
+  if (!marginsValidation.isValid) {
+    throw new CoordinateConversionError(marginsValidation.error!);
+  }
+  
+  const qrValidation = validateQRSizeInput(qrSize);
+  if (!qrValidation.isValid) {
+    throw new CoordinateConversionError(qrValidation.error!);
+  }
+  
+  // Calculate usable area
+  const usableArea = calculateUsableArea(pageWidth, pageHeight, margins);
+  
+  // Convert QR size from mm to points
+  const qrSizePoints = convertMillimetersToPoints(qrSize);
+  
+  // Calculate number of columns: floor((usable_width) / qr_size)
+  const columns = Math.floor(usableArea.width / qrSizePoints);
+  
+  // Calculate number of rows: floor((usable_height) / qr_size)  
+  const rows = Math.floor(usableArea.height / qrSizePoints);
+  
+  // Validate that we can fit at least one QR code
+  if (columns < 1 || rows < 1) {
+    throw new CoordinateConversionError(
+      `QR size too large: ${qrSize}mm QR codes don't fit in usable area ` +
+      `(${convertPointsToMillimeters(usableArea.width).toFixed(1)}mm × ${convertPointsToMillimeters(usableArea.height).toFixed(1)}mm)`
+    );
+  }
+  
+  // Calculate actual cell dimensions (might be larger than QR size for centering)
+  const cellWidth = usableArea.width / columns;
+  const cellHeight = usableArea.height / rows;
+  
+  // Grid starts at usable area origin
+  const startX = usableArea.x;
+  const startY = usableArea.y;
+  
+  return {
+    columns,
+    rows,
+    cellWidth,
+    cellHeight,
+    itemsPerPage: columns * rows,
+    startX,
+    startY,
+    qrSize: qrSizePoints,
+    gridWidth: usableArea.width,
+    gridHeight: usableArea.height,
+    unit: 'pt'
+  };
+}
+
+/**
+ * Gets the position of a specific QR cell in the grid
+ * 
+ * @param row - Row index (0-based)
+ * @param col - Column index (0-based) 
+ * @param layout - Grid layout configuration
+ * @returns Cell position with coordinates
+ * 
+ * @example
+ * ```typescript
+ * const layout = calculateGridLayout(595.28, 841.89, 10, 40);
+ * const pos = getQRCellPosition(0, 1, layout); // Second cell in first row
+ * ```
+ */
+export function getQRCellPosition(row: number, col: number, layout: GridLayout): CellPosition {
+  // Validate inputs
+  if (!Number.isInteger(row) || row < 0 || row >= layout.rows) {
+    throw new CoordinateConversionError(`Invalid row index: ${row} (must be 0-${layout.rows - 1})`);
+  }
+  
+  if (!Number.isInteger(col) || col < 0 || col >= layout.columns) {
+    throw new CoordinateConversionError(`Invalid column index: ${col} (must be 0-${layout.columns - 1})`);
+  }
+  
+  // Calculate cell position
+  const x = layout.startX + (col * layout.cellWidth);
+  const y = layout.startY + (row * layout.cellHeight);
+  const index = (row * layout.columns) + col;
+  
+  return {
+    x,
+    y,
+    col,
+    row,
+    index,
+    unit: 'pt'
+  };
+}
+
+/**
+ * Calculates total number of pages needed for given item count
+ * 
+ * @param itemCount - Total number of items to layout
+ * @param itemsPerPage - Items that fit on one page
+ * @returns Number of pages required
+ * 
+ * @example
+ * ```typescript
+ * const pages = calculateTotalPages(25, 12); // 3 pages needed
+ * ```
+ */
+export function calculateTotalPages(itemCount: number, itemsPerPage: number): number {
+  // Validate inputs
+  if (!Number.isInteger(itemCount) || itemCount < 0) {
+    throw new CoordinateConversionError(`Invalid item count: ${itemCount} (must be non-negative integer)`);
+  }
+  
+  if (!Number.isInteger(itemsPerPage) || itemsPerPage < 1) {
+    throw new CoordinateConversionError(`Invalid items per page: ${itemsPerPage} (must be positive integer)`);
+  }
+  
+  if (itemCount === 0) {
+    return 0;
+  }
+  
+  return Math.ceil(itemCount / itemsPerPage);
+}
+
+/**
+ * Gets positions for all items across multiple pages
+ * 
+ * @param itemCount - Total number of items
+ * @param layout - Grid layout for one page
+ * @returns Array of positions for each item with page information
+ */
+export function getAllItemPositions(itemCount: number, layout: GridLayout) {
+  const totalPages = calculateTotalPages(itemCount, layout.itemsPerPage);
+  const positions: Array<CellPosition & { page: number; globalIndex: number }> = [];
+  
+  for (let globalIndex = 0; globalIndex < itemCount; globalIndex++) {
+    const page = Math.floor(globalIndex / layout.itemsPerPage);
+    const pageIndex = globalIndex % layout.itemsPerPage;
+    const row = Math.floor(pageIndex / layout.columns);
+    const col = pageIndex % layout.columns;
+    
+    const cellPos = getQRCellPosition(row, col, layout);
+    
+    positions.push({
+      ...cellPos,
+      page,
+      globalIndex
+    });
+  }
+  
+  return {
+    positions,
+    totalPages,
+    itemsPerPage: layout.itemsPerPage
+  };
+}
+
+/**
+ * Validates QR size input
+ * 
+ * @param qrSize - QR size in millimeters to validate
+ * @returns Validation result
+ */
+function validateQRSizeInput(qrSize: number): ValidationResult {
+  const baseValidation = validateNumericInput(qrSize, 'QR size');
+  if (!baseValidation.isValid) {
+    return baseValidation;
+  }
+  
+  // Check QR size range (10mm minimum, 100mm maximum for reasonable printing)
+  const MIN_QR_SIZE_MM = 10;
+  const MAX_QR_SIZE_MM = 100;
+  
+  if (qrSize < MIN_QR_SIZE_MM) {
+    return {
+      isValid: false,
+      error: `QR size too small: ${qrSize}mm, minimum is ${MIN_QR_SIZE_MM}mm for readability`
+    };
+  }
+  
+  if (qrSize > MAX_QR_SIZE_MM) {
+    return {
+      isValid: false,
+      error: `QR size too large: ${qrSize}mm, maximum is ${MAX_QR_SIZE_MM}mm for efficient space usage`
+    };
+  }
+  
+  return { isValid: true };
+}
+
+/**
+ * Calculates optimal QR size for maximum items per page
+ * 
+ * @param pageWidth - Page width in points
+ * @param pageHeight - Page height in points
+ * @param margins - Margin size in millimeters
+ * @param targetItemCount - Target number of items to fit (optional)
+ * @returns Optimal QR size in millimeters
+ */
+export function calculateOptimalQRSize(
+  pageWidth: number,
+  pageHeight: number,
+  margins: number,
+  targetItemCount?: number
+): number {
+  const usableArea = calculateUsableArea(pageWidth, pageHeight, margins);
+  const usableWidthMm = convertPointsToMillimeters(usableArea.width);
+  const usableHeightMm = convertPointsToMillimeters(usableArea.height);
+  
+  if (targetItemCount) {
+    // Calculate QR size to fit target number of items
+    const aspectRatio = usableWidthMm / usableHeightMm;
+    const cols = Math.ceil(Math.sqrt(targetItemCount * aspectRatio));
+    const rows = Math.ceil(targetItemCount / cols);
+    
+    const qrWidthMm = usableWidthMm / cols;
+    const qrHeightMm = usableHeightMm / rows;
+    
+    const optimalSize = Math.min(qrWidthMm, qrHeightMm);
+    
+    // Ensure it's within valid range
+    return Math.max(10, Math.min(100, Math.floor(optimalSize)));
+  } else {
+    // Calculate maximum QR size (single item)
+    const maxSize = Math.min(usableWidthMm, usableHeightMm);
+    return Math.max(10, Math.min(100, Math.floor(maxSize)));
+  }
+}
+
+/**
  * Interface for coordinate point with unit
  */
 export interface CoordinatePoint {

@@ -149,14 +149,14 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 **Current State**: Need to calculate optimal QR code placement in grid formation with precise positioning.
 
 **Task Actions**:
-- [ ] Add `calculateGridLayout(pageWidth: number, pageHeight: number, margins: number, qrSize: number): GridLayout` to `pdf-geometry.ts`
-- [ ] Implement column calculation: `floor((page_width - 2×margin) / qr_side)`
-- [ ] Implement row calculation based on available height and item count
-- [ ] Add `getQRCellPosition(row: number, col: number, layout: GridLayout): { x: number, y: number }` function
-- [ ] Add `calculateTotalPages(itemCount: number, itemsPerPage: number): number` function
-- [ ] Handle edge cases: single item, more items than fit on one page
-- [ ] Create comprehensive unit tests for grid calculations
-- [ ] Test with various QR sizes and margin configurations
+- [x] Add `calculateGridLayout(pageWidth: number, pageHeight: number, margins: number, qrSize: number): GridLayout` to `pdf-geometry.ts` -unit tested-
+- [x] Implement column calculation: `floor((page_width - 2×margin) / qr_side)` -unit tested-
+- [x] Implement row calculation based on available height and item count -unit tested-
+- [x] Add `getQRCellPosition(row: number, col: number, layout: GridLayout): { x: number, y: number }` function -unit tested-
+- [x] Add `calculateTotalPages(itemCount: number, itemsPerPage: number): number` function -unit tested-
+- [x] Handle edge cases: single item, more items than fit on one page -unit tested-
+- [x] Create comprehensive unit tests for grid calculations -unit tested-
+- [x] Test with various QR sizes and margin configurations -unit tested-
 
 **Files to Modify**: 
 - `src/lib/pdf-geometry.ts`
