@@ -309,6 +309,215 @@ export const CoordinateConverter = {
 export type MeasurementUnit = 'mm' | 'pt' | 'px' | 'in';
 
 /**
+ * Supported page formats for PDF generation
+ */
+export type PageFormat = 'A4' | 'Letter';
+
+/**
+ * Interface for page dimensions
+ */
+export interface PageDimensions {
+  width: number;
+  height: number;
+  unit: 'pt';
+}
+
+/**
+ * Interface for usable area after margins
+ */
+export interface UsableArea {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  unit: 'pt';
+}
+
+/**
+ * Calculates page dimensions for different paper formats in points
+ * 
+ * @param format - Page format ('A4' or 'Letter')
+ * @returns Page dimensions in points
+ * 
+ * @example
+ * ```typescript
+ * const a4 = calculatePageDimensions('A4');
+ * // { width: 595.28, height: 841.89, unit: 'pt' }
+ * 
+ * const letter = calculatePageDimensions('Letter');
+ * // { width: 612, height: 792, unit: 'pt' }
+ * ```
+ */
+export function calculatePageDimensions(format: PageFormat): PageDimensions {
+  switch (format) {
+    case 'A4':
+      // A4: 210mm × 297mm
+      return {
+        width: 595.28,  // 210mm in points
+        height: 841.89, // 297mm in points
+        unit: 'pt'
+      };
+    case 'Letter':
+      // Letter: 8.5in × 11in
+      return {
+        width: 612,  // 8.5in in points
+        height: 792, // 11in in points
+        unit: 'pt'
+      };
+    default:
+      throw new CoordinateConversionError(`Unsupported page format: ${format}`);
+  }
+}
+
+/**
+ * Calculates usable area after applying margins
+ * 
+ * @param pageWidth - Page width in points
+ * @param pageHeight - Page height in points  
+ * @param margins - Margin size in millimeters
+ * @returns Usable area dimensions and position
+ * 
+ * @example
+ * ```typescript
+ * const a4 = calculatePageDimensions('A4');
+ * const usable = calculateUsableArea(a4.width, a4.height, 10);
+ * // Returns area with 10mm margins on all sides
+ * ```
+ */
+export function calculateUsableArea(
+  pageWidth: number, 
+  pageHeight: number, 
+  margins: number
+): UsableArea {
+  // Validate inputs
+  const pageWidthValidation = validateNumericInput(pageWidth, 'page width');
+  if (!pageWidthValidation.isValid) {
+    throw new CoordinateConversionError(pageWidthValidation.error!);
+  }
+  
+  const pageHeightValidation = validateNumericInput(pageHeight, 'page height');
+  if (!pageHeightValidation.isValid) {
+    throw new CoordinateConversionError(pageHeightValidation.error!);
+  }
+  
+  const marginsValidation = validateMarginInput(margins);
+  if (!marginsValidation.isValid) {
+    throw new CoordinateConversionError(marginsValidation.error!);
+  }
+  
+  // Convert margins from mm to points
+  const marginsInPoints = convertMillimetersToPoints(margins);
+  
+  // Calculate usable dimensions
+  const usableWidth = pageWidth - (2 * marginsInPoints);
+  const usableHeight = pageHeight - (2 * marginsInPoints);
+  
+  // Validate that usable area is positive
+  if (usableWidth <= 0 || usableHeight <= 0) {
+    throw new CoordinateConversionError(
+      `Margins too large: ${margins}mm margins result in negative usable area ` +
+      `(page: ${pageWidth}×${pageHeight}pt, margins: ${marginsInPoints}pt each)`
+    );
+  }
+  
+  return {
+    width: usableWidth,
+    height: usableHeight,
+    x: marginsInPoints,
+    y: marginsInPoints,
+    unit: 'pt'
+  };
+}
+
+/**
+ * Validates margin input
+ * 
+ * @param margins - Margin value in millimeters to validate
+ * @returns Validation result
+ */
+function validateMarginInput(margins: number): ValidationResult {
+  const baseValidation = validateNumericInput(margins, 'margins');
+  if (!baseValidation.isValid) {
+    return baseValidation;
+  }
+  
+  // Check margin range (5mm minimum, 25mm maximum for reasonable printing)
+  const MIN_MARGIN_MM = 5;
+  const MAX_MARGIN_MM = 25;
+  
+  if (margins < MIN_MARGIN_MM) {
+    return {
+      isValid: false,
+      error: `Margin too small: ${margins}mm, minimum is ${MIN_MARGIN_MM}mm for professional printing`
+    };
+  }
+  
+  if (margins > MAX_MARGIN_MM) {
+    return {
+      isValid: false,
+      error: `Margin too large: ${margins}mm, maximum is ${MAX_MARGIN_MM}mm for efficient space usage`
+    };
+  }
+  
+  return { isValid: true };
+}
+
+/**
+ * Converts page dimensions from one format to points
+ * 
+ * @param width - Width value
+ * @param height - Height value
+ * @param unit - Source unit
+ * @returns Page dimensions in points
+ */
+export function convertPageDimensionsToPoints(
+  width: number, 
+  height: number, 
+  unit: MeasurementUnit
+): PageDimensions {
+  const widthPoint = convertCoordinateToPoints({ x: width, y: 0, unit }).x;
+  const heightPoint = convertCoordinateToPoints({ x: 0, y: height, unit }).y;
+  
+  return {
+    width: widthPoint,
+    height: heightPoint,
+    unit: 'pt'
+  };
+}
+
+/**
+ * Gets standard page dimensions with validation
+ * 
+ * @param format - Page format
+ * @param margins - Margin size in mm (optional)
+ * @returns Object with page dimensions and usable area
+ */
+export function getStandardPageLayout(format: PageFormat, margins?: number) {
+  const pageDims = calculatePageDimensions(format);
+  
+  if (margins !== undefined) {
+    const usableArea = calculateUsableArea(pageDims.width, pageDims.height, margins);
+    return {
+      page: pageDims,
+      usable: usableArea,
+      margins: {
+        top: usableArea.y,
+        right: pageDims.width - usableArea.x - usableArea.width,
+        bottom: pageDims.height - usableArea.y - usableArea.height,
+        left: usableArea.x,
+        unit: 'pt' as const
+      }
+    };
+  }
+  
+  return {
+    page: pageDims,
+    usable: null,
+    margins: null
+  };
+}
+
+/**
  * Interface for coordinate point with unit
  */
 export interface CoordinatePoint {

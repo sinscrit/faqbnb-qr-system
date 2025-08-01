@@ -126,14 +126,14 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 **Current State**: Need to support A4 (210×297mm) and Letter (8.5×11in) formats with configurable margins.
 
 **Task Actions**:
-- [ ] Add `calculatePageDimensions(format: 'A4' | 'Letter'): { width: number, height: number }` to `pdf-geometry.ts`
-- [ ] Implement A4 dimensions: 210mm × 297mm (595.276 × 841.89 points)
-- [ ] Implement Letter dimensions: 8.5in × 11in (612 × 792 points)
-- [ ] Add `calculateUsableArea(pageWidth: number, pageHeight: number, margins: number): UsableArea` function
-- [ ] Create margin validation (minimum 5mm, maximum 25mm)
-- [ ] Add unit tests for page dimension calculations
-- [ ] Test margin calculations with various paper sizes
-- [ ] Verify calculations match standard printing specifications
+- [x] Add `calculatePageDimensions(format: 'A4' | 'Letter'): { width: number, height: number }` to `pdf-geometry.ts` -unit tested-
+- [x] Implement A4 dimensions: 210mm × 297mm (595.28 × 841.89 points) -unit tested-
+- [x] Implement Letter dimensions: 8.5in × 11in (612 × 792 points) -unit tested-
+- [x] Add `calculateUsableArea(pageWidth: number, pageHeight: number, margins: number): UsableArea` function -unit tested-
+- [x] Create margin validation (minimum 5mm, maximum 25mm) -unit tested-
+- [x] Add unit tests for page dimension calculations -unit tested-
+- [x] Test margin calculations with various paper sizes -unit tested-
+- [x] Verify calculations match standard printing specifications -unit tested-
 
 **Files to Modify**: 
 - `src/lib/pdf-geometry.ts`
