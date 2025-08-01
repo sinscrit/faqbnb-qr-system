@@ -103,14 +103,14 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 **Current State**: No coordinate conversion utilities exist. Need mathematical precision for print alignment.
 
 **Task Actions**:
-- [ ] Create new file `src/lib/pdf-geometry.ts`
-- [ ] Implement `convertMillimetersToPoints(mm: number): number` function using 1mm = 2.834645669 points
-- [ ] Implement `convertPointsToMillimeters(pts: number): number` function
-- [ ] Implement `convertPixelsToPoints(px: number, dpi: number = 72): number` function
-- [ ] Add validation for input parameters (positive numbers, reasonable ranges)
-- [ ] Create comprehensive unit tests for all conversion functions
-- [ ] Test conversion accuracy with known values
-- [ ] Verify conversions work correctly for edge cases (very small/large values)
+- [x] Create new file `src/lib/pdf-geometry.ts` -unit tested-
+- [x] Implement `convertMillimetersToPoints(mm: number): number` function using 1mm = 2.834645669 points -unit tested-
+- [x] Implement `convertPointsToMillimeters(pts: number): number` function -unit tested-
+- [x] Implement `convertPixelsToPoints(px: number, dpi: number = 72): number` function -unit tested-
+- [x] Add validation for input parameters (positive numbers, reasonable ranges) -unit tested-
+- [x] Create comprehensive unit tests for all conversion functions -unit tested-
+- [x] Test conversion accuracy with known values -unit tested-
+- [x] Verify conversions work correctly for edge cases (very small/large values) -unit tested-
 
 **Files to Create**: 
 - `src/lib/pdf-geometry.ts`
