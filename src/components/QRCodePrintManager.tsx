@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Item, QRPrintSettings, QRGenerationState } from '@/types';
+import { PDFExportSettings } from '@/types/pdf';
 import { ItemSelectionList } from './ItemSelectionList';
 import { QRCodePrintPreview } from './QRCodePrintPreview';
+import { PDFExportOptions } from './PDFExportOptions';
 import { generateBatchQRCodes, clearQRCache } from '@/lib/qrcode-utils';
+import { generatePDFFromQRCodes, downloadPDFBlob, convertPDFToBlob } from '@/lib/pdf-generator';
 import { cn } from '@/lib/utils';
 
 /**
@@ -50,9 +53,24 @@ export function QRCodePrintManager({
   });
   const [currentStep, setCurrentStep] = useState<'select' | 'configure' | 'preview'>('select');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingAction, setPendingAction] = useState<'generate' | 'print' | null>(null);
+  const [pendingAction, setPendingAction] = useState<'generate' | 'print' | 'pdf' | null>(null);
   const [lastError, setLastError] = useState<{ message: string; isRetryable: boolean } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  // PDF Export state
+  const [showPDFOptions, setShowPDFOptions] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [pdfExportSettings, setPDFExportSettings] = useState<PDFExportSettings>({
+    // QRPrintSettings inheritance
+    itemsPerRow: 3,
+    showLabels: true,
+    // PDF-specific settings
+    pageFormat: 'A4',
+    margins: 10,
+    qrSize: 40,
+    includeCutlines: true,
+    includeLabels: true
+  });
 
   // Refs for component lifecycle management
   const isComponentMountedRef = useRef(true);
@@ -243,6 +261,114 @@ export function QRCodePrintManager({
     }
   }, [selectedItems, items]);
 
+  // PDF Export functions
+  const validatePDFSettings = useCallback((settings: PDFExportSettings): boolean => {
+    try {
+      // Validate page format
+      if (!['A4', 'Letter'].includes(settings.pageFormat)) {
+        setLastError({ message: 'Invalid page format. Please select A4 or Letter.', isRetryable: false });
+        return false;
+      }
+
+      // Validate margins
+      if (!Number.isFinite(settings.margins) || settings.margins < 5 || settings.margins > 25) {
+        setLastError({ message: 'Margins must be between 5 and 25 millimeters.', isRetryable: false });
+        return false;
+      }
+
+      // Validate QR size
+      if (!Number.isFinite(settings.qrSize) || settings.qrSize < 20 || settings.qrSize > 60) {
+        setLastError({ message: 'QR code size must be between 20 and 60 millimeters.', isRetryable: false });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      setLastError({ message: 'Invalid PDF settings.', isRetryable: false });
+      return false;
+    }
+  }, []);
+
+  const handlePDFExport = useCallback(async (settings: PDFExportSettings): Promise<void> => {
+    if (generatedQRCodes.size === 0) {
+      setLastError({ message: 'No QR codes available for PDF export. Please generate QR codes first.', isRetryable: false });
+      return;
+    }
+
+    if (!validatePDFSettings(settings)) {
+      return;
+    }
+
+    setIsGeneratingPDF(true);
+    setLastError(null);
+    setSuccessMessage(null);
+
+    try {
+      console.log('🔄 Starting PDF generation with settings:', settings);
+      
+      // Convert QR codes to the format expected by the PDF generator
+      const qrCodesMap = new Map<string, string>();
+      for (const [itemId, qrDataUrl] of generatedQRCodes) {
+        const item = items.find(item => item.id === itemId);
+        if (item) {
+          qrCodesMap.set(item.name, `${window.location.origin}/item/${item.publicId}`);
+        }
+      }
+
+      const result = await generatePDFFromQRCodes(qrCodesMap, settings, {
+        onProgress: (progress) => {
+          console.log(`PDF Generation: ${progress.step} - ${progress.percentage}%`);
+        },
+        includeLabels: settings.includeLabels,
+        includeCutlines: settings.includeCutlines
+      });
+
+      if (result.success && result.pdfBytes) {
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+        const filename = `QR-Codes-${timestamp}.pdf`;
+        
+        // Convert to blob and trigger download
+        const blob = convertPDFToBlob(result.pdfBytes, filename);
+        downloadPDFBlob(blob, filename);
+        
+        setSuccessMessage(`PDF exported successfully! ${result.statistics.successfulQRCodes} QR codes included.`);
+        console.log('✅ PDF export completed:', {
+          pageCount: result.pageCount,
+          qrCodeCount: result.qrCodeCount,
+          processingTime: result.processingTime,
+          statistics: result.statistics
+        });
+
+        // Close PDF options modal
+        setShowPDFOptions(false);
+      } else {
+        throw new Error(result.error || 'PDF generation failed');
+      }
+    } catch (error: any) {
+      console.error('PDF export error:', error);
+      setLastError({
+        message: error.message || 'Failed to export PDF. Please try again.',
+        isRetryable: true
+      });
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  }, [generatedQRCodes, items, validatePDFSettings]);
+
+  const generatePDFDownload = useCallback((): void => {
+    if (generatedQRCodes.size === 0) {
+      setLastError({ message: 'No QR codes available for PDF export.', isRetryable: false });
+      return;
+    }
+    
+    setShowPDFOptions(true);
+  }, [generatedQRCodes]);
+
+  const handlePDFSettingsChange = useCallback((settings: Partial<PDFExportSettings>): void => {
+    setPDFExportSettings(prev => ({ ...prev, ...settings }));
+  }, []);
+
   // Render step indicator
   const renderStepIndicator = () => {
     const steps = [
@@ -419,6 +545,27 @@ export function QRCodePrintManager({
               >
                 🖨️ Print QR Codes
               </button>
+              
+              <button
+                onClick={generatePDFDownload}
+                className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors font-medium"
+                disabled={generatedQRCodes.size === 0 || isGeneratingPDF}
+              >
+                {isGeneratingPDF ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    📄 Export PDF
+                  </>
+                )}
+              </button>
+              
               <button
                 onClick={() => setCurrentStep('configure')}
                 className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
@@ -563,6 +710,57 @@ export function QRCodePrintManager({
           </button>
         </div>
       </div>
+      
+      {/* PDF Export Options Modal */}
+      {showPDFOptions && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="border-b border-gray-200 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-gray-900">PDF Export Settings</h3>
+                <button
+                  onClick={() => setShowPDFOptions(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  disabled={isGeneratingPDF}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                Configure your PDF export settings for professional QR code printing with {generatedQRCodes.size} QR codes.
+              </p>
+            </div>
+            
+            <div className="px-6 py-4">
+              <PDFExportOptions
+                settings={pdfExportSettings}
+                onSettingsChange={handlePDFSettingsChange}
+                onExport={() => handlePDFExport(pdfExportSettings)}
+                disabled={isGeneratingPDF}
+                isGenerating={isGeneratingPDF}
+                showExportButton={true}
+              />
+            </div>
+            
+            <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 rounded-b-lg">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-600">
+                  {generatedQRCodes.size} QR codes ready for PDF export
+                </div>
+                <button
+                  onClick={() => setShowPDFOptions(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
+                  disabled={isGeneratingPDF}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
