@@ -1,4 +1,5 @@
 import { PDFDocument, PDFPage, rgb, RGB } from 'pdf-lib';
+import { GridLayout } from './pdf-geometry';
 
 // Custom error class for cutline generation
 export class CutlineGenerationError extends Error {
@@ -24,6 +25,14 @@ export interface LineOptions {
   color: RGB;
   /** Dash pattern configuration */
   dashPattern?: DashPattern;
+}
+
+// Interface for grid boundaries
+export interface GridBoundaries {
+  /** Array of X coordinates for vertical column lines */
+  columnLines: number[];
+  /** Array of Y coordinates for horizontal row lines */
+  rowLines: number[];
 }
 
 // Default cutline configuration as per REQ-013 specifications
@@ -232,4 +241,184 @@ export function createCustomDashOptions(pattern: number[], phase: number = 0): L
     ...DEFAULT_CUTLINE_OPTIONS,
     dashPattern: configureDashPattern(pattern, phase)
   };
+}
+
+// Grid Boundary Detection Functions
+
+/**
+ * Validates grid layout for boundary calculations
+ * 
+ * @param layout - Grid layout configuration
+ * @throws CutlineGenerationError if layout is invalid
+ */
+export function validateGridLayout(layout: GridLayout): void {
+  if (!layout) {
+    throw new CutlineGenerationError('Grid layout is required');
+  }
+
+  if (!Number.isFinite(layout.pageWidth) || layout.pageWidth <= 0) {
+    throw new CutlineGenerationError('Page width must be a positive finite number');
+  }
+
+  if (!Number.isFinite(layout.pageHeight) || layout.pageHeight <= 0) {
+    throw new CutlineGenerationError('Page height must be a positive finite number');
+  }
+
+  if (!Number.isFinite(layout.usableWidth) || layout.usableWidth <= 0) {
+    throw new CutlineGenerationError('Usable width must be a positive finite number');
+  }
+
+  if (!Number.isFinite(layout.usableHeight) || layout.usableHeight <= 0) {
+    throw new CutlineGenerationError('Usable height must be a positive finite number');
+  }
+
+  if (!Number.isFinite(layout.qrSize) || layout.qrSize <= 0) {
+    throw new CutlineGenerationError('QR size must be a positive finite number');
+  }
+
+  if (!Number.isInteger(layout.columns) || layout.columns <= 0) {
+    throw new CutlineGenerationError('Columns must be a positive integer');
+  }
+
+  if (!Number.isInteger(layout.rows) || layout.rows <= 0) {
+    throw new CutlineGenerationError('Rows must be a positive integer');
+  }
+
+  if (!Number.isInteger(layout.itemsPerPage) || layout.itemsPerPage <= 0) {
+    throw new CutlineGenerationError('Items per page must be a positive integer');
+  }
+}
+
+/**
+ * Calculates vertical line positions for column boundaries
+ * 
+ * @param layout - Grid layout configuration
+ * @returns Array of X coordinates for vertical lines
+ */
+export function calculateColumnLines(layout: GridLayout): number[] {
+  validateGridLayout(layout);
+
+  const columnLines: number[] = [];
+  
+  // Calculate left margin (to center the grid)
+  const leftMargin = (layout.pageWidth - layout.usableWidth) / 2;
+  
+  // Add vertical lines for each column boundary
+  for (let col = 0; col <= layout.columns; col++) {
+    const x = leftMargin + (col * layout.qrSize);
+    columnLines.push(x);
+  }
+
+  return columnLines;
+}
+
+/**
+ * Calculates horizontal line positions for row boundaries
+ * 
+ * @param layout - Grid layout configuration
+ * @param actualItemCount - Number of actual items on this page (for partial pages)
+ * @returns Array of Y coordinates for horizontal lines
+ */
+export function calculateRowLines(layout: GridLayout, actualItemCount?: number): number[] {
+  validateGridLayout(layout);
+
+  const rowLines: number[] = [];
+  
+  // Calculate top margin (to center the grid)
+  const topMargin = (layout.pageHeight - layout.usableHeight) / 2;
+  
+  // Determine actual number of rows needed
+  const itemsOnPage = actualItemCount ?? layout.itemsPerPage;
+  const actualRows = Math.ceil(itemsOnPage / layout.columns);
+  
+  // Add horizontal lines for each row boundary
+  const maxRows = Math.min(actualRows, layout.rows);
+  for (let row = 0; row <= maxRows; row++) {
+    const y = layout.pageHeight - topMargin - (row * layout.qrSize);
+    rowLines.push(y);
+  }
+
+  return rowLines;
+}
+
+/**
+ * Validates boundary coordinates are within page bounds and properly ordered
+ * 
+ * @param boundaries - Grid boundaries to validate
+ * @param pageWidth - Page width in points
+ * @param pageHeight - Page height in points
+ * @throws CutlineGenerationError if boundaries are invalid
+ */
+export function validateBoundaries(boundaries: GridBoundaries, pageWidth: number, pageHeight: number): void {
+  if (!boundaries) {
+    throw new CutlineGenerationError('Grid boundaries are required');
+  }
+
+  if (!Array.isArray(boundaries.columnLines)) {
+    throw new CutlineGenerationError('Column lines must be an array');
+  }
+
+  if (!Array.isArray(boundaries.rowLines)) {
+    throw new CutlineGenerationError('Row lines must be an array');
+  }
+
+  // Validate column lines
+  for (let i = 0; i < boundaries.columnLines.length; i++) {
+    const x = boundaries.columnLines[i];
+    
+    if (!Number.isFinite(x)) {
+      throw new CutlineGenerationError(`Column line ${i} coordinate must be finite`);
+    }
+
+    if (x < 0 || x > pageWidth) {
+      throw new CutlineGenerationError(`Column line ${i} coordinate ${x} is outside page bounds (0-${pageWidth})`);
+    }
+
+    // Check ordering (should be ascending)
+    if (i > 0 && x <= boundaries.columnLines[i - 1]) {
+      throw new CutlineGenerationError(`Column lines must be in ascending order`);
+    }
+  }
+
+  // Validate row lines
+  for (let i = 0; i < boundaries.rowLines.length; i++) {
+    const y = boundaries.rowLines[i];
+    
+    if (!Number.isFinite(y)) {
+      throw new CutlineGenerationError(`Row line ${i} coordinate must be finite`);
+    }
+
+    if (y < 0 || y > pageHeight) {
+      throw new CutlineGenerationError(`Row line ${i} coordinate ${y} is outside page bounds (0-${pageHeight})`);
+    }
+
+    // Check ordering (should be descending for PDF coordinate system)
+    if (i > 0 && y >= boundaries.rowLines[i - 1]) {
+      throw new CutlineGenerationError(`Row lines must be in descending order for PDF coordinate system`);
+    }
+  }
+}
+
+/**
+ * Calculates exact positions for grid boundaries where cutlines should be drawn
+ * 
+ * @param layout - Grid layout configuration
+ * @param actualItemCount - Number of actual items on this page (optional, for partial pages)
+ * @returns Object containing arrays of column and row line coordinates
+ */
+export function calculateGridBoundaries(layout: GridLayout, actualItemCount?: number): GridBoundaries {
+  validateGridLayout(layout);
+
+  const columnLines = calculateColumnLines(layout);
+  const rowLines = calculateRowLines(layout, actualItemCount);
+
+  const boundaries: GridBoundaries = {
+    columnLines,
+    rowLines
+  };
+
+  // Validate the calculated boundaries
+  validateBoundaries(boundaries, layout.pageWidth, layout.pageHeight);
+
+  return boundaries;
 }

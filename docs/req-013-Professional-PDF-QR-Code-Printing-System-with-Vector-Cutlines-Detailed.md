@@ -190,21 +190,21 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 
 ---
 
-### 8. Implement Grid Boundary Detection (1 point)
+### 8. Implement Grid Boundary Detection (1 point) -unit tested-
 
 **Context**: Calculate exact positions for grid boundaries where cutlines should be drawn.
 
 **Current State**: Need to determine column and row boundaries based on grid layout calculations.
 
 **Task Actions**:
-- [ ] Add `calculateGridBoundaries(layout: GridLayout): { columnLines: number[], rowLines: number[] }` to `pdf-cutlines.ts`
-- [ ] Calculate vertical line positions for column boundaries
-- [ ] Calculate horizontal line positions for row boundaries
-- [ ] Handle partial pages with fewer items than full grid
-- [ ] Add boundary validation (within page bounds, logical ordering)
-- [ ] Create unit tests for boundary calculations
-- [ ] Test with various grid configurations and item counts
-- [ ] Verify boundaries align with calculated QR positions
+- [x] Add `calculateGridBoundaries(layout: GridLayout): { columnLines: number[], rowLines: number[] }` to `pdf-cutlines.ts` -unit tested-
+- [x] Calculate vertical line positions for column boundaries -unit tested-
+- [x] Calculate horizontal line positions for row boundaries -unit tested-
+- [x] Handle partial pages with fewer items than full grid -unit tested-
+- [x] Add boundary validation (within page bounds, logical ordering) -unit tested-
+- [x] Create unit tests for boundary calculations -unit tested-
+- [x] Test with various grid configurations and item counts -unit tested-
+- [x] Verify boundaries align with calculated QR positions -unit tested-
 
 **Files to Modify**: 
 - `src/lib/pdf-cutlines.ts`
