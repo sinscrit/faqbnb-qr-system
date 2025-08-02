@@ -7,7 +7,20 @@
  */
 
 import { PDFDocument, PageSizes, rgb, PDFPage, PDFImage, PDFFont, StandardFonts } from 'pdf-lib';
-import { convertQRCodeForPDF, validateQRForPDFEmbedding, getQRImageFormat } from './qrcode-utils';
+import { convertQRCodeForPDF, validateQRForPDFEmbedding, getQRImageFormat, generateQRCodeForPDF } from './qrcode-utils';
+import { 
+  calculateGridLayout, 
+  getQRCellPosition, 
+  calculateTotalPages, 
+  getAllItemPositions,
+  getStandardPageLayout
+} from './pdf-geometry';
+import { 
+  generateCutlineGrid, 
+  addAllPagesCutlines, 
+  DEFAULT_CUTLINE_GRID_OPTIONS
+} from './pdf-cutlines';
+import { PDFExportSettings } from '../types/pdf';
 
 /**
  * Supported page formats for PDF generation
@@ -1124,4 +1137,375 @@ export async function addMultipleQRLabelsToPDF(
   }
 
   return results;
+}
+// ================================
+// Complete PDF Generation Pipeline - REQ-013
+// ================================
+
+/**
+ * Progress callback for PDF generation
+ */
+export interface PDFGenerationProgress {
+  /** Current step in the generation process */
+  step: string;
+  /** Percentage completion (0-100) */
+  percentage: number;
+  /** Current page being processed */
+  currentPage?: number;
+  /** Total pages to process */
+  totalPages?: number;
+  /** Number of QR codes processed */
+  processedQRCodes?: number;
+  /** Total QR codes to process */
+  totalQRCodes?: number;
+}
+
+/**
+ * Complete result of PDF generation
+ */
+export interface PDFGenerationResult {
+  /** Whether generation was successful */
+  success: boolean;
+  /** Generated PDF bytes (if successful) */
+  pdfBytes?: Uint8Array;
+  /** Number of pages created */
+  pageCount: number;
+  /** Number of QR codes embedded */
+  qrCodeCount: number;
+  /** Total processing time in milliseconds */
+  processingTime: number;
+  /** Error message (if failed) */
+  error?: string;
+  /** Detailed generation statistics */
+  statistics: {
+    /** QR codes that were successfully embedded */
+    successfulQRCodes: number;
+    /** QR codes that failed to embed */
+    failedQRCodes: number;
+    /** Labels that were successfully positioned */
+    successfulLabels: number;
+    /** Labels that failed to position */
+    failedLabels: number;
+    /** Pages with cutlines generated */
+    pagesWithCutlines: number;
+  };
+}
+
+/**
+ * Options for PDF generation pipeline
+ */
+export interface PDFPipelineOptions {
+  /** Progress callback function */
+  onProgress?: (progress: PDFGenerationProgress) => void;
+  /** Whether to include QR code labels */
+  includeLabels?: boolean;
+  /** Whether to include cutlines */
+  includeCutlines?: boolean;
+  /** Label positioning options */
+  labelOptions?: QRLabelOptions;
+  /** Whether to validate all QR codes before generation */
+  validateQRCodes?: boolean;
+  /** Maximum processing time in milliseconds (default: 30000) */
+  timeout?: number;
+}
+
+/**
+ * Validates PDF export settings and QR code data
+ * 
+ * @param qrCodes - Map of item IDs to URLs for QR generation
+ * @param settings - PDF export settings
+ * @returns Validation result with error details if invalid
+ */
+export function validatePDFGenerationInput(
+  qrCodes: Map<string, string>, 
+  settings: PDFExportSettings
+): { valid: boolean; error?: string } {
+  try {
+    // Validate QR codes map
+    if (!qrCodes || !(qrCodes instanceof Map)) {
+      return { valid: false, error: 'QR codes must be a valid Map' };
+    }
+
+    if (qrCodes.size === 0) {
+      return { valid: false, error: 'At least one QR code is required' };
+    }
+
+    if (qrCodes.size > 1000) {
+      return { valid: false, error: 'Maximum 1000 QR codes supported per document' };
+    }
+
+    // Validate URLs in QR codes
+    for (const [itemId, url] of qrCodes) {
+      if (!itemId || typeof itemId !== 'string') {
+        return { valid: false, error: 'All item IDs must be non-empty strings' };
+      }
+
+      if (!url || typeof url !== 'string') {
+        return { valid: false, error: `Invalid URL for item ${itemId}` };
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        return { valid: false, error: `Invalid URL format for item ${itemId}: ${url}` };
+      }
+    }
+
+    // Validate settings
+    if (!settings || typeof settings !== 'object') {
+      return { valid: false, error: 'PDF export settings are required' };
+    }
+
+    if (!settings.pageFormat || !['A4', 'Letter'].includes(settings.pageFormat)) {
+      return { valid: false, error: 'Page format must be A4 or Letter' };
+    }
+
+    if (!Number.isFinite(settings.margins) || settings.margins < 5 || settings.margins > 50) {
+      return { valid: false, error: 'Margins must be between 5 and 50 millimeters' };
+    }
+
+    if (!Number.isFinite(settings.qrSize) || settings.qrSize < 20 || settings.qrSize > 100) {
+      return { valid: false, error: 'QR size must be between 20 and 100 millimeters' };
+    }
+
+    return { valid: true };
+
+  } catch (error) {
+    return { 
+      valid: false, 
+      error: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    };
+  }
+}
+
+/**
+ * Complete PDF generation pipeline that orchestrates all components
+ * 
+ * @param qrCodes - Map of item IDs to URLs for QR generation
+ * @param settings - PDF export settings
+ * @param options - Additional pipeline options
+ * @returns Complete PDF generation result
+ * 
+ * @example
+ * ```typescript
+ * const qrCodes = new Map([['item1', 'https://example.com/item1']]);
+ * const settings = { pageFormat: 'A4', margins: 10, qrSize: 40, includeCutlines: true, includeLabels: true };
+ * const result = await generatePDFFromQRCodes(qrCodes, settings, {
+ *   onProgress: (progress) => console.log(`${progress.step}: ${progress.percentage}%`)
+ * });
+ * ```
+ */
+export async function generatePDFFromQRCodes(
+  qrCodes: Map<string, string>,
+  settings: PDFExportSettings,
+  options: PDFPipelineOptions = {}
+): Promise<PDFGenerationResult> {
+  const startTime = Date.now();
+  const { onProgress } = options;
+
+  try {
+    onProgress?.({
+      step: 'Validating input',
+      percentage: 0
+    });
+
+    // Step 1: Validate input
+    const validation = validatePDFGenerationInput(qrCodes, settings);
+    if (!validation.valid) {
+      return {
+        success: false,
+        pageCount: 0,
+        qrCodeCount: 0,
+        processingTime: Date.now() - startTime,
+        error: validation.error,
+        statistics: {
+          successfulQRCodes: 0,
+          failedQRCodes: qrCodes.size,
+          successfulLabels: 0,
+          failedLabels: 0,
+          pagesWithCutlines: 0
+        }
+      };
+    }
+
+    onProgress?.({
+      step: 'Creating PDF document',
+      percentage: 5
+    });
+
+    // Step 2: Create PDF document
+    const doc = await createPDFDocument(settings.pageFormat, settings.margins);
+
+    // Step 3: Calculate layout
+    const pageLayout = getStandardPageLayout(settings.pageFormat, settings.margins);
+    const layout = calculateGridLayout(pageLayout, settings.qrSize, qrCodes.size);
+    const totalPages = calculateTotalPages(layout, qrCodes.size);
+
+    onProgress?.({
+      step: 'Calculating layout',
+      percentage: 10,
+      totalPages: totalPages
+    });
+
+    // Step 4: Generate QR codes  
+    const qrDataUrls = new Map<string, string>();
+    const items = Array.from(qrCodes.entries());
+    let processed = 0;
+
+    for (const [itemId, url] of items) {
+      try {
+        const qrDataUrl = await generateQRCodeForPDF(url, settings.qrSize, 300);
+        qrDataUrls.set(itemId, qrDataUrl);
+      } catch (error) {
+        console.error(`Failed to generate QR code for ${itemId}:`, error);
+      }
+      
+      processed++;
+      onProgress?.({
+        step: 'Generating QR codes',
+        percentage: 10 + Math.round((processed / items.length) * 30),
+        processedQRCodes: processed,
+        totalQRCodes: items.length
+      });
+    }
+
+    if (qrDataUrls.size === 0) {
+      return {
+        success: false,
+        pageCount: 0,
+        qrCodeCount: 0,
+        processingTime: Date.now() - startTime,
+        error: 'Failed to generate any QR codes',
+        statistics: {
+          successfulQRCodes: 0,
+          failedQRCodes: qrCodes.size,
+          successfulLabels: 0,
+          failedLabels: 0,
+          pagesWithCutlines: 0
+        }
+      };
+    }
+
+    // Step 5: Create pages
+    const pages: PDFPage[] = [];
+    for (let i = 0; i < totalPages; i++) {
+      const page = addPDFPage(doc, settings.pageFormat);
+      pages.push(page);
+    }
+
+    onProgress?.({
+      step: 'Creating pages',
+      percentage: 45,
+      totalPages: totalPages
+    });
+
+    // Step 6: Embed QR codes and labels
+    const stats = { successfulQRCodes: 0, failedQRCodes: 0, successfulLabels: 0, failedLabels: 0 };
+    const allPositions = getAllItemPositions(layout, qrDataUrls.size);
+    processed = 0;
+
+    for (const [itemId, qrDataUrl] of qrDataUrls) {
+      const itemPosition = allPositions.get(itemId);
+      if (!itemPosition) {
+        stats.failedQRCodes++;
+        continue;
+      }
+
+      const page = pages[itemPosition.page];
+      if (!page) {
+        stats.failedQRCodes++;
+        continue;
+      }
+
+      try {
+        // Embed QR code
+        const qrResult = await addQRCodeToPage(
+          page, doc, qrDataUrl, itemPosition.x, itemPosition.y, layout.cellSize, {}
+        );
+
+        if (qrResult.success) {
+          stats.successfulQRCodes++;
+
+          // Add label if enabled
+          if (options.includeLabels !== false && settings.includeLabels !== false) {
+            try {
+              const labelResult = await addQRLabelToPDF(
+                page, doc, itemId, itemPosition.x, itemPosition.y, 
+                layout.cellSize, layout.cellSize, layout.cellSize, options.labelOptions || {}
+              );
+              if (labelResult.success) {
+                stats.successfulLabels++;
+              } else {
+                stats.failedLabels++;
+              }
+            } catch {
+              stats.failedLabels++;
+            }
+          }
+        } else {
+          stats.failedQRCodes++;
+        }
+      } catch {
+        stats.failedQRCodes++;
+      }
+
+      processed++;
+      onProgress?.({
+        step: 'Embedding QR codes and labels',
+        percentage: 45 + Math.round((processed / qrDataUrls.size) * 30),
+        processedQRCodes: processed,
+        totalQRCodes: qrDataUrls.size
+      });
+    }
+
+    // Step 7: Add cutlines if enabled
+    let pagesWithCutlines = 0;
+    if (options.includeCutlines !== false && settings.includeCutlines !== false) {
+      onProgress?.({ step: 'Adding cutlines', percentage: 80 });
+      try {
+        addAllPagesCutlines(doc, layout, qrCodes.size, { ...DEFAULT_CUTLINE_GRID_OPTIONS, drawBorder: true });
+        pagesWithCutlines = totalPages;
+      } catch (error) {
+        console.error('Failed to add cutlines:', error);
+      }
+    }
+
+    onProgress?.({ step: 'Finalizing PDF', percentage: 90 });
+
+    // Step 8: Generate final PDF
+    const pdfBytes = await doc.save();
+
+    onProgress?.({ step: 'Complete', percentage: 100 });
+
+    return {
+      success: true,
+      pdfBytes: pdfBytes,
+      pageCount: totalPages,
+      qrCodeCount: qrDataUrls.size,
+      processingTime: Date.now() - startTime,
+      statistics: {
+        successfulQRCodes: stats.successfulQRCodes,
+        failedQRCodes: stats.failedQRCodes,
+        successfulLabels: stats.successfulLabels,
+        failedLabels: stats.failedLabels,
+        pagesWithCutlines: pagesWithCutlines
+      }
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      pageCount: 0,
+      qrCodeCount: 0,
+      processingTime: Date.now() - startTime,
+      error: error instanceof Error ? error.message : 'Unknown error during PDF generation',
+      statistics: {
+        successfulQRCodes: 0,
+        failedQRCodes: qrCodes.size,
+        successfulLabels: 0,
+        failedLabels: 0,
+        pagesWithCutlines: 0
+      }
+    };
+  }
 }
