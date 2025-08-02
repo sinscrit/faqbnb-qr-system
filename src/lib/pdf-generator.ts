@@ -6,7 +6,7 @@
  * with mathematical precision required for professional printing.
  */
 
-import { PDFDocument, PageSizes, rgb, PDFPage, PDFImage } from 'pdf-lib';
+import { PDFDocument, PageSizes, rgb, PDFPage, PDFImage, PDFFont, StandardFonts } from 'pdf-lib';
 import { convertQRCodeForPDF, validateQRForPDFEmbedding, getQRImageFormat } from './qrcode-utils';
 
 /**
@@ -612,4 +612,516 @@ export function calculateOptimalQRSize(
   const maxSizeByHeight = usableHeight / rows;
 
   return Math.min(maxSizeByWidth, maxSizeByHeight);
+}
+
+// ================================
+// Label Positioning Functions - REQ-013
+// ================================
+
+/**
+ * Position options for QR code labels
+ */
+export type LabelPosition = 'above' | 'below' | 'left' | 'right' | 'inside-bottom' | 'inside-top';
+
+/**
+ * Options for QR code label styling and positioning
+ */
+export interface QRLabelOptions {
+  /** Label position relative to QR code */
+  position?: LabelPosition;
+  /** Font size in points (auto-calculated if not specified) */
+  fontSize?: number;
+  /** Text color (default: black) */
+  color?: { red: number; green: number; blue: number };
+  /** Font family (default: Helvetica) */
+  font?: 'Helvetica' | 'TimesRoman' | 'Courier';
+  /** Maximum width for text wrapping in points */
+  maxWidth?: number;
+  /** Line spacing multiplier (default: 1.2) */
+  lineSpacing?: number;
+  /** Horizontal alignment */
+  alignment?: 'left' | 'center' | 'right';
+  /** Padding from QR code or cell boundaries in points */
+  padding?: number;
+}
+
+/**
+ * Result of label positioning operation
+ */
+export interface LabelPositionResult {
+  /** Whether positioning was successful */
+  success: boolean;
+  /** Actual position where label was placed */
+  position: { x: number; y: number };
+  /** Calculated font size used */
+  fontSize: number;
+  /** Lines of text that were drawn */
+  lines: string[];
+  /** Error message if positioning failed */
+  error?: string;
+}
+
+/**
+ * Default label options
+ */
+export const DEFAULT_LABEL_OPTIONS: QRLabelOptions = {
+  position: 'below',
+  color: { red: 0, green: 0, blue: 0 }, // Black
+  font: 'Helvetica',
+  lineSpacing: 1.2,
+  alignment: 'center',
+  padding: 4
+};
+
+/**
+ * Calculates optimal font size for label text within given constraints
+ * 
+ * @param text - Text to size
+ * @param maxWidth - Maximum width in points
+ * @param maxHeight - Maximum height in points
+ * @param font - PDF font object
+ * @param minSize - Minimum font size (default: 6)
+ * @param maxSize - Maximum font size (default: 14)
+ * @returns Optimal font size in points
+ */
+export function calculateOptimalFontSize(
+  text: string,
+  maxWidth: number,
+  maxHeight: number,
+  font: PDFFont,
+  minSize: number = 6,
+  maxSize: number = 14
+): number {
+  if (!text || !font) {
+    return minSize;
+  }
+
+  if (maxWidth <= 0 || maxHeight <= 0) {
+    return minSize;
+  }
+
+  // Binary search for optimal font size
+  let low = minSize;
+  let high = maxSize;
+  let optimalSize = minSize;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    const textWidth = font.widthOfTextAtSize(text, mid);
+    const textHeight = font.heightAtSize(mid);
+
+    if (textWidth <= maxWidth && textHeight <= maxHeight) {
+      optimalSize = mid;
+      low = mid + 1; // Try larger size
+    } else {
+      high = mid - 1; // Try smaller size
+    }
+  }
+
+  return Math.max(optimalSize, minSize);
+}
+
+/**
+ * Wraps text to fit within specified width
+ * 
+ * @param text - Text to wrap
+ * @param maxWidth - Maximum width in points
+ * @param font - PDF font object
+ * @param fontSize - Font size in points
+ * @returns Array of text lines
+ */
+export function wrapText(
+  text: string,
+  maxWidth: number,
+  font: PDFFont,
+  fontSize: number
+): string[] {
+  if (!text || !font || maxWidth <= 0 || fontSize <= 0) {
+    return [text || ''];
+  }
+
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let currentLine = '';
+
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    const lineWidth = font.widthOfTextAtSize(testLine, fontSize);
+
+    if (lineWidth <= maxWidth) {
+      currentLine = testLine;
+    } else {
+      if (currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        // Single word is too long, truncate it
+        let truncatedWord = word;
+        while (truncatedWord.length > 0) {
+          const wordWidth = font.widthOfTextAtSize(truncatedWord + '...', fontSize);
+          if (wordWidth <= maxWidth) {
+            lines.push(truncatedWord + (truncatedWord.length < word.length ? '...' : ''));
+            break;
+          }
+          truncatedWord = truncatedWord.slice(0, -1);
+        }
+        currentLine = '';
+      }
+    }
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines.length > 0 ? lines : [''];
+}
+
+/**
+ * Calculates label position coordinates based on QR code position and cell dimensions
+ * 
+ * @param qrX - QR code X coordinate
+ * @param qrY - QR code Y coordinate  
+ * @param qrSize - QR code size
+ * @param cellWidth - Cell width
+ * @param cellHeight - Cell height
+ * @param labelPosition - Position relative to QR code
+ * @param textWidth - Width of text to position
+ * @param textHeight - Height of text to position
+ * @param padding - Padding in points
+ * @returns Label coordinates
+ */
+export function calculateLabelPosition(
+  qrX: number,
+  qrY: number,
+  qrSize: number,
+  cellWidth: number,
+  cellHeight: number,
+  labelPosition: LabelPosition,
+  textWidth: number,
+  textHeight: number,
+  padding: number = 4
+): { x: number; y: number } {
+  const cellCenterX = qrX + (cellWidth / 2);
+  const cellCenterY = qrY + (cellHeight / 2);
+
+  switch (labelPosition) {
+    case 'above':
+      return {
+        x: cellCenterX - (textWidth / 2),
+        y: qrY + qrSize + padding
+      };
+
+    case 'below':
+      return {
+        x: cellCenterX - (textWidth / 2),
+        y: qrY - textHeight - padding
+      };
+
+    case 'left':
+      return {
+        x: qrX - textWidth - padding,
+        y: cellCenterY - (textHeight / 2)
+      };
+
+    case 'right':
+      return {
+        x: qrX + qrSize + padding,
+        y: cellCenterY - (textHeight / 2)
+      };
+
+    case 'inside-bottom':
+      return {
+        x: cellCenterX - (textWidth / 2),
+        y: qrY + padding
+      };
+
+    case 'inside-top':
+      return {
+        x: cellCenterX - (textWidth / 2),
+        y: qrY + qrSize - textHeight - padding
+      };
+
+    default:
+      // Default to below
+      return {
+        x: cellCenterX - (textWidth / 2),
+        y: qrY - textHeight - padding
+      };
+  }
+}
+
+/**
+ * Validates label text for PDF embedding
+ * 
+ * @param text - Text to validate
+ * @returns True if text is valid, false otherwise
+ */
+export function validateLabelText(text: string): boolean {
+  if (!text || typeof text !== 'string') {
+    return false;
+  }
+
+  // Check for reasonable length
+  if (text.length > 200) {
+    return false;
+  }
+
+  // Basic Unicode support check
+  try {
+    // Test if text can be encoded/decoded properly
+    const encoded = encodeURIComponent(text);
+    const decoded = decodeURIComponent(encoded);
+    return decoded === text;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Adds a text label to a PDF page for a QR code item
+ * 
+ * @param page - PDF page to add label to
+ * @param doc - PDF document (needed for font embedding)
+ * @param text - Label text
+ * @param qrX - QR code X coordinate
+ * @param qrY - QR code Y coordinate
+ * @param qrSize - QR code size
+ * @param cellWidth - Cell width
+ * @param cellHeight - Cell height (optional, defaults to cellWidth)
+ * @param options - Label styling and positioning options
+ * @returns Result of the label positioning operation
+ * 
+ * @example
+ * ```typescript
+ * const result = await addQRLabelToPDF(page, doc, 'Item 001', 100, 100, 80, 100);
+ * if (result.success) {
+ *   console.log(`Label positioned at ${result.position.x}, ${result.position.y}`);
+ * }
+ * ```
+ */
+export async function addQRLabelToPDF(
+  page: PDFPage,
+  doc: PDFDocument,
+  text: string,
+  qrX: number,
+  qrY: number,
+  qrSize: number,
+  cellWidth: number,
+  cellHeight?: number,
+  options: QRLabelOptions = {}
+): Promise<LabelPositionResult> {
+  try {
+    if (!page || !doc) {
+      throw new PDFGenerationError('Both PDF page and document are required');
+    }
+
+    if (!validateLabelText(text)) {
+      throw new PDFGenerationError('Invalid label text');
+    }
+
+    const finalCellHeight = cellHeight || cellWidth;
+    const opts = { ...DEFAULT_LABEL_OPTIONS, ...options };
+
+    // Validate coordinates and dimensions
+    if (!Number.isFinite(qrX) || !Number.isFinite(qrY) || !Number.isFinite(qrSize)) {
+      throw new PDFGenerationError('QR code position and size must be finite numbers');
+    }
+
+    if (!Number.isFinite(cellWidth) || !Number.isFinite(finalCellHeight)) {
+      throw new PDFGenerationError('Cell dimensions must be finite numbers');
+    }
+
+    if (cellWidth <= 0 || finalCellHeight <= 0 || qrSize <= 0) {
+      throw new PDFGenerationError('Cell dimensions and QR size must be positive');
+    }
+
+    // Embed font
+    let font: PDFFont;
+    switch (opts.font) {
+      case 'TimesRoman':
+        font = await doc.embedFont(StandardFonts.TimesRoman);
+        break;
+      case 'Courier':
+        font = await doc.embedFont(StandardFonts.Courier);
+        break;
+      default:
+        font = await doc.embedFont(StandardFonts.Helvetica);
+    }
+
+    // Calculate available space for label
+    const padding = opts.padding || 4;
+    const availableWidth = opts.maxWidth || (cellWidth - 2 * padding);
+    const availableHeight = Math.max(20, finalCellHeight * 0.3); // Reserve 30% of cell height for label
+
+    // Calculate optimal font size
+    const fontSize = opts.fontSize || calculateOptimalFontSize(
+      text,
+      availableWidth,
+      availableHeight,
+      font,
+      6,
+      14
+    );
+
+    // Wrap text to fit width
+    const lines = wrapText(text, availableWidth, font, fontSize);
+    
+    // Calculate total text dimensions
+    const maxLineWidth = Math.max(...lines.map(line => font.widthOfTextAtSize(line, fontSize)));
+    const totalTextHeight = lines.length * fontSize * (opts.lineSpacing || 1.2);
+
+    // Calculate label position
+    const labelPos = calculateLabelPosition(
+      qrX,
+      qrY,
+      qrSize,
+      cellWidth,
+      finalCellHeight,
+      opts.position || 'below',
+      maxLineWidth,
+      totalTextHeight,
+      padding
+    );
+
+    // Check if label fits within page bounds
+    const pageSize = page.getSize();
+    if (labelPos.x < 0 || labelPos.y < 0 || 
+        labelPos.x + maxLineWidth > pageSize.width || 
+        labelPos.y + totalTextHeight > pageSize.height) {
+      // Try alternative position
+      const altPosition: LabelPosition = opts.position === 'above' ? 'below' : 'above';
+      const altLabelPos = calculateLabelPosition(
+        qrX,
+        qrY,
+        qrSize,
+        cellWidth,
+        finalCellHeight,
+        altPosition,
+        maxLineWidth,
+        totalTextHeight,
+        padding
+      );
+      
+      if (altLabelPos.x >= 0 && altLabelPos.y >= 0 && 
+          altLabelPos.x + maxLineWidth <= pageSize.width && 
+          altLabelPos.y + totalTextHeight <= pageSize.height) {
+        labelPos.x = altLabelPos.x;
+        labelPos.y = altLabelPos.y;
+      }
+    }
+
+    // Draw each line of text
+    const lineHeight = fontSize * (opts.lineSpacing || 1.2);
+    const color = opts.color || { red: 0, green: 0, blue: 0 };
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const lineWidth = font.widthOfTextAtSize(line, fontSize);
+      
+      let lineX = labelPos.x;
+      
+      // Apply horizontal alignment
+      switch (opts.alignment) {
+        case 'center':
+          lineX = labelPos.x + (maxLineWidth - lineWidth) / 2;
+          break;
+        case 'right':
+          lineX = labelPos.x + maxLineWidth - lineWidth;
+          break;
+        default:
+          // Left alignment (default)
+          break;
+      }
+
+      const lineY = labelPos.y + totalTextHeight - (i + 1) * lineHeight;
+
+      page.drawText(line, {
+        x: lineX,
+        y: lineY,
+        size: fontSize,
+        font: font,
+        color: rgb(color.red, color.green, color.blue)
+      });
+    }
+
+    return {
+      success: true,
+      position: labelPos,
+      fontSize: fontSize,
+      lines: lines
+    };
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error during label positioning';
+    
+    return {
+      success: false,
+      position: { x: qrX, y: qrY },
+      fontSize: 8,
+      lines: [text],
+      error: errorMessage
+    };
+  }
+}
+
+/**
+ * Adds multiple labels to a page for multiple QR codes
+ * 
+ * @param page - PDF page to add labels to
+ * @param doc - PDF document (needed for font embedding)
+ * @param labels - Array of label data
+ * @returns Array of label positioning results
+ */
+export async function addMultipleQRLabelsToPDF(
+  page: PDFPage,
+  doc: PDFDocument,
+  labels: Array<{
+    text: string;
+    qrX: number;
+    qrY: number;
+    qrSize: number;
+    cellWidth: number;
+    cellHeight?: number;
+    options?: QRLabelOptions;
+  }>
+): Promise<LabelPositionResult[]> {
+  if (!page || !doc) {
+    throw new PDFGenerationError('Both PDF page and document are required');
+  }
+
+  if (!Array.isArray(labels) || labels.length === 0) {
+    throw new PDFGenerationError('Labels array is required and must not be empty');
+  }
+
+  const results: LabelPositionResult[] = [];
+
+  // Process labels sequentially to avoid font conflicts
+  for (const label of labels) {
+    try {
+      const result = await addQRLabelToPDF(
+        page,
+        doc,
+        label.text,
+        label.qrX,
+        label.qrY,
+        label.qrSize,
+        label.cellWidth,
+        label.cellHeight,
+        label.options || {}
+      );
+      results.push(result);
+    } catch (error) {
+      // Add failed result but continue with other labels
+      results.push({
+        success: false,
+        position: { x: label.qrX, y: label.qrY },
+        fontSize: 8,
+        lines: [label.text],
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+
+  return results;
 }

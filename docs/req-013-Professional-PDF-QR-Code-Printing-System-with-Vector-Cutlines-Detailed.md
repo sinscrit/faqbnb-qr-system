@@ -331,21 +331,21 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 
 ---
 
-### 14. Implement Label Positioning System (1 point)
+### 14. Implement Label Positioning System (1 point) -unit tested-
 
 **Context**: Position item labels within QR cell boundaries while maintaining readability.
 
 **Current State**: Need to add text labels for items within the calculated grid cells.
 
 **Task Actions**:
-- [ ] Add `addQRLabelToPDF(doc: PDFDocument, text: string, x: number, y: number, cellWidth: number): void` to `src/lib/pdf-generator.ts`
-- [ ] Calculate optimal label position within cell boundaries
-- [ ] Implement text wrapping for long item names
-- [ ] Add font size calculation based on cell dimensions
-- [ ] Ensure labels don't overlap with QR codes
-- [ ] Handle special characters and Unicode text
-- [ ] Test label positioning with various text lengths
-- [ ] Verify text remains readable at print scale
+- [x] Add `addQRLabelToPDF(doc: PDFDocument, text: string, x: number, y: number, cellWidth: number): void` to `src/lib/pdf-generator.ts` -unit tested-
+- [x] Calculate optimal label position within cell boundaries -unit tested-
+- [x] Implement text wrapping for long item names -unit tested-
+- [x] Add font size calculation based on cell dimensions -unit tested-
+- [x] Ensure labels don't overlap with QR codes -unit tested-
+- [x] Handle special characters and Unicode text -unit tested-
+- [x] Test label positioning with various text lengths -unit tested-
+- [x] Verify text remains readable at print scale -unit tested-
 
 **Files to Modify**: 
 - `src/lib/pdf-generator.ts`
