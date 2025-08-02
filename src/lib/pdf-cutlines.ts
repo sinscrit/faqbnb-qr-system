@@ -422,3 +422,211 @@ export function calculateGridBoundaries(layout: GridLayout, actualItemCount?: nu
 
   return boundaries;
 }
+
+// Cutline Grid Generation Functions
+
+/**
+ * Options for cutline grid generation
+ */
+export interface CutlineGridOptions {
+  /** Line drawing options (stroke width, color, dash pattern) */
+  lineOptions?: LineOptions;
+  /** Whether to draw border lines around the entire grid */
+  drawBorder?: boolean;
+  /** Whether to extend lines to page margins */
+  extendToMargins?: boolean;
+  /** Number of actual items on this page (for partial pages) */
+  actualItemCount?: number;
+}
+
+/**
+ * Default options for cutline grid generation
+ */
+export const DEFAULT_CUTLINE_GRID_OPTIONS: CutlineGridOptions = {
+  lineOptions: DEFAULT_CUTLINE_OPTIONS,
+  drawBorder: true,
+  extendToMargins: true
+};
+
+/**
+ * Draws all vertical cutlines for column boundaries
+ * 
+ * @param page - PDF page to draw on
+ * @param boundaries - Calculated grid boundaries
+ * @param layout - Grid layout configuration
+ * @param options - Cutline generation options
+ */
+export function drawVerticalCutlines(
+  page: PDFPage,
+  boundaries: GridBoundaries,
+  layout: GridLayout,
+  options: CutlineGridOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!page) {
+    throw new CutlineGenerationError('PDF page is required for drawing vertical cutlines');
+  }
+
+  if (!boundaries || !Array.isArray(boundaries.columnLines)) {
+    throw new CutlineGenerationError('Valid grid boundaries with column lines are required');
+  }
+
+  const lineOptions = options.lineOptions || DEFAULT_CUTLINE_OPTIONS;
+  const extendToMargins = options.extendToMargins !== false;
+
+  // Calculate vertical line extent
+  const topMargin = (layout.pageHeight - layout.usableHeight) / 2;
+  const bottomMargin = topMargin;
+  
+  const startY = extendToMargins ? bottomMargin : Math.min(...boundaries.rowLines);
+  const endY = extendToMargins ? layout.pageHeight - topMargin : Math.max(...boundaries.rowLines);
+
+  // Draw each vertical column line
+  for (const x of boundaries.columnLines) {
+    drawVerticalDashedLine(page, x, startY, endY, lineOptions);
+  }
+}
+
+/**
+ * Draws all horizontal cutlines for row boundaries
+ * 
+ * @param page - PDF page to draw on
+ * @param boundaries - Calculated grid boundaries
+ * @param layout - Grid layout configuration
+ * @param options - Cutline generation options
+ */
+export function drawHorizontalCutlines(
+  page: PDFPage,
+  boundaries: GridBoundaries,
+  layout: GridLayout,
+  options: CutlineGridOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!page) {
+    throw new CutlineGenerationError('PDF page is required for drawing horizontal cutlines');
+  }
+
+  if (!boundaries || !Array.isArray(boundaries.rowLines)) {
+    throw new CutlineGenerationError('Valid grid boundaries with row lines are required');
+  }
+
+  const lineOptions = options.lineOptions || DEFAULT_CUTLINE_OPTIONS;
+  const extendToMargins = options.extendToMargins !== false;
+
+  // Calculate horizontal line extent
+  const leftMargin = (layout.pageWidth - layout.usableWidth) / 2;
+  const rightMargin = leftMargin;
+  
+  const startX = extendToMargins ? leftMargin : Math.min(...boundaries.columnLines);
+  const endX = extendToMargins ? layout.pageWidth - rightMargin : Math.max(...boundaries.columnLines);
+
+  // Draw each horizontal row line
+  for (const y of boundaries.rowLines) {
+    drawHorizontalDashedLine(page, y, startX, endX, lineOptions);
+  }
+}
+
+/**
+ * Draws border lines around the entire grid area
+ * 
+ * @param page - PDF page to draw on
+ * @param layout - Grid layout configuration
+ * @param options - Cutline generation options
+ */
+export function drawGridBorder(
+  page: PDFPage,
+  layout: GridLayout,
+  options: CutlineGridOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!page) {
+    throw new CutlineGenerationError('PDF page is required for drawing grid border');
+  }
+
+  const lineOptions = options.lineOptions || DEFAULT_CUTLINE_OPTIONS;
+  
+  // Calculate border coordinates
+  const leftMargin = (layout.pageWidth - layout.usableWidth) / 2;
+  const rightMargin = leftMargin;
+  const topMargin = (layout.pageHeight - layout.usableHeight) / 2;
+  const bottomMargin = topMargin;
+  
+  const left = leftMargin;
+  const right = layout.pageWidth - rightMargin;
+  const bottom = bottomMargin;
+  const top = layout.pageHeight - topMargin;
+
+  // Draw border rectangle
+  drawHorizontalDashedLine(page, bottom, left, right, lineOptions); // Bottom border
+  drawHorizontalDashedLine(page, top, left, right, lineOptions);    // Top border
+  drawVerticalDashedLine(page, left, bottom, top, lineOptions);     // Left border
+  drawVerticalDashedLine(page, right, bottom, top, lineOptions);    // Right border
+}
+
+/**
+ * Validates cutline generation options
+ * 
+ * @param options - Cutline generation options to validate
+ * @throws CutlineGenerationError if options are invalid
+ */
+export function validateCutlineGridOptions(options: CutlineGridOptions): void {
+  if (!options) {
+    return; // Null/undefined options are acceptable (defaults will be used)
+  }
+
+  // Validate line options if provided
+  if (options.lineOptions) {
+    // Basic validation - the line drawing functions will do detailed validation
+    if (typeof options.lineOptions.strokeWidth !== 'number' || options.lineOptions.strokeWidth <= 0) {
+      throw new CutlineGenerationError('Line options must have a positive stroke width');
+    }
+  }
+
+  // Validate boolean options
+  if (options.drawBorder !== undefined && typeof options.drawBorder !== 'boolean') {
+    throw new CutlineGenerationError('drawBorder option must be a boolean');
+  }
+
+  if (options.extendToMargins !== undefined && typeof options.extendToMargins !== 'boolean') {
+    throw new CutlineGenerationError('extendToMargins option must be a boolean');
+  }
+
+  // Validate actualItemCount if provided
+  if (options.actualItemCount !== undefined) {
+    if (!Number.isInteger(options.actualItemCount) || options.actualItemCount < 0) {
+      throw new CutlineGenerationError('actualItemCount must be a non-negative integer');
+    }
+  }
+}
+
+/**
+ * Generates complete cutline grid for a PDF page using calculated boundaries and line drawing utilities
+ * 
+ * @param page - PDF page to draw cutlines on
+ * @param layout - Grid layout configuration
+ * @param options - Cutline generation options
+ */
+export function generateCutlineGrid(
+  page: PDFPage,
+  layout: GridLayout,
+  options: CutlineGridOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!page) {
+    throw new CutlineGenerationError('PDF page is required for cutline grid generation');
+  }
+
+  // Validate inputs
+  validateGridLayout(layout);
+  validateCutlineGridOptions(options);
+
+  // Calculate grid boundaries
+  const boundaries = calculateGridBoundaries(layout, options.actualItemCount);
+
+  // Draw vertical cutlines (column boundaries)
+  drawVerticalCutlines(page, boundaries, layout, options);
+
+  // Draw horizontal cutlines (row boundaries)
+  drawHorizontalCutlines(page, boundaries, layout, options);
+
+  // Draw border lines if requested
+  if (options.drawBorder !== false) {
+    drawGridBorder(page, layout, options);
+  }
+}

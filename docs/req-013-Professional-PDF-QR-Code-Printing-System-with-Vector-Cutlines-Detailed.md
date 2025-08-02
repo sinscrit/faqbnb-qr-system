@@ -213,21 +213,21 @@ Current database structure analysis completed using Supabase MCP tools. The PDF 
 
 ---
 
-### 9. Implement Cutline Grid Generation (1 point)
+### 9. Implement Cutline Grid Generation (1 point) -unit tested-
 
 **Context**: Generate complete cutline grid for a PDF page using calculated boundaries and line drawing utilities.
 
 **Current State**: Need to combine boundary detection with line drawing to create full cutting grid.
 
 **Task Actions**:
-- [ ] Add `generateCutlineGrid(doc: PDFDocument, layout: GridLayout): void` to `pdf-cutlines.ts`
-- [ ] Draw all vertical cutlines for column boundaries
-- [ ] Draw all horizontal cutlines for row boundaries
-- [ ] Ensure lines extend to page margins properly
-- [ ] Handle intersection points correctly
-- [ ] Add option to draw border lines around entire grid
-- [ ] Test cutline generation with various layouts
-- [ ] Verify generated cutlines align with QR positions
+- [x] Add `generateCutlineGrid(doc: PDFDocument, layout: GridLayout): void` to `pdf-cutlines.ts` -unit tested-
+- [x] Draw all vertical cutlines for column boundaries -unit tested-
+- [x] Draw all horizontal cutlines for row boundaries -unit tested-
+- [x] Ensure lines extend to page margins properly -unit tested-
+- [x] Handle intersection points correctly -unit tested-
+- [x] Add option to draw border lines around entire grid -unit tested-
+- [x] Test cutline generation with various layouts -unit tested-
+- [x] Verify generated cutlines align with QR positions -unit tested-
 
 **Files to Modify**: 
 - `src/lib/pdf-cutlines.ts`
