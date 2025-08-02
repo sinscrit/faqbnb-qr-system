@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from '@/components/LoginForm';
 import { AlertCircle, CheckCircle, Home } from 'lucide-react';
+import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated';
 
 interface LoginMessage {
   type: 'error' | 'success' | 'info';
@@ -17,146 +18,55 @@ export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
+  
+  // Debug logging for auth stuck issues
+  const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
+  
+  console.log(`${DEBUG_PREFIX} LOGIN_PAGE_MOUNTED`, {
+    timestamp: new Date().toISOString(),
+    url: window.location.href,
+    authLoading,
+    hasUser: !!user,
+    userId: user?.id
+  });
+  
+  // Use the custom hook to handle redirection
+  useRedirectIfAuthenticated(user, authLoading, '/admin');
+  
   const [loginMessage, setLoginMessage] = useState<LoginMessage | null>(null);
-  const [showLoginForm, setShowLoginForm] = useState(false);
-
-  // Handle redirect loops by clearing sessions if we keep coming back to login
-  useEffect(() => {
-    const redirectParam = searchParams.get('redirect');
-    if (redirectParam && window.location.href.includes('redirect=')) {
-      // If we're on login page with a redirect param, just clean up the URL
-      // Don't clear sessions as this destroys valid Supabase authentication
-      console.log('Login page with redirect param detected, cleaning URL');
-      
-      // Only remove the redirect parameter to clean up URL, don't clear sessions
-      const url = new URL(window.location.href);
-      const cleanParams = new URLSearchParams();
-      
-      // Keep non-redirect parameters but remove redirect to clean up URL
-      url.searchParams.forEach((value, key) => {
-        if (key !== 'redirect') {
-          cleanParams.set(key, value);
-        }
-      });
-      
-      const cleanUrl = cleanParams.toString() ? `/login?${cleanParams.toString()}` : '/login';
-      window.history.replaceState({}, '', cleanUrl);
-    }
-  }, [searchParams]);
 
   // Handle URL parameters for messages
   useEffect(() => {
-    const error = searchParams.get('error');
     const message = searchParams.get('message');
+    const type = searchParams.get('type');
 
-    if (error) {
-      switch (error) {
-        case 'access_denied':
-          setLoginMessage({
-            type: 'error',
-            message: 'Access denied. Admin privileges are required to access this system.',
-          });
-          break;
-        case 'session_expired':
-          setLoginMessage({
-            type: 'info',
-            message: 'Your session has expired. Please sign in again.',
-          });
-          break;
-        case 'auth_error':
-          setLoginMessage({
-            type: 'error',
-            message: 'An authentication error occurred. Please try signing in again.',
-          });
-          break;
-        case 'logout_error':
-          setLoginMessage({
-            type: 'error',
-            message: 'There was an error during logout. Please try signing in again.',
-          });
-          break;
-        default:
-          setLoginMessage({
-            type: 'error',
-            message: 'An error occurred. Please try signing in again.',
-          });
-      }
-    } else if (message) {
-      switch (message) {
-        case 'logged_out':
-          setLoginMessage({
-            type: 'success',
-            message: 'You have been successfully signed out.',
-          });
-          break;
-        default:
-          setLoginMessage({
-            type: 'info',
-            message: message,
-          });
-      }
+    if (message) {
+      setLoginMessage({
+        type: (type === 'success' || type === 'error' || type === 'info') ? type : 'info',
+        message: decodeURIComponent(message),
+      });
+      // Clean up URL
+      window.history.replaceState({}, '', '/login');
     }
   }, [searchParams]);
 
-  // Redirect if already authenticated (with better validation)
-  useEffect(() => {
-    console.log('[AUTH-RACE-DEBUG] LoginPageContent useEffect triggered');
-    
-    // If there's a redirect parameter, DON'T do client-side redirect
-    // Let middleware handle it to prevent loops
-    const hasRedirectParam = searchParams.get('redirect');
-    if (hasRedirectParam) {
-      console.log('[AUTH-RACE-DEBUG] Redirect param present - letting middleware handle navigation');
-      return;
-    }
-
-    // Debug: log the current user state
-    console.log('[LOGIN-DEBUG] User state:', { 
-      authLoading, 
-      hasUser: !!user, 
-      userEmail: user?.email, 
-      userRole: user?.role,
-      userId: user?.id
-    });
-
-    // Only redirect if we're confident the user is properly authenticated
-    // AND we're not on a page with redirect params
-    // Simplified condition: just check for user with valid id and email
-    if (!authLoading && user && user.id && user.email) {
-      const redirectTo = '/admin'; // Always redirect to admin for authenticated users
-      console.log('[AUTH-RACE-DEBUG] LoginPageContent attempting redirect to:', redirectTo);
-      
-      // Use window.location.href for immediate redirect to avoid router conflicts
-      window.location.href = redirectTo;
-    } else {
-      console.log('[AUTH-RACE-DEBUG] LoginPageContent redirect conditions not met:', {
-        authLoading,
-        hasUser: !!user,
-        hasId: !!(user?.id),
-        hasEmail: !!(user?.email)
-      });
-    }
-  }, [user, authLoading, router, searchParams]);
-
-  // Show loading if checking auth
+  // Show loading indicator while authentication is in progress
   if (authLoading) {
+    console.log(`${DEBUG_PREFIX} SHOWING_LOADING_STATE`, {
+      timestamp: new Date().toISOString(),
+      authLoading,
+      hasUser: !!user,
+      loadingDuration: 'unknown - add timestamp tracking'
+    });
+    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show redirecting message if user is authenticated (but not if we're forcing login form)
-  if (user && !showLoginForm) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Redirecting to admin panel...</p>
+          <p className="text-gray-600">Loading authentication...</p>
+          <p className="text-xs text-gray-400 mt-2">
+            Debug: Check console for AUTH_STUCK_DEBUG logs
+          </p>
         </div>
       </div>
     );
@@ -265,7 +175,7 @@ export default function LoginPageContent() {
               Back to Home
             </Link>
             {/* Clear Session Button for stuck users */}
-            {(user || showLoginForm) && (
+            {(user || loginMessage) && (
               <button
                 onClick={() => {
                   // Clear any stored sessions and force fresh login
@@ -322,4 +232,4 @@ export default function LoginPageContent() {
       </div>
     </div>
   );
-} 
+}

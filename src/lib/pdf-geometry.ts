@@ -543,6 +543,22 @@ export interface GridLayout {
   gridHeight: number;
   /** Unit of measurement */
   unit: 'pt';
+  /** Page width in points */
+  pageWidth: number;
+  /** Page height in points */
+  pageHeight: number;
+  /** Usable width (page width minus margins) in points */
+  usableWidth: number;
+  /** Usable height (page height minus margins) in points */
+  usableHeight: number;
+  /** Page margins configuration */
+  margins: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+    unit: 'pt';
+  };
 }
 
 /**
@@ -633,7 +649,11 @@ export function calculateGridLayout(
   const startX = usableArea.x;
   const startY = usableArea.y;
   
+  // Convert margins from mm to points for the margins object
+  const marginsPoints = convertMillimetersToPoints(margins);
+  
   return {
+    // Original properties
     columns,
     rows,
     cellWidth,
@@ -644,7 +664,19 @@ export function calculateGridLayout(
     qrSize: qrSizePoints,
     gridWidth: usableArea.width,
     gridHeight: usableArea.height,
-    unit: 'pt'
+    unit: 'pt',
+    // Additional properties needed by cutlines system
+    pageWidth,
+    pageHeight,
+    usableWidth: usableArea.width,
+    usableHeight: usableArea.height,
+    margins: {
+      top: marginsPoints,
+      right: marginsPoints,
+      bottom: marginsPoints,
+      left: marginsPoints,
+      unit: 'pt' as const
+    }
   };
 }
 
@@ -700,8 +732,27 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
  * ```
  */
 export function calculateTotalPages(itemCount: number, itemsPerPage: number): number {
+  // 🔍 DEBUG: Log function input parameters
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  console.log(`${DEBUG_PREFIX} CALCULATE_TOTAL_PAGES_INPUT:`, {
+    itemCount: itemCount,
+    itemCountType: typeof itemCount,
+    itemCountIsNumber: typeof itemCount === 'number',
+    itemCountIsInteger: Number.isInteger(itemCount),
+    itemsPerPage: itemsPerPage,
+    itemsPerPageType: typeof itemsPerPage,
+    itemsPerPageIsNumber: typeof itemsPerPage === 'number',
+    itemsPerPageIsInteger: Number.isInteger(itemsPerPage)
+  });
+
   // Validate inputs
   if (!Number.isInteger(itemCount) || itemCount < 0) {
+    console.log(`${DEBUG_PREFIX} VALIDATION_ERROR_ITEM_COUNT:`, {
+      itemCount: itemCount,
+      itemCountType: typeof itemCount,
+      isInteger: Number.isInteger(itemCount),
+      isNonNegative: itemCount >= 0
+    });
     throw new CoordinateConversionError(`Invalid item count: ${itemCount} (must be non-negative integer)`);
   }
   
@@ -724,7 +775,23 @@ export function calculateTotalPages(itemCount: number, itemsPerPage: number): nu
  * @returns Array of positions for each item with page information
  */
 export function getAllItemPositions(itemCount: number, layout: GridLayout) {
+  // 🔍 DEBUG: Log function input parameters
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  console.log(`${DEBUG_PREFIX} GET_ALL_ITEM_POSITIONS_INPUT:`, {
+    itemCount: itemCount,
+    itemCountType: typeof itemCount,
+    layout: layout,
+    layoutType: typeof layout,
+    layoutItemsPerPage: layout?.itemsPerPage,
+    layoutItemsPerPageType: typeof layout?.itemsPerPage
+  });
+
   const totalPages = calculateTotalPages(itemCount, layout.itemsPerPage);
+  console.log(`${DEBUG_PREFIX} GET_ALL_ITEM_POSITIONS_TOTAL_PAGES:`, {
+    totalPages: totalPages,
+    totalPagesType: typeof totalPages
+  });
+  
   const positions: Array<CellPosition & { page: number; globalIndex: number }> = [];
   
   for (let globalIndex = 0; globalIndex < itemCount; globalIndex++) {

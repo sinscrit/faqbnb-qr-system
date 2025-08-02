@@ -306,14 +306,40 @@ export function QRCodePrintManager({
     try {
       console.log('🔄 Starting PDF generation with settings:', settings);
       
+      // 🔍 DEBUG: Log initial state before conversion
+      const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+      console.log(`${DEBUG_PREFIX} INITIAL_STATE:`, {
+        generatedQRCodesType: typeof generatedQRCodes,
+        generatedQRCodesSize: generatedQRCodes.size,
+        generatedQRCodesIsMap: generatedQRCodes instanceof Map,
+        itemsCount: items.length,
+        settingsReceived: settings
+      });
+      
       // Convert QR codes to the format expected by the PDF generator
       const qrCodesMap = new Map<string, string>();
       for (const [itemId, qrDataUrl] of generatedQRCodes) {
         const item = items.find(item => item.id === itemId);
         if (item) {
-          qrCodesMap.set(item.name, `${window.location.origin}/item/${item.publicId}`);
+          qrCodesMap.set(item.id, `${window.location.origin}/item/${item.publicId}`);
+          console.log(`${DEBUG_PREFIX} MAPPING_ITEM:`, {
+            itemId,
+            itemName: item.name,
+            publicId: item.publicId,
+            url: `${window.location.origin}/item/${item.publicId}`
+          });
+        } else {
+          console.log(`${DEBUG_PREFIX} ITEM_NOT_FOUND:`, { itemId });
         }
       }
+      
+      console.log(`${DEBUG_PREFIX} FINAL_QR_CODES_MAP:`, {
+        type: typeof qrCodesMap,
+        isMap: qrCodesMap instanceof Map,
+        size: qrCodesMap.size,
+        keys: Array.from(qrCodesMap.keys()),
+        entries: Array.from(qrCodesMap.entries())
+      });
 
       const result = await generatePDFFromQRCodes(qrCodesMap, settings, {
         onProgress: (progress) => {
@@ -523,7 +549,7 @@ export function QRCodePrintManager({
 
               <QRCodePrintPreview
                 qrCodes={generatedQRCodes}
-                items={items}
+                items={items.filter(item => generatedQRCodes.has(item.id))}
                 printSettings={printSettings}
                 isGenerating={isGenerating}
               />

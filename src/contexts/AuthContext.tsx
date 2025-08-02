@@ -31,38 +31,65 @@ const GLOBAL_AUTH_PROGRESS_KEY = 'faqbnb_auth_in_progress';
 const AUTH_MUTEX_KEY = 'faqbnb_auth_mutex';
 const AUTH_MUTEX_TIMEOUT = 10000; // 10 seconds
 
-// Mutex lock system to prevent race conditions across multiple bundle instances
-const acquireAuthMutex = (): boolean => {
-  if (typeof window === 'undefined') return false;
+// FIXED: Mutex lock system with proper async race condition handling
+const acquireAuthMutex = (): Promise<boolean> => {
+  const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
+  if (typeof window === 'undefined') return Promise.resolve(false);
   
-  const now = Date.now();
-  const existingLock = localStorage.getItem(AUTH_MUTEX_KEY);
-  
-  // Check if there's an existing lock that hasn't expired
-  if (existingLock) {
-    const lockTime = parseInt(existingLock);
-    if (now - lockTime < AUTH_MUTEX_TIMEOUT) {
-      console.log('[AUTH-MUTEX-DEBUG] Auth lock held by another instance, timestamp:', lockTime);
-      return false; // Lock is still active
-    } else {
-      console.log('[AUTH-MUTEX-DEBUG] Expired lock found, cleaning up and acquiring new lock');
+  return new Promise((resolve) => {
+    const now = Date.now();
+    const existingLock = localStorage.getItem(AUTH_MUTEX_KEY);
+    
+    console.log(`${DEBUG_PREFIX} MUTEX_ACQUIRE_ATTEMPT`, {
+      timestamp: new Date().toISOString(),
+      now,
+      existingLock,
+      existingLockAge: existingLock ? now - parseInt(existingLock) : null
+    });
+    
+    // Check if there's an existing lock that hasn't expired
+    if (existingLock) {
+      const lockTime = parseInt(existingLock);
+      if (now - lockTime < AUTH_MUTEX_TIMEOUT) {
+        console.log(`${DEBUG_PREFIX} MUTEX_BLOCKED_BY_EXISTING_LOCK`, {
+          lockTime,
+          age: now - lockTime,
+          timeout: AUTH_MUTEX_TIMEOUT
+        });
+        resolve(false); // Lock is still active
+        return;
+      } else {
+        console.log(`${DEBUG_PREFIX} MUTEX_EXPIRED_LOCK_CLEANUP`, {
+          lockTime,
+          age: now - lockTime
+        });
+      }
     }
-  }
-  
-  // Acquire the lock
-  localStorage.setItem(AUTH_MUTEX_KEY, now.toString());
-  console.log('[AUTH-MUTEX-DEBUG] Auth mutex acquired at:', now);
-  
-  // Double-check we actually got the lock (race condition protection)
-  setTimeout(() => {
-    const currentLock = localStorage.getItem(AUTH_MUTEX_KEY);
-    if (currentLock !== now.toString()) {
-      console.log('[AUTH-MUTEX-DEBUG] Lost mutex race, another instance acquired it');
-      return false;
-    }
-  }, 50);
-  
-  return true;
+    
+    // Acquire the lock
+    localStorage.setItem(AUTH_MUTEX_KEY, now.toString());
+    console.log(`${DEBUG_PREFIX} MUTEX_ACQUIRED`, { timestamp: now });
+    
+    // FIXED: Proper race condition check with async resolution
+    setTimeout(() => {
+      const currentLock = localStorage.getItem(AUTH_MUTEX_KEY);
+      const success = currentLock === now.toString();
+      console.log(`${DEBUG_PREFIX} MUTEX_RACE_CHECK`, {
+        success,
+        currentLock,
+        expectedLock: now.toString(),
+        note: 'FIXED: Now properly returning race condition result!'
+      });
+      
+      if (!success) {
+        console.error(`${DEBUG_PREFIX} MUTEX_RACE_CONDITION_DETECTED - Returning false!`);
+      } else {
+        console.log(`${DEBUG_PREFIX} MUTEX_SUCCESSFULLY_ACQUIRED`);
+      }
+      
+      resolve(success);
+    }, 50);
+  });
 };
 
 const releaseAuthMutex = (): void => {
@@ -192,18 +219,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [switchingAccount, setSwitchingAccount] = useState(false);
 
   // Prevent multiple simultaneous auth initializations
-  const [authInitialized, setAuthInitialized] = useState(false);
+      const [authInitialized, setAuthInitialized] = useState(getGlobalAuthInitialized());
 
-  console.log('[AUTH-RACE-DEBUG] AuthContext component rendered, authInitialized:', authInitialized, 'globalAuthInitialized:', getGlobalAuthInitialized());
+  const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
+  
+  console.log(`${DEBUG_PREFIX} AUTH_CONTEXT_RENDERED`, {
+    timestamp: new Date().toISOString(),
+    authInitialized,
+    globalAuthInitialized: getGlobalAuthInitialized(),
+    loading,
+    hasUser: !!user,
+    userId: user?.id
+  });
 
   // Initialize auth state with account context
   useEffect(() => {
+    const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
+    
+    // FAILSAFE: Absolute timeout to prevent infinite loading
+    const loadingFailsafe = setTimeout(() => {
+      console.error(`${DEBUG_PREFIX} LOADING_TIMEOUT_FAILSAFE_TRIGGERED`, {
+        timestamp: new Date().toISOString(),
+        message: 'Force clearing loading state after 15 seconds'
+      });
+      setLoading(false);
+    }, 15000); // 15 second absolute maximum
+
     const initializeWithMutex = async () => {
-      console.log('[AUTH-RACE-DEBUG] useEffect triggered, globalAuthInitialized:', getGlobalAuthInitialized(), 'globalAuthInProgress:', getGlobalAuthInProgress());
+      console.log(`${DEBUG_PREFIX} USE_EFFECT_TRIGGERED`, {
+        timestamp: new Date().toISOString(),
+        globalAuthInitialized: getGlobalAuthInitialized(),
+        globalAuthInProgress: getGlobalAuthInProgress(),
+        currentLoading: loading,
+        hasUser: !!user
+      });
       
       // If auth is already completed globally, skip everything
       if (getGlobalAuthInitialized()) {
-        console.log('[AUTH-RACE-DEBUG] Auth already completed globally, clearing loading state and loading session');
+        console.log(`${DEBUG_PREFIX} AUTH_ALREADY_COMPLETE_GLOBALLY`, {
+          timestamp: new Date().toISOString(),
+          action: 'Setting loading to false'
+        });
         setLoading(false); // Clear loading state for this instance
         
         // Load current session data for this instance since another instance completed auth
@@ -227,8 +283,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
       
-      // Try to acquire the mutex lock
-      if (!acquireAuthMutex()) {
+      // Try to acquire the mutex lock (now async)
+      const mutexAcquired = await acquireAuthMutex();
+      if (!mutexAcquired) {
         console.log('[AUTH-RACE-DEBUG] Could not acquire mutex, waiting for other instance to complete');
         
         // Wait for the other instance to complete authentication
@@ -257,7 +314,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           
         } else {
           console.log('[AUTH-RACE-DEBUG] Other instance failed or timed out, attempting to acquire lock again');
-          if (!acquireAuthMutex()) {
+          const retryMutexAcquired = await acquireAuthMutex();
+          if (!retryMutexAcquired) {
             console.log('[AUTH-RACE-DEBUG] Still cannot acquire lock, giving up and clearing loading state');
             setLoading(false); // Clear loading state to prevent indefinite loading
             return;
@@ -307,6 +365,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.log('[AUTH-RACE-DEBUG] Cleaning up auth context');
           subscription?.unsubscribe();
           clearInterval(intervalId);
+          clearTimeout(loadingFailsafe); // Clean up failsafe timeout
           // Note: Don't reset globalAuthInitialized here as other instances might still need it
         };
       } else {
@@ -335,7 +394,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     };
     
-    initializeWithMutex();
+    initializeWithMutex().finally(() => {
+      // Always clear the failsafe timeout when auth completes
+      clearTimeout(loadingFailsafe);
+    });
+    
+    // Cleanup function
+    return () => {
+      clearTimeout(loadingFailsafe);
+    };
   }, []); // Empty dependencies to prevent re-runs
 
   // Quick authentication fallback - bypasses complex account context

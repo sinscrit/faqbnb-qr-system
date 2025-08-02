@@ -460,34 +460,58 @@ export async function addQRCodeToPage(
   size: number,
   options: QRCodeEmbedOptions = {}
 ): Promise<QRCodeEmbedResult> {
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:"; // Define locally in case it's not accessible
   try {
+    console.log(`${DEBUG_PREFIX} addQRCodeToPage START:`, {
+      hasPage: !!page,
+      hasDoc: !!doc,
+      x, y, size,
+      qrDataUrlValid: !!qrDataUrl,
+      qrDataUrlLength: qrDataUrl?.length,
+      qrDataUrlStart: qrDataUrl?.substring(0, 30) + '...'
+    });
+
     if (!page || !doc) {
       throw new PDFGenerationError('Both PDF page and document are required');
     }
 
     // Validate and convert QR code data
-    if (!validateQRForPDFEmbedding(qrDataUrl)) {
+    const isValidQR = validateQRForPDFEmbedding(qrDataUrl);
+    console.log(`${DEBUG_PREFIX} QR_VALIDATION:`, { isValidQR, qrDataUrl: qrDataUrl?.substring(0, 50) + '...' });
+    
+    if (!isValidQR) {
       throw new PDFGenerationError('Invalid QR code data URL for PDF embedding');
     }
 
     // Validate embedding parameters
     const finalSize = options.size || size;
+    console.log(`${DEBUG_PREFIX} EMBEDDING_PARAMS:`, { x, y, size, finalSize });
     validateQRCodeEmbedding(page, x, y, finalSize);
 
     // Convert QR code to binary data
+    console.log(`${DEBUG_PREFIX} CONVERTING_QR_DATA...`);
     const imageData = convertQRCodeForPDF(qrDataUrl);
+    console.log(`${DEBUG_PREFIX} QR_DATA_CONVERTED:`, { imageDataLength: imageData.length });
     
     // Determine image format and embed accordingly
     const imageFormat = getQRImageFormat(qrDataUrl);
+    console.log(`${DEBUG_PREFIX} IMAGE_FORMAT:`, { imageFormat });
     let embeddedImage: PDFImage;
 
     if (imageFormat === 'png') {
+      console.log(`${DEBUG_PREFIX} EMBEDDING_PNG...`);
       embeddedImage = await doc.embedPng(imageData);
     } else if (imageFormat === 'jpeg' || imageFormat === 'jpg') {
+      console.log(`${DEBUG_PREFIX} EMBEDDING_JPG...`);
       embeddedImage = await doc.embedJpg(imageData);
     } else {
       throw new PDFGenerationError(`Unsupported image format: ${imageFormat}`);
     }
+
+    console.log(`${DEBUG_PREFIX} IMAGE_EMBEDDED:`, {
+      width: embeddedImage.width,
+      height: embeddedImage.height
+    });
 
     // Calculate final dimensions
     const aspectRatio = embeddedImage.width / embeddedImage.height;
@@ -502,7 +526,12 @@ export async function addQRCodeToPage(
       }
     }
 
+    console.log(`${DEBUG_PREFIX} FINAL_DIMENSIONS:`, {
+      finalWidth, finalHeight, aspectRatio, x, y
+    });
+
     // Draw the QR code on the specific page
+    console.log(`${DEBUG_PREFIX} DRAWING_IMAGE...`);
     page.drawImage(embeddedImage, {
       x: x,
       y: y,
@@ -511,6 +540,8 @@ export async function addQRCodeToPage(
       opacity: options.opacity || 1.0,
       rotate: options.rotation ? { type: 'degrees', angle: options.rotation } : undefined
     });
+    
+    console.log(`${DEBUG_PREFIX} IMAGE_DRAWN_SUCCESSFULLY`);
 
     return {
       success: true,
@@ -1303,6 +1334,19 @@ export async function generatePDFFromQRCodes(
   const startTime = Date.now();
   const { onProgress } = options;
 
+  // 🔍 DEBUG: Log function input parameters
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  console.log(`${DEBUG_PREFIX} FUNCTION_INPUT:`, {
+    qrCodesType: typeof qrCodes,
+    qrCodesIsMap: qrCodes instanceof Map,
+    qrCodesSize: qrCodes?.size,
+    qrCodesKeys: qrCodes instanceof Map ? Array.from(qrCodes.keys()) : 'not_a_map',
+    settingsType: typeof settings,
+    settings: settings,
+    optionsType: typeof options,
+    options: options
+  });
+
   try {
     onProgress?.({
       step: 'Validating input',
@@ -1338,8 +1382,34 @@ export async function generatePDFFromQRCodes(
 
     // Step 3: Calculate layout
     const pageLayout = getStandardPageLayout(settings.pageFormat, settings.margins);
-    const layout = calculateGridLayout(pageLayout, settings.qrSize, qrCodes.size);
-    const totalPages = calculateTotalPages(layout, qrCodes.size);
+    console.log(`${DEBUG_PREFIX} PAGE_LAYOUT:`, {
+      pageLayoutType: typeof pageLayout,
+      pageLayout: pageLayout
+    });
+    
+    const layout = calculateGridLayout(
+      pageLayout.page.width, 
+      pageLayout.page.height, 
+      settings.margins, 
+      settings.qrSize
+    );
+    console.log(`${DEBUG_PREFIX} GRID_LAYOUT:`, {
+      layoutType: typeof layout,
+      layout: layout
+    });
+    
+    console.log(`${DEBUG_PREFIX} BEFORE_CALCULATE_TOTAL_PAGES:`, {
+      qrCodesSize: qrCodes.size,
+      qrCodesSizeType: typeof qrCodes.size,
+      itemsPerPage: layout.itemsPerPage,
+      itemsPerPageType: typeof layout.itemsPerPage
+    });
+    
+    const totalPages = calculateTotalPages(qrCodes.size, layout.itemsPerPage);
+    console.log(`${DEBUG_PREFIX} TOTAL_PAGES_RESULT:`, {
+      totalPages: totalPages,
+      totalPagesType: typeof totalPages
+    });
 
     onProgress?.({
       step: 'Calculating layout',
@@ -1401,27 +1471,101 @@ export async function generatePDFFromQRCodes(
 
     // Step 6: Embed QR codes and labels
     const stats = { successfulQRCodes: 0, failedQRCodes: 0, successfulLabels: 0, failedLabels: 0 };
-    const allPositions = getAllItemPositions(layout, qrDataUrls.size);
+    
+    console.log(`${DEBUG_PREFIX} BEFORE_GET_ALL_ITEM_POSITIONS:`, {
+      layoutType: typeof layout,
+      layout: layout,
+      qrDataUrlsSize: qrDataUrls.size,
+      qrDataUrlsSizeType: typeof qrDataUrls.size,
+      correctOrderShouldBe: 'getAllItemPositions(qrDataUrls.size, layout)'
+    });
+    
+    const allPositionsResult = getAllItemPositions(qrDataUrls.size, layout); // FIXED: Correct parameter order!
+    
+    // OPTION C: Create Map from positions array, mapping itemId to position
+    const allPositions = new Map();
+    const itemIds = Array.from(qrDataUrls.keys());
+    console.log(`${DEBUG_PREFIX} CREATING_POSITION_MAP:`, {
+      positionsArrayLength: allPositionsResult.positions.length,
+      itemIdsLength: itemIds.length,
+      itemIds: itemIds.slice(0, 3), // Show first 3 for debugging
+      firstPositions: allPositionsResult.positions.slice(0, 3) // Show first 3 for debugging
+    });
+    
+    itemIds.forEach((itemId, index) => {
+      if (index < allPositionsResult.positions.length) {
+        allPositions.set(itemId, allPositionsResult.positions[index]);
+      } else {
+        console.warn(`${DEBUG_PREFIX} Missing position for index ${index}, itemId: ${itemId}`);
+      }
+    });
+    
+    console.log(`${DEBUG_PREFIX} POSITION_MAP_CREATED:`, {
+      mapSize: allPositions.size,
+      expectedSize: itemIds.length,
+      mapHasCorrectSize: allPositions.size === itemIds.length
+    });
     processed = 0;
 
     for (const [itemId, qrDataUrl] of qrDataUrls) {
+      console.log(`${DEBUG_PREFIX} PROCESSING_QR_CODE:`, {
+        itemId: itemId,
+        itemIdType: typeof itemId,
+        qrDataUrlLength: qrDataUrl ? qrDataUrl.length : 'null',
+        mapHasItem: allPositions.has(itemId)
+      });
+      
       const itemPosition = allPositions.get(itemId);
+      console.log(`${DEBUG_PREFIX} ITEM_POSITION_RESULT:`, {
+        itemPosition: itemPosition,
+        itemPositionType: typeof itemPosition,
+        hasPage: itemPosition?.page !== undefined,
+        page: itemPosition?.page
+      });
+      
       if (!itemPosition) {
+        console.log(`${DEBUG_PREFIX} FAILED_NO_POSITION:`, { itemId, stats: stats.failedQRCodes });
         stats.failedQRCodes++;
         continue;
       }
 
       const page = pages[itemPosition.page];
+      console.log(`${DEBUG_PREFIX} PAGE_LOOKUP:`, {
+        pageIndex: itemPosition.page,
+        pageExists: !!page,
+        totalPages: pages.length
+      });
+      
       if (!page) {
+        console.log(`${DEBUG_PREFIX} FAILED_NO_PAGE:`, { itemId, pageIndex: itemPosition.page, stats: stats.failedQRCodes });
         stats.failedQRCodes++;
         continue;
       }
 
       try {
+        console.log(`${DEBUG_PREFIX} BEFORE_QR_EMBEDDING:`, {
+          itemId: itemId,
+          qrDataUrlLength: qrDataUrl ? qrDataUrl.length : 'null',
+          qrDataUrlStart: qrDataUrl ? qrDataUrl.substring(0, 50) + '...' : 'null',
+          position: { x: itemPosition.x, y: itemPosition.y },
+          cellSize: layout.cellSize,
+          pageWidth: page.getWidth(),
+          pageHeight: page.getHeight()
+        });
+        
         // Embed QR code
         const qrResult = await addQRCodeToPage(
           page, doc, qrDataUrl, itemPosition.x, itemPosition.y, layout.cellSize, {}
         );
+        
+        console.log(`${DEBUG_PREFIX} QR_EMBEDDING_RESULT:`, {
+          itemId: itemId,
+          success: qrResult?.success,
+          error: qrResult?.error,
+          resultType: typeof qrResult,
+          position: qrResult?.position,
+          size: qrResult?.size
+        });
 
         if (qrResult.success) {
           stats.successfulQRCodes++;
