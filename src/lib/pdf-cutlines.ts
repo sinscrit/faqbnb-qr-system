@@ -630,3 +630,245 @@ export function generateCutlineGrid(
     drawGridBorder(page, layout, options);
   }
 }
+
+// Multi-Page Cutline Consistency Functions
+
+/**
+ * Options for multi-page cutline generation
+ */
+export interface MultiPageCutlineOptions extends CutlineGridOptions {
+  /** Total number of items across all pages */
+  totalItemCount?: number;
+  /** Items per page (derived from layout if not specified) */
+  itemsPerPage?: number;
+}
+
+/**
+ * Information about a specific page in a multi-page document
+ */
+export interface PageInfo {
+  /** Page number (1-based) */
+  pageNumber: number;
+  /** Total number of pages in document */
+  totalPages: number;
+  /** Number of items on this specific page */
+  itemsOnPage: number;
+  /** Starting item index for this page (0-based) */
+  startItemIndex: number;
+  /** Ending item index for this page (0-based, inclusive) */
+  endItemIndex: number;
+  /** Whether this is a partial page (fewer items than full capacity) */
+  isPartialPage: boolean;
+}
+
+/**
+ * Validates page number and document structure for multi-page operations
+ * 
+ * @param pageNumber - Page number to validate (1-based)
+ * @param totalPages - Total number of pages in document
+ * @param totalItemCount - Total number of items across all pages
+ * @param itemsPerPage - Items per page capacity
+ * @throws CutlineGenerationError if validation fails
+ */
+export function validatePageInfo(
+  pageNumber: number,
+  totalPages: number,
+  totalItemCount: number,
+  itemsPerPage: number
+): void {
+  if (!Number.isInteger(pageNumber) || pageNumber < 1) {
+    throw new CutlineGenerationError('Page number must be a positive integer starting from 1');
+  }
+
+  if (!Number.isInteger(totalPages) || totalPages < 1) {
+    throw new CutlineGenerationError('Total pages must be a positive integer');
+  }
+
+  if (pageNumber > totalPages) {
+    throw new CutlineGenerationError(`Page number ${pageNumber} exceeds total pages ${totalPages}`);
+  }
+
+  if (!Number.isInteger(totalItemCount) || totalItemCount < 0) {
+    throw new CutlineGenerationError('Total item count must be a non-negative integer');
+  }
+
+  if (!Number.isInteger(itemsPerPage) || itemsPerPage < 1) {
+    throw new CutlineGenerationError('Items per page must be a positive integer');
+  }
+
+  // Validate that total items doesn't exceed total capacity
+  const totalCapacity = totalPages * itemsPerPage;
+  if (totalItemCount > totalCapacity) {
+    throw new CutlineGenerationError(
+      `Total items ${totalItemCount} exceeds total capacity ${totalCapacity} (${totalPages} pages × ${itemsPerPage} items/page)`
+    );
+  }
+}
+
+/**
+ * Calculates page information for a specific page in a multi-page document
+ * 
+ * @param pageNumber - Page number (1-based)
+ * @param totalItemCount - Total number of items across all pages
+ * @param itemsPerPage - Items per page capacity
+ * @returns Page information including item count and indices
+ */
+export function calculatePageInfo(
+  pageNumber: number,
+  totalItemCount: number,
+  itemsPerPage: number
+): PageInfo {
+  const totalPages = Math.ceil(totalItemCount / itemsPerPage);
+  
+  validatePageInfo(pageNumber, totalPages, totalItemCount, itemsPerPage);
+
+  const startItemIndex = (pageNumber - 1) * itemsPerPage;
+  const endItemIndex = Math.min(startItemIndex + itemsPerPage - 1, totalItemCount - 1);
+  const itemsOnPage = endItemIndex - startItemIndex + 1;
+  const isPartialPage = itemsOnPage < itemsPerPage;
+
+  return {
+    pageNumber,
+    totalPages,
+    itemsOnPage,
+    startItemIndex,
+    endItemIndex,
+    isPartialPage
+  };
+}
+
+/**
+ * Ensures consistent layout configuration across all pages
+ * 
+ * @param baseLayout - Base grid layout configuration
+ * @param pageInfo - Information about the specific page
+ * @returns Layout configuration adjusted for this page
+ */
+export function ensureConsistentLayout(baseLayout: GridLayout, pageInfo: PageInfo): GridLayout {
+  validateGridLayout(baseLayout);
+
+  // Create a copy of the base layout to avoid mutations
+  const consistentLayout: GridLayout = {
+    ...baseLayout,
+    // Ensure page dimensions are consistent
+    pageWidth: baseLayout.pageWidth,
+    pageHeight: baseLayout.pageHeight,
+    usableWidth: baseLayout.usableWidth,
+    usableHeight: baseLayout.usableHeight,
+    qrSize: baseLayout.qrSize,
+    columns: baseLayout.columns,
+    rows: baseLayout.rows,
+    itemsPerPage: baseLayout.itemsPerPage,
+    margins: { ...baseLayout.margins }
+  };
+
+  // For partial pages, the layout remains the same but fewer items will be positioned
+  // The grid structure should be consistent regardless of item count
+
+  return consistentLayout;
+}
+
+/**
+ * Creates consistent cutline options for multi-page documents
+ * 
+ * @param baseOptions - Base cutline options
+ * @param pageInfo - Information about the specific page
+ * @returns Cutline options adjusted for this page
+ */
+export function createConsistentCutlineOptions(
+  baseOptions: MultiPageCutlineOptions,
+  pageInfo: PageInfo
+): CutlineGridOptions {
+  const options: CutlineGridOptions = {
+    // Ensure line styling is consistent across all pages
+    lineOptions: baseOptions.lineOptions || DEFAULT_CUTLINE_OPTIONS,
+    drawBorder: baseOptions.drawBorder !== false, // Default to true
+    extendToMargins: baseOptions.extendToMargins !== false, // Default to true
+    // Set actual item count for this page (affects row boundary calculation)
+    actualItemCount: pageInfo.itemsOnPage
+  };
+
+  return options;
+}
+
+/**
+ * Adds cutlines to a specific page with guaranteed consistency across multi-page documents
+ * 
+ * @param doc - PDF document
+ * @param pageNumber - Page number to add cutlines to (1-based)
+ * @param layout - Grid layout configuration
+ * @param totalItemCount - Total number of items across all pages
+ * @param options - Multi-page cutline options
+ */
+export function addPageCutlines(
+  doc: PDFDocument,
+  pageNumber: number,
+  layout: GridLayout,
+  totalItemCount: number,
+  options: MultiPageCutlineOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!doc) {
+    throw new CutlineGenerationError('PDF document is required for adding page cutlines');
+  }
+
+  // Validate inputs
+  validateGridLayout(layout);
+  
+  const itemsPerPage = options.itemsPerPage || layout.itemsPerPage;
+  const pageInfo = calculatePageInfo(pageNumber, totalItemCount, itemsPerPage);
+
+  // Get the specific page from the document
+  const pages = doc.getPages();
+  if (pageNumber > pages.length) {
+    throw new CutlineGenerationError(
+      `Page ${pageNumber} does not exist in document (only ${pages.length} pages available)`
+    );
+  }
+
+  const page = pages[pageNumber - 1]; // Convert to 0-based index
+
+  // Ensure consistent layout across all pages
+  const consistentLayout = ensureConsistentLayout(layout, pageInfo);
+
+  // Create consistent cutline options for this page
+  const consistentOptions = createConsistentCutlineOptions(options, pageInfo);
+
+  // Generate cutlines for this page
+  generateCutlineGrid(page, consistentLayout, consistentOptions);
+}
+
+/**
+ * Adds cutlines to all pages in a multi-page document with guaranteed consistency
+ * 
+ * @param doc - PDF document
+ * @param layout - Grid layout configuration
+ * @param totalItemCount - Total number of items across all pages
+ * @param options - Multi-page cutline options
+ */
+export function addAllPagesCutlines(
+  doc: PDFDocument,
+  layout: GridLayout,
+  totalItemCount: number,
+  options: MultiPageCutlineOptions = DEFAULT_CUTLINE_GRID_OPTIONS
+): void {
+  if (!doc) {
+    throw new CutlineGenerationError('PDF document is required for adding cutlines to all pages');
+  }
+
+  validateGridLayout(layout);
+
+  const itemsPerPage = options.itemsPerPage || layout.itemsPerPage;
+  const totalPages = Math.ceil(totalItemCount / itemsPerPage);
+  const documentPages = doc.getPages();
+
+  if (documentPages.length !== totalPages) {
+    throw new CutlineGenerationError(
+      `Document has ${documentPages.length} pages but expected ${totalPages} pages for ${totalItemCount} items`
+    );
+  }
+
+  // Add cutlines to each page
+  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+    addPageCutlines(doc, pageNumber, layout, totalItemCount, options);
+  }
+}
