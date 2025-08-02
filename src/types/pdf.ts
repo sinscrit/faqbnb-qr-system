@@ -42,20 +42,20 @@ export interface CoordinateSystem {
 export interface PDFExportSettings extends QRPrintSettings {
   /** Page format (A4 or Letter) */
   pageFormat: PDFPageFormat;
+  /** Margin size in millimeters */
+  margins: number;
+  /** QR code size in millimeters */
+  qrSize: number;
   /** Whether to include cutlines in the PDF */
   includeCutlines: boolean;
-  /** Whether to include border around the entire grid */
-  includeBorder: boolean;
-  /** Margin size in millimeters */
-  marginSize: number;
-  /** QR code size in millimeters */
-  qrSizeMm: number;
-  /** Whether to extend cutlines to page margins */
-  extendLinesToMargins: boolean;
-  /** Custom PDF title */
-  pdfTitle?: string;
-  /** Custom PDF creator name */
-  pdfCreator?: string;
+  /** Whether to include item labels in the PDF */
+  includeLabels: boolean;
+  /** Number of columns per page (calculated from layout) */
+  columns?: number;
+  /** Number of rows per page (calculated from layout) */
+  rows?: number;
+  /** Total items per page (calculated from layout) */
+  itemsPerPage?: number;
 }
 
 // ================================
