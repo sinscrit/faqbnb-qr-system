@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: Fri Jul 25 17:49:54 CEST 2025 - UC-006 Admin Items Management Interface Added (REQ-006)
+**Last Updated**: Fri Aug 2 10:57:10 CEST 2025 - UC-007 Professional PDF QR Code Printing Added (REQ-013)
 
 ---
 
@@ -301,6 +301,170 @@ Administrators can access a dedicated items management interface that provides c
 - **Productivity**: Quick access to item management actions
 - **Data Visibility**: Clear overview of item statistics and status
 - **Error Recovery**: Robust error handling with recovery options
+
+---
+
+## UC007 - Professional PDF QR Code Printing System
+**Origin**: Request #013 from gen_requests.md  
+**Implementation Status**: ✅ COMPLETED  
+**Date Implemented**: August 2, 2025 10:57 CEST
+
+### Description
+Property managers and administrators can export QR codes as professional PDF documents with vector-based cutting guides, supporting both A4 and US Letter formats. The system generates mathematically precise PDFs with customizable layouts, margins, QR sizes, and optional labels for high-quality printing and professional presentation.
+
+### Actors
+- **Primary**: Property Manager/Administrator
+- **Secondary**: Maintenance Staff, Operations Team
+- **Tertiary**: Print Service Provider
+
+### Preconditions
+- User has generated QR codes for items in QRCodePrintManager
+- User has completed the QR generation process (select, configure, preview steps)
+- QR codes are successfully generated and available for export
+- User has access to PDF export functionality
+
+### Main Flow
+
+#### UC007.1 - Initiate PDF Export from QR Print Manager
+1. User completes QR code generation workflow (select items, configure settings, generate codes)
+2. System displays QR codes in preview step with generated QR codes ready
+3. User clicks "📄 Export PDF" button alongside existing "🖨️ Print QR Codes" button
+4. System validates QR codes availability and opens PDF export options modal
+5. System displays PDF configuration interface with current settings
+
+#### UC007.2 - Configure PDF Export Settings
+1. **Page Format Selection**:
+   - User selects between A4 (210×297mm) or US Letter (8.5×11") format
+   - System displays visual preview of selected page format
+   - System updates layout calculations based on format selection
+
+2. **Margin Configuration**:
+   - User adjusts margins using slider control (5-25mm range)
+   - System provides real-time feedback on usable print area
+   - System validates margin values and clamps to valid range
+
+3. **QR Code Size Configuration**:
+   - User sets QR code size using slider (20-60mm range)
+   - System displays visual preview of QR code at selected size
+   - System automatically calculates grid layout based on size
+
+4. **PDF Options Selection**:
+   - User toggles "Include Cutlines" for professional cutting guides
+   - User toggles "Include Labels" for item name display
+   - System shows real-time preview of selected options
+
+#### UC007.3 - Generate and Download PDF
+1. User clicks "Export PDF" button in modal
+2. System validates all settings and QR codes availability
+3. System initiates PDF generation pipeline with progress indication:
+   - Validating input (0%)
+   - Creating PDF document (5%)
+   - Calculating layout (10%)
+   - Generating QR codes (40%)
+   - Embedding QR codes and labels (70%)
+   - Adding cutlines (80%)
+   - Finalizing PDF (90%)
+   - Complete (100%)
+4. System generates timestamped filename (e.g., "QR-Codes-2025-08-02T10-57-10.pdf")
+5. System triggers browser download of PDF file
+6. System displays success message with generation statistics
+7. System automatically closes PDF options modal
+
+#### UC007.4 - Multi-Page Document Generation
+1. System calculates how many QR codes fit per page based on settings
+2. For large QR code batches, system generates multiple PDF pages
+3. System maintains consistent layout, margins, and cutlines across all pages
+4. System ensures even distribution of QR codes across pages
+5. Each page includes complete cutting guides and proper margins
+
+### Alternative Flows
+
+#### UC007.A1 - No QR Codes Available
+1. User attempts to export PDF before generating QR codes
+2. System displays error message: "No QR codes available for PDF export"
+3. System provides guidance to complete QR generation first
+4. User returns to QR generation workflow
+
+#### UC007.A2 - Invalid Settings Configuration
+1. User configures invalid settings (e.g., margins too large, QR size invalid)
+2. System validates settings and displays specific error messages
+3. System highlights problematic settings in the interface
+4. System prevents PDF generation until settings are corrected
+5. User adjusts settings within valid ranges
+
+#### UC007.A3 - PDF Generation Failure
+1. System encounters error during PDF generation process
+2. System displays user-friendly error message with retry option
+3. System provides detailed error information for troubleshooting
+4. User can retry generation or adjust settings
+5. System maintains existing QR codes for subsequent attempts
+
+### Success Scenarios
+
+#### UC007.S1 - Small Batch Export (1-10 QR Codes)
+- Single-page PDF with optimal layout
+- All QR codes fit on one page with proper spacing
+- Cutting guides provide precise boundaries
+- Labels clearly identify each item
+
+#### UC007.S2 - Large Batch Export (20+ QR Codes)  
+- Multi-page PDF with consistent layout
+- Pages are evenly distributed with QR codes
+- Cutting guides maintain alignment across pages
+- Performance remains responsive during generation
+
+#### UC007.S3 - Professional Printing Workflow
+- PDF exports with vector-based cutting guides
+- QR codes maintain scan quality at print resolution
+- Margins ensure compatibility with commercial printers
+- Document ready for professional print service
+
+### Postconditions
+- **Success**: High-quality PDF document downloaded to user's device
+- **Success**: PDF contains precisely positioned QR codes with mathematical accuracy
+- **Success**: Vector cutting guides enable professional trimming and alignment
+- **Success**: QR codes maintain optimal scan quality for intended print size
+- **Success**: Browser print functionality remains completely unaffected
+- **Success**: Original QR codes remain available for additional exports
+
+### Technical Implementation Features
+
+#### Mathematical Precision
+- ✅ Sub-pixel coordinate accuracy for professional printing alignment
+- ✅ Vector-based dashed cutting guides (4pt on/4pt off pattern, #999 color)
+- ✅ Precise unit conversions between millimeters, points, pixels, and inches
+- ✅ Grid layout calculations with automatic column/row optimization
+
+#### PDF Generation Pipeline
+- ✅ Complete PDF generation using pdf-lib library for vector output
+- ✅ QR code optimization and embedding with print-quality resolution
+- ✅ Multi-page document support with consistent layout preservation
+- ✅ Progress tracking and user feedback during generation process
+
+#### User Interface Integration
+- ✅ Seamless integration with existing QR Print Manager workflow
+- ✅ Responsive PDF export options modal with intuitive controls
+- ✅ Real-time settings validation and visual feedback
+- ✅ Loading states and error handling with recovery options
+
+#### Quality Assurance
+- ✅ Comprehensive TypeScript type definitions for all PDF components
+- ✅ 15 unit test suites covering all functionality aspects
+- ✅ Cross-browser compatibility and performance optimization
+- ✅ Error handling with graceful degradation and user guidance
+
+### Business Value
+- **Professional Output**: Enables high-quality printed materials for property management
+- **Operational Efficiency**: Streamlines QR code printing workflow for maintenance teams
+- **Brand Quality**: Provides professional-grade output suitable for customer-facing materials
+- **Cost Savings**: Enables in-house printing with commercial-quality results
+- **Scalability**: Supports large property portfolios with batch processing capabilities
+
+### Integration Points
+- **QRCodePrintManager**: Seamlessly integrated without disrupting existing browser print functionality
+- **PDF Generation Pipeline**: Complete end-to-end workflow from QR generation to PDF download
+- **Settings Management**: Persistent user preferences for repeated export operations
+- **Error Handling**: Comprehensive validation and user guidance throughout process
 
 ---
 
