@@ -458,4 +458,319 @@ export async function generateBatchQRCodes(
     console.error('Batch QR code generation failed:', error);
     throw error;
   }
+}
+
+// ================================
+// PDF Integration Functions - REQ-013
+// ================================
+
+/**
+ * Custom error class for QR code PDF conversion failures
+ */
+export class QRCodePDFConversionError extends Error {
+  constructor(message: string, public readonly cause?: Error) {
+    super(`QRCodePDFConversionError: ${message}`);
+    this.name = 'QRCodePDFConversionError';
+  }
+}
+
+/**
+ * Converts base64 QR code data URL to binary data suitable for PDF embedding
+ * 
+ * @param dataUrl - Base64 data URL from QR code generation (e.g., "data:image/png;base64,...")
+ * @returns Binary data as Uint8Array for PDF embedding
+ * @throws QRCodePDFConversionError if conversion fails
+ */
+export function convertQRCodeForPDF(dataUrl: string): Uint8Array {
+  if (!dataUrl || typeof dataUrl !== 'string') {
+    throw new QRCodePDFConversionError('Data URL is required and must be a string');
+  }
+
+  if (!dataUrl.startsWith('data:image/')) {
+    throw new QRCodePDFConversionError('Invalid data URL format - must start with "data:image/"');
+  }
+
+  try {
+    // Extract the base64 portion from the data URL
+    const base64Match = dataUrl.match(/^data:image\/[^;]+;base64,(.+)$/);
+    if (!base64Match || !base64Match[1]) {
+      throw new QRCodePDFConversionError('Invalid base64 data URL format');
+    }
+
+    const base64Data = base64Match[1];
+    
+    // Convert base64 to binary
+    if (typeof window !== 'undefined' && window.atob) {
+      // Browser environment
+      const binaryString = window.atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes;
+    } else {
+      // Node.js environment
+      const buffer = Buffer.from(base64Data, 'base64');
+      return new Uint8Array(buffer);
+    }
+  } catch (error) {
+    throw new QRCodePDFConversionError(
+      'Failed to convert base64 data URL to binary',
+      error instanceof Error ? error : new Error(String(error))
+    );
+  }
+}
+
+/**
+ * Optimizes QR code for print quality by regenerating at target size
+ * 
+ * @param dataUrl - Original QR code data URL
+ * @param targetSize - Target size in pixels for optimal print quality
+ * @returns Optimized QR code data URL
+ * @throws QRCodePDFConversionError if optimization fails
+ */
+export async function optimizeQRForPrint(dataUrl: string, targetSize: number): Promise<string> {
+  if (!dataUrl || typeof dataUrl !== 'string') {
+    throw new QRCodePDFConversionError('Data URL is required for optimization');
+  }
+
+  if (!Number.isInteger(targetSize) || targetSize < 64 || targetSize > 2048) {
+    throw new QRCodePDFConversionError('Target size must be an integer between 64 and 2048 pixels');
+  }
+
+  try {
+    // Extract the original URL from QR code data (we'll need to regenerate)
+    // For now, we'll optimize the existing image by resizing
+    
+    // Validate the input data URL first
+    if (!validateQRForPDFEmbedding(dataUrl)) {
+      throw new QRCodePDFConversionError('Input QR code failed validation for PDF embedding');
+    }
+
+    // Create high-quality print-optimized options
+    const printOptions: Partial<QRCodeOptions> = {
+      width: targetSize,
+      margin: Math.max(2, Math.floor(targetSize / 32)), // Scale margin with size
+      color: {
+        dark: '#000000',  // Pure black for printing
+        light: '#FFFFFF', // Pure white for printing
+      },
+    };
+
+    // If we can extract the URL from the QR code, regenerate it
+    // For now, we'll return an optimized version using canvas resize
+    if (typeof window !== 'undefined') {
+      return optimizeQRImageWithCanvas(dataUrl, targetSize);
+    } else {
+      // In Node.js environment, return the original with validation
+      console.warn('QR optimization in Node.js environment - returning validated original');
+      return dataUrl;
+    }
+  } catch (error) {
+    throw new QRCodePDFConversionError(
+      'Failed to optimize QR code for print',
+      error instanceof Error ? error : new Error(String(error))
+    );
+  }
+}
+
+/**
+ * Optimizes QR code image using canvas resizing for better print quality
+ * 
+ * @param dataUrl - Original QR code data URL
+ * @param targetSize - Target size in pixels
+ * @returns Optimized QR code data URL
+ */
+function optimizeQRImageWithCanvas(dataUrl: string, targetSize: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        // Create canvas for high-quality resizing
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        canvas.width = targetSize;
+        canvas.height = targetSize;
+        
+        // Disable image smoothing for crisp QR codes
+        ctx.imageSmoothingEnabled = false;
+        
+        // Draw the image scaled to target size
+        ctx.drawImage(img, 0, 0, targetSize, targetSize);
+        
+        // Convert to high-quality PNG
+        const optimizedDataUrl = canvas.toDataURL('image/png', 1.0);
+        resolve(optimizedDataUrl);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    img.onerror = () => {
+      reject(new Error('Failed to load QR code image for optimization'));
+    };
+    
+    img.src = dataUrl;
+  });
+}
+
+/**
+ * Validates QR code data URL for PDF embedding compatibility
+ * 
+ * @param dataUrl - QR code data URL to validate
+ * @returns True if QR code is valid for PDF embedding, false otherwise
+ */
+export function validateQRForPDFEmbedding(dataUrl: string): boolean {
+  if (!dataUrl || typeof dataUrl !== 'string') {
+    return false;
+  }
+
+  try {
+    // Check data URL format
+    if (!dataUrl.startsWith('data:image/')) {
+      return false;
+    }
+
+    // Check for supported image formats for PDF embedding
+    const supportedFormats = ['image/png', 'image/jpeg', 'image/jpg'];
+    const formatMatch = dataUrl.match(/^data:(image\/[^;]+);base64,/);
+    if (!formatMatch || !supportedFormats.includes(formatMatch[1])) {
+      return false;
+    }
+
+    // Validate base64 data portion
+    const base64Match = dataUrl.match(/^data:image\/[^;]+;base64,(.+)$/);
+    if (!base64Match || !base64Match[1]) {
+      return false;
+    }
+
+    const base64Data = base64Match[1];
+    
+    // Basic base64 validation
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64Data)) {
+      return false;
+    }
+
+    // Check minimum size (base64 data should be substantial for a valid QR code)
+    if (base64Data.length < 100) {
+      return false;
+    }
+
+    // Try to convert to binary to ensure it's valid
+    try {
+      convertQRCodeForPDF(dataUrl);
+    } catch {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Gets image format from data URL
+ * 
+ * @param dataUrl - QR code data URL
+ * @returns Image format ('png', 'jpeg', etc.) or null if invalid
+ */
+export function getQRImageFormat(dataUrl: string): string | null {
+  if (!dataUrl || typeof dataUrl !== 'string') {
+    return null;
+  }
+
+  const formatMatch = dataUrl.match(/^data:image\/([^;]+);base64,/);
+  return formatMatch ? formatMatch[1] : null;
+}
+
+/**
+ * Gets image dimensions from QR code data URL (if possible)
+ * 
+ * @param dataUrl - QR code data URL
+ * @returns Promise resolving to { width, height } or null if cannot determine
+ */
+export function getQRImageDimensions(dataUrl: string): Promise<{ width: number; height: number } | null> {
+  return new Promise((resolve) => {
+    if (!dataUrl || typeof dataUrl !== 'string' || typeof window === 'undefined') {
+      resolve(null);
+      return;
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.width, height: img.height });
+    };
+    
+    img.onerror = () => {
+      resolve(null);
+    };
+    
+    img.src = dataUrl;
+  });
+}
+
+/**
+ * Creates optimized QR code specifically for PDF printing
+ * 
+ * @param url - URL to encode in QR code
+ * @param printSizeMm - Target print size in millimeters
+ * @param dpi - Target DPI for printing (default: 300)
+ * @returns Promise resolving to print-optimized QR code data URL
+ */
+export async function generateQRCodeForPDF(
+  url: string,
+  printSizeMm: number = 40,
+  dpi: number = 300
+): Promise<string> {
+  if (!url || typeof url !== 'string') {
+    throw new QRCodePDFConversionError('URL is required for QR code generation');
+  }
+
+  if (!Number.isFinite(printSizeMm) || printSizeMm <= 0) {
+    throw new QRCodePDFConversionError('Print size must be a positive number');
+  }
+
+  if (!Number.isInteger(dpi) || dpi < 72 || dpi > 600) {
+    throw new QRCodePDFConversionError('DPI must be an integer between 72 and 600');
+  }
+
+  try {
+    // Calculate pixel size based on print size and DPI
+    const printSizeInches = printSizeMm / 25.4; // Convert mm to inches
+    const pixelSize = Math.round(printSizeInches * dpi);
+    
+    // Ensure minimum size for readability
+    const finalPixelSize = Math.max(pixelSize, 128);
+
+    // Generate QR code with print-optimized settings
+    const printOptions: Partial<QRCodeOptions> = {
+      width: finalPixelSize,
+      margin: 2, // Minimal margin for printing
+      color: {
+        dark: '#000000',  // Pure black
+        light: '#FFFFFF', // Pure white
+      },
+    };
+
+    const dataUrl = await generateQRCode(url, printOptions);
+    
+    // Validate the generated QR code
+    if (!validateQRForPDFEmbedding(dataUrl)) {
+      throw new QRCodePDFConversionError('Generated QR code failed PDF embedding validation');
+    }
+
+    return dataUrl;
+  } catch (error) {
+    throw new QRCodePDFConversionError(
+      'Failed to generate QR code for PDF',
+      error instanceof Error ? error : new Error(String(error))
+    );
+  }
 } 
