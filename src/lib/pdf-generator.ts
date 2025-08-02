@@ -6,7 +6,8 @@
  * with mathematical precision required for professional printing.
  */
 
-import { PDFDocument, PageSizes, rgb, PDFPage } from 'pdf-lib';
+import { PDFDocument, PageSizes, rgb, PDFPage, PDFImage } from 'pdf-lib';
+import { convertQRCodeForPDF, validateQRForPDFEmbedding, getQRImageFormat } from './qrcode-utils';
 
 /**
  * Supported page formats for PDF generation
@@ -238,4 +239,377 @@ export function addPDFPage(pdfDoc: PDFDocument, pageFormat: PDFPageFormat): PDFP
       error instanceof Error ? error : undefined
     );
   }
+}
+
+// ================================
+// QR Code Embedding Functions - REQ-013
+// ================================
+
+/**
+ * Options for QR code embedding in PDF
+ */
+export interface QRCodeEmbedOptions {
+  /** QR code size in points (if different from calculated) */
+  size?: number;
+  /** Whether to maintain aspect ratio */
+  maintainAspectRatio?: boolean;
+  /** Opacity (0-1) for the QR code */
+  opacity?: number;
+  /** Rotation angle in degrees */
+  rotation?: number;
+}
+
+/**
+ * Result of QR code embedding operation
+ */
+export interface QRCodeEmbedResult {
+  /** Whether embedding was successful */
+  success: boolean;
+  /** Actual position where QR code was placed */
+  position: { x: number; y: number };
+  /** Actual size of the embedded QR code */
+  size: { width: number; height: number };
+  /** Error message if embedding failed */
+  error?: string;
+}
+
+/**
+ * Validates QR code embedding parameters
+ * 
+ * @param page - PDF page to embed QR code on
+ * @param x - X coordinate in points
+ * @param y - Y coordinate in points  
+ * @param size - QR code size in points
+ * @throws PDFGenerationError if parameters are invalid
+ */
+export function validateQRCodeEmbedding(
+  page: PDFPage,
+  x: number,
+  y: number,
+  size: number
+): void {
+  if (!page) {
+    throw new PDFGenerationError('PDF page is required for QR code embedding');
+  }
+
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    throw new PDFGenerationError('QR code position coordinates must be finite numbers');
+  }
+
+  if (!Number.isFinite(size) || size <= 0) {
+    throw new PDFGenerationError('QR code size must be a positive finite number');
+  }
+
+  // Check if QR code fits within page bounds
+  const pageSize = page.getSize();
+  if (x < 0 || y < 0) {
+    throw new PDFGenerationError('QR code position cannot be negative');
+  }
+
+  if (x + size > pageSize.width) {
+    throw new PDFGenerationError(
+      `QR code extends beyond page width (${x + size} > ${pageSize.width})`
+    );
+  }
+
+  if (y + size > pageSize.height) {
+    throw new PDFGenerationError(
+      `QR code extends beyond page height (${y + size} > ${pageSize.height})`
+    );
+  }
+}
+
+/**
+ * Embeds a QR code image into a PDF document at specified coordinates
+ * 
+ * @param doc - PDF document to embed QR code into
+ * @param qrDataUrl - QR code as base64 data URL
+ * @param x - X coordinate in points (from bottom-left origin)
+ * @param y - Y coordinate in points (from bottom-left origin)
+ * @param size - QR code size in points
+ * @param options - Additional embedding options
+ * @returns Result of the embedding operation
+ * 
+ * @example
+ * ```typescript
+ * const result = await addQRCodeToPDF(doc, qrDataUrl, 100, 100, 80);
+ * if (result.success) {
+ *   console.log('QR code embedded successfully');
+ * }
+ * ```
+ */
+export async function addQRCodeToPDF(
+  doc: PDFDocument,
+  qrDataUrl: string,
+  x: number,
+  y: number,
+  size: number,
+  options: QRCodeEmbedOptions = {}
+): Promise<QRCodeEmbedResult> {
+  try {
+    if (!doc) {
+      throw new PDFGenerationError('PDF document is required');
+    }
+
+    // Validate and convert QR code data
+    if (!validateQRForPDFEmbedding(qrDataUrl)) {
+      throw new PDFGenerationError('Invalid QR code data URL for PDF embedding');
+    }
+
+    const pages = doc.getPages();
+    if (pages.length === 0) {
+      throw new PDFGenerationError('PDF document has no pages');
+    }
+
+    // Use the last page by default
+    const page = pages[pages.length - 1];
+    
+    // Validate embedding parameters
+    const finalSize = options.size || size;
+    validateQRCodeEmbedding(page, x, y, finalSize);
+
+    // Convert QR code to binary data
+    const imageData = convertQRCodeForPDF(qrDataUrl);
+    
+    // Determine image format and embed accordingly
+    const imageFormat = getQRImageFormat(qrDataUrl);
+    let embeddedImage: PDFImage;
+
+    if (imageFormat === 'png') {
+      embeddedImage = await doc.embedPng(imageData);
+    } else if (imageFormat === 'jpeg' || imageFormat === 'jpg') {
+      embeddedImage = await doc.embedJpg(imageData);
+    } else {
+      throw new PDFGenerationError(`Unsupported image format: ${imageFormat}`);
+    }
+
+    // Calculate final dimensions
+    const aspectRatio = embeddedImage.width / embeddedImage.height;
+    let finalWidth = finalSize;
+    let finalHeight = finalSize;
+
+    if (options.maintainAspectRatio !== false && aspectRatio !== 1) {
+      // For QR codes, we usually want to maintain square aspect ratio
+      // but if the image isn't square, maintain its aspect ratio
+      if (aspectRatio > 1) {
+        finalHeight = finalSize / aspectRatio;
+      } else {
+        finalWidth = finalSize * aspectRatio;
+      }
+    }
+
+    // Draw the QR code on the page
+    page.drawImage(embeddedImage, {
+      x: x,
+      y: y,
+      width: finalWidth,
+      height: finalHeight,
+      opacity: options.opacity || 1.0,
+      rotate: options.rotation ? { type: 'degrees', angle: options.rotation } : undefined
+    });
+
+    return {
+      success: true,
+      position: { x, y },
+      size: { width: finalWidth, height: finalHeight }
+    };
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error during QR code embedding';
+    
+    return {
+      success: false,
+      position: { x, y },
+      size: { width: size, height: size },
+      error: errorMessage
+    };
+  }
+}
+
+/**
+ * Embeds a QR code on a specific page at specified coordinates
+ * 
+ * @param page - PDF page to embed QR code on
+ * @param doc - PDF document (needed for image embedding)
+ * @param qrDataUrl - QR code as base64 data URL
+ * @param x - X coordinate in points
+ * @param y - Y coordinate in points
+ * @param size - QR code size in points
+ * @param options - Additional embedding options
+ * @returns Result of the embedding operation
+ */
+export async function addQRCodeToPage(
+  page: PDFPage,
+  doc: PDFDocument,
+  qrDataUrl: string,
+  x: number,
+  y: number,
+  size: number,
+  options: QRCodeEmbedOptions = {}
+): Promise<QRCodeEmbedResult> {
+  try {
+    if (!page || !doc) {
+      throw new PDFGenerationError('Both PDF page and document are required');
+    }
+
+    // Validate and convert QR code data
+    if (!validateQRForPDFEmbedding(qrDataUrl)) {
+      throw new PDFGenerationError('Invalid QR code data URL for PDF embedding');
+    }
+
+    // Validate embedding parameters
+    const finalSize = options.size || size;
+    validateQRCodeEmbedding(page, x, y, finalSize);
+
+    // Convert QR code to binary data
+    const imageData = convertQRCodeForPDF(qrDataUrl);
+    
+    // Determine image format and embed accordingly
+    const imageFormat = getQRImageFormat(qrDataUrl);
+    let embeddedImage: PDFImage;
+
+    if (imageFormat === 'png') {
+      embeddedImage = await doc.embedPng(imageData);
+    } else if (imageFormat === 'jpeg' || imageFormat === 'jpg') {
+      embeddedImage = await doc.embedJpg(imageData);
+    } else {
+      throw new PDFGenerationError(`Unsupported image format: ${imageFormat}`);
+    }
+
+    // Calculate final dimensions
+    const aspectRatio = embeddedImage.width / embeddedImage.height;
+    let finalWidth = finalSize;
+    let finalHeight = finalSize;
+
+    if (options.maintainAspectRatio !== false && aspectRatio !== 1) {
+      if (aspectRatio > 1) {
+        finalHeight = finalSize / aspectRatio;
+      } else {
+        finalWidth = finalSize * aspectRatio;
+      }
+    }
+
+    // Draw the QR code on the specific page
+    page.drawImage(embeddedImage, {
+      x: x,
+      y: y,
+      width: finalWidth,
+      height: finalHeight,
+      opacity: options.opacity || 1.0,
+      rotate: options.rotation ? { type: 'degrees', angle: options.rotation } : undefined
+    });
+
+    return {
+      success: true,
+      position: { x, y },
+      size: { width: finalWidth, height: finalHeight }
+    };
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error during QR code embedding';
+    
+    return {
+      success: false,
+      position: { x, y },
+      size: { width: size, height: size },
+      error: errorMessage
+    };
+  }
+}
+
+/**
+ * Embeds multiple QR codes on a page at specified positions
+ * 
+ * @param page - PDF page to embed QR codes on
+ * @param doc - PDF document (needed for image embedding)
+ * @param qrCodes - Array of QR code placement data
+ * @returns Array of embedding results
+ */
+export async function addMultipleQRCodesToPage(
+  page: PDFPage,
+  doc: PDFDocument,
+  qrCodes: Array<{
+    dataUrl: string;
+    x: number;
+    y: number;
+    size: number;
+    options?: QRCodeEmbedOptions;
+  }>
+): Promise<QRCodeEmbedResult[]> {
+  if (!page || !doc) {
+    throw new PDFGenerationError('Both PDF page and document are required');
+  }
+
+  if (!Array.isArray(qrCodes) || qrCodes.length === 0) {
+    throw new PDFGenerationError('QR codes array is required and must not be empty');
+  }
+
+  const results: QRCodeEmbedResult[] = [];
+
+  // Process QR codes sequentially to avoid concurrent access issues
+  for (const qrCode of qrCodes) {
+    try {
+      const result = await addQRCodeToPage(
+        page,
+        doc,
+        qrCode.dataUrl,
+        qrCode.x,
+        qrCode.y,
+        qrCode.size,
+        qrCode.options || {}
+      );
+      results.push(result);
+    } catch (error) {
+      // Add failed result but continue with other QR codes
+      results.push({
+        success: false,
+        position: { x: qrCode.x, y: qrCode.y },
+        size: { width: qrCode.size, height: qrCode.size },
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Gets the optimal QR code size for embedding based on page dimensions
+ * 
+ * @param page - PDF page to calculate size for
+ * @param columns - Number of columns in the grid
+ * @param rows - Number of rows in the grid
+ * @param marginPercentage - Margin as percentage of page size (0-1)
+ * @returns Optimal QR code size in points
+ */
+export function calculateOptimalQRSize(
+  page: PDFPage,
+  columns: number,
+  rows: number,
+  marginPercentage: number = 0.1
+): number {
+  if (!page) {
+    throw new PDFGenerationError('PDF page is required for size calculation');
+  }
+
+  if (!Number.isInteger(columns) || columns <= 0) {
+    throw new PDFGenerationError('Columns must be a positive integer');
+  }
+
+  if (!Number.isInteger(rows) || rows <= 0) {
+    throw new PDFGenerationError('Rows must be a positive integer');
+  }
+
+  if (marginPercentage < 0 || marginPercentage > 0.5) {
+    throw new PDFGenerationError('Margin percentage must be between 0 and 0.5');
+  }
+
+  const pageSize = page.getSize();
+  const usableWidth = pageSize.width * (1 - 2 * marginPercentage);
+  const usableHeight = pageSize.height * (1 - 2 * marginPercentage);
+
+  const maxSizeByWidth = usableWidth / columns;
+  const maxSizeByHeight = usableHeight / rows;
+
+  return Math.min(maxSizeByWidth, maxSizeByHeight);
 }
