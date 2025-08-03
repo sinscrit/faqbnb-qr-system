@@ -430,9 +430,12 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       setItem: (key: string, value: string) => {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, value);
-          // Also set as HTTP cookie for server-side access
-          const maxAge = 60 * 60 * 24 * 30; // 30 days
-          document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=lax; secure=${window.location.protocol === 'https:'}`;
+          // For localhost development, skip cookie setting to avoid incognito mode issues
+          if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            // Also set as HTTP cookie for server-side access in production
+            const maxAge = 60 * 60 * 24 * 30; // 30 days
+            document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=lax; secure=${window.location.protocol === 'https:'}`;
+          }
         }
       },
       removeItem: (key: string) => {

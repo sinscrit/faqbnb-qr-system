@@ -45,8 +45,36 @@ export async function middleware(req: NextRequest) {
 
     // if user is not signed in and trying to access admin, redirect to login
     // but be less aggressive - only redirect for specific admin paths
+    // EXCEPTION: Allow brief grace period for post-login redirects from /login
+    const isPostLoginRedirect = req.headers.get('referer')?.includes('/login');
+    const shouldAllowGracePeriod = isPostLoginRedirect && req.nextUrl.pathname.startsWith('/admin');
+    
     if (!session?.user && req.nextUrl.pathname.startsWith('/admin')) {
-      console.log('[MIDDLEWARE-DEBUG] Redirecting to login - no session found for admin path');
+      if (shouldAllowGracePeriod) {
+        console.log('🟡 AUTH_GRACE_PERIOD_DEBUG: ALLOWING_POST_LOGIN_REDIRECT', {
+          timestamp: new Date().toISOString(),
+          path: req.nextUrl.pathname,
+          referer: req.headers.get('referer'),
+          message: 'Allowing admin access for post-login redirect - session may be propagating'
+        });
+        // Allow the request to proceed - session should be available shortly
+        return res;
+      }
+      
+      console.log('🚨 AUTH_REDIRECT_BLOCK_DEBUG: MIDDLEWARE_BLOCKING_ADMIN_ACCESS', {
+        timestamp: new Date().toISOString(),
+        path: req.nextUrl.pathname,
+        hasSession: !!session,
+        hasUser: !!session?.user,
+        userAgent: req.headers.get('user-agent')?.slice(0, 50),
+        referer: req.headers.get('referer'),
+        isPostLoginRedirect,
+        sessionDetails: session ? {
+          userId: session.user?.id,
+          email: session.user?.email,
+          exp: session.expires_at
+        } : 'NO_SESSION'
+      });
       return NextResponse.redirect(new URL('/login', req.url))
     }
 

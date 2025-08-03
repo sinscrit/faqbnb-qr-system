@@ -652,7 +652,8 @@ export function calculateGridLayout(
   // Convert margins from mm to points for the margins object
   const marginsPoints = convertMillimetersToPoints(margins);
   
-  return {
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  const result = {
     // Original properties
     columns,
     rows,
@@ -678,6 +679,16 @@ export function calculateGridLayout(
       unit: 'pt' as const
     }
   };
+  
+  console.log(`${DEBUG_PREFIX} CALCULATE_GRID_LAYOUT_RESULT:`, {
+    inputQrSize: qrSize,
+    qrSizePoints: qrSizePoints,
+    resultQrSize: result.qrSize,
+    resultKeys: Object.keys(result),
+    resultType: typeof result
+  });
+  
+  return result;
 }
 
 /**

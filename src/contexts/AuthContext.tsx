@@ -716,6 +716,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       if (result.data) {
+        console.log('🔒 AUTH_SESSION_DEBUG: SETTING_SESSION_STATE', {
+          timestamp: new Date().toISOString(),
+          userId: result.data.user.id,
+          userEmail: result.data.user.email,
+          sessionId: result.data.session.access_token.slice(0, 20) + '...',
+          sessionExpiry: result.data.session.expires_at,
+          accountsCount: result.data.accounts.length
+        });
+        
         setUser(result.data.user);
         setSession(result.data.session);
         setUserAccounts(result.data.accounts);
@@ -723,6 +732,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (result.data.defaultAccount) {
           setCurrentAccount(result.data.defaultAccount);
         }
+        
+        // Additional delay to ensure session is fully propagated before redirect attempts
+        setTimeout(() => {
+          console.log('🔒 AUTH_SESSION_DEBUG: SESSION_STATE_SET_COMPLETE', {
+            timestamp: new Date().toISOString(),
+            userSet: !!user,
+            sessionSet: !!session,
+            message: 'State updates should be complete now'
+          });
+        }, 50);
       }
 
       return result;

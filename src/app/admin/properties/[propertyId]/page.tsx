@@ -288,69 +288,71 @@ const ViewPropertyPage: React.FC = () => {
 
   return (
     <AuthGuard>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Breadcrumb */}
-        <nav className="mb-6" aria-label="Breadcrumb">
-          <ol className="flex items-center space-x-4">
-            <li>
+        <nav className="mb-4 md:mb-6" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2 md:space-x-4 overflow-x-auto">
+            <li className="flex-shrink-0">
               <button 
                 onClick={() => router.push('/admin')}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 text-sm md:text-base"
               >
                 Admin
               </button>
             </li>
-            <li>
+            <li className="flex-shrink-0">
               <div className="flex items-center">
-                <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 md:w-6 md:h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
                 <button 
                   onClick={handleBack}
-                  className="ml-1 text-gray-400 hover:text-gray-500 md:ml-2"
+                  className="ml-1 text-gray-400 hover:text-gray-500 md:ml-2 text-sm md:text-base"
                 >
                   Properties
                 </button>
               </div>
             </li>
-            <li>
+            <li className="flex-shrink-0">
               <div className="flex items-center">
-                <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 md:w-6 md:h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
-                <span className="ml-1 text-gray-500 md:ml-2">Property Details</span>
+                <span className="ml-1 text-gray-500 md:ml-2 text-sm md:text-base truncate">Property Details</span>
               </div>
             </li>
           </ol>
         </nav>
 
         {/* Page Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{property.nickname}</h1>
-            <p className="text-sm text-gray-600 mt-1">
-              Property Details
-            </p>
-          </div>
-          <div className="flex space-x-3">
-            <button
-              onClick={handleEdit}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Edit Property
-            </button>
-            <button
-              onClick={handleBack}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Properties
-            </button>
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-4 sm:mb-0">
+              <h1 className="text-2xl font-bold text-gray-900">{property.nickname}</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Property Details
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+              <button
+                onClick={handleEdit}
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Property
+              </button>
+              <button
+                onClick={handleBack}
+                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Properties
+              </button>
+            </div>
           </div>
         </div>
 
@@ -437,17 +439,17 @@ const ViewPropertyPage: React.FC = () => {
 
         {/* Additional Info Card */}
         <div className="mt-6 bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="px-6 py-5 border-b border-gray-200">
+          <div className="px-4 md:px-6 py-5 border-b border-gray-200">
             <h3 className="text-lg leading-6 font-medium text-gray-900">
               Quick Actions
             </h3>
           </div>
           
-          <div className="px-6 py-5">
-            <div className="flex flex-wrap gap-3">
+          <div className="px-4 md:px-6 py-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <button
                 onClick={handleEdit}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -457,7 +459,7 @@ const ViewPropertyPage: React.FC = () => {
               
               <button
                 onClick={() => router.push(`/admin/items?property=${propertyId}`)}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -468,7 +470,7 @@ const ViewPropertyPage: React.FC = () => {
               <button
                 onClick={handleOpenQRPrint}
                 disabled={isQRPrintLoading}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed sm:col-span-2 lg:col-span-1"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

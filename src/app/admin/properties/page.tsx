@@ -296,9 +296,9 @@ const PropertiesPage: React.FC = () => {
 
   return (
     <AuthGuard>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Property Management</h1>
             <p className="text-sm text-gray-600 mt-1">
@@ -307,7 +307,7 @@ const PropertiesPage: React.FC = () => {
           </div>
           <button
             onClick={handleCreateProperty}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
           >
             + New Property
           </button>
@@ -403,116 +403,198 @@ const PropertiesPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-lg border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Property
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Address
-                    </th>
-                    {state.isAdmin && (
+          <>
+            {/* Desktop Table View - Hidden on mobile */}
+            <div className="hidden md:block bg-white rounded-lg border overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Owner
+                        Property
                       </th>
-                    )}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {paginatedProperties.map((property) => (
-                    <tr key={property.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {property.nickname}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            ID: {property.id.substring(0, 8)}...
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {property.property_types?.display_name || 'Unknown'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs truncate">
-                          {property.address || 'No address provided'}
-                        </div>
-                      </td>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Address
+                      </th>
                       {state.isAdmin && (
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Owner
+                        </th>
+                      )}
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Created
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {paginatedProperties.map((property) => (
+                      <tr key={property.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {property.users?.full_name || property.users?.email || 'Unknown'}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {property.nickname}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              ID: {property.id.substring(0, 8)}...
+                            </div>
                           </div>
                         </td>
-                      )}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {property.created_at ? new Date(property.created_at).toLocaleDateString() : 'Unknown'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleViewProperty(property)}
-                          className="text-green-600 hover:text-green-900 mr-3"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleEditProperty(property)}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(property)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {property.property_types?.display_name || 'Unknown'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900 max-w-xs truncate">
+                            {property.address || 'No address provided'}
+                          </div>
+                        </td>
+                        {state.isAdmin && (
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {property.users?.full_name || property.users?.email || 'Unknown'}
+                            </div>
+                          </td>
+                        )}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {property.created_at ? new Date(property.created_at).toLocaleDateString() : 'Unknown'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => handleViewProperty(property)}
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                            >
+                              👁️ View
+                            </button>
+                            <button
+                              onClick={() => handleEditProperty(property)}
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              ✏️ Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(property)}
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              🗑️ Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-                <div className="text-sm text-gray-700">
-                  Page {state.currentPage} of {totalPages}
+            {/* Mobile Card View - Visible only on mobile */}
+            <div className="md:hidden space-y-4">
+              {paginatedProperties.map((property) => (
+                <div key={property.id} className="bg-white rounded-lg border shadow-sm overflow-hidden">
+                  {/* Card Header */}
+                  <div className="px-4 py-3 border-b border-gray-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-900 truncate">
+                          {property.nickname}
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          ID: {property.id.substring(0, 8)}...
+                        </p>
+                      </div>
+                      <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 flex-shrink-0">
+                        {property.property_types?.display_name || 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="px-4 py-3">
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-xs font-medium text-gray-500">Address:</span>
+                        <p className="text-sm text-gray-900 mt-1">
+                          {property.address || 'No address provided'}
+                        </p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        {state.isAdmin && (
+                          <div>
+                            <span className="text-xs font-medium text-gray-500">Owner:</span>
+                            <p className="text-sm text-gray-900">
+                              {property.users?.full_name || property.users?.email || 'Unknown'}
+                            </p>
+                          </div>
+                        )}
+                        <div className={state.isAdmin ? '' : 'w-full'}>
+                          <span className="text-xs font-medium text-gray-500">Created:</span>
+                          <p className="text-sm text-gray-900">
+                            {property.created_at ? new Date(property.created_at).toLocaleDateString() : 'Unknown'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Actions */}
+                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleViewProperty(property)}
+                        className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        👁️ View
+                      </button>
+                      <button
+                        onClick={() => handleEditProperty(property)}
+                        className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(property)}
+                        className="flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handlePageChange(state.currentPage - 1)}
-                    disabled={state.currentPage === 1}
-                    className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(state.currentPage + 1)}
-                    disabled={state.currentPage === totalPages}
-                    className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="bg-gray-50 px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 mt-4 md:mt-0 rounded-b-lg">
+            <div className="text-sm text-gray-700 mb-2 sm:mb-0">
+              Page {state.currentPage} of {totalPages}
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handlePageChange(state.currentPage - 1)}
+                disabled={state.currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => handlePageChange(state.currentPage + 1)}
+                disabled={state.currentPage === totalPages}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
 
