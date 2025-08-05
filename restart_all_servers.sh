@@ -1,12 +1,24 @@
 #!/bin/bash
 
 # FAQBNB Server Management Script - Production Mode (QR Code Validation)
-# Purpose: Kill and restart server in production mode with cache clearing
+# Purpose: Kill and restart server in production mode with optional cache clearing
 # Enhanced to eliminate Fast Refresh issues for stable QR code validation
+# Usage: bash restart_all_servers.sh [--rebuild|--clear-cache]
 
-echo "🔄 FAQBNB Server Management - Production Mode Restart (QR Code Validation)"
-echo "============================================================================="
-echo "🎯 Purpose: Clean production build to eliminate Fast Refresh interference"
+# Check for rebuild parameter
+REBUILD_MODE=false
+if [[ "$1" == "--rebuild" || "$1" == "--clear-cache" ]]; then
+    REBUILD_MODE=true
+    echo "🔄 FAQBNB Server Management - REBUILD MODE (Cache Clearing + Fresh Build)"
+    echo "============================================================================="
+    echo "🎯 Purpose: Clean production build to eliminate Fast Refresh interference"
+    echo "🧹 Cache will be cleared and fresh build will be performed"
+else
+    echo "🔄 FAQBNB Server Management - RESTART MODE (No Rebuild)"
+    echo "============================================================================="
+    echo "🎯 Purpose: Restart existing production server"
+    echo "💡 Use '--rebuild' parameter to clear cache and rebuild"
+fi
 echo ""
 
 # Enhanced function to display port information
@@ -216,7 +228,7 @@ verify_system_state() {
     fi
 }
 
-# Main execution with cache clearing and production build
+# Main execution with conditional cache clearing and production build
 main() {
     local start_time=$(date +%s)
     
@@ -230,10 +242,26 @@ main() {
         exit 1
     fi
     
-    # NEW: Clear cache and build production version
-    if ! clear_cache_and_build; then
-        echo "❌ Build process failed. Cannot continue."
-        exit 1
+    # Conditionally clear cache and build based on parameter
+    if [ "$REBUILD_MODE" = true ]; then
+        echo "🧹 REBUILD MODE: Clearing cache and building..."
+        if ! clear_cache_and_build; then
+            echo "❌ Build process failed. Cannot continue."
+            exit 1
+        fi
+    else
+        echo "🔄 RESTART MODE: Using existing build..."
+        # Verify build exists when not rebuilding
+        if [ ! -d ".next" ]; then
+            echo "⚠️  No existing build found (.next directory missing)"
+            echo "🔄 Auto-switching to rebuild mode..."
+            if ! clear_cache_and_build; then
+                echo "❌ Build process failed. Cannot continue."
+                exit 1
+            fi
+        else
+            echo "✅ Existing build found, proceeding with restart..."
+        fi
     fi
     
     if start_production_server; then
@@ -243,7 +271,13 @@ main() {
         local duration=$((end_time - start_time))
         
         echo ""
-        echo "🎉 Production server restarted successfully!"
+        if [ "$REBUILD_MODE" = true ]; then
+            echo "🎉 Production server rebuilt and restarted successfully!"
+            echo "🧹 Cache cleared and fresh build completed"
+        else
+            echo "🎉 Production server restarted successfully!"
+            echo "🔄 Used existing build (no cache clearing)"
+        fi
         echo "⏱️  Total restart time: ${duration} seconds"
         echo "🌐 Next.js App: http://localhost:3000"
         echo "🔧 Admin Panel: http://localhost:3000/admin"
@@ -256,7 +290,8 @@ main() {
         echo "💡 Management commands:"
         echo "   📊 Check status: lsof -i:3000"
         echo "   🛑 Stop servers: pkill -f 'npm start'"
-        echo "   🔄 Restart again: bash restart_all_servers.sh"
+        echo "   🔄 Quick restart: bash restart_all_servers.sh"
+        echo "   🧹 Rebuild restart: bash restart_all_servers.sh --rebuild"
     else
         echo "❌ Failed to start production server"
         echo "🔍 Check logs above for specific error details"
