@@ -14,7 +14,8 @@ import {
   calculateTotalPages, 
   getAllItemPositions,
   getStandardPageLayout,
-  convertMillimetersToPoints
+  convertMillimetersToPoints,
+  convertPointsToMillimeters
 } from './pdf-geometry';
 import { 
   generateCutlineGrid, 
@@ -1380,12 +1381,27 @@ export function validatePDFGenerationInput(
       return { valid: false, error: 'Page format must be A4 or Letter' };
     }
 
+    // REQ-015 Task 8: Enhanced quality validation for professional printing standards
     if (!Number.isFinite(settings.margins) || settings.margins < 5 || settings.margins > 50) {
       return { valid: false, error: 'Margins must be between 5 and 50 millimeters' };
     }
+    
+    // Professional printing validation - recommend 10mm minimum for commercial quality
+    if (settings.margins < 10) {
+      console.warn('⚠️ QUALITY WARNING: Margins below 10mm may cause printing issues on some printers');
+    }
 
-    if (!Number.isFinite(settings.qrSize) || settings.qrSize < 20 || settings.qrSize > 100) {
-      return { valid: false, error: 'QR size must be between 20 and 100 millimeters' };
+    if (!Number.isFinite(settings.qrSize) || settings.qrSize < 15 || settings.qrSize > 100) {
+      return { valid: false, error: 'QR size must be between 15 and 100 millimeters' };
+    }
+    
+    // Professional QR code size validation for reliable scanning
+    if (settings.qrSize < 20) {
+      console.warn('⚠️ QUALITY WARNING: QR codes below 20mm may be difficult to scan reliably');
+    }
+    
+    if (settings.qrSize > 60) {
+      console.warn('⚠️ QUALITY WARNING: QR codes above 60mm reduce space efficiency');
     }
 
     return { valid: true };
@@ -1764,6 +1780,25 @@ export async function generatePDFFromQRCodes(
 
     onProgress?.({ step: 'Complete', percentage: 100 });
 
+    // REQ-015 Task 8: Calculate professional quality metrics
+    const itemsPerPage = layout.itemsPerPage;
+    const spaceUtilizationPercent = ((qrDataUrls.size / itemsPerPage / totalPages) * 100);
+    const actualQrSizeMm = convertPointsToMillimeters(layout.qrSize);
+    
+    // Professional printing quality assessment
+    const qualityMetrics = {
+      spaceUtilization: `${spaceUtilizationPercent.toFixed(1)}%`,
+      itemsPerPage: itemsPerPage,
+      actualQrSizeMm: actualQrSizeMm.toFixed(1),
+      gridLayout: `${layout.columns} columns × ${layout.rows} rows`,
+      professionalSpacing: `${layout.minSpacingMm}mm between QR codes`,
+      printingRecommendations: [
+        actualQrSizeMm >= 20 ? '✅ QR size suitable for reliable scanning' : '⚠️ Consider larger QR size for better scanning',
+        settings.margins >= 10 ? '✅ Margins suitable for professional printing' : '⚠️ Consider larger margins for commercial printing',
+        spaceUtilizationPercent >= 70 ? '✅ Excellent space utilization' : spaceUtilizationPercent >= 50 ? '✅ Good space utilization' : '⚠️ Low space utilization - consider optimizing layout'
+      ]
+    };
+
     return {
       success: true,
       pdfBytes: pdfBytes,
@@ -1776,7 +1811,9 @@ export async function generatePDFFromQRCodes(
         successfulLabels: stats.successfulLabels,
         failedLabels: stats.failedLabels,
         pagesWithCutlines: pagesWithCutlines
-      }
+      },
+      // REQ-015 Task 8: Professional quality metrics and recommendations
+      qualityMetrics: qualityMetrics
     };
 
   } catch (error) {
