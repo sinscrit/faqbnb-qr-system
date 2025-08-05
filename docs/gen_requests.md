@@ -948,4 +948,117 @@ Implement a professional PDF generation system for QR codes with precise vector-
 
 ---
 
-*Next Request: REQ-014* 
+*Next Request: REQ-015*
+
+## REQ-015: BUG FIX REQUEST - Critical PDF QR Code Generation Layout and Positioning Issues
+**Date**: January 28, 2025  
+**Type**: Bug Fix Implementation (Critical)  
+**Complexity**: 10 Points (Medium-High Complexity)
+
+### Request Summary
+Fix critical PDF generation issues where QR codes are rendered at incorrect sizes and positions, resulting in extremely poor space utilization and unprofessional output. Current system generates QR codes clustered in bottom-left corner at approximately 10-15mm instead of expected 40mm default, with over 90% page space wasted.
+
+### Detailed Requirements
+
+#### 1. QR Code Size Calculation Fix (3 points)
+- **Issue**: QR codes render at 10-15mm instead of expected 40mm default size
+- **Root Cause**: Millimeter-to-points conversion errors in PDF generation pipeline
+- **Fix Required**: Debug and correct size calculation throughout PDF generation chain
+- **Files Affected**:
+  - `src/lib/pdf-generator.ts` (QR code embedding and sizing)
+  - `src/lib/pdf-geometry.ts` (grid layout calculations)
+  - `src/lib/qrcode-utils.ts` (QR generation for PDF)
+  - `src/components/QRCodePrintManager.tsx` (size settings integration)
+
+#### 2. Coordinate System Positioning Correction (4 points)
+- **Issue**: QR codes clustered in bottom-left corner instead of proper grid distribution
+- **Root Cause**: PDF coordinate system (bottom-left origin) vs expected positioning logic conflicts
+- **Fix Required**: Debug and fix `getQRCellPosition()` coordinate calculations and PDF positioning
+- **Files Affected**:
+  - `src/lib/pdf-geometry.ts` (cell positioning calculations)
+  - `src/lib/pdf-generator.ts` (QR code placement logic)
+  - `src/types/pdf.ts` (coordinate type definitions)
+
+#### 3. Page Space Utilization Optimization (2 points)
+- **Issue**: Over 90% page space wasted due to incorrect grid layout calculations
+- **Root Cause**: Grid layout logic not properly distributing items across usable page area
+- **Fix Required**: Fix `calculateGridLayout()` to properly utilize entire page area
+- **Files Affected**:
+  - `src/lib/pdf-geometry.ts` (grid layout mathematics)
+  - `src/lib/pdf-generator.ts` (page layout implementation)
+
+#### 4. Professional Print Quality Validation (1 point)
+- **Issue**: Output unsuitable for professional printing due to size and positioning errors
+- **Fix Required**: Implement validation for minimum readable QR code sizes and proper spacing
+- **Files Affected**:
+  - `src/lib/pdf-generator.ts` (quality validation)
+  - `src/components/QRCodePrintManager.tsx` (user feedback)
+
+### Complexity Analysis
+
+#### Mathematical Coordinate System Debugging (4 points)
+- **PDF Coordinate Systems**: Complex debugging of bottom-left origin vs top-left expectations
+- **Unit Conversions**: Multiple conversion layers between mm, points, and pixels
+- **Grid Mathematics**: Debugging multi-step calculations for cell positioning
+- **Precision Requirements**: Sub-millimeter accuracy needed for professional printing
+- **High Risk**: Mathematical errors affect all QR code positioning
+
+#### PDF Generation Pipeline Analysis (3 points)
+- **Multi-Library Integration**: Understanding pdf-lib, QR generation, and coordinate conversion
+- **Debug Complex Flow**: Tracing data through generatePDFFromQRCodes → addQRCodeToPage → coordinate calculations
+- **Size Calculation Chain**: Following QR size from UI settings through multiple conversion steps
+- **Medium-High Risk**: Changes to core PDF generation affect entire printing system
+
+#### Quality Assurance & Validation (2 points)
+- **Physical Print Testing**: Validating actual printed output dimensions and positioning
+- **Cross-Format Testing**: Ensuring fixes work across A4, Letter, and other page sizes
+- **Edge Case Handling**: Multiple QR codes, different sizes, various margin settings
+- **Medium Risk**: Quality validation requires comprehensive testing
+
+#### System Integration Preservation (1 point)
+- **Existing Functionality**: Ensure fixes don't break current QR generation workflow
+- **UI Compatibility**: Maintain existing interface while fixing underlying calculations
+- **Low Risk**: Focused fixes to mathematical calculations without major architectural changes
+
+### Technical Challenges
+1. **Coordinate System Complexity**: PDF bottom-left origin vs standard top-left coordinate expectations
+2. **Multi-Step Unit Conversions**: Debugging mm → points → pixels conversions across multiple functions
+3. **Mathematical Precision**: Ensuring sub-millimeter accuracy for professional printing standards
+4. **Library Integration**: Understanding pdf-lib coordinate system and embedding behavior
+5. **Testing Complexity**: Validating mathematical corrections require physical print testing
+
+### Implementation Priority
+**Critical Priority** - Current PDF output is completely unusable for professional printing, making core QR code printing functionality non-functional.
+
+### Current Evidence of Issues
+- **Visual Analysis**: QR codes appear as tiny dots in corner instead of grid layout
+- **Size Analysis**: Codes approximately 10-15mm instead of 40mm specification
+- **Space Utilization**: 90%+ page area completely unused
+- **User Impact**: Generated PDFs unsuitable for any professional printing use
+
+### Related Files Reference
+- **Core PDF Generation**: 
+  - `src/lib/pdf-generator.ts` (main generation pipeline, QR embedding)
+  - `src/lib/pdf-geometry.ts` (coordinate calculations, grid layout)
+  - `src/lib/pdf-cutlines.ts` (vector drawing utilities)
+- **QR Code Integration**:
+  - `src/lib/qrcode-utils.ts` (QR generation for PDF)
+  - `src/hooks/useQRCodeGeneration.ts` (QR generation state)
+- **User Interface**:
+  - `src/components/QRCodePrintManager.tsx` (print management UI)
+  - `src/components/QRCodePrintPreview.tsx` (preview display)
+  - `src/components/PDFExportOptions.tsx` (PDF configuration)
+- **Type Definitions**:
+  - `src/types/pdf.ts` (PDF-specific types)
+  - `src/types/qrcode.ts` (QR code types)
+- **Integration Points**:
+  - `src/app/admin/properties/[propertyId]/qr-print/page.tsx` (QR print page)
+
+### Expected vs Actual Behavior
+- **Expected**: 2 QR codes distributed properly across page at 40mm each with professional layout
+- **Actual**: 2 tiny QR codes (10-15mm) clustered in bottom-left corner with massive wasted space
+- **Impact**: Complete failure of professional printing functionality
+
+---
+
+*Next Request: REQ-016* 
