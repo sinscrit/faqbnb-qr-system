@@ -4,12 +4,12 @@ import { createSupabaseServer } from '@/lib/supabase-server';
 
 export async function validateAdminAuth(request: NextRequest) {
   try {
-    console.log('ADMIN_API_DEBUG: Starting authentication validation...');
+    console.error('🚨 ADMIN_API_DEBUG: Starting authentication validation...');
     const supabase = await createSupabaseServer();
     console.log('ADMIN_API_DEBUG: Supabase server client created');
     
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    console.log('ADMIN_API_DEBUG: Got user from Supabase:', { user: user?.email, error: userError?.message });
+    console.error('🚨 ADMIN_API_DEBUG: Got user from Supabase:', { user: user?.email, error: userError?.message });
     
     if (userError || !user) {
       console.log('ADMIN_API_DEBUG: User session not found:', userError?.message);
@@ -50,26 +50,49 @@ export async function validateAdminAuth(request: NextRequest) {
       userEmail: user.email
     });
     
+    // Query admin_users table with detailed debugging
+    console.log('ADMIN_API_DEBUG: Querying admin_users with:', { 
+      userId: user.id, 
+      userEmail: user.email,
+      userIdType: typeof user.id,
+      userEmailType: typeof user.email 
+    });
+    
     const { data: adminUser, error: adminError } = await supabaseAdmin
       .from('admin_users')
-      .select('email, full_name, role')
+      .select('email, full_name, role, id')  // Added id to see what we get back
       .eq('id', user.id)
       .eq('email', user.email)
       .single();
-    console.log('ADMIN_API_DEBUG: Raw query result:', { adminUser, adminError });
+    console.error('🚨 ADMIN_API_DEBUG: Raw admin query result:', { 
+      adminUser, 
+      adminError: adminError?.message,
+      adminErrorCode: adminError?.code,
+      adminErrorDetails: adminError?.details 
+    });
 
     if (adminError || !adminUser) {
       // If not admin, check if user is a regular user
       console.log('ADMIN_API_DEBUG: Not admin, checking if regular user...');
+      console.log('ADMIN_API_DEBUG: Querying users table with:', { 
+        userId: user.id, 
+        userIdType: typeof user.id 
+      });
+      
       const { data: regularUser, error: userError } = await supabaseAdmin
         .from('users')
-        .select('email, full_name, role')
+        .select('email, full_name, role, id')  // Added id to see what we get back
         .eq('id', user.id)
         .single();
-      console.log('ADMIN_API_DEBUG: Regular user check result:', { regularUser, userError: userError?.message });
+      console.log('ADMIN_API_DEBUG: Regular user check result:', { 
+        regularUser, 
+        userError: userError?.message,
+        userErrorCode: userError?.code,
+        userErrorDetails: userError?.details 
+      });
 
       if (userError || !regularUser) {
-        console.log('ADMIN_API_DEBUG: User validation failed:', { 
+        console.error('🚨 ADMIN_API_DEBUG: User validation failed:', { 
           userId: user.id, 
           email: user.email, 
           adminError: adminError?.message,

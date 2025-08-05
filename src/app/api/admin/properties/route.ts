@@ -116,6 +116,7 @@ function validatePropertyData(data: any) {
 // GET /api/admin/properties - List properties based on user role and account context
 export async function GET(request: NextRequest) {
   try {
+    console.error('🚨 PROPERTIES_API_DEBUG: Admin properties API called - validating authentication...');
     // Validate authentication
     const authResult = await validateAdminAuth(request);
     if (authResult.error) {

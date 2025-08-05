@@ -83,7 +83,7 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('Admin items API called - validating authentication...');
+    console.error('🚨 ITEMS_API_DEBUG: Admin items API called - validating authentication...');
     
     // Validate authentication and admin role
     const authResult = await validateAdminAuth(request);
