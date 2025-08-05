@@ -420,11 +420,18 @@ export function calculateUsableArea(
     );
   }
   
+  // REQ-015 Task 5: Fix coordinate system positioning for PDF bottom-left origin
+  // For QR codes to appear at "top" of page visually, startY should be calculated from top
+  // PDF bottom-left origin: y=0 is bottom, y=pageHeight is top
+  // To start from "top" with margin: y = pageHeight - margin - qrHeight
+  // But since grid will grow downward, we want startY at the TOP of usable area
+  const startY = pageHeight - marginsInPoints;
+  
   return {
     width: usableWidth,
     height: usableHeight,
-    x: marginsInPoints,
-    y: marginsInPoints,
+    x: marginsInPoints,        // Left margin (correct)
+    y: startY,                 // Top margin (corrected for PDF coordinate system)
     unit: 'pt'
   };
 }
@@ -757,8 +764,13 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
   }
   
   // Calculate cell position
+  // REQ-015 Task 5: Fix coordinate system for PDF bottom-left origin
+  // X calculation remains the same (left to right)
   const x = layout.startX + (col * layout.cellWidth);
-  const y = layout.startY + (row * layout.cellHeight);
+  
+  // Y calculation fixed: startY is now at TOP of usable area, grow downward  
+  // Subtract row positions to go from top to bottom visually
+  const y = layout.startY - (row * layout.cellHeight);
   const index = (row * layout.columns) + col;
   
   // REQ-015 Task 4: Debug individual cell position calculations
@@ -768,9 +780,10 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
     calculatedX: x,
     calculatedY: y,
     calculation: `x = ${layout.startX} + (${col} * ${layout.cellWidth}) = ${x}`,
-    calculationY: `y = ${layout.startY} + (${row} * ${layout.cellHeight}) = ${y}`,
+    calculationY: `y = ${layout.startY} - (${row} * ${layout.cellHeight}) = ${y}`,
     cellIndex: index,
-    coordinateSystem: 'PDF bottom-left origin'
+    coordinateSystem: 'PDF bottom-left origin (FIXED: startY from top, subtract rows)',
+    note: 'Y now correctly grows downward from top of usable area'
   });
   
   return {
