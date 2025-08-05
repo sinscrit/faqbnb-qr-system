@@ -634,6 +634,19 @@ export function calculateGridLayout(
   // Calculate usable area
   const usableArea = calculateUsableArea(pageWidth, pageHeight, margins);
   
+  // REQ-015 Task 4: Debug coordinate system positioning calculations
+  console.log(`${DEBUG_PREFIX} COORDINATE_SYSTEM_DEBUG:`, {
+    pageWidth,
+    pageHeight,
+    marginsInMm: margins,
+    marginsInPoints: convertMillimetersToPoints(margins),
+    usableAreaX: usableArea.x,
+    usableAreaY: usableArea.y,
+    usableAreaWidth: usableArea.width,
+    usableAreaHeight: usableArea.height,
+    coordinateSystemNote: 'PDF uses bottom-left origin (0,0 at bottom-left corner)'
+  });
+  
   // Convert QR size from mm to points
   const qrSizePoints = convertMillimetersToPoints(qrSize);
   
@@ -666,10 +679,21 @@ export function calculateGridLayout(
   const startX = usableArea.x;
   const startY = usableArea.y;
   
+  // REQ-015 Task 4: Debug grid positioning calculations
+  console.log(`${DEBUG_PREFIX} GRID_POSITIONING_DEBUG:`, {
+    columns,
+    rows,
+    cellWidth,
+    cellHeight,
+    startX,
+    startY,
+    gridCalculation: `${columns} cols × ${rows} rows = ${columns * rows} items per page`,
+    cellCalculation: `cellWidth: ${cellWidth.toFixed(2)}pts, cellHeight: ${cellHeight.toFixed(2)}pts`,
+    coordinateOrigin: `Grid starts at (${startX}, ${startY}) points from bottom-left`
+  });
+  
   // Convert margins from mm to points for the margins object
   const marginsPoints = convertMillimetersToPoints(margins);
-  
-  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
   const result = {
     // Original properties
     columns,
@@ -736,6 +760,18 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
   const x = layout.startX + (col * layout.cellWidth);
   const y = layout.startY + (row * layout.cellHeight);
   const index = (row * layout.columns) + col;
+  
+  // REQ-015 Task 4: Debug individual cell position calculations
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  console.log(`${DEBUG_PREFIX} CELL_POSITION_CALCULATION:`, {
+    requestedPosition: `row ${row}, col ${col}`,
+    calculatedX: x,
+    calculatedY: y,
+    calculation: `x = ${layout.startX} + (${col} * ${layout.cellWidth}) = ${x}`,
+    calculationY: `y = ${layout.startY} + (${row} * ${layout.cellHeight}) = ${y}`,
+    cellIndex: index,
+    coordinateSystem: 'PDF bottom-left origin'
+  });
   
   return {
     x,

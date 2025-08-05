@@ -97,24 +97,30 @@
 
 ## Phase 2: Coordinate System Positioning Correction (4 Points)
 
-### 4. Investigate PDF Coordinate System Issues (2 Points)
+### 4. Investigate PDF Coordinate System Issues (2 Points) -unit tested-
 
 **Objective**: Debug coordinate system conflicts between PDF bottom-left origin and positioning calculations
 
 **Files to Examine**: `src/lib/pdf-geometry.ts`, `src/lib/pdf-generator.ts`
 
 **Tasks**:
-- [ ] Study PDF coordinate system implementation:
-  - [ ] Examine `getQRCellPosition()` function (line ~708 in pdf-geometry.ts)
-  - [ ] Review coordinate calculation: `x = layout.startX + (col * layout.cellWidth)`
-  - [ ] Review coordinate calculation: `y = layout.startY + (row * layout.cellHeight)`
-- [ ] Add comprehensive debugging to positioning calculations:
-  - [ ] In `calculateGridLayout()`: Log `usableArea.x`, `usableArea.y`, `startX`, `startY`
-  - [ ] In `getQRCellPosition()`: Log calculated `x`, `y` for each QR code position
-  - [ ] In `addQRCodeToPage()`: Log final placement coordinates before embedding
-- [ ] Generate test PDF with 4 QR codes (2x2 grid) and examine coordinate logs
-- [ ] Compare expected positions vs actual positions in generated PDF
-- [ ] Identify if coordinate system needs transformation for proper placement
+- [x] Study PDF coordinate system implementation:
+  - [x] Examine `getQRCellPosition()` function (line ~708 in pdf-geometry.ts)
+  - [x] Review coordinate calculation: `x = layout.startX + (col * layout.cellWidth)`
+  - [x] Review coordinate calculation: `y = layout.startY + (row * layout.cellHeight)`
+- [x] Add comprehensive debugging to positioning calculations:
+  - [x] In `calculateGridLayout()`: Log `usableArea.x`, `usableArea.y`, `startX`, `startY`
+  - [x] In `getQRCellPosition()`: Log calculated `x`, `y` for each QR code position
+  - [x] In `addQRCodeToPage()`: Log final placement coordinates before embedding
+- [x] Generate test PDF with 2 QR codes and examine coordinate logs
+- [x] Compare expected positions vs actual positions in generated PDF
+- [x] Identify coordinate system issues requiring fixes
+
+**🔍 CRITICAL FINDINGS:**
+- **Y=699.14 positioning** places QR codes near TOP of page (only 142pts from top edge)
+- **Limited horizontal distribution** - only 23% of available width used (134pts of 575pts)
+- **No vertical distribution** - both QR codes at identical Y coordinate
+- **Root cause**: Coordinate positioning logic not properly accounting for PDF bottom-left origin system
 
 ### 5. Fix Grid Layout and Positioning Logic (2 Points)
 
