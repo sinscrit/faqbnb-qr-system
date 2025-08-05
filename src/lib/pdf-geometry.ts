@@ -664,11 +664,19 @@ export function calculateGridLayout(
     conversionFunction: 'convertMillimetersToPoints'
   });
   
-  // Calculate number of columns: floor((usable_width) / qr_size)
-  const columns = Math.floor(usableArea.width / qrSizePoints);
+  // REQ-015 Task 6: Optimize grid layout with professional spacing standards
+  // Add minimum spacing between QR codes (5mm recommended)
+  const minSpacingMm = 5;
+  const minSpacingPoints = convertMillimetersToPoints(minSpacingMm);
   
-  // Calculate number of rows: floor((usable_height) / qr_size)  
-  const rows = Math.floor(usableArea.height / qrSizePoints);
+  // Calculate effective QR size including minimum spacing
+  const effectiveQrSize = qrSizePoints + minSpacingPoints;
+  
+  // Calculate number of columns: floor((usable_width) / (qr_size + spacing))
+  const columns = Math.floor(usableArea.width / effectiveQrSize);
+  
+  // Calculate number of rows: floor((usable_height) / (qr_size + spacing))  
+  const rows = Math.floor(usableArea.height / effectiveQrSize);
   
   // Validate that we can fit at least one QR code
   if (columns < 1 || rows < 1) {
@@ -678,15 +686,21 @@ export function calculateGridLayout(
     );
   }
   
-  // Calculate actual cell dimensions (might be larger than QR size for centering)
+  // REQ-015 Task 6: Calculate professional cell dimensions with proper spacing
+  // Distribute remaining space evenly to center QR codes within cells
   const cellWidth = usableArea.width / columns;
   const cellHeight = usableArea.height / rows;
+  
+  // Calculate centering offsets within each cell for visual balance
+  const qrCenterOffsetX = (cellWidth - qrSizePoints) / 2;
+  const qrCenterOffsetY = (cellHeight - qrSizePoints) / 2;
   
   // Grid starts at usable area origin
   const startX = usableArea.x;
   const startY = usableArea.y;
   
-  // REQ-015 Task 4: Debug grid positioning calculations
+  // REQ-015 Task 4: Debug grid positioning calculations  
+  // REQ-015 Task 6: Enhanced debug logging with optimization details
   console.log(`${DEBUG_PREFIX} GRID_POSITIONING_DEBUG:`, {
     columns,
     rows,
@@ -694,8 +708,14 @@ export function calculateGridLayout(
     cellHeight,
     startX,
     startY,
+    minSpacingMm,
+    minSpacingPoints: minSpacingPoints.toFixed(2),
+    effectiveQrSize: effectiveQrSize.toFixed(2),
+    qrCenterOffsetX: qrCenterOffsetX.toFixed(2),
+    qrCenterOffsetY: qrCenterOffsetY.toFixed(2),
     gridCalculation: `${columns} cols × ${rows} rows = ${columns * rows} items per page`,
     cellCalculation: `cellWidth: ${cellWidth.toFixed(2)}pts, cellHeight: ${cellHeight.toFixed(2)}pts`,
+    spacingOptimization: `QR: ${qrSizePoints.toFixed(2)}pts + Spacing: ${minSpacingPoints.toFixed(2)}pts = Effective: ${effectiveQrSize.toFixed(2)}pts`,
     coordinateOrigin: `Grid starts at (${startX}, ${startY}) points from bottom-left`
   });
   
@@ -714,6 +734,12 @@ export function calculateGridLayout(
     gridWidth: usableArea.width,
     gridHeight: usableArea.height,
     unit: 'pt',
+    // REQ-015 Task 6: Add professional spacing and centering data
+    minSpacingMm,
+    minSpacingPoints,
+    effectiveQrSize,
+    qrCenterOffsetX,
+    qrCenterOffsetY,
     // Additional properties needed by cutlines system
     pageWidth,
     pageHeight,
@@ -765,25 +791,36 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
   
   // Calculate cell position
   // REQ-015 Task 5: Fix coordinate system for PDF bottom-left origin
-  // X calculation remains the same (left to right)
-  const x = layout.startX + (col * layout.cellWidth);
+  // REQ-015 Task 6: Add professional centering within cells
   
-  // Y calculation fixed: startY is now at TOP of usable area, grow downward  
-  // Subtract row positions to go from top to bottom visually
-  const y = layout.startY - (row * layout.cellHeight);
+  // Calculate base cell position
+  const baseCellX = layout.startX + (col * layout.cellWidth);
+  const baseCellY = layout.startY - (row * layout.cellHeight);
+  
+  // Add centering offsets for professional appearance (if available in layout)
+  const centerOffsetX = layout.qrCenterOffsetX || 0;
+  const centerOffsetY = layout.qrCenterOffsetY || 0;
+  
+  // Final QR code position within centered cell
+  const x = baseCellX + centerOffsetX;
+  const y = baseCellY - centerOffsetY; // Subtract because Y grows downward from top
   const index = (row * layout.columns) + col;
   
   // REQ-015 Task 4: Debug individual cell position calculations
   const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
   console.log(`${DEBUG_PREFIX} CELL_POSITION_CALCULATION:`, {
     requestedPosition: `row ${row}, col ${col}`,
-    calculatedX: x,
-    calculatedY: y,
-    calculation: `x = ${layout.startX} + (${col} * ${layout.cellWidth}) = ${x}`,
-    calculationY: `y = ${layout.startY} - (${row} * ${layout.cellHeight}) = ${y}`,
+    baseCellX: baseCellX.toFixed(2),
+    baseCellY: baseCellY.toFixed(2),
+    centerOffsetX: centerOffsetX.toFixed(2),
+    centerOffsetY: centerOffsetY.toFixed(2),
+    finalX: x.toFixed(2),
+    finalY: y.toFixed(2),
+    calculationX: `baseCell(${baseCellX.toFixed(2)}) + centerOffset(${centerOffsetX.toFixed(2)}) = ${x.toFixed(2)}`,
+    calculationY: `baseCell(${baseCellY.toFixed(2)}) - centerOffset(${centerOffsetY.toFixed(2)}) = ${y.toFixed(2)}`,
     cellIndex: index,
-    coordinateSystem: 'PDF bottom-left origin (FIXED: startY from top, subtract rows)',
-    note: 'Y now correctly grows downward from top of usable area'
+    coordinateSystem: 'PDF bottom-left origin with professional centering',
+    optimizationNote: 'QR codes centered within cells for professional appearance'
   });
   
   return {
