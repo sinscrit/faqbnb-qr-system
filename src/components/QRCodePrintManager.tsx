@@ -308,6 +308,14 @@ export function QRCodePrintManager({
       
       // 🔍 DEBUG: Log initial state before conversion
       const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+      
+      // REQ-015 Task 2: Debug QR Size Pipeline - Log initial QR size
+      console.log(`${DEBUG_PREFIX} QR_SIZE_PIPELINE_START:`, {
+        initialQRSize: settings.qrSize,
+        qrSizeType: typeof settings.qrSize,
+        fullSettings: settings
+      });
+      
       console.log(`${DEBUG_PREFIX} INITIAL_STATE:`, {
         generatedQRCodesType: typeof generatedQRCodes,
         generatedQRCodesSize: generatedQRCodes.size,

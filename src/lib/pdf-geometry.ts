@@ -600,6 +600,16 @@ export function calculateGridLayout(
   margins: number,
   qrSize: number
 ): GridLayout {
+  // REQ-015 Task 2: Debug QR Size Pipeline - Log input QR size parameter
+  const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  console.log(`${DEBUG_PREFIX} QR_SIZE_PIPELINE_GRID_LAYOUT_INPUT:`, {
+    inputQrSize: qrSize,
+    qrSizeType: typeof qrSize,
+    pageWidth,
+    pageHeight,
+    margins
+  });
+  
   // Validate inputs
   const pageWidthValidation = validateNumericInput(pageWidth, 'page width');
   if (!pageWidthValidation.isValid) {
@@ -626,6 +636,13 @@ export function calculateGridLayout(
   
   // Convert QR size from mm to points
   const qrSizePoints = convertMillimetersToPoints(qrSize);
+  
+  // REQ-015 Task 2: Debug QR Size Pipeline - Log conversion result
+  console.log(`${DEBUG_PREFIX} QR_SIZE_PIPELINE_CONVERSION_RESULT:`, {
+    originalQrSizeMm: qrSize,
+    convertedQrSizePoints: qrSizePoints,
+    conversionFunction: 'convertMillimetersToPoints'
+  });
   
   // Calculate number of columns: floor((usable_width) / qr_size)
   const columns = Math.floor(usableArea.width / qrSizePoints);

@@ -1425,6 +1425,14 @@ export async function generatePDFFromQRCodes(
 
   // 🔍 DEBUG: Log function input parameters
   const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
+  
+  // REQ-015 Task 2: Debug QR Size Pipeline - Log received QR size in PDF generator
+  console.log(`${DEBUG_PREFIX} QR_SIZE_PIPELINE_PDF_GENERATOR:`, {
+    receivedQRSize: settings.qrSize,
+    qrSizeType: typeof settings.qrSize,
+    settingsQrSizeValue: settings.qrSize
+  });
+  
   console.log(`${DEBUG_PREFIX} FUNCTION_INPUT:`, {
     qrCodesType: typeof qrCodes,
     qrCodesIsMap: qrCodes instanceof Map,

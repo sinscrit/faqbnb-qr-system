@@ -52,22 +52,22 @@
 - [x] Run unit tests and verify mathematical accuracy
 - [x] Document any discrepancies found in conversion calculations
 
-### 2. Debug QR Size Pipeline Propagation (1 Point)
+### 2. Debug QR Size Pipeline Propagation (1 Point) -unit tested-
 
 **Objective**: Trace QR size setting from UI through entire PDF generation pipeline to identify where size gets lost or incorrectly converted
 
 **Files to Examine**: `src/components/QRCodePrintManager.tsx`, `src/lib/pdf-generator.ts`
 
 **Tasks**:
-- [ ] Add debug logging to trace QR size through pipeline:
-  - [ ] In `QRCodePrintManager.tsx` `handlePDFExport()` function (line ~292): Log initial `settings.qrSize` value
-  - [ ] In `pdf-generator.ts` `generatePDFFromQRCodes()` function (line ~1418): Log received `settings.qrSize`
-  - [ ] In `pdf-geometry.ts` `calculateGridLayout()` function (line ~597): Log input `qrSize` parameter
-  - [ ] In `calculateGridLayout()`: Log result of `convertMillimetersToPoints(qrSize)` conversion
-- [ ] Generate test PDF with 2 QR codes at 40mm setting
-- [ ] Examine debug logs to identify where size value changes unexpectedly
-- [ ] Document exact values at each step of the pipeline
-- [ ] Identify any incorrect size calculations or unit conversions
+- [x] Add debug logging to trace QR size through pipeline:
+  - [x] In `QRCodePrintManager.tsx` `handlePDFExport()` function (line ~292): Log initial `settings.qrSize` value
+  - [x] In `pdf-generator.ts` `generatePDFFromQRCodes()` function (line ~1418): Log received `settings.qrSize`
+  - [x] In `pdf-geometry.ts` `calculateGridLayout()` function (line ~597): Log input `qrSize` parameter
+  - [x] In `calculateGridLayout()`: Log result of `convertMillimetersToPoints(qrSize)` conversion
+- [x] Generate test PDF with 2 QR codes at 40mm setting
+- [x] Examine debug logs to identify where size value changes unexpectedly
+- [x] Document exact values at each step of the pipeline
+- [x] Identify any incorrect size calculations or unit conversions
 
 ### 3. Fix Size Calculation Errors (1 Point)
 
