@@ -7,7 +7,7 @@ import { ItemSelectionList } from './ItemSelectionList';
 import { QRCodePrintPreview } from './QRCodePrintPreview';
 import { PDFExportOptions } from './PDFExportOptions';
 import { generateBatchQRCodes, clearQRCache } from '@/lib/qrcode-utils';
-import { generatePDFFromQRCodes, downloadPDFBlob, convertPDFToBlob } from '@/lib/pdf-generator';
+import { downloadPDFBlob } from '@/lib/pdf-utils';
 import { cn } from '@/lib/utils';
 
 /**
@@ -319,66 +319,68 @@ export function QRCodePrintManager({
       console.log(`${DEBUG_PREFIX} INITIAL_STATE:`, {
         generatedQRCodesType: typeof generatedQRCodes,
         generatedQRCodesSize: generatedQRCodes.size,
-        generatedQRCodesIsMap: generatedQRCodes instanceof Map,
-        itemsCount: items.length,
-        settingsReceived: settings
+        generatedQRCodesEntries: Array.from(generatedQRCodes.entries()).slice(0, 2)
       });
-      
-      // Convert QR codes to the format expected by the PDF generator
-      const qrCodesMap = new Map<string, string>();
+
+      // Convert QR codes to the format expected by the server
+      const qrCodesArray = [];
       for (const [itemId, qrDataUrl] of generatedQRCodes) {
         const item = items.find(item => item.id === itemId);
         if (item) {
-          qrCodesMap.set(item.id, `${window.location.origin}/item/${item.publicId}`);
           console.log(`${DEBUG_PREFIX} MAPPING_ITEM:`, {
-            itemId,
+            itemId: item.id,
             itemName: item.name,
-            publicId: item.publicId,
-            url: `${window.location.origin}/item/${item.publicId}`
+            qrDataUrlLength: qrDataUrl.length,
+            qrDataUrlPrefix: qrDataUrl.substring(0, 50)
           });
-        } else {
-          console.log(`${DEBUG_PREFIX} ITEM_NOT_FOUND:`, { itemId });
+          
+          qrCodesArray.push({
+            id: item.id,
+            name: item.name,
+            qrDataUrl: qrDataUrl
+          });
         }
       }
-      
-      console.log(`${DEBUG_PREFIX} FINAL_QR_CODES_MAP:`, {
-        type: typeof qrCodesMap,
-        isMap: qrCodesMap instanceof Map,
-        size: qrCodesMap.size,
-        keys: Array.from(qrCodesMap.keys()),
-        entries: Array.from(qrCodesMap.entries())
+
+      console.log(`${DEBUG_PREFIX} FINAL_QR_CODES_ARRAY:`, {
+        type: 'array',
+        length: qrCodesArray.length,
+        items: qrCodesArray
       });
 
-      const result = await generatePDFFromQRCodes(qrCodesMap, settings, {
-        onProgress: (progress) => {
-          console.log(`PDF Generation: ${progress.step} - ${progress.percentage}%`);
+      const response = await fetch('/api/admin/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        includeLabels: settings.includeLabels,
-        includeCutlines: settings.includeCutlines
+        body: JSON.stringify({
+          qrCodes: qrCodesArray,
+          settings: settings
+        })
       });
 
-      if (result.success && result.pdfBytes) {
-        // Generate filename with timestamp
-        const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
-        const filename = `QR-Codes-${timestamp}.pdf`;
-        
-        // Convert to blob and trigger download
-        const blob = convertPDFToBlob(result.pdfBytes, filename);
-        downloadPDFBlob(blob, filename);
-        
-        setSuccessMessage(`PDF exported successfully! ${result.statistics.successfulQRCodes} QR codes included.`);
-        console.log('✅ PDF export completed:', {
-          pageCount: result.pageCount,
-          qrCodeCount: result.qrCodeCount,
-          processingTime: result.processingTime,
-          statistics: result.statistics
-        });
-
-        // Close PDF options modal
-        setShowPDFOptions(false);
-      } else {
-        throw new Error(result.error || 'PDF generation failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
+
+      const blob = await response.blob();
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+      const filename = `QR-Codes-${timestamp}.pdf`;
+      
+      downloadPDFBlob(blob, filename);
+      
+      setSuccessMessage(`PDF exported successfully! ${qrCodesArray.length} QR codes included.`);
+      console.log('✅ PDF export completed:', {
+        qrCodeCount: qrCodesArray.length,
+        paperSize: settings.pageFormat,
+        margin: settings.margins,
+        qrCodeSize: settings.qrSize,
+        cutlines: settings.includeCutlines
+      });
+
+      // Close PDF options modal
+      setShowPDFOptions(false);
     } catch (error: any) {
       console.error('PDF export error:', error);
       setLastError({
