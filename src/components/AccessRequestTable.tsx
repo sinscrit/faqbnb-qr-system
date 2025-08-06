@@ -9,6 +9,8 @@ interface AccessRequestTableProps {
   onDeny: (requestId: string) => void;
   onEmailClick: (request: AccessRequest) => void;
   onViewDetails?: (request: AccessRequest) => void;
+  onQuickApprove?: (requestId: string) => void;
+  onBatchApprove?: (requestIds: string[]) => void;
   isLoading?: boolean;
 }
 
@@ -27,11 +29,15 @@ export default function AccessRequestTable({
   onDeny,
   onEmailClick,
   onViewDetails,
+  onQuickApprove,
+  onBatchApprove,
   isLoading = false
 }: AccessRequestTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'request_date', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedRequests, setSelectedRequests] = useState<Set<string>>(new Set());
+  const [showBatchActions, setShowBatchActions] = useState(false);
 
   // Handle sorting
   const handleSort = (field: string) => {
@@ -127,6 +133,51 @@ export default function AccessRequestTable({
     });
   };
 
+  // Handle batch selection
+  const handleSelectRequest = (requestId: string) => {
+    const newSelected = new Set(selectedRequests);
+    if (newSelected.has(requestId)) {
+      newSelected.delete(requestId);
+    } else {
+      newSelected.add(requestId);
+    }
+    setSelectedRequests(newSelected);
+    setShowBatchActions(newSelected.size > 0);
+  };
+
+  const handleSelectAll = () => {
+    const pendingRequests = sortedAndFilteredRequests
+      .filter(r => r.status === AccessRequestStatus.PENDING)
+      .map(r => r.id);
+    
+    if (selectedRequests.size === pendingRequests.length) {
+      setSelectedRequests(new Set());
+      setShowBatchActions(false);
+    } else {
+      setSelectedRequests(new Set(pendingRequests));
+      setShowBatchActions(true);
+    }
+  };
+
+  const handleQuickApprove = async (requestId: string) => {
+    if (onQuickApprove) {
+      await onQuickApprove(requestId);
+      // Remove from selection if it was selected
+      const newSelected = new Set(selectedRequests);
+      newSelected.delete(requestId);
+      setSelectedRequests(newSelected);
+      setShowBatchActions(newSelected.size > 0);
+    }
+  };
+
+  const handleBatchApprove = async () => {
+    if (onBatchApprove && selectedRequests.size > 0) {
+      await onBatchApprove(Array.from(selectedRequests));
+      setSelectedRequests(new Set());
+      setShowBatchActions(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white shadow rounded-lg">
@@ -172,6 +223,30 @@ export default function AccessRequestTable({
               <option value={AccessRequestStatus.DENIED}>Denied</option>
               <option value={AccessRequestStatus.REGISTERED}>Registered</option>
             </select>
+
+            {/* Batch Actions */}
+            {showBatchActions && onBatchApprove && (
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-sm text-gray-600">
+                  {selectedRequests.size} selected
+                </span>
+                <button
+                  onClick={handleBatchApprove}
+                  className="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
+                >
+                  Batch Approve & Email
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedRequests(new Set());
+                    setShowBatchActions(false);
+                  }}
+                  className="px-3 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -181,6 +256,16 @@ export default function AccessRequestTable({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              {onBatchApprove && (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <input
+                    type="checkbox"
+                    checked={selectedRequests.size > 0 && selectedRequests.size === sortedAndFilteredRequests.filter(r => r.status === AccessRequestStatus.PENDING).length}
+                    onChange={handleSelectAll}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </th>
+              )}
               <th 
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('requester_email')}
@@ -231,6 +316,18 @@ export default function AccessRequestTable({
               
               return (
                 <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                  {onBatchApprove && (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {request.status === AccessRequestStatus.PENDING && (
+                        <input
+                          type="checkbox"
+                          checked={selectedRequests.has(request.id)}
+                          onChange={() => handleSelectRequest(request.id)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                      )}
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
@@ -303,6 +400,15 @@ export default function AccessRequestTable({
                           >
                             Approve
                           </button>
+                          {onQuickApprove && (
+                            <button
+                              onClick={() => handleQuickApprove(request.id)}
+                              className="text-blue-600 hover:text-blue-900 transition-colors font-medium"
+                              title="Quick approve and send email"
+                            >
+                              ⚡ Quick
+                            </button>
+                          )}
                           <button
                             onClick={() => onDeny(request.id)}
                             className="text-red-600 hover:text-red-900 transition-colors"
