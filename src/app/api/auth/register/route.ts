@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { registerUser } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import { 
+  validateAccessCodeForRegistration, 
+  consumeAccessCode 
+} from '@/lib/access-validation';
 
 // Rate limiting configuration (simple in-memory store)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
@@ -70,7 +74,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, fullName, confirmPassword } = body;
+    const { email, password, fullName, confirmPassword, accessCode } = body;
 
     // Validate required fields
     if (!email || !password) {
@@ -80,12 +84,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate email format
-    if (!EMAIL_REGEX.test(email)) {
-      return NextResponse.json(
-        { success: false, error: 'Please enter a valid email address' },
-        { status: 400 }
-      );
+    // Enhanced validation for access code registration flow
+    if (accessCode) {
+      console.log('🔒 REGISTRATION_API: ACCESS_CODE_FLOW', {
+        timestamp: new Date().toISOString(),
+        email: email,
+        hasAccessCode: !!accessCode
+      });
+
+      // Validate access code for registration
+      const accessValidation = await validateAccessCodeForRegistration(accessCode, email);
+      
+      if (!accessValidation.isValid) {
+        console.log('🔒 REGISTRATION_API: ACCESS_CODE_INVALID', {
+          timestamp: new Date().toISOString(),
+          error: accessValidation.error,
+          errorCode: accessValidation.errorCode
+        });
+        
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: accessValidation.error || 'Invalid access code',
+            errorCode: accessValidation.errorCode
+          },
+          { status: 403 }
+        );
+      }
+
+      console.log('🔒 REGISTRATION_API: ACCESS_CODE_VALID', {
+        timestamp: new Date().toISOString(),
+        requestId: accessValidation.request?.id,
+        hasMetadata: !!accessValidation.metadata
+      });
+
+      // For access code flow, we trust the email from the validated request
+      // Skip email format validation since it was already validated in access code
+    } else {
+      // Standard registration flow - validate email format
+      if (!EMAIL_REGEX.test(email)) {
+        return NextResponse.json(
+          { success: false, error: 'Please enter a valid email address' },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate password strength
@@ -151,6 +193,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // If access code was used, mark it as consumed
+    if (accessCode) {
+      console.log('🔒 REGISTRATION_API: CONSUMING_ACCESS_CODE', {
+        timestamp: new Date().toISOString(),
+        userId: registrationResult.data.user.id,
+        accessCode: `${accessCode.substring(0, 4)}...`
+      });
+
+      const consumeResult = await consumeAccessCode(accessCode, registrationResult.data.user.id);
+      
+      if (!consumeResult.success) {
+        console.error('🔒 REGISTRATION_API: ACCESS_CODE_CONSUME_FAILED', {
+          timestamp: new Date().toISOString(),
+          error: consumeResult.error,
+          errorCode: consumeResult.errorCode
+        });
+        // Note: We don't fail the registration here since the user was already created
+        // This is just a warning that the access code couldn't be marked as used
+      } else {
+        console.log('🔒 REGISTRATION_API: ACCESS_CODE_CONSUMED', {
+          timestamp: new Date().toISOString(),
+          requestId: consumeResult.requestId,
+          registrationDate: consumeResult.registrationDate
+        });
+      }
+    }
+
     // Return success response (don't include sensitive session data)
     return NextResponse.json({
       success: true,
@@ -161,6 +230,11 @@ export async function POST(request: NextRequest) {
         fullName: registrationResult.data.user.fullName,
         role: registrationResult.data.user.role,
       },
+      // Include access code metadata if available
+      ...(accessCode && {
+        accessCodeUsed: true,
+        registrationMethod: 'access_code'
+      })
     }, { status: 201 });
 
   } catch (error) {
