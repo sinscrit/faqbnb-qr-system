@@ -296,3 +296,6 @@ export interface QRCodeConfig {
   baseUrl: string;
 }
 
+// Admin types
+export * from './admin';
+
