@@ -17,6 +17,7 @@
 
 import QRCode from 'qrcode';
 import { QRCodeOptions, QRCacheEntry, QRPrintSettings } from '../types/qrcode';
+import { getQRDomain } from './config';
 
 // QR Code cache for browser storage
 const qrCodeCache = new Map<string, QRCacheEntry>();
@@ -773,4 +774,15 @@ export async function generateQRCodeForPDF(
       error instanceof Error ? error : new Error(String(error))
     );
   }
+}
+
+/**
+ * Build QR code URL for an item using configured domain
+ * Part of REQ-016: Domain Configuration for QR Links
+ * @param publicId Public ID of the item
+ * @returns Full URL for the QR code
+ */
+export function buildQRUrl(publicId: string): string {
+  const domain = getQRDomain();
+  return `${domain}/item/${publicId}`;
 } 

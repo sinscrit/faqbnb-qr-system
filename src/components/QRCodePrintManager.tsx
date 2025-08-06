@@ -6,7 +6,7 @@ import { PDFExportSettings } from '@/types/pdf';
 import { ItemSelectionList } from './ItemSelectionList';
 import { QRCodePrintPreview } from './QRCodePrintPreview';
 import { PDFExportOptions } from './PDFExportOptions';
-import { generateBatchQRCodes, clearQRCache } from '@/lib/qrcode-utils';
+import { generateBatchQRCodes, clearQRCache, buildQRUrl } from '@/lib/qrcode-utils';
 import { downloadPDFBlob } from '@/lib/pdf-utils';
 import { cn } from '@/lib/utils';
 
@@ -208,7 +208,7 @@ export function QRCodePrintManager({
       const results = await generateBatchQRCodes(
         selectedItemsData.map(item => ({
           id: item.id,
-          url: `${window.location.origin}/item/${item.publicId}`
+          url: buildQRUrl(item.publicId)
         })),
         (completed: number, total: number) => {
           if (isComponentMountedRef.current) {

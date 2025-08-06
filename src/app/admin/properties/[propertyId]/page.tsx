@@ -156,19 +156,12 @@ const ViewPropertyPage: React.FC = () => {
           encodedSize: encodedData.length
         });
         
-        // Open QR printing in a new window with pre-authenticated data
-      const windowFeatures = 'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no';
+        // Navigate to QR printing in the same tab with pre-authenticated data
         const qrPrintUrl = `/admin/properties/${propertyId}/qr-print#${encodedData}`;
       
-        console.log('[QR-AUTH-DEBUG] Opening QR Print window with pre-auth data');
-      const newWindow = window.open(qrPrintUrl, 'qr-print-window', windowFeatures);
-      
-      if (!newWindow) {
-        throw new Error('Unable to open new window. Please check your popup blocker settings.');
-      }
-      
-      newWindow.focus();
-        console.log('[QR-AUTH-DEBUG] QR Print window opened successfully');
+        console.log('[QR-AUTH-DEBUG] Navigating to QR Print page with pre-auth data');
+        router.push(qrPrintUrl);
+        console.log('[QR-AUTH-DEBUG] Navigation to QR Print page initiated');
       
     } catch (error) {
         console.error('[QR-AUTH-DEBUG] Error in pre-auth QR print:', error);

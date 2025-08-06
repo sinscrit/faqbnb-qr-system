@@ -1504,7 +1504,8 @@ export async function generatePDFFromQRCodes(
       pageLayout.page.width, 
       pageLayout.page.height, 
       settings.margins, 
-      settings.qrSize
+      settings.qrSize,
+      settings.itemsPerRow
     );
     console.log(`${DEBUG_PREFIX} GRID_LAYOUT:`, {
       layoutType: typeof layout,

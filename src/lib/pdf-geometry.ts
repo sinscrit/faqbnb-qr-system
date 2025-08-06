@@ -420,12 +420,10 @@ export function calculateUsableArea(
     );
   }
   
-  // REQ-015 Task 5: Fix coordinate system positioning for PDF bottom-left origin
-  // For QR codes to appear at "top" of page visually, startY should be calculated from top
-  // PDF bottom-left origin: y=0 is bottom, y=pageHeight is top
-  // To start from "top" with margin: y = pageHeight - margin - qrHeight
-  // But since grid will grow downward, we want startY at the TOP of usable area
-  const startY = pageHeight - marginsInPoints;
+  // REQ-015 Task 5: Fix coordinate system positioning based on pdf_generator_fixed3.js
+  // Y coordinates start from top margin and grow downward
+  // cellY = margin + (row * cellHeight) - this is the standard approach
+  const startY = marginsInPoints;
   
   return {
     width: usableWidth,
@@ -605,7 +603,8 @@ export function calculateGridLayout(
   pageWidth: number,
   pageHeight: number,
   margins: number,
-  qrSize: number
+  qrSize: number,
+  itemsPerRow?: number
 ): GridLayout {
   // REQ-015 Task 2: Debug QR Size Pipeline - Log input QR size parameter
   const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
@@ -672,10 +671,13 @@ export function calculateGridLayout(
   // Calculate effective QR size including minimum spacing
   const effectiveQrSize = qrSizePoints + minSpacingPoints;
   
-  // Calculate number of columns: floor((usable_width) / (qr_size + spacing))
-  const columns = Math.floor(usableArea.width / effectiveQrSize);
+  // EXACT grid calculation from pdf_generator_fixed3.js (lines 108-111)
+  // Use user-specified itemsPerRow instead of auto-calculating
+  const columns = itemsPerRow || Math.floor(usableArea.width / effectiveQrSize);
   
-  // Calculate number of rows: floor((usable_height) / (qr_size + spacing))  
+  // Calculate rows based on columns (like pdf_generator_fixed3.js line 109)
+  // gridRows = Math.ceil(finalConfig.qrCodeCount / gridCols)
+  // For now, calculate max possible rows
   const rows = Math.floor(usableArea.height / effectiveQrSize);
   
   // Validate that we can fit at least one QR code
@@ -686,8 +688,9 @@ export function calculateGridLayout(
     );
   }
   
-  // REQ-015 Task 6: Calculate professional cell dimensions with proper spacing
-  // Distribute remaining space evenly to center QR codes within cells
+  // EXACT cell calculation from pdf_generator_fixed3.js (lines 110-111)
+  // cellWidth = contentWidth / gridCols;
+  // cellHeight = contentHeight / gridRows;
   const cellWidth = usableArea.width / columns;
   const cellHeight = usableArea.height / rows;
   
@@ -793,34 +796,41 @@ export function getQRCellPosition(row: number, col: number, layout: GridLayout):
   // REQ-015 Task 5: Fix coordinate system for PDF bottom-left origin
   // REQ-015 Task 6: Add professional centering within cells
   
-  // Calculate base cell position
-  const baseCellX = layout.startX + (col * layout.cellWidth);
-  const baseCellY = layout.startY - (row * layout.cellHeight);
+  // EXACT coordinate calculation from pdf_generator_fixed3.js (lines 154-162)
+  // Calculate cell position - using EXACT logic from working file
+  const cellX = layout.startX + (col * layout.cellWidth);  // Line 154: margin + (col * cellWidth)
+  const cellY = layout.startY + (row * layout.cellHeight); // Line 155: margin + (row * cellHeight)
   
-  // Add centering offsets for professional appearance (if available in layout)
-  const centerOffsetX = layout.qrCenterOffsetX || 0;
-  const centerOffsetY = layout.qrCenterOffsetY || 0;
+  // Center QR code within cell
+  const labelHeight = 25; // From pdf_generator_fixed3.js line 116
+  const qrX = cellX + (layout.cellWidth - layout.qrSize) / 2;  // Line 158
+  const qrY = cellY + (layout.cellHeight - layout.qrSize - labelHeight) / 2;  // Line 159
   
-  // Final QR code position within centered cell
-  const x = baseCellX + centerOffsetX;
-  const y = baseCellY - centerOffsetY; // Subtract because Y grows downward from top
+  // Ensure QR code fits within bounds (Line 162)
+  const adjustedQrY = Math.max(cellY + 10, Math.min(qrY, cellY + layout.cellHeight - layout.qrSize - labelHeight - 10));
+  
+  // Final position using exact pdf_generator_fixed3.js logic
+  const x = qrX;
+  const y = adjustedQrY;
   const index = (row * layout.columns) + col;
   
   // REQ-015 Task 4: Debug individual cell position calculations
   const DEBUG_PREFIX = "🔍 PDF_DEBUG_013:";
   console.log(`${DEBUG_PREFIX} CELL_POSITION_CALCULATION:`, {
     requestedPosition: `row ${row}, col ${col}`,
-    baseCellX: baseCellX.toFixed(2),
-    baseCellY: baseCellY.toFixed(2),
-    centerOffsetX: centerOffsetX.toFixed(2),
-    centerOffsetY: centerOffsetY.toFixed(2),
+    cellX: cellX.toFixed(2),
+    cellY: cellY.toFixed(2),
+    qrX: qrX.toFixed(2),
+    qrY: qrY.toFixed(2),
+    adjustedQrY: adjustedQrY.toFixed(2),
+    labelHeight: labelHeight,
     finalX: x.toFixed(2),
     finalY: y.toFixed(2),
-    calculationX: `baseCell(${baseCellX.toFixed(2)}) + centerOffset(${centerOffsetX.toFixed(2)}) = ${x.toFixed(2)}`,
-    calculationY: `baseCell(${baseCellY.toFixed(2)}) - centerOffset(${centerOffsetY.toFixed(2)}) = ${y.toFixed(2)}`,
+    calculationX: `cellX(${cellX.toFixed(2)}) + centering(${((layout.cellWidth - layout.qrSize) / 2).toFixed(2)}) = qrX(${qrX.toFixed(2)})`,
+    calculationY: `cellY(${cellY.toFixed(2)}) + centering - labelHeight = qrY(${qrY.toFixed(2)}) → adjusted(${adjustedQrY.toFixed(2)})`,
     cellIndex: index,
-    coordinateSystem: 'PDF bottom-left origin with professional centering',
-    optimizationNote: 'QR codes centered within cells for professional appearance'
+    coordinateSystem: 'EXACT pdf_generator_fixed3.js logic (lines 154-162)',
+    note: 'Using adjustedQrY bounds checking from working file'
   });
   
   return {

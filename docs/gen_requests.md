@@ -1061,4 +1061,150 @@ Fix critical PDF generation issues where QR codes are rendered at incorrect size
 
 ---
 
-*Next Request: REQ-016* 
+*Next Request: REQ-016*
+
+## REQ-016: Domain Configuration for QR Links and System Admin Back Office
+**Date**: August 6, 2025  
+**Type**: Feature Implementation (Major)  
+**Complexity**: 28-34 Points (High Complexity)
+
+### Request Summary
+Implement configurable domain parameter for QR code links and create a comprehensive system admin back office interface for user management, access tracking, and account analytics.
+
+### Detailed Requirements
+
+#### 1. Domain Parameter for QR Code Links (3 points)
+- **Issue**: QR codes currently resolve to localhost when generated locally
+- **Solution**: Add configurable domain parameter that overrides localhost regardless of where code generation runs
+- **Implementation**: Environment variable or admin setting for domain configuration
+- **Files Affected**:
+  - `.env.local` / `.env` (new DOMAIN_OVERRIDE parameter)
+  - `src/lib/qrcode-utils.ts` (domain resolution logic)
+  - `src/app/api/qr-codes/route.ts` (QR generation endpoint)
+  - `src/components/QRCodePrintManager.tsx` (domain integration)
+  - `src/lib/config.ts` (new configuration management)
+
+#### 2. System Admin Database Flag Implementation (2 points)
+- **Requirement**: Sys admin users flagged in database (manually set in Supabase)
+- **Implementation**: Add is_admin boolean field to users table
+- **Access Control**: Admin-only routes and components based on database flag
+- **Files Affected**:
+  - `database/schema.sql` (add is_admin column to users table)
+  - `src/lib/auth.ts` (admin role checking)
+  - `src/middleware.ts` (admin route protection)
+  - `src/contexts/AuthContext.tsx` (admin state management)
+
+#### 3. Back Office User Analytics Dashboard (12 points)
+- **User List Display**: Current users with comprehensive account access information
+- **Account Access Analytics**: 
+  - Accounts user has access to but doesn't own
+  - Visit counts to items in those accounts
+  - Accounts user owns with item counts and visit statistics
+- **Data Aggregation**: Complex queries across users, accounts, items, and visits
+- **Files Affected**:
+  - `src/app/admin/back-office/page.tsx` (new admin dashboard)
+  - `src/app/api/admin/users/analytics/route.ts` (new user analytics API)
+  - `src/components/UserAnalyticsTable.tsx` (new analytics display component)
+  - `src/components/AccountAccessSummary.tsx` (new access summary component)
+  - `src/lib/analytics.ts` (new analytics calculation utilities)
+  - `src/types/admin.ts` (new admin-specific type definitions)
+
+#### 4. Access Request Management System (11 points)
+- **Access Request Tracking**: List of people who have requested access
+- **Request Timeline**: When access was requested, granted, and registration dates
+- **Registration Analytics**: 
+  - Days since request for unregistered users
+  - Days between request and registration for registered users
+- **Email Integration**: Pre-formatted email popup with access links and codes
+- **Approval Workflow**: Admin buttons to grant access with automated email generation
+- **Files Affected**:
+  - `database/schema.sql` (new access_requests table)
+  - `src/app/admin/back-office/access-requests/page.tsx` (new access management page)
+  - `src/app/api/admin/access-requests/route.ts` (new access request API)
+  - `src/app/api/admin/access-requests/[requestId]/grant/route.ts` (grant access endpoint)
+  - `src/components/AccessRequestTable.tsx` (new request management component)
+  - `src/components/EmailPopup.tsx` (new email composition component)
+  - `src/lib/email-templates.ts` (new email template utilities)
+  - `src/lib/access-management.ts` (new access control utilities)
+
+### Complexity Analysis
+
+#### Domain Configuration System (3 points)
+- **Environment Management**: Dynamic domain resolution based on configuration
+- **QR Code Integration**: Modify existing QR generation to use configurable domain
+- **Cross-Environment Support**: Development, staging, production domain handling
+- **Risk Level**: Low-Medium - Configuration change affecting URL generation
+
+#### Database Schema & Admin Infrastructure (2 points)
+- **Schema Addition**: Simple boolean flag addition to existing users table
+- **Authentication Integration**: Admin role checking throughout application
+- **Route Protection**: Middleware updates for admin-only access
+- **Risk Level**: Low - Simple database addition with standard auth patterns
+
+#### User Analytics Dashboard (12 points)
+- **Complex Data Aggregation**: Multi-table joins across users, accounts, items, visits
+- **Performance Optimization**: Efficient queries for potentially large datasets
+- **Advanced UI Components**: Rich dashboard interface with sortable tables and analytics
+- **Real-time Data**: Up-to-date user access and visit statistics
+- **Cross-Account Analytics**: Complex ownership vs access relationship tracking
+- **Risk Level**: High - Complex database queries and new admin interface
+
+#### Access Request Management (11 points)
+- **Complete Workflow System**: Request → Review → Approval → Email → Registration tracking
+- **Email Integration**: Template system with dynamic link generation
+- **Timeline Analytics**: Complex date calculations for request/registration tracking
+- **Database Design**: New access request tracking with proper relationships
+- **Approval Process**: Secure access granting with proper validation
+- **User Experience**: Intuitive admin interface for managing access requests
+- **Risk Level**: High - Complete new workflow system with email integration
+
+### Technical Challenges
+1. **Complex Database Relationships**: Multi-table analytics across accounts, users, and access
+2. **Email Integration**: Secure template system with dynamic access links
+3. **Performance**: Efficient analytics queries for large user datasets
+4. **Security**: Admin access control and secure access granting workflow
+5. **User Experience**: Intuitive admin interface for complex data relationships
+6. **Timeline Calculations**: Accurate date math for request/registration analytics
+
+### Implementation Priority
+**High Priority** - Critical admin functionality for user management and system oversight.
+
+### Implementation Phases
+1. **Phase 1**: Domain configuration and admin flag implementation (5 points)
+2. **Phase 2**: User analytics dashboard infrastructure (8 points)
+3. **Phase 3**: Access request management system (10 points)
+4. **Phase 4**: Email integration and approval workflow (9 points)
+
+### Related Files Reference
+- **Configuration**: 
+  - `.env.local`, `src/lib/config.ts` (domain settings)
+  - `database/schema.sql` (admin flag and access requests)
+- **Authentication & Authorization**:
+  - `src/lib/auth.ts`, `src/middleware.ts`, `src/contexts/AuthContext.tsx`
+- **QR Code System**:
+  - `src/lib/qrcode-utils.ts`, `src/app/api/qr-codes/route.ts`
+  - `src/components/QRCodePrintManager.tsx`
+- **New Admin Interface**:
+  - `src/app/admin/back-office/` (new admin pages)
+  - `src/components/UserAnalyticsTable.tsx`, `src/components/AccessRequestTable.tsx`
+  - `src/components/EmailPopup.tsx` (new components)
+- **New API Endpoints**:
+  - `src/app/api/admin/users/analytics/route.ts`
+  - `src/app/api/admin/access-requests/` (access management APIs)
+- **New Utilities**:
+  - `src/lib/analytics.ts`, `src/lib/email-templates.ts`
+  - `src/lib/access-management.ts` (new utility libraries)
+- **Type Definitions**:
+  - `src/types/admin.ts` (new admin types)
+  - `src/types/index.ts` (extend existing types)
+
+### Database Schema Requirements
+- **Users Table**: Add `is_admin` boolean field (manually settable)
+- **Access Requests Table**: New table for tracking access requests with:
+  - Request date, user info, account requested, approval status
+  - Approval date, admin who approved, registration completion date
+  - Email sent status and access code generation
+
+---
+
+*Next Request: REQ-017* 

@@ -283,3 +283,16 @@ export * from './analytics';
 // Reaction types
 export * from './reactions';
 
+// Domain Configuration types
+export interface DomainConfig {
+  override: string | null;
+  fallback: string;
+  isValid: boolean;
+}
+
+export interface QRCodeConfig {
+  domain: string;
+  protocol: 'https' | 'http';
+  baseUrl: string;
+}
+
