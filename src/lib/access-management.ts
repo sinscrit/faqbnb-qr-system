@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 import { randomBytes } from 'crypto';
 
@@ -414,11 +414,38 @@ export async function validateAccessCode(accessCode: string): Promise<{
   error?: string;
 }> {
   try {
-    const { data: request, error } = await supabase
+    // First, get the access request without complex joins (using admin client for server-side access)
+    const { data: request, error } = await supabaseAdmin
       .from('access_requests')
-      .select(`
-        *,
-        account:accounts(
+      .select('*')
+      .eq('access_code', accessCode)
+      .single();
+
+    if (error || !request) {
+      console.log('Access code validation failed:', {
+        error: error,
+        hasRequest: !!request,
+        accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null
+      });
+      return {
+        isValid: false,
+        error: 'Access code not found'
+      };
+    }
+
+    console.log('Access code validation success:', {
+      requestId: request.id,
+      status: request.status,
+      email: request.requester_email,
+      hasAccountId: !!request.account_id
+    });
+
+    // If we have an account_id, fetch the account details separately
+    let accountData = null;
+    if (request.account_id) {
+      const { data: account } = await supabaseAdmin
+        .from('accounts')
+        .select(`
           id,
           name,
           owner:users!accounts_owner_id_fkey(
@@ -426,19 +453,20 @@ export async function validateAccessCode(accessCode: string): Promise<{
             email,
             full_name
           )
-        )
-      `)
-      .eq('access_code', accessCode)
-      .single();
-
-    if (error || !request) {
-      return {
-        isValid: false,
-        error: 'Access code not found'
-      };
+        `)
+        .eq('id', request.account_id)
+        .single();
+      
+      accountData = account;
     }
 
-    if (request.status !== AccessRequestStatus.APPROVED && request.status !== AccessRequestStatus.REGISTERED) {
+    // Attach account data to request if available
+    const requestWithAccount = {
+      ...request,
+      account: accountData
+    };
+
+    if (requestWithAccount.status !== AccessRequestStatus.APPROVED && requestWithAccount.status !== AccessRequestStatus.REGISTERED) {
       return {
         isValid: false,
         error: 'Access code is not active'
@@ -447,7 +475,7 @@ export async function validateAccessCode(accessCode: string): Promise<{
 
     return {
       isValid: true,
-      request
+      request: requestWithAccount
     };
 
   } catch (error) {
