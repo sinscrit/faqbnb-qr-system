@@ -117,27 +117,29 @@ Based on Supabase MCP analysis, the following tables are **CONFIRMED** to exist 
 
 ### Phase 2: Access Code Validation System and API Integration (4 points)
 
-#### 4. Create Access Code Validation API Endpoint (1 point)
+#### 4. Create Access Code Validation API Endpoint (1 point) ✅
 **Goal**: Implement server-side API endpoint for secure access code validation
 
 **Substeps**:
-- [ ] Create file `src/app/api/auth/validate-code/route.ts`
-- [ ] Implement `GET` handler for code validation:
-  - [ ] Extract `code` and `email` from query parameters
-  - [ ] Validate parameter format and presence
-  - [ ] Call existing `validateAccessCode()` from `src/lib/access-management.ts`
-  - [ ] Verify email matches `requester_email` in database
-  - [ ] Return validation result with appropriate HTTP status codes
-- [ ] Implement rate limiting (max 10 requests per minute per IP)
-- [ ] Add comprehensive error handling
-- [ ] Add request logging for security monitoring
-- [ ] Implement CORS headers if needed
+- [x] Create file `src/app/api/auth/validate-code/route.ts`
+- [x] Implement `GET` handler for code validation:
+  - [x] Extract `code` and `email` from query parameters
+  - [x] Validate parameter format and presence
+  - [x] Call existing `validateAccessCode()` from `src/lib/access-management.ts`
+  - [x] Verify email matches `requester_email` in database
+  - [x] Return validation result with appropriate HTTP status codes
+- [x] Implement rate limiting (max 10 requests per minute per IP)
+- [x] Add comprehensive error handling
+- [x] Add request logging for security monitoring
+- [x] Implement CORS headers if needed
+- [x] **CRITICAL FIX**: Updated `validateAccessCode()` to use `supabaseAdmin` for server-side access
 
 **Test Steps**:
-- [ ] Use `mcp_supabase_execute_sql` to create test access request with known code
-- [ ] Test endpoint with valid code/email combination
-- [ ] Test with invalid codes, emails, or missing parameters
-- [ ] Verify rate limiting works correctly
+- [x] Use `mcp_supabase_execute_sql` to create test access request with known code
+- [x] Test endpoint with valid code/email combination
+- [x] Test with invalid codes, emails, or missing parameters
+- [x] Verify rate limiting works correctly
+- [x] **Unit tested with Playwright MCP** - Full validation flow confirmed working
 - [ ] Test error responses are properly formatted
 
 #### 5. Enhance Access Validation Library (1 point)
