@@ -89,15 +89,25 @@ export async function signInWithEmail(
       return { error: 'Access denied - no email in user data' };
     }
 
-    // Check if user is an admin (using temporary policy)
+    // Check if user is an admin (check both admin_users table and is_admin flag)
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('email', data.user.email)
       .single();
 
-    if (adminError || !adminUser) {
-      // Sign out if not an admin
+    // Also check is_admin flag in users table
+    const { data: userWithAdminFlag, error: userFlagError } = await supabase
+      .from('users')
+      .select('email, full_name, role, is_admin')
+      .eq('id', data.user.id)
+      .single();
+
+    const isAdminByTable = !adminError && adminUser;
+    const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
+
+    if (!isAdminByTable && !isAdminByFlag) {
+      // Sign out if not an admin by either method
       await supabase.auth.signOut();
       return { error: 'Access denied - admin privileges required' };
     }
@@ -221,14 +231,24 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
 
 
 
-    // First check if user is an admin
+    // First check if user is an admin (check both admin_users table and is_admin flag)
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('email', user.email)
       .single();
 
-    if (!adminError && adminUser) {
+    // Also check is_admin flag in users table
+    const { data: userWithAdminFlag, error: userFlagError } = await supabase
+      .from('users')
+      .select('email, full_name, role, is_admin')
+      .eq('id', user.id)
+      .single();
+
+    const isAdminByTable = !adminError && adminUser;
+    const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
+
+    if (isAdminByTable || isAdminByFlag) {
       // User is an admin - get account context
       const accounts = await getAccountsForUser(user.id);
       
@@ -256,11 +276,14 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
         };
       }
 
+      // Prioritize admin_users data if available, else use users table data
+      const userInfo = isAdminByTable ? adminUser : userWithAdminFlag;
+      
       const authUser: AuthUser = {
         id: user.id,
-        email: adminUser.email,
-        fullName: adminUser.full_name || undefined,
-        role: adminUser.role || undefined,
+        email: userInfo.email,
+        fullName: userInfo.full_name || undefined,
+        role: userInfo.role || undefined,
         currentAccount: currentAccountContext,
         availableAccounts: accounts
       };
@@ -942,5 +965,38 @@ export async function getDefaultAccountForUser(userId: string): Promise<Account 
   } catch (error) {
     console.error('Get default account for user error:', error);
     return null;
+  }
+}
+
+/**
+ * Check if a user is a system administrator
+ * Part of REQ-016: System Admin Integration
+ * @param userId User ID to check
+ * @returns Promise resolving to true if user is a system admin
+ */
+export async function isSystemAdmin(userId: string): Promise<boolean> {
+  try {
+    // Check admin_users table
+    const { data: adminUser, error: adminError } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (!adminError && adminUser) {
+      return true;
+    }
+
+    // Check is_admin flag in users table
+    const { data: userWithAdminFlag, error: userFlagError } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('id', userId)
+      .single();
+
+    return !userFlagError && userWithAdminFlag?.is_admin === true;
+  } catch (error) {
+    console.error('Error checking system admin status:', error);
+    return false;
   }
 } 

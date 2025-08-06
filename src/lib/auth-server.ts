@@ -71,32 +71,28 @@ export async function validateAdminAuth(request: NextRequest) {
       adminErrorDetails: adminError?.details 
     });
 
-    if (adminError || !adminUser) {
-      // If not admin, check if user is a regular user
-      console.log('ADMIN_API_DEBUG: Not admin, checking if regular user...');
-      console.log('ADMIN_API_DEBUG: Querying users table with:', { 
-        userId: user.id, 
-        userIdType: typeof user.id 
-      });
-      
-      const { data: regularUser, error: userError } = await supabaseAdmin
-        .from('users')
-        .select('email, full_name, role, id')  // Added id to see what we get back
-        .eq('id', user.id)
-        .single();
-      console.log('ADMIN_API_DEBUG: Regular user check result:', { 
-        regularUser, 
-        userError: userError?.message,
-        userErrorCode: userError?.code,
-        userErrorDetails: userError?.details 
-      });
+    // Also check is_admin flag in users table
+    const { data: userWithAdminFlag, error: userFlagError } = await supabaseAdmin
+      .from('users')
+      .select('email, full_name, role, is_admin, id')
+      .eq('id', user.id)
+      .single();
+    console.error('🚨 ADMIN_API_DEBUG: User admin flag query result:', { 
+      userWithAdminFlag, 
+      userFlagError: userFlagError?.message 
+    });
 
-      if (userError || !regularUser) {
+    const isAdminByTable = !adminError && adminUser;
+    const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
+
+    if (!isAdminByTable && !isAdminByFlag) {
+      // Check if user exists in users table (we already have this data)
+      if (userFlagError || !userWithAdminFlag) {
         console.error('🚨 ADMIN_API_DEBUG: User validation failed:', { 
           userId: user.id, 
           email: user.email, 
           adminError: adminError?.message,
-          userError: userError?.message
+          userFlagError: userFlagError?.message
         });
         return {
           error: NextResponse.json(
@@ -113,25 +109,26 @@ export async function validateAdminAuth(request: NextRequest) {
       // Return regular user data
       const validatedUser = {
         id: user.id,
-        email: regularUser.email,
-        fullName: regularUser.full_name || undefined,
-        role: regularUser.role
+        email: userWithAdminFlag.email,
+        fullName: userWithAdminFlag.full_name || undefined,
+        role: userWithAdminFlag.role
       };
 
       console.log('ADMIN_API_DEBUG: Authentication successful for user:', validatedUser.email);
       return { user: validatedUser, isAdmin: false, supabase };
     }
 
-    // Return admin user data
+    // Return admin user data (prioritize admin_users table if available)
+    const userInfo = isAdminByTable ? adminUser : userWithAdminFlag;
     const validatedUser = {
       id: user.id,
-      email: adminUser.email,
-      fullName: adminUser.full_name || undefined,
-      role: adminUser.role
+      email: userInfo.email,
+      fullName: userInfo.full_name || undefined,
+      role: userInfo.role
     };
 
     console.log('ADMIN_API_DEBUG: Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: adminUser.role === 'admin', supabase };
+    return { user: validatedUser, isAdmin: true, supabase };
 
   } catch (error) {
     console.error('ADMIN_API_DEBUG: Auth validation error:', error);
