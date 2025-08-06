@@ -100,6 +100,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         ...baseItems,
         { name: 'Properties', href: '/admin/properties', icon: '🏠' },
         { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
+        { name: 'Access Requests', href: '/admin/access-requests', icon: '🔐' },
         { name: 'Back Office', href: '/admin/back-office', icon: '👑' },
       ];
     } else {

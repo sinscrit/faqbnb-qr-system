@@ -1,0 +1,293 @@
+import { AccessRequest, EmailTemplate } from '@/types/admin';
+
+/**
+ * Email Template Utilities for REQ-016: System Admin Back Office
+ */
+
+/**
+ * Generate access approval email template
+ */
+export function generateAccessApprovalEmail(
+  request: AccessRequest, 
+  accessCode: string,
+  accountName?: string
+): EmailTemplate {
+  const requesterName = request.requester_name || 'there';
+  const accountDisplayName = accountName || 'Account';
+  
+  return {
+    subject: `Access Granted: ${accountDisplayName} - Your Access Code`,
+    body: `Hello ${requesterName},
+
+Great news! Your access request for "${accountDisplayName}" has been approved.
+
+Your Access Details:
+• Account: ${accountDisplayName}
+• Access Code: ${accessCode}
+• Requested on: ${new Date(request.request_date).toLocaleDateString()}
+
+To complete your access setup:
+1. Visit the FAQBNB registration page: ${createRegistrationLink()}
+2. Create your account or log in if you already have one
+3. Navigate to Account Access and enter your access code: ${accessCode}
+4. Start exploring the items and resources
+
+Your access code: ${accessCode}
+
+Important Notes:
+- Keep your access code secure and don't share it with others
+- Your access code will remain valid until you complete registration
+- If you have any questions, please contact the account owner
+
+Best regards,
+The FAQBNB Team
+
+---
+This is an automated message. Please do not reply to this email.
+If you need assistance, please contact support through the FAQBNB platform.`,
+    variables: {
+      requesterName,
+      accountName: accountDisplayName,
+      accessCode,
+      requestDate: new Date(request.request_date).toLocaleDateString(),
+      registrationLink: createRegistrationLink()
+    }
+  };
+}
+
+/**
+ * Create access link with embedded code
+ */
+export function createAccessLink(accountId: string, accessCode: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return `${baseUrl}/account-access?code=${encodeURIComponent(accessCode)}&account=${encodeURIComponent(accountId)}`;
+}
+
+/**
+ * Create registration link
+ */
+export function createRegistrationLink(): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return `${baseUrl}/register`;
+}
+
+/**
+ * Validate email template structure
+ */
+export function validateEmailTemplate(template: EmailTemplate): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!template.subject || template.subject.trim().length === 0) {
+    errors.push('Subject is required');
+  }
+
+  if (!template.body || template.body.trim().length === 0) {
+    errors.push('Body is required');
+  }
+
+  if (template.subject && template.subject.length > 200) {
+    errors.push('Subject must be less than 200 characters');
+  }
+
+  if (template.body && template.body.length > 10000) {
+    errors.push('Body must be less than 10,000 characters');
+  }
+
+  // Check for required variables in access approval emails
+  if (template.body && template.body.includes('access code')) {
+    if (!template.variables.accessCode) {
+      errors.push('Access code variable is required for access approval emails');
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Render email as HTML (basic HTML formatting)
+ */
+export function renderEmailHTML(template: EmailTemplate): string {
+  // Convert basic text to HTML
+  let htmlBody = template.body
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>');
+
+  // Replace variables in the HTML
+  Object.entries(template.variables).forEach(([key, value]) => {
+    const placeholder = `{{${key}}}`;
+    htmlBody = htmlBody.replace(new RegExp(placeholder, 'g'), value);
+  });
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${template.subject}</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .header {
+          background-color: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        }
+        .access-code {
+          background-color: #e3f2fd;
+          padding: 15px;
+          border-radius: 8px;
+          font-family: monospace;
+          font-size: 18px;
+          font-weight: bold;
+          text-align: center;
+          margin: 20px 0;
+          border: 2px solid #2196f3;
+        }
+        .footer {
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #eee;
+          font-size: 12px;
+          color: #666;
+        }
+        .button {
+          display: inline-block;
+          background-color: #2196f3;
+          color: white;
+          padding: 12px 24px;
+          text-decoration: none;
+          border-radius: 6px;
+          margin: 10px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>FAQBNB Access Notification</h1>
+      </div>
+      ${htmlBody}
+      <div class="footer">
+        <p>This is an automated message from FAQBNB. Please do not reply to this email.</p>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+/**
+ * Generate access denial email template
+ */
+export function generateAccessDenialEmail(
+  request: AccessRequest,
+  reason?: string,
+  accountName?: string
+): EmailTemplate {
+  const requesterName = request.requester_name || 'there';
+  const accountDisplayName = accountName || 'Account';
+  
+  return {
+    subject: `Access Request Update: ${accountDisplayName}`,
+    body: `Hello ${requesterName},
+
+Thank you for your interest in accessing "${accountDisplayName}".
+
+Unfortunately, we're unable to approve your access request at this time.
+
+${reason ? `Reason: ${reason}` : ''}
+
+Request Details:
+• Account: ${accountDisplayName}
+• Requested on: ${new Date(request.request_date).toLocaleDateString()}
+
+If you believe this is an error or have questions about this decision, please contact the account owner directly.
+
+Best regards,
+The FAQBNB Team
+
+---
+This is an automated message. Please do not reply to this email.`,
+    variables: {
+      requesterName,
+      accountName: accountDisplayName,
+      reason: reason || '',
+      requestDate: new Date(request.request_date).toLocaleDateString()
+    }
+  };
+}
+
+/**
+ * Generate reminder email for pending registration
+ */
+export function generateRegistrationReminderEmail(
+  request: AccessRequest,
+  accessCode: string,
+  daysSinceApproval: number,
+  accountName?: string
+): EmailTemplate {
+  const requesterName = request.requester_name || 'there';
+  const accountDisplayName = accountName || 'Account';
+  
+  return {
+    subject: `Reminder: Complete Your ${accountDisplayName} Access Setup`,
+    body: `Hello ${requesterName},
+
+This is a friendly reminder that your access to "${accountDisplayName}" was approved ${daysSinceApproval} days ago, but you haven't completed your registration yet.
+
+Your Access Code: ${accessCode}
+
+To complete your access setup:
+1. Visit: ${createRegistrationLink()}
+2. Create your account or log in
+3. Enter your access code: ${accessCode}
+
+Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.
+
+If you no longer need access or have any questions, please let us know.
+
+Best regards,
+The FAQBNB Team
+
+---
+This is an automated message. Please do not reply to this email.`,
+    variables: {
+      requesterName,
+      accountName: accountDisplayName,
+      accessCode,
+      daysSinceApproval: daysSinceApproval.toString(),
+      registrationLink: createRegistrationLink()
+    }
+  };
+}
+
+/**
+ * Sanitize email content to prevent XSS
+ */
+export function sanitizeEmailContent(content: string): string {
+  return content
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
+/**
+ * Extract access code from email body
+ */
+export function extractAccessCodeFromEmail(emailBody: string): string | null {
+  const codeMatch = emailBody.match(/Access Code:\s*([A-Z0-9]+)/i);
+  return codeMatch ? codeMatch[1] : null;
+}

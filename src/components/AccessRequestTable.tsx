@@ -1,0 +1,386 @@
+'use client';
+
+import { useState } from 'react';
+import { AccessRequest, AccessRequestStatus } from '@/types/admin';
+
+interface AccessRequestTableProps {
+  requests: AccessRequest[];
+  onApprove: (requestId: string) => void;
+  onDeny: (requestId: string) => void;
+  onEmailClick: (request: AccessRequest) => void;
+  onViewDetails?: (request: AccessRequest) => void;
+  isLoading?: boolean;
+}
+
+interface SortConfig {
+  field: string;
+  direction: 'asc' | 'desc';
+}
+
+/**
+ * Access Request Table Component
+ * Part of REQ-016: System Admin Back Office
+ */
+export default function AccessRequestTable({
+  requests,
+  onApprove,
+  onDeny,
+  onEmailClick,
+  onViewDetails,
+  isLoading = false
+}: AccessRequestTableProps) {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'request_date', direction: 'desc' });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  // Handle sorting
+  const handleSort = (field: string) => {
+    const direction = sortConfig.field === field && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    setSortConfig({ field, direction });
+  };
+
+  // Get sort icon
+  const getSortIcon = (field: string) => {
+    if (sortConfig.field !== field) return '↕️';
+    return sortConfig.direction === 'asc' ? '↑' : '↓';
+  };
+
+  // Sort and filter requests
+  const sortedAndFilteredRequests = requests
+    .filter(request => {
+      const matchesSearch = !searchTerm || 
+        request.requester_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (request.requester_name && request.requester_name.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesStatus = statusFilter === 'all' || request.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      const { field, direction } = sortConfig;
+      let aValue: any, bValue: any;
+
+      switch (field) {
+        case 'requester_email':
+          aValue = a.requester_email.toLowerCase();
+          bValue = b.requester_email.toLowerCase();
+          break;
+        case 'request_date':
+          aValue = new Date(a.request_date);
+          bValue = new Date(b.request_date);
+          break;
+        case 'status':
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        case 'approval_date':
+          aValue = a.approval_date ? new Date(a.approval_date) : new Date(0);
+          bValue = b.approval_date ? new Date(b.approval_date) : new Date(0);
+          break;
+        default:
+          aValue = a.requester_email;
+          bValue = b.requester_email;
+      }
+
+      if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+  // Get status badge styling
+  const getStatusBadge = (status: AccessRequestStatus) => {
+    const styles = {
+      [AccessRequestStatus.PENDING]: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      [AccessRequestStatus.APPROVED]: 'bg-green-100 text-green-800 border-green-200',
+      [AccessRequestStatus.DENIED]: 'bg-red-100 text-red-800 border-red-200',
+      [AccessRequestStatus.REGISTERED]: 'bg-blue-100 text-blue-800 border-blue-200'
+    };
+    
+    return styles[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
+  // Calculate timeline info
+  const getTimelineInfo = (request: AccessRequest) => {
+    const requestDate = new Date(request.request_date);
+    const now = new Date();
+    const daysSinceRequest = Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let approvalTime = null;
+    if (request.approval_date) {
+      const approvalDate = new Date(request.approval_date);
+      approvalTime = Math.floor((approvalDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    return {
+      daysSinceRequest,
+      approvalTime,
+      isOverdue: daysSinceRequest > 7 && request.status === AccessRequestStatus.PENDING
+    };
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white shadow rounded-lg">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-medium text-gray-900">Access Requests</h2>
+        </div>
+        <div className="p-8 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-sm text-gray-500">Loading access requests...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white shadow rounded-lg">
+      {/* Header with filters */}
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 className="text-lg font-medium text-gray-900">
+            Access Requests ({sortedAndFilteredRequests.length})
+          </h2>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Search by email or name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+            
+            {/* Status filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value={AccessRequestStatus.PENDING}>Pending</option>
+              <option value={AccessRequestStatus.APPROVED}>Approved</option>
+              <option value={AccessRequestStatus.DENIED}>Denied</option>
+              <option value={AccessRequestStatus.REGISTERED}>Registered</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('requester_email')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Requester</span>
+                  <span className="text-gray-400">{getSortIcon('requester_email')}</span>
+                </div>
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('request_date')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Request Date</span>
+                  <span className="text-gray-400">{getSortIcon('request_date')}</span>
+                </div>
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('status')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Status</span>
+                  <span className="text-gray-400">{getSortIcon('status')}</span>
+                </div>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Timeline
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort('approval_date')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Approval</span>
+                  <span className="text-gray-400">{getSortIcon('approval_date')}</span>
+                </div>
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {sortedAndFilteredRequests.map((request) => {
+              const timeline = getTimelineInfo(request);
+              
+              return (
+                <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                          <span className="text-sm font-medium text-gray-600">
+                            {request.requester_email.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {request.requester_email}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {request.requester_name || 'No name provided'}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div>{formatDate(request.request_date)}</div>
+                    <div className="text-xs text-gray-500">
+                      {timeline.daysSinceRequest} days ago
+                    </div>
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${getStatusBadge(request.status)}`}>
+                      {request.status}
+                    </span>
+                    {timeline.isOverdue && (
+                      <div className="text-xs text-red-600 mt-1">Overdue</div>
+                    )}
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div>
+                      {timeline.daysSinceRequest} days since request
+                    </div>
+                    {timeline.approvalTime !== null && (
+                      <div className="text-xs">
+                        Approved in {timeline.approvalTime} days
+                      </div>
+                    )}
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {request.approval_date ? (
+                      <div>
+                        <div>{formatDate(request.approval_date)}</div>
+                        {request.access_code && (
+                          <div className="text-xs text-blue-600 font-mono">
+                            {request.access_code}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      {request.status === AccessRequestStatus.PENDING && (
+                        <>
+                          <button
+                            onClick={() => onApprove(request.id)}
+                            className="text-green-600 hover:text-green-900 transition-colors"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => onDeny(request.id)}
+                            className="text-red-600 hover:text-red-900 transition-colors"
+                          >
+                            Deny
+                          </button>
+                        </>
+                      )}
+                      
+                      {request.status === AccessRequestStatus.APPROVED && (
+                        <button
+                          onClick={() => onEmailClick(request)}
+                          className="text-blue-600 hover:text-blue-900 transition-colors"
+                        >
+                          Send Email
+                        </button>
+                      )}
+                      
+                      {onViewDetails && (
+                        <button
+                          onClick={() => onViewDetails(request)}
+                          className="text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                          Details
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+            
+            {sortedAndFilteredRequests.length === 0 && (
+              <tr>
+                <td colSpan={6} className="px-6 py-8 text-center">
+                  <div className="text-gray-500">
+                    <div className="text-lg mb-2">No access requests found</div>
+                    <div className="text-sm">
+                      {searchTerm || statusFilter !== 'all'
+                        ? 'Try adjusting your search or filters'
+                        : 'No access requests have been submitted yet'
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Summary footer */}
+      {requests.length > 0 && (
+        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
+          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+            <div>
+              <span className="font-medium">
+                {requests.filter(r => r.status === AccessRequestStatus.PENDING).length}
+              </span> pending
+            </div>
+            <div>
+              <span className="font-medium">
+                {requests.filter(r => r.status === AccessRequestStatus.APPROVED).length}
+              </span> approved
+            </div>
+            <div>
+              <span className="font-medium">
+                {requests.filter(r => r.status === AccessRequestStatus.REGISTERED).length}
+              </span> registered
+            </div>
+            <div>
+              <span className="font-medium">
+                {requests.filter(r => getTimelineInfo(r).isOverdue).length}
+              </span> overdue
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
