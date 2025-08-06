@@ -725,13 +725,149 @@ export async function isPropertyOwner(userId: string, propertyId: string, accoun
 }
 
 /**
+ * Create a default account for a new user
+ */
+export async function createDefaultAccount(
+  userId: string, 
+  userEmail: string
+): Promise<AuthResponse<Account>> {
+  try {
+    console.log('🏢 CREATE_DEFAULT_ACCOUNT_START', {
+      timestamp: new Date().toISOString(),
+      userId: userId,
+      userEmail: userEmail
+    });
+
+    // Create account record
+    const { data, error } = await supabaseAdmin
+      .from('accounts')
+      .insert({
+        owner_id: userId,
+        name: 'Default Account',
+        description: `Default account for ${userEmail}`,
+        settings: {}
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('🏢 CREATE_DEFAULT_ACCOUNT_ERROR', {
+        timestamp: new Date().toISOString(),
+        error: error.message,
+        userId: userId
+      });
+      return { error: `Failed to create default account: ${error.message}` };
+    }
+
+    const account: Account = {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      owner_id: data.owner_id,
+      settings: (data.settings && typeof data.settings === 'object') ? data.settings as Record<string, any> : {},
+      created_at: data.created_at || new Date().toISOString(),
+      updated_at: data.updated_at || new Date().toISOString(),
+    };
+
+    console.log('🏢 CREATE_DEFAULT_ACCOUNT_SUCCESS', {
+      timestamp: new Date().toISOString(),
+      accountId: account.id,
+      accountName: account.name,
+      ownerId: account.owner_id
+    });
+
+    return { data: account };
+  } catch (error) {
+    console.error('🏢 CREATE_DEFAULT_ACCOUNT_ERROR:', error);
+    return { error: 'Failed to create default account' };
+  }
+}
+
+/**
+ * Link a user to an account with a specific role
+ */
+export async function linkUserToAccount(
+  userId: string, 
+  accountId: string, 
+  role: 'owner' | 'admin' | 'member' | 'viewer' = 'owner'
+): Promise<AuthResponse<{ accountId: string; userId: string; role: string }>> {
+  try {
+    console.log('🔗 LINK_USER_TO_ACCOUNT_START', {
+      timestamp: new Date().toISOString(),
+      userId: userId,
+      accountId: accountId,
+      role: role
+    });
+
+    // Create account_users relationship
+    const { data, error } = await supabaseAdmin
+      .from('account_users')
+      .insert({
+        account_id: accountId,
+        user_id: userId,
+        role: role,
+        joined_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      // Check for duplicate relationship error
+      if (error.code === '23505') { // PostgreSQL unique constraint violation
+        console.log('🔗 LINK_USER_TO_ACCOUNT_DUPLICATE', {
+          timestamp: new Date().toISOString(),
+          userId: userId,
+          accountId: accountId,
+          message: 'User already linked to account'
+        });
+        return { 
+          data: { 
+            accountId: accountId, 
+            userId: userId, 
+            role: role 
+          } 
+        };
+      }
+
+      console.error('🔗 LINK_USER_TO_ACCOUNT_ERROR', {
+        timestamp: new Date().toISOString(),
+        error: error.message,
+        code: error.code,
+        userId: userId,
+        accountId: accountId
+      });
+      return { error: `Failed to link user to account: ${error.message}` };
+    }
+
+    console.log('🔗 LINK_USER_TO_ACCOUNT_SUCCESS', {
+      timestamp: new Date().toISOString(),
+      accountId: data.account_id,
+      userId: data.user_id,
+      role: data.role,
+      joinedAt: data.joined_at
+    });
+
+    return { 
+      data: { 
+        accountId: data.account_id, 
+        userId: data.user_id, 
+        role: data.role 
+      } 
+    };
+  } catch (error) {
+    console.error('🔗 LINK_USER_TO_ACCOUNT_ERROR:', error);
+    return { error: 'Failed to link user to account' };
+  }
+}
+
+/**
  * Register a new user with Supabase Auth and create user record
  */
 export async function registerUser(
   email: string,
   password: string,
   fullName?: string
-): Promise<AuthResponse<{ user: User; session: Session }>> {
+): Promise<AuthResponse<{ user: User; session: Session; account?: Account }>> {
   try {
     // Sign up with Supabase Auth
     const { data, error } = await supabase.auth.signUp({
@@ -761,10 +897,68 @@ export async function registerUser(
       return { error: userResult.error };
     }
 
+    console.log('🔧 REGISTER_USER: USER_CREATED', {
+      timestamp: new Date().toISOString(),
+      userId: userResult.data!.id,
+      email: userResult.data!.email
+    });
+
+    // Create default account for the new user
+    const accountResult = await createDefaultAccount(userResult.data!.id, userResult.data!.email);
+    
+    if (accountResult.error) {
+      console.error('🔧 REGISTER_USER: ACCOUNT_CREATION_FAILED', {
+        timestamp: new Date().toISOString(),
+        error: accountResult.error,
+        userId: userResult.data!.id
+      });
+      // Return user without account - account creation is not critical for registration
+      return {
+        data: {
+          user: userResult.data!,
+          session: data.session,
+        },
+      };
+    }
+
+    console.log('🔧 REGISTER_USER: ACCOUNT_CREATED', {
+      timestamp: new Date().toISOString(),
+      accountId: accountResult.data!.id,
+      accountName: accountResult.data!.name
+    });
+
+    // Link user to the default account as owner
+    const linkResult = await linkUserToAccount(userResult.data!.id, accountResult.data!.id, 'owner');
+    
+    if (linkResult.error) {
+      console.error('🔧 REGISTER_USER: ACCOUNT_LINKING_FAILED', {
+        timestamp: new Date().toISOString(),
+        error: linkResult.error,
+        userId: userResult.data!.id,
+        accountId: accountResult.data!.id
+      });
+      // Continue without failing - user and account exist, just not linked
+    } else {
+      console.log('🔧 REGISTER_USER: ACCOUNT_LINKED', {
+        timestamp: new Date().toISOString(),
+        userId: linkResult.data!.userId,
+        accountId: linkResult.data!.accountId,
+        role: linkResult.data!.role
+      });
+    }
+
+    console.log('🔧 REGISTER_USER: COMPLETE_SUCCESS', {
+      timestamp: new Date().toISOString(),
+      userId: userResult.data!.id,
+      accountId: accountResult.data!.id,
+      hasSession: !!data.session
+    });
+
     return {
       data: {
         user: userResult.data!,
         session: data.session,
+        account: accountResult.data!,
       },
     };
   } catch (error) {
