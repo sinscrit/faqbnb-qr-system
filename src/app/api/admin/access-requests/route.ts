@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
-import { AccessRequestStatus } from '@/types/admin';
+import { AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const authResult = await validateAdminAuth(request);
@@ -15,6 +15,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   // Parse query parameters
   const url = new URL(request.url);
   const status = url.searchParams.get('status');
+  const source = url.searchParams.get('source');
   const accountId = url.searchParams.get('account_id');
   const limit = parseInt(url.searchParams.get('limit') || '50');
   const offset = parseInt(url.searchParams.get('offset') || '0');
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const endDate = url.searchParams.get('end_date');
 
   console.log('🔍 ACCESS_REQUESTS_API_DEBUG: Query parameters:', {
-    status, accountId, limit, offset, startDate, endDate
+    status, source, accountId, limit, offset, startDate, endDate
   });
 
   try {
@@ -51,6 +52,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Apply filters
     if (status && Object.values(AccessRequestStatus).includes(status as AccessRequestStatus)) {
       query = query.eq('status', status);
+    }
+
+    if (source && Object.values(AccessRequestSource).includes(source as AccessRequestSource)) {
+      query = query.eq('source', source);
     }
 
     if (accountId) {
@@ -165,14 +170,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body = await request.json();
-    const { requester_email, requester_name, account_id, notes } = body;
+    const { requester_email, requester_name, account_id, notes, source } = body;
 
     // Validation
-    if (!requester_email || !account_id) {
+    if (!requester_email) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields: requester_email, account_id'
+          error: 'Missing required field: requester_email'
+        },
+        { status: 400 }
+      );
+    }
+
+    // Account ID is required unless it's a beta request
+    if (!account_id && source !== AccessRequestSource.BETA_WAITLIST) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Missing required field: account_id (unless creating beta request)'
         },
         { status: 400 }
       );
@@ -222,20 +238,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Verify account exists
-    const { data: account, error: accountError } = await supabase
-      .from('accounts')
-      .select('id, name')
-      .eq('id', account_id)
-      .single();
+    // Verify account exists (skip for beta requests)
+    if (account_id) {
+      const { data: account, error: accountError } = await supabase
+        .from('accounts')
+        .select('id, name')
+        .eq('id', account_id)
+        .single();
 
-    if (accountError || !account) {
+      if (accountError || !account) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Account not found'
+          },
+          { status: 404 }
+        );
+      }
+    } else if (source !== AccessRequestSource.BETA_WAITLIST) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Account not found'
+          error: 'Account ID required for non-beta requests'
         },
-        { status: 404 }
+        { status: 400 }
       );
     }
 
@@ -248,6 +274,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         account_id,
         request_date: new Date().toISOString(),
         status: AccessRequestStatus.PENDING,
+        source: source || AccessRequestSource.ADMIN_CREATED,
         notes
       })
       .select(`

@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { AccessRequest, AccessRequestStatus } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 import { randomBytes } from 'crypto';
 
 /**
@@ -75,62 +75,79 @@ export async function validateAccessRequest(request: Partial<AccessRequest>): Pr
     }
   }
 
-  if (!request.account_id) {
+  // Account ID validation - allow null for beta requests
+  if (!request.account_id && request.source !== AccessRequestSource.BETA_WAITLIST) {
     errors.push('Account ID is required');
   }
 
   // Business rule validations
-  if (request.requester_email && request.account_id) {
+  if (request.requester_email) {
     try {
       // Check for duplicate requests
-      const { data: existingRequest, error: duplicateError } = await supabase
+      let duplicateQuery = supabase
         .from('access_requests')
-        .select('id, status')
+        .select('id, status, account_id, source')
         .eq('requester_email', request.requester_email)
-        .eq('account_id', request.account_id)
-        .in('status', [AccessRequestStatus.PENDING, AccessRequestStatus.APPROVED])
-        .single();
+        .in('status', [AccessRequestStatus.PENDING, AccessRequestStatus.APPROVED]);
+
+      // For beta requests, check by source; for others, check by account_id
+      if (request.source === AccessRequestSource.BETA_WAITLIST) {
+        duplicateQuery = duplicateQuery.eq('source', AccessRequestSource.BETA_WAITLIST);
+      } else if (request.account_id) {
+        duplicateQuery = duplicateQuery.eq('account_id', request.account_id);
+      }
+
+      const { data: existingRequest, error: duplicateError } = await duplicateQuery.single();
 
       if (duplicateError && duplicateError.code !== 'PGRST116') {
         errors.push('Unable to check for duplicate requests');
       } else if (existingRequest) {
-        errors.push(`A ${existingRequest.status} request already exists for this email and account`);
+        if (request.source === AccessRequestSource.BETA_WAITLIST) {
+          errors.push(`A ${existingRequest.status} beta waitlist request already exists for this email`);
+        } else {
+          errors.push(`A ${existingRequest.status} request already exists for this email and account`);
+        }
       }
 
-      // Verify account exists
-      const { data: account, error: accountError } = await supabase
-        .from('accounts')
-        .select('id, name, owner_id')
-        .eq('id', request.account_id)
-        .single();
-
-      if (accountError || !account) {
-        errors.push('Account not found or inaccessible');
-      } else {
-        // Check if requester is already the owner
-        const { data: existingUser } = await supabase
-          .from('users')
-          .select('id')
-          .eq('email', request.requester_email)
+      // Verify account exists (skip for beta requests)
+      if (request.account_id && request.source !== AccessRequestSource.BETA_WAITLIST) {
+        const { data: account, error: accountError } = await supabase
+          .from('accounts')
+          .select('id, name, owner_id')
+          .eq('id', request.account_id)
           .single();
 
-        if (existingUser && account.owner_id === existingUser.id) {
-          warnings.push('Requester is already the account owner');
-        }
-
-        // Check if user already has access
-        if (existingUser) {
-          const { data: existingAccess } = await supabase
-            .from('account_users')
+        if (accountError || !account) {
+          errors.push('Account not found or inaccessible');
+        } else {
+          // Check if requester is already the owner
+          const { data: existingUser } = await supabase
+            .from('users')
             .select('id')
-            .eq('user_id', existingUser.id)
-            .eq('account_id', request.account_id)
+            .eq('email', request.requester_email)
             .single();
 
-          if (existingAccess) {
-            warnings.push('User already has access to this account');
+          if (existingUser && account.owner_id === existingUser.id) {
+            warnings.push('Requester is already the account owner');
+          }
+
+          // Check if user already has access
+          if (existingUser) {
+            const { data: existingAccess } = await supabase
+              .from('account_users')
+              .select('id')
+              .eq('user_id', existingUser.id)
+              .eq('account_id', request.account_id)
+              .single();
+
+            if (existingAccess) {
+              warnings.push('User already has access to this account');
+            }
           }
         }
+      } else if (request.source === AccessRequestSource.BETA_WAITLIST) {
+        // For beta requests, add informational warning
+        warnings.push('Beta waitlist request - account will be assigned during approval');
       }
     } catch (error) {
       console.error('Validation error:', error);
@@ -152,6 +169,46 @@ export async function validateAccessRequest(request: Partial<AccessRequest>): Pr
   if (request.requester_name && request.requester_name.length > 255) {
     errors.push('Requester name is too long (max 255 characters)');
   }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings: warnings.length > 0 ? warnings : undefined
+  };
+}
+
+/**
+ * Helper function to validate beta access requests specifically
+ */
+export function validateBetaAccessRequest(email: string, metadata?: Record<string, any>): ValidationResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Email validation
+  if (!email) {
+    errors.push('Email is required for beta access request');
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push('Invalid email format');
+    }
+  }
+
+  // Email length validation
+  if (email && email.length > 255) {
+    errors.push('Email address is too long (max 255 characters)');
+  }
+
+  // Metadata validation
+  if (metadata) {
+    if (typeof metadata !== 'object' || Array.isArray(metadata)) {
+      errors.push('Metadata must be an object');
+    }
+  }
+
+  // Add informational warnings for beta requests
+  warnings.push('Beta access request will require admin assignment of target account');
+  warnings.push('User will receive access notification email upon approval');
 
   return {
     isValid: errors.length === 0,

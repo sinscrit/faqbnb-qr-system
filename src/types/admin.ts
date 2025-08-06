@@ -20,7 +20,7 @@ export interface AccessRequest {
   id: string;
   requester_email: string;
   requester_name?: string;
-  account_id: string;
+  account_id: string | null; // Allow null for beta requests
   request_date: string;
   approval_date?: string;
   approved_by?: string;
@@ -28,6 +28,8 @@ export interface AccessRequest {
   registration_date?: string;
   status: 'pending' | 'approved' | 'denied' | 'registered';
   notes?: string;
+  source?: AccessRequestSource; // Track request origin
+  metadata?: Record<string, any>; // Additional metadata for beta requests
   created_at: string;
   updated_at: string;
 }
@@ -43,6 +45,7 @@ export interface UserFilters {
 export interface AccessRequestFilters {
   status?: 'pending' | 'approved' | 'denied' | 'registered';
   email?: string;
+  source?: AccessRequestSource; // Filter by request source
   dateRange?: {
     start: string;
     end: string;
@@ -197,4 +200,12 @@ export enum UserRole {
   ADMIN = 'admin', 
   MEMBER = 'member',
   VIEWER = 'viewer'
+}
+
+// Access Request Source Tracking
+export enum AccessRequestSource {
+  ADMIN_CREATED = 'admin_created',
+  BETA_WAITLIST = 'beta_waitlist',
+  PUBLIC_FORM = 'public_form',
+  DIRECT_REQUEST = 'direct_request'
 }

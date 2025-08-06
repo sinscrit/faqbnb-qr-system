@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AccessRequest, AccessRequestStatus } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 import { useAuth } from '@/contexts/AuthContext';
 import AccessRequestTable from '@/components/AccessRequestTable';
 import EmailPopup from '@/components/EmailPopup';
 
 interface RequestFilters {
   status?: AccessRequestStatus;
+  source?: AccessRequestSource;
   accountId?: string;
   dateRange?: {
     start: string;
@@ -59,6 +60,9 @@ export default function AccessRequestsPage() {
         const params = new URLSearchParams();
         if (filters.status) {
           params.append('status', filters.status);
+        }
+        if (filters.source) {
+          params.append('source', filters.source);
         }
         if (filters.accountId) {
           params.append('account_id', filters.accountId);

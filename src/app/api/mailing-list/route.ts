@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
@@ -63,6 +64,70 @@ function detectSpam(email: string): boolean {
   ];
 
   return suspiciousPatterns.some(pattern => pattern.test(email.toLowerCase()));
+}
+
+// Helper function to create access request for beta waitlist signup
+async function createBetaAccessRequest(email: string, clientIP: string, userAgent: string | null): Promise<{ success: boolean; error?: string; data?: any }> {
+  try {
+    console.log('Creating beta access request for:', email);
+
+    // Check if access request already exists for this email
+    const { data: existingRequest, error: checkError } = await supabase
+      .from('access_requests')
+      .select('id, requester_email, source')
+      .eq('requester_email', email)
+      .eq('source', AccessRequestSource.BETA_WAITLIST)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows found
+      console.error('Error checking existing access request:', checkError);
+      return { success: false, error: 'Database check failed' };
+    }
+
+    // If access request already exists, return success (idempotent)
+    if (existingRequest) {
+      console.log('Beta access request already exists for:', email);
+      return { success: true, data: existingRequest };
+    }
+
+    // Create new beta access request
+    const requestData = {
+      requester_email: email,
+      requester_name: null, // Beta users don't provide names initially
+      account_id: null, // Beta requests don't specify accounts initially
+      request_date: new Date().toISOString(),
+      status: AccessRequestStatus.PENDING,
+      source: AccessRequestSource.BETA_WAITLIST,
+      metadata: {
+        origin: 'beta_waitlist',
+        signup_ip: clientIP !== 'unknown' ? clientIP : null,
+        user_agent: userAgent,
+        auto_created: true,
+        signup_timestamp: new Date().toISOString()
+      },
+      notes: 'Auto-created from beta waitlist signup',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { data: newRequest, error: insertError } = await supabase
+      .from('access_requests')
+      .insert(requestData)
+      .select('id, requester_email, source, status, created_at')
+      .single();
+
+    if (insertError) {
+      console.error('Failed to create beta access request:', insertError);
+      return { success: false, error: 'Access request creation failed' };
+    }
+
+    console.log('✅ Beta access request created successfully:', newRequest?.id);
+    return { success: true, data: newRequest };
+
+  } catch (error) {
+    console.error('Error in createBetaAccessRequest:', error);
+    return { success: false, error: 'Unexpected error during access request creation' };
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -160,14 +225,36 @@ export async function POST(request: NextRequest) {
     // If email already exists, return success (idempotent operation)
     if (existingSubscription) {
       console.log('Email already subscribed:', email);
+
+      // Check if beta access request exists and create if not
+      const accessRequestResult = await createBetaAccessRequest(
+        email, 
+        clientIP, 
+        request.headers.get('user-agent')
+      );
+
+      let responseData = {
+        email: existingSubscription.email,
+        subscribedAt: existingSubscription.subscribed_at,
+        alreadySubscribed: true,
+      };
+
+      // Include access request information if successful
+      if (accessRequestResult.success) {
+        responseData = {
+          ...responseData,
+          accessRequest: {
+            id: accessRequestResult.data?.id,
+            status: accessRequestResult.data?.status,
+            created: !accessRequestResult.data?.id // false if already existed
+          }
+        };
+      }
+
       return NextResponse.json({
         success: true,
         message: 'You are already subscribed to our mailing list!',
-        data: {
-          email: existingSubscription.email,
-          subscribedAt: existingSubscription.subscribed_at,
-          alreadySubscribed: true,
-        },
+        data: responseData,
       });
     }
 
@@ -214,15 +301,41 @@ export async function POST(request: NextRequest) {
     // Add analytics tracking
     console.log(`New mailing list subscription: ${email} from IP: ${clientIP}`);
 
+    // Create beta access request (non-blocking)
+    const accessRequestResult = await createBetaAccessRequest(
+      email, 
+      clientIP, 
+      request.headers.get('user-agent')
+    );
+
+    let responseData = {
+      email: newSubscription.email,
+      subscribedAt: newSubscription.subscribed_at,
+      alreadySubscribed: false,
+    };
+
+    // Include access request information if successful
+    if (accessRequestResult.success) {
+      console.log('✅ Beta access request created for:', email);
+      responseData = {
+        ...responseData,
+        accessRequest: {
+          id: accessRequestResult.data?.id,
+          status: accessRequestResult.data?.status,
+          created: true
+        }
+      };
+    } else {
+      // Log the error but don't fail the subscription
+      console.warn('⚠️ Failed to create beta access request:', accessRequestResult.error);
+      console.warn('Subscription successful but access request creation failed for:', email);
+    }
+
     // Return success response
     return NextResponse.json({
       success: true,
       message: 'Thank you for subscribing! We\'ll keep you updated on FAQBNB.',
-      data: {
-        email: newSubscription.email,
-        subscribedAt: newSubscription.subscribed_at,
-        alreadySubscribed: false,
-      },
+      data: responseData,
     }, { status: 201 });
 
   } catch (error) {

@@ -1,4 +1,4 @@
-import { AccessRequest, EmailTemplate } from '@/types/admin';
+import { AccessRequest, EmailTemplate, AccessRequestSource } from '@/types/admin';
 
 /**
  * Email Template Utilities for REQ-016: System Admin Back Office
@@ -13,6 +13,13 @@ export function generateAccessApprovalEmail(
   accountName?: string
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
+  const isBetaRequest = request.source === AccessRequestSource.BETA_WAITLIST;
+  
+  // Handle beta requests differently
+  if (isBetaRequest) {
+    return generateBetaAccessApprovalEmail(request, accessCode, accountName);
+  }
+  
   const accountDisplayName = accountName || 'Account';
   
   return {
@@ -51,6 +58,72 @@ If you need assistance, please contact support through the FAQBNB platform.`,
       accessCode,
       requestDate: new Date(request.request_date).toLocaleDateString(),
       registrationLink: createRegistrationLink()
+    }
+  };
+}
+
+/**
+ * Generate beta access approval email template
+ * For users who signed up through the beta waitlist
+ */
+export function generateBetaAccessApprovalEmail(
+  request: AccessRequest, 
+  accessCode: string,
+  accountName?: string
+): EmailTemplate {
+  const requesterName = request.requester_name || 'there';
+  const accountDisplayName = accountName || 'the FAQBNB platform';
+  
+  return {
+    subject: `🚀 Welcome to FAQBNB Beta - Access Granted!`,
+    body: `Hello ${requesterName},
+
+🎉 Congratulations! Your beta waitlist request has been approved, and you now have exclusive early access to FAQBNB!
+
+Your Beta Access Details:
+• Platform: ${accountDisplayName}
+• Access Code: ${accessCode}
+• Beta Access Granted: ${new Date().toLocaleDateString()}
+• Original Request: ${new Date(request.request_date).toLocaleDateString()}
+
+Getting Started with Your Beta Access:
+1. Visit the FAQBNB platform: ${createRegistrationLink()}
+2. Create your account using the email address: ${request.requester_email}
+3. Enter your beta access code: ${accessCode}
+4. Start exploring the platform features and capabilities
+
+Your beta access code: ${accessCode}
+
+What to Expect:
+✨ Early access to all FAQBNB features
+📱 QR code generation and management tools
+📊 Analytics and insights dashboard
+🛠️ Priority support during the beta period
+💌 Direct feedback channel to influence product development
+
+Important Beta Program Notes:
+- Your access code provides full platform access during the beta period
+- As a beta user, your feedback is invaluable to us
+- Some features may be evolving - please share your experience!
+- Keep your access code secure and don't share it with others
+- Beta users will receive priority updates on new features
+
+We're excited to have you as part of our exclusive beta community!
+
+Best regards,
+The FAQBNB Beta Team
+
+---
+🚀 You're part of something special! Thank you for joining our beta program.
+For beta support or feedback, please contact us through the platform or reply to this email.`,
+    variables: {
+      requesterName,
+      accountName: accountDisplayName,
+      accessCode,
+      requestDate: new Date(request.request_date).toLocaleDateString(),
+      approvalDate: new Date().toLocaleDateString(),
+      registrationLink: createRegistrationLink(),
+      userEmail: request.requester_email
     }
   };
 }

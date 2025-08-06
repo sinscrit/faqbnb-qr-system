@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AccessRequest, AccessRequestStatus } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 
 interface AccessRequestTableProps {
   requests: AccessRequest[];
@@ -36,6 +36,7 @@ export default function AccessRequestTable({
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'request_date', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [selectedRequests, setSelectedRequests] = useState<Set<string>>(new Set());
   const [showBatchActions, setShowBatchActions] = useState(false);
 
@@ -59,8 +60,9 @@ export default function AccessRequestTable({
         (request.requester_name && request.requester_name.toLowerCase().includes(searchTerm.toLowerCase()));
       
       const matchesStatus = statusFilter === 'all' || request.status === statusFilter;
+      const matchesSource = sourceFilter === 'all' || request.source === sourceFilter;
       
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesStatus && matchesSource;
     })
     .sort((a, b) => {
       const { field, direction } = sortConfig;
@@ -92,6 +94,36 @@ export default function AccessRequestTable({
       if (aValue > bValue) return direction === 'asc' ? 1 : -1;
       return 0;
     });
+
+  // Get source badge styling
+  const getSourceBadge = (source?: AccessRequestSource) => {
+    if (!source) return { style: 'bg-gray-100 text-gray-800 border-gray-200', label: 'Unknown', icon: '❓' };
+    
+    const badges = {
+      [AccessRequestSource.BETA_WAITLIST]: { 
+        style: 'bg-purple-100 text-purple-800 border-purple-200', 
+        label: 'Beta Waitlist', 
+        icon: '🚀' 
+      },
+      [AccessRequestSource.ADMIN_CREATED]: { 
+        style: 'bg-blue-100 text-blue-800 border-blue-200', 
+        label: 'Admin Created', 
+        icon: '👑' 
+      },
+      [AccessRequestSource.PUBLIC_FORM]: { 
+        style: 'bg-teal-100 text-teal-800 border-teal-200', 
+        label: 'Public Form', 
+        icon: '📝' 
+      },
+      [AccessRequestSource.DIRECT_REQUEST]: { 
+        style: 'bg-indigo-100 text-indigo-800 border-indigo-200', 
+        label: 'Direct Request', 
+        icon: '📞' 
+      }
+    };
+    
+    return badges[source] || { style: 'bg-gray-100 text-gray-800 border-gray-200', label: 'Unknown', icon: '❓' };
+  };
 
   // Get status badge styling
   const getStatusBadge = (status: AccessRequestStatus) => {
@@ -224,6 +256,19 @@ export default function AccessRequestTable({
               <option value={AccessRequestStatus.REGISTERED}>Registered</option>
             </select>
 
+            {/* Source filter */}
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="all">All Sources</option>
+              <option value={AccessRequestSource.BETA_WAITLIST}>🚀 Beta Waitlist</option>
+              <option value={AccessRequestSource.ADMIN_CREATED}>👑 Admin Created</option>
+              <option value={AccessRequestSource.PUBLIC_FORM}>📝 Public Form</option>
+              <option value={AccessRequestSource.DIRECT_REQUEST}>📞 Direct Request</option>
+            </select>
+
             {/* Batch Actions */}
             {showBatchActions && onBatchApprove && (
               <div className="flex items-center gap-2 ml-auto">
@@ -294,6 +339,9 @@ export default function AccessRequestTable({
                 </div>
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Source
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Timeline
               </th>
               <th 
@@ -361,6 +409,21 @@ export default function AccessRequestTable({
                     </span>
                     {timeline.isOverdue && (
                       <div className="text-xs text-red-600 mt-1">Overdue</div>
+                    )}
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {(() => {
+                      const sourceBadge = getSourceBadge(request.source);
+                      return (
+                        <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full border ${sourceBadge.style}`}>
+                          <span className="mr-1">{sourceBadge.icon}</span>
+                          {sourceBadge.label}
+                        </span>
+                      );
+                    })()}
+                    {request.source === AccessRequestSource.BETA_WAITLIST && !request.account_id && (
+                      <div className="text-xs text-purple-600 mt-1">No account assigned</div>
                     )}
                   </td>
                   

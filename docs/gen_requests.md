@@ -1207,4 +1207,85 @@ Implement configurable domain parameter for QR code links and create a comprehen
 
 ---
 
-*Next Request: REQ-017* 
+## REQ-017: Auto-Create Access Requests from Beta Waitlist Signups
+**Date**: August 6, 2025  
+**Type**: Feature Enhancement  
+**Complexity**: 3-4 Points (Medium)
+
+### Request Summary
+Automatically create access requests when users sign up for the beta waitlist through `http://localhost:3000/#beta`. This will integrate the existing mailing list signup functionality with the access request management system implemented in REQ-016.
+
+### Current State Analysis
+The beta waitlist functionality is already implemented with:
+- **Frontend**: Beta signup section at `#beta` on homepage with "Be First to Access FAQBNB" 
+- **API**: `/api/mailing-list` endpoint for email collection and validation
+- **Database**: `mailing_list_subscribers` table storing beta signups
+- **UI**: `MailingListSignup` component with full validation and user feedback
+
+### Requested Enhancement
+When a user submits their email through the beta waitlist form, the system should:
+1. **Continue existing behavior**: Add email to mailing list (preserve current functionality)
+2. **New behavior**: Automatically create an access request entry in the `access_requests` table
+3. **Admin integration**: Make these beta-originated requests visible in the admin dashboard at `/admin/access-requests`
+4. **Special handling**: Mark these requests with `source: 'beta_waitlist'` for admin identification
+
+### Complexity Analysis
+
+#### Low-Medium Complexity Factors (2 points):
+- **Existing Infrastructure**: Access request system already implemented in REQ-016
+- **Working API Endpoint**: `/api/mailing-list` already handles validation and database operations
+- **Database Schema**: `access_requests` table already exists with proper structure
+- **Admin Interface**: Dashboard already supports access request management
+
+#### Medium Complexity Factors (1-2 points):
+- **Account Handling**: Beta users don't specify a target account, need special handling
+- **Dual Operations**: Must successfully complete both mailing list signup AND access request creation
+- **Error Handling**: Need transaction-like behavior to maintain data consistency
+- **Admin UX**: Beta requests may need different UI treatment in admin dashboard
+
+#### Technical Implementation Points:
+- **API Modification** (1 point): Enhance `/api/mailing-list` to create access requests
+- **Beta Request Logic** (1 point): Handle null account_id and special beta metadata
+- **Error Handling** (0.5 point): Ensure atomic operations and proper rollback
+- **Admin Dashboard** (0.5 point): Minor updates to display beta-source requests appropriately
+- **Testing & Validation** (0.5-1 point): Verify end-to-end flow works correctly
+
+### Referenced Files
+
+#### Core Implementation Files:
+- **Primary API**: `src/app/api/mailing-list/route.ts` (main modification needed)
+- **Frontend Component**: `src/components/MailingListSignup.tsx` (minimal/no changes)
+- **Homepage Integration**: `src/app/page.tsx` (no changes expected)
+
+#### Access Request System Files (REQ-016):
+- **Types**: `src/types/admin.ts` (may need beta-specific enum values)
+- **Utilities**: `src/lib/access-management.ts` (may leverage existing validation)
+- **Admin Dashboard**: `src/app/admin/access-requests/page.tsx` (minor display updates)
+- **Components**: `src/components/AccessRequestTable.tsx` (potential beta indicator)
+
+#### Database Tables:
+- **Existing**: `mailing_list_subscribers` (continue using)
+- **Existing**: `access_requests` (add beta-originated entries)
+- **Relationship**: Link via email address for tracking
+
+### Risk Assessment
+**Low-Medium Risk**:
+- **Data Integrity**: Need to ensure both operations succeed or both fail
+- **Performance**: Minimal impact, adding one additional database insert
+- **User Experience**: Should be transparent to users (no UX change)
+- **Admin Experience**: May need to educate admins on beta vs. regular requests
+
+### Success Criteria
+1. ✅ Beta waitlist signup continues to work exactly as before
+2. ✅ Email successfully added to mailing list
+3. ✅ Access request automatically created with appropriate metadata
+4. ✅ Beta requests visible in admin dashboard with source identification
+5. ✅ Proper error handling if either operation fails
+6. ✅ Admin can approve beta requests using existing workflow
+
+### Implementation Priority
+**Medium Priority** - Enhances existing functionality and improves admin workflow efficiency by automatically capturing beta interest as actionable access requests.
+
+---
+
+*Next Request: REQ-018* 
