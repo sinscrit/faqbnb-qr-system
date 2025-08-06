@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { AccessRequestStatus } from '@/types/admin';
 import { randomBytes } from 'crypto';
+import { sendAccessApprovalEmail } from '@/lib/email-service';
+import { generateAccessApprovalEmail } from '@/lib/email-templates';
 
 interface RouteParams {
   params: {
@@ -218,15 +220,37 @@ export async function POST(
       );
     }
 
-    // Generate email template if sending email
+    // Send email if requested
     let emailData = null;
+    let emailResult = null;
     if (send_email && accessRequest.account) {
-      emailData = email_template || generateAccessGrantEmail({
-        requesterName: accessRequest.requester_name,
-        accountName: accessRequest.account.name,
+      emailData = email_template || generateAccessApprovalEmail(
+        accessRequest,
         accessCode,
-        accountOwnerName: accessRequest.account.owner?.full_name
-      });
+        accessRequest.account.name
+      );
+
+      try {
+        emailResult = await sendAccessApprovalEmail(
+          accessRequest.requester_email,
+          emailData,
+          {
+            requestId,
+            accountId: accessRequest.account_id,
+            adminId: user.id
+          }
+        );
+
+        if (!emailResult.success) {
+          console.warn('📧 ACCESS_GRANT_DEBUG: Email send failed but continuing with approval', {
+            error: emailResult.error,
+            requestId
+          });
+        }
+      } catch (emailError) {
+        console.error('📧 ACCESS_GRANT_DEBUG: Email service error', emailError);
+        // Don't fail the approval if email fails
+      }
     }
 
     // Log approval action
@@ -242,8 +266,9 @@ export async function POST(
       data: {
         request: updatedRequest,
         accessCode,
-        emailSent: send_email,
-        emailTemplate: emailData
+        emailSent: send_email && emailResult?.success,
+        emailTemplate: emailData,
+        emailResult: emailResult || undefined
       },
       message: 'Access request approved successfully'
     };

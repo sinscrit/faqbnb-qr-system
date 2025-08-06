@@ -235,6 +235,158 @@ export async function computeAccessStatistics(userId?: string): Promise<AccessSt
   }
 }
 
+// Timeline Analytics Types and Functions
+export interface RegistrationStatus {
+  stage: 'requested' | 'approved' | 'registered' | 'denied';
+  daysSinceRequest: number;
+  daysToApproval?: number;
+  daysToRegistration?: number;
+  isOverdue: boolean;
+  timeline: Array<{
+    event: string;
+    date: string;
+    daysSinceStart: number;
+  }>;
+}
+
+/**
+ * Calculate days since request was made
+ */
+export function calculateDaysSinceRequest(requestDate: Date): number {
+  const now = new Date();
+  const diffTime = now.getTime() - requestDate.getTime();
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Calculate days between request and registration
+ */
+export function calculateDaysBetweenRequestAndRegistration(
+  requestDate: Date, 
+  registrationDate: Date
+): number {
+  const diffTime = registrationDate.getTime() - requestDate.getTime();
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Get comprehensive registration status for access request
+ */
+export function getRegistrationStatus(request: any): RegistrationStatus {
+  const requestDate = new Date(request.request_date);
+  const approvalDate = request.approval_date ? new Date(request.approval_date) : null;
+  const registrationDate = request.registration_completed_date ? 
+    new Date(request.registration_completed_date) : null;
+
+  const daysSinceRequest = calculateDaysSinceRequest(requestDate);
+  const daysToApproval = approvalDate ? 
+    Math.floor((approvalDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+  const daysToRegistration = registrationDate ? 
+    calculateDaysBetweenRequestAndRegistration(requestDate, registrationDate) : undefined;
+
+  // Build timeline
+  const timeline = [
+    {
+      event: 'Request Submitted',
+      date: request.request_date,
+      daysSinceStart: 0
+    }
+  ];
+
+  if (approvalDate) {
+    timeline.push({
+      event: 'Request Approved',
+      date: request.approval_date,
+      daysSinceStart: daysToApproval!
+    });
+  }
+
+  if (registrationDate) {
+    timeline.push({
+      event: 'Registration Completed',
+      date: request.registration_completed_date,
+      daysSinceStart: daysToRegistration!
+    });
+  }
+
+  // Determine if overdue based on status and time elapsed
+  let isOverdue = false;
+  if (request.status === 'pending' && daysSinceRequest > 7) {
+    isOverdue = true;
+  } else if (request.status === 'approved' && approvalDate) {
+    const daysSinceApproval = Math.floor((new Date().getTime() - approvalDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSinceApproval > 14) { // 14 days to complete registration after approval
+      isOverdue = true;
+    }
+  }
+
+  return {
+    stage: request.status,
+    daysSinceRequest,
+    daysToApproval,
+    daysToRegistration,
+    isOverdue,
+    timeline
+  };
+}
+
+/**
+ * Get timeline analytics for multiple requests
+ */
+export function analyzeRegistrationTimelines(requests: any[]): {
+  averageDaysToApproval: number;
+  averageDaysToRegistration: number;
+  overdueRequests: number;
+  fastestApproval: number;
+  slowestApproval: number;
+  completionRate: number;
+  stageDistribution: Record<string, number>;
+} {
+  const approvedRequests = requests.filter(r => r.approval_date);
+  const registeredRequests = requests.filter(r => r.registration_completed_date);
+  
+  // Calculate averages
+  const averageDaysToApproval = approvedRequests.length > 0 ?
+    approvedRequests.reduce((sum, req) => {
+      const status = getRegistrationStatus(req);
+      return sum + (status.daysToApproval || 0);
+    }, 0) / approvedRequests.length : 0;
+
+  const averageDaysToRegistration = registeredRequests.length > 0 ?
+    registeredRequests.reduce((sum, req) => {
+      const status = getRegistrationStatus(req);
+      return sum + (status.daysToRegistration || 0);
+    }, 0) / registeredRequests.length : 0;
+
+  // Find fastest and slowest approvals
+  const approvalTimes = approvedRequests.map(req => getRegistrationStatus(req).daysToApproval || 0);
+  const fastestApproval = approvalTimes.length > 0 ? Math.min(...approvalTimes) : 0;
+  const slowestApproval = approvalTimes.length > 0 ? Math.max(...approvalTimes) : 0;
+
+  // Count overdue requests
+  const overdueRequests = requests.filter(req => getRegistrationStatus(req).isOverdue).length;
+
+  // Calculate completion rate
+  const completionRate = requests.length > 0 ? (registeredRequests.length / requests.length) * 100 : 0;
+
+  // Stage distribution
+  const stageDistribution = requests.reduce((dist, req) => {
+    const stage = req.status;
+    dist[stage] = (dist[stage] || 0) + 1;
+    return dist;
+  }, {} as Record<string, number>);
+
+  return {
+    averageDaysToApproval,
+    averageDaysToRegistration,
+    overdueRequests,
+    fastestApproval,
+    slowestApproval,
+    completionRate,
+    stageDistribution
+  };
+}
+
 /**
  * Generate comprehensive analytics report
  * Part of REQ-016: System Admin Back Office Analytics

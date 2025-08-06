@@ -291,3 +291,120 @@ export function extractAccessCodeFromEmail(emailBody: string): string | null {
   const codeMatch = emailBody.match(/Access Code:\s*([A-Z0-9]+)/i);
   return codeMatch ? codeMatch[1] : null;
 }
+
+/**
+ * Generate secure access link with expiration
+ */
+export function generateSecureAccessLink(
+  accountId: string, 
+  accessCode: string, 
+  expirationHours: number = 168 // 7 days default
+): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const expirationTime = new Date(Date.now() + expirationHours * 60 * 60 * 1000);
+  
+  // Create access link with embedded parameters
+  const params = new URLSearchParams({
+    code: accessCode,
+    account: accountId,
+    expires: expirationTime.toISOString()
+  });
+  
+  return `${baseUrl}/access/redeem?${params.toString()}`;
+}
+
+/**
+ * Link validation interface
+ */
+export interface LinkValidation {
+  isValid: boolean;
+  isExpired: boolean;
+  error?: string;
+  accessCode?: string;
+  accountId?: string;
+  expirationDate?: Date;
+}
+
+/**
+ * Validate access link structure and expiration
+ */
+export function validateAccessLink(link: string): LinkValidation {
+  try {
+    const url = new URL(link);
+    
+    // Check if it's the correct path
+    if (!url.pathname.includes('/access/redeem')) {
+      return {
+        isValid: false,
+        isExpired: false,
+        error: 'Invalid access link format'
+      };
+    }
+    
+    const accessCode = url.searchParams.get('code');
+    const accountId = url.searchParams.get('account');
+    const expiresParam = url.searchParams.get('expires');
+    
+    if (!accessCode || !accountId) {
+      return {
+        isValid: false,
+        isExpired: false,
+        error: 'Missing required parameters'
+      };
+    }
+    
+    // Validate access code format
+    if (!/^[A-Z0-9]{12}$/.test(accessCode)) {
+      return {
+        isValid: false,
+        isExpired: false,
+        error: 'Invalid access code format'
+      };
+    }
+    
+    // Check expiration if provided
+    let isExpired = false;
+    let expirationDate: Date | undefined;
+    
+    if (expiresParam) {
+      expirationDate = new Date(expiresParam);
+      isExpired = expirationDate < new Date();
+    }
+    
+    return {
+      isValid: true,
+      isExpired,
+      accessCode,
+      accountId,
+      expirationDate
+    };
+    
+  } catch (error) {
+    return {
+      isValid: false,
+      isExpired: false,
+      error: 'Invalid URL format'
+    };
+  }
+}
+
+/**
+ * Generate secure registration link
+ */
+export function generateSecureRegistrationLink(accessCode: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return `${baseUrl}/register?access_code=${encodeURIComponent(accessCode)}`;
+}
+
+/**
+ * Generate account access redemption link
+ */
+export function generateAccountAccessLink(accountId: string, accessCode: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const params = new URLSearchParams({
+    account_id: accountId,
+    access_code: accessCode
+  });
+  
+  return `${baseUrl}/account/join?${params.toString()}`;
+}
