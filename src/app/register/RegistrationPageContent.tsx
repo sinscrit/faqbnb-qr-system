@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
+import RegistrationForm from '@/components/RegistrationForm';
 import { AlertCircle, CheckCircle, Home, Shield } from 'lucide-react';
 
 interface RegistrationMessage {
@@ -306,16 +307,26 @@ export default function RegistrationPageContent() {
           {/* URL Messages */}
           {message && <MessageAlert message={message} />}
 
-          {/* Registration Form will be added in the next task */}
-          <div className="text-center py-8">
-            <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-lg">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
-              <span className="text-sm text-blue-800">Registration form loading...</span>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              Form component will be implemented in task 1.2
-            </p>
-          </div>
+          {/* Registration Form */}
+          <RegistrationForm
+            email={urlParams.email!}
+            accessCode={urlParams.code!}
+            onSuccess={(result) => {
+              console.log('Registration successful:', result);
+              setMessage({
+                type: 'success',
+                message: 'Account created successfully! Redirecting to dashboard...'
+              });
+              // TODO: Redirect to dashboard in next tasks
+            }}
+            onError={(error) => {
+              console.error('Registration failed:', error);
+              setMessage({
+                type: 'error',
+                message: error
+              });
+            }}
+          />
         </div>
 
         {/* Footer Links */}
