@@ -65,6 +65,13 @@ export async function POST(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  console.log('🔥[GRANT_DEBUG] POST request received:', {
+    requestId: params.requestId,
+    url: request.url,
+    method: request.method,
+    timestamp: new Date().toISOString()
+  });
+  
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {

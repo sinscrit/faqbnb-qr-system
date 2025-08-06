@@ -3,16 +3,17 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { createSupabaseServer } from '@/lib/supabase-server';
 
 export async function validateAdminAuth(request: NextRequest) {
+  const DEBUG_PREFIX = '🔍[ACCESS_REQ_DEBUG]';
   try {
-    console.error('🚨 ADMIN_API_DEBUG: Starting authentication validation...');
+    console.log(`${DEBUG_PREFIX} AUTH_VALIDATE_START: Starting authentication validation...`);
     const supabase = await createSupabaseServer();
-    console.log('ADMIN_API_DEBUG: Supabase server client created');
+    console.log(`${DEBUG_PREFIX} AUTH_SUPABASE_CLIENT: Server client created successfully`);
     
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    console.error('🚨 ADMIN_API_DEBUG: Got user from Supabase:', { user: user?.email, error: userError?.message });
+    console.log(`${DEBUG_PREFIX} AUTH_GET_USER: Got user from Supabase:`, { user: user?.email, error: userError?.message });
     
     if (userError || !user) {
-      console.log('ADMIN_API_DEBUG: User session not found:', userError?.message);
+      console.log(`${DEBUG_PREFIX} AUTH_USER_FAILED: User session not found:`, userError?.message);
       return {
         error: NextResponse.json(
           { 

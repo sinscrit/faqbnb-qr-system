@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
+import ConfirmationModal from '@/components/ConfirmationModal';
 import { useAuth } from '@/contexts/AuthContext';
 import AccessRequestTable from '@/components/AccessRequestTable';
 import EmailPopup from '@/components/EmailPopup';
@@ -46,6 +47,20 @@ export default function AccessRequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
   const [emailPopupOpen, setEmailPopupOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    loading: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    loading: false
+  });
 
   // Load access requests data
   useEffect(() => {
@@ -108,13 +123,14 @@ export default function AccessRequestsPage() {
   // Handle approve request
   const handleApprove = async (requestId: string) => {
     try {
-      const response = await fetch(`/api/admin/access-requests/${requestId}/grant`, {
+      const response = await fetch(`/api/admin/grant-access`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({
+          requestId: requestId,
           send_email: false // We'll handle email separately
         })
       });
@@ -143,19 +159,30 @@ export default function AccessRequestsPage() {
 
   // Handle deny request
   const handleDeny = async (requestId: string) => {
-    if (!confirm('Are you sure you want to deny this access request?')) {
-      return;
-    }
+    // Show confirmation modal
+    setConfirmationModal({
+      isOpen: true,
+      title: 'Deny Access Request',
+      message: 'Are you sure you want to deny this access request? This action cannot be undone.',
+      onConfirm: () => performDeny(requestId),
+      loading: false
+    });
+  };
 
+  // Perform the actual deny operation
+  const performDeny = async (requestId: string) => {
     try {
-      const response = await fetch(`/api/admin/access-requests/${requestId}`, {
-        method: 'PUT',
+      setConfirmationModal(prev => ({ ...prev, loading: true }));
+
+      const response = await fetch(`/api/admin/deny-access`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({
-          status: AccessRequestStatus.DENIED
+          requestId: requestId,
+          reason: 'Access denied by administrator'
         })
       });
 
@@ -169,12 +196,16 @@ export default function AccessRequestsPage() {
         throw new Error(result.error || 'Failed to deny request');
       }
 
-      // Refresh data
+      console.log('Request denied successfully:', result.data);
+
+      // Close modal and refresh data
+      setConfirmationModal(prev => ({ ...prev, isOpen: false, loading: false }));
       setRefreshTrigger(prev => prev + 1);
 
     } catch (err) {
       console.error('Error denying request:', err);
       setError(err instanceof Error ? err.message : 'Failed to deny request');
+      setConfirmationModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -396,6 +427,18 @@ export default function AccessRequestsPage() {
             accountName={selectedRequest.account?.name}
           />
         )}
+
+        {/* Confirmation Modal */}
+        <ConfirmationModal
+          isOpen={confirmationModal.isOpen}
+          title={confirmationModal.title}
+          message={confirmationModal.message}
+          onConfirm={confirmationModal.onConfirm}
+          onCancel={() => setConfirmationModal(prev => ({ ...prev, isOpen: false }))}
+          loading={confirmationModal.loading}
+          confirmText="Deny"
+          confirmButtonColor="red"
+        />
       </div>
     </div>
   );

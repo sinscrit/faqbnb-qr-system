@@ -1288,4 +1288,147 @@ When a user submits their email through the beta waitlist form, the system shoul
 
 ---
 
-*Next Request: REQ-018* 
+## REQ-018: Implement Registration Page with Access Code Validation and OAuth Support
+**Date**: January 28, 2025  
+**Type**: Feature Implementation  
+**Complexity**: 13-21 Points (High Complexity)
+
+### Request Summary
+Create a user registration system accessible via `http://localhost:3000/register?code=XXXXX&email=pendinguseremail@domain.com` that validates access codes from approved pending requests and supports both email/password and Google OAuth registration methods. Upon successful registration, automatically create a default account with the user as owner.
+
+### Detailed Requirements
+
+#### 1. Registration Page Frontend Implementation (5 points)
+- **URL Parameter Handling**: Parse and validate `code` and `email` query parameters
+- **Dual Authentication Methods**: Support both email/password and Google OAuth registration
+- **Form Validation**: Comprehensive client-side validation for all registration fields
+- **Error Handling**: User-friendly error messages for various failure scenarios
+- **Files Affected**:
+  - `src/app/register/page.tsx` (new registration page)
+  - `src/components/RegistrationForm.tsx` (new registration form component)
+  - `src/components/GoogleOAuthButton.tsx` (new OAuth component)
+  - `src/hooks/useRegistration.ts` (new registration logic hook)
+
+#### 2. Access Code Validation System (3 points)
+- **Database Integration**: Validate access codes against pending requests table
+- **Code Expiration**: Check if access codes are still valid and not expired
+- **Email Verification**: Ensure email parameter matches the pending request
+- **Security**: Prevent code reuse and implement proper validation flow
+- **Files Affected**:
+  - `src/app/api/auth/validate-code/route.ts` (new code validation endpoint)
+  - `src/lib/access-validation.ts` (new validation utilities)
+  - Database schema updates for pending requests tracking
+
+#### 3. Google OAuth Integration (8 points)
+- **OAuth Provider Setup**: Configure Google OAuth provider with Supabase
+- **Authentication Flow**: Implement complete OAuth registration flow
+- **Token Management**: Handle OAuth tokens and session creation
+- **User Data Integration**: Map Google profile data to user registration
+- **Error Handling**: OAuth-specific error scenarios and fallbacks
+- **Files Affected**:
+  - `src/lib/supabase.ts` (OAuth configuration)
+  - `src/app/api/auth/oauth/callback/route.ts` (new OAuth callback handler)
+  - `src/contexts/AuthContext.tsx` (OAuth integration in auth context)
+  - Environment variables for Google OAuth credentials
+
+#### 4. Enhanced Registration API (3 points)
+- **Extended Registration Endpoint**: Modify existing `/api/auth/register` for access code flow
+- **Access Code Consumption**: Mark access codes as used after successful registration
+- **User Creation**: Enhanced user creation with access code metadata
+- **Session Management**: Proper session creation for newly registered users
+- **Files Affected**:
+  - `src/app/api/auth/register/route.ts` (extend existing registration API)
+  - `src/lib/auth.ts` (enhance registerUser function)
+  - Database updates for tracking code usage
+
+#### 5. Default Account Creation (2 points)
+- **Automatic Account Setup**: Create default account upon successful registration
+- **Owner Assignment**: Set registered user as account owner
+- **Account Naming**: Generate appropriate default account name
+- **Database Transactions**: Ensure atomic user and account creation
+- **Files Affected**:
+  - `src/lib/auth.ts` (extend registration to include account creation)
+  - `src/app/api/auth/register/route.ts` (account creation integration)
+  - Database account creation utilities
+
+### Complexity Analysis
+
+#### Frontend Registration Interface (5 points)
+- **Dual Auth Methods**: Complex UI supporting both email/password and OAuth flows
+- **URL Parameter Handling**: Secure parsing and validation of query parameters
+- **Form State Management**: Complex form state with validation and error handling
+- **OAuth Integration**: Frontend OAuth flow with proper redirect handling
+- **Risk Level**: Medium - New frontend functionality with OAuth complexity
+
+#### Access Code Security System (3 points)
+- **Database Validation**: Secure code validation against pending requests
+- **Security Implementation**: Prevent replay attacks and unauthorized access
+- **Code Lifecycle**: Proper code expiration and consumption tracking
+- **Risk Level**: Medium-High - Security-critical validation system
+
+#### Google OAuth Implementation (8 points)
+- **OAuth Provider Setup**: Complex third-party authentication integration
+- **Supabase OAuth Config**: Integration with existing Supabase auth system
+- **Token Management**: Secure OAuth token handling and session creation
+- **Cross-Platform Support**: OAuth flow working across different environments
+- **Error Scenarios**: Comprehensive OAuth error handling and fallbacks
+- **Risk Level**: High - Third-party integration with authentication implications
+
+#### Backend Integration (5 points)
+- **API Extension**: Modify existing registration API for new access code flow
+- **Database Operations**: Complex transactions for user, account, and code management
+- **Session Integration**: Proper integration with existing authentication system
+- **Account Creation**: Automatic default account setup with proper relationships
+- **Risk Level**: Medium - Extensions to existing critical authentication systems
+
+### Technical Challenges
+1. **OAuth Integration Complexity**: Setting up and securing Google OAuth with Supabase
+2. **Security Validation**: Ensuring access codes cannot be replayed or tampered with
+3. **Database Transactions**: Atomic operations for user registration, account creation, and code consumption
+4. **Error Handling**: Comprehensive error scenarios across multiple authentication methods
+5. **URL Parameter Security**: Secure handling of sensitive data in URL parameters
+6. **Session Management**: Proper session creation and authentication state management
+
+### Implementation Priority
+**High Priority** - Core user onboarding functionality that enables controlled user registration and account creation.
+
+### Implementation Phases
+1. **Phase 1**: Registration page frontend and basic form validation (3 points)
+2. **Phase 2**: Access code validation system and API integration (4 points)
+3. **Phase 3**: Google OAuth setup and integration (8 points)
+4. **Phase 4**: Default account creation and final integration (6 points)
+
+### Related Files Reference
+- **New Registration System**:
+  - `src/app/register/page.tsx` (new registration page)
+  - `src/components/RegistrationForm.tsx` (new form component)
+  - `src/components/GoogleOAuthButton.tsx` (new OAuth component)
+  - `src/hooks/useRegistration.ts` (new registration hook)
+- **API Endpoints**:
+  - `src/app/api/auth/register/route.ts` (extend existing)
+  - `src/app/api/auth/validate-code/route.ts` (new validation endpoint)
+  - `src/app/api/auth/oauth/callback/route.ts` (new OAuth callback)
+- **Authentication System**:
+  - `src/lib/auth.ts` (extend registration functions)
+  - `src/lib/supabase.ts` (OAuth configuration)
+  - `src/contexts/AuthContext.tsx` (OAuth integration)
+  - `src/lib/access-validation.ts` (new validation utilities)
+- **Database Schema**:
+  - Pending requests table updates for code tracking
+  - Account creation integration
+  - OAuth provider data storage
+- **Configuration**:
+  - Environment variables for Google OAuth credentials
+  - Supabase OAuth provider configuration
+
+### Technical Specifications
+- **URL Format**: `/register?code=XXXXX&email=user@domain.com`
+- **Authentication Methods**: Email/password and Google OAuth
+- **Code Validation**: Server-side validation against pending requests
+- **Account Creation**: Automatic default account with user as owner
+- **Session Management**: Immediate login after successful registration
+- **Security**: Access code consumption, replay prevention, secure token handling
+
+---
+
+*Next Request: REQ-019* 

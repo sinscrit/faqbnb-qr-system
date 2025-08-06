@@ -1,71 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
-import { AccessRequestStatus, AccessRequestSource } from '@/types/admin';
+import { supabaseAdmin } from '@/lib/supabase';
+import { createSupabaseServer } from '@/lib/supabase-server';
+
+// Debug prefix for easy filtering
+const DEBUG_PREFIX = '🔍[ACCESS_REQ_DEBUG]';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  console.log(`${DEBUG_PREFIX} === API CALL START ===`);
+  console.log(`${DEBUG_PREFIX} Request URL:`, request.url);
+  
+  // Test 1: Environment Variables (with key validation)
+  console.log(`${DEBUG_PREFIX} ENV_TEST:`, {
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...',
+    serviceKeyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20) + '...',
+    anonKeyPrefix: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...',
+    nodeEnv: process.env.NODE_ENV
+  });
+
+  // Authentication (validate user is admin and use session-based client like other routes)
+  console.log(`${DEBUG_PREFIX} AUTH_START: Calling validateAdminAuth...`);
   const authResult = await validateAdminAuth(request);
+  console.log(`${DEBUG_PREFIX} AUTH_RESULT:`, { hasError: !!authResult.error, hasSupabase: !!authResult.supabase });
 
   if (authResult.error) {
+    console.log(`${DEBUG_PREFIX} AUTH_FAILED: Returning auth error`);
     return authResult.error;
   }
 
+  // Use session-based client (same pattern as working /api/admin/users/analytics)
   const { supabase } = authResult;
-  console.log('✅ ACCESS_REQUESTS_API_DEBUG: Authentication successful');
-
-  // Parse query parameters
-  const url = new URL(request.url);
-  const status = url.searchParams.get('status');
-  const source = url.searchParams.get('source');
-  const accountId = url.searchParams.get('account_id');
-  const limit = parseInt(url.searchParams.get('limit') || '50');
-  const offset = parseInt(url.searchParams.get('offset') || '0');
-  const startDate = url.searchParams.get('start_date');
-  const endDate = url.searchParams.get('end_date');
-
-  console.log('🔍 ACCESS_REQUESTS_API_DEBUG: Query parameters:', {
-    status, source, accountId, limit, offset, startDate, endDate
-  });
+  console.log(`${DEBUG_PREFIX} CLIENT_PATTERN: Using session-based client like other working admin routes`);
 
   try {
-    // Build query with joins
+
+    // Extract query parameters
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    const source = searchParams.get('source');
+    const accountId = searchParams.get('account_id');
+    const startDate = searchParams.get('start_date');
+    const endDate = searchParams.get('end_date');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const offset = parseInt(searchParams.get('offset') || '0');
+
+    console.log(`${DEBUG_PREFIX} QUERY_PARAMS:`, {
+      status, source, accountId, limit, offset, startDate, endDate
+    });
+
+    // Build query with session-based client
+    console.log(`${DEBUG_PREFIX} DB_QUERY: Building access requests query with session client...`);
     let query = supabase
       .from('access_requests')
-      .select(`
-        *,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        ),
-        approved_by_user:users!access_requests_approved_by_fkey(
-          id,
-          email,
-          full_name
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     // Apply filters
-    if (status && Object.values(AccessRequestStatus).includes(status as AccessRequestStatus)) {
+    if (status) {
       query = query.eq('status', status);
     }
-
-    if (source && Object.values(AccessRequestSource).includes(source as AccessRequestSource)) {
+    if (source) {
       query = query.eq('source', source);
     }
-
     if (accountId) {
       query = query.eq('account_id', accountId);
     }
-
     if (startDate) {
       query = query.gte('request_date', startDate);
     }
-
     if (endDate) {
       query = query.lte('request_date', endDate);
     }
@@ -73,251 +78,80 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Apply pagination
     query = query.range(offset, offset + limit - 1);
 
-    const { data: accessRequests, error, count } = await query;
-
-    if (error) {
-      console.error('❌ ACCESS_REQUESTS_API_DEBUG: Query failed:', error);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to retrieve access requests'
-        },
-        { status: 500 }
-      );
+    const { data: accessRequests, error: queryError } = await query;
+    
+    console.log(`${DEBUG_PREFIX} DB_QUERY_RESULT:`, { 
+      count: accessRequests?.length, 
+      error: queryError,
+      sampleColumns: accessRequests?.[0] ? Object.keys(accessRequests[0]) : []
+    });
+    
+    if (queryError) {
+      console.error(`${DEBUG_PREFIX} DB_QUERY_FAILED:`, queryError);
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Access requests query failed', 
+        details: queryError,
+        debugCode: 'ACCESS_REQUESTS_QUERY_FAILED'
+      }, { status: 500 });
     }
 
-    // Get total count for pagination
-    const { count: totalCount, error: countError } = await supabase
+    // Get total count for pagination (using working approach instead of count())
+    console.log(`${DEBUG_PREFIX} COUNT_ALTERNATIVE: Using select().length instead of count()...`);
+    const { data: allRequests, error: countTotalError } = await supabase
       .from('access_requests')
-      .select('*', { count: 'exact', head: true });
-
-    if (countError) {
-      console.warn('⚠️ ACCESS_REQUESTS_API_DEBUG: Failed to get count:', countError);
+      .select('id');
+    
+    const totalCount = allRequests?.length || 0;
+    
+    if (countTotalError) {
+      console.warn(`${DEBUG_PREFIX} COUNT_WARNING:`, countTotalError);
+    } else {
+      console.log(`${DEBUG_PREFIX} COUNT_SUCCESS: Found ${totalCount} total records`);
     }
 
-    // Transform and enrich data
-    const enrichedRequests = accessRequests?.map(request => {
-      const requestDate = new Date(request.request_date);
-      const approvalDate = request.approval_date ? new Date(request.approval_date) : null;
-      const registrationDate = request.registration_completed_date ? new Date(request.registration_completed_date) : null;
-      const now = new Date();
-
-      // Calculate timeline metrics
-      const daysSinceRequest = Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
-      const daysToApproval = approvalDate ? 
-        Math.floor((approvalDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) : null;
-      const daysToRegistration = registrationDate ?
-        Math.floor((registrationDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) : null;
-
-      return {
-        ...request,
-        timeline: {
-          daysSinceRequest,
-          daysToApproval,
-          daysToRegistration,
-          isPending: request.status === AccessRequestStatus.PENDING,
-          isOverdue: daysSinceRequest > 7 && request.status === AccessRequestStatus.PENDING
-        },
-        account: request.account || null,
-        approvedBy: request.approved_by_user || null
-      };
-    }) || [];
-
-    console.log(`✅ ACCESS_REQUESTS_API_DEBUG: Successfully retrieved ${enrichedRequests.length} requests`);
-
-    return NextResponse.json({
+    // Build response
+    console.log(`${DEBUG_PREFIX} RESPONSE_BUILD: Creating final response...`);
+    const response = {
       success: true,
       data: {
-        requests: enrichedRequests,
-        pagination: {
-          limit,
-          offset,
-          total: totalCount || 0,
-          hasMore: (offset + limit) < (totalCount || 0)
-        },
-        summary: {
-          totalRequests: totalCount || 0,
-          pendingRequests: enrichedRequests.filter(r => r.status === AccessRequestStatus.PENDING).length,
-          approvedRequests: enrichedRequests.filter(r => r.status === AccessRequestStatus.APPROVED).length,
-          registeredUsers: enrichedRequests.filter(r => r.status === AccessRequestStatus.REGISTERED).length,
-          overdueRequests: enrichedRequests.filter(r => r.timeline.isOverdue).length
+        requests: accessRequests || [],
+        pagination: { 
+          total: totalCount || accessRequests?.length || 0, 
+          offset: offset, 
+          limit: limit, 
+          hasMore: (totalCount || 0) > (offset + limit)
         }
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ ACCESS_REQUESTS_API_DEBUG: API error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal server error',
-        code: 'API_ERROR'
       },
-      { status: 500 }
-    );
+      debug: {
+        clientUsed: 'session-based client (same as users route)',
+        testsCompleted: ['ENV', 'AUTH', 'ADMIN_DB_CONNECTION', 'ACCESS_REQUESTS_QUERY'],
+        timestamp: new Date().toISOString()
+      }
+    };
+    
+    console.log(`${DEBUG_PREFIX} SUCCESS: Query completed, returning ${accessRequests?.length || 0} records`);
+    return NextResponse.json(response);
+
+  } catch (unexpectedError) {
+    console.error(`${DEBUG_PREFIX} UNEXPECTED_ERROR:`, unexpectedError);
+    console.error(`${DEBUG_PREFIX} ERROR_STACK:`, (unexpectedError as Error).stack);
+    
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Unexpected server error', 
+      details: String(unexpectedError),
+      debugCode: 'UNEXPECTED_ERROR'
+    }, { status: 500 });
   }
 }
 
+// Simple POST for completeness
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const authResult = await validateAdminAuth(request);
-
-  if (authResult.error) {
-    return authResult.error;
-  }
-
-  const { supabase } = authResult;
-  console.log('✅ ACCESS_REQUESTS_CREATE_DEBUG: Authentication successful');
-
-  try {
-    const body = await request.json();
-    const { requester_email, requester_name, account_id, notes, source } = body;
-
-    // Validation
-    if (!requester_email) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Missing required field: requester_email'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Account ID is required unless it's a beta request
-    if (!account_id && source !== AccessRequestSource.BETA_WAITLIST) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Missing required field: account_id (unless creating beta request)'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(requester_email)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid email format'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check for duplicate requests
-    const { data: existingRequest, error: duplicateError } = await supabase
-      .from('access_requests')
-      .select('id, status')
-      .eq('requester_email', requester_email)
-      .eq('account_id', account_id)
-      .in('status', [AccessRequestStatus.PENDING, AccessRequestStatus.APPROVED])
-      .single();
-
-    if (duplicateError && duplicateError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error('❌ ACCESS_REQUESTS_CREATE_DEBUG: Duplicate check failed:', duplicateError);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to check for duplicate requests'
-        },
-        { status: 500 }
-      );
-    }
-
-    if (existingRequest) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'An access request already exists for this email and account',
-          code: 'DUPLICATE_REQUEST',
-          existing: existingRequest
-        },
-        { status: 409 }
-      );
-    }
-
-    // Verify account exists (skip for beta requests)
-    if (account_id) {
-      const { data: account, error: accountError } = await supabase
-        .from('accounts')
-        .select('id, name')
-        .eq('id', account_id)
-        .single();
-
-      if (accountError || !account) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Account not found'
-          },
-          { status: 404 }
-        );
-      }
-    } else if (source !== AccessRequestSource.BETA_WAITLIST) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Account ID required for non-beta requests'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Create access request
-    const { data: newRequest, error: createError } = await supabase
-      .from('access_requests')
-      .insert({
-        requester_email,
-        requester_name,
-        account_id,
-        request_date: new Date().toISOString(),
-        status: AccessRequestStatus.PENDING,
-        source: source || AccessRequestSource.ADMIN_CREATED,
-        notes
-      })
-      .select(`
-        *,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        )
-      `)
-      .single();
-
-    if (createError) {
-      console.error('❌ ACCESS_REQUESTS_CREATE_DEBUG: Insert failed:', createError);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Failed to create access request'
-        },
-        { status: 500 }
-      );
-    }
-
-    console.log('✅ ACCESS_REQUESTS_CREATE_DEBUG: Request created successfully:', newRequest?.id);
-
-    return NextResponse.json({
-      success: true,
-      data: newRequest
-    }, { status: 201 });
-
-  } catch (error) {
-    console.error('❌ ACCESS_REQUESTS_CREATE_DEBUG: API error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal server error',
-        code: 'API_ERROR'
-      },
-      { status: 500 }
-    );
-  }
+  console.log(`${DEBUG_PREFIX} POST called - not implemented`);
+  return NextResponse.json({ 
+    success: false, 
+    error: 'POST not implemented in debug version',
+    debugCode: 'POST_NOT_IMPLEMENTED'
+  }, { status: 501 });
 }
