@@ -99,3 +99,102 @@ export interface EmailTemplate {
   body: string;
   variables: Record<string, string>;
 }
+
+// Additional Admin interfaces for comprehensive functionality
+export interface AccessApprovalRequest {
+  requestId: string;
+  approvedBy: string;
+  approvalNotes?: string;
+  accessCode: string;
+  emailTemplate?: EmailTemplate;
+}
+
+export interface BackOfficeUser extends UserAnalytics {
+  isSystemAdmin: boolean;
+  lastLoginDate?: string;
+  registrationDate: string;
+  accountCreationCount: number;
+  totalSystemActivity: number;
+}
+
+export interface UserAccountMetrics {
+  userId: string;
+  ownedAccountsMetrics: {
+    totalAccounts: number;
+    totalItems: number;
+    totalVisits: number;
+    averageItemsPerAccount: number;
+    mostActiveAccount: {
+      id: string;
+      name: string;
+      visitCount: number;
+    };
+  };
+  accessAccountsMetrics: {
+    totalAccounts: number;
+    totalItems: number;
+    totalVisits: number;
+    roles: Record<string, number>; // role -> count
+    mostRecentAccess: {
+      accountId: string;
+      accountName: string;
+      accessDate: string;
+    };
+  };
+}
+
+export interface VisitSummary {
+  totalVisits: number;
+  uniqueItems: number;
+  averageVisitsPerItem: number;
+  recentVisits24h: number;
+  visitTrends: {
+    daily: number[];
+    weekly: number[];
+    monthly: number[];
+  };
+  topVisitedItems: Array<{
+    itemId: string;
+    itemName: string;
+    visitCount: number;
+  }>;
+}
+
+export interface AccessStatistics {
+  pendingRequests: number;
+  approvedRequests: number;
+  registeredUsers: number;
+  averageApprovalTime: number; // in days
+  requestTrends: {
+    daily: number[];
+    weekly: number[];
+    monthly: number[];
+  };
+  approvalRates: {
+    approved: number;
+    denied: number;
+    pending: number;
+  };
+}
+
+// Enums for better type safety
+export enum AccessRequestStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  DENIED = 'denied',
+  REGISTERED = 'registered'
+}
+
+export enum EmailTemplateType {
+  ACCESS_GRANTED = 'access_granted',
+  ACCESS_DENIED = 'access_denied',
+  WELCOME = 'welcome',
+  REMINDER = 'reminder'
+}
+
+export enum UserRole {
+  OWNER = 'owner',
+  ADMIN = 'admin', 
+  MEMBER = 'member',
+  VIEWER = 'viewer'
+}

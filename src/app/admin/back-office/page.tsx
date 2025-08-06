@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { UserAnalytics, AdminDashboardStats, AccessRequest } from '@/types/admin';
 import { useAuth } from '@/contexts/AuthContext';
+import UserAnalyticsTable from '@/components/UserAnalyticsTable';
 
 interface BackOfficeData {
   users: UserAnalytics[];
@@ -19,7 +20,6 @@ export default function BackOfficePage() {
   const [data, setData] = useState<BackOfficeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   // Load back office data
@@ -104,12 +104,6 @@ export default function BackOfficePage() {
   }, [authLoading]);
 
   // Filter functions
-  const filteredUsers = data?.users.filter(user => {
-    const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  }) || [];
-
   const filteredAccessRequests = data?.accessRequests.filter(request => {
     if (statusFilter === 'all') return true;
     return request.status === statusFilter;
@@ -281,77 +275,10 @@ export default function BackOfficePage() {
 
         {/* User Analytics Section */}
         <div className="mb-8">
-          <div className="bg-white shadow rounded-lg">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">User Analytics</h2>
-                <div className="flex space-x-4">
-                  <input
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Owned Accounts
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Access Accounts
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Items
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total Visits
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{user.email}</div>
-                          <div className="text-sm text-gray-500">{user.fullName}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.ownedAccounts.count}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.accessAccounts.count}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.ownedAccounts.totalItems + user.accessAccounts.totalItems}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.ownedAccounts.totalVisits + user.accessAccounts.totalVisits}
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                        No users found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <UserAnalyticsTable 
+            users={data?.users || []}
+            isLoading={loading}
+          />
         </div>
 
         {/* Access Requests Section */}

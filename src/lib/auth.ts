@@ -8,6 +8,7 @@ export interface AuthUser {
   email: string;
   fullName?: string;
   role?: string;
+  isSystemAdmin?: boolean; // Added for REQ-016: System Admin Back Office
   // Account context for multi-tenant system
   currentAccount?: {
     id: string;

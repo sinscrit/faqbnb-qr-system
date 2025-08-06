@@ -61,6 +61,39 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/admin', req.url))
     }
 
+    // Special protection for back office routes (requires system admin)
+    if (session?.user && req.nextUrl.pathname.startsWith('/admin/back-office')) {
+      console.log('🔐 Middleware: Checking system admin access for back office');
+      
+      try {
+        // Check both admin_users table and is_admin flag
+        const { data: adminUser, error: adminError } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('id', session.user.id)
+          .single();
+
+        const { data: userWithAdminFlag, error: userFlagError } = await supabase
+          .from('users')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single();
+
+        const isAdminByTable = !adminError && adminUser;
+        const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
+
+        if (!isAdminByTable && !isAdminByFlag) {
+          console.log('🚨 Middleware: Access denied to back office - not system admin');
+          return NextResponse.redirect(new URL('/admin', req.url));
+        }
+        
+        console.log('✅ Middleware: System admin access granted to back office');
+      } catch (adminCheckError) {
+        console.error('🔄 Middleware: Error checking admin status, redirecting to admin:', adminCheckError);
+        return NextResponse.redirect(new URL('/admin', req.url));
+      }
+    }
+
     // if user is not signed in and trying to access admin, redirect to login
     // but be less aggressive - only redirect for specific admin paths
     // EXCEPTION: Allow brief grace period for post-login redirects from /login
