@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
+import { useRegistration } from '@/hooks/useRegistration';
 
 interface RegistrationFormProps {
   email: string; // Pre-filled from URL parameter
@@ -51,9 +52,19 @@ export default function RegistrationForm({
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Use the registration hook
+  const {
+    isLoading,
+    error: hookError,
+    isValidating,
+    validationResult,
+    validateAccessCodeAsync,
+    submitRegistration,
+    clearError
+  } = useRegistration();
 
   // Debug logging for registration form
   const DEBUG_PREFIX = "🔒 REGISTRATION_FORM_DEBUG:";
@@ -64,6 +75,37 @@ export default function RegistrationForm({
       setFormData(prev => ({ ...prev, email }));
     }
   }, [email]);
+
+  // Validate access code on component mount
+  useEffect(() => {
+    if (accessCode && email && !validationResult) {
+      console.log(`${DEBUG_PREFIX} AUTO_VALIDATING_ACCESS_CODE`, {
+        timestamp: new Date().toISOString(),
+        accessCode: `${accessCode.substring(0, 4)}...`,
+        email
+      });
+      
+      validateAccessCodeAsync(accessCode, email).catch(error => {
+        console.error(`${DEBUG_PREFIX} AUTO_VALIDATION_FAILED:`, error);
+        onError?.(`Access code validation failed: ${error.message}`);
+      });
+    }
+  }, [accessCode, email, validationResult, validateAccessCodeAsync, onError]);
+
+  // Handle hook errors
+  useEffect(() => {
+    if (hookError) {
+      setErrors(prev => ({ ...prev, general: hookError }));
+      onError?.(hookError);
+    }
+  }, [hookError, onError]);
+
+  // Clear hook error when form data changes
+  useEffect(() => {
+    if (hookError) {
+      clearError();
+    }
+  }, [formData, hookError, clearError]);
 
   // Password strength calculation
   const calculatePasswordStrength = (password: string): PasswordStrength => {
@@ -229,53 +271,46 @@ export default function RegistrationForm({
       return;
     }
 
-    setLoading(true);
+    // Clear any existing errors
     setErrors({});
 
     try {
-      // TODO: This will be implemented in the next task (useRegistration hook)
-      // For now, simulate the API call
-      console.log(`${DEBUG_PREFIX} REGISTRATION_API_CALL`, {
+      console.log(`${DEBUG_PREFIX} SUBMITTING_REGISTRATION`, {
         timestamp: new Date().toISOString(),
-        data: {
-          email: formData.email,
-          fullName: formData.fullName,
-          accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null
-        }
+        email: formData.email,
+        fullName: formData.fullName,
+        accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null
       });
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // TODO: Replace with actual API call
-      // const result = await submitRegistration({
-      //   email: formData.email,
-      //   password: formData.password,
-      //   fullName: formData.fullName,
-      //   accessCode: accessCode
-      // });
-
-      // Simulate success for now
-      const mockResult = {
-        success: true,
-        user: { id: 'mock-user-id', email: formData.email, fullName: formData.fullName },
-        message: 'Registration successful'
-      };
-
-      console.log(`${DEBUG_PREFIX} REGISTRATION_SUCCESS`, {
-        timestamp: new Date().toISOString(),
-        userId: mockResult.user.id
+      const result = await submitRegistration({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        accessCode: accessCode
       });
-      
-      onSuccess?.(mockResult);
+
+      if (result.success) {
+        console.log(`${DEBUG_PREFIX} REGISTRATION_SUCCESS`, {
+          timestamp: new Date().toISOString(),
+          userId: result.user?.id
+        });
+        
+        onSuccess?.(result);
+      } else {
+        console.log(`${DEBUG_PREFIX} REGISTRATION_FAILED`, {
+          timestamp: new Date().toISOString(),
+          error: result.error
+        });
+        
+        setErrors({ general: result.error || 'Registration failed' });
+        onError?.(result.error || 'Registration failed');
+      }
       
     } catch (error) {
       console.error(`${DEBUG_PREFIX} REGISTRATION_ERROR:`, error);
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred during registration';
       setErrors({ general: errorMessage });
       onError?.(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -342,10 +377,10 @@ export default function RegistrationForm({
           name="fullName"
           value={formData.fullName}
           onChange={handleInputChange}
-          disabled={loading}
+          disabled={isLoading}
           className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
             errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'
-          } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           placeholder="John Doe"
           autoComplete="name"
         />
@@ -366,10 +401,10 @@ export default function RegistrationForm({
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            disabled={loading}
+            disabled={isLoading}
             className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
-            } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             placeholder="Create a strong password"
             autoComplete="new-password"
             required
@@ -377,7 +412,7 @@ export default function RegistrationForm({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            disabled={loading}
+            disabled={isLoading}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             tabIndex={-1}
           >
@@ -437,11 +472,11 @@ export default function RegistrationForm({
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            disabled={loading}
+            disabled={isLoading}
             className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               errors.confirmPassword ? 'border-red-300 bg-red-50' : 
               formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-green-300 bg-green-50' : 'border-gray-300'
-            } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             placeholder="Confirm your password"
             autoComplete="new-password"
             required
@@ -449,7 +484,7 @@ export default function RegistrationForm({
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            disabled={loading}
+            disabled={isLoading}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             tabIndex={-1}
           >
@@ -492,7 +527,7 @@ export default function RegistrationForm({
             name="agreeToTerms"
             checked={formData.agreeToTerms}
             onChange={handleInputChange}
-            disabled={loading}
+            disabled={isLoading}
             className={`mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded ${
               errors.agreeToTerms ? 'border-red-300' : ''
             }`}
@@ -531,10 +566,10 @@ export default function RegistrationForm({
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={loading || !formData.agreeToTerms}
+        disabled={isLoading || !formData.agreeToTerms}
         className="w-full flex justify-center items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
       >
-        {loading ? (
+        {isLoading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin mr-2" />
             Creating Account...
