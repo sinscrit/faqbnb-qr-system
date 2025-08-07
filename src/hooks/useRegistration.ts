@@ -7,7 +7,7 @@ import {
   RegistrationResult,
   UserFriendlyError
 } from '@/types';
-import { translateErrorMessage, classifyError } from '@/lib/error-utils';
+import { translateErrorMessage, classifyError, getErrorDisplayDuration } from '@/lib/error-utils';
 
 /**
  * Custom hook for registration business logic and API communication
@@ -307,6 +307,34 @@ export function useRegistration() {
       validationResult: null,
     });
   }, []);
+
+  /**
+   * Automatic error clearing based on error type and duration
+   * REQ-019 Task 8.2: Enhanced Error State Management
+   */
+  useEffect(() => {
+    if (!state.error || !state.lastErrorTimestamp) {
+      return;
+    }
+
+    const displayDuration = getErrorDisplayDuration(state.error);
+    
+    // Don't auto-clear actionable errors that need user action
+    if (state.error.actionable && displayDuration === 0) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      console.log(`${DEBUG_PREFIX} AUTO_CLEAR_ERROR`, {
+        timestamp: new Date().toISOString(),
+        errorCode: state.error?.code,
+        duration: displayDuration
+      });
+      clearError();
+    }, displayDuration);
+
+    return () => clearTimeout(timeoutId);
+  }, [state.error, state.lastErrorTimestamp, clearError]);
 
   /**
    * Cleanup function for component unmount
