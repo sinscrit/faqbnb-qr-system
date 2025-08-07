@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: Thu Aug 7 12:27:15 CEST 2025 - UC-008 Registration Link Copy Feature Added
+**Last Updated**: Thu Aug 7 14:04:25 CEST 2025 - UC-009 User-Friendly Registration Error Handling Added
 
 ---
 
@@ -697,6 +697,34 @@ Users can manage multiple properties in a multi-tenant environment with complete
 ### UC004 - User Role Management  
 **Status**: Not Implemented  
 **Description**: Implement different admin roles with varying permissions for content management.
+
+---
+
+## UC-009: User-Friendly Registration Error Handling
+
+**Origin**: REQ-019  
+**Implementation Status**: 🔄 IN PROGRESS  
+**Date Started**: August 7, 2025  
+**Actor**: New User  
+**Goal**: Receive clear, actionable error messages during registration process  
+**Context**: User encounters errors during registration and needs guidance to resolve them  
+
+**Main Flow**:
+1. User navigates to registration page or attempts registration
+2. System encounters an error condition (invalid access code, missing parameters, etc.)
+3. System displays user-friendly error message instead of technical error codes
+4. When applicable, system provides actionable next steps or buttons
+5. User can take suggested action or retry with corrected information
+
+**Error Scenarios**:
+- 9a. Missing URL parameters: Shows "Registration link is invalid" with specific missing items
+- 9b. Invalid access code: Shows "Invalid access code or email - please check your invitation"
+- 9c. User already registered: Shows "User already registered" with "Go to Login" button
+- 9d. Network errors: Shows "Something went wrong on our end - please try again later"
+
+**Business Value**: Reduces user frustration and support requests by providing clear guidance on resolving registration issues
+
+**Technical Notes**: Implements centralized error translation system with deduplication and action buttons
 
 ---
 

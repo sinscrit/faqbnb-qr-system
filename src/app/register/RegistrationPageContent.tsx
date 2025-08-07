@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import RegistrationForm from '@/components/RegistrationForm';
+import AccessCodeInput from '@/components/AccessCodeInput';
 import { AlertCircle, CheckCircle, Home, Shield, ExternalLink } from 'lucide-react';
 import { UserFriendlyError } from '@/types';
 
@@ -22,12 +23,51 @@ interface URLParams {
   errors: string[];
 }
 
+interface EntryModeDetection {
+  mode: 'url' | 'manual';
+  hasValidParams: boolean;
+  missingParams: string[];
+}
+
+/**
+ * Detect how the user is entering registration (URL params vs manual entry)
+ * REQ-019 Task 4.1: Entry Mode Detection
+ */
+function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetection {
+  const code = searchParams.get('code');
+  const email = searchParams.get('email');
+  const missingParams: string[] = [];
+  
+  // Check for missing parameters
+  if (!code) missingParams.push('access code');
+  if (!email) missingParams.push('email');
+  
+  // Validate parameter formats (non-blocking)
+  const hasValidCode = code && /^[A-Za-z0-9]{8,}$/.test(code);
+  const hasValidEmail = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  
+  const hasValidParams = hasValidCode && hasValidEmail;
+  const mode: 'url' | 'manual' = hasValidParams ? 'url' : 'manual';
+  
+  console.log('🔍 ENTRY_MODE_DETECTION', {
+    timestamp: new Date().toISOString(),
+    mode,
+    hasValidParams,
+    missingParams,
+    codePresent: !!code,
+    emailPresent: !!email
+  });
+  
+  return { mode, hasValidParams, missingParams };
+}
+
 export default function RegistrationPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   
   const [message, setMessage] = useState<RegistrationMessage | null>(null);
+  const [entryMode, setEntryMode] = useState<'url' | 'manual'>('url');
   const [urlParams, setUrlParams] = useState<URLParams>({
     code: null,
     email: null,
@@ -35,6 +75,13 @@ export default function RegistrationPageContent() {
     errors: []
   });
   const [isValidatingParams, setIsValidatingParams] = useState(true);
+  
+  // Manual entry state (REQ-019 Task 5.3)
+  const [manualEntry, setManualEntry] = useState({
+    code: '',
+    email: '',
+    isValid: false
+  });
 
   // Debug logging for registration page
   const DEBUG_PREFIX = "🔒 REGISTRATION_PAGE_DEBUG:";
@@ -95,11 +142,21 @@ export default function RegistrationPageContent() {
         errors
       });
 
-      if (!isValid) {
+      // Set the detected entry mode
+      const entryDetection = detectEntryMode(searchParams);
+      setEntryMode(entryDetection.mode);
+      
+      // Update validation logic based on entry mode
+      if (entryDetection.mode === 'url' && !isValid) {
         setMessage({
           type: 'error',
           message: `Registration link is invalid: ${errors.join(', ')}`
         });
+      } else if (entryDetection.mode === 'manual') {
+        // Clear any existing error messages for manual mode - allow graceful fallback
+        setMessage(null);
+      } else {
+        setMessage(null);
       }
 
       setIsValidatingParams(false);
@@ -327,11 +384,13 @@ export default function RegistrationPageContent() {
             Complete your registration to access FAQBNB
           </p>
           
-          {/* Access code info */}
-          <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <Shield className="w-3 h-3 mr-1" />
-            Access code verified: {urlParams.code?.substring(0, 4)}...
-          </div>
+          {/* Access code info - only show for URL mode */}
+          {entryMode === 'url' && urlParams.isValid && (
+            <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <Shield className="w-3 h-3 mr-1" />
+              Access code verified: {urlParams.code?.substring(0, 4)}...
+            </div>
+          )}
         </div>
 
         {/* Registration Form Card */}
@@ -339,27 +398,70 @@ export default function RegistrationPageContent() {
           {/* URL Messages */}
           {message && <MessageAlert message={message} />}
 
-          {/* Registration Form */}
-          <RegistrationForm
-            email={urlParams.email!}
-            accessCode={urlParams.code!}
-            onSuccess={(result) => {
-              console.log('Registration successful:', result);
-              setMessage({
-                type: 'success',
-                message: 'Account created successfully! Redirecting to dashboard...'
-              });
-              // TODO: Redirect to dashboard in next tasks
-            }}
-            onError={(error, userFriendlyError) => {
-              console.error('Registration failed:', error);
-              setMessage({
-                type: 'error',
-                message: error,
-                userFriendlyError
-              });
-            }}
-          />
+          {/* Manual Entry Mode - REQ-019 Task 5.3 */}
+          {entryMode === 'manual' && (
+            <div className="space-y-6">
+              <AccessCodeInput
+                onCodeChange={(code, email) => {
+                  setManualEntry(prev => ({ ...prev, code, email }));
+                }}
+                onValidation={(isValid) => {
+                  setManualEntry(prev => ({ ...prev, isValid }));
+                }}
+                disabled={isValidatingParams}
+              />
+              
+              {/* Show registration form when manual entry is valid */}
+              {manualEntry.isValid && manualEntry.code && manualEntry.email && (
+                <div className="border-t border-gray-200 pt-6">
+                  <RegistrationForm
+                    email={manualEntry.email}
+                    accessCode={manualEntry.code}
+                    isManualEntry={true}
+                    onSuccess={(result) => {
+                      console.log('Manual registration successful:', result);
+                      setMessage({
+                        type: 'success',
+                        message: 'Account created successfully! Redirecting to dashboard...'
+                      });
+                    }}
+                    onError={(error, userFriendlyError) => {
+                      console.error('Manual registration failed:', error);
+                      setMessage({
+                        type: 'error',
+                        message: error,
+                        userFriendlyError
+                      });
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* URL Mode - Original Registration Form */}
+          {entryMode === 'url' && urlParams.isValid && (
+            <RegistrationForm
+              email={urlParams.email!}
+              accessCode={urlParams.code!}
+              isManualEntry={false}
+              onSuccess={(result) => {
+                console.log('URL registration successful:', result);
+                setMessage({
+                  type: 'success',
+                  message: 'Account created successfully! Redirecting to dashboard...'
+                });
+              }}
+              onError={(error, userFriendlyError) => {
+                console.error('URL registration failed:', error);
+                setMessage({
+                  type: 'error',
+                  message: error,
+                  userFriendlyError
+                });
+              }}
+            />
+          )}
         </div>
 
         {/* Footer Links */}

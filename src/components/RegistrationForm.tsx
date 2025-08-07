@@ -8,10 +8,12 @@ import { useRegistration } from '@/hooks/useRegistration';
 import GoogleOAuthButton from './GoogleOAuthButton';
 
 interface RegistrationFormProps {
-  email: string; // Pre-filled from URL parameter
-  accessCode: string; // Access code from URL parameter
+  email: string; // Pre-filled from URL parameter or manual entry
+  accessCode: string; // Access code from URL parameter or manual entry
   onSuccess?: (result: any) => void;
   onError?: (error: string, userFriendlyError?: UserFriendlyError) => void;
+  isManualEntry?: boolean; // REQ-019 Task 5.4: Manual entry mode support
+  onCodeValidation?: (result: any) => void; // For manual entry validation
   className?: string;
 }
 
@@ -43,7 +45,9 @@ export default function RegistrationForm({
   email, 
   accessCode, 
   onSuccess, 
-  onError, 
+  onError,
+  isManualEntry = false,
+  onCodeValidation,
   className = '' 
 }: RegistrationFormProps) {
   const [formData, setFormData] = useState<FormData>({
