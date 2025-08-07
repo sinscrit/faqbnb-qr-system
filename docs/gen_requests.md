@@ -1431,4 +1431,126 @@ Create a user registration system accessible via `http://localhost:3000/register
 
 ---
 
-*Next Request: REQ-019* 
+## REQ-019: BUG FIX REQUEST - Registration Page Error Handling and User Experience Improvements
+**Date**: August 7, 2025  
+**Type**: Bug Fix Implementation  
+**Complexity**: 13 Points (Medium-High Complexity)
+
+### Request Summary
+Fix critical user experience issues in the registration page including duplicate error displays, unclear error messages for already-registered users, and missing manual entry functionality for users without URL parameters. Additionally, add beta access link for users who need to request access codes.
+
+### Detailed Requirements
+
+#### 1. Error Message Consolidation and Improvement (5 points)
+- **Issue**: Currently displays two error boxes for the same validation failure
+- **Specific Problem**: Shows both "Validation failed: 409 Conflict" and "Registration Failed - Validation failed: 409 Conflict"
+- **Fix Required**: Consolidate to single error display with user-friendly messaging
+- **User-Friendly Error Messages**: 
+  - Replace "409 Conflict" with "User already registered" 
+  - Replace "404 Not Found" with "Invalid access code or email"
+  - Replace technical error codes with clear, actionable messages
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (error state management)
+  - `src/components/RegistrationForm.tsx` (error display logic)
+  - `src/hooks/useRegistration.ts` (error message mapping)
+
+#### 2. Manual Entry Mode Implementation (5 points)
+- **Issue**: Page requires access code and email in URL parameters, no fallback for direct page access
+- **Fix Required**: Detect missing URL parameters and provide manual entry interface
+- **Manual Entry Features**:
+  - Input fields for access code and email when not provided in URL
+  - Client-side validation for manually entered codes
+  - Same validation workflow as URL parameter flow
+  - Seamless transition between URL and manual modes
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (manual entry mode detection)
+  - `src/components/RegistrationForm.tsx` (manual input fields)
+  - `src/components/AccessCodeInput.tsx` (new component for manual entry)
+  - `src/hooks/useRegistration.ts` (manual entry validation logic)
+
+#### 3. Beta Access Link Integration (1 point)
+- **Issue**: Users who land on registration page without valid codes have no clear path to request access
+- **Fix Required**: Add prominent link to beta access request page
+- **Implementation**: Link to `http://localhost:3000/#beta` for users to request access codes
+- **Placement**: Displayed when validation fails or in manual entry mode
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (beta link placement)
+  - `src/components/RegistrationForm.tsx` (conditional beta link display)
+
+#### 4. Enhanced Error State Management (2 points)
+- **Issue**: Multiple error sources creating inconsistent error display states
+- **Fix Required**: Unified error handling system with proper state management
+- **Implementation**: Single error state with proper error type classification
+- **Error Categories**: Validation errors, network errors, user-friendly messages
+- **Files Affected**:
+  - `src/hooks/useRegistration.ts` (unified error state)
+  - `src/types/index.ts` (error type definitions)
+  - `src/app/register/RegistrationPageContent.tsx` (error state integration)
+
+### Complexity Analysis
+
+#### Error Handling System Redesign (5 points)
+- **Multiple Error Sources**: Registration validation, access code validation, network errors
+- **State Management**: Complex error state coordination between multiple components
+- **User Experience**: Converting technical errors to user-friendly messages
+- **Error Classification**: Different error types requiring different UI treatments
+- **Risk Level**: Medium - Changes to existing error flow across multiple components
+
+#### Manual Entry Interface Development (5 points)
+- **Conditional UI**: Dynamic interface based on URL parameter presence
+- **Validation Integration**: Manual entry validation using existing validation infrastructure
+- **State Transitions**: Seamless switching between URL-parameter and manual entry modes
+- **Form State Management**: Complex form state with multiple input sources
+- **User Experience**: Intuitive interface for users landing on page without parameters
+- **Risk Level**: Medium - New UI functionality with existing validation integration
+
+#### Integration and Testing (3 points)
+- **Component Integration**: Changes across multiple registration components
+- **Validation Workflow**: Ensure manual entry follows same security patterns as URL parameters
+- **User Experience Testing**: Comprehensive testing of different user entry scenarios
+- **Error Scenario Testing**: Validation of all error conditions with improved messaging
+- **Risk Level**: Low-Medium - Integration testing and UX validation
+
+### Technical Challenges
+1. **Error State Complexity**: Managing multiple error sources with single display system
+2. **UI State Management**: Dynamic interface based on entry method (URL vs manual)
+3. **Validation Consistency**: Ensuring manual entry has same security as URL parameters
+4. **User Experience**: Clear error messages without revealing security details
+5. **Component Coordination**: Multiple components need to work together seamlessly
+
+### Implementation Priority
+**High Priority** - Significant user experience issues that prevent effective user registration and create confusion for users trying to access the system.
+
+### Current Issues Evidence
+- **Duplicate Errors**: Two error boxes showing identical "409 Conflict" messages
+- **Technical Error Codes**: "409 Conflict", "404 Not Found" exposed to end users
+- **No Manual Entry**: Users can't enter codes if they don't have URL parameters
+- **No Access Path**: Users without codes have no clear way to request access
+- **Poor UX**: Confusing error messages that don't guide users to solutions
+
+### Related Files Reference
+- **Primary Components**:
+  - `src/app/register/RegistrationPageContent.tsx` (main registration page logic)
+  - `src/components/RegistrationForm.tsx` (registration form component)
+  - `src/hooks/useRegistration.ts` (registration business logic)
+- **New Components**:
+  - `src/components/AccessCodeInput.tsx` (new manual entry component)
+- **Type Definitions**:
+  - `src/types/index.ts` (error type definitions, registration interfaces)
+- **Validation System**:
+  - `src/app/api/auth/validate-code/route.ts` (validation endpoint)
+  - `src/lib/access-validation.ts` (validation utilities)
+- **Integration Points**:
+  - Beta access page at `http://localhost:3000/#beta`
+  - Access request system from REQ-016/REQ-018
+
+### Expected User Experience Improvements
+1. **Single, Clear Errors**: One error message with actionable information
+2. **User-Friendly Language**: "User already registered" instead of "409 Conflict"
+3. **Manual Entry Option**: Users can enter codes directly if not in URL
+4. **Clear Next Steps**: Beta access link when users need to request access
+5. **Consistent Interface**: Seamless experience regardless of entry method
+
+---
+
+*Next Request: REQ-020* 

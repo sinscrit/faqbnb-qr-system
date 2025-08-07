@@ -344,6 +344,46 @@ export interface RegistrationResult {
   registrationMethod?: 'access_code' | 'oauth' | 'standard';
 }
 
+// Error handling types (REQ-019)
+export enum ErrorCode {
+  VALIDATION_FAILED = 'VALIDATION_FAILED',
+  USER_ALREADY_REGISTERED = 'USER_ALREADY_REGISTERED',
+  INVALID_ACCESS_CODE = 'INVALID_ACCESS_CODE',
+  EMAIL_MISMATCH = 'EMAIL_MISMATCH',
+  NETWORK_ERROR = 'NETWORK_ERROR'
+}
+
+export interface UserFriendlyError {
+  code: ErrorCode;
+  message: string;
+  actionable: boolean;
+  nextSteps?: string;
+}
+
+// HTTP status code to user-friendly error mapping
+export const HTTP_ERROR_MAPPING: Record<number, Omit<UserFriendlyError, 'code'>> = {
+  409: {
+    message: "User already registered - please try logging in instead",
+    actionable: true,
+    nextSteps: "Click 'Go to Login' to access your account"
+  },
+  404: {
+    message: "Invalid access code or email - please check your invitation",
+    actionable: true,
+    nextSteps: "Verify your access code and email, or request a new invitation"
+  },
+  400: {
+    message: "Please check that all required fields are filled correctly",
+    actionable: true,
+    nextSteps: "Review your input and fix any validation errors"
+  },
+  500: {
+    message: "Something went wrong on our end - please try again later",
+    actionable: false,
+    nextSteps: "If the problem persists, please contact support"
+  }
+};
+
 // Admin types
 export * from './admin';
 

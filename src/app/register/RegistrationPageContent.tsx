@@ -73,8 +73,8 @@ export default function RegistrationPageContent() {
       // Validate access code parameter
       if (!code) {
         errors.push('Access code parameter is required');
-      } else if (!/^[A-Z0-9]{12}$/.test(code)) {
-        errors.push('Access code must be 12 characters long and contain only uppercase letters and numbers');
+      } else if (!/^[A-Za-z0-9]{8,}$/.test(code)) {
+        errors.push('Access code must be at least 8 characters long and contain only letters and numbers');
       }
 
       // Validate email parameter

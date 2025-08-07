@@ -119,14 +119,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate parameter format
-    const codePattern = /^[A-Z0-9]{12}$/;
+    const codePattern = /^[A-Za-z0-9]{8,}$/;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!codePattern.test(code)) {
       console.log(`${DEBUG_PREFIX} INVALID_CODE_FORMAT`, {
         timestamp: new Date().toISOString(),
         code: `${code.substring(0, 4)}...`,
-        pattern: 'Must be 12 uppercase alphanumeric characters'
+        pattern: 'Must be at least 8 alphanumeric characters'
       });
       
       return NextResponse.json(

@@ -154,7 +154,7 @@ export function createRegistrationLink(): string {
 export function createRegistrationLinkWithCode(accessCode: string, email: string): string {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const params = new URLSearchParams({
-    access_code: accessCode,
+    code: accessCode,
     email: email
   });
   return `${baseUrl}/register?${params.toString()}`;
