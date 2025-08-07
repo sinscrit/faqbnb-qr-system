@@ -4,8 +4,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { 
   RegistrationRequest, 
   AccessCodeValidation, 
-  RegistrationResult 
+  RegistrationResult,
+  UserFriendlyError
 } from '@/types';
+import { translateErrorMessage, classifyError } from '@/lib/error-utils';
 
 /**
  * Custom hook for registration business logic and API communication
@@ -14,9 +16,11 @@ import {
 
 interface UseRegistrationState {
   isLoading: boolean;
-  error: string | null;
+  error: UserFriendlyError | null;
   isValidating: boolean;
   validationResult: AccessCodeValidationResult | null;
+  errorHistory: UserFriendlyError[];
+  lastErrorTimestamp: number | null;
 }
 
 // Types are now imported from @/types
@@ -29,10 +33,68 @@ export function useRegistration() {
     error: null,
     isValidating: false,
     validationResult: null,
+    errorHistory: [],
+    lastErrorTimestamp: null,
   });
 
   // Debug logging for registration hook
   const DEBUG_PREFIX = "🔒 REGISTRATION_HOOK_DEBUG:";
+
+  /**
+   * Add error to state with deduplication and history tracking
+   */
+  const addError = useCallback((rawError: string, statusCode?: number) => {
+    const friendlyError = translateErrorMessage(rawError, statusCode);
+    const timestamp = Date.now();
+    
+    setState(prev => {
+      // Check for duplicate errors (same code within 5 seconds)
+      const isDuplicate = prev.error && 
+        prev.error.code === friendlyError.code && 
+        prev.lastErrorTimestamp &&
+        (timestamp - prev.lastErrorTimestamp) < 5000;
+      
+      if (isDuplicate) {
+        console.log(`${DEBUG_PREFIX} DUPLICATE_ERROR_IGNORED`, {
+          timestamp: new Date().toISOString(),
+          errorCode: friendlyError.code
+        });
+        return prev; // Don't add duplicate error
+      }
+
+      // Keep last 3 errors in history
+      const newHistory = [friendlyError, ...prev.errorHistory.slice(0, 2)];
+      
+      console.log(`${DEBUG_PREFIX} ERROR_ADDED`, {
+        timestamp: new Date().toISOString(),
+        errorCode: friendlyError.code,
+        message: friendlyError.message,
+        isActionable: friendlyError.actionable
+      });
+
+      return {
+        ...prev,
+        error: friendlyError,
+        errorHistory: newHistory,
+        lastErrorTimestamp: timestamp
+      };
+    });
+  }, []);
+
+  /**
+   * Clear all errors
+   */
+  const clearAllErrors = useCallback(() => {
+    console.log(`${DEBUG_PREFIX} CLEAR_ALL_ERRORS`, {
+      timestamp: new Date().toISOString()
+    });
+    
+    setState(prev => ({ 
+      ...prev, 
+      error: null,
+      lastErrorTimestamp: null
+    }));
+  }, []);
 
   /**
    * Validate access code asynchronously
@@ -51,7 +113,7 @@ export function useRegistration() {
     setState(prev => ({ ...prev, isValidating: true, error: null }));
 
     try {
-      // Call the validation API endpoint (will be implemented in task 2.1)
+      // Call the validation API endpoint
       const response = await fetch(`/api/auth/validate-code?code=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`, {
         method: 'GET',
         headers: {
@@ -60,7 +122,16 @@ export function useRegistration() {
       });
 
       if (!response.ok) {
-        throw new Error(`Validation failed: ${response.status} ${response.statusText}`);
+        const errorMessage = `Validation failed: ${response.status} ${response.statusText}`;
+        addError(errorMessage, response.status);
+        
+        setState(prev => ({ 
+          ...prev, 
+          isValidating: false, 
+          validationResult: { isValid: false, error: errorMessage }
+        }));
+
+        return { isValid: false, error: errorMessage };
       }
 
       const result: AccessCodeValidationResult = await response.json();
@@ -85,16 +156,17 @@ export function useRegistration() {
       
       console.error(`${DEBUG_PREFIX} VALIDATE_ACCESS_CODE_ERROR:`, error);
       
+      addError(errorMessage);
+      
       setState(prev => ({ 
         ...prev, 
         isValidating: false, 
-        error: errorMessage,
         validationResult: { isValid: false, error: errorMessage }
       }));
 
       return { isValid: false, error: errorMessage };
     }
-  }, []);
+  }, [addError]);
 
   /**
    * Submit registration data
@@ -113,7 +185,7 @@ export function useRegistration() {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      // Call the registration API endpoint (will be enhanced in task 4.1)
+      // Call the registration API endpoint
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -129,7 +201,12 @@ export function useRegistration() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || `Registration failed: ${response.status} ${response.statusText}`);
+        const errorMessage = errorData.error || `Registration failed: ${response.status} ${response.statusText}`;
+        addError(errorMessage, response.status);
+        
+        setState(prev => ({ ...prev, isLoading: false }));
+        
+        return { success: false, error: errorMessage };
       }
 
       const result: RegistrationResult = await response.json();
@@ -150,15 +227,13 @@ export function useRegistration() {
       
       console.error(`${DEBUG_PREFIX} SUBMIT_REGISTRATION_ERROR:`, error);
       
-      setState(prev => ({ 
-        ...prev, 
-        isLoading: false, 
-        error: errorMessage 
-      }));
+      addError(errorMessage);
+      
+      setState(prev => ({ ...prev, isLoading: false }));
 
       return { success: false, error: errorMessage };
     }
-  }, []);
+  }, [addError]);
 
   /**
    * Retry mechanism for network failures
@@ -245,6 +320,10 @@ export function useRegistration() {
     };
   }, []);
 
+  // Computed properties for enhanced error handling
+  const hasActionableError = state.error?.actionable || false;
+  const errorHistory = state.errorHistory;
+
   return {
     // State
     isLoading: state.isLoading,
@@ -252,11 +331,16 @@ export function useRegistration() {
     isValidating: state.isValidating,
     validationResult: state.validationResult,
     
+    // Enhanced error state
+    hasActionableError,
+    errorHistory,
+    
     // Actions
     validateAccessCodeAsync,
     submitRegistration,
     retryLastOperation,
     clearError,
+    clearAllErrors,
     resetState,
   };
 }
