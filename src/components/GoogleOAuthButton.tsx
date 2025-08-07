@@ -64,9 +64,8 @@ export default function GoogleOAuthButton({
           ...(email && { email }),
           returnTo: '/dashboard'
         };
-        oauthOptions.options.queryParams = {
-          state: JSON.stringify(state)
-        };
+        // State should be passed directly in options, not queryParams
+        oauthOptions.options.state = JSON.stringify(state);
       }
 
       console.log('🔗 OAUTH_BUTTON: Initiating Google OAuth', {
