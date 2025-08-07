@@ -10,12 +10,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AlertCircle, CheckCircle, ExternalLink, Eye, EyeOff } from 'lucide-react';
 
 // Simple debounce implementation to avoid lodash dependency
-function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T {
+function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T & { cancel: () => void } {
   let timeoutId: NodeJS.Timeout;
-  return ((...args: any[]) => {
+  const debouncedFunc = ((...args: any[]) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
-  }) as T;
+  }) as T & { cancel: () => void };
+  
+  debouncedFunc.cancel = () => {
+    clearTimeout(timeoutId);
+  };
+  
+  return debouncedFunc;
 }
 
 interface AccessCodeInputProps {

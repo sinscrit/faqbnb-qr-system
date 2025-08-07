@@ -280,8 +280,8 @@ export default function RegistrationPageContent() {
     );
   };
 
-  // Show invalid URL error
-  if (!urlParams.isValid) {
+  // Show invalid URL error only for URL mode (not for manual entry mode)
+  if (entryMode === 'url' && !urlParams.isValid) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex flex-col justify-center">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -357,7 +357,7 @@ export default function RegistrationPageContent() {
     );
   }
 
-  // Valid URL parameters - show registration form
+  // Show registration form for both URL mode (with valid params) and manual entry mode
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex flex-col justify-center">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
