@@ -54,6 +54,10 @@ export default function GoogleOAuthButton({
         options: {
           scopes: 'openid email profile',
           redirectTo: `${window.location.origin}/auth/oauth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       };
 

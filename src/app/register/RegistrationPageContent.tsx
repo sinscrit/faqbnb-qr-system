@@ -32,18 +32,45 @@ interface EntryModeDetection {
 /**
  * Detect how the user is entering registration (URL params vs manual entry)
  * REQ-019 Task 4.1: Entry Mode Detection
+ * Updated: Handle OAuth callback with code parameter vs access code registration
  */
 function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetection {
   const code = searchParams.get('code');
+  const accessCode = searchParams.get('accessCode');
   const email = searchParams.get('email');
+  const state = searchParams.get('state');
   const missingParams: string[] = [];
   
-  // Check for missing parameters
-  if (!code) missingParams.push('access code');
+  // Check if this is an OAuth callback (has code but might not have accessCode/email)
+  const isOAuthCallback = !!code && !accessCode;
+  
+  if (isOAuthCallback) {
+    // OAuth flow - check if we have state with access code info
+    let hasStateData = false;
+    if (state) {
+      try {
+        const stateData = JSON.parse(state);
+        hasStateData = !!(stateData.accessCode && stateData.email);
+      } catch (e) {
+        // Invalid state, treat as regular OAuth
+      }
+    }
+    
+    // OAuth callback detected - treat as URL mode regardless of missing params
+    return {
+      mode: 'url',
+      hasValidParams: true, // OAuth will handle authentication
+      missingParams: []
+    };
+  }
+  
+  // Regular access code registration flow
+  const codeToCheck = accessCode || code;
+  if (!codeToCheck) missingParams.push('access code');
   if (!email) missingParams.push('email');
   
   // Validate parameter formats (non-blocking)
-  const hasValidCode = code && /^[A-Za-z0-9]{8,}$/.test(code);
+  const hasValidCode = codeToCheck && /^[A-Za-z0-9]{8,}$/.test(codeToCheck);
   const hasValidEmail = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   
   const hasValidParams = hasValidCode && hasValidEmail;
@@ -110,19 +137,46 @@ export default function RegistrationPageContent() {
   useEffect(() => {
     const validateUrlParams = () => {
       const code = searchParams.get('code');
+      const accessCode = searchParams.get('accessCode');
       const email = searchParams.get('email');
+      const state = searchParams.get('state');
       const errors: string[] = [];
+      
+      // Check if this is an OAuth callback
+      const isOAuthCallback = !!code && !accessCode;
       
       console.log(`${DEBUG_PREFIX} VALIDATING_URL_PARAMS`, {
         timestamp: new Date().toISOString(),
+        isOAuthCallback,
         code: code ? `${code.substring(0, 4)}...` : null,
-        email: email
+        accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null,
+        email: email,
+        hasState: !!state
       });
 
-      // Validate access code parameter
-      if (!code) {
+      if (isOAuthCallback) {
+        // OAuth callback - Supabase will handle authentication
+        console.log(`${DEBUG_PREFIX} OAUTH_CALLBACK_DETECTED`, {
+          timestamp: new Date().toISOString(),
+          message: 'OAuth callback detected, letting Supabase handle authentication'
+        });
+        
+        // For OAuth, we don't validate the same way - just pass through
+        setUrlParams({
+          code: code || '',
+          email: email || '',
+          isValid: true, // OAuth will handle validation
+          errors: []
+        });
+        return;
+      }
+
+      // Regular access code registration validation
+      const codeToValidate = accessCode || code;
+      
+      if (!codeToValidate) {
         errors.push('Access code parameter is required');
-      } else if (!/^[A-Za-z0-9]{8,}$/.test(code)) {
+      } else if (!/^[A-Za-z0-9]{8,}$/.test(codeToValidate)) {
         errors.push('Access code must be at least 8 characters long and contain only letters and numbers');
       }
 
@@ -136,8 +190,8 @@ export default function RegistrationPageContent() {
       const isValid = errors.length === 0;
       
       setUrlParams({
-        code,
-        email,
+        code: codeToValidate || '',
+        email: email || '',
         isValid,
         errors
       });
