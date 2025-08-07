@@ -61,22 +61,25 @@ export default function GoogleOAuthButton({
         }
       };
 
-      // Include access code and email in redirect URL for PKCE flow
+      // Set redirect URL for PKCE flow - always use our custom callback
       // Note: We cannot use custom state parameter with PKCE as Supabase manages state internally
-      if (accessCode || email) {
-        const params = new URLSearchParams();
-        if (accessCode) params.set('accessCode', accessCode);
-        if (email) params.set('email', encodeURIComponent(email));
-        
-        // Set redirect URL with parameters
-        oauthOptions.options.redirectTo = `${window.location.origin}/auth/oauth/callback?${params.toString()}`;
-      }
+      const params = new URLSearchParams();
+      if (accessCode) params.set('accessCode', accessCode);
+      if (email) params.set('email', encodeURIComponent(email));
+      
+      // Always set redirect URL to our custom callback (with or without parameters)
+      const redirectUrl = params.toString() 
+        ? `${window.location.origin}/auth/oauth/callback?${params.toString()}`
+        : `${window.location.origin}/auth/oauth/callback`;
+      
+      oauthOptions.options.redirectTo = redirectUrl;
 
       console.log('🔗 OAUTH_BUTTON: Initiating Google OAuth', {
         timestamp: new Date().toISOString(),
         hasAccessCode: !!accessCode,
         hasEmail: !!email,
-        redirectTo: oauthOptions.options.redirectTo
+        redirectTo: redirectUrl,
+        fullOptions: oauthOptions.options
       });
 
       const { data, error } = await supabase.auth.signInWithOAuth(oauthOptions);
