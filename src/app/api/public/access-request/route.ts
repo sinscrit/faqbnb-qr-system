@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { validateAccessRequest } from '@/lib/access-management';
 import { AccessRequestStatus } from '@/types/admin';
 
@@ -111,13 +111,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       requester_email,
       requester_name,
       account_id: accountId, // null if no match
-      account_identifier_provided: account_identifier,
-      message: message || null,
-      status: AccountRequestStatus.PENDING,
+      notes: message || null,
+      status: AccessRequestStatus.PENDING,
       request_date: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      source: 'public_form',
       metadata: {
+        account_identifier_provided: account_identifier,
         match_status: matchStatus,
         matched_accounts: matchedAccounts.map(acc => ({
           id: acc.id,
@@ -128,7 +127,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     };
 
-    const { data: createdRequest, error: createError } = await supabase
+    const { data: createdRequest, error: createError } = await supabaseAdmin
       .from('access_requests')
       .insert(requestData)
       .select()
@@ -217,7 +216,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         request_date,
         approval_date,
         account_id,
-        account_identifier_provided,
+        metadata,
         accounts(name)
       `);
 

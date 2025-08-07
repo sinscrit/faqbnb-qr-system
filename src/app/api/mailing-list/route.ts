@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 
 // Rate limiting configuration
@@ -72,7 +72,7 @@ async function createBetaAccessRequest(email: string, clientIP: string, userAgen
     console.log('Creating beta access request for:', email);
 
     // Check if access request already exists for this email
-    const { data: existingRequest, error: checkError } = await supabase
+    const { data: existingRequest, error: checkError } = await supabaseAdmin
       .from('access_requests')
       .select('id, requester_email, source')
       .eq('requester_email', email)
@@ -110,7 +110,7 @@ async function createBetaAccessRequest(email: string, clientIP: string, userAgen
       updated_at: new Date().toISOString()
     };
 
-    const { data: newRequest, error: insertError } = await supabase
+    const { data: newRequest, error: insertError } = await supabaseAdmin
       .from('access_requests')
       .insert(requestData)
       .select('id, requester_email, source, status, created_at')

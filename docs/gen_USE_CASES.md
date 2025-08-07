@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: Fri Aug 2 10:57:10 CEST 2025 - UC-007 Professional PDF QR Code Printing Added (REQ-013)
+**Last Updated**: Thu Aug 7 12:27:15 CEST 2025 - UC-008 Registration Link Copy Feature Added
 
 ---
 
@@ -465,6 +465,149 @@ Property managers and administrators can export QR codes as professional PDF doc
 - **PDF Generation Pipeline**: Complete end-to-end workflow from QR generation to PDF download
 - **Settings Management**: Persistent user preferences for repeated export operations
 - **Error Handling**: Comprehensive validation and user guidance throughout process
+
+---
+
+## UC008 - Registration Link Copy Feature for Admin Access Management  
+**Origin**: Enhancement to REQ-018 Registration Page Access Code OAuth implementation  
+**Implementation Status**: ✅ COMPLETED  
+**Date Implemented**: August 7, 2025 12:27 CEST
+
+### Description
+System administrators can efficiently copy registration links with pre-filled access codes and email addresses directly to their clipboard from the Access Request Management interface. This feature streamlines the process of sharing registration links with approved users, providing immediate visual feedback and independent button operation for each access request.
+
+### Actors
+- **Primary**: System Administrator
+- **Secondary**: Support Staff, Account Manager
+
+### Preconditions
+- User has admin access to `/admin/access-requests` interface
+- Access requests exist with approved status
+- Access requests have valid access codes and email addresses
+- User's browser supports the Clipboard API (modern browsers)
+
+### Main Flow
+
+#### UC008.1 - Copy Registration Link from Access Request Table
+1. Admin navigates to Access Request Management interface (`/admin/access-requests`)
+2. System displays table of access requests with various statuses
+3. Admin identifies approved access request requiring registration link sharing
+4. Admin clicks "📋 Copy Link" button in the Actions column for specific request
+5. System generates registration URL with access code and email as query parameters
+6. System copies complete registration link to admin's clipboard
+7. System displays "Copied" text on the clicked button for 5 seconds
+8. System restores original "📋 Copy Link" text after timeout
+
+#### UC008.2 - Independent Button Operation for Multiple Requests
+1. Admin working with multiple access requests in table view
+2. Admin clicks "📋 Copy Link" button on first request (e.g., copy.test@example.com)
+3. System shows "Copied" feedback only on the clicked button
+4. Other copy buttons remain unchanged showing "📋 Copy Link"
+5. Admin can immediately click different copy button (e.g., brownieswithnuts@gmail.com)
+6. System shows "Copied" feedback only on newly clicked button
+7. First button restores to normal state after its individual 5-second timeout
+
+#### UC008.3 - Registration Link Generation and Format
+1. System retrieves access code and email from selected access request
+2. System constructs registration URL using base application URL
+3. System adds access_code and email as URL query parameters
+4. Example format: `http://localhost:3000/register?access_code=COPY12345678&email=copy.test%40example.com`
+5. Generated link enables direct registration with pre-filled credentials
+6. Link bypasses manual access code entry for improved user experience
+
+### Alternative Flows
+
+#### UC008.A1 - Missing Access Code or Email
+1. Admin clicks copy button on request missing access code or email
+2. System validates required data availability
+3. System displays alert: "Access code or email not available for this request"
+4. Admin reviews request details and ensures proper approval process completion
+5. Admin resolves missing data before attempting copy operation
+
+#### UC008.A2 - Clipboard API Unavailable (Fallback)
+1. Admin clicks copy button in browser without Clipboard API support
+2. System attempts clipboard operation and catches failure
+3. System displays alert dialog with complete registration link text
+4. Admin manually copies link from alert dialog
+5. System logs fallback usage for monitoring purposes
+
+#### UC008.A3 - Network or Application Error
+1. Admin clicks copy button during temporary system issue
+2. System encounters error during link generation or clipboard operation
+3. System displays user-friendly error message with retry option
+4. System maintains original button state without false positive feedback
+5. Admin can retry operation when system recovers
+
+### Success Scenarios
+
+#### UC008.S1 - Single Request Copy Operation
+- Admin copies one registration link successfully
+- Clipboard contains properly formatted registration URL
+- Visual feedback confirms successful operation
+- Admin can paste link into email, chat, or document
+
+#### UC008.S2 - Multiple Sequential Copy Operations
+- Admin copies links for multiple approved requests
+- Each button operates independently with individual feedback
+- No interference between button states or timeouts
+- Efficient workflow for batch link distribution
+
+#### UC008.S3 - Email Template Integration Workflow
+- Admin copies registration link from interface
+- Admin pastes link into email template or communication tool
+- Recipients receive direct link with pre-filled registration credentials
+- Registration process streamlined for end users
+
+### Postconditions
+- **Success**: Registration link copied to admin's clipboard
+- **Success**: Visual confirmation provided for successful copy operation
+- **Success**: Button independence maintained across multiple operations
+- **Success**: Generated link enables seamless user registration experience
+- **Failure**: Clear error messaging guides admin toward resolution
+
+### Technical Implementation Features
+
+#### Clipboard Integration
+- ✅ Modern Clipboard API implementation for seamless copy operation
+- ✅ Fallback alert dialog for browsers without Clipboard API support
+- ✅ Error handling with graceful degradation and user feedback
+
+#### Visual Feedback System
+- ✅ Button text changes from "📋 Copy Link" to "Copied" for 5 seconds
+- ✅ Independent button state management preventing cross-interference
+- ✅ Button reference captured before async operations to prevent null errors
+- ✅ Visual feedback scoped to specific clicked button using event.currentTarget
+
+#### URL Generation
+- ✅ Dynamic base URL detection using environment variables
+- ✅ Proper URL encoding for email addresses and special characters
+- ✅ URLSearchParams for clean query parameter construction
+- ✅ Integration with existing email template link generation functions
+
+#### Error Handling and Validation
+- ✅ Input validation for access code and email availability
+- ✅ Async operation error handling with try-catch blocks
+- ✅ Browser compatibility checks and fallback strategies
+- ✅ Detailed console logging for debugging and monitoring
+
+### User Experience Benefits
+- **Efficiency**: One-click copy operation eliminates manual URL construction
+- **Accuracy**: Automated link generation prevents transcription errors
+- **Feedback**: Clear visual confirmation of successful copy operations
+- **Independence**: Multiple buttons operate without interference
+- **Accessibility**: Fallback support for various browser capabilities
+
+### Integration Points
+- **Access Request Management**: Seamlessly integrated into existing admin interface
+- **Email Template System**: Compatible with existing registration link generation
+- **Authentication System**: Leverages existing access code validation infrastructure
+- **Admin Dashboard**: Consistent with overall admin interface design patterns
+
+### Security Considerations
+- **Access Control**: Feature only available to authenticated admin users
+- **Data Validation**: Input sanitization and validation for all link components
+- **Audit Trail**: Action logging maintains accountability for admin operations
+- **Secure URLs**: Generated links use secure HTTPS protocol in production
 
 ---
 

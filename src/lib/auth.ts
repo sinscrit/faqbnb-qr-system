@@ -673,7 +673,7 @@ export async function createUser(
   }
 ): Promise<AuthResponse<User>> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('users')
       .insert({
         id: authUser.id,

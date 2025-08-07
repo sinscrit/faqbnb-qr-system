@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
+import { createRegistrationLinkWithCode } from '@/lib/email-templates';
 
 interface AccessRequestTableProps {
   requests: AccessRequest[];
@@ -175,6 +176,50 @@ export default function AccessRequestTable({
     }
     setSelectedRequests(newSelected);
     setShowBatchActions(newSelected.size > 0);
+  };
+
+  // Handle copy registration link to clipboard
+  const handleCopyRegistrationLink = async (request: AccessRequest, event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log('handleCopyRegistrationLink called', { request, event });
+    
+    if (!request.access_code || !request.requester_email) {
+      console.log('Missing access code or email', { access_code: request.access_code, email: request.requester_email });
+      alert('Access code or email not available for this request');
+      return;
+    }
+
+    // Store button reference BEFORE async operation
+    const button = event.currentTarget;
+    console.log('Button element captured:', button, 'Original text:', button?.textContent);
+
+    try {
+      const registrationLink = createRegistrationLinkWithCode(request.access_code, request.requester_email);
+      console.log('Generated registration link:', registrationLink);
+      
+      await navigator.clipboard.writeText(registrationLink);
+      console.log('Successfully copied to clipboard');
+      
+      // Show success feedback on the specific button that was clicked
+      if (button && button.textContent) {
+        const originalText = button.textContent;
+        console.log('Changing button text from', originalText, 'to "Copied"');
+        button.textContent = 'Copied';
+        button.style.color = '#059669'; // green-600
+        
+        setTimeout(() => {
+          console.log('Restoring button text to', originalText);
+          button.textContent = originalText;
+          button.style.color = '#059669'; // Reset to green-600
+        }, 5000);
+      } else {
+        console.log('Button element not available for visual feedback');
+      }
+    } catch (error) {
+      console.error('Failed to copy registration link:', error);
+      // Fallback: show alert with the link
+      const registrationLink = createRegistrationLinkWithCode(request.access_code, request.requester_email);
+      alert(`Copy this registration link:\n\n${registrationLink}`);
+    }
   };
 
   const handleSelectAll = () => {
@@ -482,12 +527,21 @@ export default function AccessRequestTable({
                       )}
                       
                       {request.status === AccessRequestStatus.APPROVED && (
-                        <button
-                          onClick={() => onEmailClick(request)}
-                          className="text-blue-600 hover:text-blue-900 transition-colors"
-                        >
-                          Send Email
-                        </button>
+                        <>
+                          <button
+                            onClick={() => onEmailClick(request)}
+                            className="text-blue-600 hover:text-blue-900 transition-colors"
+                          >
+                            Send Email
+                          </button>
+                          <button
+                            onClick={(e) => handleCopyRegistrationLink(request, e)}
+                            className="text-green-600 hover:text-green-900 transition-colors font-medium"
+                            title="Copy registration link to clipboard"
+                          >
+                            📋 Copy Link
+                          </button>
+                        </>
                       )}
                       
                       {onViewDetails && (

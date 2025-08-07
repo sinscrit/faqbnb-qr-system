@@ -34,12 +34,13 @@ Your Access Details:
 • Requested on: ${new Date(request.request_date).toLocaleDateString()}
 
 To complete your access setup:
-1. Visit the FAQBNB registration page: ${createRegistrationLink()}
-2. Create your account or log in if you already have one
-3. Navigate to Account Access and enter your access code: ${accessCode}
-4. Start exploring the items and resources
+1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+   (This link pre-fills your access code and email for convenience)
+2. Complete your account registration
+3. Start exploring the items and resources
 
 Your access code: ${accessCode}
+Direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
 
 Important Notes:
 - Keep your access code secure and don't share it with others
@@ -57,7 +58,8 @@ If you need assistance, please contact support through the FAQBNB platform.`,
       accountName: accountDisplayName,
       accessCode,
       requestDate: new Date(request.request_date).toLocaleDateString(),
-      registrationLink: createRegistrationLink()
+      registrationLink: createRegistrationLink(),
+      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email)
     }
   };
 }
@@ -87,12 +89,13 @@ Your Beta Access Details:
 • Original Request: ${new Date(request.request_date).toLocaleDateString()}
 
 Getting Started with Your Beta Access:
-1. Visit the FAQBNB platform: ${createRegistrationLink()}
-2. Create your account using the email address: ${request.requester_email}
-3. Enter your beta access code: ${accessCode}
-4. Start exploring the platform features and capabilities
+1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+   (This link pre-fills your access code and email for convenience)
+2. Complete your account registration
+3. Start exploring the platform features and capabilities
 
 Your beta access code: ${accessCode}
+Direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
 
 What to Expect:
 ✨ Early access to all FAQBNB features
@@ -123,6 +126,7 @@ For beta support or feedback, please contact us through the platform or reply to
       requestDate: new Date(request.request_date).toLocaleDateString(),
       approvalDate: new Date().toLocaleDateString(),
       registrationLink: createRegistrationLink(),
+      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email),
       userEmail: request.requester_email
     }
   };
@@ -142,6 +146,18 @@ export function createAccessLink(accountId: string, accessCode: string): string 
 export function createRegistrationLink(): string {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   return `${baseUrl}/register`;
+}
+
+/**
+ * Create registration link with access code and email
+ */
+export function createRegistrationLinkWithCode(accessCode: string, email: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const params = new URLSearchParams({
+    access_code: accessCode,
+    email: email
+  });
+  return `${baseUrl}/register?${params.toString()}`;
 }
 
 /**
@@ -322,9 +338,11 @@ This is a friendly reminder that your access to "${accountDisplayName}" was appr
 Your Access Code: ${accessCode}
 
 To complete your access setup:
-1. Visit: ${createRegistrationLink()}
-2. Create your account or log in
-3. Enter your access code: ${accessCode}
+1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+   (This link pre-fills your access code and email for convenience)
+2. Complete your account registration
+
+Alternative: Visit ${createRegistrationLink()} and enter your access code: ${accessCode}
 
 Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.
 
@@ -340,7 +358,8 @@ This is an automated message. Please do not reply to this email.`,
       accountName: accountDisplayName,
       accessCode,
       daysSinceApproval: daysSinceApproval.toString(),
-      registrationLink: createRegistrationLink()
+      registrationLink: createRegistrationLink(),
+      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email)
     }
   };
 }
