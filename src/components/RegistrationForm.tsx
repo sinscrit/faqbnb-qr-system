@@ -1,6 +1,6 @@
 'use client';
 
-import { RegistrationResult } from '@/types';
+import { RegistrationResult, UserFriendlyError } from '@/types';
 
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
@@ -11,7 +11,7 @@ interface RegistrationFormProps {
   email: string; // Pre-filled from URL parameter
   accessCode: string; // Access code from URL parameter
   onSuccess?: (result: any) => void;
-  onError?: (error: string) => void;
+  onError?: (error: string, userFriendlyError?: UserFriendlyError) => void;
   className?: string;
 }
 
@@ -65,9 +65,11 @@ export default function RegistrationForm({
     error: hookError,
     isValidating,
     validationResult,
+    hasActionableError,
     validateAccessCodeAsync,
     submitRegistration,
-    clearError
+    clearError,
+    clearAllErrors
   } = useRegistration();
 
   // Debug logging for registration form
@@ -99,17 +101,17 @@ export default function RegistrationForm({
   // Handle hook errors
   useEffect(() => {
     if (hookError) {
-      setErrors(prev => ({ ...prev, general: hookError }));
-      onError?.(hookError);
+      setErrors(prev => ({ ...prev, general: hookError.message }));
+      onError?.(hookError.message, hookError);
     }
   }, [hookError, onError]);
 
   // Clear hook error when form data changes
   useEffect(() => {
     if (hookError) {
-      clearError();
+      clearAllErrors();
     }
-  }, [formData, hookError, clearError]);
+  }, [formData, hookError, clearAllErrors]);
 
   // Password strength calculation
   const calculatePasswordStrength = (password: string): PasswordStrength => {

@@ -6,11 +6,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import RegistrationForm from '@/components/RegistrationForm';
-import { AlertCircle, CheckCircle, Home, Shield } from 'lucide-react';
+import { AlertCircle, CheckCircle, Home, Shield, ExternalLink } from 'lucide-react';
+import { UserFriendlyError } from '@/types';
 
 interface RegistrationMessage {
   type: 'error' | 'success' | 'info' | 'warning';
   message: string;
+  userFriendlyError?: UserFriendlyError;
 }
 
 interface URLParams {
@@ -177,14 +179,44 @@ export default function RegistrationPageContent() {
       warning: 'text-yellow-400',
     }[message.type];
 
+    const friendlyError = message.userFriendlyError;
+    const showActionButtons = friendlyError?.actionable && message.type === 'error';
+
     return (
       <div className={`p-4 border rounded-lg ${bgColor} mb-6`}>
         <div className="flex">
           <Icon className={`h-5 w-5 ${iconColor} flex-shrink-0 mt-0.5`} />
-          <div className="ml-3">
+          <div className="ml-3 flex-1">
             <p className={`text-sm font-medium ${textColor}`}>
-              {message.message}
+              {friendlyError?.message || message.message}
             </p>
+            {friendlyError?.nextSteps && (
+              <p className={`text-xs mt-1 ${textColor} opacity-80`}>
+                {friendlyError.nextSteps}
+              </p>
+            )}
+            {showActionButtons && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {friendlyError.code === 'USER_ALREADY_REGISTERED' && (
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
+                  >
+                    Go to Login
+                    <ExternalLink className="w-3 h-3 ml-1" />
+                  </Link>
+                )}
+                {(friendlyError.code === 'INVALID_ACCESS_CODE' || friendlyError.code === 'EMAIL_MISMATCH') && (
+                  <Link
+                    href="/#beta"
+                    className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
+                  >
+                    Request Beta Access
+                    <ExternalLink className="w-3 h-3 ml-1" />
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -319,11 +351,12 @@ export default function RegistrationPageContent() {
               });
               // TODO: Redirect to dashboard in next tasks
             }}
-            onError={(error) => {
+            onError={(error, userFriendlyError) => {
               console.error('Registration failed:', error);
               setMessage({
                 type: 'error',
-                message: error
+                message: error,
+                userFriendlyError
               });
             }}
           />
