@@ -7,6 +7,7 @@
 import { validateAccessCode } from '@/lib/access-management';
 import { supabaseAdmin } from '@/lib/supabase';
 import { AccessRequest, AccessRequestStatus } from '@/types/admin';
+import { AccessCodeValidation } from '@/types';
 
 // Enhanced validation result for registration purposes
 export interface AccessCodeRegistrationValidation {

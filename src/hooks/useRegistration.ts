@@ -1,6 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { 
+  RegistrationRequest, 
+  AccessCodeValidation, 
+  RegistrationResult 
+} from '@/types';
 
 /**
  * Custom hook for registration business logic and API communication
@@ -14,27 +19,9 @@ interface UseRegistrationState {
   validationResult: AccessCodeValidationResult | null;
 }
 
-interface AccessCodeValidationResult {
-  isValid: boolean;
-  request?: any;
-  account?: any;
-  error?: string;
-}
-
-interface RegistrationData {
-  email: string;
-  password: string;
-  fullName?: string;
-  accessCode: string;
-}
-
-interface RegistrationResult {
-  success: boolean;
-  user?: any;
-  account?: any;
-  session?: any;
-  error?: string;
-}
+// Types are now imported from @/types
+type AccessCodeValidationResult = AccessCodeValidation;
+type RegistrationData = RegistrationRequest;
 
 export function useRegistration() {
   const [state, setState] = useState<UseRegistrationState>({

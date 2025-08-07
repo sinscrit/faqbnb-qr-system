@@ -1,4 +1,6 @@
 import { ReactionCounts } from './reactions';
+import { Session } from '@supabase/supabase-js';
+import { AccessRequest } from './admin';
 
 // Database types
 export interface Item {
@@ -294,6 +296,47 @@ export interface QRCodeConfig {
   domain: string;
   protocol: 'https' | 'http';
   baseUrl: string;
+}
+
+// Registration and Access Code types (REQ-018)
+export interface RegistrationRequest {
+  email: string;
+  password: string;
+  fullName?: string;
+  confirmPassword?: string;
+  accessCode: string;
+}
+
+export interface AccessCodeValidation {
+  isValid: boolean;
+  request?: AccessRequest;
+  account?: Account;
+  error?: string;
+  errorCode?: string;
+  metadata?: {
+    requestType: string;
+    hasAccount: boolean;
+    accountName?: string;
+    isConsumable: boolean;
+  };
+}
+
+export interface OAuthUserData {
+  email: string;
+  fullName?: string;
+  picture?: string;
+  provider: 'google';
+  providerId: string;
+}
+
+export interface RegistrationResult {
+  success: boolean;
+  user?: User;
+  account?: Account;
+  session?: Session;
+  error?: string;
+  accessCodeUsed?: boolean;
+  registrationMethod?: 'access_code' | 'oauth' | 'standard';
 }
 
 // Admin types

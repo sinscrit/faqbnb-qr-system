@@ -1,5 +1,7 @@
 'use client';
 
+import { RegistrationResult } from '@/types';
+
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
 import { useRegistration } from '@/hooks/useRegistration';
