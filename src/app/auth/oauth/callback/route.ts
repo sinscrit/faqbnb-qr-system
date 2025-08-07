@@ -76,43 +76,35 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Parse state parameter for access code and email
-    let stateData: { accessCode?: string; email?: string; returnTo?: string } = {};
-    if (state) {
-      try {
-        stateData = JSON.parse(state);
-        console.log('🔗 OAUTH_CALLBACK: State parsed', {
-          timestamp: new Date().toISOString(),
-          hasAccessCode: !!stateData.accessCode,
-          hasEmail: !!stateData.email,
-          returnTo: stateData.returnTo
-        });
-      } catch (parseError) {
-        console.warn('🔗 OAUTH_CALLBACK: Failed to parse state', {
-          timestamp: new Date().toISOString(),
-          state,
-          error: parseError
-        });
-      }
-    }
+    // Parse URL parameters for access code and email (passed from OAuth button)
+    const accessCode = searchParams.get('accessCode');
+    const email = searchParams.get('email');
+    
+    console.log('🔗 OAUTH_CALLBACK: PKCE OAuth callback received', {
+      timestamp: new Date().toISOString(),
+      hasCode: !!code,
+      hasAccessCode: !!accessCode,
+      hasEmail: !!email,
+      email: email
+    });
 
     // For PKCE flow, redirect to client to handle code exchange
     // The client will automatically exchange the code due to detectSessionInUrl: true
     console.log('🔗 OAUTH_CALLBACK: PKCE flow - redirecting to client for code exchange', {
       timestamp: new Date().toISOString(),
-      hasCode: !!code,
-      hasState: !!state
+      hasCode: !!code
     });
 
-    // Build the redirect URL with the code and state parameters
+    // Build the redirect URL with the OAuth code for client-side exchange
     const redirectParams = new URLSearchParams();
     if (code) redirectParams.set('code', code);
-    if (state) redirectParams.set('state', state);
     
-    // Redirect to registration page with code - client will handle exchange
-    const redirectUrl = stateData.accessCode && stateData.email 
-      ? `/register?${redirectParams.toString()}&accessCode=${stateData.accessCode}&email=${encodeURIComponent(stateData.email)}`
-      : `/register?${redirectParams.toString()}`;
+    // Include access code and email if provided
+    if (accessCode) redirectParams.set('accessCode', accessCode);
+    if (email) redirectParams.set('email', email);
+    
+    // Redirect to registration page with parameters - client will handle OAuth code exchange
+    const redirectUrl = `/register?${redirectParams.toString()}`;
 
     console.log('🔗 OAUTH_CALLBACK: Redirecting to', {
       timestamp: new Date().toISOString(),
