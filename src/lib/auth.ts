@@ -664,7 +664,14 @@ export async function getUserProperties(userId: string, accountId?: string): Pro
 /**
  * Create a new regular user in the multi-tenant system
  */
-export async function createUser(authUser: Omit<User, 'createdAt' | 'updatedAt'>): Promise<AuthResponse<User>> {
+export async function createUser(
+  authUser: Pick<User, 'id' | 'email'> & {
+    fullName?: string;
+    role?: string;
+    profilePicture?: string;
+    authProvider?: string;
+  }
+): Promise<AuthResponse<User>> {
   try {
     const { data, error } = await supabase
       .from('users')
@@ -673,6 +680,8 @@ export async function createUser(authUser: Omit<User, 'createdAt' | 'updatedAt'>
         email: authUser.email,
         full_name: authUser.fullName || null,
         role: authUser.role || 'user',
+        profile_picture: authUser.profilePicture || null,
+        auth_provider: authUser.authProvider || 'email',
       })
       .select()
       .single();
@@ -685,9 +694,14 @@ export async function createUser(authUser: Omit<User, 'createdAt' | 'updatedAt'>
       id: data.id,
       email: data.email,
       fullName: data.full_name || undefined,
-      role: data.role,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
+      full_name: data.full_name,
+      role: data.role || 'user',
+      profilePicture: data.profile_picture || undefined,
+      authProvider: data.auth_provider || undefined,
+      createdAt: data.created_at || new Date().toISOString(),
+      updatedAt: data.updated_at || new Date().toISOString(),
+      created_at: data.created_at,
+      updated_at: data.updated_at,
     };
 
     return { data: user };

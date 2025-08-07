@@ -5,6 +5,7 @@ import { RegistrationResult } from '@/types';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
 import { useRegistration } from '@/hooks/useRegistration';
+import GoogleOAuthButton from './GoogleOAuthButton';
 
 interface RegistrationFormProps {
   email: string; // Pre-filled from URL parameter
@@ -56,6 +57,7 @@ export default function RegistrationForm({
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
   // Use the registration hook
   const {
@@ -253,6 +255,30 @@ export default function RegistrationForm({
         general: undefined,
       }));
     }
+  };
+
+  // Handle OAuth authentication start
+  const handleOAuthStart = () => {
+    console.log(`${DEBUG_PREFIX} OAUTH_START`, {
+      timestamp: new Date().toISOString(),
+      accessCode: accessCode.substring(0, 4) + '...',
+      email: formData.email
+    });
+    
+    setOauthLoading(true);
+    setErrors({}); // Clear any previous errors
+  };
+
+  // Handle OAuth authentication error
+  const handleOAuthError = (error: string) => {
+    console.error(`${DEBUG_PREFIX} OAUTH_ERROR`, {
+      timestamp: new Date().toISOString(),
+      error
+    });
+    
+    setOauthLoading(false);
+    setErrors({ general: error });
+    onError?.(error);
   };
 
   // Handle form submission
@@ -594,13 +620,14 @@ export default function RegistrationForm({
         </div>
       </div>
 
-      {/* OAuth Button Placeholder - Will be implemented in Task 3.2 */}
-      <div className="text-center py-2">
-        <div className="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-500 rounded-lg cursor-not-allowed">
-          <div className="w-4 h-4 bg-gray-300 rounded mr-2"></div>
-          <span className="text-sm">Google OAuth (Coming in Task 3.2)</span>
-        </div>
-      </div>
+      {/* Google OAuth Button */}
+      <GoogleOAuthButton
+        accessCode={accessCode}
+        email={formData.email}
+        onAuthStart={handleOAuthStart}
+        onAuthError={handleOAuthError}
+        disabled={oauthLoading || isLoading || !formData.agreeToTerms}
+      />
 
       {/* Helper Text */}
       <div className="text-center">

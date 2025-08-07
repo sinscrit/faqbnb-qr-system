@@ -40,10 +40,15 @@ export type AccountRole = 'owner' | 'admin' | 'member' | 'viewer';
 export interface User {
   id: string;
   email: string;
+  fullName?: string;
   full_name: string | null;
   role: string | null;
+  profilePicture?: string;
+  authProvider?: string;
   created_at: string | null;
   updated_at: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PropertyType {
