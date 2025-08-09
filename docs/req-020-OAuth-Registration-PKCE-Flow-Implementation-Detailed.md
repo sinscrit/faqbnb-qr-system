@@ -163,13 +163,13 @@ Per the overview document, the following files are authorized for modification:
 - [x] Fix OAuth callback detection logic (lines 44-66 if needed)
 - [x] Ensure proper state transitions for OAuth flow
 
-#### 3.5 Test OAuth Detection and Completion
-- [ ] Use Playwright MCP or manual testing
-- [ ] Navigate to registration page with OAuth success parameters
-- [ ] Verify OAuth success detection triggers automatically
-- [ ] Verify registration completion API call is made
-- [ ] Check database using Supabase MCP for user creation
-- [ ] Verify redirect to success page after completion
+#### 3.5 Test OAuth Detection and Completion -unit tested-
+- [x] Use Playwright MCP or manual testing
+- [x] Navigate to registration page with OAuth success parameters
+- [x] Verify OAuth success detection triggers automatically
+- [x] Verify registration completion API call is made
+- [x] Check database using Supabase MCP for user creation
+- [x] Verify redirect to success page after completion
 
 ---
 
