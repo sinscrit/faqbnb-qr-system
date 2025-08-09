@@ -266,7 +266,7 @@ export default function RegistrationPageContent() {
     }
   }, [searchParams, message]);
 
-  // OAuth Success Detection and Registration Trigger (REQ-020 Task 3.1)
+  // OAuth Success Detection and Registration Trigger (REQ-020 Task 3.1, REQ-021 Task 1.1)
   useEffect(() => {
     const handleOAuthSuccess = async () => {
       const DEBUG_PREFIX_OAUTH = "🔗 OAUTH_SUCCESS_HANDLER:";
@@ -275,6 +275,20 @@ export default function RegistrationPageContent() {
       const oauthSuccess = searchParams.get('oauth_success');
       const accessCode = searchParams.get('accessCode');
       const email = searchParams.get('email');
+      
+      // REQ-021 Task 1.1: Enhanced debug logging for user/session state tracking
+      console.log(`${DEBUG_PREFIX_OAUTH} USEEFFECT_TRIGGERED`, {
+        timestamp: new Date().toISOString(),
+        oauthSuccess: oauthSuccess,
+        hasAccessCode: !!accessCode,
+        hasEmail: !!email,
+        hasUser: !!user,
+        userId: user?.id,
+        hasSession: !!session,
+        hasAccessToken: !!session?.access_token,
+        authLoading: authLoading,
+        url: typeof window !== 'undefined' ? window.location.href : 'server-side'
+      });
       
       // Check if this is an OAuth success callback
       if (oauthSuccess === 'true' && accessCode && email && user) {

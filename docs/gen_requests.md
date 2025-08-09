@@ -1678,4 +1678,108 @@ OAuth → Client Detection → Authenticated API → Success
 
 ---
 
-*Next Request: REQ-021* 
+## REQ-021: BUG FIX REQUEST - Complete OAuth Registration Flow with Automatic Login
+**Date**: August 9, 2025  
+**Type**: Bug Fix Implementation (Critical)  
+**Complexity**: 6 Points (Medium Complexity)
+
+### Request Summary
+Fix critical gaps in OAuth registration flow where users successfully authenticate via Google OAuth and user accounts are created in Supabase auth.users, but the client-side registration completion fails to trigger and users are forced to manually log in again after registration. Implement automatic OAuth success detection, registration completion, and seamless login flow.
+
+### Detailed Requirements
+
+#### 1. OAuth Success Handler Debug and Fix (2 points)
+- **Issue**: OAuth success `useEffect` in `RegistrationPageContent.tsx` not triggering despite `oauth_success=true` URL parameter
+- **Root Cause**: User/session context missing or timing issues after OAuth redirect
+- **Fix Required**: Debug and fix OAuth success detection conditions and session availability
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (OAuth success handler useEffect)
+  - OAuth success detection logging and debugging
+  - Session timing and availability issues
+
+#### 2. Automatic Login Implementation (3 points)
+- **Issue**: After successful OAuth registration, users are redirected to success page requiring manual login
+- **Root Cause**: Registration success flow doesn't maintain OAuth session for automatic login
+- **Fix Required**: Modify success flow to automatically log user into dashboard instead of requiring re-authentication
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (success handling after registration)
+  - `src/app/register/success/page.tsx` (remove manual login requirement)
+  - Authentication state persistence through registration flow
+
+#### 3. End-to-End Flow Testing and Verification (1 point)
+- **Issue**: Complete OAuth registration flow not verified from start to finish
+- **Fix Required**: Comprehensive testing using Playwright MCP and database verification
+- **Implementation**: Verify user registration AND automatic login to admin dashboard
+- **Files Affected**:
+  - End-to-end testing validation
+  - Database state verification via Supabase MCP
+  - Complete user journey testing
+
+### Complexity Analysis
+
+#### OAuth Session Timing Issues (2 points)
+- **React Component Lifecycle**: Debug useEffect conditions and dependency timing
+- **Session Availability**: Ensure user/session context available after OAuth redirect
+- **Client-Side State Management**: Fix missing user/session state in component
+- **Risk Level**: Low-Medium - Client-side React debugging and timing fixes
+
+#### Authentication Flow Redesign (3 points)
+- **Session Persistence**: Maintain OAuth authentication through registration completion
+- **Automatic Login**: Replace manual login requirement with seamless authentication
+- **State Management**: Ensure authentication state persists from OAuth through registration to dashboard
+- **User Experience**: Complete registration → automatic login → dashboard access flow
+- **Risk Level**: Medium - Changes to authentication flow and user journey
+
+#### Testing and Validation (1 point)
+- **End-to-End Testing**: Complete OAuth flow testing with Playwright MCP
+- **Database Verification**: Confirm user creation, account linking, and access code consumption
+- **User Journey Validation**: Verify seamless experience from OAuth to dashboard
+- **Risk Level**: Low - Testing and validation of implemented solution
+
+### Technical Challenges
+1. **React State Timing**: OAuth redirect causing user/session state to be unavailable in useEffect
+2. **Authentication Persistence**: Maintaining OAuth session through multi-step registration process
+3. **User Experience**: Seamless flow without manual intervention after successful OAuth
+4. **Session Management**: Proper authentication state from OAuth completion to dashboard access
+
+### Implementation Priority
+**Critical Priority** - OAuth registration appears to work but fails to complete, and successful registrations require manual re-authentication, breaking user experience.
+
+### Current Evidence of Issues
+- **OAuth Authentication**: ✅ Working - users authenticate successfully via Google
+- **Registration API**: ✅ Working - `/api/auth/complete-oauth-registration` responds correctly
+- **Client-Side Detection**: ❌ Failing - OAuth success handler not triggering
+- **Database Creation**: ❌ Incomplete - users not created in application users table
+- **Automatic Login**: ❌ Missing - users forced to manually log in after registration
+- **User Experience**: ❌ Broken - successful OAuth redirects to manual login requirement
+
+### Browser Evidence
+- **URL Parameters**: `oauth_success=true&accessCode=...&email=...` present in registration page URL
+- **Console Logs**: No `OAUTH_SUCCESS_HANDLER` logs indicating useEffect not triggering
+- **Page State**: Shows "Manual Registration Entry" form instead of automatic completion
+- **User Context**: `hasUser: false` indicating missing authentication context
+- **Database State**: User exists in `auth.users` but not in application `users` table
+
+### Expected vs Actual Flow
+- **Expected**: OAuth → Registration → Automatic Login → Dashboard
+- **Actual**: OAuth → Manual Registration Form → Manual Login Required
+- **Gap**: Client-side OAuth success detection and automatic completion not working
+
+### Related Files Reference
+- **OAuth Success Detection**: `src/app/register/RegistrationPageContent.tsx` (OAuth success useEffect handler)
+- **Registration API**: `src/app/api/auth/complete-oauth-registration/route.ts` (working registration endpoint)
+- **Success Page**: `src/app/register/success/page.tsx` (currently requires manual login)
+- **Auth Context**: `src/contexts/AuthContext.tsx` (user/session state management)
+- **OAuth Button**: `src/components/GoogleOAuthButton.tsx` (OAuth initiation)
+- **OAuth Callback**: `src/app/auth/oauth/callback/route.ts` (redirect handling)
+
+### Technical Specifications
+- **OAuth Detection**: Fix `oauth_success=true` parameter detection and useEffect triggering
+- **Session Context**: Ensure authenticated user/session available in React component after OAuth redirect
+- **Automatic Registration**: Trigger `/api/auth/complete-oauth-registration` automatically when conditions met
+- **Seamless Login**: Direct redirect to admin dashboard after successful registration
+- **Error Handling**: Comprehensive error scenarios with user-friendly messaging
+
+---
+
+*Next Request: REQ-022* 
