@@ -341,6 +341,18 @@ export default function RegistrationPageContent() {
           
           const result = await response.json();
           
+          // REQ-021 Task 2.2: Comprehensive logging for registration API responses
+          console.log(`${DEBUG_PREFIX_OAUTH} API_RESPONSE_RECEIVED`, {
+            timestamp: new Date().toISOString(),
+            status: response.status,
+            ok: response.ok,
+            success: result.success,
+            hasUser: !!result.user,
+            hasAccount: !!result.account,
+            registrationMethod: result.registrationMethod,
+            errorCode: result.errorCode || 'none'
+          });
+          
           if (response.ok && result.success) {
             console.log(`${DEBUG_PREFIX_OAUTH} REGISTRATION_COMPLETED`, {
               timestamp: new Date().toISOString(),
@@ -360,10 +372,22 @@ export default function RegistrationPageContent() {
               errorCode: result.errorCode
             });
             
-            // Show error message to user
+            // REQ-021 Task 2.2: Enhanced error handling for API call failures
+            let userFriendlyMessage = 'Registration failed. Please try again.';
+            
+            if (response.status === 401) {
+              userFriendlyMessage = 'Authentication expired. Please try the registration process again.';
+            } else if (response.status === 409) {
+              userFriendlyMessage = 'User already registered. Please try logging in instead.';
+            } else if (response.status === 400) {
+              userFriendlyMessage = 'Invalid registration data. Please check your information.';
+            } else if (result.error) {
+              userFriendlyMessage = `Registration failed: ${result.error}`;
+            }
+            
             setMessage({
               type: 'error',
-              message: `Registration failed: ${result.error || 'Unknown error'}`
+              message: userFriendlyMessage
             });
           }
           
