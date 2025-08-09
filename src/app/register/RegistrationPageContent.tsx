@@ -362,8 +362,37 @@ export default function RegistrationPageContent() {
               registrationMethod: result.registrationMethod
             });
             
-            // Success - redirect to success page
-            router.push('/register/success');
+            // REQ-021 Task 3.2: OAuth users get automatic login - redirect to admin instead of success page
+            // This ensures backward compatibility: non-OAuth registrations still use the success page
+            console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_AUTO_LOGIN_REDIRECT`, {
+              timestamp: new Date().toISOString(),
+              redirectTarget: '/admin',
+              reason: 'OAuth registration completed - bypassing manual login',
+              hasUser: !!user,
+              hasSession: !!session,
+              userId: user?.id
+            });
+            
+            // Verify authentication state before redirecting to admin
+            if (user && session) {
+              console.log(`${DEBUG_PREFIX_OAUTH} AUTH_STATE_VERIFIED`, {
+                timestamp: new Date().toISOString(),
+                message: 'User authenticated, proceeding to admin dashboard'
+              });
+              
+              // Success - redirect directly to admin dashboard for OAuth users
+              router.push('/admin');
+            } else {
+              console.warn(`${DEBUG_PREFIX_OAUTH} AUTH_STATE_INCOMPLETE`, {
+                timestamp: new Date().toISOString(),
+                message: 'Registration successful but auth state not ready, fallback to success page',
+                hasUser: !!user,
+                hasSession: !!session
+              });
+              
+              // Fallback to success page if auth state is not ready
+              router.push('/register/success');
+            }
           } else {
             console.error(`${DEBUG_PREFIX_OAUTH} REGISTRATION_FAILED`, {
               timestamp: new Date().toISOString(),
@@ -403,9 +432,16 @@ export default function RegistrationPageContent() {
             accessCode: accessCode?.substring(0, 4) + '...'
           });
           
+          // REQ-021 Task 3.2: Fallback logic for automatic login failures
+          console.error(`${DEBUG_PREFIX_OAUTH} AUTOMATIC_LOGIN_FAILURE`, {
+            timestamp: new Date().toISOString(),
+            error: errorMessage,
+            fallbackAction: 'Showing error message with manual login suggestion'
+          });
+          
           setMessage({
             type: 'error',
-            message: `OAuth registration failed: ${errorMessage}. Please try again or contact support.`
+            message: `OAuth registration failed: ${errorMessage}. Please try logging in manually at the login page.`
           });
         }
       }
