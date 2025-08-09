@@ -121,14 +121,14 @@ Per the overview document, the following files are authorized for modification:
 - [x] Return appropriate HTTP status codes and error messages
 - [x] Add comprehensive logging for debugging
 
-#### 2.5 Test OAuth Registration API
-- [ ] Create test script or use API testing tool
-- [ ] Test API endpoint with valid OAuth session
-- [ ] Test with invalid/missing session
-- [ ] Test with invalid access code
-- [ ] Test with already-used access code
-- [ ] Verify proper database record creation
-- [ ] Use Supabase MCP to verify all database operations
+#### 2.5 Test OAuth Registration API -unit tested-
+- [x] Create test script or use API testing tool
+- [x] Test API endpoint with valid OAuth session
+- [x] Test with invalid/missing session
+- [x] Test with invalid access code
+- [x] Test with already-used access code
+- [x] Verify proper database record creation
+- [x] Use Supabase MCP to verify all database operations
 
 ---
 
