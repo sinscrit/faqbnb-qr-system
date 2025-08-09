@@ -1,6 +1,6 @@
 'use client';
 
-import { RegistrationResult, UserFriendlyError } from '@/types';
+import { RegistrationResult, UserFriendlyError, OAuthRegistrationRequest } from '@/types';
 
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
@@ -15,6 +15,9 @@ interface RegistrationFormProps {
   isManualEntry?: boolean; // REQ-019 Task 5.4: Manual entry mode support
   onCodeValidation?: (result: any) => void; // For manual entry validation
   className?: string;
+  // REQ-020 Task 6.2: OAuth completion integration
+  onOAuthCompletion?: (request: OAuthRegistrationRequest, sessionToken: string) => Promise<void>;
+  isOAuthCompleting?: boolean;
 }
 
 interface FormData {
@@ -48,7 +51,9 @@ export default function RegistrationForm({
   onError,
   isManualEntry = false,
   onCodeValidation,
-  className = '' 
+  className = '',
+  onOAuthCompletion,
+  isOAuthCompleting = false
 }: RegistrationFormProps) {
   const [formData, setFormData] = useState<FormData>({
     email: email || '',
@@ -62,6 +67,9 @@ export default function RegistrationForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
+  
+  // REQ-020 Task 6.2: Combined OAuth loading state
+  const isOAuthActive = oauthLoading || isOAuthCompleting;
 
   // Use the registration hook
   const {
@@ -72,6 +80,7 @@ export default function RegistrationForm({
     hasActionableError,
     validateAccessCodeAsync,
     submitRegistration,
+    submitOAuthRegistration,
     clearError,
     clearAllErrors
   } = useRegistration();
@@ -285,6 +294,49 @@ export default function RegistrationForm({
     setOauthLoading(false);
     setErrors({ general: error });
     onError?.(error);
+  };
+
+  // REQ-020 Task 6.2: Handle OAuth completion through form
+  const handleOAuthCompletion = async (sessionToken: string) => {
+    if (!onOAuthCompletion) {
+      console.log(`${DEBUG_PREFIX} OAUTH_COMPLETION_NOT_CONFIGURED`, {
+        timestamp: new Date().toISOString()
+      });
+      return;
+    }
+
+    console.log(`${DEBUG_PREFIX} OAUTH_COMPLETION_START`, {
+      timestamp: new Date().toISOString(),
+      accessCode: accessCode.substring(0, 4) + '...',
+      email: formData.email
+    });
+
+    try {
+      const request: OAuthRegistrationRequest = {
+        accessCode,
+        email: formData.email
+      };
+
+      await onOAuthCompletion(request, sessionToken);
+      
+      console.log(`${DEBUG_PREFIX} OAUTH_COMPLETION_SUCCESS`, {
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error(`${DEBUG_PREFIX} OAUTH_COMPLETION_ERROR`, {
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : error
+      });
+      
+      setOauthLoading(false);
+      const errorMessage = error instanceof Error ? error.message : 'OAuth registration failed';
+      setErrors(prev => ({ ...prev, general: errorMessage }));
+      
+      if (onError) {
+        onError(errorMessage);
+      }
+    }
   };
 
   // Handle form submission
@@ -632,7 +684,7 @@ export default function RegistrationForm({
         email={formData.email}
         onAuthStart={handleOAuthStart}
         onAuthError={handleOAuthError}
-        disabled={oauthLoading || isLoading || !formData.agreeToTerms}
+        disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
       />
 
       {/* Helper Text */}
