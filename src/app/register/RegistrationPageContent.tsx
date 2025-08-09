@@ -94,6 +94,20 @@ export default function RegistrationPageContent() {
   const searchParams = useSearchParams();
   const { user, session, loading: authLoading } = useAuth();
   
+  // REQ-021 Task 1.2: Track user/session state availability timing
+  useEffect(() => {
+    const DEBUG_PREFIX_TIMING = "🕐 AUTH_TIMING_DEBUG:";
+    console.log(`${DEBUG_PREFIX_TIMING} AUTH_STATE_UPDATE`, {
+      timestamp: new Date().toISOString(),
+      hasUser: !!user,
+      userId: user?.id,
+      hasSession: !!session,
+      hasAccessToken: !!session?.access_token,
+      authLoading: authLoading,
+      url: typeof window !== 'undefined' ? window.location.href : 'server-side'
+    });
+  }, [user, session, authLoading]);
+  
   const [message, setMessage] = useState<RegistrationMessage | null>(null);
   const [entryMode, setEntryMode] = useState<'url' | 'manual'>('url');
   const [urlParams, setUrlParams] = useState<URLParams>({
@@ -271,12 +285,11 @@ export default function RegistrationPageContent() {
     const handleOAuthSuccess = async () => {
       const DEBUG_PREFIX_OAUTH = "🔗 OAUTH_SUCCESS_HANDLER:";
       
-      // Detect OAuth success parameters
+      // REQ-021 Task 1.1: Enhanced debug logging for user/session state tracking
       const oauthSuccess = searchParams.get('oauth_success');
       const accessCode = searchParams.get('accessCode');
       const email = searchParams.get('email');
       
-      // REQ-021 Task 1.1: Enhanced debug logging for user/session state tracking
       console.log(`${DEBUG_PREFIX_OAUTH} USEEFFECT_TRIGGERED`, {
         timestamp: new Date().toISOString(),
         oauthSuccess: oauthSuccess,
@@ -357,17 +370,49 @@ export default function RegistrationPageContent() {
         } catch (error) {
           console.error(`${DEBUG_PREFIX_OAUTH} API_CALL_ERROR:`, error);
           
+          // REQ-021 Task 1.3: Enhanced error handling for OAuth success detection failures
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          console.error(`${DEBUG_PREFIX_OAUTH} OAUTH_SUCCESS_FAILURE`, {
+            timestamp: new Date().toISOString(),
+            error: errorMessage,
+            email: email,
+            accessCode: accessCode?.substring(0, 4) + '...'
+          });
+          
           setMessage({
             type: 'error',
-            message: `Registration error: ${error instanceof Error ? error.message : 'Unknown error'}`
+            message: `OAuth registration failed: ${errorMessage}. Please try again or contact support.`
           });
         }
       }
     };
     
-    // Only trigger OAuth handling if we have a user and session (authenticated)
-    if (user && session && !authLoading) {
-      handleOAuthSuccess();
+    // REQ-021 Task 1.3: Handle OAuth success detection with retry logic for timing issues
+    // Check if we have OAuth parameters that need processing (variables already declared in handleOAuthSuccess)
+    const hasOAuthParams = searchParams.get('oauth_success') === 'true' && 
+                           searchParams.get('accessCode') && 
+                           searchParams.get('email');
+    
+    if (hasOAuthParams) {
+      const DEBUG_PREFIX_OAUTH = "🔗 OAUTH_SUCCESS_HANDLER:";
+      console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_PARAMS_DETECTED`, {
+        timestamp: new Date().toISOString(),
+        hasUser: !!user,
+        hasSession: !!session,
+        authLoading: authLoading,
+        willTriggerHandler: !!(user && session && !authLoading)
+      });
+      
+      // Only trigger OAuth handling if we have authenticated user and session
+      if (user && session && !authLoading) {
+        handleOAuthSuccess();
+      } else if (!authLoading && (!user || !session)) {
+        // REQ-021 Task 1.3: Retry logic for delayed auth context initialization
+        console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_RETRY_NEEDED`, {
+          timestamp: new Date().toISOString(),
+          reason: 'Auth context not ready, will retry when user/session available'
+        });
+      }
     }
   }, [searchParams, user, session, authLoading, router]);
 
