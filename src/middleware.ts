@@ -6,6 +6,38 @@ import type { Database } from '@/lib/supabase'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
+  
+  // ============ OAUTH CALLBACK DETECTION LOGGING ============
+  if (req.nextUrl.pathname === '/auth/oauth/callback') {
+    console.log('🔗 MIDDLEWARE: OAUTH_CALLBACK_DETECTED', {
+      timestamp: new Date().toISOString(),
+      path: req.nextUrl.pathname,
+      searchParams: Object.fromEntries(req.nextUrl.searchParams.entries()),
+      hasCode: !!req.nextUrl.searchParams.get('code'),
+      hasAccessCode: !!req.nextUrl.searchParams.get('accessCode'),
+      hasEmail: !!req.nextUrl.searchParams.get('email'),
+      userAgent: req.headers.get('user-agent')?.slice(0, 100),
+      referer: req.headers.get('referer'),
+      nextStep: 'ALLOWING_REQUEST_TO_PROCEED_TO_OAUTH_HANDLER'
+    });
+    // Allow OAuth callback to proceed without session check
+    return res;
+  }
+
+  // Also log when users hit /register after OAuth (potential redirect target)
+  if (req.nextUrl.pathname === '/register' && req.nextUrl.searchParams.get('oauth_success')) {
+    console.log('🔗 MIDDLEWARE: OAUTH_REGISTER_REDIRECT_DETECTED', {
+      timestamp: new Date().toISOString(),
+      path: req.nextUrl.pathname,
+      searchParams: Object.fromEntries(req.nextUrl.searchParams.entries()),
+      hasOAuthSuccess: req.nextUrl.searchParams.get('oauth_success') === 'true',
+      hasAccessCode: !!req.nextUrl.searchParams.get('accessCode'),
+      hasEmail: !!req.nextUrl.searchParams.get('email'),
+      referer: req.headers.get('referer'),
+      nextStep: 'CHECKING_SESSION_FOR_OAUTH_REGISTRATION_COMPLETION'
+    });
+  }
+
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -139,5 +171,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/admin', '/login'],
+  matcher: ['/admin/:path*', '/admin', '/login', '/auth/oauth/callback', '/register'],
 } 

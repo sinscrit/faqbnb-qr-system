@@ -343,6 +343,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Set up auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
           async (event, session) => {
+            // ============ ENHANCED OAUTH AUTH EVENT LOGGING ============
+            console.log('🔒 AUTH_CONTEXT: OAUTH_AUTH_STATE_CHANGE', {
+              timestamp: new Date().toISOString(),
+              event,
+              hasSession: !!session,
+              hasUser: !!session?.user,
+              userId: session?.user?.id,
+              userEmail: session?.user?.email,
+              sessionExpiry: session?.expires_at,
+              accessToken: session?.access_token ? 'present' : 'missing',
+              refreshToken: session?.refresh_token ? 'present' : 'missing',
+              eventDetails: {
+                provider: session?.user?.app_metadata?.provider,
+                aud: session?.user?.aud,
+                role: session?.user?.role,
+                isOAuthEvent: ['SIGNED_IN', 'TOKEN_REFRESHED'].includes(event) && session?.user?.app_metadata?.provider === 'google'
+              },
+              currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side',
+              isRegistrationPage: typeof window !== 'undefined' ? window.location.pathname === '/register' : false,
+              hasOAuthParams: typeof window !== 'undefined' ? 
+                new URLSearchParams(window.location.search).get('oauth_success') === 'true' : false
+            });
+            
             console.log('[AUTH-RACE-DEBUG] Auth state changed:', event, session?.user?.id);
             
             if (event === 'SIGNED_IN' && session) {

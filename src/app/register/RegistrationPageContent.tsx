@@ -93,6 +93,36 @@ export default function RegistrationPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, session, loading: authLoading } = useAuth();
+
+  // ============ COMPREHENSIVE PAGE MOUNT LOGGING ============
+  useEffect(() => {
+    const DEBUG_PREFIX = "🔒 REGISTRATION_PAGE:";
+    
+    console.log(`${DEBUG_PREFIX} PAGE_MOUNTED`, {
+      timestamp: new Date().toISOString(),
+      fullUrl: typeof window !== 'undefined' ? window.location.href : 'server-side',
+      searchParams: Object.fromEntries(searchParams.entries()),
+      urlAnalysis: {
+        hasCode: !!searchParams.get('code'),
+        hasAccessCode: !!searchParams.get('accessCode'),
+        hasEmail: !!searchParams.get('email'),
+        hasOAuthSuccess: searchParams.get('oauth_success') === 'true',
+        hasError: !!searchParams.get('error')
+      },
+      authState: {
+        hasUser: !!user,
+        userId: user?.id,
+        userEmail: user?.email,
+        hasSession: !!session,
+        hasAccessToken: !!session?.access_token,
+        authLoading: authLoading
+      },
+      detectedFlow: searchParams.get('oauth_success') === 'true' ? 'OAUTH_REGISTRATION' : 
+                    searchParams.get('code') && searchParams.get('email') ? 'URL_REGISTRATION' : 
+                    'MANUAL_REGISTRATION',
+      referer: typeof window !== 'undefined' ? document.referrer : 'server-side'
+    });
+  }, []); // Only run once on mount
   
   // REQ-021 Task 1.2: Track user/session state availability timing
   useEffect(() => {

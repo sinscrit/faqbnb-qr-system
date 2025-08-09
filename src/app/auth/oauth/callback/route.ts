@@ -7,12 +7,29 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error');
   const errorDescription = searchParams.get('error_description');
 
-  console.log('🔗 OAUTH_CALLBACK: Request received', {
+  // ============ COMPREHENSIVE OAUTH CALLBACK LOGGING ============
+  console.log('🔗 OAUTH_CALLBACK: REQUEST_RECEIVED', {
+    timestamp: new Date().toISOString(),
+    fullUrl: request.url,
+    searchParams: Object.fromEntries(searchParams.entries()),
+    headers: {
+      referer: request.headers.get('referer'),
+      userAgent: request.headers.get('user-agent')?.slice(0, 100),
+      host: request.headers.get('host')
+    },
+    method: request.method
+  });
+
+  console.log('🔗 OAUTH_CALLBACK: PARAMETER_ANALYSIS', {
     timestamp: new Date().toISOString(),
     hasCode: !!code,
+    codeLength: code?.length,
     hasState: !!state,
+    stateContent: state ? (state.length > 100 ? state.slice(0, 100) + '...' : state) : null,
     hasError: !!error,
-    url: request.url
+    error: error,
+    errorDescription: errorDescription,
+    allParams: Object.fromEntries(searchParams.entries())
   });
 
   // Handle OAuth errors from provider
@@ -83,13 +100,37 @@ export async function GET(request: NextRequest) {
     const accessCode = searchParams.get('accessCode');
     const email = searchParams.get('email');
     
-    console.log('🔗 OAUTH_CALLBACK: PKCE OAuth callback received', {
+    console.log('🔗 OAUTH_CALLBACK: PKCE_CALLBACK_RECEIVED', {
       timestamp: new Date().toISOString(),
       hasCode: !!code,
+      codePreview: code ? code.slice(0, 8) + '...' : null,
       hasAccessCode: !!accessCode,
+      accessCodePreview: accessCode ? accessCode.slice(0, 4) + '...' : null,
       hasEmail: !!email,
-      email: email
+      email: email,
+      flowType: accessCode && email ? 'REGISTRATION' : 'LOGIN'
     });
+
+    // Decode and analyze state parameter if present
+    if (state) {
+      try {
+        const decodedState = JSON.parse(state);
+        console.log('🔗 OAUTH_CALLBACK: STATE_DECODED', {
+          timestamp: new Date().toISOString(),
+          stateKeys: Object.keys(decodedState),
+          hasAccessCodeInState: !!decodedState.accessCode,
+          hasEmailInState: !!decodedState.email,
+          stateAccessCode: decodedState.accessCode ? decodedState.accessCode.slice(0, 4) + '...' : null
+        });
+      } catch (stateError) {
+        console.log('🔗 OAUTH_CALLBACK: STATE_PARSE_FAILED', {
+          timestamp: new Date().toISOString(),
+          stateLength: state.length,
+          statePreview: state.slice(0, 50) + '...',
+          error: stateError instanceof Error ? stateError.message : 'Unknown error'
+        });
+      }
+    }
     
     // Enhanced logging for Gmail OAuth callbacks
     if (email && email.endsWith('@gmail.com')) {
@@ -106,10 +147,12 @@ export async function GET(request: NextRequest) {
 
     // For registration flow with accessCode, redirect to client for registration completion
     if (accessCode && email) {
-      console.log('🔗 OAUTH_CALLBACK: Registration flow detected - redirecting to client for completion', {
+      console.log('🔗 OAUTH_CALLBACK: REGISTRATION_FLOW_DETECTED', {
         timestamp: new Date().toISOString(),
         email: email,
-        accessCode: accessCode.substring(0, 4) + '...'
+        accessCode: accessCode.substring(0, 4) + '...',
+        hasOAuthCode: !!code,
+        nextStep: 'REDIRECT_TO_REGISTER_WITH_OAUTH_SUCCESS'
       });
 
       // Redirect to registration page with OAuth success parameters
@@ -120,18 +163,36 @@ export async function GET(request: NextRequest) {
       redirectParams.set('oauth_success', 'true');
       
       const redirectUrl = `/register?${redirectParams.toString()}`;
+      
+      console.log('🔗 OAUTH_CALLBACK: REGISTRATION_REDIRECT_EXECUTING', {
+        timestamp: new Date().toISOString(),
+        redirectUrl: redirectUrl,
+        fullUrl: `${request.url.split('/auth/oauth/callback')[0]}${redirectUrl}`,
+        redirectParams: Object.fromEntries(redirectParams.entries()),
+        expectedBehavior: 'User should land on /register with oauth_success=true and trigger client-side API call'
+      });
+      
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
     // For login flow (no accessCode), redirect to client for code exchange
-    console.log('🔗 OAUTH_CALLBACK: Login flow - redirecting to client for code exchange', {
+    console.log('🔗 OAUTH_CALLBACK: LOGIN_FLOW_DETECTED', {
       timestamp: new Date().toISOString(),
-      hasCode: !!code
+      hasCode: !!code,
+      codePreview: code ? code.slice(0, 8) + '...' : null,
+      nextStep: 'REDIRECT_TO_LOGIN_FOR_CODE_EXCHANGE'
     });
     
     const redirectParams = new URLSearchParams();
     if (code) redirectParams.set('code', code);
     const redirectUrl = `/login?${redirectParams.toString()}`;
+
+    console.log('🔗 OAUTH_CALLBACK: LOGIN_REDIRECT_EXECUTING', {
+      timestamp: new Date().toISOString(),
+      redirectUrl: redirectUrl,
+      fullUrl: `${request.url.split('/auth/oauth/callback')[0]}${redirectUrl}`,
+      expectedBehavior: 'User should land on /login and complete OAuth code exchange'
+    });
 
     return NextResponse.redirect(new URL(redirectUrl, request.url));
 
