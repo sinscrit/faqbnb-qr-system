@@ -5,7 +5,9 @@ import {
   RegistrationRequest, 
   AccessCodeValidation, 
   RegistrationResult,
-  UserFriendlyError
+  UserFriendlyError,
+  OAuthRegistrationRequest,
+  OAuthRegistrationResult
 } from '@/types';
 import { translateErrorMessage, classifyError, getErrorDisplayDuration } from '@/lib/error-utils';
 
@@ -241,14 +243,13 @@ export function useRegistration() {
    * REQ-020 Task 4.2: OAuth Registration Function
    */
   const submitOAuthRegistration = useCallback(async (
-    accessCode: string,
-    email: string,
+    request: OAuthRegistrationRequest,
     sessionToken: string
-  ): Promise<RegistrationResult> => {
+  ): Promise<OAuthRegistrationResult> => {
     console.log(`${DEBUG_PREFIX} SUBMIT_OAUTH_REGISTRATION_START`, {
       timestamp: new Date().toISOString(),
-      email: email,
-      accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null,
+      email: request.email,
+      accessCode: request.accessCode ? `${request.accessCode.substring(0, 4)}...` : null,
       hasSessionToken: !!sessionToken
     });
 
@@ -262,10 +263,7 @@ export function useRegistration() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionToken}`
         },
-        body: JSON.stringify({
-          accessCode: accessCode,
-          email: email
-        }),
+        body: JSON.stringify(request),
       });
 
       if (!response.ok) {
@@ -278,7 +276,7 @@ export function useRegistration() {
         return { success: false, error: errorMessage };
       }
 
-      const result: RegistrationResult = await response.json();
+      const result: OAuthRegistrationResult = await response.json();
 
       console.log(`${DEBUG_PREFIX} SUBMIT_OAUTH_REGISTRATION_SUCCESS`, {
         timestamp: new Date().toISOString(),

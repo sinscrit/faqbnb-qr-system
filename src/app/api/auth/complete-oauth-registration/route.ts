@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createUser, createDefaultAccount, linkUserToAccount } from '@/lib/auth';
 import { validateAccessCodeForRegistration, consumeAccessCode } from '@/lib/access-validation';
+import { OAuthRegistrationRequest, OAuthRegistrationResult } from '@/types';
 
 // Supabase client for session validation
 const supabase = createClient(

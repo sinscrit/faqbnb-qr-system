@@ -334,6 +334,31 @@ export interface OAuthUserData {
   providerId: string;
 }
 
+// OAuth Registration types (REQ-020 Task 5.1)
+/**
+ * OAuth registration request interface for completing registration after OAuth authentication
+ * Used with the /api/auth/complete-oauth-registration endpoint
+ */
+export interface OAuthRegistrationRequest {
+  /** Access code from the registration invitation */
+  accessCode: string;
+  /** Email address from OAuth provider (must match access request) */
+  email: string;
+}
+
+/**
+ * OAuth registration result interface
+ * Extends the standard RegistrationResult with OAuth-specific fields
+ */
+export interface OAuthRegistrationResult extends RegistrationResult {
+  /** OAuth provider used for registration */
+  provider?: 'google';
+  /** OAuth provider user ID */
+  providerId?: string;
+  /** Indicates this was an OAuth registration */
+  registrationMethod: 'oauth';
+}
+
 export interface RegistrationResult {
   success: boolean;
   user?: User;

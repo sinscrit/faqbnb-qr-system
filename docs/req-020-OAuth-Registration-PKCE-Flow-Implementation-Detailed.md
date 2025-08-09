@@ -211,18 +211,18 @@ Per the overview document, the following files are authorized for modification:
 
 **Objective**: Add OAuth-specific type definitions for registration flow
 
-#### 5.1 Add OAuth Registration Types
-- [ ] Use `read_file` to examine `src/types/index.ts`
-- [ ] Add `OAuthRegistrationRequest` interface
-- [ ] Add `OAuthRegistrationResult` interface
-- [ ] Enhance existing `OAuthUserData` interface if needed
-- [ ] Add OAuth-specific error codes to error enums
+#### 5.1 Add OAuth Registration Types -unit tested-
+- [x] Use `read_file` to examine `src/types/index.ts`
+- [x] Add `OAuthRegistrationRequest` interface
+- [x] Add `OAuthRegistrationResult` interface
+- [x] Enhance existing `OAuthUserData` interface if needed
+- [x] Add OAuth-specific error codes to error enums
 
-#### 5.2 Update Type Exports
-- [ ] Export new OAuth registration types
-- [ ] Verify compatibility with existing registration types
-- [ ] Update any type references in authorized files
-- [ ] Add JSDoc comments for OAuth-specific types
+#### 5.2 Update Type Exports -unit tested-
+- [x] Export new OAuth registration types
+- [x] Verify compatibility with existing registration types
+- [x] Update any type references in authorized files
+- [x] Add JSDoc comments for OAuth-specific types
 
 ---
 
