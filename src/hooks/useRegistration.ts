@@ -236,6 +236,75 @@ export function useRegistration() {
   }, [addError]);
 
   /**
+   * Submit OAuth registration data
+   * Handles OAuth registration completion using existing session
+   * REQ-020 Task 4.2: OAuth Registration Function
+   */
+  const submitOAuthRegistration = useCallback(async (
+    accessCode: string,
+    email: string,
+    sessionToken: string
+  ): Promise<RegistrationResult> => {
+    console.log(`${DEBUG_PREFIX} SUBMIT_OAUTH_REGISTRATION_START`, {
+      timestamp: new Date().toISOString(),
+      email: email,
+      accessCode: accessCode ? `${accessCode.substring(0, 4)}...` : null,
+      hasSessionToken: !!sessionToken
+    });
+
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      // Call the OAuth registration completion API endpoint
+      const response = await fetch('/api/auth/complete-oauth-registration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`
+        },
+        body: JSON.stringify({
+          accessCode: accessCode,
+          email: email
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMessage = errorData.error || `OAuth registration failed: ${response.status} ${response.statusText}`;
+        addError(errorMessage, response.status);
+        
+        setState(prev => ({ ...prev, isLoading: false }));
+        
+        return { success: false, error: errorMessage };
+      }
+
+      const result: RegistrationResult = await response.json();
+
+      console.log(`${DEBUG_PREFIX} SUBMIT_OAUTH_REGISTRATION_SUCCESS`, {
+        timestamp: new Date().toISOString(),
+        userId: result.user?.id,
+        accountId: result.account?.id,
+        registrationMethod: result.registrationMethod || 'oauth'
+      });
+
+      setState(prev => ({ ...prev, isLoading: false }));
+
+      return result;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'OAuth registration failed';
+      
+      console.error(`${DEBUG_PREFIX} SUBMIT_OAUTH_REGISTRATION_ERROR:`, error);
+      
+      addError(errorMessage);
+      
+      setState(prev => ({ ...prev, isLoading: false }));
+
+      return { success: false, error: errorMessage };
+    }
+  }, [addError]);
+
+  /**
    * Retry mechanism for network failures
    * Retries the last operation with exponential backoff
    */
@@ -366,6 +435,7 @@ export function useRegistration() {
     // Actions
     validateAccessCodeAsync,
     submitRegistration,
+    submitOAuthRegistration,
     retryLastOperation,
     clearError,
     clearAllErrors,

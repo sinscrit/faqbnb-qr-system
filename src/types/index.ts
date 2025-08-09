@@ -350,7 +350,11 @@ export enum ErrorCode {
   USER_ALREADY_REGISTERED = 'USER_ALREADY_REGISTERED',
   INVALID_ACCESS_CODE = 'INVALID_ACCESS_CODE',
   EMAIL_MISMATCH = 'EMAIL_MISMATCH',
-  NETWORK_ERROR = 'NETWORK_ERROR'
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  // OAuth-specific error codes (REQ-020 Task 4.3)
+  OAUTH_SESSION_EXPIRED = 'OAUTH_SESSION_EXPIRED',
+  OAUTH_REGISTRATION_CONFLICT = 'OAUTH_REGISTRATION_CONFLICT',
+  OAUTH_AUTHENTICATION_FAILED = 'OAUTH_AUTHENTICATION_FAILED'
 }
 
 export interface UserFriendlyError {
@@ -381,6 +385,12 @@ export const HTTP_ERROR_MAPPING: Record<number, Omit<UserFriendlyError, 'code'>>
     message: "Something went wrong on our end - please try again later",
     actionable: false,
     nextSteps: "If the problem persists, please contact support"
+  },
+  // OAuth-specific error codes (REQ-020 Task 4.3)
+  401: {
+    message: "Session expired - please sign in with Google again",
+    actionable: true,
+    nextSteps: "Click 'Continue with Google' to restart the OAuth process"
   }
 };
 
