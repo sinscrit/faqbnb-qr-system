@@ -60,28 +60,28 @@ Per the overview document, the following files are authorized for modification:
 - [x] Document specific lines containing broken `exchangeCodeForSession()` calls
 - [x] Note import statements that need removal
 
-#### 1.2 Remove Broken Server-Side Registration Logic
-- [ ] Remove server-side OAuth code exchange logic (lines 111-228 approximately)
-- [ ] Remove imports: `createUser`, `createDefaultAccount`, `linkUserToAccount`
-- [ ] Remove imports: `validateAccessCodeForRegistration`, `consumeAccessCode`
-- [ ] Remove `OAuthUserData` type usage
-- [ ] Keep error handling for OAuth provider errors (lines 22-30 approximately)
+#### 1.2 Remove Broken Server-Side Registration Logic -unit tested-
+- [x] Remove server-side OAuth code exchange logic (lines 111-228 approximately)
+- [x] Remove imports: `createUser`, `createDefaultAccount`, `linkUserToAccount`
+- [x] Remove imports: `validateAccessCodeForRegistration`, `consumeAccessCode`
+- [x] Remove `OAuthUserData` type usage
+- [x] Keep error handling for OAuth provider errors (lines 22-30 approximately)
 
-#### 1.3 Implement Simplified Redirect Logic
-- [ ] Replace server-side registration with client redirect for registration flow
-- [ ] Maintain login flow redirect to `/login` (preserve existing logic)
-- [ ] For registration flow: redirect to `/register` with success parameters
-- [ ] Pass `accessCode` and `email` parameters in redirect URL
-- [ ] Add OAuth success indicator parameter (e.g., `oauth_success=true`)
+#### 1.3 Implement Simplified Redirect Logic -unit tested-
+- [x] Replace server-side registration with client redirect for registration flow
+- [x] Maintain login flow redirect to `/login` (preserve existing logic)
+- [x] For registration flow: redirect to `/register` with success parameters
+- [x] Pass `accessCode` and `email` parameters in redirect URL
+- [x] Add OAuth success indicator parameter (e.g., `oauth_success=true`)
 
-#### 1.4 Test OAuth Callback Simplification
-- [ ] Start development server: `npm run dev`
-- [ ] Use Supabase MCP to verify database state before testing
-- [ ] Navigate to registration page with access code: `http://localhost:3000/register?code=rsqtym53ggkq0z7cs5zzf&email=sgcleprojets@gmail.com`
-- [ ] Initiate Google OAuth authentication
-- [ ] Verify OAuth callback redirects properly without server-side errors
-- [ ] Check console logs for absence of PKCE errors
-- [ ] Verify user is NOT created in `users` table yet (expected behavior)
+#### 1.4 Test OAuth Callback Simplification -unit tested-
+- [x] Start development server: `npm run dev`
+- [x] Use Supabase MCP to verify database state before testing
+- [x] Navigate to registration page with access code: `http://localhost:3000/register?code=rsqtym53ggkq0z7cs5zzf&email=sgcleprojets@gmail.com`
+- [x] Initiate Google OAuth authentication
+- [x] Verify OAuth callback redirects properly without server-side errors
+- [x] Check console logs for absence of PKCE errors
+- [x] Verify user is NOT created in `users` table yet (expected behavior)
 
 ---
 
