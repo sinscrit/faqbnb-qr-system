@@ -151,12 +151,35 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h1>
           <p className="text-gray-600 mb-6">Please log in to access the admin panel.</p>
-          <button
-            onClick={() => router.push('/login')}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Login
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => {
+                window.location.href = '/';
+              }}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Go to Home
+            </button>
+            <button
+              onClick={async () => {
+                console.log('🔥 GO_TO_LOGIN_CLICKED: Button clicked, starting logout process');
+                try {
+                  console.log('🔥 GO_TO_LOGIN_CLICKED: Calling signOut()');
+                  await signOut();
+                  console.log('🔥 GO_TO_LOGIN_CLICKED: SignOut completed, forcing page reload to login');
+                  // Force a complete page reload to ensure session clearing is fully applied
+                  window.location.href = '/login';
+                } catch (error) {
+                  console.error('🔥 GO_TO_LOGIN_CLICKED: Logout failed:', error);
+                  // Still redirect to login even if logout fails
+                  window.location.href = '/login';
+                }
+              }}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go to Login
+            </button>
+          </div>
         </div>
       </div>
     );
