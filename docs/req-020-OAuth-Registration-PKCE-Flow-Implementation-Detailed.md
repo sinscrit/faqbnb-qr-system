@@ -89,37 +89,37 @@ Per the overview document, the following files are authorized for modification:
 
 **Objective**: Build new API endpoint for session-authenticated registration completion
 
-#### 2.1 Create New OAuth Registration API File
-- [ ] Create new file: `src/app/api/auth/complete-oauth-registration/route.ts`
-- [ ] Add necessary imports from existing auth and validation libraries
-- [ ] Import: `createUser`, `createDefaultAccount`, `linkUserToAccount` from `src/lib/auth.ts`
-- [ ] Import: `validateAccessCodeForRegistration`, `consumeAccessCode` from `src/lib/access-validation.ts`
-- [ ] Import Supabase client for session validation
+#### 2.1 Create New OAuth Registration API File -unit tested-
+- [x] Create new file: `src/app/api/auth/complete-oauth-registration/route.ts`
+- [x] Add necessary imports from existing auth and validation libraries
+- [x] Import: `createUser`, `createDefaultAccount`, `linkUserToAccount` from `src/lib/auth.ts`
+- [x] Import: `validateAccessCodeForRegistration`, `consumeAccessCode` from `src/lib/access-validation.ts`
+- [x] Import Supabase client for session validation
 
-#### 2.2 Implement Session Validation
-- [ ] Create `validateOAuthSession()` helper function
-- [ ] Extract user session from request headers
-- [ ] Validate session authenticity with Supabase
-- [ ] Extract OAuth user metadata (email, full_name, provider)
-- [ ] Return structured user data or authentication error
+#### 2.2 Implement Session Validation -unit tested-
+- [x] Create `validateOAuthSession()` helper function
+- [x] Extract user session from request headers
+- [x] Validate session authenticity with Supabase
+- [x] Extract OAuth user metadata (email, full_name, provider)
+- [x] Return structured user data or authentication error
 
-#### 2.3 Implement OAuth Registration Logic
-- [ ] Create main `POST()` handler function
-- [ ] Accept request with `accessCode` and `email` parameters
-- [ ] Validate OAuth session and extract user data
-- [ ] Call `validateAccessCodeForRegistration(accessCode, email)`
-- [ ] Create user with `authProvider: 'google'` using `createUser()`
-- [ ] Create default account using `createDefaultAccount()`
-- [ ] Link user to account using `linkUserToAccount()`
-- [ ] Consume access code using `consumeAccessCode()`
+#### 2.3 Implement OAuth Registration Logic -unit tested-
+- [x] Create main `POST()` handler function
+- [x] Accept request with `accessCode` and `email` parameters
+- [x] Validate OAuth session and extract user data
+- [x] Call `validateAccessCodeForRegistration(accessCode, email)`
+- [x] Create user with `authProvider: 'google'` using `createUser()`
+- [x] Create default account using `createDefaultAccount()`
+- [x] Link user to account using `linkUserToAccount()`
+- [x] Consume access code using `consumeAccessCode()`
 
-#### 2.4 Add OAuth-Specific Error Handling
-- [ ] Handle session validation errors
-- [ ] Handle access code validation failures
-- [ ] Handle user creation conflicts (already exists)
-- [ ] Handle account creation failures
-- [ ] Return appropriate HTTP status codes and error messages
-- [ ] Add comprehensive logging for debugging
+#### 2.4 Add OAuth-Specific Error Handling -unit tested-
+- [x] Handle session validation errors
+- [x] Handle access code validation failures
+- [x] Handle user creation conflicts (already exists)
+- [x] Handle account creation failures
+- [x] Return appropriate HTTP status codes and error messages
+- [x] Add comprehensive logging for debugging
 
 #### 2.5 Test OAuth Registration API
 - [ ] Create test script or use API testing tool
