@@ -90,24 +90,16 @@ export async function signInWithEmail(
       return { error: 'Access denied - no email in user data' };
     }
 
-    // Check if user is an admin (check both admin_users table and is_admin flag)
+    // Check if user is an admin using admin_users table
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('email', data.user.email)
       .single();
 
-    // Also check is_admin flag in users table
-    const { data: userWithAdminFlag, error: userFlagError } = await supabase
-      .from('users')
-      .select('email, full_name, role, is_admin')
-      .eq('id', data.user.id)
-      .single();
-
     const isAdminByTable = !adminError && adminUser;
-    const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
 
-    if (!isAdminByTable && !isAdminByFlag) {
+    if (!isAdminByTable) {
       // Sign out if not an admin by either method
       await supabase.auth.signOut();
       return { error: 'Access denied - admin privileges required' };
@@ -230,26 +222,138 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       return { data: null };
     }
 
+    // Enhanced logging for Gmail OAuth users
+    const isGmailUser = user.email?.endsWith('@gmail.com');
+    const isOAuthProvider = user.app_metadata?.provider === 'google';
+    
+    if (isGmailUser || isOAuthProvider) {
+      console.log('🔍 GMAIL_OAUTH_DEBUG: User authentication detected', {
+        timestamp: new Date().toISOString(),
+        email: user.email,
+        userId: user.id,
+        provider: user.app_metadata?.provider,
+        isGmailUser,
+        isOAuthProvider,
+        emailDomain: user.email?.split('@')[1],
+        fullUserObject: {
+          id: user.id,
+          email: user.email,
+          email_confirmed_at: user.email_confirmed_at,
+          phone: user.phone,
+          created_at: user.created_at,
+          updated_at: user.updated_at,
+          app_metadata: user.app_metadata,
+          user_metadata: user.user_metadata,
+          identities: user.identities
+        }
+      });
+    }
+
 
 
     // First check if user is an admin (check both admin_users table and is_admin flag)
+    const debugInfo = {
+      userId: user.id,
+      userEmail: user.email,
+      emailLength: user.email?.length,
+      emailCharCodes: user.email?.split('').map(c => c.charCodeAt(0)),
+      authProvider: user.app_metadata?.provider,
+      userMetadata: user.user_metadata
+    };
+    
+    console.log('🔍 AUTH_DEBUG: Checking admin status for user:', debugInfo);
+    
+    // Extra logging for Gmail users
+    if (isGmailUser || isOAuthProvider) {
+      console.log('🔍 GMAIL_OAUTH_DEBUG: About to check admin_users table for Gmail user', {
+        timestamp: new Date().toISOString(),
+        email: user.email,
+        emailBytes: new TextEncoder().encode(user.email),
+        normalizedEmail: user.email?.toLowerCase().trim(),
+        isExactMatch_brownieswithnuts: user.email === 'brownieswithnuts@gmail.com',
+        isExactMatch_sinscrit: user.email === 'sinscrit@gmail.com'
+      });
+    }
+    
     const { data: adminUser, error: adminError } = await supabase
       .from('admin_users')
       .select('email, full_name, role')
       .eq('email', user.email)
       .single();
+      
+    console.log('🔍 AUTH_DEBUG: Admin user query result:', {
+      adminUser,
+      adminError: adminError?.message,
+      adminErrorCode: adminError?.code,
+      adminErrorDetails: adminError?.details
+    });
+    
+    // Detailed Gmail OAuth logging for admin query
+    if (isGmailUser || isOAuthProvider) {
+      console.log('🔍 GMAIL_OAUTH_DEBUG: Admin query result for Gmail user', {
+        timestamp: new Date().toISOString(),
+        queryEmail: user.email,
+        foundAdminUser: !!adminUser,
+        adminUserData: adminUser,
+        hasError: !!adminError,
+        errorDetails: {
+          message: adminError?.message,
+          code: adminError?.code,
+          details: adminError?.details,
+          hint: adminError?.hint
+        },
+        sqlState: adminError?.code,
+        isRLSError: adminError?.message?.includes('policy') || adminError?.message?.includes('RLS'),
+        is406Error: adminError?.code === '406' || adminError?.message?.includes('406')
+      });
+    }
 
-    // Also check is_admin flag in users table
-    const { data: userWithAdminFlag, error: userFlagError } = await supabase
+    // Also check users table for user info (no is_admin column)
+    const { data: userInfo, error: userInfoError } = await supabase
       .from('users')
-      .select('email, full_name, role, is_admin')
+      .select('email, full_name, role')
       .eq('id', user.id)
       .single();
 
     const isAdminByTable = !adminError && adminUser;
-    const isAdminByFlag = !userFlagError && userWithAdminFlag?.is_admin;
+    
+    // Special handling for OAuth users with specific email domains
+    const isOAuthUser = user.app_metadata?.provider === 'google';
+    const isAllowedOAuthEmail = user.email === 'brownieswithnuts@gmail.com' || user.email === 'sinscrit@gmail.com';
+    const isTempOAuthAdmin = isOAuthUser && isAllowedOAuthEmail;
+    
+    console.log('🔍 AUTH_DEBUG: Admin check results:', {
+      isAdminByTable,
+      isOAuthUser,
+      isAllowedOAuthEmail,
+      isTempOAuthAdmin,
+      finalIsAdmin: isAdminByTable || isTempOAuthAdmin,
+      userInfoError: userInfoError?.message
+    });
+    
+    // Final decision logging for Gmail users
+    if (isGmailUser || isOAuthProvider) {
+      console.log('🔍 GMAIL_OAUTH_DEBUG: Final admin decision for Gmail user', {
+        timestamp: new Date().toISOString(),
+        email: user.email,
+        decision: {
+          isAdminByTable,
+          isOAuthUser,
+          isAllowedOAuthEmail,
+          isTempOAuthAdmin,
+          finalIsAdmin: isAdminByTable || isTempOAuthAdmin,
+          willGrantAccess: isAdminByTable || isTempOAuthAdmin
+        },
+        reasoning: {
+          foundInAdminTable: isAdminByTable,
+          isGoogleOAuth: isOAuthUser,
+          isInAllowlist: isAllowedOAuthEmail,
+          tempAccessGranted: isTempOAuthAdmin
+        }
+      });
+    }
 
-    if (isAdminByTable || isAdminByFlag) {
+    if (isAdminByTable || isTempOAuthAdmin) {
       // User is an admin - get account context
       const accounts = await getAccountsForUser(user.id);
       
@@ -277,17 +381,38 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
         };
       }
 
-      // Prioritize admin_users data if available, else use users table data
-      const userInfo = isAdminByTable ? adminUser : userWithAdminFlag;
+      // Prioritize admin_users data if available, else use users table data, else OAuth user data
+      const finalUserInfo = isAdminByTable ? adminUser : (userInfo || {
+        email: user.email,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        role: 'admin'
+      });
       
       const authUser: AuthUser = {
         id: user.id,
-        email: userInfo.email,
-        fullName: userInfo.full_name || undefined,
-        role: userInfo.role || undefined,
+        email: finalUserInfo.email,
+        fullName: finalUserInfo.full_name || undefined,
+        role: finalUserInfo.role || undefined,
         currentAccount: currentAccountContext,
         availableAccounts: accounts
       };
+      
+      // Log successful authentication for Gmail users
+      if (isGmailUser || isOAuthProvider) {
+        console.log('🔍 GMAIL_OAUTH_DEBUG: Successfully authenticated Gmail user', {
+          timestamp: new Date().toISOString(),
+          authUser: {
+            id: authUser.id,
+            email: authUser.email,
+            fullName: authUser.fullName,
+            role: authUser.role,
+            accountsCount: authUser.availableAccounts?.length || 0,
+            currentAccountId: authUser.currentAccount?.id
+          },
+          accessMethod: isAdminByTable ? 'admin_table' : 'oauth_allowlist'
+        });
+      }
+      
       return { data: authUser };
     }
 
@@ -299,6 +424,21 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       .single();
 
     if (userError || !regularUser) {
+      // Log access denial for Gmail users
+      if (isGmailUser || isOAuthProvider) {
+        console.log('🔍 GMAIL_OAUTH_DEBUG: Access denied for Gmail user', {
+          timestamp: new Date().toISOString(),
+          email: user.email,
+          userId: user.id,
+          reason: 'Not found in admin_users table and not in OAuth allowlist',
+          checkedSources: {
+            adminUsersTable: !isAdminByTable,
+            oauthAllowlist: !isTempOAuthAdmin,
+            usersTable: userError?.message || 'not found'
+          },
+          suggestedAction: 'Add user to admin_users table or update OAuth allowlist'
+        });
+      }
       return { data: null };
     }
 
@@ -1192,18 +1332,7 @@ export async function isSystemAdmin(userId: string): Promise<boolean> {
       .eq('id', userId)
       .single();
 
-    if (!adminError && adminUser) {
-      return true;
-    }
-
-    // Check is_admin flag in users table
-    const { data: userWithAdminFlag, error: userFlagError } = await supabase
-      .from('users')
-      .select('is_admin')
-      .eq('id', userId)
-      .single();
-
-    return !userFlagError && userWithAdminFlag?.is_admin === true;
+    return !adminError && !!adminUser;
   } catch (error) {
     console.error('Error checking system admin status:', error);
     return false;

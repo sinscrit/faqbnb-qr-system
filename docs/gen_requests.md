@@ -1553,4 +1553,129 @@ Fix critical user experience issues in the registration page including duplicate
 
 ---
 
-*Next Request: REQ-020* 
+## REQ-020: BUG FIX REQUEST - OAuth Registration PKCE Flow Implementation for Client-Side Registration
+**Date**: August 8, 2025  
+**Type**: Bug Fix Implementation (Critical)  
+**Complexity**: 8 Points (Medium-High Complexity)
+
+### Request Summary
+Fix critical OAuth registration bug where Google OAuth authentication succeeds but server-side code exchange fails due to PKCE (Proof Key for Code Exchange) flow violations. Currently, users complete OAuth authentication successfully but registration fails at server-side code exchange with "invalid request: both auth code and code verifier should be non-empty" errors. Implement client-side OAuth registration flow that respects PKCE security model.
+
+### Detailed Requirements
+
+#### 1. OAuth Callback Simplification (3 points)
+- **Issue**: Server-side `exchangeCodeForSession()` fails because PKCE code verifier is client-side only
+- **Root Cause**: Server trying to exchange OAuth code without access to client-generated PKCE verifier
+- **Fix Required**: Remove server-side code exchange, redirect to client for proper PKCE flow handling
+- **Files Affected**:
+  - `src/app/auth/oauth/callback/route.ts` (remove 100+ lines of broken server-side registration)
+  - OAuth callback should only redirect with success parameters, not attempt registration
+
+#### 2. Client-Side OAuth Registration Handler (2 points)  
+- **Issue**: No client-side mechanism to detect OAuth completion and trigger registration
+- **Fix Required**: Add OAuth success detection and registration completion on client-side
+- **Implementation**: `useEffect` hook to detect OAuth success and call authenticated registration API
+- **Files Affected**:
+  - `src/app/register/RegistrationPageContent.tsx` (OAuth success detection logic)
+  - Entry mode detection to handle OAuth success parameters
+  - State management for OAuth completion flow
+
+#### 3. Authenticated Registration API Endpoint (2 points)
+- **Issue**: No API endpoint for authenticated users to complete registration
+- **Fix Required**: Create new API endpoint that accepts authenticated session for registration
+- **Implementation**: Use existing registration logic but with session-based auth instead of password
+- **Files Affected**:
+  - `src/app/api/auth/complete-oauth-registration/route.ts` (new authenticated registration endpoint)
+  - Reuse existing `createUser`, `createDefaultAccount`, `linkUserToAccount` functions
+  - Session validation and user creation with OAuth metadata
+
+#### 4. Registration Success Flow Integration (1 point)
+- **Issue**: OAuth registration has no proper success/redirect flow
+- **Fix Required**: Integrate OAuth registration with existing success page and redirects
+- **Implementation**: Redirect to `/register/success` after successful OAuth registration
+- **Files Affected**:
+  - `src/app/register/success/page.tsx` (OAuth success messaging)
+  - Registration completion state management
+  - Success page integration with OAuth-specific messaging
+
+### Complexity Analysis
+
+#### OAuth Architecture Restructuring (3 points)
+- **Server-Side Removal**: Safely removing 100+ lines of broken OAuth code
+- **PKCE Compliance**: Ensuring proper PKCE flow respect without breaking security
+- **Redirect Flow**: Correct OAuth callback → client detection → registration completion flow
+- **Risk Level**: Medium - Architectural change to OAuth handling
+
+#### Client-Side OAuth Detection (2 points)
+- **Async Flow Management**: Complex OAuth success detection and registration triggering
+- **State Management**: OAuth state vs registration state coordination
+- **Error Handling**: Multiple failure points in OAuth → registration chain
+- **Risk Level**: Medium - New async flow with multiple components
+
+#### Authenticated API Development (2 points)
+- **Session-Based Auth**: API endpoint that validates authenticated sessions
+- **Registration Logic Reuse**: Leverage existing registration infrastructure
+- **Error Handling**: Session validation and registration failure scenarios
+- **Risk Level**: Low-Medium - New endpoint using existing proven logic
+
+#### Integration Testing (1 point)
+- **End-to-End Testing**: Complete OAuth flow from registration page to success
+- **Multiple Email Testing**: Different Gmail accounts and OAuth scenarios
+- **Database Verification**: Ensure complete user/account creation
+- **Risk Level**: Low - Testing and validation of implemented solution
+
+### Technical Challenges
+1. **PKCE Security Model**: Respecting OAuth security without compromising registration flow
+2. **Async State Management**: Coordinating OAuth completion with registration process
+3. **Error Handling**: Multiple failure points across OAuth → detection → API → success chain
+4. **Session Validation**: Ensuring authenticated API endpoint security
+5. **Existing Flow Preservation**: Not breaking current email/password registration
+
+### Implementation Priority
+**Critical Priority** - OAuth registration is completely non-functional, blocking Google-authenticated user registration entirely.
+
+### Current Bug Evidence
+- **OAuth Authentication**: ✅ Works - users successfully authenticate via Google
+- **Server-Side Code Exchange**: ❌ Fails - "invalid request: both auth code and code verifier should be non-empty"
+- **User Registration**: ❌ Fails - no user created in application `users` table  
+- **Access Request Completion**: ❌ Fails - `registration_date` remains `null`
+- **User Impact**: Complete inability to register via Google OAuth despite successful authentication
+
+### Database Evidence
+- **Auth Users Table**: ✅ User created (OAuth authentication works)
+- **Application Users Table**: ❌ Empty (registration fails)
+- **Access Requests Table**: ❌ `registration_date: null` (registration incomplete)
+- **Accounts Table**: ❌ No default account created
+
+### Architecture Solution
+**Current (Broken)**:
+```
+OAuth → Server Code Exchange → Server Registration → Success
+         ↑ FAILS HERE due to PKCE
+```
+
+**Fixed (Client-Side)**:
+```
+OAuth → Client Detection → Authenticated API → Success
+        ↑ Respects PKCE   ↑ Uses session    ↑ Complete registration
+```
+
+### Related Files Reference
+- **OAuth Callback**: `src/app/auth/oauth/callback/route.ts` (simplify, remove server-side registration)
+- **Registration Page**: `src/app/register/RegistrationPageContent.tsx` (OAuth detection logic)
+- **New API Endpoint**: `src/app/api/auth/complete-oauth-registration/route.ts` (new authenticated registration)
+- **Success Page**: `src/app/register/success/page.tsx` (OAuth success integration)
+- **Registration Logic**: `src/lib/auth.ts` (reuse existing functions)
+- **Access Validation**: `src/lib/access-validation.ts` (reuse validation logic)
+- **Types**: `src/types/index.ts` (OAuth registration types)
+
+### Technical Specifications
+- **OAuth Flow**: Google OAuth → Supabase PKCE → Client detection → Authenticated registration
+- **Authentication**: Session-based validation for registration API
+- **Registration**: Complete user/account creation using existing proven logic
+- **Success Flow**: Redirect to `/register/success` with OAuth-specific messaging
+- **Error Handling**: Comprehensive error scenarios across entire OAuth registration chain
+
+---
+
+*Next Request: REQ-021* 

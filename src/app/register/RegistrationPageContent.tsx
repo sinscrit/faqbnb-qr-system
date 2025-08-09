@@ -102,6 +102,7 @@ export default function RegistrationPageContent() {
     errors: []
   });
   const [isValidatingParams, setIsValidatingParams] = useState(true);
+
   
   // Manual entry state (REQ-019 Task 5.3)
   const [manualEntry, setManualEntry] = useState({
@@ -115,11 +116,30 @@ export default function RegistrationPageContent() {
   
   console.log(`${DEBUG_PREFIX} REGISTRATION_PAGE_MOUNTED`, {
     timestamp: new Date().toISOString(),
-    url: window.location.href,
+    url: typeof window !== 'undefined' ? window.location.href : 'server-side',
     authLoading,
     hasUser: !!user,
     userId: user?.id
   });
+  
+  // Enhanced logging for Gmail OAuth registration (using existing searchParams)
+  const paramCode = searchParams.get('code');
+  const paramEmail = searchParams.get('email');
+  const paramAccessCode = searchParams.get('accessCode');
+  
+  if (paramEmail && paramEmail.endsWith('@gmail.com')) {
+    console.log('🔍 GMAIL_REGISTRATION_DEBUG: Gmail OAuth registration detected', {
+      timestamp: new Date().toISOString(),
+      gmailEmail: paramEmail,
+      hasOAuthCode: !!paramCode,
+      oauthCode: paramCode?.substring(0, 10) + '...',
+      hasAccessCode: !!paramAccessCode,
+      accessCode: paramAccessCode?.substring(0, 10) + '...',
+      isOAuthRegistration: !!paramCode && !paramAccessCode,
+      isAccessCodeRegistration: !!paramAccessCode,
+      currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
+    });
+  }
 
   // Redirect authenticated users
   useEffect(() => {
@@ -155,19 +175,24 @@ export default function RegistrationPageContent() {
       });
 
       if (isOAuthCallback) {
-        // OAuth callback - Supabase will handle authentication
-        console.log(`${DEBUG_PREFIX} OAUTH_CALLBACK_DETECTED`, {
+        // This is NOT an OAuth callback - it's a registration link with a code parameter
+        console.log(`${DEBUG_PREFIX} REGISTRATION_WITH_CODE_PARAM`, {
           timestamp: new Date().toISOString(),
-          message: 'OAuth callback detected, letting Supabase handle authentication'
+          message: 'Registration page with code parameter - treating as valid registration link',
+          code: code?.substring(0, 4) + '...',
+          email: email
         });
         
-        // For OAuth, we don't validate the same way - just pass through
+        // Treat this as a valid registration link
         setUrlParams({
           code: code || '',
           email: email || '',
-          isValid: true, // OAuth will handle validation
+          isValid: true,
           errors: []
         });
+        
+        setIsValidatingParams(false);
+        setEntryMode('url');
         return;
       }
 
@@ -213,6 +238,14 @@ export default function RegistrationPageContent() {
         setMessage(null);
       }
 
+      console.log(`${DEBUG_PREFIX} VALIDATION_COMPLETE`, {
+        timestamp: new Date().toISOString(),
+        settingIsValidatingParams: false,
+        entryMode: entryDetection.mode,
+        isValid,
+        errors: errors.length
+      });
+      
       setIsValidatingParams(false);
     };
 
@@ -231,6 +264,8 @@ export default function RegistrationPageContent() {
       });
     }
   }, [searchParams, message]);
+
+
 
   // Show loading indicator while authentication or parameter validation is in progress
   if (authLoading || isValidatingParams) {

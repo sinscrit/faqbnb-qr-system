@@ -24,7 +24,7 @@ export default function LoginPageContent() {
   
   console.log(`${DEBUG_PREFIX} LOGIN_PAGE_MOUNTED`, {
     timestamp: new Date().toISOString(),
-    url: window.location.href,
+    url: typeof window !== 'undefined' ? window.location.href : 'server-side',
     authLoading,
     hasUser: !!user,
     userId: user?.id
@@ -35,10 +35,12 @@ export default function LoginPageContent() {
   
   const [loginMessage, setLoginMessage] = useState<LoginMessage | null>(null);
 
-  // Handle URL parameters for messages
+  // Handle URL parameters for messages and OAuth errors
   useEffect(() => {
     const message = searchParams.get('message');
     const type = searchParams.get('type');
+    const error = searchParams.get('error');
+    const errorCode = searchParams.get('error_code');
 
     if (message) {
       setLoginMessage({
@@ -46,7 +48,48 @@ export default function LoginPageContent() {
         message: decodeURIComponent(message),
       });
       // Clean up URL
-      window.history.replaceState({}, '', '/login');
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', '/login');
+      }
+    } else if (error) {
+      // Handle OAuth errors
+      setLoginMessage({
+        type: 'error',
+        message: decodeURIComponent(error),
+      });
+      // Clean up URL
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', '/login');
+      }
+    }
+  }, [searchParams]);
+
+  // Handle OAuth code exchange for login
+  useEffect(() => {
+    const code = searchParams.get('code');
+    
+    if (code && !searchParams.get('accessCode')) {
+      // This is a login OAuth flow (no accessCode means not registration)
+      console.log('🔗 LOGIN_OAUTH: OAuth code detected, auth context should handle exchange', {
+        timestamp: new Date().toISOString(),
+        hasCode: !!code,
+        url: typeof window !== 'undefined' ? window.location.href : 'server-side'
+      });
+      
+      // The Supabase client will automatically handle the PKCE flow
+      // due to detectSessionInUrl: true in the AuthContext
+      // Just show a loading message while auth processes
+      setLoginMessage({
+        type: 'info',
+        message: 'Completing Google sign-in...',
+      });
+      
+      // Clean up URL after a brief delay to let auth context process
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.history.replaceState({}, '', '/login');
+        }
+      }, 1000);
     }
   }, [searchParams]);
 
