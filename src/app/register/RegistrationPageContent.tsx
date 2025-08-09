@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import type { ReadonlyURLSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -91,7 +92,7 @@ function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetect
 export default function RegistrationPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
   
   const [message, setMessage] = useState<RegistrationMessage | null>(null);
   const [entryMode, setEntryMode] = useState<'url' | 'manual'>('url');
@@ -265,7 +266,96 @@ export default function RegistrationPageContent() {
     }
   }, [searchParams, message]);
 
-
+  // OAuth Success Detection and Registration Trigger (REQ-020 Task 3.1)
+  useEffect(() => {
+    const handleOAuthSuccess = async () => {
+      const DEBUG_PREFIX_OAUTH = "🔗 OAUTH_SUCCESS_HANDLER:";
+      
+      // Detect OAuth success parameters
+      const oauthSuccess = searchParams.get('oauth_success');
+      const accessCode = searchParams.get('accessCode');
+      const email = searchParams.get('email');
+      
+      // Check if this is an OAuth success callback
+      if (oauthSuccess === 'true' && accessCode && email && user) {
+        console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_SUCCESS_DETECTED`, {
+          timestamp: new Date().toISOString(),
+          email: email,
+          accessCode: accessCode.substring(0, 4) + '...',
+          userId: user.id,
+          provider: 'google' // OAuth success indicates Google OAuth was used
+        });
+        
+        try {
+          // Get the current session for API authentication
+          if (!session?.access_token) {
+            throw new Error('No valid session found');
+          }
+          
+          console.log(`${DEBUG_PREFIX_OAUTH} CALLING_REGISTRATION_API`, {
+            timestamp: new Date().toISOString(),
+            endpoint: '/api/auth/complete-oauth-registration',
+            accessCode: accessCode.substring(0, 4) + '...',
+            email: email
+          });
+          
+          // Call the OAuth registration API
+          const response = await fetch('/api/auth/complete-oauth-registration', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              accessCode: accessCode,
+              email: email
+            })
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            console.log(`${DEBUG_PREFIX_OAUTH} REGISTRATION_COMPLETED`, {
+              timestamp: new Date().toISOString(),
+              userId: result.user?.id,
+              email: result.user?.email,
+              accountId: result.account?.id,
+              registrationMethod: result.registrationMethod
+            });
+            
+            // Success - redirect to success page
+            router.push('/register/success');
+          } else {
+            console.error(`${DEBUG_PREFIX_OAUTH} REGISTRATION_FAILED`, {
+              timestamp: new Date().toISOString(),
+              status: response.status,
+              error: result.error,
+              errorCode: result.errorCode
+            });
+            
+            // Show error message to user
+            setMessage({
+              type: 'error',
+              message: `Registration failed: ${result.error || 'Unknown error'}`
+            });
+          }
+          
+        } catch (error) {
+          console.error(`${DEBUG_PREFIX_OAUTH} API_CALL_ERROR:`, error);
+          
+          setMessage({
+            type: 'error',
+            message: `Registration error: ${error instanceof Error ? error.message : 'Unknown error'}`
+          });
+        }
+      }
+    };
+    
+    // Only trigger OAuth handling if we have a user and session (authenticated)
+    if (user && session && !authLoading) {
+      handleOAuthSuccess();
+    }
+  }, [searchParams, user, session, authLoading, router]);
 
   // Show loading indicator while authentication or parameter validation is in progress
   if (authLoading || isValidatingParams) {

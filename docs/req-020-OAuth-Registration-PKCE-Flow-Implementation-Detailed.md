@@ -136,32 +136,32 @@ Per the overview document, the following files are authorized for modification:
 
 **Objective**: Add OAuth completion detection and registration triggering to registration page
 
-#### 3.1 Analyze Current Registration Page Implementation
-- [ ] Use `read_file` to examine `src/app/register/RegistrationPageContent.tsx`
-- [ ] Review `detectEntryMode()` function (lines 37-89)
-- [ ] Understand current OAuth detection logic (lines 44-66)
-- [ ] Identify where OAuth completion handler should be added
+#### 3.1 Analyze Current Registration Page Implementation -unit tested-
+- [x] Use `read_file` to examine `src/app/register/RegistrationPageContent.tsx`
+- [x] Review `detectEntryMode()` function (lines 37-89)
+- [x] Understand current OAuth detection logic (lines 44-66)
+- [x] Identify where OAuth completion handler should be added
 
-#### 3.2 Implement OAuth Success Detection
-- [ ] Add new `useEffect` hook for OAuth success detection
-- [ ] Detect URL parameters: `oauth_success`, `accessCode`, `email`
-- [ ] Check for authenticated session using Supabase client
-- [ ] Add state management for OAuth completion flow
-- [ ] Distinguish OAuth success from standard access code registration
+#### 3.2 Implement OAuth Success Detection -unit tested-
+- [x] Add new `useEffect` hook for OAuth success detection
+- [x] Detect URL parameters: `oauth_success`, `accessCode`, `email`
+- [x] Check for authenticated session using Supabase client
+- [x] Add state management for OAuth completion flow
+- [x] Distinguish OAuth success from standard access code registration
 
-#### 3.3 Create OAuth Registration Completion Handler
-- [ ] Add `handleOAuthRegistrationCompletion()` function
-- [ ] Call new `/api/auth/complete-oauth-registration` endpoint
-- [ ] Pass session authentication headers
-- [ ] Include access code and email parameters
-- [ ] Handle API response and error scenarios
-- [ ] Integrate with existing error handling system
+#### 3.3 Create OAuth Registration Completion Handler -unit tested-
+- [x] Add `handleOAuthRegistrationCompletion()` function
+- [x] Call new `/api/auth/complete-oauth-registration` endpoint
+- [x] Pass session authentication headers
+- [x] Include access code and email parameters
+- [x] Handle API response and error scenarios
+- [x] Integrate with existing error handling system
 
-#### 3.4 Modify Entry Mode Detection
-- [ ] Update `detectEntryMode()` to properly handle OAuth completion
-- [ ] Add OAuth success mode alongside 'url' and 'manual' modes
-- [ ] Fix OAuth callback detection logic (lines 44-66 if needed)
-- [ ] Ensure proper state transitions for OAuth flow
+#### 3.4 Modify Entry Mode Detection -unit tested-
+- [x] Update `detectEntryMode()` to properly handle OAuth completion
+- [x] Add OAuth success mode alongside 'url' and 'manual' modes
+- [x] Fix OAuth callback detection logic (lines 44-66 if needed)
+- [x] Ensure proper state transitions for OAuth flow
 
 #### 3.5 Test OAuth Detection and Completion
 - [ ] Use Playwright MCP or manual testing
