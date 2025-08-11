@@ -3,21 +3,30 @@
 # FAQBNB Server Management Script - Production Mode (QR Code Validation)
 # Purpose: Kill and restart server in production mode with optional cache clearing
 # Enhanced to eliminate Fast Refresh issues for stable QR code validation
-# Usage: bash restart_all_servers.sh [--rebuild|--clear-cache]
+# Usage: bash restart_all_servers.sh [--rebuild|--clear-cache|--clean]
 
 # Check for rebuild parameter
 REBUILD_MODE=false
+CLEAN_MODE=false
 if [[ "$1" == "--rebuild" || "$1" == "--clear-cache" ]]; then
     REBUILD_MODE=true
     echo "🔄 FAQBNB Server Management - REBUILD MODE (Cache Clearing + Fresh Build)"
     echo "============================================================================="
     echo "🎯 Purpose: Clean production build to eliminate Fast Refresh interference"
     echo "🧹 Cache will be cleared and fresh build will be performed"
+elif [[ "$1" == "--clean" ]]; then
+    REBUILD_MODE=true
+    CLEAN_MODE=true
+    echo "🔄 FAQBNB Server Management - CLEAN MODE (Full Reinstall + Rebuild)"
+    echo "============================================================================="
+    echo "🎯 Purpose: Complete clean slate with fresh dependency installation"
+    echo "🧹 All dependencies will be reinstalled from scratch"
 else
     echo "🔄 FAQBNB Server Management - RESTART MODE (No Rebuild)"
     echo "============================================================================="
     echo "🎯 Purpose: Restart existing production server"
-    echo "💡 Use '--rebuild' parameter to clear cache and rebuild"
+    echo "💡 Use '--rebuild' to clear cache and rebuild"
+    echo "💡 Use '--clean' for full dependency reinstall"
 fi
 echo ""
 
@@ -83,9 +92,44 @@ kill_existing_servers() {
     sleep 3
 }
 
+# NEW: Function to remove lock files
+remove_lock_files() {
+    echo "🔒 Removing lock files..."
+    
+    # Remove package-lock.json if it exists
+    if [ -f "package-lock.json" ]; then
+        echo "📁 Removing package-lock.json..."
+        rm -f package-lock.json
+        echo "✅ package-lock.json removed"
+    else
+        echo "ℹ️  package-lock.json not found"
+    fi
+    
+    # Remove yarn.lock if it exists
+    if [ -f "yarn.lock" ]; then
+        echo "📁 Removing yarn.lock..."
+        rm -f yarn.lock
+        echo "✅ yarn.lock removed"
+    else
+        echo "ℹ️  yarn.lock not found"
+    fi
+    
+    # Remove pnpm-lock.yaml if it exists
+    if [ -f "pnpm-lock.yaml" ]; then
+        echo "📁 Removing pnpm-lock.yaml..."
+        rm -f pnpm-lock.yaml
+        echo "✅ pnpm-lock.yaml removed"
+    else
+        echo "ℹ️  pnpm-lock.yaml not found"
+    fi
+}
+
 # NEW: Function to clear Next.js cache and build artifacts
 clear_cache_and_build() {
     echo "🧹 Clearing Next.js cache and build artifacts..."
+    
+    # Remove lock files to prevent conflicts
+    remove_lock_files
     
     # Remove .next directory to clear all cached data
     if [ -d ".next" ]; then
@@ -101,6 +145,35 @@ clear_cache_and_build() {
         echo "📁 Removing out directory..."
         rm -rf out
         echo "✅ out directory cleared"
+    fi
+    
+    # Handle dependency installation based on mode
+    if [ "$CLEAN_MODE" = true ]; then
+        # Clean mode: Remove node_modules and do fresh install
+        if [ -d "node_modules" ]; then
+            echo "📁 Removing node_modules directory (clean mode)..."
+            rm -rf node_modules
+            echo "✅ node_modules directory cleared"
+        fi
+        echo "📦 Installing fresh dependencies (clean mode)..."
+        if npm install; then
+            echo "✅ Dependencies installed successfully"
+        else
+            echo "❌ Dependency installation failed"
+            return 1
+        fi
+    elif [ ! -d "node_modules" ]; then
+        # Rebuild mode but node_modules missing: Install dependencies
+        echo "📦 Installing dependencies (node_modules missing)..."
+        if npm install; then
+            echo "✅ Dependencies installed successfully"
+        else
+            echo "❌ Dependency installation failed"
+            return 1
+        fi
+    else
+        # Rebuild mode with existing node_modules: Keep them
+        echo "ℹ️  Keeping existing node_modules (use --clean for full reinstall)"
     fi
     
     echo "🏗️  Running production build..."
@@ -271,7 +344,10 @@ main() {
         local duration=$((end_time - start_time))
         
         echo ""
-        if [ "$REBUILD_MODE" = true ]; then
+        if [ "$CLEAN_MODE" = true ]; then
+            echo "🎉 Production server completely rebuilt and restarted successfully!"
+            echo "🧹 Full clean install: lock files, cache, and dependencies refreshed"
+        elif [ "$REBUILD_MODE" = true ]; then
             echo "🎉 Production server rebuilt and restarted successfully!"
             echo "🧹 Cache cleared and fresh build completed"
         else
@@ -292,6 +368,7 @@ main() {
         echo "   🛑 Stop servers: pkill -f 'npm start'"
         echo "   🔄 Quick restart: bash restart_all_servers.sh"
         echo "   🧹 Rebuild restart: bash restart_all_servers.sh --rebuild"
+        echo "   🆕 Clean restart: bash restart_all_servers.sh --clean"
     else
         echo "❌ Failed to start production server"
         echo "🔍 Check logs above for specific error details"

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
-import { generatePDFBuffer } from '@/lib/pdf_generator_module.js';
+
+// Import CommonJS module
+const { generatePDFBuffer } = require('@/lib/pdf_generator_module.js');
 
 // Types
 interface QRCodeItem {
