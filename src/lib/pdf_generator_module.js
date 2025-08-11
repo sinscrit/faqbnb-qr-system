@@ -297,156 +297,11 @@ function generatePDF(config, outputPath) {
         fs.mkdirSync(outputDir, { recursive: true });
       }
       
-      // Create PDF document with font error handling
-      let doc;
-      try {
-        console.log('🔍 PDF_FILE_CREATE_DEBUG: Attempting to create PDFDocument...');
-        
-        // Validate font files exist before creating document
-        const projectRoot = process.cwd();
-        const publicFontsPath = path.join(projectRoot, 'public', 'fonts');
-        const fontFile = path.join(publicFontsPath, 'Helvetica.afm');
-        
-        if (!fs.existsSync(fontFile)) {
-          console.log('🔍 FONT_FILE_VALIDATION_ERROR: Font file not found:', fontFile);
-          throw new Error(`Font file not found: ${fontFile}`);
-        }
-        
-        console.log('🔍 FONT_FILE_VALIDATION_DEBUG: Font file exists:', fontFile);
-        
-        doc = new PDFDocument({
-          size: [pageWidth, pageHeight],
-          margins: { top: 0, bottom: 0, left: 0, right: 0 }
-        });
-        
-        // Apply the same font method overrides as in buffer generation
-        console.log('🔍 PDF_FILE_OVERRIDE_DEBUG: Setting up font method overrides...');
-        
-        // Prevent font loading by overriding font method
-        doc.font = function(fontName, fontSize) {
-          console.log('🔍 FONT_FILE_OVERRIDE: Intercepting font call:', fontName, fontSize);
-          if (fontSize) {
-            this._fontSize = fontSize;
-          }
-          return this;
-        };
-        
-        // Override fillColor to prevent font-related errors
-        const originalFillColor = doc.fillColor;
-        doc.fillColor = function(color) {
-          try {
-            return originalFillColor.call(this, color);
-          } catch (error) {
-            console.log('🔍 FONT_FILE_FALLBACK: fillColor failed, ignoring');
-            return this;
-          }
-        };
-        
-        // Override widthOfString with robust fallback
-        const originalWidthOfString = doc.widthOfString;
-        doc.widthOfString = function(text, options) {
-          try {
-            if (!text) return 0;
-            const fontSize = this._fontSize || options?.size || 12;
-            const avgCharWidth = fontSize * 0.6;
-            return text.length * avgCharWidth;
-          } catch (error) {
-            console.log('🔍 FONT_FILE_FALLBACK: widthOfString failed, using approximation for:', text);
-            const fontSize = this._fontSize || 12;
-            const avgCharWidth = fontSize * 0.6;
-            return Math.max((text || '').length * avgCharWidth, 10);
-          }
-        };
-        
-        // Override text method with comprehensive font error handling
-        const originalText = doc.text;
-        doc.text = function(text, x, y, options) {
-          try {
-            // Always bypass PDFKit's font system completely
-            console.log('🔍 FONT_FILE_BYPASS: Rendering text without font metrics:', text);
-            
-            // Handle font size from options
-            let fontSize = 12;
-            if (typeof options === 'object' && options !== null) {
-              fontSize = options.size || this._fontSize || 12;
-            } else if (typeof options === 'number') {
-              fontSize = options;
-            } else if (this._fontSize) {
-              fontSize = this._fontSize;
-            }
-            
-            this._fontSize = fontSize;
-            
-            // Use direct PDF text operations without font metrics
-            this._renderTextDirect(text || '', x, y, fontSize);
-            return this;
-            
-          } catch (error) {
-            console.log('🔍 FONT_FILE_FALLBACK: text method failed completely, skipping text:', text);
-            return this;
-          }
-        };
-        
-        // Override fontSize
-        const originalFontSize = doc.fontSize;
-        doc.fontSize = function(size) {
-          try {
-            this._fontSize = size;
-            if (this._font && this._font.ascender) {
-              return originalFontSize.call(this, size);
-            }
-            return this;
-          } catch (error) {
-            console.log('🔍 FONT_FILE_FALLBACK: fontSize failed, storing size manually');
-            this._fontSize = size;
-            return this;
-          }
-        };
-        
-        // Add complete custom text rendering method that bypasses font system
-        doc._renderTextDirect = function(text, x, y, fontSize) {
-          try {
-            console.log('🔍 FONT_FILE_DIRECT: Rendering text directly:', text, 'at', x, y, 'size', fontSize);
-            
-            // Escape special characters in text for PDF
-            const escapedText = (text || '').toString()
-              .replace(/\\/g, '\\\\')
-              .replace(/\(/g, '\\(')
-              .replace(/\)/g, '\\)')
-              .replace(/\n/g, ' ')
-              .replace(/\r/g, ' ')
-              .substring(0, 100); // Limit text length
-            
-            // Set text state with basic font (Helvetica) and size
-            this._write('BT');
-            this._write(`/Helvetica ${fontSize} Tf`);
-            this._write(`${x} ${y} Td`);
-            this._write(`(${escapedText}) Tj`);
-            this._write('ET');
-            
-            console.log('🔍 FONT_FILE_DIRECT: Text rendered successfully');
-          } catch (error) {
-            console.log('🔍 FONT_FILE_DIRECT: Direct text rendering failed:', error.message);
-            // Try even more basic approach
-            try {
-              this._write(`BT /Helvetica 12 Tf ${x} ${y} Td (${text || ''}) Tj ET`);
-            } catch (basicError) {
-              console.log('🔍 FONT_FILE_DIRECT: Even basic text rendering failed');
-            }
-          }
-        };
-        
-        // Add fallback _text method for backward compatibility
-        doc._text = function(text, x, y, options) {
-          this._renderTextDirect(text, x, y, this._fontSize || 12);
-        };
-        
-        console.log('🔍 PDF_FILE_CREATE_DEBUG: PDFDocument created successfully with overrides');
-        
-      } catch (createError) {
-        console.log('🔍 PDF_FILE_CREATE_ERROR: Failed to create PDFDocument:', createError.message);
-        throw new Error(`Cannot create PDF document: ${createError.message}`);
-      }
+      // Create PDF document
+      const doc = new PDFDocument({
+        size: [pageWidth, pageHeight],
+        margins: { top: 0, bottom: 0, left: 0, right: 0 }
+      });
       
       // Create output file stream
       const writeStream = fs.createWriteStream(outputPath);
@@ -579,8 +434,8 @@ function generatePDF(config, outputPath) {
         }
         
         // Add outer cutlines (solid red lines for cutting) - both layouts
-        // Only show in debug mode or when explicitly needed for cutting
-        if (margin > 0 && finalConfig.debug) {
+        // Show when cutlines are enabled and there are margins
+        if (margin > 0) {
           // Top horizontal
           doc.moveTo(margin, margin)
              .lineTo(pageWidth - margin, margin)
@@ -952,24 +807,12 @@ function generatePDFBuffer(config) {
       
       try {
         console.log('🔍 PDF_CREATE_DEBUG: Attempting to create PDFDocument...');
-        
-        // Validate font files exist before creating document
-        const projectRoot = process.cwd();
-        const publicFontsPath = path.join(projectRoot, 'public', 'fonts');
-        const fontFile = path.join(publicFontsPath, 'Helvetica.afm');
-        
-        if (!fs.existsSync(fontFile)) {
-          console.log('🔍 FONT_VALIDATION_ERROR: Font file not found:', fontFile);
-          throw new Error(`Font file not found: ${fontFile}`);
-        }
-        
-        console.log('🔍 FONT_VALIDATION_DEBUG: Font file exists:', fontFile);
-        
         doc = new PDFDocument({
           size: [pageWidth, pageHeight],
           margins: { top: 0, bottom: 0, left: 0, right: 0 },
           bufferPages: true,
-          autoFirstPage: true
+          autoFirstPage: true,
+          font: null // Disable default font loading
         });
         console.log('🔍 PDF_CREATE_DEBUG: PDFDocument created successfully');
       } catch (createError) {
@@ -993,70 +836,31 @@ function generatePDFBuffer(config) {
       // Comprehensive font method overrides
       console.log('🔍 PDF_OVERRIDE_DEBUG: Setting up font method overrides...');
       
-      // Prevent font loading by overriding font method before any font operations
-      doc.font = function(fontName, fontSize) {
-        console.log('🔍 FONT_OVERRIDE: Intercepting font call:', fontName, fontSize);
-        // Store font size but don't actually load font
-        if (fontSize) {
-          this._fontSize = fontSize;
-        }
-        return this;
-      };
-      
-      // Override fillColor to prevent font-related errors
-      const originalFillColor = doc.fillColor;
-      doc.fillColor = function(color) {
-        try {
-          return originalFillColor.call(this, color);
-        } catch (error) {
-          console.log('🔍 FONT_FALLBACK: fillColor failed, ignoring');
-          return this;
-        }
-      };
-      
-      // Override widthOfString with robust fallback that doesn't access font metrics
+      // Override widthOfString with robust fallback
       const originalWidthOfString = doc.widthOfString;
       doc.widthOfString = function(text, options) {
         try {
-          // Try to calculate width without accessing font.ascender
-          if (!text) return 0;
-          const fontSize = this._fontSize || options?.size || 12;
-          const avgCharWidth = fontSize * 0.6; // Approximate character width
-          return text.length * avgCharWidth;
+          return originalWidthOfString.call(this, text, options);
         } catch (error) {
-          console.log('🔍 FONT_FALLBACK: widthOfString failed, using basic approximation for:', text);
-          const fontSize = this._fontSize || 12;
-          const avgCharWidth = fontSize * 0.6;
-          return Math.max((text || '').length * avgCharWidth, 10);
+          console.log('🔍 FONT_FALLBACK: widthOfString failed, using approximation for:', text);
+          const fontSize = this._fontSize || (options && options.size) || 12;
+          // More accurate character width estimation for better label centering
+          const avgCharWidth = fontSize * 0.5; // Adjusted from 0.6 to 0.5 for better accuracy
+          return Math.max((text || '').length * avgCharWidth, 0);
         }
       };
       
-      // Override text method with comprehensive font error handling
+      // Override text method with font error handling
       const originalText = doc.text;
       doc.text = function(text, x, y, options) {
         try {
-          // Always bypass PDFKit's font system completely
-          console.log('🔍 FONT_BYPASS: Rendering text without font metrics:', text);
-          
-          // Handle font size from options
-          let fontSize = 12;
-          if (typeof options === 'object' && options !== null) {
-            fontSize = options.size || this._fontSize || 12;
-          } else if (typeof options === 'number') {
-            fontSize = options;
-          } else if (this._fontSize) {
-            fontSize = this._fontSize;
-          }
-          
-          this._fontSize = fontSize;
-          
-          // Use direct PDF text operations without font metrics
-          this._renderTextDirect(text || '', x, y, fontSize);
-          return this;
-          
+          return originalText.call(this, text, x, y, options);
         } catch (error) {
-          console.log('🔍 FONT_FALLBACK: text method failed completely, skipping text:', text);
-          return this;
+          console.log('🔍 FONT_FALLBACK: text method failed, using basic drawing for:', text);
+          // Simple fallback - just draw text without font metrics
+          this.save();
+          this.fontSize(this._fontSize || 12);
+          return originalText.call(this, text || '', x, y, { ...options, lineBreak: false });
         }
       };
       
@@ -1064,55 +868,12 @@ function generatePDFBuffer(config) {
       const originalFontSize = doc.fontSize;
       doc.fontSize = function(size) {
         try {
-          this._fontSize = size;
-          // Try to set font size, but don't fail if font not loaded
-          if (this._font && this._font.ascender) {
-            return originalFontSize.call(this, size);
-          }
-          return this;
+          return originalFontSize.call(this, size);
         } catch (error) {
           console.log('🔍 FONT_FALLBACK: fontSize failed, storing size manually');
           this._fontSize = size;
           return this;
         }
-      };
-      
-      // Add complete custom text rendering method that bypasses font system
-      doc._renderTextDirect = function(text, x, y, fontSize) {
-        try {
-          console.log('🔍 FONT_DIRECT: Rendering text directly:', text, 'at', x, y, 'size', fontSize);
-          
-          // Escape special characters in text for PDF
-          const escapedText = (text || '').toString()
-            .replace(/\\/g, '\\\\')
-            .replace(/\(/g, '\\(')
-            .replace(/\)/g, '\\)')
-            .replace(/\n/g, ' ')
-            .replace(/\r/g, ' ')
-            .substring(0, 100); // Limit text length
-          
-          // Set text state with basic font (Helvetica) and size
-          this._write('BT');
-          this._write(`/Helvetica ${fontSize} Tf`);
-          this._write(`${x} ${y} Td`);
-          this._write(`(${escapedText}) Tj`);
-          this._write('ET');
-          
-          console.log('🔍 FONT_DIRECT: Text rendered successfully');
-        } catch (error) {
-          console.log('🔍 FONT_DIRECT: Direct text rendering failed:', error.message);
-          // Try even more basic approach
-          try {
-            this._write(`BT /Helvetica 12 Tf ${x} ${y} Td (${text || ''}) Tj ET`);
-          } catch (basicError) {
-            console.log('🔍 FONT_DIRECT: Even basic text rendering failed');
-          }
-        }
-      };
-      
-      // Add fallback _text method for backward compatibility
-      doc._text = function(text, x, y, options) {
-        this._renderTextDirect(text, x, y, this._fontSize || 12);
       };
       
       console.log('🔍 PDF_OVERRIDE_DEBUG: Font method overrides complete');
@@ -1177,15 +938,18 @@ function generatePDFBuffer(config) {
              .text(qrData.id, qrX + 5, qrY + 5);
         }
         
-        // Add label
-        doc.fontSize(Math.max(6, qrSize * 0.06))
+        // Add label below QR code (centered)
+        const fontSize = Math.max(8, qrSize * 0.08); // Increased minimum font size for better visibility
+        doc.fontSize(fontSize)
            .fillColor('#000000');
         
-        const labelWidth = doc.widthOfString(qrData.label);
+        const labelText = qrData.label || qrData.name || `Item ${i + 1}`;
+        const labelWidth = doc.widthOfString(labelText);
         const labelX = qrX + (qrSize - labelWidth) / 2;
-        const labelY = qrY + qrSize + 8;
+        const labelY = qrY + qrSize + 10; // Increased spacing for better readability
         
-        doc.text(qrData.label, labelX, labelY);
+        console.log(`🔍 LABEL_DEBUG: Rendering "${labelText}" at (${labelX}, ${labelY}) with fontSize ${fontSize}`);
+        doc.text(labelText, labelX, labelY);
         
         if (useFixedBoxes && finalConfig.showCutlines && finalConfig.debug) {
           doc.rect(cellX, cellY, cellWidth, cellHeight)
@@ -1193,9 +957,79 @@ function generatePDFBuffer(config) {
         }
       }
       
-      // Add cutlines (same logic as file version)
+      // Add cutlines if enabled
       if (finalConfig.showCutlines) {
-        // ... cutlines logic (truncated for brevity, same as above)
+        if (useFixedBoxes) {
+          // For fixed box layout, draw cutlines around individual boxes
+          const boxMargin = finalConfig._boxMargin;
+          
+          for (let i = 0; i < qrCodesToGenerate.length; i++) {
+            const row = Math.floor(i / finalConfig.qrCodesPerRow);
+            const col = i % finalConfig.qrCodesPerRow;
+            
+            const cellX = margin + boxMargin + (col * (cellWidth + boxMargin));
+            const cellY = margin + boxMargin + (row * (cellHeight + boxMargin));
+            
+            // Draw dashed cutlines around each box
+            doc.dash(3, { space: 2 });
+            doc.rect(cellX - boxMargin/2, cellY - boxMargin/2, 
+                    cellWidth + boxMargin, cellHeight + boxMargin)
+               .stroke('#FF0000');
+            doc.undash();
+          }
+        } else {
+          // Original adaptive grid cutlines
+          const gridCols = finalConfig.qrCodesPerRow;
+          const gridRows = Math.ceil(finalConfig.qrCodeCount / gridCols);
+          const adaptiveCellWidth = contentWidth / gridCols;
+          const adaptiveCellHeight = contentHeight / gridRows;
+          
+          // Add grid cutlines (dashed)
+          doc.dash(3, { space: 2 });
+          
+          // Vertical cutlines
+          for (let col = 1; col < gridCols; col++) {
+            const x = margin + (col * adaptiveCellWidth);
+            doc.moveTo(x, margin)
+               .lineTo(x, pageHeight - margin)
+               .stroke('#999999');
+          }
+          
+          // Horizontal cutlines
+          for (let row = 1; row < gridRows; row++) {
+            const y = margin + (row * adaptiveCellHeight);
+            doc.moveTo(margin, y)
+               .lineTo(pageWidth - margin, y)
+               .stroke('#999999');
+          }
+          
+          // Reset dash pattern for solid lines
+          doc.undash();
+        }
+        
+        // Add outer cutlines (solid red lines for cutting) - both layouts
+        // Show when cutlines are enabled and there are margins
+        if (margin > 0) {
+          // Top horizontal
+          doc.moveTo(margin, margin)
+             .lineTo(pageWidth - margin, margin)
+             .stroke('#FF0000');
+          
+          // Bottom horizontal
+          doc.moveTo(margin, pageHeight - margin)
+             .lineTo(pageWidth - margin, pageHeight - margin)
+             .stroke('#FF0000');
+          
+          // Left vertical
+          doc.moveTo(margin, margin)
+             .lineTo(margin, pageHeight - margin)
+             .stroke('#FF0000');
+          
+          // Right vertical
+          doc.moveTo(pageWidth - margin, margin)
+             .lineTo(pageWidth - margin, pageHeight - margin)
+             .stroke('#FF0000');
+        }
       }
       
       // Finalize PDF
