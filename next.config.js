@@ -18,6 +18,23 @@ const nextConfig = {
     serverActions: {
       allowedOrigins: ["localhost:3000", "127.0.0.1:3000"]
     }
+  },
+  // Configure webpack to handle PDFKit properly
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Mark PDFKit as external for server-side rendering
+      config.externals = [...(config.externals || []), 'pdfkit'];
+    }
+    
+    // Handle PDFKit's font files and dependencies
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      os: false,
+    };
+    
+    return config;
   }
   // Font preloading headers temporarily disabled to prevent Google Fonts 404 errors causing flickering overlay
   // async headers() {
