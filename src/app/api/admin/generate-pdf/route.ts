@@ -142,6 +142,9 @@ export async function POST(request: NextRequest) {
       qrCodesPerRow: settings.itemsPerRow || 3, // Default to 3 if not provided
       qrCodeSize: qrCodeSize,
       showCutlines: settings.includeCutlines,
+      includeCutlines: settings.includeCutlines, // Add alternative parameter name for cutlines
+      showLabels: settings.includeLabels,        // Add label support - primary parameter
+      includeLabels: settings.includeLabels,     // Add alternative parameter name for labels
       debug: false, // Production mode - no visual debug guides
       outputFileName: filename,
       qrCodes: moduleQRCodes
@@ -154,8 +157,24 @@ export async function POST(request: NextRequest) {
       qrCodesPerRow: moduleConfig.qrCodesPerRow,
       qrCodeSize: moduleConfig.qrCodeSize,
       showCutlines: moduleConfig.showCutlines,
-      includeLabels: moduleQRCodes.length > 0 ? 'Yes (via labels)' : 'No'
+      includeCutlines: moduleConfig.includeCutlines,
+      showLabels: moduleConfig.showLabels,
+      includeLabels: moduleConfig.includeLabels,
+      labelsFromInput: settings.includeLabels,
+      cutlinesFromInput: settings.includeCutlines
     });
+    
+    // Debug font path resolution in web context
+    console.log('🔍 WEB_FONT_DEBUG: Current working directory:', process.cwd());
+    console.log('🔍 WEB_FONT_DEBUG: Font path env:', process.env.PDFKIT_FONT_PATH);
+    const fs = require('fs');
+    const path = require('path');
+    const fontDir = path.join(process.cwd(), 'public/fonts');
+    console.log('🔍 WEB_FONT_DEBUG: Font directory path:', fontDir);
+    console.log('🔍 WEB_FONT_DEBUG: Font directory exists:', fs.existsSync(fontDir));
+    if (fs.existsSync(fontDir)) {
+      console.log('🔍 WEB_FONT_DEBUG: Font files:', fs.readdirSync(fontDir));
+    }
 
     console.log('🔍 PDF_WEBPACK_DEBUG: Starting PDF generation with webpack configuration');
     

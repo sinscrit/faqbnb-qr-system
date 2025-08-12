@@ -237,6 +237,9 @@ function generatePDF(config, outputPath) {
         qrCodeSize: 'medium',   // QR code size: 'small', 'medium', 'large', or custom (e.g., '3cm', '1.5in')
         qrBoxMargin: null,      // Box margin for fixed layout: null = adaptive grid, value = fixed box layout
         showCutlines: true,     // Show cutting guides: true = show cutlines for cutting, false = hide cutlines
+        showLabels: true,       // Show labels: true = show item labels below QR codes, false = hide labels
+        includeLabels: true,    // Include labels: alternative parameter name for showLabels
+        includeCutlines: true,  // Include cutlines: alternative parameter name for showCutlines
         debug: false,           // Debug mode: false = clean output, true = show visual debug guides
         title: null,            // Optional title to display at top of PDF
         qrCodes: [              // Default QR code data array - accepts pre-generated QR code images
@@ -352,10 +355,26 @@ function generatePDF(config, outputPath) {
         }
         
         // Draw QR code (pre-generated image or placeholder)
+        console.log('🔍 QR_IMAGE_DEBUG: Processing QR code', i);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData exists:', !!qrData.imageData);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData type:', typeof qrData.imageData);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData length:', qrData.imageData?.length);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData start:', qrData.imageData?.substring(0, 50));
+        
         if (qrData.imageData) {
-          // Use pre-generated QR code image
-          doc.image(qrData.imageData, qrX, qrY, { width: qrSize, height: qrSize });
+          try {
+            console.log('🔍 QR_IMAGE_DEBUG: Attempting to draw QR image...');
+            // Use pre-generated QR code image
+            doc.image(qrData.imageData, qrX, qrY, { width: qrSize, height: qrSize });
+            console.log('🔍 QR_IMAGE_DEBUG: ✅ QR image drawn successfully');
+          } catch (error) {
+            console.log('🔍 QR_IMAGE_DEBUG: ❌ QR image failed:', error.message);
+            // Fallback to placeholder
+            doc.rect(qrX, qrY, qrSize, qrSize)
+               .fillAndStroke('#E0E0E0', '#000000');
+          }
         } else {
+          console.log('🔍 QR_IMAGE_DEBUG: No imageData, drawing placeholder');
           // Draw placeholder rectangle
           doc.rect(qrX, qrY, qrSize, qrSize)
              .fillAndStroke('#E0E0E0', '#000000');
@@ -759,6 +778,9 @@ function generatePDFBuffer(config) {
         qrCodeSize: 'medium',
         qrBoxMargin: null,
         showCutlines: true,
+        showLabels: true,     // DEFAULT: Show labels by default
+        includeLabels: true,  // DEFAULT: Include labels by default
+        includeCutlines: true, // DEFAULT: Include cutlines by default
         debug: false, // If false, hide visual debug guides (borders, margin boxes)
         qrCodes: [
           { id: 'qr-1', label: 'QR Code 1', imageData: null },
@@ -769,6 +791,16 @@ function generatePDFBuffer(config) {
       };
       
       const finalConfig = { ...defaults, ...config };
+      
+      // 🚨 DEBUG: Log incoming parameters for labels and cutlines
+      console.log('🔍 PDF_PARAMS_DEBUG: =================');
+      console.log('🔍 PDF_PARAMS_DEBUG: Raw config received:', JSON.stringify(config, null, 2));
+      console.log('🔍 PDF_PARAMS_DEBUG: finalConfig.showCutlines:', finalConfig.showCutlines);
+      console.log('🔍 PDF_PARAMS_DEBUG: finalConfig.showLabels:', finalConfig.showLabels);
+      console.log('🔍 PDF_PARAMS_DEBUG: finalConfig.includeLabels:', finalConfig.includeLabels);
+      console.log('🔍 PDF_PARAMS_DEBUG: finalConfig.includeCutlines:', finalConfig.includeCutlines);
+      console.log('🔍 PDF_PARAMS_DEBUG: finalConfig.qrCodes length:', finalConfig.qrCodes?.length || 0);
+      console.log('🔍 PDF_PARAMS_DEBUG: =================');
       
       // Get paper dimensions
       const paperSize = getPaperSize(finalConfig.paperSize);
@@ -854,11 +886,30 @@ function generatePDFBuffer(config) {
       const originalText = doc.text;
       doc.text = function(text, x, y, options) {
         try {
+          console.log('🔍 FONT_TRY_ORIGINAL: Attempting original text method for:', text);
           return originalText.call(this, text, x, y, options);
         } catch (error) {
-          console.log('🔍 FONT_FALLBACK: text method failed, using direct text rendering for:', text);
-          // Use our custom direct text rendering that bypasses font metrics entirely
-          return this._renderTextDirect(text, x, y, this._fontSize || 12);
+          console.log('🔍 FONT_FALLBACK: text method failed, trying simpler approach for:', text);
+          
+          // Try a much simpler approach - try to force use of a basic font
+          try {
+            // Clear any font state that might be causing issues
+            this._font = null;
+            this._fontSize = this._fontSize || 12;
+            
+            // Try to use the original text method with minimal options
+            return originalText.call(this, text || '', x || 0, y || 0, { 
+              width: undefined, 
+              height: undefined, 
+              ellipsis: false,
+              features: [],
+              baseline: 'alphabetic'
+            });
+          } catch (secondError) {
+            console.log('🔍 FONT_FALLBACK: Simpler approach failed, using direct rendering for:', text);
+            // Use our custom direct text rendering that bypasses font metrics entirely
+            return this._renderTextDirect(text, x, y, this._fontSize || 12);
+          }
         }
       };
       
@@ -888,12 +939,23 @@ function generatePDFBuffer(config) {
             .replace(/\r/g, ' ')
             .replace(/\n/g, ' ');
           
+          // Ensure we have a basic font available - use Helvetica which is a standard PDF font
+          if (!this._fontDirectInitialized) {
+            console.log('🔍 FONT_DIRECT: Initializing standard PDF font');
+            // Add Helvetica to the font resources
+            this._write('/Helvetica 12 Tf');
+            this._fontDirectInitialized = true;
+          }
+          
           // Save current graphics state
           this._write('q');
           
-          // Set font size (we'll use a simple approach)
+          // Use black color for text
+          this._write('0 0 0 rg');
+          
+          // Set font and text
           this._write(`BT`);
-          this._write(`/F1 ${fontSize || 12} Tf`);
+          this._write(`/Helvetica ${fontSize || 12} Tf`);
           this._write(`${x} ${this.page.height - y} Td`);
           this._write(`(${escapedText}) Tj`);
           this._write('ET');
@@ -901,12 +963,32 @@ function generatePDFBuffer(config) {
           // Restore graphics state
           this._write('Q');
           
-          console.log('🔍 FONT_DIRECT: Text rendered successfully');
+          console.log('🔍 FONT_DIRECT: Text rendered successfully with Helvetica font');
           return this;
         } catch (error) {
-          console.log('🔍 FONT_DIRECT: Even direct rendering failed, using minimal approach');
-          // Absolute minimal approach - just store the position for reference
-          return this;
+          console.log('🔍 FONT_DIRECT: Direct rendering failed:', error.message);
+          console.log('🔍 FONT_DIRECT: Attempting alternative approach...');
+          
+          // Alternative approach: try to use PDFKit's built-in text without font metrics
+          try {
+            // Force set a basic font state
+            this._fontSize = fontSize || 12;
+            this._fillColor = [0, 0, 0]; // Black
+            
+            // Try to draw the text using PDFKit's lower-level methods
+            this._write('q');
+            this._write('BT');
+            this._write(`${x} ${this.page.height - y} Td`);
+            this._write(`(${escapedText}) Tj`);
+            this._write('ET');
+            this._write('Q');
+            
+            console.log('🔍 FONT_DIRECT: Alternative approach succeeded');
+            return this;
+          } catch (altError) {
+            console.log('🔍 FONT_DIRECT: All text rendering approaches failed');
+            return this;
+          }
         }
       };
       
@@ -958,10 +1040,26 @@ function generatePDFBuffer(config) {
         }
         
         // Draw QR code (pre-generated image or placeholder)
+        console.log('🔍 QR_IMAGE_DEBUG: Processing QR code', i);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData exists:', !!qrData.imageData);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData type:', typeof qrData.imageData);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData length:', qrData.imageData?.length);
+        console.log('🔍 QR_IMAGE_DEBUG: qrData.imageData start:', qrData.imageData?.substring(0, 50));
+        
         if (qrData.imageData) {
-          // Use pre-generated QR code image
-          doc.image(qrData.imageData, qrX, qrY, { width: qrSize, height: qrSize });
+          try {
+            console.log('🔍 QR_IMAGE_DEBUG: Attempting to draw QR image...');
+            // Use pre-generated QR code image
+            doc.image(qrData.imageData, qrX, qrY, { width: qrSize, height: qrSize });
+            console.log('🔍 QR_IMAGE_DEBUG: ✅ QR image drawn successfully');
+          } catch (error) {
+            console.log('🔍 QR_IMAGE_DEBUG: ❌ QR image failed:', error.message);
+            // Fallback to placeholder
+            doc.rect(qrX, qrY, qrSize, qrSize)
+               .fillAndStroke('#E0E0E0', '#000000');
+          }
         } else {
+          console.log('🔍 QR_IMAGE_DEBUG: No imageData, drawing placeholder');
           // Draw placeholder rectangle
           doc.rect(qrX, qrY, qrSize, qrSize)
              .fillAndStroke('#E0E0E0', '#000000');
@@ -972,18 +1070,34 @@ function generatePDFBuffer(config) {
              .text(qrData.id, qrX + 5, qrY + 5);
         }
         
-        // Add label below QR code (centered)
-        const fontSize = Math.max(8, qrSize * 0.08); // Increased minimum font size for better visibility
-        doc.fontSize(fontSize)
-           .fillColor('#000000');
+        // Add label below QR code (centered) - only if labels are enabled
+        console.log('🔍 LABEL_DEBUG: ===== LABEL PROCESSING =====');
+        console.log('🔍 LABEL_DEBUG: finalConfig.showLabels =', finalConfig.showLabels);
+        console.log('🔍 LABEL_DEBUG: finalConfig.includeLabels =', finalConfig.includeLabels);
+        console.log('🔍 LABEL_DEBUG: qrData for item', i, ':', JSON.stringify(qrData, null, 2));
         
-        const labelText = qrData.label || qrData.name || `Item ${i + 1}`;
-        const labelWidth = doc.widthOfString(labelText);
-        const labelX = qrX + (qrSize - labelWidth) / 2;
-        const labelY = qrY + qrSize + 10; // Increased spacing for better readability
+        // Check if labels should be rendered
+        const shouldRenderLabels = finalConfig.showLabels || finalConfig.includeLabels;
+        console.log('🔍 LABEL_DEBUG: shouldRenderLabels =', shouldRenderLabels);
         
-        console.log(`🔍 LABEL_DEBUG: Rendering "${labelText}" at (${labelX}, ${labelY}) with fontSize ${fontSize}`);
-        doc.text(labelText, labelX, labelY);
+        if (shouldRenderLabels) {
+          const fontSize = Math.max(8, qrSize * 0.08); // Increased minimum font size for better visibility
+          doc.fontSize(fontSize)
+             .fillColor('#000000');
+          
+          const labelText = qrData.label || qrData.name || `Item ${i + 1}`;
+          console.log('🔍 LABEL_DEBUG: Extracted labelText =', `"${labelText}"`);
+          console.log('🔍 LABEL_DEBUG: qrData.label =', qrData.label);
+          console.log('🔍 LABEL_DEBUG: qrData.name =', qrData.name);
+          const labelWidth = doc.widthOfString(labelText);
+          const labelX = qrX + (qrSize - labelWidth) / 2;
+          const labelY = qrY + qrSize + 10; // Increased spacing for better readability
+          
+          console.log(`🔍 LABEL_DEBUG: Rendering "${labelText}" at (${labelX}, ${labelY}) with fontSize ${fontSize}`);
+          doc.text(labelText, labelX, labelY);
+        } else {
+          console.log('🔍 LABEL_DEBUG: Labels disabled, skipping label rendering');
+        }
         
         if (useFixedBoxes && finalConfig.showCutlines && finalConfig.debug) {
           doc.rect(cellX, cellY, cellWidth, cellHeight)
@@ -992,7 +1106,14 @@ function generatePDFBuffer(config) {
       }
       
       // Add cutlines if enabled
-      if (finalConfig.showCutlines) {
+      console.log('🔍 CUTLINES_DEBUG: About to check cutlines condition');
+      console.log('🔍 CUTLINES_DEBUG: finalConfig.showCutlines =', finalConfig.showCutlines);
+      console.log('🔍 CUTLINES_DEBUG: finalConfig.includeCutlines =', finalConfig.includeCutlines);
+      console.log('🔍 CUTLINES_DEBUG: useFixedBoxes =', useFixedBoxes);
+      console.log('🔍 CUTLINES_DEBUG: margin =', margin);
+      
+      if (finalConfig.showCutlines || finalConfig.includeCutlines) {
+        console.log('🔍 CUTLINES_DEBUG: ✅ CUTLINES ENABLED - Drawing cutlines now!');
         if (useFixedBoxes) {
           // For fixed box layout, draw cutlines around individual boxes
           const boxMargin = finalConfig._boxMargin;
