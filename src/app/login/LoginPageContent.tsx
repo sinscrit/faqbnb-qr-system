@@ -30,8 +30,55 @@ export default function LoginPageContent() {
     userId: user?.id
   });
   
-  // Use the custom hook to handle redirection
-  useRedirectIfAuthenticated(user, authLoading, '/admin');
+  // Intelligently redirect based on user role
+  useEffect(() => {
+    const DEBUG_PREFIX = "🔒 AUTH_REDIRECT_DEBUG:";
+    
+    console.log(`${DEBUG_PREFIX} REDIRECT_HOOK_CHECK`, {
+      timestamp: new Date().toISOString(),
+      loading: authLoading,
+      hasUser: !!user,
+      userId: user?.id,
+      userRole: user?.role,
+      shouldRedirect: !authLoading && !!user
+    });
+
+    // Only perform redirect if auth state is fully loaded and a user exists.
+    if (!authLoading && user) {
+      // Determine redirect path based on user role
+      const redirectPath = user.role === 'admin' || user.role === 'owner' ? '/admin' : '/user';
+      
+      console.log(`${DEBUG_PREFIX} TRIGGERING_INTELLIGENT_REDIRECT`, {
+        timestamp: new Date().toISOString(),
+        user: { id: user.id, email: user.email, role: user.role },
+        redirectPath
+      });
+      
+      // Add a small delay to ensure React state updates are fully processed
+      setTimeout(async () => {
+        console.log(`${DEBUG_PREFIX} EXECUTING_REDIRECT`, { redirectPath });
+        
+        try {
+          await router.push(redirectPath);
+          
+          // Check if navigation actually happened
+          setTimeout(() => {
+            console.log(`${DEBUG_PREFIX} POST_NAVIGATION_CHECK`, {
+              currentUrl: window.location.href,
+              expectedPath: redirectPath,
+              navigationSuccess: window.location.pathname === redirectPath
+            });
+          }, 500);
+          
+        } catch (error) {
+          console.error(`${DEBUG_PREFIX} ROUTER_PUSH_ERROR`, {
+            error: error,
+            errorMessage: error instanceof Error ? error.message : String(error)
+          });
+        }
+      }, 100);
+    }
+  }, [user, authLoading, router]);
   
   const [loginMessage, setLoginMessage] = useState<LoginMessage | null>(null);
 

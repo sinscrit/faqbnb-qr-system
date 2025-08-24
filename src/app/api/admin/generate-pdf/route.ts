@@ -167,8 +167,6 @@ export async function POST(request: NextRequest) {
     // Debug font path resolution in web context
     console.log('🔍 WEB_FONT_DEBUG: Current working directory:', process.cwd());
     console.log('🔍 WEB_FONT_DEBUG: Font path env:', process.env.PDFKIT_FONT_PATH);
-    const fs = require('fs');
-    const path = require('path');
     const fontDir = path.join(process.cwd(), 'public/fonts');
     console.log('🔍 WEB_FONT_DEBUG: Font directory path:', fontDir);
     console.log('🔍 WEB_FONT_DEBUG: Font directory exists:', fs.existsSync(fontDir));

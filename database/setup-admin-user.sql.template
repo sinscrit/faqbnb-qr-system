@@ -1,17 +1,20 @@
--- Setup admin user sinscrit@gmail.com in the database
+-- TEMPLATE: Setup admin user in the database
 -- This script should be run after the user is created in Supabase Auth
 -- Run this in Supabase SQL Editor or via command line
 
+-- INSTRUCTIONS:
+-- 1. Replace YOUR_USER_ID with the actual UUID from Supabase Auth
+-- 2. Replace YOUR_EMAIL with the actual admin email
+-- 3. Replace YOUR_ACCOUNT_ID with a generated UUID for the default account
+
 -- First, ensure the user exists in Supabase Auth
 -- You can create the user via Supabase Dashboard or Auth API
--- User ID: fa5911d7-f7c5-4ed4-8179-594359453d7f
--- Email: sinscrit@gmail.com
 
 -- 1. Add user to admin_users table
 INSERT INTO admin_users (id, email, full_name, role) 
 VALUES (
-  'fa5911d7-f7c5-4ed4-8179-594359453d7f',
-  'sinscrit@gmail.com',
+  'YOUR_USER_ID',
+  'YOUR_EMAIL',
   'Admin User',
   'admin'
 ) ON CONFLICT (id) DO UPDATE SET
@@ -23,8 +26,8 @@ VALUES (
 -- 2. Ensure the default account exists
 INSERT INTO accounts (id, owner_id, name, description, settings) 
 VALUES (
-  '5036a927-fb8c-4a11-a698-9e17f32d6d5c',
-  'fa5911d7-f7c5-4ed4-8179-594359453d7f',
+  'YOUR_ACCOUNT_ID',
+  'YOUR_USER_ID',
   'Default Account',
   'Default account for admin user',
   '{}'::jsonb
@@ -37,8 +40,8 @@ VALUES (
 -- 3. Add user to account_users table with owner role
 INSERT INTO account_users (account_id, user_id, role, joined_at) 
 VALUES (
-  '5036a927-fb8c-4a11-a698-9e17f32d6d5c',
-  'fa5911d7-f7c5-4ed4-8179-594359453d7f',
+  'YOUR_ACCOUNT_ID',
+  'YOUR_USER_ID',
   'owner',
   NOW()
 ) ON CONFLICT (account_id, user_id) DO UPDATE SET
@@ -47,27 +50,27 @@ VALUES (
 
 -- 4. Update any existing properties to be associated with the account
 UPDATE properties 
-SET account_id = '5036a927-fb8c-4a11-a698-9e17f32d6d5c'
-WHERE user_id = 'fa5911d7-f7c5-4ed4-8179-594359453d7f' 
+SET account_id = 'YOUR_ACCOUNT_ID'
+WHERE user_id = 'YOUR_USER_ID' 
   AND account_id IS NULL;
 
--- Verification queries (uncomment to run)
+-- Verification queries (uncomment to run and replace placeholders)
 /*
 -- Verify admin user
-SELECT * FROM admin_users WHERE email = 'sinscrit@gmail.com';
+SELECT * FROM admin_users WHERE email = 'YOUR_EMAIL';
 
 -- Verify account
-SELECT * FROM accounts WHERE id = '5036a927-fb8c-4a11-a698-9e17f32d6d5c';
+SELECT * FROM accounts WHERE id = 'YOUR_ACCOUNT_ID';
 
 -- Verify account association
 SELECT au.*, a.name as account_name 
 FROM account_users au 
 JOIN accounts a ON au.account_id = a.id 
-WHERE au.user_id = 'fa5911d7-f7c5-4ed4-8179-594359453d7f';
+WHERE au.user_id = 'YOUR_USER_ID';
 
 -- Verify properties
 SELECT p.*, a.name as account_name 
 FROM properties p 
 LEFT JOIN accounts a ON p.account_id = a.id 
-WHERE p.user_id = 'fa5911d7-f7c5-4ed4-8179-594359453d7f';
+WHERE p.user_id = 'YOUR_USER_ID';
 */ 

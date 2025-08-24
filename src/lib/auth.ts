@@ -99,10 +99,19 @@ export async function signInWithEmail(
 
     const isAdminByTable = !adminError && adminUser;
 
-    if (!isAdminByTable) {
-      // Sign out if not an admin by either method
+    // Check if user exists in our users table (regular users)
+    const { data: regularUser, error: userError } = await supabase
+      .from('users')
+      .select('id, email, full_name')
+      .eq('id', data.user.id)
+      .single();
+
+    const isRegularUser = !userError && regularUser;
+
+    if (!isAdminByTable && !isRegularUser) {
+      // Sign out if user is neither admin nor regular user
       await supabase.auth.signOut();
-      return { error: 'Access denied - admin privileges required' };
+      return { error: 'Access denied - user not found in system' };
     }
 
     // Get user's available accounts
@@ -124,11 +133,12 @@ export async function signInWithEmail(
       };
     }
 
+    // Create user object based on whether they're admin or regular user
     const authUser: AuthUser = {
       id: data.user.id,
-      email: adminUser.email,
-      fullName: adminUser.full_name || undefined,
-      role: adminUser.role || undefined,
+      email: data.user.email,
+      fullName: isAdminByTable ? adminUser.full_name : regularUser?.full_name,
+      role: isAdminByTable ? adminUser.role : 'user',
       currentAccount: currentAccountContext,
       availableAccounts: accounts
     };
@@ -206,6 +216,7 @@ export async function getSession(): Promise<AuthResponse<Session | null>> {
  */
 export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
   try {
+    console.log('🔍 AUTH_DEBUG: getUser() called - stack trace:', new Error().stack?.split('\n').slice(1, 5).join('\n'));
     const sessionResponse = await getSession();
     
     if (sessionResponse.error || !sessionResponse.data) {
@@ -270,8 +281,7 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
         email: user.email,
         emailBytes: new TextEncoder().encode(user.email),
         normalizedEmail: user.email?.toLowerCase().trim(),
-        isExactMatch_brownieswithnuts: user.email === 'brownieswithnuts@gmail.com',
-        isExactMatch_sinscrit: user.email === 'sinscrit@gmail.com'
+        // Hardcoded credentials removed - all users go through standard Supabase auth
       });
     }
     
@@ -308,30 +318,33 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       });
     }
 
-    // Also check users table for user info (no is_admin column)
-    const { data: userInfo, error: userInfoError } = await supabase
-      .from('users')
-      .select('email, full_name, role')
-      .eq('id', user.id)
-      .single();
+    // REMOVED: First users table query using regular client (was causing RLS issues)
+    // We'll do the proper users table query later with admin client for regular users
+    const userInfo = null; // Legacy variable kept for compatibility
+    const userInfoError = null;
 
     const isAdminByTable = !adminError && adminUser;
     
-    // Special handling for OAuth users with specific email domains
+    // All users go through standard Supabase admin_users table - no hardcoded privileges
     const isOAuthUser = user.app_metadata?.provider === 'google';
-    const isAllowedOAuthEmail = user.email === 'brownieswithnuts@gmail.com' || user.email === 'sinscrit@gmail.com';
-    const isTempOAuthAdmin = isOAuthUser && isAllowedOAuthEmail;
     
     console.log('🔍 AUTH_DEBUG: Admin check results:', {
       isAdminByTable,
       isOAuthUser,
-      isAllowedOAuthEmail,
-      isTempOAuthAdmin,
-      finalIsAdmin: isAdminByTable || isTempOAuthAdmin,
-      userInfoError: userInfoError?.message
+      finalIsAdmin: isAdminByTable,
+      willProceedToRegularUserCheck: !isAdminByTable
     });
     
-    // Final decision logging for Gmail users
+    // SOLUTION 1: Comprehensive debug flow tracking with unique filter
+    console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-A - After admin check', { 
+      isAdminByTable, 
+      userId: user.id, 
+      timestamp: new Date().toISOString() 
+    });
+    
+    console.log('🔍 AUTH_DEBUG: About to check isAdminByTable condition');
+    
+    // Final decision logging for Gmail/OAuth users
     if (isGmailUser || isOAuthProvider) {
       console.log('🔍 GMAIL_OAUTH_DEBUG: Final admin decision for Gmail user', {
         timestamp: new Date().toISOString(),
@@ -339,21 +352,26 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
         decision: {
           isAdminByTable,
           isOAuthUser,
-          isAllowedOAuthEmail,
-          isTempOAuthAdmin,
-          finalIsAdmin: isAdminByTable || isTempOAuthAdmin,
-          willGrantAccess: isAdminByTable || isTempOAuthAdmin
+          finalIsAdmin: isAdminByTable,
+          willGrantAccess: isAdminByTable
         },
         reasoning: {
           foundInAdminTable: isAdminByTable,
           isGoogleOAuth: isOAuthUser,
-          isInAllowlist: isAllowedOAuthEmail,
-          tempAccessGranted: isTempOAuthAdmin
+          standardAuthOnly: true
         }
       });
     }
 
-    if (isAdminByTable || isTempOAuthAdmin) {
+    console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-B - Before isAdminByTable check', { 
+      isAdminByTable, 
+      aboutToTakeAdminPath: isAdminByTable 
+    });
+    
+    if (isAdminByTable) {
+      console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-C - Taking ADMIN path', { 
+        userId: user.id 
+      });
       // User is an admin - get account context
       const accounts = await getAccountsForUser(user.id);
       
@@ -409,64 +427,121 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
             accountsCount: authUser.availableAccounts?.length || 0,
             currentAccountId: authUser.currentAccount?.id
           },
-          accessMethod: isAdminByTable ? 'admin_table' : 'oauth_allowlist'
+          accessMethod: 'admin_table'
         });
       }
       
       return { data: authUser };
     }
 
+    console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-D - Taking REGULAR USER path', {
+      timestamp: new Date().toISOString(),
+      isAdminByTable,
+      userEmail: user.email,
+      userId: user.id,
+      message: 'Admin check complete, now checking for regular user'
+    });
+
     // Check if user is a regular user
-    const { data: regularUser, error: userError } = await supabase
+    // FIXED: Use supabaseAdmin for initial user data retrieval to bypass RLS policies
+    // This is necessary because regular users might not have their auth context properly established yet
+    const { data: regularUser, error: userError } = await supabaseAdmin
       .from('users')
       .select('email, full_name, role')
       .eq('id', user.id)
       .single();
 
+    console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-E - Regular user query result', {
+      regularUser,
+      userError: userError?.message,
+      userErrorCode: userError?.code,
+      userErrorDetails: userError?.details,
+      queryUserId: user.id,
+      usingAdminClient: true,
+      querySuccess: !userError && !!regularUser
+    });
+
     if (userError || !regularUser) {
+      // Enhanced debugging for regular user access failure
+      console.log('🔍 AUTH_DEBUG: Regular user access failed', {
+        timestamp: new Date().toISOString(),
+        email: user.email,
+        userId: user.id,
+        errorDetails: {
+          message: userError?.message,
+          code: userError?.code,
+          details: userError?.details,
+          hint: userError?.hint
+        },
+        isRLSError: userError?.message?.includes('policy') || userError?.message?.includes('RLS'),
+        is406Error: userError?.code === '406' || userError?.message?.includes('406'),
+        checkedSources: {
+          adminUsersTable: !isAdminByTable,
+          usersTable: userError?.message || 'not found'
+        },
+        suggestedAction: 'User not found in users table - may need to be created'
+      });
+      
       // Log access denial for Gmail users
       if (isGmailUser || isOAuthProvider) {
         console.log('🔍 GMAIL_OAUTH_DEBUG: Access denied for Gmail user', {
           timestamp: new Date().toISOString(),
           email: user.email,
           userId: user.id,
-          reason: 'Not found in admin_users table and not in OAuth allowlist',
+          reason: 'Not found in admin_users table and users table query failed',
           checkedSources: {
             adminUsersTable: !isAdminByTable,
-            oauthAllowlist: !isTempOAuthAdmin,
             usersTable: userError?.message || 'not found'
           },
-          suggestedAction: 'Add user to admin_users table or update OAuth allowlist'
+          suggestedAction: 'User needs to be added to users table or admin_users table'
         });
       }
       return { data: null };
     }
 
     // Get account context for regular user
-    const accounts = await getAccountsForUser(user.id);
-    
-    // Regular users typically have access to fewer accounts
+    // FIXED: Handle cases where regular users might not have accounts yet
+    // This prevents the authentication from failing for users without account setup
+    let accounts: Account[] = [];
     let currentAccount = null;
-    if (typeof window !== 'undefined') {
-      const storedAccountId = localStorage.getItem('currentAccount');
-      if (storedAccountId) {
-        currentAccount = accounts.find(acc => acc.id === storedAccountId) || null;
-      }
-    }
-    
-    if (!currentAccount && accounts.length > 0) {
-      currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
-    }
-
     let currentAccountContext = null;
-    if (currentAccount) {
-      const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
-      currentAccountContext = {
-        id: currentAccount.id,
-        name: currentAccount.name,
-        role: userRole || 'member',
-        isOwner: currentAccount.owner_id === user.id
-      };
+    
+    try {
+      accounts = await getAccountsForUser(user.id);
+      console.log('🔍 AUTH_DEBUG: Regular user accounts loaded:', {
+        userId: user.id,
+        accountsCount: accounts.length,
+        accountIds: accounts.map(acc => acc.id)
+      });
+      
+      // Regular users typically have access to fewer accounts
+      if (typeof window !== 'undefined') {
+        const storedAccountId = localStorage.getItem('currentAccount');
+        if (storedAccountId) {
+          currentAccount = accounts.find(acc => acc.id === storedAccountId) || null;
+        }
+      }
+      
+      if (!currentAccount && accounts.length > 0) {
+        currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
+      }
+
+      if (currentAccount) {
+        const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        currentAccountContext = {
+          id: currentAccount.id,
+          name: currentAccount.name,
+          role: userRole || 'member',
+          isOwner: currentAccount.owner_id === user.id
+        };
+      }
+    } catch (accountError) {
+      console.log('🔍 AUTH_DEBUG: Account context loading failed for regular user (this is OK for new users):', {
+        userId: user.id,
+        email: user.email,
+        error: accountError instanceof Error ? accountError.message : String(accountError)
+      });
+      // Continue without account context - this is acceptable for regular users
     }
 
     const authUser: AuthUser = {
@@ -549,7 +624,8 @@ export async function switchAccount(accountId: string): Promise<AccountSwitchRes
  */
 export async function getUserRoleInAccount(userId: string, accountId: string): Promise<string | null> {
   try {
-    const { data: membership, error } = await supabase
+    // FIXED: Use supabaseAdmin to ensure consistent access for regular users
+    const { data: membership, error } = await supabaseAdmin
       .from('account_users')
       .select('role')
       .eq('user_id', userId)
@@ -1175,7 +1251,8 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
     });
 
     // First get the account IDs the user has access to
-    const accountQuery = supabase
+    // FIXED: Use supabaseAdmin to bypass potential RLS issues for regular users
+    const accountQuery = supabaseAdmin
       .from('account_users')
       .select('account_id, role')
       .eq('user_id', userId);
@@ -1198,7 +1275,7 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
     // Get the account details separately
     const accountIds = userAccountRels.map(rel => rel.account_id);
     const { data: accounts, error: accountsError } = await Promise.race([
-      supabase
+      supabaseAdmin
         .from('accounts')
         .select('id, owner_id, name, description, created_at, updated_at')
         .in('id', accountIds)
@@ -1232,7 +1309,8 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
  */
 export async function canAccessAccount(userId: string, accountId: string): Promise<boolean> {
   try {
-    const { data: membership, error } = await supabase
+    // FIXED: Use supabaseAdmin to ensure consistent access for regular users
+    const { data: membership, error } = await supabaseAdmin
       .from('account_users')
       .select('role')
       .eq('account_id', accountId)
@@ -1255,7 +1333,8 @@ export async function canAccessAccount(userId: string, accountId: string): Promi
  */
 export async function validateAccountOwnership(userId: string, accountId: string): Promise<boolean> {
   try {
-    const { data: membership, error } = await supabase
+    // FIXED: Use supabaseAdmin to ensure consistent access for regular users
+    const { data: membership, error } = await supabaseAdmin
       .from('account_users')
       .select('role')
       .eq('account_id', accountId)
@@ -1278,7 +1357,8 @@ export async function validateAccountOwnership(userId: string, accountId: string
  */
 export async function getDefaultAccountForUser(userId: string): Promise<Account | null> {
   try {
-    const { data: userAccount, error } = await supabase
+    // FIXED: Use supabaseAdmin to ensure consistent access for regular users
+    const { data: userAccount, error } = await supabaseAdmin
       .from('account_users')
       .select(`
         account_id,

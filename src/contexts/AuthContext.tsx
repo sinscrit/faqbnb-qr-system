@@ -236,14 +236,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
     
-    // FAILSAFE: Absolute timeout to prevent infinite loading
+    // FIXED: Check if this is an OAuth callback/registration context - prioritize these
+    const isOAuthContext = typeof window !== 'undefined' && (
+      window.location.pathname === '/auth/oauth/callback' ||
+      (window.location.pathname === '/register' && window.location.search.includes('oauth_success=true'))
+    );
+    
+    // FAILSAFE: Absolute timeout to prevent infinite loading (shorter for OAuth contexts)
+    const timeoutDuration = isOAuthContext ? 8000 : 15000; // 8 seconds for OAuth, 15 for others
     const loadingFailsafe = setTimeout(() => {
       console.error(`${DEBUG_PREFIX} LOADING_TIMEOUT_FAILSAFE_TRIGGERED`, {
         timestamp: new Date().toISOString(),
-        message: 'Force clearing loading state after 15 seconds'
+        message: `Force clearing loading state after ${timeoutDuration/1000} seconds`,
+        isOAuthContext: isOAuthContext,
+        currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
       });
       setLoading(false);
-    }, 15000); // 15 second absolute maximum
+    }, timeoutDuration);
 
     const initializeWithMutex = async () => {
       console.log(`${DEBUG_PREFIX} USE_EFFECT_TRIGGERED`, {
@@ -283,9 +292,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return;
       }
       
-      // Try to acquire the mutex lock (now async)
+      // FIXED: Try to acquire the mutex lock (now async) - OAuth contexts get priority
       const mutexAcquired = await acquireAuthMutex();
-      if (!mutexAcquired) {
+      if (!mutexAcquired && !isOAuthContext) {
         console.log('[AUTH-RACE-DEBUG] Could not acquire mutex, waiting for other instance to complete');
         
         // Wait for the other instance to complete authentication
@@ -322,10 +331,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
           // Fall through to initialize auth
         }
+      } else if (!mutexAcquired && isOAuthContext) {
+        console.log('[AUTH-RACE-DEBUG] OAuth context detected - proceeding with auth initialization despite mutex conflict');
+        // OAuth contexts proceed anyway to avoid blocking user registration flow
+        // Fall through to initialize auth
       }
       
-      // Only initialize if we have the lock and auth isn't completed
-      if (!getGlobalAuthInitialized()) {
+      // Only initialize if we have the lock (or OAuth context) and auth isn't completed
+      if (!getGlobalAuthInitialized() && (mutexAcquired || isOAuthContext)) {
         console.log('[AUTH-RACE-DEBUG] Setting up auth context - FIRST TIME GLOBALLY');
         console.log('[AUTH-RACE-DEBUG] useEffect dependencies check passed, calling initializeAuth');
         
@@ -433,31 +446,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!session.user?.email) return null;
     
     try {
-      // Quick admin check with timeout
-      const adminCheckPromise = supabase
-        .from('admin_users')
-        .select('email, full_name, role')
-        .eq('email', session.user.email)
-        .single();
+      // FIXED: Use getUser() instead of direct Supabase queries to leverage RLS fixes
+      // This ensures session restoration uses the same fixed authentication logic
+      console.log('🔍 QUICK_AUTH_DEBUG: Using getUser() for session restoration');
+      const userResponse = await getUser();
       
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Quick auth timeout')), 3000)
-      );
-      
-      const result = await Promise.race([adminCheckPromise, timeoutPromise]);
-      
-      if (result.data && !result.error) {
-        return {
-          id: session.user.id,
-          email: result.data.email,
-          fullName: result.data.full_name || undefined,
-          role: result.data.role || 'admin',
-          currentAccount: null, // Will be populated later if needed
-          availableAccounts: []
-        };
+      if (userResponse.error || !userResponse.data) {
+        console.log('🔍 QUICK_AUTH_DEBUG: getUser() failed during session restoration:', userResponse.error);
+        return null;
       }
       
-      return null;
+      console.log('🔍 QUICK_AUTH_DEBUG: Session restoration successful', {
+        userId: userResponse.data.id,
+        email: userResponse.data.email,
+        role: userResponse.data.role
+      });
+      
+      return userResponse.data;
     } catch (error) {
       console.log('Quick auth failed:', error);
       return null;
@@ -581,6 +586,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       console.log('[QR-AUTH-DEBUG] Loading account context in background for:', user.email);
       
+      // Skip getUser() call if user already has complete data (e.g., from signIn function)
+      if (user.role && user.availableAccounts && user.availableAccounts.length > 0) {
+        console.log('[QR-AUTH-DEBUG] User data already complete, skipping background account loading');
+        return;
+      }
+      
       // Get full user data with account context
       const userResponse = await getUser();
       if (userResponse.error || !userResponse.data) {
@@ -630,7 +641,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setSession(session);
       
-      // Get user data with account context
+      // Check if user data is already available (e.g., from signIn function)
+      // This prevents unnecessary getUser() calls that might fail due to RLS policies
+      console.log('[AUTH-RACE-DEBUG] handleSignIn - checking existing user data:', {
+        hasUser: !!user,
+        userId: user?.id,
+        sessionUserId: session.user.id,
+        userEmail: user?.email,
+        sessionEmail: session.user.email,
+        userRole: user?.role
+      });
+      
+      if (user && user.id === session.user.id) {
+        console.log('[AUTH-RACE-DEBUG] User data already available, skipping getUser() call');
+        return;
+      }
+      
+      // Get user data with account context (for OAuth or other auth methods)
       const userResponse = await getUser();
       if (userResponse.error || !userResponse.data) {
         console.error('Failed to get user data after sign in');

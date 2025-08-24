@@ -261,3 +261,10 @@ For developers working on this issue:
 
 **Note**: This represents a major breakthrough in resolving the PDF generation issues. The core webpack incompatibility has been solved, and only font metrics loading remains to be fixed.
 
+
+
+
+
+
+
+

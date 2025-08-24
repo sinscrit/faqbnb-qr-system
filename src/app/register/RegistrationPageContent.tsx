@@ -186,17 +186,26 @@ export default function RegistrationPageContent() {
     });
   }
 
-  // Redirect authenticated users
+  // Redirect authenticated users (but not during OAuth registration flow)
   useEffect(() => {
-    if (!authLoading && user) {
+    // FIXED: Don't redirect if we're in the middle of OAuth registration
+    const isOAuthRegistration = searchParams.get('oauth_success') === 'true';
+    
+    if (!authLoading && user && !isOAuthRegistration) {
       console.log(`${DEBUG_PREFIX} USER_ALREADY_AUTHENTICATED`, {
         timestamp: new Date().toISOString(),
         userId: user.id,
         redirecting: true
       });
       router.push('/admin');
+    } else if (!authLoading && user && isOAuthRegistration) {
+      console.log(`${DEBUG_PREFIX} USER_AUTHENTICATED_DURING_OAUTH`, {
+        timestamp: new Date().toISOString(),
+        userId: user.id,
+        message: 'User authenticated but OAuth registration in progress - not redirecting yet'
+      });
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, searchParams]);
 
   // Validate URL parameters
   useEffect(() => {
@@ -333,15 +342,29 @@ export default function RegistrationPageContent() {
         url: typeof window !== 'undefined' ? window.location.href : 'server-side'
       });
       
-      // Check if this is an OAuth success callback
-      if (oauthSuccess === 'true' && accessCode && email && user) {
+      // FIXED: Check if this is an OAuth success callback - don't require user/session to be immediately available
+      // The auth context may take time to populate after OAuth redirect
+      if (oauthSuccess === 'true' && accessCode && email) {
         console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_SUCCESS_DETECTED`, {
           timestamp: new Date().toISOString(),
           email: email,
           accessCode: accessCode.substring(0, 4) + '...',
-          userId: user.id,
-          provider: 'google' // OAuth success indicates Google OAuth was used
+          userId: user?.id,
+          provider: 'google', // OAuth success indicates Google OAuth was used
+          authContextReady: !!(user && session && !authLoading)
         });
+        
+        // FIXED: Wait for auth context to be ready before proceeding
+        if (!user || !session || authLoading) {
+          console.log(`${DEBUG_PREFIX_OAUTH} AUTH_CONTEXT_NOT_READY`, {
+            timestamp: new Date().toISOString(),
+            hasUser: !!user,
+            hasSession: !!session,
+            authLoading: authLoading,
+            message: 'Waiting for auth context to be available...'
+          });
+          return; // useEffect will re-trigger when auth state changes
+        }
         
         try {
           // Get the current session for API authentication
@@ -493,16 +516,8 @@ export default function RegistrationPageContent() {
         willTriggerHandler: !!(user && session && !authLoading)
       });
       
-      // Only trigger OAuth handling if we have authenticated user and session
-      if (user && session && !authLoading) {
-        handleOAuthSuccess();
-      } else if (!authLoading && (!user || !session)) {
-        // REQ-021 Task 1.3: Retry logic for delayed auth context initialization
-        console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_RETRY_NEEDED`, {
-          timestamp: new Date().toISOString(),
-          reason: 'Auth context not ready, will retry when user/session available'
-        });
-      }
+      // FIXED: Always trigger OAuth handling when params are detected - let handleOAuthSuccess decide when to proceed
+      handleOAuthSuccess();
     }
   }, [searchParams, user, session, authLoading, router]);
 

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright:*)",
+      "Bash(npx:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "Bash(bash:*)"
+    ],
+    "deny": []
+  }
+}
