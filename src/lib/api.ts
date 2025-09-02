@@ -500,6 +500,22 @@ export const reactionsApi = {
 
     return apiRequest<ReactionResponse>(`/items/${encodeURIComponent(publicId)}/reactions`, {}, false);
   },
+
+  /**
+   * Get system analytics for admin dashboard
+   * @returns Promise resolving to system analytics response
+   */
+  async getAnalytics(): Promise<SystemAnalyticsResponse> {
+    return apiRequest<SystemAnalyticsResponse>('/admin/analytics', {}, true);
+  },
+
+  /**
+   * Get user access information for admin dashboard
+   * @returns Promise resolving to user access response
+   */
+  async getUserAccess(): Promise<any> {
+    return apiRequest<any>('/admin/accounts/users', {}, true);
+  },
 };
 
 // Enhanced error handling utility

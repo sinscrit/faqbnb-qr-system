@@ -264,13 +264,14 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
       setLoading(true);
       setError(null);
 
+      // Import adminApi dynamically to avoid circular dependencies
+      const { adminApi } = await import('@/lib/api');
+
       // Fetch analytics data
-      const analyticsResponse = await fetch('/api/admin/analytics');
-      const analyticsResult = await analyticsResponse.json();
+      const analyticsResult = await adminApi.getAnalytics();
 
       // Fetch user access data
-      const userAccessResponse = await fetch('/api/admin/accounts/users');
-      const userAccessResult = await userAccessResponse.json();
+      const userAccessResult = await adminApi.getUserAccess();
 
       if (analyticsResult.success) {
         setAnalyticsData(analyticsResult.data);
