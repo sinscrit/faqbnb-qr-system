@@ -1826,4 +1826,156 @@ Main complexity factors:
 
 ---
 
-*Next Request: REQ-023* 
+## REQ-023: Unified Route Architecture Implementation - Eliminate Admin/User Route Duplication
+
+**Date:** September 3, 2025  
+**Type:** Architecture Enhancement  
+**Complexity Points:** 12/15  
+
+### Request Summary
+Implement a unified route architecture to eliminate code duplication between `/admin` and `/user` routes that currently perform identical functions but cause maintenance overhead and inconsistency when changes in one route set are not reflected in the other.
+
+### Problem Analysis
+Currently the system has two parallel route sets:
+- **Admin Routes**: `/admin`, `/admin/items`, `/admin/properties`, `/admin/analytics`
+- **User Routes**: `/user`, `/user/items`, `/user/properties`, `/user/analytics`
+
+**Issues Identified:**
+1. **Code Duplication**: Both route sets perform nearly identical functions with minimal differences
+2. **Maintenance Overhead**: Changes in admin routes not automatically reflected in user routes
+3. **API Inconsistency**: Both route sets call the same `/api/admin/*` endpoints
+4. **Authorization Logic**: Server-side APIs already handle role-based filtering
+5. **UI Redundancy**: User routes have almost identical UI components to admin routes
+
+### Detailed Requirements
+
+#### 1. Unified Dashboard Route Structure (5 points)
+- **Create New Structure**: Replace both `/admin` and `/user` with unified `/dashboard/*` routes
+- **Adaptive Interface**: Single codebase that adapts based on user permissions  
+- **Route Migration**: 
+  - `/dashboard` (replaces both `/admin` and `/user`)
+  - `/dashboard/items` (replaces `/admin/items` and `/user/items`)
+  - `/dashboard/properties` (replaces `/admin/properties` and `/user/properties`)
+  - `/dashboard/analytics` (replaces `/admin/analytics` and `/user/analytics`)
+- **Files Affected**:
+  - `src/app/dashboard/` (new unified route directory)
+  - `src/app/dashboard/items/page.tsx` (new unified items management)
+  - `src/app/dashboard/properties/page.tsx` (new unified properties management)
+  - `src/app/dashboard/analytics/page.tsx` (new unified analytics)
+  - `src/app/dashboard/layout.tsx` (new unified layout with role-based navigation)
+
+#### 2. Role-Based UI Adaptation (4 points)
+- **Conditional Rendering**: Components adapt UI elements based on user role (admin vs user)
+- **Permission-Based Features**: Show/hide features based on user permissions
+- **Navigation Adaptation**: Dynamic navigation menu based on user role
+- **Admin-Only Features**: Preserve admin-only functionality (system settings, user management)
+- **Files Affected**:
+  - `src/components/DashboardLayout.tsx` (new unified layout component)
+  - `src/components/RoleBasedNavigation.tsx` (new adaptive navigation)
+  - `src/components/UnifiedItemsManager.tsx` (new unified items component)
+  - `src/components/UnifiedPropertiesManager.tsx` (new unified properties component)
+  - `src/lib/permissions.ts` (new role-based permission utilities)
+
+#### 3. Legacy Route Redirects and Cleanup (2 points)
+- **Redirect Implementation**: Automatic redirects from old routes to new unified routes
+- **Preserve Bookmarks**: Ensure existing bookmarks continue to work
+- **Clean Migration**: Remove duplicate code from admin/user routes
+- **Files Affected**:
+  - `src/app/admin/page.tsx` (redirect to `/dashboard`)
+  - `src/app/user/page.tsx` (redirect to `/dashboard`)
+  - `src/middleware.ts` (redirect logic for old routes)
+  - Remove duplicate components and pages
+
+#### 4. Admin-Only System Routes (1 point)
+- **Preserve Admin Functions**: Keep admin-only features in separate `/admin/system` area
+- **System Management**: User management, system settings, back office functions
+- **Clear Separation**: Admin system functions vs regular dashboard functions
+- **Files Affected**:
+  - `src/app/admin/system/` (new admin-only system management)
+  - `src/app/admin/back-office/page.tsx` (move to system area)
+  - Admin-only navigation and access control
+
+### Complexity Analysis
+
+#### Architecture Transformation (5 points)
+- **Route Restructuring**: Complete reorganization of application routing structure
+- **Component Migration**: Moving and merging functionality from two separate route trees
+- **State Management**: Ensuring unified state management across role-based interfaces
+- **Navigation Logic**: Complex adaptive navigation based on user permissions
+- **Risk Level**: Medium-High - Major architectural change affecting core navigation
+
+#### Role-Based UI System (4 points)
+- **Conditional Rendering**: Complex component logic based on user roles and permissions
+- **Permission Management**: Sophisticated role-based feature access control
+- **Component Reusability**: Single components serving multiple user types with different capabilities
+- **UI/UX Consistency**: Maintaining intuitive interface across different permission levels
+- **Risk Level**: Medium - New permission-based UI patterns
+
+#### Migration and Compatibility (2 points)
+- **Redirect Management**: Ensuring seamless transition from old to new routes
+- **Bookmark Preservation**: Maintaining user bookmarks and external links
+- **Code Cleanup**: Safe removal of duplicate components and routes
+- **Risk Level**: Low-Medium - Migration planning and execution
+
+#### Testing and Validation (1 point)
+- **Cross-Role Testing**: Validating interface behavior for different user types
+- **Permission Testing**: Ensuring proper access control and feature visibility
+- **Navigation Testing**: Verifying redirect logic and route transitions
+- **Risk Level**: Low - Comprehensive testing of new unified system
+
+### Technical Challenges
+1. **Component Unification**: Merging similar but slightly different admin/user components
+2. **Permission Granularity**: Implementing precise role-based feature control
+3. **State Management**: Managing role context throughout unified application
+4. **Navigation Complexity**: Dynamic navigation adapting to user permissions
+5. **Migration Safety**: Ensuring no functionality is lost during unification
+6. **Performance**: Single components handling multiple role scenarios efficiently
+
+### Implementation Priority
+**High Priority** - Eliminates significant technical debt and maintenance overhead while improving code quality and development velocity.
+
+### Key Benefits
+1. **Single Source of Truth**: One codebase for all user interfaces
+2. **Automatic Consistency**: Changes apply to all users automatically
+3. **Reduced Maintenance**: No more duplicate code to maintain
+4. **Future Scalability**: Easier to add new roles or features
+5. **Code Quality**: DRY principles and better architecture
+
+### Implementation Phases
+1. **Phase 1**: Create unified dashboard structure and basic role detection (3 points)
+2. **Phase 2**: Implement role-based UI adaptation and components (6 points)
+3. **Phase 3**: Set up legacy redirects and admin-only system area (2 points)
+4. **Phase 4**: Testing, cleanup, and documentation (1 point)
+
+### Related Files Reference
+#### Current Duplicate Routes:
+- **Admin Routes**: `src/app/admin/` (items, properties, analytics pages)
+- **User Routes**: `src/app/user/` (items, properties, analytics pages)
+- **Shared APIs**: `src/app/api/admin/` (already handles role-based filtering)
+
+#### New Unified Structure:
+- **Dashboard Routes**: `src/app/dashboard/` (new unified interface)
+- **Unified Components**: `src/components/Unified*.tsx` (new role-adaptive components)
+- **Permission System**: `src/lib/permissions.ts` (new role management)
+- **Unified Layout**: `src/app/dashboard/layout.tsx` (new adaptive layout)
+
+#### Authentication & Context:
+- **Auth Context**: `src/contexts/AuthContext.tsx` (role detection and management)
+- **Middleware**: `src/middleware.ts` (route protection and redirects)
+- **Permission Utilities**: `src/lib/auth.ts` (role-based access control)
+
+#### API Integration:
+- **Existing APIs**: `src/app/api/admin/` (already role-aware, no changes needed)
+- **Authentication**: `src/lib/supabase.ts` (existing role validation)
+
+### Technical Specifications
+- **Route Structure**: `/dashboard/*` replaces both `/admin/*` and `/user/*`
+- **Role Detection**: Based on existing authentication system and database flags
+- **Permission Model**: Feature-level permissions within unified interface
+- **Admin System**: Separate `/admin/system/*` for admin-only functions
+- **Redirect Strategy**: 301 redirects from legacy routes to new unified routes
+- **Component Pattern**: Single components with role-based conditional rendering
+
+---
+
+*Next Request: REQ-024* 
