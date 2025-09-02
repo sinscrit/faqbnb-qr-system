@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ExternalLink, FileText, Image, Play, Link as LinkIcon } from 'lucide-react';
 import { LinkCardProps } from '@/types';
-import { getLinkTypeColor, getYoutubeThumbnail } from '@/lib/utils';
+import { getLinkTypeColor, getLinkTypeLabel, getYoutubeThumbnail } from '@/lib/utils';
 
 export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }: LinkCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -109,7 +109,7 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl, onClick }
         {/* Link type badge */}
         <div className="absolute top-2 right-2">
           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${colorClasses}`}>
-            {linkType.toUpperCase()}
+            {getLinkTypeLabel(linkType).toUpperCase()}
           </span>
         </div>
 

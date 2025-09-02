@@ -21,6 +21,21 @@ export function getLinkTypeIcon(linkType: LinkType): string {
   }
 }
 
+export function getLinkTypeLabel(linkType: LinkType): string {
+  switch (linkType) {
+    case 'youtube':
+      return 'YouTube Video';
+    case 'pdf':
+      return 'PDF Document';
+    case 'image':
+      return 'Image';
+    case 'text':
+      return 'Web Link';
+    default:
+      return 'Link';
+  }
+}
+
 export function getLinkTypeColor(linkType: LinkType): string {
   switch (linkType) {
     case 'youtube':

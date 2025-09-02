@@ -7,7 +7,33 @@ import { ItemSelectionList } from './ItemSelectionList';
 import { QRCodePrintPreview } from './QRCodePrintPreview';
 import { PDFExportOptions } from './PDFExportOptions';
 import { generateBatchQRCodes, clearQRCache, buildQRUrl } from '@/lib/qrcode-utils';
-import { downloadPDFBlob } from '@/lib/pdf-utils';
+// Dynamic import for PDF utilities to handle build environment differences
+let downloadPDFBlob: (blob: Blob, filename: string) => void;
+
+const loadPDFUtils = async () => {
+  try {
+    const pdfUtils = await import('@/lib/pdf-utils');
+    downloadPDFBlob = pdfUtils.downloadPDFBlob;
+  } catch (error) {
+    console.warn('PDF utils not available, using fallback:', error);
+    // Fallback implementation
+    downloadPDFBlob = (blob: Blob, filename: string) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    };
+  }
+};
+
+// Load PDF utils on component mount
+if (typeof window !== 'undefined') {
+  loadPDFUtils();
+}
 import { cn } from '@/lib/utils';
 
 /**
@@ -368,7 +394,20 @@ export function QRCodePrintManager({
       const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
       const filename = `QR-Codes-${timestamp}.pdf`;
       
-      downloadPDFBlob(blob, filename);
+      // Use dynamic import for PDF download
+      if (downloadPDFBlob) {
+        downloadPDFBlob(blob, filename);
+      } else {
+        // Fallback if dynamic import failed
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
       
       setSuccessMessage(`PDF exported successfully! ${qrCodesArray.length} QR codes included.`);
       console.log('✅ PDF export completed:', {
@@ -712,7 +751,11 @@ export function QRCodePrintManager({
         <div className="flex space-x-3">
           {currentStep !== 'select' && (
             <button
-              onClick={handlePreviousStep}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePreviousStep();
+              }}
               className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
               disabled={isGenerating}
             >
@@ -739,7 +782,11 @@ export function QRCodePrintManager({
           )}
           
           <button
-            onClick={handleClose}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleClose();
+            }}
             className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
           >
             Cancel
@@ -749,13 +796,27 @@ export function QRCodePrintManager({
       
       {/* PDF Export Options Modal */}
       {showPDFOptions && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isGeneratingPDF) {
+              setShowPDFOptions(false);
+            }
+          }}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="border-b border-gray-200 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-medium text-gray-900">PDF Export Settings</h3>
                 <button
-                  onClick={() => setShowPDFOptions(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowPDFOptions(false);
+                  }}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                   disabled={isGeneratingPDF}
                 >
@@ -786,7 +847,11 @@ export function QRCodePrintManager({
                   {generatedQRCodes.size} QR codes ready for PDF export
                 </div>
                 <button
-                  onClick={() => setShowPDFOptions(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowPDFOptions(false);
+                  }}
                   className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium"
                   disabled={isGeneratingPDF}
                 >

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ExternalLink, FileText, Image, Play, Link as LinkIcon } from 'lucide-react';
 import { LinkType } from '@/types';
-import { getLinkTypeColor, getYoutubeThumbnail } from '@/lib/utils';
+import { getLinkTypeColor, getLinkTypeLabel, getYoutubeThumbnail } from '@/lib/utils';
 
 interface LinkCardProps {
   title: string;
@@ -103,7 +103,7 @@ export default function LinkCard({ title, linkType, url, thumbnailUrl }: LinkCar
             {/* Link Type Badge */}
             <div className="mt-2 flex items-center">
               <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${colorClasses}`}>
-                {linkType.toUpperCase()}
+                {getLinkTypeLabel(linkType).toUpperCase()}
               </span>
             </div>
           </div>

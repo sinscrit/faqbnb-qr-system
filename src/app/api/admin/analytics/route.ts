@@ -193,9 +193,11 @@ interface SystemAnalyticsResponse {
   data?: {
     overview: {
       totalItems: number;
+      totalProperties: number; // New KPI metric for dashboard
       totalVisits: number;
       totalReactions: number;
       activeItems: number; // Items with visits in last 30 days
+      averageItemsPerProperty: number; // New KPI metric for dashboard
     };
     timeBasedVisits: {
       last24Hours: number;
@@ -216,6 +218,20 @@ interface SystemAnalyticsResponse {
       love: number;
       confused: number;
       total: number;
+    };
+    recentActivity: {
+      mostActiveProperties: Array<{
+        id: string;
+        name: string;
+        visitCount: number;
+        lastVisit: string;
+      }>;
+      topViewedItems: Array<{
+        id: string;
+        name: string;
+        publicId: string;
+        visitCount: number;
+      }>;
     };
     pagination?: {
       page: number;
@@ -308,10 +324,47 @@ export async function GET(request: NextRequest) {
     if (itemsError) {
       console.error('Error fetching items count:', itemsError);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to fetch items count',
           code: 'ITEMS_COUNT_FAILED'
+        },
+        { status: 500 }
+      );
+    }
+
+    // Total properties count (with account filtering)
+    let propertiesQuery = supabase
+      .from('properties')
+      .select('*', { count: 'exact', head: true });
+
+    // Apply account filtering
+    if (userIsAdmin && !accountId) {
+      // Admin can see all properties when no specific account is requested
+      // No additional filtering needed
+    } else if (userIsAdmin && accountId) {
+      // Admin viewing specific account's properties
+      propertiesQuery = propertiesQuery.eq('account_id', accountId);
+    } else {
+      // Regular user can only see properties within their account context
+      propertiesQuery = propertiesQuery
+        .eq('account_id', accountId)
+        .eq('user_id', user.id);
+    }
+
+    if (propertyId) {
+      propertiesQuery = propertiesQuery.eq('id', propertyId);
+    }
+
+    const { count: totalProperties, error: propertiesError } = await propertiesQuery;
+
+    if (propertiesError) {
+      console.error('Error fetching properties count:', propertiesError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to fetch properties count',
+          code: 'PROPERTIES_COUNT_FAILED'
         },
         { status: 500 }
       );
@@ -638,6 +691,91 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Get recent activity metrics (most active properties and top viewed items)
+    console.log('Fetching recent activity metrics...');
+
+    // Most active properties in last 30 days
+    const thirtyDaysAgoActivity = new Date();
+    thirtyDaysAgoActivity.setDate(thirtyDaysAgoActivity.getDate() - 30);
+
+    let activePropertiesQuery = supabase
+      .from('item_visits')
+      .select(`
+        items!inner(
+          property_id,
+          properties!inner(
+            id,
+            nickname,
+            account_id,
+            user_id
+          )
+        )
+      `)
+      .gte('visited_at', thirtyDaysAgoActivity.toISOString());
+
+    // Apply account filtering
+    if (userIsAdmin && !accountId) {
+      // Admin can see all active properties when no specific account is requested
+      // No additional filtering needed
+    } else if (userIsAdmin && accountId) {
+      // Admin viewing specific account's active properties
+      activePropertiesQuery = activePropertiesQuery.eq('items.properties.account_id', accountId);
+    } else {
+      // Regular user can only see active properties within their account context
+      activePropertiesQuery = activePropertiesQuery
+        .eq('items.properties.account_id', accountId)
+        .eq('items.properties.user_id', user.id);
+    }
+
+    const { data: activePropertiesData, error: activePropertiesError } = await activePropertiesQuery;
+
+    if (activePropertiesError) {
+      console.error('Error fetching active properties:', activePropertiesError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to fetch active properties',
+          code: 'ACTIVE_PROPERTIES_FAILED'
+        },
+        { status: 500 }
+      );
+    }
+
+    // Aggregate properties by visit count and last visit
+    const propertyActivity = new Map();
+    (activePropertiesData || []).forEach(visit => {
+      const property = visit.items.properties;
+      if (!propertyActivity.has(property.id)) {
+        propertyActivity.set(property.id, {
+          id: property.id,
+          name: property.nickname,
+          visitCount: 0,
+          lastVisit: null
+        });
+      }
+      const activity = propertyActivity.get(property.id);
+      activity.visitCount++;
+      if (!activity.lastVisit || visit.visited_at > activity.lastVisit) {
+        activity.lastVisit = visit.visited_at;
+      }
+    });
+
+    // Get most active properties (top 5)
+    const mostActiveProperties = Array.from(propertyActivity.values())
+      .sort((a, b) => b.visitCount - a.visitCount)
+      .slice(0, 5);
+
+    // Get top viewed items (already calculated in topItems, just format differently)
+    const topViewedItems = topItems
+      .filter(item => item.visitCount > 0)
+      .slice(0, 10)
+      .map(item => ({
+        id: item.id,
+        name: item.name,
+        publicId: item.publicId,
+        visitCount: item.visitCount
+      }));
+
     // Calculate pagination info
     const totalPages = Math.ceil((totalItems || 0) / limit);
     
@@ -646,13 +784,19 @@ export async function GET(request: NextRequest) {
       data: {
         overview: {
           totalItems: totalItems || 0,
+          totalProperties: totalProperties || 0,
           totalVisits: totalVisits || 0,
           totalReactions: totalReactions || 0,
           activeItems,
+          averageItemsPerProperty: totalProperties > 0 ? Math.round((totalItems || 0) / totalProperties * 100) / 100 : 0,
         },
         timeBasedVisits,
         topItems,
         reactionTrends,
+        recentActivity: {
+          mostActiveProperties,
+          topViewedItems,
+        },
         pagination: {
           page,
           limit,
@@ -669,10 +813,14 @@ export async function GET(request: NextRequest) {
 
     console.log(`System analytics calculated for account: ${accountId || 'all'}:`, {
       totalItems: totalItems || 0,
+      totalProperties: totalProperties || 0,
       totalVisits: totalVisits || 0,
       totalReactions: totalReactions || 0,
       activeItems,
+      averageItemsPerProperty: totalProperties > 0 ? Math.round((totalItems || 0) / totalProperties * 100) / 100 : 0,
       topItemsCount: topItems.length,
+      mostActivePropertiesCount: mostActiveProperties.length,
+      topViewedItemsCount: topViewedItems.length,
     });
 
     console.log(`System analytics accessed by: ${user.email}, account: ${accountId || 'all'}, page: ${page}, limit: ${limit}`);

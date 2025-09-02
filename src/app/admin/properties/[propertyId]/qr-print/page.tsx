@@ -25,7 +25,9 @@ function QRPrintPageContent() {
 
   const handleClose = () => {
     console.log('[QR-AUTH-DEBUG] Close button clicked');
-    window.close();
+    // Navigate back to the property page instead of trying to close window
+    const parentPath = `/admin/properties/${propertyId}`;
+    window.location.href = parentPath;
   };
 
   useEffect(() => {
@@ -142,7 +144,6 @@ function QRPrintPageContent() {
         <div className="mb-6 print:hidden">
           <h1 className="text-3xl font-bold text-gray-900">
             🖨️ QR Code Print Manager
-            {authBypass && <span className="text-green-600 text-lg ml-2">(Pre-Authenticated)</span>}
           </h1>
           <p className="text-gray-600">
             Generate and print QR codes for property items

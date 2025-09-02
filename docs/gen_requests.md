@@ -1782,4 +1782,48 @@ Fix critical gaps in OAuth registration flow where users successfully authentica
 
 ---
 
-*Next Request: REQ-022* 
+## REQ-022: Admin Routes Reorganization and KPI Dashboard Implementation
+
+**Date:** September 2, 2025  
+**Type:** Feature Enhancement  
+**Complexity Points:** 8/10  
+
+### Request Summary
+Reorganize admin routing structure and implement KPI dashboard:
+
+1. **Remove redundant route** `http://localhost:3000/admin/items` since it does little more than what `http://localhost:3000/admin` already does
+2. **Replace** `/admin/items` functionality with what's currently displayed under `/admin`
+3. **Transform** `/admin` into KPI dashboard displaying:
+   - Number of properties and number of views
+   - List of users with access to current user's account
+   - List of accounts that current user has access to (and associated users)
+
+### Key Files Involved
+- `/src/app/admin/page.tsx` - Main admin dashboard (to be converted to KPI dashboard)
+- `/src/app/admin/items/page.tsx` - Items route (to be removed/replaced)
+- Related admin components and API routes for KPI data
+- Database queries for user access relationships and property/view metrics
+
+### Brief Analysis
+**Complexity: Medium-High (8/10 points)**
+
+Technical considerations:
+- Route restructuring and content migration between admin pages
+- Database queries for user access relationships and account metrics  
+- KPI dashboard UI/UX implementation with metrics visualization
+- Preserving existing admin functionality during reorganization
+- Understanding current admin route functionality and relationships
+- User permission system analysis for account access data
+- Metrics calculation implementation for properties and views
+- Dashboard design and data presentation components
+
+Main complexity factors:
+1. Understanding current admin route functionality and what content needs migration
+2. Database relationship analysis for user permissions and account access
+3. Metrics calculation and aggregation for KPI display
+4. Dashboard design with proper data visualization
+5. Ensuring no functionality is lost during route reorganization
+
+---
+
+*Next Request: REQ-023* 

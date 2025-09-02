@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, GripVertical, Save, X } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Save, X, Eye } from 'lucide-react';
 import { CreateItemRequest, UpdateItemRequest, LinkType, Property } from '@/types';
-import { getLinkTypeColor, isValidUrl } from '@/lib/utils';
+import { getLinkTypeColor, getLinkTypeLabel, isValidUrl } from '@/lib/utils';
 
 // Generate a random UUID v4
 function generateUUID(): string {
@@ -163,6 +163,16 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     [newLinks[index], newLinks[targetIndex]] = [newLinks[targetIndex], newLinks[index]];
     setLinks(newLinks);
+  };
+
+  const testLink = (linkIndex: number) => {
+    const link = links[linkIndex];
+    if (!link.url || !link.title) {
+      alert('Please fill in both title and URL before testing the link.');
+      return;
+    }
+    // Open the link directly in a new tab
+    window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -357,7 +367,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                         <div className="flex items-center space-x-2">
                           <GripVertical className="w-4 h-4 text-gray-400" />
                           <span className={`px-2 py-1 rounded text-xs font-medium ${getLinkTypeColor(link.linkType)}`}>
-                            {link.linkType.toUpperCase()}
+                            {getLinkTypeLabel(link.linkType).toUpperCase()}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -377,6 +387,16 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                           >
                             ↓
                           </button>
+                          {link.url && link.title && (
+                            <button
+                              type="button"
+                              onClick={() => testLink(index)}
+                              className="p-1 text-blue-400 hover:text-blue-600"
+                              title="Test link"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => removeLink(index)}

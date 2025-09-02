@@ -8,8 +8,8 @@ import type { Database } from '@/lib/supabase';
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
@@ -191,8 +191,12 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
 // Helper function to validate item access within account context
 async function validateItemAccess(publicId: string, userId: string, isAdmin: boolean, accountId: string | null) {
   try {
+    // Create a fresh Supabase client for this request
+    const cookieStore = await cookies();
+    const supabaseClient = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
+    
     // Get item with property and account information
-    let itemQuery = supabase
+    let itemQuery = supabaseClient
       .from('items')
       .select(`
         id, 
@@ -381,8 +385,12 @@ export async function PUT(
       }
     }
     
+    // Create authenticated Supabase client for the update operations
+    const cookieStore = await cookies();
+    const supabaseClient = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
+    
     // Verify the property exists and belongs to the current account context
-    let propertyQuery = supabase
+    let propertyQuery = supabaseClient
       .from('properties')
       .select('id, account_id, user_id')
       .eq('id', body.propertyId);
@@ -417,7 +425,7 @@ export async function PUT(
     console.log('Property verified within account context, updating item...');
 
     // Update the item
-    const { data: updatedItem, error: updateError } = await supabase
+    const { data: updatedItem, error: updateError } = await supabaseClient
       .from('items')
       .update({
         name: body.name,
@@ -441,7 +449,7 @@ export async function PUT(
     console.log('Item updated successfully:', updatedItem.id);
     
     // Delete existing links
-    const { error: deleteLinksError } = await supabase
+    const { error: deleteLinksError } = await supabaseClient
       .from('item_links')
       .delete()
       .eq('item_id', item.id);
@@ -468,7 +476,7 @@ export async function PUT(
         display_order: link.displayOrder !== undefined ? link.displayOrder : index,
       }));
       
-      const { data: newLinks, error: linksError } = await supabase
+      const { data: newLinks, error: linksError } = await supabaseClient
         .from('item_links')
         .insert(linksToInsert)
         .select();

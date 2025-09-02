@@ -16,7 +16,13 @@ const nextConfig = {
   // Enable server-side features
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000", "127.0.0.1:3000"]
+      allowedOrigins: [
+        "localhost:3000", 
+        "127.0.0.1:3000",
+        // Allow Railway domains dynamically
+        ...(process.env.RAILWAY_PUBLIC_DOMAIN ? [process.env.RAILWAY_PUBLIC_DOMAIN] : []),
+        // Note: Railway domains will be handled by the RAILWAY_PUBLIC_DOMAIN env var
+      ]
     }
   },
   // Configure webpack to handle PDFKit properly
