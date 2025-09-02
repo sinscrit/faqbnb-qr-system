@@ -25,7 +25,7 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 }
 
 // Helper function for making API requests with authentication
-async function apiRequest<T>(
+export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {},
   requireAuth: boolean = false

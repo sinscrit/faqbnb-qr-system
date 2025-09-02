@@ -264,14 +264,16 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
       setLoading(true);
       setError(null);
 
-      // Import adminApi dynamically to avoid circular dependencies
-      const { adminApi } = await import('@/lib/api');
+      // Import apiRequest function directly to avoid tree-shaking issues
+      const { apiRequest } = await import('@/lib/api');
 
-      // Fetch analytics data
-      const analyticsResult = await adminApi.getAnalytics();
+      console.log('🔍 DEBUG: Using direct apiRequest calls');
 
-      // Fetch user access data
-      const userAccessResult = await adminApi.getUserAccess();
+      // Fetch analytics data directly
+      const analyticsResult = await apiRequest('/admin/analytics', {}, true);
+
+      // Fetch user access data directly
+      const userAccessResult = await apiRequest('/admin/accounts/users', {}, true);
 
       if (analyticsResult.success) {
         setAnalyticsData(analyticsResult.data);

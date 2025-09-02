@@ -451,7 +451,7 @@ const PropertiesPage: React.FC = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-xs truncate">
+                          <div className="text-sm text-gray-900 max-w-32 truncate">
                             {property.address || 'No address provided'}
                           </div>
                         </td>

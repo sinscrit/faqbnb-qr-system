@@ -236,39 +236,87 @@ export async function GET(request: NextRequest) {
 
     // Get all users who have access to any of these accounts
     console.log('Fetching users with access to owned accounts...');
-    const { data: usersWithAccessData, error: usersWithAccessError } = await supabase
-      .from('account_users')
-      .select(`
-        user_id,
-        account_id,
-        role,
-        joined_at,
-        accounts!inner(
-          id,
-          name
-        ),
-        users!inner(
-          id,
-          email,
-          full_name,
-          role
-        )
-      `)
-      .in('account_id', Array.from(allAccountIds))
-      .neq('user_id', user.id) // Exclude current user
-      .order('joined_at', { ascending: false });
 
-    if (usersWithAccessError) {
-      console.error('Error fetching users with access:', usersWithAccessError);
+    // First get the account_users records
+    const { data: accountUsersData, error: accountUsersError } = await supabase
+      .from('account_users')
+      .select('user_id, account_id, role, joined_at')
+      .in('account_id', Array.from(allAccountIds))
+      .neq('user_id', user.id); // Exclude current user
+
+    if (accountUsersError) {
+      console.error('Error fetching account users:', accountUsersError);
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to fetch users with access',
-          code: 'USERS_ACCESS_FAILED'
+          error: 'Failed to fetch account users',
+          code: 'ACCOUNT_USERS_FAILED'
         },
         { status: 500 }
       );
     }
+
+    // Then get the user details separately
+    const userIds = [...new Set((accountUsersData || []).map(au => au.user_id))];
+    let usersData = [];
+
+    if (userIds.length > 0) {
+      const { data: usersResult, error: usersError } = await supabase
+        .from('users')
+        .select('id, email, full_name, role')
+        .in('id', userIds);
+
+      if (usersError) {
+        console.error('Error fetching user details:', usersError);
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Failed to fetch user details',
+            code: 'USER_DETAILS_FAILED'
+          },
+          { status: 500 }
+        );
+      }
+      usersData = usersResult || [];
+    }
+
+    // Then get account details
+    const { data: accountsData, error: accountsError } = await supabase
+      .from('accounts')
+      .select('id, name')
+      .in('id', Array.from(allAccountIds));
+
+    if (accountsError) {
+      console.error('Error fetching account details:', accountsError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to fetch account details',
+          code: 'ACCOUNT_DETAILS_FAILED'
+        },
+        { status: 500 }
+      );
+    }
+
+    // Combine the data
+    const usersWithAccessData = (accountUsersData || []).map(accountUser => {
+      const userDetail = usersData.find(u => u.id === accountUser.user_id);
+      const accountDetail = accountsData.find(a => a.id === accountUser.account_id);
+
+      if (!userDetail || !accountDetail) {
+        console.warn('Missing data for account user:', accountUser);
+        return null;
+      }
+
+      return {
+        user_id: accountUser.user_id,
+        account_id: accountUser.account_id,
+        role: accountUser.role,
+        joined_at: accountUser.joined_at,
+        accounts: accountDetail,
+        users: userDetail
+      };
+    }).filter(Boolean);
 
     // Process owned accounts with member counts
     const ownedAccounts = await Promise.all(
@@ -320,8 +368,8 @@ export async function GET(request: NextRequest) {
 
     // Process users with access data
     const usersWithAccess = (usersWithAccessData || []).map((accessRecord) => {
-      const account = accessRecord.accounts as any;
-      const userData = accessRecord.users as any;
+      const account = accessRecord.accounts;
+      const userData = accessRecord.users;
 
       return {
         id: userData.id,
