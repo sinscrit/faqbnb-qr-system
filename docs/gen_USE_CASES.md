@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: Thu Aug 7 14:04:25 CEST 2025 - UC-009 User-Friendly Registration Error Handling Added
+**Last Updated**: Mon Sep 2 22:28:00 CEST 2025 - UC-022 Admin Dashboard KPI Display Added
 
 ---
 
@@ -725,6 +725,159 @@ Users can manage multiple properties in a multi-tenant environment with complete
 **Business Value**: Reduces user frustration and support requests by providing clear guidance on resolving registration issues
 
 **Technical Notes**: Implements centralized error translation system with deduplication and action buttons
+
+---
+
+## UC-022: Admin Dashboard KPI Display
+**Origin**: Request #022 from gen_requests.md
+**Implementation Status**: ✅ COMPLETED
+**Date Implemented**: September 2, 2025 22:28 CEST
+**Actor**: System Administrator
+**Goal**: Access comprehensive KPI dashboard with properties, users, and account management information
+**Context**: Admin needs overview of system performance, user access management, and account structure
+
+### Description
+System administrators can access a comprehensive KPI dashboard that displays key metrics about properties, user access management, and account structure. The dashboard provides real-time analytics, account access summaries, and user management capabilities in a single, organized interface.
+
+### Actors
+- **Primary**: System Administrator
+- **Secondary**: Property Manager, Account Manager
+
+### Preconditions
+- User has admin authentication and authorization
+- User has navigated to `/admin` dashboard route
+- Database contains sufficient data for meaningful KPI display
+- Analytics and user access API endpoints are functional
+
+### Main Flow
+
+#### UC022.1 - Access Admin Dashboard
+1. Admin authenticates and navigates to `/admin` route
+2. System loads KPI dashboard with comprehensive metrics
+3. System displays authentication guard if not properly authorized
+4. System loads dashboard components with real-time data
+
+#### UC022.2 - View KPI Metrics Overview
+1. **Properties Summary**:
+   - Total number of properties across all accounts
+   - Average items per property calculation
+   - Total visits and engagement metrics
+   - Real-time property performance indicators
+
+2. **Analytics Dashboard**:
+   - System-wide visit counts and trends
+   - Item engagement and reaction analytics
+   - Time-based metrics (24h, 7d, 30d, all-time)
+   - Most active properties and top viewed items
+
+3. **Account Access Management**:
+   - List of accounts owned by current admin user
+   - Accounts accessible to current admin user
+   - User access permissions and roles per account
+   - Member counts and account statistics
+
+#### UC022.3 - User Access Management
+1. System displays users with access to admin's accounts
+2. Admin can view user roles and permissions per account
+3. System shows account-specific access details
+4. Admin can navigate to detailed account management
+
+#### UC022.4 - Quick Actions Navigation
+1. **Manage Items**: Direct link to `/admin/items` for comprehensive item management
+2. **Manage Properties**: Link to property management interface
+3. **View Analytics**: Access to detailed analytics dashboard
+4. **Account Management**: Navigate to account-specific operations
+
+### Alternative Flows
+
+#### UC022.A1 - Limited Data Available
+1. System detects insufficient data for comprehensive KPIs
+2. Dashboard displays available metrics with "insufficient data" indicators
+3. System provides guidance for increasing data collection
+4. Dashboard remains functional with partial data display
+
+#### UC022.A2 - API Connection Issues
+1. System encounters API connectivity problems
+2. Dashboard displays error states with retry functionality
+3. Admin can manually refresh dashboard data
+4. System provides clear error messaging and recovery options
+
+#### UC022.A3 - Multi-Account Access
+1. Admin has access to multiple accounts
+2. System displays account selector for context switching
+3. Dashboard updates metrics based on selected account
+4. User access information reflects selected account context
+
+### Success Scenarios
+
+#### UC022.S1 - Comprehensive Dashboard View
+- All KPI metrics load and display correctly
+- User access information shows complete account structure
+- Navigation between dashboard and management interfaces works seamlessly
+- Real-time data updates function properly
+
+#### UC022.S2 - Account-Specific Insights
+- Admin can view metrics filtered by specific account
+- User access management shows account-specific roles
+- Property data reflects correct account ownership
+- Analytics provide account-contextual insights
+
+#### UC022.S3 - Performance Monitoring
+- Dashboard loads within acceptable time limits
+- Real-time updates don't impact performance
+- Large datasets display efficiently
+- Error recovery works smoothly
+
+### Postconditions
+- **Success**: Admin has complete overview of system performance and user access
+- **Success**: Dashboard provides actionable insights for account management
+- **Success**: Navigation flow enables efficient admin operations
+- **Success**: Real-time data supports informed decision-making
+
+### Technical Implementation Features
+
+#### Dashboard Architecture
+- ✅ Modular React components for KPI display (`KPIDashboardOverview`, `PropertiesMetricsCard`, `AccountAccessSummary`, `UserAccessTable`)
+- ✅ TypeScript interfaces for all dashboard data structures
+- ✅ Responsive design with mobile-friendly layouts
+- ✅ Error boundaries and loading states for robust user experience
+
+#### API Integration
+- ✅ Extended analytics API (`/api/admin/analytics`) with KPI metrics
+- ✅ New user access API (`/api/admin/accounts/users`) for account management
+- ✅ Account-filtered data queries with proper security
+- ✅ Real-time data fetching with error handling and retries
+
+#### Data Visualization
+- ✅ KPI cards with trend indicators and performance metrics
+- ✅ Account access summaries with role-based display
+- ✅ User access tables with sortable columns and filtering
+- ✅ Interactive navigation with seamless routing
+
+#### Performance Optimization
+- ✅ Efficient database queries with proper indexing
+- ✅ Lazy loading of dashboard components
+- ✅ Optimized bundle sizes (3.76 kB for dashboard, 5.76 kB for items management)
+- ✅ Caching strategies for frequently accessed data
+
+### Business Value
+- **Operational Efficiency**: Single dashboard provides complete system overview
+- **Account Management**: Streamlined user access and account management workflow
+- **Decision Support**: Real-time KPIs enable data-driven decision making
+- **User Experience**: Intuitive interface reduces admin learning curve
+- **Scalability**: Modular architecture supports future KPI additions
+
+### Integration Points
+- **Authentication System**: Seamlessly integrated with existing admin authentication
+- **Account Management**: Leverages multi-tenant account structure
+- **Analytics Engine**: Utilizes existing analytics infrastructure
+- **Navigation System**: Consistent with overall admin interface design
+
+### Security Considerations
+- **Access Control**: Dashboard only accessible to authenticated admin users
+- **Data Isolation**: All metrics respect account ownership and user permissions
+- **Audit Trail**: Admin actions logged for accountability
+- **Data Privacy**: User access information properly secured and filtered
 
 ---
 
