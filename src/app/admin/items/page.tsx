@@ -66,8 +66,8 @@ export default function AdminItemsPage() {
     }
   }, [user, selectedPropertyId]);
 
-  const loadItems = async () => {
-    if (!user) return;
+    const loadItems = async () => {
+      if (!user) return;
 
     try {
       setLoadingItems(true);
@@ -90,8 +90,8 @@ export default function AdminItemsPage() {
         }
         if ('pagination' in response) {
           setPagination(response.pagination);
-        }
-      } else {
+          }
+        } else {
         setError(response.error || 'Failed to load items');
         setItems([]);
       }
@@ -99,10 +99,10 @@ export default function AdminItemsPage() {
       console.error('Error loading items:', err);
       setError(err instanceof Error ? err.message : 'Failed to load items');
       setItems([]);
-    } finally {
-      setLoadingItems(false);
-    }
-  };
+      } finally {
+        setLoadingItems(false);
+      }
+    };
 
   const loadProperties = async () => {
     if (!user) return;
@@ -189,17 +189,17 @@ export default function AdminItemsPage() {
     <div>
       {/* Page Header */}
       <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
             <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
-          </div>
-          <div className="flex gap-3">
+        </div>
+        <div className="flex gap-3">
             <Link
               href="/admin"
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
-            >
-              ← Back to Dashboard
+          >
+            ← Back to Dashboard
             </Link>
             <Link
               href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
@@ -279,8 +279,8 @@ export default function AdminItemsPage() {
         {pagination && (
           <div className="mt-2 text-xs text-gray-500">
             Page {pagination.page} of {pagination.totalPages} • {pagination.totalItems} total items
-          </div>
-        )}
+        </div>
+      )}
       </div>
 
       {/* Items Table */}
@@ -293,12 +293,12 @@ export default function AdminItemsPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               {searchTerm ? 'No items found' : 'No items yet'}
             </h3>
-            <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6">
               {searchTerm
                 ? 'Try adjusting your search terms'
                 : 'Get started by creating your first item'
-              }
-            </p>
+                }
+              </p>
             {!searchTerm && (
               <Link
                 href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
@@ -308,8 +308,8 @@ export default function AdminItemsPage() {
                 Add Your First Item
               </Link>
             )}
-          </div>
-        ) : (
+            </div>
+          ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -456,9 +456,9 @@ export default function AdminItemsPage() {
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                     👎 {reactions.byType.dislike}
                                   </span>
-                                )}
-                              </div>
-                            </div>
+                        )}
+                      </div>
+                    </div>
                           ) : (
                             <span className="text-xs text-gray-400">No reactions</span>
                           );
@@ -485,22 +485,22 @@ export default function AdminItemsPage() {
                         >
                           <Edit className="w-4 h-4" />
                         </Link>
-                        <button
+                      <button
                           onClick={() => setDeleteConfirm(item.publicId)}
                           className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                           title="Delete item"
-                        >
+                      >
                           <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                      </button>
+                    </div>
                     </td>
                   </tr>
-                ))}
+              ))}
               </tbody>
             </table>
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (

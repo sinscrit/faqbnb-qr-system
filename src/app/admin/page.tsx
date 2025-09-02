@@ -20,14 +20,14 @@ export default function AdminPage() {
 
   // If not authenticated, this will be handled by middleware, but show a basic message
   if (!user) {
-    return (
+  return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Required</h1>
           <p className="text-gray-600">Please log in to access the admin dashboard.</p>
         </div>
-      </div>
-    );
+    </div>
+  );
   }
 
   return <KPIDashboardOverview />;
