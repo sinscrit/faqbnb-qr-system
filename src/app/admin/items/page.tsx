@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Item, Property } from '@/types';
+import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter } from 'lucide-react';
+import { adminApi } from '@/lib/api';
+import { ItemsListResponse } from '@/types';
+import { formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 interface ItemWithDetails extends Item {
   publicId: string;
@@ -37,96 +42,130 @@ export default function AdminItemsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading, isAdmin, selectedProperty } = useAuth();
-  const [items, setItems] = useState<ItemWithDetails[]>([]);
+
+  // State for comprehensive items management
+  const [items, setItems] = useState<ItemsListResponse['data']>([]);
+  const [properties, setProperties] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filteredProperty, setFilteredProperty] = useState<Property | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [accountContext, setAccountContext] = useState<any>(null);
+  const [pagination, setPagination] = useState<any>(null);
 
   // Get property ID from URL parameters
   const propertyIdFromUrl = searchParams.get('property');
 
-  // Load items
+  // Load items with comprehensive management
   useEffect(() => {
-    const loadItems = async () => {
-      if (!user) return;
+    if (user) {
+      loadItems();
+      loadProperties();
+    }
+  }, [user, selectedPropertyId]);
 
+  const loadItems = async () => {
+    if (!user) return;
+
+    try {
       setLoadingItems(true);
       setError(null);
 
-      try {
-        // Build API URL with property filter if provided
-        // Priority: URL parameter > global selectedProperty > show all
-        let apiUrl = '/api/admin/items';
-        const effectivePropertyId = propertyIdFromUrl || selectedProperty?.id;
-        if (effectivePropertyId) {
-          apiUrl += `?property=${effectivePropertyId}`;
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (selectedProperty) {
+        headers['x-current-account'] = selectedProperty.id;
+      }
+
+      const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, 1, 20, headers);
+
+      if (response.success && response.data) {
+        setItems(response.data);
+
+        // Set account context and pagination from response
+        if ('accountContext' in response) {
+          setAccountContext(response.accountContext);
         }
-
-        const response = await fetch(apiUrl, {
-          credentials: 'include'
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setItems(data.data || []);
-          } else {
-            setError(data.error || 'Failed to load items');
-          }
-        } else {
-          setError(`Failed to load items: ${response.status}`);
+        if ('pagination' in response) {
+          setPagination(response.pagination);
         }
-      } catch (error) {
-        console.error('Error loading items:', error);
-        setError('Failed to connect to server');
-      } finally {
-        setLoadingItems(false);
+      } else {
+        setError(response.error || 'Failed to load items');
+        setItems([]);
       }
-    };
+    } catch (err) {
+      console.error('Error loading items:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load items');
+      setItems([]);
+    } finally {
+      setLoadingItems(false);
+    }
+  };
 
-    loadItems();
-  }, [user, selectedProperty, propertyIdFromUrl]);
+  const loadProperties = async () => {
+    if (!user) return;
 
-  // Load filtered property details
-  useEffect(() => {
-    const loadPropertyDetails = async () => {
-      const effectivePropertyId = propertyIdFromUrl || selectedProperty?.id;
-      
-      if (!effectivePropertyId || !user) {
-        setFilteredProperty(null);
-        return;
-      }
+    try {
+      setPropertiesLoading(true);
 
-      // If using selectedProperty, don't fetch again since we already have the data
-      if (!propertyIdFromUrl && selectedProperty) {
-        setFilteredProperty(selectedProperty);
-        return;
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (selectedProperty) {
+        headers['x-current-account'] = selectedProperty.id;
       }
 
-      try {
-        const response = await fetch(`/api/admin/properties/${effectivePropertyId}`, {
-          credentials: 'include'
-        });
+      const response = await adminApi.listProperties(headers);
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data) {
-            setFilteredProperty(data.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading property details:', error);
+      if (response.success && response.data) {
+        setProperties(response.data);
+      } else {
+        console.warn('Failed to load properties:', response.error);
+        setProperties([]);
       }
-    };
+    } catch (err) {
+      console.warn('Failed to load properties:', err);
+      setProperties([]);
+    } finally {
+      setPropertiesLoading(false);
+    }
+  };
 
-    loadPropertyDetails();
-  }, [propertyIdFromUrl, selectedProperty, user]);
+  const handleDelete = async (publicId: string) => {
+    try {
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (selectedProperty) {
+        headers['x-current-account'] = selectedProperty.id;
+      }
+
+      const response = await adminApi.deleteItem(publicId, headers);
+
+      if (response.success) {
+        setItems(items?.filter(item => item.publicId !== publicId) || []);
+        setDeleteConfirm(null);
+      } else {
+        setError(response.error || 'Failed to delete item');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete item');
+    }
+  };
+
+  const filteredItems = items?.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.publicId.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   // Authentication guard
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading items management...</p>
+        </div>
       </div>
     );
   }
@@ -147,220 +186,343 @@ export default function AdminItemsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
-          <p className="text-gray-600 mt-1">
-            {filteredProperty 
-              ? `Viewing items for ${filteredProperty.nickname}` 
-              : (isAdmin ? 'Manage all items in the system' : 'Manage your property items')
-            }
-          </p>
-          {filteredProperty && (
-            <div className="mt-2 flex items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                🏠 Current Property: {filteredProperty.nickname}
-              </span>
-              <button
-                onClick={() => router.push('/admin/items')}
-                className="text-sm text-blue-600 hover:text-blue-800 underline"
-              >
-                Clear filter
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="flex gap-3">
-          {filteredProperty && (
-            <button
-              onClick={() => router.push(`/admin/properties/${filteredProperty.id}`)}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+    <div>
+      {/* Page Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Items Management</h1>
+            <p className="text-gray-600 mt-1">Manage your QR code items and resources</p>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              href="/admin"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
             >
-              ← Back to Property
-            </button>
-          )}
-          <button
-            onClick={() => router.push('/admin')}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            ← Back to Dashboard
-          </button>
-          <button
-            onClick={() => {
-              const newItemUrl = filteredProperty 
-                ? `/admin/items/new?property=${filteredProperty.id}`
-                : '/admin/items/new';
-              router.push(newItemUrl);
-            }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            + Add New Item
-          </button>
+              ← Back to Dashboard
+            </Link>
+            <Link
+              href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Item
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Property filter info */}
-      {(filteredProperty || selectedProperty) && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <span className="text-blue-800 font-medium">🏠 Current Property:</span>
-            <span className="text-blue-900">
-              {filteredProperty ? filteredProperty.nickname : selectedProperty?.nickname}
-            </span>
-            {filteredProperty && (
-              <span className="text-blue-700 text-sm">(filtered by URL)</span>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Error state */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-red-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span className="text-red-800 font-medium">Error:</span>
-            <span className="text-red-700">{error}</span>
-          </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-800">{error}</p>
           <button
-            onClick={() => window.location.reload()}
-            className="mt-2 px-3 py-1 bg-red-100 text-red-800 rounded text-sm hover:bg-red-200 transition-colors"
+            onClick={() => setError(null)}
+            className="text-red-600 hover:text-red-800 text-sm mt-2"
           >
-            Retry
+            Dismiss
           </button>
         </div>
       )}
 
-      {/* Loading state */}
-      {loadingItems && (
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading items...</p>
+      {/* Search, Filter and Stats */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search items..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Property Filter */}
+            <div className="relative min-w-64">
+              <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <select
+                value={selectedPropertyId}
+                onChange={(e) => setSelectedPropertyId(e.target.value)}
+                disabled={propertiesLoading}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white disabled:bg-gray-50 disabled:text-gray-500"
+              >
+                <option value="">
+                  {propertiesLoading ? 'Loading properties...' : 'All Properties'}
+                </option>
+                {properties.map((property) => (
+                  <option key={property.id} value={property.id}>
+                    {property.nickname} {isAdmin && property.users ? `(${property.users.email})` : ''}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-600">
+            {filteredItems.length} of {items?.length || 0} items
+            {selectedPropertyId && (
+              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                Filtered by Property
+              </span>
+            )}
           </div>
         </div>
-      )}
 
-      {/* Items list */}
-      {!loadingItems && !error && (
-        <div className="space-y-4">
-          {items.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <div className="text-gray-400 text-6xl mb-4">📦</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Items Found</h3>
-              <p className="text-gray-600 mb-6">
-                {filteredProperty 
-                  ? `No items found for ${filteredProperty.nickname}` 
-                  : (selectedProperty 
-                    ? `No items found for ${selectedProperty.nickname}` 
-                    : 'No items have been created yet'
-                  )
-                }
-              </p>
-              <button
-                onClick={() => router.push('/admin/items/new')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        {/* Pagination Info */}
+        {pagination && (
+          <div className="mt-2 text-xs text-gray-500">
+            Page {pagination.page} of {pagination.totalPages} • {pagination.totalItems} total items
+          </div>
+        )}
+      </div>
+
+      {/* Items Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {filteredItems.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <Search className="w-12 h-12 mx-auto" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchTerm ? 'No items found' : 'No items yet'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {searchTerm
+                ? 'Try adjusting your search terms'
+                : 'Get started by creating your first item'
+              }
+            </p>
+            {!searchTerm && (
+              <Link
+                href={`/admin/items/new${selectedPropertyId ? `?propertyId=${selectedPropertyId}` : ''}`}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Create Your First Item
-              </button>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {item.name}
-                      </h3>
-                      {item.description && (
-                        <p className="text-gray-600 mb-3 line-clamp-2">
-                          {item.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>ID: {item.publicId}</span>
-                        {item.property && (
-                          <span>Property: {item.property.nickname}</span>
-                        )}
-                        {item.linksCount !== undefined && (
-                          <span>Links: {item.linksCount}</span>
-                        )}
-                        {item.analytics?.visits?.allTime !== undefined && (
-                          <span>Visits: {item.analytics.visits.allTime}</span>
-                        )}
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Item
+              </Link>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Item
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Public ID
+                  </th>
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40 min-w-40">
+                    Property
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Links
+                  </th>
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24 min-w-24">
+                    Views (24h/Total)
+                  </th>
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Reactions
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32 min-w-32">
+                    Created
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-gray-900" title={item.name}>
+                        {item.name.length > 15 ? `${item.name.substring(0, 15)}...` : item.name}
                       </div>
-                    </div>
-                    <div className="flex gap-2 ml-4">
-                      <button
-                        onClick={() => router.push(`/admin/items/${item.publicId}/analytics`)}
-                        className="px-3 py-1 bg-green-100 text-green-800 rounded text-sm hover:bg-green-200 transition-colors"
-                      >
-                        📈 Analytics
-                      </button>
-                      <button
-                        onClick={() => router.push(`/admin/items/${item.publicId}/edit`)}
-                        className="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm hover:bg-blue-200 transition-colors"
-                      >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        onClick={() => router.push(`/item/${item.publicId}`)}
-                        className="px-3 py-1 bg-gray-100 text-gray-800 rounded text-sm hover:bg-gray-200 transition-colors"
-                      >
-                        👁️ View
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="group relative">
+                        <code
+                          className="px-2 py-1 bg-gray-100 rounded text-sm font-mono cursor-pointer hover:bg-gray-200 transition-colors"
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.publicId).then(() => {
+                              // Show brief feedback
+                              const element = document.activeElement;
+                              if (element) {
+                                const originalText = element.textContent;
+                                element.textContent = 'Copied!';
+                                setTimeout(() => {
+                                  element.textContent = originalText;
+                                }, 1000);
+                              }
+                            }).catch(() => {
+                              // Fallback for older browsers
+                              const textArea = document.createElement('textarea');
+                              textArea.value = item.publicId;
+                              document.body.appendChild(textArea);
+                              textArea.select();
+                              document.execCommand('copy');
+                              document.body.removeChild(textArea);
 
-      {/* Quick stats summary */}
-      {!loadingItems && !error && items.length > 0 && (
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-blue-600">{items.length}</div>
-              <div className="text-sm text-gray-600">Total Items</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {items.reduce((sum, item) => sum + (item.linksCount || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600">Total Links</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {items.reduce((sum, item) => sum + (item.analytics?.visits?.allTime || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600">Total Visits</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-orange-600">
-                {items.reduce((sum, item) => sum + (item.analytics?.reactions?.total || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600">Total Reactions</div>
+                              const element = document.activeElement;
+                              if (element) {
+                                const originalText = element.textContent;
+                                element.textContent = 'Copied!';
+                                setTimeout(() => {
+                                  element.textContent = originalText;
+                                }, 1000);
+                              }
+                            });
+                          }}
+                          title="Click to copy full UUID"
+                        >
+                          {item.publicId.substring(0, 8)}...
+                        </code>
+                        <div className="invisible group-hover:visible absolute z-10 bg-black text-white text-xs rounded py-1 px-2 bottom-full left-0 whitespace-nowrap pointer-events-none">
+                          {item.publicId}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden lg:table-cell px-6 py-4 w-40 min-w-40">
+                      <div className="text-sm text-gray-900">
+                        {/* Updated to handle new data structure */}
+                        {(() => {
+                          const propertyName = item.property?.nickname || (item as any).propertyNickname || 'Unknown Property';
+                          return (
+                            <span title={propertyName}>
+                              {propertyName.length > 12 ? `${propertyName.substring(0, 12)}...` : propertyName}
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        {item.linksCount}
+                      </span>
+                    </td>
+                    {/* Views Column */}
+                    <td className="hidden sm:table-cell px-6 py-4 w-24 min-w-24">
+                      <div className="text-sm text-gray-900">
+                        <div className="flex items-center space-x-1">
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                          </svg>
+                          <span className="font-medium">
+                            {/* Updated to handle new nested analytics structure */}
+                            {item.analytics?.visits?.last24Hours || (item as any).visitCounts?.last24Hours || 0}
+                          </span>
+                          <span className="text-gray-500">/</span>
+                          <span className="text-gray-600">
+                            {item.analytics?.visits?.allTime || (item as any).visitCounts?.allTime || 0}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    {/* Reactions Column */}
+                    <td className="hidden md:table-cell px-6 py-4">
+                      <div className="text-sm text-gray-900">
+                        {/* Updated to handle new nested analytics structure */}
+                        {(() => {
+                          const reactions = item.analytics?.reactions || (item as any).reactionCounts;
+                          return reactions && reactions.total > 0 ? (
+                            <div className="flex items-center space-x-2">
+                              <div className="flex space-x-1">
+                                {reactions.byType?.like > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    👍 {reactions.byType.like}
+                                  </span>
+                                )}
+                                {reactions.byType?.love > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                    ❤️ {reactions.byType.love}
+                                  </span>
+                                )}
+                                {reactions.byType?.confused > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    😕 {reactions.byType.confused}
+                                  </span>
+                                )}
+                                {reactions.byType?.dislike > 0 && (
+                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                    👎 {reactions.byType.dislike}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400">No reactions</span>
+                          );
+                        })()}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 w-32 min-w-32">
+                      {formatDate(item.createdAt)}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end space-x-2">
+                        <Link
+                          href={`/item/${item.publicId}`}
+                          target="_blank"
+                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                          title="View item"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                        <Link
+                          href={`/admin/items/${item.publicId}/edit`}
+                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                          title="Edit item"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => setDeleteConfirm(item.publicId)}
+                          className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                          title="Delete item"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Item</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirm)}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
