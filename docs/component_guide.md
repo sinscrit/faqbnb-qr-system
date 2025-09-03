@@ -971,9 +971,100 @@ export default function SystemAdminPage() {
 
 ---
 
+### SystemBackOfficePage
+**File**: `src/app/admin/system/back-office/page.tsx`  
+**Added**: September 3, 2025 (REQ-023 Task 8.2)  
+**Purpose**: Enhanced system administrator back office with user analytics and access request management
+
+#### Overview
+The SystemBackOfficePage component provides a secure, system-admin-only interface for advanced user management and access control. This component was moved from the general admin area to the dedicated system admin section for enhanced security and proper role separation.
+
+#### Component Structure
+```typescript
+export default function SystemBackOfficePage(): JSX.Element
+```
+
+#### Enhanced Features
+
+##### Security Enhancements
+- **System Admin Only Access**: Restricted to users with `isAdmin = true`
+- **Secure Data Handling**: All operations logged and audited
+- **Confirmation Dialogs**: Enhanced user interaction for critical actions
+- **Error Boundaries**: Robust error handling with user-friendly messages
+
+##### User Analytics Dashboard
+- **Comprehensive User Metrics**: Total users, accounts, items, and visits tracking
+- **Real-time Statistics**: Live data updates from existing admin APIs
+- **User Analytics Table**: Detailed user activity and account management view
+- **System-wide Overview**: Cross-account analytics for system administrators
+
+##### Access Request Management
+- **Advanced Filtering**: Status-based filtering (pending, approved, denied, registered)
+- **Approval Workflow**: Streamlined approval and denial processes
+- **Email Notifications**: Integrated email sending for approved requests
+- **Audit Trail**: Complete logging of all access request actions
+
+##### Visual Design
+- **System Admin Branding**: Red-themed interface consistent with system admin area
+- **Enhanced UI Components**: Improved tables, cards, and interaction elements
+- **Responsive Layout**: Mobile-friendly design with proper spacing
+- **Loading States**: Professional loading indicators and error states
+
+##### Action Handlers
+```typescript
+// Enhanced action handlers with confirmation dialogs
+const handleApproveRequest = async (requestId: string) => { /* ... */ }
+const handleDenyRequest = async (requestId: string) => { /* ... */ }
+const handleSendEmail = async (requestId: string) => { /* ... */ }
+```
+
+#### API Integration
+- **User Analytics API**: `/api/admin/users/analytics` for comprehensive user data
+- **Access Request Management**: Integrated with existing access request workflows
+- **Real-time Updates**: Live data synchronization with backend systems
+- **Error Handling**: Comprehensive error management with user feedback
+
+#### Security Features
+- **Permission Validation**: Continuous validation of system admin privileges
+- **Session Monitoring**: Active session verification throughout usage
+- **Action Logging**: Complete audit trail for all administrative actions
+- **Secure Communication**: Encrypted data transmission and storage
+
+#### User Experience Improvements
+- **Confirmation Dialogs**: User confirmation for destructive actions
+- **Status Indicators**: Clear visual feedback for all operations
+- **Error Recovery**: Graceful error handling with retry options
+- **Navigation Integration**: Seamless integration with system admin navigation
+
+#### Performance Optimizations
+- **Efficient Data Loading**: Optimized API calls and data processing
+- **Lazy Loading**: On-demand loading of heavy components
+- **Caching Strategy**: Smart caching of frequently accessed data
+- **Memory Management**: Proper cleanup and resource management
+
+#### Usage Context
+```typescript
+// System admin access only
+export default function SystemBackOfficePage() {
+  return (
+    <SystemAdminLayout>
+      <SystemBackOfficePage />
+    </SystemAdminLayout>
+  );
+}
+```
+
+#### Migration Benefits
+- **Enhanced Security**: Moved to dedicated system admin area
+- **Improved UX**: Better confirmation dialogs and user feedback
+- **Audit Compliance**: Complete logging and audit trail
+- **Role Separation**: Clear separation from regular admin functions
+
+---
+
 **Component Status**: Production Ready  
 **Last Updated**: September 3, 2025  
-**Implementation**: Dedicated system admin layout for REQ-023 unified route architecture
+**Implementation**: System administrator back office for REQ-023 unified route architecture
 
 **Permission System Status**: Production Ready  
 **Last Tested**: September 3, 2025 06:56 CEST  
