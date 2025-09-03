@@ -23,6 +23,23 @@ import {
   clearAccountContext,
   AccountSwitchResponse,
 } from '@/lib/auth';
+// REQ-023: Unified Route Architecture - Permission System Integration
+import {
+  DashboardPermissions,
+  PermissionCheck,
+  UserRole,
+  AccountRole,
+  PERMISSIONS,
+  type PermissionKey
+} from '@/types/permissions';
+import {
+  getDashboardPermissions,
+  hasPermission,
+  checkUserPermission,
+  checkAccountPermission,
+  canAccessAdminFeatures
+} from '@/lib/permissions';
+import { usePermissions } from '@/hooks/usePermissions';
 
 // Global flag to prevent multiple auth initializations across all component instances
 // Use browser storage to persist across bundle chunks and module instances
@@ -158,38 +175,67 @@ const setGlobalAuthInProgress = (value: boolean) => {
 
 console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
 
-// Enhanced auth context types with account support
+// REQ-023: Dashboard section and navigation types
+export type DashboardSection = 'dashboard' | 'items' | 'properties' | 'analytics' | 'system-admin';
+
+interface NavigationHistory {
+  section: DashboardSection;
+  timestamp: number;
+  path?: string;
+  params?: Record<string, string>;
+}
+
+// Enhanced auth context types with account support and dashboard permissions (REQ-023)
 interface AuthContextType {
   // Core authentication
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
-  
+
   // Property management (legacy)
   userProperties: Property[];
   selectedProperty: Property | null;
-  
+
   // Account management (multi-tenant)
   currentAccount: Account | null;
   userAccounts: Account[];
   switchingAccount: boolean;
-  
+
+  // Dashboard context state management (REQ-023)
+  currentDashboardSection: DashboardSection;
+  navigationHistory: NavigationHistory[];
+  dashboardPermissions: DashboardPermissions | null;
+  permissionsLoading: boolean;
+
   // Authentication functions
   signIn: (email: string, password: string) => Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
   register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
-  
+
   // Property functions (legacy)
   getUserProperties: () => Promise<void>;
   setSelectedProperty: (property: Property | null) => void;
-  
+
   // Account functions (multi-tenant)
   setCurrentAccount: (account: Account | null) => void;
   switchToAccount: (accountId: string) => Promise<AccountSwitchResponse>;
   refreshAccountContext: () => Promise<void>;
   clearCurrentAccount: () => void;
+
+  // Dashboard context functions (REQ-023)
+  setCurrentDashboardSection: (section: DashboardSection) => void;
+  navigateToSection: (section: DashboardSection, preserveHistory?: boolean) => void;
+  goBack: () => void;
+  canNavigateToSection: (section: DashboardSection) => boolean;
+
+  // Permission helper functions (REQ-023)
+  checkPermission: (permission: PermissionKey) => Promise<PermissionCheck>;
+  hasPermission: (permission: PermissionKey) => boolean;
+  refreshPermissions: () => Promise<void>;
+  getUserRole: () => UserRole;
+  getAccountRole: () => AccountRole | null;
 }
 
 interface AuthProviderProps {
@@ -202,21 +248,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Session refresh interval (5 minutes)
 const SESSION_CHECK_INTERVAL = 5 * 60 * 1000;
 
-// Authentication Provider Component with Account Support
+// Authentication Provider Component with Account Support and Dashboard Permissions (REQ-023)
 export function AuthProvider({ children }: AuthProviderProps) {
   // Core authentication state
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  
+
   // Account management state (multi-tenant)
   const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
   const [userAccounts, setUserAccounts] = useState<Account[]>([]);
   const [switchingAccount, setSwitchingAccount] = useState(false);
+
+  // Dashboard context state management (REQ-023)
+  const [currentDashboardSection, setCurrentDashboardSection] = useState<DashboardSection>('dashboard');
+  const [navigationHistory, setNavigationHistory] = useState<NavigationHistory[]>([]);
+  const [dashboardPermissions, setDashboardPermissions] = useState<DashboardPermissions | null>(null);
+  const [permissionsLoading, setPermissionsLoading] = useState(false);
 
   // Prevent multiple simultaneous auth initializations
       const [authInitialized, setAuthInitialized] = useState(getGlobalAuthInitialized());
@@ -928,7 +980,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const clearCurrentAccount = useCallback(() => {
     setCurrentAccount(null);
     clearAccountContext();
-    
+
     // Update user's current account context
     if (user) {
       const updatedUser = {
@@ -937,10 +989,147 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
       setUser(updatedUser);
     }
-    
+
     // Reload properties without account filtering
     loadUserProperties();
   }, [user]);
+
+  // REQ-023: Dashboard context and permission management functions
+
+  // Load dashboard permissions for current user/account context
+  const loadDashboardPermissions = useCallback(async () => {
+    if (!user) {
+      setDashboardPermissions(null);
+      return;
+    }
+
+    setPermissionsLoading(true);
+    try {
+      const permissions = await getDashboardPermissions(user, currentAccount);
+      setDashboardPermissions(permissions);
+    } catch (error) {
+      console.error('Failed to load dashboard permissions:', error);
+      setDashboardPermissions(null);
+    } finally {
+      setPermissionsLoading(false);
+    }
+  }, [user, currentAccount]);
+
+  // Dashboard navigation functions
+  const navigateToSection = useCallback((section: DashboardSection, preserveHistory: boolean = true) => {
+    if (preserveHistory) {
+      setNavigationHistory(prev => [...prev, {
+        section: currentDashboardSection,
+        timestamp: Date.now(),
+        path: window.location.pathname,
+        params: Object.fromEntries(new URLSearchParams(window.location.search))
+      }]);
+    }
+
+    setCurrentDashboardSection(section);
+  }, [currentDashboardSection]);
+
+  const goBack = useCallback(() => {
+    if (navigationHistory.length > 0) {
+      const lastEntry = navigationHistory[navigationHistory.length - 1];
+      setNavigationHistory(prev => prev.slice(0, -1));
+      setCurrentDashboardSection(lastEntry.section);
+    }
+  }, [navigationHistory]);
+
+  const canNavigateToSection = useCallback((section: DashboardSection): boolean => {
+    if (!dashboardPermissions) return false;
+
+    switch (section) {
+      case 'dashboard':
+        return dashboardPermissions.canAccessDashboard;
+      case 'items':
+        return dashboardPermissions.canAccessItems;
+      case 'properties':
+        return dashboardPermissions.canAccessProperties;
+      case 'analytics':
+        return dashboardPermissions.canAccessAnalytics;
+      case 'system-admin':
+        return dashboardPermissions.canAccessSystemAdmin;
+      default:
+        return false;
+    }
+  }, [dashboardPermissions]);
+
+  // Permission helper functions
+  const checkPermission = useCallback(async (permission: PermissionKey): Promise<PermissionCheck> => {
+    if (!user) {
+      return {
+        granted: false,
+        reason: 'User not authenticated',
+        requiredRole: UserRole.USER
+      };
+    }
+
+    return hasPermission(user, permission, currentAccount);
+  }, [user, currentAccount]);
+
+  const hasPermissionSync = useCallback((permission: PermissionKey): boolean => {
+    if (!dashboardPermissions) return false;
+
+    switch (permission) {
+      case PERMISSIONS.VIEW_DASHBOARD:
+        return dashboardPermissions.canAccessDashboard;
+      case PERMISSIONS.VIEW_ITEMS:
+        return dashboardPermissions.canAccessItems;
+      case PERMISSIONS.VIEW_PROPERTIES:
+        return dashboardPermissions.canAccessProperties;
+      case PERMISSIONS.VIEW_ANALYTICS:
+        return dashboardPermissions.canAccessAnalytics;
+      case PERMISSIONS.ACCESS_ADMIN_FEATURES:
+        return dashboardPermissions.canAccessAdminFeatures;
+      case PERMISSIONS.ACCESS_SYSTEM_ADMIN:
+        return dashboardPermissions.canAccessSystemAdmin;
+      case PERMISSIONS.CREATE_ITEMS:
+        return dashboardPermissions.canCreateItems;
+      case PERMISSIONS.EDIT_ITEMS:
+        return dashboardPermissions.canEditItems;
+      case PERMISSIONS.DELETE_ITEMS:
+        return dashboardPermissions.canDeleteItems;
+      case PERMISSIONS.CREATE_PROPERTIES:
+        return dashboardPermissions.canCreateProperties;
+      case PERMISSIONS.EDIT_PROPERTIES:
+        return dashboardPermissions.canEditProperties;
+      case PERMISSIONS.DELETE_PROPERTIES:
+        return dashboardPermissions.canDeleteProperties;
+      case PERMISSIONS.MANAGE_USERS:
+        return dashboardPermissions.canManageUsers;
+      case PERMISSIONS.VIEW_ALL_ACCOUNTS:
+        return dashboardPermissions.canViewAllAccounts;
+      case PERMISSIONS.MANAGE_ANALYTICS:
+        return dashboardPermissions.canManageAnalytics;
+      case PERMISSIONS.EXPORT_DATA:
+        return dashboardPermissions.canExportData;
+      case PERMISSIONS.MANAGE_ACCOUNT_USERS:
+        return dashboardPermissions.canManageAccountUsers;
+      case PERMISSIONS.MANAGE_ACCOUNT_SETTINGS:
+        return dashboardPermissions.canManageAccountSettings;
+      default:
+        return false;
+    }
+  }, [dashboardPermissions]);
+
+  const getUserRole = useCallback((): UserRole => {
+    if (!user) return UserRole.USER;
+    return canAccessAdminFeatures(user) ? UserRole.ADMIN : UserRole.USER;
+  }, [user]);
+
+  const getAccountRole = useCallback((): AccountRole | null => {
+    if (!currentAccount) return null;
+    // This would need to be determined from account_users table
+    // For now, return null if not available
+    return null;
+  }, [currentAccount]);
+
+  // Refresh permissions when user or account context changes
+  useEffect(() => {
+    loadDashboardPermissions();
+  }, [user, currentAccount, loadDashboardPermissions]);
 
   // User registration function
   const register = async (
@@ -987,38 +1176,57 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Enhanced context value with account management
+  // Enhanced context value with account management and dashboard permissions (REQ-023)
   const contextValue: AuthContextType = {
     // Core authentication
     user,
     session,
     loading,
     isAdmin: user ? isAdmin(user) : false,
-    
+
     // Property management (legacy)
     userProperties,
     selectedProperty,
-    
+
     // Account management (multi-tenant)
     currentAccount,
     userAccounts,
     switchingAccount,
-    
+
+    // Dashboard context state management (REQ-023)
+    currentDashboardSection,
+    navigationHistory,
+    dashboardPermissions,
+    permissionsLoading,
+
     // Authentication functions
     signIn,
     signOut,
     refreshSession: handleRefreshSession,
     register,
-    
+
     // Property functions (legacy)
     getUserProperties: loadUserProperties,
     setSelectedProperty,
-    
+
     // Account functions (multi-tenant)
     setCurrentAccount,
     switchToAccount,
     refreshAccountContext,
     clearCurrentAccount,
+
+    // Dashboard context functions (REQ-023)
+    setCurrentDashboardSection,
+    navigateToSection,
+    goBack,
+    canNavigateToSection,
+
+    // Permission helper functions (REQ-023)
+    checkPermission,
+    hasPermission: hasPermissionSync,
+    refreshPermissions: loadDashboardPermissions,
+    getUserRole,
+    getAccountRole,
   };
 
   return (
