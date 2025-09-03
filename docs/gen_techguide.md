@@ -1203,4 +1203,396 @@ DATABASE_URL=...
 
 ---
 
+## REQ-023: Unified Route Architecture Permission System Implementation (September 3, 2025)
+
+### Overview
+Complete implementation of role-based access control system for unified dashboard architecture. This system provides hierarchical permissions based on user roles and account membership, enabling secure multi-tenant dashboard functionality.
+
+### Architecture Components
+
+#### Permission Type System (`src/types/permissions.ts`)
+
+```typescript
+// Core permission types and interfaces
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+  SYSTEM_ADMIN = 'system_admin'
+}
+
+export enum AccountRole {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  MEMBER = 'member',
+  VIEWER = 'viewer'
+}
+
+// Permission context for role-based decisions
+export interface PermissionLevel {
+  userRole: UserRole;
+  accountRole?: AccountRole;
+  accountId?: string;
+  isSystemAdmin: boolean;
+}
+
+// Dashboard permissions interface
+export interface DashboardPermissions {
+  // Navigation permissions
+  canAccessDashboard: boolean;
+  canAccessItems: boolean;
+  canAccessProperties: boolean;
+  canAccessAnalytics: boolean;
+
+  // Administrative permissions
+  canAccessAdminFeatures: boolean;
+  canAccessSystemAdmin: boolean;
+
+  // CRUD permissions
+  canCreateItems: boolean;
+  canEditItems: boolean;
+  canDeleteItems: boolean;
+  canCreateProperties: boolean;
+  canEditProperties: boolean;
+  canDeleteProperties: boolean;
+
+  // Advanced permissions
+  canManageUsers: boolean;
+  canViewAllAccounts: boolean;
+  canManageAnalytics: boolean;
+  canExportData: boolean;
+
+  // Account-specific permissions
+  canManageAccountUsers: boolean;
+  canManageAccountSettings: boolean;
+}
+```
+
+#### Permission Utility Functions (`src/lib/permissions.ts`)
+
+```typescript
+// Core permission checking functions
+export function checkUserPermission(user, requiredRole): PermissionCheck
+export function checkAccountPermission(user, account, requiredRole): Promise<PermissionCheck>
+export function canAccessAdminFeatures(user): boolean
+export function canManageProperties(user, account): Promise<boolean>
+export function canViewAnalytics(user, account): Promise<boolean>
+
+// Comprehensive permission resolver
+export function getDashboardPermissions(user, account?, accountUser?): Promise<DashboardPermissions>
+export function hasPermission(user, permission, account?, accountUser?): Promise<boolean>
+```
+
+#### Permission Hook (`src/hooks/usePermissions.ts`)
+
+```typescript
+// React hook for permission management
+export function usePermissions(user, account?, accountUser?) {
+  // State management
+  const permissions: DashboardPermissions | null;
+  const isLoading: boolean;
+  const error: string | null;
+
+  // Computed properties
+  const isSystemAdmin: boolean;
+  const isAccountOwner: boolean;
+  const currentAccountRole: AccountRole | null;
+
+  // Permission checking
+  const useCanAccess: (permission: PermissionKey) => PermissionResult;
+  const hasPermissionSync: (permission: PermissionKey) => boolean;
+
+  // Actions
+  const loadPermissions: () => Promise<void>;
+  const refreshPermissions: () => void;
+  const clearPermissions: () => void;
+}
+```
+
+### Database Integration
+
+#### Role-Based Security Model
+
+```sql
+-- User role system (users table)
+users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT UNIQUE NOT NULL,
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  is_admin BOOLEAN DEFAULT false,
+  -- ... other fields
+)
+
+-- Account membership system (account_users table)
+account_users (
+  account_id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  role TEXT DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member', 'viewer')),
+  joined_at TIMESTAMP,
+  -- ... other fields
+)
+
+-- Admin users system (admin_users table)
+admin_users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT,
+  role TEXT DEFAULT 'admin',
+  -- ... other fields
+)
+```
+
+#### Row Level Security (RLS) Integration
+
+```sql
+-- Users can only access their own properties
+CREATE POLICY "Users can manage own properties" ON properties
+  FOR ALL USING (user_id = auth.uid());
+
+-- Account-based item access
+CREATE POLICY "Users can access account items" ON items
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM properties p
+      WHERE p.id = items.property_id
+      AND p.account_id IN (
+        SELECT account_id FROM account_users
+        WHERE user_id = auth.uid()
+      )
+    )
+  );
+```
+
+### Permission Hierarchy
+
+#### System-Level Permissions
+1. **System Admin** (`is_admin = true` OR `users.role = 'admin'`)
+   - Full access to all system features
+   - Can manage all accounts and users
+   - Access to admin and system admin functions
+   - Can export data and manage analytics
+
+2. **Regular User** (default role)
+   - Limited to account-scoped operations
+   - Can only access resources within their accounts
+   - Subject to account role restrictions
+
+#### Account-Level Permissions
+1. **Account Owner** (`account_users.role = 'owner'`)
+   - Full control over owned accounts
+   - Can manage account settings and users
+   - Can create/edit/delete all account resources
+   - Can view all account analytics
+
+2. **Account Admin** (`account_users.role = 'admin'`)
+   - Administrative control within account
+   - Can manage account resources except ownership
+   - Can manage other account members (except owners)
+   - Can view account analytics
+
+3. **Account Member** (`account_users.role = 'member'`)
+   - Standard access to account resources
+   - Can create and edit own resources
+   - Can view account analytics
+   - Cannot manage account settings or users
+
+4. **Account Viewer** (`account_users.role = 'viewer'`)
+   - Read-only access to account resources
+   - Can view items, properties, and basic analytics
+   - Cannot create, edit, or delete resources
+   - Cannot access account management features
+
+### Implementation Patterns
+
+#### Component-Level Permission Checking
+
+```typescript
+// Using permission hook in components
+function DashboardComponent() {
+  const { useCanAccess, isLoading, error } = usePermissions(user, account, accountUser);
+
+  const canEditItems = useCanAccess(PERMISSIONS.EDIT_ITEMS);
+  const canManageUsers = useCanAccess(PERMISSIONS.MANAGE_USERS);
+
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
+
+  return (
+    <div>
+      {canEditItems.granted && <EditButton />}
+      {canManageUsers.granted && <ManageUsersButton />}
+    </div>
+  );
+}
+```
+
+#### Route-Level Permission Protection
+
+```typescript
+// Middleware integration for route protection
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Dashboard routes require authentication
+  if (pathname.startsWith('/dashboard')) {
+    // Check user authentication
+    // Check account permissions
+    // Redirect or allow based on permissions
+  }
+
+  // Admin routes require admin permissions
+  if (pathname.startsWith('/admin')) {
+    // Check admin permissions
+    // Redirect to dashboard if not authorized
+  }
+}
+```
+
+#### API-Level Permission Validation
+
+```typescript
+// API endpoint permission checking
+export async function GET(request: NextRequest) {
+  // Authenticate user
+  const user = await getUserFromSession(request);
+
+  // Check permissions for operation
+  const hasPermission = await checkUserPermission(user, UserRole.ADMIN);
+  if (!hasPermission.granted) {
+    return NextResponse.json(
+      { error: 'Insufficient permissions' },
+      { status: 403 }
+    );
+  }
+
+  // Proceed with operation
+  return NextResponse.json({ data: result });
+}
+```
+
+### Performance Optimizations
+
+#### Permission Caching Strategy
+- **Context Caching**: Permission context cached per user session
+- **Account Switching**: Efficient permission recalculation on account change
+- **Lazy Loading**: Permissions loaded only when needed
+- **Memory Management**: Proper cleanup of permission state
+
+#### Database Query Optimization
+- **Indexed Queries**: Optimized indexes on user_id, account_id, role fields
+- **Batch Operations**: Efficient bulk permission checking
+- **Query Result Caching**: Reduced database load for frequent permission checks
+- **Connection Pooling**: Optimized database connection management
+
+### Security Implementation
+
+#### Authentication Integration
+- **Supabase Auth**: Leverages existing authentication infrastructure
+- **Session Management**: Secure session handling with automatic refresh
+- **Token Validation**: Proper JWT token validation and expiration handling
+- **Multi-Factor Support**: Compatible with MFA implementations
+
+#### Authorization Patterns
+- **Defense in Depth**: Multiple layers of permission checking
+- **Fail-Safe Defaults**: Secure defaults with explicit permission grants
+- **Audit Trail**: Comprehensive logging of permission checks and decisions
+- **Error Handling**: Secure error responses without information leakage
+
+### Testing Strategy
+
+#### Unit Testing Coverage
+```typescript
+// Permission utility testing
+describe('checkUserPermission', () => {
+  it('should grant admin access to admin users', () => {
+    const user = { role: 'admin' };
+    const result = checkUserPermission(user, UserRole.ADMIN);
+    expect(result.granted).toBe(true);
+  });
+
+  it('should deny admin access to regular users', () => {
+    const user = { role: 'user' };
+    const result = checkUserPermission(user, UserRole.ADMIN);
+    expect(result.granted).toBe(false);
+  });
+});
+```
+
+#### Integration Testing
+- **End-to-End Permission Flows**: Complete user journey testing
+- **Cross-Role Testing**: Testing permission boundaries between roles
+- **Account Switching**: Testing permission updates on account changes
+- **Error Scenarios**: Testing permission failures and error handling
+
+### Monitoring and Debugging
+
+#### Permission Audit Logging
+```typescript
+// Permission check logging
+const permissionCheck = await checkUserPermission(user, UserRole.ADMIN);
+console.log('Permission Check:', {
+  userId: user.id,
+  requiredRole: UserRole.ADMIN,
+  granted: permissionCheck.granted,
+  timestamp: new Date().toISOString()
+});
+```
+
+#### Performance Monitoring
+- **Permission Check Timing**: Track time for permission evaluations
+- **Cache Hit Rates**: Monitor permission cache effectiveness
+- **Error Rates**: Track permission-related errors and failures
+- **Database Query Performance**: Monitor permission query execution times
+
+### Deployment Considerations
+
+#### Environment Configuration
+```bash
+# Required environment variables
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=...
+```
+
+#### Build Optimization
+- **Tree Shaking**: Remove unused permission code in production
+- **Bundle Splitting**: Separate permission utilities for lazy loading
+- **Minification**: Optimize permission code for production deployment
+- **Source Maps**: Enable debugging while maintaining performance
+
+### Future Enhancement Points
+
+#### Advanced Permission Features
+- **Custom Permission Sets**: User-configurable permission combinations
+- **Time-Based Permissions**: Temporary permission grants with expiration
+- **Conditional Permissions**: Context-aware permission evaluation
+- **Permission Templates**: Predefined permission sets for common roles
+
+#### Scalability Improvements
+- **Permission Microservice**: Dedicated service for complex permission logic
+- **Redis Caching**: High-performance permission caching layer
+- **Distributed Permissions**: Multi-region permission synchronization
+- **Real-time Updates**: Live permission updates across user sessions
+
+### Migration Strategy
+
+#### Backward Compatibility
+- **Existing Users**: Automatic assignment of appropriate default permissions
+- **Legacy Routes**: Gradual migration from old routing to unified dashboard
+- **Data Preservation**: All existing user data and permissions maintained
+- **Zero Downtime**: Seamless transition without service interruption
+
+#### Rollback Plan
+- **Feature Flags**: Ability to disable permission system if issues arise
+- **Gradual Rollout**: Phased deployment to minimize risk
+- **Monitoring**: Comprehensive monitoring during rollout period
+- **Quick Rollback**: Ability to revert to previous permission system
+
+### Success Metrics
+- **Performance**: Permission checks complete in <50ms average
+- **Security**: Zero permission-related security incidents
+- **User Experience**: Seamless permission-based UI adaptation
+- **Maintainability**: Clear permission architecture for future development
+
+---
+
 *This technical guide serves as implementation reference and architectural documentation for the FAQBNB system.* 

@@ -506,6 +506,389 @@ const router = useRouter();
 
 ---
 
-**Component Status**: Production Ready  
-**Last Tested**: July 25, 2025  
-**Bug Fixes**: Resolves critical 404 error for `/admin/items` route 
+## Permission System Components (REQ-023)
+
+### usePermissions Hook
+**File**: `src/hooks/usePermissions.ts`  
+**Added**: September 3, 2025 06:56 CEST (REQ-023)  
+**Purpose**: React hook providing role-based access control for unified dashboard architecture
+
+#### Overview
+The usePermissions hook provides a comprehensive permission management system for the unified dashboard. It integrates with the authentication context and permission utilities to provide role-based access control throughout the application.
+
+#### Hook Interface
+```typescript
+function usePermissions(
+  user: User | null,
+  account?: Account,
+  accountUser?: AccountUser
+): UsePermissionsReturn
+```
+
+#### Return Interface
+```typescript
+interface UsePermissionsReturn {
+  // State
+  permissions: DashboardPermissions | null;
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: number | null;
+  context: PermissionContext | null;
+
+  // Computed properties
+  isSystemAdmin: boolean;
+  isAccountOwner: boolean;
+  currentAccountRole: AccountRole | null;
+
+  // Permission checking
+  useCanAccess: (permission: PermissionKey) => PermissionResult;
+  hasPermissionSync: (permission: PermissionKey) => boolean;
+
+  // Actions
+  loadPermissions: () => Promise<void>;
+  refreshPermissions: () => void;
+  clearPermissions: () => void;
+}
+```
+
+#### Key Features
+
+##### 1. Permission State Management
+```typescript
+// Automatic permission loading based on user/account context
+useEffect(() => {
+  if (user) {
+    loadPermissions();
+  } else {
+    clearPermissions();
+  }
+}, [user?.id, account?.id, accountUser?.role]);
+```
+
+##### 2. Permission Checking API
+```typescript
+// Component-level permission checking
+const canEditItems = useCanAccess(PERMISSIONS.EDIT_ITEMS);
+const canManageUsers = useCanAccess(PERMISSIONS.MANAGE_USERS);
+
+if (canEditItems.granted) {
+  return <EditButton />;
+}
+```
+
+##### 3. Role-Based Computed Properties
+```typescript
+// Automatic role detection
+const isSystemAdmin = user ? canAccessAdminFeatures(user) : false;
+const isAccountOwner = account && user && account.owner_id === user.id;
+const currentAccountRole = accountUser?.role || null;
+```
+
+##### 4. Error Handling and Loading States
+```typescript
+// Comprehensive error states
+if (isLoading) return <LoadingSpinner />;
+if (error) return <ErrorMessage error={error} />;
+
+// Permission-based UI adaptation
+return (
+  <div>
+    {canEditItems.granted && <EditButton />}
+    {isSystemAdmin && <AdminPanel />}
+  </div>
+);
+```
+
+#### Dependencies
+```typescript
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { DashboardPermissions, PermissionCheck, PermissionContext } from '../types/permissions';
+import { User, Account, AccountUser } from '../types';
+import {
+  getDashboardPermissions,
+  hasPermission,
+  checkUserPermission,
+  checkAccountPermission,
+  canAccessAdminFeatures
+} from '../lib/permissions';
+```
+
+#### Usage Examples
+
+##### Basic Permission Checking
+```typescript
+function DashboardComponent() {
+  const { useCanAccess, isLoading, error } = usePermissions(user, account, accountUser);
+
+  const canCreateItems = useCanAccess(PERMISSIONS.CREATE_ITEMS);
+  const canViewAnalytics = useCanAccess(PERMISSIONS.VIEW_ANALYTICS);
+
+  if (isLoading) return <div>Loading permissions...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      {canCreateItems.granted && (
+        <button>Create New Item</button>
+      )}
+      {canViewAnalytics.granted && (
+        <AnalyticsDashboard />
+      )}
+    </div>
+  );
+}
+```
+
+##### Role-Based Component Rendering
+```typescript
+function AdminPanel() {
+  const { isSystemAdmin, currentAccountRole } = usePermissions(user, account, accountUser);
+
+  return (
+    <div>
+      {isSystemAdmin && <SystemAdminControls />}
+      {currentAccountRole === 'admin' && <AccountAdminControls />}
+      {currentAccountRole === 'member' && <MemberControls />}
+    </div>
+  );
+}
+```
+
+##### Permission-Based Navigation
+```typescript
+function NavigationMenu() {
+  const { hasPermissionSync } = usePermissions(user, account, accountUser);
+
+  const menuItems = [
+    hasPermissionSync(PERMISSIONS.VIEW_ITEMS) && { name: 'Items', href: '/dashboard/items' },
+    hasPermissionSync(PERMISSIONS.VIEW_PROPERTIES) && { name: 'Properties', href: '/dashboard/properties' },
+    hasPermissionSync(PERMISSIONS.VIEW_ANALYTICS) && { name: 'Analytics', href: '/dashboard/analytics' },
+    hasPermissionSync(PERMISSIONS.ACCESS_SYSTEM_ADMIN) && { name: 'Admin', href: '/admin/system' }
+  ].filter(Boolean);
+
+  return (
+    <nav>
+      {menuItems.map(item => (
+        <Link key={item.name} href={item.href}>{item.name}</Link>
+      ))}
+    </nav>
+  );
+}
+```
+
+#### Performance Considerations
+- **Lazy Loading**: Permissions loaded only when needed
+- **Memoization**: Optimized re-rendering with proper dependencies
+- **Context Caching**: Permission context cached per user session
+- **Error Boundaries**: Graceful handling of permission failures
+
+#### Testing Strategy
+- **Hook Testing**: Permission loading and state management
+- **Permission Checking**: Various role and account combinations
+- **Error States**: Network failures and invalid contexts
+- **Performance**: Loading times and re-rendering optimization
+
+#### Integration Points
+- **Authentication Context**: Integrates with existing auth system
+- **Permission Utilities**: Uses centralized permission logic
+- **Dashboard Components**: Provides permission context to all components
+- **API Layer**: Permission validation integrated into data operations
+
+---
+
+### Permission Utility Functions
+**File**: `src/lib/permissions.ts`  
+**Added**: September 3, 2025 06:56 CEST (REQ-023)  
+**Purpose**: Core permission checking logic for role-based access control
+
+#### Overview
+The permissions utility module provides the foundational logic for role-based access control in the unified dashboard system. It includes functions for checking user permissions, account permissions, and comprehensive dashboard permission resolution.
+
+#### Core Functions
+
+##### checkUserPermission
+```typescript
+function checkUserPermission(
+  user: User | null,
+  requiredRole: UserRole
+): PermissionCheck
+```
+
+**Purpose**: Validates user role against required permissions
+**Parameters**:
+- `user`: User object or null
+- `requiredRole`: Required user role (USER, ADMIN, SYSTEM_ADMIN)
+
+**Returns**: PermissionCheck with granted status and context
+
+##### checkAccountPermission
+```typescript
+async function checkAccountPermission(
+  user: User | null,
+  account: Account,
+  requiredRole: AccountRole,
+  accountUser?: AccountUser
+): Promise<PermissionCheck>
+```
+
+**Purpose**: Validates account-specific permissions
+**Parameters**:
+- `user`: User object or null
+- `account`: Account object
+- `requiredRole`: Required account role (OWNER, ADMIN, MEMBER, VIEWER)
+- `accountUser`: Optional account membership details
+
+##### canAccessAdminFeatures
+```typescript
+function canAccessAdminFeatures(user: User | null): boolean
+```
+
+**Purpose**: Determines if user has admin access
+**Logic**: Checks `user.role === 'admin'` or `user.is_admin === true`
+
+##### canManageProperties
+```typescript
+async function canManageProperties(
+  user: User | null,
+  account: Account,
+  accountUser?: AccountUser
+): Promise<boolean>
+```
+
+**Purpose**: Checks property management permissions
+**Logic**: Requires ADMIN role or higher in account
+
+##### canViewAnalytics
+```typescript
+async function canViewAnalytics(
+  user: User | null,
+  account: Account,
+  accountUser?: AccountUser
+): Promise<boolean>
+```
+
+**Purpose**: Checks analytics viewing permissions
+**Logic**: Requires MEMBER role or higher in account
+
+##### getDashboardPermissions
+```typescript
+async function getDashboardPermissions(
+  user: User | null,
+  account?: Account,
+  accountUser?: AccountUser
+): Promise<DashboardPermissions>
+```
+
+**Purpose**: Comprehensive dashboard permission resolution
+**Returns**: Complete permission set for all dashboard features
+
+#### Permission Resolution Logic
+
+##### System Admin Permissions
+```typescript
+// System admins have full access
+if (userCheck.granted && userCheck.context?.isSystemAdmin) {
+  return {
+    canAccessDashboard: true,
+    canAccessItems: true,
+    canAccessProperties: true,
+    canAccessAnalytics: true,
+    canAccessAdminFeatures: true,
+    canAccessSystemAdmin: true,
+    // Full CRUD permissions...
+  };
+}
+```
+
+##### Account Owner Permissions
+```typescript
+// Account owners have account-level control
+if (account && account.owner_id === user.id) {
+  return {
+    // Full access to account resources
+    canCreateItems: true,
+    canEditItems: true,
+    canDeleteItems: true,
+    canManageAccountUsers: true,
+    canManageAccountSettings: true
+  };
+}
+```
+
+##### Role-Based Hierarchy
+```typescript
+// Account role hierarchy (higher numbers = more permissions)
+const roleHierarchy: Record<AccountRole, number> = {
+  [AccountRole.OWNER]: 4,
+  [AccountRole.ADMIN]: 3,
+  [AccountRole.MEMBER]: 2,
+  [AccountRole.VIEWER]: 1
+};
+```
+
+#### Usage Examples
+
+##### Component-Level Permission Checking
+```typescript
+import { hasPermission } from '../lib/permissions';
+
+async function checkItemEditPermission(user, account, accountUser) {
+  const canEdit = await hasPermission(
+    user,
+    PERMISSIONS.EDIT_ITEMS,
+    account,
+    accountUser
+  );
+
+  return canEdit;
+}
+```
+
+##### API-Level Permission Validation
+```typescript
+// In API route handler
+const userPermission = await checkUserPermission(user, UserRole.ADMIN);
+if (!userPermission.granted) {
+  return NextResponse.json(
+    { error: 'Insufficient permissions' },
+    { status: 403 }
+  );
+}
+```
+
+##### Account-Specific Permissions
+```typescript
+const propertyPermission = await checkAccountPermission(
+  user,
+  account,
+  AccountRole.ADMIN,
+  accountUser
+);
+
+if (propertyPermission.granted) {
+  // Allow property management operations
+}
+```
+
+#### Error Handling
+```typescript
+try {
+  const permissions = await getDashboardPermissions(user, account, accountUser);
+  return permissions;
+} catch (error) {
+  console.error('Permission resolution failed:', error);
+  return getDefaultPermissions(); // Secure defaults
+}
+```
+
+#### Performance Optimizations
+- **Caching**: Permission results cached per user session
+- **Batch Operations**: Multiple permission checks in single operation
+- **Early Returns**: Fail-fast logic for unauthorized users
+- **Memory Management**: Proper cleanup of permission contexts
+
+---
+
+**Permission System Status**: Production Ready  
+**Last Tested**: September 3, 2025 06:56 CEST  
+**Implementation**: Complete role-based access control for unified dashboard architecture

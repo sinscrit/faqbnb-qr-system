@@ -881,4 +881,172 @@ System administrators can access a comprehensive KPI dashboard that displays key
 
 ---
 
+---
+
+## UC-023: Unified Route Architecture Permission System
+**Origin**: Request #023 from gen_requests.md
+**Implementation Status**: ✅ COMPLETED
+**Date Implemented**: September 3, 2025 06:56 CEST
+**Actor**: System Administrator, Property Manager, Regular User
+**Goal**: Role-based access control for unified dashboard interface
+**Context**: Users need appropriate permissions based on their roles in accounts and system-wide access
+
+### Description
+The system implements a comprehensive permission system that controls access to dashboard features based on user roles and account membership. Users can access different levels of functionality depending on whether they are system administrators, account owners, account members, or viewers.
+
+### Actors
+- **Primary**: System Administrator (full system access)
+- **Secondary**: Account Owner (full account access)
+- **Tertiary**: Account Member (limited account access)
+- **Quaternary**: Account Viewer (read-only account access)
+
+### Preconditions
+- User authentication via Supabase Auth system
+- Database schema includes users, admin_users, account_users tables
+- Permission system types and utilities are implemented
+- User has valid role assignment in system
+
+### Main Flow
+
+#### UC023.1 - Permission System Initialization
+1. User authenticates via Supabase Auth
+2. System loads user profile and role information
+3. System determines account membership and permissions
+4. Permission context is established for dashboard session
+5. UI adapts based on user's permission level
+
+#### UC023.2 - Role-Based Dashboard Access
+1. **System Administrator**:
+   - Access to all dashboard sections (Dashboard, Items, Properties, Analytics)
+   - Full CRUD operations across all accounts
+   - Access to system admin functions (Back Office, User Management)
+   - Can view all accounts and manage system-wide analytics
+   - Can export data and manage account settings
+
+2. **Account Owner**:
+   - Access to main dashboard sections
+   - Full CRUD operations within their accounts
+   - Can manage properties and items in owned accounts
+   - Can view analytics for their accounts
+   - Can manage account user roles and settings
+
+3. **Account Member**:
+   - Access to dashboard with limited permissions
+   - Can view items and properties in accessible accounts
+   - Can create items within account scope
+   - Limited analytics access based on account permissions
+   - Cannot manage account settings or user roles
+
+4. **Account Viewer**:
+   - Read-only access to dashboard sections
+   - Can view items, properties, and basic analytics
+   - Cannot create, edit, or delete content
+   - Limited to assigned account scope
+
+#### UC023.3 - Feature-Level Permission Control
+1. **Navigation Permissions**:
+   - Dashboard access based on authentication status
+   - Items management based on account role
+   - Properties management based on account permissions
+   - Analytics access based on role hierarchy
+
+2. **CRUD Permissions**:
+   - Create: Based on account role (members can create items, viewers cannot)
+   - Read: Based on account membership and role hierarchy
+   - Update: Based on ownership or admin permissions
+   - Delete: Limited to owners and account admins
+
+3. **Advanced Permissions**:
+   - Analytics viewing requires minimum member role
+   - Data export requires admin or system admin role
+   - User management requires account owner or system admin
+   - System administration requires system admin role
+
+### Alternative Flows
+
+#### UC023.A1 - Permission Denied Scenarios
+1. User attempts to access unauthorized feature
+2. System displays permission denied message
+3. System provides guidance on required permissions
+4. User can navigate to allowed sections or request access
+
+#### UC023.A2 - Role Changes
+1. User's role changes (e.g., promoted from member to admin)
+2. Permission context updates immediately
+3. UI adapts to new permission level
+4. User gains access to previously restricted features
+
+#### UC023.A3 - Multi-Account Access
+1. User belongs to multiple accounts with different roles
+2. System shows account selector for context switching
+3. Permissions update based on selected account
+4. UI adapts to account-specific role permissions
+
+### Success Scenarios
+
+#### UC023.S1 - System Administrator Experience
+- Complete access to all system features
+- Seamless navigation between account contexts
+- Full administrative control and data export capabilities
+- System performance monitoring and user management
+
+#### UC023.S2 - Account Owner Experience
+- Complete control over owned accounts
+- Property and item management within scope
+- User role management for account members
+- Comprehensive analytics for owned properties
+
+#### UC023.S3 - Account Member Experience
+- Collaborative access to account resources
+- Item creation and management within permissions
+- View access to properties and analytics
+- Clear understanding of permission boundaries
+
+### Postconditions
+- **Success**: User has appropriate access based on role and context
+- **Success**: UI adapts dynamically to permission changes
+- **Success**: Data isolation maintained between accounts
+- **Success**: Security boundaries enforced consistently
+
+### Technical Implementation Features
+
+#### Permission Architecture
+- ✅ TypeScript permission types (`UserRole`, `AccountRole`, `DashboardPermissions`)
+- ✅ Permission utility functions with role hierarchy support
+- ✅ React hook for permission management (`usePermissions`)
+- ✅ Context-aware permission checking with account scope
+
+#### Security Implementation
+- ✅ Role-based access control with hierarchical permissions
+- ✅ Account-scoped data isolation via permission checks
+- ✅ System admin override capabilities for support
+- ✅ Secure permission context management
+
+#### User Experience
+- ✅ Dynamic UI adaptation based on permissions
+- ✅ Clear permission feedback for restricted actions
+- ✅ Seamless role transition handling
+- ✅ Account context switching with permission updates
+
+### Business Value
+- **Security**: Comprehensive access control prevents unauthorized data access
+- **User Experience**: Appropriate feature visibility reduces confusion
+- **Scalability**: Role-based architecture supports unlimited user accounts
+- **Compliance**: Permission system enables audit trails and compliance reporting
+- **Flexibility**: Hierarchical permissions support various business models
+
+### Integration Points
+- **Authentication System**: Leverages existing Supabase Auth infrastructure
+- **Database Schema**: Integrates with users, admin_users, account_users tables
+- **Dashboard Components**: Permission-aware UI components throughout system
+- **API Endpoints**: Permission checking integrated into all data operations
+
+### Security Considerations
+- **Data Isolation**: Account-scoped permissions prevent cross-account data access
+- **Role Validation**: Server-side permission validation for all operations
+- **Audit Logging**: Permission checks logged for security monitoring
+- **Session Security**: Permission context maintained securely in user sessions
+
+---
+
 *This use case document is maintained to track feature implementation and ensure system requirements are met.* 
