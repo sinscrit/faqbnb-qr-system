@@ -889,6 +889,92 @@ try {
 
 ---
 
+## Layout Components
+
+### SystemAdminLayout
+**File**: `src/app/admin/system/layout.tsx`  
+**Added**: September 3, 2025 (REQ-023 Task 8.1)  
+**Purpose**: Dedicated layout for system administrator functions with enhanced security and branding
+
+#### Overview
+The SystemAdminLayout component provides a specialized interface for system administrators (`isAdmin = true`), featuring distinctive red-themed branding and dedicated navigation for system-level functions. It serves as a secure gateway to administrative back office operations and user management tools.
+
+#### Component Structure
+```typescript
+export default function SystemAdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element
+```
+
+#### Features
+
+##### Access Control
+- **System Admin Only**: Requires `isAdmin = true` permission
+- **Secure Authentication**: Validates user admin status before rendering
+- **Graceful Access Denied**: Clear messaging for unauthorized users with return navigation
+
+##### Visual Design
+- **Red Theme Branding**: Distinctive red header and background (`bg-red-900`, `bg-red-50`)
+- **System Admin Badge**: Clear identification with 👑 System Admin indicator
+- **Breadcrumb Navigation**: Shows Dashboard → System Admin context path
+- **Professional Styling**: Consistent with admin theme but visually distinct
+
+##### Navigation Structure
+```typescript
+const navigationItems = [
+  { name: 'Back to Dashboard', href: '/dashboard', icon: '⬅️' },
+  { name: 'Back Office', href: '/admin/system/back-office', icon: '👑' },
+  { name: 'User Management', href: '/admin/system/user-management', icon: '👥' },
+  { name: 'System Analytics', href: '/admin/system/analytics', icon: '📊' },
+];
+```
+
+##### Security Features
+- **Permission Verification**: Checks `isAdmin` flag on every render
+- **Session Validation**: Integrates with existing authentication context
+- **Route Protection**: Prevents access to system admin routes for regular users
+- **Error Boundaries**: Handles authentication failures gracefully
+
+##### User Experience
+- **Loading States**: Appropriate loading indicators during authentication checks
+- **Error Messages**: Clear communication of access restrictions
+- **Navigation Options**: Multiple paths to return to main dashboard
+- **Responsive Design**: Mobile-friendly layout and navigation
+
+#### Usage Context
+```typescript
+// In system admin pages
+export default function SystemAdminPage() {
+  return (
+    <SystemAdminLayout>
+      <div className="system-admin-content">
+        {/* System admin specific content */}
+      </div>
+    </SystemAdminLayout>
+  );
+}
+```
+
+#### Integration Points
+- **Authentication Context**: Leverages existing `useAuth()` and `useAccountContext()`
+- **Navigation System**: Integrates with unified dashboard navigation
+- **Permission System**: Uses `isAdmin` flag from user authentication
+- **Error Handling**: Follows established error handling patterns
+
+#### Security Considerations
+- **Elevated Permissions**: Only accessible to system administrators
+- **Session Monitoring**: Continuous validation of admin privileges
+- **Audit Trail**: All system admin actions are logged
+- **Access Logging**: Records entry and exit from system admin areas
+
+---
+
+**Component Status**: Production Ready  
+**Last Updated**: September 3, 2025  
+**Implementation**: Dedicated system admin layout for REQ-023 unified route architecture
+
 **Permission System Status**: Production Ready  
 **Last Tested**: September 3, 2025 06:56 CEST  
 **Implementation**: Complete role-based access control for unified dashboard architecture
