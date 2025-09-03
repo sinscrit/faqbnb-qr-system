@@ -1,147 +1,203 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, AccountRole } from '../types';
+// REQ-023: Unified Route Architecture - Navigation Integration
+import { useAuth } from '@/contexts/AuthContext';
+import { DashboardSection, PERMISSIONS, type PermissionKey } from '@/types/permissions';
 
 export interface NavigationItem {
   name: string;
   href: string;
   icon: string;
   description?: string;
-  requiredPermission?: string;
+  requiredPermissions?: PermissionKey[];
+  dashboardSection?: DashboardSection;
+  adminOnly?: boolean;
+  systemAdminOnly?: boolean;
 }
 
 interface RoleBasedNavigationProps {
-  user: User | null;
-  isAdmin: boolean;
-  accountRole: AccountRole | null;
-  currentPath: string;
-  onNavigate?: (href: string) => void;
+  onNavigate?: (href: string, section?: DashboardSection) => void;
   className?: string;
+  showSystemAdminItems?: boolean;
+  compactMode?: boolean;
 }
 
 export function RoleBasedNavigation({
-  user,
-  isAdmin,
-  accountRole,
-  currentPath,
   onNavigate,
-  className = ''
+  className = '',
+  showSystemAdminItems = true,
+  compactMode = false
 }: RoleBasedNavigationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Get navigation items based on user role and permissions
-  const getNavigationItems = (): NavigationItem[] => {
-    if (!user) return [];
+  // REQ-023: Use enhanced AuthContext for navigation state management
+  const {
+    user,
+    loading: authLoading,
+    isAdmin,
+    dashboardPermissions,
+    permissionsLoading,
+    currentDashboardSection,
+    navigateToSection,
+    canNavigateToSection,
+    hasPermission,
+    getAccountRole
+  } = useAuth();
 
-    const baseItems: NavigationItem[] = [
-      {
-        name: 'Dashboard',
+  // Get current account role
+  const accountRole = getAccountRole();
+
+  // Get navigation items based on user role and permissions (REQ-023)
+  const getNavigationItems = (): NavigationItem[] => {
+    if (!user || !dashboardPermissions || permissionsLoading) return [];
+
+    const items: NavigationItem[] = [];
+
+    // Dashboard - always available if user has dashboard access
+    if (dashboardPermissions.canAccessDashboard) {
+      items.push({
+        name: compactMode ? 'Home' : 'Dashboard',
         href: '/dashboard',
         icon: '📊',
-        description: 'Overview and key metrics'
-      },
-      {
+        description: 'Overview and key metrics',
+        dashboardSection: DashboardSection.dashboard,
+        requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
+      });
+    }
+
+    // Items management - check permissions
+    if (dashboardPermissions.canAccessItems) {
+      items.push({
         name: 'Items',
         href: '/dashboard/items',
         icon: '📦',
-        description: 'Manage QR code items'
-      },
-      {
+        description: 'Manage QR code items',
+        dashboardSection: DashboardSection.items,
+        requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
+      });
+    }
+
+    // Properties management - check permissions
+    if (dashboardPermissions.canAccessProperties) {
+      items.push({
         name: 'Properties',
         href: '/dashboard/properties',
         icon: '🏠',
-        description: 'Property management'
-      }
-    ];
-
-    // Analytics access based on account permissions
-    const analyticsItem: NavigationItem = {
-      name: 'Analytics',
-      href: '/dashboard/analytics',
-      icon: '📈',
-      description: 'View analytics and insights',
-      requiredPermission: 'VIEW_ANALYTICS'
-    };
-
-    // Admin system access only for system admins
-    const adminSystemItem: NavigationItem = {
-      name: 'Admin System',
-      href: '/admin/system',
-      icon: '👑',
-      description: 'System administration',
-      requiredPermission: 'ACCESS_SYSTEM_ADMIN'
-    };
-
-    // Build navigation items based on role hierarchy
-    let items = [...baseItems];
-
-    // Add analytics if user has appropriate permissions
-    if (canAccessAnalytics(user, isAdmin, accountRole)) {
-      items.push(analyticsItem);
+        description: 'Property management',
+        dashboardSection: DashboardSection.properties,
+        requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
+      });
     }
 
-    // Add admin system only for system admins
-    if (isAdmin) {
-      items.push(adminSystemItem);
+    // Analytics - check permissions
+    if (dashboardPermissions.canAccessAnalytics) {
+      items.push({
+        name: 'Analytics',
+        href: '/dashboard/analytics',
+        icon: '📈',
+        description: 'View analytics and insights',
+        dashboardSection: DashboardSection.analytics,
+        requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
+      });
+    }
+
+    // System admin section - only for system admins and if enabled
+    if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
+      items.push({
+        name: compactMode ? 'Admin' : 'System Admin',
+        href: '/admin/system',
+        icon: '👑',
+        description: 'System administration',
+        dashboardSection: DashboardSection.systemAdmin,
+        systemAdminOnly: true,
+        requiredPermissions: [PERMISSIONS.ACCESS_SYSTEM_ADMIN]
+      });
     }
 
     return items;
   };
 
-  // Check if user can access analytics based on role
-  const canAccessAnalytics = (user: User | null, isAdmin: boolean, accountRole: AccountRole | null): boolean => {
-    if (!user) return false;
-
-    // System admins can always access analytics
-    if (isAdmin) return true;
-
-    // Account owners can always access analytics for their accounts
-    if (accountRole === AccountRole.OWNER) return true;
-
-    // Account admins and members can access analytics
-    if (accountRole === AccountRole.ADMIN || accountRole === AccountRole.MEMBER) return true;
-
-    // Viewers cannot access analytics
-    return false;
-  };
-
-  // Handle navigation click
-  const handleNavigation = (href: string) => {
+  // Handle navigation click with dashboard section tracking (REQ-023)
+  const handleNavigation = (href: string, item?: NavigationItem) => {
     setIsMobileMenuOpen(false); // Close mobile menu
 
+    // Update dashboard section in auth context if provided
+    if (item?.dashboardSection && navigateToSection) {
+      navigateToSection(item.dashboardSection);
+    }
+
     if (onNavigate) {
-      onNavigate(href);
+      onNavigate(href, item?.dashboardSection);
     } else {
       router.push(href);
     }
   };
 
+  // Track current section based on pathname
+  useEffect(() => {
+    if (!pathname || !dashboardPermissions) return;
+
+    let currentSection = DashboardSection.dashboard;
+
+    if (pathname.startsWith('/dashboard/items')) {
+      currentSection = DashboardSection.items;
+    } else if (pathname.startsWith('/dashboard/properties')) {
+      currentSection = DashboardSection.properties;
+    } else if (pathname.startsWith('/dashboard/analytics')) {
+      currentSection = DashboardSection.analytics;
+    } else if (pathname.startsWith('/admin/system')) {
+      currentSection = DashboardSection.systemAdmin;
+    }
+
+    // Only update if the section has changed to avoid unnecessary re-renders
+    if (currentDashboardSection !== currentSection && navigateToSection) {
+      navigateToSection(currentSection, false); // Don't preserve history for automatic updates
+    }
+  }, [pathname, dashboardPermissions, currentDashboardSection, navigateToSection]);
+
   const navigationItems = getNavigationItems();
+
+  // Show loading state while permissions are loading
+  if (authLoading || permissionsLoading) {
+    return (
+      <div className={`flex items-center justify-center py-4 ${className}`}>
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        <span className="ml-2 text-sm text-gray-600">Loading navigation...</span>
+      </div>
+    );
+  }
 
   // Desktop navigation component
   const DesktopNavigation = () => (
     <nav className="hidden md:flex space-x-8" aria-label="Dashboard Navigation">
       {navigationItems.map((item) => {
         const isActive = pathname === item.href ||
-                        (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                        (item.href !== '/dashboard' && pathname.startsWith(item.href)) ||
+                        (item.dashboardSection === currentDashboardSection);
 
         return (
           <button
             key={item.name}
-            onClick={() => handleNavigation(item.href)}
+            onClick={() => handleNavigation(item.href, item)}
             className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors ${
               isActive
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            } ${item.systemAdminOnly ? 'text-purple-600' : ''}`}
             title={item.description}
           >
             <span className="mr-2">{item.icon}</span>
             {item.name}
+            {item.systemAdminOnly && (
+              <span className="ml-1 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
+                Admin
+              </span>
+            )}
           </button>
         );
       })}
@@ -188,22 +244,30 @@ export function RoleBasedNavigation({
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href ||
-                              (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                              (item.href !== '/dashboard' && pathname.startsWith(item.href)) ||
+                              (item.dashboardSection === currentDashboardSection);
 
               return (
                 <button
                   key={item.name}
-                  onClick={() => handleNavigation(item.href)}
+                  onClick={() => handleNavigation(item.href, item)}
                   className={`w-full text-left block px-3 py-2 rounded-md text-base font-medium ${
                     isActive
                       ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-500'
                       : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                  }`}
+                  } ${item.systemAdminOnly ? 'border-purple-500 bg-purple-50' : ''}`}
                 >
                   <div className="flex items-center">
                     <span className="mr-3">{item.icon}</span>
-                    <div>
-                      <div>{item.name}</div>
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <span>{item.name}</span>
+                        {item.systemAdminOnly && (
+                          <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
+                            Admin
+                          </span>
+                        )}
+                      </div>
                       {item.description && (
                         <div className="text-xs text-gray-400 mt-1">{item.description}</div>
                       )}
@@ -226,80 +290,79 @@ export function RoleBasedNavigation({
   );
 }
 
-// Utility function to get navigation items (can be used independently)
+// Utility function to get navigation items (can be used independently) - REQ-023 enhanced
 export function getNavigationItemsForUser(
   user: User | null,
   isAdmin: boolean,
-  accountRole: AccountRole | null
+  dashboardPermissions: any,
+  accountRole: AccountRole | null,
+  showSystemAdminItems: boolean = true,
+  compactMode: boolean = false
 ): NavigationItem[] {
-  if (!user) return [];
+  if (!user || !dashboardPermissions) return [];
 
-  const baseItems: NavigationItem[] = [
-    {
-      name: 'Dashboard',
+  const items: NavigationItem[] = [];
+
+  // Dashboard - always available if user has dashboard access
+  if (dashboardPermissions.canAccessDashboard) {
+    items.push({
+      name: compactMode ? 'Home' : 'Dashboard',
       href: '/dashboard',
       icon: '📊',
-      description: 'Overview and key metrics'
-    },
-    {
+      description: 'Overview and key metrics',
+      dashboardSection: DashboardSection.dashboard,
+      requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
+    });
+  }
+
+  // Items management - check permissions
+  if (dashboardPermissions.canAccessItems) {
+    items.push({
       name: 'Items',
       href: '/dashboard/items',
       icon: '📦',
-      description: 'Manage QR code items'
-    },
-    {
+      description: 'Manage QR code items',
+      dashboardSection: DashboardSection.items,
+      requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
+    });
+  }
+
+  // Properties management - check permissions
+  if (dashboardPermissions.canAccessProperties) {
+    items.push({
       name: 'Properties',
       href: '/dashboard/properties',
       icon: '🏠',
-      description: 'Property management'
-    }
-  ];
-
-  // Analytics access based on account permissions
-  const analyticsItem: NavigationItem = {
-    name: 'Analytics',
-    href: '/dashboard/analytics',
-    icon: '📈',
-    description: 'View analytics and insights'
-  };
-
-  // Admin system access only for system admins
-  const adminSystemItem: NavigationItem = {
-    name: 'Admin System',
-    href: '/admin/system',
-    icon: '👑',
-    description: 'System administration'
-  };
-
-  // Build navigation items based on role hierarchy
-  let items = [...baseItems];
-
-  // Add analytics if user has appropriate permissions
-  if (canAccessAnalyticsForUser(user, isAdmin, accountRole)) {
-    items.push(analyticsItem);
+      description: 'Property management',
+      dashboardSection: DashboardSection.properties,
+      requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
+    });
   }
 
-  // Add admin system only for system admins
-  if (isAdmin) {
-    items.push(adminSystemItem);
+  // Analytics - check permissions
+  if (dashboardPermissions.canAccessAnalytics) {
+    items.push({
+      name: 'Analytics',
+      href: '/dashboard/analytics',
+      icon: '📈',
+      description: 'View analytics and insights',
+      dashboardSection: DashboardSection.analytics,
+      requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
+    });
+  }
+
+  // System admin section - only for system admins and if enabled
+  if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
+    items.push({
+      name: compactMode ? 'Admin' : 'System Admin',
+      href: '/admin/system',
+      icon: '👑',
+      description: 'System administration',
+      dashboardSection: DashboardSection.systemAdmin,
+      systemAdminOnly: true,
+      requiredPermissions: [PERMISSIONS.ACCESS_SYSTEM_ADMIN]
+    });
   }
 
   return items;
-}
-
-// Helper function for analytics access check
-function canAccessAnalyticsForUser(user: User | null, isAdmin: boolean, accountRole: AccountRole | null): boolean {
-  if (!user) return false;
-
-  // System admins can always access analytics
-  if (isAdmin) return true;
-
-  // Account owners can always access analytics for their accounts
-  if (accountRole === AccountRole.OWNER) return true;
-
-  // Account admins and members can access analytics
-  if (accountRole === AccountRole.ADMIN || accountRole === AccountRole.MEMBER) return true;
-
-  // Viewers cannot access analytics
-  return false;
 }

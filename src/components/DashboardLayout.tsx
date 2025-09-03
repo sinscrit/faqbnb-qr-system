@@ -3,6 +3,8 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
+// REQ-023: Unified Route Architecture - Navigation Integration
+import { DashboardSection, PERMISSIONS } from '@/types/permissions';
 import { CompactAccountSelector } from './AccountSelector';
 import { RoleBasedNavigation } from './RoleBasedNavigation';
 import { Account, AccountRole } from '../types';
@@ -23,7 +25,18 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading: authLoading, signOut, isAdmin, selectedProperty, setSelectedProperty } = useAuth();
+  const {
+    user,
+    loading: authLoading,
+    signOut,
+    isAdmin,
+    selectedProperty,
+    setSelectedProperty,
+    dashboardPermissions,
+    currentDashboardSection,
+    permissionsLoading,
+    canNavigateToSection
+  } = useAuth();
   const { currentAccount, userAccounts } = useAccountContext();
 
   const [availableProperties, setAvailableProperties] = useState<Property[]>([]);
@@ -85,24 +98,85 @@ export function DashboardLayout({
     }
   }, [userAccounts, currentAccount, user]);
 
-  // Handle account change
+  // Persist account and property selection across route changes (REQ-023)
+  useEffect(() => {
+    if (!user || !currentAccount) return;
+
+    // Persist current account in localStorage for route changes
+    const accountData = {
+      id: currentAccount.id,
+      name: currentAccount.name,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('dashboard_current_account', JSON.stringify(accountData));
+
+    // Persist selected property if it exists
+    if (selectedProperty) {
+      const propertyData = {
+        id: selectedProperty.id,
+        name: selectedProperty.name,
+        accountId: currentAccount.id,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('dashboard_selected_property', JSON.stringify(propertyData));
+    }
+  }, [user, currentAccount, selectedProperty]);
+
+  // Restore account and property selection on component mount
+  useEffect(() => {
+    if (!user) return;
+
+    try {
+      // Restore selected property if it belongs to current account
+      const savedProperty = localStorage.getItem('dashboard_selected_property');
+      if (savedProperty && currentAccount) {
+        const propertyData = JSON.parse(savedProperty);
+        if (propertyData.accountId === currentAccount.id && propertyData.timestamp > Date.now() - 24 * 60 * 60 * 1000) { // 24 hours
+          // Property selection would be restored here if we had the property object
+          // For now, we'll just ensure the property is cleared on account changes
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to restore dashboard state:', error);
+      localStorage.removeItem('dashboard_selected_property');
+    }
+  }, [user, currentAccount]);
+
+  // Handle account change with state persistence
   const handleAccountChange = (account: Account | null) => {
     console.log('Account changed in dashboard layout:', account?.name || 'none');
-    setSelectedProperty(null); // Clear property selection on account change
+
+    // Clear property selection when account changes
+    setSelectedProperty(null);
+
+    // Clear persisted property data for old account
+    localStorage.removeItem('dashboard_selected_property');
+
+    // The new account will be persisted in the useEffect above
   };
 
-  // Handle navigation
-  const handleNavigation = (href: string) => {
+  // Handle navigation with dashboard section tracking (REQ-023)
+  const handleNavigation = (href: string, section?: DashboardSection) => {
+    console.log('Navigation triggered:', { href, section, currentSection: currentDashboardSection });
+
+    // Validate navigation permission if section is provided
+    if (section && !canNavigateToSection(section)) {
+      console.warn('Navigation blocked: insufficient permissions for section', section);
+      return;
+    }
+
     router.push(href);
   };
 
-  // Loading state
-  if (authLoading) {
+  // Loading state (REQ-023 enhanced)
+  if (authLoading || permissionsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading dashboard...</p>
+          <p className="text-gray-600 text-lg">
+            {permissionsLoading ? 'Loading permissions...' : 'Loading dashboard...'}
+          </p>
         </div>
       </div>
     );
@@ -155,10 +229,28 @@ export function DashboardLayout({
       <div className="border-b border-gray-200 bg-white shadow-sm print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Title and user info */}
+            {/* Left side - Title, section info, and user info */}
             <div className="flex items-center space-x-4">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{title}</h1>
+                <div className="flex items-center space-x-3">
+                  <h1 className="text-xl font-bold text-gray-900">{title}</h1>
+                  {/* Current dashboard section indicator (REQ-023) */}
+                  {currentDashboardSection && (
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                      currentDashboardSection === DashboardSection.systemAdmin
+                        ? 'bg-purple-100 text-purple-800'
+                        : currentDashboardSection === DashboardSection.analytics
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {currentDashboardSection === DashboardSection.dashboard && '📊 Dashboard'}
+                      {currentDashboardSection === DashboardSection.items && '📦 Items'}
+                      {currentDashboardSection === DashboardSection.properties && '🏠 Properties'}
+                      {currentDashboardSection === DashboardSection.analytics && '📈 Analytics'}
+                      {currentDashboardSection === DashboardSection.systemAdmin && '👑 System Admin'}
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
@@ -201,15 +293,13 @@ export function DashboardLayout({
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation (REQ-023 enhanced) */}
       <div className="bg-white border-b border-gray-200 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RoleBasedNavigation
-            user={user}
-            isAdmin={isAdmin}
-            accountRole={accountRole}
-            currentPath={pathname}
             onNavigate={handleNavigation}
+            showSystemAdminItems={true}
+            compactMode={false}
           />
         </div>
       </div>
