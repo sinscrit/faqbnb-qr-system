@@ -70,8 +70,21 @@ interface UserAnalyticsData {
 }
 
 export default function DashboardAnalyticsPage() {
-  const { user, loading: authLoading, isAdmin, selectedProperty: accountContext } = useAuth();
-  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, undefined, undefined);
+  const { user, loading: authLoading, isAdmin, selectedProperty: accountContext, currentAccount } = useAuth();
+
+  // Enhanced: Use AuthContext account role integration (REQ-024)
+  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
+
+  // Enhanced: Validate account role integration (REQ-024)
+  console.log('🔍 ANALYTICS_PAGE_DEBUG: Account role integration validation', {
+    userId: user?.id,
+    accountId: currentAccount?.id,
+    accountName: currentAccount?.name,
+    accountUserRole: currentAccount?.userRole,
+    isAccountOwner: currentAccount && user ? currentAccount.owner_id === user.id : false,
+    permissionsLoading,
+    hasPermissions: !!permissions
+  });
 
   // Permission checks
   const canViewAnalytics = useCanAccess('view_analytics');

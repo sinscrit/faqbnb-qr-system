@@ -60,12 +60,33 @@ export function usePermissions(
    * Load comprehensive permissions for current user/account context
    */
   const loadPermissions = useCallback(async () => {
+    // Enhanced: Check both accountUser.role and account.userRole for comprehensive role context (REQ-024)
+    const accountRoleFromUser = accountUser?.role;
+    const accountRoleFromAccount = account?.userRole;
+
     console.log(`${DEBUG_PREFIX} LOAD_PERMISSIONS_START`, {
       timestamp: new Date().toISOString(),
       userId: user?.id,
       accountId: account?.id,
-      accountRole: accountUser?.role
+      accountRoleFromUser: accountRoleFromUser,
+      accountRoleFromAccount: accountRoleFromAccount,
+      hasAccountUser: !!accountUser,
+      hasAccountWithRole: !!account?.userRole,
+      accountOwnerId: account?.owner_id,
+      isAccountOwner: account && user ? account.owner_id === user.id : false
     });
+
+    // Enhanced: Validate account role availability (REQ-024)
+    if (!accountRoleFromUser && !accountRoleFromAccount && account) {
+      console.warn(`${DEBUG_PREFIX} ACCOUNT_ROLE_WARNING: No account role found`, {
+        userId: user?.id,
+        accountId: account.id,
+        accountName: account.name,
+        hasAccountUser: !!accountUser,
+        accountUserRole: accountUser?.role,
+        accountUserRoleField: account?.userRole
+      });
+    }
 
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
@@ -75,14 +96,23 @@ export function usePermissions(
       const context: PermissionContext = {
         userId: user?.id || '',
         accountId: account?.id,
-        accountRole: accountUser?.role,
+        // Enhanced: Use account.userRole if available, otherwise fall back to accountUser.role (REQ-024)
+        accountRole: accountRoleFromAccount || accountRoleFromUser || null,
         userRole: user?.role === 'admin' ? 'admin' : 'user',
         isSystemAdmin: user ? canAccessAdminFeatures(user) : false
       };
 
       console.log(`${DEBUG_PREFIX} LOAD_PERMISSIONS_SUCCESS`, {
         timestamp: new Date().toISOString(),
-        permissions: Object.keys(permissions).filter(key => permissions[key as keyof DashboardPermissions]),
+        permissionsGranted: Object.keys(permissions).filter(key => permissions[key as keyof DashboardPermissions]).length,
+        totalPermissions: Object.keys(permissions).length,
+        keyPermissions: {
+          canCreateProperties: permissions.canCreateProperties,
+          canEditProperties: permissions.canEditProperties,
+          canDeleteProperties: permissions.canDeleteProperties,
+          canManageAccountUsers: permissions.canManageAccountUsers,
+          canManageAccountSettings: permissions.canManageAccountSettings
+        },
         context
       });
 
@@ -207,8 +237,20 @@ export function usePermissions(
    * Get current user role in account context
    */
   const currentAccountRole = useMemo(() => {
-    return accountUser?.role || null;
-  }, [accountUser]);
+    // Enhanced: Check both account.userRole and accountUser.role for comprehensive role context (REQ-024)
+    const roleFromAccount = account?.userRole;
+    const roleFromUser = accountUser?.role;
+
+    console.log(`${DEBUG_PREFIX} CURRENT_ACCOUNT_ROLE_CALCULATION`, {
+      accountId: account?.id,
+      roleFromAccount,
+      roleFromUser,
+      finalRole: roleFromAccount || roleFromUser || null,
+      source: roleFromAccount ? 'account.userRole' : roleFromUser ? 'accountUser.role' : 'none'
+    });
+
+    return roleFromAccount || roleFromUser || null;
+  }, [account?.userRole, accountUser?.role, account?.id]);
 
   /**
    * Refresh permissions (useful when user/account context changes)

@@ -24,6 +24,8 @@ export interface Account {
   settings: Record<string, any>;
   created_at: string;
   updated_at: string;
+  // Enhanced: User's role in this account (REQ-024)
+  userRole?: AccountRole | null;
 }
 
 export interface AccountUser {

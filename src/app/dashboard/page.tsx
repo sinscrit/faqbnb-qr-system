@@ -14,13 +14,13 @@ export default function DashboardPage() {
 
   // Show loading state while authentication or permissions are being determined
   if (authLoading || permissionsLoading) {
-    return (
+  return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
+                </div>
+              </div>
     );
   }
 
@@ -31,7 +31,7 @@ export default function DashboardPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Required</h1>
           <p className="text-gray-600">Please log in to access the dashboard.</p>
-        </div>
+          </div>
       </div>
     );
   }

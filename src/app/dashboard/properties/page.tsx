@@ -12,8 +12,21 @@ import Link from 'next/link';
 
 export default function DashboardPropertiesPage() {
   const router = useRouter();
-  const { user, loading: authLoading, isAdmin, selectedProperty: accountContext } = useAuth();
-  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, undefined, undefined);
+  const { user, loading: authLoading, isAdmin, currentAccount } = useAuth();
+
+  // Enhanced: Use AuthContext account role integration (REQ-024) - removed temporary accountUser hardcoding
+  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
+
+  // Enhanced: Validate account role integration (REQ-024)
+  console.log('🔍 PROPERTIES_PAGE_DEBUG: Account role integration validation', {
+    userId: user?.id,
+    accountId: currentAccount?.id,
+    accountName: currentAccount?.name,
+    accountUserRole: currentAccount?.userRole,
+    isAccountOwner: currentAccount && user ? currentAccount.owner_id === user.id : false,
+    permissionsLoading,
+    hasPermissions: !!permissions
+  });
 
   // Permission checks
   const canViewProperties = useCanAccess('view_properties');
@@ -45,8 +58,8 @@ export default function DashboardPropertiesPage() {
     try {
       // Prepare headers with account context
       const headers: Record<string, string> = {};
-      if (accountContext) {
-        headers['x-current-account'] = accountContext.id;
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
       }
 
       // Load properties
@@ -127,8 +140,8 @@ export default function DashboardPropertiesPage() {
     try {
       // Prepare headers with account context
       const headers: Record<string, string> = {};
-      if (accountContext) {
-        headers['x-current-account'] = accountContext.id;
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
       }
 
       const response = await adminApi.deleteProperty(propertyId, headers);
@@ -200,9 +213,9 @@ export default function DashboardPropertiesPage() {
             <h1 className="text-2xl font-bold text-gray-900">Properties Management</h1>
             <p className="text-gray-600 mt-1">
               Manage your properties
-              {accountContext && (
+              {currentAccount && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {accountContext.nickname}
+                  {currentAccount.name}
                 </span>
               )}
             </p>
@@ -244,7 +257,7 @@ export default function DashboardPropertiesPage() {
         isAdmin={isAdmin}
 
         // Context props
-        accountContext={accountContext}
+        accountContext={currentAccount}
 
         // Event handlers
         onViewProperty={handleViewProperty}

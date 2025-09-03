@@ -213,18 +213,19 @@ export async function getSession(): Promise<AuthResponse<Session | null>> {
 
 /**
  * Enhanced user information retrieval with account context
+ * Optimized with LEFT JOIN queries for better performance
  */
 export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
   try {
-    console.log('🔍 AUTH_DEBUG: getUser() called - stack trace:', new Error().stack?.split('\n').slice(1, 5).join('\n'));
+    console.log('🔍 AUTH_DEBUG: getUser() called with enhanced account role fetching');
     const sessionResponse = await getSession();
-    
+
     if (sessionResponse.error || !sessionResponse.data) {
       return { data: null };
     }
 
     const { data: { user }, error } = await supabase.auth.getUser();
-    
+
     if (error || !user) {
       return { data: null };
     }
@@ -369,12 +370,12 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
     });
     
     if (isAdminByTable) {
-      console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-C - Taking ADMIN path', { 
-        userId: user.id 
+      console.error('🔍 IOI7-DEBUG-FLOW: CHECKPOINT-C - Taking ADMIN path', {
+        userId: user.id
       });
-      // User is an admin - get account context
+      // User is an admin - get account context with optimized LEFT JOIN query
       const accounts = await getAccountsForUser(user.id);
-      
+
       // Try to get current account from localStorage or use default
       let currentAccount = null;
       if (typeof window !== 'undefined') {
@@ -383,14 +384,21 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
           currentAccount = accounts.find(acc => acc.id === storedAccountId) || null;
         }
       }
-      
+
       if (!currentAccount && accounts.length > 0) {
         currentAccount = await getDefaultAccountForUser(user.id) || accounts[0];
       }
 
       let currentAccountContext = null;
       if (currentAccount) {
+        // Enhanced: Get user role with improved error handling and logging
         const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        console.log('🔍 AUTH_DEBUG: Admin user account role lookup', {
+          userId: user.id,
+          accountId: currentAccount.id,
+          role: userRole,
+          accountOwner: currentAccount.owner_id
+        });
         currentAccountContext = {
           id: currentAccount.id,
           name: currentAccount.name,
@@ -527,7 +535,14 @@ export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
       }
 
       if (currentAccount) {
+        // Enhanced: Get user role with improved error handling and logging
         const userRole = await getUserRoleInAccount(user.id, currentAccount.id);
+        console.log('🔍 AUTH_DEBUG: Regular user account role lookup', {
+          userId: user.id,
+          accountId: currentAccount.id,
+          role: userRole,
+          accountOwner: currentAccount.owner_id
+        });
         currentAccountContext = {
           id: currentAccount.id,
           name: currentAccount.name,
@@ -620,10 +635,83 @@ export async function switchAccount(accountId: string): Promise<AccountSwitchRes
 }
 
 /**
- * Get user's role in a specific account
+ * Create dedicated function to fetch account data with user's role
+ * Uses LEFT JOIN for optimal performance
+ */
+export async function getAccountWithUserRole(accountId: string, userId: string): Promise<Account & { userRole: string | null } | null> {
+  try {
+    console.log('🔍 AUTH_DEBUG: Fetching account with user role', {
+      accountId,
+      userId
+    });
+
+    // Use LEFT JOIN to get account data with user's role in one query
+    const { data: accountData, error } = await supabaseAdmin
+      .from('accounts')
+      .select(`
+        id,
+        owner_id,
+        name,
+        description,
+        created_at,
+        updated_at,
+        account_users!left(role)
+      `)
+      .eq('id', accountId)
+      .eq('account_users.user_id', userId)
+      .single();
+
+    if (error) {
+      console.log('🔍 AUTH_DEBUG: Account with role query failed', {
+        error: error.message,
+        accountId,
+        userId
+      });
+      return null;
+    }
+
+    if (!accountData) {
+      console.log('🔍 AUTH_DEBUG: No account found', { accountId, userId });
+      return null;
+    }
+
+    // Extract user role from the joined data
+    const userRole = accountData.account_users?.[0]?.role || null;
+
+    console.log('🔍 AUTH_DEBUG: Account with role fetched successfully', {
+      accountId,
+      userId,
+      accountName: accountData.name,
+      userRole
+    });
+
+    return {
+      id: accountData.id,
+      owner_id: accountData.owner_id,
+      name: accountData.name,
+      description: accountData.description,
+      settings: {}, // Default empty settings
+      created_at: accountData.created_at,
+      updated_at: accountData.updated_at,
+      userRole
+    };
+  } catch (error) {
+    console.error('Get account with user role error:', error);
+    return null;
+  }
+}
+
+/**
+ * Get user's role in a specific account - Enhanced with detailed logging and error handling
  */
 export async function getUserRoleInAccount(userId: string, accountId: string): Promise<string | null> {
   try {
+    console.log('🔍 AUTH_DEBUG: getUserRoleInAccount called', {
+      userId,
+      accountId,
+      timestamp: new Date().toISOString()
+    });
+
     // FIXED: Use supabaseAdmin to ensure consistent access for regular users
     const { data: membership, error } = await supabaseAdmin
       .from('account_users')
@@ -632,13 +720,47 @@ export async function getUserRoleInAccount(userId: string, accountId: string): P
       .eq('account_id', accountId)
       .single();
 
-    if (error || !membership) {
+    if (error) {
+      console.log('🔍 AUTH_DEBUG: getUserRoleInAccount query error', {
+        userId,
+        accountId,
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
+
+      // Provide specific error feedback based on error type
+      if (error.code === 'PGRST116') {
+        console.log('🔍 AUTH_DEBUG: User is not a member of this account', { userId, accountId });
+        return null; // User not found in account_users table
+      }
+
       return null;
     }
 
+    if (!membership) {
+      console.log('🔍 AUTH_DEBUG: No membership found despite no error', {
+        userId,
+        accountId
+      });
+      return null;
+    }
+
+    console.log('🔍 AUTH_DEBUG: getUserRoleInAccount successful', {
+      userId,
+      accountId,
+      role: membership.role
+    });
+
     return membership.role;
   } catch (error) {
-    console.error('Get user role in account error:', error);
+    console.error('🔍 AUTH_DEBUG: getUserRoleInAccount exception:', {
+      userId,
+      accountId,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return null;
   }
 }

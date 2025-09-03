@@ -1978,4 +1978,52 @@ Currently the system has two parallel route sets:
 
 ---
 
-*Next Request: REQ-024* 
+## REQ-024: BUG FIX REQUEST - AuthContext Account Role Integration and Current Account State Management
+
+**Date**: September 3, 2025  
+**Type**: BUG FIX REQUEST  
+**Complexity Points**: 8/15  
+**Reference**: `docs/req-024-AuthContext-Account-Role-Integration-Overview.md`
+
+### Request Summary
+Fix critical AuthContext bug where `currentAccount` state is not properly loaded with user's account role information, resulting in permission system failures. Users cannot access features they should have permissions for because the AuthContext is not fetching and storing the user's role within their account from the `account_users` table.
+
+### Problem Analysis
+Current state analysis reveals:
+
+1. **AuthContext State Issue**: `currentAccount` is being loaded but without the user's role in that account
+2. **getAccountRole Function**: Returns `null` because it cannot determine user's role in current account
+3. **Permission System Failure**: `usePermissions` hook receives `undefined` account role, defaulting to basic user permissions (4 permissions instead of expected 13+ permissions for account owners)
+4. **Database Relationship Missing**: User's role from `account_users` table is not being fetched and integrated into AuthContext
+
+### Console Evidence
+```
+🔐 PERMISSIONS_HOOK_DEBUG: CONTEXT_CHANGED_LOADING_PERMISSIONS {
+  userId: "122ae2c2-1236-4347-95fa-1c6a0f89201e",
+  accountId: undefined,           // ❌ Should be account ID
+  accountRole: undefined          // ❌ Should be "owner"
+}
+```
+
+### Database Evidence
+User `raphajunk@outlook.com` exists with proper account relationship:
+- `account_role: "owner"` in `account_users` table
+- `account_id: "cceeca1b-2f0b-4a23-89ba-8daf980b26a6"`
+- `account_name: "Default Account"`
+
+### Expected Behavior
+After fix, the AuthContext should:
+1. Fetch user's account role from `account_users` table during authentication
+2. Store account role information in `currentAccount` state
+3. Pass proper account role to permission system
+4. Display full permissions for account owners (create/edit/delete properties, items, etc.)
+
+### Technical Impact
+- **Priority**: HIGH - Users cannot access core application features
+- **Affected Components**: AuthContext, permission system, all dashboard pages
+- **Database Tables**: `account_users`, `accounts`, `users`
+- **Files Impacted**: AuthContext.tsx, auth.ts, usePermissions hook, dashboard pages
+
+---
+
+*Next Request: REQ-025* 

@@ -42,8 +42,21 @@ interface ItemWithDetails extends Item {
 export default function DashboardItemsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading, isAdmin, selectedProperty, userProperties } = useAuth();
-  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, undefined, undefined);
+  const { user, loading: authLoading, isAdmin, selectedProperty, userProperties, currentAccount } = useAuth();
+
+  // Enhanced: Use AuthContext account role integration (REQ-024)
+  const { useCanAccess, permissions, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
+
+  // Enhanced: Validate account role integration (REQ-024)
+  console.log('🔍 ITEMS_PAGE_DEBUG: Account role integration validation', {
+    userId: user?.id,
+    accountId: currentAccount?.id,
+    accountName: currentAccount?.name,
+    accountUserRole: currentAccount?.userRole,
+    isAccountOwner: currentAccount && user ? currentAccount.owner_id === user.id : false,
+    permissionsLoading,
+    hasPermissions: !!permissions
+  });
 
   // Permission checks
   const canManageItems = useCanAccess('manage_items');
@@ -84,8 +97,8 @@ export default function DashboardItemsPage() {
 
       // Prepare headers with account context
       const headers: Record<string, string> = {};
-      if (selectedProperty) {
-        headers['x-current-account'] = selectedProperty.id;
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
       }
 
       const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, 1, 20, headers);

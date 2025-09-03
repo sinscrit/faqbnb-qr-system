@@ -209,7 +209,21 @@ export async function getDashboardPermissions(
   account?: Account,
   accountUser?: AccountUser
 ): Promise<DashboardPermissions> {
+  console.log('🔍 PERMISSION_DEBUG: getDashboardPermissions called', {
+    userId: user?.id,
+    userRole: user?.role,
+    accountId: account?.id,
+    accountName: account?.name,
+    accountOwnerId: account?.owner_id,
+    accountUserRole: accountUser?.role,
+    accountUserRoleFromAccount: account?.userRole, // Enhanced: Check userRole field (REQ-024)
+    hasAccountUser: !!accountUser,
+    isSystemAdmin: user ? canAccessAdminFeatures(user) : false,
+    isAccountOwner: account ? account.owner_id === user?.id : false
+  });
+
   if (!user) {
+    console.log('🔍 PERMISSION_DEBUG: No user provided, returning minimal permissions');
     return {
       canAccessDashboard: false,
       canAccessItems: false,
@@ -234,7 +248,28 @@ export async function getDashboardPermissions(
 
   const isSystemAdmin = canAccessAdminFeatures(user);
   const isAccountOwner = account && account.owner_id === user.id;
-  const userAccountRole = accountUser?.role || AccountRole.VIEWER;
+
+  // Enhanced: Use account.userRole if available, otherwise fall back to accountUser.role (REQ-024)
+  let userAccountRole: AccountRole;
+  if (account?.userRole) {
+    userAccountRole = account.userRole;
+    console.log('🔍 PERMISSION_DEBUG: Using userRole from account object', {
+      userAccountRole,
+      source: 'account.userRole'
+    });
+  } else if (accountUser?.role) {
+    userAccountRole = accountUser.role;
+    console.log('🔍 PERMISSION_DEBUG: Using role from accountUser object', {
+      userAccountRole,
+      source: 'accountUser.role'
+    });
+  } else {
+    userAccountRole = AccountRole.VIEWER;
+    console.log('🔍 PERMISSION_DEBUG: No role found, defaulting to VIEWER', {
+      userAccountRole,
+      source: 'default'
+    });
+  }
 
   // Basic permissions based on authentication
   const basePermissions = {
@@ -270,6 +305,24 @@ export async function getDashboardPermissions(
     const canManageProps = await canManageProperties(user, account, accountUser);
     const canViewAnalytics = await canViewAnalytics(user, account, accountUser);
 
+    // Enhanced: Detailed logging for account permission calculations (REQ-024)
+    console.log('🔍 PERMISSION_DEBUG: Calculating account permissions', {
+      userAccountRole,
+      isAccountOwner,
+      canManageProps,
+      canViewAnalytics,
+      permissionCalculations: {
+        canCreateItems: userAccountRole !== AccountRole.VIEWER,
+        canEditItems: userAccountRole !== AccountRole.VIEWER,
+        canDeleteItems: [AccountRole.OWNER, AccountRole.ADMIN].includes(userAccountRole),
+        canCreateProperties: canManageProps,
+        canEditProperties: canManageProps,
+        canDeleteProperties: isAccountOwner || userAccountRole === AccountRole.ADMIN,
+        canManageAccountUsers: isAccountOwner || userAccountRole === AccountRole.ADMIN,
+        canManageAccountSettings: isAccountOwner || userAccountRole === AccountRole.ADMIN
+      }
+    });
+
     accountPermissions = {
       canCreateItems: userAccountRole !== AccountRole.VIEWER,
       canEditItems: userAccountRole !== AccountRole.VIEWER,
@@ -282,11 +335,31 @@ export async function getDashboardPermissions(
     };
   }
 
-  return {
+  const finalPermissions = {
     ...basePermissions,
     ...adminPermissions,
     ...accountPermissions
   };
+
+  // Enhanced: Log final permissions for debugging (REQ-024)
+  console.log('🔍 PERMISSION_DEBUG: Final dashboard permissions', {
+    userId: user.id,
+    accountId: account?.id,
+    userAccountRole,
+    finalPermissions: {
+      // Key permissions for validation
+      canAccessDashboard: finalPermissions.canAccessDashboard,
+      canAccessProperties: finalPermissions.canAccessProperties,
+      canCreateProperties: finalPermissions.canCreateProperties,
+      canManageProperties: finalPermissions.canEditProperties || finalPermissions.canDeleteProperties,
+      canManageAccountUsers: finalPermissions.canManageAccountUsers,
+      canManageAccountSettings: finalPermissions.canManageAccountSettings,
+      // Count total permissions granted
+      totalPermissionsGranted: Object.values(finalPermissions).filter(Boolean).length
+    }
+  });
+
+  return finalPermissions;
 }
 
 /**

@@ -235,7 +235,7 @@ interface AuthContextType {
   hasPermission: (permission: PermissionKey) => boolean;
   refreshPermissions: () => Promise<void>;
   getUserRole: () => UserRole;
-  getAccountRole: () => AccountRole | null;
+  getAccountRole: () => Promise<AccountRole | null>;
 }
 
 interface AuthProviderProps {
@@ -663,7 +663,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
           acc => acc.id === userResponse.data?.currentAccount?.id
         );
         if (fullAccount) {
-          setCurrentAccount(fullAccount);
+          // Enhanced: Include user role in current account (REQ-024)
+          const accountWithRole = {
+            ...fullAccount,
+            userRole: userResponse.data.currentAccount.role
+          };
+          console.log('🔍 AUTH_DEBUG: Setting current account with role in background loader', {
+            accountId: accountWithRole.id,
+            userRole: accountWithRole.userRole
+          });
+          setCurrentAccount(accountWithRole);
         }
       }
       
@@ -964,7 +973,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (currentAccount) {
         const updatedCurrentAccount = accounts.find(acc => acc.id === currentAccount.id);
         if (updatedCurrentAccount) {
-          setCurrentAccount(updatedCurrentAccount);
+          // Enhanced: Preserve user role when refreshing account context (REQ-024)
+          const accountWithRole = {
+            ...updatedCurrentAccount,
+            userRole: currentAccount.userRole || null
+          };
+          console.log('🔍 AUTH_DEBUG: Refreshing current account with preserved role', {
+            accountId: accountWithRole.id,
+            userRole: accountWithRole.userRole
+          });
+          setCurrentAccount(accountWithRole);
         } else {
           // Current account no longer accessible, clear it
           setCurrentAccount(null);
@@ -1005,10 +1023,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     setPermissionsLoading(true);
     try {
+      // Enhanced: Validate account role context before loading permissions (REQ-024)
+      console.log('🔍 AUTH_DEBUG: Loading dashboard permissions with account role context', {
+        userId: user.id,
+        userRole: user.role,
+        currentAccountId: currentAccount?.id,
+        currentAccountRole: currentAccount?.userRole,
+        accountOwner: currentAccount?.owner_id,
+        isCurrentUserOwner: currentAccount?.owner_id === user.id
+      });
+
       const permissions = await getDashboardPermissions(user, currentAccount);
+      console.log('🔍 AUTH_DEBUG: Dashboard permissions loaded successfully', {
+        permissionCount: permissions ? Object.keys(permissions).length : 0,
+        hasPropertyManagement: permissions?.canManageProperties,
+        hasItemManagement: permissions?.canManageItems,
+        hasAnalyticsAccess: permissions?.canAccessAnalytics
+      });
       setDashboardPermissions(permissions);
     } catch (error) {
-      console.error('Failed to load dashboard permissions:', error);
+      console.error('🔍 AUTH_DEBUG: Failed to load dashboard permissions:', error);
       setDashboardPermissions(null);
     } finally {
       setPermissionsLoading(false);
@@ -1119,12 +1153,59 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return canAccessAdminFeatures(user) ? UserRole.ADMIN : UserRole.USER;
   }, [user]);
 
-  const getAccountRole = useCallback((): AccountRole | null => {
-    if (!currentAccount) return null;
-    // This would need to be determined from account_users table
-    // For now, return null if not available
-    return null;
-  }, [currentAccount]);
+  const getAccountRole = useCallback(async (): Promise<AccountRole | null> => {
+    console.log('🔍 AUTH_DEBUG: getAccountRole called', {
+      hasCurrentAccount: !!currentAccount,
+      currentAccountId: currentAccount?.id,
+      userRoleInState: currentAccount?.userRole,
+      userId: user?.id
+    });
+
+    if (!currentAccount) {
+      console.log('🔍 AUTH_DEBUG: No current account, returning null');
+      return null;
+    }
+
+    // Enhanced: Check if userRole is already in the currentAccount state
+    if (currentAccount.userRole) {
+      console.log('🔍 AUTH_DEBUG: Returning userRole from currentAccount state', {
+        role: currentAccount.userRole
+      });
+      return currentAccount.userRole;
+    }
+
+    // Fallback: Query database for user's role in this account
+    if (!user?.id) {
+      console.log('🔍 AUTH_DEBUG: No user available for database query');
+      return null;
+    }
+
+    try {
+      console.log('🔍 AUTH_DEBUG: Querying database for account role', {
+        userId: user.id,
+        accountId: currentAccount.id
+      });
+
+      // Import the enhanced function from auth.ts
+      const { getUserRoleInAccount } = await import('@/lib/auth');
+      const role = await getUserRoleInAccount(user.id, currentAccount.id);
+
+      console.log('🔍 AUTH_DEBUG: Database query result', {
+        role: role,
+        accountId: currentAccount.id,
+        userId: user.id
+      });
+
+      return role;
+    } catch (error) {
+      console.error('🔍 AUTH_DEBUG: Error querying account role from database', {
+        error: error instanceof Error ? error.message : String(error),
+        userId: user?.id,
+        accountId: currentAccount.id
+      });
+      return null;
+    }
+  }, [currentAccount, user?.id]);
 
   // Refresh permissions when user or account context changes
   useEffect(() => {
