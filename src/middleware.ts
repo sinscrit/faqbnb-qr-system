@@ -124,7 +124,11 @@ export async function middleware(req: NextRequest) {
 
     // Protected routes access control
     // if user is not signed in and trying to access protected routes, redirect to login
-    if (!session?.user && (req.nextUrl.pathname.startsWith('/admin') || req.nextUrl.pathname.startsWith('/user'))) {
+    const isProtectedRoute = req.nextUrl.pathname.startsWith('/admin') ||
+                            req.nextUrl.pathname.startsWith('/user') ||
+                            req.nextUrl.pathname.startsWith('/dashboard');
+
+    if (!session?.user && isProtectedRoute) {
       console.log('🚨 MIDDLEWARE_REDIRECT_DEBUG: REDIRECTING_TO_LOGIN', {
         timestamp: new Date().toISOString(),
         path: req.nextUrl.pathname,
@@ -132,40 +136,24 @@ export async function middleware(req: NextRequest) {
         hasUser: !!session?.user,
         userAgent: req.headers.get('user-agent')?.slice(0, 50),
         referer: req.headers.get('referer'),
-        reason: 'No authenticated session found for protected route'
+        reason: 'No authenticated session found for protected route',
+        routeType: 'unified'
       });
       return NextResponse.redirect(new URL('/login', req.url))
     }
     
     // FIXED: Add specific check for authenticated users trying to access login page
-    // Redirect regular users to user dashboard, admins to admin dashboard
+    // Redirect all users to unified dashboard (REQ-023 unified route architecture)
     if (session?.user && req.nextUrl.pathname === '/login') {
-      // Check if user is admin to determine redirect target
-      let redirectTarget = '/user'; // Default for regular users
-      
-      try {
-        const { data: adminUser } = await supabase
-          .from('admin_users')
-          .select('id')
-          .eq('id', session.user.id)
-          .single();
-
-        if (adminUser) {
-          redirectTarget = '/admin'; // Admin users go to admin panel
-        }
-      } catch (error) {
-        // If error checking admin status, default to user dashboard
-        console.log('Middleware: Could not check admin status, defaulting to user dashboard');
-      }
-
       console.log('🔄 MIDDLEWARE_REDIRECT_DEBUG: AUTHENTICATED_USER_ON_LOGIN', {
         timestamp: new Date().toISOString(),
         userId: session.user.id,
         userEmail: session.user.email,
-        redirectingTo: redirectTarget,
-        reason: 'User already authenticated, redirecting to appropriate dashboard'
+        redirectingTo: '/dashboard',
+        reason: 'User already authenticated, redirecting to unified dashboard (REQ-023)',
+        routeType: 'unified'
       });
-      return NextResponse.redirect(new URL(redirectTarget, req.url))
+      return NextResponse.redirect(new URL('/dashboard', req.url))
     }
 
     console.log('[MIDDLEWARE-DEBUG] Allowing request to proceed');
@@ -178,5 +166,15 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/admin', '/user/:path*', '/user', '/login', '/auth/oauth/callback', '/register'],
+  matcher: [
+    '/admin/:path*',
+    '/admin',
+    '/user/:path*',
+    '/user',
+    '/dashboard/:path*',
+    '/dashboard',
+    '/login',
+    '/auth/oauth/callback',
+    '/register'
+  ],
 } 
