@@ -322,6 +322,320 @@ const setGlobalAuthInProgress = (value: boolean) => {
 
 console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
 
+// REQ-025: Comprehensive Error Recovery System
+
+/**
+ * Error classification and recovery strategies
+ */
+enum AuthErrorType {
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
+  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
+  SESSION_EXPIRED = 'SESSION_EXPIRED',
+  RATE_LIMITED = 'RATE_LIMITED',
+  SERVER_ERROR = 'SERVER_ERROR',
+  CLIENT_ERROR = 'CLIENT_ERROR',
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+}
+
+interface AuthErrorContext {
+  type: AuthErrorType;
+  originalError: any;
+  timestamp: number;
+  retryCount: number;
+  maxRetries: number;
+  context: string;
+  userId?: string;
+  sessionId?: string;
+}
+
+/**
+ * Classify errors and determine recovery strategies
+ */
+const classifyAuthError = (error: any): AuthErrorType => {
+  if (!error) return AuthErrorType.UNKNOWN_ERROR;
+
+  const errorMessage = error.message || error.toString();
+  const statusCode = error.status || error.statusCode;
+
+  // Network errors
+  if (errorMessage.includes('fetch') ||
+      errorMessage.includes('network') ||
+      errorMessage.includes('Failed to fetch') ||
+      !navigator.onLine) {
+    return AuthErrorType.NETWORK_ERROR;
+  }
+
+  // HTTP status based errors
+  if (statusCode) {
+    if (statusCode === 401) return AuthErrorType.AUTHENTICATION_ERROR;
+    if (statusCode === 403) return AuthErrorType.AUTHORIZATION_ERROR;
+    if (statusCode === 429) return AuthErrorType.RATE_LIMITED;
+    if (statusCode >= 500) return AuthErrorType.SERVER_ERROR;
+    if (statusCode >= 400) return AuthErrorType.CLIENT_ERROR;
+  }
+
+  // Message based classification
+  if (errorMessage.includes('session') ||
+      errorMessage.includes('expired') ||
+      errorMessage.includes('token')) {
+    return AuthErrorType.SESSION_EXPIRED;
+  }
+
+  if (errorMessage.includes('auth') ||
+      errorMessage.includes('login') ||
+      errorMessage.includes('credentials')) {
+    return AuthErrorType.AUTHENTICATION_ERROR;
+  }
+
+  return AuthErrorType.UNKNOWN_ERROR;
+};
+
+/**
+ * Determine if error is recoverable
+ */
+const isRecoverableError = (errorType: AuthErrorType): boolean => {
+  switch (errorType) {
+    case AuthErrorType.NETWORK_ERROR:
+    case AuthErrorType.SESSION_EXPIRED:
+    case AuthErrorType.SERVER_ERROR:
+      return true;
+    case AuthErrorType.AUTHENTICATION_ERROR:
+    case AuthErrorType.AUTHORIZATION_ERROR:
+    case AuthErrorType.RATE_LIMITED:
+    case AuthErrorType.CLIENT_ERROR:
+    case AuthErrorType.UNKNOWN_ERROR:
+    default:
+      return false;
+  }
+};
+
+/**
+ * Calculate retry delay with exponential backoff
+ */
+const calculateRetryDelay = (retryCount: number, errorType: AuthErrorType): number => {
+  const baseDelay = errorType === AuthErrorType.NETWORK_ERROR ? 1000 : 2000;
+  const maxDelay = 30000; // 30 seconds max
+
+  // Exponential backoff: baseDelay * 2^retryCount + jitter
+  const exponentialDelay = baseDelay * Math.pow(2, retryCount);
+  const jitter = Math.random() * 1000; // Add up to 1 second of jitter
+
+  return Math.min(exponentialDelay + jitter, maxDelay);
+};
+
+/**
+ * Comprehensive error recovery function
+ */
+const handleAuthErrorRecovery = React.useCallback(async (
+  error: any,
+  context: string,
+  onRetry?: () => Promise<any>,
+  onFallback?: () => Promise<any>
+): Promise<{ recovered: boolean; result?: any }> => {
+  const startTime = performance.now();
+  const errorType = classifyAuthError(error);
+  const recoverable = isRecoverableError(errorType);
+
+  const errorContext: AuthErrorContext = {
+    type: errorType,
+    originalError: error,
+    timestamp: Date.now(),
+    retryCount: 0,
+    maxRetries: recoverable ? 3 : 0,
+    context,
+    userId: user?.id,
+    sessionId: session?.user?.id
+  };
+
+  // Log the error (only if logger is available)
+  if (typeof window !== 'undefined' && logger) {
+    logger.logError('AUTH_ERROR_RECOVERY_STARTED', error, {
+      errorType,
+      recoverable,
+      context,
+      userId: user?.id
+    });
+  }
+
+  console.error('🚨 AUTH_ERROR_RECOVERY: Starting recovery process', {
+    errorType,
+    recoverable,
+    context,
+    error: error instanceof Error ? error.message : error
+  });
+
+  // If not recoverable, try fallback if available
+  if (!recoverable) {
+    if (onFallback) {
+      try {
+        console.log('🚨 AUTH_ERROR_RECOVERY: Attempting fallback strategy');
+        const fallbackResult = await onFallback();
+        const duration = performance.now() - startTime;
+
+        if (typeof window !== 'undefined' && logger) {
+          logger.logPerformance('AUTH_ERROR_RECOVERY_FALLBACK_SUCCESS', startTime, true, {
+            duration: `${duration.toFixed(2)}ms`,
+            errorType,
+            context
+          });
+        }
+
+        return { recovered: true, result: fallbackResult };
+      } catch (fallbackError) {
+        console.error('🚨 AUTH_ERROR_RECOVERY: Fallback strategy failed:', fallbackError);
+
+        if (typeof window !== 'undefined' && logger) {
+          logger.logError('AUTH_ERROR_RECOVERY_FALLBACK_FAILED', fallbackError, {
+            originalErrorType: errorType,
+            context
+          });
+        }
+      }
+    }
+
+    return { recovered: false };
+  }
+
+  // Attempt recovery with retries
+  for (let attempt = 1; attempt <= errorContext.maxRetries; attempt++) {
+    errorContext.retryCount = attempt;
+
+    try {
+      const retryDelay = calculateRetryDelay(attempt - 1, errorType);
+
+      console.log(`🚨 AUTH_ERROR_RECOVERY: Retry attempt ${attempt}/${errorContext.maxRetries} in ${retryDelay.toFixed(0)}ms`);
+
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+
+      // Execute retry function
+      if (onRetry) {
+        const retryResult = await onRetry();
+        const duration = performance.now() - startTime;
+
+        if (typeof window !== 'undefined' && logger) {
+          logger.logPerformance('AUTH_ERROR_RECOVERY_RETRY_SUCCESS', startTime, true, {
+            duration: `${duration.toFixed(2)}ms`,
+            errorType,
+            context,
+            attempts: attempt
+          });
+        }
+
+        console.log(`🚨 AUTH_ERROR_RECOVERY: Recovery successful on attempt ${attempt}`);
+
+        return { recovered: true, result: retryResult };
+      }
+
+    } catch (retryError) {
+      console.warn(`🚨 AUTH_ERROR_RECOVERY: Retry attempt ${attempt} failed:`, retryError);
+
+      // If this was the last attempt, log the failure
+      if (attempt === errorContext.maxRetries) {
+        const duration = performance.now() - startTime;
+
+        if (typeof window !== 'undefined' && logger) {
+          logger.logError('AUTH_ERROR_RECOVERY_EXHAUSTED', retryError, {
+            originalErrorType: errorType,
+            context,
+            totalAttempts: attempt,
+            totalDuration: `${duration.toFixed(2)}ms`
+          });
+        }
+      }
+    }
+  }
+
+  return { recovered: false };
+}, [logger, user, session]);
+
+/**
+ * Fallback authentication strategy
+ */
+const fallbackAuthenticationStrategy = React.useCallback(async (): Promise<any> => {
+  console.log('🔄 AUTH_FALLBACK: Attempting fallback authentication strategy');
+
+  try {
+    // Strategy 1: Try to restore from persisted state
+    const restoredState = restoreAuthState();
+    if (restoredState && restoredState.authState === AuthState.AUTHENTICATED) {
+      console.log('🔄 AUTH_FALLBACK: Successfully restored from persisted state');
+
+      updateGlobalAuthState({
+        user: restoredState.user,
+        session: restoredState.session,
+        accounts: restoredState.accounts,
+        currentAccount: restoredState.currentAccount,
+        authState: restoredState.authState
+      });
+
+      return { success: true, strategy: 'persisted_state' };
+    }
+
+    // Strategy 2: Try anonymous/guest mode if applicable
+    console.log('🔄 AUTH_FALLBACK: Attempting guest mode');
+    // For this application, we don't have guest mode, so we'll just return to login
+
+    return { success: false, strategy: 'guest_mode_not_available' };
+
+  } catch (fallbackError) {
+    console.error('🔄 AUTH_FALLBACK: All fallback strategies failed:', fallbackError);
+    throw fallbackError;
+  }
+}, [restoreAuthState, updateGlobalAuthState]);
+
+/**
+ * Enhanced error state recovery
+ */
+const recoverFromErrorState = React.useCallback(async (): Promise<boolean> => {
+  console.log('🔄 ERROR_STATE_RECOVERY: Attempting to recover from error state');
+
+  try {
+    // Strategy 1: Clear error state and try fresh authentication
+    updateGlobalAuthState({
+      authState: AuthState.UNAUTHORIZED,
+      error: undefined
+    });
+
+    // Wait a moment for state to settle
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Strategy 2: Try to authenticate again
+    const authResult = await authenticateUser();
+
+    if (authResult.state === 'AUTHENTICATED') {
+      console.log('🔄 ERROR_STATE_RECOVERY: Successfully recovered from error state');
+      return true;
+    }
+
+    // Strategy 3: If authentication fails, try fallback
+    const fallbackResult = await fallbackAuthenticationStrategy();
+    if (fallbackResult.success) {
+      console.log('🔄 ERROR_STATE_RECOVERY: Successfully recovered using fallback strategy');
+      return true;
+    }
+
+    console.log('🔄 ERROR_STATE_RECOVERY: Failed to recover from error state');
+    return false;
+
+  } catch (recoveryError) {
+    console.error('🔄 ERROR_STATE_RECOVERY: Recovery process failed:', recoveryError);
+
+    // Reset to clean unauthorized state
+    updateGlobalAuthState({
+      authState: AuthState.UNAUTHORIZED,
+      user: null,
+      session: null,
+      accounts: [],
+      currentAccount: null,
+      error: 'Recovery failed. Please try logging in again.'
+    });
+
+    return false;
+  }
+}, [updateGlobalAuthState, authenticateUser, fallbackAuthenticationStrategy]);
+
 // REQ-025: Enhanced State Persistence and Restoration System
 
 /**
@@ -607,7 +921,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // REQ-025: Create comprehensive logging system
   const createLogger = createAuthLoggerFactory();
-  const logger = createLogger(authState, user, currentAccount, session);
+  const logger = typeof window !== 'undefined' ? createLogger(authState, user, currentAccount, session) : null;
 
   // REQ-025: Atomic state updates function with logging
   const updateGlobalAuthState = React.useCallback((updates: {
@@ -870,9 +1184,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: undefined
         });
 
-        // Call authentication orchestrator with enhanced sequential loading
+        // Call authentication orchestrator with enhanced sequential loading and error recovery
         const authStartTime = performance.now();
-        authenticateUser().then(result => {
+
+        const performAuthentication = async () => {
+          const result = await authenticateUser();
           const authDuration = performance.now() - authStartTime;
 
           // Only log if logger is available (client-side)
@@ -901,16 +1217,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
               authState: AuthState.AUTHENTICATED
             });
           } else if (result.state === 'ERROR') {
+            throw new Error(result.error || 'Authentication failed');
+          }
+
+          return result;
+        };
+
+        // Use error recovery system for authentication
+        handleAuthErrorRecovery(
+          null, // No initial error
+          'authentication_flow',
+          performAuthentication, // Retry function
+          fallbackAuthenticationStrategy // Fallback function
+        ).then(recoveryResult => {
+          if (!recoveryResult.recovered) {
+            // If recovery failed, transition to error state
+            const authDuration = performance.now() - authStartTime;
+
             // Only log if logger is available (client-side)
             if (typeof window !== 'undefined' && logger) {
-              logger.logError('AUTH_FAILED_TRANSITION', new Error(result.error || 'Unknown auth error'), {
-                authDuration: `${authDuration.toFixed(2)}ms`
+              logger.logError('AUTH_RECOVERY_FAILED', new Error('All authentication attempts failed'), {
+                authDuration: `${authDuration.toFixed(2)}ms`,
+                context: 'authentication_flow'
               });
             }
 
             updateGlobalAuthState({
               authState: AuthState.ERROR,
-              error: result.error
+              error: 'Authentication failed after multiple attempts. Please check your connection and try again.'
             });
           }
         }).catch(error => {
@@ -918,9 +1252,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
           // Only log if logger is available (client-side)
           if (typeof window !== 'undefined' && logger) {
-            logger.logError('AUTH_ORCHESTRATOR_EXCEPTION', error, {
+            logger.logError('AUTH_RECOVERY_EXCEPTION', error, {
               authDuration: `${authDuration.toFixed(2)}ms`,
-              authState
+              authState,
+              context: 'authentication_flow'
             });
           }
 
@@ -1009,11 +1344,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
           });
         }
 
-        // In error state, we can attempt recovery or stay in error state
+        // REQ-025: Attempt automatic error recovery
+        console.log('🚨 ERROR_STATE: Attempting automatic recovery');
+
+        recoverFromErrorState().then(recovered => {
+          if (recovered) {
+            console.log('🚨 ERROR_STATE: Automatic recovery successful');
+          } else {
+            console.log('🚨 ERROR_STATE: Automatic recovery failed, staying in error state');
+
+            // If recovery fails, provide user guidance
+            if (typeof window !== 'undefined' && logger) {
+              logger.logAuthEvent('ERROR_STATE_RECOVERY_FAILED', {
+                error: authData?.error,
+                userGuidance: 'User should try logging in again or check their network connection'
+              });
+            }
+          }
+        }).catch(recoveryError => {
+          console.error('🚨 ERROR_STATE: Recovery attempt threw exception:', recoveryError);
+
+          if (typeof window !== 'undefined' && logger) {
+            logger.logError('ERROR_STATE_RECOVERY_EXCEPTION', recoveryError, {
+              originalError: authData?.error
+            });
+          }
+        });
+
         break;
       }
     }
-  }, [authState, user, session, userAccounts, currentAccount, logger, updateGlobalAuthState]);
+  }, [authState, user, session, userAccounts, currentAccount, logger, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy]);
 
   // Remove old individual useEffect hooks - now handled by state machine above
 
