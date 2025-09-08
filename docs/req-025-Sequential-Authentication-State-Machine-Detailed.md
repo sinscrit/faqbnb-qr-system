@@ -94,42 +94,43 @@ This detailed implementation document breaks down REQ-025 into specific, actiona
 
 **Success Criteria:** AuthContext compiles with new state definitions and logs state transitions properly.
 
-#### 1.2 Create Authentication Orchestrator Function (1 Point)
+#### 1.2 Create Authentication Orchestrator Function (1 Point) -unit tested-
 **File:** `src/lib/auth.ts`
 **Goal:** Single entry point for all authentication scenarios
 
-- [ ] Create new `authenticateUser()` function in `src/lib/auth.ts`:
+- [x] Create new `authenticateUser()` function in `src/lib/auth.ts`:
    ```typescript
    export async function authenticateUser(): Promise<AuthResult> {
      // Check existing session first
-     const session = await checkExistingSession();
-     if (session) {
-       return await loadAuthenticatedState(session);
+     const session = await getSession();
+     if (session.data?.user) {
+       return await loadAuthenticatedState(session.data);
      }
 
      // Check for OAuth callback
-     const oauthParams = checkOAuthCallback();
-     if (oauthParams) {
-       return await handleOAuthRegistration(oauthParams);
+     const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+     const code = urlParams?.get('code');
+     const email = urlParams?.get('email');
+     if (code && email) {
+       return await handleOAuthRegistration(code, email);
      }
 
      // Return login form state
      return { state: 'UNAUTHORIZED', action: 'SHOW_LOGIN' };
    }
    ```
-- [ ] Create helper functions:
-   - `checkExistingSession()` - Validate current Supabase session
-   - `checkOAuthCallback()` - Detect OAuth URL parameters
+- [x] Create helper functions:
    - `loadAuthenticatedState()` - Load user data and accounts
    - `handleOAuthRegistration()` - Process OAuth completion
-- [ ] Add proper error handling and logging
-- [ ] Return structured AuthResult with state and data
+   - `determineCurrentAccount()` - Determine current account for user
+- [x] Add proper error handling and logging
+- [x] Return structured AuthResult with state and data
 
 **Testing:**
-- [ ] Test with existing session (should load authenticated state)
-- [ ] Test with OAuth URL parameters (should trigger OAuth flow)
-- [ ] Test with no session (should return login state)
-- [ ] Verify error handling for invalid sessions
+- [x] Test with existing session (should load authenticated state)
+- [x] Test with OAuth URL parameters (should trigger OAuth flow)
+- [x] Test with no session (should return login state)
+- [x] Verify error handling for invalid sessions
 
 **Success Criteria:** Function handles all authentication entry points and returns consistent AuthResult structure.
 

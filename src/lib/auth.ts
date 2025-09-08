@@ -1570,4 +1570,144 @@ export async function isSystemAdmin(userId: string): Promise<boolean> {
     console.error('Error checking system admin status:', error);
     return false;
   }
-} 
+}
+
+/**
+ * REQ-025: Sequential Authentication State Machine Implementation
+ * Authentication orchestrator function - single entry point for all authentication scenarios
+ */
+export interface AuthResult {
+  state: 'UNAUTHORIZED' | 'LOADING' | 'AUTHENTICATED' | 'ERROR';
+  action?: 'SHOW_LOGIN' | 'SHOW_DASHBOARD' | 'SHOW_ERROR';
+  user?: AuthUser;
+  session?: Session;
+  accounts?: Account[];
+  currentAccount?: Account;
+  error?: string;
+}
+
+export async function authenticateUser(): Promise<AuthResult> {
+  console.log('🚀 AUTH_ORCHESTRATOR: Starting authentication process');
+
+  try {
+    // Step 1: Check existing session first
+    console.log('🚀 AUTH_ORCHESTRATOR: Checking existing session');
+    const session = await getSession();
+
+    if (session.data?.user) {
+      console.log('🚀 AUTH_ORCHESTRATOR: Valid session found, loading authenticated state');
+      const authResult = await loadAuthenticatedState(session.data);
+      return authResult;
+    }
+
+    // Step 2: Check for OAuth callback parameters
+    console.log('🚀 AUTH_ORCHESTRATOR: Checking for OAuth callback');
+    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const code = urlParams?.get('code');
+    const email = urlParams?.get('email');
+
+    if (code && email) {
+      console.log('🚀 AUTH_ORCHESTRATOR: OAuth callback detected, processing registration');
+      const oauthResult = await handleOAuthRegistration(code, email);
+      return oauthResult;
+    }
+
+    // Step 3: No valid authentication found, show login
+    console.log('🚀 AUTH_ORCHESTRATOR: No authentication found, showing login');
+    return {
+      state: 'UNAUTHORIZED',
+      action: 'SHOW_LOGIN'
+    };
+
+  } catch (error) {
+    console.error('🚀 AUTH_ORCHESTRATOR: Authentication error:', error);
+    return {
+      state: 'ERROR',
+      action: 'SHOW_ERROR',
+      error: error instanceof Error ? error.message : 'Authentication failed'
+    };
+  }
+}
+
+/**
+ * Load authenticated state for a valid session
+ */
+async function loadAuthenticatedState(session: Session): Promise<AuthResult> {
+  console.log('🚀 LOAD_AUTH_STATE: Loading authenticated state for user:', session.user.id);
+
+  try {
+    // Step 1: Load basic user profile
+    console.log('🚀 LOAD_AUTH_STATE: Loading user profile');
+    const userResponse = await getUser();
+    if (userResponse.error || !userResponse.data) {
+      throw new Error('Failed to load user profile');
+    }
+
+    // Step 2: Load user accounts with roles
+    console.log('🚀 LOAD_AUTH_STATE: Loading user accounts');
+    const accounts = await getAccountsForUser(session.user.id);
+    if (!accounts || accounts.length === 0) {
+      throw new Error('No accounts found for user');
+    }
+
+    // Step 3: Determine current account (first owned account or first available)
+    console.log('🚀 LOAD_AUTH_STATE: Determining current account');
+    const currentAccount = await determineCurrentAccount(accounts, session.user.id);
+
+    // Step 4: Return authenticated state
+    console.log('🚀 LOAD_AUTH_STATE: Authentication successful');
+    return {
+      state: 'AUTHENTICATED',
+      action: 'SHOW_DASHBOARD',
+      user: userResponse.data,
+      session: session,
+      accounts: accounts,
+      currentAccount: currentAccount
+    };
+
+  } catch (error) {
+    console.error('🚀 LOAD_AUTH_STATE: Error loading authenticated state:', error);
+    throw error;
+  }
+}
+
+/**
+ * Handle OAuth registration completion
+ */
+async function handleOAuthRegistration(code: string, email: string): Promise<AuthResult> {
+  console.log('🚀 OAUTH_REGISTRATION: Processing OAuth registration', { code: code.substring(0, 10) + '...', email });
+
+  try {
+    // This would integrate with the existing OAuth registration endpoint
+    // For now, return an error state since full OAuth implementation is complex
+    console.log('🚀 OAUTH_REGISTRATION: OAuth registration not fully implemented yet');
+    return {
+      state: 'ERROR',
+      action: 'SHOW_ERROR',
+      error: 'OAuth registration not yet implemented in orchestrator'
+    };
+
+  } catch (error) {
+    console.error('🚀 OAUTH_REGISTRATION: Error in OAuth registration:', error);
+    throw error;
+  }
+}
+
+/**
+ * Determine the current account for a user
+ */
+async function determineCurrentAccount(accounts: Account[], userId: string): Promise<Account> {
+  console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Finding current account for user:', userId);
+
+  // First, try to find an account where the user is the owner
+  const ownedAccount = accounts.find(account => account.owner_id === userId);
+
+  if (ownedAccount) {
+    console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Found owned account:', ownedAccount.id);
+    return ownedAccount;
+  }
+
+  // If no owned account, use the first available account
+  console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Using first available account:', accounts[0].id);
+  return accounts[0];
+}
