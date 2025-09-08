@@ -59,12 +59,114 @@ interface AuthStateData {
   error?: string;
 }
 
+// REQ-025: Comprehensive Logging System factory function
+function createAuthLoggerFactory() {
+  return (authState: AuthState, user: AuthUser | null, currentAccount: Account | null, session: Session | null) => {
+    const logAuthEvent = (event: string, data: any, level: 'info' | 'warn' | 'error' = 'info') => {
+      const timestamp = new Date().toISOString();
+      const logData = {
+        timestamp,
+        event,
+        level,
+        authState,
+        userId: user?.id,
+        currentAccountId: currentAccount?.id,
+        sessionId: session?.user?.id,
+        ...data
+      };
+
+      // Console logging with appropriate level
+      const logMessage = `🔍 AUTH_${level.toUpperCase()}: ${event}`;
+      switch (level) {
+        case 'error':
+          console.error(logMessage, logData);
+          break;
+        case 'warn':
+          console.warn(logMessage, logData);
+          break;
+        default:
+          console.log(logMessage, logData);
+      }
+
+      // Store recent logs in localStorage for debugging (last 50 logs)
+      try {
+        const recentLogs = JSON.parse(localStorage.getItem('auth_logs') || '[]');
+        recentLogs.unshift(logData);
+        if (recentLogs.length > 50) recentLogs.pop(); // Keep last 50 logs
+        localStorage.setItem('auth_logs', JSON.stringify(recentLogs));
+      } catch (error) {
+        console.error('Failed to store auth logs:', error);
+      }
+    };
+
+    const logPerformance = (operation: string, startTime: number, success: boolean, extraData?: any) => {
+      const duration = performance.now() - startTime;
+      logAuthEvent('PERFORMANCE', {
+        operation,
+        duration: `${duration.toFixed(2)}ms`,
+        success,
+        ...extraData
+      }, success ? 'info' : 'warn');
+    };
+
+    const logError = (operation: string, error: any, context?: any) => {
+      const errorData = {
+        operation,
+        error: error instanceof Error ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        } : error,
+        context
+      };
+      logAuthEvent('ERROR', errorData, 'error');
+    };
+
+    const logStateTransition = (fromState: AuthState, toState: AuthState, data?: any) => {
+      logAuthEvent('STATE_TRANSITION', {
+        from: fromState,
+        to: toState,
+        data
+      });
+    };
+
+    const getRecentLogs = (limit: number = 10) => {
+      try {
+        const logs = JSON.parse(localStorage.getItem('auth_logs') || '[]');
+        return logs.slice(0, limit);
+      } catch (error) {
+        console.error('Failed to retrieve auth logs:', error);
+        return [];
+      }
+    };
+
+    return {
+      logAuthEvent,
+      logPerformance,
+      logError,
+      logStateTransition,
+      getRecentLogs
+    };
+  };
+}
+
 // REQ-025: Atomic state updates function (will be defined inside AuthProvider)
 
 // State transition function (will be called from within AuthProvider)
-function createTransitionTo(currentAuthState: AuthState, setAuthState: React.Dispatch<React.SetStateAction<AuthState>>, setAuthData: React.Dispatch<React.SetStateAction<AuthStateData | undefined>>) {
+function createTransitionTo(
+  currentAuthState: AuthState,
+  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>,
+  setAuthData: React.Dispatch<React.SetStateAction<AuthStateData | undefined>>,
+  logger?: any
+) {
   return (state: AuthState, data?: AuthStateData) => {
-    console.log(`🔄 AUTH_TRANSITION: ${currentAuthState} → ${state}`, data);
+    // Log the transition if logger is available
+    if (logger) {
+      logger.logStateTransition(currentAuthState, state, data);
+    } else {
+      console.log(`🔄 AUTH_TRANSITION: ${currentAuthState} → ${state}`, data);
+    }
+
     setAuthState(state);
     setAuthData(data);
   };
@@ -307,10 +409,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [authState, setAuthState] = useState<AuthState>(initialAuthState);
   const [authData, setAuthData] = useState<AuthStateData | undefined>(undefined);
 
-  // Create transition function with current state
-  const transitionTo = createTransitionTo(authState, setAuthState, setAuthData);
+  // Create transition function with current state and logging
+  const transitionTo = createTransitionTo(authState, setAuthState, setAuthData, logger);
 
-  // REQ-025: Atomic state updates function
+  // REQ-025: Create comprehensive logging system
+  const createLogger = createAuthLoggerFactory();
+  const logger = createLogger(authState, user, currentAccount, session);
+
+  // REQ-025: Atomic state updates function with logging
   const updateGlobalAuthState = React.useCallback((updates: {
     user?: AuthUser | null;
     session?: Session | null;
@@ -319,15 +425,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     authState: AuthState;
     error?: string;
   }) => {
-    console.log('🔄 ATOMIC_STATE_UPDATE: Updating global auth state', updates);
+    const startTime = performance.now();
+
+    logger.logAuthEvent('ATOMIC_STATE_UPDATE_START', updates);
 
     // Single atomic update
-    if (updates.user !== undefined) setUser(updates.user);
-    if (updates.session !== undefined) setSession(updates.session);
+    if (updates.user !== undefined) {
+      setUser(updates.user);
+      logger.logAuthEvent('USER_STATE_UPDATE', { userId: updates.user?.id });
+    }
+    if (updates.session !== undefined) {
+      setSession(updates.session);
+      logger.logAuthEvent('SESSION_STATE_UPDATE', { sessionId: updates.session?.user?.id });
+    }
     if (updates.accounts !== undefined) {
       setUserAccounts(updates.accounts);
       // Store in localStorage for persistence
       localStorage.setItem('availableAccounts', JSON.stringify(updates.accounts));
+      logger.logAuthEvent('ACCOUNTS_STATE_UPDATE', { accountCount: updates.accounts.length });
     }
     if (updates.currentAccount !== undefined) {
       setCurrentAccount(updates.currentAccount);
@@ -337,13 +452,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         localStorage.removeItem('currentAccount');
       }
+      logger.logAuthEvent('CURRENT_ACCOUNT_UPDATE', { accountId: updates.currentAccount?.id });
     }
+
+    // Log state transition if authState is changing
+    if (updates.authState !== authState) {
+      logger.logStateTransition(authState, updates.authState, updates);
+    }
+
     setAuthState(updates.authState);
     setLoading(updates.authState === 'LOADING');
-    if (updates.error !== undefined) setError(updates.error);
+    if (updates.error !== undefined) {
+      setError(updates.error);
+      if (updates.error) {
+        logger.logError('ATOMIC_STATE_UPDATE_ERROR', updates.error, updates);
+      }
+    }
 
-    console.log('✅ ATOMIC_STATE_UPDATE: Global auth state updated successfully');
-  }, []);
+    const duration = performance.now() - startTime;
+    logger.logPerformance('ATOMIC_STATE_UPDATE', startTime, true, { duration: `${duration.toFixed(2)}ms` });
+  }, [authState, logger]);
 
   // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);

@@ -1587,6 +1587,7 @@ export interface AuthResult {
 }
 
 export async function authenticateUser(): Promise<AuthResult> {
+  const startTime = performance.now();
   console.log('🚀 AUTH_ORCHESTRATOR: Starting authentication process');
 
   try {
@@ -1595,8 +1596,13 @@ export async function authenticateUser(): Promise<AuthResult> {
     const session = await getSession();
 
     if (session.data?.user) {
-      console.log('🚀 AUTH_ORCHESTRATOR: Valid session found, loading authenticated state');
+      console.log('🚀 AUTH_ORCHESTRATOR: Valid session found, loading authenticated state', { userId: session.data.user.id });
       const authResult = await loadAuthenticatedState(session.data);
+      console.log('🚀 AUTH_ORCHESTRATOR: Authentication successful', {
+        state: authResult.state,
+        userId: authResult.user?.id,
+        currentAccountId: authResult.currentAccount?.id
+      });
       return authResult;
     }
 
@@ -1607,20 +1613,24 @@ export async function authenticateUser(): Promise<AuthResult> {
     const email = urlParams?.get('email');
 
     if (code && email) {
-      console.log('🚀 AUTH_ORCHESTRATOR: OAuth callback detected, processing registration');
+      console.log('🚀 AUTH_ORCHESTRATOR: OAuth callback detected, processing registration', { email });
       const oauthResult = await handleOAuthRegistration(code, email);
+      console.log('🚀 AUTH_ORCHESTRATOR: OAuth registration completed', { state: oauthResult.state });
       return oauthResult;
     }
 
     // Step 3: No valid authentication found, show login
     console.log('🚀 AUTH_ORCHESTRATOR: No authentication found, showing login');
+    const duration = performance.now() - startTime;
+    console.log(`🚀 AUTH_ORCHESTRATOR: Completed in ${duration.toFixed(2)}ms - No authentication required`);
     return {
       state: 'UNAUTHORIZED',
       action: 'SHOW_LOGIN'
     };
 
   } catch (error) {
-    console.error('🚀 AUTH_ORCHESTRATOR: Authentication error:', error);
+    const duration = performance.now() - startTime;
+    console.error('🚀 AUTH_ORCHESTRATOR: Authentication error:', error, `(${duration.toFixed(2)}ms)`);
     return {
       state: 'ERROR',
       action: 'SHOW_ERROR',
