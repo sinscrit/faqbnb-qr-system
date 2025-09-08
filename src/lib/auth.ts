@@ -116,6 +116,16 @@ export async function signInWithEmail(
 
     // Get user's available accounts
     const accounts = await getAccountsForUser(data.user.id);
+    console.log('🔍 GETUSER_DEBUG: Accounts loaded from getAccountsForUser', {
+      userId: data.user.id,
+      accountsCount: accounts.length,
+      accounts: accounts.map(acc => ({
+        id: acc.id,
+        name: acc.name,
+        hasUserRole: !!acc.userRole,
+        userRole: acc.userRole
+      }))
+    });
     
     // Get default account (first owned account or first available)
     const defaultAccount = await getDefaultAccountForUser(data.user.id) || 
@@ -142,6 +152,19 @@ export async function signInWithEmail(
       currentAccount: currentAccountContext,
       availableAccounts: accounts
     };
+
+    console.log('🔍 GETUSER_DEBUG: Final return data', {
+      userId: authUser.id,
+      userEmail: authUser.email,
+      accountsCount: accounts.length,
+      hasCurrentAccount: !!currentAccountContext,
+      currentAccountRole: currentAccountContext?.role,
+      availableAccountsWithRoles: accounts.map(acc => ({
+        id: acc.id,
+        name: acc.name,
+        userRole: acc.userRole
+      }))
+    });
 
     return {
       data: {
@@ -613,14 +636,15 @@ export async function switchAccount(accountId: string): Promise<AccountSwitchRes
       localStorage.setItem('currentAccount', accountId);
     }
 
-    const accountData: Account = {
+    const accountData: Account & { userRole: string | null } = {
       id: account.id,
       owner_id: account.owner_id,
       name: account.name,
       description: account.description,
       settings: account.settings || {},
       created_at: account.created_at,
-      updated_at: account.updated_at
+      updated_at: account.updated_at,
+      userRole: userRole
     };
 
     return {
@@ -1410,15 +1434,22 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
       return [];
     }
 
-    return (accounts || []).map(account => ({
-      id: account.id,
-      owner_id: account.owner_id,
-      name: account.name,
-      description: account.description,
-      settings: {},
-      created_at: account.created_at,
-      updated_at: account.updated_at
-    }));
+    return (accounts || []).map(account => {
+      // Find the user's role for this account
+      const userAccountRel = userAccountRels.find(rel => rel.account_id === account.id);
+      const userRole = userAccountRel?.role || null;
+
+      return {
+        id: account.id,
+        owner_id: account.owner_id,
+        name: account.name,
+        description: account.description,
+        settings: {},
+        created_at: account.created_at,
+        updated_at: account.updated_at,
+        userRole
+      };
+    });
   } catch (error) {
     console.error('Get accounts for user error:', error);
     // Return empty array instead of throwing to prevent auth context from getting stuck

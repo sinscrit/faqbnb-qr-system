@@ -13,6 +13,7 @@ import {
   type PermissionKey
 } from '../types/permissions';
 import { User, Account, AccountUser } from '../types';
+import { Account as AuthAccount } from '@/types';
 
 /**
  * Check if a user has the required user role

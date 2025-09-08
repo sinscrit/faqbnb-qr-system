@@ -255,3 +255,5 @@ The AuthContext is loading `currentAccount` state but failing to include the use
 
 **Document Created**: September 3, 2025, 20:35 CEST  
 **Next Step**: Create detailed implementation document `req-024-AuthContext-Account-Role-Integration-Detailed.md`
+
+

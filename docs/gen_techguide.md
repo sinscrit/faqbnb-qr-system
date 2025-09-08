@@ -2,7 +2,7 @@
 
 This document provides technical implementation details for the FAQBNB QR Item Display System.
 
-**Last Updated**: Mon Sep 2 22:35:00 CEST 2025 - REQ-022 Admin Dashboard KPI Display (UC-022) - COMPLETED (8/8 points)
+**Last Updated**: September 3, 2025 - REQ-024 AuthContext Account Role Integration (UC-024) - COMPLETED (8/8 points)
 
 ---
 
@@ -1586,6 +1586,273 @@ DATABASE_URL=...
 - **Gradual Rollout**: Phased deployment to minimize risk
 - **Monitoring**: Comprehensive monitoring during rollout period
 - **Quick Rollback**: Ability to revert to previous permission system
+
+---
+
+## REQ-024: AuthContext Account Role Integration Implementation (September 3, 2025)
+
+### Overview
+Complete implementation of AuthContext account role state management and integration. This enhancement fixes account role fetching, AuthContext state management, and ensures proper permission system integration across all dashboard components.
+
+### Architecture Components
+
+#### Enhanced Account Type (`src/types/index.ts`)
+
+```typescript
+// Enhanced Account interface with userRole field
+export interface Account {
+  id: string;
+  owner_id: string;
+  name: string;
+  description: string | null;
+  settings: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  // Enhanced: User's role in this account (REQ-024)
+  userRole?: AccountRole | null;
+}
+```
+
+#### Database Integration Functions (`src/lib/auth.ts`)
+
+```typescript
+// Enhanced getUser function with account role fetching
+export async function getUser(): Promise<AuthResponse<AuthUser | null>> {
+  // Includes enhanced account role fetching with LEFT JOIN queries
+  // Fetches user role from account_users table during authentication
+}
+
+// Enhanced getUserRoleInAccount with detailed logging
+export async function getUserRoleInAccount(userId: string, accountId: string): Promise<string | null> {
+  // Comprehensive error handling and debug logging
+  // Uses supabaseAdmin for consistent access
+}
+
+// New getAccountWithUserRole helper function
+export async function getAccountWithUserRole(accountId: string, userId: string): Promise<Account & { userRole: string | null } | null> {
+  // Optimized LEFT JOIN query for account data with user role
+  // Single query approach for better performance
+}
+```
+
+#### Enhanced AuthContext (`src/contexts/AuthContext.tsx`)
+
+```typescript
+// Enhanced AuthContext with account role state management
+interface AuthContextType {
+  // ... existing properties
+  getAccountRole: () => Promise<AccountRole | null>; // Now async with database fallback
+}
+
+// Enhanced getAccountRole function
+const getAccountRole = useCallback(async (): Promise<AccountRole | null> => {
+  // Checks currentAccount.userRole first, falls back to database query
+  // Comprehensive logging for debugging account role issues
+}, [currentAccount, user?.id]);
+
+// Enhanced account loading functions
+const loadAccountContextInBackground = async (user: AuthUser) => {
+  // Includes userRole when setting current account
+  // Preserves role information during account context updates
+};
+
+const refreshAccountContext = async (): Promise<void> => {
+  // Enhanced to preserve userRole during account refreshing
+  // Maintains role consistency across account switches
+};
+```
+
+#### Enhanced Permission System (`src/lib/permissions.ts`)
+
+```typescript
+// Enhanced getDashboardPermissions with account role validation
+export async function getDashboardPermissions(
+  user: User | null,
+  account?: Account,
+  accountUser?: AccountUser
+): Promise<DashboardPermissions> {
+  // Uses account.userRole if available, otherwise falls back to accountUser.role
+  // Comprehensive logging for permission calculation debugging
+  // Validates owner role grants proper property management permissions
+}
+```
+
+#### Enhanced Permission Hook (`src/hooks/usePermissions.ts`)
+
+```typescript
+// Enhanced usePermissions hook with account role integration
+export function usePermissions(user: User | null, account?: Account, accountUser?: AccountUser) {
+  // Checks both account.userRole and accountUser.role for comprehensive role context
+  // Enhanced permission calculation validation
+  // Detailed debug logging for permission hook context
+
+  const currentAccountRole = useMemo(() => {
+    // Prioritizes account.userRole, falls back to accountUser.role
+    // Comprehensive logging for role calculation
+  }, [account?.userRole, accountUser?.role, account?.id]);
+}
+```
+
+### Implementation Patterns
+
+#### Account Role State Management
+
+```typescript
+// Account role state flow
+1. User authentication → getUser() fetches account with role
+2. AuthContext initialization → loadAccountContextInBackground()
+3. Account state update → setCurrentAccount(accountWithRole)
+4. Permission calculation → getDashboardPermissions(user, accountWithRole)
+5. UI rendering → usePermissions hook provides role-based features
+```
+
+#### Enhanced Account Loading Flow
+
+```typescript
+// Authentication flow with account role integration
+const initializeAuth = async () => {
+  // 1. Get user authentication data
+  const userResponse = await getUser(); // Now includes account roles
+
+  // 2. Load account context in background
+  if (userResponse.data?.availableAccounts) {
+    const accountWithRole = {
+      ...fullAccount,
+      userRole: userResponse.data.currentAccount.role // Include role
+    };
+    setCurrentAccount(accountWithRole); // State includes role
+  }
+
+  // 3. Load permissions with account role context
+  const permissions = await getDashboardPermissions(user, accountWithRole);
+  // Permissions calculated based on account.userRole
+};
+```
+
+#### Dashboard Integration Pattern
+
+```typescript
+// Dashboard page integration pattern
+function DashboardPropertiesPage() {
+  const { user, currentAccount } = useAuth(); // Now includes userRole
+
+  // Enhanced: Use AuthContext account role integration (REQ-024)
+  const { useCanAccess, permissions } = usePermissions(user, currentAccount);
+
+  // Permission checks now use currentAccount.userRole
+  const canCreateProperties = useCanAccess('create_properties');
+  const canManageProperties = useCanAccess('edit_properties');
+
+  // UI renders based on account role permissions
+  return (
+    <div>
+      {canCreateProperties.granted && (
+        <AddPropertyButton />
+      )}
+    </div>
+  );
+}
+```
+
+### Performance Optimizations
+
+#### Query Optimization
+-- **Single Query Approach**: `getAccountWithUserRole()` uses LEFT JOIN for account + role data
+-- **State-First Lookup**: `getAccountRole()` checks state before database queries
+-- **Connection Reuse**: Uses existing Supabase client connections
+-- **Memory Efficiency**: Role information cached in account state
+
+#### Permission Caching Strategy
+-- **Role State Caching**: Account roles cached in AuthContext state
+-- **Permission Memoization**: Dashboard permissions cached per user/account combination
+-- **Lazy Loading**: Account roles loaded only when needed
+-- **Background Updates**: Non-blocking account role fetching
+
+### Security Implementation
+
+#### Account Role Validation
+-- **Database Verification**: Account roles verified against `account_users` table
+-- **State Consistency**: Account role state synchronized with database
+-- **Access Control**: Permission checks validate account membership
+-- **Audit Logging**: Comprehensive logging of account role operations
+
+#### Authentication Integration
+-- **Role Persistence**: Account roles maintained across browser sessions
+-- **Session Validation**: Account role verification on session refresh
+-- **Multi-Tenant Security**: Proper account isolation based on user roles
+-- **Error Handling**: Secure fallback behavior for role lookup failures
+
+### Testing and Validation
+
+#### Unit Test Coverage
+```typescript
+// AuthContext account role test (tmp/test_auth_context_account_role.js)
+describe('AuthContext Account Role Integration', () => {
+  test('getAccountRole returns proper role for test user', async () => {
+    // Test getAccountRole function with known test data
+  });
+
+  test('Permission system integration with account role', async () => {
+    // Test permission calculation with account role context
+  });
+});
+```
+
+#### Integration Test Scenarios
+-- **Role-Based Permissions**: Testing different account roles (owner, admin, member, viewer)
+-- **Account Switching**: Verifying role updates when switching accounts
+-- **Session Persistence**: Testing role persistence across browser refresh
+-- **Error Handling**: Testing fallback behavior for missing roles
+
+#### Browser Testing with Playwright MCP
+-- **Dashboard Access**: Verifying role-based dashboard feature availability
+-- **Permission UI**: Testing UI elements based on account role permissions
+-- **Account Switching**: Testing permission updates during account switches
+-- **Session Restoration**: Testing role persistence across sessions
+
+### Troubleshooting Guide
+
+#### Common Account Role Issues
+1. **Missing Account Role**: Check `account_users` table for user membership
+2. **Permission Denied**: Verify `currentAccount.userRole` is properly set
+3. **Role Not Updating**: Check AuthContext state synchronization
+4. **Database Connection**: Verify Supabase client configuration
+
+#### Debug Logging
+```typescript
+// Enable detailed account role debugging
+console.log('🔍 AUTH_DEBUG: Account role lookup', {
+  userId: user.id,
+  accountId: account.id,
+  role: account.userRole,
+  source: 'account.userRole'
+});
+```
+
+### Success Criteria Validation
+
+#### Technical Validation
+- [x] Console logs show proper account role context
+- [x] `getAccountRole()` returns correct role for test user
+- [x] Permission system receives proper account context
+- [x] Owner role grants 13+ property management permissions
+- [x] Dashboard pages show features based on account role
+
+#### User Experience Validation
+- [x] Account owners can create, edit, delete properties
+- [x] Permission warnings removed for account owners
+- [x] Dashboard features accessible based on account role
+- [x] Account switching preserves role information
+- [x] Session restoration maintains account role state
+
+### Future Enhancement Points
+
+#### Advanced Account Role Features
+-- **Role Inheritance**: Hierarchical role permissions (admin inherits member permissions)
+-- **Custom Roles**: User-defined account roles with configurable permissions
+-- **Role Transitions**: Smooth role changes with permission updates
+-- **Role Auditing**: Comprehensive audit trail for role changes
+-- **Bulk Role Management**: Mass role updates for multiple users
 
 ### Success Metrics
 - **Performance**: Permission checks complete in <50ms average

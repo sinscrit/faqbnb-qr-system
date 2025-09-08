@@ -2026,4 +2026,146 @@ After fix, the AuthContext should:
 
 ---
 
-*Next Request: REQ-025* 
+## REQ-025: BUG FIX REQUEST - Sequential Authentication State Machine Implementation
+
+**Date:** September 7, 2025
+**Type:** BUG FIX REQUEST - Architecture Refactor
+**Complexity:** 15-18 Points (High Complexity)
+**Status:** REQUESTED
+
+### Request Summary
+Replace the current concurrent race-condition prone authentication flows with a sequential state machine approach that eliminates state management failures while maintaining all existing functionality.
+
+### Problem Analysis
+
+#### Current Issue
+The authentication system currently uses 9 concurrent flows that compete for React state, causing:
+- Race conditions between multiple auth flows
+- State update failures in React's concurrent rendering
+- Permission system failures due to undefined account state
+- Complex dependency chains causing cascading failures
+
+#### Root Cause Analysis
+1. **Concurrent Flow Competition**: 9 auth flows running simultaneously compete for state
+2. **React State Management Limits**: React's batching causes state updates to be lost
+3. **Dependency Chain Complexity**: useEffect dependencies become stale with concurrent updates
+4. **Global State Corruption**: Multiple AuthContext instances interfere with each other
+
+### Detailed Requirements
+
+#### 1. Sequential State Machine Architecture (6 points)
+- **Replace 9 concurrent flows** with single state machine
+- **Clear state transitions**: UNAUTHORIZED → LOADING → AUTHENTICATED → ERROR
+- **Atomic state updates**: Single state object instead of multiple setState calls
+- **Sequential execution**: Each auth step completes before the next begins
+- **Files Affected**:
+  - `src/contexts/AuthContext.tsx` (complete refactor)
+  - `src/hooks/usePermissions.ts` (simplified dependency management)
+  - `src/lib/auth.ts` (single auth orchestrator function)
+
+#### 2. Authentication Orchestrator (4 points)
+- **Single entry point**: One function handles all auth scenarios
+- **Sequential flow control**: Check session → OAuth detection → login form
+- **State machine integration**: Clear transitions between auth states
+- **Error handling**: Proper error recovery without race conditions
+- **Files Affected**:
+  - `src/lib/auth.ts` (new `authenticateUser()` orchestrator)
+  - `src/contexts/AuthContext.tsx` (state machine implementation)
+
+#### 3. Backward Compatibility Preservation (3 points)
+- **Public item access**: Maintain QR code functionality for anonymous users
+- **Existing URLs**: Keep `/item/[publicId]` routes working without auth
+- **Gradual enhancement**: Add features only for authenticated users
+- **Files Affected**:
+  - `src/app/item/[publicId]/page.tsx` (ensure public access)
+  - `src/app/api/items/[publicId]/route.ts` (maintain API compatibility)
+
+#### 4. Permission System Simplification (2 points)
+- **Stable state input**: Permissions calculated from stable state machine
+- **No race conditions**: Sequential permission loading
+- **Clear dependencies**: Simplified useEffect dependency arrays
+- **Files Affected**:
+  - `src/hooks/usePermissions.ts` (remove complex dependency chains)
+  - `src/lib/permissions.ts` (stable permission calculation)
+
+### Complexity Analysis
+
+#### Technical Complexity Factors (15-18 points)
+
+##### Architecture Refactor (6 points)
+- **State Machine Design**: Complex state transition logic and error handling
+- **Concurrent to Sequential**: Major paradigm shift in auth flow design
+- **Atomic State Updates**: Replace multiple setState calls with single updates
+- **Global State Management**: Coordinate between AuthContext and permission hooks
+- **High Risk**: Core authentication system changes affect entire application
+
+##### Authentication Flow Reorganization (4 points)
+- **Multiple Entry Points**: Handle direct login, OAuth callbacks, session restoration
+- **State Persistence**: Maintain auth state across page refreshes
+- **Error Recovery**: Proper error handling without state corruption
+- **Integration Testing**: Ensure all auth paths work correctly
+- **Medium-High Risk**: Authentication system is critical to application functionality
+
+##### Backward Compatibility (3 points)
+- **Public Access Preservation**: Ensure QR codes continue working
+- **URL Structure Maintenance**: Keep existing `/item/*` routes functional
+- **Anonymous User Support**: Maintain read-only access for non-logged users
+- **Low-Medium Risk**: Changes are additive, not destructive
+
+##### Permission System Stabilization (2 points)
+- **Dependency Simplification**: Remove complex useEffect chains
+- **State Stability**: Calculate permissions from reliable state source
+- **Race Condition Elimination**: Sequential permission loading
+- **Low Risk**: Permission system improvements are isolated
+
+### Implementation Plan
+
+#### Phase 1: State Machine Foundation (4 points)
+1. Define clear auth states and transitions
+2. Create authentication orchestrator function
+3. Implement atomic state update mechanism
+4. Add comprehensive logging for debugging
+
+#### Phase 2: Sequential Flow Conversion (6 points)
+1. Convert concurrent useEffect hooks to state machine
+2. Replace race-condition logic with sequential steps
+3. Implement proper error handling and recovery
+4. Test auth state persistence and restoration
+
+#### Phase 3: Integration and Testing (5 points)
+1. Ensure backward compatibility with QR codes
+2. Verify permission system works with stable state
+3. Test all authentication entry points
+4. Performance testing for sequential vs concurrent flows
+
+### Files Affected
+- **Core Authentication**:
+  - `src/contexts/AuthContext.tsx` (major refactor)
+  - `src/lib/auth.ts` (new orchestrator function)
+- **Permission System**:
+  - `src/hooks/usePermissions.ts` (simplified dependencies)
+  - `src/lib/permissions.ts` (stable calculation)
+- **Public Access**:
+  - `src/app/item/[publicId]/page.tsx` (backward compatibility)
+  - `src/app/api/items/[publicId]/route.ts` (public API)
+- **Dashboard Integration**:
+  - `src/app/dashboard/properties/page.tsx` (permission integration)
+  - `src/app/dashboard/layout.tsx` (role-based navigation)
+
+### Expected Benefits
+✅ **Eliminates Race Conditions**: No concurrent flows competing for state
+✅ **Stable State Management**: Predictable React state updates
+✅ **Better Error Handling**: Clear error recovery paths
+✅ **Improved Performance**: Reduced re-renders and state conflicts
+✅ **Easier Maintenance**: Single state machine instead of 9 concurrent flows
+✅ **Same Functionality**: All business requirements maintained
+
+### Risk Assessment
+- **High Risk**: Core authentication system changes
+- **Medium Impact**: May require UI adjustments for permission handling
+- **Low Downtime**: Sequential implementation allows gradual rollout
+- **High Benefit**: Eliminates fundamental state management issues
+
+---
+
+*Next Request: REQ-026* 

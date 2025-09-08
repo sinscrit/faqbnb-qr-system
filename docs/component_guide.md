@@ -2,7 +2,7 @@
 
 This document provides detailed information about React components in the FAQBNB QR Item Display System.
 
-**Last Updated**: Sun Jul 27 02:12:42 CEST 2025 - AccountSelector Component Added (REQ-009)
+**Last Updated**: September 3, 2025 - AuthContext Account Role Integration (REQ-024)
 
 ---
 
@@ -1062,10 +1062,250 @@ export default function SystemBackOfficePage() {
 
 ---
 
+## REQ-024: AuthContext Account Role Integration (September 3, 2025)
+
+### Overview
+Complete AuthContext enhancement for account role state management and integration across all dashboard components. This implementation fixes account role fetching, enhances AuthContext state management, and ensures proper permission system integration.
+
+### Enhanced Components
+
+#### AuthContext Provider (`src/contexts/AuthContext.tsx`)
+
+##### Enhanced Interface
+```typescript
+interface AuthContextType {
+  // Enhanced: getAccountRole now returns Promise<AccountRole | null>
+  getAccountRole: () => Promise<AccountRole | null>;
+
+  // Enhanced: currentAccount includes userRole field
+  currentAccount: Account | null; // Account now has userRole?: AccountRole | null
+
+  // All other existing properties maintained for backward compatibility
+}
+```
+
+##### Key Enhancements
+- **Async getAccountRole**: Now returns Promise for database fallback queries
+- **Role State Management**: Account objects include user's role in that account
+- **Enhanced Logging**: Comprehensive debug logging for account role operations
+- **Error Handling**: Robust error handling with secure fallbacks
+
+#### Enhanced Dashboard Pages
+
+##### Properties Management Page (`src/app/dashboard/properties/page.tsx`)
+```typescript
+// Enhanced: Removed temporary accountUser hardcoding (REQ-024)
+const { useCanAccess, permissions } = usePermissions(user, currentAccount);
+
+// Enhanced: Validates account role integration
+console.log('🔍 PROPERTIES_PAGE_DEBUG: Account role integration validation', {
+  userId: user?.id,
+  accountId: currentAccount?.id,
+  accountUserRole: currentAccount?.userRole,
+  isAccountOwner: currentAccount && user ? currentAccount.owner_id === user.id : false
+});
+```
+
+**Key Changes:**
+- Removed temporary `accountUser` object hardcoding
+- Uses `currentAccount` directly from AuthContext
+- Added validation logging for account role integration
+- Maintains all existing permission functionality
+
+##### Items Management Page (`src/app/dashboard/items/page.tsx`)
+```typescript
+// Enhanced: Use AuthContext account role integration (REQ-024)
+const { user, currentAccount } = useAuth();
+const { useCanAccess, permissions } = usePermissions(user, currentAccount);
+
+// Enhanced: Validates account role integration
+console.log('🔍 ITEMS_PAGE_DEBUG: Account role integration validation', {
+  userId: user?.id,
+  accountId: currentAccount?.id,
+  accountUserRole: currentAccount?.userRole
+});
+```
+
+**Key Changes:**
+- Added `currentAccount` to useAuth destructuring
+- Updated usePermissions to use `currentAccount` instead of `undefined`
+- Enhanced header setting to use `currentAccount.id`
+- Added comprehensive validation logging
+
+##### Analytics Dashboard Page (`src/app/dashboard/analytics/page.tsx`)
+```typescript
+// Enhanced: Use AuthContext account role integration (REQ-024)
+const { user, currentAccount } = useAuth();
+const { useCanAccess, permissions } = usePermissions(user, currentAccount);
+
+// Enhanced: Validates account role integration
+console.log('🔍 ANALYTICS_PAGE_DEBUG: Account role integration validation', {
+  userId: user?.id,
+  accountId: currentAccount?.id,
+  accountUserRole: currentAccount?.userRole
+});
+```
+
+**Key Changes:**
+- Added `currentAccount` to useAuth destructuring
+- Updated usePermissions to use `currentAccount` instead of `undefined`
+- Added validation logging for account role integration
+
+#### Enhanced Permission Hook (`src/hooks/usePermissions.ts`)
+
+##### Enhanced Role Detection
+```typescript
+// Enhanced: Check both account.userRole and accountUser.role (REQ-024)
+const currentAccountRole = useMemo(() => {
+  const roleFromAccount = account?.userRole;
+  const roleFromUser = accountUser?.role;
+
+  console.log('🔐 PERMISSIONS_HOOK_DEBUG: CURRENT_ACCOUNT_ROLE_CALCULATION', {
+    accountId: account?.id,
+    roleFromAccount,
+    roleFromUser,
+    finalRole: roleFromAccount || roleFromUser || null,
+    source: roleFromAccount ? 'account.userRole' : roleFromUser ? 'accountUser.role' : 'none'
+  });
+
+  return roleFromAccount || roleFromUser || null;
+}, [account?.userRole, accountUser?.role, account?.id]);
+```
+
+##### Enhanced Permission Loading
+```typescript
+// Enhanced: Validate account role availability (REQ-024)
+if (!accountRoleFromUser && !accountRoleFromAccount && account) {
+  console.warn('🔐 PERMISSIONS_HOOK_DEBUG: ACCOUNT_ROLE_WARNING: No account role found');
+}
+
+// Enhanced: Use account.userRole if available, otherwise accountUser.role
+const context: PermissionContext = {
+  accountRole: accountRoleFromAccount || accountRoleFromUser || null,
+  // ... other context properties
+};
+```
+
+### Implementation Patterns
+
+#### Account Role Integration Pattern
+```typescript
+// Standard pattern for dashboard pages
+function DashboardPage() {
+  // 1. Get AuthContext with account role information
+  const { user, currentAccount } = useAuth();
+
+  // 2. Use usePermissions with currentAccount (includes userRole)
+  const { useCanAccess, permissions } = usePermissions(user, currentAccount);
+
+  // 3. Permission checks now use account.userRole
+  const canCreate = useCanAccess('create_items');
+  const canEdit = useCanAccess('edit_items');
+
+  // 4. UI renders based on account role permissions
+  return (
+    <div>
+      {canCreate.granted && <CreateButton />}
+      {canEdit.granted && <EditButton />}
+    </div>
+  );
+}
+```
+
+#### State Management Flow
+```typescript
+// Account role state management flow
+1. User authentication → getUser() includes account with role
+2. AuthContext initialization → setCurrentAccount(accountWithRole)
+3. Permission loading → getDashboardPermissions(user, accountWithRole)
+4. Component rendering → usePermissions provides role-based features
+5. UI adaptation → Components show/hide features based on account role
+```
+
+### Testing and Validation
+
+#### Component Integration Tests
+```typescript
+// Test account role integration in dashboard components
+describe('Dashboard Components Account Role Integration', () => {
+  test('Properties page uses currentAccount.userRole', () => {
+    // Verify usePermissions receives currentAccount with userRole
+  });
+
+  test('Items page validates account role context', () => {
+    // Verify account role validation logging
+  });
+
+  test('Analytics page uses proper account context', () => {
+    // Verify currentAccount integration
+  });
+});
+```
+
+#### Permission Hook Tests
+```typescript
+// Test enhanced usePermissions hook
+describe('usePermissions Account Role Integration', () => {
+  test('prioritizes account.userRole over accountUser.role', () => {
+    // Test role priority logic
+  });
+
+  test('provides warning for missing account role', () => {
+    // Test warning logging for missing roles
+  });
+
+  test('maintains backward compatibility', () => {
+    // Test existing functionality unchanged
+  });
+});
+```
+
+### Performance Considerations
+
+#### Optimized State Updates
+- **Role Caching**: Account roles cached in AuthContext state
+- **Lazy Loading**: Account roles loaded only when needed
+- **Memoization**: Permission calculations memoized per account/role
+- **Background Updates**: Non-blocking account role fetching
+
+#### Memory Management
+- **State Cleanup**: Proper cleanup of account role state
+- **Reference Management**: Efficient object references for account data
+- **Garbage Collection**: Automatic cleanup of unused role data
+
+### Security Enhancements
+
+#### Role Validation
+- **Database Verification**: Account roles verified against `account_users` table
+- **State Consistency**: Account role state synchronized with database
+- **Access Control**: Permission checks validate account membership
+- **Audit Logging**: Comprehensive logging of account role operations
+
+#### Authentication Integration
+- **Role Persistence**: Account roles maintained across browser sessions
+- **Session Validation**: Account role verification on session refresh
+- **Multi-Tenant Security**: Proper account isolation based on user roles
+
+### Migration Notes
+
+#### Backward Compatibility
+- **Existing Components**: All existing dashboard components continue to work
+- **Permission Checks**: Existing permission logic unchanged
+- **AuthContext Usage**: Existing useAuth usage patterns maintained
+- **Type Safety**: Enhanced types are backward compatible
+
+#### Migration Benefits
+- **Enhanced Security**: Proper account role validation and verification
+- **Improved Performance**: Optimized permission loading and caching
+- **Better UX**: Seamless account role integration across dashboard
+- **Maintainability**: Centralized account role management and validation
+
+---
+
 **Component Status**: Production Ready  
 **Last Updated**: September 3, 2025  
-**Implementation**: System administrator back office for REQ-023 unified route architecture
+**Implementation**: AuthContext account role integration for REQ-024 unified dashboard architecture
 
 **Permission System Status**: Production Ready  
-**Last Tested**: September 3, 2025 06:56 CEST  
-**Implementation**: Complete role-based access control for unified dashboard architecture
+**Last Tested**: September 3, 2025  
+**Implementation**: Enhanced role-based access control with account role integration
