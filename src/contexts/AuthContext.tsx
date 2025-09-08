@@ -59,6 +59,8 @@ interface AuthStateData {
   error?: string;
 }
 
+// REQ-025: Atomic state updates function (will be defined inside AuthProvider)
+
 // State transition function (will be called from within AuthProvider)
 function createTransitionTo(currentAuthState: AuthState, setAuthState: React.Dispatch<React.SetStateAction<AuthState>>, setAuthData: React.Dispatch<React.SetStateAction<AuthStateData | undefined>>) {
   return (state: AuthState, data?: AuthStateData) => {
@@ -307,6 +309,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Create transition function with current state
   const transitionTo = createTransitionTo(authState, setAuthState, setAuthData);
+
+  // REQ-025: Atomic state updates function
+  const updateGlobalAuthState = React.useCallback((updates: {
+    user?: AuthUser | null;
+    session?: Session | null;
+    accounts?: Account[];
+    currentAccount?: Account | null;
+    authState: AuthState;
+    error?: string;
+  }) => {
+    console.log('🔄 ATOMIC_STATE_UPDATE: Updating global auth state', updates);
+
+    // Single atomic update
+    if (updates.user !== undefined) setUser(updates.user);
+    if (updates.session !== undefined) setSession(updates.session);
+    if (updates.accounts !== undefined) {
+      setUserAccounts(updates.accounts);
+      // Store in localStorage for persistence
+      localStorage.setItem('availableAccounts', JSON.stringify(updates.accounts));
+    }
+    if (updates.currentAccount !== undefined) {
+      setCurrentAccount(updates.currentAccount);
+      // Store in localStorage for persistence
+      if (updates.currentAccount) {
+        localStorage.setItem('currentAccount', updates.currentAccount.id);
+      } else {
+        localStorage.removeItem('currentAccount');
+      }
+    }
+    setAuthState(updates.authState);
+    setLoading(updates.authState === 'LOADING');
+    if (updates.error !== undefined) setError(updates.error);
+
+    console.log('✅ ATOMIC_STATE_UPDATE: Global auth state updated successfully');
+  }, []);
 
   // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);
