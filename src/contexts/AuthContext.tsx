@@ -322,6 +322,199 @@ const setGlobalAuthInProgress = (value: boolean) => {
 
 console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
 
+// REQ-025: Enhanced State Persistence and Restoration System
+
+/**
+ * Comprehensive state persistence function
+ */
+const persistAuthState = React.useCallback((state: {
+  user: AuthUser | null;
+  session: Session | null;
+  accounts: Account[];
+  currentAccount: Account | null;
+  authState: AuthState;
+  error?: string;
+}) => {
+  const startTime = performance.now();
+
+  try {
+    const stateToPersist = {
+      user: state.user,
+      session: {
+        ...state.session,
+        access_token: state.session?.access_token ? '[PRESENT]' : null,
+        refresh_token: state.session?.refresh_token ? '[PRESENT]' : null,
+      },
+      accounts: state.accounts,
+      currentAccount: state.currentAccount,
+      authState: state.authState,
+      error: state.error,
+      timestamp: Date.now(),
+      version: '1.0'
+    };
+
+    localStorage.setItem('auth_persisted_state', JSON.stringify(stateToPersist));
+
+    const duration = performance.now() - startTime;
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logPerformance('STATE_PERSISTENCE', startTime, true, {
+        duration: `${duration.toFixed(2)}ms`,
+        dataSize: JSON.stringify(stateToPersist).length
+      });
+    }
+
+    console.log('💾 AUTH_PERSISTENCE: State persisted successfully', {
+      hasUser: !!state.user,
+      accountCount: state.accounts?.length || 0,
+      currentAccountId: state.currentAccount?.id,
+      authState: state.authState,
+      duration: `${duration.toFixed(2)}ms`
+    });
+
+  } catch (error) {
+    const duration = performance.now() - startTime;
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logError('STATE_PERSISTENCE_FAILED', error, {
+        duration: `${duration.toFixed(2)}ms`,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    // Try to clear corrupted data
+    try {
+      localStorage.removeItem('auth_persisted_state');
+      console.warn('💾 AUTH_PERSISTENCE: Cleared corrupted persisted state');
+    } catch (clearError) {
+      console.error('💾 AUTH_PERSISTENCE: Failed to clear corrupted data:', clearError);
+    }
+  }
+}, [logger]);
+
+/**
+ * State restoration function with validation
+ */
+const restoreAuthState = React.useCallback((): {
+  user: AuthUser | null;
+  session: Session | null;
+  accounts: Account[];
+  currentAccount: Account | null;
+  authState: AuthState;
+  error?: string;
+} | null => {
+  const startTime = performance.now();
+
+  try {
+    const persistedState = localStorage.getItem('auth_persisted_state');
+    if (!persistedState) {
+      console.log('💾 AUTH_RESTORATION: No persisted state found');
+      return null;
+    }
+
+    const state = JSON.parse(persistedState);
+
+    // Validate state structure and version
+    if (!state.version || state.version !== '1.0') {
+      console.warn('💾 AUTH_RESTORATION: Invalid or outdated state version, clearing');
+      localStorage.removeItem('auth_persisted_state');
+      return null;
+    }
+
+    // Check if state is too old (24 hours)
+    const age = Date.now() - (state.timestamp || 0);
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    if (age > maxAge) {
+      console.log('💾 AUTH_RESTORATION: State too old, clearing');
+      localStorage.removeItem('auth_persisted_state');
+      return null;
+    }
+
+    // Validate essential data
+    if (state.authState === AuthState.AUTHENTICATED) {
+      if (!state.user || !state.session || !state.accounts) {
+        console.warn('💾 AUTH_RESTORATION: Invalid authenticated state, missing required data');
+        localStorage.removeItem('auth_persisted_state');
+        return null;
+      }
+    }
+
+    const duration = performance.now() - startTime;
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logPerformance('STATE_RESTORATION', startTime, true, {
+        duration: `${duration.toFixed(2)}ms`,
+        age: `${(age / 1000 / 60).toFixed(1)} minutes`,
+        authState: state.authState
+      });
+    }
+
+    console.log('💾 AUTH_RESTORATION: State restored successfully', {
+      hasUser: !!state.user,
+      accountCount: state.accounts?.length || 0,
+      currentAccountId: state.currentAccount?.id,
+      authState: state.authState,
+      duration: `${duration.toFixed(2)}ms`
+    });
+
+    return {
+      user: state.user,
+      session: state.session,
+      accounts: state.accounts || [],
+      currentAccount: state.currentAccount,
+      authState: state.authState,
+      error: state.error
+    };
+
+  } catch (error) {
+    const duration = performance.now() - startTime;
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logError('STATE_RESTORATION_FAILED', error, {
+        duration: `${duration.toFixed(2)}ms`,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    // Clear corrupted data
+    try {
+      localStorage.removeItem('auth_persisted_state');
+      console.warn('💾 AUTH_RESTORATION: Cleared corrupted persisted state');
+    } catch (clearError) {
+      console.error('💾 AUTH_RESTORATION: Failed to clear corrupted data:', clearError);
+    }
+
+    return null;
+  }
+}, [logger]);
+
+/**
+ * Clear persisted state (used on logout/signout)
+ */
+const clearPersistedState = React.useCallback(() => {
+  try {
+    localStorage.removeItem('auth_persisted_state');
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logAuthEvent('PERSISTED_STATE_CLEARED', { reason: 'user_logout' });
+    }
+
+    console.log('💾 AUTH_PERSISTENCE: Persisted state cleared');
+  } catch (error) {
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logError('CLEAR_PERSISTED_STATE_FAILED', error);
+    }
+  }
+}, [logger]);
+
+console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
+
 // REQ-023: Dashboard section and navigation types
 export type DashboardSection = 'dashboard' | 'items' | 'properties' | 'analytics' | 'system-admin';
 
@@ -427,22 +620,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }) => {
     const startTime = performance.now();
 
-    logger.logAuthEvent('ATOMIC_STATE_UPDATE_START', updates);
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logAuthEvent('ATOMIC_STATE_UPDATE_START', updates);
+    }
 
     // Single atomic update
     if (updates.user !== undefined) {
       setUser(updates.user);
-      logger.logAuthEvent('USER_STATE_UPDATE', { userId: updates.user?.id });
+      // Only log if logger is available (client-side)
+      if (typeof window !== 'undefined' && logger) {
+        logger.logAuthEvent('USER_STATE_UPDATE', { userId: updates.user?.id });
+      }
     }
     if (updates.session !== undefined) {
       setSession(updates.session);
-      logger.logAuthEvent('SESSION_STATE_UPDATE', { sessionId: updates.session?.user?.id });
+      // Only log if logger is available (client-side)
+      if (typeof window !== 'undefined' && logger) {
+        logger.logAuthEvent('SESSION_STATE_UPDATE', { sessionId: updates.session?.user?.id });
+      }
     }
     if (updates.accounts !== undefined) {
       setUserAccounts(updates.accounts);
       // Store in localStorage for persistence
       localStorage.setItem('availableAccounts', JSON.stringify(updates.accounts));
-      logger.logAuthEvent('ACCOUNTS_STATE_UPDATE', { accountCount: updates.accounts.length });
+      // Only log if logger is available (client-side)
+      if (typeof window !== 'undefined' && logger) {
+        logger.logAuthEvent('ACCOUNTS_STATE_UPDATE', { accountCount: updates.accounts.length });
+      }
     }
     if (updates.currentAccount !== undefined) {
       setCurrentAccount(updates.currentAccount);
@@ -452,12 +657,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else {
         localStorage.removeItem('currentAccount');
       }
-      logger.logAuthEvent('CURRENT_ACCOUNT_UPDATE', { accountId: updates.currentAccount?.id });
+      // Only log if logger is available (client-side)
+      if (typeof window !== 'undefined' && logger) {
+        logger.logAuthEvent('CURRENT_ACCOUNT_UPDATE', { accountId: updates.currentAccount?.id });
+      }
     }
 
     // Log state transition if authState is changing
     if (updates.authState !== authState) {
-      logger.logStateTransition(authState, updates.authState, updates);
+      // Only log if logger is available (client-side)
+      if (typeof window !== 'undefined' && logger) {
+        logger.logStateTransition(authState, updates.authState, updates);
+      }
     }
 
     setAuthState(updates.authState);
@@ -465,13 +676,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (updates.error !== undefined) {
       setError(updates.error);
       if (updates.error) {
-        logger.logError('ATOMIC_STATE_UPDATE_ERROR', updates.error, updates);
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logError('ATOMIC_STATE_UPDATE_ERROR', updates.error, updates);
+        }
       }
     }
 
     const duration = performance.now() - startTime;
-    logger.logPerformance('ATOMIC_STATE_UPDATE', startTime, true, { duration: `${duration.toFixed(2)}ms` });
-  }, [authState, logger]);
+
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logPerformance('ATOMIC_STATE_UPDATE', startTime, true, {
+        duration: `${duration.toFixed(2)}ms`
+      });
+    }
+
+    // REQ-025: Persist state after successful update (except during LOADING)
+    if (updates.authState !== AuthState.LOADING) {
+      try {
+        persistAuthState({
+          user: updates.user ?? user,
+          session: updates.session ?? session,
+          accounts: updates.accounts ?? userAccounts,
+          currentAccount: updates.currentAccount ?? currentAccount,
+          authState: updates.authState,
+          error: updates.error ?? error
+        });
+      } catch (persistError) {
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logError('PERSISTENCE_AFTER_UPDATE_FAILED', persistError, {
+            authState: updates.authState
+          });
+        }
+      }
+    }
+  }, [authState, persistAuthState, user, session, userAccounts, currentAccount, error]);
 
   // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);
@@ -580,18 +821,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const DEBUG_PREFIX = "🔄 STATE_MACHINE:";
 
-    logger.logAuthEvent('STATE_MACHINE_TRIGGERED', {
-      currentState: authState,
-      hasUser: !!user,
-      hasSession: !!session,
-      userAccountsCount: userAccounts?.length || 0,
-      currentAccount: !!currentAccount
-    });
+    // Only log if logger is available (client-side)
+    if (typeof window !== 'undefined' && logger) {
+      logger.logAuthEvent('STATE_MACHINE_TRIGGERED', {
+        currentState: authState,
+        hasUser: !!user,
+        hasSession: !!session,
+        userAccountsCount: userAccounts?.length || 0,
+        currentAccount: !!currentAccount
+      });
+    }
 
     // State machine implementation
     switch (authState) {
       case AuthState.UNAUTHORIZED: {
-        logger.logStateTransition(AuthState.UNAUTHORIZED, AuthState.LOADING, 'Starting authentication process');
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logAuthEvent('UNAUTHORIZED_STATE_ACTIVE', { attemptingRestoration: true });
+        }
+
+        // REQ-025: First try to restore persisted state
+        const restoredState = restoreAuthState();
+        if (restoredState) {
+          // Only log if logger is available (client-side)
+          if (typeof window !== 'undefined' && logger) {
+            logger.logStateTransition(AuthState.UNAUTHORIZED, restoredState.authState, 'Restored from persisted state');
+          }
+
+          updateGlobalAuthState({
+            user: restoredState.user,
+            session: restoredState.session,
+            accounts: restoredState.accounts,
+            currentAccount: restoredState.currentAccount,
+            authState: restoredState.authState,
+            error: restoredState.error
+          });
+          return; // Exit early, state machine will handle the restored state
+        }
+
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logStateTransition(AuthState.UNAUTHORIZED, AuthState.LOADING, 'No persisted state found, starting authentication');
+        }
 
         // Transition to LOADING state and start authentication
         updateGlobalAuthState({
@@ -603,17 +874,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const authStartTime = performance.now();
         authenticateUser().then(result => {
           const authDuration = performance.now() - authStartTime;
-          logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', authStartTime, true, {
-            duration: `${authDuration.toFixed(2)}ms`,
-            resultState: result.state
-          });
+
+          // Only log if logger is available (client-side)
+          if (typeof window !== 'undefined' && logger) {
+            logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', authStartTime, true, {
+              duration: `${authDuration.toFixed(2)}ms`,
+              resultState: result.state
+            });
+          }
 
           if (result.state === 'AUTHENTICATED') {
-            logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
-              userId: result.user?.id,
-              accountCount: result.accounts?.length,
-              currentAccountId: result.currentAccount?.id
-            });
+            // Only log if logger is available (client-side)
+            if (typeof window !== 'undefined' && logger) {
+              logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
+                userId: result.user?.id,
+                accountCount: result.accounts?.length,
+                currentAccountId: result.currentAccount?.id
+              });
+            }
 
             updateGlobalAuthState({
               user: result.user,
@@ -623,9 +901,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
               authState: AuthState.AUTHENTICATED
             });
           } else if (result.state === 'ERROR') {
-            logger.logError('AUTH_FAILED_TRANSITION', new Error(result.error || 'Unknown auth error'), {
-              authDuration: `${authDuration.toFixed(2)}ms`
-            });
+            // Only log if logger is available (client-side)
+            if (typeof window !== 'undefined' && logger) {
+              logger.logError('AUTH_FAILED_TRANSITION', new Error(result.error || 'Unknown auth error'), {
+                authDuration: `${authDuration.toFixed(2)}ms`
+              });
+            }
 
             updateGlobalAuthState({
               authState: AuthState.ERROR,
@@ -634,10 +915,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         }).catch(error => {
           const authDuration = performance.now() - authStartTime;
-          logger.logError('AUTH_ORCHESTRATOR_EXCEPTION', error, {
-            authDuration: `${authDuration.toFixed(2)}ms`,
-            authState
-          });
+
+          // Only log if logger is available (client-side)
+          if (typeof window !== 'undefined' && logger) {
+            logger.logError('AUTH_ORCHESTRATOR_EXCEPTION', error, {
+              authDuration: `${authDuration.toFixed(2)}ms`,
+              authState
+            });
+          }
 
           updateGlobalAuthState({
             authState: AuthState.ERROR,
@@ -650,13 +935,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       case AuthState.LOADING: {
         // Handle loading state - authentication is in progress with sequential validation
-        logger.logAuthEvent('LOADING_STATE_ACTIVE', {
-          hasUser: !!user,
-          hasSession: !!session,
-          userAccountsCount: userAccounts?.length || 0,
-          hasCurrentAccount: !!currentAccount,
-          loadingProgress: `${[!!user, !!session, !!(userAccounts?.length), !!currentAccount].filter(Boolean).length}/4 steps complete`
-        });
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logAuthEvent('LOADING_STATE_ACTIVE', {
+            hasUser: !!user,
+            hasSession: !!session,
+            userAccountsCount: userAccounts?.length || 0,
+            hasCurrentAccount: !!currentAccount,
+            loadingProgress: `${[!!user, !!session, !!(userAccounts?.length), !!currentAccount].filter(Boolean).length}/4 steps complete`
+          });
+        }
 
         // Sequential validation: ensure all data is loaded in correct order
         const loadingSteps = {
@@ -669,16 +957,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const completedSteps = Object.values(loadingSteps).filter(Boolean).length;
         const totalSteps = Object.keys(loadingSteps).length;
 
-        logger.logAuthEvent('LOADING_PROGRESS', {
-          completedSteps,
-          totalSteps,
-          progress: `${completedSteps}/${totalSteps}`,
-          ...loadingSteps
-        });
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logAuthEvent('LOADING_PROGRESS', {
+            completedSteps,
+            totalSteps,
+            progress: `${completedSteps}/${totalSteps}`,
+            ...loadingSteps
+          });
+        }
 
         // If we have all required data, transition to AUTHENTICATED
         if (completedSteps === totalSteps) {
-          logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'Sequential loading complete');
+          // Only log if logger is available (client-side)
+          if (typeof window !== 'undefined' && logger) {
+            logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'Sequential loading complete');
+          }
           updateGlobalAuthState({
             authState: AuthState.AUTHENTICATED
           });
@@ -688,11 +982,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       case AuthState.AUTHENTICATED: {
-        logger.logAuthEvent('AUTHENTICATED_STATE_ACTIVE', {
-          userId: user?.id,
-          currentAccountId: currentAccount?.id,
-          userAccountsCount: userAccounts?.length || 0
-        });
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logAuthEvent('AUTHENTICATED_STATE_ACTIVE', {
+            userId: user?.id,
+            currentAccountId: currentAccount?.id,
+            userAccountsCount: userAccounts?.length || 0
+          });
+        }
 
         // Load dashboard permissions when authenticated
         if (user && currentAccount) {
@@ -703,11 +1000,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       case AuthState.ERROR: {
-        logger.logAuthEvent('ERROR_STATE_ACTIVE', {
-          error: authData?.error,
-          hasUser: !!user,
-          hasSession: !!session
-        });
+        // Only log if logger is available (client-side)
+        if (typeof window !== 'undefined' && logger) {
+          logger.logAuthEvent('ERROR_STATE_ACTIVE', {
+            error: authData?.error,
+            hasUser: !!user,
+            hasSession: !!session
+          });
+        }
 
         // In error state, we can attempt recovery or stay in error state
         break;
@@ -785,6 +1085,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(false);
     }
   };
+
+  // REQ-025: Sign out function with state persistence cleanup
+  const signOut = useCallback(async (): Promise<void> => {
+    const startTime = performance.now();
+
+    try {
+      logger.logAuthEvent('SIGN_OUT_STARTED', { hasUser: !!user, hasSession: !!session });
+
+      // Clear persisted state first to prevent restoration
+      clearPersistedState();
+
+      // Call the auth library signOut function
+      await authSignOut();
+
+      // Clear all local state
+      updateGlobalAuthState({
+        user: null,
+        session: null,
+        accounts: [],
+        currentAccount: null,
+        authState: AuthState.UNAUTHORIZED,
+        error: undefined
+      });
+
+      // Clear legacy localStorage items
+      try {
+        localStorage.removeItem('availableAccounts');
+        localStorage.removeItem('currentAccount');
+        localStorage.removeItem('auth_logs');
+      } catch (storageError) {
+        logger.logError('CLEAR_STORAGE_ERROR', storageError);
+      }
+
+      const duration = performance.now() - startTime;
+      logger.logPerformance('SIGN_OUT_SUCCESS', startTime, true, {
+        duration: `${duration.toFixed(2)}ms`
+      });
+
+      console.log('🔐 SIGN_OUT: Completed successfully', {
+        duration: `${duration.toFixed(2)}ms`
+      });
+
+    } catch (error) {
+      const duration = performance.now() - startTime;
+      logger.logError('SIGN_OUT_FAILED', error, {
+        duration: `${duration.toFixed(2)}ms`
+      });
+
+      // Even on error, try to clear state
+      updateGlobalAuthState({
+        authState: AuthState.ERROR,
+        error: 'Sign out failed'
+      });
+
+      throw error;
+    }
+  }, [logger, clearPersistedState, updateGlobalAuthState, user, session]);
 
   // Enhanced context value with account management and dashboard permissions (REQ-023)
   const contextValue: AuthContextType = {
