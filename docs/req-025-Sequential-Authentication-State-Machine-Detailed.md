@@ -395,11 +395,11 @@ This detailed implementation document breaks down REQ-025 into specific, actiona
 
 **Success Criteria:** All existing QR codes continue to work exactly as before.
 
-#### 3.2 Test Permission System Integration (1 Point)
+#### 3.2 Test Permission System Integration (1 Point) -unit tested-
 **Files:** `src/hooks/usePermissions.ts`, `src/lib/permissions.ts`
 **Goal:** Ensure permission system works with stable state machine
 
-- [ ] Test permission loading with new sequential state:
+- [x] Test permission loading with new sequential state:
    ```typescript
    // In usePermissions hook
    useEffect(() => {
@@ -408,15 +408,15 @@ This detailed implementation document breaks down REQ-025 into specific, actiona
      }
    }, [user?.id, currentAccount?.id, authState]); // Simplified dependencies
    ```
-- [ ] Verify permissions load correctly after state is stable
-- [ ] Test permission checks work with new state structure
-- [ ] Confirm UI updates when permissions change
+- [x] Verify permissions load correctly after state is stable
+- [x] Test permission checks work with new state structure
+- [x] Confirm UI updates when permissions change
 
 **Testing:**
-- [ ] Test permission loading with authenticated user
-- [ ] Verify role-based UI updates work
-- [ ] Test permission changes are reflected immediately
-- [ ] Confirm no race conditions in permission loading
+- [x] Test permission loading with authenticated user
+- [x] Verify role-based UI updates work
+- [x] Test permission changes are reflected immediately
+- [x] Confirm no race conditions in permission loading
 
 **Success Criteria:** Permission system works reliably with sequential state machine.
 
