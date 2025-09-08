@@ -576,222 +576,185 @@ export function AuthProvider({ children }: AuthProviderProps) {
     currentAccountName: currentAccount?.name
   });
 
-  // Initialize auth state with account context
+  // REQ-025: Consolidated State Machine useEffect - Replaces all concurrent useEffect hooks
   useEffect(() => {
-    const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
-    
-    // FIXED: Check if this is an OAuth callback/registration context - prioritize these
-    const isOAuthContext = typeof window !== 'undefined' && (
-      window.location.pathname === '/auth/oauth/callback' ||
-      (window.location.pathname === '/register' && window.location.search.includes('oauth_success=true'))
-    );
-    
-    // FAILSAFE: Absolute timeout to prevent infinite loading (shorter for OAuth contexts)
-    const timeoutDuration = isOAuthContext ? 8000 : 15000; // 8 seconds for OAuth, 15 for others
-    const loadingFailsafe = setTimeout(() => {
-      console.error(`${DEBUG_PREFIX} LOADING_TIMEOUT_FAILSAFE_TRIGGERED`, {
-        timestamp: new Date().toISOString(),
-        message: `Force clearing loading state after ${timeoutDuration/1000} seconds`,
-        isOAuthContext: isOAuthContext,
-        currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side'
-      });
-      setLoading(false);
-    }, timeoutDuration);
+    const DEBUG_PREFIX = "🔄 STATE_MACHINE:";
 
-    const initializeWithMutex = async () => {
-      console.log(`${DEBUG_PREFIX} USE_EFFECT_TRIGGERED`, {
-        timestamp: new Date().toISOString(),
-        globalAuthInitialized: getGlobalAuthInitialized(),
-        globalAuthInProgress: getGlobalAuthInProgress(),
-        currentLoading: loading,
-        hasUser: !!user
-      });
-      
-      // If auth is already completed globally, skip everything
-      if (getGlobalAuthInitialized()) {
-        console.log(`${DEBUG_PREFIX} AUTH_ALREADY_COMPLETE_GLOBALLY`, {
-          timestamp: new Date().toISOString(),
-          action: 'Setting loading to false'
-        });
-        setLoading(false); // Clear loading state for this instance
-        
-        // Load current session data for this instance since another instance completed auth
-        try {
-          const sessionResponse = await getSession();
-          if (sessionResponse.data?.user) {
-            console.log('[AUTH-RACE-DEBUG] Loading session data for this instance');
-            const quickUser = await getQuickUserAuth(sessionResponse.data);
-            if (quickUser) {
-              setSession(sessionResponse.data);
-              setUser(quickUser);
-              console.log('[AUTH-RACE-DEBUG] Session loaded successfully for this instance');
-
-              // Load account context in background for session restoration
-              console.log('🔍 SESSION_RESTORATION: Loading account context for restored session');
-              loadAccountContextInBackground(quickUser);
-            }
-          } else {
-            console.log('[AUTH-RACE-DEBUG] No session data available, auth may have failed globally');
-          }
-        } catch (error) {
-          console.error('[AUTH-RACE-DEBUG] Failed to load session for this instance:', error);
-        }
-        
-        return;
-      }
-      
-      // FIXED: Try to acquire the mutex lock (now async) - OAuth contexts get priority
-      const mutexAcquired = await acquireAuthMutex();
-      if (!mutexAcquired && !isOAuthContext) {
-        console.log('[AUTH-RACE-DEBUG] Could not acquire mutex, waiting for other instance to complete');
-        
-        // Wait for the other instance to complete authentication
-        const authCompleted = await waitForAuthCompletion();
-        if (authCompleted) {
-          console.log('[AUTH-RACE-DEBUG] Other instance completed auth successfully, clearing loading state and loading session');
-          setLoading(false); // Clear loading state since auth is complete
-          
-          // Load current session data for this instance
-          try {
-            const sessionResponse = await getSession();
-            if (sessionResponse.data?.user) {
-              console.log('[AUTH-RACE-DEBUG] Loading session data after waiting for other instance');
-              const quickUser = await getQuickUserAuth(sessionResponse.data);
-              if (quickUser) {
-                setSession(sessionResponse.data);
-                setUser(quickUser);
-                console.log('[AUTH-RACE-DEBUG] Session loaded successfully after waiting');
-              }
-            } else {
-              console.log('[AUTH-RACE-DEBUG] No session data available after waiting');
-            }
-          } catch (error) {
-            console.error('[AUTH-RACE-DEBUG] Failed to load session after waiting:', error);
-          }
-          
-        } else {
-          console.log('[AUTH-RACE-DEBUG] Other instance failed or timed out, attempting to acquire lock again');
-          const retryMutexAcquired = await acquireAuthMutex();
-          if (!retryMutexAcquired) {
-            console.log('[AUTH-RACE-DEBUG] Still cannot acquire lock, giving up and clearing loading state');
-            setLoading(false); // Clear loading state to prevent indefinite loading
-            return;
-          }
-          // Fall through to initialize auth
-        }
-      } else if (!mutexAcquired && isOAuthContext) {
-        console.log('[AUTH-RACE-DEBUG] OAuth context detected - proceeding with auth initialization despite mutex conflict');
-        // OAuth contexts proceed anyway to avoid blocking user registration flow
-        // Fall through to initialize auth
-      }
-      
-      // Only initialize if we have the lock (or OAuth context) and auth isn't completed
-      if (!getGlobalAuthInitialized() && (mutexAcquired || isOAuthContext)) {
-        console.log('[AUTH-RACE-DEBUG] Setting up auth context - FIRST TIME GLOBALLY');
-        console.log('[AUTH-RACE-DEBUG] useEffect dependencies check passed, calling initializeAuth');
-        
-        setGlobalAuthInProgress(true); // Mark as in progress
-        
-        try {
-          await initializeAuth();
-        } catch (error) {
-          console.error('[AUTH-RACE-DEBUG] Auth initialization failed:', error);
-        } finally {
-          setGlobalAuthInProgress(false);
-          releaseAuthMutex(); // Always release the lock
-        }
-        
-        // Set up auth state change listener
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            // ============ ENHANCED OAUTH AUTH EVENT LOGGING ============
-            console.log('🔒 AUTH_CONTEXT: OAUTH_AUTH_STATE_CHANGE', {
-              timestamp: new Date().toISOString(),
-              event,
-              hasSession: !!session,
-              hasUser: !!session?.user,
-              userId: session?.user?.id,
-              userEmail: session?.user?.email,
-              sessionExpiry: session?.expires_at,
-              accessToken: session?.access_token ? 'present' : 'missing',
-              refreshToken: session?.refresh_token ? 'present' : 'missing',
-              eventDetails: {
-                provider: session?.user?.app_metadata?.provider,
-                aud: session?.user?.aud,
-                role: session?.user?.role,
-                isOAuthEvent: ['SIGNED_IN', 'TOKEN_REFRESHED'].includes(event) && session?.user?.app_metadata?.provider === 'google'
-              },
-              currentUrl: typeof window !== 'undefined' ? window.location.href : 'server-side',
-              isRegistrationPage: typeof window !== 'undefined' ? window.location.pathname === '/register' : false,
-              hasOAuthParams: typeof window !== 'undefined' ? 
-                new URLSearchParams(window.location.search).get('oauth_success') === 'true' : false
-            });
-            
-            console.log('[AUTH-RACE-DEBUG] Auth state changed:', event, session?.user?.id);
-            
-            if (event === 'SIGNED_IN' && session) {
-              console.log('[AUTH-RACE-DEBUG] Handling SIGNED_IN event');
-              await handleSignIn(session);
-            } else if (event === 'SIGNED_OUT') {
-              console.log('[AUTH-RACE-DEBUG] Handling SIGNED_OUT event');
-              handleSignOut();
-            } else if (event === 'TOKEN_REFRESHED' && session) {
-              console.log('[AUTH-RACE-DEBUG] Handling TOKEN_REFRESHED event');
-              await handleSessionRefresh(session);
-            }
-          }
-        );
-
-        // Set up session refresh interval
-        const intervalId = setInterval(checkAndRefreshSession, SESSION_CHECK_INTERVAL);
-
-        return () => {
-          console.log('[AUTH-RACE-DEBUG] Cleaning up auth context');
-          subscription?.unsubscribe();
-          clearInterval(intervalId);
-          clearTimeout(loadingFailsafe); // Clean up failsafe timeout
-          // Note: Don't reset globalAuthInitialized here as other instances might still need it
-        };
-      } else {
-        console.log('[AUTH-RACE-DEBUG] Auth completed while we were waiting, clearing loading state and loading session');
-        setLoading(false); // Clear loading state since auth is complete
-        
-        // Load current session data for this instance
-        try {
-          const sessionResponse = await getSession();
-          if (sessionResponse.data?.user) {
-            console.log('[AUTH-RACE-DEBUG] Loading session data after auth completed while waiting');
-            const quickUser = await getQuickUserAuth(sessionResponse.data);
-            if (quickUser) {
-              setSession(sessionResponse.data);
-              setUser(quickUser);
-              console.log('[AUTH-RACE-DEBUG] Session loaded successfully after auth completed while waiting');
-            }
-          } else {
-            console.log('[AUTH-RACE-DEBUG] No session data available after auth completed while waiting');
-          }
-        } catch (error) {
-          console.error('[AUTH-RACE-DEBUG] Failed to load session after auth completed while waiting:', error);
-        }
-        
-        releaseAuthMutex(); // Release the lock since we're not using it
-      }
-    };
-    
-    initializeWithMutex().finally(() => {
-      // Always clear the failsafe timeout when auth completes
-      clearTimeout(loadingFailsafe);
+    logger.logAuthEvent('STATE_MACHINE_TRIGGERED', {
+      currentState: authState,
+      hasUser: !!user,
+      hasSession: !!session,
+      userAccountsCount: userAccounts?.length || 0,
+      currentAccount: !!currentAccount
     });
-    
-    // Cleanup function
-    return () => {
-      clearTimeout(loadingFailsafe);
-    };
-  }, []); // Empty dependencies to prevent re-runs
 
-  // Quick authentication fallback - bypasses complex account context
-  const getQuickUserAuth = async (session: Session): Promise<AuthUser | null> => {
-    if (!session.user?.email) return null;
+    // State machine implementation
+    switch (authState) {
+      case AuthState.UNAUTHORIZED: {
+        logger.logStateTransition(AuthState.UNAUTHORIZED, AuthState.LOADING, 'Starting authentication process');
+
+        // Transition to LOADING state and start authentication
+        updateGlobalAuthState({
+          authState: AuthState.LOADING,
+          error: undefined
+        });
+
+        // Call authentication orchestrator
+        authenticateUser().then(result => {
+          if (result.state === 'AUTHENTICATED') {
+            updateGlobalAuthState({
+              user: result.user,
+              session: result.session,
+              accounts: result.accounts,
+              currentAccount: result.currentAccount,
+              authState: AuthState.AUTHENTICATED
+            });
+          } else if (result.state === 'ERROR') {
+            updateGlobalAuthState({
+              authState: AuthState.ERROR,
+              error: result.error
+            });
+          }
+        }).catch(error => {
+          logger.logError('AUTH_ORCHESTRATOR_FAILED', error, { authState });
+          updateGlobalAuthState({
+            authState: AuthState.ERROR,
+            error: error.message || 'Authentication failed'
+          });
+        });
+
+        break;
+      }
+
+      case AuthState.LOADING: {
+        // Handle loading state - authentication is in progress
+        logger.logAuthEvent('LOADING_STATE_ACTIVE', {
+          hasUser: !!user,
+          hasSession: !!session,
+          userAccountsCount: userAccounts?.length || 0
+        });
+
+        // If we have all required data, transition to AUTHENTICATED
+        if (user && session && userAccounts && userAccounts.length > 0 && currentAccount) {
+          logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'All data loaded');
+          updateGlobalAuthState({
+            authState: AuthState.AUTHENTICATED
+          });
+        }
+
+        break;
+      }
+
+      case AuthState.AUTHENTICATED: {
+        logger.logAuthEvent('AUTHENTICATED_STATE_ACTIVE', {
+          userId: user?.id,
+          currentAccountId: currentAccount?.id,
+          userAccountsCount: userAccounts?.length || 0
+        });
+
+        // Load dashboard permissions when authenticated
+        if (user && currentAccount) {
+          loadDashboardPermissions();
+        }
+
+        break;
+      }
+
+      case AuthState.ERROR: {
+        logger.logAuthEvent('ERROR_STATE_ACTIVE', {
+          error: authData?.error,
+          hasUser: !!user,
+          hasSession: !!session
+        });
+
+        // In error state, we can attempt recovery or stay in error state
+        break;
+      }
+    }
+  }, [authState, user, session, userAccounts, currentAccount, logger, updateGlobalAuthState]);
+
+  // Remove old individual useEffect hooks - now handled by state machine above
+
+  // IMMEDIATE FORCE SET: If we have user and accounts, SET CURRENT ACCOUNT
+  if (user && userAccounts && userAccounts.length > 0 && !currentAccount) {
+    console.log('🚀 IMMEDIATE FORCE SETTING CURRENT ACCOUNT');
+
+    const accountToSet = userAccounts[0]; // Take first account
+    console.log('🚀 Setting account:', {
+      id: accountToSet.id,
+      name: accountToSet.name,
+      userRole: accountToSet.userRole,
+      allKeys: Object.keys(accountToSet)
+    });
+
+    // IMMEDIATE set currentAccount
+    setCurrentAccount(accountToSet);
+
+    // IMMEDIATE store in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currentAccount', accountToSet.id);
+      localStorage.setItem('availableAccounts', JSON.stringify(userAccounts));
+    }
+
+    console.log('🚀 IMMEDIATE FORCE SET COMPLETE');
+  }
+
+  // User registration function
+  const register = async (
+    email: string,
+    password: string,
+    fullName?: string
+  ): Promise<AuthResponse<{ user: User; session: Session }>> => {
+    try {
+      setLoading(true);
+
+      const result = await registerUser(email, password, fullName);
+
+      if (result.error) {
+        return result;
+      }
+
+      if (result.data) {
+        // Convert User to AuthUser for context
+        const authUser: AuthUser = {
+          id: result.data.user.id,
+          email: result.data.user.email,
+          fullName: result.data.user.fullName,
+          role: result.data.user.role,
+        };
+
+        setUser(authUser);
+        setSession(result.data.session);
+
+        // Initialize account context for new user
+        await refreshAccountContext();
+
+        // Load properties for new user
+        if (result.data) {
+          await loadUserProperties();
+        }
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { error: 'An unexpected error occurred during registration' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Enhanced context value with account management and dashboard permissions (REQ-023)
+  const contextValue: AuthContextType = {
+    // Core authentication
+    user,
+    session,
+    loading,
+    isAdmin: user ? isAdmin(user) : false,
+
+    // Property management (legacy)
+    userProperties,
+    selectedProperty,
     
     try {
       // FIXED: Use getUser() instead of direct Supabase queries to leverage RLS fixes
@@ -1632,39 +1595,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     console.log('🚀 IMMEDIATE FORCE SET COMPLETE');
   }
-
-  // FORCE currentAccount to be set - useEffect as backup
-  useEffect(() => {
-    console.log('🔥 USEEFFECT FORCE SET - BACKUP EXECUTION', {
-      timestamp: new Date().toISOString(),
-      user: !!user,
-      userId: user?.id,
-      userAccountsCount: userAccounts?.length || 0,
-      currentAccount: !!currentAccount,
-      currentAccountId: currentAccount?.id
-    });
-
-    // BACKUP FORCE SET: Always try to set if we have data
-    if (user && userAccounts && userAccounts.length > 0) {
-      console.log('🔥 BACKUP FORCE SETTING CURRENT ACCOUNT');
-
-      const accountToSet = userAccounts[0];
-      console.log('🔥 Backup setting account:', {
-        id: accountToSet.id,
-        name: accountToSet.name,
-        userRole: accountToSet.userRole
-      });
-
-      setCurrentAccount(accountToSet);
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('currentAccount', accountToSet.id);
-        localStorage.setItem('availableAccounts', JSON.stringify(userAccounts));
-      }
-
-      console.log('🔥 BACKUP FORCE SET COMPLETE');
-    }
-  }, [user?.id, userAccounts]); // Trigger on any user/accounts change
 
   // Refresh permissions when user or account context changes
   useEffect(() => {
