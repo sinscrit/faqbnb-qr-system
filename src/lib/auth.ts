@@ -1640,32 +1640,54 @@ export async function authenticateUser(): Promise<AuthResult> {
 }
 
 /**
- * Load authenticated state for a valid session
+ * REQ-025: Sequential State Loading Implementation
+ * Load authenticated state for a valid session with sequential, predictable flow
  */
 async function loadAuthenticatedState(session: Session): Promise<AuthResult> {
-  console.log('🚀 LOAD_AUTH_STATE: Loading authenticated state for user:', session.user.id);
+  const startTime = performance.now();
+  console.log('🚀 SEQUENTIAL_LOAD: Starting authenticated state loading for user:', session.user.id);
 
   try {
-    // Step 1: Load basic user profile
-    console.log('🚀 LOAD_AUTH_STATE: Loading user profile');
-    const userResponse = await getUser();
+    // Step 1: Load basic user profile with timeout and retry
+    console.log('🚀 SEQUENTIAL_LOAD: Step 1 - Loading user profile');
+    const step1Start = performance.now();
+    const userResponse = await loadUserProfileWithRetry(session);
+    const step1Duration = performance.now() - step1Start;
+    console.log(`🚀 SEQUENTIAL_LOAD: Step 1 completed in ${step1Duration.toFixed(2)}ms`);
+
     if (userResponse.error || !userResponse.data) {
-      throw new Error('Failed to load user profile');
+      throw new Error('Failed to load user profile after retries');
     }
 
     // Step 2: Load user accounts with roles
-    console.log('🚀 LOAD_AUTH_STATE: Loading user accounts');
-    const accounts = await getAccountsForUser(session.user.id);
+    console.log('🚀 SEQUENTIAL_LOAD: Step 2 - Loading user accounts with roles');
+    const step2Start = performance.now();
+    const accounts = await loadUserAccountsWithRetry(session.user.id);
+    const step2Duration = performance.now() - step2Start;
+    console.log(`🚀 SEQUENTIAL_LOAD: Step 2 completed in ${step2Duration.toFixed(2)}ms - Found ${accounts.length} accounts`);
+
     if (!accounts || accounts.length === 0) {
-      throw new Error('No accounts found for user');
+      throw new Error('No accounts found for user after retries');
     }
 
-    // Step 3: Determine current account (first owned account or first available)
-    console.log('🚀 LOAD_AUTH_STATE: Determining current account');
-    const currentAccount = await determineCurrentAccount(accounts, session.user.id);
+    // Step 3: Determine current account with intelligent selection
+    console.log('🚀 SEQUENTIAL_LOAD: Step 3 - Determining current account');
+    const step3Start = performance.now();
+    const currentAccount = await determineCurrentAccountOptimized(accounts, session.user.id);
+    const step3Duration = performance.now() - step3Start;
+    console.log(`🚀 SEQUENTIAL_LOAD: Step 3 completed in ${step3Duration.toFixed(2)}ms - Selected account: ${currentAccount.id}`);
 
-    // Step 4: Return authenticated state
-    console.log('🚀 LOAD_AUTH_STATE: Authentication successful');
+    // Step 4: Validate account permissions (optional but recommended)
+    console.log('🚀 SEQUENTIAL_LOAD: Step 4 - Validating account permissions');
+    const step4Start = performance.now();
+    await validateAccountPermissions(currentAccount, session.user.id);
+    const step4Duration = performance.now() - step4Start;
+    console.log(`🚀 SEQUENTIAL_LOAD: Step 4 completed in ${step4Duration.toFixed(2)}ms`);
+
+    // Step 5: Return authenticated state with complete data
+    const totalDuration = performance.now() - startTime;
+    console.log(`🚀 SEQUENTIAL_LOAD: All steps completed successfully in ${totalDuration.toFixed(2)}ms`);
+
     return {
       state: 'AUTHENTICATED',
       action: 'SHOW_DASHBOARD',
@@ -1676,7 +1698,119 @@ async function loadAuthenticatedState(session: Session): Promise<AuthResult> {
     };
 
   } catch (error) {
-    console.error('🚀 LOAD_AUTH_STATE: Error loading authenticated state:', error);
+    const totalDuration = performance.now() - startTime;
+    console.error(`🚀 SEQUENTIAL_LOAD: Error loading authenticated state after ${totalDuration.toFixed(2)}ms:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Load user profile with retry logic
+ */
+async function loadUserProfileWithRetry(session: Session): Promise<any> {
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🚀 USER_PROFILE_LOAD: Attempt ${attempt}/${maxRetries}`);
+      const userResponse = await getUser();
+
+      if (userResponse.data) {
+        return userResponse;
+      }
+
+      throw new Error('User profile response missing data');
+
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`🚀 USER_PROFILE_LOAD: Attempt ${attempt} failed:`, error);
+
+      if (attempt < maxRetries) {
+        // Exponential backoff: 500ms, 1000ms, 2000ms
+        const delay = Math.pow(2, attempt - 1) * 500;
+        console.log(`🚀 USER_PROFILE_LOAD: Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw new Error(`Failed to load user profile after ${maxRetries} attempts: ${lastError?.message}`);
+}
+
+/**
+ * Load user accounts with retry logic
+ */
+async function loadUserAccountsWithRetry(userId: string): Promise<Account[]> {
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🚀 ACCOUNTS_LOAD: Attempt ${attempt}/${maxRetries} for user ${userId}`);
+      const accounts = await getAccountsForUser(userId);
+
+      if (accounts && accounts.length > 0) {
+        return accounts;
+      }
+
+      throw new Error('No accounts returned or empty array');
+
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`🚀 ACCOUNTS_LOAD: Attempt ${attempt} failed:`, error);
+
+      if (attempt < maxRetries) {
+        const delay = Math.pow(2, attempt - 1) * 500;
+        console.log(`🚀 ACCOUNTS_LOAD: Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw new Error(`Failed to load user accounts after ${maxRetries} attempts: ${lastError?.message}`);
+}
+
+/**
+ * Determine current account with optimized selection logic
+ */
+async function determineCurrentAccountOptimized(accounts: Account[], userId: string): Promise<Account> {
+  console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Finding optimal current account for user:', userId);
+
+  // Strategy 1: Prefer accounts where user is the owner
+  const ownedAccounts = accounts.filter(account => account.owner_id === userId);
+  if (ownedAccounts.length > 0) {
+    const selected = ownedAccounts[0];
+    console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Selected owned account:', selected.id);
+    return selected;
+  }
+
+  // Strategy 2: Check for most recently updated account
+  const sortedByUpdate = [...accounts].sort((a, b) =>
+    new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
+  const selected = sortedByUpdate[0];
+  console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Selected most recent account:', selected.id);
+
+  return selected;
+}
+
+/**
+ * Validate account permissions for the current user
+ */
+async function validateAccountPermissions(account: Account, userId: string): Promise<void> {
+  try {
+    // Check if user has access to this account
+    const userAccounts = await getAccountsForUser(userId);
+    const hasAccess = userAccounts.some(acc => acc.id === account.id);
+
+    if (!hasAccess) {
+      throw new Error(`User ${userId} does not have access to account ${account.id}`);
+    }
+
+    console.log('🚀 PERMISSIONS_VALIDATION: Account access validated for user:', userId);
+  } catch (error) {
+    console.error('🚀 PERMISSIONS_VALIDATION: Failed to validate account permissions:', error);
     throw error;
   }
 }

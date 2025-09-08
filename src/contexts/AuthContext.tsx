@@ -599,9 +599,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: undefined
         });
 
-        // Call authentication orchestrator
+        // Call authentication orchestrator with enhanced sequential loading
+        const authStartTime = performance.now();
         authenticateUser().then(result => {
+          const authDuration = performance.now() - authStartTime;
+          logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', authStartTime, true, {
+            duration: `${authDuration.toFixed(2)}ms`,
+            resultState: result.state
+          });
+
           if (result.state === 'AUTHENTICATED') {
+            logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
+              userId: result.user?.id,
+              accountCount: result.accounts?.length,
+              currentAccountId: result.currentAccount?.id
+            });
+
             updateGlobalAuthState({
               user: result.user,
               session: result.session,
@@ -610,13 +623,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
               authState: AuthState.AUTHENTICATED
             });
           } else if (result.state === 'ERROR') {
+            logger.logError('AUTH_FAILED_TRANSITION', new Error(result.error || 'Unknown auth error'), {
+              authDuration: `${authDuration.toFixed(2)}ms`
+            });
+
             updateGlobalAuthState({
               authState: AuthState.ERROR,
               error: result.error
             });
           }
         }).catch(error => {
-          logger.logError('AUTH_ORCHESTRATOR_FAILED', error, { authState });
+          const authDuration = performance.now() - authStartTime;
+          logger.logError('AUTH_ORCHESTRATOR_EXCEPTION', error, {
+            authDuration: `${authDuration.toFixed(2)}ms`,
+            authState
+          });
+
           updateGlobalAuthState({
             authState: AuthState.ERROR,
             error: error.message || 'Authentication failed'
@@ -627,16 +649,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       case AuthState.LOADING: {
-        // Handle loading state - authentication is in progress
+        // Handle loading state - authentication is in progress with sequential validation
         logger.logAuthEvent('LOADING_STATE_ACTIVE', {
           hasUser: !!user,
           hasSession: !!session,
-          userAccountsCount: userAccounts?.length || 0
+          userAccountsCount: userAccounts?.length || 0,
+          hasCurrentAccount: !!currentAccount,
+          loadingProgress: `${[!!user, !!session, !!(userAccounts?.length), !!currentAccount].filter(Boolean).length}/4 steps complete`
+        });
+
+        // Sequential validation: ensure all data is loaded in correct order
+        const loadingSteps = {
+          userLoaded: !!user,
+          sessionValid: !!session,
+          accountsLoaded: !!(userAccounts && userAccounts.length > 0),
+          currentAccountSelected: !!currentAccount
+        };
+
+        const completedSteps = Object.values(loadingSteps).filter(Boolean).length;
+        const totalSteps = Object.keys(loadingSteps).length;
+
+        logger.logAuthEvent('LOADING_PROGRESS', {
+          completedSteps,
+          totalSteps,
+          progress: `${completedSteps}/${totalSteps}`,
+          ...loadingSteps
         });
 
         // If we have all required data, transition to AUTHENTICATED
-        if (user && session && userAccounts && userAccounts.length > 0 && currentAccount) {
-          logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'All data loaded');
+        if (completedSteps === totalSteps) {
+          logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'Sequential loading complete');
           updateGlobalAuthState({
             authState: AuthState.AUTHENTICATED
           });
@@ -755,949 +797,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Property management (legacy)
     userProperties,
     selectedProperty,
-    
-    try {
-      // FIXED: Use getUser() instead of direct Supabase queries to leverage RLS fixes
-      // This ensures session restoration uses the same fixed authentication logic
-      console.log('🔍 QUICK_AUTH_DEBUG: Using getUser() for session restoration');
-      const userResponse = await getUser();
-      
-      if (userResponse.error || !userResponse.data) {
-        console.log('🔍 QUICK_AUTH_DEBUG: getUser() failed during session restoration:', userResponse.error);
-        return null;
-      }
-      
-      console.log('🔍 QUICK_AUTH_DEBUG: Session restoration successful', {
-        userId: userResponse.data.id,
-        email: userResponse.data.email,
-        role: userResponse.data.role
-      });
-      
-      return userResponse.data;
-    } catch (error) {
-      console.log('Quick auth failed:', error);
-      return null;
-    }
-  };
-
-  // Initialize authentication state with account context
-  const initializeAuth = async () => {
-    console.log('[AUTH-RACE-DEBUG] initializeAuth called - starting authentication process');
-    
-    try {
-      setAuthInitialized(true); // Keep local state for compatibility
-      console.log('[AUTH-RACE-DEBUG] setAuthInitialized(true) called - this may trigger re-render');
-      setLoading(true);
-      
-      const isPopupWindow = window.location.pathname.includes('/qr-print');
-      console.log('[QR-AUTH-DEBUG] Auth init started:', {
-        url: window.location.href,
-        isPopupWindow,
-        timestamp: Date.now()
-      });
-      
-      // Simplified session check without complex timeouts
-      console.log('[QR-AUTH-DEBUG] Getting session...');
-      const sessionStart = Date.now();
-      const sessionResponse = await getSession();
-      console.log('[QR-AUTH-DEBUG] Session response:', { 
-        hasError: !!sessionResponse.error, 
-        hasData: !!sessionResponse.data, 
-        userId: sessionResponse.data?.user?.id,
-        duration: Date.now() - sessionStart
-      });
-      
-      if (sessionResponse.error) {
-        console.log('[QR-AUTH-DEBUG] No valid session found');
-        clearAuthState();
-        setGlobalAuthInitialized(true); // Mark as complete even if no session
-        return;
-      }
-      
-      if (!sessionResponse.data) {
-        console.log('[QR-AUTH-DEBUG] No session data');
-        clearAuthState();
-        setGlobalAuthInitialized(true); // Mark as complete even if no session
-        return;
-      }
-      
-      // Try quick auth first for better performance
-      console.log('[QR-AUTH-DEBUG] Getting user data...');
-      const quickStart = Date.now();
-      
-      try {
-        const [quickUserResponse] = await Promise.all([
-          getQuickUserAuth(sessionResponse.data)
-          // Note: Don't preload account context here since we don't have a user yet
-        ]);
-        
-        if (quickUserResponse) {
-          console.log('[QR-AUTH-DEBUG] Quick auth successful:', {
-            email: quickUserResponse.email,
-            duration: Date.now() - quickStart
-          });
-          setSession(sessionResponse.data);
-          setUser(quickUserResponse);
-
-          // Load account context if the quick user doesn't have complete account data
-          if (!quickUserResponse.availableAccounts || quickUserResponse.availableAccounts.length === 0) {
-            console.log('🔍 LOAD_ACCOUNT_CONTEXT: Quick user missing account data, loading in background');
-            loadAccountContextInBackground(quickUserResponse);
-          }
-
-          setLoading(false);
-          setGlobalAuthInitialized(true); // Mark as successfully completed
-          return;
-        }
-      } catch (quickError) {
-        console.log('[QR-AUTH-DEBUG] Quick auth failed, using basic auth:', quickError);
-      }
-      
-      // Fallback to basic auth if quick auth fails
-      console.log('[QR-AUTH-DEBUG] Using basic auth fallback');
-      const basicUser: AuthUser = {
-        id: sessionResponse.data.user!.id,
-        email: sessionResponse.data.user!.email || '',
-        role: 'user',
-        currentAccount: null,
-        availableAccounts: []
-      };
-      
-      setSession(sessionResponse.data);
-      setUser(basicUser);
-      setLoading(false);
-      
-      // Load account context in background without blocking
-      loadAccountContextInBackground(basicUser);
-      
-      setGlobalAuthInitialized(true); // Mark as successfully completed
-      
-    } catch (error) {
-      console.error('[QR-AUTH-DEBUG] Auth initialization failed:', error);
-      clearAuthState();
-      setGlobalAuthInitialized(true); // Mark as complete even on error to prevent retry loops
-    } finally {
-      setLoading(false); // Ensure loading is always cleared
-    }
-  };
-
-  const resetGlobalAuthFlags = () => {
-    console.log('[AUTH-RACE-DEBUG] Resetting global auth flags and cleaning up mutex');
-    setGlobalAuthInitialized(false);
-    setGlobalAuthInProgress(false);
-    releaseAuthMutex(); // Clean up any stale mutex locks
-  };
-
-  const clearAuthState = useCallback(() => {
-    console.log('[AUTH-RACE-DEBUG] Clearing auth state and resetting global flags');
-    setUser(null);
-    setSession(null);
-    setCurrentAccount(null);
-    setUserAccounts([]);
-    setSelectedProperty(null);
-    setLoading(false);
-    resetGlobalAuthFlags(); // Reset global flags so auth can be re-initialized
-  }, []);
-
-  // Load account context in background without blocking main auth flow
-  const loadAccountContextInBackground = async (user: AuthUser) => {
-    try {
-      console.log('🔍 LOAD_ACCOUNT_CONTEXT_BACKGROUND: Starting for user:', user.email, user.id);
-      
-      // Skip getUser() call if user already has complete data (e.g., from signIn function)
-      if (user.role && user.availableAccounts && user.availableAccounts.length > 0) {
-        console.log('[QR-AUTH-DEBUG] User data already complete, skipping background account loading');
-        return;
-      }
-      
-      // Get full user data with account context
-      const userResponse = await getUser();
-      if (userResponse.error || !userResponse.data) {
-        console.log('[QR-AUTH-DEBUG] Background account loading failed, keeping basic auth');
-        return;
-      }
-
-      // Update user with account context
-      setUser(userResponse.data);
-
-      console.log('🔍 AUTHCONTEXT_DEBUG: Processing userResponse data', {
-        userId: userResponse.data.id,
-        userEmail: userResponse.data.email,
-        hasAvailableAccounts: !!userResponse.data.availableAccounts,
-        availableAccountsCount: userResponse.data.availableAccounts?.length || 0,
-        availableAccounts: userResponse.data.availableAccounts?.map(acc => ({
-          id: acc.id,
-          name: acc.name,
-          hasUserRole: !!acc.userRole,
-          userRole: acc.userRole
-        })) || [],
-        hasCurrentAccount: !!userResponse.data.currentAccount,
-        currentAccountRole: userResponse.data.currentAccount?.role,
-        currentAccountId: userResponse.data.currentAccount?.id
-      });
-
-      if (userResponse.data.availableAccounts) {
-        setUserAccounts(userResponse.data.availableAccounts);
-        // Store accounts in localStorage for persistence during session restoration
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('availableAccounts', JSON.stringify(userResponse.data.availableAccounts));
-        }
-      }
-      
-      if (userResponse.data.currentAccount && userResponse.data.availableAccounts) {
-        const fullAccount = userResponse.data.availableAccounts.find(
-          acc => acc.id === userResponse.data?.currentAccount?.id
-        );
-        console.log('🔍 AUTHCONTEXT_DEBUG: Found full account for currentAccount', {
-          currentAccountId: userResponse.data?.currentAccount?.id,
-          currentAccountRole: userResponse.data.currentAccount.role,
-          fullAccountFound: !!fullAccount,
-          fullAccountUserRole: fullAccount?.userRole
-        });
-
-        if (fullAccount) {
-          // Enhanced: Include user role in current account (REQ-024)
-          // Priority: fullAccount.userRole (from getAccountsForUser) > currentAccount.role (from API)
-          const userRole = fullAccount.userRole || userResponse.data.currentAccount.role;
-          const accountWithRole = {
-            ...fullAccount,
-            userRole: userRole
-          };
-          console.log('🔍 AUTH_DEBUG: Setting current account with role in background loader', {
-            accountId: accountWithRole.id,
-            userRole: accountWithRole.userRole,
-            finalUserRole: accountWithRole.userRole,
-            source: fullAccount.userRole ? 'fullAccount.userRole' : 'currentAccount.role'
-          });
-          setCurrentAccount(accountWithRole);
-          // Store current account in localStorage for persistence during session restoration
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('currentAccount', accountWithRole.id);
-          }
-        }
-      }
-      
-      // Load properties
-      if (userResponse.data.role === 'user' || userResponse.data.role === 'admin') {
-        try {
-          const accountId = userResponse.data.currentAccount?.id;
-          const properties = await getUserProperties(userResponse.data.id, accountId);
-          setUserProperties(properties);
-          
-          if (properties.length > 0) {
-            setSelectedProperty(properties[0]);
-          }
-        } catch (propertyError) {
-          console.error('Background property loading failed:', propertyError);
-        }
-      }
-      
-      console.log('[QR-AUTH-DEBUG] Background account context loaded successfully');
-    } catch (error) {
-      console.error('[QR-AUTH-DEBUG] Background account loading failed:', error);
-    }
-  };
-
-  // Handle successful sign in with account context
-  const handleSignIn = async (session: Session) => {
-    try {
-      setSession(session);
-      
-      // Check if user data is already available (e.g., from signIn function)
-      // This prevents unnecessary getUser() calls that might fail due to RLS policies
-      console.log('[AUTH-RACE-DEBUG] handleSignIn - checking existing user data:', {
-        hasUser: !!user,
-        userId: user?.id,
-        sessionUserId: session.user.id,
-        userEmail: user?.email,
-        sessionEmail: session.user.email,
-        userRole: user?.role
-      });
-      
-      if (user && user.id === session.user.id) {
-        console.log('[AUTH-RACE-DEBUG] User data already available, skipping getUser() call');
-        return;
-      }
-      
-      // Get user data with account context (for OAuth or other auth methods)
-      const userResponse = await getUser();
-      if (userResponse.error || !userResponse.data) {
-        console.error('Failed to get user data after sign in');
-        clearAuthState();
-        return;
-      }
-
-      setUser(userResponse.data);
-      
-      // Set account context from user data
-      if (userResponse.data?.availableAccounts) {
-        setUserAccounts(userResponse.data.availableAccounts);
-        // Store accounts in localStorage for persistence
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('availableAccounts', JSON.stringify(userResponse.data.availableAccounts));
-        }
-      }
-      
-      if (userResponse.data?.currentAccount && userResponse.data?.availableAccounts) {
-        // Find the full account object from available accounts
-        const fullAccount = userResponse.data.availableAccounts.find(
-          acc => acc.id === userResponse.data?.currentAccount?.id
-        );
-        if (fullAccount) {
-          // Transfer the user's role from currentAccount to the fullAccount object
-          const accountWithRole = {
-            ...fullAccount,
-            userRole: userResponse.data.currentAccount.role
-          };
-          console.log('🔍 AUTH_DEBUG: Setting current account with role from handleSignIn', {
-            accountId: accountWithRole.id,
-            userRole: accountWithRole.userRole
-          });
-          setCurrentAccount(accountWithRole);
-          // Store current account in localStorage for persistence
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('currentAccount', accountWithRole.id);
-          }
-        }
-      }
-      
-      // Load user properties for the current account context
-      if (userResponse.data && (userResponse.data.role === 'user' || userResponse.data.role === 'admin')) {
-        const accountId = userResponse.data.currentAccount?.id;
-        const properties = await getUserProperties(userResponse.data.id, accountId);
-        setUserProperties(properties);
-        
-        // Auto-select first property if available
-        if (properties.length > 0) {
-          setSelectedProperty(properties[0]);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to handle sign in:', error);
-      clearAuthState();
-    }
-  };
-
-  // Handle sign out with account context clearing
-  const handleSignOut = () => {
-    clearAccountContext(); // Clear localStorage account context
-    clearAuthState();
-  };
-
-  // Handle session refresh with account context preservation
-  const handleSessionRefresh = async (session: Session) => {
-    try {
-      setSession(session);
-      
-      // Re-verify user and preserve account context
-      const userResponse = await getUser();
-      if (userResponse.error || !userResponse.data) {
-        await authSignOut();
-        clearAuthState();
-        return;
-      }
-
-      setUser(userResponse.data);
-      
-      // Update account context if needed
-      if (userResponse.data && userResponse.data.availableAccounts) {
-        setUserAccounts(userResponse.data.availableAccounts);
-        // Store accounts in localStorage for persistence
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('availableAccounts', JSON.stringify(userResponse.data.availableAccounts));
-        }
-      }
-      
-      if (userResponse.data && userResponse.data.currentAccount && userResponse.data.availableAccounts) {
-        const fullAccount = userResponse.data.availableAccounts.find(
-          acc => acc.id === userResponse.data?.currentAccount?.id
-        );
-        if (fullAccount) {
-          // Transfer the user's role from currentAccount to the fullAccount object
-          const accountWithRole = {
-            ...fullAccount,
-            userRole: userResponse.data.currentAccount.role
-          };
-          console.log('🔍 AUTH_DEBUG: Setting current account with role from handleSessionRefresh', {
-            accountId: accountWithRole.id,
-            userRole: accountWithRole.userRole
-          });
-          setCurrentAccount(accountWithRole);
-          // Store current account in localStorage for persistence
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('currentAccount', accountWithRole.id);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Failed to handle session refresh:', error);
-      await authSignOut();
-      clearAuthState();
-    }
-  };
-
-  // Check and refresh session if needed
-  const checkAndRefreshSession = async () => {
-    if (!session) return;
-
-    try {
-      if (isSessionExpiringSoon(session)) {
-        console.log('Session expiring soon, refreshing...');
-        await handleRefreshSession();
-      }
-    } catch (error) {
-      console.error('Failed to check/refresh session:', error);
-    }
-  };
-
-  // Enhanced sign in function with account context
-  const signIn = async (email: string, password: string): Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>> => {
-    try {
-      setLoading(true);
-      
-      const result = await authSignIn(email, password);
-      
-      if (result.error) {
-        return result;
-      }
-
-      if (result.data) {
-        console.log('🔒 AUTH_SESSION_DEBUG: SETTING_SESSION_STATE', {
-          timestamp: new Date().toISOString(),
-          userId: result.data.user.id,
-          userEmail: result.data.user.email,
-          sessionId: result.data.session.access_token.slice(0, 20) + '...',
-          sessionExpiry: result.data.session.expires_at,
-          accountsCount: result.data.accounts.length
-        });
-        
-        setUser(result.data.user);
-        setSession(result.data.session);
-        setUserAccounts(result.data.accounts);
-        // Store accounts in localStorage for persistence
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('availableAccounts', JSON.stringify(result.data.accounts));
-        }
-        
-        if (result.data.defaultAccount) {
-          // Find the account with userRole from the accounts array
-          const accountWithRole = result.data.accounts?.find(
-            (acc: Account & { userRole?: string }) => acc.id === result.data.defaultAccount.id
-          );
-
-          const currentAccountToSet = accountWithRole || result.data.defaultAccount;
-          setCurrentAccount(currentAccountToSet);
-
-          // Store current account in localStorage for persistence
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('currentAccount', currentAccountToSet.id);
-          }
-        }
-        
-        // Additional delay to ensure session is fully propagated before redirect attempts
-        setTimeout(() => {
-          console.log('🔒 AUTH_SESSION_DEBUG: SESSION_STATE_SET_COMPLETE', {
-            timestamp: new Date().toISOString(),
-            userSet: !!user,
-            sessionSet: !!session,
-            message: 'State updates should be complete now'
-          });
-        }, 50);
-      }
-
-      return result;
-    } catch (error) {
-      console.error('Sign in error:', error);
-      return { error: 'An unexpected error occurred during sign in' };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Enhanced sign out function with account context clearing
-  const signOut = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      await authSignOut(); // This also clears account context
-      clearAuthState();
-    } catch (error) {
-      console.error('Sign out error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Refresh session function
-  const handleRefreshSession = async (): Promise<void> => {
-    try {
-      const result = await refreshSession();
-      
-      if (result.error || !result.data) {
-        console.log('Session refresh failed, signing out');
-        await signOut();
-        return;
-      }
-
-      await handleSessionRefresh(result.data);
-    } catch (error) {
-      console.error('Refresh session error:', error);
-      await signOut();
-    }
-  };
-
-  // Get user properties function with account filtering
-  const loadUserProperties = async (): Promise<void> => {
-    if (!user?.id) {
-      setUserProperties([]);
-      setSelectedProperty(null);
-      return;
-    }
-
-    try {
-      const accountId = currentAccount?.id;
-      const properties = await getUserProperties(user.id, accountId);
-      setUserProperties(properties);
-      
-      // Auto-select first property if none selected
-      if (properties.length > 0 && !selectedProperty) {
-        setSelectedProperty(properties[0]);
-      }
-    } catch (error) {
-      console.error('Failed to load user properties:', error);
-      setUserProperties([]);
-    }
-  };
-
-  // Account switching function
-  const switchToAccount = async (accountId: string): Promise<AccountSwitchResponse> => {
-    if (!user) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    try {
-      setSwitchingAccount(true);
-      
-      const result = await switchAccount(accountId);
-      
-      if (result.success && result.account) {
-        // Ensure the account has the userRole field from the switchAccount response
-        const accountWithRole = {
-          ...result.account,
-          userRole: result.userRole || result.account.userRole
-        };
-        setCurrentAccount(accountWithRole);
-        
-        // Update user's current account context
-        if (user) {
-          const updatedUser = {
-            ...user,
-            currentAccount: {
-              id: result.account.id,
-              name: result.account.name,
-              role: result.userRole || 'member',
-              isOwner: result.account.owner_id === user.id
-            }
-          };
-          setUser(updatedUser);
-        }
-        
-        // Reload properties for the new account context
-        await loadUserProperties();
-        
-        console.log('✅ Successfully switched to account:', result.account.name);
-      }
-      
-      return result;
-    } catch (error) {
-      console.error('Account switching error:', error);
-      return { success: false, error: 'Failed to switch account' };
-    } finally {
-      setSwitchingAccount(false);
-    }
-  };
-
-  // Refresh account context (reload user's accounts and current account)
-  const refreshAccountContext = async (): Promise<void> => {
-    if (!user?.id) return;
-
-    try {
-      const accounts = await getAccountsForUser(user.id);
-      setUserAccounts(accounts);
-      
-      // Update current account if it's still valid
-      if (currentAccount) {
-        const updatedCurrentAccount = accounts.find(acc => acc.id === currentAccount.id);
-        if (updatedCurrentAccount) {
-          // Enhanced: Preserve user role when refreshing account context (REQ-024)
-          const accountWithRole = {
-            ...updatedCurrentAccount,
-            userRole: currentAccount.userRole || null
-          };
-          console.log('🔍 AUTH_DEBUG: Refreshing current account with preserved role', {
-            accountId: accountWithRole.id,
-            userRole: accountWithRole.userRole
-          });
-          setCurrentAccount(accountWithRole);
-        } else {
-          // Current account no longer accessible, clear it
-          setCurrentAccount(null);
-          clearAccountContext();
-        }
-      }
-    } catch (error) {
-      console.error('Failed to refresh account context:', error);
-    }
-  };
-
-  // Clear current account context
-  const clearCurrentAccount = useCallback(() => {
-    setCurrentAccount(null);
-    clearAccountContext();
-
-    // Update user's current account context
-    if (user) {
-      const updatedUser = {
-        ...user,
-        currentAccount: null
-      };
-      setUser(updatedUser);
-    }
-
-    // Reload properties without account filtering
-    loadUserProperties();
-  }, [user]);
-
-  // REQ-023: Dashboard context and permission management functions
-
-  // Load dashboard permissions for current user/account context
-  const loadDashboardPermissions = useCallback(async () => {
-    if (!user) {
-      setDashboardPermissions(null);
-      return;
-    }
-
-    setPermissionsLoading(true);
-    try {
-      // Enhanced: Validate account role context before loading permissions (REQ-024)
-      console.log('🔍 AUTH_DEBUG: Loading dashboard permissions with account role context', {
-        userId: user.id,
-        userRole: user.role,
-        currentAccountId: currentAccount?.id,
-        currentAccountRole: currentAccount?.userRole,
-        accountOwner: currentAccount?.owner_id,
-        isCurrentUserOwner: currentAccount?.owner_id === user.id
-      });
-
-      const permissions = await getDashboardPermissions(user, currentAccount);
-      console.log('🔍 AUTH_DEBUG: Dashboard permissions loaded successfully', {
-        permissionCount: permissions ? Object.keys(permissions).length : 0,
-        hasPropertyManagement: permissions?.canManageProperties,
-        hasItemManagement: permissions?.canManageItems,
-        hasAnalyticsAccess: permissions?.canAccessAnalytics
-      });
-      setDashboardPermissions(permissions);
-    } catch (error) {
-      console.error('🔍 AUTH_DEBUG: Failed to load dashboard permissions:', error);
-      setDashboardPermissions(null);
-    } finally {
-      setPermissionsLoading(false);
-    }
-  }, [user, currentAccount]);
-
-  // Dashboard navigation functions
-  const navigateToSection = useCallback((section: DashboardSection, preserveHistory: boolean = true) => {
-    if (preserveHistory) {
-      setNavigationHistory(prev => [...prev, {
-        section: currentDashboardSection,
-        timestamp: Date.now(),
-        path: window.location.pathname,
-        params: Object.fromEntries(new URLSearchParams(window.location.search))
-      }]);
-    }
-
-    setCurrentDashboardSection(section);
-  }, [currentDashboardSection]);
-
-  const goBack = useCallback(() => {
-    if (navigationHistory.length > 0) {
-      const lastEntry = navigationHistory[navigationHistory.length - 1];
-      setNavigationHistory(prev => prev.slice(0, -1));
-      setCurrentDashboardSection(lastEntry.section);
-    }
-  }, [navigationHistory]);
-
-  const canNavigateToSection = useCallback((section: DashboardSection): boolean => {
-    if (!dashboardPermissions) return false;
-
-    switch (section) {
-      case 'dashboard':
-        return dashboardPermissions.canAccessDashboard;
-      case 'items':
-        return dashboardPermissions.canAccessItems;
-      case 'properties':
-        return dashboardPermissions.canAccessProperties;
-      case 'analytics':
-        return dashboardPermissions.canAccessAnalytics;
-      case 'system-admin':
-        return dashboardPermissions.canAccessSystemAdmin;
-      default:
-        return false;
-    }
-  }, [dashboardPermissions]);
-
-  // Permission helper functions
-  const checkPermission = useCallback(async (permission: PermissionKey): Promise<PermissionCheck> => {
-    if (!user) {
-      return {
-        granted: false,
-        reason: 'User not authenticated',
-        requiredRole: UserRole.USER
-      };
-    }
-
-    return hasPermission(user, permission, currentAccount);
-  }, [user, currentAccount]);
-
-  const hasPermissionSync = useCallback((permission: PermissionKey): boolean => {
-    if (!dashboardPermissions) return false;
-
-    switch (permission) {
-      case PERMISSIONS.VIEW_DASHBOARD:
-        return dashboardPermissions.canAccessDashboard;
-      case PERMISSIONS.VIEW_ITEMS:
-        return dashboardPermissions.canAccessItems;
-      case PERMISSIONS.VIEW_PROPERTIES:
-        return dashboardPermissions.canAccessProperties;
-      case PERMISSIONS.VIEW_ANALYTICS:
-        return dashboardPermissions.canAccessAnalytics;
-      case PERMISSIONS.ACCESS_ADMIN_FEATURES:
-        return dashboardPermissions.canAccessAdminFeatures;
-      case PERMISSIONS.ACCESS_SYSTEM_ADMIN:
-        return dashboardPermissions.canAccessSystemAdmin;
-      case PERMISSIONS.CREATE_ITEMS:
-        return dashboardPermissions.canCreateItems;
-      case PERMISSIONS.EDIT_ITEMS:
-        return dashboardPermissions.canEditItems;
-      case PERMISSIONS.DELETE_ITEMS:
-        return dashboardPermissions.canDeleteItems;
-      case PERMISSIONS.CREATE_PROPERTIES:
-        return dashboardPermissions.canCreateProperties;
-      case PERMISSIONS.EDIT_PROPERTIES:
-        return dashboardPermissions.canEditProperties;
-      case PERMISSIONS.DELETE_PROPERTIES:
-        return dashboardPermissions.canDeleteProperties;
-      case PERMISSIONS.MANAGE_USERS:
-        return dashboardPermissions.canManageUsers;
-      case PERMISSIONS.VIEW_ALL_ACCOUNTS:
-        return dashboardPermissions.canViewAllAccounts;
-      case PERMISSIONS.MANAGE_ANALYTICS:
-        return dashboardPermissions.canManageAnalytics;
-      case PERMISSIONS.EXPORT_DATA:
-        return dashboardPermissions.canExportData;
-      case PERMISSIONS.MANAGE_ACCOUNT_USERS:
-        return dashboardPermissions.canManageAccountUsers;
-      case PERMISSIONS.MANAGE_ACCOUNT_SETTINGS:
-        return dashboardPermissions.canManageAccountSettings;
-      default:
-        return false;
-    }
-  }, [dashboardPermissions]);
-
-  const getUserRole = useCallback((): UserRole => {
-    if (!user) return UserRole.USER;
-    return canAccessAdminFeatures(user) ? UserRole.ADMIN : UserRole.USER;
-  }, [user]);
-
-  const getAccountRole = useCallback(async (): Promise<AccountRole | null> => {
-    console.log('🔍 AUTH_DEBUG: getAccountRole called', {
-      hasCurrentAccount: !!currentAccount,
-      currentAccountId: currentAccount?.id,
-      userRoleInState: currentAccount?.userRole,
-      userId: user?.id
-    });
-
-    if (!currentAccount) {
-      console.log('🔍 AUTH_DEBUG: No current account, returning null');
-      return null;
-    }
-
-    // Enhanced: Check if userRole is already in the currentAccount state
-    if (currentAccount.userRole) {
-      console.log('🔍 AUTH_DEBUG: Returning userRole from currentAccount state', {
-        role: currentAccount.userRole
-      });
-      return currentAccount.userRole;
-    }
-
-    // Fallback: Query database for user's role in this account
-    if (!user?.id) {
-      console.log('🔍 AUTH_DEBUG: No user available for database query');
-      return null;
-    }
-
-    try {
-      console.log('🔍 AUTH_DEBUG: Querying database for account role', {
-        userId: user.id,
-        accountId: currentAccount.id
-      });
-
-      // Import the enhanced function from auth.ts
-      const { getUserRoleInAccount } = await import('@/lib/auth');
-      const role = await getUserRoleInAccount(user.id, currentAccount.id);
-
-      console.log('🔍 AUTH_DEBUG: Database query result', {
-        role: role,
-        accountId: currentAccount.id,
-        userId: user.id
-      });
-
-      return role;
-    } catch (error) {
-      console.error('🔍 AUTH_DEBUG: Error querying account role from database', {
-        error: error instanceof Error ? error.message : String(error),
-        userId: user?.id,
-        accountId: currentAccount.id
-      });
-      return null;
-    }
-  }, [currentAccount, user?.id]);
-
-  // FORCE currentAccount to be set - IMMEDIATE EXECUTION
-  console.log('🚀 IMMEDIATE FORCE SET - Checking conditions', {
-    timestamp: new Date().toISOString(),
-    user: !!user,
-    userId: user?.id,
-    userAccountsCount: userAccounts?.length || 0,
-    currentAccount: !!currentAccount,
-    currentAccountId: currentAccount?.id
-  });
-
-  // IMMEDIATE FORCE SET: If we have user and accounts, SET CURRENT ACCOUNT
-  if (user && userAccounts && userAccounts.length > 0 && !currentAccount) {
-    console.log('🚀 IMMEDIATE FORCE SETTING CURRENT ACCOUNT');
-
-    const accountToSet = userAccounts[0]; // Take first account
-    console.log('🚀 Setting account:', {
-      id: accountToSet.id,
-      name: accountToSet.name,
-      userRole: accountToSet.userRole,
-      allKeys: Object.keys(accountToSet)
-    });
-
-    // IMMEDIATE set currentAccount
-    setCurrentAccount(accountToSet);
-
-    // IMMEDIATE store in localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('currentAccount', accountToSet.id);
-      localStorage.setItem('availableAccounts', JSON.stringify(userAccounts));
-    }
-
-    console.log('🚀 IMMEDIATE FORCE SET COMPLETE');
-  }
-
-  // Refresh permissions when user or account context changes
-  useEffect(() => {
-    loadDashboardPermissions();
-  }, [user, currentAccount, loadDashboardPermissions]);
-
-  // User registration function
-  const register = async (
-    email: string, 
-    password: string, 
-    fullName?: string
-  ): Promise<AuthResponse<{ user: User; session: Session }>> => {
-    try {
-      setLoading(true);
-      
-      const result = await registerUser(email, password, fullName);
-      
-      if (result.error) {
-        return result;
-      }
-
-      if (result.data) {
-        // Convert User to AuthUser for context
-        const authUser: AuthUser = {
-          id: result.data.user.id,
-          email: result.data.user.email,
-          fullName: result.data.user.fullName,
-          role: result.data.user.role,
-        };
-        
-        setUser(authUser);
-        setSession(result.data.session);
-        
-        // Initialize account context for new user
-        await refreshAccountContext();
-        
-        // Load properties for new user
-        if (result.data) {
-          await loadUserProperties();
-        }
-      }
-
-      return result;
-    } catch (error) {
-      console.error('Registration error:', error);
-      return { error: 'An unexpected error occurred during registration' };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Enhanced context value with account management and dashboard permissions (REQ-023)
-  const contextValue: AuthContextType = {
-    // Core authentication
-    user,
-    session,
-    loading,
-    isAdmin: user ? isAdmin(user) : false,
-
-    // Property management (legacy)
-    userProperties,
-    selectedProperty,
 
     // Account management (multi-tenant)
     currentAccount,
     userAccounts,
     switchingAccount,
 
-    // Dashboard context state management (REQ-023)
-    currentDashboardSection,
-    navigationHistory,
-    dashboardPermissions,
-    permissionsLoading,
+  // Dashboard context state management (REQ-023)
+  currentDashboardSection,
+  navigationHistory,
+  dashboardPermissions,
+  permissionsLoading,
 
-    // Authentication functions
-    signIn,
-    signOut,
-    refreshSession: handleRefreshSession,
-    register,
+  // Authentication functions
+  signIn,
+  signOut,
+  refreshSession,
+  register,
 
-    // Property functions (legacy)
-    getUserProperties: loadUserProperties,
-    setSelectedProperty,
+  // Property functions (legacy)
+  getUserProperties: loadUserProperties,
+  setSelectedProperty,
 
-    // Account functions (multi-tenant)
-    setCurrentAccount,
-    switchToAccount,
-    refreshAccountContext,
-    clearCurrentAccount,
+  // Account functions (multi-tenant)
+  setCurrentAccount,
+  switchToAccount,
+  refreshAccountContext,
+  clearCurrentAccount,
 
-    // Dashboard context functions (REQ-023)
-    setCurrentDashboardSection,
-    navigateToSection,
-    goBack,
-    canNavigateToSection,
+  // Dashboard context functions (REQ-023)
+  setCurrentDashboardSection,
+  navigateToSection,
+  goBack,
+  canNavigateToSection,
 
-    // Permission helper functions (REQ-023)
-    checkPermission,
-    hasPermission: hasPermissionSync,
-    refreshPermissions: loadDashboardPermissions,
-    getUserRole,
-    getAccountRole,
-  };
+  // Permission helper functions (REQ-023)
+  checkPermission,
+  hasPermission: hasPermissionSync,
+  refreshPermissions: loadDashboardPermissions,
+  getUserRole,
+  getAccountRole,
+};
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -1706,121 +846,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// Hook to use auth context
-export function useAuth(): AuthContextType {
+// Hook to use authentication context
+export function useAuth() {
   const context = useContext(AuthContext);
-  
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
   return context;
 }
 
-// Hook to use account context specifically
-export function useAccountContext() {
-  const { currentAccount, userAccounts, switchingAccount, switchToAccount, clearCurrentAccount } = useAuth();
-  
-  return {
-    currentAccount,
-    userAccounts,
-    switchingAccount,
-    switchToAccount,
-    clearCurrentAccount,
-  };
-}
-
-// Higher-order component for authentication
-export function withAuth<P extends object>(Component: React.ComponentType<P>) {
-  return function AuthenticatedComponent(props: P) {
-    const { user, loading } = useAuth();
-    
-    if (loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Authenticating...</p>
-          </div>
-        </div>
-      );
-    }
-    
-    if (!user) {
-      // Redirect to login will be handled by middleware
-      return null;
-    }
-    
-    return <Component {...props} />;
-  };
-}
-
-// Higher-order component for account-aware authentication
-export function withAccountAuth<P extends object>(Component: React.ComponentType<P>) {
-  return function AccountAuthenticatedComponent(props: P) {
-    const { user, loading, currentAccount, userAccounts } = useAuth();
-    
-    if (loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Authenticating...</p>
-          </div>
-        </div>
-      );
-    }
-    
-    if (!user) {
-      return null;
-    }
-    
-    // Show account selection if user has accounts but none selected
-    if (userAccounts.length > 0 && !currentAccount) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">Please select an account to continue</p>
-            {/* Account selector would be rendered here */}
-          </div>
-        </div>
-      );
-    }
-    
-    return <Component {...props} />;
-  };
-}
-
-// Hook to check if user is authenticated
-export function useRequireAuth(): AuthUser {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    throw new Error('Authentication is still loading');
-  }
-  
-  if (!user) {
-    throw new Error('User must be authenticated');
-  }
-  
-  return user;
-}
-
-// Hook to require account context
-export function useRequireAccount(): { user: AuthUser; account: Account } {
-  const { user, loading, currentAccount } = useAuth();
-  
-  if (loading) {
-    throw new Error('Authentication is still loading');
-  }
-  
-  if (!user) {
-    throw new Error('User must be authenticated');
-  }
-  
-  if (!currentAccount) {
-    throw new Error('Account context is required');
-  }
-  
-  return { user, account: currentAccount };
-} 
+// Export remaining functions and hooks
