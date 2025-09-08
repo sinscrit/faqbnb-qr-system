@@ -23,6 +23,7 @@ import {
   clearAccountContext,
   AccountSwitchResponse,
 } from '@/lib/auth';
+import { performanceMonitor, startTiming, endTiming, recordTiming } from '@/lib/performance-monitor';
 // REQ-023: Unified Route Architecture - Permission System Integration
 import {
   DashboardPermissions,
@@ -649,7 +650,11 @@ const persistAuthState = React.useCallback((state: {
   authState: AuthState;
   error?: string;
 }) => {
-  const startTime = performance.now();
+  const persistMetricId = startTiming('STATE_PERSISTENCE', {
+    authState: state.authState,
+    hasUser: !!state.user,
+    accountCount: state.accounts?.length || 0
+  });
 
   try {
     const stateToPersist = {
@@ -669,11 +674,22 @@ const persistAuthState = React.useCallback((state: {
 
     localStorage.setItem('auth_persisted_state', JSON.stringify(stateToPersist));
 
-    const duration = performance.now() - startTime;
+    const duration = performance.now() - parseInt(persistMetricId.split('_')[1]);
+
+    // Record performance metric
+    recordTiming('STATE_PERSISTENCE_TOTAL', duration, true, {
+      dataSize: JSON.stringify(stateToPersist).length,
+      authState: state.authState
+    });
+
+    endTiming(persistMetricId, true, {
+      duration: `${duration.toFixed(2)}ms`,
+      dataSize: JSON.stringify(stateToPersist).length
+    });
 
     // Only log if logger is available (client-side)
     if (typeof window !== 'undefined' && logger) {
-      logger.logPerformance('STATE_PERSISTENCE', startTime, true, {
+      logger.logPerformance('STATE_PERSISTENCE', parseInt(persistMetricId.split('_')[1]), true, {
         duration: `${duration.toFixed(2)}ms`,
         dataSize: JSON.stringify(stateToPersist).length
       });
@@ -688,7 +704,16 @@ const persistAuthState = React.useCallback((state: {
     });
 
   } catch (error) {
-    const duration = performance.now() - startTime;
+    const duration = performance.now() - parseInt(persistMetricId.split('_')[1]);
+
+    // Record failed performance metric
+    recordTiming('STATE_PERSISTENCE_TOTAL', duration, false, {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+
+    endTiming(persistMetricId, false, {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
 
     // Only log if logger is available (client-side)
     if (typeof window !== 'undefined' && logger) {
@@ -719,7 +744,7 @@ const restoreAuthState = React.useCallback((): {
   authState: AuthState;
   error?: string;
 } | null => {
-  const startTime = performance.now();
+  const restoreMetricId = startTiming('STATE_RESTORATION', { source: 'localStorage' });
 
   try {
     const persistedState = localStorage.getItem('auth_persisted_state');
@@ -755,11 +780,25 @@ const restoreAuthState = React.useCallback((): {
       }
     }
 
-    const duration = performance.now() - startTime;
+    const duration = performance.now() - parseInt(restoreMetricId.split('_')[1]);
+
+    // Record successful restoration performance
+    recordTiming('STATE_RESTORATION_TOTAL', duration, true, {
+      age: `${(age / 1000 / 60).toFixed(1)} minutes`,
+      authState: state.authState,
+      hasUser: !!state.user,
+      accountCount: state.accounts?.length || 0
+    });
+
+    endTiming(restoreMetricId, true, {
+      duration: `${duration.toFixed(2)}ms`,
+      age: `${(age / 1000 / 60).toFixed(1)} minutes`,
+      authState: state.authState
+    });
 
     // Only log if logger is available (client-side)
     if (typeof window !== 'undefined' && logger) {
-      logger.logPerformance('STATE_RESTORATION', startTime, true, {
+      logger.logPerformance('STATE_RESTORATION', parseInt(restoreMetricId.split('_')[1]), true, {
         duration: `${duration.toFixed(2)}ms`,
         age: `${(age / 1000 / 60).toFixed(1)} minutes`,
         authState: state.authState
@@ -784,7 +823,16 @@ const restoreAuthState = React.useCallback((): {
     };
 
   } catch (error) {
-    const duration = performance.now() - startTime;
+    const duration = performance.now() - parseInt(restoreMetricId.split('_')[1]);
+
+    // Record failed restoration performance
+    recordTiming('STATE_RESTORATION_TOTAL', duration, false, {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+
+    endTiming(restoreMetricId, false, {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
 
     // Only log if logger is available (client-side)
     if (typeof window !== 'undefined' && logger) {
@@ -1185,42 +1233,68 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         // Call authentication orchestrator with enhanced sequential loading and error recovery
-        const authStartTime = performance.now();
+        const authMetricId = startTiming('AUTH_ORCHESTRATOR', {
+          trigger: 'state_machine',
+          currentState: authState
+        });
 
         const performAuthentication = async () => {
-          const result = await authenticateUser();
-          const authDuration = performance.now() - authStartTime;
+          const stepMetricId = startTiming('AUTH_USER_LOOKUP');
 
-          // Only log if logger is available (client-side)
-          if (typeof window !== 'undefined' && logger) {
-            logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', authStartTime, true, {
-              duration: `${authDuration.toFixed(2)}ms`,
-              resultState: result.state
+          try {
+            const result = await authenticateUser();
+            endTiming(stepMetricId, true, { resultState: result.state });
+
+            const authDuration = performance.now() - parseInt(authMetricId.split('_')[1]);
+
+            // Record overall authentication performance
+            recordTiming('AUTH_ORCHESTRATOR_TOTAL', authDuration, result.state === 'AUTHENTICATED', {
+              resultState: result.state,
+              hasUser: !!result.user,
+              accountCount: result.accounts?.length || 0
             });
-          }
 
-          if (result.state === 'AUTHENTICATED') {
             // Only log if logger is available (client-side)
             if (typeof window !== 'undefined' && logger) {
-              logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
-                userId: result.user?.id,
-                accountCount: result.accounts?.length,
-                currentAccountId: result.currentAccount?.id
+              logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', parseInt(authMetricId.split('_')[1]), true, {
+                duration: `${authDuration.toFixed(2)}ms`,
+                resultState: result.state
               });
             }
 
-            updateGlobalAuthState({
-              user: result.user,
-              session: result.session,
-              accounts: result.accounts,
-              currentAccount: result.currentAccount,
-              authState: AuthState.AUTHENTICATED
-            });
-          } else if (result.state === 'ERROR') {
-            throw new Error(result.error || 'Authentication failed');
-          }
+            if (result.state === 'AUTHENTICATED') {
+              // Only log if logger is available (client-side)
+              if (typeof window !== 'undefined' && logger) {
+                logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
+                  userId: result.user?.id,
+                  accountCount: result.accounts?.length,
+                  currentAccountId: result.currentAccount?.id
+                });
+              }
 
-          return result;
+              updateGlobalAuthState({
+                user: result.user,
+                session: result.session,
+                accounts: result.accounts,
+                currentAccount: result.currentAccount,
+                authState: AuthState.AUTHENTICATED
+              });
+            } else if (result.state === 'ERROR') {
+              endTiming(authMetricId, false, { error: result.error });
+              throw new Error(result.error || 'Authentication failed');
+            }
+
+            endTiming(authMetricId, true, {
+              userId: result.user?.id,
+              accountCount: result.accounts?.length
+            });
+
+            return result;
+          } catch (error) {
+            endTiming(stepMetricId, false, { error: error.message });
+            endTiming(authMetricId, false, { error: error.message });
+            throw error;
+          }
         };
 
         // Use error recovery system for authentication
