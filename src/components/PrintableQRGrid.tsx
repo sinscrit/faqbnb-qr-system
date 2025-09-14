@@ -14,12 +14,12 @@ interface PrintableQRGridProps {
 
 export default function PrintableQRGrid({ qrData }: PrintableQRGridProps) {
   useEffect(() => {
-    // Auto-trigger print after a short delay to ensure rendering
+    // Auto-trigger print after a longer delay to ensure QR codes are rendered
     const timer = setTimeout(() => {
       window.print();
       // Close window after print dialog closes
       window.close();
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -28,7 +28,13 @@ export default function PrintableQRGrid({ qrData }: PrintableQRGridProps) {
     <div className="print-grid">
       {qrData.map((item) => (
         <div key={item.id} className="print-item">
-          <QRCode value={`item:${item.id}`} size={113} className="print-qr" />
+          <QRCode 
+            value={`item:${item.id}`} 
+            size={151} // 40mm at 96 DPI
+            level="H" // High error correction
+            className="print-qr"
+            style={{ display: 'block', maxWidth: '100%' }}
+          />
           <div className="print-label">{item.label}</div>
         </div>
       ))}

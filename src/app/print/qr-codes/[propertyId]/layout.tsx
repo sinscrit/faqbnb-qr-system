@@ -7,7 +7,11 @@ export default function PrintLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <title>Print QR Codes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
+      <body style={{ margin: 0, padding: 0, background: 'white' }}>
         <main className="print-only">{children}</main>
       </body>
     </html>
