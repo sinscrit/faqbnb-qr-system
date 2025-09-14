@@ -30,21 +30,14 @@ No database changes required. Implementation uses existing tables:
    - [ ] Test print layout
 
 4. Implement Window Management
-   - [ ] Create `src/hooks/usePrintWindow.ts`
-   - [ ] Add window opening logic
-   - [ ] Implement print trigger
-   - [ ] Add window cleanup
+   - [x] Create `src/hooks/usePrintWindow.ts` ---implemented: Created hook with window management and cleanup
+   - [x] Add window opening logic ---implemented: Added URL parameter handling and window opening
+   - [x] Implement print trigger ---implemented: Auto-print in print route
+   - [x] Add window cleanup ---implemented: Added window close handling and reference cleanup
    - [ ] Test window lifecycle
 
 5. Update Print Manager
-   - [ ] Modify `src/components/QRCodePrintManager.tsx`:
-     ```typescript
-     const handlePrint = () => {
-       // Open print window
-       // Pass QR data
-       // Handle cleanup
-     };
-     ```
+   - [x] Modify `src/components/QRCodePrintManager.tsx` ---implemented: Added usePrintWindow hook and updated print button handler
    - [ ] Test print flow
 
 6. Add Print Preview Updates

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { usePrintWindow } from '@/hooks/usePrintWindow';
 import { Item, QRPrintSettings, QRGenerationState } from '@/types';
 import { PDFExportSettings } from '@/types/pdf';
 import { ItemSelectionList } from './ItemSelectionList';
@@ -62,6 +63,9 @@ export function QRCodePrintManager({
   isLoadingItems = false,
   className
 }: QRCodePrintManagerProps) {
+  // Print window management
+  const { openPrintWindow } = usePrintWindow();
+
   // State management for QR printing workflow
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -614,7 +618,15 @@ export function QRCodePrintManager({
 
             <div className="flex space-x-3">
               <button
-                onClick={() => window.print()}
+                onClick={() => {
+                  const selectedItemsData = items
+                    .filter(item => generatedQRCodes.has(item.id))
+                    .map(item => ({
+                      id: item.id,
+                      label: item.name
+                    }));
+                  openPrintWindow(propertyId, selectedItemsData);
+                }}
                 className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
                 disabled={generatedQRCodes.size === 0}
               >
