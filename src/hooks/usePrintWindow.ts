@@ -32,9 +32,22 @@ export function usePrintWindow() {
     if (newWindow) {
       windowRef.current = newWindow;
 
-      // Handle window close
+      // Focus the new window
+      newWindow.focus();
+
+      // Handle window close and focus
       const checkWindow = setInterval(() => {
-        if (newWindow.closed) {
+        try {
+          if (newWindow.closed) {
+            clearInterval(checkWindow);
+            windowRef.current = null;
+          } else {
+            // Keep window focused
+            newWindow.focus();
+          }
+        } catch (error) {
+          // Handle cross-origin errors
+          console.error('Failed to check window state:', error);
           clearInterval(checkWindow);
           windowRef.current = null;
         }
