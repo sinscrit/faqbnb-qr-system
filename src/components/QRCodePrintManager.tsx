@@ -627,6 +627,12 @@ export function QRCodePrintManager({
                     }));
                   console.log('Opening print window with data:', selectedItemsData);
                   openPrintWindow(propertyId, selectedItemsData);
+                  // Log print window data for debugging
+                  console.log('Print window data:', {
+                    propertyId,
+                    selectedItemsData,
+                    generatedQRCodes: Array.from(generatedQRCodes.entries())
+                  });
                 }}
                 className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
                 disabled={generatedQRCodes.size === 0}
