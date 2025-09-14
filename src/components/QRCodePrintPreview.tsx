@@ -393,20 +393,21 @@ export function QRCodePrintPreview({
           
             <button
               onClick={handlePrint}
-          disabled={isGenerating || stats.generated === 0}
+              disabled={isGenerating || stats.generated === 0}
               className={cn(
-            "px-4 py-2 rounded-md font-medium transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-            isGenerating || stats.generated === 0
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700",
-            // BUG FIX: Task 17 - Mobile button styling
-            isMobile && "w-full py-3 text-sm"
-          )}
-          // BUG FIX: Task 17 - Touch-friendly button attributes
-          style={isMobile ? { touchAction: 'manipulation' } : undefined}
-        >
-          {isGenerating ? 'Generating...' : isMobile ? 'Print / Share QR Codes' : 'Print QR Codes'}
+                "px-4 py-2 rounded-md font-medium transition-colors",
+                "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+                isGenerating || stats.generated === 0
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700",
+                // BUG FIX: Task 17 - Mobile button styling
+                isMobile && "w-full py-3 text-sm"
+              )}
+              type="button"
+              // BUG FIX: Task 17 - Touch-friendly button attributes
+              style={isMobile ? { touchAction: 'manipulation' } : undefined}
+            >
+              {isGenerating ? 'Generating...' : isMobile ? 'Print / Share QR Codes' : 'Print QR Codes'}
             </button>
       </div>
 
