@@ -1,73 +1,45 @@
-/* Print-only styles for QR codes */
 @media print {
-  /* Remove page margins */
+  /* Page setup */
   @page {
-    margin: 0;
-    size: auto;
+    margin: 0.5cm;
+    size: A4;
   }
 
-  /* Hide everything by default */
-  * {
-    visibility: hidden !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Only show QR code images and their labels */
-  .qr-code-container img,
-  .qr-item-label {
-    visibility: visible !important;
-    display: block !important;
-  }
-
-  /* Show the grid container */
-  [data-cutting-grid="true"] {
-    visibility: visible !important;
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0 !important;
-    width: 100% !important;
-    height: 100vh !important;
-  }
-
-  /* Show QR containers */
-  .qr-container {
-    visibility: visible !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* QR code images - clean display */
-  .qr-code-container img {
-    width: 150px !important;
-    height: 150px !important;
-    display: block !important;
-  }
-
-  /* Item labels - simple text */
-  .qr-item-label {
-    font-size: 12px !important;
-    font-family: Arial, sans-serif !important;
-    text-align: center !important;
-    color: black !important;
-    margin-top: 5px !important;
-  }
-
-  /* Hide all other elements */
-  .print\:hidden,
-  header,
-  nav,
-  button,
-  .bg-white,
-  .border,
-  .rounded {
+  /* Hide UI elements */
+  body > *:not(.print-only) {
     display: none !important;
-    visibility: hidden !important;
   }
-} 
+
+  /* Print grid layout */
+  .print-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5cm;
+    padding: 0.5cm;
+  }
+
+  /* Individual QR item */
+  .print-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    page-break-inside: avoid;
+    border: 1px solid #000;
+    padding: 0.5cm;
+  }
+
+  /* QR code image */
+  .print-qr {
+    width: 30mm;
+    height: 30mm;
+    margin-bottom: 0.3cm;
+  }
+
+  /* Label text */
+  .print-label {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12pt;
+    text-align: center;
+    color: #000;
+  }
+}

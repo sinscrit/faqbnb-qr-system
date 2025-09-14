@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple QR Print Test</title>
+    <style>
+        @media print {
+            * { visibility: hidden !important; }
+            .qr-print-preview,
+            .qr-grid,
+            .qr-item,
+            .qr-container,
+            .qr-code-container,
+            .qr-code-image,
+            .qr-item-label { 
+                visibility: visible !important; 
+                display: block !important;
+            }
+            .qr-grid { 
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 20px !important;
+            }
+            .qr-code-image { 
+                width: 150px !important; 
+                height: 150px !important; 
+            }
+        }
+        .qr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .qr-item { text-align: center; }
+        .qr-code-image { width: 150px; height: 150px; }
+    </style>
+</head>
+<body>
+    <div class="qr-print-preview">
+        <h1>QR Print Test</h1>
+        <div class="qr-grid">
+            <div class="qr-item">
+                <div class="qr-container">
+                    <div class="qr-item-label">Test Item 1</div>
+                    <div class="qr-code-container">
+                        <img class="qr-code-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="QR Code">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

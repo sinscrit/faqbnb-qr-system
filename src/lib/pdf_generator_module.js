@@ -866,133 +866,88 @@ function generatePDFBuffer(config) {
       }
       
       // Comprehensive font method overrides
-      console.log('🔍 PDF_OVERRIDE_DEBUG: Setting up font method overrides...');
+            // Clean font handling - use PDFKit native methods
+            // 🔤 ENHANCED FONT FIX: Comprehensive font debugging and setup
+      console.log('🔤 FONT_MODULE_DEBUG: === PDF MODULE FONT SETUP START ===');
+      console.log('🔤 FONT_MODULE_DEBUG: Module execution context:', {
+        cwd: process.cwd(),
+        dirname: __dirname,
+        env_pdfkit_path: process.env.PDFKIT_DATA_PATH
+      });
       
-      // Override widthOfString with robust fallback
-      const originalWidthOfString = doc.widthOfString;
-      doc.widthOfString = function(text, options) {
-        try {
-          return originalWidthOfString.call(this, text, options);
-        } catch (error) {
-          console.log('🔍 FONT_FALLBACK: widthOfString failed, using approximation for:', text);
-          const fontSize = this._fontSize || (options && options.size) || 12;
-          // More accurate character width estimation for better label centering
-          const avgCharWidth = fontSize * 0.5; // Adjusted from 0.6 to 0.5 for better accuracy
-          return Math.max((text || '').length * avgCharWidth, 0);
-        }
-      };
+      // Strategy 2A: Multiple font path resolution attempts
+      const fontPaths = [
+        process.env.PDFKIT_DATA_PATH,
+        path.join(process.cwd(), 'node_modules', 'pdfkit', 'js', 'data'),
+        path.join(__dirname, '..', '..', 'node_modules', 'pdfkit', 'js', 'data'),
+        path.join(process.cwd(), 'public', 'fonts')
+      ].filter(Boolean);
       
-      // Override text method with complete font bypass
-      const originalText = doc.text;
-      doc.text = function(text, x, y, options) {
-        try {
-          console.log('🔍 FONT_TRY_ORIGINAL: Attempting original text method for:', text);
-          return originalText.call(this, text, x, y, options);
-        } catch (error) {
-          console.log('🔍 FONT_FALLBACK: text method failed, trying simpler approach for:', text);
-          
-          // Try a much simpler approach - try to force use of a basic font
+      let workingFontPath = null;
+      
+      for (const fontPath of fontPaths) {
+        console.log('🔤 FONT_PATH_DEBUG: Testing font path:', fontPath);
+        const helveticaPath = path.join(fontPath, 'Helvetica.afm');
+        
+        if (fs.existsSync(helveticaPath)) {
           try {
-            // Clear any font state that might be causing issues
-            this._font = null;
-            this._fontSize = this._fontSize || 12;
-            
-            // Try to use the original text method with minimal options
-            return originalText.call(this, text || '', x || 0, y || 0, { 
-              width: undefined, 
-              height: undefined, 
-              ellipsis: false,
-              features: [],
-              baseline: 'alphabetic'
-            });
-          } catch (secondError) {
-            console.log('🔍 FONT_FALLBACK: Simpler approach failed, using direct rendering for:', text);
-            // Use our custom direct text rendering that bypasses font metrics entirely
-            return this._renderTextDirect(text, x, y, this._fontSize || 12);
+            fs.accessSync(helveticaPath, fs.constants.R_OK);
+            workingFontPath = fontPath;
+            console.log('🔤 FONT_PATH_DEBUG: ✅ Working font path found:', fontPath);
+            break;
+          } catch (accessError) {
+            console.log('🔤 FONT_PATH_DEBUG: ❌ Font path not accessible:', accessError.message);
           }
+        } else {
+          console.log('🔤 FONT_PATH_DEBUG: ❌ Font path does not exist:', fontPath);
         }
-      };
+      }
       
-      // Override fontSize to handle font loading errors
-      const originalFontSize = doc.fontSize;
-      doc.fontSize = function(size) {
-        try {
-          return originalFontSize.call(this, size);
-        } catch (error) {
-          console.log('🔍 FONT_FALLBACK: fontSize failed, storing size manually');
-          this._fontSize = size;
-          return this;
-        }
-      };
+      if (workingFontPath) {
+        process.env.PDFKIT_DATA_PATH = workingFontPath;
+        console.log('🔤 FONT_MODULE_DEBUG: Set working font path:', workingFontPath);
+      } else {
+        console.error('🔤 FONT_MODULE_DEBUG: ❌ No working font path found!');
+      }
       
-      // Add complete custom text rendering method that bypasses font system
-      doc._renderTextDirect = function(text, x, y, fontSize) {
-        try {
-          console.log('🔍 FONT_DIRECT: Rendering text directly:', text, 'at', x, y, 'size', fontSize);
-          
-          // Escape special characters in text for PDF
-          const escapedText = (text || '').toString()
-            .replace(/\\/g, '\\\\')
-            .replace(/\(/g, '\\(')
-            .replace(/\)/g, '\\)')
-            .replace(/\r\n/g, ' ')
-            .replace(/\r/g, ' ')
-            .replace(/\n/g, ' ');
-          
-          // Ensure we have a basic font available - use Helvetica which is a standard PDF font
-          if (!this._fontDirectInitialized) {
-            console.log('🔍 FONT_DIRECT: Initializing standard PDF font');
-            // Add Helvetica to the font resources
-            this._write('/Helvetica 12 Tf');
-            this._fontDirectInitialized = true;
-          }
-          
-          // Save current graphics state
-          this._write('q');
-          
-          // Use black color for text
-          this._write('0 0 0 rg');
-          
-          // Set font and text
-          this._write(`BT`);
-          this._write(`/Helvetica ${fontSize || 12} Tf`);
-          this._write(`${x} ${this.page.height - y} Td`);
-          this._write(`(${escapedText}) Tj`);
-          this._write('ET');
-          
-          // Restore graphics state
-          this._write('Q');
-          
-          console.log('🔍 FONT_DIRECT: Text rendered successfully with Helvetica font');
-          return this;
-        } catch (error) {
-          console.log('🔍 FONT_DIRECT: Direct rendering failed:', error.message);
-          console.log('🔍 FONT_DIRECT: Attempting alternative approach...');
-          
-          // Alternative approach: try to use PDFKit's built-in text without font metrics
+      // Strategy 2B: Enhanced font loading with detailed error reporting
+      try {
+        console.log('🔤 FONT_LOAD_DEBUG: Attempting to load Helvetica font...');
+        doc.font('Helvetica');
+        doc.fontSize(12);
+        
+        // Test actual text rendering capability
+        const testText = 'FONT_TEST_' + Date.now();
+        console.log('🔤 FONT_TEST_DEBUG: Testing text rendering with:', testText);
+        
+        // Create a temporary text object to test rendering
+        const originalX = doc.x;
+        const originalY = doc.y;
+        doc.text(testText, -1000, -1000); // Render off-page for testing
+        doc.x = originalX;
+        doc.y = originalY;
+        
+        console.log('🔤 FONT_LOAD_DEBUG: ✅ Font loading and text rendering successful');
+      } catch (fontError) {
+        console.error('🔤 FONT_LOAD_DEBUG: ❌ Font loading failed:', fontError.message);
+        console.error('🔤 FONT_LOAD_DEBUG: Font error stack:', fontError.stack);
+        
+        // Strategy 2C: Fallback font loading attempts
+        const fallbackFonts = ['Times-Roman', 'Courier'];
+        for (const fallbackFont of fallbackFonts) {
           try {
-            // Force set a basic font state
-            this._fontSize = fontSize || 12;
-            this._fillColor = [0, 0, 0]; // Black
-            
-            // Try to draw the text using PDFKit's lower-level methods
-            this._write('q');
-            this._write('BT');
-            this._write(`${x} ${this.page.height - y} Td`);
-            this._write(`(${escapedText}) Tj`);
-            this._write('ET');
-            this._write('Q');
-            
-            console.log('🔍 FONT_DIRECT: Alternative approach succeeded');
-            return this;
-          } catch (altError) {
-            console.log('🔍 FONT_DIRECT: All text rendering approaches failed');
-            return this;
+            console.log('🔤 FONT_FALLBACK_DEBUG: Trying fallback font:', fallbackFont);
+            doc.font(fallbackFont);
+            console.log('🔤 FONT_FALLBACK_DEBUG: ✅ Fallback font loaded:', fallbackFont);
+            break;
+          } catch (fallbackError) {
+            console.log('🔤 FONT_FALLBACK_DEBUG: ❌ Fallback font failed:', fallbackError.message);
           }
         }
-      };
+      }
       
-      console.log('🔍 PDF_OVERRIDE_DEBUG: Font method overrides complete');
+      console.log('🔤 FONT_MODULE_DEBUG: === PDF MODULE FONT SETUP COMPLETE ===');
+      console.log('🔍 PDF_OVERRIDE_DEBUG: Font method overrides complete');console.log('🔍 PDF_OVERRIDE_DEBUG: Font method overrides complete');
       
       // Collect PDF data in chunks
       const chunks = [];
@@ -1091,7 +1046,7 @@ function generatePDFBuffer(config) {
           console.log('🔍 LABEL_DEBUG: qrData.name =', qrData.name);
           const labelWidth = doc.widthOfString(labelText);
           const labelX = qrX + (qrSize - labelWidth) / 2;
-          const labelY = qrY + qrSize + 10; // Increased spacing for better readability
+          const labelY = qrY - 15; // Position label below QR code (PDF coordinates: Y=0 is bottom)
           
           console.log(`🔍 LABEL_DEBUG: Rendering "${labelText}" at (${labelX}, ${labelY}) with fontSize ${fontSize}`);
           doc.text(labelText, labelX, labelY);

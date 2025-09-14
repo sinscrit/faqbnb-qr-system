@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
 import { Eye, EyeOff, LogIn, Loader2, AlertCircle } from 'lucide-react';
 import GoogleOAuthButton from './GoogleOAuthButton';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -26,6 +27,7 @@ interface FormErrors {
 
 export default function LoginForm({ onSuccess, onError, className = '' }: LoginFormProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { signIn } = useAuth();
   
   const [formData, setFormData] = useState<FormData>({
@@ -102,10 +104,10 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
     }
   };
 
-  // Handle form submission
+  // Handle form submission using AuthContext's sequential state machine
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -114,38 +116,54 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
     setErrors({});
 
     try {
-      console.log('Attempting login for:', formData.email);
-      
+      console.log('🔐 LOGIN_FORM: Starting AuthContext authentication for:', formData.email);
+
+      // Use AuthContext's signIn which integrates with the sequential state machine
       const result = await signIn(formData.email, formData.password);
-      
-      if (result.error) {
-        const errorMessage = result.error;
-        
+
+      console.log('🔐 LOGIN_FORM: AuthContext authentication result:', {
+        success: result.success,
+        user: result.data?.user?.id,
+        error: result.error
+      });
+
+      if (!result.success || result.error) {
+        console.error('🔐 LOGIN_FORM: Authentication failed:', result.error);
+
         // Set specific error based on error message
-        if (errorMessage.includes('Invalid login credentials') || 
+        const errorMessage = result.error || 'Authentication failed';
+        if (errorMessage.includes('Invalid login credentials') ||
             errorMessage.includes('Email not confirmed') ||
-            errorMessage.includes('access denied')) {
+            errorMessage.includes('Invalid email or password')) {
           setErrors({ general: 'Invalid email or password. Please check your credentials and try again.' });
-        } else if (errorMessage.includes('admin privileges')) {
+        } else if (errorMessage.includes('admin privileges') ||
+                   errorMessage.includes('Access denied')) {
           setErrors({ general: 'Access denied. Admin privileges are required.' });
         } else {
           setErrors({ general: errorMessage });
         }
-        
+
         onError?.(errorMessage);
         return;
       }
 
-      console.log('Login successful, redirecting to:', redirectTo);
-      
-      // Call success callback
-      onSuccess?.();
-      
-      // Note: Redirect removed - let LoginPageContent handle redirect once user state updates
-      // This prevents race conditions between login success and auth context update
-      
+      if (result.success && result.data?.user) {
+        console.log('🔐 LOGIN_FORM: Authentication successful - AuthContext will handle redirect');
+        
+        // Reset authentication attempted flag so AuthContext can trigger authentication
+        // The AuthContext's sequential state machine will handle the redirect to dashboard
+        // No manual redirect needed - let the LoginPageContent's useEffect handle it
+        
+        // Call success callback
+        onSuccess?.();
+      } else {
+        console.error('🔐 LOGIN_FORM: Authentication failed: No user returned');
+        setErrors({ general: 'Login failed: No user returned' });
+        onError?.('Login failed: No user returned');
+      }
+
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('🔐 LOGIN_FORM: Authentication error:', error);
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       setErrors({ general: errorMessage });
       onError?.(errorMessage);

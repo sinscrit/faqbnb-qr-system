@@ -15,6 +15,7 @@ function LoginPageFallback() {
 }
 
 export default function LoginPage() {
+  console.log('🔄 LOGIN_PAGE_COMPONENT: Login page component is rendering!');
   return (
     <Suspense fallback={<LoginPageFallback />}>
       <LoginPageContent />

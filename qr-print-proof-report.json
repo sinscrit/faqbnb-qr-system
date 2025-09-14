@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-09-10T10:58:00.264Z",
+  "testResults": {
+    "testPageScreenshot": "qr-print-proof-screen.png",
+    "printEmulationScreenshot": "qr-print-proof-print-emulation.png",
+    "testPagePDF": "qr-print-proof-actual.pdf",
+    "qrCodeAnalysis": {
+      "totalQRCodes": 0,
+      "qrDetails": []
+    }
+  },
+  "filesGenerated": [
+    "qr-print-proof-screen.png",
+    "qr-print-proof-print-emulation.png",
+    "qr-print-proof-actual.pdf"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-09-10T11:02:02.248Z",
+  "testType": "QR_PRINT_PROOF_VERIFICATION",
+  "results": [
+    {
+      "page": "qr-demo",
+      "result": "NO_QR_CODES"
+    },
+    {
+      "page": "validation-qr",
+      "result": "NO_QR_CODES"
+    }
+  ],
+  "proofFiles": [
+    {
+      "filename": "qr-demo-screen.png",
+      "size": 134479
+    },
+    {
+      "filename": "qr-demo-print.png",
+      "size": 4253
+    },
+    {
+      "filename": "qr-demo-proof.pdf",
+      "size": 902
+    }
+  ],
+  "verdict": "QR_CODES_NOT_PRINTING"
+}

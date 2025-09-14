@@ -17,51 +17,54 @@ interface LoginMessage {
 export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, authState } = useAuth();
   
-  // Debug logging for auth stuck issues
-  const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
-  
+  // REQ-025: Debug logging for sequential authentication state machine
+  const DEBUG_PREFIX = "🔄 LOGIN_PAGE_DEBUG:";
+
   console.log(`${DEBUG_PREFIX} LOGIN_PAGE_MOUNTED`, {
     timestamp: new Date().toISOString(),
     url: typeof window !== 'undefined' ? window.location.href : 'server-side',
+    authState,
     authLoading,
     hasUser: !!user,
     userId: user?.id
   });
   
-  // Intelligently redirect based on user role
+  // REQ-025: Simplified redirect logic using sequential authentication state machine
   useEffect(() => {
-    const DEBUG_PREFIX = "🔒 AUTH_REDIRECT_DEBUG:";
-    
-    console.log(`${DEBUG_PREFIX} REDIRECT_HOOK_CHECK`, {
+    const DEBUG_PREFIX = "🔄 LOGIN_REDIRECT_DEBUG:";
+
+    console.log(`${DEBUG_PREFIX} REDIRECT_CHECK`, {
       timestamp: new Date().toISOString(),
+      authState,
       loading: authLoading,
       hasUser: !!user,
       userId: user?.id,
       userRole: user?.role,
-      shouldRedirect: !authLoading && !!user
+      shouldRedirect: authState === 'AUTHENTICATED' && !!user
     });
 
-    // Only perform redirect if auth state is fully loaded and a user exists.
-    if (!authLoading && user) {
+    // REQ-025: Only redirect when auth state machine is in AUTHENTICATED state
+    // This prevents race conditions and ensures sequential state loading is complete
+    if (authState === 'AUTHENTICATED' && user) {
       // Determine redirect path based on user role
-      const redirectPath = user.role === 'admin' || user.role === 'owner' ? '/admin' : '/user';
-      
-      console.log(`${DEBUG_PREFIX} TRIGGERING_INTELLIGENT_REDIRECT`, {
+      const redirectPath = user.role === 'admin' || user.role === 'owner' ? '/admin' : '/dashboard';
+
+      console.log(`${DEBUG_PREFIX} TRIGGERING_SEQUENTIAL_REDIRECT`, {
         timestamp: new Date().toISOString(),
         user: { id: user.id, email: user.email, role: user.role },
+        authState,
         redirectPath
       });
-      
-      // Add a small delay to ensure React state updates are fully processed
+
+      // REQ-025: Use router.push without delay since state machine ensures proper sequencing
       setTimeout(async () => {
         console.log(`${DEBUG_PREFIX} EXECUTING_REDIRECT`, { redirectPath });
-        
+
         try {
           await router.push(redirectPath);
-          
-          // Check if navigation actually happened
+
           setTimeout(() => {
             console.log(`${DEBUG_PREFIX} POST_NAVIGATION_CHECK`, {
               currentUrl: window.location.href,
@@ -69,16 +72,16 @@ export default function LoginPageContent() {
               navigationSuccess: window.location.pathname === redirectPath
             });
           }, 500);
-          
+
         } catch (error) {
           console.error(`${DEBUG_PREFIX} ROUTER_PUSH_ERROR`, {
             error: error,
             errorMessage: error instanceof Error ? error.message : String(error)
           });
         }
-      }, 100);
+      }, 500); // Small delay to ensure AuthContext state updates are processed
     }
-  }, [user, authLoading, router]);
+  }, [user, authState, authLoading, router]);
   
   const [loginMessage, setLoginMessage] = useState<LoginMessage | null>(null);
 
@@ -140,22 +143,29 @@ export default function LoginPageContent() {
     }
   }, [searchParams]);
 
-  // Show loading indicator while authentication is in progress
-  if (authLoading) {
+  // REQ-025: Show loading indicator during authentication state machine transitions
+  // Only show loading if we have a user or we're in the middle of authentication
+  // If auth is stuck in LOADING with no user, show the login form anyway
+  const shouldShowLoading = authLoading && !!user;
+
+  if (shouldShowLoading || (authState === 'LOADING' && !!user)) {
     console.log(`${DEBUG_PREFIX} SHOWING_LOADING_STATE`, {
       timestamp: new Date().toISOString(),
+      authState,
       authLoading,
       hasUser: !!user,
-      loadingDuration: 'unknown - add timestamp tracking'
+      shouldShowLoading
     });
-    
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading authentication...</p>
+          <p className="text-gray-600">
+            {authState === 'LOADING' ? 'Completing authentication...' : 'Loading authentication...'}
+          </p>
           <p className="text-xs text-gray-400 mt-2">
-            Debug: Check console for AUTH_STUCK_DEBUG logs
+            Debug: Check console for LOGIN_PAGE_DEBUG logs (REQ-025)
           </p>
         </div>
       </div>

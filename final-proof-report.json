@@ -1,0 +1,188 @@
+{
+  "timestamp": "2025-09-10T12:53:04.769Z",
+  "testType": "FINAL_QR_PRINT_PROOF",
+  "url": "http://localhost:3000/qr-demo",
+  "screenAnalysis": {
+    "mode": "SCREEN",
+    "total": 5,
+    "details": [
+      {
+        "index": 1,
+        "alt": "QR Code for Samsung 65\" QLED Smart TV",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "200px",
+        "height": "200px",
+        "rect": {
+          "width": 200,
+          "height": 200,
+          "visible": true
+        }
+      },
+      {
+        "index": 2,
+        "alt": "QR Code for Keurig K-Elite Coffee Maker",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "200px",
+        "height": "200px",
+        "rect": {
+          "width": 200,
+          "height": 200,
+          "visible": true
+        }
+      },
+      {
+        "index": 3,
+        "alt": "QR Code for Nest Learning Thermostat",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "200px",
+        "height": "200px",
+        "rect": {
+          "width": 200,
+          "height": 200,
+          "visible": true
+        }
+      },
+      {
+        "index": 4,
+        "alt": "QR Code for Bosch 800 Series Dishwasher",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "200px",
+        "height": "200px",
+        "rect": {
+          "width": 200,
+          "height": 200,
+          "visible": true
+        }
+      },
+      {
+        "index": 5,
+        "alt": "QR Code for Samsung WF45T6000AW Washing Machine",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "200px",
+        "height": "200px",
+        "rect": {
+          "width": 200,
+          "height": 200,
+          "visible": true
+        }
+      }
+    ]
+  },
+  "printAnalysis": {
+    "mode": "PRINT",
+    "total": 5,
+    "visibleInPrint": 5,
+    "details": [
+      {
+        "index": 1,
+        "alt": "QR Code for Samsung 65\" QLED Smart TV",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "113.383px",
+        "height": "113.383px",
+        "rect": {
+          "width": 113.3828125,
+          "height": 113.3828125,
+          "visible": true
+        }
+      },
+      {
+        "index": 2,
+        "alt": "QR Code for Keurig K-Elite Coffee Maker",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "113.383px",
+        "height": "113.383px",
+        "rect": {
+          "width": 113.3828125,
+          "height": 113.3828125,
+          "visible": true
+        }
+      },
+      {
+        "index": 3,
+        "alt": "QR Code for Nest Learning Thermostat",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "113.383px",
+        "height": "113.383px",
+        "rect": {
+          "width": 113.3828125,
+          "height": 113.3828125,
+          "visible": true
+        }
+      },
+      {
+        "index": 4,
+        "alt": "QR Code for Bosch 800 Series Dishwasher",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "113.383px",
+        "height": "113.383px",
+        "rect": {
+          "width": 113.3828125,
+          "height": 113.3828125,
+          "visible": true
+        }
+      },
+      {
+        "index": 5,
+        "alt": "QR Code for Samsung WF45T6000AW Washing Machine",
+        "src": "HAS_DATA_URL",
+        "srcLength": 274,
+        "className": "qr-code-image max-w-full max-h-full object-contain opacity-100",
+        "visibility": "visible",
+        "display": "block",
+        "width": "113.383px",
+        "height": "113.383px",
+        "rect": {
+          "width": 113.3828125,
+          "height": 113.3828125,
+          "visible": true
+        }
+      }
+    ]
+  },
+  "verdict": {
+    "qrCodesFound": true,
+    "qrCodesVisibleInPrint": true,
+    "status": "QR_CODES_PRINT_SUCCESSFULLY",
+    "evidence": [
+      "final-proof-screen.png",
+      "final-proof-print.png",
+      "final-proof.pdf"
+    ]
+  }
+}

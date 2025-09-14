@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-09-10T13:21:21.299Z",
+  "issue": "Playwright PDF generation does not render data URL images",
+  "solution": "Convert data URLs to local files or HTTP-served images",
+  "results": {
+    "qrCodesFound": 5,
+    "imageFilesCreated": 5,
+    "workingPDFSize": 61399,
+    "httpPDFSize": 18647
+  },
+  "files": {
+    "tempDirectory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images",
+    "workingHTML": "working-qr-test.html",
+    "workingPDF": "working-qr-test.pdf",
+    "httpPDF": "http-served-test.pdf"
+  }
+}

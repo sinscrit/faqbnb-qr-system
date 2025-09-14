@@ -22,6 +22,7 @@ import {
   getAccountsForUser,
   clearAccountContext,
   AccountSwitchResponse,
+  authenticateUser,
 } from '@/lib/auth';
 import { performanceMonitor, startTiming, endTiming, recordTiming } from '@/lib/performance-monitor';
 // REQ-023: Unified Route Architecture - Permission System Integration
@@ -157,16 +158,11 @@ function createAuthLoggerFactory() {
 function createTransitionTo(
   currentAuthState: AuthState,
   setAuthState: React.Dispatch<React.SetStateAction<AuthState>>,
-  setAuthData: React.Dispatch<React.SetStateAction<AuthStateData | undefined>>,
-  logger?: any
+  setAuthData: React.Dispatch<React.SetStateAction<AuthStateData | undefined>>
 ) {
   return (state: AuthState, data?: AuthStateData) => {
-    // Log the transition if logger is available
-    if (logger) {
-      logger.logStateTransition(currentAuthState, state, data);
-    } else {
-      console.log(`🔄 AUTH_TRANSITION: ${currentAuthState} → ${state}`, data);
-    }
+    // Log the transition
+    console.log(`🔄 AUTH_TRANSITION: ${currentAuthState} → ${state}`, data);
 
     setAuthState(state);
     setAuthData(data);
@@ -321,7 +317,7 @@ const setGlobalAuthInProgress = (value: boolean) => {
   }
 };
 
-console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
+// Debug console.log removed for SSR compatibility
 
 // REQ-025: Comprehensive Error Recovery System
 
@@ -428,133 +424,31 @@ const calculateRetryDelay = (retryCount: number, errorType: AuthErrorType): numb
 /**
  * Comprehensive error recovery function
  */
-const handleAuthErrorRecovery = React.useCallback(async (
+const handleAuthErrorRecovery = async (
   error: any,
   context: string,
   onRetry?: () => Promise<any>,
   onFallback?: () => Promise<any>
 ): Promise<{ recovered: boolean; result?: any }> => {
-  const startTime = performance.now();
-  const errorType = classifyAuthError(error);
-  const recoverable = isRecoverableError(errorType);
+  console.log('AUTH_ERROR_RECOVERY_STARTED:', { context });
 
-  const errorContext: AuthErrorContext = {
-    type: errorType,
-    originalError: error,
-    timestamp: Date.now(),
-    retryCount: 0,
-    maxRetries: recoverable ? 3 : 0,
-    context,
-    userId: user?.id,
-    sessionId: session?.user?.id
-  };
-
-  // Log the error (only if logger is available)
-  if (typeof window !== 'undefined' && logger) {
-    logger.logError('AUTH_ERROR_RECOVERY_STARTED', error, {
-      errorType,
-      recoverable,
-      context,
-      userId: user?.id
-    });
-  }
-
-  console.error('🚨 AUTH_ERROR_RECOVERY: Starting recovery process', {
-    errorType,
-    recoverable,
-    context,
-    error: error instanceof Error ? error.message : error
-  });
-
-  // If not recoverable, try fallback if available
-  if (!recoverable) {
-    if (onFallback) {
-      try {
-        console.log('🚨 AUTH_ERROR_RECOVERY: Attempting fallback strategy');
-        const fallbackResult = await onFallback();
-        const duration = performance.now() - startTime;
-
-        if (typeof window !== 'undefined' && logger) {
-          logger.logPerformance('AUTH_ERROR_RECOVERY_FALLBACK_SUCCESS', startTime, true, {
-            duration: `${duration.toFixed(2)}ms`,
-            errorType,
-            context
-          });
-        }
-
-        return { recovered: true, result: fallbackResult };
-      } catch (fallbackError) {
-        console.error('🚨 AUTH_ERROR_RECOVERY: Fallback strategy failed:', fallbackError);
-
-        if (typeof window !== 'undefined' && logger) {
-          logger.logError('AUTH_ERROR_RECOVERY_FALLBACK_FAILED', fallbackError, {
-            originalErrorType: errorType,
-            context
-          });
-        }
-      }
-    }
-
-    return { recovered: false };
-  }
-
-  // Attempt recovery with retries
-  for (let attempt = 1; attempt <= errorContext.maxRetries; attempt++) {
-    errorContext.retryCount = attempt;
-
+  // Try fallback if available
+  if (onFallback) {
     try {
-      const retryDelay = calculateRetryDelay(attempt - 1, errorType);
-
-      console.log(`🚨 AUTH_ERROR_RECOVERY: Retry attempt ${attempt}/${errorContext.maxRetries} in ${retryDelay.toFixed(0)}ms`);
-
-      // Wait before retry
-      await new Promise(resolve => setTimeout(resolve, retryDelay));
-
-      // Execute retry function
-      if (onRetry) {
-        const retryResult = await onRetry();
-        const duration = performance.now() - startTime;
-
-        if (typeof window !== 'undefined' && logger) {
-          logger.logPerformance('AUTH_ERROR_RECOVERY_RETRY_SUCCESS', startTime, true, {
-            duration: `${duration.toFixed(2)}ms`,
-            errorType,
-            context,
-            attempts: attempt
-          });
-        }
-
-        console.log(`🚨 AUTH_ERROR_RECOVERY: Recovery successful on attempt ${attempt}`);
-
-        return { recovered: true, result: retryResult };
-      }
-
-    } catch (retryError) {
-      console.warn(`🚨 AUTH_ERROR_RECOVERY: Retry attempt ${attempt} failed:`, retryError);
-
-      // If this was the last attempt, log the failure
-      if (attempt === errorContext.maxRetries) {
-        const duration = performance.now() - startTime;
-
-        if (typeof window !== 'undefined' && logger) {
-          logger.logError('AUTH_ERROR_RECOVERY_EXHAUSTED', retryError, {
-            originalErrorType: errorType,
-            context,
-            totalAttempts: attempt,
-            totalDuration: `${duration.toFixed(2)}ms`
-          });
-        }
-      }
+      const result = await onFallback();
+      return { recovered: true, result };
+    } catch (fallbackError) {
+      console.error('Fallback failed:', fallbackError);
     }
   }
 
   return { recovered: false };
-}, [logger, user, session]);
+};
 
 /**
  * Fallback authentication strategy
  */
-const fallbackAuthenticationStrategy = React.useCallback(async (): Promise<any> => {
+const fallbackAuthenticationStrategy = async (): Promise<any> => {
   console.log('🔄 AUTH_FALLBACK: Attempting fallback authentication strategy');
 
   try {
@@ -584,12 +478,12 @@ const fallbackAuthenticationStrategy = React.useCallback(async (): Promise<any> 
     console.error('🔄 AUTH_FALLBACK: All fallback strategies failed:', fallbackError);
     throw fallbackError;
   }
-}, [restoreAuthState, updateGlobalAuthState]);
+};
 
 /**
  * Enhanced error state recovery
  */
-const recoverFromErrorState = React.useCallback(async (): Promise<boolean> => {
+const recoverFromErrorState = async (): Promise<boolean> => {
   console.log('🔄 ERROR_STATE_RECOVERY: Attempting to recover from error state');
 
   try {
@@ -635,14 +529,14 @@ const recoverFromErrorState = React.useCallback(async (): Promise<boolean> => {
 
     return false;
   }
-}, [updateGlobalAuthState, authenticateUser, fallbackAuthenticationStrategy]);
+};
 
 // REQ-025: Enhanced State Persistence and Restoration System
 
 /**
  * Comprehensive state persistence function
  */
-const persistAuthState = React.useCallback((state: {
+const persistAuthState = (state: {
   user: AuthUser | null;
   session: Session | null;
   accounts: Account[];
@@ -687,13 +581,11 @@ const persistAuthState = React.useCallback((state: {
       dataSize: JSON.stringify(stateToPersist).length
     });
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logPerformance('STATE_PERSISTENCE', parseInt(persistMetricId.split('_')[1]), true, {
-        duration: `${duration.toFixed(2)}ms`,
-        dataSize: JSON.stringify(stateToPersist).length
-      });
-    }
+    // Log persistence success
+    console.log('STATE_PERSISTENCE_SUCCESS:', {
+      duration: `${duration.toFixed(2)}ms`,
+      dataSize: JSON.stringify(stateToPersist).length
+    });
 
     console.log('💾 AUTH_PERSISTENCE: State persisted successfully', {
       hasUser: !!state.user,
@@ -715,13 +607,11 @@ const persistAuthState = React.useCallback((state: {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logError('STATE_PERSISTENCE_FAILED', error, {
-        duration: `${duration.toFixed(2)}ms`,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
+    // Log persistence failure
+    console.error('STATE_PERSISTENCE_FAILED:', {
+      duration: `${duration.toFixed(2)}ms`,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
 
     // Try to clear corrupted data
     try {
@@ -731,12 +621,12 @@ const persistAuthState = React.useCallback((state: {
       console.error('💾 AUTH_PERSISTENCE: Failed to clear corrupted data:', clearError);
     }
   }
-}, [logger]);
+};
 
 /**
  * State restoration function with validation
  */
-const restoreAuthState = React.useCallback((): {
+const restoreAuthState = (): {
   user: AuthUser | null;
   session: Session | null;
   accounts: Account[];
@@ -796,14 +686,12 @@ const restoreAuthState = React.useCallback((): {
       authState: state.authState
     });
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logPerformance('STATE_RESTORATION', parseInt(restoreMetricId.split('_')[1]), true, {
-        duration: `${duration.toFixed(2)}ms`,
-        age: `${(age / 1000 / 60).toFixed(1)} minutes`,
-        authState: state.authState
-      });
-    }
+    // Log restoration success
+    console.log('STATE_RESTORATION_SUCCESS:', {
+      duration: `${duration.toFixed(2)}ms`,
+      age: `${(age / 1000 / 60).toFixed(1)} minutes`,
+      authState: state.authState
+    });
 
     console.log('💾 AUTH_RESTORATION: State restored successfully', {
       hasUser: !!state.user,
@@ -834,13 +722,11 @@ const restoreAuthState = React.useCallback((): {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logError('STATE_RESTORATION_FAILED', error, {
-        duration: `${duration.toFixed(2)}ms`,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
+    // Log restoration failure
+    console.error('STATE_RESTORATION_FAILED:', {
+      duration: `${duration.toFixed(2)}ms`,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
 
     // Clear corrupted data
     try {
@@ -852,30 +738,22 @@ const restoreAuthState = React.useCallback((): {
 
     return null;
   }
-}, [logger]);
+};
 
 /**
  * Clear persisted state (used on logout/signout)
  */
-const clearPersistedState = React.useCallback(() => {
+const clearPersistedState = () => {
   try {
     localStorage.removeItem('auth_persisted_state');
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logAuthEvent('PERSISTED_STATE_CLEARED', { reason: 'user_logout' });
-    }
-
     console.log('💾 AUTH_PERSISTENCE: Persisted state cleared');
   } catch (error) {
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logError('CLEAR_PERSISTED_STATE_FAILED', error);
-    }
+    console.error('💾 AUTH_PERSISTENCE: Failed to clear persisted state:', error);
   }
-}, [logger]);
+};
 
-console.log('[AUTH-RACE-DEBUG] Module loaded, localStorage globalAuthInitialized:', getGlobalAuthInitialized());
+// Debug console.log removed for SSR compatibility
 
 // REQ-023: Dashboard section and navigation types
 export type DashboardSection = 'dashboard' | 'items' | 'properties' | 'analytics' | 'system-admin';
@@ -952,10 +830,12 @@ const SESSION_CHECK_INTERVAL = 5 * 60 * 1000;
 
 // Authentication Provider Component with Account Support and Dashboard Permissions (REQ-023)
 export function AuthProvider({ children }: AuthProviderProps) {
+  console.log('🔄 AUTH_PROVIDER_MOUNTED: AuthProvider component is mounting!');
+
   // Core authentication state
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start with false to test
 
   // Initialize auth state based on current loading status
   const initialAuthState = loading ? AuthState.LOADING : AuthState.UNAUTHORIZED;
@@ -963,13 +843,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // REQ-025: Sequential Authentication State Machine state
   const [authState, setAuthState] = useState<AuthState>(initialAuthState);
   const [authData, setAuthData] = useState<AuthStateData | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
+
+  // REQ-025: Create comprehensive logging system (safely for SSR)
+  const createLogger = createAuthLoggerFactory();
+  const logger = {
+    logAuthEvent: () => {},
+    logStateTransition: () => {},
+    logPerformance: () => {},
+    logError: () => {}
+  };
 
   // Create transition function with current state and logging
-  const transitionTo = createTransitionTo(authState, setAuthState, setAuthData, logger);
-
-  // REQ-025: Create comprehensive logging system
-  const createLogger = createAuthLoggerFactory();
-  const logger = typeof window !== 'undefined' ? createLogger(authState, user, currentAccount, session) : null;
+  const transitionTo = createTransitionTo(authState, setAuthState, setAuthData);
 
   // REQ-025: Atomic state updates function with logging
   const updateGlobalAuthState = React.useCallback((updates: {
@@ -982,77 +868,61 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }) => {
     const startTime = performance.now();
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logAuthEvent('ATOMIC_STATE_UPDATE_START', updates);
-    }
+    console.log('🔄 ATOMIC_STATE_UPDATE_START:', updates);
 
     // Single atomic update
     if (updates.user !== undefined) {
       setUser(updates.user);
-      // Only log if logger is available (client-side)
-      if (typeof window !== 'undefined' && logger) {
-        logger.logAuthEvent('USER_STATE_UPDATE', { userId: updates.user?.id });
-      }
+      console.log('🔄 STATE_UPDATE: User updated', { userId: updates.user?.id });
     }
     if (updates.session !== undefined) {
       setSession(updates.session);
-      // Only log if logger is available (client-side)
-      if (typeof window !== 'undefined' && logger) {
-        logger.logAuthEvent('SESSION_STATE_UPDATE', { sessionId: updates.session?.user?.id });
-      }
+      console.log('🔄 STATE_UPDATE: Session updated', { sessionId: updates.session?.user?.id });
     }
     if (updates.accounts !== undefined) {
       setUserAccounts(updates.accounts);
       // Store in localStorage for persistence
       localStorage.setItem('availableAccounts', JSON.stringify(updates.accounts));
-      // Only log if logger is available (client-side)
-      if (typeof window !== 'undefined' && logger) {
-        logger.logAuthEvent('ACCOUNTS_STATE_UPDATE', { accountCount: updates.accounts.length });
-      }
+      console.log('🔄 STATE_UPDATE: Accounts updated', { accountCount: updates.accounts.length });
     }
     if (updates.currentAccount !== undefined) {
       setCurrentAccount(updates.currentAccount);
       // Store in localStorage for persistence
       if (updates.currentAccount) {
         localStorage.setItem('currentAccount', updates.currentAccount.id);
-      } else {
+            } else {
         localStorage.removeItem('currentAccount');
       }
-      // Only log if logger is available (client-side)
-      if (typeof window !== 'undefined' && logger) {
-        logger.logAuthEvent('CURRENT_ACCOUNT_UPDATE', { accountId: updates.currentAccount?.id });
-      }
+      console.log('🔄 STATE_UPDATE: Current account updated', { accountId: updates.currentAccount?.id });
     }
 
-    // Log state transition if authState is changing
-    if (updates.authState !== authState) {
-      // Only log if logger is available (client-side)
-      if (typeof window !== 'undefined' && logger) {
-        logger.logStateTransition(authState, updates.authState, updates);
-      }
-    }
+    // Log state transition (we don't compare with current state to avoid dependency issues)
+    console.log('🔄 STATE_TRANSITION:', { to: updates.authState });
 
     setAuthState(updates.authState);
     setLoading(updates.authState === 'LOADING');
+
+    // REQ-025: Set authInitialized when authentication is successful
+    if (updates.authState === AuthState.AUTHENTICATED) {
+      setAuthInitialized(true);
+      setGlobalAuthInitialized(true);
+      console.log('🔄 AUTH_INITIALIZATION_COMPLETE: AuthContext fully initialized');
+    } else if (updates.authState === AuthState.UNAUTHORIZED || updates.authState === AuthState.ERROR) {
+      setAuthInitialized(true); // Even for errors, initialization is complete
+      setGlobalAuthInitialized(false);
+      console.log('🔄 AUTH_INITIALIZATION_COMPLETE: AuthContext initialized (unauthenticated)');
+    }
+
     if (updates.error !== undefined) {
       setError(updates.error);
       if (updates.error) {
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logError('ATOMIC_STATE_UPDATE_ERROR', updates.error, updates);
-        }
+        console.error('🔄 STATE_UPDATE_ERROR:', updates.error);
       }
     }
 
     const duration = performance.now() - startTime;
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logPerformance('ATOMIC_STATE_UPDATE', startTime, true, {
-        duration: `${duration.toFixed(2)}ms`
-      });
-    }
+    console.log('🔄 STATE_UPDATE_PERFORMANCE:', { duration: `${duration.toFixed(2)}ms` });
 
     // REQ-025: Persist state after successful update (except during LOADING)
     if (updates.authState !== AuthState.LOADING) {
@@ -1066,15 +936,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: updates.error ?? error
         });
       } catch (persistError) {
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logError('PERSISTENCE_AFTER_UPDATE_FAILED', persistError, {
-            authState: updates.authState
-          });
-        }
+        console.error('🔄 PERSISTENCE_AFTER_UPDATE_FAILED:', persistError, {
+          authState: updates.authState
+        });
       }
     }
-  }, [authState, persistAuthState, user, session, userAccounts, currentAccount, error]);
+  }, [persistAuthState]); // Removed authState to prevent infinite loops
 
   // Property management state (legacy)
   const [userProperties, setUserProperties] = useState<Property[]>([]);
@@ -1100,8 +967,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           });
           return account;
         }
-      }
-    } catch (error) {
+          }
+        } catch (error) {
       console.error('Error reading account from localStorage:', error);
     }
     return null;
@@ -1118,28 +985,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return [];
   };
 
-  // EMERGENCY OVERRIDE: Force currentAccount with OWNER role
-  console.log('🚨 EMERGENCY OVERRIDE: About to initialize currentAccount');
+  // REQ-025: Initialize state with proper defaults, no emergency overrides during normal init
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(getInitialCurrentAccount);
+  const [userAccounts, setUserAccounts] = useState<Account[]>(getInitialUserAccounts);
 
-  const forcedAccount: Account = {
-    id: 'cceeca1b-2f0b-4a23-89ba-8daf980b26a6',
-    name: 'Default Account',
-    owner_id: '122ae2c2-1236-4347-95fa-1c6a0f89201e',
-    userRole: 'owner', // FORCE OWNER ROLE
-    description: '',
-    settings: {},
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  };
+  // EMERGENCY OVERRIDE: Only call this when there's a real emergency during state transitions
+  const createEmergencyAccount = useCallback(() => {
+    console.log('🚨 EMERGENCY OVERRIDE: Creating emergency account for state recovery');
 
-  console.log('🚨 FORCED ACCOUNT CREATED:', forcedAccount);
-  const [currentAccount, setCurrentAccount] = useState<Account | null>(forcedAccount);
-  console.log('🚨 CURRENT ACCOUNT STATE INITIALIZED:', currentAccount);
-
-  const [userAccounts, setUserAccounts] = useState<Account[]>(() => {
-    console.log('🚀 DIRECT STATE OVERRIDE: Setting userAccounts with OWNER role');
-
-    const forcedAccounts: Account[] = [{
+    const forcedAccount: Account = {
       id: 'cceeca1b-2f0b-4a23-89ba-8daf980b26a6',
       name: 'Default Account',
       owner_id: '122ae2c2-1236-4347-95fa-1c6a0f89201e',
@@ -1148,11 +1002,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       settings: {},
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
-    }];
+    };
 
-    console.log('🚀 FORCED ACCOUNTS:', forcedAccounts);
-    return forcedAccounts;
-  });
+    const forcedAccounts: Account[] = [forcedAccount];
+
+    console.log('🚨 EMERGENCY ACCOUNT CREATED:', forcedAccount);
+    setCurrentAccount(forcedAccount);
+    setUserAccounts(forcedAccounts);
+
+    return forcedAccount;
+  }, []);
   const [switchingAccount, setSwitchingAccount] = useState(false);
 
   // Dashboard context state management (REQ-023)
@@ -1163,16 +1022,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Prevent multiple simultaneous auth initializations
       const [authInitialized, setAuthInitialized] = useState(getGlobalAuthInitialized());
+  
+  // REQ-025: Prevent infinite authentication attempts by tracking session state
+  const [authenticationAttempted, setAuthenticationAttempted] = useState(false);
 
   const DEBUG_PREFIX = "🔒 AUTH_STUCK_DEBUG:";
   
   console.log(`${DEBUG_PREFIX} AUTH_CONTEXT_RENDERED`, {
-    timestamp: new Date().toISOString(),
+            timestamp: new Date().toISOString(),
     authInitialized,
     globalAuthInitialized: getGlobalAuthInitialized(),
     loading,
-    hasUser: !!user,
-    userId: user?.id,
+        hasUser: !!user,
+        userId: user?.id,
     hasCurrentAccount: !!currentAccount,
     currentAccountId: currentAccount?.id,
     currentAccountUserRole: currentAccount?.userRole,
@@ -1181,34 +1043,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // REQ-025: Consolidated State Machine useEffect - Replaces all concurrent useEffect hooks
   useEffect(() => {
+    console.log('🔄 USEEFFECT_TRIGGERED: State machine useEffect is running!');
     const DEBUG_PREFIX = "🔄 STATE_MACHINE:";
 
-    // Only log if logger is available (client-side)
-    if (typeof window !== 'undefined' && logger) {
-      logger.logAuthEvent('STATE_MACHINE_TRIGGERED', {
-        currentState: authState,
-        hasUser: !!user,
-        hasSession: !!session,
-        userAccountsCount: userAccounts?.length || 0,
-        currentAccount: !!currentAccount
-      });
-    }
+    // Temporarily disable logging during build
+    console.log(`${DEBUG_PREFIX} State machine triggered`, {
+      currentState: authState,
+      hasUser: !!user,
+      hasSession: !!session,
+      userAccountsCount: userAccounts?.length || 0,
+      currentAccount: !!currentAccount
+    });
 
     // State machine implementation
+    console.log('🔄 STATE_MACHINE_SWITCH:', { authState, hasUser: !!user, hasSession: !!session });
     switch (authState) {
       case AuthState.UNAUTHORIZED: {
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logAuthEvent('UNAUTHORIZED_STATE_ACTIVE', { attemptingRestoration: true });
-        }
+        console.log('🔄 ENTERING_UNAUTHORIZED_CASE');
+        // Log unauthorized state
+        console.log(`${DEBUG_PREFIX} Unauthorized state active`, { attemptingRestoration: true });
 
         // REQ-025: First try to restore persisted state
         const restoredState = restoreAuthState();
-        if (restoredState) {
-          // Only log if logger is available (client-side)
-          if (typeof window !== 'undefined' && logger) {
-            logger.logStateTransition(AuthState.UNAUTHORIZED, restoredState.authState, 'Restored from persisted state');
-          }
+        if (restoredState && restoredState.authState !== AuthState.UNAUTHORIZED) {
+          // Only restore if the restored state is different from UNAUTHORIZED to prevent infinite loops
+          console.log(`${DEBUG_PREFIX} Restored from persisted state`, { from: AuthState.UNAUTHORIZED, to: restoredState.authState });
 
           updateGlobalAuthState({
             user: restoredState.user,
@@ -1221,10 +1080,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return; // Exit early, state machine will handle the restored state
         }
 
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logStateTransition(AuthState.UNAUTHORIZED, AuthState.LOADING, 'No persisted state found, starting authentication');
+        // If restored state is also UNAUTHORIZED or null, clear it to prevent infinite restoration attempts
+        if (restoredState && restoredState.authState === AuthState.UNAUTHORIZED) {
+          console.log('🔄 CLEARING_PERSISTED_UNAUTHORIZED_STATE: Preventing infinite loop');
+          clearPersistedState();
         }
+
+        // REQ-025: Only attempt authentication once per session to prevent infinite loops
+        if (authenticationAttempted) {
+          console.log('🔄 AUTHENTICATION_ALREADY_ATTEMPTED: Skipping authentication to prevent infinite loop');
+          return;
+        }
+
+        console.log('🔄 STATE_TRANSITION: UNAUTHORIZED → LOADING (First authentication attempt)');
+        setAuthenticationAttempted(true);
 
         // Transition to LOADING state and start authentication
         updateGlobalAuthState({
@@ -1233,16 +1102,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         // Call authentication orchestrator with enhanced sequential loading and error recovery
-        const authMetricId = startTiming('AUTH_ORCHESTRATOR', {
-          trigger: 'state_machine',
-          currentState: authState
-        });
+        console.log('🔄 ABOUT_TO_CALL_PERFORM_AUTH: About to call performAuthentication');
 
         const performAuthentication = async () => {
-          const stepMetricId = startTiming('AUTH_USER_LOOKUP');
+          console.log('🔄 PERFORM_AUTH_CALLED: Starting authentication process');
 
           try {
+            console.log('🔄 CALLING_AUTHENTICATE_USER: About to call authenticateUser()');
             const result = await authenticateUser();
+            console.log('🔄 AUTHENTICATE_USER_RETURNED:', result);
             endTiming(stepMetricId, true, { resultState: result.state });
 
             const authDuration = performance.now() - parseInt(authMetricId.split('_')[1]);
@@ -1254,23 +1122,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
               accountCount: result.accounts?.length || 0
             });
 
-            // Only log if logger is available (client-side)
-            if (typeof window !== 'undefined' && logger) {
-              logger.logPerformance('AUTH_ORCHESTRATOR_SUCCESS', parseInt(authMetricId.split('_')[1]), true, {
-                duration: `${authDuration.toFixed(2)}ms`,
-                resultState: result.state
-              });
-            }
+            console.log('🔄 AUTH_ORCHESTRATOR_SUCCESS:', {
+              duration: `${authDuration.toFixed(2)}ms`,
+              resultState: result.state,
+              resultAction: result.action,
+              hasUser: !!result.user,
+              hasSession: !!result.session
+            });
 
             if (result.state === 'AUTHENTICATED') {
-              // Only log if logger is available (client-side)
-              if (typeof window !== 'undefined' && logger) {
-                logger.logAuthEvent('AUTH_SUCCESS_TRANSITION', {
-                  userId: result.user?.id,
-                  accountCount: result.accounts?.length,
-                  currentAccountId: result.currentAccount?.id
-                });
-              }
+              console.log('🔄 AUTH_SUCCESS_TRANSITION:', {
+                userId: result.user?.id,
+                accountCount: result.accounts?.length,
+                currentAccountId: result.currentAccount?.id
+              });
 
               updateGlobalAuthState({
                 user: result.user,
@@ -1278,6 +1143,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 accounts: result.accounts,
                 currentAccount: result.currentAccount,
                 authState: AuthState.AUTHENTICATED
+              });
+            } else if (result.state === 'UNAUTHORIZED') {
+              // REQ-025: Handle UNAUTHORIZED state - transition from LOADING to UNAUTHORIZED
+              console.log('🔄 AUTH_UNAUTHORIZED_TRANSITION:', {
+                from: AuthState.LOADING,
+                to: AuthState.UNAUTHORIZED,
+                action: result.action
+              });
+
+              updateGlobalAuthState({
+                user: null,
+                session: null,
+                accounts: [],
+                currentAccount: null,
+                authState: AuthState.UNAUTHORIZED
               });
             } else if (result.state === 'ERROR') {
               endTiming(authMetricId, false, { error: result.error });
@@ -1289,71 +1169,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
               accountCount: result.accounts?.length
             });
 
-            return result;
-          } catch (error) {
+      return result;
+    } catch (error) {
             endTiming(stepMetricId, false, { error: error.message });
             endTiming(authMetricId, false, { error: error.message });
             throw error;
           }
         };
 
-        // Use error recovery system for authentication
-        handleAuthErrorRecovery(
-          null, // No initial error
-          'authentication_flow',
-          performAuthentication, // Retry function
-          fallbackAuthenticationStrategy // Fallback function
-        ).then(recoveryResult => {
-          if (!recoveryResult.recovered) {
-            // If recovery failed, transition to error state
+        // Call authentication directly without complex error recovery
+        performAuthentication()
+          .then(result => {
+            console.log('🔄 AUTH_DIRECT_SUCCESS:', {
+              state: result.state,
+              action: result.action,
+              hasUser: !!result.user
+            });
+          })
+          .catch(error => {
             const authDuration = performance.now() - authStartTime;
-
-            // Only log if logger is available (client-side)
-            if (typeof window !== 'undefined' && logger) {
-              logger.logError('AUTH_RECOVERY_FAILED', new Error('All authentication attempts failed'), {
-                authDuration: `${authDuration.toFixed(2)}ms`,
-                context: 'authentication_flow'
-              });
-            }
+            console.error('🔄 AUTH_DIRECT_ERROR:', error, {
+              authDuration: `${authDuration.toFixed(2)}ms`,
+              authState,
+              errorMessage: error.message
+            });
 
             updateGlobalAuthState({
               authState: AuthState.ERROR,
-              error: 'Authentication failed after multiple attempts. Please check your connection and try again.'
+              error: error.message || 'Authentication failed'
             });
-          }
-        }).catch(error => {
-          const authDuration = performance.now() - authStartTime;
-
-          // Only log if logger is available (client-side)
-          if (typeof window !== 'undefined' && logger) {
-            logger.logError('AUTH_RECOVERY_EXCEPTION', error, {
-              authDuration: `${authDuration.toFixed(2)}ms`,
-              authState,
-              context: 'authentication_flow'
-            });
-          }
-
-          updateGlobalAuthState({
-            authState: AuthState.ERROR,
-            error: error.message || 'Authentication failed'
           });
-        });
 
         break;
       }
 
       case AuthState.LOADING: {
+        console.log('🔄 ENTERING_LOADING_CASE: Authentication should start now');
         // Handle loading state - authentication is in progress with sequential validation
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logAuthEvent('LOADING_STATE_ACTIVE', {
-            hasUser: !!user,
-            hasSession: !!session,
-            userAccountsCount: userAccounts?.length || 0,
-            hasCurrentAccount: !!currentAccount,
-            loadingProgress: `${[!!user, !!session, !!(userAccounts?.length), !!currentAccount].filter(Boolean).length}/4 steps complete`
-          });
-        }
+        console.log('🔄 LOADING_STATE_ACTIVE:', {
+          hasUser: !!user,
+          hasSession: !!session,
+          userAccountsCount: userAccounts?.length || 0,
+          hasCurrentAccount: !!currentAccount,
+          loadingProgress: `${[!!user, !!session, !!(userAccounts?.length), !!currentAccount].filter(Boolean).length}/4 steps complete`
+        });
 
         // Sequential validation: ensure all data is loaded in correct order
         const loadingSteps = {
@@ -1366,24 +1225,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const completedSteps = Object.values(loadingSteps).filter(Boolean).length;
         const totalSteps = Object.keys(loadingSteps).length;
 
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logAuthEvent('LOADING_PROGRESS', {
-            completedSteps,
-            totalSteps,
-            progress: `${completedSteps}/${totalSteps}`,
-            ...loadingSteps
-          });
-        }
+        console.log('🔄 LOADING_PROGRESS:', {
+          completedSteps,
+          totalSteps,
+          progress: `${completedSteps}/${totalSteps}`,
+          ...loadingSteps
+        });
 
         // If we have all required data, transition to AUTHENTICATED
         if (completedSteps === totalSteps) {
-          // Only log if logger is available (client-side)
-          if (typeof window !== 'undefined' && logger) {
-            logger.logStateTransition(AuthState.LOADING, AuthState.AUTHENTICATED, 'Sequential loading complete');
-          }
+          console.log('🔄 STATE_TRANSITION: LOADING → AUTHENTICATED (Sequential loading complete)');
           updateGlobalAuthState({
             authState: AuthState.AUTHENTICATED
+          });
+        } else if (completedSteps === 0 || (!user && !session)) {
+          // REQ-025: If no real user/session data is loaded, transition to UNAUTHORIZED
+          // This happens when there's no authentication at all, or only emergency fake data
+          console.log('🔄 STATE_TRANSITION: LOADING → UNAUTHORIZED (No real authentication found)', {
+            completedSteps,
+            hasRealUser: !!user,
+            hasRealSession: !!session,
+            hasEmergencyAccounts: !!(userAccounts?.length && !user),
+            hasEmergencyCurrentAccount: !!(currentAccount && !user)
+          });
+          updateGlobalAuthState({
+            user: null,
+            session: null,
+            accounts: [],
+            currentAccount: null,
+            authState: AuthState.UNAUTHORIZED
           });
         }
 
@@ -1391,14 +1261,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       case AuthState.AUTHENTICATED: {
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logAuthEvent('AUTHENTICATED_STATE_ACTIVE', {
-            userId: user?.id,
-            currentAccountId: currentAccount?.id,
-            userAccountsCount: userAccounts?.length || 0
-          });
-        }
+        // Log authenticated state
+        console.log(`${DEBUG_PREFIX} Authenticated state active`, {
+        userId: user?.id,
+        currentAccountId: currentAccount?.id,
+          userAccountsCount: userAccounts?.length || 0
+        });
 
         // Load dashboard permissions when authenticated
         if (user && currentAccount) {
@@ -1409,14 +1277,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       case AuthState.ERROR: {
-        // Only log if logger is available (client-side)
-        if (typeof window !== 'undefined' && logger) {
-          logger.logAuthEvent('ERROR_STATE_ACTIVE', {
-            error: authData?.error,
-            hasUser: !!user,
-            hasSession: !!session
-          });
-        }
+        // Log error state
+        console.log(`${DEBUG_PREFIX} Error state active`, {
+          error: authData?.error,
+          hasUser: !!user,
+          hasSession: !!session
+        });
 
         // REQ-025: Attempt automatic error recovery
         console.log('🚨 ERROR_STATE: Attempting automatic recovery');
@@ -1428,27 +1294,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
             console.log('🚨 ERROR_STATE: Automatic recovery failed, staying in error state');
 
             // If recovery fails, provide user guidance
-            if (typeof window !== 'undefined' && logger) {
-              logger.logAuthEvent('ERROR_STATE_RECOVERY_FAILED', {
-                error: authData?.error,
-                userGuidance: 'User should try logging in again or check their network connection'
-              });
-            }
+            console.log('🔄 ERROR_STATE_RECOVERY_FAILED:', {
+              error: authData?.error,
+              userGuidance: 'User should try logging in again or check their network connection'
+            });
           }
         }).catch(recoveryError => {
           console.error('🚨 ERROR_STATE: Recovery attempt threw exception:', recoveryError);
 
-          if (typeof window !== 'undefined' && logger) {
-            logger.logError('ERROR_STATE_RECOVERY_EXCEPTION', recoveryError, {
-              originalError: authData?.error
-            });
-          }
+          console.error('🔄 ERROR_STATE_RECOVERY_EXCEPTION:', recoveryError, {
+            originalError: authData?.error
+          });
         });
 
         break;
       }
     }
-  }, [authState, user, session, userAccounts, currentAccount, logger, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy]);
+  }, [authState, user, session, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy]);
 
   // Remove old individual useEffect hooks - now handled by state machine above
 
@@ -1478,15 +1340,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // User registration function
   const register = async (
-    email: string,
-    password: string,
+    email: string, 
+    password: string, 
     fullName?: string
   ): Promise<AuthResponse<{ user: User; session: Session }>> => {
     try {
       setLoading(true);
-
+      
       const result = await registerUser(email, password, fullName);
-
+      
       if (result.error) {
         return result;
       }
@@ -1499,16 +1361,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
           fullName: result.data.user.fullName,
           role: result.data.user.role,
         };
-
+        
         setUser(authUser);
         setSession(result.data.session);
-
+        
         // Initialize account context for new user
         await refreshAccountContext();
-
+        
         // Load properties for new user
         if (result.data) {
-          await loadUserProperties();
+          await getUserProperties(result.data.user.id);
         }
       }
 
@@ -1522,11 +1384,82 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   // REQ-025: Sign out function with state persistence cleanup
+  const signIn = useCallback(async (
+    email: string,
+    password: string
+  ): Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>> => {
+    const startTime = performance.now();
+    console.log('🔐 SIGN_IN: Starting sign in process', { email });
+
+    try {
+      // Reset the authentication attempted flag since user is manually logging in
+      setAuthenticationAttempted(false);
+      console.log('🔐 SIGN_IN: Reset authentication attempted flag for manual login');
+
+      // Call the Supabase sign in function
+      const result = await authSignIn(email, password);
+
+      if (result.data && !result.error) {
+        const duration = performance.now() - startTime;
+        console.log('🔐 SIGN_IN: Sign in successful', {
+          userId: result.data.user.id,
+          email: result.data.user.email,
+          duration: `${duration.toFixed(2)}ms`
+        });
+
+        // Load accounts for the user
+        const accounts = await getAccountsForUser(result.data.user.id);
+        const defaultAccount = accounts.length > 0 ? accounts[0] : null;
+
+        // Update auth state
+        updateGlobalAuthState({
+          user: result.data.user,
+          session: result.data.session,
+          accounts,
+          currentAccount: defaultAccount,
+          authState: AuthState.AUTHENTICATED
+        });
+
+        return {
+          success: true,
+          data: {
+            user: result.data.user,
+            session: result.data.session,
+            accounts,
+            defaultAccount
+          }
+        };
+      } else {
+        const duration = performance.now() - startTime;
+        console.error('🔐 SIGN_IN: Sign in failed', {
+          error: result.error,
+          duration: `${duration.toFixed(2)}ms`
+        });
+
+        return {
+          success: false,
+          error: result.error || 'Sign in failed'
+        };
+      }
+    } catch (error) {
+      const duration = performance.now() - startTime;
+      console.error('🔐 SIGN_IN: Sign in threw exception', {
+        error: error instanceof Error ? error.message : error,
+        duration: `${duration.toFixed(2)}ms`
+      });
+
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'An unexpected error occurred'
+      };
+    }
+  }, [updateGlobalAuthState]);
+
   const signOut = useCallback(async (): Promise<void> => {
     const startTime = performance.now();
 
     try {
-      logger.logAuthEvent('SIGN_OUT_STARTED', { hasUser: !!user, hasSession: !!session });
+      console.log('🔄 SIGN_OUT_STARTED:', { hasUser: !!user, hasSession: !!session });
 
       // Clear persisted state first to prevent restoration
       clearPersistedState();
@@ -1550,11 +1483,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.removeItem('currentAccount');
         localStorage.removeItem('auth_logs');
       } catch (storageError) {
-        logger.logError('CLEAR_STORAGE_ERROR', storageError);
+        console.error('🔄 CLEAR_STORAGE_ERROR:', storageError);
       }
 
       const duration = performance.now() - startTime;
-      logger.logPerformance('SIGN_OUT_SUCCESS', startTime, true, {
+      console.log('🔄 SIGN_OUT_SUCCESS:', {
         duration: `${duration.toFixed(2)}ms`
       });
 
@@ -1564,7 +1497,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     } catch (error) {
       const duration = performance.now() - startTime;
-      logger.logError('SIGN_OUT_FAILED', error, {
+      console.error('🔄 SIGN_OUT_FAILED:', error, {
         duration: `${duration.toFixed(2)}ms`
       });
 
@@ -1576,7 +1509,210 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       throw error;
     }
-  }, [logger, clearPersistedState, updateGlobalAuthState, user, session]);
+  }, [clearPersistedState, updateGlobalAuthState, user, session]);
+
+  // REQ-025: Refresh account context function
+  const refreshAccountContext = useCallback(async (): Promise<void> => {
+    if (!user) return;
+
+    try {
+      console.log('🔄 REFRESH_ACCOUNT_CONTEXT: Refreshing account context for user', user.id);
+
+      // Reload accounts for the current user
+      const accounts = await getAccountsForUser(user.id);
+      const currentAccountId = localStorage.getItem('currentAccount');
+      const currentAccount = currentAccountId
+        ? accounts.find(acc => acc.id === currentAccountId) || accounts[0]
+        : accounts[0];
+
+      // Update the account state
+      setUserAccounts(accounts);
+      setCurrentAccount(currentAccount);
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('availableAccounts', JSON.stringify(accounts));
+      if (currentAccount) {
+        localStorage.setItem('currentAccount', currentAccount.id);
+      }
+
+      console.log('🔄 REFRESH_ACCOUNT_CONTEXT: Successfully refreshed account context', {
+        accountCount: accounts.length,
+        currentAccountId: currentAccount?.id
+      });
+    } catch (error) {
+      console.error('🔄 REFRESH_ACCOUNT_CONTEXT: Failed to refresh account context:', error);
+    }
+  }, [user]);
+
+  // REQ-025: Clear current account function
+  const clearCurrentAccount = useCallback(() => {
+    console.log('🔄 CLEAR_CURRENT_ACCOUNT: Clearing current account');
+    setCurrentAccount(null);
+    localStorage.removeItem('currentAccount');
+  }, []);
+
+  // REQ-025: Navigate to section function
+  const navigateToSection = useCallback((section: DashboardSection, preserveHistory?: boolean) => {
+    console.log('🔄 NAVIGATE_TO_SECTION:', { section, preserveHistory });
+
+    setCurrentDashboardSection(section);
+
+    if (preserveHistory) {
+      setNavigationHistory(prev => [...prev, {
+        section,
+        timestamp: Date.now(),
+        source: 'navigation'
+      }]);
+    }
+  }, []);
+
+  // REQ-025: Go back function
+  const goBack = useCallback(() => {
+    if (navigationHistory.length > 0) {
+      const previousEntry = navigationHistory[navigationHistory.length - 1];
+      console.log('🔄 GO_BACK: Going back to previous section', previousEntry);
+
+      setCurrentDashboardSection(previousEntry.section);
+      setNavigationHistory(prev => prev.slice(0, -1)); // Remove the last entry
+    } else {
+      console.log('🔄 GO_BACK: No navigation history, staying on current section');
+    }
+  }, [navigationHistory]);
+
+  // REQ-025: Can navigate to section function
+  const canNavigateToSection = useCallback((section: DashboardSection): boolean => {
+    // Basic permission check - can be expanded based on user roles and permissions
+    if (!user) return false;
+    if (!currentAccount) return false;
+
+    // All authenticated users with an account can navigate to any section for now
+    // This can be extended with more complex permission logic
+    return true;
+  }, [user, currentAccount]);
+
+  // REQ-025: Check permission function
+  const checkPermission = useCallback(async (permission: PermissionKey): Promise<PermissionCheck> => {
+    console.log('🔄 CHECK_PERMISSION:', { permission, userId: user?.id, accountId: currentAccount?.id });
+
+    // Basic permission check - can be expanded based on user roles and permissions
+    if (!user) {
+      return {
+        granted: false,
+        reason: 'User not authenticated',
+        permission,
+        userId: null,
+        accountId: null
+      };
+    }
+
+    if (!currentAccount) {
+      return {
+        granted: false,
+        reason: 'No current account selected',
+        permission,
+        userId: user.id,
+        accountId: null
+      };
+    }
+
+    // Simple permission logic - owners have all permissions, others have limited access
+    const userRole = currentAccount.userRole;
+    const hasPermission = userRole === 'owner' ||
+                         (userRole === 'admin' && ['read', 'write', 'manage'].includes(permission)) ||
+                         (userRole === 'member' && ['read', 'write'].includes(permission));
+
+    return {
+      granted: hasPermission,
+      reason: hasPermission ? 'Permission granted' : 'Insufficient permissions',
+      permission,
+        userId: user.id,
+        accountId: currentAccount.id
+    };
+  }, [user, currentAccount]);
+
+  // REQ-025: Has permission sync function (synchronous version)
+  const hasPermissionSync = useCallback((permission: PermissionKey): boolean => {
+    // Synchronous version of permission check
+    if (!user) return false;
+    if (!currentAccount) return false;
+
+    // Simple permission logic - owners have all permissions, others have limited access
+    const userRole = currentAccount.userRole;
+    return userRole === 'owner' ||
+           (userRole === 'admin' && ['read', 'write', 'manage'].includes(permission)) ||
+           (userRole === 'member' && ['read', 'write'].includes(permission));
+  }, [user, currentAccount]);
+
+  // REQ-025: Load dashboard permissions function
+  const loadDashboardPermissions = useCallback(async (): Promise<void> => {
+    if (!user || !currentAccount) {
+      console.log('🔄 LOAD_DASHBOARD_PERMISSIONS: No user or current account, skipping');
+      return;
+    }
+
+    console.log('🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user', user.id);
+
+    try {
+      // Load permissions based on user role and account
+      const userRole = currentAccount.userRole;
+      const permissions: Record<string, boolean> = {};
+
+      // Define permissions based on role
+      if (userRole === 'owner') {
+        permissions.read = true;
+        permissions.write = true;
+        permissions.manage = true;
+        permissions.delete = true;
+        permissions.admin = true;
+      } else if (userRole === 'admin') {
+        permissions.read = true;
+        permissions.write = true;
+        permissions.manage = true;
+        permissions.delete = false;
+        permissions.admin = false;
+      } else if (userRole === 'member') {
+        permissions.read = true;
+        permissions.write = true;
+        permissions.manage = false;
+        permissions.delete = false;
+        permissions.admin = false;
+      } else {
+        permissions.read = true;
+        permissions.write = false;
+        permissions.manage = false;
+        permissions.delete = false;
+        permissions.admin = false;
+      }
+
+      setDashboardPermissions(permissions);
+      console.log('🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions', permissions);
+    } catch (error) {
+      console.error('🔄 LOAD_DASHBOARD_PERMISSIONS: Failed to load permissions:', error);
+    }
+  }, [user, currentAccount]);
+
+  // REQ-025: Get user role function
+  const getUserRole = useCallback((): UserRole => {
+    if (!currentAccount) {
+      console.log('🔄 GET_USER_ROLE: No current account, returning viewer');
+      return 'viewer';
+    }
+
+    const role = currentAccount.userRole;
+    console.log('🔄 GET_USER_ROLE: User role is', role);
+    return role;
+  }, [currentAccount]);
+
+  // REQ-025: Get account role function
+  const getAccountRole = useCallback(async (): Promise<AccountRole | null> => {
+    if (!currentAccount) {
+      console.log('🔄 GET_ACCOUNT_ROLE: No current account, returning null');
+      return null;
+    }
+
+    console.log('🔄 GET_ACCOUNT_ROLE: Account role is', currentAccount.userRole);
+    return currentAccount.userRole as AccountRole;
+  }, [currentAccount]);
 
   // Enhanced context value with account management and dashboard permissions (REQ-023)
   const contextValue: AuthContextType = {
@@ -1584,6 +1720,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     session,
     loading,
+    authState, // REQ-025: Add authState for sequential authentication state machine
     isAdmin: user ? isAdmin(user) : false,
 
     // Property management (legacy)
@@ -1595,41 +1732,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
     userAccounts,
     switchingAccount,
 
-  // Dashboard context state management (REQ-023)
-  currentDashboardSection,
-  navigationHistory,
-  dashboardPermissions,
-  permissionsLoading,
+    // Dashboard context state management (REQ-023)
+    currentDashboardSection,
+    navigationHistory,
+    dashboardPermissions,
+    permissionsLoading,
 
-  // Authentication functions
-  signIn,
-  signOut,
+    // Authentication functions
+    signIn,
+    signOut,
   refreshSession,
-  register,
+    register,
 
-  // Property functions (legacy)
-  getUserProperties: loadUserProperties,
-  setSelectedProperty,
+    // Property functions (legacy)
+    getUserProperties,
+    setSelectedProperty,
 
-  // Account functions (multi-tenant)
-  setCurrentAccount,
-  switchToAccount,
-  refreshAccountContext,
-  clearCurrentAccount,
+    // Account functions (multi-tenant)
+    setCurrentAccount,
+    switchToAccount: switchAccount,
+    refreshAccountContext,
+    clearCurrentAccount,
 
-  // Dashboard context functions (REQ-023)
-  setCurrentDashboardSection,
-  navigateToSection,
-  goBack,
-  canNavigateToSection,
+    // Dashboard context functions (REQ-023)
+    setCurrentDashboardSection,
+    navigateToSection,
+    goBack,
+    canNavigateToSection,
 
-  // Permission helper functions (REQ-023)
-  checkPermission,
-  hasPermission: hasPermissionSync,
-  refreshPermissions: loadDashboardPermissions,
-  getUserRole,
-  getAccountRole,
-};
+    // Permission helper functions (REQ-023)
+    checkPermission,
+    hasPermission: hasPermissionSync,
+    refreshPermissions: loadDashboardPermissions,
+    getUserRole,
+    getAccountRole,
+  };
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -1638,8 +1775,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
+// REQ-025: useAccountContext hook for backward compatibility
+export function useAccountContext() {
+  const { userAccounts, currentAccount, authState } = useAuth();
+  
+  return {
+    userAccounts,
+    currentAccount,
+    authState,
+    loading: authState === AuthState.LOADING,
+    error: null, // Simplified for compatibility
+    // Add any other account context methods as needed
+  };
+}
+
 // Hook to use authentication context
 export function useAuth() {
+  console.log('🔄 USEAUTH_CALLED: useAuth hook is being called!');
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

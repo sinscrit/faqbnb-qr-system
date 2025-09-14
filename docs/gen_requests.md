@@ -2168,4 +2168,130 @@ The authentication system currently uses 9 concurrent flows that compete for Rea
 
 ---
 
-*Next Request: REQ-026* 
+## REQ-026: UI Enhancement - Relocate Print QR Codes Button
+**Date**: September 10, 2025  
+**Type**: UI Enhancement  
+**Complexity**: 2 Points (Simple UI Reorganization)
+
+### Request Summary
+Relocate the "Print QR Codes" button from the QR Code Management section to the top right header area of the property detail page, replacing the redundant email display.
+
+### Detailed Requirements
+
+#### 1. Remove Redundant Email Display
+- Remove email display from top right of property detail page header
+- Keep existing email display in top left area
+- **File**: `src/app/dashboard/properties/[propertyId]/page.tsx`
+
+#### 2. Remove QR Code Management Section
+- Remove entire "QR Code Management" section from property information area
+- Remove associated description text: "Generate and print QR codes for all items in this property"
+- Remove item count text: "X items available for QR codes"
+- **File**: `src/app/dashboard/properties/[propertyId]/page.tsx`
+
+#### 3. Relocate Print QR Codes Button
+- Move "Print QR Codes" button to top right header area
+- Maintain current action button styling (blue background, white text, printer icon)
+- Preserve existing functionality and event handlers
+- **File**: `src/app/dashboard/properties/[propertyId]/page.tsx`
+
+### Files Affected
+- **Primary**: `src/app/dashboard/properties/[propertyId]/page.tsx`
+  - Header section reorganization
+  - QR Code Management section removal
+  - Button relocation and styling preservation
+
+### Current Implementation Status
+- ✅ QR print functionality already working
+- ✅ Button event handlers implemented
+- ✅ QR print page and manager functional
+- 🔄 Only UI reorganization needed
+
+### Complexity Analysis
+
+#### Low Complexity Factors (2 points total)
+##### UI Element Relocation (1 point)
+- **Simple DOM Reorganization**: Moving existing button element to different container
+- **Preserved Functionality**: No changes to event handlers or logic
+- **Maintained Styling**: Keep existing button appearance
+- **Low Risk**: Purely presentational change
+
+##### Section Removal (1 point)
+- **Clean Code Removal**: Delete unused QR Code Management section
+- **No Dependency Impact**: Other components unaffected
+- **Simplified UI**: Cleaner interface with better button placement
+- **Low Risk**: Removing redundant elements
+
+### Implementation Plan
+
+#### Phase 1: Header Reorganization (1 point)
+1. Locate current email display in header
+2. Replace with Print QR Codes button
+3. Ensure proper styling and positioning
+4. Test button accessibility in new location
+
+#### Phase 2: Section Cleanup (1 point)
+1. Remove QR Code Management section from property information
+2. Remove associated text and item counts
+3. Verify clean removal without broken layouts
+4. Test overall page appearance
+
+### Expected Benefits
+✅ **Cleaner UI**: Remove redundant email display  
+✅ **Better Accessibility**: QR print function in prominent header location  
+✅ **Improved UX**: Quicker access to print functionality  
+✅ **Consistent Design**: Better button placement following UI patterns  
+
+### Risk Assessment
+- **Low Risk**: Simple UI reorganization with no logic changes
+- **Low Impact**: Purely visual improvement
+- **No Downtime**: Safe to implement without functionality disruption
+- **High Benefit**: Improved user experience and interface clarity
+
+---
+
+## REQ-027: BUG FIX REQUEST - Browser Print Including UI Elements
+
+**Date**: September 2025  
+**Points**: 5  
+**Type**: Bug Fix  
+**Status**: Pending
+
+### Problem Description
+When using the "Print QR Codes" button, the browser prints the entire page including UI elements instead of just the QR codes, leading to wasted ink and unprofessional output.
+
+### Current Implementation
+**Files**:
+- `src/components/QRCodePrintManager.tsx` - Contains print trigger using `window.print()`
+- `src/components/QRCodePrintPreview.tsx` - Print preview and handling
+- `src/styles/print.css` - Current print-specific styles
+
+### Proposed Solution
+Create a dedicated print route (`/print/qr-codes/[propertyId]`) that:
+1. Only renders printable content
+2. Has no UI elements
+3. Auto-triggers print
+4. Handles window management
+
+### Complexity Analysis
+**Technical Complexity**: Medium
+- Route implementation
+- Window management
+- State preservation
+- Print event handling
+
+**Points Breakdown**:
+- Route & Component: 2 points
+- Window Management: 1 point
+- Print Optimization: 1 point
+- Testing: 1 point
+Total: 5 points
+
+### Success Criteria
+1. Only QR codes and labels in print
+2. No UI elements
+3. Automatic print triggering
+4. Clean window management
+5. Cross-browser compatibility
+
+*Next Request: REQ-028* 

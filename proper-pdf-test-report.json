@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-09-10T13:27:34.648Z",
+  "apiTest": {
+    "success": false,
+    "status": 401,
+    "error": "{\"success\":false,\"error\":\"Invalid or expired token\",\"code\":\"UNAUTHORIZED\"}"
+  },
+  "uiTest": {
+    "title": "FAQBNB - QR Item Display System",
+    "hasErrorMessage": false,
+    "bodyText": "FAQBNB Dashboard👤 UserLogout📊Dashboard📦Items🏠My Properties📈Analytics🖨️ QR Code Print ManagerGenerate and print QR codes for property itemsQR Code Print Manager📋Select Items⚙️Configure Print🖨️Preview & PrintLoading items...Property ID: test-property-123 • 0 total itemsConfigure Print →Cancelr",
+    "buttons": [
+      "Logout",
+      "📊Dashboard",
+      "📦Items",
+      "🏠My Properties",
+      "📈Analytics",
+      "",
+      "Configure Print →",
+      "Cancel"
+    ]
+  },
+  "conclusion": "PDF API module needs investigation."
+}

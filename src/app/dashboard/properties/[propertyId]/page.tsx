@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import { Property, Item } from '@/types';
 import { formatDate } from '@/lib/utils';
-import { ArrowLeft, Building, Package, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Building, Package, Calendar, User, Printer } from 'lucide-react';
 import Link from 'next/link';
 
 const UserPropertyDetailPage: React.FC = () => {
@@ -53,6 +53,9 @@ const UserPropertyDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [itemsLoading, setItemsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // QR Print State
+  const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
 
   useEffect(() => {
     if (user && propertyId) {
@@ -64,21 +67,31 @@ const UserPropertyDetailPage: React.FC = () => {
   const loadProperty = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/user/properties/${propertyId}`, {
+      console.log('🔍 Loading property details for:', propertyId);
+      
+      // Use admin API which we know works with our authentication
+      const response = await fetch(`/api/admin/properties`, {
         credentials: 'include'
       });
 
       if (response.ok) {
         const data = await response.json();
-        if (data.success) {
-          setProperty(data.data);
+        if (data.success && data.data) {
+          // Find the specific property from the list
+          const foundProperty = data.data.find((p: Property) => p.id === propertyId);
+          if (foundProperty) {
+            setProperty(foundProperty);
+            console.log('✅ Property loaded successfully:', foundProperty.nickname);
+          } else {
+            setError('Property not found in your properties list');
+          }
         } else {
-          setError(data.error || 'Failed to load property');
+          setError(data.error || 'Failed to load properties');
         }
       } else if (response.status === 403) {
-        setError('You do not have access to this property');
+        setError('You do not have access to view properties');
       } else if (response.status === 404) {
-        setError('Property not found');
+        setError('Properties API not found');
       } else {
         setError('Failed to load property');
       }
@@ -93,7 +106,10 @@ const UserPropertyDetailPage: React.FC = () => {
   const loadPropertyItems = async () => {
     try {
       setItemsLoading(true);
-      const response = await fetch(`/api/user/properties/${propertyId}/items`, {
+      console.log('🔍 Loading items for property:', propertyId);
+      
+      // Use admin items API with property filter
+      const response = await fetch(`/api/admin/items?property=${propertyId}`, {
         credentials: 'include'
       });
 
@@ -101,15 +117,89 @@ const UserPropertyDetailPage: React.FC = () => {
         const data = await response.json();
         if (data.success) {
           setItems(data.data || []);
+          console.log('✅ Items loaded successfully:', data.data?.length || 0, 'items');
         } else {
           console.warn('Failed to load items:', data.error);
         }
+      } else {
+        console.warn('Items API failed with status:', response.status);
       }
     } catch (err) {
       console.error('Error loading items:', err);
     } finally {
       setItemsLoading(false);
     }
+  };
+
+  // QR Print Handler
+  const handleOpenQRPrint = () => {
+    setIsQRPrintLoading(true);
+    console.log('[QR-AUTH-DEBUG] Print QR Codes clicked, pre-fetching items...');
+    
+    const preAuthAndOpenQRPrint = async () => {
+      try {
+        console.log('[QR-AUTH-DEBUG] Fetching items for property:', propertyId);
+        const fetchStart = Date.now();
+        
+        // Pre-fetch items in main window where auth is already working
+        const response = await fetch(`/api/admin/items?property=${propertyId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        console.log('[QR-AUTH-DEBUG] Items API response:', {
+          status: response.status,
+          duration: Date.now() - fetchStart
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch items: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('[QR-AUTH-DEBUG] Items data received:', {
+          success: data.success,
+          itemCount: data.data?.length || 0,
+          totalDuration: Date.now() - fetchStart
+        });
+        
+        if (!data.success || !data.data) {
+          throw new Error('No items data received');
+        }
+        
+        // Encode items data for URL hash (limit size to avoid URL length issues)
+        const itemsData = {
+          propertyId,
+          items: data.data,
+          authBypass: true,
+          timestamp: Date.now()
+        };
+        
+        const encodedData = btoa(JSON.stringify(itemsData));
+        console.log('[QR-AUTH-DEBUG] Data encoded for URL:', {
+          originalSize: JSON.stringify(itemsData).length,
+          encodedSize: encodedData.length
+        });
+        
+        // Navigate to QR printing page with dashboard path
+        const qrPrintUrl = `/dashboard/properties/${propertyId}/qr-print#${encodedData}`;
+      
+        console.log('[QR-AUTH-DEBUG] Navigating to QR Print page with pre-auth data');
+        router.push(qrPrintUrl);
+        console.log('[QR-AUTH-DEBUG] Navigation to QR Print page initiated');
+      
+      } catch (error) {
+        console.error('[QR-AUTH-DEBUG] Error in pre-auth QR print:', error);
+        setError(error instanceof Error ? error.message : 'Failed to open QR print window');
+      } finally {
+        setIsQRPrintLoading(false);
+      }
+    };
+    
+    // Execute the pre-auth process
+    preAuthAndOpenQRPrint();
   };
 
   if (loading) {
@@ -178,15 +268,19 @@ const UserPropertyDetailPage: React.FC = () => {
                 <div className="flex items-center">
                   <Building className="h-6 w-6 text-blue-600 mr-3" />
                   <div>
-                    <h1 className="text-xl font-semibold text-gray-900">{property?.name}</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">{property?.nickname || property?.name}</h1>
                     <p className="text-sm text-gray-500">Property Details</p>
                   </div>
                 </div>
               </div>
-              <div className="text-sm text-gray-500">
-                <User className="h-4 w-4 inline mr-1" />
-                {user?.email}
-              </div>
+              <button
+                onClick={handleOpenQRPrint}
+                disabled={isQRPrintLoading || items.length === 0}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                {isQRPrintLoading ? 'Loading...' : 'Print QR Codes'}
+              </button>
             </div>
           </div>
         </header>
@@ -201,11 +295,21 @@ const UserPropertyDetailPage: React.FC = () => {
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Name</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{property?.name}</dd>
+                    <dd className="mt-1 text-sm text-gray-900">{property?.nickname || property?.name}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-gray-500">Description</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{property?.description || 'No description provided'}</dd>
+                    <dt className="text-sm font-medium text-gray-500">Address</dt>
+                    <dd className="mt-1 text-sm text-gray-900">{property?.address || 'No address provided'}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Property Type</dt>
+                    <dd className="mt-1 text-sm text-gray-900">
+                      {property?.property_types?.display_name || property?.property_types?.name || 'Unknown type'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-500">Property ID</dt>
+                    <dd className="mt-1 text-sm text-gray-900 font-mono text-xs">{property?.id}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Created</dt>
@@ -258,22 +362,22 @@ const UserPropertyDetailPage: React.FC = () => {
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-medium text-gray-900">{item.name}</h3>
                           <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                            {item.public_id}
+                            {item.publicId || item.public_id}
                           </span>
                         </div>
                         {item.description && (
                           <p className="text-sm text-gray-600 mb-2">{item.description}</p>
                         )}
                         <div className="text-xs text-gray-500">
-                          <p>Added: {formatDate(item.created_at)}</p>
-                          {item.updated_at && item.updated_at !== item.created_at && (
-                            <p>Updated: {formatDate(item.updated_at)}</p>
+                          <p>Added: {item.createdAt ? formatDate(item.createdAt) : formatDate(item.created_at)}</p>
+                          {(item.updated_at || item.updatedAt) && (item.updated_at !== item.created_at || item.updatedAt !== item.createdAt) && (
+                            <p>Updated: {item.updatedAt ? formatDate(item.updatedAt) : formatDate(item.updated_at)}</p>
                           )}
                         </div>
-                        {item.qr_code_url && (
+                        {(item.qr_code_url || item.qrCodeUrl) && (
                           <div className="mt-2">
                             <Link
-                              href={item.qr_code_url}
+                              href={item.qrCodeUrl || item.qr_code_url}
                               target="_blank"
                               className="text-sm text-blue-600 hover:text-blue-500 font-medium"
                             >

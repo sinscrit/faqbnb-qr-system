@@ -1,0 +1,98 @@
+{
+  "timestamp": "2025-09-10T12:58:10.609Z",
+  "browserQRs": [
+    {
+      "index": 1,
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA...",
+      "srcLength": 274,
+      "naturalWidth": 256,
+      "naturalHeight": 256,
+      "complete": true,
+      "visible": true
+    },
+    {
+      "index": 2,
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA...",
+      "srcLength": 274,
+      "naturalWidth": 256,
+      "naturalHeight": 256,
+      "complete": true,
+      "visible": true
+    },
+    {
+      "index": 3,
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA...",
+      "srcLength": 274,
+      "naturalWidth": 256,
+      "naturalHeight": 256,
+      "complete": true,
+      "visible": true
+    },
+    {
+      "index": 4,
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA...",
+      "srcLength": 274,
+      "naturalWidth": 256,
+      "naturalHeight": 256,
+      "complete": true,
+      "visible": true
+    },
+    {
+      "index": 5,
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA...",
+      "srcLength": 274,
+      "naturalWidth": 256,
+      "naturalHeight": 256,
+      "complete": true,
+      "visible": true
+    }
+  ],
+  "pdfSizes": {
+    "current": 216953,
+    "screen": 294394,
+    "override": 322207
+  },
+  "printModeAnalysis": {
+    "qrImagesFound": 5,
+    "qrImages": [
+      {
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "width": "100px",
+        "height": "100px"
+      },
+      {
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "width": "100px",
+        "height": "100px"
+      },
+      {
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "width": "100px",
+        "height": "100px"
+      },
+      {
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "width": "100px",
+        "height": "100px"
+      },
+      {
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "width": "100px",
+        "height": "100px"
+      }
+    ],
+    "totalElements": 110,
+    "visibleElements": 107,
+    "hiddenElements": 3
+  }
+}

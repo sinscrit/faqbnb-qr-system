@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-09-10T12:52:05.256Z",
+  "testResults": {
+    "qrCodesFound": 5,
+    "pdfSizes": {
+      "screen": 294394,
+      "override": 287896,
+      "minimal": 31326
+    },
+    "imageLoadingStatus": [
+      {
+        "complete": true,
+        "naturalWidth": 256,
+        "naturalHeight": 256,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA..."
+      },
+      {
+        "complete": true,
+        "naturalWidth": 256,
+        "naturalHeight": 256,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA..."
+      },
+      {
+        "complete": true,
+        "naturalWidth": 256,
+        "naturalHeight": 256,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA..."
+      },
+      {
+        "complete": true,
+        "naturalWidth": 256,
+        "naturalHeight": 256,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA..."
+      },
+      {
+        "complete": true,
+        "naturalWidth": 256,
+        "naturalHeight": 256,
+        "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAA..."
+      }
+    ]
+  }
+}

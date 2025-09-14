@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-09-10T11:07:27.357Z",
+  "testType": "REAL_QR_GENERATION_TEST",
+  "results": {
+    "qrGeneration": {
+      "imageCount": 0,
+      "canvasCount": 0,
+      "images": [],
+      "bodyText": ""
+    },
+    "printVisibility": {
+      "printMode": true,
+      "imageCount": 0,
+      "visibleImages": 0
+    },
+    "filesGenerated": [
+      "real-qr-test.png",
+      "real-qr-test-print.png",
+      "real-qr-test.pdf"
+    ]
+  },
+  "verdict": "QR_CODES_BROKEN"
+}

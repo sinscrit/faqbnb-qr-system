@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-09-10T13:28:57.470Z",
+  "moduleLoaded": true,
+  "availableFunctions": [
+    "generatePDFsFromJSON",
+    "generateSinglePDF",
+    "generatePDFBuffer",
+    "generateQRCodeBuffer",
+    "convertToPoints",
+    "getPaperSize",
+    "getMarginSize",
+    "getQRCodeSize"
+  ],
+  "testResults": {
+    "bufferGeneration": "attempted",
+    "fileGeneration": "attempted",
+    "qrGeneration": "attempted"
+  },
+  "conclusion": "PDF module can be used directly without API authentication"
+}

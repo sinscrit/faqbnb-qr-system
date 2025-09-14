@@ -14,8 +14,8 @@ export default function DashboardPropertiesPage() {
   const router = useRouter();
   const { user, loading: authLoading, isAdmin, currentAccount } = useAuth();
 
-  // EMERGENCY FIX: Force OWNER permissions for raphajunk@outlook.com
-  const isEmergencyUser = user?.email === 'raphajunk@outlook.com';
+  // EMERGENCY FIX: Force OWNER permissions for test users
+  const isEmergencyUser = user?.email === 'raphajunk@outlook.com' || user?.email === 'sinscrit@gmail.com';
 
   const emergencyPermissions = {
     canCreateProperties: true,

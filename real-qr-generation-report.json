@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-09-10T13:36:12.909Z",
+  "generatedQRCodes": 5,
+  "items": [
+    {
+      "id": "9659f771-6f3b-40cc-a906-57bbb451788f",
+      "name": "Samsung 65\" QLED Smart TV",
+      "url": "http://localhost:3000/items/9659f771-6f3b-40cc-a906-57bbb451788f",
+      "qrGenerated": true,
+      "qrDataLength": 3266
+    },
+    {
+      "id": "f2b82987-a2a4-4de2-94db-f8924dc096d5",
+      "name": "Keurig K-Elite Coffee Maker",
+      "url": "http://localhost:3000/items/f2b82987-a2a4-4de2-94db-f8924dc096d5",
+      "qrGenerated": true,
+      "qrDataLength": 3242
+    },
+    {
+      "id": "0d92cbeb-a61f-4492-9346-6ab03363fdab",
+      "name": "Nest Learning Thermostat",
+      "url": "http://localhost:3000/items/0d92cbeb-a61f-4492-9346-6ab03363fdab",
+      "qrGenerated": true,
+      "qrDataLength": 3358
+    },
+    {
+      "id": "1c8e4723-5186-41f3-b4bd-11b614a77bdb",
+      "name": "Bosch 800 Series Dishwasher",
+      "url": "http://localhost:3000/items/1c8e4723-5186-41f3-b4bd-11b614a77bdb",
+      "qrGenerated": true,
+      "qrDataLength": 3346
+    },
+    {
+      "id": "8d678bd0-e4f7-495f-b4cd-43756813e23a",
+      "name": "Samsung WF45T6000AW Washing Machine",
+      "url": "http://localhost:3000/items/8d678bd0-e4f7-495f-b4cd-43756813e23a",
+      "qrGenerated": true,
+      "qrDataLength": 3270
+    }
+  ],
+  "codeSnippet": "updated-demo-qr-map.txt"
+}

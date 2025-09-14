@@ -41,6 +41,23 @@ const nextConfig = {
     };
     
     return config;
+  },
+
+  // Configure page routes
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  async rewrites() {
+    return [
+      {
+        source: '/print/qr-codes/:propertyId',
+        destination: '/print/qr-codes/[propertyId]',
+        has: [
+          {
+            type: 'query',
+            key: 'data',
+          },
+        ],
+      },
+    ];
   }
   // Font preloading headers temporarily disabled to prevent Google Fonts 404 errors causing flickering overlay
   // async headers() {

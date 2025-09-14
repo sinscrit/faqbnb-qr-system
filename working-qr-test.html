@@ -1,0 +1,74 @@
+
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { 
+            margin: 20mm; 
+            font-family: Arial, sans-serif; 
+          }
+          .qr-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15mm; 
+          }
+          .qr-item { 
+            text-align: center; 
+            page-break-inside: avoid; 
+          }
+          .qr-image { 
+            width: 30mm; 
+            height: 30mm; 
+            border: 1px solid black; 
+            display: block; 
+            margin: 0 auto 5mm auto;
+          }
+          .qr-label { 
+            font-size: 10pt; 
+            color: black; 
+            word-wrap: break-word;
+            max-width: 35mm;
+          }
+          @media print {
+            .qr-image { 
+              width: 30mm !important; 
+              height: 30mm !important; 
+              border: 1px solid black !important;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>QR Codes (File-based)</h1>
+        <div class="qr-grid">
+          
+            <div class="qr-item">
+              <img src="file:///Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images/qr-1.png" class="qr-image" alt="QR Code for Samsung 65" QLED Smart TV">
+              <div class="qr-label">QR Code for Samsung 65" QLED Smart TV</div>
+            </div>
+          
+            <div class="qr-item">
+              <img src="file:///Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images/qr-2.png" class="qr-image" alt="QR Code for Keurig K-Elite Coffee Maker">
+              <div class="qr-label">QR Code for Keurig K-Elite Coffee Maker</div>
+            </div>
+          
+            <div class="qr-item">
+              <img src="file:///Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images/qr-3.png" class="qr-image" alt="QR Code for Nest Learning Thermostat">
+              <div class="qr-label">QR Code for Nest Learning Thermostat</div>
+            </div>
+          
+            <div class="qr-item">
+              <img src="file:///Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images/qr-4.png" class="qr-image" alt="QR Code for Bosch 800 Series Dishwasher">
+              <div class="qr-label">QR Code for Bosch 800 Series Dishwasher</div>
+            </div>
+          
+            <div class="qr-item">
+              <img src="file:///Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/temp-qr-images/qr-5.png" class="qr-image" alt="QR Code for Samsung WF45T6000AW Washing Machine">
+              <div class="qr-label">QR Code for Samsung WF45T6000AW Washing Machine</div>
+            </div>
+          
+        </div>
+        <p>Generated 5 QR codes from local files</p>
+      </body>
+      </html>
+    
