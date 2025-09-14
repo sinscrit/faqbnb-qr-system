@@ -2,7 +2,7 @@
 
 This document describes the use cases implemented in the FAQBNB QR Item Display System.
 
-**Last Updated**: Wed Sep 4 10:15:00 CEST 2025 - UC-025 Sequential Authentication State Machine Added
+**Last Updated**: September 14, 2025 03:02:28 CEST - UC-027 Print-Only View Added
 
 ---
 
@@ -608,6 +608,140 @@ System administrators can efficiently copy registration links with pre-filled ac
 - **Data Validation**: Input sanitization and validation for all link components
 - **Audit Trail**: Action logging maintains accountability for admin operations
 - **Secure URLs**: Generated links use secure HTTPS protocol in production
+
+---
+
+## UC-027: Print-Only View for QR Code Generation
+**Origin**: Request #027 from gen_requests.md (BUG FIX REQUEST - Browser Print Including UI Elements)
+**Implementation Status**: ✅ COMPLETED
+**Date Implemented**: September 14, 2025
+
+### Description
+The system provides a dedicated print-only view for QR code generation, ensuring that only QR codes and their labels are included in the printed output. This feature eliminates the inclusion of UI elements in printed materials and provides a professional, clean output suitable for property management use.
+
+### Actors
+- **Primary**: Property Manager/Administrator
+- **Secondary**: Maintenance Staff
+- **Tertiary**: Print Service Provider
+
+### Preconditions
+- User has authenticated access to QR code generation
+- User has selected items for QR code generation
+- QR codes have been successfully generated
+- User has access to browser print functionality
+
+### Main Flow
+
+#### UC027.1 - Print Route Access
+1. User clicks "Print QR Codes" in QR code manager
+2. System opens new window/tab with print-only route
+3. Route validates user authentication and data
+4. System displays QR codes in print-optimized layout
+5. Print dialog automatically triggers
+
+#### UC027.2 - Print-Only View Display
+1. System renders QR codes without UI elements
+2. QR codes arranged in grid layout with proper spacing
+3. Labels positioned correctly under each QR code
+4. Page margins and breaks optimized for printing
+5. Print-specific styles applied automatically
+
+#### UC027.3 - Window Management
+1. Print window opens with correct dimensions
+2. Print dialog triggers automatically
+3. Window closes after print completion
+4. Focus returns to main application window
+5. Clean window lifecycle management
+
+### Alternative Flows
+
+#### UC027.A1 - Authentication Failure
+1. User attempts to access print route without authentication
+2. System redirects to login page
+3. User completes authentication
+4. System returns to print route with data
+5. Print process continues normally
+
+#### UC027.A2 - Invalid Data
+1. System detects missing or invalid QR code data
+2. User receives clear error message
+3. System provides navigation back to QR manager
+4. User can regenerate QR codes
+5. Print process restarts with valid data
+
+#### UC027.A3 - Print Dialog Cancellation
+1. User cancels print dialog
+2. Print window remains open
+3. User can trigger print again or close window
+4. System maintains data for retry
+5. Window closes on user action
+
+### Success Scenarios
+
+#### UC027.S1 - Professional Print Output
+- QR codes print without UI elements
+- Labels are clearly readable
+- Layout is consistent and professional
+- Page breaks occur at logical points
+- Output suitable for property management use
+
+#### UC027.S2 - Efficient User Experience
+- Print process starts automatically
+- Window management is seamless
+- User returns to main interface easily
+- Multiple print attempts supported
+- Clear error recovery paths available
+
+### Postconditions
+- **Success**: QR codes printed without UI elements
+- **Success**: Print window closed automatically
+- **Success**: User returned to main interface
+- **Success**: Print output professionally formatted
+- **Success**: Window resources properly cleaned up
+
+### Technical Implementation Features
+
+#### Print Route Architecture
+- ✅ Dedicated `/print/qr-codes/[propertyId]` route
+- ✅ Authentication protection via middleware
+- ✅ Data validation and sanitization
+- ✅ Print-optimized React components
+- ✅ Automatic print triggering
+
+#### Window Management
+- ✅ Custom `usePrintWindow` hook for lifecycle management
+- ✅ Automatic window cleanup
+- ✅ Focus management between windows
+- ✅ Error handling and recovery
+- ✅ Resource cleanup on completion
+
+#### Print Styling
+- ✅ Print-specific CSS with proper margins
+- ✅ Grid layout optimization
+- ✅ Label positioning and readability
+- ✅ Cross-browser compatibility
+- ✅ Professional output formatting
+
+### Business Value
+- **Professional Output**: Clean, UI-free QR code printing
+- **Efficiency**: Streamlined printing workflow
+- **User Experience**: Automatic print triggering
+- **Resource Usage**: Proper window management
+- **Maintainability**: Dedicated print components
+
+### Integration Points
+- **Authentication System**: Protected print routes
+- **QR Manager**: Print window triggering
+- **Styling System**: Print-specific CSS
+- **Window Management**: Lifecycle control
+- **Error Handling**: Recovery mechanisms
+
+### Success Metrics
+- **Print Quality**: Professional output achieved
+- **User Satisfaction**: Streamlined workflow
+- **Performance**: Quick print route loading
+- **Reliability**: Consistent print output
+- **Maintainability**: Modular implementation
 
 ---
 
