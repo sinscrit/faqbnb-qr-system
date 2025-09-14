@@ -41,9 +41,9 @@ No database changes required. Implementation uses existing tables:
    - [ ] Test print flow
 
 6. Add Print Preview Updates
-   - [ ] Update `src/components/QRCodePrintPreview.tsx`
-   - [ ] Remove direct print calls
-   - [ ] Add window management
+   - [x] Update `src/components/QRCodePrintPreview.tsx` ---implemented: Updated component to use print manager
+   - [x] Remove direct print calls ---implemented: Removed window.print() calls
+   - [x] Add window management ---implemented: Using usePrintWindow hook
    - [ ] Test preview functionality
 
 7. Testing Tasks

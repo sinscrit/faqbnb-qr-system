@@ -305,58 +305,12 @@ export function QRCodePrintPreview({
     };
   }, [printItems]);
 
-  // BUG FIX: Task 17 - Enhanced print functionality with mobile browser support
+  // Print functionality moved to QRCodePrintManager
   const handlePrint = useCallback(() => {
     if (onPrint) {
       onPrint();
     }
-    
-    // BUG FIX: Task 17 - Mobile browser print handling
-    if (isMobile) {
-      // Mobile browsers have limited print support
-      if (isSafari && isIOS) {
-        // iOS Safari specific handling
-        alert('To print on iOS Safari, please use the Share button and select Print');
-        return;
-      } else if (navigator.share && printItems.length > 0) {
-        // Use Web Share API if available
-        const firstQR = printItems.find(item => item.qrCodeDataUrl);
-        if (firstQR) {
-          navigator.share({
-            title: `QR Codes for ${printItems.length} items`,
-            text: `Generated QR codes for printing`,
-            url: window.location.href
-          }).catch(console.error);
-          return;
-        }
-      }
-    }
-    
-    // BUG FIX: Ensure all images are loaded before printing
-    const images = document.querySelectorAll('.qr-code-image');
-    const imagePromises = Array.from(images).map(img => {
-      return new Promise<void>((resolve) => {
-        if ((img as HTMLImageElement).complete) {
-          resolve();
-        } else {
-          img.addEventListener('load', () => resolve());
-          img.addEventListener('error', () => resolve()); // Continue even if some images fail
-        }
-      });
-    });
-
-    Promise.all(imagePromises).then(() => {
-      // BUG FIX: Task 17 - Browser-specific print timing
-      const delay = isSafari ? 200 : 100;
-    setTimeout(() => {
-        if (typeof window !== 'undefined' && window.print) {
-      window.print();
-        } else {
-          console.warn('Print functionality not available in this browser');
-        }
-      }, delay);
-    });
-  }, [onPrint, printItems]);
+  }, [onPrint]);
 
   /**
    * BUG FIX: Optimized QR grid rendering with virtualization
