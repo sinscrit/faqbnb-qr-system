@@ -29,7 +29,7 @@ export default function PrintableQRGrid({ qrData }: PrintableQRGridProps) {
       {qrData.map((item) => (
         <div key={item.id} className="print-item">
           <QRCode 
-            value={`item:${item.id}`} 
+            value={`${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/item/${item.id}`} 
             size={151} // 40mm at 96 DPI
             level="H" // High error correction
             className="print-qr"
