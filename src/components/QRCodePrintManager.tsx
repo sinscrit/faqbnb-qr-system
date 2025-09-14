@@ -620,9 +620,9 @@ export function QRCodePrintManager({
               <button
                 onClick={() => {
                   const selectedItemsData = items
-                    .filter(item => generatedQRCodes.has(item.id))
+                    .filter(item => generatedQRCodes.has(item.publicId))
                     .map(item => ({
-                      id: item.id,
+                      id: item.publicId,
                       label: item.name
                     }));
                   console.log('Opening print window with data:', selectedItemsData);

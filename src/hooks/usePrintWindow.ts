@@ -27,6 +27,7 @@ export function usePrintWindow() {
 
     // Open new window
     const url = `/print/qr-codes/${propertyId}?${params}`;
+    console.log('Opening print window with URL:', url);
     const newWindow = window.open(url, 'qr-print', 'width=800,height=600');
 
     if (newWindow) {
@@ -39,6 +40,7 @@ export function usePrintWindow() {
       const checkWindow = setInterval(() => {
         try {
           if (newWindow.closed) {
+            console.log('Print window closed');
             clearInterval(checkWindow);
             windowRef.current = null;
           } else {
@@ -52,6 +54,14 @@ export function usePrintWindow() {
           windowRef.current = null;
         }
       }, 500);
+
+      // Add window event listeners
+      window.addEventListener('focus', () => {
+        if (windowRef.current && !windowRef.current.closed) {
+          console.log('Main window focused, refocusing print window');
+          windowRef.current.focus();
+        }
+      });
     } else {
       console.error('Failed to open print window. Check if popups are blocked.');
     }
