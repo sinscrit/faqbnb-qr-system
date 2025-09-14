@@ -202,8 +202,8 @@ export function QRCodePrintPreview({
   const printItems: QRCodePrintItem[] = useMemo(() => {
     return items.map(item => ({
       item,
-      qrCodeDataUrl: qrCodes.get(item.publicId),
-      isLoading: isGenerating && !qrCodes.has(item.publicId)
+      qrCodeDataUrl: qrCodes.get(item.id),
+      isLoading: isGenerating && !qrCodes.has(item.id)
     }));
   }, [items, qrCodes, isGenerating]);
 
