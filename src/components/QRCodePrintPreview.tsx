@@ -202,8 +202,8 @@ export function QRCodePrintPreview({
   const printItems: QRCodePrintItem[] = useMemo(() => {
     return items.map(item => ({
       item,
-      qrCodeDataUrl: qrCodes.get(item.id),
-      isLoading: isGenerating && !qrCodes.has(item.id)
+      qrCodeDataUrl: qrCodes.get(item.publicId),
+      isLoading: isGenerating && !qrCodes.has(item.publicId)
     }));
   }, [items, qrCodes, isGenerating]);
 
@@ -233,7 +233,7 @@ export function QRCodePrintPreview({
     const updateVisibleItems = () => {
       if (!containerRef.current || printItems.length <= 20) {
         // Show all items if list is small
-        setVisibleItems(new Set(printItems.map(item => item.item.id)));
+        setVisibleItems(new Set(printItems.map(item => item.item.publicId)));
         return;
       }
 
@@ -248,7 +248,7 @@ export function QRCodePrintPreview({
                          itemRect.bottom > containerRect.top - 200;
         
         if (isVisible && printItems[index]) {
-          visible.add(printItems[index].item.id);
+          visible.add(printItems[index].item.publicId);
         }
       });
 
@@ -290,7 +290,7 @@ export function QRCodePrintPreview({
       
       updateVisibleItems(); // Initial check
     } else {
-      setVisibleItems(new Set(printItems.map(item => item.item.id)));
+      setVisibleItems(new Set(printItems.map(item => item.item.publicId)));
     }
 
     return () => {
@@ -327,11 +327,11 @@ export function QRCodePrintPreview({
       >
         {printItems.map((printItem) => (
           <VirtualizedQRItem
-            key={printItem.item.id}
+            key={printItem.item.publicId}
             item={printItem}
             qrSizeClass={qrSizeClass}
             showLabels={printSettings.showLabels}
-            isVisible={visibleItems.has(printItem.item.id)}
+            isVisible={visibleItems.has(printItem.item.publicId)}
           />
         ))}
       </div>
