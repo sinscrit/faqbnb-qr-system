@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import QRCode from 'react-qr-code';
 
 interface QRData {
-  id: number;
+  id: string;
   label: string;
 }
 

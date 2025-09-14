@@ -3,7 +3,7 @@
 import { useCallback, useRef } from 'react';
 
 interface QRCodeData {
-  id: number;
+  id: string;
   label: string;
 }
 
