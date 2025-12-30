@@ -82,7 +82,7 @@ async function validateAdminAuth(request: NextRequest) {
       };
 
       console.log('Authentication successful for user:', validatedUser.email);
-      return { user: validatedUser, isAdmin: false };
+      return { user: validatedUser, isAdmin: false, supabase };
     }
 
     // Return admin user data
@@ -94,7 +94,7 @@ async function validateAdminAuth(request: NextRequest) {
     };
 
     console.log('Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin', supabase };
 
   } catch (error) {
     console.error('Auth validation error:', error);
@@ -112,7 +112,7 @@ async function validateAdminAuth(request: NextRequest) {
 }
 
 // Helper function to extract account context from request
-async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabaseClient: any) {
   try {
     // Extract account_id from query parameters or headers
     const { searchParams } = new URL(request.url);
@@ -120,7 +120,7 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
     
     if (requestedAccountId) {
       // Validate user has access to the requested account
-      const { data: accountAccess, error: accessError } = await supabase
+      const { data: accountAccess, error: accessError } = await supabaseClient
         .from('account_users')
         .select('account_id, role')
         .eq('account_id', requestedAccountId)
@@ -149,7 +149,7 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
       return { accountId: null, accountRole: 'admin' };
     } else {
       // Regular user: get their primary account
-      const { data: userAccounts, error: accountsError } = await supabase
+      const { data: userAccounts, error: accountsError } = await supabaseClient
         .from('account_users')
         .select('account_id, role')
         .eq('user_id', userId)
@@ -261,9 +261,10 @@ export async function GET(request: NextRequest) {
 
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase;
 
     // Get account context
-    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
     if (accountContext.error) {
       return accountContext.error;
     }

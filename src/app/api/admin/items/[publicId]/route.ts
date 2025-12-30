@@ -1,16 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { UpdateItemRequest, ItemResponse } from '@/types';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
+    console.log('🔑 validateAdminAuth: Starting authentication validation...');
+    
+    // Use standard Supabase server creation without custom cookie handling
+    const supabase = await createSupabaseServer();
+    
+    // Add current account header to all requests
+    const currentAccountId = request.headers.get('x-current-account');
+    if (currentAccountId) {
+      supabase.headers = {
+        ...supabase.headers,
+        'x-current-account': currentAccountId
+      };
+    }
+    console.log('🔑 validateAdminAuth: Supabase server client created');
+    
     const { data: { user }, error: userError } = await supabase.auth.getUser();
+    console.log('🔑 validateAdminAuth: Got user from Supabase:', { user: user?.email, error: userError?.message });
 
     if (userError || !user) {
       console.log('User session not found:', userError?.message);
@@ -83,7 +96,7 @@ async function validateAdminAuth(request: NextRequest) {
       };
 
       console.log('Authentication successful for user:', validatedUser.email);
-      return { user: validatedUser, isAdmin: false };
+      return { user: validatedUser, isAdmin: false, supabase };
     }
 
     // Return admin user data
@@ -95,7 +108,7 @@ async function validateAdminAuth(request: NextRequest) {
     };
 
     console.log('Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: adminUser.role === 'admin' };
+    return { user: validatedUser, isAdmin: adminUser.role === 'admin', supabase };
 
   } catch (error) {
     console.error('Auth validation error:', error);
@@ -113,7 +126,7 @@ async function validateAdminAuth(request: NextRequest) {
 }
 
 // Helper function to extract account context from request
-async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean) {
+async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
   try {
     // Extract account_id from query parameters or headers
     const { searchParams } = new URL(request.url);
@@ -189,12 +202,8 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
 }
 
 // Helper function to validate item access within account context
-async function validateItemAccess(publicId: string, userId: string, isAdmin: boolean, accountId: string | null) {
+async function validateItemAccess(publicId: string, userId: string, isAdmin: boolean, accountId: string | null, supabaseClient: any) {
   try {
-    // Create a fresh Supabase client for this request
-    const cookieStore = await cookies();
-    const supabaseClient = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
-    
     // Get item with property and account information
     let itemQuery = supabaseClient
       .from('items')
@@ -204,7 +213,7 @@ async function validateItemAccess(publicId: string, userId: string, isAdmin: boo
         name, 
         description,
         property_id,
-        properties!inner(id, nickname, user_id, account_id)
+        properties!left(id, nickname, user_id, account_id)
       `)
       .eq('public_id', publicId);
 
@@ -283,12 +292,12 @@ async function validateItemAccess(publicId: string, userId: string, isAdmin: boo
   }
 }
 
-export async function PUT(
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
-    console.log('Admin update item API called - validating authentication...');
+    console.log('Admin get item API called - validating authentication...');
     
     // Validate authentication
     const authResult = await validateAdminAuth(request);
@@ -298,9 +307,10 @@ export async function PUT(
 
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase;
 
     // Get account context
-    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
     if (accountContext.error) {
       return accountContext.error;
     }
@@ -322,7 +332,124 @@ export async function PUT(
     }
 
     // Validate item access within account context
-    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId);
+    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId, supabase);
+    if (!canAccess || error) {
+      return error;
+    }
+    
+    console.log('Item access validated, fetching item details...');
+
+    // Get item with property and links
+    const { data: itemData, error: itemError } = await supabase
+      .from('items')
+      .select(`
+        id,
+        public_id,
+        name,
+        description,
+        property_id,
+        qr_code_url,
+        created_at,
+        updated_at,
+        properties!left(id, nickname, user_id, account_id)
+      `)
+      .eq('public_id', publicId)
+      .single();
+      
+    if (itemError || !itemData) {
+      console.error('Item fetch error:', itemError);
+      return NextResponse.json(
+        { success: false, error: 'Item not found within account context' },
+        { status: 404 }
+      );
+    }
+
+    // Get item links
+    const { data: links, error: linksError } = await supabase
+      .from('item_links')
+      .select('id, title, url, created_at')
+      .eq('item_id', itemData.id)
+      .order('created_at', { ascending: true });
+
+    if (linksError) {
+      console.error('Links fetch error:', linksError);
+      // Don't fail the request, just return empty links
+    }
+
+    console.log('Item fetched successfully:', itemData.id);
+
+    const response = {
+      success: true,
+      data: {
+        id: itemData.id,
+        publicId: itemData.public_id,
+        name: itemData.name,
+        description: itemData.description,
+        property_id: itemData.property_id,
+        qr_code_url: itemData.qr_code_url,
+        created_at: itemData.created_at,
+        updated_at: itemData.updated_at,
+        property: itemData.properties,
+        links: links || []
+      },
+      accountContext: {
+        accountId,
+        accountRole
+      }
+    };
+
+    return NextResponse.json(response);
+
+  } catch (error) {
+    console.error('Error in GET /api/admin/items/[publicId]:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ publicId: string }> }
+) {
+  try {
+    console.log('Admin update item API called - validating authentication...');
+    
+    // Validate authentication
+    const authResult = await validateAdminAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
+    const user = authResult.user;
+    const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase;
+
+    // Get account context
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
+    if (accountContext.error) {
+      return accountContext.error;
+    }
+
+    const { accountId, accountRole } = accountContext;
+    
+    console.log('Authentication successful for user:', user.email, 'account:', accountId || 'all');
+    
+    const { publicId } = await params;
+    console.log('Public ID:', publicId);
+    
+    // Validate publicId format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(publicId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid publicId format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate item access within account context
+    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId, supabase);
     if (!canAccess || error) {
       return error;
     }
@@ -547,9 +674,10 @@ export async function DELETE(
 
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
+    const supabase = authResult.supabase;
 
     // Get account context
-    const accountContext = await getAccountContext(request, user.id, userIsAdmin);
+    const accountContext = await getAccountContext(request, user.id, userIsAdmin, supabase);
     if (accountContext.error) {
       return accountContext.error;
     }
@@ -571,7 +699,7 @@ export async function DELETE(
     }
     
     // Validate item access within account context
-    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId);
+    const { canAccess, item, error } = await validateItemAccess(publicId, user.id, userIsAdmin, accountId, supabase);
     if (!canAccess || error) {
       return error;
     }

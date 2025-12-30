@@ -358,7 +358,11 @@ const UserPropertyDetailPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {items.map((item) => (
-                      <div key={item.id} className="bg-gray-50 rounded-lg p-4 border">
+                      <Link
+                        key={item.id}
+                        href={`/dashboard/items/${item.publicId || item.public_id}/edit`}
+                        className="bg-gray-50 rounded-lg p-4 border hover:border-blue-300 hover:shadow-md transition-all cursor-pointer block"
+                      >
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-medium text-gray-900">{item.name}</h3>
                           <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
@@ -374,18 +378,7 @@ const UserPropertyDetailPage: React.FC = () => {
                             <p>Updated: {item.updatedAt ? formatDate(item.updatedAt) : formatDate(item.updated_at)}</p>
                           )}
                         </div>
-                        {(item.qr_code_url || item.qrCodeUrl) && (
-                          <div className="mt-2">
-                            <Link
-                              href={item.qrCodeUrl || item.qr_code_url}
-                              target="_blank"
-                              className="text-sm text-blue-600 hover:text-blue-500 font-medium"
-                            >
-                              View QR Code →
-                            </Link>
-                          </div>
-                        )}
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}

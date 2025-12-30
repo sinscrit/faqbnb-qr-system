@@ -118,6 +118,7 @@ export function ItemsManagement({
 }: ItemsManagementProps) {
   const router = useRouter();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const filteredItems = items?.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -137,35 +138,33 @@ export function ItemsManagement({
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      // Show brief feedback
-      const element = document.activeElement;
-      if (element) {
-        const originalText = element.textContent;
-        element.textContent = 'Copied!';
-        setTimeout(() => {
-          element.textContent = originalText;
-        }, 1000);
-      }
-    }).catch(() => {
+  const copyToClipboard = async (text: string, publicId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(publicId);
+      // Reset after 2 seconds
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-
-      const element = document.activeElement;
-      if (element) {
-        const originalText = element.textContent;
-        element.textContent = 'Copied!';
-        setTimeout(() => {
-          element.textContent = originalText;
-        }, 1000);
-      }
-    });
+      setCopiedId(publicId);
+      // Reset after 2 seconds
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    }
   };
 
   // Loading state
@@ -345,13 +344,19 @@ export function ItemsManagement({
                     </td>
                     <td className="px-6 py-4">
                       <div className="group relative">
-                        <code
-                          className="px-2 py-1 bg-gray-100 rounded text-sm font-mono cursor-pointer hover:bg-gray-200 transition-colors"
-                          onClick={() => copyToClipboard(item.publicId)}
+                        <button
+                          type="button"
+                          className="px-2 py-1 bg-gray-100 rounded text-sm font-mono cursor-pointer hover:bg-gray-200 transition-colors border-0 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          onClick={(e) => copyToClipboard(item.publicId, item.publicId, e)}
                           title="Click to copy full UUID"
                         >
-                          {item.publicId.substring(0, 8)}...
-                        </code>
+                          {copiedId === item.publicId ? 'Copied!' : `${item.publicId.substring(0, 8)}...`}
+                        </button>
+                        {copiedId === item.publicId && (
+                          <div className="absolute z-20 bg-green-600 text-white text-xs rounded py-1 px-2 bottom-full left-0 mb-1 whitespace-nowrap pointer-events-none transition-opacity duration-200">
+                            Copied to clipboard!
+                          </div>
+                        )}
                         <div className="invisible group-hover:visible absolute z-10 bg-black text-white text-xs rounded py-1 px-2 bottom-full left-0 whitespace-nowrap pointer-events-none">
                           {item.publicId}
                         </div>

@@ -277,7 +277,7 @@ export async function getDashboardPermissions(
     canAccessDashboard: true,
     canAccessItems: true,
     canAccessProperties: true,
-    canAccessAnalytics: true
+    canAccessAnalytics: false // Analytics only for admin users
   };
 
   // Admin features access
@@ -286,6 +286,7 @@ export async function getDashboardPermissions(
     canAccessSystemAdmin: isSystemAdmin,
     canManageUsers: isSystemAdmin,
     canViewAllAccounts: isSystemAdmin,
+    canAccessAnalytics: isSystemAdmin, // Grant Analytics access to admins
     canManageAnalytics: isSystemAdmin,
     canExportData: isSystemAdmin
   };

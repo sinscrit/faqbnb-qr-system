@@ -105,7 +105,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       return [
         ...baseItems,
         { name: 'My Properties', href: '/dashboard/properties', icon: '🏠' },
-        { name: 'Analytics', href: '/dashboard/analytics', icon: '📈' },
+        // Analytics removed - only for admin users
       ];
     }
   };

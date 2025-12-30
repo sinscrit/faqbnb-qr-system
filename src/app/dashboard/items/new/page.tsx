@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Property } from '@/types';
-import { ArrowLeft, Save, Loader2, Shield, Package, FileText, Settings, QrCode } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Shield, Package, FileText, QrCode } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import Link from 'next/link';
 
@@ -13,8 +13,6 @@ interface ItemFormData {
   name: string;
   description: string;
   propertyId: string;
-  isActive: boolean;
-  allowPublicView: boolean;
   url: string;
 }
 
@@ -54,8 +52,6 @@ export default function CreateItemPage() {
     name: '',
     description: '',
     propertyId: propertyIdFromUrl || '',
-    isActive: true,
-    allowPublicView: true,
     url: ''
   });
 
@@ -155,10 +151,10 @@ export default function CreateItemPage() {
         setSuccess(true);
         setCreatedItem(response.data);
         
-        // Redirect to item detail or items list after short delay
+        // Redirect to item edit page or items list after short delay
         setTimeout(() => {
           if (response.data?.publicId) {
-            router.push(`/dashboard/items/${response.data.publicId}`);
+            router.push(`/dashboard/items/${response.data.publicId}/edit`);
           } else {
             router.push('/dashboard/items');
           }
@@ -378,42 +374,6 @@ export default function CreateItemPage() {
               <p className="text-sm text-gray-500 mt-1">
                 If provided, the QR code will direct users to this URL. Otherwise, it will show item information.
               </p>
-            </div>
-          </div>
-
-          {/* Settings */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <Settings className="w-5 h-5 mr-2" />
-              Settings
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  name="isActive"
-                  checked={formData.isActive}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
-                  Active item (QR code can be scanned)
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="allowPublicView"
-                  name="allowPublicView"
-                  checked={formData.allowPublicView}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="allowPublicView" className="ml-2 block text-sm text-gray-700">
-                  Allow public viewing (anyone with QR code can view)
-                </label>
-              </div>
             </div>
           </div>
 

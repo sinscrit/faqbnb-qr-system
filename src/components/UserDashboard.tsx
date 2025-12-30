@@ -41,7 +41,7 @@ interface UserDashboardProps {
 
 export function UserDashboard({ className = '' }: UserDashboardProps) {
   const router = useRouter();
-  const { user, selectedProperty, userProperties } = useAuth();
+  const { user, selectedProperty, userProperties, isAdmin } = useAuth();
 
   const [stats, setStats] = useState<UserStats>({
     totalProperties: 0,
@@ -115,7 +115,7 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
     fetchDashboardData();
   };
 
-  // Quick action buttons
+  // Quick action buttons - conditionally include Analytics for admin users only
   const quickActions = [
     {
       title: 'Create New Item',
@@ -139,13 +139,13 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
       icon: <Building2 className="w-5 h-5" />,
       color: 'bg-green-600 hover:bg-green-700'
     },
-    {
+    ...(isAdmin ? [{
       title: 'View Analytics',
       description: 'See your insights',
       href: '/dashboard/analytics',
       icon: <TrendingUp className="w-5 h-5" />,
       color: 'bg-purple-600 hover:bg-purple-700'
-    }
+    }] : [])
   ];
 
   // Stats cards
@@ -351,7 +351,11 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Properties</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {propertySummaries.map((property) => (
-              <div key={property.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <a
+                key={property.id}
+                href={`/dashboard/properties/${property.id}`}
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer block"
+              >
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-medium text-gray-900 truncate">{property.nickname}</h4>
                   <Building2 className="w-5 h-5 text-gray-400" />
@@ -371,7 +375,7 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
                     </div>
                   )}
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>

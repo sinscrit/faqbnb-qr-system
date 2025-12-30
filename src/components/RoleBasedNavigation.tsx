@@ -94,8 +94,8 @@ export function RoleBasedNavigation({
       });
     }
 
-    // Analytics - check permissions
-    if (dashboardPermissions.canAccessAnalytics) {
+    // Analytics - only for admin users
+    if (isAdmin && dashboardPermissions.canAccessAnalytics) {
       items.push({
         name: 'Analytics',
         href: '/dashboard/analytics',
@@ -339,8 +339,8 @@ export function getNavigationItemsForUser(
     });
   }
 
-  // Analytics - check permissions
-  if (dashboardPermissions.canAccessAnalytics) {
+  // Analytics - only for admin users
+  if (isAdmin && dashboardPermissions.canAccessAnalytics) {
     items.push({
       name: 'Analytics',
       href: '/dashboard/analytics',

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { BarChart3, Users, Building2, Eye, TrendingUp, RefreshCw } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 // KPI Card Component
 interface KPICardProps {
@@ -254,6 +255,11 @@ interface KPIDashboardOverviewProps {
 }
 
 export default function KPIDashboardOverview({ onRefresh, className = '' }: KPIDashboardOverviewProps) {
+  // Get current account context from useAuth
+  const { currentAccount } = useAuth();
+  
+  console.log('🔍 KPIDashboardOverview: currentAccount state:', currentAccount);
+  
   const [analyticsData, setAnalyticsData] = useState<any>(null);
   const [userAccessData, setUserAccessData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -267,10 +273,14 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
       // Import apiRequest function directly to avoid tree-shaking issues
       const { apiRequest } = await import('@/lib/api');
 
-      console.log('🔍 DEBUG: Using direct apiRequest calls');
+      console.log('🔍 DEBUG: Using direct apiRequest calls with account:', currentAccount?.id);
 
-      // Fetch analytics data directly
-      const analyticsResult = await apiRequest('/admin/analytics', {}, true);
+      // Fetch analytics data directly with current account ID
+      const analyticsResult = await apiRequest(
+        `/admin/analytics${currentAccount?.id ? `?account_id=${currentAccount.id}` : ''}`, 
+        {}, 
+        true
+      );
 
       // Fetch user access data directly
       const userAccessResult = await apiRequest('/admin/accounts/users', {}, true);
@@ -296,8 +306,14 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
   };
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    // Only fetch when we have a current account
+    if (currentAccount?.id) {
+      console.log('🔍 KPIDashboardOverview: Fetching with account:', currentAccount.id);
+      fetchDashboardData();
+    } else {
+      console.log('🔍 KPIDashboardOverview: Waiting for currentAccount...');
+    }
+  }, [currentAccount]);
 
   const handleRefresh = () => {
     fetchDashboardData();

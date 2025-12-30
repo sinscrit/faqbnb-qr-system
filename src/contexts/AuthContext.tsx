@@ -1653,36 +1653,49 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('🔄 LOAD_DASHBOARD_PERMISSIONS: Loading permissions for user', user.id);
 
     try {
-      // Load permissions based on user role and account
-      const userRole = currentAccount.userRole;
-      const permissions: Record<string, boolean> = {};
+      // Inline permissions calculation to avoid circular dependency issues
+      const isSystemAdmin = isAdmin(user);
+      const isAccountOwner = currentAccount.owner_id === user.id;
+      const userAccountRole = currentAccount.userRole || 'viewer';
 
-      // Define permissions based on role
-      if (userRole === 'owner') {
-        permissions.read = true;
-        permissions.write = true;
-        permissions.manage = true;
-        permissions.delete = true;
-        permissions.admin = true;
-      } else if (userRole === 'admin') {
-        permissions.read = true;
-        permissions.write = true;
-        permissions.manage = true;
-        permissions.delete = false;
-        permissions.admin = false;
-      } else if (userRole === 'member') {
-        permissions.read = true;
-        permissions.write = true;
-        permissions.manage = false;
-        permissions.delete = false;
-        permissions.admin = false;
-      } else {
-        permissions.read = true;
-        permissions.write = false;
-        permissions.manage = false;
-        permissions.delete = false;
-        permissions.admin = false;
-      }
+      // Base permissions for authenticated users
+      const basePermissions = {
+        canAccessDashboard: true,
+        canAccessItems: true,
+        canAccessProperties: true,
+        canAccessAnalytics: isSystemAdmin, // Only admins get analytics
+      };
+
+      // Account-level permissions based on role
+      const isViewer = userAccountRole === 'viewer';
+      const isOwnerOrAdmin = userAccountRole === 'owner' || userAccountRole === 'admin';
+
+      const accountPermissions = {
+        canCreateItems: !isViewer,
+        canEditItems: !isViewer,
+        canDeleteItems: isOwnerOrAdmin,
+        canCreateProperties: !isViewer,
+        canEditProperties: !isViewer,
+        canDeleteProperties: isOwnerOrAdmin,
+        canManageAccountUsers: isOwnerOrAdmin,
+        canManageAccountSettings: isOwnerOrAdmin,
+      };
+
+      // System admin permissions
+      const adminPermissions = {
+        canAccessAdminFeatures: isSystemAdmin,
+        canAccessSystemAdmin: isSystemAdmin,
+        canManageUsers: isSystemAdmin,
+        canViewAllAccounts: isSystemAdmin,
+        canManageAnalytics: isSystemAdmin,
+        canExportData: isSystemAdmin,
+      };
+
+      const permissions: DashboardPermissions = {
+        ...basePermissions,
+        ...accountPermissions,
+        ...adminPermissions,
+      };
 
       setDashboardPermissions(permissions);
       console.log('🔄 LOAD_DASHBOARD_PERMISSIONS: Successfully loaded permissions', permissions);

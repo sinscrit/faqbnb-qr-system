@@ -5,8 +5,7 @@ import type { Database } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 
 // Create server-side Supabase client using the new @supabase/ssr package
-export async function createSupabaseServer() {
-  const cookieStore = await cookies();
+export async function createSupabaseServer(cookieStore = cookies()) {
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

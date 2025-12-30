@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--vision",
+        "--cdp-endpoint=http://localhost:9222"
+      ]
+    },
     "supabase": {
       "command": "npx",
       "args": [

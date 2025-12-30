@@ -45,10 +45,10 @@ export function usePermissions(
   account?: Account,
   accountUser?: AccountUser
 ) {
-  // EMERGENCY FIX: Force OWNER role for user raphajunk@outlook.com
+  // EMERGENCY FIX DISABLED: Was forcing OWNER permissions - removed to allow proper RBAC
   console.log('🚨 EMERGENCY PERMISSIONS FIX: Checking user', user?.email);
 
-  if (user?.email === 'raphajunk@outlook.com') {
+  if (false && user?.email === 'raphajunk@outlook.com') {
     console.log('🚨 EMERGENCY FIX: Forcing OWNER permissions for raphajunk@outlook.com');
 
     // Return hardcoded OWNER permissions

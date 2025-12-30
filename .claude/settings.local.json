@@ -5,7 +5,8 @@
       "Bash(npx:*)",
       "Bash(curl:*)",
       "Bash(npm run dev:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(lsof:*)"
     ],
     "deny": []
   }

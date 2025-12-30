@@ -2295,3 +2295,83 @@ Total: 5 points
 5. Cross-browser compatibility
 
 *Next Request: REQ-028* 
+---
+
+## REQ-028: Bundle Size Impact Analysis for Media Processing Dependencies
+
+**Date**: 2025-12-30 00:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should validate that new media processing dependencies do not exceed bundle size performance targets before implementing the item capture workflow.
+
+### Current Behavior
+The application does not yet include dependencies for PDF thumbnail generation, image cropping, or markdown rendering. No baseline measurement exists for how these libraries will impact bundle size and initial load time.
+
+### Expected Behavior
+Before implementing the item capture component, the system should:
+- Measure the bundle size impact of adding PDF processing, image cropping, and markdown rendering capabilities
+- Verify that lazy loading strategies prevent large libraries from blocking initial page load
+- Confirm that the total bundle size for the item capture workflow remains under performance targets
+- Document baseline metrics and chunk sizes for future reference
+
+### User Impact
+End users will experience fast initial page loads (under 2 seconds) even after new media processing features are added. Users uploading PDFs will see thumbnails load quickly without affecting the experience of users who never upload PDFs.
+
+### Business Value
+Prevents performance regressions before they reach production. Identifies optimization strategies early in the development cycle, reducing the risk of costly refactoring later.
+
+### Acceptance Criteria
+- [ ] Dependencies for PDF processing, image cropping, and markdown rendering are installed
+- [ ] Production build analysis shows item capture workflow bundle is under 500KB (excluding lazily-loaded PDF processing)
+- [ ] PDF processing library loads only when a user uploads a PDF file, not on initial page load
+- [ ] Initial page load time remains under 2 seconds with new dependencies included
+- [ ] Bundle analysis report documents chunk sizes and lazy loading behavior for all new dependencies
+
+
+---
+
+## REQ-029: iOS Safari MediaRecorder API Compatibility Validation
+
+**Date**: 2025-12-30 (Spike Work)
+**Type**: TECHNICAL SPIKE
+**Size**: S
+
+### Summary
+Validate that the MediaRecorder API works reliably on iOS Safari (versions 15+) before implementing video recording features for mobile property item documentation.
+
+### Current Behavior
+The system does not currently support video recording for documenting property items. Before implementing this feature, iOS Safari compatibility must be verified, as this browser has known inconsistencies with the MediaRecorder API.
+
+### Expected Behavior
+After completing this spike:
+- Development team has documented evidence that MediaRecorder works (or doesn't work) on iOS Safari 15, 16, and 17
+- Documented list of working codec and container combinations for iOS devices
+- Documented permission flows and any iOS-specific quirks
+- Clear recommendation on whether to proceed with MediaRecorder-based implementation or plan alternative approaches
+
+### User Impact
+This spike directly impacts mobile users (iPhone and iPad) who will need to record video walkthroughs of property items. If MediaRecorder is not viable on iOS Safari, alternative solutions (photo-only mode, third-party libraries, or native app requirements) must be identified before development begins.
+
+### Business Value
+Prevents wasted development effort by validating technical feasibility early. If iOS Safari does not support the required recording functionality, the team can pivot to alternative solutions before investing in full implementation.
+
+### Acceptance Criteria
+- [ ] Minimal test page created that attempts MediaRecorder video recording
+- [ ] Test page verified on iPhone running iOS 15, iOS 16, and iOS 17
+- [ ] Test page verified on iPad
+- [ ] Documentation produced listing working codec/container combinations for each tested iOS version
+- [ ] Documentation produced describing camera permission flows and any iOS-specific quirks
+- [ ] Successfully record and play back a 30-second video on iOS Safari 15 OR document why this is not possible
+- [ ] Successfully switch between front and back cameras during recording OR document limitations
+- [ ] Recommendation provided on implementation approach (proceed with MediaRecorder, use fallback, or alternative solution)
+
+### Dependencies
+This spike must be completed before implementing the ItemCapture component described in the item capture implementation plan. Results will inform Phase 2 development decisions.
+
+### Timebox
+4 hours maximum
+
+*Next Request: REQ-030*
+---

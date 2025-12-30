@@ -203,14 +203,14 @@ export const adminApi = {
   /**
    * Get item by public ID for admin purposes
    * @param publicId The public UUID of the item
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to item response with full details
    */
-  async getItem(publicId: string): Promise<ItemResponse> {
+  async getItem(publicId: string, headers?: Record<string, string>): Promise<ItemResponse> {
     if (!publicId || typeof publicId !== 'string') {
       throw new ApiError('Invalid publicId: must be a non-empty string');
     }
-    // Note: Using public API endpoint since admin doesn't have separate GET endpoint
-    return apiRequest<ItemResponse>(`/items/${encodeURIComponent(publicId)}`, {}, false);
+    return apiRequest<ItemResponse>(`/admin/items/${encodeURIComponent(publicId)}`, { headers }, true);
   },
 
   /**
@@ -239,9 +239,10 @@ export const adminApi = {
    * Update an existing item and its links
    * @param publicId The public UUID of the item to update
    * @param item The updated item data
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to the updated item response
    */
-  async updateItem(publicId: string, item: UpdateItemRequest): Promise<ItemResponse> {
+  async updateItem(publicId: string, item: UpdateItemRequest, headers?: Record<string, string>): Promise<ItemResponse> {
     if (!publicId || typeof publicId !== 'string') {
       throw new ApiError('Invalid publicId: must be a non-empty string');
     }
@@ -253,6 +254,7 @@ export const adminApi = {
     return apiRequest<ItemResponse>(`/admin/items/${encodeURIComponent(publicId)}`, {
       method: 'PUT',
       body: JSON.stringify(item),
+      headers,
     }, true);
   },
 
@@ -296,6 +298,29 @@ export const adminApi = {
     return apiRequest('/admin/properties', {
       method: 'POST',
       body: JSON.stringify(property),
+    }, true);
+  },
+
+  /**
+   * Update an existing property
+   * @param propertyId The ID of the property to update
+   * @param property The updated property data
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
+   * @returns Promise resolving to the updated property response
+   */
+  async updateProperty(propertyId: string, property: { nickname: string; address?: string; propertyTypeId: string }, headers?: Record<string, string>): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
+    if (!propertyId || typeof propertyId !== 'string') {
+      throw new ApiError('Invalid propertyId: must be a non-empty string');
+    }
+    
+    if (!property || !property.nickname) {
+      throw new ApiError('Invalid property data: nickname is required');
+    }
+    
+    return apiRequest(`/admin/properties/${encodeURIComponent(propertyId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(property),
+      headers,
     }, true);
   },
 

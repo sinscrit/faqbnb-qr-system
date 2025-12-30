@@ -6,6 +6,8 @@ export async function validateAdminAuth(request: NextRequest) {
   const DEBUG_PREFIX = '🔍[ACCESS_REQ_DEBUG]';
   try {
     console.log(`${DEBUG_PREFIX} AUTH_VALIDATE_START: Starting authentication validation...`);
+    
+    // Use standard Next.js cookie handling (same as working endpoints)
     const supabase = await createSupabaseServer();
     console.log(`${DEBUG_PREFIX} AUTH_SUPABASE_CLIENT: Server client created successfully`);
     
