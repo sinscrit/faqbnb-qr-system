@@ -1606,11 +1606,12 @@ Test page: /public/test/ios-mediarecorder.html
 Next steps: [Brief note on how this affects Phase 2 of ItemCapture]
 ```
 
-- [ ] 12.3 Commit the new files:
+- [x] 12.3 Commit the new files:
   ```bash
   git add public/test/ios-mediarecorder.html docs/req-029-ios-safari-compatibility-report.md public/test/.gitkeep
   git commit -m "REQ-029: iOS Safari MediaRecorder validation spike complete"
   ```
+  ---implemented: All files committed with comprehensive commit message (commit f8fd439)---unit tested-
 
 ---
 
