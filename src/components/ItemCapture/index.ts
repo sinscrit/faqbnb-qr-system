@@ -50,6 +50,7 @@ export type {
   UseMediaCaptureOptions,
   UseMediaCaptureReturn,
   FacingMode,
+  CameraPreviewProps,
 } from './ItemCapture.types';
 
 // =============================================================================
@@ -85,6 +86,12 @@ export type { MetadataStepProps } from './components/steps/MetadataStep';
 
 export { ContentTypeStep } from './components/steps/ContentTypeStep';
 export type { ContentTypeStepProps, ContentType } from './components/steps/ContentTypeStep';
+
+// =============================================================================
+// Shared Components (REQ-037)
+// =============================================================================
+
+export { CameraPreview } from './components/shared/CameraPreview';
 
 // =============================================================================
 // Constants Export

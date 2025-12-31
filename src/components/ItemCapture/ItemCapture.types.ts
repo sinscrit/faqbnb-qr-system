@@ -426,3 +426,47 @@ export interface UseMediaCaptureReturn {
   /** Perform full cleanup of all resources */
   cleanup: () => void;
 }
+
+// =============================================================================
+// CameraPreview Types (REQ-037)
+// =============================================================================
+
+/**
+ * Props for the CameraPreview component.
+ * Displays live camera feed with loading, error, and mirror mode states.
+ * @lastModified 2025-12-31 (REQ-037)
+ */
+export interface CameraPreviewProps {
+  /** Media stream from useMediaCapture hook (null when inactive) */
+  stream: MediaStream | null;
+
+  /** Whether the camera is currently loading/initializing */
+  isLoading: boolean;
+
+  /** Error object from useMediaCapture (null when no error) */
+  error: MediaCaptureError | null;
+
+  /** Whether to mirror the video preview (for front-facing camera) */
+  isMirrored: boolean;
+
+  /** Callback to toggle mirror mode */
+  onMirrorToggle?: () => void;
+
+  /** Detected facing mode from useMediaCapture */
+  facingMode?: 'user' | 'environment' | 'unknown';
+
+  /** Optional aspect ratio (default: 16/9) */
+  aspectRatio?: number;
+
+  /** Optional additional CSS classes */
+  className?: string;
+
+  /** Whether the component is in a compact mode (e.g., thumbnail preview) */
+  compact?: boolean;
+
+  /** Callback when user wants to retry after error */
+  onRetry?: () => void;
+
+  /** Callback when user wants to open settings (permission denied) */
+  onOpenSettings?: () => void;
+}
