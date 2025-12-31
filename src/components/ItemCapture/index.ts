@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-048)
+ * @lastModified 2025-12-31 (REQ-049)
  */
 
 // =============================================================================
@@ -181,6 +181,30 @@ export type { ImageCropperProps, AspectRatioPreset } from './editors/ImageCroppe
  */
 export { default as ImageRotator } from './editors/ImageRotator';
 export type { ImageRotatorProps } from './editors/ImageRotator';
+
+/**
+ * VideoTrimmer component (V1 Simplified) - lazy-loaded for video editing.
+ * This component captures trim markers as metadata only - actual video
+ * encoding is deferred to the server at upload time.
+ *
+ * For optimal bundle size, use dynamic import:
+ *
+ * @example
+ * const VideoTrimmer = dynamic(() => import('./editors/VideoTrimmer'), { ssr: false });
+ */
+export { default as VideoTrimmer } from './editors/VideoTrimmer';
+export type { VideoTrimmerProps, TrimDescriptor as VideoTrimDescriptor } from './editors/VideoTrimmer';
+
+// Trim utilities
+export {
+  formatTime,
+  parseTime,
+  validateTrim,
+  timeToPercent,
+  percentToTime,
+  clampMarkerPosition,
+} from './editors/trimUtils';
+export type { TrimValidation } from './editors/trimUtils';
 
 // Rotation utilities
 export {
