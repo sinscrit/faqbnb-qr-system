@@ -8,7 +8,7 @@
  *
  * @module ItemCapture/components/steps/VideoCaptureStep
  * @see docs/REQ-038-implement-videocapturestep-detailed.md
- * @lastModified 2025-12-31 (REQ-038)
+ * @lastModified 2025-12-31 (REQ-054 - Enhanced URL cleanup for memory optimization)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';

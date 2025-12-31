@@ -294,7 +294,10 @@ export type ItemCaptureAction =
   | { type: 'SUBMIT' }
   | { type: 'SUBMIT_SUCCESS' }
   | { type: 'SUBMIT_ERROR'; payload: string }
-  | { type: 'RESET' };
+  | { type: 'RESET' }
+
+  // Cleanup (REQ-054)
+  | { type: 'CLEANUP_ALL' };
 
 // =============================================================================
 // Media Capture Types (REQ-036)

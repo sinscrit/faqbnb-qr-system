@@ -9,7 +9,7 @@
  *
  * @module ItemCapture/components/steps/PhotoCaptureStep
  * @see docs/REQ-039-implement-photocapturestep-detailed.md
- * @lastModified 2025-12-31 (REQ-039)
+ * @lastModified 2025-12-31 (REQ-054 - Verified URL cleanup for memory optimization)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';

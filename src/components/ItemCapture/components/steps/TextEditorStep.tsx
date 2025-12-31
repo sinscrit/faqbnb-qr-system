@@ -18,11 +18,19 @@
  *
  * @module ItemCapture/components/steps/TextEditorStep
  * @see docs/REQ-044-implement-texteditorstep-detailed.md
- * @lastModified 2025-12-31 (REQ-044)
+ * @lastModified 2025-12-31 (REQ-054 - Added lazy loading for ReactMarkdown)
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import dynamic from 'next/dynamic';
+
+// Lazy-load ReactMarkdown to reduce initial bundle size (REQ-054)
+const ReactMarkdown = dynamic(() => import('react-markdown'), {
+  ssr: false,
+  loading: () => (
+    <div className="animate-pulse h-20 bg-gray-100 rounded" aria-label="Loading preview..." />
+  ),
+});
 import {
   Bold,
   Italic,

@@ -8,7 +8,7 @@
  * and instructions preview with options to edit, reorder, or remove items.
  *
  * @module ItemCapture/components/steps/ReviewStep
- * @lastModified 2025-12-31 (REQ-052 - Added validation layer integration)
+ * @lastModified 2025-12-31 (REQ-054 - URL cleanup with urlsRef pattern)
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';

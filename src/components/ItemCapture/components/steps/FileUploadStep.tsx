@@ -12,7 +12,7 @@
  * @module ItemCapture/components/steps/FileUploadStep
  * @see docs/REQ-042-implement-fileuploadstep-detailed.md
  * @see docs/REQ-043-add-pdf-thumbnail-generation-detailed.md
- * @lastModified 2025-12-31 (REQ-043 Task 3.3.12)
+ * @lastModified 2025-12-31 (REQ-054 - URL cleanup via useFileUpload hook)
  */
 
 import React, { useCallback, useState, useEffect } from 'react';

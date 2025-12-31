@@ -8,10 +8,10 @@
  *
  * @module ItemCapture/hooks/useItemCaptureState
  * @see docs/REQ-032-implement-core-state-machine-hook-detailed.md
- * @lastModified 2025-12-31 (REQ-032)
+ * @lastModified 2025-12-31 (REQ-054 - Added CLEANUP_ALL action for resource cleanup)
  */
 
-import { useReducer, useCallback, useMemo } from 'react';
+import { useReducer, useCallback, useMemo, useEffect } from 'react';
 import type {
   WizardStep,
   ItemMetadata,
@@ -19,6 +19,7 @@ import type {
   ItemCaptureState,
   ItemCaptureAction,
 } from '../ItemCapture.types';
+import { revokeAllTrackedURLs, setURLManagerDebug } from '../utils/urlManager';
 
 // =============================================================================
 // Step Transitions
@@ -361,6 +362,14 @@ function itemCaptureReducer(
     case 'RESET':
       return createInitialState();
 
+    // =========================================================================
+    // Cleanup Actions (REQ-054)
+    // =========================================================================
+    case 'CLEANUP_ALL':
+      // Revoke all tracked object URLs to prevent memory leaks
+      revokeAllTrackedURLs();
+      return createInitialState();
+
     default:
       return state;
   }
@@ -401,6 +410,9 @@ export interface UseItemCaptureStateReturn {
   // Submission
   setSubmitting: (isSubmitting: boolean) => void;
   reset: () => void;
+
+  // Cleanup (REQ-054)
+  cleanupAll: () => void;
 
   // Computed values
   canGoNext: boolean;
@@ -493,6 +505,11 @@ export function useItemCaptureState(): UseItemCaptureStateReturn {
     dispatch({ type: 'RESET' });
   }, []);
 
+  // Cleanup action (REQ-054)
+  const cleanupAll = useCallback(() => {
+    dispatch({ type: 'CLEANUP_ALL' });
+  }, []);
+
   // Computed values
   const canGoNext = useMemo(() => {
     if (state.currentStep === 'review') return false;
@@ -534,6 +551,7 @@ export function useItemCaptureState(): UseItemCaptureStateReturn {
     deactivateCamera,
     setSubmitting,
     reset,
+    cleanupAll,
     canGoNext,
     canGoBack,
     canSubmit,
