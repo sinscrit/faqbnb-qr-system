@@ -7,7 +7,7 @@
  *
  * @module ItemCapture/types
  * @see docs/prd/item-capture-implementation-plan.md
- * @lastModified 2025-12-31
+ * @lastModified 2025-12-31 (REQ-032 Task 2-4)
  */
 
 // =============================================================================
@@ -211,12 +211,18 @@ export interface ItemMetadata {
 }
 
 /**
- * Central state shape for the ItemCapture state machine.
+ * Complete state object managed by useItemCaptureState hook.
+ * Single source of truth for all wizard data.
  */
 export interface ItemCaptureState {
+  // Navigation
   /** Current wizard step */
   currentStep: WizardStep;
 
+  /** Step history for back navigation */
+  stepHistory: WizardStep[];
+
+  // Data
   /** Item metadata from MetadataStep */
   metadata: ItemMetadata;
 
@@ -226,32 +232,58 @@ export interface ItemCaptureState {
   /** Markdown instructions text */
   instructions: string;
 
-  /** Validation errors by field name */
+  // Validation
+  /** Field-level validation errors */
   errors: Record<string, string>;
 
+  // Resource states
   /** Whether video recording is in progress */
   isRecording: boolean;
 
   /** Whether camera is currently active */
   isCameraActive: boolean;
+
+  // UI state
+  /** Whether form is currently submitting */
+  isSubmitting: boolean;
+
+  /** Track unsaved changes */
+  isDirty: boolean;
 }
 
 /**
- * Discriminated union of all actions for the state machine reducer.
+ * All actions that can be dispatched to modify ItemCapture state.
+ * Uses discriminated union pattern for type safety.
  */
 export type ItemCaptureAction =
+  // Metadata actions
   | { type: 'SET_METADATA'; payload: Partial<ItemMetadata> }
+
+  // Media actions
   | { type: 'ADD_MEDIA'; payload: MediaItem }
-  | { type: 'REMOVE_MEDIA'; payload: string }
-  | { type: 'REORDER_MEDIA'; payload: { id: string; newOrder: number } }
+  | { type: 'REMOVE_MEDIA'; payload: string } // by id
   | { type: 'UPDATE_MEDIA'; payload: { id: string; updates: Partial<MediaItem> } }
+  | { type: 'REORDER_MEDIA'; payload: { fromIndex: number; toIndex: number } }
+
+  // Instructions
   | { type: 'SET_INSTRUCTIONS'; payload: string }
+
+  // Navigation
   | { type: 'GO_TO_STEP'; payload: WizardStep }
   | { type: 'NEXT_STEP' }
   | { type: 'PREV_STEP' }
+
+  // Errors
   | { type: 'SET_ERROR'; payload: { field: string; message: string } }
-  | { type: 'CLEAR_ERRORS' }
+  | { type: 'CLEAR_ERROR'; payload: string } // field name
+  | { type: 'CLEAR_ALL_ERRORS' }
+
+  // Resource states
   | { type: 'START_RECORDING' }
   | { type: 'STOP_RECORDING' }
   | { type: 'ACTIVATE_CAMERA' }
-  | { type: 'DEACTIVATE_CAMERA' };
+  | { type: 'DEACTIVATE_CAMERA' }
+
+  // Submission
+  | { type: 'SET_SUBMITTING'; payload: boolean }
+  | { type: 'RESET' };

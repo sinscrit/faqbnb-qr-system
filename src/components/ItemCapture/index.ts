@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31
+ * @lastModified 2025-12-31 (REQ-032)
  */
 
 // =============================================================================
@@ -39,8 +39,17 @@ export type {
 } from './ItemCapture.types';
 
 // =============================================================================
+// Hooks Export
+// =============================================================================
+
+export {
+  useItemCaptureState,
+  type UseItemCaptureStateReturn,
+} from './hooks';
+
+// =============================================================================
 // Main Component Export
 // =============================================================================
 
-// TODO: Add main component export in Task 1.2
+// TODO: Add main component export in later task
 // export { ItemCapture } from './ItemCapture';
