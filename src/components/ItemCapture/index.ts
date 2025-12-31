@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-049)
+ * @lastModified 2025-12-31 (REQ-050)
  */
 
 // =============================================================================
@@ -157,6 +157,9 @@ export type { TextEditorStepProps } from './components/steps/TextEditorStep';
 
 export { MediaEditorStep } from './components/steps/MediaEditorStep';
 export type { MediaEditorStepProps, ImageEditPhase } from './components/steps/MediaEditorStep';
+
+export { ReviewStep } from './components/steps/ReviewStep';
+export type { ReviewStepProps } from './components/steps/ReviewStep';
 
 // =============================================================================
 // Editor Components (REQ-045, REQ-047, REQ-048, REQ-050)
