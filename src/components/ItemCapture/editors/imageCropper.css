@@ -1,0 +1,212 @@
+/**
+ * ImageCropper Touch-Friendly CSS Overrides
+ *
+ * Enhances touch targets for crop handles on mobile devices and provides
+ * visual feedback for active states.
+ *
+ * @module ItemCapture/editors/imageCropper
+ * @see docs/REQ-047-implement-imagecropper-detailed.md
+ * @lastModified 2025-12-31
+ */
+
+/* =============================================================================
+   Container Touch Handling (Task 8)
+   ============================================================================= */
+
+/* Prevent touch scrolling while cropping */
+.image-cropper-container {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Allow scrolling outside crop area */
+.image-cropper-wrapper {
+  touch-action: pan-y;
+}
+
+/* =============================================================================
+   Drag Handle Size Overrides (Task 8)
+   ============================================================================= */
+
+/* Larger touch targets for crop handles - desktop */
+.ReactCrop__drag-handle {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50%;
+  background-color: rgba(59, 130, 246, 0.9) !important;
+  border: 2px solid white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+/* Even larger handles on mobile for easier touch */
+@media (max-width: 768px) {
+  .ReactCrop__drag-handle {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
+
+/* Extra large handles on small mobile devices */
+@media (max-width: 480px) {
+  .ReactCrop__drag-handle {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* =============================================================================
+   Visual Feedback for Interactions (Task 8)
+   ============================================================================= */
+
+/* Active handle state - provides visual feedback when dragging */
+.ReactCrop__drag-handle:active,
+.ReactCrop__drag-handle:focus {
+  background-color: rgba(59, 130, 246, 1) !important;
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Hover state for desktop */
+@media (hover: hover) {
+  .ReactCrop__drag-handle:hover {
+    background-color: rgba(59, 130, 246, 1) !important;
+    transform: scale(1.1);
+  }
+}
+
+/* =============================================================================
+   Crop Selection Styling
+   ============================================================================= */
+
+/* Enhance the crop selection border */
+.ReactCrop__crop-selection {
+  border: 2px solid rgba(59, 130, 246, 0.9) !important;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+/* Rule of thirds grid (optional visual aid) */
+.ReactCrop__rule-of-thirds-hz::before,
+.ReactCrop__rule-of-thirds-hz::after,
+.ReactCrop__rule-of-thirds-vt::before,
+.ReactCrop__rule-of-thirds-vt::after {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* =============================================================================
+   Disabled State
+   ============================================================================= */
+
+/* Visual indication when cropping is disabled (during processing) */
+.ReactCrop--disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.ReactCrop--disabled .ReactCrop__drag-handle {
+  background-color: rgba(156, 163, 175, 0.5) !important;
+  cursor: not-allowed;
+}
+
+/* =============================================================================
+   Corner Handle Positioning Adjustments
+   ============================================================================= */
+
+/* Ensure corner handles are positioned correctly with larger sizes */
+.ReactCrop__drag-handle.ord-nw {
+  margin-top: -10px;
+  margin-left: -10px;
+}
+
+.ReactCrop__drag-handle.ord-ne {
+  margin-top: -10px;
+  margin-right: -10px;
+}
+
+.ReactCrop__drag-handle.ord-sw {
+  margin-bottom: -10px;
+  margin-left: -10px;
+}
+
+.ReactCrop__drag-handle.ord-se {
+  margin-bottom: -10px;
+  margin-right: -10px;
+}
+
+@media (max-width: 768px) {
+  .ReactCrop__drag-handle.ord-nw {
+    margin-top: -14px;
+    margin-left: -14px;
+  }
+
+  .ReactCrop__drag-handle.ord-ne {
+    margin-top: -14px;
+    margin-right: -14px;
+  }
+
+  .ReactCrop__drag-handle.ord-sw {
+    margin-bottom: -14px;
+    margin-left: -14px;
+  }
+
+  .ReactCrop__drag-handle.ord-se {
+    margin-bottom: -14px;
+    margin-right: -14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ReactCrop__drag-handle.ord-nw {
+    margin-top: -16px;
+    margin-left: -16px;
+  }
+
+  .ReactCrop__drag-handle.ord-ne {
+    margin-top: -16px;
+    margin-right: -16px;
+  }
+
+  .ReactCrop__drag-handle.ord-sw {
+    margin-bottom: -16px;
+    margin-left: -16px;
+  }
+
+  .ReactCrop__drag-handle.ord-se {
+    margin-bottom: -16px;
+    margin-right: -16px;
+  }
+}
+
+/* =============================================================================
+   Edge Handle Positioning Adjustments
+   ============================================================================= */
+
+/* Center edge handles */
+.ReactCrop__drag-handle.ord-n,
+.ReactCrop__drag-handle.ord-s {
+  width: 24px !important;
+  height: 12px !important;
+  border-radius: 6px;
+}
+
+.ReactCrop__drag-handle.ord-e,
+.ReactCrop__drag-handle.ord-w {
+  width: 12px !important;
+  height: 24px !important;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .ReactCrop__drag-handle.ord-n,
+  .ReactCrop__drag-handle.ord-s {
+    width: 32px !important;
+    height: 16px !important;
+  }
+
+  .ReactCrop__drag-handle.ord-e,
+  .ReactCrop__drag-handle.ord-w {
+    width: 16px !important;
+    height: 32px !important;
+  }
+}
