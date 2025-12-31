@@ -136,6 +136,13 @@ export { TextEditorStep } from './components/steps/TextEditorStep';
 export type { TextEditorStepProps } from './components/steps/TextEditorStep';
 
 // =============================================================================
+// Editor Components (REQ-045)
+// =============================================================================
+
+export { MarkdownEditor } from './editors/MarkdownEditor';
+export type { MarkdownEditorProps } from './editors/MarkdownEditor';
+
+// =============================================================================
 // Shared Components (REQ-037, REQ-043)
 // =============================================================================
 
