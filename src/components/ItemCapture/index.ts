@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-050)
+ * @lastModified 2025-12-31 (REQ-051)
  */
 
 // =============================================================================
@@ -222,7 +222,7 @@ export {
 export type { RotationDegrees as RotationDegreesUtil } from './editors/rotationUtils';
 
 // =============================================================================
-// Shared Components (REQ-037, REQ-043)
+// Shared Components (REQ-037, REQ-043, REQ-051)
 // =============================================================================
 
 export { CameraPreview } from './components/shared/CameraPreview';
@@ -232,6 +232,9 @@ export type { PDFPlaceholderProps } from './components/shared/PDFPlaceholder';
 
 export { PageCountBadge } from './components/shared/PageCountBadge';
 export type { PageCountBadgeProps } from './components/shared/PageCountBadge';
+
+export { MediaThumbnail } from './components/shared/MediaThumbnail';
+export type { MediaThumbnailProps } from './components/shared/MediaThumbnail';
 
 // =============================================================================
 // Constants Export

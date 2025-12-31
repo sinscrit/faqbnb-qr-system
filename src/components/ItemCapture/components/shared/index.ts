@@ -5,7 +5,7 @@
  * the ItemCapture wizard.
  *
  * @module ItemCapture/components/shared
- * @lastModified 2025-12-31 (REQ-043)
+ * @lastModified 2025-12-31 (REQ-051)
  */
 
 export { CameraPreview } from './CameraPreview';
@@ -22,3 +22,6 @@ export type { PDFPlaceholderProps } from './PDFPlaceholder';
 
 export { PageCountBadge } from './PageCountBadge';
 export type { PageCountBadgeProps } from './PageCountBadge';
+
+export { MediaThumbnail } from './MediaThumbnail';
+export type { MediaThumbnailProps } from './MediaThumbnail';
