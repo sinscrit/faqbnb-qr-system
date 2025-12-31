@@ -4,7 +4,7 @@
  * This file exports all hooks for the ItemCapture component.
  *
  * @module ItemCapture/hooks
- * @lastModified 2025-12-31 (REQ-043)
+ * @lastModified 2025-12-31 (REQ-046)
  */
 
 export {
@@ -23,3 +23,5 @@ export { useMediaCapture } from './useMediaCapture';
 export { useFileUpload } from './useFileUpload';
 
 export { usePDFThumbnail, type PDFThumbnailState } from './usePDFThumbnail';
+
+export { useMediaEditor } from './useMediaEditor';

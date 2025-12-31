@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-044)
+ * @lastModified 2025-12-31 (REQ-046)
  */
 
 // =============================================================================
@@ -86,6 +86,24 @@ export {
 } from './utils/pdfConstants';
 
 // =============================================================================
+// useMediaEditor Types (REQ-046)
+// =============================================================================
+
+export type {
+  UseMediaEditorOptions,
+  UseMediaEditorReturn,
+  MediaEditState,
+  CropDescriptor,
+  RotationDegrees,
+  TrimDescriptor,
+  EditType,
+  EditSummary,
+  EditConfirmationResult,
+  MediaEditorError,
+  MediaEditorErrorCode,
+} from './ItemCapture.types';
+
+// =============================================================================
 // Hooks Export
 // =============================================================================
 
@@ -99,6 +117,8 @@ export { useMediaCapture } from './hooks';
 export { useFileUpload } from './hooks';
 
 export { usePDFThumbnail, type PDFThumbnailState } from './hooks';
+
+export { useMediaEditor } from './hooks';
 
 // =============================================================================
 // Wizard Navigation Components (Task 1.3)

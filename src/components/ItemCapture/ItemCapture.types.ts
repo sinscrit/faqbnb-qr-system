@@ -697,3 +697,218 @@ export interface PDFThumbnailResult {
   /** Whether the PDF is corrupted or malformed */
   isCorrupt: boolean;
 }
+
+// =============================================================================
+// useMediaEditor Types (REQ-046)
+// =============================================================================
+
+/**
+ * Configuration options for useMediaEditor hook.
+ * @lastModified 2025-12-31 (REQ-046)
+ */
+export interface UseMediaEditorOptions {
+  /** Maximum number of concurrent edit sessions (default: 5) */
+  maxConcurrentEdits?: number;
+  /** Whether to auto-generate previews on edit changes (default: true) */
+  autoGeneratePreview?: boolean;
+  /** Preview quality for images (0-1, default: 0.8) */
+  previewQuality?: number;
+  /** Maximum preview dimensions (default: { width: 800, height: 800 }) */
+  maxPreviewSize?: { width: number; height: number };
+  /** Callback when edit state changes */
+  onEditStateChange?: (mediaId: string, state: MediaEditState) => void;
+  /** Callback when edits are confirmed */
+  onEditsConfirmed?: (mediaId: string, result: EditConfirmationResult) => void;
+  /** Callback when edits are cancelled */
+  onEditsCancelled?: (mediaId: string) => void;
+  /** Enable debug logging (default: false) */
+  debug?: boolean;
+}
+
+/**
+ * Current edit state for a media item.
+ * Tracks all non-destructive edit operations.
+ */
+export interface MediaEditState {
+  /** ID of the media item being edited */
+  mediaId: string;
+  /** Reference to original media (preserved until confirmation) */
+  originalMedia: MediaItem;
+  /** Crop descriptor if crop is applied */
+  crop: CropDescriptor | null;
+  /** Rotation in 90-degree increments */
+  rotation: RotationDegrees;
+  /** Trim descriptor for video (null for images) */
+  trim: TrimDescriptor | null;
+  /** Generated preview URL (Object URL) */
+  previewUrl: string | null;
+  /** Whether preview generation is in progress */
+  isGeneratingPreview: boolean;
+  /** Whether any edits have been made */
+  isDirty: boolean;
+  /** When editing session started */
+  startedAt: Date;
+  /** When last edit was made */
+  lastModifiedAt: Date;
+}
+
+/**
+ * Descriptor for crop operation (percentages 0-100).
+ * Using percentages allows consistent behavior across different image sizes.
+ */
+export interface CropDescriptor {
+  /** X offset from left edge (0-100) */
+  x: number;
+  /** Y offset from top edge (0-100) */
+  y: number;
+  /** Width of crop area (0-100) */
+  width: number;
+  /** Height of crop area (0-100) */
+  height: number;
+  /** Optional aspect ratio constraint */
+  aspectRatio?: number;
+}
+
+/**
+ * Rotation in 90-degree increments.
+ * Limited to these values for consistent behavior.
+ */
+export type RotationDegrees = 0 | 90 | 180 | 270;
+
+/**
+ * Descriptor for video trim operation.
+ * Times are in seconds.
+ */
+export interface TrimDescriptor {
+  /** Start time in seconds */
+  startTime: number;
+  /** End time in seconds */
+  endTime: number;
+  /** Original video duration for reference */
+  originalDuration: number;
+}
+
+/**
+ * Types of edits supported by the media editor.
+ */
+export type EditType = 'crop' | 'rotation' | 'trim';
+
+/**
+ * Result of confirming edits.
+ * Contains the edited blob (for images) and metadata about applied edits.
+ */
+export interface EditConfirmationResult {
+  /** Whether confirmation succeeded */
+  success: boolean;
+  /** Edited blob (for images; undefined for videos in V1) */
+  editedBlob?: Blob;
+  /** Updated metadata reflecting edits */
+  editedMetadata: MediaMetadata;
+  /** Summary of all edits that were applied */
+  appliedEdits: EditSummary;
+  /** Error message if confirmation failed */
+  error?: string;
+}
+
+/**
+ * Summary of edits applied to a media item.
+ */
+export interface EditSummary {
+  /** Whether crop was applied */
+  cropped: boolean;
+  /** Rotation applied (0 means no rotation) */
+  rotated: RotationDegrees;
+  /** Trim applied (null if no trim) */
+  trimmed: TrimDescriptor | null;
+  /** Total count of edit operations */
+  editCount: number;
+}
+
+/**
+ * Error codes for editor operations.
+ */
+export type MediaEditorErrorCode =
+  | 'PREVIEW_GENERATION_FAILED'
+  | 'CONFIRM_FAILED'
+  | 'INVALID_CROP_BOUNDS'
+  | 'INVALID_TRIM_POINTS'
+  | 'MAX_SESSIONS_EXCEEDED'
+  | 'SESSION_NOT_FOUND'
+  | 'UNSUPPORTED_MEDIA_TYPE';
+
+/**
+ * Structured error for editor operations.
+ * Provides user-friendly messages and recovery guidance.
+ */
+export interface MediaEditorError {
+  /** Error code for programmatic handling */
+  code: MediaEditorErrorCode;
+  /** User-friendly error message */
+  message: string;
+  /** Actionable guidance for the user */
+  action: string;
+  /** Whether the error can be resolved by retrying */
+  recoverable: boolean;
+}
+
+/**
+ * Return type for useMediaEditor hook.
+ * Provides all state and actions for non-destructive media editing.
+ */
+export interface UseMediaEditorReturn {
+  // Edit State
+  /** Map of all active edit sessions */
+  editSessions: Map<string, MediaEditState>;
+  /** Get edit state for a specific media item */
+  getEditState: (mediaId: string) => MediaEditState | null;
+  /** Check if a specific media item has pending (unsaved) edits */
+  hasPendingEdits: (mediaId: string) => boolean;
+  /** Get list of all media IDs with pending edits */
+  getPendingEditIds: () => string[];
+  /** Whether any media items have pending edits */
+  hasAnyPendingEdits: boolean;
+
+  // Edit Actions
+  /** Start an editing session for a media item */
+  startEditing: (mediaId: string, originalMedia: MediaItem) => void;
+  /** Set crop for a media item */
+  setCrop: (mediaId: string, crop: CropDescriptor | null) => void;
+  /** Set rotation for a media item */
+  setRotation: (mediaId: string, degrees: RotationDegrees) => void;
+  /** Set trim for a video item */
+  setTrim: (mediaId: string, trim: TrimDescriptor | null) => void;
+  /** Reset a specific edit type to default */
+  resetEdit: (mediaId: string, editType: EditType) => void;
+  /** Reset all edits for a media item */
+  resetAllEdits: (mediaId: string) => void;
+
+  // Preview Generation
+  /** Get or generate preview for current edits */
+  getEditPreview: (mediaId: string) => Promise<string | null>;
+  /** Check if preview is currently being generated */
+  isGeneratingPreview: (mediaId: string) => boolean;
+  /** Force regeneration of preview */
+  regeneratePreview: (mediaId: string) => Promise<void>;
+
+  // Confirmation / Cancellation
+  /** Apply edits and produce final result */
+  confirmEdits: (mediaId: string) => Promise<EditConfirmationResult>;
+  /** Cancel all edits and restore original */
+  cancelEdits: (mediaId: string) => void;
+  /** End editing session (use after confirmation or cancellation) */
+  endEditing: (mediaId: string) => void;
+
+  // Utility
+  /** Get summary of edits for a media item */
+  getEditSummary: (mediaId: string) => EditSummary | null;
+  /** Check if a specific edit type has been applied */
+  hasEdit: (mediaId: string, editType: EditType) => boolean;
+  /** Clear all edit sessions and free resources */
+  clearAllSessions: () => void;
+
+  // Error State
+  /** Get current error for a media item */
+  getError: (mediaId: string) => MediaEditorError | null;
+  /** Clear error for a media item */
+  clearError: (mediaId: string) => void;
+}
