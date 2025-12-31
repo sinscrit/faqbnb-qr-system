@@ -109,3 +109,58 @@ export const METADATA_CONSTRAINTS = {
   },
   maxTags: 10,
 } as const;
+
+// =============================================================================
+// Thumbnail Generation Configuration (Task 2.5 / REQ-040)
+// =============================================================================
+
+/**
+ * Default thumbnail dimensions in pixels.
+ * Used for consistent thumbnail sizing across image and video sources.
+ */
+export const THUMBNAIL_SIZE = {
+  width: 200,
+  height: 200,
+} as const;
+
+/**
+ * Default settings for thumbnail generation.
+ */
+export const THUMBNAIL_DEFAULTS = {
+  /** JPEG quality setting (0-1) */
+  quality: 0.8,
+  /** Default output format */
+  format: 'image/jpeg' as const,
+  /** Default fit strategy: 'cover' crops to fill, 'contain' fits within bounds */
+  fit: 'cover' as const,
+};
+
+/**
+ * Supported image MIME types for thumbnail generation.
+ */
+export const SUPPORTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+] as const;
+
+/**
+ * Supported video MIME types for thumbnail generation.
+ */
+export const SUPPORTED_VIDEO_TYPES = [
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+] as const;
+
+/**
+ * Maximum time in milliseconds to wait for thumbnail generation.
+ * Used as a timeout for loading images and seeking videos.
+ */
+export const THUMBNAIL_TIMEOUT = 10000;
+
+/**
+ * Default time in seconds to seek into a video for frame extraction.
+ * 0.5 seconds provides a frame after video playback has started.
+ */
+export const VIDEO_SEEK_TIME = 0.5;

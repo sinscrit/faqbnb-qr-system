@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-038)
+ * @lastModified 2025-12-31 (REQ-040)
  */
 
 // =============================================================================
@@ -105,8 +105,33 @@ export {
   APPLIANCE_TYPES,
   SUGGESTED_TAGS,
   METADATA_CONSTRAINTS,
+  THUMBNAIL_SIZE,
+  THUMBNAIL_DEFAULTS,
+  SUPPORTED_IMAGE_TYPES,
+  SUPPORTED_VIDEO_TYPES,
+  THUMBNAIL_TIMEOUT,
+  VIDEO_SEEK_TIME,
 } from './utils/constants';
 export type { PresetLocation, SuggestedTag } from './utils/constants';
+
+// =============================================================================
+// Thumbnail Generation Utilities (REQ-040)
+// =============================================================================
+
+/**
+ * Thumbnail generation utilities are designed to be lazy-loaded.
+ * For optimal bundle size, use dynamic import:
+ *
+ * @example
+ * const { generateThumbnail } = await import('@/components/ItemCapture/utils/thumbnailGenerator');
+ * const thumbnail = await generateThumbnail(file);
+ */
+export {
+  generateThumbnail,
+  generateImageThumbnail,
+  generateVideoThumbnail,
+} from './utils/thumbnailGenerator';
+export type { ThumbnailOptions } from './utils/thumbnailGenerator';
 
 // =============================================================================
 // Main Component Export
