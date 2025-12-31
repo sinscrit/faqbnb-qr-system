@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-032)
+ * @lastModified 2025-12-31 (REQ-034 Task 9)
  */
 
 // =============================================================================
@@ -59,6 +59,25 @@ export type { StepNavigationProps } from './components/shared/StepNavigation';
 
 export { ProgressIndicator, getCurrentStageIndex, PROGRESS_STAGES, STEP_TO_STAGE_INDEX } from './components/shared/ProgressIndicator';
 export type { ProgressIndicatorProps, StepDefinition } from './components/shared/ProgressIndicator';
+
+// =============================================================================
+// Step Components (Task 1.4)
+// =============================================================================
+
+export { MetadataStep, validateMetadata } from './components/steps/MetadataStep';
+export type { MetadataStepProps } from './components/steps/MetadataStep';
+
+// =============================================================================
+// Constants Export
+// =============================================================================
+
+export {
+  PRESET_LOCATIONS,
+  APPLIANCE_TYPES,
+  SUGGESTED_TAGS,
+  METADATA_CONSTRAINTS,
+} from './utils/constants';
+export type { PresetLocation, SuggestedTag } from './utils/constants';
 
 // =============================================================================
 // Main Component Export
