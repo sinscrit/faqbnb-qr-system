@@ -203,3 +203,78 @@ export const MARKDOWN_FORMATS = {
  * Type for markdown format keys.
  */
 export type MarkdownFormatKey = keyof typeof MARKDOWN_FORMATS;
+
+// =============================================================================
+// Capture Constraints (REQ-052)
+// =============================================================================
+
+/**
+ * Validation constraints for capture operations.
+ * These limits are enforced by the validation layer to ensure content
+ * meets quality and size requirements.
+ *
+ * @lastModified 2025-12-31 (REQ-052 Task 1)
+ */
+export const CAPTURE_CONSTRAINTS = {
+  video: {
+    /** Maximum video duration in seconds */
+    maxDuration: 120, // 2 minutes
+    /** Maximum video file size in bytes */
+    maxFileSize: 104857600, // 100 MB
+  },
+  image: {
+    /** Maximum image file size in bytes */
+    maxFileSize: 20971520, // 20 MB
+    /** Maximum number of images per item */
+    maxCount: 10,
+  },
+  pdf: {
+    /** Maximum PDF file size in bytes */
+    maxFileSize: 52428800, // 50 MB
+    /** Maximum number of pages per PDF */
+    maxPages: 50,
+  },
+  text: {
+    /** Maximum instructions text length in characters */
+    maxLength: 5000,
+  },
+  total: {
+    /** Maximum total file size in bytes for all media in an item */
+    maxSize: 209715200, // 200 MB
+  },
+  title: {
+    /** Maximum title length in characters */
+    maxLength: 200,
+  },
+} as const;
+
+// =============================================================================
+// Supported File Formats (REQ-052)
+// =============================================================================
+
+/**
+ * Supported MIME types for each media category.
+ * Used for file validation and upload filtering.
+ *
+ * @lastModified 2025-12-31 (REQ-052 Task 1)
+ */
+export const SUPPORTED_FORMATS = {
+  image: ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'] as const,
+  video: ['video/mp4', 'video/webm', 'video/quicktime'] as const,
+  pdf: ['application/pdf'] as const,
+} as const;
+
+/**
+ * Type for supported image MIME types.
+ */
+export type SupportedImageFormat = typeof SUPPORTED_FORMATS.image[number];
+
+/**
+ * Type for supported video MIME types.
+ */
+export type SupportedVideoFormat = typeof SUPPORTED_FORMATS.video[number];
+
+/**
+ * Type for supported PDF MIME types.
+ */
+export type SupportedPDFFormat = typeof SUPPORTED_FORMATS.pdf[number];

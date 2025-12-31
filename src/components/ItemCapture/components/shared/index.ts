@@ -5,7 +5,7 @@
  * the ItemCapture wizard.
  *
  * @module ItemCapture/components/shared
- * @lastModified 2025-12-31 (REQ-051)
+ * @lastModified 2025-12-31 (REQ-052 - Added ValidationMessage)
  */
 
 export { CameraPreview } from './CameraPreview';
@@ -25,3 +25,6 @@ export type { PageCountBadgeProps } from './PageCountBadge';
 
 export { MediaThumbnail } from './MediaThumbnail';
 export type { MediaThumbnailProps } from './MediaThumbnail';
+
+export { ValidationMessage, ValidationMessageList } from './ValidationMessage';
+export type { ValidationMessageProps, ValidationMessageType, ValidationMessageListProps } from './ValidationMessage';

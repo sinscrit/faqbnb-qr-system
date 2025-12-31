@@ -8,7 +8,7 @@
  * and instructions preview with options to edit, reorder, or remove items.
  *
  * @module ItemCapture/components/steps/ReviewStep
- * @lastModified 2025-12-31 (REQ-050)
+ * @lastModified 2025-12-31 (REQ-052 - Added validation layer integration)
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -26,10 +26,13 @@ import {
   FileText,
   Play,
   Plus,
+  HardDrive,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MediaItem, ItemMetadata, ApplianceType } from '../../ItemCapture.types';
 import { APPLIANCE_TYPES } from '../../utils/constants';
+import { useItemValidation } from '../../hooks/useItemValidation';
+import { ValidationMessage, ValidationMessageList } from '../shared/ValidationMessage';
 
 // =============================================================================
 // Lazy-loaded ReactMarkdown
@@ -299,9 +302,21 @@ export function ReviewStep({
   // Ref for cleanup
   const urlsRef = useRef<string[]>([]);
 
-  // Computed validation
-  const hasContent = mediaItems.length > 0 || instructions.trim().length > 0;
-  const isValid = metadata.title.trim().length > 0 && hasContent;
+  // Validation hook
+  const {
+    isValid,
+    errors,
+    warnings,
+    calculateTotalSize,
+    getRemainingSize,
+    formatSize,
+    maxTotalSize,
+    hasContent,
+  } = useItemValidation(metadata, mediaItems, instructions);
+
+  // Calculate size values
+  const totalSize = calculateTotalSize();
+  const remainingSize = getRemainingSize();
 
   // Cleanup on unmount
   useEffect(() => {
@@ -319,9 +334,13 @@ export function ReviewStep({
         instructionsLength: instructions.length,
         isValid,
         hasContent,
+        totalSize: formatSize(totalSize),
+        remainingSize: formatSize(remainingSize),
+        errors,
+        warnings,
       });
     }
-  }, [debug, metadata, mediaItems.length, instructions.length, isValid, hasContent]);
+  }, [debug, metadata, mediaItems.length, instructions.length, isValid, hasContent, totalSize, remainingSize, errors, warnings, formatSize]);
 
   // ==========================================================================
   // Handlers
@@ -538,16 +557,70 @@ export function ReviewStep({
       </section>
 
       {/* =================================================================== */}
-      {/* Validation Warning */}
+      {/* Size Indicator */}
       {/* =================================================================== */}
-      {!isValid && (
+      {mediaItems.length > 0 && (
         <div
-          className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded"
-          role="alert"
+          className="bg-gray-50 rounded-lg border border-gray-200 p-4"
+          aria-label="Upload size summary"
         >
-          <p className="text-sm">
-            Please add a title and at least one media item or instructions before submitting.
-          </p>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <HardDrive className="w-4 h-4 text-gray-400" aria-hidden="true" />
+            <span>
+              Total size: <span className="font-medium text-gray-900">{formatSize(totalSize)}</span>
+              {' / '}
+              <span className="text-gray-500">{formatSize(maxTotalSize)}</span>
+              {' ('}
+              <span className={remainingSize > 0 ? 'text-green-600' : 'text-red-600'}>
+                {formatSize(remainingSize)} remaining
+              </span>
+              {')'}
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div className="mt-2 h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={cn(
+                'h-full transition-all',
+                totalSize / maxTotalSize > 0.9
+                  ? 'bg-red-500'
+                  : totalSize / maxTotalSize > 0.7
+                  ? 'bg-yellow-500'
+                  : 'bg-green-500'
+              )}
+              style={{ width: `${Math.min(100, (totalSize / maxTotalSize) * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* =================================================================== */}
+      {/* Validation Errors */}
+      {/* =================================================================== */}
+      {Object.keys(errors).length > 0 && (
+        <div className="space-y-2">
+          {Object.entries(errors).map(([key, message]) => (
+            <ValidationMessage
+              key={key}
+              type="error"
+              message={message}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* =================================================================== */}
+      {/* Validation Warnings */}
+      {/* =================================================================== */}
+      {Object.keys(warnings).length > 0 && (
+        <div className="space-y-2">
+          {Object.entries(warnings).map(([key, message]) => (
+            <ValidationMessage
+              key={key}
+              type="warning"
+              message={message}
+            />
+          ))}
         </div>
       )}
 

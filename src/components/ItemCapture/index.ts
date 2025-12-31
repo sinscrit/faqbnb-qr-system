@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-051)
+ * @lastModified 2025-12-31 (REQ-052 - Added validation utilities and useItemValidation hook)
  */
 
 // =============================================================================
@@ -119,6 +119,8 @@ export { useFileUpload } from './hooks';
 export { usePDFThumbnail, type PDFThumbnailState } from './hooks';
 
 export { useMediaEditor } from './hooks';
+
+export { useItemValidation, type UseItemValidationReturn, type ValidatableField } from './hooks';
 
 // =============================================================================
 // Wizard Navigation Components (Task 1.3)
@@ -236,6 +238,9 @@ export type { PageCountBadgeProps } from './components/shared/PageCountBadge';
 export { MediaThumbnail } from './components/shared/MediaThumbnail';
 export type { MediaThumbnailProps } from './components/shared/MediaThumbnail';
 
+export { ValidationMessage, ValidationMessageList } from './components/shared/ValidationMessage';
+export type { ValidationMessageProps, ValidationMessageType, ValidationMessageListProps } from './components/shared/ValidationMessage';
+
 // =============================================================================
 // Constants Export
 // =============================================================================
@@ -253,8 +258,44 @@ export {
   VIDEO_SEEK_TIME,
   TEXT_EDITOR_CONSTRAINTS,
   MARKDOWN_FORMATS,
+  CAPTURE_CONSTRAINTS,
+  SUPPORTED_FORMATS,
 } from './utils/constants';
-export type { PresetLocation, SuggestedTag, MarkdownFormatKey } from './utils/constants';
+export type {
+  PresetLocation,
+  SuggestedTag,
+  MarkdownFormatKey,
+  SupportedImageFormat,
+  SupportedVideoFormat,
+  SupportedPDFFormat,
+} from './utils/constants';
+
+// =============================================================================
+// Validation Utilities (REQ-052)
+// =============================================================================
+
+export {
+  formatFileSize,
+  parseFileSize,
+  validateTitle,
+  validateContentRequirement,
+  validateFileSize,
+  validateTotalSize,
+  validateTextLength,
+  validateImageCount,
+  validateMimeType,
+  validateItemCapture,
+  getMediaTypeFromMime,
+  calculateRemainingSize,
+  calculateTotalSize,
+  wouldExceedTotalSize,
+} from './utils/validation';
+export type {
+  ValidationResult,
+  FileSizeValidationResult,
+  TotalSizeValidationResult,
+  ItemCaptureValidation,
+} from './utils/validation';
 
 // =============================================================================
 // Thumbnail Generation Utilities (REQ-040)

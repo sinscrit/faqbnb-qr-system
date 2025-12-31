@@ -4,7 +4,7 @@
  * This file exports all hooks for the ItemCapture component.
  *
  * @module ItemCapture/hooks
- * @lastModified 2025-12-31 (REQ-046)
+ * @lastModified 2025-12-31 (REQ-052 - Added useItemValidation)
  */
 
 export {
@@ -25,3 +25,5 @@ export { useFileUpload } from './useFileUpload';
 export { usePDFThumbnail, type PDFThumbnailState } from './usePDFThumbnail';
 
 export { useMediaEditor } from './useMediaEditor';
+
+export { useItemValidation, type UseItemValidationReturn, type ValidatableField } from './useItemValidation';

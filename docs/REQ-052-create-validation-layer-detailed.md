@@ -1,13 +1,34 @@
 # REQ-052: Create Validation Layer - Detailed Task Breakdown
 
 **Document Created:** 2025-12-31T18:30:00
-**Last Modified:** 2025-12-31T18:30:00
+**Last Modified:** 2025-12-31T19:00:00
 **Request Reference:** `/docs/gen_requests.md` - Request #052
 **Overview Document:** `/docs/REQ-052-create-validation-layer-overview.md`
 **Implementation Plan:** `/docs/prd/item-capture-implementation-plan.md`
 **Phase:** 5 - Review & Polish
 **Task ID:** 5.3
-**Status:** Ready for Implementation
+**Status:** COMPLETED
+
+---
+
+## Implementation Summary
+
+All 16 tasks have been successfully completed. The validation layer is fully implemented and integrated.
+
+### Files Created
+- `src/components/ItemCapture/utils/validation.ts` - Pure validation functions
+- `src/components/ItemCapture/hooks/useItemValidation.ts` - React validation hook
+- `src/components/ItemCapture/components/shared/ValidationMessage.tsx` - Error/warning display component
+- `src/components/ItemCapture/utils/__tests__/validation.test.ts` - Unit tests
+- `src/components/ItemCapture/hooks/__tests__/useItemValidation.test.ts` - Integration tests
+
+### Files Modified
+- `src/components/ItemCapture/utils/constants.ts` - Added CAPTURE_CONSTRAINTS and SUPPORTED_FORMATS
+- `src/components/ItemCapture/components/steps/ReviewStep.tsx` - Integrated validation hook and display
+- `src/components/ItemCapture/hooks/useFileUpload.ts` - Added type-specific size validation
+- `src/components/ItemCapture/index.ts` - Added exports for validation utilities
+- `src/components/ItemCapture/hooks/index.ts` - Added useItemValidation export
+- `src/components/ItemCapture/components/shared/index.ts` - Added ValidationMessage exports
 
 ---
 
@@ -83,11 +104,13 @@ The validation layer ensures:
 
 ---
 
-### Task 1: Create Capture Constraints Constants
+### Task 1: Create Capture Constraints Constants [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/constants.ts`
 
 **Objective:** Create a centralized constants file defining all validation limits and supported formats.
+
+**Implementation Notes:** Added CAPTURE_CONSTRAINTS and SUPPORTED_FORMATS constants to existing constants.ts file. Includes type-safe definitions with TypeScript readonly types.
 
 **Implementation Requirements:**
 
@@ -130,10 +153,10 @@ The validation layer ensures:
 3. Add `'use client';` directive at top of file
 
 **Acceptance Criteria:**
-- [ ] File exists at `src/components/ItemCapture/utils/constants.ts`
-- [ ] All constraint values match the implementation plan (Appendix B)
-- [ ] Constants are properly typed with TypeScript
-- [ ] File can be imported without errors
+- [x] File exists at `src/components/ItemCapture/utils/constants.ts`
+- [x] All constraint values match the implementation plan (Appendix B)
+- [x] Constants are properly typed with TypeScript
+- [x] File can be imported without errors
 
 **Verification Steps:**
 1. Run: `npx tsc --noEmit src/components/ItemCapture/utils/constants.ts`
@@ -141,9 +164,11 @@ The validation layer ensures:
 
 ---
 
-### Task 2: Implement File Size Formatting Utility
+### Task 2: Implement File Size Formatting Utility [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Created formatFileSize and parseFileSize functions with full support for B/KB/MB/GB units.
 
 **Objective:** Create utility functions for formatting file sizes in human-readable format.
 
@@ -174,12 +199,12 @@ export function formatFileSize(bytes: number): string {
 ```
 
 **Acceptance Criteria:**
-- [ ] `formatFileSize(0)` returns '0 B'
-- [ ] `formatFileSize(1024)` returns '1 KB'
-- [ ] `formatFileSize(1536)` returns '1.5 KB'
-- [ ] `formatFileSize(104857600)` returns '100 MB'
-- [ ] `parseFileSize('100MB')` returns 104857600
-- [ ] `parseFileSize('invalid')` returns 0
+- [x] `formatFileSize(0)` returns '0 B'
+- [x] `formatFileSize(1024)` returns '1 KB'
+- [x] `formatFileSize(1536)` returns '1.5 KB'
+- [x] `formatFileSize(104857600)` returns '100 MB'
+- [x] `parseFileSize('100MB')` returns 104857600
+- [x] `parseFileSize('invalid')` returns 0
 
 **Verification Steps:**
 1. Write quick test cases in a scratch file
@@ -187,9 +212,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 3: Implement Title Validation Function
+### Task 3: Implement Title Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateTitle function with empty/whitespace and max length checks.
 
 **Objective:** Create a pure function to validate the item title field.
 
@@ -214,10 +241,10 @@ export function formatFileSize(bytes: number): string {
 - Too long: "Title must be 200 characters or less (current: {n})"
 
 **Acceptance Criteria:**
-- [ ] `validateTitle('')` returns `{ isValid: false, error: 'Title is required' }`
-- [ ] `validateTitle('   ')` returns `{ isValid: false, error: 'Title is required' }`
-- [ ] `validateTitle('Valid Title')` returns `{ isValid: true }`
-- [ ] `validateTitle('x'.repeat(201))` includes current length in error
+- [x] `validateTitle('')` returns `{ isValid: false, error: 'Title is required' }`
+- [x] `validateTitle('   ')` returns `{ isValid: false, error: 'Title is required' }`
+- [x] `validateTitle('Valid Title')` returns `{ isValid: true }`
+- [x] `validateTitle('x'.repeat(201))` includes current length in error
 
 **Verification Steps:**
 1. Unit test each edge case
@@ -225,9 +252,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 4: Implement Content Requirement Validation
+### Task 4: Implement Content Requirement Validation [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateContentRequirement function checking for media or text content.
 
 **Objective:** Create a function that validates at least one form of content exists.
 
@@ -246,11 +275,11 @@ export function formatFileSize(bytes: number): string {
 - Import `MediaItem` type from `../ItemCapture.types` (or define inline if not available)
 
 **Acceptance Criteria:**
-- [ ] Returns valid when mediaItems has items, no text
-- [ ] Returns valid when no media, instructions has text
-- [ ] Returns valid when both have content
-- [ ] Returns error when both are empty
-- [ ] Trims whitespace from instructions before checking
+- [x] Returns valid when mediaItems has items, no text
+- [x] Returns valid when no media, instructions has text
+- [x] Returns valid when both have content
+- [x] Returns error when both are empty
+- [x] Trims whitespace from instructions before checking
 
 **Verification Steps:**
 1. Test with empty arrays and empty strings
@@ -259,9 +288,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 5: Implement File Size Validation Function
+### Task 5: Implement File Size Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateFileSize with type-specific limits for video (100MB), image (20MB), and PDF (50MB).
 
 **Objective:** Create a function to validate individual file sizes against type-specific limits.
 
@@ -288,12 +319,12 @@ export function formatFileSize(bytes: number): string {
 - Example: "File exceeds 100 MB limit (current: 125 MB)"
 
 **Acceptance Criteria:**
-- [ ] Video 50 MB file validates successfully (limit is 100 MB)
-- [ ] Video 150 MB file returns error with correct limits
-- [ ] Image 15 MB file validates successfully (limit is 20 MB)
-- [ ] Image 25 MB file returns error with correct limits
-- [ ] PDF 40 MB file validates successfully (limit is 50 MB)
-- [ ] Error message includes human-readable sizes
+- [x] Video 50 MB file validates successfully (limit is 100 MB)
+- [x] Video 150 MB file returns error with correct limits
+- [x] Image 15 MB file validates successfully (limit is 20 MB)
+- [x] Image 25 MB file returns error with correct limits
+- [x] PDF 40 MB file validates successfully (limit is 50 MB)
+- [x] Error message includes human-readable sizes
 
 **Verification Steps:**
 1. Create mock File objects with specific sizes
@@ -301,9 +332,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 6: Implement Total Size Validation Function
+### Task 6: Implement Total Size Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateTotalSize function with 200MB total limit.
 
 **Objective:** Create a function to validate the combined size of all media items.
 
@@ -326,10 +359,10 @@ export function formatFileSize(bytes: number): string {
 - Example: "Total upload size (220 MB) exceeds 200 MB limit"
 
 **Acceptance Criteria:**
-- [ ] Empty array returns valid with currentSize: 0
-- [ ] Items totaling 150 MB return valid
-- [ ] Items totaling 250 MB return error with correct sizes
-- [ ] Handles items with undefined/null file property
+- [x] Empty array returns valid with currentSize: 0
+- [x] Items totaling 150 MB return valid
+- [x] Items totaling 250 MB return error with correct sizes
+- [x] Handles items with undefined/null file property
 
 **Verification Steps:**
 1. Test with mock MediaItem arrays
@@ -337,9 +370,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 7: Implement Text Length Validation Function
+### Task 7: Implement Text Length Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateTextLength with 5000 character limit.
 
 **Objective:** Create a function to validate instructions text length.
 
@@ -355,10 +390,10 @@ export function formatFileSize(bytes: number): string {
 - Example: "Instructions exceed 5000 character limit (current: 5234)"
 
 **Acceptance Criteria:**
-- [ ] Empty string returns valid
-- [ ] 4999 characters returns valid
-- [ ] 5001 characters returns error with current count
-- [ ] Error message includes both limit and current count
+- [x] Empty string returns valid
+- [x] 4999 characters returns valid
+- [x] 5001 characters returns error with current count
+- [x] Error message includes both limit and current count
 
 **Verification Steps:**
 1. Test boundary conditions (4999, 5000, 5001 characters)
@@ -366,9 +401,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 8: Implement Image Count Validation Function
+### Task 8: Implement Image Count Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateImageCount with 10 image limit (counts only type='image' items).
 
 **Objective:** Create a function to validate the number of images doesn't exceed the limit.
 
@@ -384,10 +421,10 @@ export function formatFileSize(bytes: number): string {
 - Example: "Maximum 10 photos allowed (current: 12)"
 
 **Acceptance Criteria:**
-- [ ] 9 images returns valid
-- [ ] 10 images returns valid
-- [ ] 11 images returns error
-- [ ] Only counts items with type 'image', not videos or PDFs
+- [x] 9 images returns valid
+- [x] 10 images returns valid
+- [x] 11 images returns error
+- [x] Only counts items with type 'image', not videos or PDFs
 
 **Verification Steps:**
 1. Test with mixed media types
@@ -395,9 +432,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 9: Implement MIME Type Validation Function
+### Task 9: Implement MIME Type Validation Function [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateMimeType with support for image/jpeg/png/webp/heic/heif, video/mp4/webm/quicktime, and application/pdf.
 
 **Objective:** Create a function to validate file MIME types.
 
@@ -413,11 +452,11 @@ export function formatFileSize(bytes: number): string {
 - Example: "File type 'audio/mp3' is not supported for video"
 
 **Acceptance Criteria:**
-- [ ] 'image/jpeg' with 'image' type returns valid
-- [ ] 'image/heic' with 'image' type returns valid
-- [ ] 'audio/mp3' with 'video' type returns error
-- [ ] 'application/pdf' with 'pdf' type returns valid
-- [ ] Error message includes actual MIME type and category
+- [x] 'image/jpeg' with 'image' type returns valid
+- [x] 'image/heic' with 'image' type returns valid
+- [x] 'audio/mp3' with 'video' type returns error
+- [x] 'application/pdf' with 'pdf' type returns valid
+- [x] Error message includes actual MIME type and category
 
 **Verification Steps:**
 1. Test all supported formats
@@ -425,9 +464,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 10: Create Complete Validation Aggregator
+### Task 10: Create Complete Validation Aggregator [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/validation.ts`
+
+**Implementation Notes:** Implemented validateItemCapture function aggregating all validators with separate errors and warnings.
 
 **Objective:** Create a comprehensive validation function that runs all validators and aggregates results.
 
@@ -479,13 +520,13 @@ export function formatFileSize(bytes: number): string {
    - `textLength` for text length warnings
 
 **Acceptance Criteria:**
-- [ ] Returns isValid: true when all validations pass
-- [ ] Returns isValid: false when any error exists
-- [ ] Errors object contains all field-specific errors
-- [ ] Warnings object contains non-blocking issues
-- [ ] Text length issues are warnings, not errors
-- [ ] Individual file sizes are validated per item
-- [ ] Total size is calculated and validated
+- [x] Returns isValid: true when all validations pass
+- [x] Returns isValid: false when any error exists
+- [x] Errors object contains all field-specific errors
+- [x] Warnings object contains non-blocking issues
+- [x] Text length issues are warnings, not errors
+- [x] Individual file sizes are validated per item
+- [x] Total size is calculated and validated
 
 **Verification Steps:**
 1. Test with fully valid data
@@ -495,9 +536,11 @@ export function formatFileSize(bytes: number): string {
 
 ---
 
-### Task 11: Create ValidationMessage Component
+### Task 11: Create ValidationMessage Component [x] COMPLETED
 
 **File:** `src/components/ItemCapture/components/shared/ValidationMessage.tsx`
+
+**Implementation Notes:** Created ValidationMessage and ValidationMessageList components with error/warning/info variants and accessibility support.
 
 **Objective:** Create a reusable component for displaying validation errors and warnings.
 
@@ -533,10 +576,10 @@ const styles = {
 ```
 
 **Acceptance Criteria:**
-- [ ] Component renders with correct styling for each type
-- [ ] Icons match message type
-- [ ] className prop merges correctly
-- [ ] Component is accessible (screen reader friendly)
+- [x] Component renders with correct styling for each type
+- [x] Icons match message type
+- [x] className prop merges correctly
+- [x] Component is accessible (screen reader friendly)
 
 **Verification Steps:**
 1. Visual inspection of all three types
@@ -545,9 +588,11 @@ const styles = {
 
 ---
 
-### Task 12: Create useItemValidation Hook
+### Task 12: Create useItemValidation Hook [x] COMPLETED
 
 **File:** `src/components/ItemCapture/hooks/useItemValidation.ts`
+
+**Implementation Notes:** Created hook with memoized validation, size calculations, and field validation.
 
 **Objective:** Create a React hook that provides real-time validation state management.
 
@@ -583,12 +628,12 @@ const styles = {
    - Use `useCallback` for methods returned to consumers
 
 **Acceptance Criteria:**
-- [ ] Validation updates when metadata changes
-- [ ] Validation updates when mediaItems changes
-- [ ] Validation updates when instructions changes
-- [ ] `isValid` reflects overall validation state
-- [ ] `calculateTotalSize()` returns correct sum
-- [ ] `getRemainingSize()` returns space left before limit
+- [x] Validation updates when metadata changes
+- [x] Validation updates when mediaItems changes
+- [x] Validation updates when instructions changes
+- [x] `isValid` reflects overall validation state
+- [x] `calculateTotalSize()` returns correct sum
+- [x] `getRemainingSize()` returns space left before limit
 
 **Verification Steps:**
 1. Test in React component with changing props
@@ -597,9 +642,11 @@ const styles = {
 
 ---
 
-### Task 13: Integrate Validation in ReviewStep
+### Task 13: Integrate Validation in ReviewStep [x] COMPLETED
 
 **File:** `src/components/ItemCapture/components/steps/ReviewStep.tsx`
+
+**Implementation Notes:** Integrated useItemValidation hook, added size indicator with progress bar, displays all errors and warnings.
 
 **Objective:** Integrate the validation hook and display validation feedback in the ReviewStep component.
 
@@ -630,12 +677,12 @@ const {
 ```
 
 **Acceptance Criteria:**
-- [ ] Size indicator displays current/max/remaining sizes
-- [ ] All validation errors display with error styling
-- [ ] All warnings display with warning styling
-- [ ] Submit button is disabled when validation fails
-- [ ] Submit button has correct visual disabled state
-- [ ] Validation updates in real-time as content changes
+- [x] Size indicator displays current/max/remaining sizes
+- [x] All validation errors display with error styling
+- [x] All warnings display with warning styling
+- [x] Submit button is disabled when validation fails
+- [x] Submit button has correct visual disabled state
+- [x] Validation updates in real-time as content changes
 
 **Verification Steps:**
 1. Test with missing title - verify error displays
@@ -646,9 +693,11 @@ const {
 
 ---
 
-### Task 14: Add Pre-Upload Validation in useFileUpload
+### Task 14: Add Pre-Upload Validation in useFileUpload [x] COMPLETED
 
 **File:** `src/components/ItemCapture/hooks/useFileUpload.ts`
+
+**Implementation Notes:** Enhanced validateFileInternal to use type-specific size limits from CAPTURE_CONSTRAINTS.
 
 **Objective:** Add validation before files are added to prevent invalid files from being accepted.
 
@@ -677,11 +726,11 @@ const {
 - "Adding this file would exceed the {limit} total limit"
 
 **Acceptance Criteria:**
-- [ ] Oversized files are rejected before being added
-- [ ] Files that would exceed total limit are rejected
-- [ ] Invalid MIME types are rejected
-- [ ] User sees error message when file is rejected
-- [ ] Valid files are added successfully
+- [x] Oversized files are rejected before being added
+- [x] Files that would exceed total limit are rejected
+- [x] Invalid MIME types are rejected
+- [x] User sees error message when file is rejected
+- [x] Valid files are added successfully
 
 **Verification Steps:**
 1. Attempt to upload 150 MB video (should fail)
@@ -690,9 +739,11 @@ const {
 
 ---
 
-### Task 15: Add Unit Tests for Validation Functions
+### Task 15: Add Unit Tests for Validation Functions [x] COMPLETED
 
 **File:** `src/components/ItemCapture/utils/__tests__/validation.test.ts`
+
+**Implementation Notes:** Created comprehensive test suite with 60+ test cases covering all validation functions.
 
 **Objective:** Create comprehensive unit tests for all validation functions.
 
@@ -750,10 +801,10 @@ const {
    - Warnings don't affect isValid
 
 **Acceptance Criteria:**
-- [ ] All test cases pass
-- [ ] Tests cover edge cases
-- [ ] Tests are properly isolated
-- [ ] No flaky tests
+- [x] All test cases pass
+- [x] Tests cover edge cases
+- [x] Tests are properly isolated
+- [x] No flaky tests
 
 **Verification Steps:**
 1. Run: `npm test -- validation.test.ts`
@@ -761,9 +812,11 @@ const {
 
 ---
 
-### Task 16: Add Integration Tests for Validation Hook
+### Task 16: Add Integration Tests for Validation Hook [x] COMPLETED
 
 **File:** `src/components/ItemCapture/hooks/__tests__/useItemValidation.test.ts`
+
+**Implementation Notes:** Created integration test suite with 30+ test cases covering hook behavior, real-time updates, memoization, and content state.
 
 **Objective:** Create integration tests for the useItemValidation hook.
 
@@ -795,9 +848,9 @@ import { useItemValidation } from '../useItemValidation';
 ```
 
 **Acceptance Criteria:**
-- [ ] All integration tests pass
-- [ ] Hook behavior matches specification
-- [ ] Memoization works correctly
+- [x] All integration tests pass
+- [x] Hook behavior matches specification
+- [x] Memoization works correctly
 
 **Verification Steps:**
 1. Run: `npm test -- useItemValidation.test.ts`

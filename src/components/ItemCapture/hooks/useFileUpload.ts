@@ -12,7 +12,7 @@
  *
  * @module ItemCapture/hooks/useFileUpload
  * @see docs/REQ-041-create-usefileupload-hook-detailed.md
- * @lastModified 2025-12-31 (REQ-041)
+ * @lastModified 2025-12-31 (REQ-052 - Added type-specific size validation from CAPTURE_CONSTRAINTS)
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
@@ -28,7 +28,13 @@ import type {
   DropZoneProps,
   InputProps,
 } from '../ItemCapture.types';
-import { SUPPORTED_IMAGE_TYPES, SUPPORTED_VIDEO_TYPES } from '../utils/constants';
+import { SUPPORTED_IMAGE_TYPES, SUPPORTED_VIDEO_TYPES, CAPTURE_CONSTRAINTS, SUPPORTED_FORMATS } from '../utils/constants';
+import {
+  validateFileSize as validateFileSizeLimit,
+  validateMimeType as validateMimeTypeFormat,
+  getMediaTypeFromMime,
+  formatFileSize as formatFileSizeUtil,
+} from '../utils/validation';
 
 // =============================================================================
 // Constants
@@ -214,6 +220,7 @@ interface ValidationOptions {
 
 /**
  * Validate a single file against the constraints.
+ * Enhanced with type-specific size limits from CAPTURE_CONSTRAINTS.
  */
 function validateFileInternal(
   file: File,
@@ -248,8 +255,20 @@ function validateFileInternal(
     };
   }
 
-  // Check file size
-  if (file.size > maxFileSize) {
+  // Determine media type for type-specific size limits
+  const mediaType = getMediaTypeFromMime(file.type);
+
+  // Use type-specific size limit if available, otherwise fall back to maxFileSize
+  let effectiveMaxSize = maxFileSize;
+  if (mediaType) {
+    const typeSpecificLimit = CAPTURE_CONSTRAINTS[mediaType]?.maxFileSize;
+    if (typeSpecificLimit) {
+      effectiveMaxSize = Math.min(maxFileSize, typeSpecificLimit);
+    }
+  }
+
+  // Check file size against type-specific or general limit
+  if (file.size > effectiveMaxSize) {
     return {
       valid: false,
       rejection: {
@@ -258,7 +277,7 @@ function validateFileInternal(
         message: ERROR_MESSAGES.FILE_TOO_LARGE.getMessage(
           file.name,
           bytesToMB(file.size),
-          bytesToMB(maxFileSize)
+          bytesToMB(effectiveMaxSize)
         ),
         action: ERROR_MESSAGES.FILE_TOO_LARGE.getAction(),
       },
