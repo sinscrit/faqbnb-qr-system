@@ -470,3 +470,194 @@ export interface CameraPreviewProps {
   /** Callback when user wants to open settings (permission denied) */
   onOpenSettings?: () => void;
 }
+
+// =============================================================================
+// File Upload Types (REQ-041)
+// =============================================================================
+
+/**
+ * File category for uploaded files based on MIME type.
+ */
+export type FileCategory = 'image' | 'video' | 'pdf' | 'other';
+
+/**
+ * Error codes for file rejection during upload.
+ * Each code maps to a specific validation failure.
+ */
+export type FileRejectionCode =
+  | 'FILE_TYPE_NOT_ALLOWED'
+  | 'FILE_TOO_LARGE'
+  | 'TOTAL_SIZE_EXCEEDED'
+  | 'MAX_FILES_EXCEEDED'
+  | 'EMPTY_FILE'
+  | 'VALIDATION_ERROR';
+
+/**
+ * A validated file with metadata extracted during upload.
+ */
+export interface ValidatedFile {
+  /** Unique UUID for this file */
+  id: string;
+  /** Original File object */
+  file: File;
+  /** Validated MIME type */
+  mimeType: string;
+  /** File size in bytes */
+  size: number;
+  /** Original filename */
+  name: string;
+  /** Lowercase file extension */
+  extension: string;
+  /** File category based on MIME type */
+  category: FileCategory;
+  /** Object URL for preview (for images/videos) */
+  previewUrl?: string;
+  /** Timestamp when file was added */
+  addedAt: Date;
+}
+
+/**
+ * Information about a rejected file including error details.
+ */
+export interface FileRejection {
+  /** Original File object that was rejected */
+  file: File;
+  /** Error code identifying the rejection reason */
+  code: FileRejectionCode;
+  /** User-friendly error message */
+  message: string;
+  /** Suggested action to resolve the issue */
+  action: string;
+}
+
+/**
+ * Hook-level error for file upload operations.
+ */
+export interface FileUploadError {
+  /** Error code for programmatic handling */
+  code: FileRejectionCode | 'UNKNOWN_ERROR';
+  /** User-friendly error message */
+  message: string;
+  /** Suggested action for recovery */
+  action: string;
+}
+
+/**
+ * Result of validating a single file.
+ */
+export interface FileValidationResult {
+  /** Whether the file passed validation */
+  valid: boolean;
+  /** Rejection details if invalid */
+  rejection?: FileRejection;
+  /** Validated file metadata if valid */
+  validatedFile?: Omit<ValidatedFile, 'id' | 'previewUrl' | 'addedAt'>;
+}
+
+/**
+ * Configuration options for useFileUpload hook.
+ */
+export interface UseFileUploadOptions {
+  /** Array of allowed MIME types (e.g., ['image/*', 'video/mp4']) */
+  allowedMimeTypes?: string[];
+  /** Maximum file size in bytes per file */
+  maxFileSize?: number;
+  /** Maximum total size in bytes for all files */
+  maxTotalSize?: number;
+  /** Allow multiple file selection (default: true) */
+  multiple?: boolean;
+  /** Maximum number of files allowed */
+  maxFiles?: number;
+  /** Accept attribute for file input (overrides allowedMimeTypes) */
+  accept?: string;
+  /** Callback when files are successfully added */
+  onFilesAdded?: (files: ValidatedFile[]) => void;
+  /** Callback when files are rejected */
+  onFilesRejected?: (rejections: FileRejection[]) => void;
+  /** Enable debug logging (default: false) */
+  debug?: boolean;
+}
+
+/**
+ * Props returned by getDropZoneProps for spreading on drop zone element.
+ */
+export interface DropZoneProps {
+  /** Drag enter handler */
+  onDragEnter: (e: React.DragEvent) => void;
+  /** Drag over handler */
+  onDragOver: (e: React.DragEvent) => void;
+  /** Drag leave handler */
+  onDragLeave: (e: React.DragEvent) => void;
+  /** Drop handler */
+  onDrop: (e: React.DragEvent) => void;
+  /** Click handler to open file picker */
+  onClick: () => void;
+  /** Keyboard handler for accessibility */
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  /** Role attribute for accessibility */
+  role: 'button';
+  /** Tab index for keyboard navigation */
+  tabIndex: number;
+  /** Aria label for screen readers */
+  'aria-label': string;
+}
+
+/**
+ * Props returned by getInputProps for spreading on hidden file input.
+ */
+export interface InputProps {
+  /** Input type */
+  type: 'file';
+  /** Ref for the input element */
+  ref: React.RefObject<HTMLInputElement>;
+  /** Change handler for file selection */
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Accept attribute for file type filtering */
+  accept: string;
+  /** Whether multiple files can be selected */
+  multiple: boolean;
+  /** Hidden styling */
+  style: { display: 'none' };
+  /** Hidden from accessibility tree */
+  'aria-hidden': true;
+}
+
+/**
+ * Return type for useFileUpload hook.
+ * Provides all state and actions for file upload operations.
+ */
+export interface UseFileUploadReturn {
+  // State
+  /** Array of validated files that have been added */
+  files: ValidatedFile[];
+  /** Array of files that were rejected during last operation */
+  rejectedFiles: FileRejection[];
+  /** Total size in bytes of all added files */
+  totalSize: number;
+  /** Whether there are any files */
+  hasFiles: boolean;
+  /** Whether a drag operation is currently over the drop zone */
+  isDragActive: boolean;
+  /** Whether dragged files appear to be valid types */
+  isDragValid: boolean;
+  /** Current error state */
+  error: FileUploadError | null;
+
+  // Actions
+  /** Open the native file picker dialog */
+  openFilePicker: () => void;
+  /** Remove a file by index or ID */
+  removeFile: (indexOrId: number | string) => void;
+  /** Remove all files and reset state */
+  clearFiles: () => void;
+  /** Clear current error state */
+  clearError: () => void;
+  /** Validate a file without adding it */
+  validateFile: (file: File) => FileValidationResult;
+
+  // Props factories
+  /** Get props to spread on drop zone element */
+  getDropZoneProps: () => DropZoneProps;
+  /** Get props to spread on hidden file input */
+  getInputProps: () => InputProps;
+}

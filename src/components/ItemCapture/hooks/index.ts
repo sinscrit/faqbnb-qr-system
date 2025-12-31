@@ -4,7 +4,7 @@
  * This file exports all hooks for the ItemCapture component.
  *
  * @module ItemCapture/hooks
- * @lastModified 2025-12-31 (REQ-036)
+ * @lastModified 2025-12-31 (REQ-041)
  */
 
 export {
@@ -19,3 +19,5 @@ export {
 } from './useItemCaptureState';
 
 export { useMediaCapture } from './useMediaCapture';
+
+export { useFileUpload } from './useFileUpload';

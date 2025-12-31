@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-040)
+ * @lastModified 2025-12-31 (REQ-041)
  */
 
 // =============================================================================
@@ -54,6 +54,23 @@ export type {
 } from './ItemCapture.types';
 
 // =============================================================================
+// File Upload Types (REQ-041)
+// =============================================================================
+
+export type {
+  FileCategory,
+  FileRejectionCode,
+  ValidatedFile,
+  FileRejection,
+  FileUploadError,
+  FileValidationResult,
+  UseFileUploadOptions,
+  UseFileUploadReturn,
+  DropZoneProps,
+  InputProps,
+} from './ItemCapture.types';
+
+// =============================================================================
 // Hooks Export
 // =============================================================================
 
@@ -63,6 +80,8 @@ export {
 } from './hooks';
 
 export { useMediaCapture } from './hooks';
+
+export { useFileUpload } from './hooks';
 
 // =============================================================================
 // Wizard Navigation Components (Task 1.3)
