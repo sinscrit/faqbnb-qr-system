@@ -2329,7 +2329,6 @@ Prevents performance regressions before they reach production. Identifies optimi
 - [ ] Initial page load time remains under 2 seconds with new dependencies included
 - [ ] Bundle analysis report documents chunk sizes and lazy loading behavior for all new dependencies
 
-
 ---
 
 ## REQ-029: iOS Safari MediaRecorder API Compatibility Validation
@@ -2375,3 +2374,1022 @@ This spike must be completed before implementing the ItemCapture component descr
 
 *Next Request: REQ-030*
 ---
+
+---
+
+## REQ-030: ItemCapture Component Foundation Infrastructure
+
+**Date**: 2025-12-31 04:15
+**Type**: NEW FEATURE
+**Size**: XS
+
+### Summary
+The system shall provide a structured directory and type-safe foundation for the ItemCapture component to enable organized development of media capture functionality.
+
+### Current Behavior
+The ItemCapture component infrastructure does not exist. There is no organized directory structure, type definitions, or export mechanism for the upcoming media capture feature.
+
+### Expected Behavior
+When developers begin implementing the ItemCapture component, they should find:
+- A properly organized directory structure under the components folder
+- A centralized type definition file containing all necessary interfaces for the component
+- A barrel export file that exposes the component's public API
+
+This foundation enables multiple developers to work on different aspects of the feature simultaneously while maintaining type safety and consistent module boundaries.
+
+### User Impact
+Property owners will ultimately use this infrastructure to capture and organize instructional media about household items. This foundation task does not directly impact end users but is a prerequisite for delivering that capability.
+
+### Business Value
+Establishes the technical foundation for the ItemCapture feature, enabling parallel development of subsequent phases and ensuring type safety across the component architecture.
+
+### Acceptance Criteria
+- [ ] Directory structure exists at the correct location within the components folder
+- [ ] Type definition file contains all required interfaces as specified in the implementation plan
+- [ ] Barrel export file properly exports the component and its public types
+- [ ] TypeScript compiler reports no errors when importing from the new module
+- [ ] All files follow the established codebase patterns for client components and type exports
+
+---
+
+## REQ-031: ItemCapture Component Directory Structure Setup
+
+**Date**: 2025-12-31 14:23
+**Type**: NEW FEATURE
+**Size**: XS
+
+### Summary
+Establish the foundational directory structure and TypeScript type definitions for the ItemCapture component to support organized component development.
+
+### Current Behavior
+The ItemCapture component directory structure does not exist in the codebase.
+
+### Expected Behavior
+The project contains a properly organized component directory with:
+- A dedicated folder for all ItemCapture-related components
+- Centralized export management for clean imports throughout the application
+- Complete TypeScript interface definitions for type safety
+
+### User Impact
+Developers working on the ItemCapture feature will have a clear, organized structure that:
+- Makes it easy to locate ItemCapture-related code
+- Enables clean, predictable imports across the codebase
+- Provides type safety and autocomplete support when working with ItemCapture data
+
+### Business Value
+Proper component architecture reduces development time and bugs by establishing clear boundaries and type contracts before implementation begins.
+
+### Acceptance Criteria
+- [ ] A new directory exists specifically for ItemCapture components
+- [ ] A barrel export file is present that allows importing ItemCapture modules from a single entry point
+- [ ] A TypeScript types file is present containing all necessary interface definitions for the ItemCapture feature
+- [ ] The directory structure follows the project's existing component organization patterns
+- [ ] No compilation errors or TypeScript warnings are introduced
+
+---
+
+## REQ-032: ItemCapture State Machine Implementation
+
+**Date**: 2025-12-31 16:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users navigating through the item capture workflow need a reliable mechanism that controls step transitions, validates data at each stage, and maintains a consistent state throughout the capture process.
+
+### Current Behavior
+No state management infrastructure exists for the ItemCapture component. There is no mechanism to track wizard progress, validate step transitions, or maintain captured data across the multi-step flow.
+
+### Expected Behavior
+The application provides a predictable, reducer-based state machine that:
+- Manages all wizard steps and transitions between them
+- Validates user input before allowing progression to the next step
+- Maintains all captured metadata and media items in a single source of truth
+- Handles errors gracefully with clear messaging
+- Prevents invalid state transitions
+
+### User Impact
+Property owners using the item capture feature will experience:
+- Smooth navigation through the capture workflow without unexpected behavior
+- Clear validation feedback if required information is missing
+- Confidence that their work is preserved as they move between steps
+- Prevention of data loss if errors occur during the capture process
+
+### Business Value
+A robust state machine reduces support burden by preventing users from entering invalid states and ensures data integrity throughout the capture workflow, leading to higher completion rates and better quality submissions.
+
+### Acceptance Criteria
+- [ ] A custom hook exists that manages wizard state using a reducer pattern
+- [ ] All wizard steps can be transitioned to and from according to the defined flow
+- [ ] Step transitions validate required data before allowing progression
+- [ ] State includes all necessary fields: current step, metadata, media items, instructions, and errors
+- [ ] Actions exist for all state mutations: setting metadata, adding/removing media, updating instructions, navigating steps, and managing errors
+- [ ] Invalid state transitions are prevented by the reducer logic
+- [ ] Error state can be set and cleared for individual fields
+- [ ] The hook provides both state and dispatch methods to consuming components
+- [ ] Camera and recording states are tracked separately for proper resource management
+
+
+---
+
+## REQ-033: Wizard Navigation Scaffold for Item Capture
+
+**Date**: 2025-12-31 11:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a multi-step wizard interface with navigation controls and visual progress tracking to guide them through the item capture process.
+
+### Current Behavior
+No wizard navigation framework exists for the item capture workflow. Users have no structured way to move between capture steps or understand their progress through the process.
+
+### Expected Behavior
+Users see a clear wizard interface that:
+- Displays their current step in the capture process
+- Shows visual progress indicating how far they've progressed
+- Provides intuitive navigation controls (back, next, cancel) to move between steps
+- Maintains context as they navigate through the multi-step workflow
+
+### User Impact
+All users capturing items will interact with this navigation scaffold. It provides the foundational user experience for the entire capture workflow, making it easy to understand where they are in the process and how to move forward or backward through the steps.
+
+### Business Value
+A well-designed wizard navigation reduces user confusion and abandonment during item capture. Clear progress indicators and intuitive controls improve task completion rates and overall user satisfaction with the capture experience.
+
+### Acceptance Criteria
+- [ ] Users can see a container that organizes and displays individual capture steps
+- [ ] Users can navigate backward to review or modify previous steps
+- [ ] Users can navigate forward to advance through the workflow
+- [ ] Users can cancel the entire capture process from any step
+- [ ] Users can see a visual indicator showing which step they're on and how many steps remain
+- [ ] Navigation controls are disabled or hidden when contextually inappropriate (e.g., "back" on first step)
+- [ ] Progress indicator accurately reflects the user's position in the multi-step workflow
+
+
+---
+
+## REQ-034: Metadata Collection Step in Item Capture Wizard
+
+**Date**: 2025-12-31 10:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to enter descriptive metadata for their items through a dedicated step in the item capture wizard, including title, location, tags, and appliance type.
+
+### Current Behavior
+The item capture wizard does not yet have a step for collecting metadata information about items being captured.
+
+### Expected Behavior
+When users reach the metadata step in the item capture wizard, they see a form with four fields:
+- A required title field with validation feedback
+- An optional location field that combines a dropdown of preset locations with the ability to enter custom text
+- An optional tags field displaying selected tags as removable pills with the ability to add new tags
+- An optional appliance type selector presented as a dropdown with predefined options
+
+Users can navigate forward only when required fields (title) are valid. All entered data persists when navigating between wizard steps.
+
+### User Impact
+All users capturing items will use this step to provide descriptive information that makes their items searchable and organized. Without accurate metadata, users cannot effectively categorize or later find their captured items.
+
+### Business Value
+Structured metadata collection ensures item data quality and enables effective search, filtering, and organization features that drive user engagement and platform value.
+
+### Acceptance Criteria
+- [ ] Title field is required and displays validation errors when empty or invalid
+- [ ] Location field offers both preset options and custom text entry
+- [ ] Tags field displays selected tags as dismissible pills and allows adding multiple tags
+- [ ] Appliance type selector shows predefined categories in a dropdown format
+- [ ] All metadata entered persists when navigating backward and forward through wizard steps
+- [ ] Users cannot proceed to the next step when the title field is invalid
+- [ ] Form handling follows the same patterns and conventions used in existing item forms
+
+
+---
+
+## REQ-035: Content Type Selection Step in Item Capture Wizard
+
+**Date**: 2025-12-31 09:15
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users must be able to select the type of content they want to create (video, photo, text, or upload existing media) through an accessible, mobile-optimized interface during the item capture flow.
+
+### Current Behavior
+The content type selection step does not exist in the item capture wizard.
+
+### Expected Behavior
+When users reach the content type selection step in the wizard, they see four clearly labeled options presented as large, touch-friendly buttons:
+- Record Video
+- Take Photo
+- Write Text
+- Upload File
+
+Each button displays both an icon and text label. The interface is optimized for mobile devices with touch targets large enough to prevent accidental selections. Users can tap any option to proceed to the appropriate capture or upload flow.
+
+### User Impact
+All users creating new items will interact with this step. Mobile users particularly benefit from the touch-optimized design, reducing frustration from mis-taps or unclear options. The clear visual presentation helps users quickly understand their content creation choices without confusion.
+
+### Business Value
+Streamlines the content creation flow by providing clear, accessible choices upfront. Reduces user error and abandonment during item creation by following mobile-first accessibility standards.
+
+### Acceptance Criteria
+- [ ] Four content type options are displayed: Video, Photo, Text, and Upload
+- [ ] Each option includes both an icon and descriptive text label
+- [ ] All interactive buttons meet minimum touch target size of 48x48 pixels
+- [ ] Icons are provided by the Lucide React icon library
+- [ ] The layout adapts appropriately to different screen sizes
+- [ ] Users can select one option and proceed to the next step in the wizard
+- [ ] The selected option is visually indicated before proceeding
+
+
+---
+
+## REQ-036: Media Capture Interface for Item Photography
+
+**Date**: 2025-12-31 14:23
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users need a reliable way to capture photos of items using their device's camera with appropriate error handling and device selection capabilities.
+
+### Current Behavior
+No media capture functionality exists. Users cannot take photos of items directly within the application.
+
+### Expected Behavior
+Users can:
+- Grant camera permissions through a clear, guided flow with helpful error messages
+- See which cameras are available on their device
+- Switch between available cameras (front/back on mobile, multiple webcams on desktop)
+- Receive clear feedback when camera access fails or is unavailable
+- Be informed upfront if their browser does not support camera functionality
+- Experience consistent behavior across different browsers and devices
+
+### User Impact
+All users attempting to capture item photos are affected. This enables users to document their items without leaving the application or using external tools. Users with camera permission issues or browser compatibility problems will receive clear guidance instead of cryptic errors.
+
+### Business Value
+Removes friction from the item documentation workflow. Increases completion rates by keeping users in-app. Reduces support burden by proactively handling permission and compatibility issues.
+
+### Acceptance Criteria
+- [ ] User can successfully capture photos when camera permissions are granted
+- [ ] User receives a clear, actionable message when camera permissions are denied
+- [ ] User can see a list of available cameras and select between them
+- [ ] User receives appropriate feedback when no cameras are detected
+- [ ] User is notified if their browser does not support camera access before attempting to use the feature
+- [ ] Camera switching works on devices with multiple cameras without requiring page reload
+- [ ] Permission requests follow platform-specific best practices and display user-friendly language
+- [ ] Error messages distinguish between different failure scenarios (no permission, no hardware, browser incompatibility)
+
+
+---
+
+## REQ-037: Live Camera Preview Component for Media Capture
+
+**Date**: 2025-12-31 10:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a live camera preview interface that displays the video feed, handles camera initialization states, and provides visual feedback when permissions are denied or the camera is unavailable.
+
+### Current Behavior
+No camera preview component exists. Users cannot see a live feed from their device camera during the item capture workflow.
+
+### Expected Behavior
+When users activate camera capture mode:
+- A live video preview appears showing the camera feed
+- The preview automatically mirrors the image when using the front-facing camera for natural selfie-style composition
+- A loading indicator displays while the camera is activating
+- If camera permissions are denied or unavailable, an error message explains the situation and suggests corrective action
+- Users can toggle the mirror mode on or off based on their preference
+
+### User Impact
+This affects property managers and hosts who need to capture photos and videos of property items. The preview ensures they can properly frame shots before capturing, improving media quality and reducing retakes.
+
+### Business Value
+Real-time camera feedback reduces the friction in capturing property documentation, leading to higher-quality media assets and faster item cataloging workflows.
+
+### Acceptance Criteria
+- [ ] Live video feed displays in the preview area when camera access is granted
+- [ ] Front-facing camera feed is mirrored by default for intuitive composition
+- [ ] A loading state is visible during camera initialization
+- [ ] Permission denied scenarios show a clear error message with guidance
+- [ ] Camera unavailable scenarios (hardware missing, in-use by another app) show appropriate error messages
+- [ ] Mirror mode can be toggled on and off without interrupting the video stream
+- [ ] Preview maintains appropriate aspect ratio across different device orientations
+- [ ] Camera preview stops cleanly when the user navigates away or cancels capture
+
+
+---
+
+## REQ-038: Video Recording Step with Playback Review
+
+**Date**: 2025-12-31 10:15
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users need the ability to record short videos of items with recording controls, duration limits, and playback review capabilities before proceeding in the capture workflow.
+
+### Current Behavior
+The Item Capture wizard does not currently support video recording. Users can only capture still photographs of items.
+
+### Expected Behavior
+Users should be able to:
+- Initiate video recording with a clear start control
+- See a visible recording indicator while capturing is in progress
+- Monitor elapsed recording time via a countdown timer display
+- Have recording automatically stopped when the 2-minute maximum is reached
+- Switch between front and back cameras during setup (before or between recordings)
+- Stop recording manually before reaching the time limit
+- Review the captured video with playback controls before accepting or re-recording
+
+### User Impact
+Property managers and staff who need to document items with video (showing details, demonstrating functionality, capturing context that still images cannot convey) will be able to create video content directly within the Item Capture workflow. This enables richer documentation of complex or high-value items.
+
+### Business Value
+Video capture capability increases the quality and completeness of item documentation, supporting better guest communication and reducing disputes about item condition or functionality.
+
+### Acceptance Criteria
+- [ ] A start recording button is visible and functional when the video capture step is active
+- [ ] When recording begins, a clear visual indicator shows that recording is in progress
+- [ ] A countdown timer displays the elapsed recording time and shows how much time remains until the 2-minute limit
+- [ ] Recording automatically stops when 2 minutes is reached
+- [ ] Users can manually stop recording at any time before the limit
+- [ ] A camera switch button allows toggling between available cameras (when multiple cameras exist)
+- [ ] After recording stops, a review screen displays with playback controls
+- [ ] From the review screen, users can choose to accept the video or discard and re-record
+- [ ] The captured video can be played, paused, and scrubbed through on the review screen
+
+
+---
+
+## REQ-039: Photo Capture Step with Multi-Image Support
+
+**Date**: 2025-12-31 10:45
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users should be able to capture multiple photos of an item using their device camera, with the ability to review, accept, or retake each photo before proceeding.
+
+### Current Behavior
+No photo capture functionality currently exists within the item capture workflow.
+
+### Expected Behavior
+When users reach the photo capture step in the item capture wizard, they should see:
+- A live camera preview showing what will be captured
+- A prominent capture button that triggers photo capture
+- Tactile feedback when the capture button is pressed (on supported devices)
+- A toggle to switch between front and rear cameras
+- A visual indicator showing flash status (on devices that support camera flash)
+- After capturing a photo, a preview screen with options to accept or retake the photo
+- If accepted, the photo appears as a thumbnail in a strip at the bottom of the screen
+- The ability to capture additional photos, with all captured photos visible in the thumbnail strip
+- The ability to review previously captured photos by tapping their thumbnails
+
+### User Impact
+Property managers and hosts capturing item inventory will have a streamlined, mobile-friendly interface for documenting items with multiple angles or detail shots. This enables comprehensive visual documentation without leaving the capture workflow.
+
+### Business Value
+Multi-photo support allows users to create complete visual records of items in a single session, improving documentation quality and reducing the likelihood of needing to recapture items later.
+
+### Acceptance Criteria
+- [ ] User can see a live camera preview before capturing
+- [ ] Capture button triggers photo capture and provides haptic feedback on supported devices
+- [ ] User can switch between front and rear cameras
+- [ ] Flash indicator displays current flash status on devices with camera flash
+- [ ] After capture, user sees a full-screen preview of the captured photo
+- [ ] User can choose to accept or retake the photo from the preview screen
+- [ ] Accepted photos appear as thumbnails in a horizontally scrollable strip
+- [ ] User can capture multiple photos in sequence
+- [ ] User can tap a thumbnail to review a previously captured photo
+- [ ] All captured photos are retained when navigating to the next step
+---
+
+## REQ-040: Thumbnail Generation Utility for Media Capture
+
+**Date**: 2025-12-31 11:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users should see consistent thumbnail previews of captured media (photos and videos) within the item capture workflow.
+
+### Current Behavior
+No thumbnail generation capability exists. Captured media cannot be displayed in preview form without loading the full-resolution asset.
+
+### Expected Behavior
+The system generates compact, consistently-sized thumbnail images from both photo captures and video frames. Thumbnails display quickly in gallery views and media selection interfaces without consuming excessive memory or bandwidth.
+
+### User Impact
+Users can quickly browse and review their captured media through visual thumbnails. This improves navigation speed and reduces loading times when reviewing multiple photos or videos within a single item capture session.
+
+### Business Value
+Thumbnail previews are essential for modern media workflows. They enable rapid visual scanning of content and reduce frustration associated with loading full-size assets just to identify which media was captured.
+
+### Acceptance Criteria
+- [ ] System generates 200x200 pixel thumbnails from captured photos
+- [ ] System extracts a representative frame from captured videos and generates a 200x200 pixel thumbnail
+- [ ] All thumbnails maintain consistent dimensions regardless of source aspect ratio
+- [ ] Thumbnail generation uses canvas-based rendering for both image and video sources
+- [ ] Generated thumbnails are returned as memory-efficient blob objects
+- [ ] Thumbnail generation completes within 500ms for typical mobile device camera captures
+- [ ] Thumbnails display correctly in media gallery views without distortion
+
+
+---
+
+## REQ-041: File Upload Hook with Validation and Drag-and-Drop Support
+
+**Date**: 2025-12-31 14:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to upload files through both traditional file input selection and drag-and-drop interactions, with automatic validation of file types and sizes before upload.
+
+### Current Behavior
+No file upload capability exists in the item capture workflow. Users cannot add documents, images, or other files to their items.
+
+### Expected Behavior
+Users can select files by clicking a file input button or by dragging files from their file system and dropping them onto a designated area. The system immediately validates each selected file against allowed types and size limits, providing clear feedback if a file is rejected. Users can select multiple files at once when appropriate.
+
+### User Impact
+Property managers and hosts can attach supporting documents, additional photos, receipts, or other files to their inventory items. The drag-and-drop functionality makes bulk uploads faster and more intuitive, while validation prevents upload errors and wasted time.
+
+### Business Value
+Enables comprehensive item documentation by supporting multiple file types beyond camera-captured media. Reduces user frustration through immediate validation feedback and modern interaction patterns.
+
+### Acceptance Criteria
+- [ ] Users can click to open a file browser and select one or more files
+- [ ] Users can drag files from their desktop or file manager and drop them onto a designated zone
+- [ ] The system validates each file's type against an allowed list before accepting it
+- [ ] The system validates each file's size against a maximum limit before accepting it
+- [ ] Users receive clear feedback when a file is rejected due to type or size restrictions
+- [ ] Multiple files can be selected simultaneously when enabled
+- [ ] Visual feedback indicates when the drag-and-drop zone is active and ready to receive files
+- [ ] Rejected files do not interrupt the acceptance of valid files in a multi-file selection
+
+
+---
+
+## REQ-042: File Upload Step with Interactive Upload Zone
+
+**Date**: 2025-12-31 09:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to upload files through an intuitive interface that supports both click-to-select and drag-and-drop interactions, with clear visual feedback throughout the upload process.
+
+### Current Behavior
+No file upload step exists in the ItemCapture wizard flow.
+
+### Expected Behavior
+The wizard presents a dedicated step where users can:
+- Click an upload area to select files from their device
+- Drag files from their desktop/file manager and drop them onto a designated zone
+- See visual feedback when dragging files over the drop zone (highlighting, border changes)
+- View file type icons that indicate what kind of file has been selected
+- Monitor upload progress through a visual indicator (progress bar or percentage)
+- Receive clear error messages when attempting to upload invalid or unsupported file types
+- Preview thumbnails of successfully uploaded files before proceeding
+
+### User Impact
+Property owners and managers uploading inventory documentation will have a modern, intuitive file upload experience that matches contemporary web application standards. Reduces friction in the capture workflow and provides confidence through visual feedback.
+
+### Business Value
+Streamlines the file upload process, reducing abandonment rates during item capture. Visual feedback and error handling prevent user confusion and support ticket volume related to failed uploads.
+
+### Acceptance Criteria
+- [ ] Upload area responds to click events and opens the native file picker
+- [ ] Drop zone visually changes appearance when files are dragged over it
+- [ ] Each uploaded file displays an appropriate icon based on its file type
+- [ ] Progress indicator appears and updates during file upload
+- [ ] Error messages appear immediately when invalid file types are selected
+- [ ] Successfully uploaded files display as thumbnail previews
+- [ ] Users can proceed to the next wizard step after successful upload
+- [ ] Users receive clear feedback if they attempt to proceed without uploading files
+
+---
+
+## REQ-043: PDF Thumbnail Generation and Metadata Display
+
+**Date**: 2025-12-31 09:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should generate visual thumbnail previews from uploaded PDF documents and display document metadata to help users identify and verify PDF content before submission.
+
+### Current Behavior
+When users upload PDF files through the file upload interface, they receive generic file-type icons with no visual preview of the document content or information about the document structure.
+
+### Expected Behavior
+When a user uploads a PDF file, the system should automatically generate a thumbnail image from the first page of the document and display the total page count alongside the preview. Users should see a clear visual representation of their PDF content without needing to open the file separately. If a PDF cannot be processed due to corruption or password protection, the system should display an appropriate placeholder with a helpful message instead of failing silently.
+
+### User Impact
+Users uploading PDF documents for property items (manuals, guides, receipts, warranties) will be able to visually confirm they selected the correct file without leaving the upload interface. This reduces errors and improves confidence during the upload process, particularly when managing multiple similar documents.
+
+### Business Value
+Reduces user errors and support requests related to incorrect document uploads. Enhances perceived quality and professionalism of the upload experience.
+
+### Acceptance Criteria
+- [ ] Uploaded PDF files display a thumbnail preview showing the first page of the document
+- [ ] Page count metadata appears next to each PDF thumbnail (e.g., "3 pages")
+- [ ] Corrupt PDF files display a placeholder image with a message indicating the file cannot be previewed
+- [ ] Password-protected PDFs display a placeholder image with a message indicating the file is protected
+- [ ] Thumbnail generation completes within 2 seconds for PDFs under 10MB
+- [ ] System handles PDFs with zero pages or malformed structure without crashing
+- [ ] Generated thumbnails maintain readable aspect ratio and quality
+- [ ] Users can still proceed with upload even when thumbnail generation fails
+
+
+---
+
+## REQ-044: Text Editor Step with Markdown Support and Live Preview
+
+**Date**: 2025-12-31 14:22
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to compose and format item descriptions using a markdown editor with formatting tools, live preview, and input limits to create rich text content for their inventory items.
+
+### Current Behavior
+No text editing capability exists in the item capture workflow. Users cannot add or format descriptive text for their inventory items.
+
+### Expected Behavior
+The wizard presents a dedicated step with a text editor that allows users to:
+- Type and edit item descriptions in markdown syntax
+- Apply common text formatting using toolbar buttons (bold, italic, headings, bulleted lists, numbered lists, hyperlinks)
+- See a live preview of their formatted text as they type
+- View the editor and preview side-by-side on larger screens for immediate feedback
+- Switch between editor and preview tabs on mobile devices to maximize screen space
+- Monitor their character count in real-time with a visual indicator showing proximity to the limit
+- Receive automatic saving of their content to prevent data loss during typing
+- Know exactly when they exceed the character limit with clear visual feedback
+
+### User Impact
+Property managers and hosts can create detailed, well-formatted descriptions for inventory items that improve readability and professionalism. The live preview eliminates guesswork about markdown rendering, while auto-save prevents frustration from accidental data loss during long editing sessions.
+
+### Business Value
+Enables richer item documentation with formatted descriptions that increase the value and usability of inventory records. Reduces user frustration through auto-save and clear input boundaries, leading to higher completion rates in the capture workflow.
+
+### Acceptance Criteria
+- [ ] Toolbar provides buttons for bold, italic, heading levels, bullet lists, numbered lists, and link insertion
+- [ ] Clicking a toolbar button applies the appropriate markdown syntax to selected text or at cursor position
+- [ ] Preview pane displays formatted markdown rendering in real-time
+- [ ] Desktop layout shows editor and preview side-by-side simultaneously
+- [ ] Mobile layout provides tab navigation to switch between editor view and preview view
+- [ ] Character counter displays current character count and updates with each keystroke
+- [ ] Visual indicator shows when user approaches or exceeds the character limit
+- [ ] Content automatically saves to application state after user stops typing for a defined period
+- [ ] Previously saved content persists when user navigates away and returns to this step
+- [ ] Markdown syntax in toolbar buttons matches common conventions (e.g., **bold**, *italic*)
+
+---
+
+## REQ-045: Accessible Markdown Editor with Mobile-Optimized Toolbar
+
+**Date**: 2025-12-31 14:23
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a markdown editor with an accessible toolbar, keyboard shortcuts, and live preview to create and edit FAQ content on both desktop and mobile devices.
+
+### Current Behavior
+No markdown editing capability exists within the item capture workflow. Users cannot format text content or preview how their markdown will render.
+
+### Expected Behavior
+When users choose to add text content, they see a markdown editor with:
+- A toolbar containing formatting buttons (bold, italic, headings, lists, links, etc.) that work with screen readers
+- Keyboard shortcuts that allow power users to format text without using the toolbar
+- A toolbar that adapts its layout and position for comfortable use on mobile devices
+- A live preview pane showing how the markdown content will appear when rendered
+- Smooth transitions between editing and previewing on smaller screens
+
+### User Impact
+All users creating text-based FAQ items benefit from easier content formatting. Mobile users gain a touch-friendly editing experience. Users with accessibility needs can navigate and use formatting features via keyboard and assistive technologies.
+
+### Business Value
+Improves content quality by making markdown formatting accessible to non-technical users. Reduces support requests related to markdown syntax errors by providing immediate visual feedback through live preview.
+
+### Acceptance Criteria
+- [ ] Toolbar buttons are keyboard-navigable and announce their function to screen readers
+- [ ] Common formatting operations (bold, italic, headings, lists, links) can be triggered via keyboard shortcuts
+- [ ] On mobile viewports, the toolbar repositions or collapses to avoid obscuring the editing area
+- [ ] Preview pane renders markdown content using standard markdown syntax
+- [ ] Users can toggle between edit and preview modes
+- [ ] Formatting buttons update the editor content correctly when text is selected
+- [ ] The editor maintains focus and cursor position after formatting operations
+
+
+---
+
+## REQ-046: Non-Destructive Media Editing State Management
+
+**Date**: 2025-12-31 14:35
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to edit media items (photos and videos) with changes tracked separately from the original, and only applied when explicitly confirmed.
+
+### Current Behavior
+No editing capability exists for captured or uploaded media items. Once a photo or video is added to an item, it cannot be modified or enhanced.
+
+### Expected Behavior
+Users can:
+- Select any media item to enter edit mode
+- Make adjustments to photos or videos (cropping, rotation, filters, etc.)
+- Preview changes in real-time while the original remains untouched
+- Cancel edits to revert to the original at any time
+- Confirm edits to apply changes permanently
+- See which media items have pending edits that haven't been confirmed
+
+### User Impact
+Property owners and managers creating item documentation will be able to refine their media before finalizing, reducing the need to recapture photos or videos when minor adjustments are needed. This improves content quality and reduces frustration during the capture workflow.
+
+### Business Value
+Enables users to produce higher-quality item documentation without leaving the capture interface, reducing abandonment rates and increasing the completeness of property inventories.
+
+### Acceptance Criteria
+- [ ] Each media item can be placed into an edit state independently of other items
+- [ ] Original media data is preserved and never modified until user confirms changes
+- [ ] All edit operations are tracked as a changeset that can be inspected or discarded
+- [ ] Users can cancel editing to immediately return to the original media
+- [ ] Confirming edits applies the changeset and updates the media item
+- [ ] The system indicates visually which items have pending (unconfirmed) edits
+- [ ] Multiple media items can have pending edits simultaneously without conflict
+
+
+---
+
+## REQ-047: Image Cropping Tool for Media Editing
+
+**Date**: 2025-12-31 09:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to crop photos with intuitive touch-friendly controls, choosing either free-form cropping or standard aspect ratios to frame their item images precisely.
+
+### Current Behavior
+Once a photo is captured or uploaded, users cannot crop, reframe, or adjust the composition. The entire image is used as-is, even if it includes unwanted elements or poor framing.
+
+### Expected Behavior
+When a user selects a photo to edit, they can activate a cropping tool that:
+- Displays adjustable crop boundaries overlaid on the image
+- Offers preset aspect ratio options (1:1 square, 4:3 standard, 16:9 widescreen) for common use cases
+- Allows free-form cropping with no aspect ratio constraint for maximum flexibility
+- Provides touch-friendly drag handles that work reliably on mobile devices
+- Shows a real-time preview of the cropped result as the user adjusts the boundaries
+- Applies the crop when confirmed, or cancels to return to the uncropped image
+
+### User Impact
+Property owners creating item documentation gain control over photo composition, enabling them to remove distracting backgrounds, focus on the item itself, and create professional-looking images without external editing tools. Mobile users benefit from touch-optimized controls designed for phones and tablets.
+
+### Business Value
+Improves the quality and consistency of item photos by allowing users to frame items properly within the capture workflow, reducing the need for external photo editing and increasing user satisfaction with their documentation.
+
+### Acceptance Criteria
+- [ ] Cropping tool displays a draggable crop boundary overlay on the selected image
+- [ ] Users can select from preset aspect ratios: 1:1, 4:3, and 16:9
+- [ ] Users can choose free-form cropping with no aspect ratio constraint
+- [ ] Crop boundary handles are large enough and positioned appropriately for touch interaction on mobile screens
+- [ ] Preview updates in real-time as the crop boundary is adjusted
+- [ ] Confirming the crop applies the change to the image
+- [ ] Canceling the crop returns the image to its pre-crop state
+- [ ] The cropping interface integrates with the non-destructive editing state management system
+
+
+---
+
+## REQ-048: Image Rotation Tool for Media Editing
+
+**Date**: 2025-12-31 15:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users should be able to rotate photos in 90-degree increments with smooth animated previews and precise canvas-based processing.
+
+### Current Behavior
+Once a photo is captured or uploaded, users cannot rotate it to correct orientation issues. Photos taken in the wrong orientation must be retaken or remain incorrectly oriented in the documentation.
+
+### Expected Behavior
+When a user selects a photo to edit, they can access rotation controls that:
+- Display clearly labeled buttons for rotating left (counter-clockwise) and right (clockwise) by 90 degrees
+- Show an animated preview that smoothly rotates the image as the user clicks rotation buttons
+- Apply the actual rotation using canvas-based processing to maintain image quality
+- Allow multiple rotation operations to be chained (e.g., rotating 180 degrees via two 90-degree clicks)
+- Update the preview instantly with smooth transitions between rotation states
+- Preserve image quality and dimensions appropriately when rotation is confirmed
+
+### User Impact
+Property owners and managers creating item documentation can quickly fix orientation issues without leaving the capture workflow. This is especially valuable for photos imported from devices that may not automatically correct orientation metadata, or for items photographed at awkward angles.
+
+### Business Value
+Reduces friction in the item capture workflow by eliminating the need to retake photos or use external editing tools for simple orientation corrections, improving efficiency and user satisfaction.
+
+### Acceptance Criteria
+- [ ] Rotation controls display two clearly labeled buttons: rotate left 90 degrees and rotate right 90 degrees
+- [ ] Clicking a rotation button triggers a smooth animated transition showing the image rotating
+- [ ] The actual rotation is processed using canvas-based rendering to ensure quality
+- [ ] Multiple rotation operations can be applied sequentially (e.g., 90, then another 90 for 180 total)
+- [ ] The rotation preview animation completes before allowing the next rotation action
+- [ ] Confirming edits applies the rotation permanently to the image
+- [ ] Canceling edits reverts the image to its original orientation
+- [ ] The rotation tool integrates with the non-destructive editing state management system
+
+
+
+---
+
+## REQ-049: Video Trimming Interface with Start/End Markers
+
+**Date**: 2025-12-31 16:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to visually mark start and end points on recorded or uploaded videos to indicate which portion should be retained, with the actual trimming performed server-side at upload time.
+
+### Current Behavior
+When users capture or upload videos, they must accept the entire video duration regardless of unwanted content at the beginning or end. There is no way to exclude introductory fumbling, setup time, or trailing footage without re-recording the entire video.
+
+### Expected Behavior
+When a user selects a video to edit, they can access a trimming interface that:
+- Displays a video player showing the full captured or uploaded video
+- Provides a scrubber timeline control that allows dragging to navigate through the video
+- Shows visual markers (handles) to set the desired start point and end point
+- Highlights the selected trim region on the timeline to clearly indicate what will be kept
+- Updates the video preview to show the trimmed section when playback is initiated
+- Displays the duration of the selected trim region and the total original duration
+- Allows adjustment of markers by dragging them along the timeline
+- Saves trim marker positions (timestamps) without performing actual video processing in the browser
+- Communicates trim instructions to the server for processing during final upload
+
+### User Impact
+Property owners and managers documenting items with video can quickly exclude unnecessary footage from the beginning and end of recordings, ensuring only relevant content is uploaded. This eliminates the need to re-record videos or manually edit them outside the system.
+
+### Business Value
+Improves the quality of video documentation by giving users control over content boundaries without requiring expensive client-side video processing. Deferring actual trimming to server-side upload time keeps the browser-based workflow lightweight and performant while still delivering professional results.
+
+### Acceptance Criteria
+- [ ] Video player displays the full video with standard playback controls (play, pause, seek)
+- [ ] Timeline scrubber allows users to drag and navigate to any point in the video
+- [ ] Two draggable markers appear on the timeline representing start point and end point
+- [ ] The timeline visually highlights the region between start and end markers to show the selected trim range
+- [ ] Playing the video starts from the marked start point and stops at the marked end point
+- [ ] Duration display shows both the trimmed selection length and total video length
+- [ ] Markers can be repositioned by dragging along the timeline with smooth visual feedback
+- [ ] Markers cannot be dragged past each other (start must remain before end)
+- [ ] Trim marker positions (as timestamps) are saved to the application state
+- [ ] No actual video encoding or processing occurs in the browser (V1 simplified approach)
+- [ ] Trim instructions are packaged with the video file for server-side processing during upload
+- [ ] The trimming interface integrates with the non-destructive editing state management system
+
+---
+
+## REQ-050: Media Editor Step with Type-Specific Editing Interface
+
+**Date**: 2025-12-31 10:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to edit captured or uploaded media items within a wizard step that displays the appropriate editing interface based on media type, with the ability to skip, apply, or cancel edits before proceeding.
+
+### Current Behavior
+No media editing step exists in the item capture wizard. Users cannot modify images or videos after capturing or uploading them.
+
+### Expected Behavior
+When the user reaches the media editor step in the wizard:
+- The system displays the appropriate editing interface based on the media type (cropping and rotation controls for images, trimming controls for videos)
+- Each editing operation shows a "Skip" button that allows bypassing that particular edit
+- After making changes, the user sees "Apply" and "Cancel" buttons to confirm or discard their edits
+- Upon completing edits for one media item, the system automatically advances to the next media item if multiple items exist
+- After all media items have been edited (or skipped), the system transitions to the review step
+
+### User Impact
+Users creating item listings with visual media will be able to refine their images and videos directly within the capture workflow, eliminating the need to edit media externally before uploading. This improves the quality of listings and reduces friction in the creation process.
+
+### Business Value
+Integrated editing capabilities increase listing quality and reduce abandonment rates by providing a seamless end-to-end capture and refinement experience without requiring external tools.
+
+### Acceptance Criteria
+- [ ] When an image is presented for editing, cropping and rotation controls are displayed
+- [ ] When a video is presented for editing, trimming controls are displayed
+- [ ] Each editing interface includes a clearly visible "Skip" button
+- [ ] After making edits, "Apply" and "Cancel" buttons are available
+- [ ] Clicking "Apply" saves the edits and advances to the next media item or review step
+- [ ] Clicking "Cancel" discards edits and advances to the next media item or review step
+- [ ] Clicking "Skip" bypasses editing and advances to the next media item or review step
+- [ ] When multiple media items exist, the system presents each one sequentially for editing
+- [ ] After the last media item is processed, the wizard transitions to the review step
+- [ ] The user can see which media item they are currently editing (e.g., "Image 2 of 5")
+---
+
+## REQ-051: Media Thumbnail Component with Type-Specific Visual Indicators
+
+**Date**: 2025-12-31 11:23
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users should see a consistent, visually distinct thumbnail representation for all media types (video, image, PDF) with appropriate overlays and controls that clearly communicate the media type and available actions.
+
+### Current Behavior
+No reusable media thumbnail component exists. Different media types are displayed inconsistently or not at all during the item capture review process.
+
+### Expected Behavior
+When a media item is displayed as a thumbnail:
+- Images appear with their actual visual content scaled to fit the thumbnail dimensions
+- Videos display their first frame or generated thumbnail with a play icon overlay clearly visible
+- PDF files show a document icon with the total page count displayed numerically
+- All thumbnails include a delete button overlay that appears when the user hovers or taps the thumbnail
+- While a thumbnail is generating or loading, a loading state indicator is displayed in place of the content
+- All three media types maintain the same visual dimensions and styling for consistent grid layouts
+
+### User Impact
+Users reviewing their captured or uploaded media will have a clear, at-a-glance understanding of what type of content each item represents, with consistent controls across all media types. This reduces confusion and makes managing multiple media items more intuitive.
+
+### Business Value
+Standardized media presentation improves user confidence during the review process and reduces errors caused by unclear media type indicators, leading to higher quality submissions and fewer support requests.
+
+### Acceptance Criteria
+- [ ] Image thumbnails display the actual image content scaled to fit the thumbnail area
+- [ ] Video thumbnails display a representative frame with a visible play icon overlay
+- [ ] PDF thumbnails display a document icon with the exact page count shown as text
+- [ ] All three media types render at the same dimensions when displayed in a grid
+- [ ] A delete button overlay appears on hover (desktop) or tap (mobile) for all media types
+- [ ] Clicking the delete button removes the associated media item from the collection
+- [ ] While content is loading or processing, a loading spinner or skeleton state is displayed
+- [ ] The loading state transitions smoothly to the final thumbnail once content is ready
+- [ ] All thumbnails maintain consistent spacing, border radius, and visual styling
+
+
+---
+
+## REQ-052: Content Submission Validation Layer
+
+**Date**: 2025-12-31 15:42
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must validate all user-provided content before allowing submission, ensuring data completeness, content requirements, and size constraints are met.
+
+### Current Behavior
+Users can progress through the item capture wizard without comprehensive validation of their inputs, potentially leading to incomplete submissions or failed uploads due to size constraints.
+
+### Expected Behavior
+Before submission is allowed, the system validates that:
+- All required metadata fields contain valid values
+- At least one form of content (media files or text) has been provided
+- Individual files do not exceed their respective size limits
+- The combined total size of all uploads remains within acceptable bounds
+- Users receive clear, actionable feedback when validation fails, indicating exactly what needs to be corrected
+
+### User Impact
+**Affected**: All users creating new items through the capture wizard
+
+Users will receive immediate feedback about missing or invalid data before attempting submission, reducing frustration from failed uploads and ensuring all submissions meet minimum quality standards. Clear validation messages guide users to complete their submissions successfully on the first attempt.
+
+### Business Value
+Reduces server load from invalid submissions, improves data quality in the system, and enhances user experience by catching errors early in the submission process rather than after upload attempts.
+
+### Acceptance Criteria
+- [ ] Submission cannot proceed when any required metadata field is empty or invalid
+- [ ] Submission cannot proceed when neither media files nor text content has been provided
+- [ ] Warning appears when a single file exceeds the maximum allowed size for its type
+- [ ] Warning appears when the total size of all files exceeds the maximum total upload size
+- [ ] Validation errors display specific, user-friendly messages indicating which requirements are not met
+- [ ] Total upload size calculation accurately reflects the sum of all selected media files
+- [ ] Validation state updates in real-time as users add or remove content
+
+
+---
+
+## REQ-053: Final Item Record Assembly and Submission Handler
+
+**Date**: 2025-12-31 16:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+When the user completes the item capture wizard, the system must assemble all collected data into a final structured record with unique identifiers, timestamps, and properly determined content type before emitting it to the parent component.
+
+### Current Behavior
+The wizard collects metadata, content, and media across multiple steps, but no mechanism exists to consolidate this information into a unified, submission-ready record structure when the user clicks "Submit" or "Complete."
+
+### Expected Behavior
+When the user completes the final review step and initiates submission:
+- All captured metadata (name, description, location, tags) is gathered into a single record structure
+- All content data (text content, uploaded files, captured media) is included in the record
+- A unique identifier is generated for the item itself
+- Additional unique identifiers are generated for each media file in the submission
+- The content type field is automatically determined based on what content was provided (e.g., "video" if video was captured, "image" if photos were uploaded, "text" if only text content exists)
+- A creation timestamp is added to the record reflecting the moment of submission
+- The complete, structured record is emitted to the parent component for processing
+- The wizard state is cleared and reset to allow creation of another item
+
+### User Impact
+Users completing the wizard will experience a seamless transition from review to submission, with their data properly packaged and ready for backend processing. The completion event triggers the next step in the workflow (saving to database, displaying success message, etc.) without requiring manual data assembly.
+
+### Business Value
+Automated record assembly ensures data consistency, reduces the risk of missing fields or malformed submissions, and provides a clean integration point between the capture interface and backend persistence logic.
+
+### Acceptance Criteria
+- [ ] Upon submission, all metadata fields are collected into the final record structure
+- [ ] All content data (text, media files, uploaded files) is included in the final record
+- [ ] A unique identifier is generated for the item record itself
+- [ ] Each media file receives its own unique identifier
+- [ ] The content type field is set automatically based on the primary content provided
+- [ ] A creation timestamp is added to the record using the current date and time
+- [ ] The completed record is emitted to the parent component via callback or event
+- [ ] After emission, the wizard state is reset to initial values
+- [ ] The record structure matches the expected format for backend persistence
+
+
+---
+
+## REQ-054: Media Editor Performance Optimization
+
+**Date**: 2025-12-31 16:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The item capture wizard must efficiently manage system resources by lazy loading heavy components, properly cleaning up media streams and object URLs, and preventing memory leaks throughout the capture and editing lifecycle.
+
+### Current Behavior
+Media editor components, camera streams, and dynamically generated object URLs are loaded immediately and may not be properly released when no longer needed, potentially causing memory accumulation, degraded performance over extended sessions, and resource exhaustion on memory-constrained devices.
+
+### Expected Behavior
+The system optimizes resource usage by:
+- Loading editor components (image cropper, video trimmer, PDF viewer) only when the user enters the editing step, not during initial wizard load
+- Releasing camera and microphone streams immediately when the user exits camera capture or switches to a different step
+- Revoking all blob URLs created for media previews and thumbnails when those previews are no longer displayed or when the component unmounts
+- Maintaining stable memory usage across multiple capture sessions without requiring page refresh
+- Completing media operations without noticeable lag or performance degradation, even on mid-range mobile devices
+
+### User Impact
+**Affected**: All users capturing or editing media, particularly those on mobile devices or completing multiple submissions in a single session
+
+Users will experience faster initial load times, smoother transitions between wizard steps, and consistent performance throughout extended editing sessions. Battery drain on mobile devices will be reduced by releasing camera access promptly, and memory-constrained devices will remain responsive even after multiple item captures.
+
+### Business Value
+Improved resource management reduces user frustration from slow performance, extends the usable session time before browser memory limits are reached, and decreases abandonment rates caused by application lag or unresponsiveness.
+
+### Acceptance Criteria
+- [ ] Editor components (cropper, trimmer, PDF viewer) are not loaded until the user navigates to the editing step
+- [ ] Camera and microphone access is released within one second of exiting the capture step
+- [ ] All blob URLs created for media preview are revoked when their associated preview element is unmounted
+- [ ] Memory usage remains stable across five consecutive item capture sessions without page reload
+- [ ] No active media streams persist after the user navigates away from camera capture
+- [ ] Application performance (measured by frame rate or interaction responsiveness) does not degrade during a 15-minute editing session
+- [ ] Memory profiling confirms no significant memory leaks in media handling code paths
+
+
+---
+
+## REQ-055: Developer Test Harness for Item Capture Wizard
+
+**Date**: 2025-12-31 14:23
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Developers need a dedicated test page to manually verify the complete item capture wizard flow, inspect output data, and confirm local-only operation without network requests.
+
+### Current Behavior
+Developers must integrate the ItemCapture component into the main application to test functionality, making it difficult to isolate behavior, verify output structure, and confirm network isolation during development and debugging.
+
+### Expected Behavior
+A standalone test page accessible at a dedicated route allows developers to:
+- Launch and complete the full wizard workflow in isolation
+- View structured output data in the browser console when the wizard completes
+- Confirm through browser developer tools that zero network requests occur during the capture process
+
+### User Impact
+Development team members testing, debugging, or extending the ItemCapture wizard will have a self-contained environment for verification without affecting the main application flow.
+
+### Business Value
+Reduces development time and increases confidence in changes by providing immediate feedback on wizard behavior and data structure conformance.
+
+### Acceptance Criteria
+- [ ] Test page is accessible at the designated test route
+- [ ] Completing the wizard triggers console output displaying the complete data structure passed to onComplete
+- [ ] Browser network monitor shows zero requests initiated during the entire capture workflow
+- [ ] Test page can be accessed without authentication or special configuration
+- [ ] Console output is clearly formatted and includes all expected data fields
+

@@ -1,0 +1,193 @@
+# =============================================================================
+# Pipeline Configuration: ItemCapture Implementation
+# =============================================================================
+#
+# This file contains ALL project-specific configuration.
+# The orchestrator reads this file and makes no assumptions beyond it.
+#
+# Place this file in your project root and run:
+#   python /path/to/orchestrator.py --config ./pipeline.yaml
+#
+# =============================================================================
+
+pipeline:
+  name: item-capture-implementation
+  version: "1.0"
+  description: "Process ItemCapture implementation plan through request generation"
+
+# =============================================================================
+# Source Document
+# =============================================================================
+# Where to find the implementation plan and how to parse it.
+
+source:
+  # Path to the implementation plan (relative to this config file)
+  path: ./docs/prd/item-capture-implementation-plan.md
+  
+  # How to extract tasks from the document
+  extraction:
+    # Regex pattern to match task lines
+    # This pattern matches: "- [ ] **1.1 Task Title** *(Dependencies)*"
+    task_pattern: '^\s*-\s*\[\s*\]\s*\*\*(\d+\.\d+)\s+(.+?)\*\*'
+    
+    # Which regex groups contain the task ID and title
+    # Group numbers (1-indexed) from the task_pattern
+    task_groups:
+      id: 1       # First capture group = task ID (e.g., "1.1")
+      title: 2    # Second capture group = task title
+    
+    # Regex pattern to match phase headers
+    # This pattern matches: "### Phase 1: Foundation (Estimated: X days)"
+    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)\s*\('
+    
+    # Which regex groups contain phase number and name
+    phase_groups:
+      number: 1   # First capture group = phase number
+      name: 2     # Second capture group = phase name
+    
+    # How to extract task descriptions
+    description:
+      # Mode options: "following_bullets", "same_line", "none"
+      mode: following_bullets
+      
+      # Patterns that signal end of description (stop extracting)
+      end_patterns:
+        - '^\s*-\s*\[\s*\]\s*\*\*'   # Next task
+        - '^###\s+'                   # Next section
+        - '^##\s+'                    # Next major section
+        - '^\|\s*Task'                # Dependency table
+
+# =============================================================================
+# Output Locations
+# =============================================================================
+# Where to write results (relative to this config file)
+
+outputs:
+  # Where the request-fa agent appends requests
+  requests: ./docs/gen_requests.md
+  
+  # Pipeline state tracking (for resume capability)
+  state: ./pipeline-state.json
+  
+  # Optional: Log file for debugging
+  logs: ./pipeline.log
+
+# =============================================================================
+# Pipeline Stages
+# =============================================================================
+# Define each stage of the pipeline.
+# Only "request" is enabled; others are placeholders for future expansion.
+
+stages:
+  # -------------------------------------------------------------------------
+  # Stage 1: Request Generation
+  # -------------------------------------------------------------------------
+  - id: request
+    name: "Request Generation"
+    description: "Convert implementation tasks into formal requirements"
+    enabled: true
+    
+    # Agent configuration
+    agent:
+      # Name of the agent (for logging/documentation)
+      name: "01-request-fa"
+
+      # Template for constructing the prompt
+      # Available variables: {task_id}, {task_title}, {task_description},
+      #                      {phase}, {phase_name}, {full_task}
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+
+      # Command to invoke Claude Code headless mode
+      # {prompt} will be replaced with the formatted invocation
+      # This matches the working pattern from testa.sh
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--permission-mode"
+        - "acceptEdits"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+        - "--output-format"
+        - "json"
+
+      # Timeout in seconds per task
+      timeout: 120
+    
+    # Retry behavior
+    retry:
+      max_attempts: 2
+      # Options: "skip_and_log", "stop", "continue"
+      on_failure: skip_and_log
+    
+    # Stop after this stage for human review?
+    stop_hook: false
+
+  # -------------------------------------------------------------------------
+  # Stage 2: Context Overview (FUTURE)
+  # -------------------------------------------------------------------------
+  - id: overview
+    name: "Context Overview"
+    description: "Pull relevant context for each request"
+    enabled: false
+    
+    agent:
+      name: "02-overview-fa"
+      invocation_template: "use agent 02-overview-fa to create overview for: {task_title}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+      timeout: 180
+    
+    retry:
+      max_attempts: 2
+      on_failure: skip_and_log
+    
+    stop_hook: true  # Review overviews before breakdown
+
+  # -------------------------------------------------------------------------
+  # Stage 3: Task Breakdown (FUTURE)
+  # -------------------------------------------------------------------------
+  - id: breakdown
+    name: "Task Breakdown"
+    description: "Break requests into 1-point implementation tasks"
+    enabled: false
+    
+    agent:
+      name: "03-breakdown-fa"
+      invocation_template: "use agent 03-breakdown-fa to break down: {task_title}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+      timeout: 180
+    
+    retry:
+      max_attempts: 2
+      on_failure: stop
+    
+    stop_hook: true  # Review breakdown before execution
+
+  # -------------------------------------------------------------------------
+  # Stage 4: Execute Tasks (FUTURE)
+  # -------------------------------------------------------------------------
+  - id: execute
+    name: "Execute Implementation"
+    description: "Implement each 1-point task"
+    enabled: false
+    
+    agent:
+      name: "04-execute-fa"
+      invocation_template: "use agent 04-execute-fa to implement: {task_title}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+      timeout: 300  # 5 minutes for implementation tasks
+    
+    retry:
+      max_attempts: 3
+      on_failure: skip_and_log
+    
+    stop_hook: false  # Auto-advance through tasks

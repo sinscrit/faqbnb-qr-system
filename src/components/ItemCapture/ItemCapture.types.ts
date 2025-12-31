@@ -7,7 +7,7 @@
  *
  * @module ItemCapture/types
  * @see docs/prd/item-capture-implementation-plan.md
- * @lastModified 2025-12-31 (REQ-032 Task 2-4)
+ * @lastModified 2025-12-31 (REQ-036 Task 2.1.1)
  */
 
 // =============================================================================
@@ -287,3 +287,142 @@ export type ItemCaptureAction =
   // Submission
   | { type: 'SET_SUBMITTING'; payload: boolean }
   | { type: 'RESET' };
+
+// =============================================================================
+// Media Capture Types (REQ-036)
+// =============================================================================
+
+/**
+ * Permission status for camera/microphone access.
+ * Mirrors the Permissions API states with additional handling for unsupported browsers.
+ */
+export type PermissionStatus = 'prompt' | 'granted' | 'denied' | 'unavailable';
+
+/**
+ * Error codes for media capture operations.
+ * Each code maps to a specific user-actionable error scenario.
+ */
+export type MediaCaptureErrorCode =
+  | 'PERMISSION_DENIED'
+  | 'PERMISSION_DISMISSED'
+  | 'NO_DEVICE_FOUND'
+  | 'DEVICE_IN_USE'
+  | 'BROWSER_NOT_SUPPORTED'
+  | 'STREAM_ERROR'
+  | 'RECORDING_ERROR'
+  | 'CONSTRAINT_ERROR'
+  | 'CAPTURE_ERROR'
+  | 'UNKNOWN_ERROR';
+
+/**
+ * Structured error type for media capture operations.
+ * Provides user-friendly messages and recovery guidance.
+ */
+export interface MediaCaptureError {
+  /** Error code for programmatic handling */
+  code: MediaCaptureErrorCode;
+  /** User-friendly error message */
+  message: string;
+  /** Actionable guidance for the user */
+  action: string;
+  /** Whether the error can be resolved by retrying */
+  recoverable: boolean;
+  /** Original error for debugging purposes */
+  originalError?: Error;
+}
+
+/**
+ * Browser capability detection results.
+ * Used to determine which features are available before attempting media operations.
+ */
+export interface BrowserCapabilities {
+  /** Whether all required APIs are available */
+  isSupported: boolean;
+  /** navigator.mediaDevices availability */
+  hasMediaDevices: boolean;
+  /** getUserMedia availability */
+  hasGetUserMedia: boolean;
+  /** MediaRecorder availability */
+  hasMediaRecorder: boolean;
+  /** enumerateDevices availability */
+  hasEnumerateDevices: boolean;
+  /** Human-readable reason when not supported */
+  unsupportedReason?: string;
+}
+
+/**
+ * Configuration options for useMediaCapture hook.
+ */
+export interface UseMediaCaptureOptions {
+  /** Preferred video resolution (default: { width: 1920, height: 1080 }) */
+  resolution?: { width: number; height: number };
+  /** Preferred frame rate (default: 30) */
+  frameRate?: number;
+  /** Initial facing mode preference (default: 'environment') */
+  facingMode?: 'user' | 'environment';
+  /** Whether to include audio in video recording (default: true) */
+  includeAudio?: boolean;
+  /** Photo capture format (default: 'image/jpeg') */
+  photoFormat?: 'image/jpeg' | 'image/png';
+  /** Photo capture quality 0-1 (default: 0.92) */
+  photoQuality?: number;
+  /** Enable debug logging (default: false) */
+  debug?: boolean;
+}
+
+/**
+ * Camera facing mode as detected from stream.
+ */
+export type FacingMode = 'user' | 'environment' | 'unknown';
+
+/**
+ * Return type for useMediaCapture hook.
+ * Provides all state and actions for camera/recording operations.
+ */
+export interface UseMediaCaptureReturn {
+  // State
+  /** Browser capability detection result */
+  capabilities: BrowserCapabilities;
+  /** Current permission status */
+  permissionStatus: PermissionStatus;
+  /** Available camera devices */
+  devices: MediaDeviceInfo[];
+  /** Currently selected device ID */
+  selectedDeviceId: string | null;
+  /** Active media stream */
+  stream: MediaStream | null;
+  /** Whether camera is currently active */
+  isCameraActive: boolean;
+  /** Whether video recording is in progress */
+  isRecording: boolean;
+  /** Current recording duration in seconds */
+  recordingTime: number;
+  /** Current facing mode (front/back camera) */
+  facingMode: FacingMode;
+  /** Current error state */
+  error: MediaCaptureError | null;
+
+  // Actions
+  /** Request camera/microphone permission */
+  requestPermission: () => Promise<boolean>;
+  /** Refresh available camera devices list */
+  refreshDevices: () => Promise<void>;
+  /** Start camera stream */
+  startCamera: (deviceId?: string) => Promise<boolean>;
+  /** Stop camera stream and release resources */
+  stopCamera: () => void;
+  /** Switch to a different camera device */
+  switchCamera: (deviceId: string) => Promise<boolean>;
+  /** Toggle between front and back camera */
+  toggleFacingMode: () => Promise<boolean>;
+  /** Start video recording */
+  startRecording: () => Promise<boolean>;
+  /** Stop video recording and return the recorded Blob */
+  stopRecording: () => Promise<Blob | null>;
+  /** Capture a photo from current stream */
+  capturePhoto: () => Promise<Blob | null>;
+  /** Clear current error state */
+  clearError: () => void;
+  /** Perform full cleanup of all resources */
+  cleanup: () => void;
+}

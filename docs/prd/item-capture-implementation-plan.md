@@ -1,7 +1,7 @@
 # Implementation Plan: ItemCapture Component
 
 **Generated:** 2025-12-30T12:45:00
-**Last Modified:** 2025-12-30T12:45:00
+**Last Modified:** 2025-12-31T03:05:00
 **PRD Reference:** `/docs/prd/item-capture-prd.md`
 
 ---
@@ -391,33 +391,130 @@ function CreateItemPage() {
 
 ## Implementation Approach
 
+### Phase Dependencies
+
+The implementation follows a structured dependency chain. Understanding these dependencies is critical for planning parallel work and identifying blockers.
+
+```
+                    ┌─────────────────────────────────────────────────────────┐
+                    │                     PHASE 1                              │
+                    │                    Foundation                            │
+                    │  (Types, State Machine, Wizard Navigation, Metadata)     │
+                    └─────────────────────┬───────────────────────────────────┘
+                                          │
+                    ┌─────────────────────┴───────────────────────┐
+                    │                                             │
+                    ▼                                             ▼
+    ┌───────────────────────────────┐         ┌───────────────────────────────┐
+    │          PHASE 2              │         │          PHASE 3              │
+    │       Media Capture           │         │    File Upload & Text         │
+    │  (Camera, Video, Photo)       │         │  (Upload, PDF, Markdown)      │
+    └───────────────┬───────────────┘         └───────────────┬───────────────┘
+                    │                                         │
+                    │       ┌─────────────────────────┐       │
+                    └──────►│        PHASE 4          │◄──────┘
+                            │    Editing Features     │
+                            │  (Crop, Rotate, Trim)   │
+                            └────────────┬────────────┘
+                                         │
+                                         ▼
+                            ┌─────────────────────────┐
+                            │        PHASE 5          │
+                            │    Review & Polish      │
+                            │ (Review, Validation,    │
+                            │  Testing, Optimization) │
+                            └─────────────────────────┘
+```
+
+#### Dependency Rules
+
+| Phase | Hard Dependencies | Can Start After | Parallelizable With |
+|-------|-------------------|-----------------|---------------------|
+| **Phase 1** | None | Immediately | None (must complete first) |
+| **Phase 2** | Phase 1 complete | Phase 1 | Phase 3 |
+| **Phase 3** | Phase 1 complete | Phase 1 | Phase 2 |
+| **Phase 4** | Phase 2 OR Phase 3 complete | Phase 2 or 3 | Remaining work from Phase 2/3 |
+| **Phase 5** | Phases 1-4 complete | Phase 4 | None (integration phase) |
+
+#### Key Insights
+
+1. **Phases 2 & 3 can run in parallel** - Both depend only on Phase 1's infrastructure (state machine, types, wizard scaffold). Different developers could work on these simultaneously.
+
+2. **Phase 4 has a soft dependency** - Editing features need media items to edit, but development can start once *either* Phase 2 or Phase 3 produces media items. Image cropping/rotation could be tested with uploaded images while video capture is still in progress.
+
+3. **Phase 5 is the integration point** - Review step needs all content types, so this phase cannot begin until all prior phases are functionally complete.
+
+4. **Spike work is independent** - The iOS Safari MediaRecorder spike (REQ-029) and Bundle Size Analysis (REQ-028) can be done before or during Phase 1, informing technical decisions for Phase 2.
+
+#### Critical Path
+
+The critical path (longest sequential chain) is:
+
+```
+Phase 1 → Phase 2 → Phase 4 → Phase 5
+   │         │         │         │
+  3-4d     4-5d      4-5d      3-4d  = 14-18 days minimum
+```
+
+Phase 3 can complete during Phase 2 without extending the timeline if parallelized.
+
+---
+
 ### Phase 1: Foundation (Estimated: 3-4 days)
 
 **Goal:** Establish core infrastructure and basic capture flow without editing.
 
-- [ ] **1.1 Create component directory structure**
+#### Task Dependencies (Phase 1)
+
+```
+1.1 Directory Structure
+         │
+         ▼
+1.2 State Machine Hook
+         │
+         ▼
+1.3 Wizard Navigation
+         │
+    ┌────┴────┐
+    ▼         ▼
+  1.4       1.5
+Metadata  ContentType
+  Step      Step
+```
+
+| Task | Depends On | Can Parallelize With |
+|------|------------|---------------------|
+| 1.1 | None | - |
+| 1.2 | 1.1 | - |
+| 1.3 | 1.2 | - |
+| 1.4 | 1.3 | 1.5 |
+| 1.5 | 1.3 | 1.4 |
+
+#### Tasks
+
+- [ ] **1.1 Create component directory structure** *(No dependencies)*
   - Create `/src/components/ItemCapture/` directory
   - Set up barrel exports in `index.ts`
   - Create `ItemCapture.types.ts` with all interfaces
 
-- [ ] **1.2 Implement core state machine hook**
+- [ ] **1.2 Implement core state machine hook** *(Depends on: 1.1)*
   - Create `useItemCaptureState.ts` with reducer
   - Define step transitions and validation rules
   - Add error handling and state persistence
 
-- [ ] **1.3 Build wizard navigation scaffold**
+- [ ] **1.3 Build wizard navigation scaffold** *(Depends on: 1.2)*
   - Create `CaptureWizard.tsx` step container
   - Create `StepNavigation.tsx` with back/next/cancel
   - Create `ProgressIndicator.tsx` for step progress
 
-- [ ] **1.4 Implement MetadataStep**
+- [ ] **1.4 Implement MetadataStep** *(Depends on: 1.3 | Parallel with: 1.5)*
   - Title input (required, validated)
   - Location input (optional, dropdown + free text)
   - Tags input (optional, pill-based multi-select)
   - Appliance type selector (optional, dropdown)
   - Follow `ItemForm.tsx` patterns for form handling
 
-- [ ] **1.5 Implement ContentTypeStep**
+- [ ] **1.5 Implement ContentTypeStep** *(Depends on: 1.3 | Parallel with: 1.4)*
   - Large, accessible buttons for Video/Photo/Text/Upload
   - Mobile-first touch targets (min 48x48px)
   - Icons from Lucide React
@@ -426,19 +523,45 @@ function CreateItemPage() {
 
 **Goal:** Full video and photo capture with camera switching.
 
-- [ ] **2.1 Create useMediaCapture hook**
+#### Task Dependencies (Phase 2)
+
+```
+2.1 useMediaCapture Hook          2.5 Thumbnail Utility
+         │                              (Independent)
+         ▼
+2.2 CameraPreview Component
+         │
+    ┌────┴────┐
+    ▼         ▼
+  2.3       2.4
+ Video     Photo
+Capture   Capture
+  Step      Step
+```
+
+| Task | Depends On | Can Parallelize With |
+|------|------------|---------------------|
+| 2.1 | Phase 1 complete | 2.5 |
+| 2.2 | 2.1 | 2.5 |
+| 2.3 | 2.2 | 2.4, 2.5 |
+| 2.4 | 2.2 | 2.3, 2.5 |
+| 2.5 | None (utility) | 2.1, 2.2, 2.3, 2.4 |
+
+#### Tasks
+
+- [ ] **2.1 Create useMediaCapture hook** *(No dependencies within phase)*
   - Abstract MediaDevices API with error handling
   - Camera enumeration and switching
   - Permission request handling with user-friendly messages
   - Browser compatibility detection
 
-- [ ] **2.2 Build CameraPreview component**
+- [ ] **2.2 Build CameraPreview component** *(Depends on: 2.1)*
   - Video element with live feed
   - Mirror mode toggle for front camera
   - Loading state during camera activation
   - Error state for permission denied
 
-- [ ] **2.3 Implement VideoCaptureStep**
+- [ ] **2.3 Implement VideoCaptureStep** *(Depends on: 2.2 | Parallel with: 2.4)*
   - Start/stop recording controls
   - Countdown timer (max 2 min)
   - Auto-stop at limit
@@ -446,14 +569,14 @@ function CreateItemPage() {
   - Recording indicator
   - Review screen with playback
 
-- [ ] **2.4 Implement PhotoCaptureStep**
+- [ ] **2.4 Implement PhotoCaptureStep** *(Depends on: 2.2 | Parallel with: 2.3)*
   - Capture button with haptic feedback (if available)
   - Camera switch button
   - Flash indicator (if available)
   - Preview with accept/retake options
   - Multi-photo support with thumbnail strip
 
-- [ ] **2.5 Create thumbnail generation utility**
+- [ ] **2.5 Create thumbnail generation utility** *(Independent - can start anytime)*
   - Canvas-based thumbnail from video frame
   - Canvas-based thumbnail from image
   - Consistent sizing (e.g., 200x200)
@@ -463,14 +586,42 @@ function CreateItemPage() {
 
 **Goal:** Complete upload flow and markdown editing.
 
-- [ ] **3.1 Create useFileUpload hook**
+#### Task Dependencies (Phase 3)
+
+```
+     TRACK A                    TRACK B
+  (File Upload)              (Text/Markdown)
+
+3.1 useFileUpload Hook      3.4 TextEditorStep
+         │                         │
+         ▼                         ▼
+3.2 FileUploadStep          3.5 MarkdownEditor
+         │                    Component
+         ▼
+3.3 PDF Thumbnail
+    Generation
+```
+
+| Task | Depends On | Can Parallelize With |
+|------|------------|---------------------|
+| 3.1 | Phase 1 complete | 3.4, 3.5 |
+| 3.2 | 3.1 | 3.4, 3.5 |
+| 3.3 | 3.2 | 3.4, 3.5 |
+| 3.4 | Phase 1 complete | 3.1, 3.2, 3.3 |
+| 3.5 | 3.4 | 3.1, 3.2, 3.3 |
+
+**Note:** Track A (3.1→3.2→3.3) and Track B (3.4→3.5) are completely independent and can be developed in parallel by different developers.
+
+#### Tasks
+
+- [ ] **3.1 Create useFileUpload hook** *(No dependencies within phase | Track A)*
   - File input management
   - Drag-and-drop zone handling
   - MIME type validation
   - Size validation
   - Multiple file selection
 
-- [ ] **3.2 Implement FileUploadStep**
+- [ ] **3.2 Implement FileUploadStep** *(Depends on: 3.1 | Track A)*
   - Click-to-upload area
   - Drag-and-drop zone with visual feedback
   - File type icons
@@ -478,20 +629,20 @@ function CreateItemPage() {
   - Error messages for invalid files
   - Thumbnail preview for uploaded files
 
-- [ ] **3.3 Add PDF thumbnail generation**
+- [ ] **3.3 Add PDF thumbnail generation** *(Depends on: 3.2 | Track A)*
   - Integrate pdfjs-dist
   - Extract first page as image
   - Display page count metadata
   - Handle corrupt/password-protected PDFs gracefully
 
-- [ ] **3.4 Implement TextEditorStep**
+- [ ] **3.4 Implement TextEditorStep** *(No dependencies within phase | Track B)*
   - Markdown editor with toolbar
   - Bold, italic, headings, lists, links
   - Live preview pane (split view on desktop, tab on mobile)
   - Character count with limit indicator
   - Auto-save to state on debounced input
 
-- [ ] **3.5 Create MarkdownEditor component**
+- [ ] **3.5 Create MarkdownEditor component** *(Depends on: 3.4 | Track B)*
   - Custom toolbar with accessible buttons
   - Keyboard shortcuts
   - Mobile-optimized toolbar placement
@@ -501,29 +652,58 @@ function CreateItemPage() {
 
 **Goal:** Photo cropping/rotation and video trimming.
 
-- [ ] **4.1 Create useMediaEditor hook**
+#### Task Dependencies (Phase 4)
+
+```
+        4.1 useMediaEditor Hook
+                   │
+       ┌───────────┼───────────┐
+       ▼           ▼           ▼
+     4.2         4.3         4.4
+   Image       Image       Video
+  Cropper     Rotator     Trimmer
+       │           │           │
+       └───────────┼───────────┘
+                   ▼
+          4.5 MediaEditorStep
+           (Container/Router)
+```
+
+| Task | Depends On | Can Parallelize With |
+|------|------------|---------------------|
+| 4.1 | Phase 2 OR Phase 3 complete | - |
+| 4.2 | 4.1 | 4.3, 4.4 |
+| 4.3 | 4.1 | 4.2, 4.4 |
+| 4.4 | 4.1 | 4.2, 4.3 |
+| 4.5 | 4.2, 4.3, 4.4 | - |
+
+**Note:** The three editor components (4.2, 4.3, 4.4) are independent of each other and can be developed in parallel once the hook (4.1) is complete.
+
+#### Tasks
+
+- [ ] **4.1 Create useMediaEditor hook** *(Requires Phase 2 or 3 for media items)*
   - Manage edit state per media item
   - Non-destructive edit tracking
   - Apply edits on confirm
 
-- [ ] **4.2 Implement ImageCropper**
+- [ ] **4.2 Implement ImageCropper** *(Depends on: 4.1 | Parallel with: 4.3, 4.4)*
   - Integrate react-image-crop
   - Free-form and preset aspect ratios (1:1, 4:3, 16:9)
   - Touch-friendly handles
   - Preview of cropped result
 
-- [ ] **4.3 Implement ImageRotator**
+- [ ] **4.3 Implement ImageRotator** *(Depends on: 4.1 | Parallel with: 4.2, 4.4)*
   - 90-degree rotation buttons
   - Animated rotation preview
   - Canvas-based actual rotation
 
-- [ ] **4.4 Implement VideoTrimmer (V1 Simplified)**
+- [ ] **4.4 Implement VideoTrimmer (V1 Simplified)** *(Depends on: 4.1 | Parallel with: 4.2, 4.3)*
   - Video player with scrubber
   - Set start/end markers
   - Visual preview of trimmed section
   - **Note:** Actual trimming deferred to upload time (no WASM in V1)
 
-- [ ] **4.5 Build MediaEditorStep**
+- [ ] **4.5 Build MediaEditorStep** *(Depends on: 4.2, 4.3, 4.4)*
   - Display appropriate editor based on media type
   - Skip button for each edit type
   - Apply/Cancel buttons
@@ -533,7 +713,38 @@ function CreateItemPage() {
 
 **Goal:** Complete review flow and production readiness.
 
-- [ ] **5.1 Implement ReviewStep**
+#### Task Dependencies (Phase 5)
+
+```
+5.1 ReviewStep ◄────► 5.2 MediaThumbnail
+       │                 (can develop together)
+       ▼
+5.3 Validation Layer
+       │
+       ▼
+5.4 onComplete Assembly
+       │
+  ┌────┴────┐
+  ▼         ▼
+5.5       5.6
+Perf     Test
+Opt.    Harness
+```
+
+| Task | Depends On | Can Parallelize With |
+|------|------------|---------------------|
+| 5.1 | Phases 1-4 complete | 5.2 |
+| 5.2 | None (reusable component) | 5.1 |
+| 5.3 | 5.1 | - |
+| 5.4 | 5.3 | - |
+| 5.5 | 5.4 | 5.6 |
+| 5.6 | 5.4 | 5.5 |
+
+**Note:** Tasks 5.1 and 5.2 can be developed together as they're complementary. Tasks 5.5 and 5.6 are independent post-integration tasks.
+
+#### Tasks
+
+- [ ] **5.1 Implement ReviewStep** *(Requires Phases 1-4 | Parallel with: 5.2)*
   - Summary display of all content
   - Media thumbnails with type badges
   - Reorder via drag-and-drop
@@ -542,33 +753,33 @@ function CreateItemPage() {
   - Metadata summary
   - Instructions preview
 
-- [ ] **5.2 Build MediaThumbnail component**
+- [ ] **5.2 Build MediaThumbnail component** *(Independent utility | Parallel with: 5.1)*
   - Consistent display for video/image/PDF
   - Play icon overlay for video
   - PDF icon with page count
   - Delete button overlay
   - Loading state
 
-- [ ] **5.3 Create validation layer**
+- [ ] **5.3 Create validation layer** *(Depends on: 5.1)*
   - Required field validation
   - Content requirement (at least one: media or text)
   - File size limit enforcement
   - Total size calculation
 
-- [ ] **5.4 Implement onComplete assembly**
+- [ ] **5.4 Implement onComplete assembly** *(Depends on: 5.3)*
   - Gather all state into ItemRecord
   - Generate final UUIDs
   - Set contentType based on content
   - Create createdAt timestamp
   - Emit to parent
 
-- [ ] **5.5 Performance optimization**
+- [ ] **5.5 Performance optimization** *(Depends on: 5.4 | Parallel with: 5.6)*
   - Lazy load editor components
   - Cleanup media streams on unmount
   - Revoke object URLs
   - Memory profiling
 
-- [ ] **5.6 Create test harness**
+- [ ] **5.6 Create test harness** *(Depends on: 5.4 | Parallel with: 5.5)*
   - Standalone page at `/test/item-capture`
   - Console output of onComplete
   - Network monitor confirmation (zero requests)

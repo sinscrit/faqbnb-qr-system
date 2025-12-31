@@ -1,0 +1,512 @@
+{
+  "pipeline": "item-capture-implementation",
+  "version": "1.0",
+  "created_at": "2025-12-31T04:14:44.550575",
+  "updated_at": "2025-12-31T15:14:13.979894",
+  "status": "running",
+  "current_stage": "request",
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/item-capture-implementation-plan.md",
+  "source_hash": "12ef0738f8067af7c89cb82a3987a73c",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Create component directory structure",
+      "description": "Create `/src/components/ItemCapture/` directory\nSet up barrel exports in `index.ts`\nCreate `ItemCapture.types.ts` with all interfaces",
+      "raw_match": "\n- [ ] **1.1 Create component directory structure**",
+      "status": "completed",
+      "request_id": "REQ-031",
+      "error": null,
+      "processed_at": "2025-12-31T14:15:20.346720",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-031",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-031-create-component-directory-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-031-create-component-directory-structure-detailed.md"
+      }
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement core state machine hook",
+      "description": "Create `useItemCaptureState.ts` with reducer\nDefine step transitions and validation rules\nAdd error handling and state persistence",
+      "raw_match": "\n- [ ] **1.2 Implement core state machine hook**",
+      "status": "completed",
+      "request_id": "REQ-032",
+      "error": null,
+      "processed_at": "2025-12-31T14:25:52.613784",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-032",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-032-implement-core-state-machine-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-032-implement-core-state-machine-hook-detailed.md"
+      }
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Build wizard navigation scaffold",
+      "description": "Create `CaptureWizard.tsx` step container\nCreate `StepNavigation.tsx` with back/next/cancel\nCreate `ProgressIndicator.tsx` for step progress",
+      "raw_match": "\n- [ ] **1.3 Build wizard navigation scaffold**",
+      "status": "completed",
+      "request_id": "REQ-033",
+      "error": null,
+      "processed_at": "2025-12-31T14:34:59.755713",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-033",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-033-build-wizard-navigation-scaffold-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-033-build-wizard-navigation-scaffold-detailed.md"
+      }
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement MetadataStep",
+      "description": "Title input (required, validated)\nLocation input (optional, dropdown + free text)\nTags input (optional, pill-based multi-select)\nAppliance type selector (optional, dropdown)\nFollow `ItemForm.tsx` patterns for form handling",
+      "raw_match": "\n- [ ] **1.4 Implement MetadataStep**",
+      "status": "completed",
+      "request_id": "REQ-034",
+      "error": null,
+      "processed_at": "2025-12-31T14:49:52.020780",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-034",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-034-implement-metadatastep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-034-implement-metadatastep-detailed.md"
+      }
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement ContentTypeStep",
+      "description": "Large, accessible buttons for Video/Photo/Text/Upload\nMobile-first touch targets (min 48x48px)\nIcons from Lucide React",
+      "raw_match": "\n- [ ] **1.5 Implement ContentTypeStep**",
+      "status": "completed",
+      "request_id": "REQ-035",
+      "error": null,
+      "processed_at": "2025-12-31T15:14:13.979864",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-035",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-035-implement-contenttypestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-035-implement-contenttypestep-detailed.md"
+      }
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Media Capture",
+      "title": "Create useMediaCapture hook",
+      "description": "Abstract MediaDevices API with error handling\nCamera enumeration and switching\nPermission request handling with user-friendly messages\nBrowser compatibility detection",
+      "raw_match": "\n- [ ] **2.1 Create useMediaCapture hook**",
+      "status": "completed",
+      "request_id": "REQ-036",
+      "error": null,
+      "processed_at": "2025-12-31T07:34:21.760284",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-036",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-036-create-usemediacapture-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-036-create-usemediacapture-hook-detailed.md"
+      }
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Media Capture",
+      "title": "Build CameraPreview component",
+      "description": "Video element with live feed\nMirror mode toggle for front camera\nLoading state during camera activation\nError state for permission denied",
+      "raw_match": "\n- [ ] **2.2 Build CameraPreview component**",
+      "status": "completed",
+      "request_id": "REQ-037",
+      "error": null,
+      "processed_at": "2025-12-31T07:42:43.442261",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-037",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-037-build-camerapreview-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-037-build-camerapreview-component-detailed.md"
+      }
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "Media Capture",
+      "title": "Implement VideoCaptureStep",
+      "description": "Start/stop recording controls\nCountdown timer (max 2 min)\nAuto-stop at limit\nCamera switch button\nRecording indicator\nReview screen with playback",
+      "raw_match": "\n- [ ] **2.3 Implement VideoCaptureStep**",
+      "status": "completed",
+      "request_id": "REQ-038",
+      "error": null,
+      "processed_at": "2025-12-31T07:52:25.664984",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-038",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-038-implement-videocapturestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-038-implement-videocapturestep-detailed.md"
+      }
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "Media Capture",
+      "title": "Implement PhotoCaptureStep",
+      "description": "Capture button with haptic feedback (if available)\nCamera switch button\nFlash indicator (if available)\nPreview with accept/retake options\nMulti-photo support with thumbnail strip",
+      "raw_match": "\n- [ ] **2.4 Implement PhotoCaptureStep**",
+      "status": "completed",
+      "request_id": "REQ-039",
+      "error": null,
+      "processed_at": "2025-12-31T08:04:44.892610",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-039",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-039-implement-photocapturestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-039-implement-photocapturestep-detailed.md"
+      }
+    },
+    {
+      "id": "2.5",
+      "phase": "2",
+      "phase_name": "Media Capture",
+      "title": "Create thumbnail generation utility",
+      "description": "Canvas-based thumbnail from video frame\nCanvas-based thumbnail from image\nConsistent sizing (e.g., 200x200)\nMemory-efficient blob handling",
+      "raw_match": "\n- [ ] **2.5 Create thumbnail generation utility**",
+      "status": "completed",
+      "request_id": "REQ-040",
+      "error": null,
+      "processed_at": "2025-12-31T08:11:35.880171",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-040",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-040-create-thumbnail-generation-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-040-create-thumbnail-generation-utility-detailed.md"
+      }
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "File Upload & Text",
+      "title": "Create useFileUpload hook",
+      "description": "File input management\nDrag-and-drop zone handling\nMIME type validation\nSize validation\nMultiple file selection",
+      "raw_match": "\n- [ ] **3.1 Create useFileUpload hook**",
+      "status": "completed",
+      "request_id": "REQ-041",
+      "error": null,
+      "processed_at": "2025-12-31T08:20:32.219205",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-041",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-041-create-usefileupload-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-041-create-usefileupload-hook-detailed.md"
+      }
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "File Upload & Text",
+      "title": "Implement FileUploadStep",
+      "description": "Click-to-upload area\nDrag-and-drop zone with visual feedback\nFile type icons\nProgress indication\nError messages for invalid files\nThumbnail preview for uploaded files",
+      "raw_match": "\n- [ ] **3.2 Implement FileUploadStep**",
+      "status": "completed",
+      "request_id": "REQ-042",
+      "error": null,
+      "processed_at": "2025-12-31T08:31:52.277462",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-042",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-042-implement-fileuploadstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-042-implement-fileuploadstep-detailed.md"
+      }
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "File Upload & Text",
+      "title": "Add PDF thumbnail generation",
+      "description": "Integrate pdfjs-dist\nExtract first page as image\nDisplay page count metadata\nHandle corrupt/password-protected PDFs gracefully",
+      "raw_match": "\n- [ ] **3.3 Add PDF thumbnail generation**",
+      "status": "completed",
+      "request_id": "REQ-043",
+      "error": null,
+      "processed_at": "2025-12-31T08:41:58.017053",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-043",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-043-add-pdf-thumbnail-generation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-043-add-pdf-thumbnail-generation-detailed.md"
+      }
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "File Upload & Text",
+      "title": "Implement TextEditorStep",
+      "description": "Markdown editor with toolbar\nBold, italic, headings, lists, links\nLive preview pane (split view on desktop, tab on mobile)\nCharacter count with limit indicator\nAuto-save to state on debounced input",
+      "raw_match": "\n- [ ] **3.4 Implement TextEditorStep**",
+      "status": "completed",
+      "request_id": "REQ-044",
+      "error": null,
+      "processed_at": "2025-12-31T08:52:35.583530",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-044",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-044-implement-texteditorstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-044-implement-texteditorstep-detailed.md"
+      }
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "File Upload & Text",
+      "title": "Create MarkdownEditor component",
+      "description": "Custom toolbar with accessible buttons\nKeyboard shortcuts\nMobile-optimized toolbar placement\nPreview rendering with react-markdown",
+      "raw_match": "\n- [ ] **3.5 Create MarkdownEditor component**",
+      "status": "completed",
+      "request_id": "REQ-045",
+      "error": null,
+      "processed_at": "2025-12-31T09:03:16.982916",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-045",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-045-create-markdowneditor-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-045-create-markdowneditor-component-detailed.md"
+      }
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Editing Features",
+      "title": "Create useMediaEditor hook",
+      "description": "Manage edit state per media item\nNon-destructive edit tracking\nApply edits on confirm",
+      "raw_match": "\n- [ ] **4.1 Create useMediaEditor hook**",
+      "status": "completed",
+      "request_id": "REQ-046",
+      "error": null,
+      "processed_at": "2025-12-31T09:14:32.477043",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-046",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-046-create-usemediaeditor-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-046-create-usemediaeditor-hook-detailed.md"
+      }
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Editing Features",
+      "title": "Implement ImageCropper",
+      "description": "Integrate react-image-crop\nFree-form and preset aspect ratios (1:1, 4:3, 16:9)\nTouch-friendly handles\nPreview of cropped result",
+      "raw_match": "\n- [ ] **4.2 Implement ImageCropper**",
+      "status": "completed",
+      "request_id": "REQ-047",
+      "error": null,
+      "processed_at": "2025-12-31T09:23:14.999855",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-047",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-047-implement-imagecropper-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-047-implement-imagecropper-detailed.md"
+      }
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Editing Features",
+      "title": "Implement ImageRotator",
+      "description": "90-degree rotation buttons\nAnimated rotation preview\nCanvas-based actual rotation",
+      "raw_match": "\n- [ ] **4.3 Implement ImageRotator**",
+      "status": "completed",
+      "request_id": "REQ-048",
+      "error": null,
+      "processed_at": "2025-12-31T09:32:19.803315",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-048",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-048-implement-imagerotator-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-048-implement-imagerotator-detailed.md"
+      }
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Editing Features",
+      "title": "Implement VideoTrimmer (V1 Simplified)",
+      "description": "Video player with scrubber\nSet start/end markers\nVisual preview of trimmed section\n**Note:** Actual trimming deferred to upload time (no WASM in V1)",
+      "raw_match": "\n- [ ] **4.4 Implement VideoTrimmer (V1 Simplified)**",
+      "status": "completed",
+      "request_id": "REQ-049",
+      "error": null,
+      "processed_at": "2025-12-31T09:44:12.176384",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-049",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-049-implement-videotrimmer-v1-simplified-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-049-implement-videotrimmer-v1-simplified-detailed.md"
+      }
+    },
+    {
+      "id": "4.5",
+      "phase": "4",
+      "phase_name": "Editing Features",
+      "title": "Build MediaEditorStep",
+      "description": "Display appropriate editor based on media type\nSkip button for each edit type\nApply/Cancel buttons\nTransition to next media or review",
+      "raw_match": "\n- [ ] **4.5 Build MediaEditorStep**",
+      "status": "completed",
+      "request_id": "REQ-050",
+      "error": null,
+      "processed_at": "2025-12-31T09:54:26.645191",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-050",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-050-build-mediaeditorstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-050-build-mediaeditorstep-detailed.md"
+      }
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Implement ReviewStep",
+      "description": "Summary display of all content\nMedia thumbnails with type badges\nReorder via drag-and-drop\nRemove individual items\nEdit any section (navigate back)\nMetadata summary\nInstructions preview",
+      "raw_match": "\n- [ ] **5.1 Implement ReviewStep**",
+      "status": "completed",
+      "request_id": "REQ-050",
+      "error": null,
+      "processed_at": "2025-12-31T10:08:44.277819",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-050",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-050-implement-reviewstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-050-implement-reviewstep-detailed.md"
+      }
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Build MediaThumbnail component",
+      "description": "Consistent display for video/image/PDF\nPlay icon overlay for video\nPDF icon with page count\nDelete button overlay\nLoading state",
+      "raw_match": "\n- [ ] **5.2 Build MediaThumbnail component**",
+      "status": "completed",
+      "request_id": "REQ-051",
+      "error": null,
+      "processed_at": "2025-12-31T10:15:51.113123",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-051",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-051-build-mediathumbnail-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-051-build-mediathumbnail-component-detailed.md"
+      }
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Create validation layer",
+      "description": "Required field validation\nContent requirement (at least one: media or text)\nFile size limit enforcement\nTotal size calculation",
+      "raw_match": "\n- [ ] **5.3 Create validation layer**",
+      "status": "completed",
+      "request_id": "REQ-052",
+      "error": null,
+      "processed_at": "2025-12-31T10:26:07.218653",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-052",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-052-create-validation-layer-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-052-create-validation-layer-detailed.md"
+      }
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Implement onComplete assembly",
+      "description": "Gather all state into ItemRecord\nGenerate final UUIDs\nSet contentType based on content\nCreate createdAt timestamp\nEmit to parent",
+      "raw_match": "\n- [ ] **5.4 Implement onComplete assembly**",
+      "status": "completed",
+      "request_id": "REQ-053",
+      "error": null,
+      "processed_at": "2025-12-31T10:34:57.788328",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-053",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-053-implement-oncomplete-assembly-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-053-implement-oncomplete-assembly-detailed.md"
+      }
+    },
+    {
+      "id": "5.5",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Performance optimization",
+      "description": "Lazy load editor components\nCleanup media streams on unmount\nRevoke object URLs\nMemory profiling",
+      "raw_match": "\n- [ ] **5.5 Performance optimization**",
+      "status": "completed",
+      "request_id": "REQ-054",
+      "error": null,
+      "processed_at": "2025-12-31T10:45:57.429087",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-054",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-054-performance-optimization-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-054-performance-optimization-detailed.md"
+      }
+    },
+    {
+      "id": "5.6",
+      "phase": "5",
+      "phase_name": "Review & Polish",
+      "title": "Create test harness",
+      "description": "Standalone page at `/test/item-capture`\nConsole output of onComplete\nNetwork monitor confirmation (zero requests) ---",
+      "raw_match": "\n- [ ] **5.6 Create test harness**",
+      "status": "completed",
+      "request_id": "REQ-055",
+      "error": null,
+      "processed_at": "2025-12-31T10:52:40.451393",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-055",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-055-create-test-harness-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-055-create-test-harness-detailed.md"
+      }
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 26,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "disabled",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "breakdown": {
+      "status": "disabled",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "execute": {
+      "status": "disabled",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [],
+  "metadata": {
+    "total_requests_generated": 5,
+    "last_request_id": "REQ-055",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline.yaml",
+    "first_request_id": "REQ-031",
+    "request_id_before_run": null
+  },
+  "current_task_index": 4,
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2025-12-31T12:54:10.167185",
+    "elapsed": "27.9s",
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Successfully connected to Chrome with CDP on port 9223. Browser snapshot captured showing page at localhost:3000/test/ios-mediarecorder.html"
+      }
+    }
+  }
+}

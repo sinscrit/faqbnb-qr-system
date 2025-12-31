@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-034 Task 9)
+ * @lastModified 2025-12-31 (REQ-036)
  */
 
 // =============================================================================
@@ -39,6 +39,20 @@ export type {
 } from './ItemCapture.types';
 
 // =============================================================================
+// Media Capture Types (REQ-036)
+// =============================================================================
+
+export type {
+  PermissionStatus,
+  MediaCaptureErrorCode,
+  MediaCaptureError,
+  BrowserCapabilities,
+  UseMediaCaptureOptions,
+  UseMediaCaptureReturn,
+  FacingMode,
+} from './ItemCapture.types';
+
+// =============================================================================
 // Hooks Export
 // =============================================================================
 
@@ -46,6 +60,8 @@ export {
   useItemCaptureState,
   type UseItemCaptureStateReturn,
 } from './hooks';
+
+export { useMediaCapture } from './hooks';
 
 // =============================================================================
 // Wizard Navigation Components (Task 1.3)
