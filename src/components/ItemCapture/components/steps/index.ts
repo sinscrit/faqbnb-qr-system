@@ -5,7 +5,7 @@
  * the ItemCapture wizard.
  *
  * @module ItemCapture/components/steps
- * @lastModified 2025-12-31 (REQ-038)
+ * @lastModified 2025-12-31 (REQ-039)
  */
 
 export { ContentTypeStep } from './ContentTypeStep';
@@ -16,3 +16,6 @@ export type { MetadataStepProps } from './MetadataStep';
 
 export { VideoCaptureStep } from './VideoCaptureStep';
 export type { VideoCaptureStepProps } from './VideoCaptureStep';
+
+export { PhotoCaptureStep } from './PhotoCaptureStep';
+export type { PhotoCaptureStepProps } from './PhotoCaptureStep';
