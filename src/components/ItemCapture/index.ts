@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-046)
+ * @lastModified 2025-12-31 (REQ-048)
  */
 
 // =============================================================================
@@ -156,11 +156,40 @@ export { TextEditorStep } from './components/steps/TextEditorStep';
 export type { TextEditorStepProps } from './components/steps/TextEditorStep';
 
 // =============================================================================
-// Editor Components (REQ-045)
+// Editor Components (REQ-045, REQ-047, REQ-048)
 // =============================================================================
 
 export { MarkdownEditor } from './editors/MarkdownEditor';
 export type { MarkdownEditorProps } from './editors/MarkdownEditor';
+
+/**
+ * ImageCropper component is lazy-loaded only when user enters edit mode.
+ * For optimal bundle size, use dynamic import:
+ *
+ * @example
+ * const ImageCropper = dynamic(() => import('./editors/ImageCropper'), { ssr: false });
+ */
+export { default as ImageCropper } from './editors/ImageCropper';
+export type { ImageCropperProps, AspectRatioPreset } from './editors/ImageCropper';
+
+/**
+ * ImageRotator component is lazy-loaded only when user enters edit mode.
+ * For optimal bundle size, use dynamic import:
+ *
+ * @example
+ * const ImageRotator = dynamic(() => import('./editors/ImageRotator'), { ssr: false });
+ */
+export { default as ImageRotator } from './editors/ImageRotator';
+export type { ImageRotatorProps } from './editors/ImageRotator';
+
+// Rotation utilities
+export {
+  rotateImage,
+  calculateNextRotation,
+  degreesToRadians,
+  ROTATION_ERROR_MESSAGES,
+} from './editors/rotationUtils';
+export type { RotationDegrees as RotationDegreesUtil } from './editors/rotationUtils';
 
 // =============================================================================
 // Shared Components (REQ-037, REQ-043)
