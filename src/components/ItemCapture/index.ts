@@ -155,8 +155,11 @@ export type { FileUploadStepProps } from './components/steps/FileUploadStep';
 export { TextEditorStep } from './components/steps/TextEditorStep';
 export type { TextEditorStepProps } from './components/steps/TextEditorStep';
 
+export { MediaEditorStep } from './components/steps/MediaEditorStep';
+export type { MediaEditorStepProps, ImageEditPhase } from './components/steps/MediaEditorStep';
+
 // =============================================================================
-// Editor Components (REQ-045, REQ-047, REQ-048)
+// Editor Components (REQ-045, REQ-047, REQ-048, REQ-050)
 // =============================================================================
 
 export { MarkdownEditor } from './editors/MarkdownEditor';
