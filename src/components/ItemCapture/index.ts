@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-042)
+ * @lastModified 2025-12-31 (REQ-043)
  */
 
 // =============================================================================
@@ -71,6 +71,21 @@ export type {
 } from './ItemCapture.types';
 
 // =============================================================================
+// PDF Thumbnail Types (REQ-043)
+// =============================================================================
+
+export type {
+  PDFThumbnailError,
+  PDFThumbnailResult,
+} from './ItemCapture.types';
+
+export {
+  PDF_CONSTRAINTS,
+  PDF_ERROR_MESSAGES,
+  type PDFErrorCode,
+} from './utils/pdfConstants';
+
+// =============================================================================
 // Hooks Export
 // =============================================================================
 
@@ -82,6 +97,8 @@ export {
 export { useMediaCapture } from './hooks';
 
 export { useFileUpload } from './hooks';
+
+export { usePDFThumbnail, type PDFThumbnailState } from './hooks';
 
 // =============================================================================
 // Wizard Navigation Components (Task 1.3)
@@ -116,10 +133,16 @@ export { FileUploadStep } from './components/steps/FileUploadStep';
 export type { FileUploadStepProps } from './components/steps/FileUploadStep';
 
 // =============================================================================
-// Shared Components (REQ-037)
+// Shared Components (REQ-037, REQ-043)
 // =============================================================================
 
 export { CameraPreview } from './components/shared/CameraPreview';
+
+export { PDFPlaceholder } from './components/shared/PDFPlaceholder';
+export type { PDFPlaceholderProps } from './components/shared/PDFPlaceholder';
+
+export { PageCountBadge } from './components/shared/PageCountBadge';
+export type { PageCountBadgeProps } from './components/shared/PageCountBadge';
 
 // =============================================================================
 // Constants Export
@@ -157,6 +180,20 @@ export {
   generateVideoThumbnail,
 } from './utils/thumbnailGenerator';
 export type { ThumbnailOptions } from './utils/thumbnailGenerator';
+
+/**
+ * PDF thumbnail generation utilities are designed to be lazy-loaded.
+ * For optimal bundle size, use dynamic import:
+ *
+ * @example
+ * const { generatePDFThumbnailWithMetadata } = await import('@/components/ItemCapture/utils/pdfThumbnailGenerator');
+ * const result = await generatePDFThumbnailWithMetadata(pdfFile);
+ */
+export {
+  generatePDFThumbnailWithMetadata,
+  generatePDFThumbnail,
+  getPDFPageCount,
+} from './utils/pdfThumbnailGenerator';
 
 // =============================================================================
 // Main Component Export

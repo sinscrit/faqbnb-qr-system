@@ -7,8 +7,10 @@
  *
  * @module ItemCapture/types
  * @see docs/prd/item-capture-implementation-plan.md
- * @lastModified 2025-12-31 (REQ-036 Task 2.1.1)
+ * @lastModified 2025-12-31 (REQ-043 Task 3.3.2)
  */
+
+import type { PDFErrorCode } from './utils/pdfConstants';
 
 // =============================================================================
 // Configuration Types
@@ -660,4 +662,38 @@ export interface UseFileUploadReturn {
   getDropZoneProps: () => DropZoneProps;
   /** Get props to spread on hidden file input */
   getInputProps: () => InputProps;
+}
+
+// =============================================================================
+// PDF Thumbnail Types (REQ-043)
+// =============================================================================
+
+/**
+ * Structured error type for PDF thumbnail generation failures.
+ * Provides error classification and user-friendly messaging.
+ */
+export interface PDFThumbnailError {
+  /** Error code for programmatic handling */
+  code: PDFErrorCode;
+  /** Technical error message for debugging */
+  message: string;
+  /** User-friendly message suitable for display */
+  userMessage: string;
+}
+
+/**
+ * Result of PDF thumbnail generation operation.
+ * Contains the thumbnail blob, page count, and error/status information.
+ */
+export interface PDFThumbnailResult {
+  /** Generated thumbnail blob (null if generation failed) */
+  thumbnail: Blob | null;
+  /** Number of pages in the PDF */
+  pageCount: number;
+  /** Error details if thumbnail generation failed */
+  error?: PDFThumbnailError;
+  /** Whether the PDF is password-protected */
+  isPasswordProtected: boolean;
+  /** Whether the PDF is corrupted or malformed */
+  isCorrupt: boolean;
 }

@@ -5,7 +5,7 @@
  * the ItemCapture wizard.
  *
  * @module ItemCapture/components/shared
- * @lastModified 2025-12-31 (REQ-037)
+ * @lastModified 2025-12-31 (REQ-043)
  */
 
 export { CameraPreview } from './CameraPreview';
@@ -16,3 +16,9 @@ export type { ProgressIndicatorProps, StepDefinition } from './ProgressIndicator
 
 export { StepNavigation } from './StepNavigation';
 export type { StepNavigationProps } from './StepNavigation';
+
+export { PDFPlaceholder } from './PDFPlaceholder';
+export type { PDFPlaceholderProps } from './PDFPlaceholder';
+
+export { PageCountBadge } from './PageCountBadge';
+export type { PageCountBadgeProps } from './PageCountBadge';

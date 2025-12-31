@@ -7,9 +7,12 @@
  * Provides drag-and-drop file upload, click-to-select, file previews,
  * and comprehensive validation with user-friendly error handling.
  *
+ * Features PDF thumbnail generation with page count display (REQ-043).
+ *
  * @module ItemCapture/components/steps/FileUploadStep
  * @see docs/REQ-042-implement-fileuploadstep-detailed.md
- * @lastModified 2025-12-31 (REQ-042)
+ * @see docs/REQ-043-add-pdf-thumbnail-generation-detailed.md
+ * @lastModified 2025-12-31 (REQ-043 Task 3.3.12)
  */
 
 import React, { useCallback, useState, useEffect } from 'react';
@@ -25,6 +28,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFileUpload } from '../../hooks/useFileUpload';
+import { usePDFThumbnail } from '../../hooks/usePDFThumbnail';
+import { PDFPlaceholder } from '../shared/PDFPlaceholder';
+import { PageCountBadge } from '../shared/PageCountBadge';
 import {
   SUPPORTED_IMAGE_TYPES,
   SUPPORTED_VIDEO_TYPES,
@@ -119,7 +125,105 @@ function getFileIcon(category: ValidatedFile['category']): React.ReactNode {
 // =============================================================================
 
 /**
+ * PDFFileCard displays a PDF file with generated thumbnail and page count.
+ * Uses the usePDFThumbnail hook for thumbnail generation.
+ */
+interface PDFFileCardProps {
+  file: ValidatedFile;
+  onRemove: (id: string) => void;
+}
+
+function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
+  const sizeLabel = formatFileSize(file.size);
+
+  // Use the PDF thumbnail hook
+  const {
+    thumbnailUrl,
+    pageCount,
+    isLoading,
+    error,
+    isPasswordProtected,
+    isCorrupt,
+  } = usePDFThumbnail(file.file);
+
+  return (
+    <div className="relative group bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
+      {/* Thumbnail area */}
+      <div className="aspect-square rounded-md overflow-hidden bg-gray-100 mb-2 flex items-center justify-center relative">
+        {isLoading ? (
+          <PDFPlaceholder isLoading className="w-full h-full" />
+        ) : thumbnailUrl ? (
+          <>
+            <img
+              src={thumbnailUrl}
+              alt={`Preview of ${file.name}`}
+              className="w-full h-full object-cover"
+            />
+            {/* Page count badge */}
+            <PageCountBadge pageCount={pageCount} />
+          </>
+        ) : (
+          <PDFPlaceholder
+            errorCode={error?.code}
+            isPasswordProtected={isPasswordProtected}
+            isCorrupt={isCorrupt}
+            className="w-full h-full"
+          />
+        )}
+      </div>
+
+      {/* File info */}
+      <p
+        className="text-sm font-medium text-gray-700 truncate"
+        title={file.name}
+      >
+        {file.name}
+      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-gray-500">{sizeLabel}</p>
+        {/* Show page count in text for PDFs without thumbnail */}
+        {!thumbnailUrl && pageCount > 0 && (
+          <p className="text-xs text-gray-500">
+            {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+          </p>
+        )}
+      </div>
+
+      {/* Error message for failed thumbnails */}
+      {error && !isPasswordProtected && !isCorrupt && (
+        <p className="text-xs text-orange-600 mt-1 truncate" title={error.userMessage}>
+          {error.userMessage}
+        </p>
+      )}
+      {isPasswordProtected && (
+        <p className="text-xs text-amber-600 mt-1">Password protected</p>
+      )}
+      {isCorrupt && (
+        <p className="text-xs text-red-600 mt-1">File may be damaged</p>
+      )}
+
+      {/* Remove button - always visible on mobile, hover on desktop */}
+      <button
+        type="button"
+        onClick={() => onRemove(file.id)}
+        className={cn(
+          'absolute top-1 right-1 p-2 rounded-full',
+          'bg-red-100 text-red-600',
+          'opacity-100 sm:opacity-0 sm:group-hover:opacity-100',
+          'transition-opacity hover:bg-red-200',
+          'focus:outline-none focus:ring-2 focus:ring-red-500 focus:opacity-100'
+        )}
+        aria-label={`Remove ${file.name}`}
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+/**
  * FileCard displays a single uploaded file with preview and remove functionality.
+ * For PDF files, use PDFFileCard instead.
  */
 interface FileCardProps {
   file: ValidatedFile;
@@ -127,6 +231,11 @@ interface FileCardProps {
 }
 
 function FileCard({ file, onRemove }: FileCardProps) {
+  // Use specialized PDFFileCard for PDF files
+  if (file.category === 'pdf') {
+    return <PDFFileCard file={file} onRemove={onRemove} />;
+  }
+
   const icon = getFileIcon(file.category);
   const sizeLabel = formatFileSize(file.size);
 
