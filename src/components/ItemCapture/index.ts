@@ -61,11 +61,14 @@ export { ProgressIndicator, getCurrentStageIndex, PROGRESS_STAGES, STEP_TO_STAGE
 export type { ProgressIndicatorProps, StepDefinition } from './components/shared/ProgressIndicator';
 
 // =============================================================================
-// Step Components (Task 1.4)
+// Step Components (Task 1.4, 1.5)
 // =============================================================================
 
 export { MetadataStep, validateMetadata } from './components/steps/MetadataStep';
 export type { MetadataStepProps } from './components/steps/MetadataStep';
+
+export { ContentTypeStep } from './components/steps/ContentTypeStep';
+export type { ContentTypeStepProps, ContentType } from './components/steps/ContentTypeStep';
 
 // =============================================================================
 // Constants Export
