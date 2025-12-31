@@ -331,8 +331,21 @@ export {
 } from './utils/pdfThumbnailGenerator';
 
 // =============================================================================
+// Assembly Utilities (REQ-053)
+// =============================================================================
+
+export { generateUUID, isValidUUID } from './utils/generateUUID';
+export {
+  assembleItemRecord,
+  determineContentType,
+  type InternalMediaItem,
+  type InternalState,
+  type AssemblyOptions,
+} from './utils/assembleItemRecord';
+
+// =============================================================================
 // Main Component Export
 // =============================================================================
 
-// TODO: Add main component export in later task
-// export { ItemCapture } from './ItemCapture';
+export { ItemCapture } from './ItemCapture';
+export type { ItemCaptureProps } from './ItemCapture.types';

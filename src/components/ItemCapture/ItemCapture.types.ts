@@ -249,6 +249,9 @@ export interface ItemCaptureState {
   /** Whether form is currently submitting */
   isSubmitting: boolean;
 
+  /** Submission error message (null when no error) */
+  submitError: string | null;
+
   /** Track unsaved changes */
   isDirty: boolean;
 }
@@ -288,6 +291,9 @@ export type ItemCaptureAction =
 
   // Submission
   | { type: 'SET_SUBMITTING'; payload: boolean }
+  | { type: 'SUBMIT' }
+  | { type: 'SUBMIT_SUCCESS' }
+  | { type: 'SUBMIT_ERROR'; payload: string }
   | { type: 'RESET' };
 
 // =============================================================================

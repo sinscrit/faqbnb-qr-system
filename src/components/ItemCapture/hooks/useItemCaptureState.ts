@@ -63,6 +63,7 @@ export const createInitialState = (): ItemCaptureState => ({
   isRecording: false,
   isCameraActive: false,
   isSubmitting: false,
+  submitError: null,
   isDirty: false,
 });
 
@@ -338,6 +339,23 @@ function itemCaptureReducer(
       return {
         ...state,
         isSubmitting: action.payload,
+      };
+
+    case 'SUBMIT':
+      return {
+        ...state,
+        isSubmitting: true,
+        submitError: null,
+      };
+
+    case 'SUBMIT_SUCCESS':
+      return createInitialState();
+
+    case 'SUBMIT_ERROR':
+      return {
+        ...state,
+        isSubmitting: false,
+        submitError: action.payload,
       };
 
     case 'RESET':
