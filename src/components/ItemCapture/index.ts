@@ -48,6 +48,19 @@ export {
 } from './hooks';
 
 // =============================================================================
+// Wizard Navigation Components (Task 1.3)
+// =============================================================================
+
+export { CaptureWizard } from './components/CaptureWizard';
+export type { CaptureWizardProps } from './components/CaptureWizard';
+
+export { StepNavigation } from './components/shared/StepNavigation';
+export type { StepNavigationProps } from './components/shared/StepNavigation';
+
+export { ProgressIndicator, getCurrentStageIndex, PROGRESS_STAGES, STEP_TO_STAGE_INDEX } from './components/shared/ProgressIndicator';
+export type { ProgressIndicatorProps, StepDefinition } from './components/shared/ProgressIndicator';
+
+// =============================================================================
 // Main Component Export
 // =============================================================================
 
