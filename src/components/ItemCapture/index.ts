@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-041)
+ * @lastModified 2025-12-31 (REQ-042)
  */
 
 // =============================================================================
@@ -108,6 +108,12 @@ export type { ContentTypeStepProps, ContentType } from './components/steps/Conte
 
 export { VideoCaptureStep } from './components/steps/VideoCaptureStep';
 export type { VideoCaptureStepProps } from './components/steps/VideoCaptureStep';
+
+export { PhotoCaptureStep } from './components/steps/PhotoCaptureStep';
+export type { PhotoCaptureStepProps } from './components/steps/PhotoCaptureStep';
+
+export { FileUploadStep } from './components/steps/FileUploadStep';
+export type { FileUploadStepProps } from './components/steps/FileUploadStep';
 
 // =============================================================================
 // Shared Components (REQ-037)
