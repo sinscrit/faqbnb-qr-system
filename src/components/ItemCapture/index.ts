@@ -8,7 +8,7 @@
  * import { ItemCapture, ItemCaptureProps, ItemRecord } from '@/components/ItemCapture';
  *
  * @module ItemCapture
- * @lastModified 2025-12-31 (REQ-043)
+ * @lastModified 2025-12-31 (REQ-044)
  */
 
 // =============================================================================
@@ -132,6 +132,9 @@ export type { PhotoCaptureStepProps } from './components/steps/PhotoCaptureStep'
 export { FileUploadStep } from './components/steps/FileUploadStep';
 export type { FileUploadStepProps } from './components/steps/FileUploadStep';
 
+export { TextEditorStep } from './components/steps/TextEditorStep';
+export type { TextEditorStepProps } from './components/steps/TextEditorStep';
+
 // =============================================================================
 // Shared Components (REQ-037, REQ-043)
 // =============================================================================
@@ -159,8 +162,10 @@ export {
   SUPPORTED_VIDEO_TYPES,
   THUMBNAIL_TIMEOUT,
   VIDEO_SEEK_TIME,
+  TEXT_EDITOR_CONSTRAINTS,
+  MARKDOWN_FORMATS,
 } from './utils/constants';
-export type { PresetLocation, SuggestedTag } from './utils/constants';
+export type { PresetLocation, SuggestedTag, MarkdownFormatKey } from './utils/constants';
 
 // =============================================================================
 // Thumbnail Generation Utilities (REQ-040)

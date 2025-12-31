@@ -5,7 +5,7 @@
  * including preset locations, appliance types, suggested tags, and validation constraints.
  *
  * @module ItemCapture/utils/constants
- * @lastModified 2025-12-31 (REQ-034 Task 1)
+ * @lastModified 2025-12-31 (REQ-044 Task 3.4.1)
  */
 
 import type { ApplianceType } from '../ItemCapture.types';
@@ -164,3 +164,42 @@ export const THUMBNAIL_TIMEOUT = 10000;
  * 0.5 seconds provides a frame after video playback has started.
  */
 export const VIDEO_SEEK_TIME = 0.5;
+
+// =============================================================================
+// Text Editor Constraints (Task 3.4 / REQ-044)
+// =============================================================================
+
+/**
+ * Constraints for the TextEditorStep component.
+ * Controls character limits, warning thresholds, and UI behavior.
+ */
+export const TEXT_EDITOR_CONSTRAINTS = {
+  /** Maximum character count */
+  maxLength: 5000,
+  /** Character count at which to show warning (yellow) */
+  warningThreshold: 4500,
+  /** Debounce delay in milliseconds for auto-save */
+  autoSaveDelay: 500,
+  /** Minimum textarea height in pixels */
+  minHeight: 200,
+} as const;
+
+/**
+ * Markdown format definitions for the toolbar.
+ * Each format has a prefix/suffix to wrap selected text or insert at cursor.
+ */
+export const MARKDOWN_FORMATS = {
+  bold: { prefix: '**', suffix: '**', label: 'Bold', shortcut: 'Ctrl+B' },
+  italic: { prefix: '*', suffix: '*', label: 'Italic', shortcut: 'Ctrl+I' },
+  heading1: { prefix: '# ', suffix: '', label: 'Heading 1', shortcut: '' },
+  heading2: { prefix: '## ', suffix: '', label: 'Heading 2', shortcut: '' },
+  heading3: { prefix: '### ', suffix: '', label: 'Heading 3', shortcut: '' },
+  bulletList: { prefix: '- ', suffix: '', label: 'Bullet List', shortcut: '' },
+  numberedList: { prefix: '1. ', suffix: '', label: 'Numbered List', shortcut: '' },
+  link: { prefix: '[', suffix: '](url)', label: 'Link', shortcut: 'Ctrl+K' },
+} as const;
+
+/**
+ * Type for markdown format keys.
+ */
+export type MarkdownFormatKey = keyof typeof MARKDOWN_FORMATS;
