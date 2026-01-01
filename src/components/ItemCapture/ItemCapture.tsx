@@ -222,7 +222,7 @@ export function ItemCapture({
         case 'photo':
           goToStep('capture-photo');
           break;
-        case 'file':
+        case 'upload':
           goToStep('upload-file');
           break;
         case 'text':
