@@ -348,4 +348,4 @@ export {
 // =============================================================================
 
 export { ItemCapture } from './ItemCapture';
-export type { ItemCaptureProps } from './ItemCapture.types';
+// Note: ItemCaptureProps is already exported in the "Public Types" section above
