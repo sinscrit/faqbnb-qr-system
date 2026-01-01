@@ -364,19 +364,22 @@ export function ItemCapture({
       case 'capture-video':
         return (
           <VideoCaptureStep
-            onCapture={handleAddMedia}
-            onCancel={() => goToStep('content-type')}
-            maxDuration={config?.maxVideoDuration}
+            state={state}
+            addMedia={addMedia}
+            goToStep={goToStep}
+            prevStep={() => goToStep('content-type')}
+            config={config || {}}
           />
         );
 
       case 'capture-photo':
         return (
           <PhotoCaptureStep
-            onCapture={handleAddMedia}
-            onCancel={() => goToStep('content-type')}
-            maxPhotos={config?.maxPhotos}
-            currentPhotoCount={state.mediaItems.filter((m) => m.type === 'image').length}
+            state={state}
+            addMedia={addMedia}
+            goToStep={goToStep}
+            prevStep={() => goToStep('content-type')}
+            config={config || {}}
           />
         );
 

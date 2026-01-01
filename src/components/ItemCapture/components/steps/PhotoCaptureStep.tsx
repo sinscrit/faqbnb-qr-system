@@ -264,7 +264,7 @@ export function PhotoCaptureStep({
   } = useMediaCapture({
     facingMode: 'environment',
     includeAudio: false,
-    debug: config.debug,
+    debug: config?.debug,
   });
 
   // ===========================================================================

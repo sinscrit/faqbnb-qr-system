@@ -263,7 +263,7 @@ export function VideoCaptureStep({
   } = useMediaCapture({
     facingMode: 'environment',
     includeAudio: true,
-    debug: config.debug,
+    debug: config?.debug,
   });
 
   // ===========================================================================
