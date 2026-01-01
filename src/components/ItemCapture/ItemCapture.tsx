@@ -386,25 +386,22 @@ export function ItemCapture({
       case 'upload-file':
         return (
           <FileUploadStep
-            onFilesAdded={(files) => {
-              files.forEach((file) => addMedia(file));
-              handleCaptureComplete();
-            }}
-            onCancel={() => goToStep('content-type')}
-            maxFileSize={config?.maxFileSize}
-            maxTotalSize={config?.maxTotalSize}
-            existingMediaItems={state.mediaItems}
+            state={state}
+            addMedia={addMedia}
+            removeMedia={removeMedia}
+            goToStep={goToStep}
+            prevStep={() => goToStep('content-type')}
+            config={config || {}}
           />
         );
 
       case 'write-text':
         return (
           <TextEditorStep
-            value={state.instructions}
-            onChange={setInstructions}
-            onNext={handleCaptureComplete}
-            onCancel={() => goToStep('content-type')}
-            maxLength={config?.maxTextLength}
+            state={state}
+            setInstructions={setInstructions}
+            goToStep={goToStep}
+            prevStep={() => goToStep('content-type')}
           />
         );
 
