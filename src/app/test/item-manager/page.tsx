@@ -7,11 +7,12 @@
  * renders correctly in all states (empty, loading, error, with items).
  *
  * @module test/item-manager
- * @lastModified 2026-01-03 (REQ-059 Task 13 - Added ItemRow visual tests)
+ * @lastModified 2026-01-03 (REQ-075 Task 12 - Added MediaGallery visual tests)
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ItemManager, ItemCard, ItemRow } from '@/components/ItemManager';
+import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
 // =============================================================================
@@ -158,6 +159,106 @@ const itemCardMockItems: ItemRecord[] = [
 ];
 
 // =============================================================================
+// MediaGallery Test Mock Data (REQ-075)
+// =============================================================================
+
+/**
+ * Creates mock media items for MediaGallery testing.
+ * Uses colored canvas blobs to simulate different media types.
+ */
+function createGalleryMockMediaItems(): MediaItem[] {
+  // Create colored canvas blobs for each type
+  const createColoredBlob = (color: string, text: string): Blob | null => {
+    if (typeof document === 'undefined') return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 640, 480);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 48px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 320, 240);
+    // Convert to blob synchronously using toDataURL
+    const dataUrl = canvas.toDataURL('image/png');
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  };
+
+  const imageBlob1 = createColoredBlob('#22c55e', 'IMAGE 1');
+  const imageBlob2 = createColoredBlob('#16a34a', 'IMAGE 2');
+  const videoBlob = createColoredBlob('#9333ea', 'VIDEO');
+  const pdfBlob = createColoredBlob('#f59e0b', 'PDF');
+
+  return [
+    {
+      id: 'gallery-img-1',
+      type: 'image',
+      file: imageBlob1 || new Blob(['image'], { type: 'image/png' }),
+      thumbnail: imageBlob1 || undefined,
+      order: 0,
+      metadata: {
+        mimeType: 'image/png',
+        fileSize: 1024,
+        source: 'capture',
+        originalFilename: 'photo-1.png',
+      },
+    },
+    {
+      id: 'gallery-vid-1',
+      type: 'video',
+      file: new Blob(['video'], { type: 'video/mp4' }),
+      thumbnail: videoBlob || undefined,
+      order: 1,
+      metadata: {
+        mimeType: 'video/mp4',
+        fileSize: 5120,
+        source: 'upload',
+        duration: 125,
+        originalFilename: 'demo-video.mp4',
+      },
+    },
+    {
+      id: 'gallery-pdf-1',
+      type: 'pdf',
+      file: new Blob(['pdf'], { type: 'application/pdf' }),
+      thumbnail: pdfBlob || undefined,
+      order: 2,
+      metadata: {
+        mimeType: 'application/pdf',
+        fileSize: 2048,
+        source: 'upload',
+        pageCount: 5,
+        originalFilename: 'manual.pdf',
+      },
+    },
+    {
+      id: 'gallery-img-2',
+      type: 'image',
+      file: imageBlob2 || new Blob(['image'], { type: 'image/png' }),
+      thumbnail: imageBlob2 || undefined,
+      order: 3,
+      metadata: {
+        mimeType: 'image/png',
+        fileSize: 2048,
+        source: 'capture',
+        originalFilename: 'photo-2.png',
+      },
+    },
+  ];
+}
+
+// =============================================================================
 // ItemRow Test Mock Data (REQ-059)
 // =============================================================================
 
@@ -248,12 +349,24 @@ const itemRowMockItems: ItemRecord[] = [
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row'>('row');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery'>('gallery');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
   const [showManageAssets, setShowManageAssets] = useState(true);
   const [showDuplicate, setShowDuplicate] = useState(true);
+
+  // MediaGallery state (REQ-075)
+  const [galleryMediaItems, setGalleryMediaItems] = useState<MediaItem[]>([]);
+  const [galleryActiveIndex, setGalleryActiveIndex] = useState(0);
+  const [galleryControlledMode, setGalleryControlledMode] = useState(false);
+  const [galleryShowThumbnails, setGalleryShowThumbnails] = useState(true);
+  const [galleryEnableFullScreen, setGalleryEnableFullScreen] = useState(true);
+
+  // Initialize gallery mock data on client side
+  useEffect(() => {
+    setGalleryMediaItems(createGalleryMockMediaItems());
+  }, []);
 
   // Determine what to render based on test state
   const getTestProps = () => {
@@ -344,9 +457,19 @@ export default function TestItemManagerPage() {
 
       {/* View Toggle */}
       <div className="bg-white border-b border-gray-200 px-6 py-3">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <span className="text-sm font-medium text-gray-700">Test View:</span>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => setTestView('gallery')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'gallery'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              MediaGallery (REQ-075)
+            </button>
             <button
               onClick={() => setTestView('row')}
               className={`px-4 py-2 text-sm font-medium rounded ${
@@ -355,7 +478,7 @@ export default function TestItemManagerPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              ItemRow Tests (REQ-059)
+              ItemRow (REQ-059)
             </button>
             <button
               onClick={() => setTestView('card')}
@@ -365,7 +488,7 @@ export default function TestItemManagerPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              ItemCard Tests (REQ-058)
+              ItemCard (REQ-058)
             </button>
             <button
               onClick={() => setTestView('manager')}
@@ -375,11 +498,134 @@ export default function TestItemManagerPage() {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              ItemManager Shell (REQ-057)
+              ItemManager (REQ-057)
             </button>
           </div>
         </div>
       </div>
+
+      {/* MediaGallery Test Section (REQ-075) */}
+      {testView === 'gallery' && (
+        <>
+          {/* Gallery Test Controls */}
+          <div className="bg-white border-b border-gray-200 px-6 py-3">
+            <div className="flex items-center gap-4 flex-wrap">
+              <button
+                onClick={() => setGalleryControlledMode(!galleryControlledMode)}
+                className={`px-3 py-1 text-sm rounded ${
+                  galleryControlledMode
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Controlled Mode: {galleryControlledMode ? 'ON' : 'OFF'}
+              </button>
+              <button
+                onClick={() => setGalleryShowThumbnails(!galleryShowThumbnails)}
+                className={`px-3 py-1 text-sm rounded ${
+                  galleryShowThumbnails
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Thumbnails: {galleryShowThumbnails ? 'ON' : 'OFF'}
+              </button>
+              <button
+                onClick={() => setGalleryEnableFullScreen(!galleryEnableFullScreen)}
+                className={`px-3 py-1 text-sm rounded ${
+                  galleryEnableFullScreen
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Full-Screen: {galleryEnableFullScreen ? 'ON' : 'OFF'}
+              </button>
+              {galleryControlledMode && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setGalleryActiveIndex(Math.max(0, galleryActiveIndex - 1))}
+                    className="px-2 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200"
+                    disabled={galleryActiveIndex === 0}
+                  >
+                    Prev
+                  </button>
+                  <span className="text-sm text-gray-600">
+                    Index: {galleryActiveIndex} / {galleryMediaItems.length - 1}
+                  </span>
+                  <button
+                    onClick={() => setGalleryActiveIndex(Math.min(galleryMediaItems.length - 1, galleryActiveIndex + 1))}
+                    className="px-2 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200"
+                    disabled={galleryActiveIndex === galleryMediaItems.length - 1}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* MediaGallery Visual Tests */}
+          <div className="p-6 space-y-8">
+            <h2 className="text-lg font-semibold text-gray-900">MediaGallery Visual Test Cases</h2>
+
+            {/* Multiple Items Gallery */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="font-medium text-gray-700 mb-4">Multiple Media Items (Uncontrolled/Controlled)</h3>
+              <MediaGallery
+                mediaItems={galleryMediaItems}
+                activeIndex={galleryControlledMode ? galleryActiveIndex : undefined}
+                onActiveIndexChange={(idx) => {
+                  console.log('[TEST] MediaGallery onActiveIndexChange:', idx);
+                  if (galleryControlledMode) {
+                    setGalleryActiveIndex(idx);
+                  }
+                }}
+                onMediaClick={(item, idx) => {
+                  console.log('[TEST] MediaGallery onMediaClick:', item.id, idx);
+                  alert(`Media clicked: ${item.metadata.originalFilename || item.id}`);
+                }}
+                enableFullScreen={galleryEnableFullScreen}
+                showThumbnails={galleryShowThumbnails}
+                debug
+              />
+            </div>
+
+            {/* Single Item Gallery */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="font-medium text-gray-700 mb-4">Single Media Item (No Navigation)</h3>
+              <MediaGallery
+                mediaItems={galleryMediaItems.slice(0, 1)}
+                enableFullScreen={galleryEnableFullScreen}
+                onMediaClick={(item, idx) => {
+                  console.log('[TEST] Single Item onMediaClick:', item.id, idx);
+                }}
+              />
+            </div>
+
+            {/* Empty Gallery */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <h3 className="font-medium text-gray-700 mb-4">Empty State (No Media)</h3>
+              <MediaGallery mediaItems={[]} />
+            </div>
+
+            {/* Legend */}
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases Legend:</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li><span className="font-medium">Multiple Items:</span> Tests carousel navigation, swipe gestures, keyboard nav (Arrow keys), thumbnails, full-screen</li>
+                <li><span className="font-medium">Single Item:</span> Tests that navigation controls are hidden for single items</li>
+                <li><span className="font-medium">Empty State:</span> Tests empty placeholder display</li>
+                <li><span className="font-medium">Controlled Mode:</span> Tests external index control via props</li>
+              </ul>
+              <div className="mt-3 text-sm text-gray-500">
+                <p><strong>Keyboard:</strong> Use Arrow Left/Right to navigate. Press Escape to exit full-screen.</p>
+                <p><strong>Touch:</strong> Swipe left/right to navigate on mobile devices.</p>
+                <p><strong>Debug:</strong> Check console for state changes and callback invocations.</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ItemCard Test Section */}
       {testView === 'card' && (
