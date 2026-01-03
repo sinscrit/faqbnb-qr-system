@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-057 Task 1.3 - Added ItemManager component export)
+ * @lastModified 2026-01-03 (REQ-058 Task 8 - Added ItemCard component export)
  */
 
 // =============================================================================
@@ -32,6 +32,9 @@ export type {
   // Render Props
   ToolbarRenderProps,
   ConfirmDialogProps,
+
+  // Component Props
+  ItemCardProps,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -74,3 +77,10 @@ export { createInitialState, itemManagerReducer } from './hooks/useItemManagerSt
 
 export { ItemManager } from './ItemManager';
 export { default as ItemManagerDefault } from './ItemManager';
+
+// =============================================================================
+// ItemCard Component Export (REQ-058)
+// =============================================================================
+
+export { ItemCard } from './components/ItemCard';
+export { default as ItemCardDefault } from './components/ItemCard';

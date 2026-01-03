@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-057 Task 1.3 - Added ToolbarRenderProps extensions)
+ * @lastModified 2026-01-03 (REQ-058 Task 1 - Added ItemCardProps interface)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -401,6 +401,29 @@ export interface ConfirmDialogProps {
 
   /** Callback when user cancels */
   onCancel: () => void;
+}
+
+// =============================================================================
+// Item Card Props Interface
+// =============================================================================
+
+/**
+ * Props for the ItemCard component.
+ * Used for displaying items in grid view.
+ */
+export interface ItemCardProps {
+  /** The item record to display */
+  item: ItemRecord;
+  /** Callback when card is clicked (for preview) */
+  onPreviewClick: (item: ItemRecord) => void;
+  /** Callback when selection checkbox changes */
+  onSelectionChange: (id: string, selected: boolean) => void;
+  /** Whether the card is currently selected */
+  isSelected: boolean;
+  /** Whether selection mode is active (shows checkbox) */
+  isSelectionMode: boolean;
+  /** Optional additional CSS classes */
+  className?: string;
 }
 
 // =============================================================================

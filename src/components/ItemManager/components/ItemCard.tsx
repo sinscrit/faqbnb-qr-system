@@ -1,0 +1,229 @@
+'use client';
+
+/**
+ * ItemCard Component
+ *
+ * A card component for displaying items in the grid view of ItemManager.
+ * Features include:
+ * - Thumbnail display with Object URL management
+ * - Content type badge with appropriate colors
+ * - Selection checkbox for bulk operations
+ * - Hover and focus states for accessibility
+ * - Keyboard navigation support
+ *
+ * @module ItemManager/components/ItemCard
+ * @lastModified 2026-01-03 (REQ-058 - Initial implementation)
+ */
+
+import { useState, useEffect, useMemo } from 'react';
+import { Play, FileText, ImageIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ItemCardProps } from '../ItemManager.types';
+
+/**
+ * Helper function to determine badge info based on content type and media type.
+ * Returns label and appropriate CSS classes for each content type.
+ */
+function getContentTypeBadge(contentType: string, firstMediaType?: string) {
+  if (contentType === 'text-only') {
+    return { label: 'TEXT', classes: 'bg-purple-100 text-purple-800 border-purple-200' };
+  }
+  if (contentType === 'pdf-only') {
+    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
+  }
+  if (contentType === 'mixed') {
+    return { label: 'MIXED', classes: 'bg-orange-100 text-orange-800 border-orange-200' };
+  }
+  // contentType === 'media'
+  if (firstMediaType === 'video') {
+    return { label: 'VIDEO', classes: 'bg-red-100 text-red-800 border-red-200' };
+  }
+  if (firstMediaType === 'image') {
+    return { label: 'PHOTO', classes: 'bg-green-100 text-green-800 border-green-200' };
+  }
+  if (firstMediaType === 'pdf') {
+    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
+  }
+  return { label: 'MEDIA', classes: 'bg-gray-100 text-gray-800 border-gray-200' };
+}
+
+/**
+ * ItemCard Component
+ *
+ * Renders a card for a single item in the grid view with thumbnail,
+ * title, location, content type badge, and selection checkbox.
+ */
+export function ItemCard({
+  item,
+  onPreviewClick,
+  onSelectionChange,
+  isSelected,
+  isSelectionMode,
+  className,
+}: ItemCardProps) {
+  // Image loading/error state
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
+  // Create object URL from thumbnail or file blob with proper cleanup
+  const objectUrl = useMemo(() => {
+    const firstMedia = item.media[0];
+    if (!firstMedia) return null;
+    const blob = firstMedia.thumbnail || (firstMedia.type === 'image' ? firstMedia.file : null);
+    if (!blob) return null;
+    return URL.createObjectURL(blob);
+  }, [item.media]);
+
+  // Cleanup object URL on unmount or when URL changes
+  useEffect(() => {
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [objectUrl]);
+
+  // Reset image state when item changes
+  useEffect(() => {
+    setImageError(false);
+    setImageLoading(true);
+  }, [item.id]);
+
+  // Get content type badge info
+  const badge = getContentTypeBadge(item.contentType, item.media[0]?.type);
+
+  // Get fallback icon based on content type and media type
+  const getFallbackIcon = () => {
+    const firstMediaType = item.media[0]?.type;
+
+    if (item.contentType === 'text-only') {
+      return <FileText className="w-10 h-10 text-purple-400" />;
+    }
+    if (item.contentType === 'pdf-only' || firstMediaType === 'pdf') {
+      return <FileText className="w-10 h-10 text-blue-400" />;
+    }
+    if (firstMediaType === 'video') {
+      return <Play className="w-10 h-10 text-red-400" />;
+    }
+    if (firstMediaType === 'image') {
+      return <ImageIcon className="w-10 h-10 text-green-400" />;
+    }
+    return <FileText className="w-10 h-10 text-purple-400" />;
+  };
+
+  // Handle card click (for preview)
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger preview if clicking checkbox
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.closest('input')) {
+      return;
+    }
+    onPreviewClick(item);
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onPreviewClick(item);
+    }
+  };
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${item.title}`}
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      className={cn(
+        'group cursor-pointer bg-white rounded-xl shadow-sm border border-gray-200',
+        'hover:shadow-lg hover:border-gray-300 transition-all duration-200 overflow-hidden',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+        isSelected && 'border-blue-500 ring-2 ring-blue-200',
+        className
+      )}
+    >
+      {/* Thumbnail Section */}
+      <div className="relative aspect-video bg-gray-100 overflow-hidden">
+        {/* Thumbnail Image */}
+        {objectUrl && !imageError && (
+          <img
+            src={objectUrl}
+            alt={`${item.title} thumbnail`}
+            className={cn(
+              'w-full h-full object-cover transition-all duration-200 group-hover:scale-105',
+              imageLoading ? 'opacity-0' : 'opacity-100'
+            )}
+            onLoad={() => setImageLoading(false)}
+            onError={() => {
+              setImageError(true);
+              setImageLoading(false);
+            }}
+          />
+        )}
+
+        {/* Loading Spinner */}
+        {imageLoading && objectUrl && !imageError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* Fallback Icon (when no thumbnail or error) */}
+        {(!objectUrl || imageError) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            {getFallbackIcon()}
+          </div>
+        )}
+
+        {/* Selection Checkbox */}
+        {isSelectionMode && (
+          <div className="absolute top-2 left-2 z-10">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => {
+                e.stopPropagation();
+                onSelectionChange(item.id, e.target.checked);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className={cn(
+                'w-5 h-5 rounded border-gray-300 text-blue-600',
+                'focus:ring-blue-500 bg-white/80 cursor-pointer',
+                'shadow-sm hover:border-blue-400'
+              )}
+              aria-label={`Select ${item.title}`}
+            />
+          </div>
+        )}
+
+        {/* Content Type Badge */}
+        <div className="absolute top-2 right-2 z-10">
+          <span
+            className={cn(
+              'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border',
+              badge.classes
+            )}
+          >
+            {badge.label}
+          </span>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="p-4">
+        <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+          {item.title}
+        </h3>
+        {item.location && (
+          <p className="text-xs text-gray-500 mt-1 truncate">
+            {item.location}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default ItemCard;
