@@ -11,7 +11,7 @@
  */
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ItemManager, ItemCard, ItemRow, useAssetManagement } from '@/components/ItemManager';
+import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel } from '@/components/ItemManager';
 import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
@@ -642,7 +642,7 @@ function AssetManagementHookTest() {
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook'>('asset-hook');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel'>('asset-panel');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -655,6 +655,9 @@ export default function TestItemManagerPage() {
   const [galleryControlledMode, setGalleryControlledMode] = useState(false);
   const [galleryShowThumbnails, setGalleryShowThumbnails] = useState(true);
   const [galleryEnableFullScreen, setGalleryEnableFullScreen] = useState(true);
+
+  // AssetPanel state (REQ-081)
+  const [assetPanelItem, setAssetPanelItem] = useState<ItemRecord | null>(null);
 
   // Initialize gallery mock data on client side
   useEffect(() => {
@@ -754,6 +757,16 @@ export default function TestItemManagerPage() {
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setTestView('asset-panel')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'asset-panel'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              AssetPanel (REQ-081)
+            </button>
+            <button
               onClick={() => setTestView('asset-hook')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'asset-hook'
@@ -809,6 +822,71 @@ export default function TestItemManagerPage() {
 
       {/* useAssetManagement Hook Test Section (REQ-080) */}
       {testView === 'asset-hook' && <AssetManagementHookTest />}
+
+      {/* AssetPanel Component Test Section (REQ-081) */}
+      {testView === 'asset-panel' && (
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">AssetPanel Visual Test Cases (REQ-081)</h2>
+
+          {/* Mock Item Cards for Testing */}
+          <div className="bg-white rounded-lg shadow p-4 mb-6">
+            <h3 className="font-semibold mb-3">Select an item to manage assets:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {itemCardMockItems.slice(0, 3).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setAssetPanelItem(item)}
+                  className="text-left p-4 border rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                >
+                  <p className="font-medium text-gray-900 truncate">{item.title}</p>
+                  <p className="text-sm text-gray-500">{item.location || 'No location'}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {item.media?.length || 0} asset{(item.media?.length || 0) !== 1 ? 's' : ''}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Test Cases Legend */}
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases:</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li><span className="font-medium">Open Panel:</span> Click any item card above to open the AssetPanel</li>
+              <li><span className="font-medium">Add Media:</span> Click &quot;Add Media&quot; button to select files</li>
+              <li><span className="font-medium">Remove Asset:</span> Click X button on any asset to mark for removal</li>
+              <li><span className="font-medium">Undo Removal:</span> Click &quot;Restore&quot; on removed assets</li>
+              <li><span className="font-medium">Cancel:</span> Discard changes and close the panel</li>
+              <li><span className="font-medium">Done:</span> Commit changes (enabled when changes exist)</li>
+              <li><span className="font-medium">Escape Key:</span> Press Escape to cancel and close</li>
+              <li><span className="font-medium">Backdrop Click:</span> Click outside the panel to cancel</li>
+            </ul>
+            <div className="mt-3 text-sm text-gray-500">
+              <p>Check browser console for callback invocations (onAddAssets, onRemoveAssets, onReorderAssets).</p>
+            </div>
+          </div>
+
+          {/* AssetPanel Component */}
+          <AssetPanel
+            isOpen={!!assetPanelItem}
+            item={assetPanelItem}
+            onClose={() => setAssetPanelItem(null)}
+            onAddAssets={async (itemId, files) => {
+              console.log('=== AssetPanel onAddAssets ===', itemId, files.map(f => f.name));
+              // Simulate async operation
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }}
+            onRemoveAssets={async (itemId, ids) => {
+              console.log('=== AssetPanel onRemoveAssets ===', itemId, ids);
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }}
+            onReorderAssets={async (itemId, orderedIds) => {
+              console.log('=== AssetPanel onReorderAssets ===', itemId, orderedIds);
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }}
+          />
+        </div>
+      )}
 
       {/* MediaGallery Test Section (REQ-075) */}
       {testView === 'gallery' && (

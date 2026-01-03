@@ -1321,3 +1321,30 @@ export interface UseAssetManagementReturn {
   /** Clear current error */
   clearError: () => void;
 }
+
+/**
+ * Props for the AssetPanel component.
+ * Slide-in drawer for managing item assets.
+ *
+ * @lastModified 2026-01-03 (REQ-081 Task 5.2.1)
+ */
+export interface AssetPanelProps {
+  /** Whether the panel is visible */
+  isOpen: boolean;
+  /** The item whose assets are being managed */
+  item: ItemRecord | null;
+  /** Callback when panel requests to close */
+  onClose: () => void;
+  /** Callback when assets are added */
+  onAddAssets?: (itemId: string, assets: File[]) => Promise<void>;
+  /** Callback when assets are removed */
+  onRemoveAssets?: (itemId: string, assetIds: string[]) => Promise<void>;
+  /** Callback when assets are reordered */
+  onReorderAssets?: (itemId: string, orderedIds: string[]) => Promise<void>;
+  /** Optional class names for customization */
+  className?: string;
+  /** Configuration for allowed media types */
+  allowedMediaTypes?: ('video' | 'image' | 'pdf')[];
+  /** Maximum file size in bytes */
+  maxFileSize?: number;
+}

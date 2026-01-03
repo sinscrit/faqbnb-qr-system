@@ -146,3 +146,11 @@ export { ItemPreviewModalDefault } from './components/ItemPreview';
 
 export { InstructionsViewer, InstructionsViewerDefault } from './components/ItemPreview';
 export type { InstructionsViewerProps } from './components/ItemPreview';
+
+// =============================================================================
+// AssetPanel Component Export (REQ-081)
+// =============================================================================
+
+export { AssetPanel } from './components/AssetPanel';
+export { default as AssetPanelDefault } from './components/AssetPanel';
+export type { AssetPanelProps } from './components';
