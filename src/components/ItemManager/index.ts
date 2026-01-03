@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-060 Task 6 - Added ItemGrid, ItemList, ViewModeToggle exports)
+ * @lastModified 2026-01-03 (REQ-074 Task 6 - Added ItemPreviewModal export)
  */
 
 // =============================================================================
@@ -39,6 +39,7 @@ export type {
   ItemGridProps,
   ItemListProps,
   ViewModeToggleProps,
+  ItemPreviewModalProps,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -108,3 +109,10 @@ export { default as ItemListDefault } from './components/ItemList';
 
 export { ViewModeToggle } from './components/shared/ViewModeToggle';
 export { default as ViewModeToggleDefault } from './components/shared/ViewModeToggle';
+
+// =============================================================================
+// ItemPreviewModal Component Export (REQ-074)
+// =============================================================================
+
+export { ItemPreviewModal } from './components/ItemPreview';
+export { ItemPreviewModalDefault } from './components/ItemPreview';

@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-072 Task 3.5.9 - Added BulkTagDialogProps re-export)
+ * @lastModified 2026-01-03 (REQ-074 Task 2 - Added ItemPreviewModalProps interface)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -1104,4 +1104,37 @@ export interface BulkMoveDialogProps {
   loading?: boolean;
   /** Optional additional CSS classes */
   className?: string;
+}
+
+// =============================================================================
+// ItemPreviewModal Types (REQ-074)
+// =============================================================================
+
+/**
+ * Props for the ItemPreviewModal component.
+ * Controls the modal/drawer display for item preview.
+ *
+ * @lastModified 2026-01-03 (REQ-074 Task 2)
+ */
+export interface ItemPreviewModalProps {
+  /** Whether the modal is currently open */
+  isOpen: boolean;
+
+  /** Callback when modal should close */
+  onClose: () => void;
+
+  /** The item being previewed (null when closed) */
+  item: ItemRecord | null;
+
+  /** Optional title override (defaults to item.title) */
+  title?: string;
+
+  /** Content to render inside the modal */
+  children: React.ReactNode;
+
+  /** Optional CSS class for the root element */
+  className?: string;
+
+  /** Optional CSS class for content container */
+  contentClassName?: string;
 }

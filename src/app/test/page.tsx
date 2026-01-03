@@ -8,7 +8,7 @@
  *
  * @route /test
  * @created 2025-12-31
- * @lastModified 2025-12-31
+ * @lastModified 2026-01-03 (REQ-074 - Added ItemPreviewModal test)
  */
 
 import Link from 'next/link';
@@ -103,6 +103,11 @@ const componentTests: TestLink[] = [
     href: '/test/media-thumbnail',
     title: 'MediaThumbnail',
     description: 'Thumbnail rendering for various media types',
+  },
+  {
+    href: '/test/item-preview-modal',
+    title: 'ItemPreviewModal',
+    description: 'Responsive modal/drawer for item preview (REQ-074)',
   },
 ];
 
