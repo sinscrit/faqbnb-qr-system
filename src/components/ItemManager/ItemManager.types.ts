@@ -427,6 +427,39 @@ export interface ItemCardProps {
 }
 
 // =============================================================================
+// Item Row Props Interface (REQ-059)
+// =============================================================================
+
+/**
+ * Props for the ItemRow component.
+ * Used for displaying items in list view with comprehensive metadata.
+ *
+ * @lastModified 2026-01-03 (REQ-059 Task 1)
+ */
+export interface ItemRowProps {
+  /** The item record to display */
+  item: ItemRecord;
+  /** Callback when row is clicked (for preview) */
+  onPreviewClick: (item: ItemRecord) => void;
+  /** Callback when selection checkbox changes */
+  onSelectionChange: (id: string, selected: boolean) => void;
+  /** Whether the row is currently selected */
+  isSelected: boolean;
+  /** Whether selection mode is active (shows checkbox) */
+  isSelectionMode: boolean;
+  /** Callback when edit action is triggered */
+  onEdit: (item: ItemRecord) => void;
+  /** Callback when delete action is triggered */
+  onDelete: (item: ItemRecord) => void;
+  /** Optional callback for manage assets action */
+  onManageAssets?: (item: ItemRecord) => void;
+  /** Optional callback for duplicate action */
+  onDuplicate?: (item: ItemRecord) => void;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+// =============================================================================
 // Main Component Props Interface
 // =============================================================================
 

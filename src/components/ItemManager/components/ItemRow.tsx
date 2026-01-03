@@ -1,0 +1,372 @@
+'use client';
+
+/**
+ * ItemRow Component
+ *
+ * Displays an individual item in the ItemManager list view.
+ * Features thumbnail preview, comprehensive metadata display,
+ * kebab action menu, and selection mode support.
+ *
+ * @module ItemManager/components/ItemRow
+ * @lastModified 2026-01-03 (REQ-059)
+ */
+
+import { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  MoreVertical,
+  Edit,
+  Trash2,
+  Layers,
+  Copy,
+  Play,
+  FileText,
+  ImageIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ItemRowProps } from '../ItemManager.types';
+
+/**
+ * Maximum number of tags to display before showing overflow count.
+ */
+const MAX_VISIBLE_TAGS = 3;
+
+/**
+ * Helper function to format date in a readable format.
+ * @param date - Date to format
+ * @returns Formatted date string (e.g., "Jan 3, 2026")
+ */
+function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
+}
+
+/**
+ * Helper function to determine badge info based on content type and media type.
+ * Returns label and appropriate CSS classes for each content type.
+ */
+function getContentTypeBadge(contentType: string, firstMediaType?: string) {
+  if (contentType === 'text-only') {
+    return { label: 'TEXT', classes: 'bg-purple-100 text-purple-800 border-purple-200' };
+  }
+  if (contentType === 'pdf-only') {
+    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
+  }
+  if (contentType === 'mixed') {
+    return { label: 'MIXED', classes: 'bg-orange-100 text-orange-800 border-orange-200' };
+  }
+  // contentType === 'media'
+  if (firstMediaType === 'video') {
+    return { label: 'VIDEO', classes: 'bg-red-100 text-red-800 border-red-200' };
+  }
+  return { label: 'PHOTO', classes: 'bg-green-100 text-green-800 border-green-200' };
+}
+
+/**
+ * ItemRow Component
+ *
+ * Renders a row for a single item in the list view with thumbnail,
+ * comprehensive metadata, selection checkbox, and kebab menu actions.
+ */
+export function ItemRow({
+  item,
+  onPreviewClick,
+  onSelectionChange,
+  isSelected,
+  isSelectionMode,
+  onEdit,
+  onDelete,
+  onManageAssets,
+  onDuplicate,
+  className,
+}: ItemRowProps) {
+  // Image loading/error state
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
+  // Menu state
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Create object URL from thumbnail or file blob with proper cleanup
+  const objectUrl = useMemo(() => {
+    const firstMedia = item.media[0];
+    if (!firstMedia) return null;
+    const blob = firstMedia.thumbnail || (firstMedia.type === 'image' ? firstMedia.file : null);
+    if (!blob) return null;
+    return URL.createObjectURL(blob);
+  }, [item.media]);
+
+  // Cleanup object URL on unmount or when URL changes
+  useEffect(() => {
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [objectUrl]);
+
+  // Reset image state when item changes
+  useEffect(() => {
+    setImageError(false);
+    setImageLoading(true);
+  }, [item.id]);
+
+  // Click-outside detection for menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
+
+  // Get content type badge info
+  const badge = getContentTypeBadge(item.contentType, item.media[0]?.type);
+
+  // Get fallback icon based on content type and media type
+  const getFallbackIcon = () => {
+    const firstMedia = item.media[0];
+    if (!firstMedia) {
+      if (item.contentType === 'text-only') {
+        return <FileText className="w-6 h-6 text-purple-400" />;
+      }
+      if (item.contentType === 'pdf-only') {
+        return <FileText className="w-6 h-6 text-blue-400" />;
+      }
+      return <ImageIcon className="w-6 h-6 text-gray-400" />;
+    }
+
+    switch (firstMedia.type) {
+      case 'video':
+        return <Play className="w-6 h-6 text-red-400" />;
+      case 'pdf':
+        return <FileText className="w-6 h-6 text-blue-400" />;
+      case 'image':
+      default:
+        return <ImageIcon className="w-6 h-6 text-green-400" />;
+    }
+  };
+
+  // Render tags with overflow handling
+  const renderTags = () => {
+    if (!item.tags?.length) return null;
+
+    const visibleTags = item.tags.slice(0, MAX_VISIBLE_TAGS);
+    const remainingCount = item.tags.length - MAX_VISIBLE_TAGS;
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {visibleTags.map((tag) => (
+          <span
+            key={tag}
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
+          >
+            {tag}
+          </span>
+        ))}
+        {remainingCount > 0 && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-gray-500">
+            +{remainingCount}
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  // Define menu items
+  const menuItems = [
+    { icon: Edit, label: 'Edit', onClick: () => onEdit(item), show: true },
+    { icon: Layers, label: 'Manage Assets', onClick: () => onManageAssets?.(item), show: !!onManageAssets },
+    { icon: Copy, label: 'Duplicate', onClick: () => onDuplicate?.(item), show: !!onDuplicate },
+    { icon: Trash2, label: 'Delete', onClick: () => onDelete(item), show: true, danger: true },
+  ];
+
+  // Handle row click (for preview)
+  const handleRowClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'BUTTON' ||
+      target.closest('button') ||
+      target.closest('[role="menu"]')
+    ) {
+      return;
+    }
+    onPreviewClick(item);
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onPreviewClick(item);
+    }
+    if (e.key === 'Escape' && menuOpen) {
+      setMenuOpen(false);
+    }
+  };
+
+  return (
+    <div
+      role="row"
+      tabIndex={0}
+      aria-label={`Item: ${item.title}`}
+      onClick={handleRowClick}
+      onKeyDown={handleKeyDown}
+      className={cn(
+        'flex items-center gap-4 px-4 py-3 bg-white border-b border-gray-200',
+        'hover:bg-gray-50 transition-colors cursor-pointer',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500',
+        isSelected && 'bg-blue-50 border-l-4 border-l-blue-500',
+        className
+      )}
+    >
+      {/* Selection Checkbox (Task 9) */}
+      {isSelectionMode && (
+        <div className="flex-shrink-0 w-8 flex items-center justify-center">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={(e) => {
+              e.stopPropagation();
+              onSelectionChange(item.id, e.target.checked);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            aria-label={`Select ${item.title}`}
+          />
+        </div>
+      )}
+
+      {/* Thumbnail Area (Task 3) */}
+      <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100 relative">
+        {/* Thumbnail Image */}
+        {objectUrl && !imageError && (
+          <img
+            src={objectUrl}
+            alt={`${item.title} thumbnail`}
+            className={cn(
+              'w-full h-full object-cover',
+              imageLoading ? 'opacity-0' : 'opacity-100'
+            )}
+            onLoad={() => setImageLoading(false)}
+            onError={() => {
+              setImageError(true);
+              setImageLoading(false);
+            }}
+          />
+        )}
+
+        {/* Loading Spinner */}
+        {imageLoading && objectUrl && !imageError && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* Fallback Icon (when no thumbnail or error) */}
+        {(!objectUrl || imageError) && (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            {getFallbackIcon()}
+          </div>
+        )}
+      </div>
+
+      {/* Title and Description Section (Task 4) */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-medium text-gray-900 truncate">
+          {item.title}
+        </h3>
+        {item.instructions && (
+          <p className="text-sm text-gray-500 truncate">
+            {item.instructions}
+          </p>
+        )}
+      </div>
+
+      {/* Location Column (Task 5) */}
+      <div className="hidden md:flex w-24 items-center text-sm text-gray-500 truncate">
+        {item.location || '-'}
+      </div>
+
+      {/* Content Type Badge (Task 6) */}
+      <div className="hidden sm:flex w-20 items-center">
+        <span
+          className={cn(
+            'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
+            badge.classes
+          )}
+        >
+          {badge.label}
+        </span>
+      </div>
+
+      {/* Tags Column (Task 7) */}
+      <div className="hidden lg:flex w-40">
+        {renderTags()}
+      </div>
+
+      {/* Date Column (Task 8) */}
+      <div className="hidden md:flex w-28 items-center text-sm text-gray-500">
+        {formatDate(item.createdAt)}
+      </div>
+
+      {/* Kebab Menu (Task 10) */}
+      <div className="flex-shrink-0 relative" ref={menuRef}>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+          }}
+          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          aria-label="Item actions"
+          aria-haspopup="true"
+          aria-expanded={menuOpen}
+        >
+          <MoreVertical className="w-5 h-5" />
+        </button>
+
+        {menuOpen && (
+          <div
+            role="menu"
+            className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20"
+          >
+            {menuItems
+              .filter((menuItem) => menuItem.show !== false)
+              .map((menuItem) => (
+                <button
+                  key={menuItem.label}
+                  role="menuitem"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    menuItem.onClick();
+                    setMenuOpen(false);
+                  }}
+                  className={cn(
+                    'w-full flex items-center gap-2 px-4 py-2 text-sm text-left',
+                    'hover:bg-gray-50 transition-colors',
+                    menuItem.danger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'
+                  )}
+                >
+                  <menuItem.icon className="w-4 h-4" />
+                  {menuItem.label}
+                </button>
+              ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default ItemRow;

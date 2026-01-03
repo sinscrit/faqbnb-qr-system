@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-058 Task 8 - Added ItemCard component export)
+ * @lastModified 2026-01-03 (REQ-059 Task 12 - Added ItemRow component export)
  */
 
 // =============================================================================
@@ -35,6 +35,7 @@ export type {
 
   // Component Props
   ItemCardProps,
+  ItemRowProps,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -84,3 +85,10 @@ export { default as ItemManagerDefault } from './ItemManager';
 
 export { ItemCard } from './components/ItemCard';
 export { default as ItemCardDefault } from './components/ItemCard';
+
+// =============================================================================
+// ItemRow Component Export (REQ-059)
+// =============================================================================
+
+export { ItemRow } from './components/ItemRow';
+export { default as ItemRowDefault } from './components/ItemRow';

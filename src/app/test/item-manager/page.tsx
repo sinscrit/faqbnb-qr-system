@@ -7,11 +7,11 @@
  * renders correctly in all states (empty, loading, error, with items).
  *
  * @module test/item-manager
- * @lastModified 2026-01-03 (REQ-058 Task 9 - Added ItemCard visual tests)
+ * @lastModified 2026-01-03 (REQ-059 Task 13 - Added ItemRow visual tests)
  */
 
 import { useState, useMemo } from 'react';
-import { ItemManager, ItemCard } from '@/components/ItemManager';
+import { ItemManager, ItemCard, ItemRow } from '@/components/ItemManager';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
 // =============================================================================
@@ -158,15 +158,102 @@ const itemCardMockItems: ItemRecord[] = [
 ];
 
 // =============================================================================
+// ItemRow Test Mock Data (REQ-059)
+// =============================================================================
+
+/**
+ * Mock items specifically for ItemRow testing with various content types, tags, and states.
+ */
+const itemRowMockItems: ItemRecord[] = [
+  {
+    id: 'row-video-item',
+    title: 'How to use the coffee maker in the kitchen - this is a very long title that should truncate properly',
+    location: 'Kitchen',
+    contentType: 'media',
+    media: [createMockMedia('video')],
+    instructions: 'Press the power button and wait for it to heat up before brewing.',
+    tags: ['appliances', 'morning', 'essential', 'daily', 'breakfast'],
+    createdAt: new Date('2026-01-01'),
+  },
+  {
+    id: 'row-image-item',
+    title: 'Thermostat Settings Guide',
+    location: 'Living Room',
+    contentType: 'media',
+    media: [createMockMedia('image')],
+    instructions: 'Set to 72F for comfortable temperature.',
+    tags: ['hvac', 'controls'],
+    createdAt: new Date('2026-01-02'),
+  },
+  {
+    id: 'row-pdf-item',
+    title: 'Pool Maintenance Schedule',
+    location: 'Backyard',
+    contentType: 'pdf-only',
+    media: [createMockMedia('pdf')],
+    tags: ['outdoor', 'maintenance', 'weekly'],
+    createdAt: new Date('2025-12-28'),
+  },
+  {
+    id: 'row-text-item',
+    title: 'WiFi Network Credentials',
+    location: 'Office',
+    contentType: 'text-only',
+    media: [],
+    instructions: 'Network: GuestWiFi | Password: Welcome2026!',
+    tags: ['internet'],
+    createdAt: new Date('2025-12-15'),
+  },
+  {
+    id: 'row-mixed-item',
+    title: 'Complete House Tour with Video and Instructions',
+    location: 'All Areas',
+    contentType: 'mixed',
+    media: [createMockMedia('video'), createMockMedia('pdf')],
+    instructions: 'Watch the video for a full house tour, refer to PDF for details.',
+    tags: ['welcome', 'tour', 'overview'],
+    createdAt: new Date('2026-01-03'),
+  },
+  {
+    id: 'row-no-tags-item',
+    title: 'Simple Item Without Tags',
+    location: 'Garage',
+    contentType: 'media',
+    media: [createMockMedia('image')],
+    createdAt: new Date('2025-11-01'),
+  },
+  {
+    id: 'row-no-location-item',
+    title: 'Item Without Location Field',
+    contentType: 'media',
+    media: [createMockMedia('image')],
+    tags: ['misc'],
+    createdAt: new Date('2025-10-15'),
+  },
+  {
+    id: 'row-no-instructions-item',
+    title: 'Item With No Instructions',
+    location: 'Basement',
+    contentType: 'media',
+    media: [createMockMedia('video')],
+    tags: ['storage'],
+    createdAt: new Date('2025-09-20'),
+  },
+];
+
+// =============================================================================
 // Test Page Component
 // =============================================================================
 
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card'>('card');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row'>('row');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
+  const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
+  const [showManageAssets, setShowManageAssets] = useState(true);
+  const [showDuplicate, setShowDuplicate] = useState(true);
 
   // Determine what to render based on test state
   const getTestProps = () => {
@@ -203,12 +290,56 @@ export default function TestItemManagerPage() {
     alert(`Preview: ${item.title}`);
   };
 
+  // Handler for ItemRow selection change
+  const handleRowSelectionChange = (id: string, selected: boolean) => {
+    console.log('[TEST] ItemRow onSelectionChange:', id, selected);
+    setRowSelectedIds(prev => {
+      const next = new Set(prev);
+      if (selected) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  };
+
+  // Handler for ItemRow preview click
+  const handleRowPreviewClick = (item: ItemRecord) => {
+    console.log('[TEST] ItemRow onPreviewClick:', item.id, item.title);
+    alert(`Preview: ${item.title}`);
+  };
+
+  // Handler for ItemRow edit
+  const handleRowEdit = (item: ItemRecord) => {
+    console.log('[TEST] ItemRow onEdit:', item.id, item.title);
+    alert(`Edit: ${item.title}`);
+  };
+
+  // Handler for ItemRow delete
+  const handleRowDelete = (item: ItemRecord) => {
+    console.log('[TEST] ItemRow onDelete:', item.id, item.title);
+    alert(`Delete: ${item.title}`);
+  };
+
+  // Handler for ItemRow manage assets
+  const handleRowManageAssets = (item: ItemRecord) => {
+    console.log('[TEST] ItemRow onManageAssets:', item.id, item.title);
+    alert(`Manage Assets: ${item.title}`);
+  };
+
+  // Handler for ItemRow duplicate
+  const handleRowDuplicate = (item: ItemRecord) => {
+    console.log('[TEST] ItemRow onDuplicate:', item.id, item.title);
+    alert(`Duplicate: ${item.title}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <h1 className="text-2xl font-bold text-gray-900">ItemManager Test Suite</h1>
-        <p className="text-sm text-gray-500 mt-1">REQ-057 & REQ-058 - Component Tests</p>
+        <p className="text-sm text-gray-500 mt-1">REQ-057, REQ-058, REQ-059 - Component Tests</p>
       </div>
 
       {/* View Toggle */}
@@ -216,6 +347,16 @@ export default function TestItemManagerPage() {
         <div className="flex items-center gap-4">
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2">
+            <button
+              onClick={() => setTestView('row')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'row'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              ItemRow Tests (REQ-059)
+            </button>
             <button
               onClick={() => setTestView('card')}
               className={`px-4 py-2 text-sm font-medium rounded ${
@@ -305,6 +446,112 @@ export default function TestItemManagerPage() {
         </>
       )}
 
+      {/* ItemRow Test Section (REQ-059) */}
+      {testView === 'row' && (
+        <>
+          {/* Row Test Controls */}
+          <div className="bg-white border-b border-gray-200 px-6 py-3">
+            <div className="flex items-center gap-4 flex-wrap">
+              <button
+                onClick={() => setIsSelectionMode(!isSelectionMode)}
+                className={`px-3 py-1 text-sm rounded ${
+                  isSelectionMode
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Selection Mode: {isSelectionMode ? 'ON' : 'OFF'}
+              </button>
+              <button
+                onClick={() => setRowSelectedIds(new Set())}
+                className="px-3 py-1 text-sm rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Clear Selection
+              </button>
+              <button
+                onClick={() => setShowManageAssets(!showManageAssets)}
+                className={`px-3 py-1 text-sm rounded ${
+                  showManageAssets
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Manage Assets: {showManageAssets ? 'ON' : 'OFF'}
+              </button>
+              <button
+                onClick={() => setShowDuplicate(!showDuplicate)}
+                className={`px-3 py-1 text-sm rounded ${
+                  showDuplicate
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Duplicate: {showDuplicate ? 'ON' : 'OFF'}
+              </button>
+              {rowSelectedIds.size > 0 && (
+                <span className="text-sm text-gray-600">
+                  Selected: {Array.from(rowSelectedIds).join(', ')}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* ItemRow List Display */}
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">ItemRow Visual Test Cases</h2>
+
+            {/* Table Header */}
+            <div className="flex items-center gap-4 px-4 py-2 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {isSelectionMode && <div className="w-8" />}
+              <div className="w-12">Thumb</div>
+              <div className="flex-1">Title / Description</div>
+              <div className="hidden md:block w-24">Location</div>
+              <div className="hidden sm:block w-20">Type</div>
+              <div className="hidden lg:block w-40">Tags</div>
+              <div className="hidden md:block w-28">Date</div>
+              <div className="w-10">Actions</div>
+            </div>
+
+            {/* Item Rows */}
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              {itemRowMockItems.map((item) => (
+                <ItemRow
+                  key={item.id}
+                  item={item}
+                  onPreviewClick={handleRowPreviewClick}
+                  onSelectionChange={handleRowSelectionChange}
+                  isSelected={rowSelectedIds.has(item.id)}
+                  isSelectionMode={isSelectionMode}
+                  onEdit={handleRowEdit}
+                  onDelete={handleRowDelete}
+                  onManageAssets={showManageAssets ? handleRowManageAssets : undefined}
+                  onDuplicate={showDuplicate ? handleRowDuplicate : undefined}
+                />
+              ))}
+            </div>
+
+            {/* Legend */}
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases Legend:</h3>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li><span className="font-medium">row-video-item:</span> Video content, long title (tests truncation), 5 tags (tests overflow), red VIDEO badge</li>
+                <li><span className="font-medium">row-image-item:</span> Image content, green PHOTO badge, 2 tags</li>
+                <li><span className="font-medium">row-pdf-item:</span> PDF-only content, blue PDF badge, 3 tags (exactly MAX_VISIBLE_TAGS)</li>
+                <li><span className="font-medium">row-text-item:</span> Text-only content, purple TEXT badge, 1 tag</li>
+                <li><span className="font-medium">row-mixed-item:</span> Mixed content, orange MIXED badge, 3 tags</li>
+                <li><span className="font-medium">row-no-tags-item:</span> No tags field (tests empty tags rendering)</li>
+                <li><span className="font-medium">row-no-location-item:</span> No location field (shows dash in location column)</li>
+                <li><span className="font-medium">row-no-instructions-item:</span> No instructions (tests description hiding)</li>
+              </ul>
+              <div className="mt-3 text-sm text-gray-500">
+                <p>Toggle Selection Mode to see checkboxes. Click rows to trigger preview callback. Click kebab menu for actions.</p>
+                <p className="mt-1">Toggle &quot;Manage Assets&quot; and &quot;Duplicate&quot; buttons to show/hide those menu items.</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {/* ItemManager Shell Test Section */}
       {testView === 'manager' && (
         <>
@@ -375,6 +622,7 @@ export default function TestItemManagerPage() {
           Open browser console to see callback invocations.
           {testView === 'manager' && ' Click Grid/List buttons to toggle view mode.'}
           {testView === 'card' && ' Use Tab to navigate cards with keyboard.'}
+          {testView === 'row' && ' Use Tab to navigate rows. Press Enter or Space to trigger preview. Try keyboard navigation and kebab menu.'}
         </p>
       </div>
     </div>
