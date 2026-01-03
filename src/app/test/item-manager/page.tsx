@@ -7,11 +7,11 @@
  * renders correctly in all states (empty, loading, error, with items).
  *
  * @module test/item-manager
- * @lastModified 2026-01-03 (REQ-075 Task 12 - Added MediaGallery visual tests)
+ * @lastModified 2026-01-03 (REQ-080 Task 7 - Added useAssetManagement hook tests)
  */
 
-import { useState, useMemo, useEffect } from 'react';
-import { ItemManager, ItemCard, ItemRow } from '@/components/ItemManager';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { ItemManager, ItemCard, ItemRow, useAssetManagement } from '@/components/ItemManager';
 import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
@@ -343,13 +343,306 @@ const itemRowMockItems: ItemRecord[] = [
 ];
 
 // =============================================================================
+// useAssetManagement Hook Test Component (REQ-080)
+// =============================================================================
+
+/**
+ * Mock MediaItem data for testing useAssetManagement hook.
+ */
+function createAssetMockMediaItem(id: string, type: 'video' | 'image' | 'pdf'): MediaItem {
+  return {
+    id,
+    type,
+    file: new Blob(['mock content'], { type: type === 'pdf' ? 'application/pdf' : `${type}/mock` }),
+    order: 0,
+    metadata: {
+      mimeType: type === 'pdf' ? 'application/pdf' : `${type}/mock`,
+      fileSize: 1024,
+      source: 'upload',
+    },
+  };
+}
+
+const assetMockItems: MediaItem[] = [
+  createAssetMockMediaItem('asset-1', 'image'),
+  createAssetMockMediaItem('asset-2', 'video'),
+  createAssetMockMediaItem('asset-3', 'pdf'),
+];
+
+/**
+ * Test component for useAssetManagement hook.
+ */
+function AssetManagementHookTest() {
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const addLog = useCallback((message: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setLogs((prev) => [`[${timestamp}] ${message}`, ...prev.slice(0, 49)]);
+  }, []);
+
+  const {
+    isActive,
+    currentAssets,
+    pendingAdditions,
+    pendingRemovalIds,
+    isDirty,
+    isCommitting,
+    error,
+    startSession,
+    endSession,
+    addAsset,
+    removeAsset,
+    undoRemoval,
+    reorderAssets,
+    commit,
+    discard,
+    isPendingAddition,
+    isPendingRemoval,
+  } = useAssetManagement({
+    debug: true,
+    onAddAssets: async (itemId, files) => {
+      addLog(`onAddAssets called: itemId=${itemId}, files=${files.length}`);
+      // Simulate async operation
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    },
+    onRemoveAssets: async (itemId, assetIds) => {
+      addLog(`onRemoveAssets called: itemId=${itemId}, assetIds=${assetIds.join(', ')}`);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    },
+    onReorderAssets: async (itemId, orderedIds) => {
+      addLog(`onReorderAssets called: itemId=${itemId}, order=${orderedIds.join(', ')}`);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    },
+  });
+
+  const handleStartSession = () => {
+    startSession('test-item-123', assetMockItems);
+    addLog('Session started with 3 mock assets');
+  };
+
+  const handleAddFile = () => {
+    const file = new File(['test content'], 'test-image.jpg', { type: 'image/jpeg' });
+    addAsset(file).then((success) => {
+      addLog(`Add file result: ${success ? 'success' : 'failed'}`);
+    });
+  };
+
+  const handleAddInvalidFile = () => {
+    const file = new File(['test content'], 'document.txt', { type: 'text/plain' });
+    addAsset(file).then((success) => {
+      addLog(`Add invalid file result: ${success ? 'success' : 'failed (expected)'}`);
+    });
+  };
+
+  const handleRemoveFirst = () => {
+    if (currentAssets.length > 0) {
+      const first = currentAssets[0];
+      removeAsset(first.id);
+      addLog(`Removed asset: ${first.id}`);
+    }
+  };
+
+  const handleReorder = () => {
+    if (currentAssets.length >= 2) {
+      reorderAssets(0, 1);
+      addLog('Reordered: moved first asset to second position');
+    }
+  };
+
+  const handleCommit = async () => {
+    addLog('Committing changes...');
+    const success = await commit();
+    addLog(`Commit result: ${success ? 'success' : 'failed'}`);
+  };
+
+  const handleDiscard = () => {
+    discard();
+    addLog('Changes discarded');
+  };
+
+  return (
+    <div className="p-6">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">useAssetManagement Hook Test (REQ-080)</h2>
+
+      {/* Status Panel */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <h3 className="font-semibold mb-2">Hook State</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <span className="font-medium">isActive:</span>{' '}
+            <span className={isActive ? 'text-green-600' : 'text-gray-500'}>
+              {isActive ? 'Yes' : 'No'}
+            </span>
+          </div>
+          <div>
+            <span className="font-medium">isDirty:</span>{' '}
+            <span className={isDirty ? 'text-orange-600' : 'text-gray-500'}>
+              {isDirty ? 'Yes' : 'No'}
+            </span>
+          </div>
+          <div>
+            <span className="font-medium">isCommitting:</span>{' '}
+            <span className={isCommitting ? 'text-blue-600' : 'text-gray-500'}>
+              {isCommitting ? 'Yes' : 'No'}
+            </span>
+          </div>
+          <div>
+            <span className="font-medium">currentAssets:</span> {currentAssets.length}
+          </div>
+          <div>
+            <span className="font-medium">pendingAdditions:</span> {pendingAdditions.length}
+          </div>
+          <div>
+            <span className="font-medium">pendingRemovals:</span> {pendingRemovalIds.length}
+          </div>
+        </div>
+        {error && (
+          <div className="mt-2 p-2 bg-red-100 text-red-700 rounded text-sm">
+            Error: {error.message} ({error.code})
+          </div>
+        )}
+      </div>
+
+      {/* Actions Panel */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <h3 className="font-semibold mb-2">Actions</h3>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={handleStartSession}
+            disabled={isActive}
+            className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+          >
+            Start Session
+          </button>
+          <button
+            onClick={() => { endSession(); addLog('Session ended'); }}
+            disabled={!isActive}
+            className="px-3 py-1 bg-gray-500 text-white rounded disabled:opacity-50"
+          >
+            End Session
+          </button>
+          <button
+            onClick={handleAddFile}
+            disabled={!isActive}
+            className="px-3 py-1 bg-green-500 text-white rounded disabled:opacity-50"
+          >
+            Add Valid File
+          </button>
+          <button
+            onClick={handleAddInvalidFile}
+            disabled={!isActive}
+            className="px-3 py-1 bg-yellow-500 text-white rounded disabled:opacity-50"
+          >
+            Add Invalid File (Test Error)
+          </button>
+          <button
+            onClick={handleRemoveFirst}
+            disabled={!isActive || currentAssets.length === 0}
+            className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
+          >
+            Remove First
+          </button>
+          <button
+            onClick={handleReorder}
+            disabled={!isActive || currentAssets.length < 2}
+            className="px-3 py-1 bg-purple-500 text-white rounded disabled:opacity-50"
+          >
+            Swap 1 & 2
+          </button>
+          <button
+            onClick={handleCommit}
+            disabled={!isActive || !isDirty || isCommitting}
+            className="px-3 py-1 bg-emerald-500 text-white rounded disabled:opacity-50"
+          >
+            Commit
+          </button>
+          <button
+            onClick={handleDiscard}
+            disabled={!isActive || !isDirty}
+            className="px-3 py-1 bg-orange-500 text-white rounded disabled:opacity-50"
+          >
+            Discard
+          </button>
+        </div>
+      </div>
+
+      {/* Current Assets Panel */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <h3 className="font-semibold mb-2">Current Assets</h3>
+        {currentAssets.length === 0 ? (
+          <p className="text-gray-500 text-sm">No assets (start a session to add mock assets)</p>
+        ) : (
+          <ul className="space-y-2">
+            {currentAssets.map((asset, index) => (
+              <li
+                key={asset.id}
+                className={`p-2 rounded text-sm flex justify-between ${
+                  isPendingAddition(asset.id)
+                    ? 'bg-green-100 border border-green-300'
+                    : isPendingRemoval(asset.id)
+                    ? 'bg-red-100 border border-red-300'
+                    : 'bg-gray-100'
+                }`}
+              >
+                <span>
+                  {index + 1}. {asset.id} ({asset.type})
+                  {isPendingAddition(asset.id) && ' [PENDING ADD]'}
+                  {isPendingRemoval(asset.id) && ' [PENDING REMOVE]'}
+                </span>
+                {isPendingRemoval(asset.id) && (
+                  <button
+                    onClick={() => { undoRemoval(asset.id); addLog(`Undo removal: ${asset.id}`); }}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Undo
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Logs Panel */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <h3 className="font-semibold mb-2">Event Log</h3>
+        <div className="h-48 overflow-y-auto bg-gray-900 text-green-400 p-2 rounded text-xs font-mono">
+          {logs.length === 0 ? (
+            <p className="text-gray-500">No events yet. Click &quot;Start Session&quot; to begin.</p>
+          ) : (
+            logs.map((log, i) => <div key={i}>{log}</div>)
+          )}
+        </div>
+      </div>
+
+      {/* Test Cases Legend */}
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases:</h3>
+        <ul className="text-sm text-gray-600 space-y-1">
+          <li><span className="font-medium">Start Session:</span> Initialize with 3 mock assets (image, video, PDF)</li>
+          <li><span className="font-medium">Add Valid File:</span> Add a JPG file (should succeed)</li>
+          <li><span className="font-medium">Add Invalid File:</span> Add a TXT file (should fail with error)</li>
+          <li><span className="font-medium">Remove First:</span> Mark first asset for removal</li>
+          <li><span className="font-medium">Swap 1 & 2:</span> Reorder assets (move first to second position)</li>
+          <li><span className="font-medium">Commit:</span> Apply all changes (calls onAddAssets, onRemoveAssets, onReorderAssets)</li>
+          <li><span className="font-medium">Discard:</span> Revert all changes to original state</li>
+        </ul>
+        <div className="mt-3 text-sm text-gray-500">
+          <p>Check browser console for debug logging. No network requests should be made.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
 // Test Page Component
 // =============================================================================
 
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery'>('gallery');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook'>('asset-hook');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -461,6 +754,16 @@ export default function TestItemManagerPage() {
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setTestView('asset-hook')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'asset-hook'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              useAssetManagement (REQ-080)
+            </button>
+            <button
               onClick={() => setTestView('gallery')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'gallery'
@@ -503,6 +806,9 @@ export default function TestItemManagerPage() {
           </div>
         </div>
       </div>
+
+      {/* useAssetManagement Hook Test Section (REQ-080) */}
+      {testView === 'asset-hook' && <AssetManagementHookTest />}
 
       {/* MediaGallery Test Section (REQ-075) */}
       {testView === 'gallery' && (

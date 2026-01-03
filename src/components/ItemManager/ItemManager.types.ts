@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-074 Task 2 - Added ItemPreviewModalProps interface)
+ * @lastModified 2026-01-03 (REQ-080 Task 2 - Added asset management type definitions)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -1160,4 +1160,164 @@ export interface ItemPreviewModalProps {
     /** Enable asset management button (default: true) */
     enableAssetManagement?: boolean;
   };
+}
+
+// =============================================================================
+// Asset Management Types (REQ-080)
+// =============================================================================
+
+/**
+ * Error codes for asset management operations.
+ */
+export type AssetManagementErrorCode =
+  | 'INVALID_FILE_TYPE'
+  | 'FILE_TOO_LARGE'
+  | 'COMMIT_FAILED'
+  | 'SESSION_NOT_FOUND'
+  | 'UNKNOWN_ERROR';
+
+/**
+ * Structured error for asset management operations.
+ */
+export interface AssetManagementError {
+  /** Error code for programmatic handling */
+  code: AssetManagementErrorCode;
+  /** User-friendly error message */
+  message: string;
+}
+
+/**
+ * Represents an asset pending addition (not yet committed).
+ */
+export interface PendingAsset {
+  /** Temporary UUID for this pending asset */
+  id: string;
+  /** The file to be added */
+  file: File;
+  /** Generated preview URL (object URL) */
+  previewUrl: string;
+  /** Detected media type */
+  type: 'video' | 'image' | 'pdf';
+  /** Timestamp when added */
+  addedAt: Date;
+}
+
+/**
+ * Complete state for asset management operations.
+ */
+export interface AssetManagementState {
+  /** The item whose assets are being managed */
+  itemId: string | null;
+  /** Original committed assets (read-only reference) */
+  originalAssets: MediaItem[];
+  /** Assets added but not yet committed */
+  pendingAdditions: PendingAsset[];
+  /** IDs of assets marked for removal */
+  pendingRemovals: Set<string>;
+  /** Current order of all assets (committed + pending additions, minus removals) */
+  currentOrder: string[];
+  /** Whether any changes have been made */
+  isDirty: boolean;
+  /** Whether a commit operation is in progress */
+  isCommitting: boolean;
+  /** Error from last operation */
+  error: AssetManagementError | null;
+}
+
+/**
+ * Actions for the asset management reducer.
+ */
+export type AssetManagementAction =
+  // Session management
+  | { type: 'START_SESSION'; payload: { itemId: string; assets: MediaItem[] } }
+  | { type: 'END_SESSION' }
+  // Asset operations
+  | { type: 'ADD_ASSET'; payload: PendingAsset }
+  | { type: 'REMOVE_ASSET'; payload: string }
+  | { type: 'REORDER_ASSETS'; payload: { fromIndex: number; toIndex: number } }
+  | { type: 'UNDO_REMOVAL'; payload: string }
+  // Commit/discard
+  | { type: 'START_COMMIT' }
+  | { type: 'COMMIT_SUCCESS' }
+  | { type: 'COMMIT_ERROR'; payload: string }
+  | { type: 'DISCARD_CHANGES' }
+  // Error handling
+  | { type: 'SET_ERROR'; payload: AssetManagementError }
+  | { type: 'CLEAR_ERROR' };
+
+/**
+ * Configuration options for useAssetManagement hook.
+ */
+export interface UseAssetManagementOptions {
+  /** Callback when assets are added during commit */
+  onAddAssets?: (itemId: string, assets: File[]) => Promise<void>;
+  /** Callback when assets are removed during commit */
+  onRemoveAssets?: (itemId: string, assetIds: string[]) => Promise<void>;
+  /** Callback when assets are reordered during commit */
+  onReorderAssets?: (itemId: string, orderedIds: string[]) => Promise<void>;
+  /** Allowed media types for validation */
+  allowedMediaTypes?: ('video' | 'image' | 'pdf')[];
+  /** Maximum file size in bytes */
+  maxFileSize?: number;
+  /** Enable debug logging */
+  debug?: boolean;
+}
+
+/**
+ * Return type for useAssetManagement hook.
+ */
+export interface UseAssetManagementReturn {
+  // State
+  /** Whether a management session is active */
+  isActive: boolean;
+  /** Current assets (committed + pending additions - removals, in order) */
+  currentAssets: (MediaItem | PendingAsset)[];
+  /** Assets pending addition */
+  pendingAdditions: PendingAsset[];
+  /** IDs of assets pending removal */
+  pendingRemovalIds: string[];
+  /** Whether any changes have been made */
+  isDirty: boolean;
+  /** Whether commit is in progress */
+  isCommitting: boolean;
+  /** Current error state */
+  error: AssetManagementError | null;
+
+  // Session Actions
+  /** Start managing assets for an item */
+  startSession: (itemId: string, assets: MediaItem[]) => void;
+  /** End session (must commit or discard first) */
+  endSession: () => void;
+
+  // Asset Actions
+  /** Add a file to pending additions */
+  addAsset: (file: File) => Promise<boolean>;
+  /** Add multiple files to pending additions */
+  addAssets: (files: File[]) => Promise<{ success: File[]; failed: File[] }>;
+  /** Mark an asset for removal */
+  removeAsset: (assetId: string) => void;
+  /** Undo a pending removal (restore asset) */
+  undoRemoval: (assetId: string) => void;
+  /** Reorder assets */
+  reorderAssets: (fromIndex: number, toIndex: number) => void;
+
+  // Commit/Discard
+  /** Commit all pending changes */
+  commit: () => Promise<boolean>;
+  /** Discard all pending changes */
+  discard: () => void;
+
+  // Computed
+  /** Get an asset by ID (from current assets) */
+  getAssetById: (id: string) => MediaItem | PendingAsset | null;
+  /** Check if an asset is pending addition */
+  isPendingAddition: (id: string) => boolean;
+  /** Check if an asset is pending removal */
+  isPendingRemoval: (id: string) => boolean;
+  /** Get the effective order (all asset IDs in current order) */
+  getOrderedIds: () => string[];
+
+  // Error handling
+  /** Clear current error */
+  clearError: () => void;
 }

@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-074 Task 6 - Added ItemPreviewModal export)
+ * @lastModified 2026-01-03 (REQ-080 - Added useAssetManagement hook export)
  */
 
 // =============================================================================
@@ -40,6 +40,14 @@ export type {
   ItemListProps,
   ViewModeToggleProps,
   ItemPreviewModalProps,
+  // Asset Management Types (REQ-080)
+  AssetManagementErrorCode,
+  AssetManagementError,
+  PendingAsset,
+  AssetManagementState,
+  AssetManagementAction,
+  UseAssetManagementOptions,
+  UseAssetManagementReturn,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -75,6 +83,21 @@ export type { UseItemManagerStateReturn } from './hooks/useItemManagerState';
 
 // Also export the utilities for testing
 export { createInitialState, itemManagerReducer } from './hooks/useItemManagerState';
+
+// =============================================================================
+// useAssetManagement Hook Export (REQ-080)
+// =============================================================================
+
+export { useAssetManagement, useAssetManagementDefault } from './hooks';
+
+// Also export utility functions for testing
+export {
+  createAssetManagementInitialState,
+  getFileCategory,
+  validateAssetFile,
+  createPendingAsset,
+  assetManagementReducer,
+} from './hooks';
 
 // =============================================================================
 // Main Component Export (REQ-057 Task 1.3)
