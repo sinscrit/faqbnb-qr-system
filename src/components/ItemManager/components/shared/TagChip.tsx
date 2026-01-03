@@ -12,10 +12,10 @@
  * - Two variants: 'default' (blue) and 'outline' (gray border)
  * - Conditional remove button with accessible label
  * - Disabled state with reduced opacity
- * - Minimum 24px touch target for remove button
+ * - Minimum 44px touch target for remove button on mobile
  *
  * @module ItemManager/components/shared/TagChip
- * @lastModified 2026-01-03 (REQ-088 Task 1)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import React from 'react';
@@ -95,12 +95,15 @@ export function TagChip({
   const removeButtonStyles = cn(
     // Base styles for remove button
     'inline-flex items-center justify-center',
-    'min-w-[24px] min-h-[24px] -mr-1', // Ensure minimum 24px touch target
+    // 44px touch target on mobile, 24px on desktop
+    'min-w-[44px] min-h-[44px] md:min-w-[24px] md:min-h-[24px]',
+    '-mr-1',
     'rounded-full',
     'transition-colors',
+    'touch-manipulation [-webkit-tap-highlight-color:transparent]',
     // Interactive states
-    !disabled && 'hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-    variant === 'outline' && !disabled && 'hover:bg-gray-200',
+    !disabled && 'hover:bg-blue-200 active:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+    variant === 'outline' && !disabled && 'hover:bg-gray-200 active:bg-gray-300',
     // Disabled
     disabled && 'cursor-not-allowed'
   );

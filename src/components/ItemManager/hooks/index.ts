@@ -2,8 +2,16 @@
  * ItemManager hooks barrel export
  *
  * @module ItemManager/hooks
- * @lastModified 2026-01-03
+ * @lastModified 2026-01-03 (REQ-089 - Added useIsMobile)
  */
+
+// =============================================================================
+// useIsMobile Hook (REQ-089)
+// =============================================================================
+
+export { useIsMobile } from './useIsMobile';
+export { default as useIsMobileDefault } from './useIsMobile';
+export type { UseIsMobileOptions } from './useIsMobile';
 
 // =============================================================================
 // useItemManagerState Hook (REQ-057)

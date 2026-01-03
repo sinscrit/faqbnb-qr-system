@@ -16,7 +16,7 @@
  * - Full accessibility compliance (ARIA, keyboard-only operation)
  *
  * @module ItemManager/components/shared/InlineEdit
- * @lastModified 2026-01-03 (REQ-086)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import React, { useState, useRef, useCallback, useEffect, useId } from 'react';
@@ -318,10 +318,12 @@ export function InlineEdit({
 
   const displayStyles = cn(
     'cursor-pointer rounded px-2 py-1',
-    'hover:bg-gray-100 transition-colors',
+    'hover:bg-gray-100 active:bg-gray-200 transition-colors',
     'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
     'group inline-flex items-center gap-1.5 w-full text-left',
-    'min-h-[40px]', // Minimum touch target height
+    // 48px minimum touch target on mobile, 40px on desktop
+    'min-h-[48px] md:min-h-[40px]',
+    'touch-manipulation [-webkit-tap-highlight-color:transparent]',
     disabled && 'cursor-not-allowed opacity-50 hover:bg-transparent',
     isPlaceholder && 'text-gray-400 italic',
     displayClassName
@@ -330,7 +332,8 @@ export function InlineEdit({
   const inputStyles = cn(
     'w-full px-3 py-2 border rounded-lg transition-colors',
     'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-    'min-h-[40px]',
+    // 48px minimum touch target on mobile, 40px on desktop
+    'min-h-[48px] md:min-h-[40px]',
     hasError
       ? 'border-red-300 bg-red-50 focus:ring-red-500'
       : 'border-gray-300 hover:border-gray-400',

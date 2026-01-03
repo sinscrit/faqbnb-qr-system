@@ -139,3 +139,72 @@ body {
 .animate-drawer-out {
   animation: drawerOut 300ms ease-in;
 }
+
+/* =============================================================================
+ * Mobile Touch Feedback (REQ-089)
+ * Touch-optimized styles for mobile responsiveness
+ * @lastModified 2026-01-03
+ * ============================================================================= */
+
+/* Touch ripple effect - subtle feedback on tap */
+@keyframes touchRipple {
+  from {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(0.98);
+  }
+  to {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+/* Apply to interactive elements on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Active state enhancement for touch devices */
+  .touch-feedback-active:active {
+    animation: touchRipple 200ms ease-out;
+  }
+
+  /* Prevent text selection on touch targets */
+  button,
+  [role="button"],
+  [role="menuitem"],
+  [role="option"],
+  [role="radio"] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Increase tap target visibility on focus */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+/* Bottom sheet animation for BottomSheet component */
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutToBottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.animate-in.slide-in-from-bottom {
+  animation: slideInFromBottom 300ms ease-out forwards;
+}
+
+.animate-out.slide-out-to-bottom {
+  animation: slideOutToBottom 300ms ease-in forwards;
+}

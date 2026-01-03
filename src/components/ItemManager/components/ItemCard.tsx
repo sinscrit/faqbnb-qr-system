@@ -13,7 +13,7 @@
  * - Inline editing of title, location, and tags (REQ-087, REQ-088)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-03 (REQ-088 Task 10 - Added inline tag editing)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -209,9 +209,17 @@ export function ItemCard({
           </div>
         )}
 
-        {/* Selection Checkbox */}
+        {/* Selection Checkbox - 48px touch target on mobile */}
         {isSelectionMode && (
-          <div className="absolute top-2 left-2 z-10">
+          <label
+            className={cn(
+              'absolute top-1 left-1 z-10',
+              'flex items-center justify-center cursor-pointer',
+              'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0',
+              'md:top-2 md:left-2'
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
             <input
               type="checkbox"
               checked={isSelected}
@@ -219,7 +227,6 @@ export function ItemCard({
                 e.stopPropagation();
                 onSelectionChange(item.id, e.target.checked);
               }}
-              onClick={(e) => e.stopPropagation()}
               className={cn(
                 'w-5 h-5 rounded border-gray-300 text-blue-600',
                 'focus:ring-blue-500 bg-white/80 cursor-pointer',
@@ -227,7 +234,7 @@ export function ItemCard({
               )}
               aria-label={`Select ${item.title}`}
             />
-          </div>
+          </label>
         )}
 
         {/* Content Type Badge */}

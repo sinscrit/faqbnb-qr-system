@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/BulkActions/BulkTagDialog
  * @see docs/REQ-072-implement-bulktagdialog-detailed.md
- * @lastModified 2026-01-03 (REQ-072 Task 3.5.1 - Initial implementation)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import React, {
@@ -318,7 +318,9 @@ export function BulkTagDialog({
             onClick={onCancel}
             disabled={loading}
             className={cn(
-              'p-2 rounded-full hover:bg-gray-100 transition-colors',
+              'flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors',
+              'min-h-[48px] min-w-[48px]',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
             aria-label="Close dialog"
@@ -384,7 +386,7 @@ export function BulkTagDialog({
                   />
                 </div>
 
-                {/* Tag Suggestions */}
+                {/* Tag Suggestions - 48px touch targets */}
                 {filteredSuggestions.length > 0 && tagsToAdd.length < MAX_TAGS_TO_ADD && (
                   <div className="space-y-2">
                     <p className="text-xs text-gray-500">Suggested tags:</p>
@@ -395,8 +397,10 @@ export function BulkTagDialog({
                           onClick={() => handleAddTag(tag)}
                           disabled={loading}
                           className={cn(
-                            'px-3 py-1 border rounded-full text-sm',
-                            'hover:bg-gray-100 hover:border-gray-400 transition-colors',
+                            'px-3 border rounded-full text-sm',
+                            'min-h-[48px]',
+                            'hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200 transition-colors',
+                            'touch-manipulation [-webkit-tap-highlight-color:transparent]',
                             loading && 'opacity-50 cursor-not-allowed'
                           )}
                         >
@@ -470,9 +474,11 @@ export function BulkTagDialog({
             onClick={onCancel}
             disabled={loading}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium',
+              'px-4 rounded-lg text-sm font-medium',
+              'min-h-[48px]',
               'bg-white border border-gray-300 text-gray-700',
-              'hover:bg-gray-50 transition-colors',
+              'hover:bg-gray-50 active:bg-gray-100 transition-colors',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
           >
@@ -482,8 +488,10 @@ export function BulkTagDialog({
             onClick={handleConfirmClick}
             disabled={loading || confirmDisabled}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium text-white',
+              'px-4 rounded-lg text-sm font-medium text-white',
+              'min-h-[48px]',
               'flex items-center gap-2 transition-colors',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               mode === 'add'
                 ? 'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300'
                 : 'bg-red-600 hover:bg-red-700 disabled:bg-red-300',

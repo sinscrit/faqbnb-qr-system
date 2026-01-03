@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/ItemToolbar
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.2)
- * @lastModified 2026-01-03 (REQ-063 Task 2.2.2)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import { cn } from '@/lib/utils';
@@ -56,8 +56,10 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
         onClick={() => onViewModeChange('grid')}
         onKeyDown={(e) => handleKeyDown(e, 'grid')}
         className={cn(
-          'inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-all',
+          'inline-flex items-center justify-center rounded-md text-sm font-medium transition-all',
+          'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:px-3 md:py-1.5',
           'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'touch-manipulation [-webkit-tap-highlight-color:transparent]',
           viewMode === 'grid'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
@@ -74,8 +76,10 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
         onClick={() => onViewModeChange('list')}
         onKeyDown={(e) => handleKeyDown(e, 'list')}
         className={cn(
-          'inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-all',
+          'inline-flex items-center justify-center rounded-md text-sm font-medium transition-all',
+          'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:px-3 md:py-1.5',
           'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'touch-manipulation [-webkit-tap-highlight-color:transparent]',
           viewMode === 'list'
             ? 'bg-blue-600 text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
@@ -135,6 +139,7 @@ interface ClearFiltersButtonProps {
 
 /**
  * Button to clear all active filters and search.
+ * 48px minimum touch target on mobile.
  */
 function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
   return (
@@ -143,11 +148,13 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
       onClick={onClick}
       aria-label="Clear all filters"
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-1 rounded-md',
+        'inline-flex items-center gap-1.5 px-3 rounded-md',
+        'min-h-[48px]',
         'text-sm font-medium text-gray-600',
-        'hover:text-gray-900 hover:bg-gray-100',
+        'hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
         'transition-colors',
+        'touch-manipulation [-webkit-tap-highlight-color:transparent]',
         className
       )}
     >
@@ -170,6 +177,7 @@ interface SearchPlaceholderProps {
 /**
  * Temporary search input placeholder.
  * Will be replaced by full SearchInput component in Task 2.3.
+ * 48px minimum height on mobile for touch accessibility.
  */
 function SearchPlaceholder({ value, onChange, placeholder }: SearchPlaceholderProps) {
   return (
@@ -179,7 +187,8 @@ function SearchPlaceholder({ value, onChange, placeholder }: SearchPlaceholderPr
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       className={cn(
-        'w-full px-4 py-2 text-sm',
+        'w-full px-4 text-sm',
+        'min-h-[48px] md:min-h-0 md:py-2',
         'border border-gray-300 rounded-lg bg-white',
         'placeholder:text-gray-400',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -209,6 +218,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 /**
  * Temporary sort select placeholder.
  * Will be replaced by full SortMenu component in Task 2.5.
+ * 48px minimum height on mobile for touch accessibility.
  */
 function SortPlaceholder({ sortBy, onSortChange }: SortPlaceholderProps) {
   return (
@@ -216,7 +226,8 @@ function SortPlaceholder({ sortBy, onSortChange }: SortPlaceholderProps) {
       value={sortBy}
       onChange={(e) => onSortChange(e.target.value as SortOption)}
       className={cn(
-        'px-3 py-2 text-sm',
+        'px-3 text-sm',
+        'min-h-[48px] md:min-h-0 md:py-2',
         'border border-gray-300 rounded-lg bg-white',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
       )}

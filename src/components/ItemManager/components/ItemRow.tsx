@@ -9,7 +9,7 @@
  * of title, location, and tags (REQ-087, REQ-088).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-03 (REQ-088 Task 11 - Added inline tag editing)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -262,9 +262,15 @@ export function ItemRow({
         className
       )}
     >
-      {/* Selection Checkbox (Task 9) */}
+      {/* Selection Checkbox - 48px touch target on mobile */}
       {isSelectionMode && (
-        <div className="flex-shrink-0 w-8 flex items-center justify-center">
+        <label
+          className={cn(
+            'flex-shrink-0 flex items-center justify-center cursor-pointer',
+            'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:w-8'
+          )}
+          onClick={(e) => e.stopPropagation()}
+        >
           <input
             type="checkbox"
             checked={isSelected}
@@ -272,11 +278,10 @@ export function ItemRow({
               e.stopPropagation();
               onSelectionChange(item.id, e.target.checked);
             }}
-            onClick={(e) => e.stopPropagation()}
             className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             aria-label={`Select ${item.title}`}
           />
-        </div>
+        </label>
       )}
 
       {/* Thumbnail Area (Task 3) */}
@@ -397,7 +402,7 @@ export function ItemRow({
         {formatDate(item.createdAt)}
       </div>
 
-      {/* Kebab Menu (Task 10) */}
+      {/* Kebab Menu - 48px touch target on mobile */}
       <div className="flex-shrink-0 relative" ref={menuRef}>
         <button
           type="button"
@@ -405,7 +410,13 @@ export function ItemRow({
             e.stopPropagation();
             setMenuOpen(!menuOpen);
           }}
-          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className={cn(
+            'flex items-center justify-center',
+            'text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg',
+            'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+            'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:p-2',
+            'touch-manipulation [-webkit-tap-highlight-color:transparent]'
+          )}
           aria-label="Item actions"
           aria-haspopup="true"
           aria-expanded={menuOpen}
@@ -431,8 +442,10 @@ export function ItemRow({
                     setMenuOpen(false);
                   }}
                   className={cn(
-                    'w-full flex items-center gap-2 px-4 py-2 text-sm text-left',
+                    'w-full flex items-center gap-2 px-4 text-sm text-left',
+                    'min-h-[48px]',
                     'hover:bg-gray-50 transition-colors',
+                    'touch-manipulation',
                     menuItem.danger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'
                   )}
                 >

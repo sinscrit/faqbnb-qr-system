@@ -7,7 +7,7 @@
  * Shows thumbnail preview, type indicator, metadata, and remove button.
  *
  * @module ItemManager/components/AssetPanel/AssetItem
- * @lastModified 2026-01-03 (REQ-084 Task 3 - Added drag handle support with DragHandleProps)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -165,12 +165,14 @@ export function AssetItem({
       role="listitem"
       aria-label={`${assetName}, ${asset.type}${isMarkedForRemoval ? ', marked for removal' : ''}${isDragging ? ', dragging' : ''}`}
     >
-      {/* Drag Handle (optional) - hidden when marked for removal */}
+      {/* Drag Handle (optional) - hidden when marked for removal - 48px touch target */}
       {showDragHandle && !isMarkedForRemoval && (
         <div
           {...dragHandleProps}
           className={cn(
-            'shrink-0 p-2 cursor-grab active:cursor-grabbing',
+            'shrink-0 cursor-grab active:cursor-grabbing',
+            'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:p-2',
+            'flex items-center justify-center',
             'text-gray-400 hover:text-gray-600',
             'touch-none select-none',
             'transition-colors duration-150',
@@ -284,7 +286,9 @@ export function AssetItem({
             }}
             className={cn(
               'text-sm text-blue-600 hover:text-blue-700 font-medium',
-              'px-2 py-1 rounded hover:bg-blue-50 transition-colors'
+              'px-3 rounded hover:bg-blue-50 active:bg-blue-100 transition-colors',
+              'min-h-[48px] flex items-center',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
             aria-label="Restore this asset"
           >
@@ -297,10 +301,12 @@ export function AssetItem({
               onRemove(asset.id);
             }}
             className={cn(
-              'p-2 text-gray-400 hover:text-red-600 hover:bg-red-50',
+              'text-gray-400 hover:text-red-600 hover:bg-red-50',
               'rounded-lg transition-colors',
-              // Touch-friendly minimum size
-              'min-w-[44px] min-h-[44px] flex items-center justify-center'
+              // Touch-friendly minimum size (48px on mobile)
+              'min-w-[48px] min-h-[48px] md:min-w-[44px] md:min-h-[44px]',
+              'flex items-center justify-center',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
             aria-label={`Remove ${assetName}`}
           >

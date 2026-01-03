@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/BulkActions/BulkMoveDialog
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 3, Task 3.6)
- * @lastModified 2026-01-03 (REQ-073 Task 3.6.11 - Accessibility audit complete)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import React, {
@@ -262,8 +262,10 @@ function PropertyDropdown({
                 aria-selected={isSelected}
                 onClick={() => handleOptionClick(property.id)}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 cursor-pointer',
+                  'flex items-center gap-3 px-3 cursor-pointer',
+                  'min-h-[48px]',
                   'transition-colors',
+                  'touch-manipulation',
                   isSelected && 'bg-blue-50',
                   isFocused && !isSelected && 'bg-gray-100',
                   !isSelected && !isFocused && 'hover:bg-gray-50'
@@ -519,7 +521,9 @@ export function BulkMoveDialog({
             onClick={onCancel}
             disabled={loading}
             className={cn(
-              'p-2 rounded-full hover:bg-gray-100 transition-colors',
+              'flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors',
+              'min-h-[48px] min-w-[48px]',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
             aria-label="Close dialog"
@@ -566,9 +570,11 @@ export function BulkMoveDialog({
             onClick={onCancel}
             disabled={loading}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium',
+              'px-4 rounded-lg text-sm font-medium',
+              'min-h-[48px]',
               'bg-white border border-gray-300 text-gray-700',
-              'hover:bg-gray-50 transition-colors',
+              'hover:bg-gray-50 active:bg-gray-100 transition-colors',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
           >
@@ -578,8 +584,10 @@ export function BulkMoveDialog({
             onClick={handleConfirmClick}
             disabled={confirmDisabled}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium text-white',
+              'px-4 rounded-lg text-sm font-medium text-white',
+              'min-h-[48px]',
               'flex items-center gap-2 transition-colors',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               'bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300',
               confirmDisabled && 'cursor-not-allowed'
             )}

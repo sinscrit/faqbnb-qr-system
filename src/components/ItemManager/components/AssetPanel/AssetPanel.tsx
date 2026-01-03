@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/AssetPanel
  * @see docs/REQ-081-build-assetpanel-component-detailed.md
- * @lastModified 2026-01-03 (REQ-084 Task 6 - Integrated SortableAssetList for drag-and-drop reordering)
+ * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -210,7 +210,12 @@ export function AssetPanel({
             ref={firstFocusableRef}
             onClick={handleCancel}
             disabled={isCommitting}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className={cn(
+              'text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100',
+              'transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50',
+              'min-h-[48px] min-w-[48px] flex items-center justify-center',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]'
+            )}
             aria-label="Close panel"
           >
             <X className="w-5 h-5" />
@@ -267,12 +272,18 @@ export function AssetPanel({
           )}
         </div>
 
-        {/* Footer with action buttons */}
+        {/* Footer with action buttons - 48px min height */}
         <div className="border-t p-4 flex gap-3 shrink-0">
           <button
             onClick={handleCancel}
             disabled={isCommitting}
-            className="flex-1 py-2.5 px-4 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className={cn(
+              'flex-1 px-4 text-gray-700 bg-gray-100 rounded-lg',
+              'min-h-[48px]',
+              'hover:bg-gray-200 active:bg-gray-300 transition-colors',
+              'disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-500',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]'
+            )}
           >
             Cancel
           </button>
@@ -280,7 +291,10 @@ export function AssetPanel({
             onClick={handleDone}
             disabled={!isDirty || isCommitting}
             className={cn(
-              'flex-1 py-2.5 px-4 text-white rounded-lg transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500',
+              'flex-1 px-4 text-white rounded-lg transition-colors flex items-center justify-center',
+              'min-h-[48px]',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500',
+              'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               isDirty
                 ? 'bg-blue-600 hover:bg-blue-700'
                 : 'bg-gray-300 cursor-not-allowed',
