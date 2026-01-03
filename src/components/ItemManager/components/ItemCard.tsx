@@ -10,14 +10,16 @@
  * - Selection checkbox for bulk operations
  * - Hover and focus states for accessibility
  * - Keyboard navigation support
+ * - Inline editing of title and location (REQ-087)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-03 (REQ-058 - Initial implementation)
+ * @lastModified 2026-01-03 (REQ-087 Task 2 - Added inline edit integration)
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Play, FileText, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { InlineEdit } from './shared/InlineEdit';
 import type { ItemCardProps } from '../ItemManager.types';
 
 /**
@@ -60,10 +62,30 @@ export function ItemCard({
   isSelected,
   isSelectionMode,
   className,
+  enableInlineEdit,
+  onUpdateItem,
 }: ItemCardProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+
+  // Calculate effective inline edit state - disable when in selection mode
+  const effectiveEnableInlineEdit = enableInlineEdit && !isSelectionMode && !!onUpdateItem;
+
+  // Title save handler
+  const handleTitleSave = useCallback(async (newTitle: string) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({ ...item, title: newTitle });
+  }, [item, onUpdateItem]);
+
+  // Location save handler
+  const handleLocationSave = useCallback(async (newLocation: string) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({
+      ...item,
+      location: newLocation || undefined,
+    });
+  }, [item, onUpdateItem]);
 
   // Create object URL from thumbnail or file blob with proper cleanup
   const objectUrl = useMemo(() => {
@@ -113,9 +135,9 @@ export function ItemCard({
 
   // Handle card click (for preview)
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger preview if clicking checkbox
+    // Don't trigger preview if clicking checkbox or inline edit areas
     const target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT' || target.closest('input')) {
+    if (target.tagName === 'INPUT' || target.closest('input') || target.closest('[data-inline-edit]')) {
       return;
     }
     onPreviewClick(item);
@@ -213,13 +235,43 @@ export function ItemCard({
 
       {/* Content Section */}
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
-          {item.title}
-        </h3>
-        {item.location && (
-          <p className="text-xs text-gray-500 mt-1 truncate">
-            {item.location}
-          </p>
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()}>
+            <InlineEdit
+              value={item.title}
+              onSave={handleTitleSave}
+              placeholder="Enter title..."
+              ariaLabel={`Edit title for ${item.title}`}
+              maxLength={100}
+              minLength={1}
+              className="font-semibold text-gray-900 text-sm leading-tight"
+              displayClassName="line-clamp-2 group-hover:text-blue-600 transition-colors"
+            />
+          </div>
+        ) : (
+          <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+            {item.title}
+          </h3>
+        )}
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()} className="mt-1">
+            <InlineEdit
+              value={item.location || ''}
+              onSave={handleLocationSave}
+              placeholder="Add location..."
+              ariaLabel={`Edit location for ${item.title}`}
+              maxLength={100}
+              allowEmpty
+              className="text-xs text-gray-500"
+              displayClassName="truncate"
+            />
+          </div>
+        ) : (
+          item.location && (
+            <p className="text-xs text-gray-500 mt-1 truncate">
+              {item.location}
+            </p>
+          )
         )}
       </div>
     </div>

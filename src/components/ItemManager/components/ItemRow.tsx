@@ -5,13 +5,14 @@
  *
  * Displays an individual item in the ItemManager list view.
  * Features thumbnail preview, comprehensive metadata display,
- * kebab action menu, and selection mode support.
+ * kebab action menu, selection mode support, and inline editing
+ * of title and location (REQ-087).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-03 (REQ-059)
+ * @lastModified 2026-01-03 (REQ-087 Task 3 - Added inline edit integration)
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   MoreVertical,
   Edit,
@@ -23,6 +24,7 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { InlineEdit } from './shared/InlineEdit';
 import type { ItemRowProps } from '../ItemManager.types';
 
 /**
@@ -81,6 +83,8 @@ export function ItemRow({
   onManageAssets,
   onDuplicate,
   className,
+  enableInlineEdit,
+  onUpdateItem,
 }: ItemRowProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -89,6 +93,24 @@ export function ItemRow({
   // Menu state
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Calculate effective inline edit state - disable when in selection mode
+  const effectiveEnableInlineEdit = enableInlineEdit && !isSelectionMode && !!onUpdateItem;
+
+  // Title save handler
+  const handleTitleSave = useCallback(async (newTitle: string) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({ ...item, title: newTitle });
+  }, [item, onUpdateItem]);
+
+  // Location save handler
+  const handleLocationSave = useCallback(async (newLocation: string) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({
+      ...item,
+      location: newLocation || undefined,
+    });
+  }, [item, onUpdateItem]);
 
   // Create object URL from thumbnail or file blob with proper cleanup
   const objectUrl = useMemo(() => {
@@ -196,7 +218,8 @@ export function ItemRow({
       target.tagName === 'INPUT' ||
       target.tagName === 'BUTTON' ||
       target.closest('button') ||
-      target.closest('[role="menu"]')
+      target.closest('[role="menu"]') ||
+      target.closest('[data-inline-edit]')
     ) {
       return;
     }
@@ -282,9 +305,25 @@ export function ItemRow({
 
       {/* Title and Description Section (Task 4) */}
       <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-gray-900 truncate">
-          {item.title}
-        </h3>
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()}>
+            <InlineEdit
+              value={item.title}
+              onSave={handleTitleSave}
+              placeholder="Enter title..."
+              ariaLabel={`Edit title for ${item.title}`}
+              maxLength={100}
+              minLength={1}
+              className="font-medium text-gray-900"
+              displayClassName="truncate"
+              inputClassName="text-base"
+            />
+          </div>
+        ) : (
+          <h3 className="font-medium text-gray-900 truncate">
+            {item.title}
+          </h3>
+        )}
         {item.instructions && (
           <p className="text-sm text-gray-500 truncate">
             {item.instructions}
@@ -293,8 +332,25 @@ export function ItemRow({
       </div>
 
       {/* Location Column (Task 5) */}
-      <div className="hidden md:flex w-24 items-center text-sm text-gray-500 truncate">
-        {item.location || '-'}
+      <div className="hidden md:flex w-24 items-center">
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()} className="w-full">
+            <InlineEdit
+              value={item.location || ''}
+              onSave={handleLocationSave}
+              placeholder="Add location"
+              ariaLabel={`Edit location for ${item.title}`}
+              maxLength={100}
+              allowEmpty
+              className="text-sm text-gray-500 w-full"
+              displayClassName="truncate"
+            />
+          </div>
+        ) : (
+          <span className="text-sm text-gray-500 truncate">
+            {item.location || '-'}
+          </span>
+        )}
       </div>
 
       {/* Content Type Badge (Task 6) */}

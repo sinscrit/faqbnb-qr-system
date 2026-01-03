@@ -9,7 +9,7 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-073 Task 3.6.8 - Integrated BulkMoveDialog component)
+ * @lastModified 2026-01-03 (REQ-087 Task 6 - Integrated inline edit for title/location)
  */
 
 import { useCallback, useMemo, useEffect, useState } from 'react';
@@ -177,6 +177,21 @@ export function ItemManager({
   const getSelectedItems = useCallback(
     () => items.filter((item) => state.selectedIds.has(item.id)),
     [items, state.selectedIds]
+  );
+
+  // -------------------------------------------------------------------------
+  // Inline Edit Handler (REQ-087)
+  // -------------------------------------------------------------------------
+
+  /**
+   * Wrapper for onUpdateItem that returns a Promise.
+   * The InlineEdit component expects an async callback.
+   */
+  const handleInlineUpdate = useCallback(
+    async (item: ItemRecord): Promise<void> => {
+      onUpdateItem(item);
+    },
+    [onUpdateItem]
   );
 
   // -------------------------------------------------------------------------
@@ -429,6 +444,8 @@ export function ItemManager({
             }}
             selectedIds={state.selectedIds}
             isSelectionMode={state.isSelectionMode}
+            enableInlineEdit={effectiveConfig.enableInlineEdit}
+            onUpdateItem={handleInlineUpdate}
           />
         </div>
       );
@@ -453,6 +470,8 @@ export function ItemManager({
           onDelete={(item) => onDeleteItems([item.id])}
           onManageAssets={effectiveConfig.enableAssetManagement ? openAssetPanel : undefined}
           onDuplicate={effectiveConfig.enableDuplicate ? onDuplicateItem : undefined}
+          enableInlineEdit={effectiveConfig.enableInlineEdit}
+          onUpdateItem={handleInlineUpdate}
         />
       </div>
     );
@@ -466,6 +485,7 @@ export function ItemManager({
     effectiveConfig.labels,
     effectiveConfig.enableAssetManagement,
     effectiveConfig.enableDuplicate,
+    effectiveConfig.enableInlineEdit,
     renderLoadingState,
     renderErrorState,
     renderEmptyState,
@@ -477,6 +497,7 @@ export function ItemManager({
     onDeleteItems,
     openAssetPanel,
     onDuplicateItem,
+    handleInlineUpdate,
   ]);
 
   // -------------------------------------------------------------------------

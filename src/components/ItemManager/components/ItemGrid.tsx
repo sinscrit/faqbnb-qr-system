@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemCard component.
  *
  * @module ItemManager/components/ItemGrid
- * @lastModified 2026-01-03 (REQ-060 Task 3)
+ * @lastModified 2026-01-03 (REQ-087 Task 4 - Added inline edit props)
  */
 
 import { cn } from '@/lib/utils';
@@ -21,6 +21,8 @@ export function ItemGrid({
   selectedIds,
   isSelectionMode,
   className,
+  enableInlineEdit,
+  onUpdateItem,
 }: ItemGridProps) {
   return (
     <div
@@ -40,6 +42,8 @@ export function ItemGrid({
           onSelectionChange={onSelectionChange}
           isSelected={selectedIds.has(item.id)}
           isSelectionMode={isSelectionMode}
+          enableInlineEdit={enableInlineEdit}
+          onUpdateItem={onUpdateItem}
         />
       ))}
     </div>

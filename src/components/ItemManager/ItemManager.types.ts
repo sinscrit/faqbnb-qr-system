@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-082 Task 2 - Added AssetItemProps interface)
+ * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props to ItemCard/Row/Grid/List props)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -420,6 +420,8 @@ export interface ConfirmDialogProps {
 /**
  * Props for the ItemCard component.
  * Used for displaying items in grid view.
+ *
+ * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props)
  */
 export interface ItemCardProps {
   /** The item record to display */
@@ -434,6 +436,10 @@ export interface ItemCardProps {
   isSelectionMode: boolean;
   /** Optional additional CSS classes */
   className?: string;
+  /** Enable inline editing of title/location (controlled by config.enableInlineEdit) */
+  enableInlineEdit?: boolean;
+  /** Callback when item is updated via inline edit */
+  onUpdateItem?: (item: ItemRecord) => Promise<void>;
 }
 
 // =============================================================================
@@ -444,7 +450,7 @@ export interface ItemCardProps {
  * Props for the ItemRow component.
  * Used for displaying items in list view with comprehensive metadata.
  *
- * @lastModified 2026-01-03 (REQ-059 Task 1)
+ * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props)
  */
 export interface ItemRowProps {
   /** The item record to display */
@@ -467,6 +473,10 @@ export interface ItemRowProps {
   onDuplicate?: (item: ItemRecord) => void;
   /** Optional additional CSS classes */
   className?: string;
+  /** Enable inline editing of title/location (controlled by config.enableInlineEdit) */
+  enableInlineEdit?: boolean;
+  /** Callback when item is updated via inline edit */
+  onUpdateItem?: (item: ItemRecord) => Promise<void>;
 }
 
 // =============================================================================
@@ -477,7 +487,7 @@ export interface ItemRowProps {
  * Props for the ItemGrid component.
  * Renders items in a responsive multi-column grid layout.
  *
- * @lastModified 2026-01-03 (REQ-060 Task 1)
+ * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props)
  */
 export interface ItemGridProps {
   /** Array of item records to display */
@@ -492,13 +502,17 @@ export interface ItemGridProps {
   isSelectionMode: boolean;
   /** Optional additional CSS classes */
   className?: string;
+  /** Enable inline editing of title/location */
+  enableInlineEdit?: boolean;
+  /** Callback when item is updated via inline edit */
+  onUpdateItem?: (item: ItemRecord) => Promise<void>;
 }
 
 /**
  * Props for the ItemList component.
  * Renders items in a vertical list layout with table-like structure.
  *
- * @lastModified 2026-01-03 (REQ-060 Task 1)
+ * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props)
  */
 export interface ItemListProps {
   /** Array of item records to display */
@@ -521,6 +535,10 @@ export interface ItemListProps {
   onDuplicate?: (item: ItemRecord) => void;
   /** Optional additional CSS classes */
   className?: string;
+  /** Enable inline editing of title/location */
+  enableInlineEdit?: boolean;
+  /** Callback when item is updated via inline edit */
+  onUpdateItem?: (item: ItemRecord) => Promise<void>;
 }
 
 /**

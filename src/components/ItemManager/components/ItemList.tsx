@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemRow component.
  *
  * @module ItemManager/components/ItemList
- * @lastModified 2026-01-03 (REQ-060 Task 4)
+ * @lastModified 2026-01-03 (REQ-087 Task 5 - Added inline edit props)
  */
 
 import { cn } from '@/lib/utils';
@@ -25,6 +25,8 @@ export function ItemList({
   onManageAssets,
   onDuplicate,
   className,
+  enableInlineEdit,
+  onUpdateItem,
 }: ItemListProps) {
   return (
     <div
@@ -61,6 +63,8 @@ export function ItemList({
             onDelete={onDelete}
             onManageAssets={onManageAssets}
             onDuplicate={onDuplicate}
+            enableInlineEdit={enableInlineEdit}
+            onUpdateItem={onUpdateItem}
           />
         ))}
       </div>
