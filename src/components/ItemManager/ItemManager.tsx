@@ -9,15 +9,18 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-060 Task 5 - Integrated Grid/List views)
+ * @lastModified 2026-01-03 (REQ-072 Task 3.5.10 - Integrated BulkTagDialog component)
  */
 
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
+import { Tag, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
 import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
+import { ItemToolbar } from './components/ItemToolbar';
 import { ViewModeToggle } from './components/shared/ViewModeToggle';
+import { BulkTagDialog } from './components/BulkActions';
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -133,6 +136,36 @@ export function ItemManager({
   } = useItemManagerState(effectiveConfig);
 
   // -------------------------------------------------------------------------
+  // Bulk Tag Dialog State
+  // -------------------------------------------------------------------------
+
+  const [tagDialogMode, setTagDialogMode] = useState<'add' | 'remove' | null>(null);
+  const [bulkLoading, setBulkLoading] = useState(false);
+
+  // -------------------------------------------------------------------------
+  // Computed Values for Bulk Actions
+  // -------------------------------------------------------------------------
+
+  /**
+   * Collect all unique tags from all items for autocomplete suggestions.
+   */
+  const existingTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    items.forEach((item) => {
+      (item.tags || []).forEach((tag) => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [items]);
+
+  /**
+   * Get the selected items based on selectedIds.
+   */
+  const getSelectedItems = useCallback(
+    () => items.filter((item) => state.selectedIds.has(item.id)),
+    [items, state.selectedIds]
+  );
+
+  // -------------------------------------------------------------------------
   // Debug Helper
   // -------------------------------------------------------------------------
 
@@ -204,6 +237,73 @@ export function ItemManager({
       onSelectionChange(selectedArray);
     }
   }, [state.selectedIds, onSelectionChange, debugLog]);
+
+  // -------------------------------------------------------------------------
+  // Bulk Tag Handlers
+  // -------------------------------------------------------------------------
+
+  /**
+   * Open dialog to add tags to selected items.
+   */
+  const handleBulkAddTag = useCallback(() => {
+    setTagDialogMode('add');
+  }, []);
+
+  /**
+   * Open dialog to remove tags from selected items.
+   */
+  const handleBulkRemoveTag = useCallback(() => {
+    setTagDialogMode('remove');
+  }, []);
+
+  /**
+   * Handle tag confirmation from dialog.
+   * Applies tag additions or removals to all selected items.
+   */
+  const handleTagConfirm = useCallback(
+    async (tags: string[]) => {
+      if (tags.length === 0) return;
+
+      const selectedItemsList = getSelectedItems();
+      setBulkLoading(true);
+
+      try {
+        for (const item of selectedItemsList) {
+          let updatedTags: string[];
+
+          if (tagDialogMode === 'add') {
+            // Add new tags (avoiding duplicates)
+            const currentTags = item.tags || [];
+            const newTags = tags.filter(
+              (t) => !currentTags.some((ct) => ct.toLowerCase() === t.toLowerCase())
+            );
+            updatedTags = [...currentTags, ...newTags];
+          } else {
+            // Remove specified tags
+            updatedTags = (item.tags || []).filter(
+              (t) => !tags.some((rt) => rt.toLowerCase() === t.toLowerCase())
+            );
+          }
+
+          await onUpdateItem({ ...item, tags: updatedTags });
+        }
+
+        // Close dialog and clear selection after successful operation
+        setTagDialogMode(null);
+        clearSelection();
+      } finally {
+        setBulkLoading(false);
+      }
+    },
+    [tagDialogMode, getSelectedItems, onUpdateItem, clearSelection]
+  );
+
+  /**
+   * Close tag dialog without applying changes.
+   */
+  const handleTagCancel = useCallback(() => {
+    setTagDialogMode(null);
+  }, []);
 
   // -------------------------------------------------------------------------
   // Render Functions
@@ -363,24 +463,29 @@ export function ItemManager({
   return (
     <div className={cn('flex flex-col h-full bg-white', classNames?.container)}>
       {/* Toolbar Area */}
-      <div className={cn('border-b border-gray-200', classNames?.toolbar)}>
+      <div className={classNames?.toolbar}>
         {renderToolbar ? (
           renderToolbar(toolbarProps)
         ) : (
-          // Default toolbar with ViewModeToggle
-          <div className="px-4 py-3 flex items-center justify-between">
-            <div className="text-sm text-gray-500">
-              {items.length} item{items.length !== 1 ? 's' : ''}
-              {hasFilters && ' (filtered)'}
-            </div>
-            {effectiveConfig.allowViewToggle && (
-              <ViewModeToggle
-                viewMode={state.viewMode}
-                onViewModeChange={setViewMode}
-                disabled={items.length === 0}
-              />
-            )}
-          </div>
+          <ItemToolbar
+            viewMode={state.viewMode}
+            onViewModeChange={setViewMode}
+            allowViewToggle={effectiveConfig.allowViewToggle}
+            searchQuery={state.searchQuery}
+            onSearchChange={setSearchQuery}
+            enableSearch={effectiveConfig.enableSearch}
+            filters={state.filters}
+            onFiltersChange={setFilters}
+            onClearFilters={clearFilters}
+            enableFilters={effectiveConfig.enableFilters}
+            sortBy={state.sortBy}
+            onSortChange={setSort}
+            enableSort={effectiveConfig.enableSort}
+            resultCount={items.length}
+            totalCount={items.length}
+            isFiltered={hasFilters || state.searchQuery.length > 0}
+            labels={effectiveConfig.labels}
+          />
         )}
       </div>
 
@@ -389,21 +494,46 @@ export function ItemManager({
         {renderContent}
       </div>
 
-      {/* Bulk Actions Bar (Phase 3) */}
+      {/* Bulk Actions Bar */}
       {effectiveConfig.enableBulkActions && hasSelection && (
         <div className={cn(
           'fixed bottom-4 left-1/2 -translate-x-1/2',
           'bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg',
           'flex items-center gap-4'
         )}>
-          <span>{selectedCount} selected</span>
+          <span className="font-medium">{selectedCount} selected</span>
+          <div className="h-4 w-px bg-gray-600" />
+          <button
+            onClick={handleBulkAddTag}
+            disabled={bulkLoading}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
+              'bg-blue-600 hover:bg-blue-700 transition-colors',
+              bulkLoading && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            <Tag className="h-4 w-4" />
+            Add Tag
+          </button>
+          <button
+            onClick={handleBulkRemoveTag}
+            disabled={bulkLoading}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
+              'bg-orange-600 hover:bg-orange-700 transition-colors',
+              bulkLoading && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            <Minus className="h-4 w-4" />
+            Remove Tag
+          </button>
+          <div className="h-4 w-px bg-gray-600" />
           <button
             onClick={clearSelection}
-            className="text-sm underline hover:no-underline"
+            className="text-sm text-gray-300 hover:text-white underline hover:no-underline"
           >
             Clear
           </button>
-          {/* More bulk actions added in Phase 3 */}
         </div>
       )}
 
@@ -449,6 +579,18 @@ export function ItemManager({
             Asset panel will be implemented in Phase 5
           </div>
         </div>
+      )}
+
+      {/* Bulk Tag Dialog */}
+      {tagDialogMode && (
+        <BulkTagDialog
+          mode={tagDialogMode}
+          selectedItems={getSelectedItems()}
+          existingTags={existingTags}
+          onConfirm={handleTagConfirm}
+          onCancel={handleTagCancel}
+          loading={bulkLoading}
+        />
       )}
     </div>
   );

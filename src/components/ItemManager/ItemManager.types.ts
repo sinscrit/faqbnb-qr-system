@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-060 Task 1 - Added ItemGridProps, ItemListProps, ViewModeToggleProps)
+ * @lastModified 2026-01-03 (REQ-072 Task 3.5.9 - Added BulkTagDialogProps re-export)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -531,6 +531,44 @@ export interface ViewModeToggleProps {
 }
 
 // =============================================================================
+// Empty and Loading State Props Interfaces (REQ-061)
+// =============================================================================
+
+/**
+ * Props for the EmptyState component.
+ * Displays when the item collection is empty.
+ *
+ * @lastModified 2026-01-03 (REQ-061 Task 1.7.1)
+ */
+export interface EmptyStateProps {
+  /** Title text for empty state (default: "No items yet") */
+  title?: string;
+  /** Description text for empty state (default: "Create your first item to get started") */
+  description?: string;
+  /** Custom icon component to display (default: Package icon) */
+  icon?: React.ReactNode;
+  /** Call-to-action element (button, link, etc.) */
+  action?: React.ReactNode;
+  /** Additional CSS classes for styling customization */
+  className?: string;
+}
+
+/**
+ * Props for the LoadingState component.
+ * Displays skeleton animation while content is loading.
+ *
+ * @lastModified 2026-01-03 (REQ-061 Task 1.7.1)
+ */
+export interface LoadingStateProps {
+  /** View mode to determine skeleton layout ('grid' | 'list') */
+  viewMode?: 'grid' | 'list';
+  /** Number of skeleton items to display (default: 6 for grid, 5 for list) */
+  itemCount?: number;
+  /** Additional CSS classes for styling customization */
+  className?: string;
+}
+
+// =============================================================================
 // Main Component Props Interface
 // =============================================================================
 
@@ -839,3 +877,198 @@ export type ItemManagerAction =
 
   /** End inline editing (commit or cancel) */
   | { type: 'END_INLINE_EDIT' };
+
+// =============================================================================
+// ItemToolbar Types (REQ-063)
+// =============================================================================
+
+/**
+ * CSS class name overrides for ItemToolbar sub-components.
+ * Allows consumers to apply custom styling to specific toolbar elements.
+ *
+ * @lastModified 2026-01-03 (REQ-063 Task 2.2.1)
+ */
+export interface ItemToolbarClassNames {
+  /** Main toolbar container */
+  container?: string;
+  /** View toggle button group wrapper */
+  viewToggle?: string;
+  /** Search input wrapper */
+  searchContainer?: string;
+  /** Filters section wrapper */
+  filtersContainer?: string;
+  /** Sort menu wrapper */
+  sortContainer?: string;
+  /** Result count display */
+  resultCount?: string;
+  /** Clear filters button */
+  clearButton?: string;
+}
+
+/**
+ * Props for the ItemToolbar component.
+ * Provides comprehensive control over toolbar display, search, filters, and sort.
+ *
+ * @lastModified 2026-01-03 (REQ-063 Task 2.2.1)
+ */
+export interface ItemToolbarProps {
+  // ---------------------------------------------------------------------------
+  // View Mode Props
+  // ---------------------------------------------------------------------------
+
+  /** Current view mode ('grid' or 'list') */
+  viewMode: 'grid' | 'list';
+
+  /** Callback when view mode changes */
+  onViewModeChange: (mode: 'grid' | 'list') => void;
+
+  /**
+   * Whether to show the view toggle buttons.
+   * @default true
+   */
+  allowViewToggle?: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Search Props
+  // ---------------------------------------------------------------------------
+
+  /** Current search query string */
+  searchQuery: string;
+
+  /** Callback when search query changes */
+  onSearchChange: (query: string) => void;
+
+  /**
+   * Whether to enable search functionality.
+   * @default true
+   */
+  enableSearch?: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Filter Props
+  // ---------------------------------------------------------------------------
+
+  /** Current filter state */
+  filters: FilterState;
+
+  /** Callback when filters change (supports partial updates) */
+  onFiltersChange: (filters: Partial<FilterState>) => void;
+
+  /** Callback to clear all filters and search */
+  onClearFilters: () => void;
+
+  /**
+   * Whether to enable filter functionality.
+   * @default true
+   */
+  enableFilters?: boolean;
+
+  /**
+   * Available filter options extracted from items.
+   * Used to populate filter dropdowns/chips.
+   */
+  filterOptions?: {
+    contentTypes: string[];
+    tags: string[];
+    locations: string[];
+  };
+
+  // ---------------------------------------------------------------------------
+  // Sort Props
+  // ---------------------------------------------------------------------------
+
+  /** Current sort option */
+  sortBy: SortOption;
+
+  /** Callback when sort option changes */
+  onSortChange: (sort: SortOption) => void;
+
+  /**
+   * Whether to enable sort functionality.
+   * @default true
+   */
+  enableSort?: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Result Props
+  // ---------------------------------------------------------------------------
+
+  /** Number of items after filtering */
+  resultCount: number;
+
+  /** Total number of items before filtering */
+  totalCount: number;
+
+  /** Whether any filters or search is currently active */
+  isFiltered: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Customization Props
+  // ---------------------------------------------------------------------------
+
+  /** Custom labels for UI text customization */
+  labels?: ItemManagerLabels;
+
+  /** CSS class name overrides for sub-components */
+  classNames?: ItemToolbarClassNames;
+
+  // ---------------------------------------------------------------------------
+  // Render Overrides
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Custom render function for the search input.
+   * Receives value, onChange callback, and placeholder text.
+   */
+  renderSearch?: (props: {
+    value: string;
+    onChange: (value: string) => void;
+    placeholder: string;
+  }) => React.ReactNode;
+
+  /**
+   * Custom render function for the filters section.
+   * Receives current filters, onChange callback, and available options.
+   */
+  renderFilters?: (props: {
+    filters: FilterState;
+    onChange: (filters: Partial<FilterState>) => void;
+    options: { contentTypes: string[]; tags: string[]; locations: string[] };
+  }) => React.ReactNode;
+
+  /**
+   * Custom render function for the sort menu.
+   * Receives current sort option and onChange callback.
+   */
+  renderSort?: (props: {
+    sortBy: SortOption;
+    onChange: (sort: SortOption) => void;
+  }) => React.ReactNode;
+}
+
+// =============================================================================
+// BulkActions Types (REQ-072)
+// =============================================================================
+
+/**
+ * Props for the BulkTagDialog component.
+ * Used for bulk tag add/remove operations on multiple items.
+ *
+ * @lastModified 2026-01-03 (REQ-072 Task 3.5.9)
+ */
+export interface BulkTagDialogProps {
+  /** Dialog mode - determines add or remove operation */
+  mode: 'add' | 'remove';
+  /** Array of selected items to apply tag operation to */
+  selectedItems: ItemRecord[];
+  /** All existing tags in the system for autocomplete suggestions */
+  existingTags: string[];
+  /** Callback when tags are confirmed */
+  onConfirm: (tags: string[]) => void;
+  /** Callback when dialog is cancelled/closed */
+  onCancel: () => void;
+  /** Loading state during operation */
+  loading?: boolean;
+  /** Optional additional CSS classes */
+  className?: string;
+}
