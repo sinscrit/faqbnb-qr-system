@@ -8,14 +8,15 @@
  *
  * @module ItemManager/components/AssetPanel
  * @see docs/REQ-081-build-assetpanel-component-detailed.md
- * @lastModified 2026-01-03 (REQ-082 Task 10 - Integrated AssetItem component)
+ * @lastModified 2026-01-03 (REQ-083 Task 10 - Integrated AssetDropZone component)
  */
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { X, Loader2, Plus, ImageIcon } from 'lucide-react';
+import { useCallback, useEffect, useRef } from 'react';
+import { X, Loader2, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssetManagement } from '../../hooks/useAssetManagement';
 import { AssetItem } from './AssetItem';
+import { AssetDropZone } from './AssetDropZone';
 import type { AssetPanelProps } from '../../ItemManager.types';
 
 /**
@@ -51,10 +52,9 @@ export function AssetPanel({
   allowedMediaTypes,
   maxFileSize,
 }: AssetPanelProps) {
-  // Refs for focus management and file input
+  // Refs for focus management
   const panelRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize the asset management hook
   const {
@@ -119,24 +119,12 @@ export function AssetPanel({
   }, [commit, endSession, onClose]);
 
   /**
-   * Handle Add Media button click - trigger file picker
+   * Handle files selected from the AssetDropZone
    */
-  const handleAddMedia = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
-  /**
-   * Handle file selection from the file input
-   */
-  const handleFileSelect = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
+  const handleFilesSelected = useCallback(
+    async (files: File[]) => {
       if (files.length > 0) {
         await addAssets(files);
-      }
-      // Reset input to allow selecting same file again
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
       }
     },
     [addAssets]
@@ -174,23 +162,6 @@ export function AssetPanel({
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
-
-  // ===========================================================================
-  // Computed Values
-  // ===========================================================================
-
-  /**
-   * Compute the accept attribute for file input based on allowedMediaTypes
-   */
-  const acceptAttribute = useMemo(() => {
-    const types = allowedMediaTypes || ['video', 'image', 'pdf'];
-    const mimeMap: Record<string, string> = {
-      video: 'video/*',
-      image: 'image/*',
-      pdf: 'application/pdf',
-    };
-    return types.map((t) => mimeMap[t]).join(',');
-  }, [allowedMediaTypes]);
 
   // ===========================================================================
   // Render
@@ -260,26 +231,17 @@ export function AssetPanel({
 
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto p-4">
-          {/* Hidden file input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept={acceptAttribute}
-            onChange={handleFileSelect}
-            className="hidden"
-            aria-hidden="true"
-          />
-
-          {/* Add Media button */}
-          <button
-            onClick={handleAddMedia}
-            disabled={isCommitting}
-            className="w-full py-3 px-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Plus className="w-5 h-5" />
-            Add Media
-          </button>
+          {/* Drop Zone for adding media */}
+          <div className="mb-4">
+            <AssetDropZone
+              onFilesSelected={handleFilesSelected}
+              allowedMediaTypes={allowedMediaTypes}
+              maxFileSize={maxFileSize}
+              currentFileCount={currentAssets.length}
+              disabled={isCommitting}
+              compact={currentAssets.length > 0}
+            />
+          </div>
 
           {/* Asset list */}
           {currentAssets.length > 0 && (

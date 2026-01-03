@@ -8,7 +8,7 @@
  *
  * @route /test
  * @created 2025-12-31
- * @lastModified 2026-01-03 (REQ-078 - Added InstructionsViewer test)
+ * @lastModified 2026-01-03 (REQ-083 - Added AssetDropZone test)
  */
 
 import Link from 'next/link';
@@ -113,6 +113,11 @@ const componentTests: TestLink[] = [
     href: '/test/instructions-viewer',
     title: 'InstructionsViewer',
     description: 'Markdown instructions viewer with scrollable container (REQ-078)',
+  },
+  {
+    href: '/test/asset-dropzone',
+    title: 'AssetDropZone',
+    description: 'Drag-and-drop file upload zone for asset management (REQ-083)',
   },
 ];
 
