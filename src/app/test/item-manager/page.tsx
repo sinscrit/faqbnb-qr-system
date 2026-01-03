@@ -1,13 +1,19 @@
 'use client';
 
 /**
- * ItemManager Shell Test Page
+ * ItemManager Test Harness Page
  *
- * Test harness for verifying the basic ItemManager shell component
- * renders correctly in all states (empty, loading, error, with items).
+ * Developer test environment for isolated testing of the ItemManager component.
+ * Features:
+ * - Console output of all callbacks with structured formatting
+ * - Session counter for tracking operations
+ * - Mock data covering all item type variations
+ * - Zero network requests (verify in DevTools -> Network tab)
  *
- * @module test/item-manager
- * @lastModified 2026-01-03 (REQ-082 Task 9 - Added AssetItem component tests)
+ * @route /test/item-manager
+ * @created 2025-12-31
+ * @lastModified 2026-01-03
+ * @request REQ-090 (Task 6.6)
  */
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -369,6 +375,369 @@ const assetMockItems: MediaItem[] = [
   createAssetMockMediaItem('asset-3', 'pdf'),
 ];
 
+// =============================================================================
+// REQ-090 Test Harness Mock Data
+// =============================================================================
+
+/**
+ * Creates a simple mock Blob for testing (REQ-090).
+ */
+const createTestHarnessMockBlob = (type: string, size: number = 1024): Blob => {
+  const content = new Array(size).fill('x').join('');
+  return new Blob([content], { type });
+};
+
+/**
+ * Creates a mock MediaItem for test harness (REQ-090).
+ */
+const createTestHarnessMedia = (
+  id: string,
+  type: 'video' | 'image' | 'pdf',
+  order: number,
+  options: Partial<MediaItem['metadata']> = {}
+): MediaItem => ({
+  id,
+  type,
+  order,
+  file: createTestHarnessMockBlob(
+    type === 'video' ? 'video/mp4' :
+    type === 'pdf' ? 'application/pdf' : 'image/jpeg',
+    type === 'video' ? 5242880 : 1048576
+  ),
+  metadata: {
+    mimeType: type === 'video' ? 'video/mp4' :
+              type === 'pdf' ? 'application/pdf' : 'image/jpeg',
+    fileSize: type === 'video' ? 5242880 : 1048576,
+    source: 'capture',
+    ...options,
+  },
+});
+
+/**
+ * Generates 8 diverse mock items covering all content type variations (REQ-090).
+ * Items span different dates for sort testing.
+ */
+const generateTestHarnessMockItems = (): ItemRecord[] => {
+  return [
+    // 1. Video item - Coffee Maker
+    {
+      id: 'item-001',
+      title: 'How to Use the Coffee Maker',
+      location: 'Kitchen',
+      tags: ['appliances', 'kitchen'],
+      applianceType: 'other',
+      contentType: 'media',
+      media: [createTestHarnessMedia('media-001', 'video', 0, { duration: 45 })],
+      instructions: 'Fill reservoir, add grounds, press start.',
+      createdAt: new Date('2026-01-01'),
+    },
+
+    // 2. Photo item - Thermostat (3 images)
+    {
+      id: 'item-002',
+      title: 'Thermostat Settings',
+      location: 'Hallway',
+      tags: ['hvac'],
+      applianceType: 'hvac',
+      contentType: 'media',
+      media: [
+        createTestHarnessMedia('media-002a', 'image', 0),
+        createTestHarnessMedia('media-002b', 'image', 1),
+        createTestHarnessMedia('media-002c', 'image', 2),
+      ],
+      instructions: 'Adjust temperature using up/down arrows.',
+      createdAt: new Date('2026-01-02'),
+    },
+
+    // 3. PDF item - Dishwasher Manual
+    {
+      id: 'item-003',
+      title: 'Dishwasher Manual',
+      location: 'Kitchen',
+      tags: [],
+      applianceType: 'dishwasher',
+      contentType: 'pdf-only',
+      media: [createTestHarnessMedia('media-003', 'pdf', 0, {
+        mimeType: 'application/pdf',
+        fileSize: 2097152,
+        source: 'upload',
+        pageCount: 24,
+      })],
+      createdAt: new Date('2025-12-15'),
+    },
+
+    // 4. Text-only item - WiFi Info
+    {
+      id: 'item-004',
+      title: 'WiFi Network Information',
+      location: 'Living Room',
+      tags: ['wifi', 'internet', 'connectivity'],
+      contentType: 'text-only',
+      media: [],
+      instructions: '# WiFi Access\n\n**Network:** GuestNet\n**Password:** Welcome123\n\n## Troubleshooting\n- Restart router if issues occur\n- Check signal strength near windows',
+      createdAt: new Date('2025-12-28'),
+    },
+
+    // 5. Mixed item - Pool Equipment
+    {
+      id: 'item-005',
+      title: 'Pool Equipment Guide',
+      location: 'Backyard',
+      tags: ['pool', 'outdoor'],
+      contentType: 'mixed',
+      media: [
+        createTestHarnessMedia('media-005a', 'video', 0, { duration: 120, fileSize: 8388608 }),
+        createTestHarnessMedia('media-005b', 'video', 1, { duration: 60, fileSize: 4194304 }),
+        createTestHarnessMedia('media-005c', 'image', 2),
+      ],
+      instructions: '## Pool Pump Operation\n\n1. Check water level\n2. Ensure valves are open\n3. Turn on pump at breaker',
+      createdAt: new Date('2025-12-20'),
+    },
+
+    // 6. Item with empty tags - Garbage Disposal
+    {
+      id: 'item-006',
+      title: 'Garbage Disposal',
+      location: 'Kitchen',
+      tags: [],
+      applianceType: 'other',
+      contentType: 'media',
+      media: [createTestHarnessMedia('media-006', 'image', 0, { fileSize: 524288 })],
+      instructions: 'Run cold water, flip switch under sink.',
+      createdAt: new Date('2025-12-10'),
+    },
+
+    // 7. Long title - Test truncation
+    {
+      id: 'item-007',
+      title: 'Extremely Long Title for Testing Text Truncation Behavior in Various UI Components and Views',
+      location: 'Utility Room',
+      tags: ['testing'],
+      contentType: 'media',
+      media: [createTestHarnessMedia('media-007', 'video', 0, { duration: 30, fileSize: 3145728 })],
+      createdAt: new Date('2025-12-05'),
+    },
+
+    // 8. No location - Emergency Shutoffs
+    {
+      id: 'item-008',
+      title: 'Emergency Shutoffs',
+      // location intentionally omitted
+      tags: ['safety', 'emergency'],
+      contentType: 'media',
+      media: [createTestHarnessMedia('media-008', 'image', 0, { fileSize: 786432 })],
+      instructions: 'Water shutoff: basement near water heater\nGas shutoff: side of house near meter\nElectrical: main breaker in garage',
+      createdAt: new Date('2025-11-30'),
+    },
+  ];
+};
+
+// =============================================================================
+// REQ-090 Test Harness Output Types
+// =============================================================================
+
+interface CallbackOutput {
+  callbackName: string;
+  timestamp: string;
+  data: string;
+}
+
+// =============================================================================
+// REQ-090 Test Harness Component
+// =============================================================================
+
+function TestHarnessView() {
+  // State for items and UI tracking
+  const [items, setItems] = useState<ItemRecord[]>(generateTestHarnessMockItems);
+  const [sessionCount, setSessionCount] = useState(0);
+  const [lastOutput, setLastOutput] = useState<CallbackOutput | null>(null);
+
+  /**
+   * JSON replacer function for serializing non-standard types.
+   * Converts Blob, File, and Date objects to human-readable strings.
+   */
+  const jsonReplacer = useCallback((key: string, value: unknown): unknown => {
+    if (value instanceof Blob) {
+      return `[Blob: ${value.size} bytes, ${value.type}]`;
+    }
+    if (value instanceof File) {
+      return `[File: ${value.name}, ${value.size} bytes, ${value.type}]`;
+    }
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    return value;
+  }, []);
+
+  /**
+   * Structured console logging for callback events.
+   */
+  const logCallback = useCallback((callbackName: string, data: unknown) => {
+    const timestamp = new Date().toISOString();
+    const formatted = JSON.stringify(data, jsonReplacer, 2);
+
+    console.log('==================================================');
+    console.log(`=== ${callbackName} [${timestamp}] ===`);
+    console.log('==================================================');
+    console.log(formatted);
+    console.log('==================================================');
+
+    setLastOutput({
+      callbackName,
+      timestamp,
+      data: formatted,
+    });
+
+    return formatted;
+  }, [jsonReplacer]);
+
+  // Callback handlers
+
+  const handleEditItem = useCallback((item: ItemRecord) => {
+    logCallback('EDIT_ITEM', item);
+  }, [logCallback]);
+
+  const handleDeleteItems = useCallback((ids: string[]) => {
+    logCallback('DELETE_ITEMS', { ids, count: ids.length });
+    setItems(prev => prev.filter(i => !ids.includes(i.id)));
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleUpdateItem = useCallback((updatedItem: ItemRecord) => {
+    logCallback('UPDATE_ITEM', updatedItem);
+    setItems(prev => prev.map(i => i.id === updatedItem.id ? updatedItem : i));
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleAddAssets = useCallback((itemId: string, assets: File[]) => {
+    logCallback('ADD_ASSETS', {
+      itemId,
+      assetCount: assets.length,
+      assets: assets.map(f => ({ name: f.name, size: f.size, type: f.type }))
+    });
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleRemoveAssets = useCallback((itemId: string, assetIds: string[]) => {
+    logCallback('REMOVE_ASSETS', { itemId, assetIds, count: assetIds.length });
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleReorderAssets = useCallback((itemId: string, orderedIds: string[]) => {
+    logCallback('REORDER_ASSETS', { itemId, orderedIds });
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleDuplicateItem = useCallback((item: ItemRecord) => {
+    const newId = `item-dup-${Date.now()}`;
+    const duplicated: ItemRecord = { ...item, id: newId, title: `${item.title} (Copy)` };
+    logCallback('DUPLICATE_ITEM', { original: item.id, duplicate: duplicated });
+    setItems(prev => [...prev, duplicated]);
+    setSessionCount(prev => prev + 1);
+  }, [logCallback]);
+
+  const handleSelectionChange = useCallback((selectedIds: string[]) => {
+    logCallback('SELECTION_CHANGE', { selectedIds, count: selectedIds.length });
+  }, [logCallback]);
+
+  const handleResetItems = useCallback(() => {
+    const timestamp = new Date().toISOString();
+    console.log('==================================================');
+    console.log(`=== ITEMS RESET [${timestamp}] ===`);
+    console.log('==================================================');
+    setItems(generateTestHarnessMockItems());
+    setLastOutput(null);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Header section */}
+      <header className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">
+              ItemManager Test Harness
+            </h1>
+            <p className="text-sm text-gray-500">
+              Development & debugging environment (REQ-090)
+            </p>
+          </div>
+          <div className="flex flex-col items-start sm:items-end gap-1">
+            <span className="text-sm text-gray-600">
+              Operations: <span className="font-mono font-bold">{sessionCount}</span>
+            </span>
+            <span className="text-xs text-gray-400">
+              Open DevTools → Network to verify zero requests
+            </span>
+          </div>
+        </div>
+      </header>
+
+      {/* Item count and reset */}
+      <div className="bg-blue-50 border-b border-blue-100 px-4 py-2">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <span className="text-sm text-blue-700">
+            Displaying <strong>{items.length}</strong> mock items
+          </span>
+          <button
+            onClick={handleResetItems}
+            className="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+          >
+            Reset Items
+          </button>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <main className="p-4 pb-72">
+        <div className="max-w-6xl mx-auto">
+          <ItemManager
+            items={items}
+            onEditItem={handleEditItem}
+            onDeleteItems={handleDeleteItems}
+            onUpdateItem={handleUpdateItem}
+            onAddAssets={handleAddAssets}
+            onRemoveAssets={handleRemoveAssets}
+            onReorderAssets={handleReorderAssets}
+            onDuplicateItem={handleDuplicateItem}
+            onSelectionChange={handleSelectionChange}
+            config={{
+              defaultView: 'grid',
+              enableBulkActions: true,
+              enableInlineEdit: true,
+              enableAssetManagement: true,
+              enableDuplicate: true,
+              enableSearch: true,
+              enableFilters: true,
+              enableSort: true,
+            }}
+          />
+        </div>
+      </main>
+
+      {/* Output preview panel */}
+      {lastOutput && (
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-green-400 p-4 max-h-64 overflow-auto shadow-lg">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono text-gray-400">
+              {lastOutput.callbackName} [{lastOutput.timestamp}]
+            </span>
+            <button
+              onClick={() => setLastOutput(null)}
+              className="text-xs text-gray-500 hover:text-gray-300 px-2 py-1"
+            >
+              Dismiss
+            </button>
+          </div>
+          <pre className="text-xs font-mono whitespace-pre-wrap">
+            {lastOutput.data}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /**
  * Test component for useAssetManagement hook.
  */
@@ -642,7 +1011,7 @@ function AssetManagementHookTest() {
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item' | 'drag-drop'>('drag-drop');
+  const [testView, setTestView] = useState<'test-harness' | 'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item' | 'drag-drop'>('test-harness');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -818,6 +1187,16 @@ export default function TestItemManagerPage() {
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setTestView('test-harness')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'test-harness'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Test Harness (REQ-090)
+            </button>
+            <button
               onClick={() => setTestView('drag-drop')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'drag-drop'
@@ -900,6 +1279,9 @@ export default function TestItemManagerPage() {
           </div>
         </div>
       </div>
+
+      {/* Test Harness Section (REQ-090) */}
+      {testView === 'test-harness' && <TestHarnessView />}
 
       {/* useAssetManagement Hook Test Section (REQ-080) */}
       {testView === 'asset-hook' && <AssetManagementHookTest />}

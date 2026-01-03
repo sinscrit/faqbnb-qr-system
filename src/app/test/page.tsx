@@ -1,14 +1,14 @@
 'use client';
 
 /**
- * ItemCapture Test Index Page
+ * Component Test Index Page
  *
- * Central hub for testing all ItemCapture components and flows.
+ * Central hub for testing all ItemCapture and ItemManager components and flows.
  * Provides links to individual test harnesses and documented use cases.
  *
  * @route /test
  * @created 2025-12-31
- * @lastModified 2026-01-03 (REQ-083 - Added AssetDropZone test)
+ * @lastModified 2026-01-03 (REQ-090 - Added ItemManager test harness and use cases)
  */
 
 import Link from 'next/link';
@@ -24,6 +24,11 @@ const mainTests: TestLink[] = [
     href: '/test/item-capture',
     title: 'Full Wizard',
     description: 'Complete ItemCapture flow - metadata → content → capture → edit → review',
+  },
+  {
+    href: '/test/item-manager',
+    title: 'ItemManager',
+    description: 'Browse, filter, select, and manage item collection with all callbacks',
   },
 ];
 
@@ -206,6 +211,81 @@ const useCases: UseCase[] = [
       'Verify state is cleared',
     ],
   },
+  // ItemManager Use Cases (REQ-090)
+  {
+    title: 'Use Case: Grid/List View Toggle',
+    testPath: '/test/item-manager',
+    steps: [
+      'Go to ItemManager test page',
+      'View items in default grid layout',
+      'Click list view toggle button',
+      'Verify items display as rows with metadata columns',
+      'Toggle back to grid view',
+    ],
+  },
+  {
+    title: 'Use Case: Search and Filter Items',
+    testPath: '/test/item-manager',
+    steps: [
+      'Go to ItemManager test page',
+      'Type "coffee" in search box',
+      'Verify only matching items appear',
+      'Click content type filter for "Video"',
+      'Verify filter combines with search',
+      'Click "Clear filters" to reset',
+    ],
+  },
+  {
+    title: 'Use Case: Multi-Select and Bulk Delete',
+    testPath: '/test/item-manager',
+    steps: [
+      'Go to ItemManager test page',
+      'Enter selection mode (checkbox icon)',
+      'Select 3 items using checkboxes',
+      'Verify bulk action bar appears with count',
+      'Click delete button in bulk bar',
+      'Confirm deletion in dialog',
+      'Verify console logs DELETE_ITEMS with 3 IDs',
+      'Verify items are removed from display',
+    ],
+  },
+  {
+    title: 'Use Case: Inline Edit Title',
+    testPath: '/test/item-manager',
+    steps: [
+      'Go to ItemManager test page',
+      'Click on an item title to edit inline',
+      'Change the title text',
+      'Press Enter or click outside to save',
+      'Verify console logs UPDATE_ITEM with new title',
+    ],
+  },
+  {
+    title: 'Use Case: Item Preview Modal',
+    testPath: '/test/item-manager',
+    steps: [
+      'Go to ItemManager test page',
+      'Click on an item card (not the checkbox)',
+      'Verify preview modal opens with item details',
+      'Swipe through media gallery if multiple media',
+      'Scroll to view instructions text',
+      'Click Edit button - verify EDIT_ITEM logged',
+      'Close modal with X button or Escape key',
+      'Verify focus returns to triggering element',
+    ],
+  },
+  {
+    title: 'Use Case: Verify Zero Network Requests',
+    testPath: '/test/item-manager',
+    steps: [
+      'Open browser DevTools → Network tab',
+      'Clear network log',
+      'Navigate to ItemManager test page',
+      'Perform: search, filter, select, delete, inline edit',
+      'Verify Network tab shows only static assets (JS, CSS)',
+      'Confirm zero API requests to backend endpoints',
+    ],
+  },
 ];
 
 function TestLinkCard({ href, title, description }: TestLink) {
@@ -249,9 +329,9 @@ export default function TestIndexPage() {
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">ItemCapture Test Harness</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Component Test Harness</h1>
           <p className="text-gray-600 mt-2">
-            Test all ItemCapture wizard components and flows. Open DevTools Console to see output.
+            Test all ItemCapture and ItemManager components and flows. Open DevTools Console to see output.
           </p>
         </div>
 
@@ -327,7 +407,7 @@ export default function TestIndexPage() {
 
         {/* Footer */}
         <footer className="text-center text-sm text-gray-500 py-4">
-          ItemCapture Test Harness • Generated 2025-12-31
+          Component Test Harness • Last Updated 2026-01-03
         </footer>
       </div>
     </div>
