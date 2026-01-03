@@ -179,3 +179,11 @@ export type {
 
 export { AssetRemoveConfirmDialog } from './components/AssetPanel';
 export type { AssetRemoveConfirmDialogProps } from './components/AssetPanel';
+
+// =============================================================================
+// InlineEdit Component Export (REQ-086)
+// =============================================================================
+
+export { InlineEdit } from './components/shared/InlineEdit';
+export { default as InlineEditDefault } from './components/shared/InlineEdit';
+export type { InlineEditProps, InlineEditState } from './components/shared/InlineEdit';
