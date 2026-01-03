@@ -208,3 +208,21 @@ body {
 .animate-out.slide-out-to-bottom {
   animation: slideOutToBottom 300ms ease-in forwards;
 }
+
+/* =============================================================================
+ * Screen Reader Only (REQ-090)
+ * Visually hides content while keeping it accessible to screen readers
+ * @lastModified 2026-01-03
+ * ============================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

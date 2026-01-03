@@ -17,7 +17,7 @@
  *
  * @module ItemManager/components/ItemPreview
  * @see docs/REQ-079-add-preview-actions-detailed.md
- * @lastModified 2026-01-03 (REQ-079 - Added preview actions)
+ * @lastModified 2026-01-03 (REQ-090 Task 8 - Enhanced accessibility)
  */
 
 import { useEffect, useState, useRef, useCallback } from 'react';
@@ -355,11 +355,11 @@ export function ItemPreviewModal({
         </Dialog.Content>
       </Dialog.Portal>
 
-      {/* Delete Confirmation Dialog (Task 4.6.5) */}
+      {/* Delete Confirmation Dialog (Task 4.6.5, REQ-090 - Enhanced accessibility) */}
       {showDeleteConfirm && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]"
-          role="dialog"
+          role="alertdialog"
           aria-modal="true"
           aria-labelledby="delete-confirm-title"
           aria-describedby="delete-confirm-description"
@@ -367,7 +367,7 @@ export function ItemPreviewModal({
           onKeyDown={handleDialogKeyDown}
         >
           <div
-            className="bg-white rounded-lg p-6 max-w-sm mx-4 w-full"
+            className="bg-white rounded-lg p-6 max-w-sm mx-4 w-full shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3

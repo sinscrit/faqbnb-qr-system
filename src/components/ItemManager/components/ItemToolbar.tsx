@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/ItemToolbar
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.2)
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-03 (REQ-090 - Added accessibility features)
  */
 
 import { cn } from '@/lib/utils';
@@ -181,19 +181,27 @@ interface SearchPlaceholderProps {
  */
 function SearchPlaceholder({ value, onChange, placeholder }: SearchPlaceholderProps) {
   return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={cn(
-        'w-full px-4 text-sm',
-        'min-h-[48px] md:min-h-0 md:py-2',
-        'border border-gray-300 rounded-lg bg-white',
-        'placeholder:text-gray-400',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-      )}
-    />
+    <div className="relative">
+      <input
+        type="search"
+        role="searchbox"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label="Search items"
+        aria-describedby="search-hint"
+        className={cn(
+          'w-full px-4 text-sm',
+          'min-h-[48px] md:min-h-0 md:py-2',
+          'border border-gray-300 rounded-lg bg-white',
+          'placeholder:text-gray-400',
+          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+        )}
+      />
+      <span id="search-hint" className="sr-only">
+        Search by title, location, or tags
+      </span>
+    </div>
   );
 }
 
@@ -225,6 +233,7 @@ function SortPlaceholder({ sortBy, onSortChange }: SortPlaceholderProps) {
     <select
       value={sortBy}
       onChange={(e) => onSortChange(e.target.value as SortOption)}
+      aria-label="Sort items"
       className={cn(
         'px-3 text-sm',
         'min-h-[48px] md:min-h-0 md:py-2',
@@ -312,6 +321,8 @@ export function ItemToolbar({
 
   return (
     <div
+      role="toolbar"
+      aria-label="Item management controls"
       className={cn(
         'flex flex-col gap-4 p-4 bg-white border-b border-gray-200',
         classNames.container

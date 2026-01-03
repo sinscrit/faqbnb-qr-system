@@ -9,13 +9,14 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-088 Task 8-9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-03 (REQ-090 Task 2 - Added accessibility features)
  */
 
-import { useCallback, useMemo, useEffect, useState } from 'react';
-import { Tag, Minus, FolderInput } from 'lucide-react';
+import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import { Tag, Minus, FolderInput, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
+import { useAnnounce } from './utils/a11yUtils';
 import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
 import { ItemToolbar } from './components/ItemToolbar';
@@ -135,6 +136,13 @@ export function ItemManager({
     hasFilters,
     isItemSelected,
   } = useItemManagerState(effectiveConfig);
+
+  // -------------------------------------------------------------------------
+  // Accessibility Announcements (REQ-090)
+  // -------------------------------------------------------------------------
+
+  const { announce, AnnouncerRegion } = useAnnounce();
+  const prevSelectedCountRef = useRef<number>(0);
 
   // -------------------------------------------------------------------------
   // Bulk Tag Dialog State
@@ -279,6 +287,20 @@ export function ItemManager({
       onSelectionChange(selectedArray);
     }
   }, [state.selectedIds, onSelectionChange, debugLog]);
+
+  // Announce selection changes for screen readers (REQ-090)
+  useEffect(() => {
+    const currentCount = selectedCount;
+    const prevCount = prevSelectedCountRef.current;
+
+    if (currentCount !== prevCount && currentCount > 0) {
+      announce(`${currentCount} item${currentCount !== 1 ? 's' : ''} selected`);
+    } else if (currentCount === 0 && prevCount > 0) {
+      announce('Selection cleared');
+    }
+
+    prevSelectedCountRef.current = currentCount;
+  }, [selectedCount, announce]);
 
   // -------------------------------------------------------------------------
   // Bulk Tag Handlers
@@ -560,7 +582,14 @@ export function ItemManager({
   // -------------------------------------------------------------------------
 
   return (
-    <div className={cn('flex flex-col h-full bg-white', classNames?.container)}>
+    <div
+      role="region"
+      aria-label="Item manager"
+      className={cn('flex flex-col h-full bg-white', classNames?.container)}
+    >
+      {/* Screen reader announcements (REQ-090) */}
+      <AnnouncerRegion />
+
       {/* Toolbar Area */}
       <div className={classNames?.toolbar}>
         {renderToolbar ? (
@@ -593,37 +622,50 @@ export function ItemManager({
         {renderContent}
       </div>
 
-      {/* Bulk Actions Bar */}
+      {/* Bulk Actions Bar (REQ-090 - Added accessibility) */}
       {effectiveConfig.enableBulkActions && hasSelection && (
-        <div className={cn(
-          'fixed bottom-4 left-1/2 -translate-x-1/2',
-          'bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg',
-          'flex items-center gap-4'
-        )}>
-          <span className="font-medium">{selectedCount} selected</span>
-          <div className="h-4 w-px bg-gray-600" />
+        <div
+          role="toolbar"
+          aria-label={`Bulk actions for ${selectedCount} selected items`}
+          className={cn(
+            'fixed bottom-4 left-1/2 -translate-x-1/2',
+            'bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg',
+            'flex items-center gap-4'
+          )}
+        >
+          {/* Screen reader announcement */}
+          <span className="sr-only" aria-live="polite">
+            {selectedCount} items selected. Bulk actions available.
+          </span>
+
+          <span className="font-medium" aria-hidden="true">{selectedCount} selected</span>
+          <div className="h-4 w-px bg-gray-600" aria-hidden="true" />
           <button
             onClick={handleBulkAddTag}
             disabled={bulkLoading || bulkMoveLoading}
+            aria-label="Add tag to selected items"
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
               'bg-blue-600 hover:bg-blue-700 transition-colors',
+              'focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900',
               (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
             )}
           >
-            <Tag className="h-4 w-4" />
+            <Tag className="h-4 w-4" aria-hidden="true" />
             Add Tag
           </button>
           <button
             onClick={handleBulkRemoveTag}
             disabled={bulkLoading || bulkMoveLoading}
+            aria-label="Remove tag from selected items"
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
               'bg-orange-600 hover:bg-orange-700 transition-colors',
+              'focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900',
               (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
             )}
           >
-            <Minus className="h-4 w-4" />
+            <Minus className="h-4 w-4" aria-hidden="true" />
             Remove Tag
           </button>
           {/* Move to... button - only in multi-property mode */}
@@ -631,22 +673,31 @@ export function ItemManager({
             <button
               onClick={handleBulkMove}
               disabled={bulkLoading || bulkMoveLoading}
+              aria-label="Move selected items to another property"
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
                 'bg-purple-600 hover:bg-purple-700 transition-colors',
+                'focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900',
                 (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
               )}
             >
-              <FolderInput className="h-4 w-4" />
+              <FolderInput className="h-4 w-4" aria-hidden="true" />
               Move to...
             </button>
           )}
-          <div className="h-4 w-px bg-gray-600" />
+          <div className="h-4 w-px bg-gray-600" aria-hidden="true" />
           <button
             onClick={clearSelection}
-            className="text-sm text-gray-300 hover:text-white underline hover:no-underline"
+            aria-label="Clear selection"
+            className={cn(
+              'flex items-center justify-center min-h-[44px] min-w-[44px] px-2',
+              'text-gray-300 hover:text-white hover:bg-white/10 rounded-md',
+              'focus:outline-none focus:ring-2 focus:ring-white/50',
+              'transition-colors'
+            )}
           >
-            Clear
+            <X className="h-5 w-5" aria-hidden="true" />
+            <span className="sr-only">Clear selection</span>
           </button>
         </div>
       )}

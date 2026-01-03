@@ -9,7 +9,7 @@
  * of title, location, and tags (REQ-087, REQ-088).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-03 (REQ-090 Task 7 - Enhanced accessibility)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -247,11 +247,15 @@ export function ItemRow({
     }
   };
 
+  // Build comprehensive aria-label
+  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Created ${formatDate(item.createdAt)}.${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
+
   return (
     <div
       role="row"
       tabIndex={0}
-      aria-label={`Item: ${item.title}`}
+      aria-label={ariaLabel}
+      aria-selected={isSelectionMode ? isSelected : undefined}
       onClick={handleRowClick}
       onKeyDown={handleKeyDown}
       className={cn(
@@ -427,6 +431,7 @@ export function ItemRow({
         {menuOpen && (
           <div
             role="menu"
+            aria-label={`Actions for ${item.title}`}
             className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20"
           >
             {menuItems
@@ -445,11 +450,12 @@ export function ItemRow({
                     'w-full flex items-center gap-2 px-4 text-sm text-left',
                     'min-h-[48px]',
                     'hover:bg-gray-50 transition-colors',
+                    'focus:outline-none focus:bg-gray-100',
                     'touch-manipulation',
-                    menuItem.danger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'
+                    menuItem.danger ? 'text-red-600 hover:bg-red-50 focus:bg-red-50' : 'text-gray-700'
                   )}
                 >
-                  <menuItem.icon className="w-4 h-4" />
+                  <menuItem.icon className="w-4 h-4" aria-hidden="true" />
                   {menuItem.label}
                 </button>
               ))}

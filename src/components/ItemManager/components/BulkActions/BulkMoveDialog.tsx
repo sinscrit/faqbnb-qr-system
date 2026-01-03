@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/BulkActions/BulkMoveDialog
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 3, Task 3.6)
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-03 (REQ-090 Task 11 - Enhanced accessibility with focus trap)
  */
 
 import React, {
@@ -21,6 +21,7 @@ import React, {
 } from 'react';
 import { X, FolderInput, Building, ChevronDown, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '../../utils/a11yUtils';
 import type { ItemRecord } from '@/components/ItemCapture/ItemCapture.types';
 
 // =============================================================================
@@ -383,10 +384,11 @@ export function BulkMoveDialog({
   const selectLabelId = `bulk-move-select-label-${uniqueId}`;
 
   // ---------------------------------------------------------------------------
-  // Refs
+  // Refs and Focus Trap (REQ-090)
   // ---------------------------------------------------------------------------
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useFocusTrap(dialogRef, true);
 
   // ---------------------------------------------------------------------------
   // State
@@ -432,38 +434,7 @@ export function BulkMoveDialog({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onCancel, loading]);
 
-  // Focus trap - keep focus within dialog
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    // Set initial focus to the close button (or first focusable element)
-    closeButtonRef.current?.focus();
-
-    const handleFocusTrap = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-
-      const focusableElements = dialog.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-
-      if (focusableElements.length === 0) return;
-
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-
-      if (e.shiftKey && document.activeElement === firstElement) {
-        e.preventDefault();
-        lastElement.focus();
-      } else if (!e.shiftKey && document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement.focus();
-      }
-    };
-
-    document.addEventListener('keydown', handleFocusTrap);
-    return () => document.removeEventListener('keydown', handleFocusTrap);
-  }, []);
+  // Note: Focus trap is now handled by useFocusTrap hook (REQ-090)
 
   // ---------------------------------------------------------------------------
   // Handlers

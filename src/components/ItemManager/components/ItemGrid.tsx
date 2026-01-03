@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemCard component.
  *
  * @module ItemManager/components/ItemGrid
- * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-03 (REQ-090 Task 4 - Added accessibility features)
  */
 
 import { cn } from '@/lib/utils';
@@ -24,7 +24,8 @@ export function ItemGrid({
   enableInlineEdit,
   onUpdateItem,
   existingTags,
-}: ItemGridProps) {
+  loading,
+}: ItemGridProps & { loading?: boolean }) {
   return (
     <div
       className={cn(
@@ -33,20 +34,23 @@ export function ItemGrid({
         className
       )}
       role="grid"
-      aria-label={`Item grid with ${items.length} item${items.length !== 1 ? 's' : ''}`}
+      aria-label={`${items.length} item${items.length !== 1 ? 's' : ''}`}
+      aria-busy={loading}
+      aria-describedby={items.length === 0 ? 'empty-message-grid' : undefined}
     >
       {items.map((item) => (
-        <ItemCard
-          key={item.id}
-          item={item}
-          onPreviewClick={onItemPreview}
-          onSelectionChange={onSelectionChange}
-          isSelected={selectedIds.has(item.id)}
-          isSelectionMode={isSelectionMode}
-          enableInlineEdit={enableInlineEdit}
-          onUpdateItem={onUpdateItem}
-          existingTags={existingTags}
-        />
+        <div key={item.id} role="gridcell">
+          <ItemCard
+            item={item}
+            onPreviewClick={onItemPreview}
+            onSelectionChange={onSelectionChange}
+            isSelected={selectedIds.has(item.id)}
+            isSelectionMode={isSelectionMode}
+            enableInlineEdit={enableInlineEdit}
+            onUpdateItem={onUpdateItem}
+            existingTags={existingTags}
+          />
+        </div>
       ))}
     </div>
   );

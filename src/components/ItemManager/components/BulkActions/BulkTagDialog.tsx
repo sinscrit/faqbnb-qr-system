@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/BulkActions/BulkTagDialog
  * @see docs/REQ-072-implement-bulktagdialog-detailed.md
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-03 (REQ-090 Task 10 - Enhanced accessibility with focus trap)
  */
 
 import React, {
@@ -21,6 +21,7 @@ import React, {
 } from 'react';
 import { X, Tag, Minus, Loader2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '../../utils/a11yUtils';
 import type { ItemRecord } from '@/components/ItemCapture/ItemCapture.types';
 
 // =============================================================================
@@ -119,6 +120,12 @@ export function BulkTagDialog({
   // ---------------------------------------------------------------------------
   const uniqueId = useId();
   const titleId = `bulk-tag-title-${uniqueId}`;
+
+  // ---------------------------------------------------------------------------
+  // Refs and Focus Trap (REQ-090)
+  // ---------------------------------------------------------------------------
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
 
   // ---------------------------------------------------------------------------
   // Add Mode State
@@ -288,6 +295,7 @@ export function BulkTagDialog({
       }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

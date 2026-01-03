@@ -13,7 +13,7 @@
  * - Inline editing of title, location, and tags (REQ-087, REQ-088)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-03 (REQ-090 Task 6 - Enhanced accessibility)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -161,11 +161,17 @@ export function ItemCard({
     }
   };
 
+  // Build aria-label with full context
+  const ariaLabel = isSelectionMode
+    ? `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. ${isSelected ? 'Selected.' : 'Not selected.'} Press Enter to ${isSelected ? 'deselect' : 'select'}, or click to preview.`
+    : `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Press Enter to preview.`;
+
   return (
-    <div
+    <article
       role="button"
       tabIndex={0}
-      aria-label={`View ${item.title}`}
+      aria-label={ariaLabel}
+      aria-pressed={isSelectionMode ? isSelected : undefined}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       className={cn(
@@ -317,7 +323,7 @@ export function ItemCard({
           )
         )}
       </div>
-    </div>
+    </article>
   );
 }
 

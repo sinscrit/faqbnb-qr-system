@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/shared/EmptyState
  * @see docs/REQ-061-implement-empty-and-loading-states-detailed.md
- * @lastModified 2026-01-03 (REQ-061 Task 1.7.2)
+ * @lastModified 2026-01-03 (REQ-090 Task 17 - Added accessibility features)
  */
 
 import { Package } from 'lucide-react';
@@ -52,9 +52,13 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('text-center py-12', className)}>
-      {/* Icon container */}
-      <div className="text-gray-400 mb-4 flex justify-center">
+    <div
+      role="status"
+      aria-label={`${title}. ${description}`}
+      className={cn('text-center py-12', className)}
+    >
+      {/* Icon container - decorative */}
+      <div className="text-gray-400 mb-4 flex justify-center" aria-hidden="true">
         {icon ?? <Package className="w-12 h-12" />}
       </div>
 
