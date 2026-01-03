@@ -59,6 +59,16 @@ export type {
 } from '@/components/ItemCapture';
 
 // =============================================================================
+// Hook Exports (REQ-057 Task 1.2)
+// =============================================================================
+
+export { useItemManagerState } from './hooks/useItemManagerState';
+export type { UseItemManagerStateReturn } from './hooks/useItemManagerState';
+
+// Also export the utilities for testing
+export { createInitialState, itemManagerReducer } from './hooks/useItemManagerState';
+
+// =============================================================================
 // Main Component Export (Task 1.3)
 // =============================================================================
 // export { ItemManager } from './ItemManager';
