@@ -3393,3 +3393,1395 @@ Reduces development time and increases confidence in changes by providing immedi
 - [ ] Test page can be accessed without authentication or special configuration
 - [ ] Console output is clearly formatted and includes all expected data fields
 
+
+---
+
+## REQ-056: ItemManager Component Foundation and Type System
+
+**Date**: 2026-01-02 16:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The ItemManager component requires a proper directory structure and complete type system that defines all interfaces, data structures, and configuration options needed to support item listing, filtering, selection, and management operations.
+
+### Current Behavior
+The ItemManager component does not yet exist in the codebase. Property owners currently have no interface for browsing, searching, or managing their library of instructional items after creation.
+
+### Expected Behavior
+A foundational component structure is established with:
+- A dedicated component directory at the proper location in the source tree
+- Complete TypeScript type definitions covering all component props, callbacks, configuration options, and data structures
+- Barrel exports that provide clean import paths for consuming code
+- Integration with existing shared types from the ItemCapture component to maintain consistency across the item lifecycle
+
+### User Impact
+Development team members implementing ItemManager features will have a clear type contract to follow, ensuring consistency in data handling and reducing integration errors when connecting the manager to backend services and the ItemCapture editing workflow.
+
+### Business Value
+Establishing types upfront prevents rework, clarifies component responsibilities, and ensures the interface can properly receive data and emit actions without tight coupling to persistence or routing concerns.
+
+### Acceptance Criteria
+- [ ] Component directory exists at the expected location in the source tree
+- [ ] Type definition file contains all interfaces specified in the component PRD
+- [ ] Barrel export file allows importing ItemManager types and components from a single entry point
+- [ ] Shared types from ItemCapture (ItemRecord, MediaItem, Property) are imported and reused
+- [ ] No implementation logic exists yet, only structural files and type definitions
+- [ ] TypeScript compilation succeeds with no type errors in the new files
+- [ ] File contains proper documentation comments for exported interfaces
+
+---
+
+## REQ-057: Item Manager State Management Hook
+
+**Date**: 2026-01-02 17:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The Item Manager component requires a centralized state management hook that coordinates view modes, filtering, sorting, and multi-item selection across the item listing interface.
+
+### Current Behavior
+The ItemManager component has no internal state management mechanism. Users cannot switch between different viewing layouts, filter or sort their item collection, or select multiple items for batch operations.
+
+### Expected Behavior
+A custom React hook manages all core presentation and interaction state for the item manager:
+- Users can toggle between different view modes (grid, list, or other layout options) and the interface responds by rearranging the displayed items accordingly
+- Users can apply filters to narrow down visible items based on criteria such as content type, creation date, or status
+- Users can change the sort order of displayed items using various sorting criteria
+- Users can select individual items or multiple items simultaneously for bulk actions
+- State transitions are handled through a reducer pattern that ensures predictable and traceable state updates
+- The state hook integrates cleanly with the component's props and can be controlled externally when needed
+
+### User Impact
+Property owners will gain fundamental interaction capabilities needed to navigate and manage large collections of instructional items, making the interface practical for real-world use with dozens or hundreds of items.
+
+### Business Value
+Implementing robust state management early prevents architectural refactoring later and ensures the component can scale to support advanced features like saved filters, bulk editing, and synchronized state across multiple views.
+
+### Acceptance Criteria
+- [ ] State management hook file exists and exports a single primary hook function
+- [ ] View mode state can be toggled between supported layout types and persists across interactions
+- [ ] Filter state accepts multiple filter criteria and correctly manages active filter combinations
+- [ ] Sort state tracks current sort field and direction (ascending/descending)
+- [ ] Selection state manages a collection of selected item identifiers and supports select-all and clear-all operations
+- [ ] All state transitions are handled by a reducer function that processes typed action objects
+- [ ] Hook returns both current state values and dispatch functions for triggering state changes
+- [ ] Hook can be initialized with default or externally-provided state values
+- [ ] State shape matches the interfaces defined in the component's type system
+- [ ] No UI rendering logic exists in the hook - only state management
+- [ ] TypeScript compilation succeeds with full type safety for all state operations
+
+
+---
+
+## REQ-058: ItemCard Component for Grid View Display
+
+**Date**: 2026-01-02 17:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The Item Manager requires a visual card component that displays individual items in a grid layout, showing key metadata and supporting user interactions for preview and selection.
+
+### Current Behavior
+The ItemManager component has no visual representation for displaying individual items. Property owners cannot see their collection of instructional items or interact with them through a visual interface.
+
+### Expected Behavior
+A reusable card component renders each item with:
+- A thumbnail image or type-specific visual placeholder at the top of the card
+- The item's title displayed prominently below the thumbnail
+- The associated location or room name shown beneath the title
+- A visual badge or indicator showing the content type (photo, video, document, text, or upload)
+- Clickable card surface that opens a preview or detail view of the item when tapped or clicked
+- A selection checkbox that appears when the interface enters selection mode, allowing users to mark the item for batch operations
+- Visual feedback indicating the current selection state when the checkbox is visible and checked
+
+### User Impact
+Property owners will be able to browse their item collection visually, quickly identify items by thumbnail and title, understand what type of content each item contains, open items for detailed viewing, and select multiple items for batch operations when needed.
+
+### Business Value
+A well-designed card component creates an intuitive browsing experience that scales from small collections to large libraries, reducing the cognitive load of managing instructional content and encouraging property owners to create comprehensive guest information.
+
+### Acceptance Criteria
+- [ ] ItemCard component file exists in the ItemManager component directory
+- [ ] Card displays a thumbnail image when the item has associated media
+- [ ] Card shows a type-appropriate placeholder when no thumbnail is available
+- [ ] Item title is displayed with appropriate text truncation for long titles
+- [ ] Location or room name appears below the title
+- [ ] Content type badge is visible and uses distinct visual styling for each content type
+- [ ] Clicking anywhere on the card (except the checkbox) triggers the preview callback
+- [ ] Selection checkbox is hidden by default and only appears when selection mode is active
+- [ ] Checking the checkbox triggers the selection callback with the item's identifier
+- [ ] Card provides visual feedback (hover state, active state) during user interaction
+- [ ] Component accepts all necessary props defined in the ItemManager type system
+- [ ] Component is responsive and adapts to different grid column widths
+- [ ] TypeScript compilation succeeds with no type errors
+
+---
+
+## REQ-059: ItemRow Component for List View Display
+
+**Date**: 2026-01-02 (Current Time)
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users should be able to view captured items in a list format that displays comprehensive metadata and provides quick access to item actions and selection controls.
+
+### Current Behavior
+No list view option exists for displaying captured items with detailed metadata.
+
+### Expected Behavior
+When users select list view mode, each captured item appears as a row showing:
+- Item thumbnail or icon
+- Item title and description
+- Associated tags
+- Creation and modification dates
+- Action menu accessible via a kebab menu icon
+- Selection checkbox for bulk operations
+
+Users can:
+- Click the checkbox to select/deselect individual items
+- Click the kebab menu to access item-specific actions (edit, delete, share, etc.)
+- Click anywhere else on the row to view full item details
+
+### User Impact
+All users who need to manage multiple captured items will benefit from:
+- Faster scanning of item metadata without opening individual items
+- Easier comparison of multiple items side-by-side
+- More efficient bulk selection for batch operations
+- Better utilization of screen space on wider displays
+
+### Business Value
+List view is a standard pattern in content management interfaces that improves user productivity when managing collections. This complements the grid view option and accommodates different user preferences and use cases.
+
+### Acceptance Criteria
+- [ ] List view displays all captured items as horizontal rows
+- [ ] Each row shows item thumbnail, title, description, tags, and dates
+- [ ] Checkbox appears on each row and toggles item selection state
+- [ ] Kebab menu icon appears on each row and opens contextual action menu
+- [ ] Row background highlights on hover to indicate interactivity
+- [ ] Clicking the row (excluding checkbox and kebab menu) navigates to item details
+- [ ] Row layout adapts responsively to different screen widths
+- [ ] Selected rows display visual indication (e.g., background color change)
+
+---
+
+## REQ-060: Grid and List View Layout Components with Toggle
+
+**Date**: 2026-01-02 14:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to switch between grid and list display modes when viewing their collection of captured items, with each mode optimized for different browsing and management needs.
+
+### Current Behavior
+The Item Manager does not provide alternate view modes for displaying captured items. Users can only view items in a single, fixed layout format regardless of their current task or preference.
+
+### Expected Behavior
+The Item Manager displays a view mode toggle control (typically icons for grid and list) that allows users to switch between two layout modes:
+
+**Grid View Mode:**
+- Items are arranged in a responsive grid with multiple columns
+- Grid automatically adjusts column count based on available screen width (e.g., 4 columns on desktop, 2 on tablet, 1 on mobile)
+- Each grid cell displays an item using the card component format
+- Grid maintains consistent spacing and alignment across all items
+- Layout emphasizes visual browsing with thumbnails prominently displayed
+
+**List View Mode:**
+- Items are arranged in a vertical single-column format
+- Each item appears as a horizontal row showing comprehensive metadata
+- List format provides a table-like structure optimized for scanning detailed information
+- Layout emphasizes efficiency and information density
+
+**Toggle Behavior:**
+- View mode toggle control is always visible when items are present
+- Clicking the grid icon switches to grid view and updates the display immediately
+- Clicking the list icon switches to list view and updates the display immediately
+- The currently active view mode is visually indicated in the toggle control
+- Selected view mode preference persists during the user session
+
+### User Impact
+All property owners managing instructional items will benefit from:
+- Flexibility to choose the view that best suits their current task (visual browsing vs. detailed management)
+- Better experience on different device sizes with appropriately responsive layouts
+- Faster visual scanning when using grid view for thumbnail-based navigation
+- More efficient metadata review when using list view for detailed item comparison
+- Personalized interface that adapts to individual workflow preferences
+
+### Business Value
+Providing multiple view modes is a standard pattern in content management systems that significantly improves user satisfaction and efficiency. Users with different cognitive preferences, tasks, and device contexts all gain a better experience, which increases engagement with the item management features and encourages more comprehensive property documentation.
+
+### Acceptance Criteria
+- [ ] Grid layout component renders items in a responsive multi-column grid
+- [ ] Grid automatically adjusts column count based on viewport width (responsive breakpoints)
+- [ ] Grid layout maintains consistent spacing between items and consistent item sizing
+- [ ] List layout component renders items in a single-column vertical arrangement
+- [ ] List layout displays rows with table-like structure and consistent column alignment
+- [ ] View mode toggle control appears in the Item Manager interface header or toolbar
+- [ ] Toggle control displays distinct icons for grid and list modes
+- [ ] Clicking grid icon switches display to grid layout immediately
+- [ ] Clicking list icon switches display to list layout immediately
+- [ ] Currently active view mode is visually highlighted in the toggle control
+- [ ] Switching between views preserves item selection state (selected items remain selected)
+- [ ] Both layouts work correctly with empty state (no items to display)
+- [ ] Both layouts work correctly with single item and multiple items
+- [ ] TypeScript compilation succeeds with no type errors
+- [ ] Layouts render correctly across different viewport sizes and devices
+
+
+---
+
+## REQ-061: Empty and Loading State Components
+
+**Date**: 2026-01-02 (Current Session)
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should display appropriate visual feedback when content is loading or when no items are available to display.
+
+### Current Behavior
+There is no standardized way to communicate loading progress or empty collection states to users within the item capture workflow.
+
+### Expected Behavior
+When the system is fetching or processing data, users see a skeleton loading animation that matches the expected content layout. When a collection contains no items, users see a friendly empty state message with relevant guidance or next steps.
+
+### User Impact
+Users managing item collections will have clear visual feedback during loading operations and will understand when a collection is intentionally empty versus still loading. This reduces confusion and improves perceived performance.
+
+### Business Value
+Proper loading and empty states improve user confidence in the application and reduce support inquiries related to "broken" or "stuck" interfaces.
+
+### Acceptance Criteria
+- [ ] Empty state displays a clear message and optional guidance when no items exist in a collection
+- [ ] Loading state shows a skeleton animation that reflects the structure of the content being loaded
+- [ ] Both states are visually consistent with the application's design system
+- [ ] Loading state smoothly transitions to content or empty state once data is available
+- [ ] Empty state provides actionable next steps where appropriate
+
+
+---
+
+## REQ-062: Search, Filter, and Sort Hook for Item Management
+
+**Date**: 2026-01-02 15:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need the ability to search, filter, and sort their captured items to quickly find specific content within their collection.
+
+### Current Behavior
+Users must manually scroll through their entire item collection to find specific items, with no ability to narrow down results based on search criteria, filters, or custom sorting preferences.
+
+### Expected Behavior
+Users can:
+- Enter search text to instantly filter items matching their title, location, tags, or instructions
+- Apply filters to narrow down items by specific criteria
+- Choose different sort orders to organize items according to their preference
+- See results update in real-time as they type or change filter/sort settings
+- Clear search and filters to return to viewing all items
+
+### User Impact
+All users managing multiple items will benefit from faster item discovery and improved organization. This is especially valuable for users with large collections where manual browsing becomes time-consuming and inefficient.
+
+### Business Value
+Improves user productivity and satisfaction by reducing the time needed to locate specific items. Essential foundation for scaling the application to handle large item collections without degrading user experience.
+
+### Acceptance Criteria
+- [ ] Search functionality returns items when query matches any part of the item's title, location, tags, or instructions (case-insensitive)
+- [ ] Multiple filters can be applied simultaneously, with results showing only items that match all active filters
+- [ ] Sort options reorder the entire result set according to the selected comparator
+- [ ] When search query is empty and no filters are active, all items are returned in the selected sort order
+- [ ] Changes to search, filter, or sort settings produce immediate results without requiring a manual refresh
+- [ ] The hook returns the filtered and sorted items array ready for display
+
+
+---
+
+## REQ-063: Item Toolbar with View Controls and Filter Management
+
+**Date**: 2026-01-02 (Current Session)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a toolbar interface that allows them to control how items are displayed, see how many results match their current filters, and quickly reset all applied filters.
+
+### Current Behavior
+There is no unified toolbar interface for managing item display preferences and filter state visibility.
+
+### Expected Behavior
+Users see a toolbar above the item listing that includes:
+- Toggle controls to switch between different view modes (e.g., grid, list, table)
+- A display showing the current count of items matching active filters
+- A clearly visible action to remove all active filters at once
+- Visual feedback indicating which view mode is currently active
+
+### User Impact
+All users browsing or managing items will have immediate access to view customization and filter management, improving their ability to find and organize information efficiently.
+
+### Business Value
+Provides essential navigation and control features that improve user experience and reduce friction when working with filtered or sorted item collections.
+
+### Acceptance Criteria
+- [ ] Toolbar is visible and positioned consistently above item listings
+- [ ] View toggle buttons allow switching between available display modes
+- [ ] Active view mode is clearly indicated visually
+- [ ] Result count updates dynamically as filters are applied or removed
+- [ ] "Clear filters" action is accessible and removes all active filters when triggered
+- [ ] Toolbar layout adapts gracefully to different screen sizes
+- [ ] All toolbar controls are keyboard accessible
+
+
+---
+
+## REQ-064: Search Input Interface for Item Filtering
+
+**Date**: 2026-01-02 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need a responsive search input field to quickly filter and find items in their collection using text-based queries.
+
+### Current Behavior
+Users can only browse items through views and applied filters without the ability to perform text-based searches for specific items or content.
+
+### Expected Behavior
+Users see a search input field that allows them to type search queries and immediately see matching items. The search updates smoothly without lag or performance issues. Users can clear the search with a single action to return to the full item list.
+
+### User Impact
+All users managing item collections will be able to quickly locate specific items by typing keywords, significantly reducing time spent browsing through long lists or applying multiple filters.
+
+### Business Value
+Search functionality is a fundamental expectation for content management interfaces. Providing responsive, intuitive search improves user efficiency and satisfaction when working with medium to large item collections.
+
+### Acceptance Criteria
+- [ ] Search input field is prominently displayed and easily accessible
+- [ ] Input updates trigger filtering with a slight delay to prevent performance degradation during typing
+- [ ] A clear button appears when search text is present and removes all search text when activated
+- [ ] Search field displays an appropriate icon indicating its purpose
+- [ ] Search field styling is consistent with the overall design system
+- [ ] Search remains functional and responsive with collections of varying sizes
+- [ ] Search input is keyboard accessible and supports standard navigation patterns
+- [ ] Visual feedback indicates when search is active (e.g., highlighted state, result count)
+
+
+---
+
+## REQ-065: Advanced Filter Panel for Multi-Criteria Item Filtering
+
+**Date**: 2026-01-02 
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users need a comprehensive filter panel to refine item listings by multiple criteria simultaneously including content type, tags, location, and property association.
+
+### Current Behavior
+Users can only search for items using basic text search functionality without the ability to apply structured filters or combine multiple filtering criteria.
+
+### Expected Behavior
+Users can access a filter panel that allows them to:
+- Select one or more content types to view (e.g., photos, videos, documents, links)
+- Choose from existing tags using a multi-select interface
+- Filter by location from a predefined list
+- Filter by specific property or properties when managing multiple properties
+- Apply multiple filters simultaneously with results updating in real-time
+- Easily clear individual filters or reset all filters at once
+- Access the filter panel seamlessly on mobile devices through a collapsible/expandable interface
+
+### User Impact
+All users managing item collections benefit from faster, more precise item discovery. Property managers handling multiple properties gain significant efficiency by quickly isolating items by property, content type, or tag combinations. Mobile users can access full filtering capabilities without compromising screen space.
+
+### Business Value
+Reduces time spent searching for specific items and improves user productivity when managing large collections. Enhanced filtering capabilities increase platform utility for power users and professional property managers.
+
+### Acceptance Criteria
+- [ ] Filter panel displays all available filter categories (content type, tags, location, property)
+- [ ] Content type filter allows selecting multiple types simultaneously
+- [ ] Tag filter displays all existing tags and supports multi-selection
+- [ ] Location filter presents available locations in a dropdown format
+- [ ] Property filter enables filtering by one or multiple properties
+- [ ] Applied filters are visually indicated with the ability to remove individual filters
+- [ ] Filtered results update immediately when filters are applied or removed
+- [ ] A "Clear All" action removes all active filters and returns to unfiltered view
+- [ ] On mobile devices, the filter panel collapses to preserve screen space and expands when activated
+- [ ] Filter panel state persists during the user session when navigating between views
+- [ ] Filter combinations work correctly together (e.g., filtering by both content type AND tag shows items matching all criteria)
+
+---
+
+## REQ-066: Sort Menu for Item Organization
+
+**Date**: 2026-01-02 14:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a sorting menu to reorder their item listings based on different criteria such as date, name, or type.
+
+### Current Behavior
+Items are displayed in a fixed order without the ability for users to reorganize the list based on their preferences or current task needs.
+
+### Expected Behavior
+Users can access a sort menu that allows them to:
+- Select from multiple sort options (e.g., date added, name, content type, last modified)
+- See which sort option is currently active with a visual indicator
+- Change sort order (ascending/descending) for applicable criteria
+- Access the menu easily on mobile devices with appropriately-sized touch targets
+- Observe immediate reordering of items when a new sort option is selected
+
+### User Impact
+All users managing item collections benefit from flexible organization options. Users working on mobile devices can comfortably select sort options without precision tapping. Users searching for recently added items or alphabetically organized content can quickly find what they need.
+
+### Business Value
+Improves user productivity by allowing personalized item organization that matches different workflow patterns. Enhanced mobile usability reduces friction in mobile-first usage scenarios.
+
+### Acceptance Criteria
+- [ ] Sort menu displays as a dropdown with all available sorting options
+- [ ] Currently active sort option is clearly indicated within the menu
+- [ ] Touch targets meet minimum size requirements (44x44px) for mobile accessibility
+- [ ] Item list reorders immediately upon selecting a new sort option
+- [ ] Sort order toggle (ascending/descending) is available for relevant sort criteria
+- [ ] Sort menu is accessible via keyboard navigation for accessibility
+- [ ] Selected sort preference persists during the user session
+- [ ] Menu closes automatically after selecting an option
+- [ ] Visual design is consistent with the application's design system
+
+
+---
+
+## REQ-067: Filter and Sort Utilities for Item Collection Management
+
+**Date**: 2026-01-02 (created by Claude Agent)
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need the ability to filter and sort their item collections using reusable, testable utility functions that support multiple criteria and ordering options.
+
+### Current Behavior
+No standardized filtering or sorting capabilities exist for item collections, requiring custom implementation for each use case.
+
+### Expected Behavior
+- Users can filter items based on multiple criteria (category, status, date range, metadata attributes)
+- Users can sort items using various comparators (alphabetical, chronological, custom fields)
+- Filtering and sorting operations are consistent across the application
+- Multiple filters can be combined to narrow down results
+- Sort order can be ascending or descending
+
+### User Impact
+All users managing item collections will benefit from consistent, predictable filtering and sorting behavior across the application, making it easier to find and organize their content.
+
+### Business Value
+Providing robust, reusable filter and sort utilities reduces development time for future features, ensures consistent user experience, and improves maintainability through centralized logic that can be thoroughly tested.
+
+### Acceptance Criteria
+- [ ] Users can apply filters to item collections and see only items matching the filter criteria
+- [ ] Users can sort item collections by different attributes and see results in the expected order
+- [ ] Multiple filters can be applied simultaneously with correct combined results
+- [ ] Sort order (ascending/descending) can be toggled and produces correct ordering
+- [ ] Filter and sort operations return correct results for edge cases (empty collections, no matches, null values)
+- [ ] All filter and sort functions are covered by unit tests demonstrating correct behavior
+
+
+---
+
+## REQ-068: Multi-Item Selection and Bulk Action Support
+
+**Date**: 2026-01-02 14:23
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to select multiple items from a collection simultaneously and perform bulk actions on the selected set.
+
+### Current Behavior
+Users can only interact with items individually, requiring repetitive actions when the same operation needs to be applied to multiple items.
+
+### Expected Behavior
+Users can:
+- Click on individual items to add them to or remove them from a selection
+- Use a "select all" control to quickly select all visible items that match current filters
+- Toggle between normal browsing mode and selection mode
+- See a clear visual indication of which items are currently selected
+- Clear all selections with a single action
+- Perform operations on the entire selected set at once
+
+### User Impact
+This affects any user managing collections of items who needs to perform the same action on multiple items. It significantly reduces repetitive work and improves efficiency when organizing, categorizing, or performing bulk operations.
+
+### Business Value
+Reduces time spent on repetitive tasks and improves user satisfaction by providing standard multi-select functionality expected in modern applications. Enables efficient bulk operations that are foundational for advanced collection management features.
+
+### Acceptance Criteria
+- [ ] Individual items can be toggled in and out of the selection independently
+- [ ] A "select all" action adds all currently visible (filtered) items to the selection
+- [ ] Selection can be cleared completely with a single action
+- [ ] Selection mode can be explicitly toggled on or off
+- [ ] The selection persists correctly when filters or sorting change
+- [ ] Visual feedback clearly indicates which items are selected at all times
+- [ ] Selection state is maintained independently from other UI interactions
+
+
+---
+
+## REQ-069: Selection Mode UI Integration with Visual Feedback
+
+**Date**: 2026-01-02 17:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Item display components should provide interactive selection controls with clear visual feedback to enable users to enter selection mode and identify which items are currently selected.
+
+### Current Behavior
+Item display components show content in a static presentation format without selection controls or visual indicators for multi-select operations.
+
+### Expected Behavior
+Users can:
+- See a checkbox control on each displayed item (both card and row views)
+- Tap and hold an item on mobile devices to activate selection mode
+- Immediately recognize selected items through distinct visual styling (highlighting, color change, or border treatment)
+- View a persistent count showing how many items are currently selected
+- Distinguish between normal browsing mode and active selection mode through clear visual state changes
+
+### User Impact
+This affects all users who need to perform bulk operations on multiple items. The visual feedback and interaction patterns make the selection feature discoverable and usable, particularly on mobile devices where selection patterns differ from desktop conventions.
+
+### Business Value
+Provides standard, intuitive multi-select controls that users expect from modern applications. Mobile-optimized long-press interaction ensures the feature works naturally across all device types without compromising the browsing experience.
+
+### Acceptance Criteria
+- [ ] Checkboxes appear on item cards when selection mode is active or available
+- [ ] Checkboxes appear on item rows when selection mode is active or available
+- [ ] Long-press gesture on mobile devices (touch interfaces) activates selection mode
+- [ ] Selected items display a visually distinct appearance (different from unselected state)
+- [ ] A selection count indicator shows the current number of selected items
+- [ ] Visual state clearly differentiates between selection mode active and selection mode inactive
+- [ ] Checkbox controls are accessible and meet WCAG standards for touch target size and keyboard navigation
+- [ ] Selection state updates immediately and smoothly when items are selected or deselected
+
+
+
+---
+
+## REQ-070: Bulk Actions Bar for Multi-Item Operations
+
+**Date**: 2026-01-02 18:23
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users with selected items should see a floating action bar that provides quick access to bulk operations including deletion, tagging, and moving items between properties.
+
+### Current Behavior
+Users can select multiple items but have no interface to perform operations on the entire selection. Each item must be managed individually even when many items need the same action applied.
+
+### Expected Behavior
+When one or more items are selected, a floating action bar appears on screen containing:
+- A "Delete" button to remove all selected items
+- An "Add Tag" button to apply tags to all selected items
+- A "Remove Tag" button to strip tags from all selected items
+- A "Move to Property" button to relocate selected items to a different property (in multi-property scenarios)
+- An "Exit Selection Mode" or "Cancel" button to deselect all items and hide the action bar
+
+The bar should remain visible and accessible while items are selected, and automatically hide when selection is cleared or canceled.
+
+### User Impact
+This affects all users who manage collections of items and need to perform repetitive operations across multiple items. Users with large inventories or frequent reorganization needs will benefit most significantly, as they can apply changes to dozens of items simultaneously rather than individually.
+
+### Business Value
+Dramatically reduces time and effort required for common collection management tasks. Enables users to efficiently organize and maintain larger item collections, which increases engagement and perceived platform capability. Multi-property support facilitates advanced use cases for power users and professional property managers.
+
+### Acceptance Criteria
+- [ ] A floating action bar appears when at least one item is selected
+- [ ] The action bar disappears when selection is cleared or canceled
+- [ ] Delete action removes all selected items (with appropriate confirmation)
+- [ ] Add Tag action allows applying one or more tags to all selected items
+- [ ] Remove Tag action allows stripping specific tags from all selected items
+- [ ] Move to Property action is available and functional in multi-property environments
+- [ ] Exit/Cancel button clears the selection and dismisses the action bar
+- [ ] The action bar remains accessible and does not obstruct critical content
+- [ ] All bulk operations provide feedback on completion (success count, error handling)
+- [ ] The action bar is responsive and works correctly on mobile, tablet, and desktop screen sizes
+
+
+---
+
+## REQ-071: Delete Confirmation Dialog with Item Preview
+
+**Date**: 2026-01-02 15:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users must confirm item deletion through a dialog that shows what will be deleted, preventing accidental data loss.
+
+### Current Behavior
+No delete confirmation dialog exists. Users cannot review which items will be deleted before confirming the destructive action.
+
+### Expected Behavior
+When a user initiates a delete action (single or bulk), a confirmation dialog appears showing:
+- The number of items to be deleted
+- The titles of up to 5 items being deleted
+- An overflow indicator when more than 5 items are selected (e.g., "and 3 more")
+- Clear cancel and confirm actions with the confirm button styled to indicate a destructive operation
+
+### User Impact
+All users managing items will have protection against accidental deletion. Users performing bulk operations will gain confidence knowing exactly what they are about to delete.
+
+### Business Value
+Reduces data loss incidents and support requests related to accidental deletions, while improving user trust in bulk operations.
+
+### Acceptance Criteria
+- [ ] Confirmation dialog appears when user attempts to delete one or more items
+- [ ] Dialog displays accurate count of items to be deleted
+- [ ] Dialog shows titles of up to 5 items, with clear truncation message for additional items
+- [ ] Confirm button uses destructive styling (red/warning color scheme) to signal danger
+- [ ] Cancel button dismisses dialog without performing deletion
+- [ ] Confirm button executes deletion and closes dialog
+- [ ] Dialog content adapts appropriately for single-item versus bulk deletion scenarios
+
+---
+
+## REQ-072: Bulk Tag Management Dialog
+
+**Date**: 2026-01-02 16:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to add or remove tags from multiple selected items simultaneously through a dedicated dialog interface.
+
+### Current Behavior
+Users must tag items individually, requiring repetitive actions when the same tag needs to be applied to or removed from multiple items.
+
+### Expected Behavior
+When multiple items are selected, users can open a bulk tag dialog that allows them to:
+- Choose between adding tags to all selected items or removing tags from them
+- Enter tag names with autocomplete suggestions based on existing tags in the system
+- See a preview list of which items will be affected by the tag operation
+- Apply the tag changes to all selected items with a single confirmation action
+
+### User Impact
+Content creators and organizers who manage large collections will save significant time when categorizing or reorganizing multiple items. Users who need to apply consistent tagging across related items will experience a more efficient workflow.
+
+### Business Value
+Reduces friction in content organization workflows and enables users to maintain better-structured collections with less effort, leading to improved content discoverability and user satisfaction.
+
+### Acceptance Criteria
+- [ ] Dialog can be opened when one or more items are selected
+- [ ] User can toggle between "add tags" and "remove tags" modes
+- [ ] Tag input field displays suggestions based on existing tags as user types
+- [ ] Dialog shows a preview list of all items that will be affected by the operation
+- [ ] User can confirm the operation and all selected items are updated accordingly
+- [ ] Dialog can be cancelled without making changes
+- [ ] Appropriate feedback is shown when the tag operation completes successfully or fails
+
+
+---
+
+## REQ-073: Bulk Move Items Between Properties
+
+**Date**: 2026-01-02 (Last Modified: 2026-01-02)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to select multiple items and move them from one property to another in a single operation when managing multiple properties.
+
+### Current Behavior
+Users cannot move multiple items between properties simultaneously. Each item must be moved individually, requiring repetitive actions when reorganizing inventory across properties.
+
+### Expected Behavior
+When users have selected multiple items and are operating in multi-property mode, they can initiate a bulk move operation that:
+- Presents a dialog to select which property should receive the items
+- Shows a clear preview of which items will be moved
+- Executes the transfer to the selected property upon confirmation
+
+The bulk move option should not be visible or accessible when the user is working in single-property mode.
+
+### User Impact
+Property managers overseeing multiple locations can reorganize inventory more efficiently. This particularly benefits users who need to redistribute items between properties during seasonal changes, renovations, or property portfolio adjustments.
+
+### Business Value
+Reduces time spent on inventory management tasks and improves operational efficiency for multi-property users, making the platform more competitive for professional property managers.
+
+### Acceptance Criteria
+- [ ] When multiple items are selected in multi-property mode, a bulk move action is available
+- [ ] Initiating the bulk move action opens a dialog with a property selector
+- [ ] The dialog displays a preview of all selected items that will be moved
+- [ ] Users can select the destination property from the available properties
+- [ ] Upon confirmation, all selected items are transferred to the chosen property
+- [ ] The bulk move action is not visible or accessible in single-property mode
+- [ ] Users can cancel the operation without making changes
+- [ ] After successful move, users receive confirmation of how many items were transferred
+
+
+---
+
+## REQ-074: Item Preview Modal with Mobile-Friendly Drawer
+
+**Date**: 2026-01-02 10:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to preview captured item details in a responsive modal overlay that adapts to mobile devices as a slide-up drawer.
+
+### Current Behavior
+After capturing an item (photo, video, text, or file), there is no immediate preview interface allowing users to review what they've captured before proceeding with save or edit actions.
+
+### Expected Behavior
+When a user completes an item capture action, a preview interface appears that:
+- Displays as a centered modal overlay on desktop/tablet screens
+- Transforms into a slide-up drawer on mobile devices for thumb-friendly interaction
+- Shows the captured item content in an appropriate preview format
+- Provides a clearly visible close button
+- Closes when the user taps outside the content area (overlay click)
+- Closes when the user presses the Escape key
+- Supports smooth animations for open/close transitions
+- Maintains focus within the modal for keyboard navigation
+
+### User Impact
+All users capturing items through the Item Capture Manager will benefit from immediate visual confirmation of their captured content. Mobile users particularly benefit from the drawer-style interface that's optimized for one-handed use and doesn't obscure their captured content.
+
+### Business Value
+Improves user confidence in the capture workflow by providing immediate feedback and reducing capture errors. The mobile-optimized experience increases engagement on mobile devices, which represent the majority of property management interactions.
+
+### Acceptance Criteria
+- [ ] Preview interface opens immediately after successful item capture
+- [ ] On desktop/tablet (viewport width ≥768px), content appears as a centered modal overlay
+- [ ] On mobile (viewport width <768px), content appears as a drawer sliding up from bottom
+- [ ] Close button is visible and accessible in all viewport sizes
+- [ ] Clicking/tapping the overlay background closes the preview
+- [ ] Pressing the Escape key closes the preview
+- [ ] Opening the preview prevents scrolling of content behind it
+- [ ] Closing the preview restores normal scrolling behavior
+- [ ] Transition animations are smooth and complete within 300ms
+- [ ] Keyboard focus is trapped within the modal when open
+- [ ] Screen readers announce the modal opening and closing appropriately
+
+
+---
+
+## REQ-075: Interactive Media Gallery with Swipe Navigation
+
+**Date**: 2026-01-02 14:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to browse through multiple media items (photos, videos) in a carousel-style gallery with touch/swipe gestures, thumbnail navigation, and the ability to view media in full-screen mode.
+
+### Current Behavior
+No dedicated media gallery component exists. Users cannot interactively browse through multiple media items associated with an inventory item.
+
+### Expected Behavior
+- Users can swipe left/right (or click arrows) to navigate between media items in the carousel
+- A thumbnail strip displays all available media items, allowing direct selection of any specific item
+- Users can tap a full-screen button to expand the current media to fill the entire viewport
+- Visual indicators clearly distinguish between different media types (e.g., photo vs. video)
+- The gallery responds smoothly to touch gestures on mobile devices
+- The currently viewed media item is highlighted in the thumbnail strip
+
+### User Impact
+Property owners and staff viewing inventory item details will have an intuitive, efficient way to review all associated media. This improves the inspection and verification workflow, particularly for items with multiple photos or videos documenting condition, angles, or details.
+
+### Business Value
+Enhances the item detail experience with industry-standard media browsing patterns, reducing friction in reviewing inventory documentation and enabling faster decision-making.
+
+### Acceptance Criteria
+- [ ] Carousel displays one media item at a time and responds to swipe gestures (touch) and arrow clicks (desktop)
+- [ ] Thumbnail strip shows all media items with the active item visually highlighted
+- [ ] Clicking a thumbnail navigates directly to that media item in the carousel
+- [ ] Full-screen toggle button expands the current media to fill the viewport and provides a way to exit full-screen
+- [ ] Photos and videos have distinct visual indicators (e.g., play icon overlay on video thumbnails)
+- [ ] Navigation controls are accessible and visible on both mobile and desktop viewports
+- [ ] Gallery gracefully handles edge cases (single media item, no media, mixed media types)
+
+
+---
+
+## REQ-076: Video Playback Interface with Standard Controls
+
+**Date**: 2026-01-02 15:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to watch video content in the item preview with standard playback controls including play/pause, seeking, volume adjustment, and full-screen viewing.
+
+### Current Behavior
+Video items captured or uploaded through the application lack a functional playback interface. Users cannot review video content with interactive controls.
+
+### Expected Behavior
+When viewing a video item in the preview or detail view, users see:
+- A video player that automatically loads the video content
+- Play and pause controls that respond immediately to user interaction
+- A seek bar allowing users to jump to any point in the video timeline
+- Volume controls with visual feedback showing current volume level
+- A full-screen button that expands the video to fill the entire viewport
+- Playback progress indicator showing current time and total duration
+- Controls that appear on hover (desktop) or tap (mobile) and fade after a few seconds of inactivity
+- Responsive sizing that adapts the player to available screen space
+
+### User Impact
+Property managers and staff reviewing inventory documentation containing video walkthroughs, condition assessments, or operational demonstrations gain the ability to watch, pause, and review specific moments efficiently. This is particularly valuable when documenting high-value items, complex equipment, or condition issues requiring detailed visual evidence.
+
+### Business Value
+Enables comprehensive video-based inventory documentation, meeting professional property management standards and providing defensible records for insurance claims, disputes, or audits.
+
+### Acceptance Criteria
+- [ ] Video player loads and displays video content when a video item is selected
+- [ ] Play button initiates playback and transforms into a pause button
+- [ ] Pause button stops playback and transforms back into a play button
+- [ ] Seek bar displays current playback position and allows clicking/dragging to jump to any timestamp
+- [ ] Volume control adjusts audio level with visual feedback (mute toggle and volume slider)
+- [ ] Full-screen button expands video to fill the viewport with controls remaining accessible
+- [ ] Exiting full-screen mode returns the player to its original size and position
+- [ ] Playback progress shows current time and total video duration in readable format (e.g., "1:23 / 4:56")
+- [ ] Controls auto-hide after 3 seconds of mouse/touch inactivity during playback
+- [ ] Moving the mouse or tapping the screen reveals controls again
+- [ ] Player is accessible via keyboard (spacebar for play/pause, arrow keys for seeking)
+- [ ] Player handles common video formats (MP4, WebM) across modern browsers
+
+---
+
+## REQ-077: Interactive Photo and PDF Viewer with Navigation Controls
+
+**Date**: 2026-01-02 (Current Time)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to zoom into photos and navigate through multi-page PDF documents when viewing captured item attachments in the preview/detail view.
+
+### Current Behavior
+The item preview/detail view displays photos and PDFs, but users cannot interact with these documents beyond basic viewing. Photos cannot be enlarged for closer inspection, and PDF documents cannot be navigated when they contain multiple pages.
+
+### Expected Behavior
+When viewing a photo attachment, users can:
+- Tap or use pinch gestures to zoom in and examine details
+- Pan around the zoomed image to view different areas
+- Zoom out to return to the original view
+
+When viewing a PDF attachment, users can:
+- Navigate forward and backward through pages
+- See the current page number and total page count (e.g., "3 / 12")
+- Understand their position within the document
+
+### User Impact
+Property managers and inventory personnel frequently need to verify small details in photos (damage, serial numbers, text) and review multi-page documents (manuals, receipts, warranty information). This feature enables thorough inspection and efficient document navigation without leaving the application.
+
+### Business Value
+Improves verification accuracy and reduces the need to export documents to external viewers, streamlining the item documentation workflow.
+
+### Acceptance Criteria
+- [ ] Users can zoom into photos using tap or pinch gestures
+- [ ] Zoomed photos can be panned to view different areas
+- [ ] Users can navigate between pages in multi-page PDF documents
+- [ ] PDF viewer displays current page number and total page count
+- [ ] Navigation controls are intuitive and respond immediately to user input
+- [ ] Zoom and navigation state resets when switching between different attachments
+
+
+---
+
+## REQ-078: Instructions Viewer for Item Preview
+
+**Date**: 2026-01-02 (System date at time of creation)
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need the ability to view formatted instruction text associated with captured items in a readable, scrollable interface.
+
+### Current Behavior
+There is no dedicated component to display instruction content for items in the preview/detail view.
+
+### Expected Behavior
+When viewing an item that includes instructions, users should see the instructions rendered with proper formatting (headings, lists, emphasis, etc.) in a dedicated scrollable viewing area that handles content of varying lengths gracefully.
+
+### User Impact
+Users who create or review items with instructional content will be able to read and understand formatted instructions more easily, improving comprehension and usability of instruction-heavy items.
+
+### Business Value
+Enhances the item detail experience by providing clear, formatted display of instructions, supporting better content consumption and reducing user confusion when reviewing complex instructional content.
+
+### Acceptance Criteria
+- [ ] Instructions are rendered with markdown formatting preserved (headings, bold, italic, lists, etc.)
+- [ ] Content area is scrollable when instructions exceed the visible area
+- [ ] The viewer integrates seamlessly within the item preview/detail interface
+- [ ] Long instruction content does not break the layout or become unreadable
+- [ ] The component uses the existing markdown rendering dependency already present in the project
+
+---
+
+## REQ-079: Item Preview Action Controls with Asset Management
+
+**Date**: 2026-01-02 (System timestamp preserved)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need quick access to common actions when previewing item details, including editing metadata, managing associated assets, and deletion with safety confirmation.
+
+### Current Behavior
+The item preview displays item information but lacks integrated action controls. Users must navigate away from the preview to perform common item management tasks.
+
+### Expected Behavior
+When viewing an item preview or detail view, users see a clear set of action buttons that allow them to:
+- Edit the item's core information and metadata
+- Access a dedicated panel to manage all associated assets (photos, videos, documents)
+- Delete the item after confirming their intention
+
+The preview also displays key metadata including the item's title, location information, and any assigned tags for quick reference.
+
+### User Impact
+Property managers and staff can perform common item operations directly from the preview interface without navigating to separate management screens. This reduces friction in the workflow when reviewing, organizing, or maintaining item records.
+
+### Business Value
+Streamlines the item management workflow by consolidating common actions into the preview interface, reducing the number of navigation steps required for routine operations and improving overall efficiency.
+
+### Acceptance Criteria
+- [ ] An Edit button is visible in the item preview that triggers the edit item callback when pressed
+- [ ] A Manage Assets button is present that opens a dedicated asset management panel
+- [ ] A Delete button is available with appropriate visual treatment (warning/danger styling)
+- [ ] When the Delete button is pressed, a confirmation dialog appears before any deletion occurs
+- [ ] The item's title is prominently displayed in the preview header
+- [ ] Location information is shown when available for the item
+- [ ] Tags assigned to the item are displayed in an easily scannable format
+- [ ] All action buttons remain accessible and usable on mobile device screen sizes
+- [ ] The asset management panel shows all media and documents associated with the item
+- [ ] Confirmation dialog clearly identifies which item will be deleted and asks for explicit confirmation
+
+---
+
+## REQ-080: Asset Management State Hook for Batched Operations
+
+**Date**: 2026-01-02 15:42
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system needs a centralized state management mechanism that tracks pending changes to item assets and batches all modifications until explicitly committed by the user.
+
+### Current Behavior
+Asset operations (adding photos, removing videos, reordering documents) are either applied immediately without user confirmation or lack a cohesive state management approach. Users cannot preview or review their pending changes before finalizing them.
+
+### Expected Behavior
+When users interact with item assets in a management interface, the system:
+- Tracks all pending additions, removals, and reordering operations in temporary state
+- Allows users to perform multiple modifications without immediately persisting changes
+- Displays a clear indication of which changes are pending but not yet saved
+- Commits all batched changes only when the user explicitly confirms via a "Done" or "Save Changes" action
+- Discards all pending changes if the user cancels or navigates away without saving
+
+Users can add multiple assets, remove unwanted ones, and reorder the sequence, then review all changes before finalizing them in a single atomic operation.
+
+### User Impact
+Property managers gain confidence when organizing item assets because they can experiment with different arrangements, add or remove multiple files, and review the complete set of changes before committing. This eliminates anxiety about accidental immediate modifications and reduces the need for multiple save operations.
+
+### Business Value
+Improves data integrity by allowing users to stage and review changes before persisting them, reducing errors from premature or accidental saves. Supports a more professional asset management workflow aligned with user expectations from modern content management systems.
+
+### Acceptance Criteria
+- [ ] Pending additions to the asset collection are tracked in temporary state separate from committed assets
+- [ ] Pending removals are tracked without immediately deleting assets from the server or database
+- [ ] Reordering operations update only the temporary state until committed
+- [ ] An action is provided to add new assets to the pending changes collection
+- [ ] An action is provided to mark existing assets for removal in the pending changes
+- [ ] An action is provided to reorder assets within the pending changes collection
+- [ ] All pending changes are clearly distinguishable from the original asset state
+- [ ] When changes are committed, all pending operations are applied in the correct sequence
+- [ ] When changes are discarded, the asset state returns to its original configuration
+- [ ] The temporary state correctly handles edge cases such as adding then removing the same asset before committing
+
+---
+
+## REQ-081: AssetPanel Slide-In Drawer for Media Management
+
+**Date**: 2026-01-02 17:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a dedicated slide-in panel to view, add, and manage media assets for an item without leaving the current screen or navigating to a separate page.
+
+### Current Behavior
+There is no dedicated interface for managing an item's asset collection within the item preview or management context. Users lack a focused workspace for reviewing existing assets and adding new media while maintaining context of the parent item.
+
+### Expected Behavior
+When users trigger asset management for an item, a drawer slides in from the right side of the screen displaying:
+- A scrollable list of the item's current assets, each shown with a representative thumbnail
+- An "Add Media" button that initiates the process to capture or upload new assets
+- A "Done" button to confirm and save pending changes
+- A "Cancel" button to discard pending changes and close the drawer
+
+The drawer overlays the current view without forcing navigation, maintains focus on asset management, and provides clear visual feedback for all actions. Users can review the full asset collection, add new media, and finalize or abandon their changes in a single, cohesive interface.
+
+### User Impact
+Property managers gain a streamlined, focused workspace for managing item media without losing context or interrupting their workflow. The slide-in panel keeps them oriented within the item they're editing while providing dedicated space for asset operations. This reduces cognitive load and makes media management feel integrated rather than disruptive.
+
+### Business Value
+Improves user efficiency and satisfaction by providing a modern, contextual interface for asset management. The drawer pattern aligns with contemporary UX standards and reduces friction in a frequently-used workflow, making the platform feel more polished and professional.
+
+### Acceptance Criteria
+- [ ] A drawer component slides in from the right side of the screen when asset management is triggered
+- [ ] The drawer displays a scrollable list of all current assets for the item
+- [ ] Each asset in the list is shown with an appropriate thumbnail image
+- [ ] An "Add Media" button is prominently displayed within the drawer
+- [ ] A "Done" button is available to commit pending asset changes and close the drawer
+- [ ] A "Cancel" button is available to discard pending changes and close the drawer
+- [ ] The drawer does not navigate away from the current page or lose user context
+- [ ] The drawer is visually distinct from the underlying content and clearly indicates it is an overlay
+- [ ] The drawer is accessible via keyboard navigation and screen readers
+- [ ] On mobile devices, the drawer provides an appropriate responsive experience
+- [ ] Clicking outside the drawer or pressing the Escape key triggers the cancel behavior
+
+
+---
+
+## REQ-082: Individual Asset Card Component with Media Type Indicators
+
+**Date**: 2026-01-02 13:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need to visually identify and manage individual media assets within the asset management panel, with clear type indicators, metadata display, and the ability to remove unwanted assets.
+
+### Current Behavior
+There is no component to represent individual assets within the asset management panel. Users cannot see thumbnails, identify media types, view relevant metadata like duration or page count, or remove specific assets from the collection.
+
+### Expected Behavior
+When viewing the asset management panel, each media asset is displayed as a card with a thumbnail preview, a visual indicator showing whether it's a video, photo, or PDF, relevant metadata (such as video duration or PDF page count), and a remove button to delete the asset from the item.
+
+### User Impact
+Property managers can quickly scan their media assets visually, immediately identify the type of each asset, understand key metadata at a glance (like how long a video is or how many pages a PDF contains), and easily remove assets that were added by mistake or are no longer needed. This makes asset management intuitive and efficient.
+
+### Business Value
+Provides essential visual feedback and control mechanisms for media management, reducing errors and improving user confidence. Clear type indicators and metadata display help users make informed decisions about their content without needing to open each asset individually.
+
+### Acceptance Criteria
+- [ ] Each asset is displayed as a distinct card or list item within the asset management panel
+- [ ] A thumbnail image is shown for each asset, representing its content
+- [ ] A visual type indicator clearly shows whether the asset is a video, photo, or PDF
+- [ ] For video assets, the duration is displayed in a readable format (e.g., "1:24")
+- [ ] For PDF assets, the page count is displayed (e.g., "5 pages")
+- [ ] Photo assets do not display duration or page count
+- [ ] Each asset card includes a remove button that is clearly labeled or iconified
+- [ ] Clicking the remove button removes the asset from the collection
+- [ ] The thumbnail accurately represents the asset content (e.g., first frame for video, page preview for PDF)
+- [ ] Type indicators use consistent iconography or labeling across all asset types
+- [ ] The component layout remains visually clean and scannable even with multiple assets
+
+---
+
+## REQ-083: Asset Drop Zone Component for File Upload
+
+**Date**: 2026-01-02 (Created by System)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a drag-and-drop upload area where they can easily add asset files by dragging them from their file system or clicking to browse, with immediate visual feedback about which files will be uploaded.
+
+### Current Behavior
+No dedicated drag-and-drop upload interface exists for asset management workflows.
+
+### Expected Behavior
+Users see a clearly defined drop zone area where they can:
+- Drag files from their desktop or file manager and drop them onto the zone
+- Click anywhere on the zone to open a traditional file picker dialog
+- See their selected files listed with preview information before upload begins
+- Receive immediate feedback if a file type is not supported
+- View thumbnails or icons representing each queued file
+
+The drop zone should visually respond to drag events (e.g., highlighting when files are dragged over it) and clearly indicate its purpose when empty.
+
+### User Impact
+Content creators, property managers, and administrators uploading assets will benefit from:
+- Faster file selection through drag-and-drop instead of only browse dialogs
+- Reduced errors by seeing validation feedback before submission
+- Better confidence through preview of queued files
+- More intuitive upload experience aligned with modern web application standards
+
+### Business Value
+Streamlines asset upload workflows, reducing time spent on file management tasks and improving user satisfaction with the platform's media handling capabilities.
+
+### Acceptance Criteria
+- [ ] User can drag one or multiple files from their file system onto the drop zone area
+- [ ] User can click on the drop zone to open a file picker dialog
+- [ ] Drop zone provides visual feedback when files are dragged over it (highlight, border change, or similar indicator)
+- [ ] Files with unsupported types are rejected with a clear error message
+- [ ] Accepted files appear in a queue with preview information (file name, size, and thumbnail/icon)
+- [ ] User can see all queued files before confirming upload
+- [ ] Drop zone clearly indicates its purpose when no files are queued (e.g., instructional text or icon)
+
+
+---
+
+## REQ-084: Drag-and-Drop Reordering for Captured Assets
+
+**Date**: 2026-01-02 10:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to reorder captured assets by dragging and dropping them into their preferred sequence.
+
+### Current Behavior
+Assets are displayed in the order they were captured or added, with no ability to change the sequence after capture. Users must accept the chronological order or delete and re-add items to achieve a different arrangement.
+
+### Expected Behavior
+Users can click and hold on an asset item, drag it to a new position in the list, and release to reorder. The system provides clear visual feedback during the drag operation, including:
+- A visible drag handle on each asset item that indicates the item can be moved
+- Visual indication that an item is being dragged (e.g., elevation, opacity change)
+- A clear indicator showing where the item will be dropped when released
+- Smooth animations when items shift to accommodate the new position
+
+### User Impact
+Content creators and users managing multiple assets gain fine-grained control over presentation order without needing to re-capture or re-upload items. This is particularly valuable when the logical sequence differs from the capture sequence, such as when reorganizing a photo gallery or reordering demonstration steps.
+
+### Business Value
+Enhances user autonomy and reduces friction in the content creation workflow, leading to higher quality asset collections and improved user satisfaction with the capture experience.
+
+### Acceptance Criteria
+- [ ] Each asset item displays a visible drag handle or clearly indicates it can be dragged
+- [ ] When dragging begins, the dragged item provides visual feedback distinct from its normal state
+- [ ] While dragging, a clear drop position indicator shows where the item will be placed
+- [ ] Releasing the item at a valid position reorders the asset list and persists the new sequence
+- [ ] The drag-and-drop interaction works smoothly across touch and mouse input devices
+- [ ] Accessibility features support keyboard-based reordering for users who cannot use drag-and-drop
+- [ ] The reordering operation does not cause data loss or corruption of asset metadata
+
+
+
+---
+
+## REQ-085: Asset Removal Confirmation with Visual Preview
+
+**Date**: 2026-01-02 17:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Users should see a confirmation dialog with visual preview when removing an individual asset from the asset management panel.
+
+### Current Behavior
+When users click the remove button on an asset item, the removal may occur immediately without confirmation, or with a generic text-only confirmation that provides no visual context about what is being deleted.
+
+### Expected Behavior
+When a user initiates the removal of an asset by clicking the remove button:
+- A confirmation dialog appears displaying the asset's thumbnail preview
+- The dialog clearly identifies what type of media is being removed (video, photo, or PDF)
+- For videos, the thumbnail includes duration information
+- For PDFs, the thumbnail shows page count information
+- The dialog presents clear action options: a "Cancel" button and a "Remove" button with destructive styling
+- Only when the user confirms by clicking "Remove" does the asset get removed from the collection
+
+### User Impact
+Users managing photo galleries, video collections, or mixed media sets gain protection against accidental removal of important assets. The visual preview helps users verify they are removing the correct item, particularly valuable when managing similar-looking assets or working with many items at once.
+
+### Business Value
+Reduces user frustration from accidental asset deletion and prevents content loss, which improves confidence in the asset management workflow and reduces support requests for asset recovery.
+
+### Acceptance Criteria
+- [ ] Clicking the remove button on any asset item triggers a confirmation dialog before removal
+- [ ] The confirmation dialog displays the asset's thumbnail with appropriate scaling and aspect ratio preservation
+- [ ] The dialog shows the asset type indicator (video, photo, or PDF) clearly visible
+- [ ] For video assets, the confirmation dialog displays the video duration
+- [ ] For PDF assets, the confirmation dialog displays the page count
+- [ ] The dialog presents a "Cancel" button that closes the dialog without removing the asset
+- [ ] The dialog presents a "Remove" button with destructive styling (e.g., red color, warning icon)
+- [ ] The asset is only removed from the collection when the user explicitly clicks the "Remove" button
+- [ ] The confirmation dialog can be dismissed by clicking outside the dialog or pressing the Escape key, which cancels the removal
+
+
+---
+
+## REQ-086: Inline Text Editing Component with Keyboard Navigation
+
+**Date**: 2026-01-02 18:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to click on text fields to edit them in place with immediate visual feedback, keyboard shortcuts for save and cancel, and clear indication of loading and error states.
+
+### Current Behavior
+Text fields require navigation to separate edit pages or forms, or they lack visual feedback during editing operations. Users cannot quickly edit text values in context, and there is no standardized pattern for inline editing with proper state management across the application.
+
+### Expected Behavior
+When a user clicks on an editable text field:
+- The text transforms into an editable input field with focus automatically set
+- The original text is preserved and can be restored if the user cancels
+- Pressing Enter or clicking outside the input field saves the changes
+- Pressing Escape cancels the edit and restores the original text
+- During save operations, a loading indicator appears to show the system is processing
+- If the save fails, an error message displays near the input field explaining what went wrong
+- The component returns to read-only display mode after successful save or cancellation
+- Visual styling clearly distinguishes between read-only, editing, loading, and error states
+
+### User Impact
+Users managing item metadata, property details, or other text-based information can make quick edits without leaving their current context. This streamlines workflows for updating names, descriptions, tags, and other text fields, particularly when making multiple small updates across different items or properties.
+
+### Business Value
+Reduces friction in content management workflows and improves user productivity by eliminating unnecessary navigation and form submissions for simple text updates. Provides a consistent editing experience across all editable text fields in the application.
+
+### Acceptance Criteria
+- [ ] Clicking on the component transitions it from read-only display to edit mode with an active text input
+- [ ] The text input receives keyboard focus automatically when entering edit mode
+- [ ] The original text value is preserved and available for restoration during the edit session
+- [ ] Pressing the Enter key triggers the save operation
+- [ ] Clicking outside the input field (blur event) triggers the save operation
+- [ ] Pressing the Escape key cancels the edit and restores the original text without saving
+- [ ] During save operations, a loading indicator is visible within or near the input field
+- [ ] The input field is disabled during the save operation to prevent further edits
+- [ ] If the save operation fails, an error message displays with clear explanation of the failure
+- [ ] The error message is positioned near the input field and is clearly associated with it
+- [ ] After a successful save, the component returns to read-only display mode showing the updated text
+- [ ] After cancellation, the component returns to read-only display mode showing the original text
+- [ ] Visual styling clearly distinguishes between all states: read-only, editing, loading, and error
+- [ ] The component is keyboard-accessible and works without a mouse
+- [ ] The component handles empty string values appropriately
+
+---
+
+## REQ-087: Enable Inline Editing for Item Titles and Locations
+
+**Date**: 2026-01-02 (Current Session)
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to edit item titles and locations directly within the item card or row display without navigating to a separate form or view.
+
+### Current Behavior
+Users must navigate away from the item list view or use a separate editing interface to modify item titles and locations. This interrupts the browsing and management workflow.
+
+### Expected Behavior
+When inline editing is enabled, users can click on an item's title or location field and edit the text directly in place. Changes are saved through a callback mechanism and the display updates immediately to reflect the new values.
+
+### User Impact
+Property managers and hosts managing multiple items will experience a more streamlined workflow. Quick corrections to item names or location details can be made without context switching, reducing the time spent on inventory management tasks.
+
+### Business Value
+Reduces friction in the item management workflow, leading to more accurate and up-to-date inventory data. Faster editing encourages users to maintain better quality information in their listings.
+
+### Acceptance Criteria
+- [ ] Item cards display an edit indicator when inline editing is enabled
+- [ ] Clicking on a title or location field activates the inline editor
+- [ ] Text changes are transmitted through the update callback when the user confirms the edit
+- [ ] The inline edit feature can be toggled on or off through a configuration flag
+- [ ] Visual feedback indicates when an item is in edit mode versus display mode
+- [ ] Changes are reflected in the display immediately after successful save
+- [ ] Users can cancel an edit in progress and revert to the original value
+
+
+---
+
+## REQ-088: Enable Inline Editing for Item Tags
+
+**Date**: 2026-01-02 (Current Session)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to add, remove, and edit tags directly within the item view without navigating to a separate editing mode or form.
+
+### Current Behavior
+Tags can only be managed through a dedicated editing interface that requires users to enter edit mode, make changes, and save explicitly.
+
+### Expected Behavior
+Users can click on the tags area within an item to immediately add new tags or remove existing ones. As users type, the system suggests tags that have been used on other items to maintain consistency. Tags appear as interactive chips that can be clicked to remove them.
+
+### User Impact
+All users managing inventory items will experience a faster, more intuitive tagging workflow. This particularly benefits users who frequently categorize and organize items, as they can make quick adjustments without context switching.
+
+### Business Value
+Reduces friction in the tagging workflow, encouraging better item organization and more consistent categorization across the inventory. Better-tagged items improve searchability and overall system usability.
+
+### Acceptance Criteria
+- [ ] Clicking on the tags area activates inline editing mode
+- [ ] Users can type to add new tags without leaving the current view
+- [ ] Existing tags from other items are suggested as users type
+- [ ] Each tag is displayed as a removable chip with a clear deletion action
+- [ ] Changes are persisted immediately or with minimal explicit save action
+- [ ] The interface clearly indicates when tags are in edit mode versus view mode
+- [ ] Tag suggestions are relevant and based on the user's existing tag vocabulary
+
+---
+
+## REQ-089: Mobile UX Polish and Touch Optimization
+
+**Date**: 2026-01-02 15:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The application should provide a polished, mobile-optimized experience with appropriately sized touch targets, gesture support, and adaptive UI components for small screens.
+
+### Current Behavior
+The interface is designed primarily for desktop use with mouse interactions. On mobile devices, users encounter touch targets that are too small, panels that obscure content, and previews that don't adapt well to mobile viewports.
+
+### Expected Behavior
+On mobile devices, all interactive elements meet minimum touch target sizes for comfortable tapping. Filter panels automatically collapse to maximize screen space. Item previews appear as bottom sheets that slide up from the screen bottom rather than as centered modals. Users can optionally use swipe gestures to navigate through items or perform quick actions.
+
+### User Impact
+Property managers and staff using mobile devices while physically inspecting or managing items will have a significantly improved experience. Touch interactions will be more reliable, screen space will be used efficiently, and the interface will feel native to mobile platforms.
+
+### Business Value
+Improves accessibility and usability on mobile devices, expanding the range of contexts where the application can be effectively used. Better mobile experience reduces user frustration and increases adoption among field staff.
+
+### Acceptance Criteria
+- [ ] All interactive buttons, links, and controls meet the minimum 48x48 pixel touch target size on mobile viewports
+- [ ] Filter panels collapse automatically on mobile screens to maximize content visibility
+- [ ] Users can expand collapsed filter panels with a clear, accessible toggle control
+- [ ] Item preview displays as a bottom sheet on mobile devices instead of a centered modal
+- [ ] Bottom sheet preview can be dismissed by swiping down or tapping outside the content area
+- [ ] Swipe gestures for navigation or quick actions are implemented where contextually appropriate
+- [ ] All touch interactions provide appropriate visual and haptic feedback where supported
+- [ ] The mobile experience is tested on both iOS and Android devices
+
+
+---
+
+## REQ-090: Comprehensive Accessibility Audit and Compliance
+
+**Date**: 2026-01-02 14:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system must provide full accessibility compliance to ensure all users, including those using assistive technologies, can successfully navigate and interact with all features.
+
+### Current Behavior
+The current implementation may have accessibility gaps including incomplete keyboard navigation, missing focus indicators, inadequate ARIA labeling, and untested screen reader compatibility across interactive components and modal dialogs.
+
+### Expected Behavior
+All interactive elements and workflows should be fully accessible via keyboard alone, with clear visual focus indicators throughout. Modal dialogs and dynamic content changes should properly manage focus and announce state changes to assistive technologies. All controls should have appropriate ARIA labels and roles that accurately describe their purpose and state to screen reader users.
+
+### User Impact
+Users who rely on keyboard navigation, screen readers, or other assistive technologies will gain equal access to all system features. This includes users with visual impairments, motor disabilities, or those who prefer keyboard-based workflows for efficiency.
+
+### Business Value
+Ensures legal compliance with accessibility standards (WCAG 2.1 AA), expands the potential user base to include people with disabilities, and demonstrates commitment to inclusive design principles.
+
+### Acceptance Criteria
+- [ ] All interactive elements are reachable and operable using only keyboard (Tab, Enter, Space, Arrow keys)
+- [ ] Focus indicators are clearly visible on all focusable elements with sufficient color contrast
+- [ ] Modal dialogs trap focus appropriately and return focus to the triggering element upon close
+- [ ] All form controls, buttons, and interactive elements have descriptive ARIA labels and appropriate roles
+- [ ] Dynamic content changes and state updates are announced to screen readers
+- [ ] Screen reader testing confirms logical reading order and meaningful announcements across all major workflows
+- [ ] No keyboard traps exist where users cannot escape using standard navigation
+

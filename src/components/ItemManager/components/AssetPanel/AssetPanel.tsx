@@ -8,14 +8,14 @@
  *
  * @module ItemManager/components/AssetPanel
  * @see docs/REQ-081-build-assetpanel-component-detailed.md
- * @lastModified 2026-01-03 (REQ-083 Task 10 - Integrated AssetDropZone component)
+ * @lastModified 2026-01-03 (REQ-084 Task 6 - Integrated SortableAssetList for drag-and-drop reordering)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
 import { X, Loader2, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssetManagement } from '../../hooks/useAssetManagement';
-import { AssetItem } from './AssetItem';
+import { SortableAssetList } from './SortableAssetList';
 import { AssetDropZone } from './AssetDropZone';
 import type { AssetPanelProps } from '../../ItemManager.types';
 
@@ -70,6 +70,7 @@ export function AssetPanel({
     addAssets,
     removeAsset,
     undoRemoval,
+    reorderAssets,
     commit,
     discard,
     isPendingAddition,
@@ -243,22 +244,17 @@ export function AssetPanel({
             />
           </div>
 
-          {/* Asset list */}
+          {/* Sortable Asset list with drag-and-drop reordering */}
           {currentAssets.length > 0 && (
-            <div className="space-y-2" role="list" aria-label="Media assets">
-              {currentAssets.map((asset, index) => (
-                <AssetItem
-                  key={asset.id}
-                  asset={asset}
-                  index={index}
-                  isPending={isPendingAddition(asset.id)}
-                  isMarkedForRemoval={isPendingRemoval(asset.id)}
-                  onRemove={removeAsset}
-                  onRestore={undoRemoval}
-                  size="medium"
-                />
-              ))}
-            </div>
+            <SortableAssetList
+              assets={currentAssets}
+              onReorder={reorderAssets}
+              onRemove={removeAsset}
+              onRestore={undoRemoval}
+              isPendingAddition={isPendingAddition}
+              isPendingRemoval={isPendingRemoval}
+              markedForRemovalIds={new Set(pendingRemovalIds)}
+            />
           )}
 
           {/* Empty state */}

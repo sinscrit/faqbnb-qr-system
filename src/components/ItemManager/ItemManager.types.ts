@@ -1372,11 +1372,81 @@ export interface AssetItemProps {
   showDragHandle?: boolean;
 }
 
+// =============================================================================
+// Drag and Drop Types (REQ-084)
+// =============================================================================
+
+/**
+ * Props for drag handle functionality on AssetItem.
+ *
+ * @lastModified 2026-01-03 (REQ-084 Task 2)
+ */
+export interface DragHandleProps {
+  /** Whether to show the drag handle (hidden when single item) */
+  showDragHandle: boolean;
+  /** Props from useSortable to spread on drag handle element */
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
+  /** Whether this item is currently being dragged */
+  isDragging?: boolean;
+  /** Whether this item is marked for removal (disable dragging) */
+  isMarkedForRemoval?: boolean;
+}
+
+/**
+ * Props for SortableAssetList component.
+ *
+ * @lastModified 2026-01-03 (REQ-084 Task 2)
+ */
+export interface SortableAssetListProps {
+  /** Array of assets to display (MediaItem or PendingAsset) */
+  assets: Array<MediaItem | PendingAsset>;
+  /** Callback when assets are reordered */
+  onReorder: (fromIndex: number, toIndex: number) => void;
+  /** Callback when an asset is removed */
+  onRemove: (assetId: string) => void;
+  /** Callback to undo removal of an asset */
+  onRestore?: (assetId: string) => void;
+  /** Check if an asset is a pending addition */
+  isPendingAddition?: (id: string) => boolean;
+  /** Check if an asset is pending removal */
+  isPendingRemoval?: (id: string) => boolean;
+  /** IDs of assets marked for removal */
+  markedForRemovalIds?: Set<string>;
+  /** Additional CSS class name */
+  className?: string;
+}
+
+/**
+ * Props for SortableAssetItem wrapper component.
+ *
+ * @lastModified 2026-01-03 (REQ-084 Task 2)
+ */
+export interface SortableAssetItemProps {
+  /** The asset to display */
+  asset: MediaItem | PendingAsset;
+  /** Unique identifier for sorting */
+  id: string;
+  /** Index in the list */
+  index: number;
+  /** Callback when removed */
+  onRemove: (id: string) => void;
+  /** Callback to restore a removed asset */
+  onRestore?: (id: string) => void;
+  /** Whether this is a pending addition */
+  isPending: boolean;
+  /** Whether marked for removal */
+  isMarkedForRemoval: boolean;
+  /** Total number of assets (for hiding drag handle on single item) */
+  totalCount: number;
+  /** Number of draggable (non-removed) items */
+  draggableCount: number;
+}
+
 /**
  * Props for the AssetPanel component.
  * Slide-in drawer for managing item assets.
  *
- * @lastModified 2026-01-03 (REQ-081 Task 5.2.1)
+ * @lastModified 2026-01-03 (REQ-084 Task 2)
  */
 export interface AssetPanelProps {
   /** Whether the panel is visible */

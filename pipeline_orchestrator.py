@@ -330,8 +330,38 @@ def compute_file_hash(path: Path) -> str:
 def load_state(state_path: Path) -> Optional[dict]:
     """Load pipeline state from JSON file."""
     if state_path.exists():
-        return json.loads(state_path.read_text(encoding='utf-8'))
+        state = json.loads(state_path.read_text(encoding='utf-8'))
+        # Migrate: ensure per-stage completion flags exist based on files present
+        migrate_stage_completion_flags(state)
+        return state
     return None
+
+
+def migrate_stage_completion_flags(state: dict):
+    """
+    Migrate legacy state: add per-stage completion flags based on files present.
+
+    This ensures tasks that have output files from previous runs (before the
+    per-stage tracking was added) get their {stage_id}_completed flags set.
+    """
+    for task_dict in state.get('tasks', []):
+        files = task_dict.get('files', {})
+
+        # If task has request file but no request_completed flag, add it
+        if files.get('request') and not task_dict.get('request_completed'):
+            task_dict['request_completed'] = True
+
+        # If task has overview file but no overview_completed flag, add it
+        if files.get('overview') and not task_dict.get('overview_completed'):
+            task_dict['overview_completed'] = True
+
+        # If task has details file but no details_completed flag, add it
+        if files.get('details') and not task_dict.get('details_completed'):
+            task_dict['details_completed'] = True
+
+        # If task has implementation file but no implementation_completed flag, add it
+        if files.get('implementation') and not task_dict.get('implementation_completed'):
+            task_dict['implementation_completed'] = True
 
 
 def save_state(state: dict, state_path: Path):
@@ -1122,6 +1152,10 @@ def run_task_stages(
                 return False
             # continue = try next stage anyway (probably not useful for vertical)
         
+        # Mark stage as completed for this task
+        if not dry_run:
+            task_dict[f'{stage_id}_completed'] = True
+
         # Track output based on stage type
         if stage_id == 'request' and requests_file and not dry_run:
             # Track request ID
@@ -1470,8 +1504,11 @@ def run_pipeline_per_request(state: dict, config: dict, dry_run: bool = False, t
     # Determine which tasks to process
     if task_indices is not None:
         tasks_to_process = [(i, tasks[i]) for i in task_indices if i < len(tasks)]
+    elif stage_filter:
+        # When running specific stages, process ALL tasks (stage-level skip logic will handle completed ones)
+        tasks_to_process = [(i, tasks[i]) for i in range(len(tasks))]
     else:
-        # Start from current_task_index for resume capability
+        # Start from current_task_index for resume capability (only when running all stages)
         start_index = state.get('current_task_index', 0)
         tasks_to_process = [(i, tasks[i]) for i in range(start_index, len(tasks))]
 

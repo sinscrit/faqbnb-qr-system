@@ -7,7 +7,7 @@
  * Shows thumbnail preview, type indicator, metadata, and remove button.
  *
  * @module ItemManager/components/AssetPanel/AssetItem
- * @lastModified 2026-01-03 (REQ-082 Tasks 3-8)
+ * @lastModified 2026-01-03 (REQ-084 Task 3 - Added drag handle support with DragHandleProps)
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -21,8 +21,14 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/components/ItemCapture';
-import type { AssetItemProps, PendingAsset } from '../../ItemManager.types';
+import type { AssetItemProps, PendingAsset, DragHandleProps } from '../../ItemManager.types';
 import { formatDuration, getAssetDisplayName } from '../../utils/formatUtils';
+
+// =============================================================================
+// Extended Props (combines AssetItemProps with DragHandleProps)
+// =============================================================================
+
+type ExtendedAssetItemProps = AssetItemProps & Partial<DragHandleProps>;
 
 // =============================================================================
 // Constants
@@ -82,7 +88,9 @@ export function AssetItem({
   className,
   size = 'medium',
   showDragHandle = false,
-}: AssetItemProps) {
+  dragHandleProps,
+  isDragging = false,
+}: ExtendedAssetItemProps) {
   // ===========================================================================
   // State
   // ===========================================================================
@@ -143,21 +151,36 @@ export function AssetItem({
       className={cn(
         'flex items-center gap-3 p-3 rounded-lg border',
         'transition-all duration-200',
-        onClick && 'cursor-pointer hover:bg-gray-50',
+        onClick && !isDragging && 'cursor-pointer hover:bg-gray-50',
         // Normal state
         !isPending && !isMarkedForRemoval && 'border-gray-200 bg-white',
         // Pending addition - green highlight
         isPending && !isMarkedForRemoval && 'border-green-300 bg-green-50',
         // Pending removal - red/dimmed
         isMarkedForRemoval && 'border-red-300 bg-red-50 opacity-60',
+        // Dragging state - elevated with ring
+        isDragging && 'shadow-lg ring-2 ring-blue-500 opacity-95 scale-[1.02] bg-white z-10',
         className
       )}
       role="listitem"
-      aria-label={`${assetName}, ${asset.type}${isMarkedForRemoval ? ', marked for removal' : ''}`}
+      aria-label={`${assetName}, ${asset.type}${isMarkedForRemoval ? ', marked for removal' : ''}${isDragging ? ', dragging' : ''}`}
     >
-      {/* Drag Handle (optional) */}
-      {showDragHandle && (
-        <div className="shrink-0 cursor-grab text-gray-400 hover:text-gray-600">
+      {/* Drag Handle (optional) - hidden when marked for removal */}
+      {showDragHandle && !isMarkedForRemoval && (
+        <div
+          {...dragHandleProps}
+          className={cn(
+            'shrink-0 p-2 cursor-grab active:cursor-grabbing',
+            'text-gray-400 hover:text-gray-600',
+            'touch-none select-none',
+            'transition-colors duration-150',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:rounded',
+            isDragging && 'cursor-grabbing'
+          )}
+          aria-label="Drag to reorder"
+          role="button"
+          tabIndex={0}
+        >
           <GripVertical className="w-5 h-5" />
         </div>
       )}

@@ -11,7 +11,7 @@
  */
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel, AssetItem } from '@/components/ItemManager';
+import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel, AssetItem, SortableAssetList } from '@/components/ItemManager';
 import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
@@ -642,7 +642,7 @@ function AssetManagementHookTest() {
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item'>('asset-item');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item' | 'drag-drop'>('drag-drop');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -659,9 +659,70 @@ export default function TestItemManagerPage() {
   // AssetPanel state (REQ-081)
   const [assetPanelItem, setAssetPanelItem] = useState<ItemRecord | null>(null);
 
+  // Drag-and-Drop test state (REQ-084)
+  const [dragTestAssets, setDragTestAssets] = useState<MediaItem[]>([]);
+  const [dragTestRemovalIds, setDragTestRemovalIds] = useState<Set<string>>(new Set());
+
   // Initialize gallery mock data on client side
   useEffect(() => {
     setGalleryMediaItems(createGalleryMockMediaItems());
+  }, []);
+
+  // Initialize drag-and-drop test data on client side (REQ-084)
+  useEffect(() => {
+    const createDragTestAssets = (): MediaItem[] => [
+      {
+        id: 'drag-video-1',
+        type: 'video',
+        file: new Blob(['video'], { type: 'video/mp4' }),
+        order: 0,
+        metadata: {
+          mimeType: 'video/mp4',
+          fileSize: 1024000,
+          source: 'capture',
+          duration: 90,
+          originalFilename: 'coffee-maker-demo.mp4',
+        },
+      },
+      {
+        id: 'drag-photo-1',
+        type: 'image',
+        file: new Blob(['image'], { type: 'image/jpeg' }),
+        order: 1,
+        metadata: {
+          mimeType: 'image/jpeg',
+          fileSize: 512000,
+          source: 'upload',
+          originalFilename: 'kitchen-appliance.jpg',
+        },
+      },
+      {
+        id: 'drag-pdf-1',
+        type: 'pdf',
+        file: new Blob(['pdf'], { type: 'application/pdf' }),
+        order: 2,
+        metadata: {
+          mimeType: 'application/pdf',
+          fileSize: 256000,
+          source: 'upload',
+          pageCount: 5,
+          originalFilename: 'user-manual.pdf',
+        },
+      },
+      {
+        id: 'drag-photo-2',
+        type: 'image',
+        file: new Blob(['image'], { type: 'image/png' }),
+        order: 3,
+        metadata: {
+          mimeType: 'image/png',
+          fileSize: 768000,
+          source: 'capture',
+          originalFilename: 'thermostat-settings.png',
+        },
+      },
+    ];
+    setDragTestAssets(createDragTestAssets());
   }, []);
 
   // Determine what to render based on test state
@@ -757,6 +818,16 @@ export default function TestItemManagerPage() {
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setTestView('drag-drop')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'drag-drop'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Drag & Drop (REQ-084)
+            </button>
+            <button
               onClick={() => setTestView('asset-item')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'asset-item'
@@ -832,6 +903,147 @@ export default function TestItemManagerPage() {
 
       {/* useAssetManagement Hook Test Section (REQ-080) */}
       {testView === 'asset-hook' && <AssetManagementHookTest />}
+
+      {/* Drag-and-Drop Reordering Test Section (REQ-084) */}
+      {testView === 'drag-drop' && (
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Drag-and-Drop Reordering (REQ-084)</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Drag assets using the grip handle to reorder. Works with mouse, touch, and keyboard.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* SortableAssetList Test */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">SortableAssetList Component</h3>
+
+              {dragTestAssets.length > 0 ? (
+                <SortableAssetList
+                  assets={dragTestAssets}
+                  onReorder={(from, to) => {
+                    console.log(`=== REORDER: ${from} -> ${to} ===`);
+                    setDragTestAssets(prev => {
+                      const result = [...prev];
+                      const [removed] = result.splice(from, 1);
+                      result.splice(to, 0, removed);
+                      return result;
+                    });
+                  }}
+                  onRemove={(id) => {
+                    console.log('=== MARK FOR REMOVAL:', id, '===');
+                    setDragTestRemovalIds(prev => new Set([...prev, id]));
+                  }}
+                  onRestore={(id) => {
+                    console.log('=== RESTORE:', id, '===');
+                    setDragTestRemovalIds(prev => {
+                      const next = new Set(prev);
+                      next.delete(id);
+                      return next;
+                    });
+                  }}
+                  markedForRemovalIds={dragTestRemovalIds}
+                />
+              ) : (
+                <p className="text-gray-500 text-sm">Loading test assets...</p>
+              )}
+
+              {/* Current Order Display */}
+              <div className="mt-4 p-3 bg-gray-50 rounded text-sm">
+                <strong>Current Order:</strong>
+                <ol className="mt-2 list-decimal list-inside space-y-1">
+                  {dragTestAssets.map((asset, index) => (
+                    <li key={asset.id} className={dragTestRemovalIds.has(asset.id) ? 'line-through text-gray-400' : ''}>
+                      {asset.metadata?.originalFilename || asset.id}
+                      {dragTestRemovalIds.has(asset.id) && ' (removed)'}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* Reset Button */}
+              <button
+                onClick={() => {
+                  setDragTestRemovalIds(new Set());
+                  setDragTestAssets([
+                    {
+                      id: 'drag-video-1',
+                      type: 'video',
+                      file: new Blob(['video'], { type: 'video/mp4' }),
+                      order: 0,
+                      metadata: { mimeType: 'video/mp4', fileSize: 1024000, source: 'capture', duration: 90, originalFilename: 'coffee-maker-demo.mp4' },
+                    },
+                    {
+                      id: 'drag-photo-1',
+                      type: 'image',
+                      file: new Blob(['image'], { type: 'image/jpeg' }),
+                      order: 1,
+                      metadata: { mimeType: 'image/jpeg', fileSize: 512000, source: 'upload', originalFilename: 'kitchen-appliance.jpg' },
+                    },
+                    {
+                      id: 'drag-pdf-1',
+                      type: 'pdf',
+                      file: new Blob(['pdf'], { type: 'application/pdf' }),
+                      order: 2,
+                      metadata: { mimeType: 'application/pdf', fileSize: 256000, source: 'upload', pageCount: 5, originalFilename: 'user-manual.pdf' },
+                    },
+                    {
+                      id: 'drag-photo-2',
+                      type: 'image',
+                      file: new Blob(['image'], { type: 'image/png' }),
+                      order: 3,
+                      metadata: { mimeType: 'image/png', fileSize: 768000, source: 'capture', originalFilename: 'thermostat-settings.png' },
+                    },
+                  ]);
+                }}
+                className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium"
+              >
+                Reset Order
+              </button>
+            </div>
+
+            {/* Test Cases and Controls */}
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Controls:</h4>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li><span className="font-medium">Mouse:</span> Click and drag the grip icon</li>
+                  <li><span className="font-medium">Touch:</span> Long-press (250ms) and drag</li>
+                  <li><span className="font-medium">Keyboard:</span> Tab to grip, Space to pick up, Arrows to move, Space to drop, Esc to cancel</li>
+                </ul>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Test Cases:</h4>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li><span className="font-medium">Drag handle visible:</span> Grip icon appears on left of each item</li>
+                  <li><span className="font-medium">Visual feedback:</span> Item lifts with shadow when dragging</li>
+                  <li><span className="font-medium">Placeholder:</span> Original position shows faded placeholder</li>
+                  <li><span className="font-medium">Drop animation:</span> Smooth transition to new position</li>
+                  <li><span className="font-medium">Removed items:</span> No drag handle, cannot be moved</li>
+                  <li><span className="font-medium">Single item:</span> Drag handle hidden (nothing to reorder)</li>
+                </ul>
+              </div>
+
+              <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
+                <h4 className="text-sm font-semibold text-blue-700 mb-3">Accessibility (VoiceOver/NVDA):</h4>
+                <ul className="text-sm text-blue-600 space-y-2">
+                  <li>Announces &quot;Picked up [name]. Current position: X of Y&quot;</li>
+                  <li>Announces position changes during drag</li>
+                  <li>Announces &quot;Dropped [name]. New position: X of Y&quot;</li>
+                  <li>Announces if drag is cancelled</li>
+                </ul>
+              </div>
+
+              <div className="bg-yellow-50 rounded-lg border border-yellow-200 p-4">
+                <h4 className="text-sm font-semibold text-yellow-700 mb-3">Check Console:</h4>
+                <p className="text-sm text-yellow-600">
+                  Watch the browser console for REORDER, MARK FOR REMOVAL, and RESTORE log messages.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AssetItem Component Test Section (REQ-082) */}
       {testView === 'asset-item' && (

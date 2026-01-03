@@ -1,0 +1,868 @@
+{
+  "pipeline": "item-capture-manager-implementation",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-02T18:42:20.064242",
+  "updated_at": "2026-01-03T20:14:31.795057",
+  "status": "running",
+  "current_stage": "request",
+  "current_task_index": 28,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/item-capture-manager-implementation-plan.md",
+  "source_hash": "2ff89806af3feadc1b1c6ad594d67316",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Create component directory structure and types",
+      "description": "Create `/src/components/ItemManager/` directory\nCreate `ItemManager.types.ts` with all interfaces from PRD\nSet up barrel exports in `index.ts`\nImport shared types from ItemCapture",
+      "raw_match": "\n- [ ] **1.1 Create component directory structure and types**",
+      "status": "completed",
+      "request_id": "REQ-056",
+      "error": null,
+      "processed_at": "2026-01-03T14:46:05.803099",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-056",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-056-create-component-directory-structure-and-types-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-056-create-component-directory-structure-and-types-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement core state management hook",
+      "description": "Create `useItemManagerState.ts` with reducer\nImplement view mode toggle\nImplement basic filter/sort state\nImplement selection state",
+      "raw_match": "\n- [ ] **1.2 Implement core state management hook**",
+      "status": "completed",
+      "request_id": "REQ-057",
+      "error": null,
+      "processed_at": "2026-01-03T14:54:49.938664",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-057",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-057-implement-core-state-management-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-057-implement-core-state-management-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Build basic ItemManager shell",
+      "description": "Create `ItemManager.tsx` main component\nWire up props to state\nImplement basic layout structure\nAdd config defaults handling",
+      "raw_match": "\n- [ ] **1.3 Build basic ItemManager shell**",
+      "status": "completed",
+      "request_id": "REQ-057",
+      "error": null,
+      "processed_at": "2026-01-03T15:02:33.304745",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-057",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-057-build-basic-itemmanager-shell-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-057-build-basic-itemmanager-shell-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement ItemCard component",
+      "description": "Create `ItemCard.tsx` for grid view\nDisplay thumbnail, title, location, content type badge\nHandle click for preview open\nHandle selection checkbox (when in selection mode)",
+      "raw_match": "\n- [ ] **1.4 Implement ItemCard component**",
+      "status": "completed",
+      "request_id": "REQ-058",
+      "error": null,
+      "processed_at": "2026-01-03T15:31:08.306953",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-058",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-058-implement-itemcard-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-058-implement-itemcard-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement ItemRow component",
+      "description": "Create `ItemRow.tsx` for list view\nDisplay more metadata (tags, dates) in row format\nHandle action menu (kebab menu)\nHandle selection checkbox",
+      "raw_match": "\n- [ ] **1.5 Implement ItemRow component**",
+      "status": "completed",
+      "request_id": "REQ-059",
+      "error": null,
+      "processed_at": "2026-01-03T15:40:51.643930",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-059",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-059-implement-itemrow-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-059-implement-itemrow-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.6",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement Grid and List views",
+      "description": "Create `ItemGrid.tsx` with responsive grid\nCreate `ItemList.tsx` with table-like layout\nWire up view mode toggle",
+      "raw_match": "\n- [ ] **1.6 Implement Grid and List views**",
+      "status": "completed",
+      "request_id": "REQ-060",
+      "error": null,
+      "processed_at": "2026-01-03T15:50:18.680979",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-060",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-060-implement-grid-and-list-views-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-060-implement-grid-and-list-views-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "1.7",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Implement Empty and Loading states",
+      "description": "Create `EmptyState.tsx` component\nCreate `LoadingState.tsx` with skeleton\nIntegrate into main component",
+      "raw_match": "\n- [ ] **1.7 Implement Empty and Loading states**",
+      "status": "failed",
+      "request_id": "REQ-061",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:10:39.784046",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-061",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-061-implement-empty-and-loading-states-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-061-implement-empty-and-loading-states-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Create useItemSearch hook",
+      "description": "Implement search query matching (title, location, tags, instructions)\nImplement filter application logic\nImplement sort comparators\nReturn filtered/sorted items array",
+      "raw_match": "\n- [ ] **2.1 Create useItemSearch hook**",
+      "status": "failed",
+      "request_id": "REQ-062",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:20:05.795835",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-062",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-062-create-useitemsearch-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-062-create-useitemsearch-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Build ItemToolbar component",
+      "description": "Create main toolbar layout\nIntegrate view toggle buttons\nAdd result count display\nAdd \"clear filters\" action",
+      "raw_match": "\n- [ ] **2.2 Build ItemToolbar component**",
+      "status": "failed",
+      "request_id": "REQ-063",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:28:50.400509",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-063",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-063-build-itemtoolbar-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-063-build-itemtoolbar-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Implement search UI",
+      "description": "Search input with debounced updates\nClear search button\nSearch icon and styling",
+      "raw_match": "\n- [ ] **2.3 Implement search UI**",
+      "status": "failed",
+      "request_id": "REQ-064",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:37:31.016586",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-064",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-064-implement-search-ui-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-064-implement-search-ui-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Implement FilterPanel",
+      "description": "Content type filter (checkbox/chip group)\nTag filter (multi-select with existing tags)\nLocation filter (dropdown)\nProperty filter (multi-property mode)\nMobile-friendly collapsible panel",
+      "raw_match": "\n- [ ] **2.4 Implement FilterPanel**",
+      "status": "failed",
+      "request_id": "REQ-065",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:48:29.248733",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-065",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-065-implement-filterpanel-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-065-implement-filterpanel-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.5",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Implement SortMenu",
+      "description": "Dropdown with sort options\nCurrent sort indicator\nMobile-friendly touch targets",
+      "raw_match": "\n- [ ] **2.5 Implement SortMenu**",
+      "status": "failed",
+      "request_id": "REQ-066",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T03:57:37.629158",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-066",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-066-implement-sortmenu-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-066-implement-sortmenu-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.6",
+      "phase": "2",
+      "phase_name": "Search, Filter & Sort",
+      "title": "Create filter/sort utilities",
+      "description": "`filterUtils.ts` with filter logic\n`sortUtils.ts` with comparator functions\nUnit testable pure functions",
+      "raw_match": "\n- [ ] **2.6 Create filter/sort utilities**",
+      "status": "failed",
+      "request_id": "REQ-067",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T04:05:21.970886",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-067",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-067-create-filtersort-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-067-create-filtersort-utilities-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Create useItemSelection hook",
+      "description": "Manage selection Set\nSelect/deselect individual items\nSelect all (filtered) items\nClear selection\nSelection mode toggle",
+      "raw_match": "\n- [ ] **3.1 Create useItemSelection hook**",
+      "status": "failed",
+      "request_id": "REQ-068",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T04:13:34.559303",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-068",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-068-create-useitemselection-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-068-create-useitemselection-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Integrate selection UI",
+      "description": "Add checkboxes to ItemCard and ItemRow\nLong-press to enter selection mode (mobile)\nVisual highlight for selected items\nSelection count display",
+      "raw_match": "\n- [ ] **3.2 Integrate selection UI**",
+      "status": "failed",
+      "request_id": "REQ-069",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T04:22:12.992303",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-069",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-069-integrate-selection-ui-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-069-integrate-selection-ui-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Build BulkActionsBar component",
+      "description": "Floating action bar when items selected\nDelete, Add Tag, Remove Tag buttons\nMove to Property button (multi-property)\nExit selection mode button",
+      "raw_match": "\n- [ ] **3.3 Build BulkActionsBar component**",
+      "status": "failed",
+      "request_id": "REQ-070",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T04:30:28.696518",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-070",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-070-build-bulkactionsbar-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-070-build-bulkactionsbar-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Implement ConfirmDeleteDialog",
+      "description": "Single item delete confirmation\nBulk delete confirmation with item count\nShow item titles (up to 5, then \"and X more\")\nDestructive button styling",
+      "raw_match": "\n- [ ] **3.4 Implement ConfirmDeleteDialog**",
+      "status": "failed",
+      "request_id": "REQ-071",
+      "error": "Stage implementation: Exit code 1: ",
+      "processed_at": "2026-01-03T04:39:01.443285",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-071",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-071-implement-confirmdeletedialog-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-071-implement-confirmdeletedialog-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Implement BulkTagDialog",
+      "description": "Add tag mode\nRemove tag mode\nTag input with suggestions\nPreview of affected items",
+      "raw_match": "\n- [ ] **3.5 Implement BulkTagDialog**",
+      "status": "completed",
+      "request_id": "REQ-072",
+      "error": null,
+      "processed_at": "2026-01-03T17:54:00.880934",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-072",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-072-implement-bulktagdialog-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-072-implement-bulktagdialog-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "3.6",
+      "phase": "3",
+      "phase_name": "Selection & Bulk Actions",
+      "title": "Implement BulkMoveDialog",
+      "description": "Property selector\nPreview of affected items\nOnly shown in multi-property mode",
+      "raw_match": "\n- [ ] **3.6 Implement BulkMoveDialog**",
+      "status": "completed",
+      "request_id": "REQ-073",
+      "error": null,
+      "processed_at": "2026-01-03T18:08:59.395539",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-073",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-073-implement-bulkmovedialog-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-073-implement-bulkmovedialog-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Create ItemPreviewModal component",
+      "description": "Modal/drawer container\nClose button and overlay\nMobile-friendly slide-up drawer\nKeyboard navigation (Escape to close)",
+      "raw_match": "\n- [ ] **4.1 Create ItemPreviewModal component**",
+      "status": "completed",
+      "request_id": "REQ-074",
+      "error": null,
+      "processed_at": "2026-01-03T18:19:59.606671",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-074",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-074-create-itempreviewmodal-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-074-create-itempreviewmodal-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Build MediaGallery component",
+      "description": "Swipeable media carousel\nThumbnail strip navigation\nFull-screen toggle\nMedia type indicators",
+      "raw_match": "\n- [ ] **4.2 Build MediaGallery component**",
+      "status": "completed",
+      "request_id": "REQ-075",
+      "error": null,
+      "processed_at": "2026-01-03T18:30:53.952093",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-075",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-075-build-mediagallery-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-075-build-mediagallery-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Implement video playback",
+      "description": "Video player with controls\nPlay/pause, seek, volume\nFull-screen support",
+      "raw_match": "\n- [ ] **4.3 Implement video playback**",
+      "status": "completed",
+      "request_id": "REQ-076",
+      "error": null,
+      "processed_at": "2026-01-03T18:46:29.349274",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-076",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-076-implement-video-playback-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-076-implement-video-playback-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Implement photo/PDF viewer",
+      "description": "Photo zoom on tap/pinch\nPDF page navigation\nPDF page count display",
+      "raw_match": "\n- [ ] **4.4 Implement photo/PDF viewer**",
+      "status": "completed",
+      "request_id": "REQ-077",
+      "error": null,
+      "processed_at": "2026-01-03T18:58:37.858669",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-077",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-077-implement-photopdf-viewer-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-077-implement-photopdf-viewer-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.5",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Create InstructionsViewer",
+      "description": "Render markdown instructions\nScrollable text area\nUse existing react-markdown dependency",
+      "raw_match": "\n- [ ] **4.5 Create InstructionsViewer**",
+      "status": "completed",
+      "request_id": "REQ-078",
+      "error": null,
+      "processed_at": "2026-01-03T19:10:04.014376",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-078",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-078-create-instructionsviewer-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-078-create-instructionsviewer-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "4.6",
+      "phase": "4",
+      "phase_name": "Item Preview/Detail",
+      "title": "Add preview actions",
+      "description": "Edit button (triggers onEditItem)\nManage Assets button (opens asset panel)\nDelete button (with confirmation)\nMetadata display (title, location, tags)",
+      "raw_match": "\n- [ ] **4.6 Add preview actions**",
+      "status": "completed",
+      "request_id": "REQ-079",
+      "error": null,
+      "processed_at": "2026-01-03T19:20:44.986878",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-079",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-079-add-preview-actions-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-079-add-preview-actions-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Create useAssetManagement hook",
+      "description": "Track pending changes (adds, removes, reorders)\nBatch changes until \"Done\"\nProvide add, remove, reorder actions",
+      "raw_match": "\n- [ ] **5.1 Create useAssetManagement hook**",
+      "status": "completed",
+      "request_id": "REQ-080",
+      "error": null,
+      "processed_at": "2026-01-03T19:31:31.031407",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-080",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-080-create-useassetmanagement-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-080-create-useassetmanagement-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Build AssetPanel component",
+      "description": "Slide-in drawer from right\nAsset list with thumbnails\n\"Add Media\" button\n\"Done\" and \"Cancel\" buttons",
+      "raw_match": "\n- [ ] **5.2 Build AssetPanel component**",
+      "status": "completed",
+      "request_id": "REQ-081",
+      "error": null,
+      "processed_at": "2026-01-03T19:46:30.726935",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-081",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-081-build-assetpanel-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-081-build-assetpanel-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Implement AssetItem component",
+      "description": "Thumbnail display\nType indicator (video/photo/PDF)\nDuration/page count for video/PDF\nRemove button",
+      "raw_match": "\n- [ ] **5.3 Implement AssetItem component**",
+      "status": "completed",
+      "request_id": "REQ-082",
+      "error": null,
+      "processed_at": "2026-01-03T20:01:17.060474",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-082",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-082-implement-assetitem-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-082-implement-assetitem-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Implement AssetDropZone",
+      "description": "Drag-and-drop file upload area\nFile picker click fallback\nFile type validation\nPreview of queued files",
+      "raw_match": "\n- [ ] **5.4 Implement AssetDropZone**",
+      "status": "completed",
+      "request_id": "REQ-083",
+      "error": null,
+      "processed_at": "2026-01-03T20:14:31.794988",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-083",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-083-implement-assetdropzone-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-083-implement-assetdropzone-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "5.5",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Add drag-and-drop reordering",
+      "description": "Drag handle on AssetItem\nVisual feedback during drag\nDrop position indicator\nConsider @dnd-kit/core if native DnD insufficient",
+      "raw_match": "\n- [ ] **5.5 Add drag-and-drop reordering**",
+      "status": "completed",
+      "request_id": "REQ-084",
+      "error": null,
+      "processed_at": "2026-01-03T06:22:50.739060",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-084",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-084-add-drag-and-drop-reordering-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-084-add-drag-and-drop-reordering-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.6",
+      "phase": "5",
+      "phase_name": "Asset Management",
+      "title": "Add asset remove confirmation",
+      "description": "Confirmation for single asset removal\nShow asset thumbnail in confirmation",
+      "raw_match": "\n- [ ] **5.6 Add asset remove confirmation**",
+      "status": "completed",
+      "request_id": "REQ-085",
+      "error": null,
+      "processed_at": "2026-01-03T06:28:19.304492",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-085",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-085-add-asset-remove-confirmation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-085-add-asset-remove-confirmation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Create InlineEdit component",
+      "description": "Click-to-edit text field\nEscape to cancel, Enter/blur to save\nLoading state during save\nError display",
+      "raw_match": "\n- [ ] **6.1 Create InlineEdit component**",
+      "status": "completed",
+      "request_id": "REQ-086",
+      "error": null,
+      "processed_at": "2026-01-03T06:35:06.280065",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-086",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-086-create-inlineedit-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-086-create-inlineedit-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Integrate title/location inline edit",
+      "description": "Add inline edit to ItemCard/ItemRow\nConnect to onUpdateItem callback\nConfigurable via `enableInlineEdit` flag",
+      "raw_match": "\n- [ ] **6.2 Integrate title/location inline edit**",
+      "status": "completed",
+      "request_id": "REQ-087",
+      "error": null,
+      "processed_at": "2026-01-03T06:42:03.183869",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-087",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-087-integrate-titlelocation-inline-edit-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-087-integrate-titlelocation-inline-edit-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.3",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Implement tags inline edit",
+      "description": "Add/remove tags in place\nTag suggestions from existing items\nChip-based UI",
+      "raw_match": "\n- [ ] **6.3 Implement tags inline edit**",
+      "status": "completed",
+      "request_id": "REQ-088",
+      "error": null,
+      "processed_at": "2026-01-03T06:50:14.395753",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-088",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-088-implement-tags-inline-edit-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-088-implement-tags-inline-edit-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.4",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Mobile polish",
+      "description": "Touch target sizing (min 48x48px)\nSwipe actions (optional)\nFilter panel collapse on mobile\nPreview as bottom sheet",
+      "raw_match": "\n- [ ] **6.4 Mobile polish**",
+      "status": "completed",
+      "request_id": "REQ-089",
+      "error": null,
+      "processed_at": "2026-01-03T07:00:42.607588",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-089",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-089-mobile-polish-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-089-mobile-polish-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.5",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Accessibility audit",
+      "description": "Keyboard navigation throughout\nFocus management in modals\nARIA labels and roles\nScreen reader testing",
+      "raw_match": "\n- [ ] **6.5 Accessibility audit**",
+      "status": "completed",
+      "request_id": "REQ-090",
+      "error": null,
+      "processed_at": "2026-01-03T07:09:06.815959",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-090",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-090-accessibility-audit-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-090-accessibility-audit-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.6",
+      "phase": "6",
+      "phase_name": "Inline Edit & Polish",
+      "title": "Create test harness",
+      "description": "Standalone page at `/test/item-manager`\nMock data with various item types\nConsole output of all callbacks\nNetwork monitor confirmation (zero requests)",
+      "raw_match": "\n- [ ] **6.6 Create test harness**",
+      "status": "completed",
+      "request_id": "REQ-090",
+      "error": null,
+      "processed_at": "2026-01-03T07:16:58.117364",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-090",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-090-create-test-harness-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-090-create-test-harness-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "disabled",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [
+    {
+      "stage": "implementation",
+      "task_id": "1.7",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T15:59:33.424196"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:06:42.269980"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:24:08.219349"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:31:09.821846"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:38:19.216208"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.5",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:45:21.658472"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.6",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:52:26.625700"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "3.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T16:59:36.679299"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "3.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T17:06:40.304910"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "3.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T17:13:51.666370"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "3.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-03T17:20:56.982720"
+    }
+  ],
+  "metadata": {
+    "total_requests_generated": 18,
+    "last_request_id": "REQ-090",
+    "first_request_id": "REQ-056",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-capture-manager.yaml"
+  },
+  "precheck": {
+    "status": "failed",
+    "completed_at": "2026-01-03T10:28:22.109140",
+    "elapsed": "22.0s",
+    "tools": {
+      "playwright_mcp": {
+        "available": false,
+        "notes": "Connection refused on port 9223. Chrome is not running with remote debugging enabled."
+      }
+    }
+  }
+}

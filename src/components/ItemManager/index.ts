@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-080 - Added useAssetManagement hook export)
+ * @lastModified 2026-01-03 (REQ-084 - Added SortableAssetList export for drag-and-drop reordering)
  */
 
 // =============================================================================
@@ -161,3 +161,14 @@ export type { AssetPanelProps } from './components';
 
 export { AssetItem } from './components/AssetPanel';
 export type { AssetItemProps } from './ItemManager.types';
+
+// =============================================================================
+// SortableAssetList Component Export (REQ-084)
+// =============================================================================
+
+export { SortableAssetList } from './components/AssetPanel';
+export type {
+  SortableAssetListProps,
+  SortableAssetItemProps,
+  DragHandleProps,
+} from './ItemManager.types';

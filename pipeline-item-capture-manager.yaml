@@ -1,0 +1,290 @@
+# =============================================================================
+# Pipeline Configuration: ItemManager Implementation
+# =============================================================================
+#
+# Generated: 2026-01-02T17:55:00
+# Source: ./docs/prd/item-capture-manager-implementation-plan.md
+#
+# This file contains ALL project-specific configuration for the ItemManager
+# component implementation. The orchestrator reads this file and makes no
+# assumptions beyond it.
+#
+# Usage:
+#   python pipeline_orchestrator.py --config ./pipeline-item-capture-manager.yaml
+#   python pipeline_orchestrator.py --config ./pipeline-item-capture-manager.yaml --dry-run
+#   python pipeline_orchestrator.py --config ./pipeline-item-capture-manager.yaml --list-tasks
+#   python pipeline_orchestrator.py --config ./pipeline-item-capture-manager.yaml --tasks "1,2,3"
+#   python pipeline_orchestrator.py --config ./pipeline-item-capture-manager.yaml --stages "request,overview"
+#
+# =============================================================================
+
+pipeline:
+  name: item-capture-manager-implementation
+  version: "1.0"
+  description: "Process ItemManager implementation plan through request generation"
+
+  # Pipeline mode:
+  #   - "horizontal": All tasks through stage 1, then all through stage 2, etc.
+  #   - "per_request": All stages for each task before moving to next task.
+  mode: per_request
+
+  # Global default timeout for agent invocations (in seconds)
+  default_timeout: 900  # 15 minutes
+
+# =============================================================================
+# Source Document
+# =============================================================================
+
+source:
+  path: ./docs/prd/item-capture-manager-implementation-plan.md
+
+  extraction:
+    # Pattern to match tasks like: - [ ] **1.1 Task Title** *(...)
+    task_pattern: '^\s*-\s*\[\s*\]\s*\*\*(\d+\.\d+)\s+(.+?)\*\*'
+    task_groups:
+      id: 1
+      title: 2
+    # Pattern to match phases like: ### Phase 1: Foundation (Estimated: 2-3 days)
+    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)\s*\('
+    phase_groups:
+      number: 1
+      name: 2
+    description:
+      mode: following_bullets
+      end_patterns:
+        - '^\s*-\s*\[\s*\]\s*\*\*'
+        - '^###\s+'
+        - '^##\s+'
+        - '^\|\s*Task'
+        - '^---'
+
+# =============================================================================
+# Output Locations
+# =============================================================================
+
+outputs:
+  requests: ./docs/gen_requests.md
+  overviews: ./docs/
+  details: ./docs/
+  state: ./pipeline-item-capture-manager-state.json
+  logs: ./pipeline-item-capture-manager.log
+
+# =============================================================================
+# Request Stages (Per-Request Mode)
+# =============================================================================
+# These stages run in sequence FOR EACH task/request before moving to the next.
+# Flow: Task1(request->overview->details->impl) -> Task2(request->overview->details->impl) -> ...
+
+request_stages:
+  # -------------------------------------------------------------------------
+  # Stage 1: Create Request
+  # -------------------------------------------------------------------------
+  - id: request
+    name: "Create Request"
+    description: "Convert implementation task into formal requirement"
+    enabled: true
+
+    agent:
+      name: "01-request-fa"
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 240  # 4 minutes
+
+    output:
+      type: append
+      file: ./docs/gen_requests.md
+
+  # -------------------------------------------------------------------------
+  # Stage 2: Create Overview
+  # -------------------------------------------------------------------------
+  - id: overview
+    name: "Create Overview"
+    description: "Pull relevant context from codebase for the request"
+    enabled: true
+
+    agent:
+      name: "02-techlead-overview"
+      invocation_template: |
+        Acting as a Technical Lead, create an implementation breakdown document for:
+        {requests_file_path} - Request #{request_id_num}
+
+        **Implementation Plan Reference**: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+        - Details:
+            {task_description_formatted}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-overview.md
+
+        **Instructions**:
+        1. Read the request from {requests_file_path} (find Request #{request_id_num})
+        2. Read the implementation plan from {implementation_plan_path} for:
+           - Component hierarchy and file structure
+           - Phase dependencies and task relationships
+           - Technical decisions (state management, libraries, patterns)
+           - Authorized files/locations for this component
+        3. Investigate the codebase for existing patterns to follow
+        4. Create the overview document following the standard structure
+        5. Include an "Authorized Files and Functions for Modification" section
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 660  # 11 minutes
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-overview.md"
+
+  # -------------------------------------------------------------------------
+  # Stage 3: Create Detailed Task Breakdown
+  # -------------------------------------------------------------------------
+  - id: details
+    name: "Create Detailed Tasks"
+    description: "Break request into 1-point implementation tasks"
+    enabled: true
+
+    agent:
+      name: "03-senior-dev-task-breakdown"
+      invocation_template: |
+        Create a detailed task breakdown document for Request #{request_id_num}
+
+        **Input Documents** (you MUST read these first):
+        - Overview document: {overview_file}
+        - Requirements: {requests_file_path} (find Request #{request_id_num})
+        - Implementation Plan: {implementation_plan_path}
+        - Project README: README.md
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-detailed.md
+
+        **Pre-Analysis Steps**:
+        1. Read the overview document at {overview_file}
+        2. Review README.md for project conventions
+        3. Check database structure if relevant (db.sql or Supabase MCP)
+        4. Identify the "Authorized Files and Functions for Modification" from the overview
+
+        **Requirements**:
+        - Each numbered task must be <= 1 story point (a few hours of focused work)
+        - Include testing tasks for each implementation
+        - Only modify files listed in the authorized section of the overview
+        - Use actual system date/time in the document header
+        - All file paths relative to project root
+        - Include verification steps for each task
+        - Solutions must be input-driven, not example-specific
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 480  # 8 minutes
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-detailed.md"
+
+  # -------------------------------------------------------------------------
+  # Stage 4: Implementation
+  # -------------------------------------------------------------------------
+  - id: implementation
+    name: "Implementation"
+    description: "Autonomously implement all tasks from the detailed specification"
+    enabled: true
+
+    agent:
+      name: "05-spec-implementation"
+      invocation_template: |
+        Implement all tasks from the detailed specification for Request #{request_id_num}
+
+        **Detailed Specification**: {details_file}
+
+        **Task Context**:
+        - Request ID: {request_id}
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        {project_context}
+
+        **Instructions**:
+        1. Read the detailed specification at {details_file}
+        2. Execute all tasks following the per-task workflow:
+           - Implement -> Verify -> Update Doc -> Build -> Commit
+        3. Mark completed tasks with [x] and add implementation notes
+        4. Continue autonomously until all required tasks are complete
+        5. Report final status with summary of completed/failed/blocked tasks
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__playwright__*"
+      timeout: 1800  # 30 minutes
+
+    output:
+      type: implementation
+      # Output is tracked via git commits and doc updates
+
+# =============================================================================
+# Implementation Configuration
+# =============================================================================
+# Technology context and tool requirements for the implementation stage.
+
+implementation:
+  technology:
+    # Database: none - ItemManager is a frontend-only component
+    database: none
+    # Browser testing required for UI components
+    browser_testing: true
+
+  required_tools:
+    - playwright_mcp  # Required for browser-based verification of UI components
+
+  precheck:
+    timeout: 120  # 2 minutes
+
+# =============================================================================
+# Retry Configuration (Global)
+# =============================================================================
+
+retry:
+  max_attempts: 2
+  on_failure: skip_and_log
+
+# =============================================================================
+# Legacy Stages (Horizontal Mode - Not Used in per_request mode)
+# =============================================================================
+# These are kept for backward compatibility if you switch to horizontal mode.
+
+stages:
+  - id: request
+    name: "Request Generation"
+    enabled: false
+    agent:
+      name: "01-request-fa"
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+    retry:
+      max_attempts: 2
+      on_failure: skip_and_log
+    stop_hook: false
