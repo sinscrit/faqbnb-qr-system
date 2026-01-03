@@ -1114,7 +1114,7 @@ export interface BulkMoveDialogProps {
  * Props for the ItemPreviewModal component.
  * Controls the modal/drawer display for item preview.
  *
- * @lastModified 2026-01-03 (REQ-074 Task 2)
+ * @lastModified 2026-01-03 (REQ-079 Task 4.6 - Added preview actions support)
  */
 export interface ItemPreviewModalProps {
   /** Whether the modal is currently open */
@@ -1137,4 +1137,27 @@ export interface ItemPreviewModalProps {
 
   /** Optional CSS class for content container */
   contentClassName?: string;
+
+  // ---------------------------------------------------------------------------
+  // Preview Action Callbacks (REQ-079)
+  // ---------------------------------------------------------------------------
+
+  /** Callback when Edit button is clicked */
+  onEditItem?: (item: ItemRecord) => void;
+
+  /** Callback when Delete is confirmed (array format for bulk delete compatibility) */
+  onDeleteItems?: (ids: string[]) => void;
+
+  /** Callback when Manage Assets button is clicked (dispatches OPEN_ASSET_PANEL) */
+  onManageAssets?: (item: ItemRecord) => void;
+
+  // ---------------------------------------------------------------------------
+  // Preview Actions Configuration (REQ-079)
+  // ---------------------------------------------------------------------------
+
+  /** Configuration options for preview actions */
+  config?: {
+    /** Enable asset management button (default: true) */
+    enableAssetManagement?: boolean;
+  };
 }
