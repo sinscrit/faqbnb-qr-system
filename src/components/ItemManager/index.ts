@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-084 - Added SortableAssetList export for drag-and-drop reordering)
+ * @lastModified 2026-01-03 (REQ-085 - Added AssetRemoveConfirmDialog export for removal confirmation)
  */
 
 // =============================================================================
@@ -172,3 +172,10 @@ export type {
   SortableAssetItemProps,
   DragHandleProps,
 } from './ItemManager.types';
+
+// =============================================================================
+// AssetRemoveConfirmDialog Component Export (REQ-085)
+// =============================================================================
+
+export { AssetRemoveConfirmDialog } from './components/AssetPanel';
+export type { AssetRemoveConfirmDialogProps } from './components/AssetPanel';

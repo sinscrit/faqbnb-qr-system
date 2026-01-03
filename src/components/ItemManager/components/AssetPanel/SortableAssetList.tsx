@@ -9,9 +9,13 @@
  * - Touch drag with long-press activation (mobile)
  * - Keyboard navigation (Space to pick up, Arrows to move, Space to drop)
  *
+ * Also includes asset removal confirmation dialog (REQ-085) to prevent
+ * accidental deletion of assets.
+ *
  * @module ItemManager/components/AssetPanel/SortableAssetList
  * @see docs/REQ-084-add-drag-and-drop-reordering-detailed.md
- * @lastModified 2026-01-03 (REQ-084 Tasks 4-5)
+ * @see docs/REQ-085-add-asset-remove-confirmation-detailed.md
+ * @lastModified 2026-01-03 (REQ-085 - Added removal confirmation dialog)
  *
  * @example
  * <SortableAssetList
@@ -48,6 +52,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { AssetItem } from './AssetItem';
+import { AssetRemoveConfirmDialog } from './AssetRemoveConfirmDialog';
 import type { MediaItem } from '@/components/ItemCapture';
 import type {
   SortableAssetListProps,
@@ -78,6 +83,14 @@ function getAssetName(asset: MediaItem | PendingAsset | undefined): string {
 // =============================================================================
 
 /**
+ * Extended props for SortableAssetItem with remove click handler.
+ */
+interface ExtendedSortableAssetItemProps extends SortableAssetItemProps {
+  /** Handler called when remove button is clicked (for confirmation dialog) */
+  onRemoveClick: (asset: MediaItem | PendingAsset) => void;
+}
+
+/**
  * Wrapper component that makes an AssetItem sortable via drag-and-drop.
  * Handles CSS transforms, drag state, and passes drag listeners to the drag handle.
  */
@@ -86,12 +99,13 @@ function SortableAssetItem({
   id,
   index,
   onRemove,
+  onRemoveClick,
   onRestore,
   isPending,
   isMarkedForRemoval,
   totalCount,
   draggableCount,
-}: SortableAssetItemProps) {
+}: ExtendedSortableAssetItemProps) {
   const {
     attributes,
     listeners,
@@ -114,6 +128,12 @@ function SortableAssetItem({
   // Only show drag handle when there's more than one draggable item
   const showDragHandle = draggableCount > 1 && !isMarkedForRemoval;
 
+  // Handler that passes the full asset to trigger confirmation dialog
+  // The assetId param is ignored since we already have the asset from closure
+  const handleRemove = useCallback((_assetId: string) => {
+    onRemoveClick(asset);
+  }, [asset, onRemoveClick]);
+
   return (
     <div
       ref={setNodeRef}
@@ -124,7 +144,7 @@ function SortableAssetItem({
       <AssetItem
         asset={asset}
         index={index}
-        onRemove={onRemove}
+        onRemove={handleRemove}
         onRestore={onRestore}
         isPending={isPending}
         isMarkedForRemoval={isMarkedForRemoval}
@@ -154,6 +174,29 @@ export function SortableAssetList({
   className,
 }: SortableAssetListProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  // ===========================================================================
+  // Removal Confirmation Dialog State (REQ-085)
+  // ===========================================================================
+  const [assetToRemove, setAssetToRemove] = useState<MediaItem | PendingAsset | null>(null);
+
+  // Handler when remove button is clicked - shows confirmation dialog
+  const handleRemoveClick = useCallback((asset: MediaItem | PendingAsset) => {
+    setAssetToRemove(asset);
+  }, []);
+
+  // Handler when user confirms removal in dialog
+  const handleConfirmRemove = useCallback(() => {
+    if (assetToRemove) {
+      onRemove(assetToRemove.id);
+      setAssetToRemove(null);
+    }
+  }, [assetToRemove, onRemove]);
+
+  // Handler when user cancels removal in dialog
+  const handleCancelRemove = useCallback(() => {
+    setAssetToRemove(null);
+  }, []);
 
   // Configure sensors for mouse, touch, and keyboard
   const sensors = useSensors(
@@ -282,6 +325,7 @@ export function SortableAssetList({
                 asset={asset}
                 index={index}
                 onRemove={onRemove}
+                onRemoveClick={handleRemoveClick}
                 onRestore={onRestore}
                 isPending={isPending}
                 isMarkedForRemoval={isMarkedForRemoval}
@@ -306,6 +350,14 @@ export function SortableAssetList({
           />
         ) : null}
       </DragOverlay>
+
+      {/* Removal Confirmation Dialog (REQ-085) */}
+      <AssetRemoveConfirmDialog
+        isOpen={assetToRemove !== null}
+        asset={assetToRemove}
+        onConfirm={handleConfirmRemove}
+        onCancel={handleCancelRemove}
+      />
     </DndContext>
   );
 }
