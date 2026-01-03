@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-059 Task 12 - Added ItemRow component export)
+ * @lastModified 2026-01-03 (REQ-060 Task 6 - Added ItemGrid, ItemList, ViewModeToggle exports)
  */
 
 // =============================================================================
@@ -36,6 +36,9 @@ export type {
   // Component Props
   ItemCardProps,
   ItemRowProps,
+  ItemGridProps,
+  ItemListProps,
+  ViewModeToggleProps,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -92,3 +95,16 @@ export { default as ItemCardDefault } from './components/ItemCard';
 
 export { ItemRow } from './components/ItemRow';
 export { default as ItemRowDefault } from './components/ItemRow';
+
+// =============================================================================
+// Grid and List View Component Exports (REQ-060)
+// =============================================================================
+
+export { ItemGrid } from './components/ItemGrid';
+export { default as ItemGridDefault } from './components/ItemGrid';
+
+export { ItemList } from './components/ItemList';
+export { default as ItemListDefault } from './components/ItemList';
+
+export { ViewModeToggle } from './components/shared/ViewModeToggle';
+export { default as ViewModeToggleDefault } from './components/shared/ViewModeToggle';

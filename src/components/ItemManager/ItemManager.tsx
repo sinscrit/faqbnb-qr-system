@@ -9,12 +9,15 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03
+ * @lastModified 2026-01-03 (REQ-060 Task 5 - Integrated Grid/List views)
  */
 
 import { useCallback, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
+import { ItemGrid } from './components/ItemGrid';
+import { ItemList } from './components/ItemList';
+import { ViewModeToggle } from './components/shared/ViewModeToggle';
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -248,19 +251,47 @@ export function ItemManager({
       );
     }
 
-    // Items display placeholder (Grid/List views implemented in Task 1.6)
-    return (
-      <div className={cn(
-        'flex-1 p-4',
-        state.viewMode === 'grid' ? classNames?.itemGrid : classNames?.itemList
-      )}>
-        <div className="text-gray-500 text-center border-2 border-dashed border-gray-200 rounded-lg py-8">
-          <div className="font-medium">{items.length} items</div>
-          <div className="text-sm mt-1">View mode: {state.viewMode}</div>
-          <div className="text-xs mt-2 text-gray-400">
-            Grid/List components will be added in Tasks 1.4-1.6
-          </div>
+    // Render items based on view mode
+    if (state.viewMode === 'grid') {
+      return (
+        <div className={cn('flex-1 p-4', classNames?.itemGrid)}>
+          <ItemGrid
+            items={items}
+            onItemPreview={openPreview}
+            onSelectionChange={(id, selected) => {
+              if (selected) {
+                selectItem(id);
+              } else {
+                deselectItem(id);
+              }
+            }}
+            selectedIds={state.selectedIds}
+            isSelectionMode={state.isSelectionMode}
+          />
         </div>
+      );
+    }
+
+    // List view
+    return (
+      <div className={cn('flex-1 p-4', classNames?.itemList)}>
+        <ItemList
+          items={items}
+          onItemPreview={openPreview}
+          onSelectionChange={(id, selected) => {
+            if (selected) {
+              selectItem(id);
+            } else {
+              deselectItem(id);
+            }
+          }}
+          selectedIds={state.selectedIds}
+          isSelectionMode={state.isSelectionMode}
+          onEdit={onEditItem}
+          onDelete={(item) => onDeleteItems([item.id])}
+          onManageAssets={effectiveConfig.enableAssetManagement ? openAssetPanel : undefined}
+          onDuplicate={effectiveConfig.enableDuplicate ? onDuplicateItem : undefined}
+        />
       </div>
     );
   }, [
@@ -268,11 +299,22 @@ export function ItemManager({
     error,
     items,
     state.viewMode,
+    state.selectedIds,
+    state.isSelectionMode,
     effectiveConfig.labels,
+    effectiveConfig.enableAssetManagement,
+    effectiveConfig.enableDuplicate,
     renderLoadingState,
     renderErrorState,
     renderEmptyState,
     classNames,
+    openPreview,
+    selectItem,
+    deselectItem,
+    onEditItem,
+    onDeleteItems,
+    openAssetPanel,
+    onDuplicateItem,
   ]);
 
   // -------------------------------------------------------------------------
@@ -325,33 +367,18 @@ export function ItemManager({
         {renderToolbar ? (
           renderToolbar(toolbarProps)
         ) : (
-          // Default toolbar placeholder
+          // Default toolbar with ViewModeToggle
           <div className="px-4 py-3 flex items-center justify-between">
             <div className="text-sm text-gray-500">
               {items.length} item{items.length !== 1 ? 's' : ''}
               {hasFilters && ' (filtered)'}
             </div>
             {effectiveConfig.allowViewToggle && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={cn(
-                    'px-2 py-1 text-sm rounded',
-                    state.viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'
-                  )}
-                >
-                  Grid
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={cn(
-                    'px-2 py-1 text-sm rounded',
-                    state.viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'
-                  )}
-                >
-                  List
-                </button>
-              </div>
+              <ViewModeToggle
+                viewMode={state.viewMode}
+                onViewModeChange={setViewMode}
+                disabled={items.length === 0}
+              />
             )}
           </div>
         )}

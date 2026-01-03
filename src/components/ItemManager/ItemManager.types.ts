@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-058 Task 1 - Added ItemCardProps interface)
+ * @lastModified 2026-01-03 (REQ-060 Task 1 - Added ItemGridProps, ItemListProps, ViewModeToggleProps)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -455,6 +455,77 @@ export interface ItemRowProps {
   onManageAssets?: (item: ItemRecord) => void;
   /** Optional callback for duplicate action */
   onDuplicate?: (item: ItemRecord) => void;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+// =============================================================================
+// Grid and List View Props Interfaces (REQ-060)
+// =============================================================================
+
+/**
+ * Props for the ItemGrid component.
+ * Renders items in a responsive multi-column grid layout.
+ *
+ * @lastModified 2026-01-03 (REQ-060 Task 1)
+ */
+export interface ItemGridProps {
+  /** Array of item records to display */
+  items: ItemRecord[];
+  /** Callback when an item card is clicked for preview */
+  onItemPreview: (item: ItemRecord) => void;
+  /** Callback when selection state changes */
+  onSelectionChange: (id: string, selected: boolean) => void;
+  /** Set of currently selected item IDs */
+  selectedIds: Set<string>;
+  /** Whether selection mode is active */
+  isSelectionMode: boolean;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+/**
+ * Props for the ItemList component.
+ * Renders items in a vertical list layout with table-like structure.
+ *
+ * @lastModified 2026-01-03 (REQ-060 Task 1)
+ */
+export interface ItemListProps {
+  /** Array of item records to display */
+  items: ItemRecord[];
+  /** Callback when an item row is clicked for preview */
+  onItemPreview: (item: ItemRecord) => void;
+  /** Callback when selection state changes */
+  onSelectionChange: (id: string, selected: boolean) => void;
+  /** Set of currently selected item IDs */
+  selectedIds: Set<string>;
+  /** Whether selection mode is active */
+  isSelectionMode: boolean;
+  /** Callback when edit action is triggered */
+  onEdit: (item: ItemRecord) => void;
+  /** Callback when delete action is triggered */
+  onDelete: (item: ItemRecord) => void;
+  /** Optional callback for asset management action */
+  onManageAssets?: (item: ItemRecord) => void;
+  /** Optional callback for duplicate action */
+  onDuplicate?: (item: ItemRecord) => void;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+/**
+ * Props for the ViewModeToggle component.
+ * Toggle control for switching between grid and list views.
+ *
+ * @lastModified 2026-01-03 (REQ-060 Task 1)
+ */
+export interface ViewModeToggleProps {
+  /** Current view mode */
+  viewMode: 'grid' | 'list';
+  /** Callback when view mode changes */
+  onViewModeChange: (mode: 'grid' | 'list') => void;
+  /** Whether the toggle is disabled */
+  disabled?: boolean;
   /** Optional additional CSS classes */
   className?: string;
 }
