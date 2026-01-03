@@ -9,7 +9,7 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-087 Task 6 - Integrated inline edit for title/location)
+ * @lastModified 2026-01-03 (REQ-088 Task 8-9 - Added existingTags for inline tag editing)
  */
 
 import { useCallback, useMemo, useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ import type {
   ToolbarRenderProps,
 } from './ItemManager.types';
 import type { ItemRecord } from '@/components/ItemCapture';
+import { SUGGESTED_TAGS } from '@/components/ItemCapture/utils/constants';
 
 // =============================================================================
 // Constants
@@ -161,14 +162,26 @@ export function ItemManager({
   }, [effectiveConfig.multiPropertyMode, properties]);
 
   /**
-   * Collect all unique tags from all items for autocomplete suggestions.
+   * Collect all unique tags from all items plus suggested tags for autocomplete suggestions.
+   * Used for both bulk tag operations and inline tag editing.
+   *
+   * @lastModified 2026-01-03 (REQ-088 Task 8 - Added SUGGESTED_TAGS baseline)
    */
-  const existingTags = useMemo(() => {
+  const allExistingTags = useMemo(() => {
     const tagSet = new Set<string>();
+
+    // Add suggested tags as baseline
+    SUGGESTED_TAGS.forEach((tag) => tagSet.add(tag));
+
+    // Add tags from all items
     items.forEach((item) => {
       (item.tags || []).forEach((tag) => tagSet.add(tag));
     });
-    return Array.from(tagSet).sort();
+
+    // Sort alphabetically (case-insensitive)
+    return Array.from(tagSet).sort((a, b) =>
+      a.toLowerCase().localeCompare(b.toLowerCase())
+    );
   }, [items]);
 
   /**
@@ -446,6 +459,7 @@ export function ItemManager({
             isSelectionMode={state.isSelectionMode}
             enableInlineEdit={effectiveConfig.enableInlineEdit}
             onUpdateItem={handleInlineUpdate}
+            existingTags={allExistingTags}
           />
         </div>
       );
@@ -472,6 +486,7 @@ export function ItemManager({
           onDuplicate={effectiveConfig.enableDuplicate ? onDuplicateItem : undefined}
           enableInlineEdit={effectiveConfig.enableInlineEdit}
           onUpdateItem={handleInlineUpdate}
+          existingTags={allExistingTags}
         />
       </div>
     );
@@ -498,6 +513,7 @@ export function ItemManager({
     openAssetPanel,
     onDuplicateItem,
     handleInlineUpdate,
+    allExistingTags,
   ]);
 
   // -------------------------------------------------------------------------
@@ -684,7 +700,7 @@ export function ItemManager({
         <BulkTagDialog
           mode={tagDialogMode}
           selectedItems={getSelectedItems()}
-          existingTags={existingTags}
+          existingTags={allExistingTags}
           onConfirm={handleTagConfirm}
           onCancel={handleTagCancel}
           loading={bulkLoading}

@@ -6,10 +6,10 @@
  * Displays an individual item in the ItemManager list view.
  * Features thumbnail preview, comprehensive metadata display,
  * kebab action menu, selection mode support, and inline editing
- * of title and location (REQ-087).
+ * of title, location, and tags (REQ-087, REQ-088).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-03 (REQ-087 Task 3 - Added inline edit integration)
+ * @lastModified 2026-01-03 (REQ-088 Task 11 - Added inline tag editing)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -24,7 +24,7 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { InlineEdit } from './shared/InlineEdit';
+import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
 import type { ItemRowProps } from '../ItemManager.types';
 
 /**
@@ -85,6 +85,7 @@ export function ItemRow({
   className,
   enableInlineEdit,
   onUpdateItem,
+  existingTags,
 }: ItemRowProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -109,6 +110,15 @@ export function ItemRow({
     await onUpdateItem({
       ...item,
       location: newLocation || undefined,
+    });
+  }, [item, onUpdateItem]);
+
+  // Tags save handler
+  const handleTagsSave = useCallback(async (newTags: string[]) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({
+      ...item,
+      tags: newTags.length > 0 ? newTags : undefined,
     });
   }, [item, onUpdateItem]);
 
@@ -365,9 +375,21 @@ export function ItemRow({
         </span>
       </div>
 
-      {/* Tags Column (Task 7) */}
+      {/* Tags Column (Task 7, REQ-088) */}
       <div className="hidden lg:flex w-40">
-        {renderTags()}
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()} className="w-full">
+            <TagsInlineEdit
+              tags={item.tags || []}
+              onSave={handleTagsSave}
+              existingTags={existingTags}
+              placeholder="Add tags..."
+              ariaLabel={`Edit tags for ${item.title}`}
+            />
+          </div>
+        ) : (
+          renderTags()
+        )}
       </div>
 
       {/* Date Column (Task 8) */}

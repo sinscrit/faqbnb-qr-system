@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemRow component.
  *
  * @module ItemManager/components/ItemList
- * @lastModified 2026-01-03 (REQ-087 Task 5 - Added inline edit props)
+ * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
  */
 
 import { cn } from '@/lib/utils';
@@ -27,6 +27,7 @@ export function ItemList({
   className,
   enableInlineEdit,
   onUpdateItem,
+  existingTags,
 }: ItemListProps) {
   return (
     <div
@@ -65,6 +66,7 @@ export function ItemList({
             onDuplicate={onDuplicate}
             enableInlineEdit={enableInlineEdit}
             onUpdateItem={onUpdateItem}
+            existingTags={existingTags}
           />
         ))}
       </div>

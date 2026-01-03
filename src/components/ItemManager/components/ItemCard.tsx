@@ -10,16 +10,16 @@
  * - Selection checkbox for bulk operations
  * - Hover and focus states for accessibility
  * - Keyboard navigation support
- * - Inline editing of title and location (REQ-087)
+ * - Inline editing of title, location, and tags (REQ-087, REQ-088)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-03 (REQ-087 Task 2 - Added inline edit integration)
+ * @lastModified 2026-01-03 (REQ-088 Task 10 - Added inline tag editing)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Play, FileText, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { InlineEdit } from './shared/InlineEdit';
+import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
 import type { ItemCardProps } from '../ItemManager.types';
 
 /**
@@ -64,6 +64,7 @@ export function ItemCard({
   className,
   enableInlineEdit,
   onUpdateItem,
+  existingTags,
 }: ItemCardProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -84,6 +85,15 @@ export function ItemCard({
     await onUpdateItem({
       ...item,
       location: newLocation || undefined,
+    });
+  }, [item, onUpdateItem]);
+
+  // Tags save handler
+  const handleTagsSave = useCallback(async (newTags: string[]) => {
+    if (!onUpdateItem) return;
+    await onUpdateItem({
+      ...item,
+      tags: newTags.length > 0 ? newTags : undefined,
     });
   }, [item, onUpdateItem]);
 
@@ -271,6 +281,32 @@ export function ItemCard({
             <p className="text-xs text-gray-500 mt-1 truncate">
               {item.location}
             </p>
+          )
+        )}
+
+        {/* Tags Section */}
+        {effectiveEnableInlineEdit ? (
+          <div data-inline-edit onClick={(e) => e.stopPropagation()} className="mt-2">
+            <TagsInlineEdit
+              tags={item.tags || []}
+              onSave={handleTagsSave}
+              existingTags={existingTags}
+              placeholder="Add tags..."
+              ariaLabel={`Edit tags for ${item.title}`}
+            />
+          </div>
+        ) : (
+          item.tags && item.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {item.tags.slice(0, 3).map((tag) => (
+                <TagChip key={tag} tag={tag} variant="outline" />
+              ))}
+              {item.tags.length > 3 && (
+                <span className="text-xs text-gray-500 ml-1">
+                  +{item.tags.length - 3} more
+                </span>
+              )}
+            </div>
           )
         )}
       </div>
