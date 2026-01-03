@@ -15,7 +15,7 @@
  * - Accessible with ARIA labels and keyboard support
  *
  * @module ItemManager/components/ItemPreview/MediaGallery
- * @lastModified 2026-01-03 (REQ-075)
+ * @lastModified 2026-01-03 (REQ-076 - VideoPlayer integration)
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/components/ItemCapture/ItemCapture.types';
+import { VideoPlayer } from './VideoPlayer';
 
 // =============================================================================
 // Types
@@ -291,6 +292,11 @@ export function MediaGallery({
   const [announcement, setAnnouncement] = useState('');
 
   // ---------------------------------------------------------------------------
+  // Video playback state
+  // ---------------------------------------------------------------------------
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
+
+  // ---------------------------------------------------------------------------
   // Object URL management
   // ---------------------------------------------------------------------------
   const createTrackedUrl = useCallback((blob: Blob): string => {
@@ -329,6 +335,8 @@ export function MediaGallery({
   const goToIndex = useCallback(
     (index: number) => {
       const clampedIndex = Math.max(0, Math.min(index, mediaItems.length - 1));
+      // Stop video playback when navigating away
+      setPlayingVideoId(null);
       if (!isControlled) {
         setUncontrolledIndex(clampedIndex);
       }
@@ -543,6 +551,7 @@ export function MediaGallery({
       const isLoading = loadingStates[item.id] !== false;
       const config = MEDIA_TYPE_CONFIG[item.type];
       const { Icon } = config;
+      const isVideoPlaying = playingVideoId === item.id;
 
       const containerClasses = inFullScreen
         ? 'max-w-full max-h-full flex items-center justify-center'
@@ -552,21 +561,50 @@ export function MediaGallery({
         ? 'max-w-full max-h-[80vh] object-contain'
         : 'max-w-full max-h-full object-contain';
 
+      // Handler to start video playback
+      const handleVideoClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (item.type === 'video' && !isSwiping) {
+          setPlayingVideoId(item.id);
+        }
+      };
+
       return (
         <div
           className={containerClasses}
           onClick={() => {
-            if (!isSwiping) {
+            if (!isSwiping && item.type !== 'video') {
               onMediaClick?.(item, idx);
             }
           }}
         >
-          {/* Image/Video display */}
-          {item.type !== 'pdf' && !hasError && url && (
-            <>
+          {/* Video Player - when video is playing */}
+          {item.type === 'video' && isVideoPlaying && (
+            <VideoPlayer
+              key={item.id}
+              src={item}
+              poster={url}
+              className={cn(
+                'w-full h-full',
+                inFullScreen && 'max-h-[80vh]'
+              )}
+              onEnded={() => setPlayingVideoId(null)}
+              onError={(error) => {
+                console.error('Video error:', error);
+                handleImageError(item.id);
+              }}
+            />
+          )}
+
+          {/* Video thumbnail - when not playing */}
+          {item.type === 'video' && !isVideoPlaying && !hasError && url && (
+            <div
+              className="relative w-full h-full cursor-pointer"
+              onClick={handleVideoClick}
+            >
               <img
                 src={url}
-                alt={item.metadata.originalFilename || `${item.type} ${idx + 1}`}
+                alt={item.metadata.originalFilename || `video ${idx + 1}`}
                 className={cn(
                   mediaClasses,
                   'transition-opacity duration-200',
@@ -576,14 +614,29 @@ export function MediaGallery({
                 onError={() => handleImageError(item.id)}
               />
               {/* Video play overlay */}
-              {item.type === 'video' && !isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="bg-black/60 text-white rounded-full p-4">
+              {!isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-black/60 hover:bg-black/80 text-white rounded-full p-4 transition-colors">
                     <Play className="w-12 h-12 fill-current" />
                   </div>
                 </div>
               )}
-            </>
+            </div>
+          )}
+
+          {/* Image display */}
+          {item.type === 'image' && !hasError && url && (
+            <img
+              src={url}
+              alt={item.metadata.originalFilename || `image ${idx + 1}`}
+              className={cn(
+                mediaClasses,
+                'transition-opacity duration-200',
+                isLoading ? 'opacity-0' : 'opacity-100'
+              )}
+              onLoad={() => handleImageLoad(item.id)}
+              onError={() => handleImageError(item.id)}
+            />
           )}
 
           {/* Loading state */}
@@ -653,6 +706,7 @@ export function MediaGallery({
       onMediaClick,
       handleImageLoad,
       handleImageError,
+      playingVideoId,
     ]
   );
 
