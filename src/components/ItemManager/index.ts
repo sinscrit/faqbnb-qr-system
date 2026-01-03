@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-056 Task 1.1)
+ * @lastModified 2026-01-03 (REQ-057 Task 1.3 - Added ItemManager component export)
  */
 
 // =============================================================================
@@ -69,6 +69,8 @@ export type { UseItemManagerStateReturn } from './hooks/useItemManagerState';
 export { createInitialState, itemManagerReducer } from './hooks/useItemManagerState';
 
 // =============================================================================
-// Main Component Export (Task 1.3)
+// Main Component Export (REQ-057 Task 1.3)
 // =============================================================================
-// export { ItemManager } from './ItemManager';
+
+export { ItemManager } from './ItemManager';
+export { default as ItemManagerDefault } from './ItemManager';

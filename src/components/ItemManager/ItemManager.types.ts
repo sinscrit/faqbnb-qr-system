@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-056 Task 1.1)
+ * @lastModified 2026-01-03 (REQ-057 Task 1.3 - Added ToolbarRenderProps extensions)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -359,6 +359,18 @@ export interface ToolbarRenderProps {
 
   /** Number of items after filtering */
   filteredCount: number;
+
+  /** Whether any filters are currently applied */
+  hasFilters: boolean;
+
+  /** Whether the filter panel is currently open */
+  isFilterPanelOpen: boolean;
+
+  /** Callback to toggle the filter panel */
+  onToggleFilterPanel: () => void;
+
+  /** Current configuration (read-only) */
+  config: Required<ItemManagerConfig>;
 }
 
 /**
