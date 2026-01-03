@@ -221,16 +221,26 @@ export interface ItemRecordExtended extends ItemRecord {
 /**
  * Property definition for multi-property mode.
  * Represents a rental property that can contain multiple items.
+ *
+ * @lastModified 2026-01-03 (REQ-073 Task 3.6.7 - Extended with nickname and property_types)
  */
 export interface Property {
   /** Unique identifier for the property */
   id: string;
 
   /** Display name of the property */
-  name: string;
+  name?: string;
+
+  /** Friendly nickname for the property */
+  nickname?: string;
 
   /** Optional physical address */
   address?: string;
+
+  /** Property type information */
+  property_types?: {
+    display_name: string;
+  };
 }
 
 /**
@@ -1068,6 +1078,29 @@ export interface BulkTagDialogProps {
   /** Callback when dialog is cancelled/closed */
   onCancel: () => void;
   /** Loading state during operation */
+  loading?: boolean;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+/**
+ * Props for the BulkMoveDialog component.
+ * Used for moving multiple items to a different property in multi-property mode.
+ *
+ * @lastModified 2026-01-03 (REQ-073 Task 3.6.7)
+ */
+export interface BulkMoveDialogProps {
+  /** Array of selected items to move */
+  selectedItems: ItemRecord[];
+  /** Available properties to move items to */
+  properties: Property[];
+  /** Current property ID (will be filtered out of destination options) */
+  currentPropertyId?: string;
+  /** Callback when move is confirmed with destination property ID */
+  onConfirm: (destinationPropertyId: string) => void;
+  /** Callback when dialog is cancelled/closed */
+  onCancel: () => void;
+  /** Loading state during move operation */
   loading?: boolean;
   /** Optional additional CSS classes */
   className?: string;

@@ -9,18 +9,18 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-072 Task 3.5.10 - Integrated BulkTagDialog component)
+ * @lastModified 2026-01-03 (REQ-073 Task 3.6.8 - Integrated BulkMoveDialog component)
  */
 
 import { useCallback, useMemo, useEffect, useState } from 'react';
-import { Tag, Minus } from 'lucide-react';
+import { Tag, Minus, FolderInput } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
 import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
 import { ItemToolbar } from './components/ItemToolbar';
 import { ViewModeToggle } from './components/shared/ViewModeToggle';
-import { BulkTagDialog } from './components/BulkActions';
+import { BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -143,8 +143,22 @@ export function ItemManager({
   const [bulkLoading, setBulkLoading] = useState(false);
 
   // -------------------------------------------------------------------------
+  // Bulk Move Dialog State
+  // -------------------------------------------------------------------------
+
+  const [showMoveDialog, setShowMoveDialog] = useState(false);
+  const [bulkMoveLoading, setBulkMoveLoading] = useState(false);
+
+  // -------------------------------------------------------------------------
   // Computed Values for Bulk Actions
   // -------------------------------------------------------------------------
+
+  /**
+   * Determine if multi-property mode is active.
+   */
+  const isMultiPropertyMode = useMemo(() => {
+    return effectiveConfig.multiPropertyMode || (properties && properties.length > 1);
+  }, [effectiveConfig.multiPropertyMode, properties]);
 
   /**
    * Collect all unique tags from all items for autocomplete suggestions.
@@ -303,6 +317,54 @@ export function ItemManager({
    */
   const handleTagCancel = useCallback(() => {
     setTagDialogMode(null);
+  }, []);
+
+  // -------------------------------------------------------------------------
+  // Bulk Move Handlers
+  // -------------------------------------------------------------------------
+
+  /**
+   * Open dialog to move selected items to a different property.
+   */
+  const handleBulkMove = useCallback(() => {
+    setShowMoveDialog(true);
+  }, []);
+
+  /**
+   * Handle move confirmation from dialog.
+   * Updates propertyId for all selected items.
+   */
+  const handleMoveConfirm = useCallback(
+    async (destinationPropertyId: string) => {
+      const selectedItemsList = getSelectedItems();
+      if (selectedItemsList.length === 0 || !destinationPropertyId) return;
+
+      setBulkMoveLoading(true);
+
+      try {
+        for (const item of selectedItemsList) {
+          // Update item with new propertyId
+          await onUpdateItem({
+            ...item,
+            propertyId: destinationPropertyId,
+          } as ItemRecord & { propertyId: string });
+        }
+
+        // Close dialog and clear selection after successful operation
+        setShowMoveDialog(false);
+        clearSelection();
+      } finally {
+        setBulkMoveLoading(false);
+      }
+    },
+    [getSelectedItems, onUpdateItem, clearSelection]
+  );
+
+  /**
+   * Close move dialog without applying changes.
+   */
+  const handleMoveCancel = useCallback(() => {
+    setShowMoveDialog(false);
   }, []);
 
   // -------------------------------------------------------------------------
@@ -505,11 +567,11 @@ export function ItemManager({
           <div className="h-4 w-px bg-gray-600" />
           <button
             onClick={handleBulkAddTag}
-            disabled={bulkLoading}
+            disabled={bulkLoading || bulkMoveLoading}
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
               'bg-blue-600 hover:bg-blue-700 transition-colors',
-              bulkLoading && 'opacity-50 cursor-not-allowed'
+              (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
             )}
           >
             <Tag className="h-4 w-4" />
@@ -517,16 +579,31 @@ export function ItemManager({
           </button>
           <button
             onClick={handleBulkRemoveTag}
-            disabled={bulkLoading}
+            disabled={bulkLoading || bulkMoveLoading}
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
               'bg-orange-600 hover:bg-orange-700 transition-colors',
-              bulkLoading && 'opacity-50 cursor-not-allowed'
+              (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
             )}
           >
             <Minus className="h-4 w-4" />
             Remove Tag
           </button>
+          {/* Move to... button - only in multi-property mode */}
+          {isMultiPropertyMode && properties && properties.length > 0 && (
+            <button
+              onClick={handleBulkMove}
+              disabled={bulkLoading || bulkMoveLoading}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
+                'bg-purple-600 hover:bg-purple-700 transition-colors',
+                (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
+              )}
+            >
+              <FolderInput className="h-4 w-4" />
+              Move to...
+            </button>
+          )}
           <div className="h-4 w-px bg-gray-600" />
           <button
             onClick={clearSelection}
@@ -590,6 +667,17 @@ export function ItemManager({
           onConfirm={handleTagConfirm}
           onCancel={handleTagCancel}
           loading={bulkLoading}
+        />
+      )}
+
+      {/* Bulk Move Dialog */}
+      {showMoveDialog && isMultiPropertyMode && properties && (
+        <BulkMoveDialog
+          selectedItems={getSelectedItems()}
+          properties={properties}
+          onConfirm={handleMoveConfirm}
+          onCancel={handleMoveCancel}
+          loading={bulkMoveLoading}
         />
       )}
     </div>
