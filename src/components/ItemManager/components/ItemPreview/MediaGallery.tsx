@@ -15,7 +15,7 @@
  * - Accessible with ARIA labels and keyboard support
  *
  * @module ItemManager/components/ItemPreview/MediaGallery
- * @lastModified 2026-01-03 (REQ-076 - VideoPlayer integration)
+ * @lastModified 2026-01-03 (REQ-077 - PhotoViewer and PDFViewer integration)
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -32,6 +32,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/components/ItemCapture/ItemCapture.types';
 import { VideoPlayer } from './VideoPlayer';
+import { PhotoViewer, PDFViewer } from './viewers';
 
 // =============================================================================
 // Types
@@ -624,19 +625,28 @@ export function MediaGallery({
             </div>
           )}
 
-          {/* Image display */}
+          {/* Image display - PhotoViewer in full-screen, simple img otherwise */}
           {item.type === 'image' && !hasError && url && (
-            <img
-              src={url}
-              alt={item.metadata.originalFilename || `image ${idx + 1}`}
-              className={cn(
-                mediaClasses,
-                'transition-opacity duration-200',
-                isLoading ? 'opacity-0' : 'opacity-100'
-              )}
-              onLoad={() => handleImageLoad(item.id)}
-              onError={() => handleImageError(item.id)}
-            />
+            inFullScreen ? (
+              <PhotoViewer
+                key={item.id}
+                imageSrc={url}
+                alt={item.metadata.originalFilename || `image ${idx + 1}`}
+                className="w-full h-full max-h-[80vh]"
+              />
+            ) : (
+              <img
+                src={url}
+                alt={item.metadata.originalFilename || `image ${idx + 1}`}
+                className={cn(
+                  mediaClasses,
+                  'transition-opacity duration-200',
+                  isLoading ? 'opacity-0' : 'opacity-100'
+                )}
+                onLoad={() => handleImageLoad(item.id)}
+                onError={() => handleImageError(item.id)}
+              />
+            )
           )}
 
           {/* Loading state */}
@@ -646,20 +656,35 @@ export function MediaGallery({
             </div>
           )}
 
-          {/* PDF display */}
+          {/* PDF display - PDFViewer in full-screen, placeholder otherwise */}
           {item.type === 'pdf' && (
-            <div className="flex flex-col items-center justify-center h-full bg-gray-800 px-4">
-              <FileText className="w-24 h-24 text-amber-400" />
-              <span className="text-white text-lg mt-4">
-                {item.metadata.originalFilename || 'PDF Document'}
-              </span>
-              {item.metadata.pageCount !== undefined && (
-                <span className="text-amber-300 text-sm mt-1">
-                  {item.metadata.pageCount}{' '}
-                  {item.metadata.pageCount === 1 ? 'page' : 'pages'}
+            inFullScreen && item.file ? (
+              <PDFViewer
+                key={item.id}
+                pdfSrc={item.file}
+                pageCount={item.metadata.pageCount}
+                className="w-full h-full max-h-[80vh]"
+                onPageChange={(page, total) => {
+                  // Optional: Log page changes for debugging
+                  if (debug) {
+                    console.log(`[MediaGallery] PDF page: ${page}/${total}`);
+                  }
+                }}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full bg-gray-800 px-4">
+                <FileText className="w-24 h-24 text-amber-400" />
+                <span className="text-white text-lg mt-4">
+                  {item.metadata.originalFilename || 'PDF Document'}
                 </span>
-              )}
-            </div>
+                {item.metadata.pageCount !== undefined && (
+                  <span className="text-amber-300 text-sm mt-1">
+                    {item.metadata.pageCount}{' '}
+                    {item.metadata.pageCount === 1 ? 'page' : 'pages'}
+                  </span>
+                )}
+              </div>
+            )
           )}
 
           {/* Error/fallback display */}
@@ -707,6 +732,7 @@ export function MediaGallery({
       handleImageLoad,
       handleImageError,
       playingVideoId,
+      debug,
     ]
   );
 
