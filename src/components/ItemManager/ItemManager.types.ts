@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-080 Task 2 - Added asset management type definitions)
+ * @lastModified 2026-01-03 (REQ-082 Task 2 - Added AssetItemProps interface)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -1188,6 +1188,8 @@ export interface AssetManagementError {
 
 /**
  * Represents an asset pending addition (not yet committed).
+ *
+ * @lastModified 2026-01-03 (REQ-082 Task 2 - Added thumbnail and metadata properties)
  */
 export interface PendingAsset {
   /** Temporary UUID for this pending asset */
@@ -1200,6 +1202,16 @@ export interface PendingAsset {
   type: 'video' | 'image' | 'pdf';
   /** Timestamp when added */
   addedAt: Date;
+  /** Generated thumbnail blob (if available) */
+  thumbnail?: Blob;
+  /** Metadata extracted from file */
+  metadata?: {
+    mimeType?: string;
+    fileSize?: number;
+    originalFilename?: string;
+    duration?: number; // For videos
+    pageCount?: number; // For PDFs
+  };
 }
 
 /**
@@ -1320,6 +1332,44 @@ export interface UseAssetManagementReturn {
   // Error handling
   /** Clear current error */
   clearError: () => void;
+}
+
+/**
+ * Props for the AssetItem component.
+ * Represents a single asset within the AssetPanel.
+ *
+ * @lastModified 2026-01-03 (REQ-082 Task 2)
+ */
+export interface AssetItemProps {
+  /** The media asset to display (MediaItem or PendingAsset) */
+  asset: MediaItem | PendingAsset;
+
+  /** Index position in the asset list (for ordering context) */
+  index: number;
+
+  /** Whether this asset is a pending addition (not yet committed) */
+  isPending?: boolean;
+
+  /** Whether this asset is marked for removal */
+  isMarkedForRemoval?: boolean;
+
+  /** Callback when remove button is clicked */
+  onRemove: (assetId: string) => void;
+
+  /** Callback when restore button is clicked (for pending removals) */
+  onRestore?: (assetId: string) => void;
+
+  /** Callback when asset is clicked (optional, for preview) */
+  onClick?: (assetId: string) => void;
+
+  /** Optional additional CSS classes */
+  className?: string;
+
+  /** Size variant for the thumbnail */
+  size?: 'small' | 'medium' | 'large';
+
+  /** Whether to show the drag handle (for future drag-and-drop) */
+  showDragHandle?: boolean;
 }
 
 /**

@@ -154,3 +154,10 @@ export type { InstructionsViewerProps } from './components/ItemPreview';
 export { AssetPanel } from './components/AssetPanel';
 export { default as AssetPanelDefault } from './components/AssetPanel';
 export type { AssetPanelProps } from './components';
+
+// =============================================================================
+// AssetItem Component Export (REQ-082)
+// =============================================================================
+
+export { AssetItem } from './components/AssetPanel';
+export type { AssetItemProps } from './ItemManager.types';

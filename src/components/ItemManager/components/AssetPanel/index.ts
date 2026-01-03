@@ -2,8 +2,9 @@
  * AssetPanel Component Barrel Export
  *
  * @module ItemManager/components/AssetPanel
- * @lastModified 2026-01-03 (REQ-081 Task 5.2.1)
+ * @lastModified 2026-01-03 (REQ-082 Task 3 - Added AssetItem export)
  */
 
 export { AssetPanel, default } from './AssetPanel';
-export type { AssetPanelProps } from '../../ItemManager.types';
+export { AssetItem } from './AssetItem';
+export type { AssetPanelProps, AssetItemProps } from '../../ItemManager.types';

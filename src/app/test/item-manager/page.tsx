@@ -7,11 +7,11 @@
  * renders correctly in all states (empty, loading, error, with items).
  *
  * @module test/item-manager
- * @lastModified 2026-01-03 (REQ-080 Task 7 - Added useAssetManagement hook tests)
+ * @lastModified 2026-01-03 (REQ-082 Task 9 - Added AssetItem component tests)
  */
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel } from '@/components/ItemManager';
+import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel, AssetItem } from '@/components/ItemManager';
 import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
@@ -642,7 +642,7 @@ function AssetManagementHookTest() {
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel'>('asset-panel');
+  const [testView, setTestView] = useState<'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item'>('asset-item');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -757,6 +757,16 @@ export default function TestItemManagerPage() {
           <span className="text-sm font-medium text-gray-700">Test View:</span>
           <div className="flex gap-2 flex-wrap">
             <button
+              onClick={() => setTestView('asset-item')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'asset-item'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              AssetItem (REQ-082)
+            </button>
+            <button
               onClick={() => setTestView('asset-panel')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'asset-panel'
@@ -822,6 +832,258 @@ export default function TestItemManagerPage() {
 
       {/* useAssetManagement Hook Test Section (REQ-080) */}
       {testView === 'asset-hook' && <AssetManagementHookTest />}
+
+      {/* AssetItem Component Test Section (REQ-082) */}
+      {testView === 'asset-item' && (
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">AssetItem Visual Test Cases (REQ-082)</h2>
+
+          <div className="space-y-3 max-w-md bg-white rounded-lg shadow p-4">
+            {/* Normal Video */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Video Asset (with duration)</h3>
+              <AssetItem
+                asset={{
+                  id: 'video-1',
+                  type: 'video',
+                  file: new Blob([''], { type: 'video/mp4' }),
+                  order: 0,
+                  metadata: {
+                    mimeType: 'video/mp4',
+                    fileSize: 1024000,
+                    source: 'capture',
+                    duration: 90,
+                    originalFilename: 'coffee-maker-demo.mp4',
+                  },
+                }}
+                index={0}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Normal Photo */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Photo Asset</h3>
+              <AssetItem
+                asset={{
+                  id: 'photo-1',
+                  type: 'image',
+                  file: new Blob([''], { type: 'image/jpeg' }),
+                  order: 1,
+                  metadata: {
+                    mimeType: 'image/jpeg',
+                    fileSize: 512000,
+                    source: 'upload',
+                    originalFilename: 'kitchen-appliance.jpg',
+                  },
+                }}
+                index={1}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Normal PDF */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">PDF Asset (with page count)</h3>
+              <AssetItem
+                asset={{
+                  id: 'pdf-1',
+                  type: 'pdf',
+                  file: new Blob([''], { type: 'application/pdf' }),
+                  order: 2,
+                  metadata: {
+                    mimeType: 'application/pdf',
+                    fileSize: 256000,
+                    source: 'upload',
+                    pageCount: 5,
+                    originalFilename: 'user-manual.pdf',
+                  },
+                }}
+                index={2}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Pending Addition */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Pending Addition (New)</h3>
+              <AssetItem
+                asset={{
+                  id: 'pending-photo',
+                  type: 'image',
+                  file: new Blob([''], { type: 'image/jpeg' }),
+                  order: 3,
+                  metadata: {
+                    mimeType: 'image/jpeg',
+                    fileSize: 512000,
+                    source: 'upload',
+                    originalFilename: 'new-photo.jpg',
+                  },
+                }}
+                index={3}
+                isPending={true}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Pending Removal */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Marked for Removal</h3>
+              <AssetItem
+                asset={{
+                  id: 'remove-video',
+                  type: 'video',
+                  file: new Blob([''], { type: 'video/mp4' }),
+                  order: 4,
+                  metadata: {
+                    mimeType: 'video/mp4',
+                    fileSize: 1024000,
+                    source: 'capture',
+                    duration: 45,
+                    originalFilename: 'old-video.mp4',
+                  },
+                }}
+                index={4}
+                isMarkedForRemoval={true}
+                onRemove={(id) => console.log('Remove:', id)}
+                onRestore={(id) => console.log('Restore:', id)}
+              />
+            </div>
+
+            {/* With Drag Handle */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">With Drag Handle</h3>
+              <AssetItem
+                asset={{
+                  id: 'draggable-photo',
+                  type: 'image',
+                  file: new Blob([''], { type: 'image/png' }),
+                  order: 5,
+                  metadata: {
+                    mimeType: 'image/png',
+                    fileSize: 256000,
+                    source: 'capture',
+                    originalFilename: 'draggable-image.png',
+                  },
+                }}
+                index={5}
+                showDragHandle={true}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Clickable Asset */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Clickable (with onClick)</h3>
+              <AssetItem
+                asset={{
+                  id: 'clickable-pdf',
+                  type: 'pdf',
+                  file: new Blob([''], { type: 'application/pdf' }),
+                  order: 6,
+                  metadata: {
+                    mimeType: 'application/pdf',
+                    fileSize: 512000,
+                    source: 'upload',
+                    pageCount: 10,
+                    originalFilename: 'instructions.pdf',
+                  },
+                }}
+                index={6}
+                onClick={(id) => {
+                  console.log('Click:', id);
+                  alert(`Asset clicked: ${id}`);
+                }}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Different Sizes */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Size: Small</h3>
+              <AssetItem
+                asset={{
+                  id: 'small-photo',
+                  type: 'image',
+                  file: new Blob([''], { type: 'image/jpeg' }),
+                  order: 7,
+                  metadata: {
+                    mimeType: 'image/jpeg',
+                    fileSize: 256000,
+                    source: 'upload',
+                    originalFilename: 'small-size.jpg',
+                  },
+                }}
+                index={7}
+                size="small"
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Size: Large</h3>
+              <AssetItem
+                asset={{
+                  id: 'large-photo',
+                  type: 'image',
+                  file: new Blob([''], { type: 'image/jpeg' }),
+                  order: 8,
+                  metadata: {
+                    mimeType: 'image/jpeg',
+                    fileSize: 1024000,
+                    source: 'upload',
+                    originalFilename: 'large-size.jpg',
+                  },
+                }}
+                index={8}
+                size="large"
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+
+            {/* Long filename */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase">Long Filename (Truncation)</h3>
+              <AssetItem
+                asset={{
+                  id: 'long-name',
+                  type: 'video',
+                  file: new Blob([''], { type: 'video/mp4' }),
+                  order: 9,
+                  metadata: {
+                    mimeType: 'video/mp4',
+                    fileSize: 2048000,
+                    source: 'upload',
+                    duration: 120,
+                    originalFilename: 'this-is-a-very-long-filename-that-should-be-truncated-with-ellipsis-in-the-display.mp4',
+                  },
+                }}
+                index={9}
+                onRemove={(id) => console.log('Remove:', id)}
+              />
+            </div>
+          </div>
+
+          {/* Test Cases Legend */}
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 max-w-md">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases Legend:</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li><span className="font-medium">Video Asset:</span> Play overlay, duration badge (1:30)</li>
+              <li><span className="font-medium">Photo Asset:</span> Image thumbnail, no overlay</li>
+              <li><span className="font-medium">PDF Asset:</span> Document icon, page count badge</li>
+              <li><span className="font-medium">Pending Addition:</span> Green border, &quot;New&quot; badge</li>
+              <li><span className="font-medium">Marked for Removal:</span> Red/dimmed, strikethrough, Restore button</li>
+              <li><span className="font-medium">Drag Handle:</span> Shows grip icon for reordering</li>
+              <li><span className="font-medium">Clickable:</span> Cursor pointer, hover state, click triggers callback</li>
+              <li><span className="font-medium">Sizes:</span> Small (48px), Medium (64px), Large (80px)</li>
+              <li><span className="font-medium">Long Filename:</span> Truncated with ellipsis, hover for full name</li>
+            </ul>
+            <div className="mt-3 text-sm text-gray-500">
+              <p>Check browser console for Remove/Restore/Click callback invocations.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AssetPanel Component Test Section (REQ-081) */}
       {testView === 'asset-panel' && (

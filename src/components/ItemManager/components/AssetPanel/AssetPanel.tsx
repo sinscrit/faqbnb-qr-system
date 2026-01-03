@@ -8,13 +8,14 @@
  *
  * @module ItemManager/components/AssetPanel
  * @see docs/REQ-081-build-assetpanel-component-detailed.md
- * @lastModified 2026-01-03 (REQ-081 Task 5.2)
+ * @lastModified 2026-01-03 (REQ-082 Task 10 - Integrated AssetItem component)
  */
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { X, Loader2, Plus, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssetManagement } from '../../hooks/useAssetManagement';
+import { AssetItem } from './AssetItem';
 import type { AssetPanelProps } from '../../ItemManager.types';
 
 /**
@@ -282,58 +283,18 @@ export function AssetPanel({
 
           {/* Asset list */}
           {currentAssets.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2" role="list" aria-label="Media assets">
               {currentAssets.map((asset, index) => (
-                <div
+                <AssetItem
                   key={asset.id}
-                  className={cn(
-                    'p-3 border rounded-lg transition-colors',
-                    isPendingAddition(asset.id) &&
-                      'border-green-300 bg-green-50',
-                    isPendingRemoval(asset.id) &&
-                      'opacity-50 border-red-300 bg-red-50'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Placeholder thumbnail */}
-                    <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center shrink-0">
-                      <ImageIcon className="w-6 h-6 text-gray-400" />
-                    </div>
-
-                    {/* Asset info */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {'file' in asset && asset.file
-                          ? asset.file.name
-                          : `Asset ${index + 1}`}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {asset.type}
-                        {isPendingAddition(asset.id) && ' • Pending'}
-                      </p>
-                    </div>
-
-                    {/* Action button */}
-                    {isPendingRemoval(asset.id) ? (
-                      <button
-                        onClick={() => undoRemoval(asset.id)}
-                        disabled={isCommitting}
-                        className="text-xs text-blue-600 hover:text-blue-800 underline disabled:opacity-50"
-                      >
-                        Restore
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => removeAsset(asset.id)}
-                        disabled={isCommitting}
-                        className="p-1.5 text-gray-400 hover:text-red-600 rounded hover:bg-red-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        aria-label="Remove asset"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
+                  asset={asset}
+                  index={index}
+                  isPending={isPendingAddition(asset.id)}
+                  isMarkedForRemoval={isPendingRemoval(asset.id)}
+                  onRemove={removeAsset}
+                  onRestore={undoRemoval}
+                  size="medium"
+                />
               ))}
             </div>
           )}
