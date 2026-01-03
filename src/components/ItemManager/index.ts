@@ -116,3 +116,10 @@ export { default as ViewModeToggleDefault } from './components/shared/ViewModeTo
 
 export { ItemPreviewModal } from './components/ItemPreview';
 export { ItemPreviewModalDefault } from './components/ItemPreview';
+
+// =============================================================================
+// InstructionsViewer Component Export (REQ-078)
+// =============================================================================
+
+export { InstructionsViewer, InstructionsViewerDefault } from './components/ItemPreview';
+export type { InstructionsViewerProps } from './components/ItemPreview';
