@@ -47,6 +47,10 @@ export type {
   PropertyFilterProps,
 } from './dialogs';
 
+// Delete Dialog (REQ-071)
+export { ConfirmDeleteDialog } from './dialogs';
+export type { ConfirmDeleteDialogProps } from './dialogs';
+
 // BulkActions components (REQ-070)
 export { BulkActionsBar, BulkTagDialog, BulkMoveDialog } from './BulkActions';
 export type { BulkActionsBarProps, BulkMoveDialogProps } from '../ItemManager.types';

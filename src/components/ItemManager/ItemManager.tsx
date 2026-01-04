@@ -24,6 +24,7 @@ import { ViewModeToggle } from './components/shared/ViewModeToggle';
 import { EmptyState } from './components/shared/EmptyState';
 import { LoadingState } from './components/shared/LoadingState';
 import { BulkActionsBar, BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
+import { ConfirmDeleteDialog } from './components/dialogs';
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -178,10 +179,11 @@ export function ItemManager({
   const [bulkMoveLoading, setBulkMoveLoading] = useState(false);
 
   // -------------------------------------------------------------------------
-  // Bulk Delete State (REQ-070)
+  // Bulk Delete State (REQ-070, REQ-071)
   // -------------------------------------------------------------------------
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // -------------------------------------------------------------------------
   // Computed Values for Bulk Actions
@@ -221,6 +223,15 @@ export function ItemManager({
    * Get the selected items based on selectedIds.
    */
   const getSelectedItems = useCallback(
+    () => items.filter((item) => state.selectedIds.has(item.id)),
+    [items, state.selectedIds]
+  );
+
+  /**
+   * Memoized array of selected items for ConfirmDeleteDialog.
+   * @see REQ-071
+   */
+  const selectedItemsForDelete = useMemo(
     () => items.filter((item) => state.selectedIds.has(item.id)),
     [items, state.selectedIds]
   );
@@ -443,23 +454,51 @@ export function ItemManager({
   }, []);
 
   // -------------------------------------------------------------------------
-  // Bulk Delete Handler (REQ-070)
+  // Bulk Delete Handlers (REQ-070, REQ-071)
   // -------------------------------------------------------------------------
 
   /**
-   * Handle bulk delete action - opens confirmation or deletes directly.
-   * For now, directly calls onDeleteItems. In future, ConfirmDeleteDialog (Task 3.4)
-   * will be implemented to show confirmation before deletion.
+   * Opens the delete confirmation dialog.
+   * Triggered by BulkActionsBar delete button.
+   * @see REQ-071 - ConfirmDeleteDialog implementation
    */
   const handleBulkDelete = useCallback(() => {
-    const selectedIds = Array.from(state.selectedIds);
-    if (selectedIds.length > 0) {
-      // TODO: When ConfirmDeleteDialog is implemented (Task 3.4),
-      // this should open the dialog instead of deleting directly
-      onDeleteItems(selectedIds);
+    if (state.selectedIds.size > 0) {
+      setShowDeleteConfirm(true);
+    }
+  }, [state.selectedIds]);
+
+  /**
+   * Handles confirmed delete action.
+   * Calls onDeleteItems callback and manages loading state.
+   */
+  const handleConfirmDelete = useCallback(async () => {
+    if (state.selectedIds.size === 0) return;
+
+    const idsToDelete = Array.from(state.selectedIds);
+
+    setIsDeleting(true);
+    try {
+      await onDeleteItems(idsToDelete);
+      // Clear selection after successful delete
       clearSelection();
+      setShowDeleteConfirm(false);
+    } catch (error) {
+      console.error('Delete operation failed:', error);
+      // Dialog stays open on error so user can retry or cancel
+    } finally {
+      setIsDeleting(false);
     }
   }, [state.selectedIds, onDeleteItems, clearSelection]);
+
+  /**
+   * Handles cancel/dismiss of delete dialog.
+   */
+  const handleCancelDelete = useCallback(() => {
+    if (!isDeleting) {
+      setShowDeleteConfirm(false);
+    }
+  }, [isDeleting]);
 
   // -------------------------------------------------------------------------
   // Long-Press Selection Handler (REQ-069)
@@ -793,6 +832,15 @@ export function ItemManager({
           loading={bulkMoveLoading}
         />
       )}
+
+      {/* Confirm Delete Dialog (REQ-071) */}
+      <ConfirmDeleteDialog
+        isOpen={showDeleteConfirm}
+        items={selectedItemsForDelete}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        loading={isDeleting}
+      />
     </div>
   );
 }
