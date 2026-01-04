@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemRow component.
  *
  * @module ItemManager/components/ItemList
- * @lastModified 2026-01-03 (REQ-090 Task 5 - Added accessibility features)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect prop support)
  */
 
 import { cn } from '@/lib/utils';
@@ -20,6 +20,7 @@ export function ItemList({
   onSelectionChange,
   selectedIds,
   isSelectionMode,
+  onLongPressSelect,
   onEdit,
   onDelete,
   onManageAssets,
@@ -71,6 +72,7 @@ export function ItemList({
             onSelectionChange={onSelectionChange}
             isSelected={selectedIds.has(item.id)}
             isSelectionMode={isSelectionMode}
+            onLongPressSelect={onLongPressSelect}
             onEdit={onEdit}
             onDelete={onDelete}
             onManageAssets={onManageAssets}

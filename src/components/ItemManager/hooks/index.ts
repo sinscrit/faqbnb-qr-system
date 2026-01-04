@@ -2,7 +2,7 @@
  * ItemManager hooks barrel export
  *
  * @module ItemManager/hooks
- * @lastModified 2026-01-04 (REQ-068 - Added useItemSelection)
+ * @lastModified 2026-01-04 (REQ-069 - Added useLongPress hook)
  */
 
 // =============================================================================
@@ -60,3 +60,14 @@ export type {
   UseItemSelectionOptions,
   UseItemSelectionReturn,
 } from './useItemSelection';
+
+// =============================================================================
+// useLongPress Hook (REQ-069)
+// =============================================================================
+
+export { useLongPress } from './useLongPress';
+export { default as useLongPressDefault } from './useLongPress';
+export type {
+  UseLongPressOptions,
+  UseLongPressReturn,
+} from './useLongPress';

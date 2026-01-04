@@ -9,7 +9,7 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-04 (REQ-063 Task 2.2.10 - Integrated useItemSearch hook for search, filter, sort)
+ * @lastModified 2026-01-04 (REQ-069 Task 3.2.5 - Integrated selection UI with long-press and toolbar indicator)
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
@@ -438,6 +438,33 @@ export function ItemManager({
   }, []);
 
   // -------------------------------------------------------------------------
+  // Long-Press Selection Handler (REQ-069)
+  // -------------------------------------------------------------------------
+
+  /**
+   * Handler for long-press selection.
+   * Enters selection mode and selects the pressed item.
+   */
+  const handleLongPressSelect = useCallback(
+    (id: string) => {
+      if (!state.isSelectionMode) {
+        toggleSelectionMode();
+      }
+      selectItem(id);
+    },
+    [state.isSelectionMode, toggleSelectionMode, selectItem]
+  );
+
+  /**
+   * Handler for selecting all visible/filtered items.
+   * Used by the toolbar's SelectionIndicator.
+   */
+  const handleSelectAllFiltered = useCallback(() => {
+    const ids = filteredItems.map((item) => item.id);
+    selectAll(ids);
+  }, [filteredItems, selectAll]);
+
+  // -------------------------------------------------------------------------
   // Render Functions
   // -------------------------------------------------------------------------
 
@@ -508,6 +535,7 @@ export function ItemManager({
             }}
             selectedIds={state.selectedIds}
             isSelectionMode={state.isSelectionMode}
+            onLongPressSelect={handleLongPressSelect}
             enableInlineEdit={effectiveConfig.enableInlineEdit}
             onUpdateItem={handleInlineUpdate}
             existingTags={allExistingTags}
@@ -531,6 +559,7 @@ export function ItemManager({
           }}
           selectedIds={state.selectedIds}
           isSelectionMode={state.isSelectionMode}
+          onLongPressSelect={handleLongPressSelect}
           onEdit={onEditItem}
           onDelete={(item) => onDeleteItems([item.id])}
           onManageAssets={effectiveConfig.enableAssetManagement ? openAssetPanel : undefined}
@@ -566,6 +595,7 @@ export function ItemManager({
     openAssetPanel,
     onDuplicateItem,
     handleInlineUpdate,
+    handleLongPressSelect,
     allExistingTags,
   ]);
 
@@ -646,6 +676,10 @@ export function ItemManager({
             totalCount={totalCount}
             isFiltered={isFiltered}
             labels={effectiveConfig.labels}
+            // Selection props (REQ-069)
+            selectedCount={selectedCount}
+            onClearSelection={clearSelection}
+            onSelectAll={handleSelectAllFiltered}
           />
         )}
       </div>

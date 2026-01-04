@@ -4,15 +4,15 @@
  * ItemToolbar Component
  *
  * Provides toolbar controls for the ItemManager including view toggle,
- * search, filters, sort, and result count display.
+ * search, filters, sort, result count display, and selection indicator.
  *
  * @module ItemManager/components/ItemToolbar
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.2)
- * @lastModified 2026-01-04 (REQ-066 Task 2.5.7 - Integrated SortMenu component)
+ * @lastModified 2026-01-04 (REQ-069 Task 3.2.4 - Added SelectionIndicator component)
  */
 
 import { cn } from '@/lib/utils';
-import { LayoutGrid, List, X } from 'lucide-react';
+import { LayoutGrid, List, X, CheckSquare } from 'lucide-react';
 import type {
   ItemToolbarProps,
   FilterState,
@@ -167,6 +167,87 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
 }
 
 // =============================================================================
+// SelectionIndicator Sub-component (REQ-069 Task 3.2.4)
+// =============================================================================
+
+interface SelectionIndicatorProps {
+  /** Number of currently selected items */
+  selectedCount: number;
+  /** Callback to clear all selections */
+  onClearSelection: () => void;
+  /** Optional callback to select all items */
+  onSelectAll?: () => void;
+  /** Total number of items (for select all comparison) */
+  totalCount?: number;
+  /** Optional additional CSS classes */
+  className?: string;
+}
+
+/**
+ * Selection count badge with clear and select all buttons.
+ * Displays the number of selected items and provides quick actions.
+ */
+function SelectionIndicator({
+  selectedCount,
+  onClearSelection,
+  onSelectAll,
+  totalCount = 0,
+  className,
+}: SelectionIndicatorProps) {
+  // Don't render if no items selected
+  if (selectedCount === 0) return null;
+
+  // Check if all items are selected
+  const allSelected = totalCount > 0 && selectedCount >= totalCount;
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn(
+        'flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full',
+        className
+      )}
+    >
+      <CheckSquare className="h-4 w-4" aria-hidden="true" />
+      <span className="text-sm font-medium">
+        {selectedCount} selected
+      </span>
+
+      {/* Clear selection button */}
+      <button
+        type="button"
+        onClick={onClearSelection}
+        className={cn(
+          'ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors',
+          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
+        )}
+        aria-label="Clear selection"
+      >
+        <X className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
+
+      {/* Select all link (if not all selected) */}
+      {onSelectAll && !allSelected && totalCount > 0 && (
+        <>
+          <span className="text-blue-400 mx-1" aria-hidden="true">|</span>
+          <button
+            type="button"
+            onClick={onSelectAll}
+            className={cn(
+              'text-sm font-medium text-blue-600 hover:text-blue-800',
+              'focus:outline-none focus:underline'
+            )}
+          >
+            Select all ({totalCount})
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
 // SearchPlaceholder Sub-component (Task 2.2.6) - DEPRECATED
 // =============================================================================
 
@@ -243,6 +324,10 @@ export function ItemToolbar({
   resultCount,
   totalCount,
   isFiltered,
+  // Selection props (REQ-069)
+  selectedCount,
+  onClearSelection,
+  onSelectAll,
   // Customization props
   labels = {},
   classNames = {},
@@ -331,14 +416,26 @@ export function ItemToolbar({
         </div>
       )}
 
-      {/* Row 3: Result Count + Clear Filters */}
-      <div className="flex items-center justify-between">
-        <ResultCount
-          count={resultCount}
-          total={totalCount}
-          isFiltered={isFiltered}
-          className={classNames.resultCount}
-        />
+      {/* Row 3: Selection Indicator + Result Count + Clear Filters */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          {/* Selection Indicator (REQ-069) */}
+          {selectedCount !== undefined && onClearSelection && (
+            <SelectionIndicator
+              selectedCount={selectedCount}
+              onClearSelection={onClearSelection}
+              onSelectAll={onSelectAll}
+              totalCount={resultCount}
+            />
+          )}
+
+          <ResultCount
+            count={resultCount}
+            total={totalCount}
+            isFiltered={isFiltered}
+            className={classNames.resultCount}
+          />
+        </div>
 
         {isFiltered && (
           <ClearFiltersButton

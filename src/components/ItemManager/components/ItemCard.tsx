@@ -11,15 +11,17 @@
  * - Hover and focus states for accessibility
  * - Keyboard navigation support
  * - Inline editing of title, location, and tags (REQ-087, REQ-088)
+ * - Long-press gesture for mobile selection mode entry (REQ-069)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-03 (REQ-090 Task 6 - Enhanced accessibility)
+ * @lastModified 2026-01-04 (REQ-069 - Integrated useLongPress hook for mobile selection)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Play, FileText, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
+import { useLongPress } from '../hooks/useLongPress';
 import type { ItemCardProps } from '../ItemManager.types';
 
 /**
@@ -61,6 +63,7 @@ export function ItemCard({
   onSelectionChange,
   isSelected,
   isSelectionMode,
+  onLongPressSelect,
   className,
   enableInlineEdit,
   onUpdateItem,
@@ -72,6 +75,18 @@ export function ItemCard({
 
   // Calculate effective inline edit state - disable when in selection mode
   const effectiveEnableInlineEdit = enableInlineEdit && !isSelectionMode && !!onUpdateItem;
+
+  // Long-press hook for mobile selection mode entry
+  const { handlers: longPressHandlers, isLongPress } = useLongPress({
+    onLongPress: () => {
+      if (onLongPressSelect) {
+        onLongPressSelect(item.id);
+      }
+    },
+    enabled: !isSelectionMode && !!onLongPressSelect,
+    delay: 500,
+    hapticFeedback: true,
+  });
 
   // Title save handler
   const handleTitleSave = useCallback(async (newTitle: string) => {
@@ -143,13 +158,26 @@ export function ItemCard({
     return <FileText className="w-10 h-10 text-purple-400" />;
   };
 
-  // Handle card click (for preview)
+  // Handle card click (for preview or selection)
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger preview if clicking checkbox or inline edit areas
+    // Don't trigger if clicking checkbox or inline edit areas
     const target = e.target as HTMLElement;
     if (target.tagName === 'INPUT' || target.closest('input') || target.closest('[data-inline-edit]')) {
       return;
     }
+
+    // Ignore if this was a long-press (prevents click after long-press)
+    if (isLongPress()) {
+      return;
+    }
+
+    // In selection mode, toggle selection instead of preview
+    if (isSelectionMode) {
+      onSelectionChange(item.id, !isSelected);
+      return;
+    }
+
+    // Normal mode: open preview
     onPreviewClick(item);
   };
 
@@ -157,6 +185,12 @@ export function ItemCard({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
+      // In selection mode, toggle selection
+      if (isSelectionMode) {
+        onSelectionChange(item.id, !isSelected);
+        return;
+      }
+      // Normal mode: open preview
       onPreviewClick(item);
     }
   };
@@ -171,14 +205,20 @@ export function ItemCard({
       role="button"
       tabIndex={0}
       aria-label={ariaLabel}
-      aria-pressed={isSelectionMode ? isSelected : undefined}
+      aria-selected={isSelectionMode ? isSelected : undefined}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
+      {...longPressHandlers}
       className={cn(
-        'group cursor-pointer bg-white rounded-xl shadow-sm border border-gray-200',
-        'hover:shadow-lg hover:border-gray-300 transition-all duration-200 overflow-hidden',
+        'group cursor-pointer bg-white rounded-xl shadow-sm border transition-all duration-200 overflow-hidden',
+        'hover:shadow-lg hover:border-gray-300',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-        isSelected && 'border-blue-500 ring-2 ring-blue-200',
+        // Selected state
+        isSelected
+          ? 'border-blue-500 ring-2 ring-blue-200 bg-blue-50/30'
+          : 'border-gray-200',
+        // Selection mode hover indicator (when not selected)
+        isSelectionMode && !isSelected && 'hover:ring-1 hover:ring-blue-300',
         className
       )}
     >

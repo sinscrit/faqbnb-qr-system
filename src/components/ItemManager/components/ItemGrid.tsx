@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemCard component.
  *
  * @module ItemManager/components/ItemGrid
- * @lastModified 2026-01-03 (REQ-090 Task 4 - Added accessibility features)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect prop support)
  */
 
 import { cn } from '@/lib/utils';
@@ -20,6 +20,7 @@ export function ItemGrid({
   onSelectionChange,
   selectedIds,
   isSelectionMode,
+  onLongPressSelect,
   className,
   enableInlineEdit,
   onUpdateItem,
@@ -46,6 +47,7 @@ export function ItemGrid({
             onSelectionChange={onSelectionChange}
             isSelected={selectedIds.has(item.id)}
             isSelectionMode={isSelectionMode}
+            onLongPressSelect={onLongPressSelect}
             enableInlineEdit={enableInlineEdit}
             onUpdateItem={onUpdateItem}
             existingTags={existingTags}

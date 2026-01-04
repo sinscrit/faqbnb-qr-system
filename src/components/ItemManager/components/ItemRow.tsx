@@ -5,11 +5,12 @@
  *
  * Displays an individual item in the ItemManager list view.
  * Features thumbnail preview, comprehensive metadata display,
- * kebab action menu, selection mode support, and inline editing
- * of title, location, and tags (REQ-087, REQ-088).
+ * kebab action menu, selection mode support, inline editing
+ * of title, location, and tags (REQ-087, REQ-088), and
+ * long-press gesture for mobile selection mode entry (REQ-069).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-03 (REQ-090 Task 7 - Enhanced accessibility)
+ * @lastModified 2026-01-04 (REQ-069 - Integrated useLongPress hook for mobile selection)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
+import { useLongPress } from '../hooks/useLongPress';
 import type { ItemRowProps } from '../ItemManager.types';
 
 /**
@@ -78,6 +80,7 @@ export function ItemRow({
   onSelectionChange,
   isSelected,
   isSelectionMode,
+  onLongPressSelect,
   onEdit,
   onDelete,
   onManageAssets,
@@ -97,6 +100,18 @@ export function ItemRow({
 
   // Calculate effective inline edit state - disable when in selection mode
   const effectiveEnableInlineEdit = enableInlineEdit && !isSelectionMode && !!onUpdateItem;
+
+  // Long-press hook for mobile selection mode entry
+  const { handlers: longPressHandlers, isLongPress } = useLongPress({
+    onLongPress: () => {
+      if (onLongPressSelect) {
+        onLongPressSelect(item.id);
+      }
+    },
+    enabled: !isSelectionMode && !!onLongPressSelect,
+    delay: 500,
+    hapticFeedback: true,
+  });
 
   // Title save handler
   const handleTitleSave = useCallback(async (newTitle: string) => {
@@ -221,9 +236,10 @@ export function ItemRow({
     { icon: Trash2, label: 'Delete', onClick: () => onDelete(item), show: true, danger: true },
   ];
 
-  // Handle row click (for preview)
+  // Handle row click (for preview or selection)
   const handleRowClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
+    // Ignore clicks on interactive elements
     if (
       target.tagName === 'INPUT' ||
       target.tagName === 'BUTTON' ||
@@ -233,6 +249,19 @@ export function ItemRow({
     ) {
       return;
     }
+
+    // Ignore if this was a long-press (prevents click after long-press)
+    if (isLongPress()) {
+      return;
+    }
+
+    // In selection mode, toggle selection instead of preview
+    if (isSelectionMode) {
+      onSelectionChange(item.id, !isSelected);
+      return;
+    }
+
+    // Normal mode: open preview
     onPreviewClick(item);
   };
 
@@ -240,6 +269,12 @@ export function ItemRow({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
+      // In selection mode, toggle selection
+      if (isSelectionMode) {
+        onSelectionChange(item.id, !isSelected);
+        return;
+      }
+      // Normal mode: open preview
       onPreviewClick(item);
     }
     if (e.key === 'Escape' && menuOpen) {
@@ -258,11 +293,17 @@ export function ItemRow({
       aria-selected={isSelectionMode ? isSelected : undefined}
       onClick={handleRowClick}
       onKeyDown={handleKeyDown}
+      {...longPressHandlers}
       className={cn(
-        'flex items-center gap-4 px-4 py-3 bg-white border-b border-gray-200',
-        'hover:bg-gray-50 transition-colors cursor-pointer',
+        'flex items-center gap-4 px-4 py-3 bg-white border-b transition-colors cursor-pointer',
+        'hover:bg-gray-50',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500',
-        isSelected && 'bg-blue-50 border-l-4 border-l-blue-500',
+        // Selected state
+        isSelected
+          ? 'bg-blue-50 border-l-4 border-l-blue-500 border-b-gray-200'
+          : 'border-gray-200',
+        // Selection mode hover indicator (when not selected)
+        isSelectionMode && !isSelected && 'hover:bg-blue-50/50',
         className
       )}
     >

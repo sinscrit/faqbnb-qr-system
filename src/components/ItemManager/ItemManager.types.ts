@@ -421,7 +421,7 @@ export interface ConfirmDialogProps {
  * Props for the ItemCard component.
  * Used for displaying items in grid view.
  *
- * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect for mobile selection mode entry)
  */
 export interface ItemCardProps {
   /** The item record to display */
@@ -434,6 +434,8 @@ export interface ItemCardProps {
   isSelected: boolean;
   /** Whether selection mode is active (shows checkbox) */
   isSelectionMode: boolean;
+  /** Callback when long-press gesture triggers selection mode (mobile) */
+  onLongPressSelect?: (id: string) => void;
   /** Optional additional CSS classes */
   className?: string;
   /** Enable inline editing of title/location/tags (controlled by config.enableInlineEdit) */
@@ -452,7 +454,7 @@ export interface ItemCardProps {
  * Props for the ItemRow component.
  * Used for displaying items in list view with comprehensive metadata.
  *
- * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect for mobile selection mode entry)
  */
 export interface ItemRowProps {
   /** The item record to display */
@@ -465,6 +467,8 @@ export interface ItemRowProps {
   isSelected: boolean;
   /** Whether selection mode is active (shows checkbox) */
   isSelectionMode: boolean;
+  /** Callback when long-press gesture triggers selection mode (mobile) */
+  onLongPressSelect?: (id: string) => void;
   /** Callback when edit action is triggered */
   onEdit: (item: ItemRecord) => void;
   /** Callback when delete action is triggered */
@@ -491,7 +495,7 @@ export interface ItemRowProps {
  * Props for the ItemGrid component.
  * Renders items in a responsive multi-column grid layout.
  *
- * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect for mobile selection mode entry)
  */
 export interface ItemGridProps {
   /** Array of item records to display */
@@ -504,6 +508,8 @@ export interface ItemGridProps {
   selectedIds: Set<string>;
   /** Whether selection mode is active */
   isSelectionMode: boolean;
+  /** Callback when long-press gesture triggers selection mode (mobile) */
+  onLongPressSelect?: (id: string) => void;
   /** Optional additional CSS classes */
   className?: string;
   /** Enable inline editing of title/location/tags */
@@ -518,7 +524,7 @@ export interface ItemGridProps {
  * Props for the ItemList component.
  * Renders items in a vertical list layout with table-like structure.
  *
- * @lastModified 2026-01-03 (REQ-088 Task 9 - Added existingTags for inline tag editing)
+ * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect for mobile selection mode entry)
  */
 export interface ItemListProps {
   /** Array of item records to display */
@@ -531,6 +537,8 @@ export interface ItemListProps {
   selectedIds: Set<string>;
   /** Whether selection mode is active */
   isSelectionMode: boolean;
+  /** Callback when long-press gesture triggers selection mode (mobile) */
+  onLongPressSelect?: (id: string) => void;
   /** Callback when edit action is triggered */
   onEdit: (item: ItemRecord) => void;
   /** Callback when delete action is triggered */
@@ -943,9 +951,9 @@ export interface ItemToolbarClassNames {
 
 /**
  * Props for the ItemToolbar component.
- * Provides comprehensive control over toolbar display, search, filters, and sort.
+ * Provides comprehensive control over toolbar display, search, filters, sort, and selection.
  *
- * @lastModified 2026-01-03 (REQ-063 Task 2.2.1)
+ * @lastModified 2026-01-04 (REQ-069 Task 3.2.4 - Added selection indicator props)
  */
 export interface ItemToolbarProps {
   // ---------------------------------------------------------------------------
@@ -1037,6 +1045,19 @@ export interface ItemToolbarProps {
 
   /** Whether any filters or search is currently active */
   isFiltered: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Selection Props (REQ-069)
+  // ---------------------------------------------------------------------------
+
+  /** Number of currently selected items (optional) */
+  selectedCount?: number;
+
+  /** Callback to clear all selections (optional) */
+  onClearSelection?: () => void;
+
+  /** Callback to select all visible/filtered items (optional) */
+  onSelectAll?: () => void;
 
   // ---------------------------------------------------------------------------
   // Customization Props
