@@ -2,7 +2,7 @@
  * Filter Panel Components Barrel Export
  *
  * @module ItemManager/components/dialogs
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.6)
+ * @lastModified 2026-01-04 (REQ-066 Task 2.5.6 - Added SortMenu export)
  */
 
 // Filter Panel Components
@@ -20,3 +20,7 @@ export type { LocationFilterProps } from './LocationFilter';
 
 export { PropertyFilter } from './PropertyFilter';
 export type { PropertyFilterProps } from './PropertyFilter';
+
+// Sort Menu Component
+export { SortMenu } from './SortMenu';
+export type { SortMenuProps } from './SortMenu';

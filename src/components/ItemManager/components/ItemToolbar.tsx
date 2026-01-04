@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/ItemToolbar
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.2)
- * @lastModified 2026-01-04 (REQ-064 - Integrated SearchInput component)
+ * @lastModified 2026-01-04 (REQ-066 Task 2.5.7 - Integrated SortMenu component)
  */
 
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ import type {
   SortOption,
 } from '../ItemManager.types';
 import { SearchInput } from './SearchInput';
+import { SortMenu } from './dialogs/SortMenu';
 
 // =============================================================================
 // ViewToggle Sub-component (Task 2.2.3)
@@ -177,48 +178,11 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
 
 // =============================================================================
 // SortPlaceholder Sub-component (Task 2.2.7)
+// DEPRECATED: Replaced by SortMenu component in REQ-066 Task 2.5
 // =============================================================================
 
-interface SortPlaceholderProps {
-  sortBy: SortOption;
-  onSortChange: (sort: SortOption) => void;
-}
-
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'created-desc', label: 'Newest First' },
-  { value: 'created-asc', label: 'Oldest First' },
-  { value: 'title-asc', label: 'Title (A-Z)' },
-  { value: 'title-desc', label: 'Title (Z-A)' },
-  { value: 'updated-desc', label: 'Recently Modified' },
-  { value: 'location-asc', label: 'Location (A-Z)' },
-];
-
-/**
- * Temporary sort select placeholder.
- * Will be replaced by full SortMenu component in Task 2.5.
- * 48px minimum height on mobile for touch accessibility.
- */
-function SortPlaceholder({ sortBy, onSortChange }: SortPlaceholderProps) {
-  return (
-    <select
-      value={sortBy}
-      onChange={(e) => onSortChange(e.target.value as SortOption)}
-      aria-label="Sort items"
-      className={cn(
-        'px-3 text-sm',
-        'min-h-[48px] md:min-h-0 md:py-2',
-        'border border-gray-300 rounded-lg bg-white',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-      )}
-    >
-      {SORT_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  );
-}
+// The SortPlaceholder has been replaced by the SortMenu component.
+// See: src/components/ItemManager/components/dialogs/SortMenu.tsx
 
 // =============================================================================
 // FiltersPlaceholder Sub-component (Task 2.2.8)
@@ -339,8 +303,8 @@ export function ItemToolbar({
                 onChange: onSortChange,
               })
             ) : (
-              <SortPlaceholder
-                sortBy={sortBy}
+              <SortMenu
+                currentSort={sortBy}
                 onSortChange={onSortChange}
               />
             )}
