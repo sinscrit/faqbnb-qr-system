@@ -2,7 +2,7 @@
  * ItemManager Components Barrel Export
  *
  * @module ItemManager/components
- * @lastModified 2026-01-04 (REQ-065 - Added FilterPanel and filter components)
+ * @lastModified 2026-01-04 (REQ-070 - Added BulkActionsBar export)
  */
 
 // Core display components
@@ -46,3 +46,7 @@ export type {
   LocationFilterProps,
   PropertyFilterProps,
 } from './dialogs';
+
+// BulkActions components (REQ-070)
+export { BulkActionsBar, BulkTagDialog, BulkMoveDialog } from './BulkActions';
+export type { BulkActionsBarProps, BulkMoveDialogProps } from '../ItemManager.types';

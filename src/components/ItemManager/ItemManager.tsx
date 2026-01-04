@@ -9,11 +9,10 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-04 (REQ-069 Task 3.2.5 - Integrated selection UI with long-press and toolbar indicator)
+ * @lastModified 2026-01-04 (REQ-070 - Replaced inline bulk actions with BulkActionsBar component)
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
-import { Tag, Minus, FolderInput, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
 import { useItemSearch } from './hooks/useItemSearch';
@@ -24,7 +23,7 @@ import { ItemToolbar } from './components/ItemToolbar';
 import { ViewModeToggle } from './components/shared/ViewModeToggle';
 import { EmptyState } from './components/shared/EmptyState';
 import { LoadingState } from './components/shared/LoadingState';
-import { BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
+import { BulkActionsBar, BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -177,6 +176,12 @@ export function ItemManager({
 
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [bulkMoveLoading, setBulkMoveLoading] = useState(false);
+
+  // -------------------------------------------------------------------------
+  // Bulk Delete State (REQ-070)
+  // -------------------------------------------------------------------------
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // -------------------------------------------------------------------------
   // Computed Values for Bulk Actions
@@ -438,6 +443,25 @@ export function ItemManager({
   }, []);
 
   // -------------------------------------------------------------------------
+  // Bulk Delete Handler (REQ-070)
+  // -------------------------------------------------------------------------
+
+  /**
+   * Handle bulk delete action - opens confirmation or deletes directly.
+   * For now, directly calls onDeleteItems. In future, ConfirmDeleteDialog (Task 3.4)
+   * will be implemented to show confirmation before deletion.
+   */
+  const handleBulkDelete = useCallback(() => {
+    const selectedIds = Array.from(state.selectedIds);
+    if (selectedIds.length > 0) {
+      // TODO: When ConfirmDeleteDialog is implemented (Task 3.4),
+      // this should open the dialog instead of deleting directly
+      onDeleteItems(selectedIds);
+      clearSelection();
+    }
+  }, [state.selectedIds, onDeleteItems, clearSelection]);
+
+  // -------------------------------------------------------------------------
   // Long-Press Selection Handler (REQ-069)
   // -------------------------------------------------------------------------
 
@@ -689,84 +713,18 @@ export function ItemManager({
         {renderContent}
       </div>
 
-      {/* Bulk Actions Bar (REQ-090 - Added accessibility) */}
-      {effectiveConfig.enableBulkActions && hasSelection && (
-        <div
-          role="toolbar"
-          aria-label={`Bulk actions for ${selectedCount} selected items`}
-          className={cn(
-            'fixed bottom-4 left-1/2 -translate-x-1/2',
-            'bg-gray-900 text-white px-4 py-3 rounded-lg shadow-lg',
-            'flex items-center gap-4'
-          )}
-        >
-          {/* Screen reader announcement */}
-          <span className="sr-only" aria-live="polite">
-            {selectedCount} items selected. Bulk actions available.
-          </span>
-
-          <span className="font-medium" aria-hidden="true">{selectedCount} selected</span>
-          <div className="h-4 w-px bg-gray-600" aria-hidden="true" />
-          <button
-            onClick={handleBulkAddTag}
-            disabled={bulkLoading || bulkMoveLoading}
-            aria-label="Add tag to selected items"
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
-              'bg-blue-600 hover:bg-blue-700 transition-colors',
-              'focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900',
-              (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
-            )}
-          >
-            <Tag className="h-4 w-4" aria-hidden="true" />
-            Add Tag
-          </button>
-          <button
-            onClick={handleBulkRemoveTag}
-            disabled={bulkLoading || bulkMoveLoading}
-            aria-label="Remove tag from selected items"
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
-              'bg-orange-600 hover:bg-orange-700 transition-colors',
-              'focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900',
-              (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
-            )}
-          >
-            <Minus className="h-4 w-4" aria-hidden="true" />
-            Remove Tag
-          </button>
-          {/* Move to... button - only in multi-property mode */}
-          {isMultiPropertyMode && properties && properties.length > 0 && (
-            <button
-              onClick={handleBulkMove}
-              disabled={bulkLoading || bulkMoveLoading}
-              aria-label="Move selected items to another property"
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm',
-                'bg-purple-600 hover:bg-purple-700 transition-colors',
-                'focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-gray-900',
-                (bulkLoading || bulkMoveLoading) && 'opacity-50 cursor-not-allowed'
-              )}
-            >
-              <FolderInput className="h-4 w-4" aria-hidden="true" />
-              Move to...
-            </button>
-          )}
-          <div className="h-4 w-px bg-gray-600" aria-hidden="true" />
-          <button
-            onClick={clearSelection}
-            aria-label="Clear selection"
-            className={cn(
-              'flex items-center justify-center min-h-[44px] min-w-[44px] px-2',
-              'text-gray-300 hover:text-white hover:bg-white/10 rounded-md',
-              'focus:outline-none focus:ring-2 focus:ring-white/50',
-              'transition-colors'
-            )}
-          >
-            <X className="h-5 w-5" aria-hidden="true" />
-            <span className="sr-only">Clear selection</span>
-          </button>
-        </div>
+      {/* Bulk Actions Bar (REQ-070) */}
+      {effectiveConfig.enableBulkActions && (
+        <BulkActionsBar
+          selectedCount={selectedCount}
+          onDelete={handleBulkDelete}
+          onAddTag={handleBulkAddTag}
+          onRemoveTag={handleBulkRemoveTag}
+          onMoveToProperty={isMultiPropertyMode && properties && properties.length > 0 ? handleBulkMove : undefined}
+          onExitSelection={clearSelection}
+          multiPropertyMode={isMultiPropertyMode && properties && properties.length > 0}
+          loading={bulkLoading || bulkMoveLoading}
+        />
       )}
 
       {/* Preview Modal placeholder (Phase 4) */}

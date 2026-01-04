@@ -1104,8 +1104,36 @@ export interface ItemToolbarProps {
 }
 
 // =============================================================================
-// BulkActions Types (REQ-072)
+// BulkActions Types (REQ-070, REQ-072, REQ-073)
 // =============================================================================
+
+/**
+ * Props for BulkActionsBar component.
+ * Floating action bar that appears when items are selected for bulk operations.
+ *
+ * @see docs/REQ-070-build-bulkactionsbar-component-overview.md
+ * @lastModified 2026-01-04 (REQ-070)
+ */
+export interface BulkActionsBarProps {
+  /** Number of selected items */
+  selectedCount: number;
+  /** Callback when delete action is triggered */
+  onDelete: () => void;
+  /** Callback when add tag action is triggered */
+  onAddTag: () => void;
+  /** Callback when remove tag action is triggered */
+  onRemoveTag: () => void;
+  /** Callback when move to property action is triggered (multi-property mode) */
+  onMoveToProperty?: () => void;
+  /** Callback when exit selection / cancel is triggered */
+  onExitSelection: () => void;
+  /** Whether multi-property mode is enabled (shows move button) */
+  multiPropertyMode?: boolean;
+  /** Loading state (during bulk operation) */
+  loading?: boolean;
+  /** Optional additional CSS classes */
+  className?: string;
+}
 
 /**
  * Props for the BulkTagDialog component.
