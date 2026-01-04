@@ -1,7 +1,7 @@
 # REQ-068: Create useItemSelection Hook - Detailed Task Breakdown
 
 **Document Created:** 2026-01-03 12:45:00
-**Last Modified:** 2026-01-03 12:45:00
+**Last Modified:** 2026-01-04 18:30:00
 **Request Reference:** REQ-068 (Multi-Item Selection and Bulk Action Support)
 **Overview Document:** `/docs/REQ-068-create-useitemselection-hook-overview.md`
 **Implementation Plan:** `/docs/prd/item-capture-manager-implementation-plan.md`
@@ -91,11 +91,13 @@ Create the following types:
 
 #### Verification Steps
 
-- [ ] File compiles without TypeScript errors
-- [ ] All types are exported from the file
-- [ ] `SelectionAction` covers all action types from overview
-- [ ] `UseItemSelectionReturn` includes all methods from overview spec
-- [ ] JSDoc comments are present on all exported interfaces
+- [x] File compiles without TypeScript errors
+- [x] All types are exported from the file
+- [x] `SelectionAction` covers all action types from overview
+- [x] `UseItemSelectionReturn` includes all methods from overview spec
+- [x] JSDoc comments are present on all exported interfaces
+
+**Implementation Notes (2026-01-04):** Created `useItemSelection.ts` with all types defined including `SelectionState`, `SelectionAction`, `UseItemSelectionOptions`, and `UseItemSelectionReturn`. All types include JSDoc documentation.
 
 #### Code Template
 
@@ -243,14 +245,16 @@ Key behaviors to implement:
 
 #### Verification Steps
 
-- [ ] Reducer is a pure function (no side effects)
-- [ ] Each action type returns a new state object (immutability)
-- [ ] SELECT_ITEM respects maxSelection limit
-- [ ] Auto-enter selection mode works on first selection
-- [ ] Auto-exit selection mode works on last deselection
-- [ ] SELECT_ALL truncates to maxSelection
-- [ ] Unknown action type returns current state unchanged
-- [ ] Set operations create new Set instances (immutability)
+- [x] Reducer is a pure function (no side effects)
+- [x] Each action type returns a new state object (immutability)
+- [x] SELECT_ITEM respects maxSelection limit
+- [x] Auto-enter selection mode works on first selection
+- [x] Auto-exit selection mode works on last deselection
+- [x] SELECT_ALL truncates to maxSelection
+- [x] Unknown action type returns current state unchanged
+- [x] Set operations create new Set instances (immutability)
+
+**Implementation Notes (2026-01-04):** Implemented `selectionReducer` with all 11 action types. All operations maintain immutability by creating new Set instances. The reducer enforces maxSelection limits and auto-manages selection mode based on selection state.
 
 #### Code Template
 
@@ -353,13 +357,15 @@ Implementation requirements:
 
 #### Verification Steps
 
-- [ ] Hook compiles without TypeScript errors
-- [ ] Hook is marked 'use client'
-- [ ] All callbacks have stable references (useCallback)
-- [ ] Return object has stable reference (useMemo)
-- [ ] onSelectionChange only fires on actual changes
-- [ ] Debug logging works when enabled
-- [ ] Default options work correctly
+- [x] Hook compiles without TypeScript errors
+- [x] Hook is marked 'use client'
+- [x] All callbacks have stable references (useCallback)
+- [x] Return object has stable reference (useMemo)
+- [x] onSelectionChange only fires on actual changes
+- [x] Debug logging works when enabled
+- [x] Default options work correctly
+
+**Implementation Notes (2026-01-04):** Hook core implemented with all memoization patterns. Uses useReducer for state management, useCallback for all action methods, useMemo for return value, and useEffect with useRef for change detection.
 
 #### Code Template
 
@@ -457,12 +463,14 @@ Methods to implement:
 
 #### Verification Steps
 
-- [ ] selectItem dispatches correct action
-- [ ] deselectItem dispatches correct action
-- [ ] toggleItem dispatches correct action
-- [ ] isSelected returns correct boolean
-- [ ] All methods are memoized with useCallback
-- [ ] isSelected dependency includes state.selectedIds
+- [x] selectItem dispatches correct action
+- [x] deselectItem dispatches correct action
+- [x] toggleItem dispatches correct action
+- [x] isSelected returns correct boolean
+- [x] All methods are memoized with useCallback
+- [x] isSelected dependency includes state.selectedIds
+
+**Implementation Notes (2026-01-04):** All item-level actions implemented with useCallback memoization and debug logging support.
 
 #### Code Template
 
@@ -536,12 +544,14 @@ Methods to implement:
 
 #### Verification Steps
 
-- [ ] selectAll dispatches with array payload
-- [ ] selectMultiple dispatches with array payload
-- [ ] deselectMultiple dispatches with array payload
-- [ ] clearSelection dispatches correct action
-- [ ] All methods are memoized with useCallback
-- [ ] Debug logs show item counts
+- [x] selectAll dispatches with array payload
+- [x] selectMultiple dispatches with array payload
+- [x] deselectMultiple dispatches with array payload
+- [x] clearSelection dispatches correct action
+- [x] All methods are memoized with useCallback
+- [x] Debug logs show item counts
+
+**Implementation Notes (2026-01-04):** All bulk actions implemented with useCallback memoization. Debug logs show item counts for array-based operations.
 
 #### Code Template
 
@@ -616,13 +626,15 @@ Methods to implement:
 
 #### Verification Steps
 
-- [ ] enterSelectionMode sets mode to true
-- [ ] exitSelectionMode clears selection and mode
-- [ ] toggleSelectionMode correctly toggles
-- [ ] getSelectedItems filters correctly
-- [ ] getSelectedItems preserves item type
-- [ ] getSelectedArray returns string array
-- [ ] All methods are memoized appropriately
+- [x] enterSelectionMode sets mode to true
+- [x] exitSelectionMode clears selection and mode
+- [x] toggleSelectionMode correctly toggles
+- [x] getSelectedItems filters correctly
+- [x] getSelectedItems preserves item type
+- [x] getSelectedArray returns string array
+- [x] All methods are memoized appropriately
+
+**Implementation Notes (2026-01-04):** All mode control methods and utilities implemented with proper memoization. `getSelectedItems` uses generic typing to preserve item types.
 
 #### Code Template
 
@@ -684,10 +696,12 @@ export type {
 
 #### Verification Steps
 
-- [ ] Hook can be imported from '@/components/ItemManager/hooks'
-- [ ] Types can be imported from '@/components/ItemManager/hooks'
-- [ ] No circular dependency issues
-- [ ] TypeScript compiles without errors
+- [x] Hook can be imported from '@/components/ItemManager/hooks'
+- [x] Types can be imported from '@/components/ItemManager/hooks'
+- [x] No circular dependency issues
+- [x] TypeScript compiles without errors
+
+**Implementation Notes (2026-01-04):** Added exports to `hooks/index.ts` barrel file for useItemSelection, useItemSelectionDefault, and types (UseItemSelectionOptions, UseItemSelectionReturn). Build verified successful.
 
 ---
 
@@ -719,10 +733,12 @@ Setup requirements:
 
 #### Verification Steps
 
-- [ ] Test file is in correct directory
-- [ ] Imports work correctly
-- [ ] Test structure matches functionality groupings
-- [ ] Mock data is reusable across tests
+- [x] Test file is in correct directory
+- [x] Imports work correctly
+- [x] Test structure matches functionality groupings
+- [x] Mock data is reusable across tests
+
+**Implementation Notes (2026-01-04):** Created `useItemSelection.test.ts` in `hooks/__tests__/` with full test suite structure covering all functionality areas.
 
 #### Code Template
 
@@ -812,10 +828,12 @@ Test cases:
 
 #### Verification Steps
 
-- [ ] All initial state tests pass
-- [ ] Tests use renderHook correctly
-- [ ] Tests verify all computed values
-- [ ] Tests are isolated (no shared state)
+- [x] All initial state tests pass
+- [x] Tests use renderHook correctly
+- [x] Tests verify all computed values
+- [x] Tests are isolated (no shared state)
+
+**Implementation Notes (2026-01-04):** Implemented comprehensive initial state tests covering default values, initialSelection option, and custom maxSelection.
 
 #### Code Template
 
@@ -897,10 +915,12 @@ Test cases:
 
 #### Verification Steps
 
-- [ ] All item-level action tests pass
-- [ ] Tests use act() for state updates
-- [ ] Edge cases are covered
-- [ ] Auto-mode behavior is verified
+- [x] All item-level action tests pass
+- [x] Tests use act() for state updates
+- [x] Edge cases are covered
+- [x] Auto-mode behavior is verified
+
+**Implementation Notes (2026-01-04):** Implemented comprehensive tests for selectItem, deselectItem, toggleItem, and isSelected including edge cases for maxSelection limits and auto-mode behavior.
 
 #### Code Template
 
@@ -1052,9 +1072,11 @@ Test cases:
 
 #### Verification Steps
 
-- [ ] All bulk action tests pass
-- [ ] Constraint tests verify limit enforcement
-- [ ] Edge cases handled (empty arrays, non-existent IDs)
+- [x] All bulk action tests pass
+- [x] Constraint tests verify limit enforcement
+- [x] Edge cases handled (empty arrays, non-existent IDs)
+
+**Implementation Notes (2026-01-04):** Implemented comprehensive bulk action tests including selectAll, selectMultiple, deselectMultiple, clearSelection, and constraint enforcement tests.
 
 #### Code Template
 
@@ -1167,10 +1189,12 @@ Test cases:
 
 #### Verification Steps
 
-- [ ] All mode control tests pass
-- [ ] Callback tests verify correct behavior
-- [ ] Utility tests verify filtering and conversion
-- [ ] All tests are deterministic
+- [x] All mode control tests pass
+- [x] Callback tests verify correct behavior
+- [x] Utility tests verify filtering and conversion
+- [x] All tests are deterministic
+
+**Implementation Notes (2026-01-04):** Implemented comprehensive mode control, callback, and utility tests including enterSelectionMode, exitSelectionMode, toggleSelectionMode, onSelectionChange callback, getSelectedItems, and getSelectedArray.
 
 #### Code Template
 
@@ -1283,11 +1307,13 @@ Verification checklist:
 
 #### Verification Steps
 
-- [ ] `import { useItemSelection } from '@/components/ItemManager/hooks'` works
-- [ ] `import type { UseItemSelectionOptions } from '@/components/ItemManager/hooks'` works
-- [ ] TypeScript compilation succeeds
-- [ ] All unit tests pass
-- [ ] No console warnings or errors
+- [x] `import { useItemSelection } from '@/components/ItemManager/hooks'` works
+- [x] `import type { UseItemSelectionOptions } from '@/components/ItemManager/hooks'` works
+- [x] TypeScript compilation succeeds
+- [x] All unit tests pass
+- [x] No console warnings or errors
+
+**Implementation Notes (2026-01-04):** Final verification complete. TypeScript compilation succeeds (`npm run build` passes). Hook and types import correctly from barrel exports. Test file verifies all import paths work.
 
 ---
 
@@ -1295,21 +1321,21 @@ Verification checklist:
 
 From REQ-068 requirements:
 
-- [ ] Individual items can be toggled in and out of the selection independently
-- [ ] A "select all" action adds all currently visible (filtered) items to the selection
-- [ ] Selection can be cleared completely with a single action
-- [ ] Selection mode can be explicitly toggled on or off
-- [ ] Visual indication of selection is supported (via isSelected function)
+- [x] Individual items can be toggled in and out of the selection independently
+- [x] A "select all" action adds all currently visible (filtered) items to the selection
+- [x] Selection can be cleared completely with a single action
+- [x] Selection mode can be explicitly toggled on or off
+- [x] Visual indication of selection is supported (via isSelected function)
 
 From Technical Requirements:
 
-- [ ] Hook follows established patterns from ItemCapture hooks
-- [ ] Uses Set for O(1) selection lookups
-- [ ] Memoization prevents unnecessary re-computations
-- [ ] Debug mode provides useful console output
-- [ ] TypeScript types are comprehensive and exported
-- [ ] maxSelection constraint is enforced
-- [ ] All unit tests pass
+- [x] Hook follows established patterns from ItemCapture hooks
+- [x] Uses Set for O(1) selection lookups
+- [x] Memoization prevents unnecessary re-computations
+- [x] Debug mode provides useful console output
+- [x] TypeScript types are comprehensive and exported
+- [x] maxSelection constraint is enforced
+- [x] All unit tests pass
 
 ---
 
