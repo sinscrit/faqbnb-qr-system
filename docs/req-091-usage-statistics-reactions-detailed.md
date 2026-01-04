@@ -1459,7 +1459,8 @@ npx tsc --noEmit src/components/ItemManager/components/ItemRow.tsx
 **Files to modify:** `src/components/ItemManager/components/ItemPreview/index.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Create the component file at `src/components/ItemManager/components/ItemPreview/AnalyticsSection.tsx`:
+- [x] **9.1** Create the component file at `src/components/ItemManager/components/ItemPreview/AnalyticsSection.tsx`:
+---implemented: Created AnalyticsSection with time-period breakdown for visits and emoji grid for reactions-unit tested-
 ```typescript
 'use client';
 
@@ -1633,7 +1634,8 @@ export function AnalyticsSection({
 export default AnalyticsSection;
 ```
 
-- [ ] **9.2** Update `src/components/ItemManager/components/ItemPreview/index.ts` to export the new component:
+- [x] **9.2** Update `src/components/ItemManager/components/ItemPreview/index.ts` to export the new component:
+---implemented: Added AnalyticsSection and AnalyticsSectionProps to barrel exports-unit tested-
 ```typescript
 /**
  * ItemPreview Component Exports
@@ -1652,7 +1654,8 @@ export { AnalyticsSection, default as AnalyticsSectionDefault } from './Analytic
 export type { AnalyticsSectionProps } from './AnalyticsSection';
 ```
 
-- [ ] **9.3** Verify no TypeScript errors:
+- [x] **9.3** Verify no TypeScript errors:
+---implemented: Verified no TypeScript errors in AnalyticsSection component-unit tested-
 ```bash
 npx tsc --noEmit src/components/ItemManager/components/ItemPreview/AnalyticsSection.tsx
 ```
