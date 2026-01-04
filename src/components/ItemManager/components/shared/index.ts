@@ -14,6 +14,7 @@ export { TagsInlineEdit } from './TagsInlineEdit';
 export { BottomSheet } from './BottomSheet';
 export { TouchButton } from './TouchButton';
 export { VisitCountBadge } from './VisitCountBadge';
+export { ReactionSummary } from './ReactionSummary';
 
 // Types
 export type { InlineEditProps, InlineEditState } from './InlineEdit';
@@ -22,3 +23,4 @@ export type { TagsInlineEditProps, TagsInlineEditState } from './TagsInlineEdit'
 export type { BottomSheetProps } from './BottomSheet';
 export type { TouchButtonProps } from './TouchButton';
 export type { VisitCountBadgeProps } from './VisitCountBadge';
+export type { ReactionSummaryProps } from './ReactionSummary';
