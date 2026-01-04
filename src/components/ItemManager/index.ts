@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-04 (REQ-064 - Added SearchInput component and useDebounce hook)
+ * @lastModified 2026-01-05 (REQ-091 - Added analytics type exports)
  */
 
 // =============================================================================
@@ -51,6 +51,9 @@ export type {
   AssetManagementAction,
   UseAssetManagementOptions,
   UseAssetManagementReturn,
+  // Analytics Types (REQ-091)
+  ItemVisitStats,
+  ItemReactionSummary,
   // Hook Types (REQ-062)
   UseItemSearchOptions,
   UseItemSearchReturn,
