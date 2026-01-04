@@ -1361,7 +1361,8 @@ npx tsc --noEmit src/components/ItemManager/components/ItemCard.tsx
 **Files to modify:** `src/components/ItemManager/components/ItemRow.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Open `src/components/ItemManager/components/ItemRow.tsx` and update the imports (around line 16-30):
+- [x] **8.1** Open `src/components/ItemManager/components/ItemRow.tsx` and update the imports (around line 16-30):
+---implemented: Added VisitCountBadge and ReactionSummary to imports-unit tested-
 ```typescript
 import {
   MoreVertical,
@@ -1379,7 +1380,8 @@ import { useLongPress } from '../hooks/useLongPress';
 import type { ItemRowProps } from '../ItemManager.types';
 ```
 
-- [ ] **8.2** Update the function signature to include the new props (around line 77-92):
+- [x] **8.2** Update the function signature to include the new props (around line 77-92):
+---implemented: Added visitStats and reactions props to ItemRow function signature-unit tested-
 ```typescript
 export function ItemRow({
   item,
@@ -1401,7 +1403,8 @@ export function ItemRow({
 }: ItemRowProps) {
 ```
 
-- [ ] **8.3** Add the Views column. Locate the Date Column section (around line 445-448) and add a Views column right after it:
+- [x] **8.3** Add the Views column. Locate the Date Column section (around line 445-448) and add a Views column right after it:
+---implemented: Added Views column showing VisitCountBadge (hidden on lg screens and below)-unit tested-
 ```typescript
       {/* Date Column (Task 8) */}
       <div className="hidden md:flex w-28 items-center text-sm text-gray-500">
@@ -1429,17 +1432,20 @@ export function ItemRow({
       {/* Kebab Menu - 48px touch target on mobile */}
 ```
 
-- [ ] **8.4** Update the aria-label to include analytics info (around line 286):
+- [x] **8.4** Update the aria-label to include analytics info (around line 286):
+---implemented: Updated aria-label to include view count and reaction count for accessibility-unit tested-
 ```typescript
   const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
 ```
 
-- [ ] **8.5** Update the component's JSDoc header:
+- [x] **8.5** Update the component's JSDoc header:
+---implemented: Updated JSDoc header with REQ-091 modification note-unit tested-
 ```typescript
  * @lastModified 2026-01-05 (REQ-091 - Added Views and Reactions columns)
 ```
 
-- [ ] **8.6** Verify no TypeScript errors:
+- [x] **8.6** Verify no TypeScript errors:
+---implemented: Verified no new TypeScript errors in ItemRow component-unit tested-
 ```bash
 npx tsc --noEmit src/components/ItemManager/components/ItemRow.tsx
 ```

@@ -10,7 +10,7 @@
  * long-press gesture for mobile selection mode entry (REQ-069).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-04 (REQ-069 - Integrated useLongPress hook for mobile selection)
+ * @lastModified 2026-01-05 (REQ-091 - Added Views and Reactions columns)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -25,7 +25,7 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
+import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary } from './shared';
 import { useLongPress } from '../hooks/useLongPress';
 import type { ItemRowProps } from '../ItemManager.types';
 
@@ -89,6 +89,8 @@ export function ItemRow({
   enableInlineEdit,
   onUpdateItem,
   existingTags,
+  visitStats,
+  reactions,
 }: ItemRowProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -283,7 +285,7 @@ export function ItemRow({
   };
 
   // Build comprehensive aria-label
-  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Created ${formatDate(item.createdAt)}.${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
+  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
 
   return (
     <div
@@ -445,6 +447,24 @@ export function ItemRow({
       {/* Date Column (Task 8) */}
       <div className="hidden md:flex w-28 items-center text-sm text-gray-500">
         {formatDate(item.createdAt)}
+      </div>
+
+      {/* Views Column (REQ-091) */}
+      <div className="hidden lg:flex w-20 items-center">
+        {visitStats ? (
+          <VisitCountBadge count={visitStats.allTime} size="small" />
+        ) : (
+          <span className="text-xs text-gray-400">-</span>
+        )}
+      </div>
+
+      {/* Reactions Column (REQ-091) */}
+      <div className="hidden xl:flex w-24 items-center">
+        {reactions && reactions.total > 0 ? (
+          <ReactionSummary reactions={reactions} size="small" maxReactions={2} />
+        ) : (
+          <span className="text-xs text-gray-400">-</span>
+        )}
       </div>
 
       {/* Kebab Menu - 48px touch target on mobile */}
