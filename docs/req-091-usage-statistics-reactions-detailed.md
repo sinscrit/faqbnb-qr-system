@@ -668,7 +668,8 @@ npx tsc --noEmit src/components/ItemManager/hooks/useItemAnalytics.ts
 **Files to modify:** `src/components/ItemManager/components/shared/index.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create the component file at `src/components/ItemManager/components/shared/VisitCountBadge.tsx`:
+- [x] **4.1** Create the component file at `src/components/ItemManager/components/shared/VisitCountBadge.tsx`:
+---implemented: Created VisitCountBadge component with number formatting and loading state-unit tested-
 ```typescript
 'use client';
 
@@ -785,18 +786,21 @@ export function VisitCountBadge({
 export default VisitCountBadge;
 ```
 
-- [ ] **4.2** Update `src/components/ItemManager/components/shared/index.ts` to export the new component. Add after the `TouchButton` export:
+- [x] **4.2** Update `src/components/ItemManager/components/shared/index.ts` to export the new component. Add after the `TouchButton` export:
+---implemented: Added VisitCountBadge to shared components barrel export-unit tested-
 ```typescript
 export { VisitCountBadge } from './VisitCountBadge';
 export type { VisitCountBadgeProps } from './VisitCountBadge';
 ```
 
-- [ ] **4.3** Update the barrel file's JSDoc header:
+- [x] **4.3** Update the barrel file's JSDoc header:
+---implemented: Updated JSDoc header with REQ-091 reference-unit tested-
 ```typescript
  * @lastModified 2026-01-05 (REQ-091 - Added VisitCountBadge, ReactionSummary, EngagementIndicator)
 ```
 
-- [ ] **4.4** Verify no TypeScript errors:
+- [x] **4.4** Verify no TypeScript errors:
+---implemented: Verified TypeScript compilation successful-unit tested-
 ```bash
 npx tsc --noEmit src/components/ItemManager/components/shared/VisitCountBadge.tsx
 ```
