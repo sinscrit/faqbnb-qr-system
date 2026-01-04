@@ -14,13 +14,13 @@
  * - Long-press gesture for mobile selection mode entry (REQ-069)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-04 (REQ-069 - Integrated useLongPress hook for mobile selection)
+ * @lastModified 2026-01-05 (REQ-091 - Added analytics display: visitStats, reactions)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Play, FileText, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { InlineEdit, TagsInlineEdit, TagChip } from './shared';
+import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary, EngagementIndicator } from './shared';
 import { useLongPress } from '../hooks/useLongPress';
 import type { ItemCardProps } from '../ItemManager.types';
 
@@ -68,6 +68,8 @@ export function ItemCard({
   enableInlineEdit,
   onUpdateItem,
   existingTags,
+  visitStats,
+  reactions,
 }: ItemCardProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -283,6 +285,18 @@ export function ItemCard({
           </label>
         )}
 
+        {/* Engagement Indicator - Top Left (when analytics available and not in selection mode) */}
+        {!isSelectionMode && (visitStats || reactions) && (
+          <div className="absolute top-2 left-2 z-10">
+            <EngagementIndicator
+              visitStats={visitStats}
+              reactions={reactions}
+              variant="dot"
+              size="small"
+            />
+          </div>
+        )}
+
         {/* Content Type Badge */}
         <div className="absolute top-2 right-2 z-10">
           <span
@@ -361,6 +375,18 @@ export function ItemCard({
               )}
             </div>
           )
+        )}
+
+        {/* Analytics Section - View count and reactions */}
+        {(visitStats || reactions) && (
+          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
+            {visitStats && (
+              <VisitCountBadge count={visitStats.allTime} size="small" />
+            )}
+            {reactions && reactions.total > 0 && (
+              <ReactionSummary reactions={reactions} size="small" maxReactions={2} />
+            )}
+          </div>
         )}
       </div>
     </article>

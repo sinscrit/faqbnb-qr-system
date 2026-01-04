@@ -1274,7 +1274,8 @@ npx tsc --noEmit src/components/ItemManager/components/shared/EngagementIndicato
 **Files to modify:** `src/components/ItemManager/components/ItemCard.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Open `src/components/ItemManager/components/ItemCard.tsx` and update the imports (around line 20-25):
+- [x] **7.1** Open `src/components/ItemManager/components/ItemCard.tsx` and update the imports (around line 20-25):
+---implemented: Added VisitCountBadge, ReactionSummary, EngagementIndicator to imports-unit tested-
 ```typescript
 import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary, EngagementIndicator } from './shared';
@@ -1282,7 +1283,8 @@ import { useLongPress } from '../hooks/useLongPress';
 import type { ItemCardProps } from '../ItemManager.types';
 ```
 
-- [ ] **7.2** Update the function signature to include the new props (around line 60-71):
+- [x] **7.2** Update the function signature to include the new props (around line 60-71):
+---implemented: Added visitStats and reactions props to ItemCard function signature-unit tested-
 ```typescript
 export function ItemCard({
   item,
@@ -1300,7 +1302,8 @@ export function ItemCard({
 }: ItemCardProps) {
 ```
 
-- [ ] **7.3** Add analytics display in the thumbnail section. Locate the Content Type Badge div (around line 287-296) and add the engagement indicator right before it:
+- [x] **7.3** Add analytics display in the thumbnail section. Locate the Content Type Badge div (around line 287-296) and add the engagement indicator right before it:
+---implemented: Added EngagementIndicator dot variant in top-left of thumbnail (hidden in selection mode)-unit tested-
 ```typescript
         {/* Engagement Indicator - Top Left (when analytics available and not in selection mode) */}
         {!isSelectionMode && (visitStats || reactions) && (
@@ -1318,7 +1321,8 @@ export function ItemCard({
         <div className="absolute top-2 right-2 z-10">
 ```
 
-- [ ] **7.4** Add analytics display in the content section footer. Locate the tags section end (around line 365) and add analytics display after it:
+- [x] **7.4** Add analytics display in the content section footer. Locate the tags section end (around line 365) and add analytics display after it:
+---implemented: Added analytics section showing VisitCountBadge and ReactionSummary in card footer-unit tested-
 ```typescript
         )}
 
@@ -1337,12 +1341,14 @@ export function ItemCard({
     </article>
 ```
 
-- [ ] **7.5** Update the component's JSDoc header:
+- [x] **7.5** Update the component's JSDoc header:
+---implemented: Updated JSDoc header with REQ-091 modification note-unit tested-
 ```typescript
  * @lastModified 2026-01-05 (REQ-091 - Added analytics display: visitStats, reactions)
 ```
 
-- [ ] **7.6** Verify no TypeScript errors:
+- [x] **7.6** Verify no TypeScript errors:
+---implemented: Verified no new TypeScript errors in ItemCard component-unit tested-
 ```bash
 npx tsc --noEmit src/components/ItemManager/components/ItemCard.tsx
 ```
