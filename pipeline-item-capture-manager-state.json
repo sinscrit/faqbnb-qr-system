@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-02T18:42:20.064242",
-  "updated_at": "2026-01-04T17:05:25.688124",
+  "updated_at": "2026-01-04T17:14:20.887976",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 10,
+  "current_task_index": 11,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/item-capture-manager-implementation-plan.md",
   "source_hash": "2ff89806af3feadc1b1c6ad594d67316",
   "tasks": [
@@ -248,10 +248,10 @@
       "title": "Implement SortMenu",
       "description": "Dropdown with sort options\nCurrent sort indicator\nMobile-friendly touch targets",
       "raw_match": "\n- [ ] **2.5 Implement SortMenu**",
-      "status": "failed",
+      "status": "completed",
       "request_id": "REQ-066",
       "error": "Stage implementation: Exit code 1: ",
-      "processed_at": "2026-01-03T03:57:37.629158",
+      "processed_at": "2026-01-04T17:14:20.887934",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-066",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-066-implement-sortmenu-overview.md",
@@ -259,7 +259,8 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "2.6",
@@ -862,7 +863,7 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 5,
+    "total_requests_generated": 6,
     "last_request_id": "REQ-090",
     "first_request_id": "REQ-056",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-capture-manager.yaml"

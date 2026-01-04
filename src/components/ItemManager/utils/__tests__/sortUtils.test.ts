@@ -2,7 +2,7 @@
  * Unit tests for sortUtils
  *
  * @module ItemManager/utils/__tests__/sortUtils.test
- * @lastModified 2026-01-04 (REQ-062 Task 10)
+ * @lastModified 2026-01-04 (REQ-067 - Added tests for all sort utility functions)
  */
 
 import { describe, it, expect } from 'vitest';
@@ -10,9 +10,18 @@ import {
   sortComparators,
   getSortComparator,
   DEFAULT_SORT,
+  SORT_OPTIONS,
+  CONTENT_TYPE_OPTIONS,
+  getDateTimestamp,
+  safeLocaleCompare,
+  createChainedComparator,
+  reverseSortOrder,
+  createKeyComparator,
+  getSortLabel,
+  isValidSortOption,
 } from '../sortUtils';
 import type { ItemRecord } from '@/components/ItemCapture';
-import type { ItemRecordExtended } from '../../ItemManager.types';
+import type { ItemRecordExtended, SortOption } from '../../ItemManager.types';
 
 /**
  * Factory function to create mock items for testing.
@@ -328,5 +337,251 @@ describe('sort stability', () => {
     const sorted = [...items].sort(sortComparators['created-desc']);
 
     expect(sorted).toHaveLength(3);
+  });
+});
+
+// =============================================================================
+// Constants Tests
+// =============================================================================
+
+describe('SORT_OPTIONS', () => {
+  it('has exactly 7 options', () => {
+    expect(SORT_OPTIONS).toHaveLength(7);
+  });
+
+  it('contains all expected sort options', () => {
+    const values = SORT_OPTIONS.map((opt) => opt.value);
+    expect(values).toContain('title-asc');
+    expect(values).toContain('title-desc');
+    expect(values).toContain('created-desc');
+    expect(values).toContain('created-asc');
+    expect(values).toContain('updated-desc');
+    expect(values).toContain('updated-asc');
+    expect(values).toContain('location-asc');
+  });
+
+  it('has labels for all options', () => {
+    SORT_OPTIONS.forEach((opt) => {
+      expect(opt.label).toBeDefined();
+      expect(opt.label.length).toBeGreaterThan(0);
+    });
+  });
+});
+
+describe('CONTENT_TYPE_OPTIONS', () => {
+  it('has 5 content type options', () => {
+    expect(CONTENT_TYPE_OPTIONS).toHaveLength(5);
+  });
+
+  it('contains expected content types', () => {
+    const values = CONTENT_TYPE_OPTIONS.map((opt) => opt.value);
+    expect(values).toContain('video');
+    expect(values).toContain('image');
+    expect(values).toContain('pdf');
+    expect(values).toContain('text-only');
+    expect(values).toContain('mixed');
+  });
+});
+
+// =============================================================================
+// getDateTimestamp Tests
+// =============================================================================
+
+describe('getDateTimestamp', () => {
+  it('returns timestamp for Date object', () => {
+    const date = new Date('2024-01-15T12:00:00Z');
+    expect(getDateTimestamp(date)).toBe(date.getTime());
+  });
+
+  it('returns timestamp for ISO string', () => {
+    const isoString = '2024-01-15T12:00:00Z';
+    expect(getDateTimestamp(isoString)).toBe(Date.parse(isoString));
+  });
+
+  it('returns 0 for undefined', () => {
+    expect(getDateTimestamp(undefined)).toBe(0);
+  });
+
+  it('returns 0 for null', () => {
+    expect(getDateTimestamp(null)).toBe(0);
+  });
+
+  it('returns 0 for invalid date string', () => {
+    expect(getDateTimestamp('invalid-date')).toBe(0);
+  });
+
+  it('returns 0 for invalid Date object', () => {
+    expect(getDateTimestamp(new Date('invalid'))).toBe(0);
+  });
+});
+
+// =============================================================================
+// safeLocaleCompare Tests
+// =============================================================================
+
+describe('safeLocaleCompare', () => {
+  it('compares two strings', () => {
+    expect(safeLocaleCompare('apple', 'banana')).toBeLessThan(0);
+    expect(safeLocaleCompare('banana', 'apple')).toBeGreaterThan(0);
+    expect(safeLocaleCompare('apple', 'apple')).toBe(0);
+  });
+
+  it('handles undefined as empty string', () => {
+    expect(safeLocaleCompare(undefined, 'apple')).toBeLessThan(0);
+    expect(safeLocaleCompare('apple', undefined)).toBeGreaterThan(0);
+    expect(safeLocaleCompare(undefined, undefined)).toBe(0);
+  });
+
+  it('handles null as empty string', () => {
+    expect(safeLocaleCompare(null, 'apple')).toBeLessThan(0);
+    expect(safeLocaleCompare('apple', null)).toBeGreaterThan(0);
+    expect(safeLocaleCompare(null, null)).toBe(0);
+  });
+});
+
+// =============================================================================
+// createChainedComparator Tests
+// =============================================================================
+
+describe('createChainedComparator', () => {
+  it('uses first comparator when it returns non-zero', () => {
+    const chained = createChainedComparator(
+      sortComparators['location-asc'],
+      sortComparators['title-asc']
+    );
+
+    const a = createMockItem({ location: 'Alpha', title: 'Zebra' });
+    const b = createMockItem({ location: 'Beta', title: 'Apple' });
+
+    expect(chained(a, b)).toBeLessThan(0); // location comparison wins
+  });
+
+  it('uses second comparator when first returns zero', () => {
+    const chained = createChainedComparator(
+      sortComparators['location-asc'],
+      sortComparators['title-asc']
+    );
+
+    const a = createMockItem({ location: 'Kitchen', title: 'Zebra' });
+    const b = createMockItem({ location: 'Kitchen', title: 'Apple' });
+
+    expect(chained(a, b)).toBeGreaterThan(0); // title comparison used
+  });
+
+  it('works with empty comparator list', () => {
+    const chained = createChainedComparator();
+    const a = createMockItem({ title: 'A' });
+    const b = createMockItem({ title: 'B' });
+
+    expect(chained(a, b)).toBe(0);
+  });
+});
+
+// =============================================================================
+// reverseSortOrder Tests
+// =============================================================================
+
+describe('reverseSortOrder', () => {
+  it('reverses the comparison result', () => {
+    const titleAsc = sortComparators['title-asc'];
+    const titleDesc = reverseSortOrder(titleAsc);
+
+    const items = [
+      createMockItem({ id: '1', title: 'Apple' }),
+      createMockItem({ id: '2', title: 'Zebra' }),
+    ];
+
+    const sorted = [...items].sort(titleDesc);
+    expect(sorted.map((i) => i.title)).toEqual(['Zebra', 'Apple']);
+  });
+});
+
+// =============================================================================
+// createKeyComparator Tests
+// =============================================================================
+
+describe('createKeyComparator', () => {
+  it('creates comparator for string keys', () => {
+    const byTitle = createKeyComparator((item) => item.title);
+    const items = [
+      createMockItem({ title: 'Zebra' }),
+      createMockItem({ title: 'Apple' }),
+    ];
+
+    const sorted = [...items].sort(byTitle);
+    expect(sorted.map((i) => i.title)).toEqual(['Apple', 'Zebra']);
+  });
+
+  it('creates comparator for numeric keys', () => {
+    const byMediaCount = createKeyComparator((item) => item.media.length);
+    const items = [
+      createMockItem({ media: [{} as any, {} as any, {} as any] }),
+      createMockItem({ media: [{} as any] }),
+    ];
+
+    const sorted = [...items].sort(byMediaCount);
+    expect(sorted.map((i) => i.media.length)).toEqual([1, 3]);
+  });
+
+  it('supports descending order', () => {
+    const byTitleDesc = createKeyComparator((item) => item.title, true);
+    const items = [
+      createMockItem({ title: 'Apple' }),
+      createMockItem({ title: 'Zebra' }),
+    ];
+
+    const sorted = [...items].sort(byTitleDesc);
+    expect(sorted.map((i) => i.title)).toEqual(['Zebra', 'Apple']);
+  });
+
+  it('handles null/undefined keys', () => {
+    const byLocation = createKeyComparator((item) => item.location);
+    const items = [
+      createMockItem({ location: 'Kitchen' }),
+      createMockItem({ location: undefined }),
+      createMockItem({ location: 'Bathroom' }),
+    ];
+
+    const sorted = [...items].sort(byLocation);
+    // undefined sorts to end
+    expect(sorted.map((i) => i.location)).toEqual(['Bathroom', 'Kitchen', undefined]);
+  });
+});
+
+// =============================================================================
+// getSortLabel Tests
+// =============================================================================
+
+describe('getSortLabel', () => {
+  it('returns label for valid sort option', () => {
+    expect(getSortLabel('title-asc')).toBe('Title (A-Z)');
+    expect(getSortLabel('title-desc')).toBe('Title (Z-A)');
+    expect(getSortLabel('created-desc')).toBe('Newest First');
+  });
+
+  it('returns value for unknown option', () => {
+    expect(getSortLabel('unknown' as SortOption)).toBe('unknown');
+  });
+});
+
+// =============================================================================
+// isValidSortOption Tests
+// =============================================================================
+
+describe('isValidSortOption', () => {
+  it('returns true for all valid sort options', () => {
+    expect(isValidSortOption('title-asc')).toBe(true);
+    expect(isValidSortOption('title-desc')).toBe(true);
+    expect(isValidSortOption('created-desc')).toBe(true);
+    expect(isValidSortOption('created-asc')).toBe(true);
+    expect(isValidSortOption('updated-desc')).toBe(true);
+    expect(isValidSortOption('updated-asc')).toBe(true);
+    expect(isValidSortOption('location-asc')).toBe(true);
+  });
+
+  it('returns false for invalid options', () => {
+    expect(isValidSortOption('invalid')).toBe(false);
+    expect(isValidSortOption('title-both')).toBe(false);
+    expect(isValidSortOption('')).toBe(false);
   });
 });

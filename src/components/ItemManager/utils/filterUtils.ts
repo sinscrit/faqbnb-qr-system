@@ -3,11 +3,101 @@
  * All functions are pure and side-effect free.
  *
  * @module ItemManager/utils/filterUtils
- * @lastModified 2026-01-04 (REQ-062 Task 1)
+ * @lastModified 2026-01-04 (REQ-067 - Added missing filter utility functions)
  */
 
 import type { ItemRecord } from '@/components/ItemCapture';
 import type { FilterState, ItemRecordExtended } from '../ItemManager.types';
+
+// =============================================================================
+// Types
+// =============================================================================
+
+/**
+ * Available filter options extracted from item collections.
+ * Used to populate filter dropdowns/chips with available options.
+ */
+export interface FilterOptions {
+  /** Unique content types from all items */
+  contentTypes: string[];
+  /** Unique tags from all items */
+  tags: string[];
+  /** Unique locations from all items */
+  locations: string[];
+}
+
+/**
+ * Content type categories for item classification.
+ * Mirrors ItemRecord.contentType for type safety.
+ */
+export type ContentType = 'video' | 'image' | 'pdf' | 'text-only' | 'mixed' | 'media' | 'pdf-only';
+
+// =============================================================================
+// Constants
+// =============================================================================
+
+/**
+ * Fields that are searched when matching items against a search query.
+ * Used by getSearchableText to extract text from items.
+ */
+export const SEARCHABLE_FIELDS = ['title', 'location', 'tags', 'instructions'] as const;
+
+// =============================================================================
+// Search Functions
+// =============================================================================
+
+/**
+ * Normalize a search query for matching.
+ * Trims whitespace and optionally converts to lowercase.
+ *
+ * @param query - The search query string to normalize
+ * @param caseSensitive - Whether to preserve case (default: false)
+ * @returns Normalized query string
+ *
+ * @example
+ * normalizeSearchQuery("  TEST  ", false); // returns "test"
+ * normalizeSearchQuery("TEST", true); // returns "TEST"
+ */
+export function normalizeSearchQuery(query: string, caseSensitive = false): string {
+  const trimmed = query.trim();
+  return caseSensitive ? trimmed : trimmed.toLowerCase();
+}
+
+/**
+ * Extract all searchable text from an item as an array.
+ * Used for advanced search scenarios.
+ *
+ * @param item - The item to extract text from
+ * @returns Array of searchable text strings
+ *
+ * @example
+ * getSearchableText(item); // ['Coffee Machine', 'Kitchen', 'appliance', 'Press the button...']
+ */
+export function getSearchableText(item: ItemRecord): string[] {
+  const texts: string[] = [];
+
+  // Add title (always present)
+  if (item.title) {
+    texts.push(item.title);
+  }
+
+  // Add location (optional)
+  if (item.location) {
+    texts.push(item.location);
+  }
+
+  // Add tags (optional array)
+  if (item.tags && Array.isArray(item.tags)) {
+    texts.push(...item.tags.filter((tag) => !!tag));
+  }
+
+  // Add instructions (optional)
+  if (item.instructions) {
+    texts.push(item.instructions);
+  }
+
+  return texts;
+}
 
 /**
  * Check if an item matches the search query.
@@ -69,6 +159,123 @@ export function matchesSearch(
 
   return false;
 }
+
+// =============================================================================
+// Individual Filter Functions
+// =============================================================================
+
+/**
+ * Check if an item matches the content types filter.
+ * Uses OR logic - item matches if its contentType is in the array.
+ *
+ * @param item - The item to check
+ * @param contentTypes - Array of content types to match against
+ * @returns true if item matches any content type or array is empty
+ *
+ * @example
+ * matchesContentTypes(item, ['video', 'image']); // true if item.contentType is 'video' or 'image'
+ * matchesContentTypes(item, []); // true (empty filter matches all)
+ */
+export function matchesContentTypes(item: ItemRecord, contentTypes: string[]): boolean {
+  // Empty filter matches all items
+  if (!contentTypes || contentTypes.length === 0) {
+    return true;
+  }
+
+  // Check if item's contentType is in the filter array
+  return contentTypes.includes(item.contentType);
+}
+
+/**
+ * Check if an item matches the tags filter.
+ * Uses AND logic - item must have ALL specified tags.
+ *
+ * @param item - The item to check
+ * @param tags - Array of tags the item must have
+ * @returns true if item has all specified tags or array is empty
+ *
+ * @example
+ * matchesTags(item, ['kitchen', 'appliance']); // true only if item has BOTH tags
+ * matchesTags(item, []); // true (empty filter matches all)
+ */
+export function matchesTags(item: ItemRecord, tags: string[]): boolean {
+  // Empty filter matches all items
+  if (!tags || tags.length === 0) {
+    return true;
+  }
+
+  // No tags on item means it can't match any required tags
+  if (!item.tags || !Array.isArray(item.tags)) {
+    return false;
+  }
+
+  // Item must have ALL specified tags (AND logic)
+  for (const requiredTag of tags) {
+    if (!item.tags.includes(requiredTag)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Check if an item matches the locations filter.
+ * Uses OR logic - item matches if its location is in the array.
+ *
+ * @param item - The item to check
+ * @param locations - Array of locations to match against
+ * @returns true if item matches any location or array is empty
+ *
+ * @example
+ * matchesLocations(item, ['Kitchen', 'Bathroom']); // true if item.location is 'Kitchen' or 'Bathroom'
+ * matchesLocations(item, []); // true (empty filter matches all)
+ */
+export function matchesLocations(item: ItemRecord, locations: string[]): boolean {
+  // Empty filter matches all items
+  if (!locations || locations.length === 0) {
+    return true;
+  }
+
+  // No location on item means it can't match any required location
+  if (!item.location) {
+    return false;
+  }
+
+  // Check if item's location is in the filter array
+  return locations.includes(item.location);
+}
+
+/**
+ * Check if an extended item matches the property IDs filter.
+ * Uses OR logic - item matches if its propertyId is in the array.
+ *
+ * @param item - The extended item to check
+ * @param propertyIds - Array of property IDs to match against
+ * @returns true if item matches any property ID or array is empty
+ *
+ * @example
+ * matchesPropertyIds(item, ['prop-123', 'prop-456']); // true if item.propertyId matches either
+ * matchesPropertyIds(item, []); // true (empty filter matches all)
+ */
+export function matchesPropertyIds(item: ItemRecordExtended, propertyIds: string[]): boolean {
+  // Empty filter matches all items
+  if (!propertyIds || propertyIds.length === 0) {
+    return true;
+  }
+
+  // No propertyId on item means it can't match any required propertyId
+  if (!item.propertyId) {
+    return false;
+  }
+
+  // Check if item's propertyId is in the filter array
+  return propertyIds.includes(item.propertyId);
+}
+
+// =============================================================================
+// Composite Filter Functions
+// =============================================================================
 
 /**
  * Check if an item matches all active filters.
@@ -199,5 +406,72 @@ export function extractFilterOptions(items: ItemRecord[]): {
     contentTypes: Array.from(contentTypesSet).sort((a, b) => a.localeCompare(b)),
     tags: Array.from(tagsSet).sort((a, b) => a.localeCompare(b)),
     locations: Array.from(locationsSet).sort((a, b) => a.localeCompare(b)),
+  };
+}
+
+/**
+ * Derive the content type from an item.
+ * Simply returns the item's contentType cast to ContentType.
+ *
+ * @param item - The item to derive content type from
+ * @returns The item's content type as ContentType
+ *
+ * @example
+ * deriveContentType(item); // 'video'
+ */
+export function deriveContentType(item: ItemRecord): ContentType {
+  return item.contentType as ContentType;
+}
+
+/**
+ * Count the number of active filter categories.
+ * Useful for displaying filter count badges.
+ *
+ * @param filters - The filter state to count
+ * @returns Number of filter categories with active values
+ *
+ * @example
+ * countActiveFilters({ tags: ['a'], locations: ['b'] }); // returns 2
+ * countActiveFilters({}); // returns 0
+ */
+export function countActiveFilters(filters: FilterState): number {
+  if (!filters) {
+    return 0;
+  }
+
+  let count = 0;
+
+  if (filters.contentTypes && filters.contentTypes.length > 0) {
+    count++;
+  }
+  if (filters.tags && filters.tags.length > 0) {
+    count++;
+  }
+  if (filters.locations && filters.locations.length > 0) {
+    count++;
+  }
+  if (filters.propertyIds && filters.propertyIds.length > 0) {
+    count++;
+  }
+
+  return count;
+}
+
+/**
+ * Create an empty filter state with all filter arrays initialized to empty.
+ * Useful for resetting filters or initializing state.
+ *
+ * @returns A new FilterState with all filter arrays empty
+ *
+ * @example
+ * const filters = createEmptyFilterState();
+ * // { contentTypes: [], tags: [], locations: [], propertyIds: [] }
+ */
+export function createEmptyFilterState(): FilterState {
+  return {
+    contentTypes: [],
+    tags: [],
+    locations: [],
+    propertyIds: [],
   };
 }

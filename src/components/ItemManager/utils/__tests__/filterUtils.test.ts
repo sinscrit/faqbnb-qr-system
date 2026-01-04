@@ -2,7 +2,7 @@
  * Unit tests for filterUtils
  *
  * @module ItemManager/utils/__tests__/filterUtils.test
- * @lastModified 2026-01-04 (REQ-062 Task 9)
+ * @lastModified 2026-01-04 (REQ-067 - Added tests for all filter utility functions)
  */
 
 import { describe, it, expect } from 'vitest';
@@ -11,9 +11,19 @@ import {
   matchesFilters,
   hasActiveFilters,
   extractFilterOptions,
+  normalizeSearchQuery,
+  getSearchableText,
+  matchesContentTypes,
+  matchesTags,
+  matchesLocations,
+  matchesPropertyIds,
+  deriveContentType,
+  countActiveFilters,
+  createEmptyFilterState,
+  SEARCHABLE_FIELDS,
 } from '../filterUtils';
 import type { ItemRecord } from '@/components/ItemCapture';
-import type { FilterState } from '../../ItemManager.types';
+import type { FilterState, ItemRecordExtended } from '../../ItemManager.types';
 
 /**
  * Factory function to create mock items for testing.
@@ -389,5 +399,242 @@ describe('extractFilterOptions', () => {
     const options = extractFilterOptions(items);
     expect(options.tags).toEqual(['bathroom', 'kitchen']);
     expect(options.tags).not.toContain('');
+  });
+});
+
+// =============================================================================
+// normalizeSearchQuery Tests
+// =============================================================================
+
+describe('normalizeSearchQuery', () => {
+  it('trims whitespace from query', () => {
+    expect(normalizeSearchQuery('  TEST  ')).toBe('test');
+  });
+
+  it('converts to lowercase by default', () => {
+    expect(normalizeSearchQuery('TEST')).toBe('test');
+  });
+
+  it('preserves case when caseSensitive is true', () => {
+    expect(normalizeSearchQuery('TEST', true)).toBe('TEST');
+  });
+
+  it('trims and converts mixed case', () => {
+    expect(normalizeSearchQuery('  TeSt Query  ')).toBe('test query');
+  });
+
+  it('returns empty string for whitespace-only input', () => {
+    expect(normalizeSearchQuery('   ')).toBe('');
+  });
+});
+
+// =============================================================================
+// getSearchableText Tests
+// =============================================================================
+
+describe('getSearchableText', () => {
+  it('extracts all fields from complete item', () => {
+    const item = createMockItem({
+      title: 'Coffee Machine',
+      location: 'Kitchen',
+      tags: ['appliance', 'kitchen'],
+      instructions: 'Press the button',
+    });
+
+    const texts = getSearchableText(item);
+    expect(texts).toContain('Coffee Machine');
+    expect(texts).toContain('Kitchen');
+    expect(texts).toContain('appliance');
+    expect(texts).toContain('kitchen');
+    expect(texts).toContain('Press the button');
+  });
+
+  it('handles missing optional fields', () => {
+    const item = createMockItem({
+      title: 'Simple Item',
+      location: undefined,
+      tags: undefined,
+      instructions: undefined,
+    });
+
+    const texts = getSearchableText(item);
+    expect(texts).toEqual(['Simple Item']);
+  });
+
+  it('filters out empty tags', () => {
+    const item = createMockItem({
+      title: 'Item',
+      tags: ['valid', '', 'also-valid'],
+    });
+
+    const texts = getSearchableText(item);
+    expect(texts).toContain('valid');
+    expect(texts).toContain('also-valid');
+    expect(texts).not.toContain('');
+  });
+});
+
+// =============================================================================
+// Individual Filter Function Tests
+// =============================================================================
+
+describe('matchesContentTypes', () => {
+  it('returns true for empty filter array', () => {
+    const item = createMockItem({ contentType: 'video' });
+    expect(matchesContentTypes(item, [])).toBe(true);
+  });
+
+  it('matches when contentType is in array', () => {
+    const item = createMockItem({ contentType: 'video' });
+    expect(matchesContentTypes(item, ['video', 'image'])).toBe(true);
+  });
+
+  it('does not match when contentType is not in array', () => {
+    const item = createMockItem({ contentType: 'pdf' });
+    expect(matchesContentTypes(item, ['video', 'image'])).toBe(false);
+  });
+});
+
+describe('matchesTags', () => {
+  it('returns true for empty filter array', () => {
+    const item = createMockItem({ tags: ['kitchen'] });
+    expect(matchesTags(item, [])).toBe(true);
+  });
+
+  it('matches when item has all required tags', () => {
+    const item = createMockItem({ tags: ['kitchen', 'appliance', 'important'] });
+    expect(matchesTags(item, ['kitchen', 'appliance'])).toBe(true);
+  });
+
+  it('does not match when item is missing a required tag', () => {
+    const item = createMockItem({ tags: ['kitchen'] });
+    expect(matchesTags(item, ['kitchen', 'bathroom'])).toBe(false);
+  });
+
+  it('does not match when item has no tags', () => {
+    const item = createMockItem({ tags: undefined });
+    expect(matchesTags(item, ['kitchen'])).toBe(false);
+  });
+});
+
+describe('matchesLocations', () => {
+  it('returns true for empty filter array', () => {
+    const item = createMockItem({ location: 'Kitchen' });
+    expect(matchesLocations(item, [])).toBe(true);
+  });
+
+  it('matches when location is in array', () => {
+    const item = createMockItem({ location: 'Kitchen' });
+    expect(matchesLocations(item, ['Kitchen', 'Bathroom'])).toBe(true);
+  });
+
+  it('does not match when location is not in array', () => {
+    const item = createMockItem({ location: 'Bedroom' });
+    expect(matchesLocations(item, ['Kitchen', 'Bathroom'])).toBe(false);
+  });
+
+  it('does not match when item has no location', () => {
+    const item = createMockItem({ location: undefined });
+    expect(matchesLocations(item, ['Kitchen'])).toBe(false);
+  });
+});
+
+describe('matchesPropertyIds', () => {
+  it('returns true for empty filter array', () => {
+    const item = createMockItem() as ItemRecordExtended;
+    item.propertyId = 'prop-123';
+    expect(matchesPropertyIds(item, [])).toBe(true);
+  });
+
+  it('matches when propertyId is in array', () => {
+    const item = createMockItem() as ItemRecordExtended;
+    item.propertyId = 'prop-123';
+    expect(matchesPropertyIds(item, ['prop-123', 'prop-456'])).toBe(true);
+  });
+
+  it('does not match when propertyId is not in array', () => {
+    const item = createMockItem() as ItemRecordExtended;
+    item.propertyId = 'prop-789';
+    expect(matchesPropertyIds(item, ['prop-123', 'prop-456'])).toBe(false);
+  });
+
+  it('does not match when item has no propertyId', () => {
+    const item = createMockItem() as ItemRecordExtended;
+    item.propertyId = undefined;
+    expect(matchesPropertyIds(item, ['prop-123'])).toBe(false);
+  });
+});
+
+// =============================================================================
+// Utility Function Tests
+// =============================================================================
+
+describe('deriveContentType', () => {
+  it('returns item contentType', () => {
+    const item = createMockItem({ contentType: 'video' });
+    expect(deriveContentType(item)).toBe('video');
+  });
+
+  it('works with all content types', () => {
+    expect(deriveContentType(createMockItem({ contentType: 'image' }))).toBe('image');
+    expect(deriveContentType(createMockItem({ contentType: 'pdf' } as any))).toBe('pdf');
+    expect(deriveContentType(createMockItem({ contentType: 'text-only' }))).toBe('text-only');
+    expect(deriveContentType(createMockItem({ contentType: 'mixed' }))).toBe('mixed');
+  });
+});
+
+describe('countActiveFilters', () => {
+  it('returns 0 for empty filters', () => {
+    expect(countActiveFilters({})).toBe(0);
+  });
+
+  it('returns 0 for filters with empty arrays', () => {
+    expect(countActiveFilters({ contentTypes: [], tags: [], locations: [] })).toBe(0);
+  });
+
+  it('counts each filter category with values', () => {
+    expect(countActiveFilters({ tags: ['kitchen'] })).toBe(1);
+    expect(countActiveFilters({ tags: ['kitchen'], locations: ['Kitchen'] })).toBe(2);
+    expect(countActiveFilters({
+      contentTypes: ['video'],
+      tags: ['kitchen'],
+      locations: ['Kitchen'],
+      propertyIds: ['prop-1'],
+    })).toBe(4);
+  });
+});
+
+describe('createEmptyFilterState', () => {
+  it('returns object with empty filter arrays', () => {
+    const state = createEmptyFilterState();
+    expect(state).toEqual({
+      contentTypes: [],
+      tags: [],
+      locations: [],
+      propertyIds: [],
+    });
+  });
+
+  it('returns a new object each time', () => {
+    const state1 = createEmptyFilterState();
+    const state2 = createEmptyFilterState();
+    expect(state1).not.toBe(state2);
+  });
+});
+
+// =============================================================================
+// Constants Tests
+// =============================================================================
+
+describe('SEARCHABLE_FIELDS', () => {
+  it('contains expected fields', () => {
+    expect(SEARCHABLE_FIELDS).toContain('title');
+    expect(SEARCHABLE_FIELDS).toContain('location');
+    expect(SEARCHABLE_FIELDS).toContain('tags');
+    expect(SEARCHABLE_FIELDS).toContain('instructions');
+  });
+
+  it('has exactly 4 fields', () => {
+    expect(SEARCHABLE_FIELDS).toHaveLength(4);
   });
 });
