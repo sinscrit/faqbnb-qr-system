@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/ItemToolbar
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.2)
- * @lastModified 2026-01-03 (REQ-090 - Added accessibility features)
+ * @lastModified 2026-01-04 (REQ-064 - Integrated SearchInput component)
  */
 
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ import type {
   FilterState,
   SortOption,
 } from '../ItemManager.types';
+import { SearchInput } from './SearchInput';
 
 // =============================================================================
 // ViewToggle Sub-component (Task 2.2.3)
@@ -165,45 +166,14 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
 }
 
 // =============================================================================
-// SearchPlaceholder Sub-component (Task 2.2.6)
+// SearchPlaceholder Sub-component (Task 2.2.6) - DEPRECATED
 // =============================================================================
 
-interface SearchPlaceholderProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-}
-
 /**
- * Temporary search input placeholder.
- * Will be replaced by full SearchInput component in Task 2.3.
- * 48px minimum height on mobile for touch accessibility.
+ * @deprecated Use SearchInput from './SearchInput' instead.
+ * Kept for reference until fully removed.
  */
-function SearchPlaceholder({ value, onChange, placeholder }: SearchPlaceholderProps) {
-  return (
-    <div className="relative">
-      <input
-        type="search"
-        role="searchbox"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        aria-label="Search items"
-        aria-describedby="search-hint"
-        className={cn(
-          'w-full px-4 text-sm',
-          'min-h-[48px] md:min-h-0 md:py-2',
-          'border border-gray-300 rounded-lg bg-white',
-          'placeholder:text-gray-400',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-        )}
-      />
-      <span id="search-hint" className="sr-only">
-        Search by title, location, or tags
-      </span>
-    </div>
-  );
-}
+// function SearchPlaceholder has been replaced by SearchInput component
 
 // =============================================================================
 // SortPlaceholder Sub-component (Task 2.2.7)
@@ -350,10 +320,11 @@ export function ItemToolbar({
                 placeholder: searchPlaceholder,
               })
             ) : (
-              <SearchPlaceholder
+              <SearchInput
                 value={searchQuery}
                 onChange={onSearchChange}
                 placeholder={searchPlaceholder}
+                className="w-full"
               />
             )}
           </div>

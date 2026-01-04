@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-04 (REQ-062 - Added useItemSearch hook and utilities)
+ * @lastModified 2026-01-04 (REQ-064 - Added SearchInput component and useDebounce hook)
  */
 
 // =============================================================================
@@ -226,3 +226,18 @@ export type { AssetRemoveConfirmDialogProps } from './components/AssetPanel';
 export { InlineEdit } from './components/shared/InlineEdit';
 export { default as InlineEditDefault } from './components/shared/InlineEdit';
 export type { InlineEditProps, InlineEditState } from './components/shared/InlineEdit';
+
+// =============================================================================
+// SearchInput Component Export (REQ-064)
+// =============================================================================
+
+export { SearchInput } from './components/SearchInput';
+export { default as SearchInputDefault } from './components/SearchInput';
+export type { SearchInputProps } from './components/SearchInput';
+
+// =============================================================================
+// useDebounce Hook Export (REQ-064)
+// =============================================================================
+
+export { useDebounce, DEFAULT_DEBOUNCE_MS } from './hooks/useDebounce';
+export { default as useDebounceDefault } from './hooks/useDebounce';

@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-03 (REQ-087 Task 1 - Added inline edit props to ItemCard/Row/Grid/List props)
+ * @lastModified 2026-01-04 (REQ-064 - Added SearchInputProps re-export)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -1584,3 +1584,14 @@ export interface UseItemSearchReturn {
   /** Check if a specific item matches the current filters */
   itemMatchesFilters: (item: ItemRecord) => boolean;
 }
+
+// =============================================================================
+// SearchInput Types (REQ-064)
+// =============================================================================
+
+/**
+ * Re-export SearchInputProps from the component for convenient imports.
+ *
+ * @lastModified 2026-01-04 (REQ-064)
+ */
+export type { SearchInputProps } from './components/SearchInput';

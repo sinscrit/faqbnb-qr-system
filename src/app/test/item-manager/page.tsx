@@ -12,12 +12,12 @@
  *
  * @route /test/item-manager
  * @created 2025-12-31
- * @lastModified 2026-01-03
- * @request REQ-090 (Task 6.6)
+ * @lastModified 2026-01-04
+ * @request REQ-090 (Task 6.6), REQ-064 (SearchInput test section)
  */
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel, AssetItem, SortableAssetList } from '@/components/ItemManager';
+import { ItemManager, ItemCard, ItemRow, useAssetManagement, AssetPanel, AssetItem, SortableAssetList, SearchInput } from '@/components/ItemManager';
 import { MediaGallery } from '@/components/ItemManager/components/ItemPreview';
 import type { ItemRecord, MediaItem } from '@/components/ItemCapture';
 
@@ -1011,7 +1011,7 @@ function AssetManagementHookTest() {
 export default function TestItemManagerPage() {
   const [testState, setTestState] = useState<'empty' | 'loading' | 'error' | 'items'>('items');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [testView, setTestView] = useState<'test-harness' | 'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item' | 'drag-drop'>('test-harness');
+  const [testView, setTestView] = useState<'test-harness' | 'manager' | 'card' | 'row' | 'gallery' | 'asset-hook' | 'asset-panel' | 'asset-item' | 'drag-drop' | 'search-input'>('test-harness');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [cardSelectedIds, setCardSelectedIds] = useState<Set<string>>(new Set());
   const [rowSelectedIds, setRowSelectedIds] = useState<Set<string>>(new Set());
@@ -1031,6 +1031,11 @@ export default function TestItemManagerPage() {
   // Drag-and-Drop test state (REQ-084)
   const [dragTestAssets, setDragTestAssets] = useState<MediaItem[]>([]);
   const [dragTestRemovalIds, setDragTestRemovalIds] = useState<Set<string>>(new Set());
+
+  // SearchInput test state (REQ-064)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debounceTestQuery, setDebounceTestQuery] = useState('');
+  const [searchDebounceMs, setSearchDebounceMs] = useState(300);
 
   // Initialize gallery mock data on client side
   useEffect(() => {
@@ -1197,6 +1202,16 @@ export default function TestItemManagerPage() {
               Test Harness (REQ-090)
             </button>
             <button
+              onClick={() => setTestView('search-input')}
+              className={`px-4 py-2 text-sm font-medium rounded ${
+                testView === 'search-input'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              SearchInput (REQ-064)
+            </button>
+            <button
               onClick={() => setTestView('drag-drop')}
               className={`px-4 py-2 text-sm font-medium rounded ${
                 testView === 'drag-drop'
@@ -1282,6 +1297,125 @@ export default function TestItemManagerPage() {
 
       {/* Test Harness Section (REQ-090) */}
       {testView === 'test-harness' && <TestHarnessView />}
+
+      {/* SearchInput Test Section (REQ-064) */}
+      {testView === 'search-input' && (
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">SearchInput Component Tests (REQ-064)</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Responsive search input with debounced updates, clear button, and keyboard shortcuts.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Basic Search Input */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Basic Search Input</h3>
+              <SearchInput
+                value={searchQuery}
+                onChange={(query) => {
+                  console.log(`[${new Date().toISOString()}] Search query changed:`, query);
+                  setSearchQuery(query);
+                }}
+                placeholder="Search items..."
+              />
+              <div className="mt-3 text-sm text-gray-600">
+                <p><strong>Current value:</strong> {searchQuery || '(empty)'}</p>
+                <p className="mt-1 text-xs text-gray-400">Check console for onChange timing (300ms default debounce)</p>
+              </div>
+            </div>
+
+            {/* Custom Debounce */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Custom Debounce ({searchDebounceMs}ms)</h3>
+              <div className="flex gap-2 mb-3">
+                {[0, 100, 300, 500, 1000].map((ms) => (
+                  <button
+                    key={ms}
+                    onClick={() => setSearchDebounceMs(ms)}
+                    className={`px-2 py-1 text-xs rounded ${
+                      searchDebounceMs === ms
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {ms}ms
+                  </button>
+                ))}
+              </div>
+              <SearchInput
+                value={debounceTestQuery}
+                onChange={(query) => {
+                  console.log(`[${new Date().toISOString()}] Debounced (${searchDebounceMs}ms):`, query);
+                  setDebounceTestQuery(query);
+                }}
+                debounceMs={searchDebounceMs}
+                placeholder="Type quickly to test debounce..."
+              />
+              <div className="mt-3 text-sm text-gray-600">
+                <p><strong>Debounced value:</strong> {debounceTestQuery || '(empty)'}</p>
+                <p className="mt-1 text-xs text-gray-400">0ms = immediate updates, higher = more delay</p>
+              </div>
+            </div>
+
+            {/* Custom Placeholder */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Custom Placeholder</h3>
+              <SearchInput
+                value=""
+                onChange={() => {}}
+                placeholder="Find your items..."
+              />
+            </div>
+
+            {/* Disabled State */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Disabled State</h3>
+              <SearchInput
+                value="Cannot edit this"
+                onChange={() => {}}
+                disabled
+              />
+            </div>
+
+            {/* With Pre-filled Value */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Pre-filled Value (with clear button)</h3>
+              <SearchInput
+                value="kitchen"
+                onChange={(query) => console.log('Pre-filled changed:', query)}
+              />
+            </div>
+
+            {/* Auto Focus */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-medium text-gray-800 mb-4">Auto Focus (enable to test)</h3>
+              <SearchInput
+                value=""
+                onChange={() => {}}
+                placeholder="This would auto-focus on mount"
+                // autoFocus={true} // Uncomment to test
+              />
+              <p className="mt-2 text-xs text-gray-400">Uncomment autoFocus in code to test</p>
+            </div>
+          </div>
+
+          {/* Keyboard Shortcuts Info */}
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Test Cases:</h3>
+            <ul className="text-sm text-gray-600 space-y-2">
+              <li><span className="font-medium">Type text:</span> Input shows immediately, onChange fires after debounce delay</li>
+              <li><span className="font-medium">Clear button:</span> Appears when text is entered, clears immediately (no debounce)</li>
+              <li><span className="font-medium">Escape key:</span> Clears input if has text, blurs input if empty</li>
+              <li><span className="font-medium">Focus ring:</span> Blue ring appears on keyboard focus</li>
+              <li><span className="font-medium">Disabled:</span> Cannot type, grayed out, no clear button</li>
+              <li><span className="font-medium">Touch target:</span> 48px minimum height on mobile</li>
+            </ul>
+            <div className="mt-3 text-sm text-gray-500">
+              <p>Check browser console for onChange callback invocations with timestamps.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* useAssetManagement Hook Test Section (REQ-080) */}
       {testView === 'asset-hook' && <AssetManagementHookTest />}

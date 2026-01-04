@@ -2,7 +2,7 @@
  * ItemManager hooks barrel export
  *
  * @module ItemManager/hooks
- * @lastModified 2026-01-04 (REQ-062 - Added useItemSearch)
+ * @lastModified 2026-01-04 (REQ-064 - Added useDebounce)
  */
 
 // =============================================================================
@@ -42,6 +42,13 @@ export {
 
 export { useItemSearch } from './useItemSearch';
 export { default as useItemSearchDefault } from './useItemSearch';
+
+// =============================================================================
+// useDebounce Hook (REQ-064)
+// =============================================================================
+
+export { useDebounce, DEFAULT_DEBOUNCE_MS } from './useDebounce';
+export { default as useDebounceDefault } from './useDebounce';
 
 // Future hooks (to be implemented in subsequent tasks):
 // export { useItemSelection } from './useItemSelection';

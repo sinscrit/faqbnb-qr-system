@@ -2,7 +2,7 @@
  * ItemManager Components Barrel Export
  *
  * @module ItemManager/components
- * @lastModified 2026-01-03 (REQ-086 - Added InlineEdit component)
+ * @lastModified 2026-01-04 (REQ-064 - Added SearchInput component)
  */
 
 // Core display components
@@ -24,3 +24,7 @@ export type { InlineEditProps, InlineEditState } from './shared/InlineEdit';
 // Asset management components (REQ-081)
 export { AssetPanel } from './AssetPanel';
 export type { AssetPanelProps } from '../ItemManager.types';
+
+// Search components (REQ-064)
+export { SearchInput } from './SearchInput';
+export type { SearchInputProps } from './SearchInput';
