@@ -15,6 +15,7 @@ export { BottomSheet } from './BottomSheet';
 export { TouchButton } from './TouchButton';
 export { VisitCountBadge } from './VisitCountBadge';
 export { ReactionSummary } from './ReactionSummary';
+export { EngagementIndicator } from './EngagementIndicator';
 
 // Types
 export type { InlineEditProps, InlineEditState } from './InlineEdit';
@@ -24,3 +25,4 @@ export type { BottomSheetProps } from './BottomSheet';
 export type { TouchButtonProps } from './TouchButton';
 export type { VisitCountBadgeProps } from './VisitCountBadge';
 export type { ReactionSummaryProps } from './ReactionSummary';
+export type { EngagementIndicatorProps, EngagementLevel, EngagementThresholds } from './EngagementIndicator';
