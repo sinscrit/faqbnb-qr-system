@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-03 (REQ-085 - Added AssetRemoveConfirmDialog export for removal confirmation)
+ * @lastModified 2026-01-04 (REQ-061 - Added EmptyState and LoadingState exports)
  */
 
 // =============================================================================
@@ -40,6 +40,9 @@ export type {
   ItemListProps,
   ViewModeToggleProps,
   ItemPreviewModalProps,
+  // Empty and Loading State Types (REQ-061)
+  EmptyStateProps,
+  LoadingStateProps,
   // Asset Management Types (REQ-080)
   AssetManagementErrorCode,
   AssetManagementError,
@@ -132,6 +135,16 @@ export { default as ItemListDefault } from './components/ItemList';
 
 export { ViewModeToggle } from './components/shared/ViewModeToggle';
 export { default as ViewModeToggleDefault } from './components/shared/ViewModeToggle';
+
+// =============================================================================
+// Empty and Loading State Component Exports (REQ-061)
+// =============================================================================
+
+export { EmptyState } from './components/shared/EmptyState';
+export { default as EmptyStateDefault } from './components/shared/EmptyState';
+
+export { LoadingState } from './components/shared/LoadingState';
+export { default as LoadingStateDefault } from './components/shared/LoadingState';
 
 // =============================================================================
 // ItemPreviewModal Component Export (REQ-074)

@@ -363,6 +363,10 @@ def migrate_stage_completion_flags(state: dict):
         if files.get('implementation') and not task_dict.get('implementation_completed'):
             task_dict['implementation_completed'] = True
 
+        # If task has verification but no testcheck_completed flag, add it
+        if files.get('verification') and not task_dict.get('testcheck_completed'):
+            task_dict['testcheck_completed'] = True
+
 
 def save_state(state: dict, state_path: Path):
     """Save pipeline state to JSON file."""
@@ -1118,6 +1122,10 @@ def run_task_stages(
             print(f"    ✗ Skipping: No details file (details stage not completed)")
             return False
 
+        if stage_id == 'testcheck' and not task_dict.get('implementation_completed'):
+            print(f"    ✗ Skipping: Implementation stage not completed")
+            return False
+
         # Attempt invocation with retries
         success = False
         error = None
@@ -1223,12 +1231,35 @@ def run_task_stages(
                 print(f"    ✓ Created {filepath.name} ({stage_elapsed_str})")
             else:
                 print(f"    ✓ Completed ({stage_elapsed_str})")
+
+        elif stage_id == 'testcheck' and not dry_run:
+            # Track verification results
+            task_dict['files']['verification'] = True
+
+            # Check if this is the last task - if so, record test harness info
+            tasks = state.get('tasks', [])
+            task_index = next((i for i, t in enumerate(tasks) if t.get('id') == task.id), -1)
+            is_last_task = (task_index == len(tasks) - 1)
+
+            if is_last_task:
+                # Initialize verification summary in state
+                if 'verification' not in state:
+                    state['verification'] = {
+                        'completed_at': datetime.now().isoformat(),
+                        'status': 'completed',
+                        'tasks_verified': 0,
+                        'discrepancies': [],
+                        'test_harness_url': None
+                    }
+                print(f"    ✓ Verification complete - test harness deployed ({stage_elapsed_str})")
+            else:
+                print(f"    ✓ Verified ({stage_elapsed_str})")
         else:
             if not dry_run:
                 print(f"    ✓ Completed ({stage_elapsed_str})")
             else:
                 print(f"    ✓ Completed")
-    
+
     return True
 
 

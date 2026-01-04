@@ -9,7 +9,7 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-03 (REQ-090 Task 2 - Added accessibility features)
+ * @lastModified 2026-01-04 (REQ-061 Task 1.7.5 - Integrated EmptyState and LoadingState components)
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
@@ -21,6 +21,8 @@ import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
 import { ItemToolbar } from './components/ItemToolbar';
 import { ViewModeToggle } from './components/shared/ViewModeToggle';
+import { EmptyState } from './components/shared/EmptyState';
+import { LoadingState } from './components/shared/LoadingState';
 import { BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
 import type {
   ItemManagerProps,
@@ -422,44 +424,42 @@ export function ItemManager({
   // -------------------------------------------------------------------------
 
   const renderContent = useMemo(() => {
-    // Loading state
+    // Loading state - render first (takes priority)
     if (loading) {
       if (renderLoadingState) {
         return renderLoadingState();
       }
       return (
-        <div className={cn('flex items-center justify-center py-12', classNames?.loadingState)}>
-          <div className="text-gray-500">Loading items...</div>
-        </div>
+        <LoadingState
+          viewMode={state.viewMode}
+          className={classNames?.loadingState}
+        />
       );
     }
 
-    // Error state
+    // Error state - render if error exists
     if (error) {
       if (renderErrorState) {
         return renderErrorState(error);
       }
       return (
-        <div className={cn('flex items-center justify-center py-12', classNames?.emptyState)}>
-          <div className="text-red-500">Error: {error.message}</div>
+        <div className={cn('text-center py-12', classNames?.emptyState)}>
+          <p className="text-red-600">An error occurred: {error.message}</p>
         </div>
       );
     }
 
-    // Empty state
+    // Empty state - render if no items
     if (items.length === 0) {
       if (renderEmptyState) {
         return renderEmptyState();
       }
       return (
-        <div className={cn('flex flex-col items-center justify-center py-12', classNames?.emptyState)}>
-          <div className="text-lg font-medium text-gray-900">
-            {effectiveConfig.labels.emptyStateTitle}
-          </div>
-          <div className="mt-1 text-sm text-gray-500">
-            {effectiveConfig.labels.emptyStateDescription}
-          </div>
-        </div>
+        <EmptyState
+          title={effectiveConfig.labels.emptyStateTitle}
+          description={effectiveConfig.labels.emptyStateDescription}
+          className={classNames?.emptyState}
+        />
       );
     }
 
