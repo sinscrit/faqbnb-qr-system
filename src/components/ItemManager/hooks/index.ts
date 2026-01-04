@@ -2,7 +2,7 @@
  * ItemManager hooks barrel export
  *
  * @module ItemManager/hooks
- * @lastModified 2026-01-04 (REQ-069 - Added useLongPress hook)
+ * @lastModified 2026-01-05 (REQ-091 - Added useItemAnalytics hook)
  */
 
 // =============================================================================
@@ -71,3 +71,15 @@ export type {
   UseLongPressOptions,
   UseLongPressReturn,
 } from './useLongPress';
+
+// =============================================================================
+// useItemAnalytics Hook (REQ-091)
+// =============================================================================
+
+export { useItemAnalytics } from './useItemAnalytics';
+export { default as useItemAnalyticsDefault } from './useItemAnalytics';
+export type {
+  ItemAnalyticsData,
+  UseItemAnalyticsOptions,
+  UseItemAnalyticsReturn,
+} from './useItemAnalytics';
