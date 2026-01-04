@@ -243,49 +243,61 @@ request_stages:
       # Output is tracked via git commits and doc updates
 
   # -------------------------------------------------------------------------
-  # Stage 5: Test Verification & Harness Generation
+  # Stage 5: Test Verification & Harness Generation (Pipeline-Level)
   # -------------------------------------------------------------------------
+  # This stage runs ONCE for the entire pipeline, not per-task.
+  # It verifies all implementations and creates a unified test harness.
   - id: testcheck
     name: "Test Verification"
     description: "Verify implementation against specs and create/deploy test harness"
     enabled: true
+    mode: pipeline  # Runs once for entire pipeline, not per-task
 
     agent:
       name: "06a-pipeline-testcheck"
       invocation_template: |
-        Verify implementation and create test harness for Request #{request_id_num}
+        Execute the 06a-pipeline-testcheck agent for the pipeline.
 
         **Pipeline Config**: {pipeline_yaml_path}
         **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
 
-        **Task Context**:
-        - Request ID: {request_id}
-        - Phase: {phase} - {phase_name}
-        - Task ID: {task_id}
-        - Title: {task_title}
+        Follow the workflow defined in ~/.claude/agents/06a-pipeline-testcheck.md:
 
-        **Detailed Specification**: {details_file}
-        **Overview Document**: {overview_file}
+        **Phase 1: Discovery**
+        - Read the pipeline YAML and state file
+        - Collect all detailed spec files from docs/
 
-        **Instructions**:
-        1. Read the detailed specification at {details_file}
-        2. Verify all files mentioned in "Authorized Files" exist
-        3. Verify exports, types, and props match the spec
-        4. Record any discrepancies found
-        5. If this is the LAST task in the pipeline:
-           a. Generate test harness page at /src/app/test/<component>/page.tsx
-           b. Update test index at /src/app/test/page.tsx with use cases
-           c. Run build to verify no compilation errors
-           d. Deploy to Railway
-           e. Verify deployed URL is accessible
-        6. Update state file with verification results
+        **Phase 2: Specification Analysis**
+        - Parse each detailed spec to extract components, exports, types, use cases
+
+        **Phase 3: Implementation Verification**
+        - Verify files exist at src/components/ItemManager/
+        - Verify exports in index.ts
+        - Check types match specs
+        - Record any discrepancies
+
+        **Phase 4: Test Harness Generation**
+        - Create/update test harness page at /src/app/test/item-manager/page.tsx
+        - Update test index at /src/app/test/page.tsx with use cases
+
+        **Phase 5: Build & Deploy**
+        - Run npm run build to verify no compilation errors
+        - Deploy to Railway
+        - Verify deployed URL is accessible
+
+        **Phase 6: State Update**
+        - Update state file with verification results
+
+        Report findings including discrepancies, test harness status, build status, and deployed URL.
       command:
         - "claude"
         - "-p"
         - "{prompt}"
         - "--allowedTools"
         - "Read,Write,Edit,Bash,Glob,Grep,WebFetch"
-      timeout: 600  # 10 minutes
+      timeout: 900  # 15 minutes for full pipeline verification
 
     output:
       type: verification

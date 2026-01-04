@@ -940,6 +940,13 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     if stage_id == 'implementation' and config and state:
         project_context = build_project_context_prompt(config, state)
 
+    # Get pipeline and state file paths for testcheck stage
+    pipeline_yaml_path = ''
+    state_file_path = ''
+    if config:
+        pipeline_yaml_path = config.get('_config_path', '')
+        state_file_path = str(config.get('outputs', {}).get('_state_resolved', ''))
+
     return template.format(
         task_id=task.id,
         task_title=task.title,
@@ -957,6 +964,8 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
         implementation_plan_path=implementation_plan_path,
         requests_file_path=requests_file_path,
         project_context=project_context,
+        pipeline_yaml_path=pipeline_yaml_path,
+        state_file_path=state_file_path,
     )
 
 
@@ -1163,6 +1172,9 @@ def run_task_stages(
         # Mark stage as completed for this task
         if not dry_run:
             task_dict[f'{stage_id}_completed'] = True
+            # Clear any previous error for this task since it succeeded on re-run
+            if task_dict.get('error'):
+                task_dict['error'] = None
 
         # Track output based on stage type
         if stage_id == 'request' and requests_file and not dry_run:
@@ -1506,6 +1518,28 @@ def run_stage(state: dict, config: dict, stage_id: str, dry_run: bool = False, t
 
 def run_pipeline(state: dict, config: dict, dry_run: bool = False, task_indices: Optional[List[int]] = None, horizontal: bool = False, stage_filter: Optional[List[str]] = None):
     """Run pipeline in configured mode (horizontal or per_request)."""
+    # Check for pipeline-level stages first
+    request_stages = config.get('request_stages', []) or config.get('stages', [])
+
+    # Separate pipeline-level stages from per-task stages
+    pipeline_stages = [s for s in request_stages if s.get('mode') == 'pipeline']
+    per_task_stages = [s for s in request_stages if s.get('mode') != 'pipeline']
+
+    # If stage_filter is specified, check if any are pipeline-level
+    if stage_filter:
+        pipeline_stage_ids = {s['id'] for s in pipeline_stages}
+        filtered_pipeline_stages = [sid for sid in stage_filter if sid in pipeline_stage_ids]
+        filtered_per_task_stages = [sid for sid in stage_filter if sid not in pipeline_stage_ids]
+
+        # Run pipeline-level stages
+        if filtered_pipeline_stages:
+            run_pipeline_level_stages(state, config, dry_run, filtered_pipeline_stages)
+            # If only pipeline stages were requested, we're done
+            if not filtered_per_task_stages:
+                return
+            # Update stage_filter to only include per-task stages
+            stage_filter = filtered_per_task_stages
+
     # CLI flag overrides config
     if horizontal:
         mode = 'horizontal'
@@ -1516,6 +1550,187 @@ def run_pipeline(state: dict, config: dict, dry_run: bool = False, task_indices:
         run_pipeline_horizontal(state, config, dry_run, task_indices, stage_filter)
     else:
         run_pipeline_per_request(state, config, dry_run, task_indices, stage_filter)
+
+
+def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, stage_ids: List[str] = None):
+    """
+    Run pipeline-level stages that execute once for the entire pipeline.
+
+    These stages operate on the pipeline as a whole, not per-task.
+    Examples: testcheck (verification & test harness generation)
+    """
+    import time
+
+    request_stages = config.get('request_stages', []) or config.get('stages', [])
+    state_path = config['outputs']['_state_resolved']
+
+    for stage in request_stages:
+        if stage.get('mode') != 'pipeline':
+            continue
+        if not stage.get('enabled', True):
+            continue
+        if stage_ids and stage['id'] not in stage_ids:
+            continue
+
+        stage_id = stage['id']
+        agent_name = stage.get('agent', {}).get('name', stage_id)
+
+        # Check if already completed
+        if state.get(f'{stage_id}_completed') and not dry_run:
+            print(f"\nPipeline stage '{stage_id}' already completed, skipping")
+            continue
+
+        print(f"\n{'='*60}")
+        print(f"Pipeline Stage: {stage.get('name', stage_id)} ({agent_name})")
+        print(f"Mode: Pipeline-level (runs once)")
+        print(f"{'='*60}")
+
+        stage_start = time.time()
+
+        # Build prompt with pipeline-level context
+        template = stage.get('agent', {}).get('invocation_template', '')
+        prompt = format_pipeline_stage_prompt(template, config, state)
+
+        if dry_run:
+            print(f"\n[DRY RUN] Would invoke: {agent_name}")
+            print(f"  Prompt: {prompt[:100]}...")
+            print(f"  ✓ Completed")
+            continue
+
+        # Get timeout
+        default_timeout = config.get('pipeline', {}).get('default_timeout', 600)
+        timeout = stage.get('agent', {}).get('timeout', default_timeout)
+
+        logging.info(f"Invoking {agent_name} for pipeline stage {stage_id} (timeout: {timeout}s)")
+
+        # Build command
+        cmd_template = stage.get('agent', {}).get('command', ['claude', '-p', '{prompt}'])
+        cmd = [part.format(prompt=prompt) if '{prompt}' in part else part for part in cmd_template]
+
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout
+            )
+
+            stage_elapsed = time.time() - stage_start
+            stage_elapsed_str = format_duration(stage_elapsed)
+
+            if result.returncode == 0:
+                logging.info(f"Agent {agent_name} completed successfully for pipeline stage {stage_id} in {stage_elapsed_str}")
+                state[f'{stage_id}_completed'] = True
+                state[f'{stage_id}_completed_at'] = datetime.now().isoformat()
+                print(f"\n  ✓ Pipeline stage '{stage_id}' completed ({stage_elapsed_str})")
+
+                # Parse output for verification results if applicable
+                if stage_id == 'testcheck':
+                    # Display test harness URLs
+                    display_test_harness_urls(state, config)
+            else:
+                logging.error(f"Agent {agent_name} failed for pipeline stage {stage_id}: {result.stderr[:200]}")
+                print(f"\n  ✗ Pipeline stage '{stage_id}' failed ({stage_elapsed_str})")
+                print(f"    Error: {result.stderr[:100]}...")
+                state['errors'].append({
+                    'stage': stage_id,
+                    'type': 'pipeline_stage',
+                    'error': result.stderr[:500],
+                    'timestamp': datetime.now().isoformat()
+                })
+
+        except subprocess.TimeoutExpired:
+            stage_elapsed = time.time() - stage_start
+            stage_elapsed_str = format_duration(stage_elapsed)
+            logging.error(f"Agent {agent_name} timed out after {timeout}s for pipeline stage {stage_id}")
+            print(f"\n  ✗ Pipeline stage '{stage_id}' timed out ({stage_elapsed_str})")
+            state['errors'].append({
+                'stage': stage_id,
+                'type': 'pipeline_stage',
+                'error': f'Timeout after {timeout}s',
+                'timestamp': datetime.now().isoformat()
+            })
+        except Exception as e:
+            logging.error(f"Error invoking {agent_name} for pipeline stage {stage_id}: {e}")
+            print(f"\n  ✗ Pipeline stage '{stage_id}' error: {e}")
+            state['errors'].append({
+                'stage': stage_id,
+                'type': 'pipeline_stage',
+                'error': str(e),
+                'timestamp': datetime.now().isoformat()
+            })
+
+        # Save state after each pipeline stage
+        save_state(state, state_path)
+
+    print(f"\n{'='*60}")
+    print(f"Pipeline-level stages complete")
+    print(f"{'='*60}")
+
+
+def display_test_harness_urls(state: dict, config: dict):
+    """Display test harness URLs after testcheck stage completion."""
+    import glob
+
+    verification = state.get('verification', {})
+    test_page_url = verification.get('summary', {}).get('test_page_url', '')
+    deployed_url = verification.get('deployed_url', '')
+
+    print(f"\n  Test Harness URLs:")
+
+    # Local URL
+    if test_page_url:
+        print(f"    Local:    http://localhost:3000{test_page_url}")
+    else:
+        # Try to find test harness files
+        test_files = glob.glob('src/app/test/*/page.tsx')
+        if test_files:
+            for f in test_files:
+                route = f.replace('src/app', '').replace('/page.tsx', '')
+                print(f"    Local:    http://localhost:3000{route}")
+        else:
+            print(f"    Local:    No test harness pages found")
+
+    # Deployed URL
+    if deployed_url:
+        print(f"    Deployed: {deployed_url}")
+    else:
+        # Check notes for deployment info
+        notes = verification.get('notes', [])
+        deployment_note = next((n for n in notes if 'deploy' in n.lower()), None)
+        if deployment_note and 'NO DEPLOYMENT' not in deployment_note.upper():
+            print(f"    Deployed: Check Railway dashboard")
+        else:
+            print(f"    Deployed: Not deployed (run 'railway up' to deploy)")
+
+    # Build status
+    build_status = verification.get('build_status', 'unknown')
+    if build_status:
+        print(f"    Build:    {build_status}")
+
+
+def format_pipeline_stage_prompt(template: str, config: dict, state: dict) -> str:
+    """Format prompt template for pipeline-level stages."""
+    # Get paths from config
+    pipeline_yaml_path = str(config.get('_config_path', ''))
+    state_file_path = str(config.get('outputs', {}).get('_state_resolved', ''))
+    implementation_plan_path = str(config.get('source', {}).get('_resolved_path', ''))
+
+    # Get task count
+    total_tasks = len(state.get('tasks', []))
+
+    # Get request range
+    first_request_id = state.get('metadata', {}).get('first_request_id', '')
+    last_request_id = state.get('metadata', {}).get('last_request_id', '')
+
+    return template.format(
+        pipeline_yaml_path=pipeline_yaml_path,
+        state_file_path=state_file_path,
+        implementation_plan_path=implementation_plan_path,
+        total_tasks=total_tasks,
+        first_request_id=first_request_id,
+        last_request_id=last_request_id,
+    )
 
 
 def run_pipeline_per_request(state: dict, config: dict, dry_run: bool = False, task_indices: Optional[List[int]] = None, stage_filter: Optional[List[str]] = None):
@@ -2054,17 +2269,92 @@ def cmd_show_config(config: dict):
 def cmd_reset_state(config: dict):
     """Reset pipeline state (with confirmation)."""
     state_path = config['outputs']['_state_resolved']
-    
+
     if not state_path.exists():
         print("No state file exists.")
         return
-    
+
     response = input(f"Delete {state_path} and reset all progress? (yes/N): ")
     if response.lower() == 'yes':
         state_path.unlink()
         print("State reset.")
     else:
         print("Cancelled.")
+
+
+def cmd_show_test_harness(config: dict):
+    """Display test harness URL(s) from state file."""
+    state_path = config['outputs']['_state_resolved']
+
+    if not state_path.exists():
+        print("No test harness created (no state file exists)")
+        return
+
+    state = load_state(state_path)
+    if not state:
+        print("No test harness created (state file is empty)")
+        return
+
+    # Check for verification results
+    verification = state.get('verification', {})
+    testcheck_completed = state.get('testcheck_completed', False)
+
+    print(f"\n{'='*60}")
+    print("Test Harness Status")
+    print(f"{'='*60}")
+
+    if not testcheck_completed and not verification:
+        print("\nNo test harness created")
+        print("Run the testcheck stage to create one:")
+        print(f"  python pipeline_orchestrator.py --config {config.get('_config_path', 'pipeline.yaml')} --stages testcheck --keep")
+        return
+
+    # Display test harness info
+    test_page_url = verification.get('summary', {}).get('test_page_url', '')
+    deployed_url = verification.get('deployed_url', '')
+    build_status = verification.get('build_status', verification.get('summary', {}).get('build_verification', 'unknown'))
+
+    print(f"\nTestcheck completed: {state.get('testcheck_completed_at', 'unknown')}")
+    print(f"Build status: {build_status}")
+
+    # Local URL
+    if test_page_url:
+        print(f"\nLocal test URL:")
+        print(f"  http://localhost:3000{test_page_url}")
+    else:
+        # Try to find test harness files
+        import glob
+        test_files = glob.glob('src/app/test/*/page.tsx')
+        if test_files:
+            print(f"\nLocal test URLs:")
+            for f in test_files:
+                # Extract route from path: src/app/test/item-manager/page.tsx -> /test/item-manager
+                route = f.replace('src/app', '').replace('/page.tsx', '')
+                print(f"  http://localhost:3000{route}")
+        else:
+            print("\nNo test harness pages found")
+
+    # Deployed URL
+    if deployed_url:
+        print(f"\nDeployed URL:")
+        print(f"  {deployed_url}")
+    else:
+        # Check if deployment was mentioned
+        notes = verification.get('notes', [])
+        deployment_note = next((n for n in notes if 'deploy' in n.lower()), None)
+        if deployment_note:
+            print(f"\nDeployment: {deployment_note}")
+
+    # Show summary stats
+    summary = verification.get('summary', {})
+    if summary:
+        print(f"\nVerification Summary:")
+        print(f"  Total tasks: {summary.get('total_tasks', 'N/A')}")
+        print(f"  Completed: {summary.get('completed_tasks', 'N/A')}")
+        print(f"  Completion rate: {summary.get('implementation_completion_rate', 'N/A')}")
+        print(f"  Discrepancies: {verification.get('discrepancies_count', 0)}")
+
+    print(f"\n{'='*60}")
 
 
 # =============================================================================
@@ -2181,6 +2471,11 @@ Examples:
         action='store_true',
         help='Force continue even if precheck fails (use with caution)'
     )
+    parser.add_argument(
+        '--test-harness',
+        action='store_true',
+        help='Display test harness URL(s) from state file and exit'
+    )
 
     args = parser.parse_args()
     
@@ -2204,13 +2499,17 @@ Examples:
     if args.show_config:
         cmd_show_config(config)
         return
-    
+
     if args.list_tasks:
         cmd_list_tasks(config)
         return
-    
+
     if args.reset:
         cmd_reset_state(config)
+        return
+
+    if args.test_harness:
+        cmd_show_test_harness(config)
         return
     
     # Extract tasks

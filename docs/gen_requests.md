@@ -4785,3 +4785,35 @@ Ensures legal compliance with accessibility standards (WCAG 2.1 AA), expands the
 - [ ] Screen reader testing confirms logical reading order and meaningful announcements across all major workflows
 - [ ] No keyboard traps exist where users cannot escape using standard navigation
 
+
+---
+
+## REQ-091: Usage Statistics and User Reactions Integration
+
+**Date**: 2026-01-05 (current system time)
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Item listings should display visit counts and reaction summaries to help users understand which content is most engaging and useful to their guests.
+
+### Current Behavior
+The item management interface shows basic item metadata (title, location, tags, media) but does not display any engagement metrics. Users cannot see how many times items have been viewed or what reactions guests have provided, even though this data is being collected and stored in the system.
+
+### Expected Behavior
+Each item should display its total view count and a summary of guest reactions (likes, loves, etc.). Users should be able to see this information at a glance in both grid and list views, and access detailed analytics when viewing individual items. The back office should provide insights into which items are most frequently accessed or appreciated by guests.
+
+### User Impact
+Property managers and staff will gain visibility into which items generate the most guest interest, helping them understand what information is most valuable. This feedback loop enables data-driven decisions about what content to create, update, or prioritize.
+
+### Business Value
+Transforms passive content management into an insights-driven workflow by surfacing existing engagement data that is already being collected. Helps users understand their content's impact without additional data collection overhead.
+
+### Acceptance Criteria
+- [ ] Item listings show total visit count for each item
+- [ ] Item listings display reaction summaries showing count by reaction type
+- [ ] Detailed item view provides access to complete analytics including visit history and reaction breakdown
+- [ ] Analytics data updates reflect recent guest interactions without requiring page refresh
+- [ ] Back office interface includes item-level analytics accessible to property managers
+- [ ] Visual indicators clearly distinguish between high-engagement and low-engagement items
+- [ ] Performance remains acceptable when displaying analytics for large item collections

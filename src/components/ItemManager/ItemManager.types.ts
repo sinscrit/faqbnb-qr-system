@@ -7,7 +7,7 @@
  *
  * @module ItemManager/types
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-04 (REQ-064 - Added SearchInputProps re-export)
+ * @lastModified 2026-01-05 (REQ-091 - Added analytics types: ItemVisitStats, ItemReactionSummary)
  */
 
 import type { ItemRecord, MediaItem, MediaMetadata, ApplianceType } from '@/components/ItemCapture';
@@ -86,6 +86,22 @@ export interface ItemManagerConfig {
    * @default 50
    */
   maxBulkSelection?: number;
+
+  /**
+   * Enable analytics display (visit counts, reaction summaries).
+   * When enabled, fetches and displays engagement metrics for items.
+   * @default false
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  enableAnalytics?: boolean;
+
+  /**
+   * Polling interval in milliseconds for analytics refresh.
+   * Only used when enableAnalytics is true. Set to 0 to disable polling.
+   * @default 60000 (1 minute)
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  analyticsPollingInterval?: number;
 
   /**
    * Custom labels for UI text customization.
@@ -192,6 +208,44 @@ export interface ItemManagerClassNames {
   loadingState?: string;
 }
 
+/**
+ * Visit statistics for an item.
+ * Mirrors structure from VisitAnalytics in src/types/analytics.ts.
+ *
+ * @lastModified 2026-01-05 (REQ-091)
+ */
+export interface ItemVisitStats {
+  /** Total views in the last 24 hours */
+  last24Hours: number;
+  /** Total views in the last 7 days */
+  last7Days: number;
+  /** Total views in the last 30 days */
+  last30Days: number;
+  /** Total views in the last 365 days */
+  last365Days: number;
+  /** Total all-time views */
+  allTime: number;
+}
+
+/**
+ * Reaction summary for an item.
+ * Mirrors structure from ReactionCounts in src/types/reactions.ts.
+ *
+ * @lastModified 2026-01-05 (REQ-091)
+ */
+export interface ItemReactionSummary {
+  /** Number of 'like' reactions */
+  like: number;
+  /** Number of 'dislike' reactions */
+  dislike: number;
+  /** Number of 'love' reactions */
+  love: number;
+  /** Number of 'confused' reactions */
+  confused: number;
+  /** Total count of all reactions */
+  total: number;
+}
+
 // =============================================================================
 // Data Model Types
 // =============================================================================
@@ -216,6 +270,18 @@ export interface ItemRecordExtended extends ItemRecord {
    * Maps media item IDs to their accessible URLs.
    */
   mediaUrls?: Record<string, string>;
+
+  /**
+   * Visit statistics for this item. Optional, loaded on demand.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  visitStats?: ItemVisitStats;
+
+  /**
+   * Reaction summary for this item. Optional, loaded on demand.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  reactions?: ItemReactionSummary;
 }
 
 /**
@@ -444,6 +510,16 @@ export interface ItemCardProps {
   onUpdateItem?: (item: ItemRecord) => Promise<void>;
   /** Existing tags from all items for autocomplete suggestions */
   existingTags?: string[];
+  /**
+   * Optional visit statistics for displaying view count badge.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  visitStats?: ItemVisitStats;
+  /**
+   * Optional reaction summary for displaying reaction counts.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  reactions?: ItemReactionSummary;
 }
 
 // =============================================================================
@@ -485,6 +561,16 @@ export interface ItemRowProps {
   onUpdateItem?: (item: ItemRecord) => Promise<void>;
   /** Existing tags from all items for autocomplete suggestions */
   existingTags?: string[];
+  /**
+   * Optional visit statistics for displaying view count.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  visitStats?: ItemVisitStats;
+  /**
+   * Optional reaction summary for displaying reaction counts.
+   * @lastModified 2026-01-05 (REQ-091)
+   */
+  reactions?: ItemReactionSummary;
 }
 
 // =============================================================================
