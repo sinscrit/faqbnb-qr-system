@@ -9,13 +9,14 @@
  * @module ItemManager/ItemManager
  * @see docs/prd/item-capture-manager-implementation-plan.md
  * @see docs/REQ-057-build-basic-itemmanager-shell-overview.md
- * @lastModified 2026-01-04 (REQ-061 Task 1.7.5 - Integrated EmptyState and LoadingState components)
+ * @lastModified 2026-01-04 (REQ-063 Task 2.2.10 - Integrated useItemSearch hook for search, filter, sort)
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import { Tag, Minus, FolderInput, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
+import { useItemSearch } from './hooks/useItemSearch';
 import { useAnnounce } from './utils/a11yUtils';
 import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
@@ -138,6 +139,23 @@ export function ItemManager({
     hasFilters,
     isItemSelected,
   } = useItemManagerState(effectiveConfig);
+
+  // -------------------------------------------------------------------------
+  // Search, Filter, Sort (REQ-062/REQ-063)
+  // -------------------------------------------------------------------------
+
+  const {
+    filteredItems,
+    resultCount,
+    totalCount,
+    isFiltered,
+    filterOptions,
+  } = useItemSearch({
+    items,
+    searchQuery: state.searchQuery,
+    filters: state.filters,
+    sortBy: state.sortBy,
+  });
 
   // -------------------------------------------------------------------------
   // Accessibility Announcements (REQ-090)
@@ -449,7 +467,7 @@ export function ItemManager({
       );
     }
 
-    // Empty state - render if no items
+    // Empty state - render if no items at all
     if (items.length === 0) {
       if (renderEmptyState) {
         return renderEmptyState();
@@ -463,12 +481,23 @@ export function ItemManager({
       );
     }
 
+    // No results state - render if filtering yields no results
+    if (filteredItems.length === 0 && isFiltered) {
+      return (
+        <EmptyState
+          title={effectiveConfig.labels.noResultsTitle || 'No matching items'}
+          description={effectiveConfig.labels.noResultsDescription || 'Try adjusting your search or filters'}
+          className={classNames?.emptyState}
+        />
+      );
+    }
+
     // Render items based on view mode
     if (state.viewMode === 'grid') {
       return (
         <div className={cn('flex-1 p-4', classNames?.itemGrid)}>
           <ItemGrid
-            items={items}
+            items={filteredItems}
             onItemPreview={openPreview}
             onSelectionChange={(id, selected) => {
               if (selected) {
@@ -491,7 +520,7 @@ export function ItemManager({
     return (
       <div className={cn('flex-1 p-4', classNames?.itemList)}>
         <ItemList
-          items={items}
+          items={filteredItems}
           onItemPreview={openPreview}
           onSelectionChange={(id, selected) => {
             if (selected) {
@@ -516,6 +545,8 @@ export function ItemManager({
     loading,
     error,
     items,
+    filteredItems,
+    isFiltered,
     state.viewMode,
     state.selectedIds,
     state.isSelectionMode,
@@ -557,8 +588,8 @@ export function ItemManager({
     isFilterPanelOpen: state.isFilterPanelOpen,
     onToggleFilterPanel: toggleFilterPanel,
     config: effectiveConfig,
-    totalCount: items.length,
-    filteredCount: items.length, // TODO: Update when filtering is implemented
+    totalCount,
+    filteredCount: resultCount,
   }), [
     state.viewMode,
     state.searchQuery,
@@ -574,7 +605,8 @@ export function ItemManager({
     hasFilters,
     toggleFilterPanel,
     effectiveConfig,
-    items.length,
+    totalCount,
+    resultCount,
   ]);
 
   // -------------------------------------------------------------------------
@@ -606,12 +638,13 @@ export function ItemManager({
             onFiltersChange={setFilters}
             onClearFilters={clearFilters}
             enableFilters={effectiveConfig.enableFilters}
+            filterOptions={filterOptions}
             sortBy={state.sortBy}
             onSortChange={setSort}
             enableSort={effectiveConfig.enableSort}
-            resultCount={items.length}
-            totalCount={items.length}
-            isFiltered={hasFilters || state.searchQuery.length > 0}
+            resultCount={resultCount}
+            totalCount={totalCount}
+            isFiltered={isFiltered}
             labels={effectiveConfig.labels}
           />
         )}
