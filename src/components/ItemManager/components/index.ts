@@ -2,7 +2,7 @@
  * ItemManager Components Barrel Export
  *
  * @module ItemManager/components
- * @lastModified 2026-01-04 (REQ-064 - Added SearchInput component)
+ * @lastModified 2026-01-04 (REQ-065 - Added FilterPanel and filter components)
  */
 
 // Core display components
@@ -28,3 +28,21 @@ export type { AssetPanelProps } from '../ItemManager.types';
 // Search components (REQ-064)
 export { SearchInput } from './SearchInput';
 export type { SearchInputProps } from './SearchInput';
+
+// Filter components (REQ-065)
+export {
+  FilterPanel,
+  ContentTypeFilter,
+  TagFilter,
+  LocationFilter,
+  PropertyFilter,
+} from './dialogs';
+export type {
+  FilterPanelProps,
+  FilterPanelClassNames,
+  FilterPanelLabels,
+  ContentTypeFilterProps,
+  TagFilterProps,
+  LocationFilterProps,
+  PropertyFilterProps,
+} from './dialogs';
