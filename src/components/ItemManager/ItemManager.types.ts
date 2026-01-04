@@ -1494,3 +1494,93 @@ export interface AssetPanelProps {
   /** Maximum file size in bytes */
   maxFileSize?: number;
 }
+
+// =============================================================================
+// Hook Types (REQ-062)
+// =============================================================================
+
+/**
+ * Options for the useItemSearch hook.
+ *
+ * @lastModified 2026-01-04 (REQ-062 Task 5)
+ */
+export interface UseItemSearchOptions {
+  /** Array of items to search/filter/sort */
+  items: ItemRecord[];
+
+  /** Current search query string */
+  searchQuery: string;
+
+  /** Active filter state */
+  filters: FilterState;
+
+  /** Current sort option */
+  sortBy: SortOption;
+
+  /** Enable case-sensitive search (default: false) */
+  caseSensitive?: boolean;
+
+  /** Enable debug logging (default: false) */
+  debug?: boolean;
+}
+
+/**
+ * Return type for the useItemSearch hook.
+ * Contains filtered results, computed state, and utility functions.
+ *
+ * @lastModified 2026-01-04 (REQ-062 Task 5)
+ */
+export interface UseItemSearchReturn {
+  // ---------------------------------------------------------------------------
+  // Results
+  // ---------------------------------------------------------------------------
+
+  /** Filtered, sorted array of items matching current search/filter criteria */
+  filteredItems: ItemRecord[];
+
+  /** Number of items after filtering */
+  resultCount: number;
+
+  /** Total number of items before filtering */
+  totalCount: number;
+
+  // ---------------------------------------------------------------------------
+  // Computed State
+  // ---------------------------------------------------------------------------
+
+  /** Whether any search or filter is active (items are filtered) */
+  isFiltered: boolean;
+
+  /** Whether there are any results after filtering */
+  hasResults: boolean;
+
+  /** Whether there is an active search query (non-empty) */
+  hasSearchQuery: boolean;
+
+  /** Whether any filters are currently active */
+  hasActiveFilters: boolean;
+
+  // ---------------------------------------------------------------------------
+  // Available Filter Options
+  // ---------------------------------------------------------------------------
+
+  /** Available filter options extracted from all items */
+  filterOptions: {
+    /** Unique content types from all items */
+    contentTypes: string[];
+    /** Unique tags from all items */
+    tags: string[];
+    /** Unique locations from all items */
+    locations: string[];
+  };
+
+  // ---------------------------------------------------------------------------
+  // Utility Functions
+  // ---------------------------------------------------------------------------
+
+  /** Check if a specific item matches the current search query */
+  itemMatchesSearch: (item: ItemRecord) => boolean;
+
+  /** Check if a specific item matches the current filters */
+  itemMatchesFilters: (item: ItemRecord) => boolean;
+}

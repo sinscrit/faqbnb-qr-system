@@ -2,7 +2,7 @@
  * ItemManager hooks barrel export
  *
  * @module ItemManager/hooks
- * @lastModified 2026-01-03 (REQ-089 - Added useIsMobile)
+ * @lastModified 2026-01-04 (REQ-062 - Added useItemSearch)
  */
 
 // =============================================================================
@@ -35,3 +35,13 @@ export {
   createPendingAsset,
   assetManagementReducer,
 } from './useAssetManagement';
+
+// =============================================================================
+// useItemSearch Hook (REQ-062)
+// =============================================================================
+
+export { useItemSearch } from './useItemSearch';
+export { default as useItemSearchDefault } from './useItemSearch';
+
+// Future hooks (to be implemented in subsequent tasks):
+// export { useItemSelection } from './useItemSelection';

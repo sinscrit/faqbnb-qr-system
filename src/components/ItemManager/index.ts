@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-04 (REQ-061 - Added EmptyState and LoadingState exports)
+ * @lastModified 2026-01-04 (REQ-062 - Added useItemSearch hook and utilities)
  */
 
 // =============================================================================
@@ -51,6 +51,9 @@ export type {
   AssetManagementAction,
   UseAssetManagementOptions,
   UseAssetManagementReturn,
+  // Hook Types (REQ-062)
+  UseItemSearchOptions,
+  UseItemSearchReturn,
 } from './ItemManager.types';
 
 // =============================================================================
@@ -101,6 +104,29 @@ export {
   createPendingAsset,
   assetManagementReducer,
 } from './hooks';
+
+// =============================================================================
+// useItemSearch Hook Export (REQ-062)
+// =============================================================================
+
+export { useItemSearch, useItemSearchDefault } from './hooks';
+
+// =============================================================================
+// Search/Filter/Sort Utilities (REQ-062)
+// =============================================================================
+
+export {
+  matchesSearch,
+  matchesFilters,
+  hasActiveFilters,
+  extractFilterOptions,
+} from './utils/filterUtils';
+
+export {
+  sortComparators,
+  getSortComparator,
+  DEFAULT_SORT,
+} from './utils/sortUtils';
 
 // =============================================================================
 // Main Component Export (REQ-057 Task 1.3)
