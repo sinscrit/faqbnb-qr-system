@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Hooks - Barrel Export
  *
  * @module ItemCreationWorkflow/hooks
- * @lastModified 2026-01-05 (REQ-094 Task 1.2)
+ * @lastModified 2026-01-05 (REQ-096 Task 1.4)
  */
 
 // =============================================================================
@@ -17,8 +17,12 @@ export type { UseWorkflowStateReturn } from './useWorkflowState';
 // Persistence Hooks
 // =============================================================================
 
-// Placeholder for Task 1.4: useSessionPersistence
-// export { useSessionPersistence } from './useSessionPersistence';
+// Task 1.4: useSessionPersistence - Session persistence hook
+export { useSessionPersistence } from './useSessionPersistence';
+export type {
+  UseSessionPersistenceOptions,
+  UseSessionPersistenceReturn,
+} from './useSessionPersistence';
 
 // =============================================================================
 // Data Hooks
