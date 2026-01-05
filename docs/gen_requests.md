@@ -5128,3 +5128,40 @@ Intelligent suggestions reduce friction in the item creation process, improve da
 
 ---
 
+
+## REQ-101: Comprehensive Suggestions Matrix Data Population
+
+**Date**: 2026-01-05 16:23
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The suggestion system must be populated with a comprehensive matrix of common items across all room types (Kitchen, Laundry, Bedroom, Bathroom, Living Room, Garage, Outdoor, General), properly categorized by item type (Appliance, Room Item, General Info).
+
+### Current Behavior
+The suggestion system infrastructure exists but lacks complete data coverage. Users may see limited or missing suggestions for certain room and item type combinations, reducing the system's helpfulness and requiring manual entry more frequently than necessary.
+
+### Expected Behavior
+When users select any combination of room type and item type, they see relevant, well-organized suggestions that represent commonly documented items for that context. Kitchen appliances include items like Microwave, Refrigerator, Dishwasher, and Oven. Bedroom room items include Bed Frame, Nightstand, Dresser, and Closet. Every room type has appropriate suggestions for all applicable item type categories, making the system feel complete and professional.
+
+### User Impact
+Users creating items for any room type receive helpful, contextually relevant suggestions that speed up their workflow and reduce cognitive load. Coverage across all room types ensures a consistent experience regardless of which area of their property they are documenting.
+
+### Business Value
+Complete suggestion coverage demonstrates system maturity, reduces user friction across all use cases, and ensures feature parity between different room types. This completeness encourages adoption and reduces support requests about missing suggestions.
+
+### Acceptance Criteria
+- [ ] Suggestions are defined for all eight room types: Kitchen, Laundry, Bedroom, Bathroom, Living Room, Garage, Outdoor, and General
+- [ ] Each room type includes suggestions categorized as Appliance, Room Item, or General Info where applicable
+- [ ] Kitchen suggestions include common appliances and room items found in kitchens
+- [ ] Laundry suggestions include washing machines, dryers, and related items
+- [ ] Bedroom suggestions include furniture and storage items
+- [ ] Bathroom suggestions include fixtures, appliances, and accessories
+- [ ] Living Room suggestions include entertainment, seating, and storage items
+- [ ] Garage suggestions include tools, storage, and utility items
+- [ ] Outdoor suggestions include furniture, equipment, and landscaping items
+- [ ] General suggestions include items that don't fit specific room categories
+- [ ] All suggestions follow consistent naming conventions
+- [ ] Suggestions matrix is sourced from PRD specifications or best practices for rental property documentation
+
+---
