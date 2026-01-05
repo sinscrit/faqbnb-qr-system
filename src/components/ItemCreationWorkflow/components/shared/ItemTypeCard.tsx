@@ -5,11 +5,23 @@
  *
  * Selectable card for item type selection in Step 2 of the workflow.
  * Displays item type icon, label, and description in horizontal layout.
+ * Supports keyboard navigation with roving tabindex pattern.
+ *
+ * @example
+ * ```tsx
+ * <ItemTypeCard
+ *   itemType="appliance"
+ *   label="Appliance"
+ *   description="Stove, refrigerator, washer, etc."
+ *   icon={Zap}
+ *   isSelected={selectedType === 'appliance'}
+ *   onSelect={selectItemType}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/ItemTypeCard
- * @see docs/REQ-097-basic-shared-components-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
+ * @see ItemTypeStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { forwardRef } from 'react';

@@ -4,11 +4,22 @@
  * SessionRecoveryBanner Component
  *
  * Displays a notification banner when a previous session has been
- * recovered from localStorage after browser refresh.
+ * recovered from localStorage after browser refresh. Allows user
+ * to continue with recovered session or start fresh.
+ *
+ * @example
+ * ```tsx
+ * <SessionRecoveryBanner
+ *   itemCount={3}
+ *   contentNeedingReUpload={2}
+ *   onContinue={handleContinue}
+ *   onStartFresh={handleStartFresh}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/SessionRecoveryBanner
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @see useSessionPersistence for recovery logic
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useEffect, useCallback } from 'react';

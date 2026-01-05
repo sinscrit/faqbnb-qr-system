@@ -1,17 +1,40 @@
 'use client';
 
 /**
- * useUrlPreview - Hook for fetching and displaying URL previews
+ * useUrlPreview - URL metadata fetching for link content previews
  *
- * This hook fetches Open Graph metadata from URLs via the existing /api/url-metadata
- * endpoint to display rich previews in the item creation workflow. It handles
- * loading, success, and error states, and supports proceeding without a preview
- * when metadata fetch fails.
+ * Fetches Open Graph metadata from URLs to display rich previews.
+ * Handles loading states, errors, and timeout for unreachable URLs.
+ * Supports debounced fetching for live typing and manual retry.
+ *
+ * ## Features
+ * - Debounced fetch for typing input
+ * - Configurable timeout (default: 8 seconds)
+ * - Network error detection with retry support
+ * - Graceful fallback when metadata unavailable
+ *
+ * @example Displaying URL preview
+ * ```tsx
+ * const {
+ *   status,
+ *   data,
+ *   error,
+ *   fetchPreview,
+ *   clearPreview,
+ *   networkError,
+ * } = useUrlPreview({ timeout: 5000 });
+ *
+ * if (status === 'loading') return <Skeleton />;
+ * if (status === 'error') {
+ *   return <NetworkErrorIndicator message={error} onRetry={() => fetchPreview(url)} />;
+ * }
+ * if (data) return <UrlPreviewCard {...data} />;
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/useUrlPreview
- * @see docs/REQ-104-url-content-with-preview-overview.md
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @see NetworkErrorIndicator for error display
+ * @see ContentCreationStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';

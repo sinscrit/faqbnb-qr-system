@@ -5,10 +5,22 @@
  *
  * Clickable button for item suggestions in SpecificItemStep.
  * Supports selected, unselected, and created (grayed out) states.
+ * Already-created items are visually distinguished but still clickable.
+ *
+ * @example
+ * ```tsx
+ * <SuggestionButton
+ *   label="Stove/Oven"
+ *   isSelected={selectedItem === 'Stove/Oven'}
+ *   isCreated={createdSuggestions.has('Stove/Oven')}
+ *   onSelect={handleSelectSuggestion}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/SuggestionButton
- * @see docs/REQ-100-specific-item-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see SpecificItemStep for usage context
+ * @see useSuggestions for suggestion tracking
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { cn } from '@/lib/utils';

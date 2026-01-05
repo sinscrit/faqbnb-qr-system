@@ -4,12 +4,23 @@
  * RoomCard Component
  *
  * Selectable card for room type selection in Step 1 of the workflow.
- * Displays room icon and label with selection states.
+ * Displays room icon and label with selection states. Supports
+ * keyboard navigation with roving tabindex pattern.
+ *
+ * @example
+ * ```tsx
+ * <RoomCard
+ *   roomType="kitchen"
+ *   label="Kitchen"
+ *   isSelected={selectedRoom === 'kitchen'}
+ *   onSelect={selectRoom}
+ *   tabIndex={0}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/RoomCard
- * @see docs/REQ-097-basic-shared-components-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
+ * @see RoomSelectionStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { forwardRef } from 'react';

@@ -1,62 +1,99 @@
 /**
  * ItemCreationWorkflow Step Components - Barrel Export
  *
+ * This module exports all step components for the Item Creation Workflow.
+ * Steps are rendered by the main ItemCreationWorkflow component based on
+ * the current workflow state.
+ *
+ * ## Step Flow
+ * ```
+ * 1. RoomSelectionStep      - Select room (kitchen, bedroom, etc.)
+ * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
+ * 3. SpecificItemStep       - Select/name specific item with suggestions
+ * 4. ContentSourceStep      - Choose existing content or create new
+ * 5. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
+ * 6. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
+ * 7. PreviewSaveStep        - Preview and save the item
+ * 8. NextActionStep         - Add more content, new item, or finish
+ * 9. SessionSummaryStep     - Review all items and print QR codes
+ * ```
+ *
+ * ## Skip Conditions
+ * - ItemTypeStep skips if "General" room selected
+ * - Some steps may skip based on content source selection
+ *
+ * @example Importing step components (for testing/custom workflows)
+ * ```tsx
+ * import {
+ *   RoomSelectionStep,
+ *   SessionSummaryStep,
+ * } from '@/components/ItemCreationWorkflow/components/steps';
+ * ```
+ *
  * @module ItemCreationWorkflow/components/steps
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see useWorkflowState for navigation logic
+ * @see README.md for complete workflow documentation
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 // =============================================================================
-// Selection Steps (Phase 2)
+// Selection Steps (Steps 1-3)
 // =============================================================================
-
-// Task 2.1: RoomSelectionStep
+/**
+ * Initial selection steps for room, item type, and specific item.
+ * These steps narrow down what item the user is creating.
+ */
 export { RoomSelectionStep } from './RoomSelectionStep';
 export type { RoomSelectionStepProps } from './RoomSelectionStep';
 
-// Task 2.2: ItemTypeStep
 export { ItemTypeStep } from './ItemTypeStep';
 export type { ItemTypeStepProps } from './ItemTypeStep';
 
-// Task 2.3: SpecificItemStep
 export { SpecificItemStep } from './SpecificItemStep';
 export type { SpecificItemStepProps } from './SpecificItemStep';
 
 // =============================================================================
-// Content Selection Steps (Phase 3)
+// Content Selection Steps (Steps 4-5)
 // =============================================================================
-
-// Task 3.1: ContentSourceStep
+/**
+ * Content source and type selection steps.
+ * Determine whether user has content or will create it, and what type.
+ */
 export { ContentSourceStep } from './ContentSourceStep';
 export type { ContentSourceStepProps } from './ContentSourceStep';
 
-// Task 3.2: ContentTypeStep
 export { ContentTypeStep } from './ContentTypeStep';
 export type { ContentTypeStepProps } from './ContentTypeStep';
 
 // =============================================================================
-// Content Creation Steps (Phase 4)
+// Content Creation Steps (Steps 6-7)
 // =============================================================================
-
-// Task 4.1: ContentCreationStep
+/**
+ * Content creation and preview steps.
+ * ContentCreationStep delegates to ItemCapture for actual capture/upload.
+ */
 export { ContentCreationStep } from './ContentCreationStep';
 export type { ContentCreationStepProps } from './ContentCreationStep';
 
-// Task 4.2: PreviewSaveStep
 export { PreviewSaveStep } from './PreviewSaveStep';
 export type { PreviewSaveStepProps } from './PreviewSaveStep';
 
 // =============================================================================
-// Session Flow Steps (Phase 5)
+// Session Flow Steps (Step 8)
 // =============================================================================
-
-// Task 5.1: NextActionStep
+/**
+ * Decision point for what to do next after saving an item.
+ * Options: add more content, create new item, or finish session.
+ */
 export { NextActionStep } from './NextActionStep';
 export type { NextActionStepProps } from './NextActionStep';
 
 // =============================================================================
-// Summary Steps (Phase 6)
+// Summary Steps (Step 9)
 // =============================================================================
-
-// Task 6.1: SessionSummaryStep
+/**
+ * Final step for reviewing session and printing QR codes.
+ * Displays all items created and provides print/export options.
+ */
 export { SessionSummaryStep } from './SessionSummaryStep';
 export type { SessionSummaryStepProps } from './SessionSummaryStep';

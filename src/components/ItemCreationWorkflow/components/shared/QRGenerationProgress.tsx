@@ -3,12 +3,25 @@
 /**
  * QRGenerationProgress Component
  *
- * Visual feedback component showing QR code generation progress,
- * status per item, and error states with retry capability.
+ * Visual progress indicator for batch QR code generation. Shows
+ * overall progress bar, per-item status indicators, and retry
+ * capability for failed items.
+ *
+ * @example
+ * ```tsx
+ * <QRGenerationProgress
+ *   isGenerating={isGenerating}
+ *   progress={75}
+ *   stats={{ total: 10, completed: 7, failed: 1, remaining: 2 }}
+ *   items={progressItems}
+ *   onRetry={handleRetryFailed}
+ *   onCancel={handleCancel}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/QRGenerationProgress
- * @see docs/REQ-111-qr-code-integration-overview.md
- * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
+ * @see useSessionQRGeneration for generation logic
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { Loader2, Check, X, RefreshCw, XCircle, AlertCircle } from 'lucide-react';

@@ -5742,3 +5742,74 @@ Integration testing reduces production defects by catching issues that only appe
 - [ ] Error handling tests demonstrate that failures in one component provide appropriate feedback without corrupting the entire workflow
 - [ ] All integration tests run successfully in a continuous integration environment
 
+---
+
+## REQ-117: Technical Documentation and API Reference for Item Creation Workflow
+
+**Date**: 2026-01-05 16:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system's Item Creation Workflow shall include comprehensive developer documentation covering barrel export patterns, public API interfaces, and practical implementation examples to support maintainability and developer onboarding.
+
+### Current Behavior
+Developers working with the Item Creation Workflow must rely on source code inspection to understand component APIs, barrel export structures, and usage patterns. There is no consolidated reference documentation or practical examples showing how to integrate and extend workflow components.
+
+### Expected Behavior
+Developers have access to complete technical documentation that includes:
+- Clear documentation of all barrel export patterns explaining the module organization and what each export provides
+- JSDoc comments on every public API (components, hooks, utilities, types) describing parameters, return values, and usage constraints
+- Practical usage examples in the README demonstrating common integration scenarios such as embedding the workflow, customizing steps, handling events, and extending functionality
+- Code examples that developers can reference when implementing or troubleshooting workflow integration
+
+### User Impact
+Developers joining the project or maintaining the Item Creation Workflow can quickly understand component APIs, discover available features through documentation, and implement workflow integrations correctly on their first attempt, reducing trial-and-error development time.
+
+### Business Value
+Comprehensive documentation reduces onboarding time for new developers, decreases maintenance costs by making the codebase more accessible, and improves code quality by clarifying intended usage patterns and API contracts.
+
+### Acceptance Criteria
+- [ ] All barrel export files include header comments documenting the organization strategy and purpose of exported modules
+- [ ] Every public component includes JSDoc comments describing props, behavior, and usage examples
+- [ ] Every custom hook includes JSDoc comments describing parameters, return values, and side effects
+- [ ] All exported utility functions and type definitions include complete JSDoc documentation
+- [ ] README includes at least three practical usage examples covering basic workflow integration, custom step configuration, and event handling
+- [ ] Documentation examples use current TypeScript syntax and match the actual implemented API signatures
+- [ ] Code examples in documentation are validated to compile and run without errors
+
+
+---
+
+## REQ-118: Phase 8 Documentation Updates - Barrel Exports, JSDoc, and Usage Examples
+
+**Date**: 2026-01-05 19:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system shall provide updated barrel export documentation, comprehensive JSDoc comments on all public APIs, and practical usage examples in the README to improve code discoverability and developer experience.
+
+### Current Behavior
+Developers navigating the codebase encounter barrel export files without explanatory documentation, public APIs lacking JSDoc annotations describing their purpose and parameters, and a README that does not demonstrate common usage patterns or integration examples.
+
+### Expected Behavior
+Developers accessing the codebase find:
+- Barrel export files with clear documentation explaining the module organization, what components or utilities are grouped together, and why specific items are exported
+- Every public API (components, hooks, functions, types) annotated with JSDoc comments that describe purpose, parameters, return values, usage constraints, and examples where applicable
+- README sections containing practical code examples demonstrating typical integration scenarios, common workflows, and best practices for using the public APIs
+
+### User Impact
+Developers working with the codebase can quickly locate relevant components through organized barrel exports, understand API contracts without inspecting implementation details, and reference working examples when implementing features, resulting in faster development velocity and fewer integration errors.
+
+### Business Value
+Well-documented code reduces onboarding friction for new team members, decreases time spent answering documentation questions, minimizes bugs caused by API misuse, and improves long-term maintainability by making architectural decisions explicit and discoverable.
+
+### Acceptance Criteria
+- [ ] All barrel export files contain header comments explaining the organization strategy and listing the categories of exported items
+- [ ] Every public component, hook, utility function, and type interface includes JSDoc comments with descriptions and parameter/return type documentation
+- [ ] README includes at least three practical usage examples demonstrating common integration patterns
+- [ ] JSDoc comments follow consistent formatting standards throughout the codebase
+- [ ] Usage examples in README are tested to ensure they compile and execute without errors
+- [ ] Documentation is reviewed by at least one developer unfamiliar with the code to verify clarity and completeness
+

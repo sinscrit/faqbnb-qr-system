@@ -4,12 +4,22 @@
  * SessionItemCard Component
  *
  * Displays individual session item in the summary view with thumbnail,
- * item info, and action buttons (edit/remove).
+ * item info, and action buttons (edit/remove). New items are highlighted
+ * with accent border styling.
+ *
+ * @example
+ * ```tsx
+ * <SessionItemCard
+ *   item={sessionItem}
+ *   isNew={true}
+ *   onEdit={(id) => handleEdit(id)}
+ *   onRemove={(id) => handleRemove(id)}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/SessionItemCard
- * @see docs/REQ-109-session-summary-step-overview.md
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113 Error Handling)
+ * @see SessionSummaryStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useEffect, useRef } from 'react';

@@ -1,14 +1,46 @@
 'use client';
 
 /**
- * useSessionQRGeneration Hook
+ * useSessionQRGeneration - QR code generation for session items
  *
- * Adapter hook that bridges SessionItem type to the existing useQRCodeGeneration hook.
- * Transforms SessionItem[] to Item-compatible format and manages QR generation state.
+ * Generates QR codes for items created in the current session.
+ * Wraps the existing useQRCodeGeneration hook with session-specific
+ * functionality and progress tracking.
+ *
+ * ## Features
+ * - Batch generation with configurable batch size
+ * - Progress tracking per item and overall
+ * - Retry mechanism for failed items
+ * - Cancellation support for long operations
+ *
+ * @example Generating QR codes for session
+ * ```tsx
+ * const {
+ *   generateForItems,
+ *   isGenerating,
+ *   progress,
+ *   stats,
+ *   qrCodes,
+ * } = useSessionQRGeneration({ batchSize: 5 });
+ *
+ * const handlePrint = async () => {
+ *   await generateForItems(session.items);
+ *   // stats contains { total, completed, failed, remaining }
+ * };
+ *
+ * return (
+ *   <QRGenerationProgress
+ *     isGenerating={isGenerating}
+ *     progress={progress}
+ *     stats={stats}
+ *   />
+ * );
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/useSessionQRGeneration
- * @see docs/REQ-111-qr-code-integration-overview.md
- * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
+ * @see QRGenerationProgress for progress UI
+ * @see useQRCodeGeneration for underlying implementation
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useCallback, useMemo } from 'react';

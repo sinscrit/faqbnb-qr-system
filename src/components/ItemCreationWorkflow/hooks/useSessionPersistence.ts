@@ -1,21 +1,46 @@
 'use client';
 
 /**
- * useSessionPersistence - Hook for Workflow State Persistence
+ * useSessionPersistence - Automatic session persistence and recovery
  *
  * This hook provides auto-save and session recovery functionality for the
  * ItemCreationWorkflow component. It automatically persists state to localStorage
  * with debouncing and provides methods for manual save/restore operations.
  *
- * Features:
- * - Auto-save on state changes (debounced)
- * - Session recovery on mount
+ * ## Features
+ * - Auto-save on state changes (debounced to minimize storage operations)
+ * - Session recovery on mount with recoverable session detection
  * - Automatic cleanup on session completion
- * - Detection of content needing re-upload
+ * - Detection of content needing re-upload (File/Blob references don't persist)
+ *
+ * @example Session recovery on mount
+ * ```tsx
+ * const {
+ *   hasRecoverableSession,
+ *   recover,
+ *   discard,
+ *   lastSaved,
+ * } = useSessionPersistence({
+ *   sessionId: state.session.id,
+ *   state,
+ *   enabled: true,
+ * });
+ *
+ * if (hasRecoverableSession) {
+ *   return (
+ *     <SessionRecoveryBanner
+ *       lastSaved={lastSaved}
+ *       onRecover={recover}
+ *       onDiscard={discard}
+ *     />
+ *   );
+ * }
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/useSessionPersistence
- * @see docs/REQ-096-session-persistence-detailed.md
- * @lastModified 2026-01-05 (REQ-096 Task 1.4)
+ * @see SessionRecoveryBanner for recovery UI
+ * @see sessionStorage utilities for storage implementation
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';

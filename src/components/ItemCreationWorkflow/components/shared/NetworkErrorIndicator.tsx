@@ -5,10 +5,21 @@
  *
  * Displays a network error state with retry and proceed options
  * when URL preview fetch fails due to connectivity issues.
+ * Provides user with choice to retry or proceed without preview.
+ *
+ * @example
+ * ```tsx
+ * <NetworkErrorIndicator
+ *   isRetrying={isRetrying}
+ *   onRetry={handleRetry}
+ *   onProceedWithoutPreview={handleProceed}
+ *   errorMessage="Unable to fetch URL preview"
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/NetworkErrorIndicator
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @see useUrlPreview for error source
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { WifiOff, RefreshCw, ArrowRight } from 'lucide-react';

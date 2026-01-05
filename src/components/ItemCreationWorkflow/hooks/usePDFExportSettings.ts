@@ -1,14 +1,38 @@
 'use client';
 
 /**
- * usePDFExportSettings Hook
+ * usePDFExportSettings - PDF export configuration state management
  *
- * Manages PDF export settings state with sensible defaults for the workflow.
- * Settings are session-only (no persistence to localStorage for V1).
+ * Manages user preferences for PDF export including page format, margins,
+ * QR code size, and label options. Settings are session-scoped and reset
+ * when the workflow completes.
+ *
+ * ## Default Settings
+ * - Page Format: Letter (US standard)
+ * - Margins: 10mm
+ * - QR Size: 40mm (optimal for scanning)
+ * - Layout: 4 items per row
+ * - Cutlines/Labels: Enabled
+ *
+ * @example Configuring PDF export
+ * ```tsx
+ * const { settings, updateSettings, resetToDefaults } = usePDFExportSettings({
+ *   initialSettings: { pageFormat: 'A4' },
+ * });
+ *
+ * return (
+ *   <PDFExportDialog
+ *     settings={settings}
+ *     onSettingsChange={updateSettings}
+ *     onReset={resetToDefaults}
+ *   />
+ * );
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/usePDFExportSettings
- * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see PDFExportDialog for settings UI
+ * @see usePDFGeneration for using settings in generation
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback } from 'react';

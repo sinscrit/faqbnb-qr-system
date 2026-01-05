@@ -5,10 +5,21 @@
  *
  * Editable text field for the auto-generated item name.
  * Allows users to customize the "Room - Item" format name.
+ * Shows character count and enforces maximum length.
+ *
+ * @example
+ * ```tsx
+ * <ItemNameEditor
+ *   value={itemName}
+ *   onChange={setItemName}
+ *   placeholder="Enter item name"
+ *   maxLength={100}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/ItemNameEditor
- * @see docs/REQ-100-specific-item-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see SpecificItemStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useCallback } from 'react';

@@ -1,15 +1,32 @@
 'use client';
 
 /**
- * SessionSummaryStep Component
+ * SessionSummaryStep Component - Step 9 (final step) of the workflow
  *
- * Step 9 of ItemCreationWorkflow - Session summary with item review.
- * Displays all items created in the current session and provides
- * options to proceed to printing or finish without printing.
+ * Displays all items created in the current session with options
+ * to add more items, proceed to printing, or finish without printing.
+ * Shows session progress and allows item removal/editing.
+ *
+ * ## Features
+ * - Session progress bar with item count
+ * - Collapsible existing items section
+ * - Item removal with confirmation dialog
+ * - Print options integration
+ *
+ * @example
+ * ```tsx
+ * <SessionSummaryStep
+ *   sessionItems={session.items}
+ *   existingItems={existingItems}
+ *   onAddMore={startNewItem}
+ *   onProceedToPrint={() => setShowPrintOptions(true)}
+ *   onFinish={handleComplete}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/steps/SessionSummaryStep
- * @see docs/REQ-109-session-summary-step-overview.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see PrintOptionsPanel for print configuration
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback } from 'react';

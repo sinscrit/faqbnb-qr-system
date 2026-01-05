@@ -1,15 +1,26 @@
 'use client';
 
 /**
- * RoomSelectionStep Component
+ * RoomSelectionStep Component - Step 1 of the workflow
  *
- * Step 1 of the item creation workflow.
- * Displays a grid of room options for user selection.
+ * Displays a responsive grid of room options for user selection.
+ * Features keyboard navigation with roving tabindex and automatic
+ * next step progression on selection.
+ *
+ * @example
+ * ```tsx
+ * <RoomSelectionStep
+ *   currentRoom={state.currentItem?.room ?? null}
+ *   onSelectRoom={(room) => {
+ *     selectRoom(room);
+ *     nextStep();
+ *   }}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/steps/RoomSelectionStep
- * @see docs/REQ-098-room-selection-step-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
+ * @see RoomCard for individual room selection UI
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';

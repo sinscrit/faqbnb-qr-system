@@ -5,10 +5,40 @@
  *
  * This hook manages all state for the multi-step ItemCreationWorkflow,
  * including navigation, step history, item creation state, and session management.
+ * Uses the reducer pattern for predictable state transitions, consistent with
+ * ItemCapture and ItemManager patterns.
+ *
+ * ## Features
+ * - Multi-step navigation with history tracking
+ * - Room/item type/content selection state
+ * - Session management with multiple items
+ * - Progress calculation and validation
+ * - Error handling and submission state
+ *
+ * @example Basic usage
+ * ```tsx
+ * function WorkflowContainer() {
+ *   const { state, dispatch, canGoBack, goBack } = useWorkflowState();
+ *
+ *   const handleRoomSelect = (room: RoomType) => {
+ *     selectRoom(room);
+ *     nextStep();
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={prevStep} disabled={!canGoBack}>Back</button>
+ *       <RoomSelectionStep onSelect={handleRoomSelect} />
+ *     </div>
+ *   );
+ * }
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/useWorkflowState
- * @see docs/REQ-094-workflow-state-machine-detailed.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see ItemCreationWorkflow - Main component that uses this hook
+ * @see WorkflowAction for available action types
+ * @see docs/prd/Plan-093-Item-Creation-Workflow.md for implementation details
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';

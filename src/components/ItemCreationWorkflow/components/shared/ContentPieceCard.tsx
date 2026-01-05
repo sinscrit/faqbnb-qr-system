@@ -4,11 +4,23 @@
  * ContentPieceCard Component
  *
  * Displays individual content piece with type-appropriate preview.
- * Supports video, photo, PDF, text, and URL content types.
+ * Supports video, photo, PDF, text, and URL content types with
+ * remove/retake actions and optional drag handles for reordering.
+ *
+ * @example
+ * ```tsx
+ * <ContentPieceCard
+ *   content={contentPiece}
+ *   onRemove={(id) => removeContentPiece(id)}
+ *   onRetake={(id) => handleRetake(id)}
+ *   showDragHandle={true}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
- * @see docs/REQ-106-preview-save-step-overview.md
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @see PreviewSaveStep for usage context
+ * @see SortableContentPieceCard for sortable version
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useEffect, useRef } from 'react';

@@ -3,12 +3,23 @@
 /**
  * SessionProgressBar Component
  *
- * Displays session-level progress showing items created count.
- * Uses Airbnb brand color (#FF385C) for the progress fill.
+ * Displays session-level progress showing items created in the current
+ * session. Visual progress bar with Airbnb brand color (#FF385C) and
+ * optional count display.
+ *
+ * @example
+ * ```tsx
+ * <SessionProgressBar
+ *   itemsCreated={5}
+ *   maxItems={50}
+ *   showCount={true}
+ * />
+ * // Displays: "5 of 50 items"
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/SessionProgressBar
- * @see docs/REQ-097-basic-shared-components-overview.md
- * @lastModified 2026-01-05
+ * @see SessionSummaryStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { cn } from '@/lib/utils';

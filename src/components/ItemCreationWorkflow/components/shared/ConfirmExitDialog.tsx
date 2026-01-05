@@ -3,13 +3,29 @@
 /**
  * ConfirmExitDialog Component
  *
- * Confirmation dialog to prevent accidental data loss when exiting the workflow.
- * Shows warning with session context and confirm/cancel actions.
+ * Modal confirmation dialog to prevent accidental data loss when exiting
+ * the workflow. Shows warning message based on session state (items created,
+ * unsaved changes) and provides confirm/cancel actions.
+ *
+ * ## Features
+ * - Focus trapping for accessibility (WAI-ARIA compliant)
+ * - Dynamic messaging based on session progress
+ * - Escape key handling for dismissal
+ *
+ * @example
+ * ```tsx
+ * <ConfirmExitDialog
+ *   isOpen={showExitDialog}
+ *   onClose={() => setShowExitDialog(false)}
+ *   onConfirmExit={handleSessionExit}
+ *   itemCount={3}
+ *   hasUnsavedChanges={true}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/ConfirmExitDialog
- * @see docs/REQ-095-main-workflow-component-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
+ * @see WorkflowHeader for exit button trigger
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useRef, useEffect } from 'react';

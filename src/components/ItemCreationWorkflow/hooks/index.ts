@@ -1,23 +1,58 @@
 /**
  * ItemCreationWorkflow Hooks - Barrel Export
  *
+ * This module exports all custom hooks for the ItemCreationWorkflow component.
+ * Hooks are organized by functional category:
+ *
+ * - **State Management**: `useWorkflowState` - Core workflow state machine
+ * - **Persistence**: `useSessionPersistence` - Session recovery and draft saving
+ * - **Data**: `useSuggestions`, `useUrlPreview` - Dynamic data fetching
+ * - **Generation**: `useSessionQRGeneration`, `usePDFGeneration` - Output generation
+ *
+ * @example Using hooks together
+ * ```tsx
+ * import {
+ *   useWorkflowState,
+ *   useSuggestions,
+ *   useSessionQRGeneration,
+ * } from '@/components/ItemCreationWorkflow/hooks';
+ *
+ * function MyWorkflow() {
+ *   const { state, dispatch } = useWorkflowState();
+ *   const { suggestions } = useSuggestions({
+ *     room: state.currentItem?.room,
+ *     itemType: state.currentItem?.itemType,
+ *   });
+ *   const { generateQRCodes, isGenerating } = useSessionQRGeneration({
+ *     items: state.session.items,
+ *   });
+ *   // ...
+ * }
+ * ```
+ *
  * @module ItemCreationWorkflow/hooks
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see useWorkflowState for core state machine documentation
+ * @see README.md for comprehensive usage examples
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 // =============================================================================
 // State Management Hooks
 // =============================================================================
-
-// Task 1.2: useWorkflowState - Core state machine hook
+/**
+ * Core state machine for managing the complete workflow lifecycle.
+ * Uses useReducer pattern for predictable state transitions.
+ */
 export { useWorkflowState } from './useWorkflowState';
 export type { UseWorkflowStateReturn } from './useWorkflowState';
 
 // =============================================================================
 // Persistence Hooks
 // =============================================================================
-
-// Task 1.4: useSessionPersistence - Session persistence hook
+/**
+ * Session persistence with auto-save and recovery capabilities.
+ * Saves to localStorage with debouncing to minimize storage operations.
+ */
 export { useSessionPersistence } from './useSessionPersistence';
 export type {
   UseSessionPersistenceOptions,
@@ -27,15 +62,16 @@ export type {
 // =============================================================================
 // Data Hooks
 // =============================================================================
-
-// Task 2.3: useSuggestions - Dynamic suggestions hook
+/**
+ * Dynamic data fetching hooks for suggestions and URL previews.
+ * Provide contextual item suggestions and rich link metadata.
+ */
 export { useSuggestions } from './useSuggestions';
 export type {
   UseSuggestionsOptions,
   UseSuggestionsReturn,
 } from './useSuggestions';
 
-// Task 3.3: useUrlPreview - URL preview fetching hook
 export { useUrlPreview } from './useUrlPreview';
 export type {
   UseUrlPreviewOptions,
@@ -46,8 +82,10 @@ export type {
 // =============================================================================
 // QR Generation Hooks
 // =============================================================================
-
-// Task 6.3: useSessionQRGeneration - QR code generation adapter for session items
+/**
+ * Batch QR code generation for session items.
+ * Wraps the base QR generation with session-specific progress tracking.
+ */
 export { useSessionQRGeneration } from './useSessionQRGeneration';
 export type {
   UseSessionQRGenerationOptions,
@@ -57,17 +95,18 @@ export type {
 } from './useSessionQRGeneration';
 
 // =============================================================================
-// PDF Generation Hooks (Task 6.4)
+// PDF Generation Hooks
 // =============================================================================
-
-// Task 6.4.1: usePDFExportSettings - PDF settings state management
+/**
+ * PDF export configuration and generation.
+ * Manages user preferences and orchestrates PDF creation for QR code sheets.
+ */
 export { usePDFExportSettings, DEFAULT_PDF_EXPORT_SETTINGS } from './usePDFExportSettings';
 export type {
   UsePDFExportSettingsOptions,
   UsePDFExportSettingsReturn,
 } from './usePDFExportSettings';
 
-// Task 6.4.2: usePDFGeneration - PDF generation orchestration
 export { usePDFGeneration } from './usePDFGeneration';
 export type {
   UsePDFGenerationOptions,

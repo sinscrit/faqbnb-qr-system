@@ -4,24 +4,69 @@
  * This barrel file provides the public API for the ItemCreationWorkflow component.
  * Import from '@/components/ItemCreationWorkflow' for clean, predictable imports.
  *
- * @example
- * import {
- *   ItemCreationWorkflow,
- *   ItemCreationWorkflowProps,
+ * ## Module Organization
+ *
+ * - **Types**: Configuration, domain, session, and output type definitions
+ * - **Constants**: Room types, item types, content types, workflow configuration
+ * - **Hooks**: State management, persistence, suggestions, preview, QR/PDF generation
+ * - **Components**: Main workflow, step components, shared UI elements
+ * - **Utilities**: Suggestion matrix, session storage, accessibility helpers
+ *
+ * @example Basic Integration
+ * ```tsx
+ * import { ItemCreationWorkflow, ItemCreationWorkflowProps } from '@/components/ItemCreationWorkflow';
+ *
+ * function MyPage() {
+ *   return (
+ *     <ItemCreationWorkflow
+ *       onSessionComplete={(session) => console.log('Completed:', session)}
+ *       onSessionExit={(partial) => console.log('Exited:', partial)}
+ *       onGeneratePDF={async (items, scope) => new Blob()}
+ *       onPrintDirect={async () => window.print()}
+ *       onFetchExistingItems={async () => []}
+ *       onSaveItem={async (item) => ({ id: 'new-id', qrCodeUrl: '/qr/new-id' })}
+ *     />
+ *   );
+ * }
+ * ```
+ *
+ * @example Using Hooks Directly
+ * ```tsx
+ * import { useWorkflowState, useSuggestions } from '@/components/ItemCreationWorkflow';
+ *
+ * const { state, dispatch, canGoBack, goBack } = useWorkflowState();
+ * const { suggestions } = useSuggestions({ room: 'kitchen', itemType: 'appliance' });
+ * ```
+ *
+ * @example Importing Types
+ * ```tsx
+ * import type {
  *   WorkflowSession,
+ *   SessionItem,
  *   RoomType,
- *   ROOM_TYPES,
- *   getSuggestions,
+ *   CompletedSession,
+ *   PrintScope,
  * } from '@/components/ItemCreationWorkflow';
+ * ```
  *
  * @module ItemCreationWorkflow
- * @lastModified 2026-01-05 (REQ-095 Task 1.3)
+ * @see README.md for comprehensive usage documentation
+ * @see docs/prd/Plan-093-Item-Creation-Workflow.md for implementation details
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 // =============================================================================
 // Public Types (for consumer use)
 // =============================================================================
-
+/**
+ * Public type exports for consumers of the ItemCreationWorkflow component.
+ * Import these types to properly type your callback handlers and state management.
+ *
+ * - **Configuration**: Props and config for the main component
+ * - **Domain**: Room, item, and content type identifiers
+ * - **Session**: State structures for workflow and items
+ * - **Output**: Return types from callbacks
+ */
 export type {
   // Configuration
   ItemCreationWorkflowProps,
@@ -49,7 +94,10 @@ export type {
 // =============================================================================
 // Internal Types (for component development)
 // =============================================================================
-
+/**
+ * Internal type exports for extending or testing the ItemCreationWorkflow.
+ * Use these when building custom step components or testing state transitions.
+ */
 export type {
   WorkflowState,
   WorkflowAction,
@@ -58,7 +106,12 @@ export type {
 // =============================================================================
 // Constants Export
 // =============================================================================
-
+/**
+ * Configuration constants for the workflow. Use these for:
+ * - Populating room and item type selection UI
+ * - Configuring workflow defaults
+ * - Accessing human-readable labels and icons
+ */
 export {
   // Room configuration
   ROOM_TYPES,
@@ -94,7 +147,11 @@ export type {
 // =============================================================================
 // Suggestion Matrix Export
 // =============================================================================
-
+/**
+ * Dynamic item suggestions based on room and item type combinations.
+ * Use `getSuggestions(room, itemType)` to get contextual suggestions,
+ * or `hasSuggestions(room, itemType)` to check availability.
+ */
 export {
   SUGGESTION_MATRIX,
   getSuggestions,
@@ -106,43 +163,133 @@ export {
 // =============================================================================
 // Hooks Export
 // =============================================================================
-
-// Task 1.2: useWorkflowState - Core state machine hook (REQ-094)
+/**
+ * Custom hooks for workflow state management and feature integration.
+ *
+ * - **useWorkflowState**: Core state machine for navigation and item creation
+ * - **useSessionPersistence**: Auto-save to localStorage with recovery
+ * - **useSuggestions**: Dynamic item suggestions by room and type
+ * - **useUrlPreview**: URL metadata fetching for link previews
+ * - **useSessionQRGeneration**: Batch QR code generation
+ * - **usePDFExportSettings**: PDF export configuration
+ * - **usePDFGeneration**: PDF generation orchestration
+ */
 export { useWorkflowState } from './hooks';
 export type { UseWorkflowStateReturn } from './hooks';
 
-// Task 1.4: useSessionPersistence
-// export { useSessionPersistence } from './hooks';
+export { useSessionPersistence } from './hooks';
+export type {
+  UseSessionPersistenceOptions,
+  UseSessionPersistenceReturn,
+} from './hooks';
 
-// Task 2.3: useSuggestions
-// export { useSuggestions } from './hooks';
+export { useSuggestions } from './hooks';
+export type { UseSuggestionsOptions, UseSuggestionsReturn } from './hooks';
 
-// Task 3.3: useUrlPreview
-// export { useUrlPreview } from './hooks';
+export { useUrlPreview } from './hooks';
+export type {
+  UseUrlPreviewOptions,
+  UrlPreviewStatus,
+  UseUrlPreviewReturn,
+} from './hooks';
+
+export { useSessionQRGeneration } from './hooks';
+export type {
+  UseSessionQRGenerationOptions,
+  UseSessionQRGenerationReturn,
+  QRItemStatus,
+  QRGenerationStats,
+} from './hooks';
+
+export { usePDFExportSettings, DEFAULT_PDF_EXPORT_SETTINGS } from './hooks';
+export type {
+  UsePDFExportSettingsOptions,
+  UsePDFExportSettingsReturn,
+} from './hooks';
+
+export { usePDFGeneration } from './hooks';
+export type { UsePDFGenerationOptions, UsePDFGenerationReturn } from './hooks';
 
 // =============================================================================
 // Components Export
 // =============================================================================
-
-// Task 1.3: Main component
+/**
+ * Main workflow component and shared UI components.
+ *
+ * - **ItemCreationWorkflow**: Main component - renders the complete workflow
+ * - **Layout**: WorkflowHeader, ConfirmExitDialog, SessionProgressBar
+ * - **Selection**: RoomCard, ItemTypeCard, SuggestionButton, ItemNameEditor
+ * - **Content**: ContentPieceCard, SortableContentPieceCard
+ * - **Summary**: SessionItemCard, PrintOptionsPanel, PDFExportDialog
+ * - **Error Handling**: NetworkErrorIndicator, SessionRecoveryBanner, etc.
+ */
 export { ItemCreationWorkflow } from './ItemCreationWorkflow';
 
-// Task 1.3: WorkflowHeader
+// Layout components
 export { WorkflowHeader } from './components/shared/WorkflowHeader';
 export type { WorkflowHeaderProps } from './components/shared/WorkflowHeader';
 
-// Task 1.3: ConfirmExitDialog
 export { ConfirmExitDialog } from './components/shared/ConfirmExitDialog';
 export type { ConfirmExitDialogProps } from './components/shared/ConfirmExitDialog';
 
-// Task 1.5: SessionProgressBar
 export { SessionProgressBar } from './components/shared/SessionProgressBar';
 export type { SessionProgressBarProps } from './components/shared/SessionProgressBar';
 
-// Task 1.5: RoomCard
+// Selection components
 export { RoomCard } from './components/shared/RoomCard';
 export type { RoomCardProps } from './components/shared/RoomCard';
 
-// Task 1.5: ItemTypeCard
 export { ItemTypeCard, ITEM_TYPE_ICONS } from './components/shared/ItemTypeCard';
 export type { ItemTypeCardProps } from './components/shared/ItemTypeCard';
+
+export { SuggestionButton } from './components/shared/SuggestionButton';
+export type { SuggestionButtonProps } from './components/shared/SuggestionButton';
+
+export { ItemNameEditor } from './components/shared/ItemNameEditor';
+export type { ItemNameEditorProps } from './components/shared/ItemNameEditor';
+
+// Content components
+export { ContentPieceCard } from './components/shared/ContentPieceCard';
+export type { ContentPieceCardProps } from './components/shared/ContentPieceCard';
+
+export { SortableContentPieceCard } from './components/shared/SortableContentPieceCard';
+export type { SortableContentPieceCardProps } from './components/shared/SortableContentPieceCard';
+
+// Summary components
+export { SessionItemCard } from './components/shared/SessionItemCard';
+export type { SessionItemCardProps } from './components/shared/SessionItemCard';
+
+export { RemoveItemDialog } from './components/shared/RemoveItemDialog';
+export type { RemoveItemDialogProps } from './components/shared/RemoveItemDialog';
+
+export { PrintOptionsPanel } from './components/shared/PrintOptionsPanel';
+export type { PrintOptionsPanelProps } from './components/shared/PrintOptionsPanel';
+
+export { QRGenerationProgress } from './components/shared/QRGenerationProgress';
+export type {
+  QRGenerationProgressProps,
+  QRProgressItem,
+  QRProgressItemStatus,
+} from './components/shared/QRGenerationProgress';
+
+export { PDFExportDialog } from './components/shared/PDFExportDialog';
+export type { PDFExportDialogProps } from './components/shared/PDFExportDialog';
+
+// Error handling components
+export { NetworkErrorIndicator } from './components/shared/NetworkErrorIndicator';
+export type { NetworkErrorIndicatorProps } from './components/shared/NetworkErrorIndicator';
+
+export { CameraPermissionFallback } from './components/shared/CameraPermissionFallback';
+export type { CameraPermissionFallbackProps } from './components/shared/CameraPermissionFallback';
+
+export { SessionRecoveryBanner } from './components/shared/SessionRecoveryBanner';
+export type { SessionRecoveryBannerProps } from './components/shared/SessionRecoveryBanner';
+
+export { TruncatedText } from './components/shared/TruncatedText';
+export type { TruncatedTextProps } from './components/shared/TruncatedText';
+
+export { EmptySessionDialog } from './components/shared/EmptySessionDialog';
+export type { EmptySessionDialogProps } from './components/shared/EmptySessionDialog';
+
+export { DuplicateNameWarning } from './components/shared/DuplicateNameWarning';
+export type { DuplicateNameWarningProps } from './components/shared/DuplicateNameWarning';

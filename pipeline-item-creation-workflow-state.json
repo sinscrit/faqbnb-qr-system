@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T14:16:32.532117",
+  "updated_at": "2026-01-05T15:54:09.607020",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 22,
+  "current_task_index": 24,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -500,11 +500,19 @@
       "title": "Integration Tests",
       "description": "[ ] Test complete workflow flow\n[ ] Test ItemCapture integration\n[ ] Test QR code generation integration",
       "raw_match": "#### Task 8.2: Integration Tests [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-116",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T14:43:27.209240",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-116",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-116-integration-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-116-integration-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "8.3",
@@ -514,10 +522,17 @@
       "description": "[ ] Update barrel exports documentation\n[ ] Add JSDoc comments to all public APIs\n[ ] Create usage examples in README",
       "raw_match": "#### Task 8.3: Documentation [",
       "status": "pending",
-      "request_id": null,
+      "request_id": "REQ-117",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-117",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-117-documentation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-117-documentation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     }
   ],
   "stages": {
@@ -531,10 +546,17 @@
       "current_task_index": 0
     }
   },
-  "errors": [],
+  "errors": [
+    {
+      "stage": "details",
+      "task_id": "8.3",
+      "error": "Agent timed out (480s)",
+      "timestamp": "2026-01-05T15:04:31.076055"
+    }
+  ],
   "metadata": {
-    "total_requests_generated": 23,
-    "last_request_id": "REQ-115",
+    "total_requests_generated": 24,
+    "last_request_id": "REQ-117",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

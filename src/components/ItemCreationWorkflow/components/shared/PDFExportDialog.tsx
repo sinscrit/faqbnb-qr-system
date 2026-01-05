@@ -4,12 +4,29 @@
  * PDFExportDialog Component
  *
  * Modal dialog for configuring PDF export settings before generation.
- * Embeds PDFExportOptions component for settings UI.
+ * Embeds PDFExportOptions component for settings UI with page format,
+ * margins, QR size, and label options.
+ *
+ * ## Features
+ * - Focus trapping for accessibility
+ * - Export progress indicator
+ * - Error display with retry option
+ *
+ * @example
+ * ```tsx
+ * <PDFExportDialog
+ *   isOpen={showExportDialog}
+ *   onClose={() => setShowExportDialog(false)}
+ *   onExport={handleExport}
+ *   itemCount={selectedItems.length}
+ *   settings={pdfSettings}
+ *   onSettingsChange={updateSettings}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/PDFExportDialog
- * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
+ * @see usePDFGeneration for generation logic
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useCallback, useEffect, useRef } from 'react';

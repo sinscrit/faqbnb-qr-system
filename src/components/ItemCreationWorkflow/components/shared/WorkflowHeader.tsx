@@ -3,12 +3,25 @@
 /**
  * WorkflowHeader Component
  *
- * Displays workflow progress and navigation controls.
- * Shows progress bar, step indicator, back button, and exit button.
+ * Displays workflow progress and navigation controls at the top of
+ * each workflow step. Shows progress bar, step indicator, back button,
+ * and exit button for consistent navigation UX.
+ *
+ * @example
+ * ```tsx
+ * <WorkflowHeader
+ *   currentStepIndex={2}
+ *   totalSteps={9}
+ *   progressPercent={25}
+ *   canGoBack={true}
+ *   onBack={() => prevStep()}
+ *   onExit={() => setShowExitDialog(true)}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/WorkflowHeader
- * @see docs/REQ-095-main-workflow-component-overview.md
- * @lastModified 2026-01-05
+ * @see ItemCreationWorkflow for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { ArrowLeft, X } from 'lucide-react';

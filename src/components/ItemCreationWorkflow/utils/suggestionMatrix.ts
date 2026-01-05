@@ -1,12 +1,27 @@
 /**
  * Suggestion Matrix for ItemCreationWorkflow
  *
- * Maps Room + ItemType combinations to suggested specific items.
- * Based on PRD Appendix A specifications.
+ * Maps Room + ItemType combinations to contextual item suggestions.
+ * Used by SpecificItemStep to display relevant item options based
+ * on the user's room and category selections.
+ *
+ * @example Using the suggestion matrix
+ * ```tsx
+ * import { getSuggestions, hasSuggestions } from '@/components/ItemCreationWorkflow/utils/suggestionMatrix';
+ *
+ * // Get suggestions for kitchen appliances
+ * const suggestions = getSuggestions('kitchen', 'appliance');
+ * // ['Stove/Oven', 'Refrigerator', 'Microwave', ...]
+ *
+ * // Check if suggestions exist
+ * if (hasSuggestions('garage', 'room-item')) {
+ *   // Render suggestion buttons
+ * }
+ * ```
  *
  * @module ItemCreationWorkflow/utils/suggestionMatrix
- * @see docs/prd/Plan-093-Item-Creation-Workflow.md Appendix A
- * @lastModified 2026-01-05 (REQ-101 Comprehensive Suggestions Matrix Data)
+ * @see useSuggestions hook for React integration
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import type { RoomType, ItemType } from '../ItemCreationWorkflow.types';

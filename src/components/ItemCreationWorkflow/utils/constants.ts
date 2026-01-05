@@ -1,12 +1,31 @@
 /**
  * ItemCreationWorkflow Constants
  *
- * This file contains all constant values used by the ItemCreationWorkflow component,
- * including room types, item types, content types, and workflow configuration.
+ * All configuration constants for the ItemCreationWorkflow component:
+ * - Room types and labels
+ * - Item type categories
+ * - Content type options
+ * - Workflow step configuration
+ * - UI/UX constants
+ *
+ * @example Importing constants
+ * ```tsx
+ * import {
+ *   ROOM_TYPES,
+ *   ROOM_LABELS,
+ *   ITEM_TYPES,
+ *   WORKFLOW_STEPS,
+ * } from '@/components/ItemCreationWorkflow/utils/constants';
+ *
+ * const roomOptions = ROOM_TYPES.map(room => ({
+ *   value: room,
+ *   label: ROOM_LABELS[room],
+ * }));
+ * ```
  *
  * @module ItemCreationWorkflow/utils/constants
- * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @see SUGGESTION_MATRIX for item suggestions per room
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 // =============================================================================

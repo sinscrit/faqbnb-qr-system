@@ -1,14 +1,43 @@
 'use client';
 
 /**
- * useSuggestions - Dynamic suggestions hook for SpecificItemStep
+ * useSuggestions - Dynamic item suggestions based on room and item type
  *
- * Provides contextual item suggestions based on room and item type,
- * with tracking of which suggestions have already been created in the session.
+ * Provides contextual item name suggestions based on the selected room
+ * and item type. Suggestions are sourced from the suggestion matrix
+ * and help users quickly select common items.
+ *
+ * ## Features
+ * - Dynamic suggestions based on room + item type combination
+ * - Tracking of already-created suggestions to mark as "done"
+ * - Case-insensitive matching for existing items
+ *
+ * @example Using suggestions in item selection
+ * ```tsx
+ * const { suggestions, isCreated, hasSuggestions } = useSuggestions({
+ *   room: 'kitchen',
+ *   itemType: 'appliance',
+ *   existingItems: sessionItems,
+ * });
+ *
+ * return (
+ *   <div>
+ *     {suggestions.map((suggestion) => (
+ *       <SuggestionButton
+ *         key={suggestion}
+ *         label={suggestion}
+ *         disabled={isCreated(suggestion)}
+ *         onClick={() => handleSelect(suggestion)}
+ *       />
+ *     ))}
+ *   </div>
+ * );
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/useSuggestions
- * @see docs/REQ-100-specific-item-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see SUGGESTION_MATRIX for suggestion data
+ * @see SpecificItemStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useMemo, useCallback } from 'react';

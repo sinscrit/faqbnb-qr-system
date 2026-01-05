@@ -1325,26 +1325,62 @@ def parse_stage_filter(stages_str: str, config: dict) -> List[str]:
     return result
 
 
-def parse_task_indices(indices_str: str, total_tasks: int) -> List[int]:
+def parse_task_indices(indices_str: str, total_tasks: int, tasks: Optional[List[dict]] = None) -> List[int]:
     """
-    Parse comma-separated task indices string into list of 0-based indices.
-    Input is 1-based (user-friendly), output is 0-based (internal).
-    
+    Parse comma-separated task indices/IDs string into list of 0-based indices.
+
+    Supports multiple formats:
+    - Numeric indices (1-based): "2,3" -> [1, 2]
+    - Numeric ranges: "1-5" -> [0, 1, 2, 3, 4]
+    - Task IDs: "8.3" -> finds task with id="8.3"
+    - Wildcard task IDs: "8.*" -> finds all tasks with id starting with "8."
+    - Mixed: "1,8.3,9.*" -> combines all formats
+
     Examples:
         "2,3" -> [1, 2]
         "1,5,10" -> [0, 4, 9]
         "1-5" -> [0, 1, 2, 3, 4]
-        "1,3-5,10" -> [0, 2, 3, 4, 9]
+        "8.3" -> [index of task with id="8.3"]
+        "8.*" -> [indices of all tasks with id starting with "8."]
+        "1,8.3,9.*" -> combined
     """
     indices = set()
-    
+
+    # Build task ID to index mapping if tasks provided
+    task_id_to_index = {}
+    if tasks:
+        for i, task in enumerate(tasks):
+            task_id = task.get('id', '')
+            if task_id:
+                task_id_to_index[task_id] = i
+
     for part in indices_str.split(','):
         part = part.strip()
         if not part:
             continue
-            
+
+        # Check for wildcard pattern (e.g., "8.*")
+        if '*' in part and tasks:
+            pattern = part.replace('*', '')  # "8.*" -> "8."
+            matched = False
+            for task_id, idx in task_id_to_index.items():
+                if task_id.startswith(pattern):
+                    indices.add(idx)
+                    matched = True
+            if not matched:
+                print(f"Warning: No tasks match pattern '{part}'")
+            continue
+
+        # Check for task ID format (contains '.', e.g., "8.3")
+        if '.' in part and tasks:
+            if part in task_id_to_index:
+                indices.add(task_id_to_index[part])
+            else:
+                print(f"Warning: Task ID '{part}' not found")
+            continue
+
+        # Check for numeric range (e.g., "1-5")
         if '-' in part:
-            # Range: "1-5"
             try:
                 start, end = part.split('-', 1)
                 start_idx = int(start.strip())
@@ -1354,17 +1390,18 @@ def parse_task_indices(indices_str: str, total_tasks: int) -> List[int]:
                         indices.add(i - 1)  # Convert to 0-based
             except ValueError:
                 print(f"Warning: Invalid range '{part}', skipping")
-        else:
-            # Single index
-            try:
-                idx = int(part)
-                if 1 <= idx <= total_tasks:
-                    indices.add(idx - 1)  # Convert to 0-based
-                else:
-                    print(f"Warning: Index {idx} out of range (1-{total_tasks}), skipping")
-            except ValueError:
-                print(f"Warning: Invalid index '{part}', skipping")
-    
+            continue
+
+        # Single numeric index
+        try:
+            idx = int(part)
+            if 1 <= idx <= total_tasks:
+                indices.add(idx - 1)  # Convert to 0-based
+            else:
+                print(f"Warning: Index {idx} out of range (1-{total_tasks}), skipping")
+        except ValueError:
+            print(f"Warning: Invalid index '{part}', skipping")
+
     return sorted(indices)
 
 
@@ -2373,9 +2410,11 @@ Examples:
   %(prog)s --config ./pipeline.yaml --resume
   %(prog)s --config ./pipeline.yaml --keep
   %(prog)s --config ./pipeline.yaml --delete
-  %(prog)s --config ./pipeline.yaml --tasks "2,3"        # Process tasks 2 and 3 only
-  %(prog)s --config ./pipeline.yaml --tasks "1-5"        # Process tasks 1 through 5
-  %(prog)s --config ./pipeline.yaml --tasks "1,5,10-15"  # Process tasks 1, 5, and 10-15
+  %(prog)s --config ./pipeline.yaml --tasks "2,3"        # Process tasks 2 and 3 (by index)
+  %(prog)s --config ./pipeline.yaml --tasks "8.3"        # Process task with ID "8.3"
+  %(prog)s --config ./pipeline.yaml --tasks "8.*"        # Process all tasks starting with "8."
+  %(prog)s --config ./pipeline.yaml --tasks "1-5"        # Process tasks 1 through 5 (by index)
+  %(prog)s --config ./pipeline.yaml --tasks "1,8.3,9.*"  # Mixed: index, ID, and wildcard
   %(prog)s --config ./pipeline.yaml --stages "3"         # Run only stage 3 (details)
   %(prog)s --config ./pipeline.yaml --stages "details"   # Same as above, by name
   %(prog)s --config ./pipeline.yaml --stages "2,3"       # Run stages 2 and 3
@@ -2396,7 +2435,7 @@ Examples:
         '--tasks', '-t',
         type=str,
         default=None,
-        help='Process only specific task indices (comma-separated, 1-based). E.g., "2,3" or "1,5,10"'
+        help='Process specific tasks. Supports: indices ("2,3"), ranges ("1-5"), task IDs ("8.3"), wildcards ("8.*"). E.g., "8.3" or "8.*" or "1,8.3"'
     )
 
     parser.add_argument(
@@ -2588,11 +2627,13 @@ Examples:
     task_indices = None
     if args.tasks:
         total_tasks = len(state['tasks'])
-        task_indices = parse_task_indices(args.tasks, total_tasks)
+        task_indices = parse_task_indices(args.tasks, total_tasks, state['tasks'])
         if not task_indices:
             print(f"Error: No valid task indices in '{args.tasks}'")
             sys.exit(1)
-        print(f"Will process {len(task_indices)} specific task(s): {[i+1 for i in task_indices]}")
+        # Show matched tasks with their IDs for clarity
+        matched_tasks = [(i+1, state['tasks'][i].get('id', '?')) for i in task_indices]
+        print(f"Will process {len(task_indices)} specific task(s): {matched_tasks}")
 
         # If --delete flag is used with --tasks, reset the status of those specific tasks
         if args.delete:

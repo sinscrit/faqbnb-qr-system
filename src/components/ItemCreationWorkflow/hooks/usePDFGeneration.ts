@@ -1,14 +1,47 @@
 'use client';
 
 /**
- * usePDFGeneration Hook
+ * usePDFGeneration - PDF generation from QR codes
  *
- * Orchestrates QR codes → PDF generation with progress tracking and error handling.
- * Uses the existing pdf-generator library for PDF creation.
+ * Orchestrates the generation of PDF documents containing QR codes.
+ * Takes session items and their generated QR codes, applies export
+ * settings, and produces a downloadable PDF blob.
+ *
+ * ## Features
+ * - Progress tracking during generation
+ * - Auto-download with configurable filename
+ * - Error handling with user-friendly messages
+ * - Support for all PDF export settings
+ *
+ * @example Generating and downloading PDF
+ * ```tsx
+ * const { settings } = usePDFExportSettings();
+ * const {
+ *   generatePDF,
+ *   downloadPDF,
+ *   isGenerating,
+ *   progress,
+ *   error,
+ * } = usePDFGeneration({ settings });
+ *
+ * const handleExport = async () => {
+ *   const blob = await generatePDF(items, qrCodes);
+ *   if (blob) {
+ *     downloadPDF(blob, 'my-qr-codes.pdf');
+ *   }
+ * };
+ *
+ * return (
+ *   <Button onClick={handleExport} disabled={isGenerating}>
+ *     {isGenerating ? `Generating... ${progress?.percent}%` : 'Download PDF'}
+ *   </Button>
+ * );
+ * ```
  *
  * @module ItemCreationWorkflow/hooks/usePDFGeneration
- * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see usePDFExportSettings for configuration
+ * @see useSessionQRGeneration for QR code generation
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback, useRef } from 'react';

@@ -3,16 +3,33 @@
 /**
  * PrintOptionsPanel Component
  *
- * Provides print scope selection (All Items, New Items Only, Select Items)
- * with item selection list for selective printing of QR codes.
- * Includes action buttons for Generate PDF, Print Directly, and Done for Now.
- * Integrates QR code generation with progress feedback.
+ * Comprehensive print options for QR code generation. Provides scope
+ * selection (All Items, New Items Only, Select Items) with item selection
+ * list. Integrates QR code generation, PDF export, and direct print.
+ *
+ * ## Features
+ * - Three print scope options: all, new-only, selected
+ * - Item selection list for selective printing
+ * - QR code generation with progress feedback
+ * - PDF export with configurable settings
+ * - Direct print option
+ *
+ * @example
+ * ```tsx
+ * <PrintOptionsPanel
+ *   newItems={session.items}
+ *   existingItems={existingItems}
+ *   selectedScope={printScope}
+ *   onScopeChange={setPrintScope}
+ *   onGeneratePDF={handleGeneratePDF}
+ *   onPrintDirect={handlePrintDirect}
+ *   onComplete={handleComplete}
+ * />
+ * ```
  *
  * @module ItemCreationWorkflow/components/shared/PrintOptionsPanel
- * @see docs/REQ-110-print-options-panel-overview.md
- * @see docs/REQ-111-qr-code-integration-overview.md
- * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see SessionSummaryStep for usage context
+ * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
  */
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
