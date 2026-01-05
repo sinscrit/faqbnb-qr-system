@@ -38,8 +38,8 @@ export type { ContentTypeStepProps } from './ContentTypeStep';
 // =============================================================================
 
 // Task 4.1: ContentCreationStep
-// export { ContentCreationStep } from './ContentCreationStep';
-// export type { ContentCreationStepProps } from './ContentCreationStep';
+export { ContentCreationStep } from './ContentCreationStep';
+export type { ContentCreationStepProps } from './ContentCreationStep';
 
 // Task 4.2: PreviewSaveStep
 // export { PreviewSaveStep } from './PreviewSaveStep';

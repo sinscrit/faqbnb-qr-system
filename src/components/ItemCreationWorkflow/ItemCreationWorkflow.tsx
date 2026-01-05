@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep } from './components/steps';
 
 // =============================================================================
 // Step Placeholder Component
@@ -105,6 +105,7 @@ export function ItemCreationWorkflow({
     setItemName,
     selectContentSource,
     selectContentType,
+    addContentPiece,
   } = useWorkflowState();
 
   // Exit confirmation dialog state
@@ -203,7 +204,16 @@ export function ItemCreationWorkflow({
           />
         );
       case 'content-creation':
-        return <StepPlaceholder step="content-creation" {...commonProps} />;
+        return (
+          <ContentCreationStep
+            currentContentType={state.currentItem?.contentType ?? 'video'}
+            currentContentSource={state.currentItem?.contentSource ?? 'existing'}
+            currentItem={state.currentItem!}
+            onAddContent={addContentPiece}
+            onNext={() => goToStep('preview-save')}
+            onCancel={() => goToStep('content-type-selection')}
+          />
+        );
       case 'preview-save':
         return <StepPlaceholder step="preview-save" {...commonProps} />;
       case 'next-action':
@@ -214,7 +224,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, goToStep]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

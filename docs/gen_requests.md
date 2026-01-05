@@ -5281,3 +5281,39 @@ Open Graph preview functionality demonstrates modern UX patterns familiar from s
 - [ ] Fetched metadata is stored in workflow state for potential later use
 - [ ] Component follows established patterns from previous step implementations
 - [ ] URL validation prevents obviously malformed URLs from triggering fetch requests
+
+---
+
+## REQ-105: Content Creation Step for Item Creation Workflow
+
+**Date**: 2026-01-05 11:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to create content for their FAQ/information items through a guided content creation step that adapts to their previous workflow selections.
+
+### Current Behavior
+Users cannot create content through the item creation workflow. The existing content capture functionality exists but is not integrated into the multi-step workflow.
+
+### Expected Behavior
+When users reach the content creation step in the item creation workflow:
+- They see a content creation interface configured based on their earlier selections (item type, specific item, and content source)
+- They can input or capture content appropriate to the selected content source type
+- Their captured content is properly formatted and ready for the next workflow step
+- They can cancel and return to the previous step without losing their progress
+
+### User Impact
+All users creating new FAQ or information items will use this step to capture their content. This affects the primary content creation flow and ensures content is captured in a consistent, workflow-aware manner.
+
+### Business Value
+Completes a critical step in the item creation workflow, enabling users to actually create content after configuring what type of content they want to create. This bridges the gap between workflow configuration and content capture.
+
+### Acceptance Criteria
+- [ ] Content creation step displays when user advances from content source selection
+- [ ] Content capture interface adapts based on item type, specific item, and content source selections
+- [ ] Captured content is transformed into the expected format for subsequent workflow steps
+- [ ] Cancel action returns user to previous step without data loss
+- [ ] Content validation occurs before allowing progression to next step
+- [ ] Existing content capture functionality is preserved and not broken by integration
+

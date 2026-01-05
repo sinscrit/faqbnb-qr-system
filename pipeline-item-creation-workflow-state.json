@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T08:06:15.678318",
+  "updated_at": "2026-01-05T08:26:00.892621",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 10,
+  "current_task_index": 11,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -248,11 +248,19 @@
       "title": "URL Content with Preview",
       "description": "[ ] Implement `useUrlPreview` hook\n[ ] Fetch Open Graph metadata\n[ ] Handle loading, success, error states\n[ ] Support proceeding without preview (with warning)",
       "raw_match": "#### Task 3.3: URL Content with Preview [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-104",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T08:26:00.892582",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-104",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-104-url-content-with-preview-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-104-url-content-with-preview-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "4.1",
@@ -437,8 +445,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 11,
-    "last_request_id": "REQ-103",
+    "total_requests_generated": 12,
+    "last_request_id": "REQ-104",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },
