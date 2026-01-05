@@ -46,8 +46,8 @@ export type { ItemNameEditorProps } from './ItemNameEditor';
 // =============================================================================
 
 // Task 4.2: ContentPieceCard
-// export { ContentPieceCard } from './ContentPieceCard';
-// export type { ContentPieceCardProps } from './ContentPieceCard';
+export { ContentPieceCard } from './ContentPieceCard';
+export type { ContentPieceCardProps } from './ContentPieceCard';
 
 // =============================================================================
 // Summary Components (Phase 6)

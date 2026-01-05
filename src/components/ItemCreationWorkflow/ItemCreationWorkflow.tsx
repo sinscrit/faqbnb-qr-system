@@ -16,7 +16,8 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep } from './components/steps';
+import type { SessionItem } from './ItemCreationWorkflow.types';
 
 // =============================================================================
 // Step Placeholder Component
@@ -106,7 +107,13 @@ export function ItemCreationWorkflow({
     selectContentSource,
     selectContentType,
     addContentPiece,
+    removeContentPiece,
+    reorderContent,
+    saveItem,
   } = useWorkflowState();
+
+  // Save operation state
+  const [isSaving, setIsSaving] = useState(false);
 
   // Exit confirmation dialog state
   const [showExitDialog, setShowExitDialog] = useState(false);
@@ -143,6 +150,34 @@ export function ItemCreationWorkflow({
   const handleCancelExit = useCallback(() => {
     setShowExitDialog(false);
   }, []);
+
+  // Handle save item
+  const handleSaveItem = useCallback(async () => {
+    if (!state.currentItem) {
+      throw new Error('No current item to save');
+    }
+
+    setIsSaving(true);
+    try {
+      const sessionItem: SessionItem = {
+        id: crypto.randomUUID(),
+        name: state.currentItem.itemName,
+        room: state.currentItem.room,
+        itemType: state.currentItem.itemType,
+        content: state.currentItem.content,
+        createdAt: new Date(),
+      };
+
+      const result = await onSaveItem(sessionItem);
+
+      // Save to session state
+      saveItem({ ...sessionItem, qrCodeUrl: result.qrCodeUrl });
+
+      return result;
+    } finally {
+      setIsSaving(false);
+    }
+  }, [state.currentItem, onSaveItem, saveItem]);
 
   // Render current step content
   const renderCurrentStep = useCallback(() => {
@@ -215,7 +250,19 @@ export function ItemCreationWorkflow({
           />
         );
       case 'preview-save':
-        return <StepPlaceholder step="preview-save" {...commonProps} />;
+        return (
+          <PreviewSaveStep
+            currentItem={state.currentItem!}
+            onUpdateItemName={setItemName}
+            onRemoveContent={removeContentPiece}
+            onReorderContent={reorderContent}
+            onRetake={() => goToStep('content-creation')}
+            onSave={handleSaveItem}
+            onCancel={prevStep}
+            onComplete={() => goToStep('next-action')}
+            isSaving={isSaving}
+          />
+        );
       case 'next-action':
         return <StepPlaceholder step="next-action" {...commonProps} />;
       case 'session-summary':
@@ -224,7 +271,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, goToStep]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

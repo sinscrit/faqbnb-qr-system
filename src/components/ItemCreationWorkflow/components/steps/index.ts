@@ -42,8 +42,8 @@ export { ContentCreationStep } from './ContentCreationStep';
 export type { ContentCreationStepProps } from './ContentCreationStep';
 
 // Task 4.2: PreviewSaveStep
-// export { PreviewSaveStep } from './PreviewSaveStep';
-// export type { PreviewSaveStepProps } from './PreviewSaveStep';
+export { PreviewSaveStep } from './PreviewSaveStep';
+export type { PreviewSaveStepProps } from './PreviewSaveStep';
 
 // =============================================================================
 // Session Flow Steps (Phase 5)

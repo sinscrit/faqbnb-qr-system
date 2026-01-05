@@ -5317,3 +5317,41 @@ Completes a critical step in the item creation workflow, enabling users to actua
 - [ ] Content validation occurs before allowing progression to next step
 - [ ] Existing content capture functionality is preserved and not broken by integration
 
+---
+
+## REQ-106: Preview and Save Step for Item Creation Workflow
+
+**Date**: 2026-01-05 17:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to preview their created content in its final presentation format and confirm that all information is correct before saving the completed item to their property.
+
+### Current Behavior
+Users complete the content creation step but have no opportunity to preview how the content will appear to end users or make final adjustments before saving. There is no unified preview experience showing the item name, content thumbnail, and offering options to modify or replace content.
+
+### Expected Behavior
+After creating content, users advance to a preview and save step where:
+- They see a visual preview of their content appropriate to the content type (video thumbnail, photo preview, PDF representation, text preview, or URL card with metadata)
+- The item name is displayed prominently with an option to edit it inline
+- They can choose to retake or replace the content if unsatisfied
+- They can save the completed item through a clear call-to-action button
+- They receive immediate confirmation feedback when the item is successfully saved
+
+### User Impact
+All users completing the item creation workflow will use this step as the final checkpoint before their item goes live. This affects user confidence in the content quality and reduces the need for post-creation edits or deletions.
+
+### Business Value
+Provides quality assurance in the creation process by giving users a final review opportunity before committing. Reduces user errors, abandoned creations, and support requests related to incorrectly saved items. Completes the end-to-end item creation experience.
+
+### Acceptance Criteria
+- [ ] Preview step displays after content creation with appropriate content visualization for all supported content types (video, photo, PDF, text, URL)
+- [ ] Item name is shown prominently with an edit option that allows inline modification
+- [ ] Retake or replace option allows users to return to content creation without losing other workflow data
+- [ ] Save button is clearly visible and triggers item persistence to the database
+- [ ] Success confirmation is displayed immediately after successful save
+- [ ] Multi-content items display all content pieces through a dedicated card component
+- [ ] Content preview accurately represents how the item will appear to end users
+- [ ] All workflow state (room, item type, specific item, content) is preserved during preview
+
