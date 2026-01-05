@@ -5665,3 +5665,80 @@ Accessibility and mobile optimization are essential for inclusive product design
 - [ ] Screen reader testing confirms all content and interactions are announced correctly
 - [ ] Mobile gesture support is verified on iOS and Android devices
 
+
+---
+
+## REQ-115: Unit Testing for Item Creation Workflow Components
+
+**Date**: 2026-01-05 14:32
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system shall provide comprehensive unit test coverage for the item creation workflow's state management, suggestion handling, URL preview functionality, navigation logic, and session persistence mechanisms.
+
+### Current Behavior
+The item creation workflow components and hooks lack dedicated unit tests, making it difficult to verify correctness, catch regressions early, and ensure reliable behavior across edge cases.
+
+### Expected Behavior
+Each major component and hook in the item creation workflow has a corresponding test suite that validates its behavior in isolation, including:
+- State transitions and reducer logic respond correctly to all action types
+- Suggestion generation and filtering produce expected results
+- URL preview fetching handles success, failure, and loading states appropriately
+- Step navigation prevents invalid transitions and maintains workflow integrity
+- Session data persists and recovers correctly across browser sessions
+
+### User Impact
+While users do not directly interact with tests, this enhancement improves overall system reliability by catching bugs before they reach production, reducing unexpected errors during item creation, and enabling confident future modifications to workflow logic.
+
+### Business Value
+Unit tests reduce maintenance costs by catching regressions early, enable faster iteration by providing confidence in changes, and improve overall product quality by ensuring core workflow features behave consistently.
+
+### Acceptance Criteria
+- [ ] Workflow state reducer handles all action types correctly and transitions between states as expected
+- [ ] Suggestion hook returns appropriate suggestions based on input and handles empty or invalid scenarios
+- [ ] URL preview hook manages loading, success, and error states correctly for various URL inputs
+- [ ] Step navigation logic prevents users from skipping required steps or moving backward inappropriately
+- [ ] Session persistence correctly saves and restores workflow state across browser sessions
+- [ ] All tests run successfully in the project's test environment without manual intervention
+- [ ] Test coverage for these components meets or exceeds project standards
+
+
+
+---
+
+## REQ-116: Integration Testing for Item Creation Workflow
+
+**Date**: 2026-01-05 14:45
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The system shall provide comprehensive integration tests that verify the complete item creation workflow operates correctly end-to-end, including seamless integration between all workflow steps, media capture functionality, and QR code generation.
+
+### Current Behavior
+While unit tests validate individual components in isolation, there is no comprehensive integration testing to verify that all workflow steps work together correctly, that the ItemCapture component integrates properly with the workflow, and that QR code generation functions as expected within the complete user journey.
+
+### Expected Behavior
+The testing suite includes integration tests that validate:
+- Users can navigate through the complete workflow from room selection through final save, with all steps communicating correctly and maintaining consistent state
+- The ItemCapture component integrates seamlessly, allowing users to capture photos, videos, and other media as part of the workflow without data loss or state corruption
+- QR code generation triggers at the appropriate time, produces valid codes for created items, and handles generation failures gracefully within the workflow context
+- Session persistence works correctly across the entire workflow, allowing users to pause and resume their work without losing progress
+- Error states propagate correctly between integrated components, providing users with clear feedback when issues occur
+
+### User Impact
+Users completing the item creation workflow will experience a reliable, predictable system where all features work together harmoniously, media captures integrate smoothly, QR codes generate successfully, and their work is protected through automatic session recovery.
+
+### Business Value
+Integration testing reduces production defects by catching issues that only appear when components interact, decreases support costs by preventing workflow failures, and increases user confidence in the system's reliability during critical item creation tasks.
+
+### Acceptance Criteria
+- [ ] Complete workflow flow tests verify users can progress from initial step through final save with all intermediate steps functioning correctly
+- [ ] ItemCapture integration tests confirm media capture, preview, and editing features work within the workflow context
+- [ ] QR code generation integration tests verify codes are created successfully for items and handle generation failures appropriately
+- [ ] Cross-step data persistence tests confirm information entered in one step is correctly available in subsequent steps
+- [ ] Session recovery tests validate that pausing and resuming the workflow at any step maintains complete state integrity
+- [ ] Error handling tests demonstrate that failures in one component provide appropriate feedback without corrupting the entire workflow
+- [ ] All integration tests run successfully in a continuous integration environment
+

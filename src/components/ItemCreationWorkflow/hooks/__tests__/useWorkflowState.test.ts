@@ -2,11 +2,12 @@
  * Unit Tests for useWorkflowState Hook
  *
  * Tests the pure functions (reducer, helper functions, factory) that don't require
- * React Testing Library. Hook integration tests are deferred until testing
- * infrastructure is set up.
+ * React Testing Library. Includes comprehensive tests for state management, navigation,
+ * content management, session handling, and large session edge cases.
  *
  * @module ItemCreationWorkflow/hooks/__tests__/useWorkflowState.test
- * @lastModified 2026-01-05 (REQ-094)
+ * @vitest-environment jsdom
+ * @lastModified 2026-01-05 (REQ-115 - Added large session handling tests)
  */
 
 import { describe, it, expect, vi } from 'vitest';
@@ -851,6 +852,197 @@ describe('workflowReducer - Error Handling', () => {
       expect(newState.currentStep).toBe('room-selection');
       expect(newState.currentItem).toBeNull();
       expect(newState.session.id).not.toBe(originalSessionId);
+    });
+  });
+});
+
+// =============================================================================
+// Large Session Handling Tests (REQ-115)
+// =============================================================================
+
+describe('workflowReducer - Large Session Handling', () => {
+  const MAX_ITEMS = 50; // Matches WORKFLOW_CONFIG_DEFAULTS.maxItemsPerSession
+
+  /**
+   * Creates a workflow state with the specified number of session items.
+   */
+  const createSessionWithItems = (count: number): WorkflowState => {
+    const items: SessionItem[] = Array.from({ length: count }, (_, i) => ({
+      id: `item-${i}`,
+      name: `Test Item ${i}`,
+      room: 'kitchen',
+      itemType: 'appliance',
+      content: [],
+      createdAt: new Date(),
+    }));
+
+    return {
+      ...createInitialState(),
+      session: {
+        ...createInitialState().session,
+        items,
+      },
+    };
+  };
+
+  describe('session item capacity', () => {
+    it('allows saving items up to one below session limit (49 items)', () => {
+      const state = createSessionWithItems(49);
+
+      expect(state.session.items).toHaveLength(49);
+
+      const newItem: SessionItem = {
+        id: 'item-49',
+        name: 'Item 49',
+        room: 'kitchen',
+        itemType: 'appliance',
+        content: [],
+        createdAt: new Date(),
+      };
+
+      const newState = workflowReducer(state, {
+        type: 'SAVE_ITEM',
+        payload: newItem,
+      });
+
+      expect(newState.session.items).toHaveLength(50);
+      expect(newState.session.items[49].id).toBe('item-49');
+    });
+
+    it('handles session at maximum capacity (50 items)', () => {
+      const state = createSessionWithItems(50);
+
+      expect(state.session.items).toHaveLength(50);
+
+      // Verify all 50 items have unique IDs
+      const uniqueIds = new Set(state.session.items.map(item => item.id));
+      expect(uniqueIds.size).toBe(50);
+    });
+
+    it('allows navigation actions with large item count', () => {
+      const state = createSessionWithItems(50);
+
+      // Navigate to room-selection
+      let newState = workflowReducer(state, {
+        type: 'NAVIGATE_TO',
+        payload: 'room-selection',
+      });
+
+      expect(newState.currentStep).toBe('room-selection');
+      expect(newState.session.items).toHaveLength(50);
+
+      // Select a room - should still work
+      newState = workflowReducer(newState, {
+        type: 'SELECT_ROOM',
+        payload: 'bedroom',
+      });
+
+      expect(newState.currentItem?.room).toBe('bedroom');
+      expect(newState.session.items).toHaveLength(50);
+    });
+  });
+
+  describe('reducer performance with large sessions', () => {
+    it('maintains performance with 50 items for state transitions', () => {
+      const state = createSessionWithItems(50);
+      const startTime = performance.now();
+
+      // Perform multiple reducer actions
+      let newState = state;
+      for (let i = 0; i < 10; i++) {
+        newState = workflowReducer(newState, { type: 'START_NEW_ITEM' });
+        newState = workflowReducer(newState, { type: 'SELECT_ROOM', payload: 'kitchen' });
+        newState = workflowReducer(newState, { type: 'GO_BACK' });
+      }
+
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+
+      // Should complete within reasonable time (1 second for 30 operations)
+      expect(duration).toBeLessThan(1000);
+
+      // State should still be valid
+      expect(newState.session.items).toHaveLength(50);
+    });
+  });
+
+  describe('session state consistency', () => {
+    it('preserves all items after multiple state changes', () => {
+      let state = createSessionWithItems(50);
+
+      // Perform various state operations
+      state = workflowReducer(state, { type: 'START_NEW_ITEM' });
+      state = workflowReducer(state, { type: 'SELECT_ROOM', payload: 'bathroom' });
+      state = workflowReducer(state, { type: 'GO_BACK' });
+      state = workflowReducer(state, { type: 'COMPLETE_SESSION' });
+      state = workflowReducer(state, { type: 'GO_BACK' });
+
+      // All 50 original items should still exist
+      expect(state.session.items).toHaveLength(50);
+    });
+
+    it('correctly updates session.currentItem independently of session.items', () => {
+      const state = createSessionWithItems(50);
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_ROOM',
+        payload: 'outdoor',
+      });
+
+      // currentItem should be set
+      expect(newState.currentItem?.room).toBe('outdoor');
+      expect(newState.session.currentItem?.room).toBe('outdoor');
+
+      // Saved items should be unchanged
+      expect(newState.session.items).toHaveLength(50);
+      expect(newState.session.items[0].room).toBe('kitchen');
+    });
+  });
+
+  describe('boundary conditions', () => {
+    it('handles 0 items gracefully', () => {
+      const state = createSessionWithItems(0);
+
+      expect(state.session.items).toHaveLength(0);
+
+      const newState = workflowReducer(state, { type: 'COMPLETE_SESSION' });
+
+      expect(newState.currentStep).toBe('session-summary');
+      expect(newState.session.items).toHaveLength(0);
+    });
+
+    it('handles 1 item correctly', () => {
+      const state = createSessionWithItems(1);
+
+      expect(state.session.items).toHaveLength(1);
+
+      const newState = workflowReducer(state, { type: 'COMPLETE_SESSION' });
+
+      expect(newState.currentStep).toBe('session-summary');
+      expect(newState.session.items).toHaveLength(1);
+    });
+
+    it('handles session at 49 items (one below max)', () => {
+      const state = createSessionWithItems(49);
+
+      expect(state.session.items).toHaveLength(49);
+
+      // Can add one more item
+      const newItem: SessionItem = {
+        id: 'new-item',
+        name: 'New Item',
+        room: 'kitchen',
+        itemType: 'appliance',
+        content: [],
+        createdAt: new Date(),
+      };
+
+      const newState = workflowReducer(state, {
+        type: 'SAVE_ITEM',
+        payload: newItem,
+      });
+
+      expect(newState.session.items).toHaveLength(50);
     });
   });
 });

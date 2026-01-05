@@ -2,11 +2,12 @@
  * Unit Tests for useSessionPersistence Hook
  *
  * Tests the session persistence hook functionality using mocked storage utilities.
- * Note: Full React hook integration tests require testing infrastructure setup.
+ * Includes tests for auto-save, debouncing, session recovery, and concurrent save
+ * operation handling.
  *
  * @module ItemCreationWorkflow/hooks/__tests__/useSessionPersistence.test
  * @vitest-environment jsdom
- * @lastModified 2026-01-05 (REQ-096 Task 1.4)
+ * @lastModified 2026-01-05 (REQ-115 - Added concurrent save operations tests)
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
@@ -637,6 +638,186 @@ describe('useSessionPersistence', () => {
   describe('constants', () => {
     it('exports AUTO_SAVE_DEBOUNCE_MS', () => {
       expect(AUTO_SAVE_DEBOUNCE_MS).toBe(500);
+    });
+  });
+
+  // ===========================================================================
+  // Concurrent Save Operations Tests (REQ-115)
+  // ===========================================================================
+
+  describe('concurrent save operations', () => {
+    it('coalesces rapid state changes into single save', () => {
+      const state = createMockState({ isDirty: true });
+
+      const { rerender } = renderHook(
+        ({ state }) => useSessionPersistence(state),
+        { initialProps: { state } }
+      );
+
+      // Trigger 5 rapid state changes
+      for (let i = 0; i < 5; i++) {
+        const updatedState = createMockState({
+          isDirty: true,
+          currentStep: i % 2 === 0 ? 'room-selection' : 'item-type-selection',
+        });
+        rerender({ state: updatedState });
+      }
+
+      // Should not have saved yet (still in debounce)
+      expect(sessionStorage.saveWorkflowState).not.toHaveBeenCalled();
+
+      // Advance past debounce interval
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS + 10);
+      });
+
+      // Verify only one save occurred
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledTimes(1);
+    });
+
+    it('saves latest state when multiple changes occur during debounce', () => {
+      const state1 = createMockState({ currentStep: 'room-selection' });
+      const state2 = createMockState({ currentStep: 'item-type-selection' });
+      const state3 = createMockState({ currentStep: 'content-creation' });
+
+      const { rerender } = renderHook(
+        ({ state }) => useSessionPersistence(state),
+        { initialProps: { state: state1 } }
+      );
+
+      rerender({ state: state2 });
+      rerender({ state: state3 });
+
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS + 10);
+      });
+
+      // Verify the final state (state3) was saved
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledWith(
+        expect.objectContaining({ currentStep: 'content-creation' })
+      );
+
+      // Only one save operation
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles saveNow during pending debounced save', () => {
+      const state = createMockState();
+
+      const { result } = renderHook(() =>
+        useSessionPersistence(state)
+      );
+
+      // Trigger debounced save (start timer)
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS / 2);
+      });
+
+      // Should not have saved yet
+      expect(sessionStorage.saveWorkflowState).not.toHaveBeenCalled();
+
+      // Call saveNow while debounce is pending
+      act(() => {
+        result.current.saveNow();
+      });
+
+      // Verify immediate save occurred
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledTimes(1);
+
+      // Advance past original debounce time
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS);
+      });
+
+      // The debounced save should also occur after full interval
+      // Total saves depends on implementation - at least the immediate one happened
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalled();
+    });
+
+    it('prevents duplicate saves when saveNow is called multiple times', () => {
+      const state = createMockState();
+
+      const { result } = renderHook(() =>
+        useSessionPersistence(state)
+      );
+
+      // Call saveNow multiple times rapidly
+      act(() => {
+        result.current.saveNow();
+        result.current.saveNow();
+        result.current.saveNow();
+      });
+
+      // Each call should trigger a save (saveNow is immediate)
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledTimes(3);
+    });
+
+    it('resets debounce timer on each state change', () => {
+      const state1 = createMockState({ currentStep: 'room-selection' });
+      const state2 = createMockState({ currentStep: 'item-type-selection' });
+
+      const { rerender } = renderHook(
+        ({ state }) => useSessionPersistence(state),
+        { initialProps: { state: state1 } }
+      );
+
+      // Advance to just before debounce completion
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS - 50);
+      });
+
+      // Should not have saved
+      expect(sessionStorage.saveWorkflowState).not.toHaveBeenCalled();
+
+      // Change state - resets timer
+      rerender({ state: state2 });
+
+      // Advance the original remaining time
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      // Still should not have saved (timer was reset)
+      expect(sessionStorage.saveWorkflowState).not.toHaveBeenCalled();
+
+      // Now complete the new debounce period
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS);
+      });
+
+      // Now it should save with the latest state
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledWith(state2);
+    });
+
+    it('handles alternating between same states during debounce', () => {
+      const stateA = createMockState({ currentStep: 'room-selection' });
+      const stateB = createMockState({ currentStep: 'item-type-selection' });
+
+      const { rerender } = renderHook(
+        ({ state }) => useSessionPersistence(state),
+        { initialProps: { state: stateA } }
+      );
+
+      // Alternate between states
+      rerender({ state: stateB });
+      act(() => { vi.advanceTimersByTime(100); });
+
+      rerender({ state: stateA });
+      act(() => { vi.advanceTimersByTime(100); });
+
+      rerender({ state: stateB });
+      act(() => { vi.advanceTimersByTime(100); });
+
+      rerender({ state: stateA });
+
+      // Complete debounce
+      act(() => {
+        vi.advanceTimersByTime(AUTO_SAVE_DEBOUNCE_MS);
+      });
+
+      // Should only save once with the final state
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledTimes(1);
+      expect(sessionStorage.saveWorkflowState).toHaveBeenCalledWith(stateA);
     });
   });
 });

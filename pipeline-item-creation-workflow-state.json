@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T13:22:55.517248",
+  "updated_at": "2026-01-05T14:16:32.532117",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 20,
+  "current_task_index": 22,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -458,11 +458,19 @@
       "title": "Accessibility & Mobile Optimization",
       "description": "[ ] ARIA labels for all interactive elements\n[ ] Keyboard navigation support\n[ ] Focus management between steps\n[ ] Touch target verification (48px minimum)\n[ ] Responsive layouts for mobile/tablet/desktop\n[ ] Reduced motion support for animations",
       "raw_match": "#### Task 7.2: Accessibility & Mobile Optimization [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-114",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T13:55:03.451283",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-114",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-114-accessibility-mobile-optimization-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-114-accessibility-mobile-optimization-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "8.1",
@@ -471,11 +479,19 @@
       "title": "Unit Tests",
       "description": "[ ] Test `useWorkflowState` reducer\n[ ] Test `useSuggestions` hook\n[ ] Test `useUrlPreview` hook\n[ ] Test step navigation logic\n[ ] Test session persistence",
       "raw_match": "#### Task 8.1: Unit Tests [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-115",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T14:16:32.532066",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-115",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-115-unit-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-115-unit-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "8.2",
@@ -517,8 +533,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 21,
-    "last_request_id": "REQ-113",
+    "total_requests_generated": 23,
+    "last_request_id": "REQ-115",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

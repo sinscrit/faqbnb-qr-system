@@ -5,10 +5,12 @@
  * in the workflow state management.
  *
  * @module ItemCreationWorkflow/hooks/__tests__/useWorkflowState.max-content
+ * @vitest-environment jsdom
  * @see docs/REQ-108-multi-content-item-support-detailed.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-05 (REQ-115 - Migrated from Jest to Vitest)
  */
 
+import { describe, it, expect, vi } from 'vitest';
 import { workflowReducer, createInitialState } from '../useWorkflowState';
 import { MAX_CONTENT_PIECES } from '../../utils/constants';
 import type { ContentPiece, WorkflowState } from '../../ItemCreationWorkflow.types';
@@ -78,7 +80,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     });
 
     it('rejects content beyond MAX_CONTENT_PIECES', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       let state = createStateWithContent(MAX_CONTENT_PIECES);
 
@@ -100,7 +102,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     });
 
     it('returns same state reference when rejecting content', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       const state = createStateWithContent(MAX_CONTENT_PIECES);
 
@@ -116,7 +118,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     });
 
     it('does not log warning when adding within limit', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       const state = createStateWithContent(MAX_CONTENT_PIECES - 1);
 
@@ -251,7 +253,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     });
 
     it('does not mark state as dirty when content is rejected', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       const state = createStateWithContent(MAX_CONTENT_PIECES);
       // Verify we're at max
@@ -288,7 +290,7 @@ describe('useWorkflowState - MAX_CONTENT_PIECES enforcement', () => {
     });
 
     it('keeps session.currentItem in sync when content is rejected', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       const state = createStateWithContent(MAX_CONTENT_PIECES);
 

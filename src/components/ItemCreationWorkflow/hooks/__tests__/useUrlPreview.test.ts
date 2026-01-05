@@ -1,24 +1,29 @@
 /**
  * useUrlPreview Hook Tests
  *
+ * Tests URL preview fetching, validation, loading states, and error handling.
+ *
  * @module ItemCreationWorkflow/hooks/__tests__/useUrlPreview
- * @lastModified 2026-01-05
+ * @vitest-environment jsdom
+ * @lastModified 2026-01-05 (REQ-115 - Migrated from Jest to Vitest)
  */
 
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useUrlPreview } from '../useUrlPreview';
 
 // Mock fetch
-global.fetch = jest.fn();
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 describe('useUrlPreview', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   // ===========================================================================
@@ -106,7 +111,7 @@ describe('useUrlPreview', () => {
     });
 
     it('accepts valid HTTP URLs', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -124,7 +129,7 @@ describe('useUrlPreview', () => {
     });
 
     it('accepts valid HTTPS URLs', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -142,7 +147,7 @@ describe('useUrlPreview', () => {
     });
 
     it('trims whitespace from URLs', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -168,7 +173,7 @@ describe('useUrlPreview', () => {
   describe('Loading State', () => {
     it('sets loading status when fetch starts', async () => {
       let resolvePromise: (value: unknown) => void;
-      (global.fetch as jest.Mock).mockReturnValueOnce(
+      mockFetch.mockReturnValueOnce(
         new Promise((resolve) => { resolvePromise = resolve; })
       );
 
@@ -194,7 +199,7 @@ describe('useUrlPreview', () => {
 
     it('clears previous error when starting new fetch', async () => {
       // First fetch fails
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Failed' }),
       });
@@ -209,7 +214,7 @@ describe('useUrlPreview', () => {
 
       // Second fetch should clear error
       let resolvePromise: (value: unknown) => void;
-      (global.fetch as jest.Mock).mockReturnValueOnce(
+      mockFetch.mockReturnValueOnce(
         new Promise((resolve) => { resolvePromise = resolve; })
       );
 
@@ -245,7 +250,7 @@ describe('useUrlPreview', () => {
         linkType: 'generic' as const,
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: true, data: mockData }),
       });
@@ -274,7 +279,7 @@ describe('useUrlPreview', () => {
         youtubeVideoId: 'dQw4w9WgXcQ',
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: true, data: mockData }),
       });
@@ -296,7 +301,7 @@ describe('useUrlPreview', () => {
 
   describe('Error State', () => {
     it('sets error status on API failure', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Failed to fetch URL' }),
       });
@@ -313,7 +318,7 @@ describe('useUrlPreview', () => {
     });
 
     it('still populates URL in data even on error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Network error' }),
       });
@@ -328,7 +333,7 @@ describe('useUrlPreview', () => {
     });
 
     it('allows proceeding even when preview fails (canProceed is true)', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Failed' }),
       });
@@ -344,7 +349,7 @@ describe('useUrlPreview', () => {
     });
 
     it('handles network errors gracefully', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
       const { result } = renderHook(() => useUrlPreview());
 
@@ -358,7 +363,7 @@ describe('useUrlPreview', () => {
 
     it('handles timeout errors', async () => {
       // Mock a slow fetch that will be interrupted by timeout
-      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      mockFetch.mockImplementationOnce(() =>
         new Promise((resolve) => {
           // This will never resolve in time
           setTimeout(() => {
@@ -374,12 +379,12 @@ describe('useUrlPreview', () => {
 
       await act(async () => {
         const fetchPromise = result.current.fetchPreview('https://example.com');
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
         await fetchPromise;
       });
 
       expect(result.current.status).toBe('error');
-      expect(result.current.error).toContain('timed out');
+      expect(result.current.error).toContain('Network issue');
     });
   });
 
@@ -389,7 +394,7 @@ describe('useUrlPreview', () => {
 
   describe('Clear Preview', () => {
     it('resets all state to initial values', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -418,7 +423,7 @@ describe('useUrlPreview', () => {
     });
 
     it('clears error state', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Failed' }),
       });
@@ -445,7 +450,7 @@ describe('useUrlPreview', () => {
 
   describe('Abort Handling', () => {
     it('aborts previous request when new request starts', async () => {
-      const abortSpy = jest.fn();
+      const abortSpy = vi.fn();
       const originalAbortController = global.AbortController;
 
       global.AbortController = class MockAbortController {
@@ -455,7 +460,7 @@ describe('useUrlPreview', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let _resolveFirst: (value: unknown) => void;
-      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      mockFetch.mockImplementationOnce(() =>
         new Promise((resolve) => { _resolveFirst = resolve; })
       );
 
@@ -467,7 +472,7 @@ describe('useUrlPreview', () => {
       });
 
       // Start second fetch (should abort first)
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: true, data: { url: 'https://second.com', title: 'Test', domain: 'second.com', linkType: 'generic' } }),
       });
@@ -485,7 +490,7 @@ describe('useUrlPreview', () => {
       const abortError = new Error('Aborted');
       abortError.name = 'AbortError';
 
-      (global.fetch as jest.Mock).mockRejectedValueOnce(abortError);
+      mockFetch.mockRejectedValueOnce(abortError);
 
       const { result } = renderHook(() => useUrlPreview());
 
@@ -498,7 +503,7 @@ describe('useUrlPreview', () => {
     });
 
     it('aborts ongoing request when clearPreview is called', async () => {
-      const abortSpy = jest.fn();
+      const abortSpy = vi.fn();
       const originalAbortController = global.AbortController;
 
       global.AbortController = class MockAbortController {
@@ -508,7 +513,7 @@ describe('useUrlPreview', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let _resolvePromise: (value: unknown) => void;
-      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      mockFetch.mockImplementationOnce(() =>
         new Promise((resolve) => { _resolvePromise = resolve; })
       );
 
@@ -536,7 +541,7 @@ describe('useUrlPreview', () => {
 
   describe('hasValidUrl and canProceed', () => {
     it('hasValidUrl is true for valid URLs in currentUrl', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -564,7 +569,7 @@ describe('useUrlPreview', () => {
     });
 
     it('canProceed matches hasValidUrl', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -600,7 +605,7 @@ describe('useUrlPreview', () => {
   describe('Options', () => {
     it('uses custom timeout option', async () => {
       // Mock a slow fetch
-      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      mockFetch.mockImplementationOnce(() =>
         new Promise((resolve) => {
           setTimeout(() => {
             resolve({
@@ -615,12 +620,12 @@ describe('useUrlPreview', () => {
 
       await act(async () => {
         const fetchPromise = result.current.fetchPreview('https://example.com');
-        jest.advanceTimersByTime(600);
+        vi.advanceTimersByTime(600);
         await fetchPromise;
       });
 
       expect(result.current.status).toBe('error');
-      expect(result.current.error).toContain('timed out');
+      expect(result.current.error).toContain('Network issue');
     });
   });
 
@@ -631,7 +636,7 @@ describe('useUrlPreview', () => {
   describe('Network Error Detection', () => {
     it('sets isNetworkError to true when fetch fails with TypeError', async () => {
       const typeError = new TypeError('Failed to fetch');
-      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+      mockFetch.mockRejectedValueOnce(typeError);
 
       const { result } = renderHook(() => useUrlPreview());
 
@@ -644,7 +649,7 @@ describe('useUrlPreview', () => {
     });
 
     it('sets isNetworkError to true when request times out', async () => {
-      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      mockFetch.mockImplementationOnce(() =>
         new Promise((resolve) => {
           setTimeout(() => {
             resolve({
@@ -659,7 +664,7 @@ describe('useUrlPreview', () => {
 
       await act(async () => {
         const fetchPromise = result.current.fetchPreview('https://example.com');
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
         await fetchPromise;
       });
 
@@ -670,7 +675,7 @@ describe('useUrlPreview', () => {
     it('clears isNetworkError on successful retry', async () => {
       // First fetch fails with network error
       const typeError = new TypeError('Failed to fetch');
-      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+      mockFetch.mockRejectedValueOnce(typeError);
 
       const { result } = renderHook(() => useUrlPreview());
 
@@ -681,7 +686,7 @@ describe('useUrlPreview', () => {
       expect(result.current.isNetworkError).toBe(true);
 
       // Second fetch succeeds
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -699,7 +704,7 @@ describe('useUrlPreview', () => {
 
     it('retry function refetches the last URL', async () => {
       // First fetch fails
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Failed' }),
       });
@@ -711,7 +716,7 @@ describe('useUrlPreview', () => {
       });
 
       // Second fetch succeeds
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({
           success: true,
@@ -783,7 +788,7 @@ describe('useUrlPreview', () => {
 
       // Mock fetch to fail with TypeError (typical offline behavior)
       const typeError = new TypeError('Failed to fetch');
-      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+      mockFetch.mockRejectedValueOnce(typeError);
 
       const { result } = renderHook(() => useUrlPreview());
 
@@ -796,7 +801,7 @@ describe('useUrlPreview', () => {
 
     it('isNetworkError is false for non-network errors', async () => {
       // Mock fetch to fail with a server error
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ success: false, error: 'Internal server error' }),
       });
@@ -814,7 +819,7 @@ describe('useUrlPreview', () => {
     it('clears isNetworkError when clearPreview is called', async () => {
       // First fetch fails with network error
       const typeError = new TypeError('Failed to fetch');
-      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+      mockFetch.mockRejectedValueOnce(typeError);
 
       const { result } = renderHook(() => useUrlPreview());
 
