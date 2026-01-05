@@ -7,7 +7,7 @@
  *
  * @module ItemCapture/types
  * @see docs/prd/item-capture-implementation-plan.md
- * @lastModified 2025-12-31 (REQ-043 Task 3.3.2)
+ * @lastModified 2026-01-05 (REQ-092 Task 1)
  */
 
 import type { PDFErrorCode } from './utils/pdfConstants';
@@ -119,6 +119,58 @@ export interface MediaMetadata {
     trimStart?: number; // seconds
     trimEnd?: number; // seconds
   };
+
+  // URL-specific fields (REQ-092)
+  /** URL for link items */
+  url?: string;
+  /** Domain extracted from URL */
+  domain?: string;
+  /** Fetched page title for URL items */
+  pageTitle?: string;
+  /** Fetched thumbnail URL for URL items */
+  thumbnailUrl?: string;
+  /** Favicon URL for URL items */
+  faviconUrl?: string;
+  /** Link type classification */
+  linkType?: 'youtube' | 'pdf' | 'image' | 'text' | 'generic';
+}
+
+/**
+ * Metadata extracted from a URL for preview display.
+ * @lastModified 2026-01-05 (REQ-092)
+ */
+export interface UrlMetadata {
+  /** The original URL */
+  url: string;
+  /** Extracted page title (from og:title or <title>) */
+  title: string;
+  /** Extracted description (from og:description or meta description) */
+  description?: string;
+  /** Thumbnail/preview image URL (from og:image) */
+  thumbnailUrl?: string;
+  /** Favicon URL */
+  faviconUrl?: string;
+  /** Extracted domain name */
+  domain: string;
+  /** Classified link type */
+  linkType: 'youtube' | 'pdf' | 'image' | 'text' | 'generic';
+  /** YouTube video ID (if applicable) */
+  youtubeVideoId?: string;
+}
+
+/**
+ * URL item stored in wizard state (before assembly).
+ * @lastModified 2026-01-05 (REQ-092)
+ */
+export interface UrlItem {
+  /** Local UUID for this URL item */
+  id: string;
+  /** The URL metadata */
+  metadata: UrlMetadata;
+  /** Display order (0-indexed) */
+  order: number;
+  /** Timestamp when added */
+  addedAt: Date;
 }
 
 /**
@@ -129,7 +181,7 @@ export interface MediaItem {
   id: string;
 
   /** Type of media */
-  type: 'video' | 'image' | 'pdf';
+  type: 'video' | 'image' | 'pdf' | 'url';
 
   /** The actual file/blob data */
   file: File | Blob;
@@ -165,7 +217,7 @@ export interface ItemRecord {
   applianceType?: ApplianceType;
 
   /** Type of content combination */
-  contentType: 'media' | 'text-only' | 'pdf-only' | 'mixed';
+  contentType: 'media' | 'text-only' | 'pdf-only' | 'url-only' | 'mixed';
 
   /** Array of captured/uploaded media items */
   media: MediaItem[];
@@ -191,6 +243,7 @@ export type WizardStep =
   | 'capture-photo'
   | 'upload-file'
   | 'write-text'
+  | 'add-url'
   | 'edit-media'
   | 'add-more'
   | 'review';
@@ -230,6 +283,9 @@ export interface ItemCaptureState {
 
   /** Collection of captured/uploaded media */
   mediaItems: MediaItem[];
+
+  /** Collection of URL items (REQ-092) */
+  urlItems: UrlItem[];
 
   /** Markdown instructions text */
   instructions: string;
@@ -272,6 +328,11 @@ export type ItemCaptureAction =
 
   // Instructions
   | { type: 'SET_INSTRUCTIONS'; payload: string }
+
+  // URL actions (REQ-092)
+  | { type: 'ADD_URL'; payload: UrlItem }
+  | { type: 'REMOVE_URL'; payload: string } // by id
+  | { type: 'UPDATE_URL'; payload: { id: string; updates: Partial<UrlItem> } }
 
   // Navigation
   | { type: 'GO_TO_STEP'; payload: WizardStep }

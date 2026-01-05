@@ -4817,3 +4817,36 @@ Transforms passive content management into an insights-driven workflow by surfac
 - [ ] Back office interface includes item-level analytics accessible to property managers
 - [ ] Visual indicators clearly distinguish between high-engagement and low-engagement items
 - [ ] Performance remains acceptable when displaying analytics for large item collections
+
+---
+
+## REQ-092: Support for URL/Link Items with Metadata Preview
+
+**Date**: 2026-01-05 14:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to add URLs and web links as items alongside images, videos, PDFs, and text content, with automatic metadata extraction and rich preview display.
+
+### Current Behavior
+The system supports four content types: images, videos, PDFs, and text/markdown. When users want to reference external resources such as product manuals, tutorial videos, or related web pages, they must either describe them in text or cannot include them at all. The database schema includes a links table that is not currently utilized by the user interface.
+
+### Expected Behavior
+Users can select "URL/Link" as a content type during item creation. After entering a URL, the system automatically fetches and displays metadata including the page title, preview image, and website icon. For video platforms like YouTube, the system extracts the video identifier and displays the appropriate thumbnail. The saved link appears in item listings with a visual preview card showing the thumbnail, title, and source domain, and opens the external page when clicked.
+
+### User Impact
+Property hosts managing appliances, amenities, and services will be able to enrich item documentation with external resources. Guests viewing items will have direct access to manufacturer manuals, instructional videos, product pages, and related external content without leaving the application context.
+
+### Business Value
+This enhancement extends the existing media type system to support modern web-based documentation patterns, making property information more comprehensive and reducing support inquiries by providing guests with manufacturer resources and tutorial content.
+
+### Acceptance Criteria
+- [ ] Users can select URL/Link as a content type option during item creation
+- [ ] After entering a URL, the system displays a preview showing the fetched title and thumbnail
+- [ ] YouTube URLs automatically display the video thumbnail without requiring API authentication
+- [ ] Saved URL items appear in item lists with thumbnail, title, and domain indicator
+- [ ] Clicking a URL item opens the link in a new browser tab
+- [ ] URL items integrate seamlessly with existing item display components and layouts
+- [ ] Invalid or inaccessible URLs display appropriate fallback content with the domain name and URL visible
+
