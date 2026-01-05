@@ -5165,3 +5165,39 @@ Complete suggestion coverage demonstrates system maturity, reduces user friction
 - [ ] Suggestions matrix is sourced from PRD specifications or best practices for rental property documentation
 
 ---
+
+## REQ-102: Content Source Selection Step for Item Creation Workflow
+
+**Date**: 2026-01-05 17:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to choose whether they have existing content to upload or want to create new content immediately, with this choice influencing which content type options appear in the subsequent step.
+
+### Current Behavior
+After selecting the specific item name, users have no way to indicate whether they already have documentation materials ready to upload (videos, photos, PDFs, text, URLs) or prefer to create content on the spot using device capabilities. The workflow does not differentiate between these two distinct user paths.
+
+### Expected Behavior
+The fourth workflow step presents two clear choice cards: "I have content" and "Create now". Each card displays a descriptive explanation of what that option means. The "I have content" card explains that users can upload existing videos, photos, PDFs, paste text, or add URLs. The "Create now" card explains that users can record videos, take photos, or write text directly. Users select one option by clicking the corresponding card. The selected choice determines which content type options are available in the next step, filtering to only upload-based types for existing content or only creation-based types for new content.
+
+### User Impact
+Property managers and hosts benefit from a clearer separation between uploading prepared materials versus creating documentation in real-time. This reduces confusion in the content type selection step by showing only relevant options based on the user's current situation. Users with existing materials can quickly proceed to upload workflows, while those creating fresh content see only applicable creation options.
+
+### Business Value
+Separating content source from content type streamlines the user experience by reducing cognitive load and eliminating irrelevant choices. This two-step filtering approach makes the workflow feel more intelligent and responsive to user context.
+
+### Acceptance Criteria
+- [ ] Two distinct choice cards are presented: "I have content" and "Create now"
+- [ ] Each card displays a clear title and description explaining the option
+- [ ] Each card shows examples of what content types will be available for that choice
+- [ ] User can select exactly one content source option by clicking a card
+- [ ] Selection state is visually indicated on the chosen card
+- [ ] Continue button is disabled until a content source is selected
+- [ ] Selecting "I have content" stores 'existing' in workflow state
+- [ ] Selecting "Create now" stores 'create-new' in workflow state
+- [ ] Component follows established patterns from ItemTypeStep and RoomSelectionStep implementations
+- [ ] Component uses shared card component if applicable for consistency
+- [ ] The selected content source filters options in the content-type-selection step
+- [ ] Component is exported from steps index file for integration into workflow renderer
+

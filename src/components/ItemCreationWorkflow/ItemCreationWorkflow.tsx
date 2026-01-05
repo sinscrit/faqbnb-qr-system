@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep } from './components/steps';
 
 // =============================================================================
 // Step Placeholder Component
@@ -103,6 +103,7 @@ export function ItemCreationWorkflow({
     selectItemType,
     selectSpecificItem,
     setItemName,
+    selectContentSource,
   } = useWorkflowState();
 
   // Exit confirmation dialog state
@@ -182,7 +183,14 @@ export function ItemCreationWorkflow({
           />
         );
       case 'content-source-selection':
-        return <StepPlaceholder step="content-source-selection" {...commonProps} />;
+        return (
+          <ContentSourceStep
+            currentContentSource={state.currentItem?.contentSource ?? null}
+            onSelectContentSource={selectContentSource}
+            onNext={nextStep}
+            canNext={canGoNext}
+          />
+        );
       case 'content-type-selection':
         return <StepPlaceholder step="content-type-selection" {...commonProps} />;
       case 'content-creation':
@@ -197,7 +205,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

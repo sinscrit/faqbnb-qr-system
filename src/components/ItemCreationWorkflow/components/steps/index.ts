@@ -26,8 +26,8 @@ export type { SpecificItemStepProps } from './SpecificItemStep';
 // =============================================================================
 
 // Task 3.1: ContentSourceStep
-// export { ContentSourceStep } from './ContentSourceStep';
-// export type { ContentSourceStepProps } from './ContentSourceStep';
+export { ContentSourceStep } from './ContentSourceStep';
+export type { ContentSourceStepProps } from './ContentSourceStep';
 
 // Task 3.2: ContentTypeStep
 // export { ContentTypeStep } from './ContentTypeStep';
