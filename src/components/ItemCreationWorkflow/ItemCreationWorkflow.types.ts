@@ -7,7 +7,7 @@
  *
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-05 (REQ-107 Task 8)
+ * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
  */
 
 // =============================================================================
@@ -343,6 +343,8 @@ export type WorkflowAction =
   | { type: 'COMPLETE_SESSION' }
   // Add More to Item action (for NextActionStep)
   | { type: 'ADD_MORE_TO_ITEM'; payload: CurrentItemState }
+  // Remove session item action (for SessionSummaryStep)
+  | { type: 'REMOVE_SESSION_ITEM'; payload: string }
 
   // Error handling actions
   | { type: 'SET_ERROR'; payload: { field: string; message: string } }

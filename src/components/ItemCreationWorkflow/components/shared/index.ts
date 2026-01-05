@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
  */
 
 // =============================================================================
@@ -58,8 +58,12 @@ export type { SortableContentPieceCardProps } from './SortableContentPieceCard';
 // =============================================================================
 
 // Task 6.1: SessionItemCard
-// export { SessionItemCard } from './SessionItemCard';
-// export type { SessionItemCardProps } from './SessionItemCard';
+export { SessionItemCard } from './SessionItemCard';
+export type { SessionItemCardProps } from './SessionItemCard';
+
+// Task 6.1: RemoveItemDialog
+export { RemoveItemDialog } from './RemoveItemDialog';
+export type { RemoveItemDialogProps } from './RemoveItemDialog';
 
 // Task 6.2: PrintOptionsPanel
 // export { PrintOptionsPanel } from './PrintOptionsPanel';

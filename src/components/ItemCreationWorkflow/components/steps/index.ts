@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Step Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/steps
- * @lastModified 2026-01-05 (REQ-107 Task 7)
+ * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
  */
 
 // =============================================================================
@@ -58,5 +58,5 @@ export type { NextActionStepProps } from './NextActionStep';
 // =============================================================================
 
 // Task 6.1: SessionSummaryStep
-// export { SessionSummaryStep } from './SessionSummaryStep';
-// export type { SessionSummaryStepProps } from './SessionSummaryStep';
+export { SessionSummaryStep } from './SessionSummaryStep';
+export type { SessionSummaryStepProps } from './SessionSummaryStep';

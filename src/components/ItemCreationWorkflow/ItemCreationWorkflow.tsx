@@ -8,15 +8,15 @@
  *
  * @module ItemCreationWorkflow
  * @see docs/REQ-095-main-workflow-component-overview.md
- * @lastModified 2026-01-05 (REQ-107 Task 11)
+ * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 
 // =============================================================================
@@ -113,6 +113,7 @@ export function ItemCreationWorkflow({
     startNewItem,
     completeSession,
     addMoreToItem,
+    removeSessionItem,
   } = useWorkflowState();
 
   // Save operation state
@@ -120,6 +121,10 @@ export function ItemCreationWorkflow({
 
   // Exit confirmation dialog state
   const [showExitDialog, setShowExitDialog] = useState(false);
+
+  // Existing items state (for session summary)
+  const [existingItems, setExistingItems] = useState<SessionItem[]>([]);
+  const [isLoadingExisting, setIsLoadingExisting] = useState(false);
 
   // Handle exit button click
   const handleExitClick = useCallback(() => {
@@ -202,6 +207,43 @@ export function ItemCreationWorkflow({
       setIsSaving(false);
     }
   }, [state.currentItem, onSaveItem, saveItem]);
+
+  // Fetch existing items when entering session-summary step
+  useEffect(() => {
+    if (state.currentStep === 'session-summary') {
+      setIsLoadingExisting(true);
+      onFetchExistingItems()
+        .then(items => setExistingItems(items))
+        .catch(err => {
+          console.error('Failed to fetch existing items:', err);
+          setExistingItems([]);
+        })
+        .finally(() => setIsLoadingExisting(false));
+    }
+  }, [state.currentStep, onFetchExistingItems]);
+
+  // Handle edit item (placeholder for Phase 7)
+  const handleEditItem = useCallback((itemId: string) => {
+    // TODO: Implement edit flow in Phase 7
+    console.warn('Edit item not yet implemented:', itemId);
+  }, []);
+
+  // Handle proceed to print (placeholder for Task 6.2)
+  const handleProceedToPrint = useCallback(() => {
+    // TODO: Navigate to PrintOptionsPanel in Task 6.2
+    console.log('Proceed to print');
+  }, []);
+
+  // Handle finish without print
+  const handleFinishWithoutPrint = useCallback(() => {
+    onSessionComplete({
+      id: state.session.id,
+      newItems: state.session.items,
+      existingItems: existingItems,
+      completedAt: new Date(),
+      printAction: 'skipped',
+    });
+  }, [state.session, existingItems, onSessionComplete]);
 
   // Render current step content
   const renderCurrentStep = useCallback(() => {
@@ -300,12 +342,22 @@ export function ItemCreationWorkflow({
         );
       }
       case 'session-summary':
-        // Session summary is the final step, no Continue button
-        return <StepPlaceholder step="session-summary" />;
+        return (
+          <SessionSummaryStep
+            sessionItems={state.session.items}
+            existingItems={existingItems}
+            isLoadingExisting={isLoadingExisting}
+            onEditItem={handleEditItem}
+            onRemoveItem={removeSessionItem}
+            onAddMoreItems={startNewItem}
+            onProceedToPrint={handleProceedToPrint}
+            onFinishWithoutPrint={handleFinishWithoutPrint}
+          />
+        );
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

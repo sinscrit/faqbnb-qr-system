@@ -5428,3 +5428,39 @@ Reduces item fragmentation by allowing comprehensive documentation in a single i
 - [ ] All drag-and-drop interactions are keyboard accessible for users who cannot use a mouse
 - [ ] Content piece order is preserved when saving the item and displayed consistently in all views
 
+
+---
+
+## REQ-109: Session Summary Step with Item Management
+
+**Date**: 2026-01-05 14:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to review all content items created during their current session and access previously created items before generating QR codes.
+
+### Current Behavior
+There is no consolidated view where users can review the collection of content items they have created within a single session or access items from previous sessions.
+
+### Expected Behavior
+After creating one or more content items, users see a summary screen that displays:
+- All newly created items in the current session with visual thumbnails
+- A collapsible section showing items created in previous sessions
+- The ability to edit or remove any displayed item
+- Visual distinction between new session items and historical items
+
+### User Impact
+Content creators managing multiple items need a centralized place to review, organize, and manage their content before proceeding to QR code generation. This enables them to quality-check their work, make last-minute adjustments, and ensure they're generating QR codes for the correct set of items.
+
+### Business Value
+Reduces errors and rework by giving users a final review checkpoint before committing to QR code generation. Improves user confidence and reduces support requests related to incorrect or incomplete content submissions.
+
+### Acceptance Criteria
+- [ ] Session summary screen displays all items created in the current session
+- [ ] Each item shows a visual thumbnail or icon representing its content type
+- [ ] Previously created items are accessible through a collapsible section that is collapsed by default
+- [ ] Each item card provides edit and remove actions that function correctly
+- [ ] Visual design clearly distinguishes between new session items and historical items
+- [ ] Removing an item updates the display immediately without requiring a page refresh
+- [ ] Editing an item navigates back to the appropriate editing interface with data pre-populated

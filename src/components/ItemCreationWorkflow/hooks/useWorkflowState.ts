@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow/hooks/useWorkflowState
  * @see docs/REQ-094-workflow-state-machine-detailed.md
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
@@ -463,6 +463,18 @@ export function workflowReducer(
       };
     }
 
+    case 'REMOVE_SESSION_ITEM': {
+      const itemId = action.payload;
+      const updatedItems = state.session.items.filter(item => item.id !== itemId);
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          items: updatedItems,
+        },
+      };
+    }
+
     // =========================================================================
     // Error Handling Actions
     // =========================================================================
@@ -569,6 +581,8 @@ export interface UseWorkflowStateReturn {
   completeSession: () => void;
   /** Restore an item and navigate to content-source-selection for adding more content */
   addMoreToItem: (item: CurrentItemState) => void;
+  /** Remove a session item by ID */
+  removeSessionItem: (itemId: string) => void;
 
   // Error actions
   /** Set a field-level error */
@@ -694,6 +708,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     dispatch({ type: 'ADD_MORE_TO_ITEM', payload: item });
   }, []);
 
+  const removeSessionItem = useCallback((itemId: string) => {
+    dispatch({ type: 'REMOVE_SESSION_ITEM', payload: itemId });
+  }, []);
+
   // =========================================================================
   // Error Actions
   // =========================================================================
@@ -786,6 +804,7 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     startNewItem,
     completeSession,
     addMoreToItem,
+    removeSessionItem,
     setError,
     clearError,
     clearAllErrors,
