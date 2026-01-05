@@ -30,8 +30,8 @@ export { ContentSourceStep } from './ContentSourceStep';
 export type { ContentSourceStepProps } from './ContentSourceStep';
 
 // Task 3.2: ContentTypeStep
-// export { ContentTypeStep } from './ContentTypeStep';
-// export type { ContentTypeStepProps } from './ContentTypeStep';
+export { ContentTypeStep } from './ContentTypeStep';
+export type { ContentTypeStepProps } from './ContentTypeStep';
 
 // =============================================================================
 // Content Creation Steps (Phase 4)

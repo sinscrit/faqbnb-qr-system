@@ -35,5 +35,10 @@ export type {
   UseSuggestionsReturn,
 } from './useSuggestions';
 
-// Placeholder for Task 3.3: useUrlPreview
-// export { useUrlPreview } from './useUrlPreview';
+// Task 3.3: useUrlPreview - URL preview fetching hook
+export { useUrlPreview } from './useUrlPreview';
+export type {
+  UseUrlPreviewOptions,
+  UrlPreviewStatus,
+  UseUrlPreviewReturn,
+} from './useUrlPreview';

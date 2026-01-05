@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T06:47:47.927984",
+  "updated_at": "2026-01-05T08:06:15.678318",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 8,
+  "current_task_index": 10,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -206,11 +206,19 @@
       "title": "Content Source Step",
       "description": "[ ] Create `ContentSourceStep.tsx` component\n[ ] Two options: \"I have content\" vs \"Create now\"\n[ ] Clear descriptions for each option\n[ ] Store selection in state for next step filtering",
       "raw_match": "#### Task 3.1: Content Source Step [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-102",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T07:27:30.971837",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-102",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-102-content-source-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-102-content-source-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "3.2",
@@ -219,11 +227,19 @@
       "title": "Content Type Step",
       "description": "[ ] Create `ContentTypeStep.tsx` component\n[ ] Dynamic options based on content source selection\n[ ] Icon-labeled cards for each content type\n[ ] For \"I have content\": Upload Video, Upload Photo, Upload PDF, Paste Text, Paste URL\n[ ] For \"Create now\": Record Video, Take Photo, Write Text",
       "raw_match": "#### Task 3.2: Content Type Step [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-103",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T08:06:15.678282",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-103",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-103-content-type-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-103-content-type-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "3.3",
@@ -421,8 +437,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 9,
-    "last_request_id": "REQ-101",
+    "total_requests_generated": 11,
+    "last_request_id": "REQ-103",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

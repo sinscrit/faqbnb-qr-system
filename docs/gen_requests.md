@@ -5201,3 +5201,83 @@ Separating content source from content type streamlines the user experience by r
 - [ ] The selected content source filters options in the content-type-selection step
 - [ ] Component is exported from steps index file for integration into workflow renderer
 
+
+---
+
+## REQ-103: Content Type Selection Step with Dynamic Options
+
+**Date**: 2026-01-05 19:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to select the specific type of content they want to add, with available options dynamically filtered based on their previous content source selection.
+
+### Current Behavior
+After selecting whether they have existing content or want to create new content, users have no interface to specify the actual content format they intend to use. There is no mechanism to capture whether they want to upload a video versus a photo, or record new media versus writing text, leaving the workflow incomplete.
+
+### Expected Behavior
+The fifth workflow step presents content type options as icon-labeled cards, dynamically filtered based on the previous content source selection. Users who selected "I have content" see five options: Upload Video, Upload Photo, Upload PDF, Paste Text, and Paste URL. Users who selected "Create now" see three options: Record Video, Take Photo, and Write Text. Each card displays a clear icon representing the content type and a descriptive label. Users select one content type by clicking the corresponding card. The selection is visually highlighted, and the chosen content type is stored in workflow state for use in subsequent content capture steps.
+
+### User Impact
+Property managers and hosts benefit from seeing only relevant content type options based on their current context, reducing decision fatigue and potential confusion. The visual card-based interface with icons makes content type selection intuitive and accessible across different user skill levels. Clear separation between upload and creation paths ensures users always see options that match their stated intent.
+
+### Business Value
+Dynamic content type filtering based on user context demonstrates intelligent workflow design and prevents users from encountering inappropriate options. This refinement in the user journey increases perceived system quality and reduces support burden by eliminating confusion about which content types are available when.
+
+### Acceptance Criteria
+- [ ] Content type options are rendered as icon-labeled cards
+- [ ] For "I have content" source, exactly five options appear: Upload Video, Upload Photo, Upload PDF, Paste Text, Paste URL
+- [ ] For "Create now" source, exactly three options appear: Record Video, Take Photo, Write Text
+- [ ] Each card displays an appropriate icon representing the content type
+- [ ] Each card displays a clear, descriptive label matching the content type
+- [ ] User can select exactly one content type by clicking a card
+- [ ] Selected card shows visual indication of active selection state
+- [ ] Continue button is disabled until a content type is selected
+- [ ] Selected content type is stored in workflow state as content-type field
+- [ ] Component retrieves content source from workflow state to determine which options to display
+- [ ] Component follows established patterns from previous step implementations
+- [ ] Component uses shared card components for consistency if applicable
+- [ ] Component is exported from steps index file for integration into workflow renderer
+- [ ] Icon selections are visually distinct and clearly communicate each content type's purpose
+
+
+---
+
+## REQ-104: URL Content with Preview Using Open Graph Metadata
+
+**Date**: 2026-01-05 20:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to paste a URL and see a preview of the content before proceeding, with the system fetching and displaying Open Graph metadata while gracefully handling loading, success, and error states.
+
+### Current Behavior
+After selecting "Paste URL" as the content type, users have no interface to enter a URL or preview what the linked content contains before adding it to their item documentation. There is no mechanism to validate that the URL is accessible or to provide users with visual confirmation of what they are documenting.
+
+### Expected Behavior
+When users select the URL content type, they see an input field to paste or type a URL. After entering a valid URL, the system automatically fetches Open Graph metadata including title, description, and preview image. While fetching, users see a loading indicator. On success, a rich preview card displays showing the retrieved title, description, and image from the URL's Open Graph tags. If fetching fails or metadata is unavailable, users see an error message but can still proceed with a warning notification. Users can continue with the workflow once a URL is entered, regardless of whether the preview loaded successfully, though warnings appear when metadata could not be retrieved.
+
+### User Impact
+Property managers and hosts benefit from immediate visual feedback confirming the URL they entered points to the expected content. Rich previews showing titles, descriptions, and images reduce errors from pasting incorrect URLs and increase confidence that documentation links will be helpful to guests. The ability to proceed even when previews fail ensures workflow continuity while maintaining awareness of potential issues.
+
+### Business Value
+Open Graph preview functionality demonstrates modern UX patterns familiar from social media and messaging platforms, increasing perceived system quality. Validation feedback reduces support requests from users adding broken or incorrect links while maintaining workflow flexibility by allowing manual override when automated preview fails.
+
+### Acceptance Criteria
+- [ ] URL input field accepts text entry for web addresses
+- [ ] System automatically triggers metadata fetch after URL is entered and validated as proper URL format
+- [ ] Loading state displays visual indicator while fetching Open Graph metadata
+- [ ] Success state displays preview card with retrieved title, description, and image when available
+- [ ] Preview card layout is visually appealing and clearly displays all available metadata fields
+- [ ] Error state displays informative message when metadata fetch fails
+- [ ] Error state includes warning indicator but still allows user to proceed with workflow
+- [ ] Users can continue to next step with entered URL regardless of preview success or failure
+- [ ] Warning message appears when user proceeds without successful preview
+- [ ] useUrlPreview hook encapsulates fetching logic and state management
+- [ ] useUrlPreview hook returns loading, success, error, and data states
+- [ ] useUrlPreview hook handles network errors gracefully
+- [ ] Fetched metadata is stored in workflow state for potential later use
+- [ ] Component follows established patterns from previous step implementations
+- [ ] URL validation prevents obviously malformed URLs from triggering fetch requests

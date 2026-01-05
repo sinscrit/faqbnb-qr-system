@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep } from './components/steps';
 
 // =============================================================================
 // Step Placeholder Component
@@ -104,6 +104,7 @@ export function ItemCreationWorkflow({
     selectSpecificItem,
     setItemName,
     selectContentSource,
+    selectContentType,
   } = useWorkflowState();
 
   // Exit confirmation dialog state
@@ -192,7 +193,15 @@ export function ItemCreationWorkflow({
           />
         );
       case 'content-type-selection':
-        return <StepPlaceholder step="content-type-selection" {...commonProps} />;
+        return (
+          <ContentTypeStep
+            currentContentSource={state.currentItem?.contentSource ?? 'existing'}
+            currentContentType={state.currentItem?.contentType ?? null}
+            onSelectContentType={selectContentType}
+            onNext={nextStep}
+            canNext={canGoNext}
+          />
+        );
       case 'content-creation':
         return <StepPlaceholder step="content-creation" {...commonProps} />;
       case 'preview-save':
@@ -205,7 +214,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
