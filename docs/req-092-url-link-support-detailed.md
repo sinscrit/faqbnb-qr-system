@@ -321,7 +321,7 @@ item_links: {
 
 **Estimated effort:** 1 story point
 
-- [ ] Import the new `UrlItem` type at line 16:
+- [x] Import the new `UrlItem` type at line 16:
   ```typescript
   import type {
     WizardStep,
@@ -331,9 +331,9 @@ item_links: {
     ItemCaptureState,
     ItemCaptureAction,
   } from '../ItemCapture.types';
-  ```
+  ``` ---implemented: UrlItem imported in useItemCaptureState.ts---unit tested-
 
-- [ ] Update `STEP_TRANSITIONS` (line 32-42) to add 'add-url' transitions:
+- [x] Update `STEP_TRANSITIONS` (line 32-42) to add 'add-url' transitions:
   ```typescript
   export const STEP_TRANSITIONS: Record<WizardStep, WizardStep[]> = {
     'metadata': ['content-type'],
@@ -347,9 +347,9 @@ item_links: {
     'add-more': ['content-type', 'review'],
     'review': ['metadata', 'content-type'],
   };
-  ```
+  ``` ---implemented: STEP_TRANSITIONS updated with add-url step---unit tested-
 
-- [ ] Add `urlItems` array to `ItemCaptureState` interface (around line 232 in types file, but state is defined in hook). Update `createInitialState()` (line 52):
+- [x] Add `urlItems` array to `ItemCaptureState` interface (around line 232 in types file, but state is defined in hook). Update `createInitialState()` (line 52):
   ```typescript
   export const createInitialState = (): ItemCaptureState => ({
     currentStep: 'metadata',
@@ -360,17 +360,17 @@ item_links: {
     instructions: '',
     // ...rest
   });
-  ```
+  ``` ---implemented: urlItems array added to createInitialState() and ItemCaptureState interface---unit tested-
 
-- [ ] Add URL-specific actions to `ItemCaptureAction` type (in ItemCapture.types.ts around line 263):
+- [x] Add URL-specific actions to `ItemCaptureAction` type (in ItemCapture.types.ts around line 263):
   ```typescript
   // URL actions (REQ-092)
   | { type: 'ADD_URL'; payload: UrlItem }
   | { type: 'REMOVE_URL'; payload: string } // by id
   | { type: 'UPDATE_URL'; payload: { id: string; updates: Partial<UrlItem> } }
-  ```
+  ``` ---implemented: URL actions added to ItemCaptureAction discriminated union---unit tested-
 
-- [ ] Add URL action handlers to `itemCaptureReducer` (after line 272):
+- [x] Add URL action handlers to `itemCaptureReducer` (after line 272):
   ```typescript
   case 'ADD_URL':
     return {
@@ -396,9 +396,9 @@ item_links: {
       ),
       isDirty: true,
     };
-  ```
+  ``` ---implemented: URL action handlers added to itemCaptureReducer---unit tested-
 
-- [ ] Add URL action helpers to `useItemCaptureState` return (after line 508):
+- [x] Add URL action helpers to `useItemCaptureState` return (after line 508):
   ```typescript
   const addUrl = useCallback((urlItem: UrlItem) => {
     dispatch({ type: 'ADD_URL', payload: urlItem });
@@ -411,23 +411,23 @@ item_links: {
   const updateUrl = useCallback((id: string, updates: Partial<UrlItem>) => {
     dispatch({ type: 'UPDATE_URL', payload: { id, updates } });
   }, []);
-  ```
+  ``` ---implemented: addUrl, removeUrl, updateUrl callbacks added---unit tested-
 
-- [ ] Export the new functions in the return object
+- [x] Export the new functions in the return object ---implemented: URL action functions exported in hook return object---unit tested-
 
-- [ ] Update `canSubmitState` function (line 95) to include URL items:
+- [x] Update `canSubmitState` function (line 95) to include URL items:
   ```typescript
   export function canSubmitState(state: ItemCaptureState): boolean {
     if (!state.metadata.title.trim()) return false;
     if (state.mediaItems.length === 0 && state.urlItems.length === 0 && !state.instructions.trim()) return false;
     return true;
   }
-  ```
+  ``` ---implemented: canSubmitState now checks urlItems.length > 0---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/hooks/useItemCaptureState.ts
-  ```
+  ``` ---implemented: TypeScript compilation verified successful---unit tested-
 
 ---
 
