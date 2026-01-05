@@ -820,17 +820,17 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Import UrlItem type (line 15):
+- [x] Import UrlItem type (line 15):
   ```typescript
   import type { MediaItem, ItemMetadata, UrlItem } from '../ItemCapture.types';
-  ```
+  ``` ---implemented: UrlItem type imported---unit tested-
 
-- [ ] Import URL_CONSTRAINTS from constants:
+- [x] Import URL_CONSTRAINTS from constants:
   ```typescript
   import { CAPTURE_CONSTRAINTS, SUPPORTED_FORMATS, URL_CONSTRAINTS } from './constants';
-  ```
+  ``` ---implemented: URL_CONSTRAINTS imported---unit tested-
 
-- [ ] Create `validateUrl` function (after line 208):
+- [x] Create `validateUrl` function (after line 208):
   ```typescript
   /**
    * Validate a URL string.
@@ -858,9 +858,9 @@ item_links: {
 
     return { isValid: true };
   }
-  ```
+  ``` ---implemented: validateUrl function created with URL format and protocol validation---unit tested-
 
-- [ ] Create `validateUrlCount` function:
+- [x] Create `validateUrlCount` function:
   ```typescript
   /**
    * Validate the number of URL items doesn't exceed the limit.
@@ -874,9 +874,9 @@ item_links: {
     }
     return { isValid: true };
   }
-  ```
+  ``` ---implemented: validateUrlCount function created to check URL limit---unit tested-
 
-- [ ] Update `validateContentRequirement` function signature and logic (line 192):
+- [x] Update `validateContentRequirement` function signature and logic (line 192):
   ```typescript
   export function validateContentRequirement(
     mediaItems: MediaItem[],
@@ -896,9 +896,9 @@ item_links: {
 
     return { isValid: true };
   }
-  ```
+  ``` ---implemented: validateContentRequirement updated to accept urlItems and check URL presence---unit tested-
 
-- [ ] Update `validateItemCapture` function signature to include urlItems:
+- [x] Update `validateItemCapture` function signature to include urlItems:
   ```typescript
   export function validateItemCapture(
     metadata: ItemMetadata,
@@ -908,12 +908,12 @@ item_links: {
   ): ItemCaptureValidation {
     // ... add URL validation checks
   }
-  ```
+  ``` ---implemented: validateItemCapture signature updated to include urlItems parameter and URL count validation---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/utils/validation.ts
-  ```
+  ``` ---implemented: TypeScript compilation successful, build verified---unit tested-
 
 ---
 

@@ -12,8 +12,8 @@
  * @lastModified 2025-12-31 (REQ-052)
  */
 
-import type { MediaItem, ItemMetadata } from '../ItemCapture.types';
-import { CAPTURE_CONSTRAINTS, SUPPORTED_FORMATS } from './constants';
+import type { MediaItem, ItemMetadata, UrlItem } from '../ItemCapture.types';
+import { CAPTURE_CONSTRAINTS, SUPPORTED_FORMATS, URL_CONSTRAINTS } from './constants';
 
 // =============================================================================
 // Types
@@ -179,28 +179,32 @@ export function validateTitle(title: string): ValidationResult {
 // =============================================================================
 
 /**
- * Validate that at least one form of content exists (media or text).
+ * Validate that at least one form of content exists (media, URL, or text).
  *
  * @param mediaItems - Array of media items
+ * @param urlItems - Array of URL items
  * @param instructions - Text instructions string
  * @returns Validation result with error message if no content
  *
  * @example
- * validateContentRequirement([], "") // { isValid: false, error: "At least one media item or text instructions must be provided" }
- * validateContentRequirement([mediaItem], "") // { isValid: true }
- * validateContentRequirement([], "Some text") // { isValid: true }
+ * validateContentRequirement([], [], "") // { isValid: false, error: "At least one media item, link, or text instructions must be provided" }
+ * validateContentRequirement([mediaItem], [], "") // { isValid: true }
+ * validateContentRequirement([], [urlItem], "") // { isValid: true }
+ * validateContentRequirement([], [], "Some text") // { isValid: true }
  */
 export function validateContentRequirement(
   mediaItems: MediaItem[],
+  urlItems: UrlItem[],
   instructions: string
 ): ValidationResult {
   const hasMedia = mediaItems.length > 0;
+  const hasUrls = urlItems.length > 0;
   const hasText = instructions?.trim().length > 0;
 
-  if (!hasMedia && !hasText) {
+  if (!hasMedia && !hasUrls && !hasText) {
     return {
       isValid: false,
-      error: 'At least one media item or text instructions must be provided',
+      error: 'At least one media item, link, or text instructions must be provided',
     };
   }
 
@@ -311,6 +315,66 @@ export function validateTextLength(text: string): ValidationResult {
 }
 
 // =============================================================================
+// URL Validation (REQ-092)
+// =============================================================================
+
+/**
+ * Validate a URL string.
+ *
+ * @param url - URL to validate
+ * @returns Validation result with error if invalid
+ *
+ * @example
+ * validateUrl("") // { isValid: false, error: "URL is required" }
+ * validateUrl("https://example.com") // { isValid: true }
+ * validateUrl("javascript:alert('xss')") // { isValid: false, error: "Only http and https URLs are allowed" }
+ */
+export function validateUrl(url: string): ValidationResult {
+  if (!url || url.trim().length === 0) {
+    return { isValid: false, error: 'URL is required' };
+  }
+
+  if (url.length > URL_CONSTRAINTS.maxUrlLength) {
+    return {
+      isValid: false,
+      error: `URL exceeds ${URL_CONSTRAINTS.maxUrlLength} character limit`,
+    };
+  }
+
+  try {
+    const parsed = new URL(url);
+    const allowedProtocols = URL_CONSTRAINTS.allowedProtocols as readonly string[];
+    if (!allowedProtocols.includes(parsed.protocol)) {
+      return { isValid: false, error: 'Only http and https URLs are allowed' };
+    }
+  } catch {
+    return { isValid: false, error: 'Invalid URL format' };
+  }
+
+  return { isValid: true };
+}
+
+/**
+ * Validate the number of URL items doesn't exceed the limit.
+ *
+ * @param urlItems - Array of URL items
+ * @returns Validation result with error if too many URLs
+ *
+ * @example
+ * validateUrlCount([...19urls]) // { isValid: true }
+ * validateUrlCount([...21urls]) // { isValid: false, error: "Maximum 20 links allowed (current: 21)" }
+ */
+export function validateUrlCount(urlItems: UrlItem[]): ValidationResult {
+  if (urlItems.length > URL_CONSTRAINTS.maxUrls) {
+    return {
+      isValid: false,
+      error: `Maximum ${URL_CONSTRAINTS.maxUrls} links allowed (current: ${urlItems.length})`,
+    };
+  }
+  return { isValid: true };
+}
+
+// =============================================================================
 // Task 8: Image Count Validation
 // =============================================================================
 
@@ -398,11 +462,12 @@ export function getMediaTypeFromMime(mimeType: string): 'video' | 'image' | 'pdf
  *
  * @param metadata - Item metadata including title
  * @param mediaItems - Array of media items
+ * @param urlItems - Array of URL items
  * @param instructions - Text instructions
  * @returns Comprehensive validation result with all errors and warnings
  *
  * @example
- * const validation = validateItemCapture(metadata, mediaItems, instructions);
+ * const validation = validateItemCapture(metadata, mediaItems, urlItems, instructions);
  * if (!validation.isValid) {
  *   console.log("Errors:", validation.errors);
  * }
@@ -410,6 +475,7 @@ export function getMediaTypeFromMime(mimeType: string): 'video' | 'image' | 'pdf
 export function validateItemCapture(
   metadata: ItemMetadata,
   mediaItems: MediaItem[],
+  urlItems: UrlItem[],
   instructions: string
 ): ItemCaptureValidation {
   const errors: Record<string, string> = {};
@@ -422,11 +488,17 @@ export function validateItemCapture(
   }
 
   // Validate content requirement
-  const contentResult = validateContentRequirement(mediaItems, instructions);
+  const contentResult = validateContentRequirement(mediaItems, urlItems, instructions);
   const hasMedia = mediaItems.length > 0;
   const hasText = instructions?.trim().length > 0;
   if (!contentResult.isValid && contentResult.error) {
     errors['content'] = contentResult.error;
+  }
+
+  // Validate URL count
+  const urlCountResult = validateUrlCount(urlItems);
+  if (!urlCountResult.isValid && urlCountResult.error) {
+    errors['urlCount'] = urlCountResult.error;
   }
 
   // Validate image count
@@ -448,6 +520,9 @@ export function validateItemCapture(
   }> = [];
 
   for (const item of mediaItems) {
+    // Skip URL items - they don't have file sizes to validate
+    if (item.type === 'url') continue;
+
     if (item.file) {
       const result = validateFileSize(item.file, item.type);
       individualFileSizes.push({
