@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow
  * @see docs/REQ-095-main-workflow-component-overview.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-05 (REQ-107 Task 11)
  */
 
 import { useState, useCallback } from 'react';
@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep } from './components/steps';
-import type { SessionItem } from './ItemCreationWorkflow.types';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep } from './components/steps';
+import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 
 // =============================================================================
 // Step Placeholder Component
@@ -110,6 +110,9 @@ export function ItemCreationWorkflow({
     removeContentPiece,
     reorderContent,
     saveItem,
+    startNewItem,
+    completeSession,
+    addMoreToItem,
   } = useWorkflowState();
 
   // Save operation state
@@ -150,6 +153,27 @@ export function ItemCreationWorkflow({
   const handleCancelExit = useCallback(() => {
     setShowExitDialog(false);
   }, []);
+
+  // Handle "Add More to This Item" from NextActionStep
+  const handleAddMore = useCallback(() => {
+    const lastItem = state.session.items[state.session.items.length - 1];
+    if (!lastItem) return;
+
+    // Reconstruct CurrentItemState from SessionItem
+    const restoredItem: CurrentItemState = {
+      room: lastItem.room,
+      itemType: lastItem.itemType,
+      specificItem: lastItem.name.includes(' - ')
+        ? lastItem.name.split(' - ')[1]
+        : lastItem.name,
+      itemName: lastItem.name,
+      contentSource: 'existing',
+      contentType: null,
+      content: lastItem.content,
+    };
+
+    addMoreToItem(restoredItem);
+  }, [state.session.items, addMoreToItem]);
 
   // Handle save item
   const handleSaveItem = useCallback(async () => {
@@ -263,15 +287,25 @@ export function ItemCreationWorkflow({
             isSaving={isSaving}
           />
         );
-      case 'next-action':
-        return <StepPlaceholder step="next-action" {...commonProps} />;
+      case 'next-action': {
+        const lastSavedItem = state.session.items[state.session.items.length - 1] || null;
+        return (
+          <NextActionStep
+            itemsCreated={itemCount}
+            lastSavedItem={lastSavedItem}
+            onAddMore={handleAddMore}
+            onTagNewItem={startNewItem}
+            onDone={completeSession}
+          />
+        );
+      }
       case 'session-summary':
         // Session summary is the final step, no Continue button
         return <StepPlaceholder step="session-summary" />;
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

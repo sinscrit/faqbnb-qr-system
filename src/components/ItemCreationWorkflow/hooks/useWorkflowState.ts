@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow/hooks/useWorkflowState
  * @see docs/REQ-094-workflow-state-machine-detailed.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-05 (REQ-107 Tasks 9-10)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
@@ -49,7 +49,7 @@ export const STEP_TRANSITIONS: Record<WorkflowStep, WorkflowStep[]> = {
   'content-type-selection': ['content-creation'],
   'content-creation': ['preview-save'],
   'preview-save': ['next-action'],
-  'next-action': ['room-selection', 'session-summary'],
+  'next-action': ['room-selection', 'session-summary', 'content-source-selection'],
   'session-summary': [],
 };
 
@@ -437,6 +437,24 @@ export function workflowReducer(
       };
     }
 
+    case 'ADD_MORE_TO_ITEM': {
+      const restoredItem = action.payload;
+      const newHistory = [...state.stepHistory, state.currentStep];
+      return {
+        ...state,
+        currentStep: 'content-source-selection',
+        stepHistory: newHistory,
+        canGoBack: true,
+        currentItem: restoredItem,
+        isDirty: true,
+        session: {
+          ...state.session,
+          currentStep: 'content-source-selection',
+          currentItem: restoredItem,
+        },
+      };
+    }
+
     // =========================================================================
     // Error Handling Actions
     // =========================================================================
@@ -541,6 +559,8 @@ export interface UseWorkflowStateReturn {
   startNewItem: () => void;
   /** Complete the session (navigate to session-summary) */
   completeSession: () => void;
+  /** Restore an item and navigate to content-source-selection for adding more content */
+  addMoreToItem: (item: CurrentItemState) => void;
 
   // Error actions
   /** Set a field-level error */
@@ -662,6 +682,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     dispatch({ type: 'COMPLETE_SESSION' });
   }, []);
 
+  const addMoreToItem = useCallback((item: CurrentItemState) => {
+    dispatch({ type: 'ADD_MORE_TO_ITEM', payload: item });
+  }, []);
+
   // =========================================================================
   // Error Actions
   // =========================================================================
@@ -753,6 +777,7 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     saveItem,
     startNewItem,
     completeSession,
+    addMoreToItem,
     setError,
     clearError,
     clearAllErrors,

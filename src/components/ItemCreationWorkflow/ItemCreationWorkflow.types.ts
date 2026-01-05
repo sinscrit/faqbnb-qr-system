@@ -7,7 +7,7 @@
  *
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-107 Task 8)
  */
 
 // =============================================================================
@@ -341,6 +341,8 @@ export type WorkflowAction =
   | { type: 'SAVE_ITEM'; payload: SessionItem }
   | { type: 'START_NEW_ITEM' }
   | { type: 'COMPLETE_SESSION' }
+  // Add More to Item action (for NextActionStep)
+  | { type: 'ADD_MORE_TO_ITEM'; payload: CurrentItemState }
 
   // Error handling actions
   | { type: 'SET_ERROR'; payload: { field: string; message: string } }

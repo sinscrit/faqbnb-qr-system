@@ -5355,3 +5355,40 @@ Provides quality assurance in the creation process by giving users a final revie
 - [ ] Content preview accurately represents how the item will appear to end users
 - [ ] All workflow state (room, item type, specific item, content) is preserved during preview
 
+
+---
+
+## REQ-107: Next Action Step for Item Creation Workflow
+
+**Date**: 2026-01-05 (System timestamp preserved)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+After creating or editing an item, users should be presented with clear options to continue their session, add more content to the current item, or finish their work.
+
+### Current Behavior
+Once an item is created or edited, there is no structured way for users to decide what to do next within the same session, leading to an unclear continuation of the workflow.
+
+### Expected Behavior
+After completing item creation or editing, users see a decision point with three clear options:
+1. Add More to Item - Continue enriching the current item with additional content
+2. Tag New Item - Start creating another item in the same session
+3. I'm Done - Complete the session and return to the main view
+
+The interface displays session progress (e.g., "4 items created") to give users context about their productivity during the current session. Selection of any option routes the user to the appropriate next step in the workflow.
+
+### User Impact
+Content creators and curators gain better control over their workflow, allowing them to batch-create multiple items efficiently or continue refining a single item without losing context. The session progress indicator provides motivation and clarity about their accomplishments.
+
+### Business Value
+Streamlines the content creation process by reducing cognitive load and navigation uncertainty, potentially increasing the number of items created per session and improving overall content quality through easier iterative enhancement.
+
+### Acceptance Criteria
+- [ ] After item creation or editing completion, users are presented with three distinct action options
+- [ ] Session progress indicator displays the number of items created in the current session
+- [ ] Selecting "Add More to Item" navigates to the appropriate step for adding additional content to the current item
+- [ ] Selecting "Tag New Item" initiates a new item creation flow while maintaining the session context
+- [ ] Selecting "I'm Done" concludes the session and returns the user to the main application view
+- [ ] The session progress count accurately reflects the number of items created during the current session
+- [ ] All three navigation paths successfully route to their intended destinations

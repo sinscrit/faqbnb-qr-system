@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Step Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/steps
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-107 Task 7)
  */
 
 // =============================================================================
@@ -50,8 +50,8 @@ export type { PreviewSaveStepProps } from './PreviewSaveStep';
 // =============================================================================
 
 // Task 5.1: NextActionStep
-// export { NextActionStep } from './NextActionStep';
-// export type { NextActionStepProps } from './NextActionStep';
+export { NextActionStep } from './NextActionStep';
+export type { NextActionStepProps } from './NextActionStep';
 
 // =============================================================================
 // Summary Steps (Phase 6)
