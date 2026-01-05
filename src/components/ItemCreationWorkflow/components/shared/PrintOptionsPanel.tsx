@@ -11,7 +11,8 @@
  * @module ItemCreationWorkflow/components/shared/PrintOptionsPanel
  * @see docs/REQ-110-print-options-panel-overview.md
  * @see docs/REQ-111-qr-code-integration-overview.md
- * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
+ * @see docs/REQ-112-pdf-generation-integration-overview.md
+ * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
  */
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
@@ -35,10 +36,12 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SessionItem, PrintScope, ContentPiece, ContentType, ContentData } from '../../ItemCreationWorkflow.types';
+import type { PDFExportSettings } from '@/types/pdf';
 import { ROOM_LABELS } from '../../utils/constants';
 import type { RoomTypeConst } from '../../utils/constants';
 import { QRGenerationProgress, type QRProgressItem } from './QRGenerationProgress';
-import { useSessionQRGeneration } from '../../hooks';
+import { PDFExportDialog } from './PDFExportDialog';
+import { useSessionQRGeneration, usePDFExportSettings, usePDFGeneration } from '../../hooks';
 
 // =============================================================================
 // Type Definitions
@@ -65,6 +68,8 @@ export interface PrintOptionsPanelProps {
   onClearError?: () => void;
   /** Callback when QR generation completes */
   onQRGenerationComplete?: (qrCodes: Map<string, string>) => void;
+  /** Callback when PDF is generated with items, scope, and blob (Task 6.4.6) */
+  onPDFGenerated?: (items: SessionItem[], scope: PrintScope, blob: Blob) => void;
   /** Optional CSS class */
   className?: string;
 }
@@ -365,6 +370,7 @@ export function PrintOptionsPanel({
   error,
   onClearError,
   onQRGenerationComplete,
+  onPDFGenerated,
   className,
 }: PrintOptionsPanelProps) {
   // Internal state
@@ -383,6 +389,13 @@ export function PrintOptionsPanel({
   const qrGeneration = useSessionQRGeneration({
     batchSize: 5,
   });
+
+  // PDF Export Dialog state (Task 6.4.6)
+  const [showPDFDialog, setShowPDFDialog] = useState(false);
+
+  // PDF settings and generation hooks (Task 6.4.6)
+  const pdfSettings = usePDFExportSettings();
+  const pdfGeneration = usePDFGeneration({ settings: pdfSettings.settings });
 
   // Ref for tracking object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
@@ -488,17 +501,18 @@ export function PrintOptionsPanel({
     }
 
     // Proceed with the pending action
-    const scope = buildPrintScope();
     setShowQRProgress(false);
 
     if (pendingAction === 'pdf') {
-      await onGeneratePDF(scope);
+      // Open PDF dialog after QR codes are ready (Task 6.4.6)
+      setShowPDFDialog(true);
     } else if (pendingAction === 'print') {
+      const scope = buildPrintScope();
       await onPrintDirect(scope);
     }
 
     setPendingAction(null);
-  }, [onQRGenerationComplete, qrGeneration.qrCodes, buildPrintScope, pendingAction, onGeneratePDF, onPrintDirect]);
+  }, [onQRGenerationComplete, qrGeneration.qrCodes, buildPrintScope, pendingAction, onPrintDirect]);
 
   // Task 4.12: Effect to handle when QR generation completes
   useEffect(() => {
@@ -515,7 +529,7 @@ export function PrintOptionsPanel({
   }, [showQRProgress, qrGeneration.isGenerating, qrGeneration.stats, handleProceedWithQRCodes]);
 
   // Check if actions should be disabled
-  const isActionsDisabled = isProcessing || qrGeneration.isGenerating || (scopeType === 'selected' && selectedCount === 0);
+  const isActionsDisabled = isProcessing || qrGeneration.isGenerating || pdfGeneration.isGenerating || (scopeType === 'selected' && selectedCount === 0);
 
   // Toggle individual item selection
   const handleToggleItem = useCallback((itemId: string) => {
@@ -586,10 +600,61 @@ export function PrintOptionsPanel({
     await qrGeneration.generateForItems(itemsNeedingQR);
   }, [buildPrintScope, getItemsForScope, onGeneratePDF, onPrintDirect, qrGeneration]);
 
-  // Handle Generate PDF click
+  // Handle Generate PDF click (Task 6.4.6)
   const handleGeneratePDF = useCallback(async () => {
-    await startQRGeneration('pdf');
-  }, [startQRGeneration]);
+    // Generate QR codes first if needed
+    const scope = buildPrintScope();
+    const itemsInScope = getItemsForScope(scope);
+    const itemsNeedingQR = itemsInScope.filter(item =>
+      !item.qrCodeUrl && !qrGeneration.qrCodes.has(item.id)
+    );
+
+    if (itemsNeedingQR.length > 0) {
+      // Need to generate QR codes first
+      setPendingAction('pdf');
+      setShowQRProgress(true);
+      await qrGeneration.generateForItems(itemsNeedingQR);
+    } else {
+      // All QR codes available, open PDF dialog directly
+      setShowPDFDialog(true);
+    }
+  }, [buildPrintScope, getItemsForScope, qrGeneration]);
+
+  // Handle PDF export confirmation from dialog (Task 6.4.6)
+  const handlePDFExportConfirm = useCallback(async (settings: PDFExportSettings) => {
+    try {
+      const scope = buildPrintScope();
+      const itemsInScope = getItemsForScope(scope);
+
+      // Merge QR codes from generation and existing items
+      const allQRCodes = new Map<string, string>();
+      for (const item of itemsInScope) {
+        const qrCode = qrGeneration.qrCodes.get(item.id) || item.qrCodeUrl;
+        if (qrCode) {
+          allQRCodes.set(item.id, qrCode);
+        }
+      }
+
+      // Generate PDF
+      const blob = await pdfGeneration.generatePDF(itemsInScope, allQRCodes);
+
+      if (blob) {
+        // Download automatically
+        pdfGeneration.downloadPDF(blob);
+
+        // Close dialog
+        setShowPDFDialog(false);
+
+        // Notify parent of PDF generation
+        onPDFGenerated?.(itemsInScope, scope, blob);
+
+        // Complete session via existing callback
+        await onGeneratePDF(scope);
+      }
+    } catch (error) {
+      // Error handled by pdfGeneration hook
+    }
+  }, [buildPrintScope, getItemsForScope, qrGeneration, pdfGeneration, onPDFGenerated, onGeneratePDF]);
 
   // Handle Print Directly click
   const handlePrintDirect = useCallback(async () => {
@@ -814,10 +879,15 @@ export function PrintOptionsPanel({
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
               Generating QR Codes...
             </>
-          ) : isProcessing ? (
+          ) : pdfGeneration.isGenerating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
               Generating PDF...
+            </>
+          ) : isProcessing ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+              Processing...
             </>
           ) : (
             <>
@@ -864,6 +934,19 @@ export function PrintOptionsPanel({
           Done for Now
         </button>
       </div>
+
+      {/* PDF Export Dialog (Task 6.4.6) */}
+      <PDFExportDialog
+        isOpen={showPDFDialog}
+        onClose={() => setShowPDFDialog(false)}
+        onExport={handlePDFExportConfirm}
+        itemCount={getItemsForScope(buildPrintScope()).length}
+        settings={pdfSettings.settings}
+        onSettingsChange={pdfSettings.updateSettings}
+        isGenerating={pdfGeneration.isGenerating}
+        error={pdfGeneration.error}
+        onClearError={pdfGeneration.clearError}
+      />
     </div>
   );
 }

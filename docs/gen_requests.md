@@ -5536,3 +5536,43 @@ Reduces friction in the item-to-deployment pipeline by eliminating context switc
 - [ ] Generation process can be cancelled by the user mid-operation
 - [ ] Users can proceed with the workflow even if some QR codes failed to generate
 
+
+---
+
+## REQ-112: PDF Generation Integration for Item Creation Workflow
+
+**Date**: 2026-01-05 16:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to generate and download a professionally formatted PDF containing QR codes for items created during their session, with configurable paper sizes and item name labels.
+
+### Current Behavior
+After completing an item creation session and selecting print options, users can generate QR codes but there is no integrated capability to export these QR codes as a downloadable PDF document with professional formatting.
+
+### Expected Behavior
+Users can generate a PDF document containing their selected QR codes with the following characteristics:
+- Standard paper size support for Letter and A4 formats
+- QR codes arranged in an optimized grid layout with appropriate spacing
+- Item name labels positioned below each QR code for easy identification
+- Professional margins and formatting suitable for printing
+- Immediate download capability of the generated PDF file
+
+The PDF generation should leverage existing infrastructure and component patterns already established in the system, providing a seamless experience from session completion through to obtaining printable materials.
+
+### User Impact
+Property managers and hosts who need physical QR codes for their items will be able to immediately generate print-ready PDFs without relying on external tools or manual formatting. This eliminates friction in the workflow from digital item creation to physical deployment, particularly valuable during initial property setup or bulk item additions.
+
+### Business Value
+Completes the end-to-end item creation workflow by providing the final deliverable users need: a professional, print-ready document. This reduces abandonment at the final step of the workflow and increases the likelihood that users will complete physical QR code deployment, thereby maximizing platform engagement and utility.
+
+### Acceptance Criteria
+- [ ] Users can select between Letter and A4 paper formats before generating the PDF
+- [ ] Generated PDFs contain QR codes arranged in an optimized grid layout that maximizes space utilization
+- [ ] Each QR code displays the corresponding item name as a label positioned directly below the code
+- [ ] PDF margins and spacing are appropriate for standard home and office printers
+- [ ] The PDF automatically downloads to the user's device when generation completes
+- [ ] Generation respects the user's item selection from the print options panel
+- [ ] Users see visual feedback during PDF generation for operations that take more than one second
+- [ ] Failed PDF generation displays a clear error message with recovery options

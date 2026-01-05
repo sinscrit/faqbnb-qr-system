@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-110 Print Options Panel)
+ * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
  */
 
 // =============================================================================
@@ -76,3 +76,11 @@ export type {
   QRProgressItem,
   QRProgressItemStatus,
 } from './QRGenerationProgress';
+
+// =============================================================================
+// PDF Export Components (Task 6.4)
+// =============================================================================
+
+// Task 6.4.3: PDFExportDialog
+export { PDFExportDialog } from './PDFExportDialog';
+export type { PDFExportDialogProps } from './PDFExportDialog';

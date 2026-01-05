@@ -9,7 +9,8 @@
  * @module ItemCreationWorkflow
  * @see docs/REQ-095-main-workflow-component-overview.md
  * @see docs/REQ-111-qr-code-integration-overview.md
- * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
+ * @see docs/REQ-112-pdf-generation-integration-overview.md
+ * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
  */
 
 import { useState, useCallback, useEffect } from 'react';
@@ -333,6 +334,17 @@ export function ItemCreationWorkflow({
     console.log('QR codes generated:', qrCodes.size);
   }, []);
 
+  // Task 6.4.7: Handle PDF generation complete callback
+  const handlePDFGenerated = useCallback((
+    items: SessionItem[],
+    scope: PrintScope,
+    blob: Blob
+  ) => {
+    // Track that PDF was generated in session state for analytics
+    console.log(`PDF generated with ${items.length} items, scope: ${scope.type}`);
+    // Could also emit analytics event here if needed
+  }, []);
+
   // Task 4.14: Clear print error
   const handleClearPrintError = useCallback(() => {
     setPrintError(null);
@@ -489,6 +501,7 @@ export function ItemCreationWorkflow({
             error={printError}
             onClearError={handleClearPrintError}
             onQRGenerationComplete={handleQRGenerationComplete}
+            onPDFGenerated={handlePDFGenerated}
           />
         ) : (
           renderCurrentStep()

@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Hooks - Barrel Export
  *
  * @module ItemCreationWorkflow/hooks
- * @lastModified 2026-01-05 (REQ-096 Task 1.4)
+ * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
  */
 
 // =============================================================================
@@ -55,3 +55,21 @@ export type {
   QRItemStatus,
   QRGenerationStats,
 } from './useSessionQRGeneration';
+
+// =============================================================================
+// PDF Generation Hooks (Task 6.4)
+// =============================================================================
+
+// Task 6.4.1: usePDFExportSettings - PDF settings state management
+export { usePDFExportSettings, DEFAULT_PDF_EXPORT_SETTINGS } from './usePDFExportSettings';
+export type {
+  UsePDFExportSettingsOptions,
+  UsePDFExportSettingsReturn,
+} from './usePDFExportSettings';
+
+// Task 6.4.2: usePDFGeneration - PDF generation orchestration
+export { usePDFGeneration } from './usePDFGeneration';
+export type {
+  UsePDFGenerationOptions,
+  UsePDFGenerationReturn,
+} from './usePDFGeneration';
