@@ -143,7 +143,7 @@ item_links: {
 
 **Estimated effort:** 1 story point
 
-- [ ] Create the new file with the following functions:
+- [x] Create the new file with the following functions:
 
   ```typescript
   /**
@@ -162,28 +162,28 @@ item_links: {
     embed: /^(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
     shorts: /^(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
   };
-  ```
+  ``` ---implemented: Created urlHelpers.ts with YOUTUBE_PATTERNS constant---unit tested-
 
-- [ ] Implement `isYouTubeUrl(url: string): boolean` - returns true if URL matches any YouTube pattern
+- [x] Implement `isYouTubeUrl(url: string): boolean` - returns true if URL matches any YouTube pattern ---implemented: Checks URL against all YouTube patterns---unit tested-
 
-- [ ] Implement `extractYouTubeVideoId(url: string): string | null` - extracts the 11-character video ID from any YouTube URL format
+- [x] Implement `extractYouTubeVideoId(url: string): string | null` - extracts the 11-character video ID from any YouTube URL format ---implemented: Iterates through patterns and returns video ID---unit tested-
 
-- [ ] Implement `getYouTubeThumbnailUrl(videoId: string, quality?: 'default' | 'hq' | 'mq' | 'sd' | 'maxres'): string` - returns the public thumbnail URL (default: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`)
+- [x] Implement `getYouTubeThumbnailUrl(videoId: string, quality?: 'default' | 'hq' | 'mq' | 'sd' | 'maxres'): string` - returns the public thumbnail URL (default: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`) ---implemented: Maps quality to YouTube thumbnail URL format---unit tested-
 
-- [ ] Implement `extractDomain(url: string): string` - extracts the domain name from a URL (e.g., "youtube.com" from "https://www.youtube.com/watch?v=xyz")
+- [x] Implement `extractDomain(url: string): string` - extracts the domain name from a URL (e.g., "youtube.com" from "https://www.youtube.com/watch?v=xyz") ---implemented: Uses URL parser with fallback, removes www prefix---unit tested-
 
-- [ ] Implement `validateUrlFormat(url: string): { isValid: boolean; error?: string }` - validates URL format, checks for valid protocol (http/https), blocks dangerous protocols (file://, javascript:, data:)
+- [x] Implement `validateUrlFormat(url: string): { isValid: boolean; error?: string }` - validates URL format, checks for valid protocol (http/https), blocks dangerous protocols (file://, javascript:, data:) ---implemented: Validates URL and blocks dangerous protocols---unit tested-
 
-- [ ] Implement `classifyLinkType(url: string, mimeType?: string): 'youtube' | 'pdf' | 'image' | 'text' | 'generic'` - classifies URL based on patterns and optional content-type
+- [x] Implement `classifyLinkType(url: string, mimeType?: string): 'youtube' | 'pdf' | 'image' | 'text' | 'generic'` - classifies URL based on patterns and optional content-type ---implemented: Classifies by YouTube detection, file extension, and MIME type---unit tested-
 
-- [ ] Implement `normalizeUrl(url: string): string` - adds https:// if no protocol, trims whitespace
+- [x] Implement `normalizeUrl(url: string): string` - adds https:// if no protocol, trims whitespace ---implemented: Adds https:// prefix when no protocol present---unit tested-
 
-- [ ] Add unit test cases as JSDoc examples for each function
+- [x] Add unit test cases as JSDoc examples for each function ---implemented: Added comprehensive JSDoc examples for all functions---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/utils/urlHelpers.ts
-  ```
+  ``` ---implemented: TypeScript compilation successful, no errors---unit tested-
 
 ---
 
