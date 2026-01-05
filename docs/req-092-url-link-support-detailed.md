@@ -1026,12 +1026,12 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Import Link icon (line 21):
+- [x] Import Link icon (line 21):
   ```typescript
   import { Play, FileText, ImageIcon, Link as LinkIcon } from 'lucide-react';
-  ```
+  ``` ---implemented: LinkIcon imported from lucide-react---unit tested-
 
-- [ ] Update `getContentTypeBadge` function (line 31) to add URL case:
+- [x] Update `getContentTypeBadge` function (line 31) to add URL case:
   ```typescript
   function getContentTypeBadge(contentType: string, firstMediaType?: string) {
     if (contentType === 'url-only') {
@@ -1046,23 +1046,24 @@ item_links: {
     }
     // ... rest
   }
-  ```
+  ``` ---implemented: url-only and url media type cases added to getContentTypeBadge with cyan styling---unit tested-
 
-- [ ] Update `getFallbackIcon` function (line 145) to add URL case:
+- [x] Update `getFallbackIcon` function (line 145) to add URL case:
   ```typescript
   if (item.contentType === 'url-only' || firstMediaType === 'url') {
     return <LinkIcon className="w-10 h-10 text-cyan-400" />;
   }
-  ```
+  ``` ---implemented: LinkIcon fallback added for url-only and url media type---unit tested-
 
-- [ ] Update thumbnail rendering to handle URL items (line 118-124):
+- [x] Update thumbnail rendering to handle URL items (line 118-124):
   - For URL items, use `metadata.thumbnailUrl` if available
   - Otherwise show domain favicon or fallback icon
+  ---implemented: objectUrl computation updated to use thumbnailUrl for URL items, cleanup logic updated to skip external URLs---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemManager/components/ItemCard.tsx
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 

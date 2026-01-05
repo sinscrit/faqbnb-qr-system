@@ -18,7 +18,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Play, FileText, ImageIcon } from 'lucide-react';
+import { Play, FileText, ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary, EngagementIndicator } from './shared';
 import { useLongPress } from '../hooks/useLongPress';
@@ -29,6 +29,9 @@ import type { ItemCardProps } from '../ItemManager.types';
  * Returns label and appropriate CSS classes for each content type.
  */
 function getContentTypeBadge(contentType: string, firstMediaType?: string) {
+  if (contentType === 'url-only') {
+    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
+  }
   if (contentType === 'text-only') {
     return { label: 'TEXT', classes: 'bg-purple-100 text-purple-800 border-purple-200' };
   }
@@ -39,6 +42,9 @@ function getContentTypeBadge(contentType: string, firstMediaType?: string) {
     return { label: 'MIXED', classes: 'bg-orange-100 text-orange-800 border-orange-200' };
   }
   // contentType === 'media'
+  if (firstMediaType === 'url') {
+    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
+  }
   if (firstMediaType === 'video') {
     return { label: 'VIDEO', classes: 'bg-red-100 text-red-800 border-red-200' };
   }
@@ -118,6 +124,12 @@ export function ItemCard({
   const objectUrl = useMemo(() => {
     const firstMedia = item.media[0];
     if (!firstMedia) return null;
+
+    // For URL items, use the thumbnailUrl from metadata (if available)
+    if (firstMedia.type === 'url' && firstMedia.metadata.thumbnailUrl) {
+      return firstMedia.metadata.thumbnailUrl;
+    }
+
     const blob = firstMedia.thumbnail || (firstMedia.type === 'image' ? firstMedia.file : null);
     if (!blob) return null;
     return URL.createObjectURL(blob);
@@ -126,7 +138,8 @@ export function ItemCard({
   // Cleanup object URL on unmount or when URL changes
   useEffect(() => {
     return () => {
-      if (objectUrl) {
+      // Only revoke blob URLs, not external URLs (like YouTube thumbnails)
+      if (objectUrl && objectUrl.startsWith('blob:')) {
         URL.revokeObjectURL(objectUrl);
       }
     };
@@ -145,6 +158,9 @@ export function ItemCard({
   const getFallbackIcon = () => {
     const firstMediaType = item.media[0]?.type;
 
+    if (item.contentType === 'url-only' || firstMediaType === 'url') {
+      return <LinkIcon className="w-10 h-10 text-cyan-400" />;
+    }
     if (item.contentType === 'text-only') {
       return <FileText className="w-10 h-10 text-purple-400" />;
     }
