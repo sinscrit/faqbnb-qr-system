@@ -103,12 +103,12 @@ export {
 } from './utils/suggestionMatrix';
 
 // =============================================================================
-// Hooks Export (placeholder for future tasks)
+// Hooks Export
 // =============================================================================
 
-// Task 1.2: useWorkflowState
-// export { useWorkflowState } from './hooks';
-// export type { UseWorkflowStateReturn } from './hooks';
+// Task 1.2: useWorkflowState - Core state machine hook (REQ-094)
+export { useWorkflowState } from './hooks';
+export type { UseWorkflowStateReturn } from './hooks';
 
 // Task 1.4: useSessionPersistence
 // export { useSessionPersistence } from './hooks';

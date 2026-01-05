@@ -1,7 +1,7 @@
 # REQ-094: Workflow State Machine - Detailed Task Breakdown
 
 **Generated:** 2026-01-05 01:57:53 UTC
-**Last Modified:** 2026-01-05 01:57:53 UTC
+**Last Modified:** 2026-01-05 02:15:00 UTC
 **Request Reference:** REQ-094 in docs/gen_requests.md
 **Overview Document:** docs/REQ-094-workflow-state-machine-overview.md
 **Implementation Plan Reference:** docs/prd/Plan-093-Item-Creation-Workflow.md
@@ -1949,41 +1949,63 @@ describe('useWorkflowState - Computed Values', () => {
 
 | Task | Description | Story Points | Status |
 |------|-------------|--------------|--------|
-| 1.2.1 | Create Hook File Skeleton with Imports | 0.5 | [ ] |
-| 1.2.2 | Define Step Transitions Map | 0.5 | [ ] |
-| 1.2.3 | Implement createInitialState Factory | 0.5 | [ ] |
-| 1.2.4 | Implement Step Skipping Logic Helpers | 0.5 | [ ] |
-| 1.2.5 | Implement Navigation Actions in Reducer | 1 | [ ] |
-| 1.2.6 | Implement Selection Actions in Reducer | 1 | [ ] |
-| 1.2.7 | Implement Content Actions in Reducer | 1 | [ ] |
-| 1.2.8 | Implement Session Management Actions | 0.5 | [ ] |
-| 1.2.9 | Implement Error and Reset Actions | 0.5 | [ ] |
-| 1.2.10 | Define Hook Return Interface | 0.5 | [ ] |
-| 1.2.11 | Implement Main Hook with useCallback Actions | 1 | [ ] |
-| 1.2.12 | Implement Computed Values with useMemo | 0.5 | [ ] |
-| 1.2.13 | Update Barrel Exports | 0.25 | [ ] |
-| 1.2.14 | Write Unit Tests for createInitialState and Helpers | 1 | [ ] |
-| 1.2.15 | Write Unit Tests for Navigation Actions | 1 | [ ] |
-| 1.2.16 | Write Unit Tests for Selection and Content Actions | 1 | [ ] |
-| 1.2.17 | Write Unit Tests for Computed Values | 0.5 | [ ] |
+| 1.2.1 | Create Hook File Skeleton with Imports | 0.5 | [x] |
+| 1.2.2 | Define Step Transitions Map | 0.5 | [x] |
+| 1.2.3 | Implement createInitialState Factory | 0.5 | [x] |
+| 1.2.4 | Implement Step Skipping Logic Helpers | 0.5 | [x] |
+| 1.2.5 | Implement Navigation Actions in Reducer | 1 | [x] |
+| 1.2.6 | Implement Selection Actions in Reducer | 1 | [x] |
+| 1.2.7 | Implement Content Actions in Reducer | 1 | [x] |
+| 1.2.8 | Implement Session Management Actions | 0.5 | [x] |
+| 1.2.9 | Implement Error and Reset Actions | 0.5 | [x] |
+| 1.2.10 | Define Hook Return Interface | 0.5 | [x] |
+| 1.2.11 | Implement Main Hook with useCallback Actions | 1 | [x] |
+| 1.2.12 | Implement Computed Values with useMemo | 0.5 | [x] |
+| 1.2.13 | Update Barrel Exports | 0.25 | [x] |
+| 1.2.14 | Write Unit Tests for createInitialState and Helpers | 1 | [x] |
+| 1.2.15 | Write Unit Tests for Navigation Actions | 1 | [x] |
+| 1.2.16 | Write Unit Tests for Selection and Content Actions | 1 | [x] |
+| 1.2.17 | Write Unit Tests for Computed Values | 0.5 | [x] |
 
 **Total Estimated Story Points:** ~11.25
+**Completed:** 2026-01-05 02:15 UTC
 
 ### Acceptance Criteria Summary
 
-- [ ] Hook creates initial state with unique session ID
-- [ ] Forward navigation respects STEP_TRANSITIONS map
-- [ ] Back navigation uses stepHistory for accurate restoration
-- [ ] "General" room selection skips item-type-selection step
-- [ ] Room selection initializes currentItem state
-- [ ] Specific item selection auto-generates item name
-- [ ] Content actions (add, remove, reorder) work correctly
-- [ ] Session management actions (save, new, complete) function properly
-- [ ] Error handling follows established patterns
-- [ ] Computed values (canGoNext, canGoBack, progressPercent) are accurate
-- [ ] Hook is exported from barrel files
-- [ ] All unit tests pass
-- [ ] Code follows established naming conventions and patterns
+- [x] Hook creates initial state with unique session ID
+- [x] Forward navigation respects STEP_TRANSITIONS map
+- [x] Back navigation uses stepHistory for accurate restoration
+- [x] "General" room selection skips item-type-selection step
+- [x] Room selection initializes currentItem state
+- [x] Specific item selection auto-generates item name
+- [x] Content actions (add, remove, reorder) work correctly
+- [x] Session management actions (save, new, complete) function properly
+- [x] Error handling follows established patterns
+- [x] Computed values (canGoNext, canGoBack, progressPercent) are accurate
+- [x] Hook is exported from barrel files
+- [x] All unit tests pass (56 tests)
+- [x] Code follows established naming conventions and patterns
+
+### Implementation Notes
+
+**Files Created:**
+- `src/components/ItemCreationWorkflow/hooks/useWorkflowState.ts` - Main hook implementation (~560 lines)
+- `src/components/ItemCreationWorkflow/hooks/__tests__/useWorkflowState.test.ts` - Unit tests (56 tests, all passing)
+
+**Files Modified:**
+- `src/components/ItemCreationWorkflow/hooks/index.ts` - Added exports for useWorkflowState
+- `src/components/ItemCreationWorkflow/index.ts` - Added re-exports for useWorkflowState
+
+**Key Features Implemented:**
+- Reducer pattern with 21 action types
+- Step transition validation with STEP_TRANSITIONS map
+- Skip logic for "general" room (auto-sets itemType to 'general-info')
+- Auto-generated item names using ROOM_LABELS
+- Session management with unique session IDs
+- Content piece management (add, remove, reorder)
+- Computed values: canGoNext, canGoBack, progressPercent, currentStepIndex, totalSteps, itemCount
+- All callbacks wrapped in useCallback for referential stability
+- All computed values use useMemo for performance
 
 ---
 

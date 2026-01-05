@@ -2,16 +2,16 @@
  * ItemCreationWorkflow Hooks - Barrel Export
  *
  * @module ItemCreationWorkflow/hooks
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-094 Task 1.2)
  */
 
 // =============================================================================
 // State Management Hooks
 // =============================================================================
 
-// Placeholder for Task 1.2: useWorkflowState
-// export { useWorkflowState } from './useWorkflowState';
-// export type { UseWorkflowStateReturn } from './useWorkflowState';
+// Task 1.2: useWorkflowState - Core state machine hook
+export { useWorkflowState } from './useWorkflowState';
+export type { UseWorkflowStateReturn } from './useWorkflowState';
 
 // =============================================================================
 // Persistence Hooks
