@@ -4923,3 +4923,39 @@ Establishes a scalable foundation for all multi-step user workflows. Reduces dev
 - [ ] All state transitions follow predictable patterns that handle edge cases gracefully
 - [ ] The state management solution can be reused across different workflow types
 
+
+---
+
+## REQ-095: Main Workflow Component with Step Rendering
+
+**Date**: 2026-01-05 (Modified: 2026-01-05)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a unified workflow interface that guides them through the item creation process by displaying the appropriate step based on their current progress and allowing them to navigate safely between steps.
+
+### Current Behavior
+No main workflow component exists to orchestrate the item creation process. Users cannot progress through a guided multi-step experience when creating items.
+
+### Expected Behavior
+When users begin creating an item, they are presented with a cohesive workflow interface that:
+- Displays the current step's content based on where they are in the process
+- Shows a visual progress indicator at the top indicating which step they are on and how many steps remain
+- Allows users to see their progress at a glance through a header component
+- Prevents accidental data loss by confirming before they exit the workflow
+- Seamlessly transitions between steps as users navigate forward and backward
+
+### User Impact
+All users creating items will benefit from a clear, guided experience that reduces confusion about what information is needed next and prevents accidental loss of work-in-progress.
+
+### Business Value
+A polished workflow experience increases user confidence and completion rates for item creation, reducing abandonment and support requests related to confusion about the creation process.
+
+### Acceptance Criteria
+- [ ] Users see a workflow interface when creating items that displays different content based on which step they are currently on
+- [ ] A progress indicator is visible at all times showing the current step number and total steps
+- [ ] When users attempt to exit the workflow with unsaved changes, they are prompted to confirm before losing their work
+- [ ] The workflow interface smoothly transitions between different steps without jarring layout shifts or content flashes
+- [ ] Users can clearly identify which step they are on at any point in the workflow
+

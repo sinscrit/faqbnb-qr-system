@@ -6,6 +6,7 @@
  *
  * @example
  * import {
+ *   ItemCreationWorkflow,
  *   ItemCreationWorkflowProps,
  *   WorkflowSession,
  *   RoomType,
@@ -14,7 +15,7 @@
  * } from '@/components/ItemCreationWorkflow';
  *
  * @module ItemCreationWorkflow
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-095 Task 1.3)
  */
 
 // =============================================================================
@@ -120,14 +121,16 @@ export type { UseWorkflowStateReturn } from './hooks';
 // export { useUrlPreview } from './hooks';
 
 // =============================================================================
-// Components Export (placeholder for future tasks)
+// Components Export
 // =============================================================================
 
 // Task 1.3: Main component
-// export { ItemCreationWorkflow } from './ItemCreationWorkflow';
+export { ItemCreationWorkflow } from './ItemCreationWorkflow';
 
 // Task 1.3: WorkflowHeader
-// export { WorkflowHeader } from './components/shared/WorkflowHeader';
+export { WorkflowHeader } from './components/shared/WorkflowHeader';
+export type { WorkflowHeaderProps } from './components/shared/WorkflowHeader';
 
 // Task 1.3: ConfirmExitDialog
-// export { ConfirmExitDialog } from './components/shared/ConfirmExitDialog';
+export { ConfirmExitDialog } from './components/shared/ConfirmExitDialog';
+export type { ConfirmExitDialogProps } from './components/shared/ConfirmExitDialog';

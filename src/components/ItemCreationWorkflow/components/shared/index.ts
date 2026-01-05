@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-095 Task 1.3)
  */
 
 // =============================================================================
@@ -10,12 +10,12 @@
 // =============================================================================
 
 // Task 1.3: WorkflowHeader
-// export { WorkflowHeader } from './WorkflowHeader';
-// export type { WorkflowHeaderProps } from './WorkflowHeader';
+export { WorkflowHeader } from './WorkflowHeader';
+export type { WorkflowHeaderProps } from './WorkflowHeader';
 
 // Task 1.3: ConfirmExitDialog
-// export { ConfirmExitDialog } from './ConfirmExitDialog';
-// export type { ConfirmExitDialogProps } from './ConfirmExitDialog';
+export { ConfirmExitDialog } from './ConfirmExitDialog';
+export type { ConfirmExitDialogProps } from './ConfirmExitDialog';
 
 // Task 1.5: SessionProgressBar
 // export { SessionProgressBar } from './SessionProgressBar';
