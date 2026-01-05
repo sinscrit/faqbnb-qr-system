@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow/hooks/useWorkflowState
  * @see docs/REQ-094-workflow-state-machine-detailed.md
- * @lastModified 2026-01-05 (REQ-107 Tasks 9-10)
+ * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
@@ -27,6 +27,7 @@ import {
   ROOM_LABELS,
   PROGRESS_WEIGHTS,
   WORKFLOW_STEPS,
+  MAX_CONTENT_PIECES,
 } from '../utils/constants';
 
 // =============================================================================
@@ -324,6 +325,13 @@ export function workflowReducer(
 
     case 'ADD_CONTENT_PIECE': {
       if (!state.currentItem) return state;
+
+      // Enforce maximum content pieces limit
+      if (state.currentItem.content.length >= MAX_CONTENT_PIECES) {
+        console.warn(`Cannot add content: maximum limit of ${MAX_CONTENT_PIECES} pieces reached`);
+        return state;
+      }
+
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
         content: [...state.currentItem.content, action.payload],

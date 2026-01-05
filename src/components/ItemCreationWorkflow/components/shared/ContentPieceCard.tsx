@@ -8,11 +8,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
  * @see docs/REQ-106-preview-save-step-overview.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { Video, Image, FileText, Type, Link, Trash2, RotateCcw, Play } from 'lucide-react';
+import { Video, Image, FileText, Type, Link, Trash2, RotateCcw, Play, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ContentPiece, ContentData } from '../../ItemCreationWorkflow.types';
 
@@ -29,6 +29,12 @@ export interface ContentPieceCardProps {
   onRetake?: (id: string) => void;
   /** Whether actions are disabled (during save) */
   disabled?: boolean;
+  /** Whether to show drag handle for reordering */
+  showDragHandle?: boolean;
+  /** Props to spread on drag handle element (from useSortable) */
+  dragHandleProps?: Record<string, unknown>;
+  /** Whether this card is currently being dragged */
+  isDragging?: boolean;
   /** Optional CSS class */
   className?: string;
 }
@@ -216,6 +222,9 @@ export function ContentPieceCard({
   onRemove,
   onRetake,
   disabled = false,
+  showDragHandle = false,
+  dragHandleProps,
+  isDragging = false,
   className,
 }: ContentPieceCardProps) {
   // Ref for tracking object URLs for cleanup
@@ -255,6 +264,7 @@ export function ContentPieceCard({
         'relative group rounded-lg overflow-hidden border border-gray-200 bg-white',
         'aspect-square shadow-sm',
         disabled && 'opacity-60 pointer-events-none',
+        isDragging && 'ring-2 ring-[#FF385C] shadow-lg',
         className
       )}
       role="listitem"
@@ -274,6 +284,25 @@ export function ContentPieceCard({
         <TypeIcon className="w-3 h-3" />
         <span>{config.label}</span>
       </div>
+
+      {/* Drag Handle (top-right, visible when showDragHandle is true) */}
+      {showDragHandle && (
+        <button
+          type="button"
+          {...dragHandleProps}
+          className={cn(
+            'absolute top-1 right-1 z-10',
+            'p-1.5 bg-white/90 backdrop-blur-sm rounded',
+            'cursor-grab active:cursor-grabbing touch-none',
+            'min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'hover:bg-white hover:shadow-sm transition-all',
+            'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
+          )}
+          aria-label="Drag to reorder"
+        >
+          <GripVertical className="w-5 h-5 text-gray-600" />
+        </button>
+      )}
 
       {/* Action buttons (bottom) - visible on hover */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">

@@ -6,7 +6,7 @@
  *
  * @module ItemCreationWorkflow/utils/constants
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-05 (REQ-093 Task 1.1)
+ * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
  */
 
 // =============================================================================
@@ -158,6 +158,12 @@ export const WORKFLOW_CONFIG_DEFAULTS = {
   /** Whether to enable debug logging */
   debug: false,
 } as const;
+
+/**
+ * Maximum number of content pieces allowed per item.
+ * Prevents system abuse while accommodating legitimate multi-content use cases.
+ */
+export const MAX_CONTENT_PIECES = 10;
 
 /**
  * Ordered list of all workflow steps.

@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-097 Task 1.5)
+ * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
  */
 
 // =============================================================================
@@ -42,12 +42,16 @@ export { ItemNameEditor } from './ItemNameEditor';
 export type { ItemNameEditorProps } from './ItemNameEditor';
 
 // =============================================================================
-// Content Components (Phase 4)
+// Content Components (Phase 4 & Phase 5)
 // =============================================================================
 
 // Task 4.2: ContentPieceCard
 export { ContentPieceCard } from './ContentPieceCard';
 export type { ContentPieceCardProps } from './ContentPieceCard';
+
+// Task 5.2 (REQ-108): SortableContentPieceCard
+export { SortableContentPieceCard } from './SortableContentPieceCard';
+export type { SortableContentPieceCardProps } from './SortableContentPieceCard';
 
 // =============================================================================
 // Summary Components (Phase 6)

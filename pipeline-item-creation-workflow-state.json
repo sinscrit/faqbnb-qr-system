@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T09:20:13.142466",
+  "updated_at": "2026-01-05T09:42:07.260709",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 13,
+  "current_task_index": 14,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -311,11 +311,19 @@
       "title": "Next Action Step",
       "description": "[ ] Create `NextActionStep.tsx` component\n[ ] Three options: Add More to Item, Tag New Item, I'm Done\n[ ] Session progress indicator (\"4 items created\")\n[ ] Route to appropriate next step based on selection",
       "raw_match": "#### Task 5.1: Next Action Step [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-107",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T09:42:07.260683",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-107",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-107-next-action-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-107-next-action-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "5.2",
@@ -461,8 +469,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 14,
-    "last_request_id": "REQ-106",
+    "total_requests_generated": 15,
+    "last_request_id": "REQ-107",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

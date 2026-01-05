@@ -5,7 +5,7 @@
  * Step 8 of ItemCreationWorkflow - Decision point after item save.
  * @module ItemCreationWorkflow/components/steps/NextActionStep
  * @see docs/REQ-107-next-action-step-overview.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
  */
 
 import { useRef, useCallback } from 'react';
@@ -13,6 +13,7 @@ import { Plus, Tag, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 import { SessionProgressBar } from '../shared/SessionProgressBar';
+import { MAX_CONTENT_PIECES } from '../../utils/constants';
 
 // =============================================================================
 // Type Definitions
@@ -44,6 +45,8 @@ export interface NextActionStepProps {
   itemsCreated: number;
   /** Last saved item in the session (null if no items saved yet) */
   lastSavedItem: SessionItem | null;
+  /** Number of content pieces in the last saved item */
+  lastItemContentCount?: number;
   /** Callback when user wants to add more content to the last item */
   onAddMore: () => void;
   /** Callback when user wants to start a new item */
@@ -141,6 +144,7 @@ function truncateText(text: string, maxLength: number = 40): string {
 export function NextActionStep({
   itemsCreated,
   lastSavedItem,
+  lastItemContentCount = 0,
   onAddMore,
   onTagNewItem,
   onDone,
@@ -192,14 +196,20 @@ export function NextActionStep({
     onClick: () => void;
   }[] = [];
 
-  // "Add More to This Item" card - only show if there's a last saved item
-  if (lastSavedItem) {
+  // "Add More to This Item" card - only show if:
+  // 1. There's a last saved item, AND
+  // 2. The item hasn't reached the content limit
+  const canAddMore = lastSavedItem && lastItemContentCount < MAX_CONTENT_PIECES;
+
+  if (canAddMore) {
     cards.push({
       key: 'add-more',
       icon: <Plus className="w-6 h-6 text-blue-600" aria-hidden="true" />,
       iconBgColor: 'bg-blue-100',
       title: 'Add More to This Item',
-      description: `Add another video, photo, or document to "${itemName}"`,
+      description: lastItemContentCount >= MAX_CONTENT_PIECES - 1
+        ? `Add one more piece to "${itemName}" (at limit after)`
+        : `Add another video, photo, or document to "${itemName}"`,
       onClick: onAddMore,
     });
   }

@@ -5392,3 +5392,39 @@ Streamlines the content creation process by reducing cognitive load and navigati
 - [ ] Selecting "I'm Done" concludes the session and returns the user to the main application view
 - [ ] The session progress count accurately reflects the number of items created during the current session
 - [ ] All three navigation paths successfully route to their intended destinations
+
+---
+
+## REQ-108: Multi-Content Item Support
+
+**Date**: 2026-01-05 09:42
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+Users should be able to add multiple pieces of content to a single item, reorder those content pieces, and remove individual pieces to create comprehensive, multi-faceted item documentation.
+
+### Current Behavior
+Items support storing multiple content pieces internally through a content array, but users cannot add additional content after the initial creation step. The preview displays all content pieces, but provides no way to add more content, reorder existing pieces for better presentation, or selectively remove pieces that are no longer needed.
+
+### Expected Behavior
+When users select "Add More to Item" from the next action step, they are returned to an appropriate point in the workflow where they can add another piece of content to the existing item. The preview step displays all existing content pieces with visual indicators showing their current order. Users can drag and drop content pieces to reorder them for optimal presentation. Each content piece includes a remove button that allows selective deletion without affecting other pieces. A counter displays the current number of content pieces and enforces a maximum limit of 10 pieces per item to prevent overwhelming content collections.
+
+### User Impact
+Content creators gain the flexibility to build comprehensive item documentation that includes multiple perspectives, formats, or levels of detail. Property managers can combine video walkthroughs with text instructions, photos, and PDF manuals in a single item. Users who realize they forgot important content can easily add it without creating duplicate items. The ability to reorder content ensures the most important information appears first.
+
+### Business Value
+Reduces item fragmentation by allowing comprehensive documentation in a single item rather than forcing users to create multiple related items. Improves content quality and completeness, leading to better guest experiences and fewer support requests. The 10-piece limit prevents system abuse while accommodating legitimate use cases.
+
+### Acceptance Criteria
+- [ ] Users selecting "Add More to Item" from the next action step are routed to the content source selection with the current item preserved
+- [ ] Preview step displays all existing content pieces in their current order
+- [ ] Users can drag and drop content pieces using intuitive touch or mouse interactions to reorder them
+- [ ] Each content piece displays a remove button that deletes only that specific piece
+- [ ] Content counter displays current count and maximum limit (e.g., "3 of 10 pieces")
+- [ ] System prevents adding more than 10 content pieces to a single item with a clear error message
+- [ ] Reordering content updates the order property of each content piece to maintain sort stability
+- [ ] Removing a content piece triggers a confirmation if it's the last remaining piece
+- [ ] All drag-and-drop interactions are keyboard accessible for users who cannot use a mouse
+- [ ] Content piece order is preserved when saving the item and displayed consistently in all views
+
