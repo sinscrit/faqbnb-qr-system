@@ -8,12 +8,14 @@
  *
  * @module ItemCreationWorkflow/components/shared/RemoveItemDialog
  * @see docs/REQ-109-session-summary-step-overview.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
  */
 
 import { useEffect, useRef } from 'react';
 import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions
@@ -45,11 +47,17 @@ export function RemoveItemDialog({
 }: RemoveItemDialogProps) {
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Focus the confirm button when dialog opens
+  // REQ-114: Focus trapping - trap focus within dialog when open
+  useFocusTrap(dialogRef, isOpen);
+
+  // REQ-114: Focus cancel button when dialog opens (safer option)
   useEffect(() => {
-    if (isOpen && confirmButtonRef.current) {
-      confirmButtonRef.current.focus();
+    if (isOpen && cancelButtonRef.current) {
+      requestAnimationFrame(() => {
+        cancelButtonRef.current?.focus();
+      });
     }
   }, [isOpen]);
 
@@ -85,6 +93,7 @@ export function RemoveItemDialog({
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       role="alertdialog"
@@ -93,10 +102,10 @@ export function RemoveItemDialog({
       aria-describedby="remove-dialog-description"
     >
       <div
-        ref={dialogRef}
         className={cn(
           "bg-white rounded-lg shadow-xl max-w-md w-full mx-4",
           "animate-in fade-in zoom-in-95 duration-200",
+          "motion-reduce:animate-none",
           className
         )}
         onClick={(e) => e.stopPropagation()}
@@ -125,6 +134,7 @@ export function RemoveItemDialog({
         {/* Actions */}
         <div className="flex gap-3 p-6 pt-4 border-t border-gray-100">
           <button
+            ref={cancelButtonRef}
             type="button"
             onClick={onClose}
             className={cn(
@@ -132,6 +142,7 @@ export function RemoveItemDialog({
               "text-gray-700 bg-gray-100",
               "hover:bg-gray-200 active:bg-gray-300",
               "transition-colors duration-150",
+              "motion-reduce:transition-none",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
               "min-h-[44px]"
             )}
@@ -147,6 +158,7 @@ export function RemoveItemDialog({
               "text-white",
               "hover:opacity-90 active:opacity-80",
               "transition-opacity duration-150",
+              "motion-reduce:transition-none",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
               "min-h-[44px]"
             )}

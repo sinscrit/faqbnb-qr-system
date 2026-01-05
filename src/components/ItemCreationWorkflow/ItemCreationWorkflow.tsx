@@ -11,10 +11,11 @@
  * @see docs/REQ-111-qr-code-integration-overview.md
  * @see docs/REQ-112-pdf-generation-integration-overview.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113 Session Recovery Banner)
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility & Mobile Optimization)
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
@@ -22,6 +23,7 @@ import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBa
 import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
+import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
 
 // =============================================================================
 // Step Placeholder Component
@@ -141,6 +143,11 @@ export function ItemCreationWorkflow({
   const [recoveredItemCount, setRecoveredItemCount] = useState(0);
   const [contentNeedingReUpload, setContentNeedingReUpload] = useState(0);
 
+  // REQ-114: Accessibility - refs and hooks for focus management
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const previousStepRef = useRef<string>(state.currentStep);
+  const { announce } = useAnnounce();
+
   // Task 5.3: Check for recoverable session on mount
   useEffect(() => {
     // Only check on initial mount when no items exist
@@ -155,6 +162,31 @@ export function ItemCreationWorkflow({
       }
     }
   }, []); // Only run once on mount
+
+  // REQ-114: Announce step changes to screen readers and manage focus
+  useEffect(() => {
+    // Only announce if step actually changed
+    if (previousStepRef.current !== state.currentStep) {
+      const stepName = STEP_NAMES[state.currentStep] || state.currentStep;
+      const announcement = getStepAnnouncement(currentStepIndex + 1, totalSteps, stepName);
+      announce(announcement);
+
+      // Focus main content area for keyboard navigation
+      if (mainContentRef.current) {
+        // Find the first heading in the step content and focus it
+        const heading = mainContentRef.current.querySelector('h2, h3, [role="heading"]');
+        if (heading && heading instanceof HTMLElement) {
+          // Make heading focusable if it isn't already
+          if (!heading.hasAttribute('tabindex')) {
+            heading.setAttribute('tabindex', '-1');
+          }
+          heading.focus();
+        }
+      }
+
+      previousStepRef.current = state.currentStep;
+    }
+  }, [state.currentStep, currentStepIndex, totalSteps, announce]);
 
   // Task 5.3: Handle continue with recovered session
   const handleRecoveryContinue = useCallback(() => {
@@ -518,6 +550,19 @@ export function ItemCreationWorkflow({
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
+      {/* REQ-114: Skip link for keyboard navigation */}
+      <a
+        href="#main-content"
+        className={cn(
+          'sr-only focus:not-sr-only',
+          'absolute top-4 left-4 z-50',
+          'px-4 py-2 bg-[#FF385C] text-white rounded-lg',
+          'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF385C]'
+        )}
+      >
+        Skip to main content
+      </a>
+
       <WorkflowHeader
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
@@ -543,7 +588,12 @@ export function ItemCreationWorkflow({
       )}
 
       {/* Main content area */}
-      <main className="flex-1 flex flex-col">
+      <main
+        id="main-content"
+        ref={mainContentRef}
+        className="flex-1 flex flex-col"
+        tabIndex={-1}
+      >
         {/* Task 4.14: Show PrintOptionsPanel when user proceeds to print */}
         {showPrintPanel ? (
           <PrintOptionsPanel

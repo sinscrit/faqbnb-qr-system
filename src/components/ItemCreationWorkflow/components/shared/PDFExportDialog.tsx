@@ -8,7 +8,8 @@
  *
  * @module ItemCreationWorkflow/components/shared/PDFExportDialog
  * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -16,6 +17,7 @@ import { X, FileDown, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PDFExportOptions } from '@/components/PDFExportOptions';
 import type { PDFExportSettings } from '@/types/pdf';
+import { useFocusTrap, useReducedMotion } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions (Task 6.4.3)
@@ -62,19 +64,17 @@ export function PDFExportDialog({
 }: PDFExportDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
-  // Focus trap and keyboard handling
+  // REQ-114: Focus trapping - trap focus within dialog when open
+  useFocusTrap(dialogRef, isOpen);
+
+  // REQ-114: Focus close button when dialog opens
   useEffect(() => {
-    if (isOpen && dialogRef.current) {
-      // Focus the close button when dialog opens
-      closeButtonRef.current?.focus();
-
-      // Store previous active element to restore on close
-      const previousActiveElement = document.activeElement as HTMLElement;
-
-      return () => {
-        previousActiveElement?.focus();
-      };
+    if (isOpen && closeButtonRef.current) {
+      requestAnimationFrame(() => {
+        closeButtonRef.current?.focus();
+      });
     }
   }, [isOpen]);
 
@@ -117,6 +117,7 @@ export function PDFExportDialog({
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
@@ -126,10 +127,10 @@ export function PDFExportDialog({
       aria-describedby="pdf-export-dialog-description"
     >
       <div
-        ref={dialogRef}
         className={cn(
           'bg-white rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col',
           'animate-in fade-in zoom-in-95 duration-200',
+          'motion-reduce:animate-none',
           className
         )}
         onClick={(e) => e.stopPropagation()}
@@ -173,6 +174,7 @@ export function PDFExportDialog({
             disabled={isGenerating}
             className={cn(
               'p-2 rounded-full transition-colors duration-150',
+              'motion-reduce:transition-none',
               isGenerating
                 ? 'text-gray-300 cursor-not-allowed'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
@@ -242,6 +244,7 @@ export function PDFExportDialog({
             disabled={isGenerating}
             className={cn(
               'flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-150',
+              'motion-reduce:transition-none',
               isGenerating
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
@@ -255,6 +258,7 @@ export function PDFExportDialog({
             disabled={isGenerating}
             className={cn(
               'flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-150 flex items-center justify-center gap-2',
+              'motion-reduce:transition-none',
               isGenerating
                 ? 'cursor-wait'
                 : 'hover:opacity-90 active:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
@@ -266,7 +270,10 @@ export function PDFExportDialog({
           >
             {isGenerating ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                <Loader2
+                  className={cn('w-4 h-4', !prefersReducedMotion && 'animate-spin')}
+                  aria-hidden="true"
+                />
                 <span>Generating...</span>
               </>
             ) : (

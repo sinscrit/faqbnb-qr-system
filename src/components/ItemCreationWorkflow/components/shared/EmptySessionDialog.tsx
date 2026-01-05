@@ -8,12 +8,14 @@
  *
  * @module ItemCreationWorkflow/components/shared/EmptySessionDialog
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
 import { AlertCircle, Plus, LogOut, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions
@@ -50,6 +52,9 @@ export function EmptySessionDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
+  // REQ-114: Focus trapping - trap focus within dialog when open
+  useFocusTrap(dialogRef, isOpen);
+
   // Handle escape key
   useEffect(() => {
     if (!isOpen) return;
@@ -64,10 +69,12 @@ export function EmptySessionDialog({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  // Focus first button when dialog opens
+  // REQ-114: Focus first button when dialog opens
   useEffect(() => {
     if (isOpen && firstButtonRef.current) {
-      firstButtonRef.current.focus();
+      requestAnimationFrame(() => {
+        firstButtonRef.current?.focus();
+      });
     }
   }, [isOpen]);
 
@@ -85,11 +92,13 @@ export function EmptySessionDialog({
 
   return (
     <div
+      ref={dialogRef}
       className={cn(
         'fixed inset-0 z-50',
         'flex items-center justify-center',
         'bg-black/50 backdrop-blur-sm',
-        'animate-in fade-in-0 duration-200'
+        'animate-in fade-in-0 duration-200',
+        'motion-reduce:animate-none'
       )}
       onClick={handleBackdropClick}
       role="dialog"
@@ -98,11 +107,11 @@ export function EmptySessionDialog({
       aria-describedby="empty-session-description"
     >
       <div
-        ref={dialogRef}
         className={cn(
           'relative w-full max-w-md mx-4',
           'bg-white rounded-xl shadow-xl',
           'animate-in zoom-in-95 duration-200',
+          'motion-reduce:animate-none',
           className
         )}
       >
@@ -116,6 +125,7 @@ export function EmptySessionDialog({
             'text-gray-400 hover:text-gray-600',
             'hover:bg-gray-100',
             'transition-colors duration-200',
+            'motion-reduce:transition-none',
             'focus:outline-none focus:ring-2 focus:ring-gray-500'
           )}
           aria-label="Close dialog"
@@ -161,6 +171,7 @@ export function EmptySessionDialog({
                 'text-base font-medium text-white rounded-lg',
                 'bg-[#FF385C] hover:bg-[#E31C5F]',
                 'transition-colors duration-200',
+                'motion-reduce:transition-none',
                 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF385C]'
               )}
             >
@@ -179,6 +190,7 @@ export function EmptySessionDialog({
                 'bg-white border border-gray-300',
                 'hover:bg-gray-50',
                 'transition-colors duration-200',
+                'motion-reduce:transition-none',
                 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
               )}
             >

@@ -8,9 +8,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/ItemTypeCard
  * @see docs/REQ-097-basic-shared-components-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
  */
 
+import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Zap, Package, Info, Check, type LucideIcon } from 'lucide-react';
 import type { ItemType } from '../../ItemCreationWorkflow.types';
@@ -32,6 +34,8 @@ export interface ItemTypeCardProps {
   isSelected: boolean;
   /** Called when item type is selected */
   onSelect: (itemType: ItemType) => void;
+  /** REQ-114: Tab index for roving tabindex pattern */
+  tabIndex?: number;
   /** Optional CSS class name */
   className?: string;
 }
@@ -54,15 +58,19 @@ export const ITEM_TYPE_ICONS: Record<ItemType, LucideIcon> = {
 // Main Component
 // =============================================================================
 
-export function ItemTypeCard({
-  itemType,
-  label,
-  description,
-  icon: Icon,
-  isSelected,
-  onSelect,
-  className,
-}: ItemTypeCardProps) {
+export const ItemTypeCard = forwardRef<HTMLButtonElement, ItemTypeCardProps>(function ItemTypeCard(
+  {
+    itemType,
+    label,
+    description,
+    icon: Icon,
+    isSelected,
+    onSelect,
+    tabIndex,
+    className,
+  },
+  ref
+) {
   const handleClick = () => {
     onSelect(itemType);
   };
@@ -76,12 +84,14 @@ export function ItemTypeCard({
 
   return (
     <button
+      ref={ref}
       type="button"
       role="radio"
       aria-checked={isSelected}
       aria-describedby={`${itemType}-description`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      tabIndex={tabIndex}
       className={cn(
         // Layout - horizontal with icon left, text right
         'flex items-center gap-4',
@@ -92,12 +102,13 @@ export function ItemTypeCard({
         'touch-manipulation select-none',
         // Transitions
         'transition-all duration-200',
+        'motion-reduce:transition-none motion-reduce:transform-none',
         // Focus states
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         // Selection states
         isSelected
           ? 'border-blue-500 bg-blue-50'
-          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98]',
+          : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98] motion-reduce:active:scale-100',
         className
       )}
     >
@@ -148,6 +159,6 @@ export function ItemTypeCard({
       )}
     </button>
   );
-}
+});
 
 export default ItemTypeCard;

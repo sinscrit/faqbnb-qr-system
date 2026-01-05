@@ -5622,3 +5622,46 @@ Improved error handling reduces support requests, increases workflow completion 
 - [ ] All error states include actionable recovery options rather than passive error messages
 - [ ] Network-related errors distinguish between temporary connectivity issues and permanent failures
 
+
+---
+
+## REQ-114: Accessibility and Mobile Optimization for Item Creation Workflow
+
+**Date**: 2026-01-05 14:23
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The Item Creation Workflow should be fully accessible to users with disabilities and provide an optimized experience across all device types and input methods.
+
+### Current Behavior
+The Item Creation Workflow currently functions on desktop browsers but may have gaps in accessibility support, keyboard navigation, screen reader compatibility, and mobile device optimization. Users relying on assistive technologies or accessing the workflow from mobile devices may encounter barriers to completing item creation tasks.
+
+### Expected Behavior
+All users should be able to complete the Item Creation Workflow regardless of their device type, input method, or accessibility needs. This includes:
+- Screen reader users who navigate via keyboard and rely on descriptive labels
+- Keyboard-only users who navigate without a mouse
+- Mobile and tablet users who interact via touch gestures
+- Users with motion sensitivity who prefer reduced animations
+- Users on various screen sizes from small phones to large desktop displays
+
+### User Impact
+This affects all users of the Item Creation Workflow, with particular importance for:
+- Users with visual, motor, or cognitive disabilities who rely on assistive technologies
+- Mobile users who represent a significant portion of potential platform access
+- Users in accessibility-regulated environments where compliance is mandatory
+- Power users who prefer keyboard-based workflows for efficiency
+
+### Business Value
+Accessibility and mobile optimization are essential for inclusive product design and regulatory compliance. Expanding support to mobile devices increases potential user reach, while accessibility features ensure legal compliance and demonstrate commitment to universal design principles.
+
+### Acceptance Criteria
+- [ ] All interactive elements include appropriate ARIA labels and roles
+- [ ] Complete keyboard navigation support allows users to move through all workflow steps using only keyboard input
+- [ ] Focus indicators are visible and logical focus order is maintained when navigating between workflow steps
+- [ ] All touch targets meet minimum size requirements of 48x48 pixels for reliable interaction on touch devices
+- [ ] Workflow layout adapts appropriately to mobile phone, tablet, and desktop screen sizes
+- [ ] Users can enable reduced motion preferences to minimize or eliminate animations throughout the workflow
+- [ ] Screen reader testing confirms all content and interactions are announced correctly
+- [ ] Mobile gesture support is verified on iOS and Android devices
+

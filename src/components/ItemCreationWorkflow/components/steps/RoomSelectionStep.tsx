@@ -8,14 +8,16 @@
  *
  * @module ItemCreationWorkflow/components/steps/RoomSelectionStep
  * @see docs/REQ-098-room-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { RoomCard } from '../shared';
 import { ROOM_TYPES, ROOM_LABELS, ROOM_ICONS } from '../../utils/constants';
 import type { RoomType } from '../../ItemCreationWorkflow.types';
+import { createKeyboardNavigator } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions
@@ -48,6 +50,12 @@ export function RoomSelectionStep({
   // Local state for custom room name when "Other" is selected
   const [customRoomName, setCustomRoomName] = useState('');
 
+  // REQ-114: Refs for keyboard navigation (roving tabindex)
+  const [activeIndex, setActiveIndex] = useState(() =>
+    currentRoom ? ROOM_TYPES.indexOf(currentRoom as RoomType) : 0
+  );
+  const roomRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   // Handle custom room name changes
   const handleCustomRoomNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +80,38 @@ export function RoomSelectionStep({
     }
   }, [isValidSelection, onNext]);
 
+  // REQ-114: Keyboard navigation handler for room grid
+  // Uses a 2-column layout on mobile, 3 on tablet, 4 on desktop
+  // For simplicity, we'll use a fixed 4-column approach and let it adapt
+  const handleGridKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const validRefs = roomRefs.current.filter(Boolean) as HTMLButtonElement[];
+    if (validRefs.length === 0) return;
+
+    // Dynamically determine columns based on viewport width
+    // This is a simplified approach - actual column count depends on CSS grid
+    const getColumns = () => {
+      if (typeof window === 'undefined') return 4;
+      if (window.innerWidth < 640) return 2;  // sm breakpoint
+      if (window.innerWidth < 1024) return 3; // lg breakpoint
+      return 4;
+    };
+
+    const handleNav = createKeyboardNavigator({
+      items: validRefs,
+      orientation: 'grid',
+      columns: getColumns(),
+      loop: true,
+      onSelect: (index) => {
+        onSelectRoom(ROOM_TYPES[index] as RoomType);
+      },
+      onFocusChange: (index) => {
+        setActiveIndex(index);
+      },
+    });
+
+    handleNav(event);
+  }, [onSelectRoom]);
+
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
       {/* Step header */}
@@ -88,19 +128,26 @@ export function RoomSelectionStep({
       <div
         role="radiogroup"
         aria-label="Select a room for your item"
+        aria-describedby="room-selection-help"
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+        onKeyDown={handleGridKeyDown}
       >
-        {ROOM_TYPES.map((room) => (
+        {ROOM_TYPES.map((room, index) => (
           <RoomCard
             key={room}
+            ref={(el) => { roomRefs.current[index] = el; }}
             room={room}
             label={ROOM_LABELS[room]}
             icon={ROOM_ICONS[room]}
             isSelected={currentRoom === room}
             onSelect={onSelectRoom}
+            tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}
       </div>
+      <p id="room-selection-help" className="sr-only">
+        Use arrow keys to navigate between rooms. Press Enter or Space to select.
+      </p>
 
       {/* Custom room input for "Other" option */}
       {currentRoom === 'other' && (
@@ -121,7 +168,7 @@ export function RoomSelectionStep({
             className={cn(
               'w-full px-4 py-3 border-2 rounded-lg',
               'text-base text-[#222222] placeholder:text-[#717171]',
-              'transition-colors duration-150',
+              'transition-colors duration-150 motion-reduce:transition-none',
               'focus:outline-none focus:border-[#222222]',
               'border-gray-200'
             )}
@@ -142,7 +189,7 @@ export function RoomSelectionStep({
           disabled={!isValidSelection}
           className={cn(
             'w-full py-4 rounded-lg font-semibold text-lg',
-            'transition-colors duration-150',
+            'transition-colors duration-150 motion-reduce:transition-none',
             'min-h-[56px]', // Touch target height
             isValidSelection
               ? 'bg-[#FF385C] text-white hover:bg-[#E31C5F] active:bg-[#D70466]'

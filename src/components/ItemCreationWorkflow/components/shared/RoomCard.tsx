@@ -8,9 +8,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/RoomCard
  * @see docs/REQ-097-basic-shared-components-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
  */
 
+import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import {
   ChefHat,
@@ -43,6 +45,8 @@ export interface RoomCardProps {
   isDisabled?: boolean;
   /** Called when room is selected */
   onSelect: (room: RoomType) => void;
+  /** REQ-114: Tab index for roving tabindex pattern */
+  tabIndex?: number;
   /** Optional CSS class name */
   className?: string;
 }
@@ -78,15 +82,19 @@ function getRoomIcon(iconName: string): LucideIcon {
 // Main Component
 // =============================================================================
 
-export function RoomCard({
-  room,
-  label,
-  icon,
-  isSelected,
-  isDisabled = false,
-  onSelect,
-  className,
-}: RoomCardProps) {
+export const RoomCard = forwardRef<HTMLButtonElement, RoomCardProps>(function RoomCard(
+  {
+    room,
+    label,
+    icon,
+    isSelected,
+    isDisabled = false,
+    onSelect,
+    tabIndex,
+    className,
+  },
+  ref
+) {
   const Icon = getRoomIcon(icon);
 
   const handleClick = () => {
@@ -104,6 +112,7 @@ export function RoomCard({
 
   return (
     <button
+      ref={ref}
       type="button"
       role="radio"
       aria-checked={isSelected}
@@ -111,6 +120,7 @@ export function RoomCard({
       disabled={isDisabled}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      tabIndex={tabIndex}
       className={cn(
         // Layout - centered content, square aspect on mobile
         'flex flex-col items-center justify-center',
@@ -121,6 +131,7 @@ export function RoomCard({
         'touch-manipulation select-none',
         // Transitions
         'transition-all duration-200',
+        'motion-reduce:transition-none motion-reduce:transform-none',
         // Focus states
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         // Selection states
@@ -128,7 +139,7 @@ export function RoomCard({
           ? 'border-blue-500 bg-blue-50 text-blue-700'
           : isDisabled
             ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 active:scale-95',
+            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 active:scale-95 motion-reduce:active:scale-100',
         className
       )}
     >
@@ -152,6 +163,6 @@ export function RoomCard({
       </span>
     </button>
   );
-}
+});
 
 export default RoomCard;

@@ -9,14 +9,16 @@
  *
  * @module ItemCreationWorkflow/components/steps/ItemTypeStep
  * @see docs/REQ-099-item-type-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
+ * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
  */
 
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ItemTypeCard, ITEM_TYPE_ICONS } from '../shared';
 import { ITEM_TYPES, ITEM_TYPE_LABELS, ITEM_TYPE_DESCRIPTIONS } from '../../utils/constants';
 import type { ItemType } from '../../ItemCreationWorkflow.types';
+import { createKeyboardNavigator } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions
@@ -46,12 +48,38 @@ export function ItemTypeStep({
   canNext,
   className,
 }: ItemTypeStepProps) {
+  // REQ-114: Refs for keyboard navigation (roving tabindex)
+  const [activeIndex, setActiveIndex] = useState(() =>
+    currentItemType ? ITEM_TYPES.indexOf(currentItemType as ItemType) : 0
+  );
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   // Handle Continue button click
   const handleContinue = useCallback(() => {
     if (canNext) {
       onNext();
     }
   }, [canNext, onNext]);
+
+  // REQ-114: Keyboard navigation handler for item type cards (vertical list)
+  const handleListKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const validRefs = itemRefs.current.filter(Boolean) as HTMLButtonElement[];
+    if (validRefs.length === 0) return;
+
+    const handleNav = createKeyboardNavigator({
+      items: validRefs,
+      orientation: 'vertical',
+      loop: true,
+      onSelect: (index) => {
+        onSelectItemType(ITEM_TYPES[index] as ItemType);
+      },
+      onFocusChange: (index) => {
+        setActiveIndex(index);
+      },
+    });
+
+    handleNav(event);
+  }, [onSelectItemType]);
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
@@ -69,20 +97,27 @@ export function ItemTypeStep({
       <div
         role="radiogroup"
         aria-label="Select item type"
+        aria-describedby="item-type-help"
         className="flex flex-col gap-4"
+        onKeyDown={handleListKeyDown}
       >
-        {ITEM_TYPES.map((type) => (
+        {ITEM_TYPES.map((type, index) => (
           <ItemTypeCard
             key={type}
+            ref={(el) => { itemRefs.current[index] = el; }}
             itemType={type}
             label={ITEM_TYPE_LABELS[type]}
             description={ITEM_TYPE_DESCRIPTIONS[type]}
             icon={ITEM_TYPE_ICONS[type]}
             isSelected={currentItemType === type}
             onSelect={onSelectItemType}
+            tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}
       </div>
+      <p id="item-type-help" className="sr-only">
+        Use up and down arrow keys to navigate. Press Enter or Space to select.
+      </p>
 
       {/* Continue button */}
       <div className="mt-8 pt-6 border-t border-gray-200">
@@ -92,7 +127,7 @@ export function ItemTypeStep({
           disabled={!canNext}
           className={cn(
             'w-full py-4 rounded-lg font-semibold text-lg',
-            'transition-colors duration-150',
+            'transition-colors duration-150 motion-reduce:transition-none',
             'min-h-[56px]', // Touch target height
             canNext
               ? 'bg-[#FF385C] text-white hover:bg-[#E31C5F] active:bg-[#D70466]'
