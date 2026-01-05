@@ -3,16 +3,16 @@
 /**
  * ContentTypeStep Component
  *
- * Presents users with four content creation options: Video, Photo, Text, Upload.
+ * Presents users with five content creation options: Video, Photo, Text, Upload, URL.
  * Uses large, accessible, touch-friendly buttons with Lucide React icons.
  *
  * @module ItemCapture/components/steps/ContentTypeStep
  * @see docs/REQ-035-implement-contenttypestep-detailed.md
- * @lastModified 2025-12-31 (REQ-035)
+ * @lastModified 2026-01-05 (REQ-092 - Added URL link support)
  */
 
 import React from 'react';
-import { Video, Camera, FileText, Upload, type LucideIcon } from 'lucide-react';
+import { Video, Camera, FileText, Upload, Link, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 /**
  * Available content types for item capture.
  */
-export type ContentType = 'video' | 'photo' | 'text' | 'upload';
+export type ContentType = 'video' | 'photo' | 'text' | 'upload' | 'url';
 
 /**
  * Props for ContentTypeStep component.
@@ -79,6 +79,12 @@ const CONTENT_OPTIONS: ContentTypeOption[] = [
     label: 'Upload File',
     description: 'Upload existing media',
   },
+  {
+    type: 'url',
+    icon: Link,
+    label: 'Add Link',
+    description: 'Add external URL',
+  },
 ] as const;
 
 // =============================================================================
@@ -89,8 +95,8 @@ const CONTENT_OPTIONS: ContentTypeOption[] = [
  * ContentTypeStep presents content type selection with large, accessible buttons.
  *
  * Features:
- * - Four content type options: Video, Photo, Text, Upload
- * - Responsive 2-column (mobile) / 4-column (desktop) grid
+ * - Five content type options: Video, Photo, Text, Upload, URL
+ * - Responsive 2-column (mobile) / 3-column (tablet) / 5-column (desktop) grid
  * - Touch-friendly targets (100px+ height)
  * - Full keyboard navigation support
  * - ARIA radiogroup pattern for accessibility
@@ -125,7 +131,7 @@ export function ContentTypeStep({
       <div
         role="radiogroup"
         aria-label="Content type selection"
-        className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4"
       >
         {CONTENT_OPTIONS.map((option) => {
           const Icon = option.icon;
