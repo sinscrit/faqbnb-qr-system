@@ -5090,3 +5090,41 @@ Proper categorization improves the overall quality of property documentation and
 - [ ] The selected item type is stored in workflow state
 - [ ] Component follows established patterns from RoomSelectionStep implementation
 
+---
+
+## REQ-100: Specific Item Selection Step with Intelligent Suggestions
+
+**Date**: 2026-01-05 15:47
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users must be able to select or enter the specific item name in the third step of the item creation workflow, with intelligent suggestions based on previously selected room and item type, automatic name generation, and prevention of duplicate item creation.
+
+### Current Behavior
+After selecting a room and item type, users have no interface to specify the actual item they want to document. There is no guidance on naming, no suggestions based on context, and no visibility into which items already exist for the selected location.
+
+### Expected Behavior
+The third workflow step presents an intelligent item selection interface. Users see contextual suggestions for common items based on their room and item type selections (e.g., "Microwave" suggested for Kitchen + Appliance). Previously created items for the same room and type appear in a grayed-out state to prevent duplicates. Users can select a suggested item or enter a custom name through an editable field that auto-populates with a "Room - Item" format. All interactions feel responsive and guide users toward consistent, collision-free item naming.
+
+### User Impact
+Property managers and hosts creating item documentation receive intelligent guidance that reduces typing, prevents accidental duplicate entries, and ensures consistent naming across their property inventory. New users especially benefit from suggestions that help them discover what types of items are commonly documented.
+
+### Business Value
+Intelligent suggestions reduce friction in the item creation process, improve data quality through consistent naming, and prevent user frustration from duplicate item conflicts. The system becomes more helpful and professional by anticipating user needs.
+
+### Acceptance Criteria
+- [ ] Suggestions are dynamically generated based on selected room and item type combination
+- [ ] Previously created items for the same room and type appear visually distinct (grayed out) and are not selectable
+- [ ] Users can click a suggestion to select it as the item name
+- [ ] An editable name field allows users to enter custom item names
+- [ ] Default item name follows "Room - Item" format when field is initially displayed
+- [ ] Selected or entered item name is validated before allowing progression
+- [ ] Suggestion system is implemented through a reusable hook for potential future use
+- [ ] Individual suggestion buttons are separate components for maintainability
+- [ ] Name editor component handles text input, validation, and formatting logic
+- [ ] Continue button is disabled until a valid item name is selected or entered
+- [ ] The selected item name is stored in workflow state
+
+---
+

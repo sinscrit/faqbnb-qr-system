@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep } from './components/steps';
 
 // =============================================================================
 // Step Placeholder Component
@@ -101,6 +101,8 @@ export function ItemCreationWorkflow({
     reset,
     selectRoom,
     selectItemType,
+    selectSpecificItem,
+    setItemName,
   } = useWorkflowState();
 
   // Exit confirmation dialog state
@@ -166,7 +168,19 @@ export function ItemCreationWorkflow({
           />
         );
       case 'specific-item-selection':
-        return <StepPlaceholder step="specific-item-selection" {...commonProps} />;
+        return (
+          <SpecificItemStep
+            currentRoom={state.currentItem?.room ?? 'other'}
+            currentItemType={state.currentItem?.itemType ?? 'general-info'}
+            currentSpecificItem={state.currentItem?.specificItem ?? ''}
+            currentItemName={state.currentItem?.itemName ?? ''}
+            existingSessionItems={state.session.items}
+            onSelectSpecificItem={selectSpecificItem}
+            onSetItemName={setItemName}
+            onNext={nextStep}
+            canNext={canGoNext}
+          />
+        );
       case 'content-source-selection':
         return <StepPlaceholder step="content-source-selection" {...commonProps} />;
       case 'content-type-selection':
@@ -183,7 +197,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, nextStep, canGoNext, selectRoom, selectItemType]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

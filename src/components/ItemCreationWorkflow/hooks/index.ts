@@ -28,8 +28,12 @@ export type {
 // Data Hooks
 // =============================================================================
 
-// Placeholder for Task 2.3: useSuggestions
-// export { useSuggestions } from './useSuggestions';
+// Task 2.3: useSuggestions - Dynamic suggestions hook
+export { useSuggestions } from './useSuggestions';
+export type {
+  UseSuggestionsOptions,
+  UseSuggestionsReturn,
+} from './useSuggestions';
 
 // Placeholder for Task 3.3: useUrlPreview
 // export { useUrlPreview } from './useUrlPreview';

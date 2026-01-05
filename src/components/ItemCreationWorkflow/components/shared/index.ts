@@ -34,12 +34,12 @@ export { ItemTypeCard, ITEM_TYPE_ICONS } from './ItemTypeCard';
 export type { ItemTypeCardProps } from './ItemTypeCard';
 
 // Task 2.3: SuggestionButton
-// export { SuggestionButton } from './SuggestionButton';
-// export type { SuggestionButtonProps } from './SuggestionButton';
+export { SuggestionButton } from './SuggestionButton';
+export type { SuggestionButtonProps } from './SuggestionButton';
 
 // Task 2.3: ItemNameEditor
-// export { ItemNameEditor } from './ItemNameEditor';
-// export type { ItemNameEditorProps } from './ItemNameEditor';
+export { ItemNameEditor } from './ItemNameEditor';
+export type { ItemNameEditorProps } from './ItemNameEditor';
 
 // =============================================================================
 // Content Components (Phase 4)

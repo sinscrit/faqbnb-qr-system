@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T05:30:02.863361",
+  "updated_at": "2026-01-05T05:59:53.788229",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 5,
+  "current_task_index": 6,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -143,11 +143,19 @@
       "title": "Item Type Selection Step",
       "description": "[ ] Create `ItemTypeStep.tsx` component\n[ ] Three card options: Appliance, Room Item, General Info\n[ ] Clear descriptions and examples on each card\n[ ] Auto-skip if \"General\" room was selected",
       "raw_match": "#### Task 2.2: Item Type Selection Step [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-099",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T05:59:53.788190",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-099",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-099-item-type-selection-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-099-item-type-selection-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "2.3",
@@ -397,8 +405,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 6,
-    "last_request_id": "REQ-098",
+    "total_requests_generated": 7,
+    "last_request_id": "REQ-099",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

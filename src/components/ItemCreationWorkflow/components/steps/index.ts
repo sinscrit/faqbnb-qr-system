@@ -18,8 +18,8 @@ export { ItemTypeStep } from './ItemTypeStep';
 export type { ItemTypeStepProps } from './ItemTypeStep';
 
 // Task 2.3: SpecificItemStep
-// export { SpecificItemStep } from './SpecificItemStep';
-// export type { SpecificItemStepProps } from './SpecificItemStep';
+export { SpecificItemStep } from './SpecificItemStep';
+export type { SpecificItemStepProps } from './SpecificItemStep';
 
 // =============================================================================
 // Content Selection Steps (Phase 3)
