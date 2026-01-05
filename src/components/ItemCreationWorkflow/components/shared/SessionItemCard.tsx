@@ -8,15 +8,17 @@
  *
  * @module ItemCreationWorkflow/components/shared/SessionItemCard
  * @see docs/REQ-109-session-summary-step-overview.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113 Error Handling)
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Video, Image, FileText, Type, Link, Edit2, Trash2, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SessionItem, ContentPiece, ContentType, ContentData } from '../../ItemCreationWorkflow.types';
 import { ROOM_LABELS } from '../../utils/constants';
 import type { RoomTypeConst } from '../../utils/constants';
+import { TruncatedText } from './TruncatedText';
 
 // =============================================================================
 // Types
@@ -253,9 +255,12 @@ export function SessionItemCard({
 
       {/* Info Section */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-base font-medium text-[#222222] truncate" title={item.name}>
-          {item.name}
-        </h3>
+        <TruncatedText
+          text={item.name}
+          maxLength={40}
+          as="h3"
+          className="text-base font-medium text-[#222222]"
+        />
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-sm text-[#717171]">
             {getContentCountLabel(item.content.length)}
