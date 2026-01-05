@@ -10,12 +10,12 @@
 // =============================================================================
 
 // Task 2.1: RoomSelectionStep
-// export { RoomSelectionStep } from './RoomSelectionStep';
-// export type { RoomSelectionStepProps } from './RoomSelectionStep';
+export { RoomSelectionStep } from './RoomSelectionStep';
+export type { RoomSelectionStepProps } from './RoomSelectionStep';
 
 // Task 2.2: ItemTypeStep
-// export { ItemTypeStep } from './ItemTypeStep';
-// export type { ItemTypeStepProps } from './ItemTypeStep';
+export { ItemTypeStep } from './ItemTypeStep';
+export type { ItemTypeStepProps } from './ItemTypeStep';
 
 // Task 2.3: SpecificItemStep
 // export { SpecificItemStep } from './SpecificItemStep';

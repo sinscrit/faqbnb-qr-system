@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T04:18:22.424950",
+  "updated_at": "2026-01-05T05:30:02.863361",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 3,
+  "current_task_index": 5,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -101,11 +101,19 @@
       "title": "Basic Shared Components",
       "description": "[ ] Create `SessionProgressBar` component\n[ ] Create base card components (RoomCard, ItemTypeCard)\n[ ] Apply Airbnb design system styles",
       "raw_match": "#### Task 1.5: Basic Shared Components [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-097",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T04:54:18.010983",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-097",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-097-basic-shared-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-097-basic-shared-components-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "2.1",
@@ -114,11 +122,19 @@
       "title": "Room Selection Step",
       "description": "[ ] Create `RoomSelectionStep.tsx` component\n[ ] Implement room grid with icons and labels\n[ ] Add \"Other\" option with free-text input\n[ ] Handle selection and navigation\n[ ] Ensure large touch targets (48x48px minimum)",
       "raw_match": "#### Task 2.1: Room Selection Step [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-098",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T05:30:02.863322",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-098",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-098-room-selection-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-098-room-selection-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "2.2",
@@ -381,8 +397,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 4,
-    "last_request_id": "REQ-096",
+    "total_requests_generated": 6,
+    "last_request_id": "REQ-098",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

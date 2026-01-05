@@ -5022,3 +5022,71 @@ Accelerates future development by enabling component reuse. Ensures brand consis
 - [ ] Components accept appropriate props for customization while maintaining visual consistency
 - [ ] Card components support hover states and visual feedback for interactive elements
 
+
+---
+
+## REQ-098: Room Selection Step in Item Creation Workflow
+
+**Date**: 2026-01-05 19:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to select which room a household item belongs to during the item creation workflow, choosing from predefined room types or specifying a custom room name.
+
+### Current Behavior
+The item creation workflow does not provide a dedicated step for room selection. Users cannot associate items with specific rooms in their property, limiting the organizational value of the inventory system.
+
+### Expected Behavior
+During the item creation workflow, users encounter a room selection step displaying a visual grid of common room types (such as Bedroom, Kitchen, Bathroom, Living Room) with recognizable icons and clear labels. Users can tap any predefined room to select it, or choose an "Other" option that reveals a text input field for entering a custom room name. After making a selection, users can proceed to the next workflow step.
+
+### User Impact
+Users can organize their property inventory by room location, making it easier to find items later and create room-specific documentation for guests. The visual grid with large touch targets ensures selections are easy and accurate on mobile devices. The custom room option accommodates unique property layouts without restricting users to a predetermined list.
+
+### Business Value
+Improves the utility of the inventory system by adding spatial organization. Enhances data quality by capturing room context for each item. Supports better guest experiences through room-specific information presentation.
+
+### Acceptance Criteria
+- [ ] Room selection step displays a grid of predefined room options with icons and text labels
+- [ ] Each room option has a minimum touch target size of 48x48 pixels for mobile accessibility
+- [ ] An "Other" option is available for rooms not in the predefined list
+- [ ] Selecting "Other" reveals a text input field for entering a custom room name
+- [ ] Users can change their selection before proceeding to the next step
+- [ ] The selected room (predefined or custom) is saved to the workflow state
+- [ ] Navigation to the next workflow step is only possible after a valid room selection is made
+- [ ] The step integrates seamlessly with the workflow's progress indicator and navigation pattern
+
+
+---
+
+## REQ-099: Item Type Selection Step in Item Creation Workflow
+
+**Date**: 2026-01-05 14:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users must be able to select the type of item they are creating from three distinct categories: Appliance, Room Item, or General Information, with the step automatically skipped when creating general property information.
+
+### Current Behavior
+After selecting a room, users have no way to specify what kind of item they are documenting. The workflow does not differentiate between appliances, physical room items, or general informational content.
+
+### Expected Behavior
+After room selection, users see three clearly labeled cards representing item type options. Each card displays a title, description, and relevant examples to help users understand the distinction. If the user selected "General" as the room type in the previous step, this item type selection is automatically skipped since general information has a predetermined type.
+
+### User Impact
+Property managers and hosts creating item documentation will have a clearer categorization system. This helps organize items logically and ensures the correct fields and workflows are presented in subsequent steps based on item type. Users who selected "General" room save time by not seeing an unnecessary selection step.
+
+### Business Value
+Proper categorization improves the overall quality of property documentation and enables type-specific features and validations in later workflow steps.
+
+### Acceptance Criteria
+- [ ] Three distinct card options are presented: Appliance, Room Item, and General Info
+- [ ] Each card displays clear descriptions and practical examples
+- [ ] User can select exactly one item type by clicking a card
+- [ ] Selection state is visually indicated on the chosen card
+- [ ] Continue button is disabled until an item type is selected
+- [ ] When "General" room was previously selected, this step is automatically bypassed
+- [ ] The selected item type is stored in workflow state
+- [ ] Component follows established patterns from RoomSelectionStep implementation
+
