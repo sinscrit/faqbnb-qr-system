@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @lastModified 2026-01-05 (REQ-110 Print Options Panel)
  */
 
 // =============================================================================
@@ -66,5 +66,5 @@ export { RemoveItemDialog } from './RemoveItemDialog';
 export type { RemoveItemDialogProps } from './RemoveItemDialog';
 
 // Task 6.2: PrintOptionsPanel
-// export { PrintOptionsPanel } from './PrintOptionsPanel';
-// export type { PrintOptionsPanelProps } from './PrintOptionsPanel';
+export { PrintOptionsPanel } from './PrintOptionsPanel';
+export type { PrintOptionsPanelProps } from './PrintOptionsPanel';

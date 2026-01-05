@@ -5464,3 +5464,42 @@ Reduces errors and rework by giving users a final review checkpoint before commi
 - [ ] Visual design clearly distinguishes between new session items and historical items
 - [ ] Removing an item updates the display immediately without requiring a page refresh
 - [ ] Editing an item navigates back to the appropriate editing interface with data pre-populated
+
+---
+
+## REQ-110: Print Options Panel for Item Creation Session
+
+**Date**: 2026-01-05 14:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need the ability to selectively print items created during their session with options to generate a PDF, print directly, or skip printing entirely.
+
+### Current Behavior
+After completing an item creation session, users have no integrated way to review and print the items they just created. They must navigate elsewhere in the system to access print functionality.
+
+### Expected Behavior
+After reviewing their session summary, users are presented with a print options panel that allows them to:
+- Choose the scope of items to print (all items from the session, only new items, or manually select specific items)
+- Generate a PDF document containing the selected items
+- Send selected items directly to a printer
+- Opt out of printing and return to the main workflow
+
+The panel should clearly display which items are included in each scope option and provide a way to exit without printing.
+
+### User Impact
+Property managers and hosts who create multiple items in a single session will be able to immediately print QR codes and item information without leaving the workflow. This streamlines the process of preparing physical materials for their properties, especially during initial setup or bulk item additions.
+
+### Business Value
+Reduces friction in the item creation workflow by providing immediate access to print functionality at the natural conclusion of a creation session. This encourages users to complete the full setup process including physical QR code placement, which increases the utility and stickiness of the platform.
+
+### Acceptance Criteria
+- [ ] Users can select one of three print scopes: all items from the session, only newly created items, or individually selected items
+- [ ] When selecting individual items, users can see a list of items with selection controls
+- [ ] A "Generate PDF" action creates a downloadable PDF containing the selected items
+- [ ] A "Print Directly" action triggers the browser print dialog for the selected items
+- [ ] A "Just Review / Done for Now" option allows users to exit the panel without printing
+- [ ] The panel clearly indicates how many items are included in the current selection
+- [ ] Users can change their scope selection and see the count update accordingly
+
