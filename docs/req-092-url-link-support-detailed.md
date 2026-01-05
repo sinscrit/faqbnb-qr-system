@@ -531,7 +531,7 @@ item_links: {
 
 **Estimated effort:** 1 story point
 
-- [ ] Create the component file:
+- [x] Create the component file:
   ```typescript
   'use client';
 
@@ -549,9 +549,9 @@ item_links: {
   import { ExternalLink, Globe, Play, Link as LinkIcon } from 'lucide-react';
   import { cn } from '@/lib/utils';
   import type { UrlMetadata } from '../../ItemCapture.types';
-  ```
+  ``` ---implemented: Created UrlPreview.tsx with all required imports---unit tested-
 
-- [ ] Define `UrlPreviewProps` interface:
+- [x] Define `UrlPreviewProps` interface:
   ```typescript
   export interface UrlPreviewProps {
     /** URL metadata to display */
@@ -567,34 +567,37 @@ item_links: {
     /** Show external link icon */
     showExternalIcon?: boolean;
   }
-  ```
+  ``` ---implemented: UrlPreviewProps interface with all display options---unit tested-
 
-- [ ] Implement thumbnail display with:
+- [x] Implement thumbnail display with:
   - Image loading state
   - Error fallback to domain icon/globe
   - YouTube play icon overlay for YouTube URLs
   - Aspect ratio container
+  ---implemented: Complete thumbnail with loading spinner, error handling, YouTube play overlay---unit tested-
 
-- [ ] Implement domain badge with:
+- [x] Implement domain badge with:
   - Favicon (if available)
   - Domain text
   - Different colors for known domains (YouTube: red, generic: gray)
+  ---implemented: Domain badge with favicon fallback and YouTube red styling---unit tested-
 
-- [ ] Implement size variants:
+- [x] Implement size variants:
   - `small`: 48x48 thumbnail, single line title
   - `medium`: 80x80 thumbnail, 2-line title, description
   - `large`: 120x80 thumbnail, full metadata
+  ---implemented: Three size variants with responsive dimensions and text truncation---unit tested-
 
-- [ ] Add hover state for clickable variant
+- [x] Add hover state for clickable variant ---implemented: Hover shadow and border color change for clickable previews---unit tested-
 
-- [ ] Add external link icon (optional) for new-tab indicator
+- [x] Add external link icon (optional) for new-tab indicator ---implemented: ExternalLink icon with showExternalIcon prop---unit tested-
 
-- [ ] Export both named and default export
+- [x] Export both named and default export ---implemented: Both default and named export for UrlPreview---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/components/shared/UrlPreview.tsx
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 
