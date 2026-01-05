@@ -4886,3 +4886,40 @@ Accelerates development of the item creation feature by providing reusable infra
 - [ ] Type definitions compile without errors and satisfy strict mode requirements
 - [ ] Constants are structured to support future extensibility without breaking changes
 
+
+---
+
+## REQ-094: Workflow State Management with Step Navigation
+
+**Date**: 2026-01-05 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide a centralized state management solution that controls multi-step workflow progression, including forward and backward navigation, conditional step skipping, and navigation history tracking.
+
+### Current Behavior
+There is no unified workflow state management mechanism. Step transitions, navigation history, and conditional flow logic are either not implemented or handled inconsistently across different parts of the application.
+
+### Expected Behavior
+Users can seamlessly progress through multi-step workflows with the following capabilities:
+- Move forward to the next logical step
+- Navigate backward through previously visited steps
+- Automatically skip irrelevant steps based on context (e.g., when "General" room category is selected, item type selection is bypassed)
+- Have their navigation history preserved to enable accurate back-button behavior
+- Experience consistent state transitions regardless of which workflow they're using
+
+### User Impact
+Affects all users who interact with multi-step workflows in the application. Improves user experience by providing intuitive navigation controls, preventing invalid state transitions, and allowing users to review and modify earlier choices without losing progress.
+
+### Business Value
+Establishes a scalable foundation for all multi-step user workflows. Reduces development time for future workflow features by providing reusable state management patterns and ensures consistent user experience across different workflows.
+
+### Acceptance Criteria
+- [ ] Users can progress forward through workflow steps in the correct sequence
+- [ ] Users can navigate backward to any previously visited step without data loss
+- [ ] When applicable conditions are met, irrelevant steps are automatically skipped without user intervention
+- [ ] Navigation history accurately reflects the actual path taken through the workflow
+- [ ] All state transitions follow predictable patterns that handle edge cases gracefully
+- [ ] The state management solution can be reused across different workflow types
+

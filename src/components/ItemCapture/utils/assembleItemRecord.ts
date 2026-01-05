@@ -17,6 +17,7 @@ import type {
   MediaItem,
   ApplianceType,
   MediaMetadata,
+  UrlItem,
 } from '../ItemCapture.types';
 
 // =============================================================================
@@ -29,7 +30,7 @@ import type {
  */
 export interface InternalMediaItem {
   id: string;
-  type: 'video' | 'image' | 'pdf';
+  type: 'video' | 'image' | 'pdf' | 'url';
   file: File | Blob;
   thumbnail?: Blob;
   order: number;
@@ -48,6 +49,7 @@ export interface InternalState {
     applianceType?: ApplianceType;
   };
   mediaItems: InternalMediaItem[];
+  urlItems: UrlItem[];
   instructions: string;
 }
 
@@ -77,43 +79,47 @@ export interface AssemblyOptions {
  * Determine the contentType based on captured content.
  *
  * Logic:
- * - 'media': Only video/image content (no text, no PDF)
- * - 'text-only': Only text instructions (no media)
- * - 'pdf-only': Only PDF files (no other media, no text)
+ * - 'media': Only video/image content (no text, no PDF, no URLs)
+ * - 'text-only': Only text instructions (no media, no URLs)
+ * - 'pdf-only': Only PDF files (no other media, no text, no URLs)
+ * - 'url-only': Only URL links (no other media, no text)
  * - 'mixed': Multiple content types combined
  *
  * @param mediaItems - Array of media items to analyze
+ * @param urlItems - Array of URL items to analyze
  * @param instructions - Optional text instructions
  * @returns The determined content type
  *
  * @example
- * determineContentType([{type: 'video'}], undefined); // 'media'
- * determineContentType([{type: 'pdf'}], undefined); // 'pdf-only'
- * determineContentType([{type: 'video'}], 'Instructions'); // 'mixed'
- * determineContentType([], 'Text only'); // 'text-only'
+ * determineContentType([{type: 'video'}], [], undefined); // 'media'
+ * determineContentType([{type: 'pdf'}], [], undefined); // 'pdf-only'
+ * determineContentType([], [{...urlItem}], undefined); // 'url-only'
+ * determineContentType([{type: 'video'}], [], 'Instructions'); // 'mixed'
+ * determineContentType([], [], 'Text only'); // 'text-only'
  */
 export function determineContentType(
-  mediaItems: Array<{ type: 'video' | 'image' | 'pdf' }>,
+  mediaItems: Array<{ type: 'video' | 'image' | 'pdf' | 'url' }>,
+  urlItems: UrlItem[],
   instructions: string | undefined
-): 'media' | 'text-only' | 'pdf-only' | 'mixed' {
+): 'media' | 'text-only' | 'pdf-only' | 'url-only' | 'mixed' {
   const hasMedia = mediaItems.some(
     (item) => item.type === 'video' || item.type === 'image'
   );
   const hasPDF = mediaItems.some((item) => item.type === 'pdf');
+  const hasUrls = urlItems.length > 0;
   const hasText = instructions && instructions.trim().length > 0;
 
-  // Mixed cases first (combinations)
-  if (hasMedia && (hasPDF || hasText)) return 'mixed';
-  if (hasPDF && hasText) return 'mixed';
-  if (hasPDF && hasMedia) return 'mixed';
+  // Count content types
+  const contentTypes = [hasMedia, hasPDF, hasUrls, hasText].filter(Boolean).length;
+
+  // Mixed if more than one content type
+  if (contentTypes > 1) return 'mixed';
 
   // Single type cases
   if (hasMedia) return 'media';
-  if (hasPDF && !hasText) return 'pdf-only';
-  if (hasText && !hasPDF && !hasMedia) return 'text-only';
-
-  // Edge case: has both PDF and text but no media
-  if (hasPDF || hasText) return 'mixed';
+  if (hasPDF) return 'pdf-only';
+  if (hasUrls) return 'url-only';
+  if (hasText) return 'text-only';
 
   // Fallback (empty content - should not happen in valid flow)
   return 'media';
@@ -168,9 +174,32 @@ export function assembleItemRecord(
     metadata: { ...item.metadata },
   }));
 
+  // Convert URL items to MediaItem format
+  const urlAsMedia: MediaItem[] = state.urlItems.map((urlItem, index) => ({
+    id: regenerateIds ? generateUUID() : urlItem.id,
+    type: 'url' as const,
+    file: new Blob([urlItem.metadata.url], { type: 'text/plain' }),
+    order: state.mediaItems.length + index,
+    metadata: {
+      mimeType: 'text/uri-list',
+      fileSize: urlItem.metadata.url.length,
+      source: 'upload' as const,
+      url: urlItem.metadata.url,
+      domain: urlItem.metadata.domain,
+      pageTitle: urlItem.metadata.title,
+      thumbnailUrl: urlItem.metadata.thumbnailUrl,
+      faviconUrl: urlItem.metadata.faviconUrl,
+      linkType: urlItem.metadata.linkType,
+    },
+  }));
+
+  // Combine media and URL items
+  const allMedia = [...transformedMedia, ...urlAsMedia];
+
   // Determine content type based on captured content
   const contentType = determineContentType(
     state.mediaItems,
+    state.urlItems,
     state.instructions
   );
 
@@ -179,7 +208,7 @@ export function assembleItemRecord(
     id: itemId,
     title: state.metadata.title.trim(),
     contentType,
-    media: transformedMedia,
+    media: allMedia,
     createdAt: timestamp,
   };
 

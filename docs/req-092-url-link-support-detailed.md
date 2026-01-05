@@ -925,7 +925,7 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Import UrlItem type (line 15-20):
+- [x] Import UrlItem type (line 15-20):
   ```typescript
   import type {
     ItemRecord,
@@ -934,9 +934,9 @@ item_links: {
     MediaMetadata,
     UrlItem,  // ADD
   } from '../ItemCapture.types';
-  ```
+  ``` ---implemented: UrlItem type imported---unit tested-
 
-- [ ] Update `InternalState` interface (line 43):
+- [x] Update `InternalState` interface (line 43):
   ```typescript
   export interface InternalState {
     metadata: {
@@ -949,9 +949,9 @@ item_links: {
     urlItems: UrlItem[];  // ADD
     instructions: string;
   }
-  ```
+  ``` ---implemented: urlItems added to InternalState interface---unit tested-
 
-- [ ] Update `determineContentType` function (line 95) to handle URL-only case:
+- [x] Update `determineContentType` function (line 95) to handle URL-only case:
   ```typescript
   export function determineContentType(
     mediaItems: Array<{ type: 'video' | 'image' | 'pdf' | 'url' }>,
@@ -980,9 +980,9 @@ item_links: {
     // Fallback
     return 'media';
   }
-  ```
+  ``` ---implemented: determineContentType updated with urlItems parameter and url-only case---unit tested-
 
-- [ ] Update `assembleItemRecord` to convert URL items to MediaItem format (or keep separate):
+- [x] Update `assembleItemRecord` to convert URL items to MediaItem format (or keep separate):
   - Option A: Convert UrlItem to MediaItem with type: 'url'
   - Option B: Keep urlItems as separate array in ItemRecord (requires type change)
 
@@ -1009,12 +1009,12 @@ item_links: {
 
   // Combine media and URL items
   const allMedia = [...transformedMedia, ...urlAsMedia];
-  ```
+  ``` ---implemented: URL items converted to MediaItem format with type 'url' and combined with media---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/utils/assembleItemRecord.ts
-  ```
+  ``` ---implemented: TypeScript compilation successful, build verified---unit tested-
 
 ---
 
