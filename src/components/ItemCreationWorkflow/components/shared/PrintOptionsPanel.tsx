@@ -6,13 +6,15 @@
  * Provides print scope selection (All Items, New Items Only, Select Items)
  * with item selection list for selective printing of QR codes.
  * Includes action buttons for Generate PDF, Print Directly, and Done for Now.
+ * Integrates QR code generation with progress feedback.
  *
  * @module ItemCreationWorkflow/components/shared/PrintOptionsPanel
  * @see docs/REQ-110-print-options-panel-overview.md
- * @lastModified 2026-01-05 (REQ-110 Print Options Panel)
+ * @see docs/REQ-111-qr-code-integration-overview.md
+ * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import {
   FileDown,
   Printer,
@@ -35,6 +37,8 @@ import { cn } from '@/lib/utils';
 import type { SessionItem, PrintScope, ContentPiece, ContentType, ContentData } from '../../ItemCreationWorkflow.types';
 import { ROOM_LABELS } from '../../utils/constants';
 import type { RoomTypeConst } from '../../utils/constants';
+import { QRGenerationProgress, type QRProgressItem } from './QRGenerationProgress';
+import { useSessionQRGeneration } from '../../hooks';
 
 // =============================================================================
 // Type Definitions
@@ -59,6 +63,8 @@ export interface PrintOptionsPanelProps {
   error?: string | null;
   /** Callback to clear error */
   onClearError?: () => void;
+  /** Callback when QR generation completes */
+  onQRGenerationComplete?: (qrCodes: Map<string, string>) => void;
   /** Optional CSS class */
   className?: string;
 }
@@ -358,6 +364,7 @@ export function PrintOptionsPanel({
   processingStatus,
   error,
   onClearError,
+  onQRGenerationComplete,
   className,
 }: PrintOptionsPanelProps) {
   // Internal state
@@ -367,6 +374,15 @@ export function PrintOptionsPanel({
     return new Set(sessionItems.map(item => item.id));
   });
   const [isSelectionExpanded, setIsSelectionExpanded] = useState(false);
+
+  // QR Generation state (Task 4.11)
+  const [showQRProgress, setShowQRProgress] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'pdf' | 'print' | null>(null);
+
+  // QR Generation hook
+  const qrGeneration = useSessionQRGeneration({
+    batchSize: 5,
+  });
 
   // Ref for tracking object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
@@ -419,8 +435,87 @@ export function PrintOptionsPanel({
     }
   }, [scopeType, selectedItemIds]);
 
+  // Task 4.12: Get items for the current scope
+  const getItemsForScope = useCallback((scope: PrintScope): SessionItem[] => {
+    switch (scope.type) {
+      case 'all':
+        return [...sessionItems, ...existingItems];
+      case 'new-only':
+        return sessionItems;
+      case 'selected':
+        const allItemsForScope = [...sessionItems, ...existingItems];
+        return allItemsForScope.filter(item => scope.itemIds.includes(item.id));
+    }
+  }, [sessionItems, existingItems]);
+
+  // Task 4.12: Build QR progress items from current items being processed
+  const qrProgressItems = useMemo((): QRProgressItem[] => {
+    if (!showQRProgress) {
+      return [];
+    }
+
+    const scope = buildPrintScope();
+    const itemsInScope = getItemsForScope(scope);
+
+    return itemsInScope.map(item => {
+      // Determine status based on QR generation state
+      let status: QRProgressItem['status'] = 'pending';
+
+      if (qrGeneration.qrCodes.has(item.id) || item.qrCodeUrl) {
+        status = 'completed';
+      } else if (qrGeneration.failedItemIds.has(item.id)) {
+        status = 'failed';
+      } else if (qrGeneration.isGenerating) {
+        // If we're generating and this item isn't completed/failed, it's either generating or pending
+        // The hook doesn't expose per-item generating state, so we approximate
+        status = 'generating';
+      }
+
+      return {
+        id: item.id,
+        name: item.name,
+        status,
+        qrCodeUrl: qrGeneration.qrCodes.get(item.id) ?? item.qrCodeUrl,
+      };
+    });
+  }, [showQRProgress, buildPrintScope, getItemsForScope, qrGeneration.qrCodes, qrGeneration.failedItemIds, qrGeneration.isGenerating]);
+
+  // Task 4.12: Handle proceeding with QR codes (after generation completes or skip)
+  const handleProceedWithQRCodes = useCallback(async () => {
+    // Notify parent of generated QR codes
+    if (onQRGenerationComplete && qrGeneration.qrCodes.size > 0) {
+      onQRGenerationComplete(qrGeneration.qrCodes);
+    }
+
+    // Proceed with the pending action
+    const scope = buildPrintScope();
+    setShowQRProgress(false);
+
+    if (pendingAction === 'pdf') {
+      await onGeneratePDF(scope);
+    } else if (pendingAction === 'print') {
+      await onPrintDirect(scope);
+    }
+
+    setPendingAction(null);
+  }, [onQRGenerationComplete, qrGeneration.qrCodes, buildPrintScope, pendingAction, onGeneratePDF, onPrintDirect]);
+
+  // Task 4.12: Effect to handle when QR generation completes
+  useEffect(() => {
+    // When generation completes (not generating, progress is 100 or all items processed)
+    if (showQRProgress && !qrGeneration.isGenerating && qrGeneration.stats.total > 0) {
+      const { completed, failed, total } = qrGeneration.stats;
+
+      // If all completed successfully, auto-proceed
+      if (completed === total && failed === 0) {
+        handleProceedWithQRCodes();
+      }
+      // If there are failures, let user decide (via ErrorBanner buttons)
+    }
+  }, [showQRProgress, qrGeneration.isGenerating, qrGeneration.stats, handleProceedWithQRCodes]);
+
   // Check if actions should be disabled
-  const isActionsDisabled = isProcessing || (scopeType === 'selected' && selectedCount === 0);
+  const isActionsDisabled = isProcessing || qrGeneration.isGenerating || (scopeType === 'selected' && selectedCount === 0);
 
   // Toggle individual item selection
   const handleToggleItem = useCallback((itemId: string) => {
@@ -467,17 +562,63 @@ export function PrintOptionsPanel({
     }
   }, []);
 
+  // Task 4.12: Start QR generation for items in scope
+  const startQRGeneration = useCallback(async (action: 'pdf' | 'print') => {
+    const scope = buildPrintScope();
+    const itemsInScope = getItemsForScope(scope);
+
+    // Filter items that need QR codes (don't have one yet)
+    const itemsNeedingQR = itemsInScope.filter(item => !item.qrCodeUrl);
+
+    if (itemsNeedingQR.length === 0) {
+      // All items already have QR codes, proceed directly
+      if (action === 'pdf') {
+        await onGeneratePDF(scope);
+      } else {
+        await onPrintDirect(scope);
+      }
+      return;
+    }
+
+    // Items need QR codes, start generation
+    setPendingAction(action);
+    setShowQRProgress(true);
+    await qrGeneration.generateForItems(itemsNeedingQR);
+  }, [buildPrintScope, getItemsForScope, onGeneratePDF, onPrintDirect, qrGeneration]);
+
   // Handle Generate PDF click
   const handleGeneratePDF = useCallback(async () => {
-    const scope = buildPrintScope();
-    await onGeneratePDF(scope);
-  }, [buildPrintScope, onGeneratePDF]);
+    await startQRGeneration('pdf');
+  }, [startQRGeneration]);
 
   // Handle Print Directly click
   const handlePrintDirect = useCallback(async () => {
+    await startQRGeneration('print');
+  }, [startQRGeneration]);
+
+  // Task 4.12: Handle cancel QR generation
+  const handleCancelQRGeneration = useCallback(() => {
+    qrGeneration.cancel();
+    setShowQRProgress(false);
+    setPendingAction(null);
+  }, [qrGeneration]);
+
+  // Task 4.12: Handle retry all failed
+  const handleRetryAllFailed = useCallback(async () => {
     const scope = buildPrintScope();
-    await onPrintDirect(scope);
-  }, [buildPrintScope, onPrintDirect]);
+    const itemsInScope = getItemsForScope(scope);
+    await qrGeneration.retryFailed(itemsInScope);
+  }, [buildPrintScope, getItemsForScope, qrGeneration]);
+
+  // Task 4.12: Handle retry single item
+  const handleRetryItem = useCallback(async (itemId: string) => {
+    const scope = buildPrintScope();
+    const itemsInScope = getItemsForScope(scope);
+    const item = itemsInScope.find(i => i.id === itemId);
+    if (item) {
+      await qrGeneration.retryFailed([item]);
+    }
+  }, [buildPrintScope, getItemsForScope, qrGeneration]);
 
   // Dismiss error and return focus
   const handleDismissError = useCallback(() => {
@@ -584,6 +725,26 @@ export function PrintOptionsPanel({
           )}
         </div>
 
+        {/* Task 4.13: QR Generation Progress (visible during generation) */}
+        {showQRProgress && (
+          <div className="border-t border-gray-200 pt-4">
+            <h3 className="text-sm font-medium text-[#222222] mb-3">
+              Generating QR Codes
+            </h3>
+            <QRGenerationProgress
+              isGenerating={qrGeneration.isGenerating}
+              progress={qrGeneration.progress}
+              stats={qrGeneration.stats}
+              items={qrProgressItems}
+              error={qrGeneration.error}
+              onRetry={handleRetryAllFailed}
+              onRetryItem={handleRetryItem}
+              onCancel={handleCancelQRGeneration}
+              onContinue={handleProceedWithQRCodes}
+            />
+          </div>
+        )}
+
         {/* Live region for screen reader announcements */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           {selectedCount} items selected for printing
@@ -648,10 +809,15 @@ export function PrintOptionsPanel({
             'min-h-[48px]'
           )}
         >
-          {isProcessing ? (
+          {qrGeneration.isGenerating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-              Generating...
+              Generating QR Codes...
+            </>
+          ) : isProcessing ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+              Generating PDF...
             </>
           ) : (
             <>

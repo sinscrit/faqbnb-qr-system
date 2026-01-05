@@ -8,14 +8,15 @@
  *
  * @module ItemCreationWorkflow
  * @see docs/REQ-095-main-workflow-component-overview.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @see docs/REQ-111-qr-code-integration-overview.md
+ * @lastModified 2026-01-05 (REQ-111 QR Code Integration)
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import type { ItemCreationWorkflowProps } from './ItemCreationWorkflow.types';
+import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
-import { WorkflowHeader, ConfirmExitDialog } from './components/shared';
+import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel } from './components/shared';
 import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 
@@ -126,6 +127,12 @@ export function ItemCreationWorkflow({
   const [existingItems, setExistingItems] = useState<SessionItem[]>([]);
   const [isLoadingExisting, setIsLoadingExisting] = useState(false);
 
+  // Task 4.14: Print panel state
+  const [showPrintPanel, setShowPrintPanel] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [printError, setPrintError] = useState<string | null>(null);
+  const [printStatus, setPrintStatus] = useState<string | undefined>(undefined);
+
   // Handle exit button click
   const handleExitClick = useCallback(() => {
     if (state.isDirty || itemCount > 0) {
@@ -228,10 +235,107 @@ export function ItemCreationWorkflow({
     console.warn('Edit item not yet implemented:', itemId);
   }, []);
 
-  // Handle proceed to print (placeholder for Task 6.2)
+  // Task 4.14: Handle proceed to print - show PrintOptionsPanel
   const handleProceedToPrint = useCallback(() => {
-    // TODO: Navigate to PrintOptionsPanel in Task 6.2
-    console.log('Proceed to print');
+    setShowPrintPanel(true);
+    setPrintError(null);
+  }, []);
+
+  // Task 4.14: Handle back from print panel
+  const handleBackFromPrint = useCallback(() => {
+    setShowPrintPanel(false);
+    setPrintError(null);
+  }, []);
+
+  // Task 4.14: Helper to get items for a given scope
+  const getItemsForPrintScope = useCallback((scope: PrintScope): SessionItem[] => {
+    switch (scope.type) {
+      case 'all':
+        return [...state.session.items, ...existingItems];
+      case 'new-only':
+        return state.session.items;
+      case 'selected':
+        const allItems = [...state.session.items, ...existingItems];
+        return allItems.filter(item => scope.itemIds.includes(item.id));
+    }
+  }, [state.session.items, existingItems]);
+
+  // Task 4.14: Handle generate PDF
+  const handleGeneratePDFFromPanel = useCallback(async (scope: PrintScope) => {
+    setIsPrinting(true);
+    setPrintError(null);
+    setPrintStatus('Generating PDF...');
+
+    try {
+      const itemsToInclude = getItemsForPrintScope(scope);
+      await onGeneratePDF(itemsToInclude, scope);
+
+      // Complete session with PDF action
+      onSessionComplete({
+        id: state.session.id,
+        newItems: state.session.items,
+        existingItems: existingItems,
+        completedAt: new Date(),
+        printAction: 'pdf',
+        printScope: scope,
+      });
+    } catch (error) {
+      setPrintError(error instanceof Error ? error.message : 'Failed to generate PDF');
+    } finally {
+      setIsPrinting(false);
+      setPrintStatus(undefined);
+    }
+  }, [getItemsForPrintScope, onGeneratePDF, state.session, existingItems, onSessionComplete]);
+
+  // Task 4.14: Handle print directly
+  const handlePrintDirectFromPanel = useCallback(async (scope: PrintScope) => {
+    setIsPrinting(true);
+    setPrintError(null);
+    setPrintStatus('Sending to printer...');
+
+    try {
+      const itemsToInclude = getItemsForPrintScope(scope);
+      await onPrintDirect(itemsToInclude, scope);
+
+      // Complete session with direct print action
+      onSessionComplete({
+        id: state.session.id,
+        newItems: state.session.items,
+        existingItems: existingItems,
+        completedAt: new Date(),
+        printAction: 'direct',
+        printScope: scope,
+      });
+    } catch (error) {
+      setPrintError(error instanceof Error ? error.message : 'Failed to print');
+    } finally {
+      setIsPrinting(false);
+      setPrintStatus(undefined);
+    }
+  }, [getItemsForPrintScope, onPrintDirect, state.session, existingItems, onSessionComplete]);
+
+  // Task 4.14: Handle skip print from panel
+  const handleSkipPrintFromPanel = useCallback(() => {
+    onSessionComplete({
+      id: state.session.id,
+      newItems: state.session.items,
+      existingItems: existingItems,
+      completedAt: new Date(),
+      printAction: 'skipped',
+    });
+  }, [state.session, existingItems, onSessionComplete]);
+
+  // Task 4.14: Handle QR generation complete callback
+  const handleQRGenerationComplete = useCallback((qrCodes: Map<string, string>) => {
+    // Update session items with generated QR codes
+    // Note: This could be enhanced with a dispatch to update state,
+    // but for now the PrintOptionsPanel manages this internally
+    console.log('QR codes generated:', qrCodes.size);
+  }, []);
+
+  // Task 4.14: Clear print error
+  const handleClearPrintError = useCallback(() => {
+    setPrintError(null);
   }, []);
 
   // Handle finish without print
@@ -365,14 +469,30 @@ export function ItemCreationWorkflow({
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
         progressPercent={progressPercent}
-        canGoBack={canGoBack}
-        onBack={prevStep}
+        canGoBack={showPrintPanel ? true : canGoBack}
+        onBack={showPrintPanel ? handleBackFromPrint : prevStep}
         onExit={handleExitClick}
       />
 
       {/* Main content area */}
       <main className="flex-1 flex flex-col">
-        {renderCurrentStep()}
+        {/* Task 4.14: Show PrintOptionsPanel when user proceeds to print */}
+        {showPrintPanel ? (
+          <PrintOptionsPanel
+            sessionItems={state.session.items}
+            existingItems={existingItems}
+            onGeneratePDF={handleGeneratePDFFromPanel}
+            onPrintDirect={handlePrintDirectFromPanel}
+            onSkipPrint={handleSkipPrintFromPanel}
+            isProcessing={isPrinting}
+            processingStatus={printStatus}
+            error={printError}
+            onClearError={handleClearPrintError}
+            onQRGenerationComplete={handleQRGenerationComplete}
+          />
+        ) : (
+          renderCurrentStep()
+        )}
       </main>
 
       {/* Exit confirmation dialog */}

@@ -42,3 +42,16 @@ export type {
   UrlPreviewStatus,
   UseUrlPreviewReturn,
 } from './useUrlPreview';
+
+// =============================================================================
+// QR Generation Hooks
+// =============================================================================
+
+// Task 6.3: useSessionQRGeneration - QR code generation adapter for session items
+export { useSessionQRGeneration } from './useSessionQRGeneration';
+export type {
+  UseSessionQRGenerationOptions,
+  UseSessionQRGenerationReturn,
+  QRItemStatus,
+  QRGenerationStats,
+} from './useSessionQRGeneration';

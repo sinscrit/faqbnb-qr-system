@@ -5503,3 +5503,36 @@ Reduces friction in the item creation workflow by providing immediate access to 
 - [ ] The panel clearly indicates how many items are included in the current selection
 - [ ] Users can change their scope selection and see the count update accordingly
 
+
+---
+
+## REQ-111: QR Code Generation and Progress Tracking for Item Creation Sessions
+
+**Date**: 2026-01-05 12:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to generate QR codes for selected items created during a session, with visible progress tracking and error recovery options.
+
+### Current Behavior
+After items are created in a session, users must navigate away from the workflow to generate QR codes for their items. There is no integrated QR code generation capability within the item creation workflow itself.
+
+### Expected Behavior
+Within the session summary step, users can generate QR codes for one or more items directly. The system displays real-time progress as QR codes are generated, and if any generation fails, users can retry individual items without losing already-generated codes.
+
+### User Impact
+Property managers and administrators completing item creation sessions can immediately generate QR codes for their new items without switching contexts or navigating to different screens. This streamlines the workflow from item creation to physical deployment.
+
+### Business Value
+Reduces friction in the item-to-deployment pipeline by eliminating context switching and navigation overhead. Improves user confidence through transparent progress feedback and resilient error handling.
+
+### Acceptance Criteria
+- [ ] Users can select one or more items from their session for QR code generation
+- [ ] Progress indicator shows current generation status (e.g., "Generating 3 of 12")
+- [ ] Successfully generated QR codes are visually distinguished from pending or failed items
+- [ ] When generation fails for an item, an error message appears with a retry action
+- [ ] Retrying a failed item does not regenerate already-successful QR codes
+- [ ] Generation process can be cancelled by the user mid-operation
+- [ ] Users can proceed with the workflow even if some QR codes failed to generate
+

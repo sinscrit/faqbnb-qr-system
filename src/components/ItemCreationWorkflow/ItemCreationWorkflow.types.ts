@@ -345,6 +345,8 @@ export type WorkflowAction =
   | { type: 'ADD_MORE_TO_ITEM'; payload: CurrentItemState }
   // Remove session item action (for SessionSummaryStep)
   | { type: 'REMOVE_SESSION_ITEM'; payload: string }
+  // Task 4.15: Update QR codes for session items after batch generation
+  | { type: 'UPDATE_ITEMS_QR_CODES'; payload: Map<string, string> }
 
   // Error handling actions
   | { type: 'SET_ERROR'; payload: { field: string; message: string } }

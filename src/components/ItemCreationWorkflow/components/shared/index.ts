@@ -68,3 +68,11 @@ export type { RemoveItemDialogProps } from './RemoveItemDialog';
 // Task 6.2: PrintOptionsPanel
 export { PrintOptionsPanel } from './PrintOptionsPanel';
 export type { PrintOptionsPanelProps } from './PrintOptionsPanel';
+
+// Task 6.3: QRGenerationProgress - QR generation progress UI
+export { QRGenerationProgress } from './QRGenerationProgress';
+export type {
+  QRGenerationProgressProps,
+  QRProgressItem,
+  QRProgressItemStatus,
+} from './QRGenerationProgress';

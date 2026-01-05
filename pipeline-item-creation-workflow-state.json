@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T11:02:46.132250",
+  "updated_at": "2026-01-05T11:30:02.412439",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 16,
+  "current_task_index": 17,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -374,11 +374,19 @@
       "title": "Print Options Panel",
       "description": "[ ] Create `PrintOptionsPanel.tsx` component\n[ ] Print scope selector: All items, New items only, Select items\n[ ] \"Generate PDF\" and \"Print Directly\" buttons\n[ ] \"Just Review / Done for Now\" option",
       "raw_match": "#### Task 6.2: Print Options Panel [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-110",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T11:30:02.412390",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-110",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-110-print-options-panel-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-110-print-options-panel-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "6.3",
@@ -485,8 +493,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 17,
-    "last_request_id": "REQ-109",
+    "total_requests_generated": 18,
+    "last_request_id": "REQ-110",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

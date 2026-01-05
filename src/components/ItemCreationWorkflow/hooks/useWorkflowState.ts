@@ -475,6 +475,25 @@ export function workflowReducer(
       };
     }
 
+    // Task 4.15: Update QR codes for session items after batch generation
+    case 'UPDATE_ITEMS_QR_CODES': {
+      const qrCodesMap = action.payload;
+      const updatedItems = state.session.items.map(item => {
+        const qrCodeUrl = qrCodesMap.get(item.id);
+        if (qrCodeUrl && !item.qrCodeUrl) {
+          return { ...item, qrCodeUrl };
+        }
+        return item;
+      });
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          items: updatedItems,
+        },
+      };
+    }
+
     // =========================================================================
     // Error Handling Actions
     // =========================================================================
@@ -583,6 +602,8 @@ export interface UseWorkflowStateReturn {
   addMoreToItem: (item: CurrentItemState) => void;
   /** Remove a session item by ID */
   removeSessionItem: (itemId: string) => void;
+  /** Task 4.15: Update QR codes for session items after batch generation */
+  updateItemsQRCodes: (qrCodes: Map<string, string>) => void;
 
   // Error actions
   /** Set a field-level error */
@@ -712,6 +733,11 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     dispatch({ type: 'REMOVE_SESSION_ITEM', payload: itemId });
   }, []);
 
+  // Task 4.15: Update QR codes for session items
+  const updateItemsQRCodes = useCallback((qrCodes: Map<string, string>) => {
+    dispatch({ type: 'UPDATE_ITEMS_QR_CODES', payload: qrCodes });
+  }, []);
+
   // =========================================================================
   // Error Actions
   // =========================================================================
@@ -805,6 +831,7 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     completeSession,
     addMoreToItem,
     removeSessionItem,
+    updateItemsQRCodes,
     setError,
     clearError,
     clearAllErrors,
