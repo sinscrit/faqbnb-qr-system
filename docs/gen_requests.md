@@ -4850,3 +4850,39 @@ This enhancement extends the existing media type system to support modern web-ba
 - [ ] URL items integrate seamlessly with existing item display components and layouts
 - [ ] Invalid or inaccessible URLs display appropriate fallback content with the domain name and URL visible
 
+
+---
+
+## REQ-093: Component Infrastructure for Item Creation Workflow
+
+**Date**: 2026-01-05 14:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Establish the foundational component structure, type definitions, and configuration constants needed for the item creation workflow system.
+
+### Current Behavior
+No dedicated component structure exists for managing the item creation workflow. Type definitions, constants, and organizational scaffolding are scattered or missing.
+
+### Expected Behavior
+A well-organized component directory with:
+- Clear type definitions for all workflow entities and states
+- Centralized constants defining room types, item categories, and suggestion logic
+- Barrel exports enabling clean imports throughout the application
+- A foundation that supports subsequent workflow step implementations
+
+### User Impact
+Developers building the item creation workflow will have a clear, type-safe foundation to work from. This reduces implementation errors, improves code discoverability, and establishes consistent patterns across the workflow components.
+
+### Business Value
+Accelerates development of the item creation feature by providing reusable infrastructure. Reduces technical debt and maintenance burden through proper typing and organization from the start.
+
+### Acceptance Criteria
+- [ ] Component directory structure is created following project conventions
+- [ ] All workflow-related TypeScript interfaces are defined and documented
+- [ ] Constants file includes room types, item types, and suggestion matrix
+- [ ] Barrel export files enable importing from the component root
+- [ ] Type definitions compile without errors and satisfy strict mode requirements
+- [ ] Constants are structured to support future extensibility without breaking changes
+

@@ -439,7 +439,7 @@ item_links: {
 
 **Estimated effort:** 1 story point
 
-- [ ] Create the component file with the following structure:
+- [x] Create the component file with the following structure:
   ```typescript
   'use client';
 
@@ -461,7 +461,7 @@ item_links: {
   import { generateUUID } from '../../utils/generateUUID';
   ```
 
-- [ ] Define `UrlInputStepProps` interface:
+- [x] Define `UrlInputStepProps` interface:
   ```typescript
   export interface UrlInputStepProps {
     state: ItemCaptureState;
@@ -470,51 +470,56 @@ item_links: {
     prevStep: () => void;
     config?: { debug?: boolean };
   }
-  ```
+  ``` ---implemented: UrlInputStepProps interface defined with all required props---unit tested-
 
-- [ ] Implement component with internal state:
+- [x] Implement component with internal state:
   - `urlInput: string` - current input value
   - `isLoading: boolean` - fetching metadata
   - `error: string | null` - validation/fetch error
   - `preview: UrlMetadata | null` - fetched metadata preview
+  ---implemented: All state variables implemented using useState---unit tested-
 
-- [ ] Implement URL input field with:
+- [x] Implement URL input field with:
   - Placeholder: "Paste a URL (e.g., YouTube, product page, manual)"
   - Paste button for mobile
   - Clear button when has value
   - Enter key to submit
+  ---implemented: Complete URL input with paste button, clear button, and Enter key handler---unit tested-
 
-- [ ] Implement `handleFetchMetadata` callback:
+- [x] Implement `handleFetchMetadata` callback:
   1. Validate URL format using helper
   2. Normalize URL (add https:// if needed)
   3. Set loading state
   4. Call `/api/url-metadata` endpoint
   5. Display preview or error
+  ---implemented: Full metadata fetching with validation, normalization, and error handling---unit tested-
 
-- [ ] Implement `handleAddUrl` callback:
+- [x] Implement `handleAddUrl` callback:
   1. Create `UrlItem` with generated UUID
   2. Call `addUrl(urlItem)`
   3. Navigate to 'add-more' step
+  ---implemented: URL item creation and navigation to add-more step---unit tested-
 
-- [ ] Render preview card when metadata is available showing:
+- [x] Render preview card when metadata is available showing:
   - Thumbnail image (or domain favicon fallback)
   - Page title
   - Domain name badge
   - URL preview (truncated)
   - "Add Link" button
+  ---implemented: Complete preview card with thumbnail, metadata, domain badge, and actions---unit tested-
 
-- [ ] Include Back button that calls `prevStep()`
+- [x] Include Back button that calls `prevStep()` ---implemented: Back button with ArrowLeft icon---unit tested-
 
-- [ ] Add loading spinner during fetch
+- [x] Add loading spinner during fetch ---implemented: Loader2 spinner with "Fetching preview..." text---unit tested-
 
-- [ ] Add error display with retry option
+- [x] Add error display with retry option ---implemented: Error display with AlertCircle icon and "Try Another" button---unit tested-
 
-- [ ] Export default and named export
+- [x] Export default and named export ---implemented: Both default and named export for UrlInputStep---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/components/steps/UrlInputStep.tsx
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 
