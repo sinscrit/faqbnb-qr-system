@@ -1075,15 +1075,15 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Import Link icon (line 16-27):
+- [x] Import Link icon (line 16-27):
   ```typescript
   import {
     // ... existing
     Link as LinkIcon,
   } from 'lucide-react';
-  ```
+  ``` ---implemented: LinkIcon imported from lucide-react---unit tested-
 
-- [ ] Update `getContentTypeBadge` function (line 54) to add URL case:
+- [x] Update `getContentTypeBadge` function (line 54) to add URL case:
   ```typescript
   function getContentTypeBadge(contentType: string, firstMediaType?: string) {
     if (contentType === 'url-only') {
@@ -1095,20 +1095,21 @@ item_links: {
     }
     // ... rest
   }
-  ```
+  ``` ---implemented: url-only and url media type cases added to getContentTypeBadge with cyan styling---unit tested-
 
-- [ ] Update `getFallbackIcon` function (line 184) to add URL case:
+- [x] Update `getFallbackIcon` function (line 184) to add URL case:
   ```typescript
   case 'url':
     return <LinkIcon className="w-6 h-6 text-cyan-400" />;
-  ```
+  ``` ---implemented: URL case added to switch statement for fallback icon, url-only check added for no media---unit tested-
 
-- [ ] Update thumbnail display logic for URL items
+- [x] Update thumbnail display logic for URL items
+  ---implemented: objectUrl computation updated to use thumbnailUrl for URL items, cleanup logic updated to skip external URLs---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemManager/components/ItemRow.tsx
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 
