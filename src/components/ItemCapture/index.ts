@@ -25,6 +25,10 @@ export type {
   MediaItem,
   MediaMetadata,
   ApplianceType,
+
+  // URL types (REQ-092)
+  UrlItem,
+  UrlMetadata,
 } from './ItemCapture.types';
 
 // =============================================================================
@@ -260,6 +264,8 @@ export {
   MARKDOWN_FORMATS,
   CAPTURE_CONSTRAINTS,
   SUPPORTED_FORMATS,
+  URL_CONSTRAINTS,
+  YOUTUBE_THUMBNAIL_QUALITIES,
 } from './utils/constants';
 export type {
   PresetLocation,
@@ -289,6 +295,8 @@ export {
   calculateRemainingSize,
   calculateTotalSize,
   wouldExceedTotalSize,
+  validateUrl,
+  validateUrlCount,
 } from './utils/validation';
 export type {
   ValidationResult,

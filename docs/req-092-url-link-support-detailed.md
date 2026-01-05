@@ -1121,21 +1121,29 @@ item_links: {
 
 **Estimated effort:** 0.25 story points
 
-- [ ] Add UrlItem and UrlMetadata to type exports:
+- [x] Add UrlItem and UrlMetadata to type exports:
   ```typescript
   export type {
     // ... existing
     UrlItem,
     UrlMetadata,
   } from './ItemCapture.types';
-  ```
+  ``` ---implemented: UrlItem and UrlMetadata types exported in public types section---unit tested-
 
-- [ ] Add UrlInputStep to component exports (if applicable)
+- [x] Add URL validation functions and constants
+  ```typescript
+  // Added to validation exports:
+  validateUrl,
+  validateUrlCount,
+  // Added to constants exports:
+  URL_CONSTRAINTS,
+  YOUTUBE_THUMBNAIL_QUALITIES,
+  ``` ---implemented: URL validation functions and constants exported---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/index.ts
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 
