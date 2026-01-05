@@ -8,7 +8,7 @@
  * import { ItemManagerProps, ItemRecord, FilterState } from '@/components/ItemManager';
  *
  * @module ItemManager
- * @lastModified 2026-01-05 (REQ-091 - Added analytics type exports)
+ * @lastModified 2026-01-05 (REQ-091 - Added analytics hook and component exports)
  */
 
 // =============================================================================
@@ -244,3 +244,30 @@ export type { SearchInputProps } from './components/SearchInput';
 
 export { useDebounce, DEFAULT_DEBOUNCE_MS } from './hooks/useDebounce';
 export { default as useDebounceDefault } from './hooks/useDebounce';
+
+// =============================================================================
+// useItemAnalytics Hook Export (REQ-091)
+// =============================================================================
+
+export { useItemAnalytics, useItemAnalyticsDefault } from './hooks';
+export type {
+  ItemAnalyticsData,
+  UseItemAnalyticsOptions,
+  UseItemAnalyticsReturn,
+} from './hooks';
+
+// =============================================================================
+// Analytics Display Components (REQ-091)
+// =============================================================================
+
+export { VisitCountBadge } from './components/shared/VisitCountBadge';
+export type { VisitCountBadgeProps } from './components/shared/VisitCountBadge';
+
+export { ReactionSummary } from './components/shared/ReactionSummary';
+export type { ReactionSummaryProps } from './components/shared/ReactionSummary';
+
+export { EngagementIndicator } from './components/shared/EngagementIndicator';
+export type { EngagementIndicatorProps, EngagementLevel, EngagementThresholds } from './components/shared/EngagementIndicator';
+
+export { AnalyticsSection } from './components/ItemPreview';
+export type { AnalyticsSectionProps } from './components/ItemPreview';
