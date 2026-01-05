@@ -24,6 +24,7 @@ import { VideoCaptureStep } from './components/steps/VideoCaptureStep';
 import { PhotoCaptureStep } from './components/steps/PhotoCaptureStep';
 import { FileUploadStep } from './components/steps/FileUploadStep';
 import { TextEditorStep } from './components/steps/TextEditorStep';
+import { UrlInputStep } from './components/steps/UrlInputStep';
 import { MediaEditorStep } from './components/steps/MediaEditorStep';
 import { ReviewStep } from './components/steps/ReviewStep';
 import type {
@@ -31,6 +32,7 @@ import type {
   ItemRecord,
   WizardStep,
   MediaItem,
+  UrlItem,
 } from './ItemCapture.types';
 import type { ContentType } from './components/steps/ContentTypeStep';
 
@@ -82,6 +84,9 @@ export function ItemCapture({
     updateMedia,
     reorderMedia,
     setInstructions,
+    addUrl,
+    removeUrl,
+    updateUrl,
     setError,
     clearError,
     clearAllErrors,
@@ -227,6 +232,9 @@ export function ItemCapture({
           break;
         case 'text':
           goToStep('write-text');
+          break;
+        case 'url':
+          goToStep('add-url');
           break;
         default:
           debugLog('Unknown content type:', contentType);
@@ -402,6 +410,17 @@ export function ItemCapture({
             setInstructions={setInstructions}
             goToStep={goToStep}
             prevStep={() => goToStep('content-type')}
+          />
+        );
+
+      case 'add-url':
+        return (
+          <UrlInputStep
+            state={state}
+            addUrl={addUrl}
+            goToStep={goToStep}
+            prevStep={() => goToStep('content-type')}
+            config={config}
           />
         );
 

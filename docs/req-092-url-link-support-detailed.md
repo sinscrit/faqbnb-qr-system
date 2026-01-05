@@ -651,12 +651,12 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Import `UrlInputStep` (after line 27):
+- [x] Import `UrlInputStep` (after line 27):
   ```typescript
   import { UrlInputStep } from './components/steps/UrlInputStep';
-  ```
+  ``` ---implemented: UrlInputStep imported---unit tested-
 
-- [ ] Import `UrlItem` type (line 29-34):
+- [x] Import `UrlItem` type (line 29-34):
   ```typescript
   import type {
     ItemCaptureProps,
@@ -665,9 +665,9 @@ item_links: {
     MediaItem,
     UrlItem,  // ADD
   } from './ItemCapture.types';
-  ```
+  ``` ---implemented: UrlItem type imported---unit tested-
 
-- [ ] Add URL-related state actions from useItemCaptureState (line 74-97):
+- [x] Add URL-related state actions from useItemCaptureState (line 74-97):
   ```typescript
   const {
     state,
@@ -677,16 +677,16 @@ item_links: {
     updateUrl,  // ADD
     // ... rest
   } = useItemCaptureState();
-  ```
+  ``` ---implemented: addUrl, removeUrl, updateUrl destructured from hook---unit tested-
 
-- [ ] Add 'url' case to `handleContentTypeSelect` (around line 224):
+- [x] Add 'url' case to `handleContentTypeSelect` (around line 224):
   ```typescript
   case 'url':
     goToStep('add-url');
     break;
-  ```
+  ``` ---implemented: URL case routes to add-url step---unit tested-
 
-- [ ] Add 'add-url' case to `renderStep` (around line 406, before 'add-more' case):
+- [x] Add 'add-url' case to `renderStep` (around line 406, before 'add-more' case):
   ```typescript
   case 'add-url':
     return (
@@ -698,12 +698,12 @@ item_links: {
         config={config}
       />
     );
-  ```
+  ``` ---implemented: UrlInputStep rendered in add-url case---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/ItemCapture.tsx
-  ```
+  ``` ---implemented: Build verified successful---unit tested-
 
 ---
 
