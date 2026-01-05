@@ -253,7 +253,7 @@ item_links: {
 
 **Estimated effort:** 1 story point
 
-- [ ] Create the API route file with POST handler:
+- [x] Create the API route file with POST handler:
   ```typescript
   /**
    * URL Metadata API Route
@@ -266,17 +266,17 @@ item_links: {
    */
 
   import { NextRequest, NextResponse } from 'next/server';
-  ```
+  ``` ---implemented: Created API route with imports and structure---unit tested-
 
-- [ ] Implement `validateUrl(url: string)` helper - checks for valid URL format and blocked protocols (SSRF prevention)
+- [x] Implement `validateUrl(url: string)` helper - checks for valid URL format and blocked protocols (SSRF prevention) ---implemented: Added validation with SSRF protection (blocks localhost, private IPs, dangerous protocols)---unit tested-
 
-- [ ] Implement `parseOpenGraphTags(html: string)` helper - extracts og:title, og:description, og:image from HTML
+- [x] Implement `parseOpenGraphTags(html: string)` helper - extracts og:title, og:description, og:image from HTML ---implemented: Regex-based Open Graph tag extraction---unit tested-
 
-- [ ] Implement `extractFavicon(html: string, baseUrl: string)` helper - finds favicon from link tags or defaults to /favicon.ico
+- [x] Implement `extractFavicon(html: string, baseUrl: string)` helper - finds favicon from link tags or defaults to /favicon.ico ---implemented: Extracts favicon with fallback to /favicon.ico---unit tested-
 
-- [ ] Implement `extractTitle(html: string)` helper - falls back to <title> tag if no og:title
+- [x] Implement `extractTitle(html: string)` helper - falls back to <title> tag if no og:title ---implemented: Extracts HTML title tag---unit tested-
 
-- [ ] Implement the POST handler with the following flow:
+- [x] Implement the POST handler with the following flow:
   1. Parse request body for `url` field
   2. Validate URL format and protocol
   3. Check if YouTube URL - if so, use helper functions to get thumbnail directly
@@ -284,30 +284,32 @@ item_links: {
   5. Validate Content-Type is HTML (reject large files, non-HTML)
   6. Parse HTML and extract metadata
   7. Return structured `UrlMetadata` response
+  ---implemented: Complete POST handler with YouTube fast-path and metadata extraction---unit tested-
 
-- [ ] Add error handling for:
+- [x] Add error handling for:
   - Invalid URL format (400)
   - Blocked protocol (400)
   - Fetch timeout (408)
   - Non-HTML content (415)
   - Network errors (502)
   - Generic errors (500)
+  ---implemented: Comprehensive error handling with appropriate HTTP status codes---unit tested-
 
-- [ ] Return response in format:
+- [x] Return response in format:
   ```typescript
   interface UrlMetadataResponse {
     success: boolean;
     data?: UrlMetadata;
     error?: string;
   }
-  ```
+  ``` ---implemented: Response format matches specification---unit tested-
 
 - [ ] Test the endpoint manually:
   ```bash
   curl -X POST http://localhost:3000/api/url-metadata \
     -H "Content-Type: application/json" \
     -d '{"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}'
-  ```
+  ``` ---Note: Manual testing deferred to integration testing phase (Task 16)---
 
 ---
 
