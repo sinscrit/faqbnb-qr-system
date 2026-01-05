@@ -269,7 +269,7 @@ export function ItemCapture({
    * Handle edit section from ReviewStep.
    */
   const handleEditSection = useCallback(
-    (section: 'metadata' | 'content-type' | 'capture' | 'text') => {
+    (section: 'metadata' | 'content-type' | 'capture' | 'text' | 'url') => {
       debugLog('Edit section:', section);
 
       switch (section) {
@@ -284,6 +284,9 @@ export function ItemCapture({
           break;
         case 'text':
           goToStep('write-text');
+          break;
+        case 'url':
+          goToStep('add-url');
           break;
       }
     },
@@ -476,11 +479,13 @@ export function ItemCapture({
           <ReviewStep
             metadata={state.metadata}
             mediaItems={state.mediaItems}
+            urlItems={state.urlItems}
             instructions={state.instructions}
             onSubmit={handleSubmit}
             onCancel={onCancel}
             onEditSection={handleEditSection}
             onRemoveMedia={removeMedia}
+            onRemoveUrl={removeUrl}
             onReorderMedia={handleReorderMedia}
             onEditMedia={handleEditMedia}
             isSubmitting={state.isSubmitting}

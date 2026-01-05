@@ -27,9 +27,11 @@ import {
   Play,
   Plus,
   HardDrive,
+  Link as LinkIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { MediaItem, ItemMetadata, ApplianceType } from '../../ItemCapture.types';
+import type { MediaItem, ItemMetadata, ApplianceType, UrlItem } from '../../ItemCapture.types';
+import { UrlPreview } from '../shared/UrlPreview';
 import { APPLIANCE_TYPES } from '../../utils/constants';
 import { useItemValidation } from '../../hooks/useItemValidation';
 import { ValidationMessage, ValidationMessageList } from '../shared/ValidationMessage';
@@ -55,6 +57,8 @@ export interface ReviewStepProps {
   metadata: ItemMetadata;
   /** Array of media items */
   mediaItems: MediaItem[];
+  /** Array of URL items */
+  urlItems: UrlItem[];
   /** Markdown-formatted instructions */
   instructions: string;
   /** Submit callback */
@@ -62,9 +66,11 @@ export interface ReviewStepProps {
   /** Cancel callback */
   onCancel: () => void;
   /** Navigation callback to edit a specific section */
-  onEditSection: (section: 'metadata' | 'content-type' | 'capture' | 'text') => void;
+  onEditSection: (section: 'metadata' | 'content-type' | 'capture' | 'text' | 'url') => void;
   /** Remove media callback */
   onRemoveMedia: (mediaId: string) => void;
+  /** Remove URL callback */
+  onRemoveUrl: (urlId: string) => void;
   /** Reorder media callback */
   onReorderMedia: (mediaId: string, direction: 'up' | 'down') => void;
   /** Edit media callback */
@@ -283,11 +289,13 @@ function MediaItemCard({
 export function ReviewStep({
   metadata,
   mediaItems,
+  urlItems,
   instructions,
   onSubmit,
   onCancel,
   onEditSection,
   onRemoveMedia,
+  onRemoveUrl,
   onReorderMedia,
   onEditMedia,
   isSubmitting = false,
@@ -515,7 +523,56 @@ export function ReviewStep({
       </section>
 
       {/* =================================================================== */}
-      {/* Section 3: Instructions Preview */}
+      {/* Section 3: URL Links */}
+      {/* =================================================================== */}
+      <section
+        className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        aria-labelledby="urls-heading"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 id="urls-heading" className="text-lg font-medium text-gray-900">
+            Links ({urlItems.length} {urlItems.length === 1 ? 'link' : 'links'})
+          </h3>
+          <button
+            type="button"
+            onClick={() => onEditSection('url')}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+            aria-label="Add more links"
+          >
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            <span>Add Link</span>
+          </button>
+        </div>
+
+        {urlItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-gray-300 rounded-lg">
+            <LinkIcon className="w-12 h-12 text-gray-400 mb-3" aria-hidden="true" />
+            <p className="text-gray-500 mb-3">No links added yet</p>
+            <button
+              type="button"
+              onClick={() => onEditSection('url')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              Add Link
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {urlItems.map((urlItem) => (
+              <UrlPreview
+                key={urlItem.id}
+                metadata={urlItem.metadata}
+                size="medium"
+                onRemove={() => onRemoveUrl(urlItem.id)}
+                showExternalIcon
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* =================================================================== */}
+      {/* Section 4: Instructions Preview */}
       {/* =================================================================== */}
       <section
         className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"

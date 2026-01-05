@@ -11,7 +11,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { ReviewStep } from '@/components/ItemCapture';
-import type { ItemMetadata, MediaItem } from '@/components/ItemCapture';
+import type { ItemMetadata, MediaItem, UrlItem } from '@/components/ItemCapture';
 
 // Mock media items for testing
 const createMockMediaItems = (): MediaItem[] => [
@@ -64,6 +64,7 @@ export default function ReviewStepTestPage() {
   });
 
   const [mediaItems, setMediaItems] = useState<MediaItem[]>(createMockMediaItems());
+  const [urlItems, setUrlItems] = useState<UrlItem[]>([]);
   const [instructions, setInstructions] = useState<string>(`# How to run a cleaning cycle
 
 1. **Empty the dishwasher** completely
@@ -102,7 +103,7 @@ export default function ReviewStepTestPage() {
     alert('Cancel confirmed - would navigate away');
   }, [addLog]);
 
-  const handleEditSection = useCallback((section: 'metadata' | 'content-type' | 'capture' | 'text') => {
+  const handleEditSection = useCallback((section: 'metadata' | 'content-type' | 'capture' | 'text' | 'url') => {
     addLog(`onEditSection called with: ${section}`);
     alert(`Would navigate to edit: ${section}`);
   }, [addLog]);
@@ -110,6 +111,11 @@ export default function ReviewStepTestPage() {
   const handleRemoveMedia = useCallback((mediaId: string) => {
     addLog(`onRemoveMedia called with ID: ${mediaId}`);
     setMediaItems(prev => prev.filter(item => item.id !== mediaId));
+  }, [addLog]);
+
+  const handleRemoveUrl = useCallback((urlId: string) => {
+    addLog(`onRemoveUrl called with ID: ${urlId}`);
+    setUrlItems(prev => prev.filter(item => item.id !== urlId));
   }, [addLog]);
 
   const handleReorderMedia = useCallback((mediaId: string, direction: 'up' | 'down') => {
@@ -151,11 +157,13 @@ export default function ReviewStepTestPage() {
           <ReviewStep
             metadata={metadata}
             mediaItems={mediaItems}
+            urlItems={urlItems}
             instructions={instructions}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
             onEditSection={handleEditSection}
             onRemoveMedia={handleRemoveMedia}
+            onRemoveUrl={handleRemoveUrl}
             onReorderMedia={handleReorderMedia}
             onEditMedia={handleEditMedia}
             isSubmitting={isSubmitting}
