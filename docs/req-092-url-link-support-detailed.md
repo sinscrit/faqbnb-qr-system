@@ -195,7 +195,7 @@ item_links: {
 
 **Estimated effort:** 0.5 story points
 
-- [ ] Add new `URL_CONSTRAINTS` constant after `CAPTURE_CONSTRAINTS` (around line 249):
+- [x] Add new `URL_CONSTRAINTS` constant after `CAPTURE_CONSTRAINTS` (around line 249):
   ```typescript
   // =============================================================================
   // URL/Link Constraints (REQ-092)
@@ -221,9 +221,9 @@ item_links: {
     /** Maximum number of URL items per item record */
     maxUrls: 20,
   } as const;
-  ```
+  ``` ---implemented: Added URL_CONSTRAINTS with validation limits and security constraints---unit tested-
 
-- [ ] Add `YOUTUBE_THUMBNAIL_QUALITIES` constant:
+- [x] Add `YOUTUBE_THUMBNAIL_QUALITIES` constant:
   ```typescript
   /**
    * YouTube thumbnail quality options.
@@ -236,12 +236,12 @@ item_links: {
     standard: 'sddefault',   // 640x480
     maxres: 'maxresdefault', // 1280x720
   } as const;
-  ```
+  ``` ---implemented: Added YOUTUBE_THUMBNAIL_QUALITIES mapping---unit tested-
 
-- [ ] Verify file compiles:
+- [x] Verify file compiles:
   ```bash
   npx tsc --noEmit src/components/ItemCapture/utils/constants.ts
-  ```
+  ``` ---implemented: TypeScript compilation successful, no errors---unit tested-
 
 ---
 

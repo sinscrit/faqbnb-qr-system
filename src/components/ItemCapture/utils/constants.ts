@@ -5,7 +5,7 @@
  * including preset locations, appliance types, suggested tags, and validation constraints.
  *
  * @module ItemCapture/utils/constants
- * @lastModified 2025-12-31 (REQ-044 Task 3.4.1)
+ * @lastModified 2026-01-05 (REQ-092 Task 3)
  */
 
 import type { ApplianceType } from '../ItemCapture.types';
@@ -246,6 +246,45 @@ export const CAPTURE_CONSTRAINTS = {
     /** Maximum title length in characters */
     maxLength: 200,
   },
+} as const;
+
+// =============================================================================
+// URL/Link Constraints (REQ-092)
+// =============================================================================
+
+/**
+ * Constraints for URL/Link items.
+ * Used for validation in the URL input step.
+ *
+ * @lastModified 2026-01-05 (REQ-092 Task 3)
+ */
+export const URL_CONSTRAINTS = {
+  /** Maximum URL length in characters */
+  maxUrlLength: 2048,
+  /** Maximum custom title length */
+  maxTitleLength: 200,
+  /** Allowed URL protocols */
+  allowedProtocols: ['http:', 'https:'] as const,
+  /** Blocked URL protocols for security */
+  blockedProtocols: ['javascript:', 'data:', 'file:', 'vbscript:'] as const,
+  /** Timeout for metadata fetching in milliseconds */
+  fetchTimeout: 10000,
+  /** Maximum number of URL items per item record */
+  maxUrls: 20,
+} as const;
+
+/**
+ * YouTube thumbnail quality options.
+ * Maps to the standard YouTube thumbnail URL patterns.
+ *
+ * @lastModified 2026-01-05 (REQ-092 Task 3)
+ */
+export const YOUTUBE_THUMBNAIL_QUALITIES = {
+  default: 'default', // 120x90
+  medium: 'mqdefault', // 320x180
+  high: 'hqdefault', // 480x360
+  standard: 'sddefault', // 640x480
+  maxres: 'maxresdefault', // 1280x720
 } as const;
 
 // =============================================================================
