@@ -134,3 +134,15 @@ export type { WorkflowHeaderProps } from './components/shared/WorkflowHeader';
 // Task 1.3: ConfirmExitDialog
 export { ConfirmExitDialog } from './components/shared/ConfirmExitDialog';
 export type { ConfirmExitDialogProps } from './components/shared/ConfirmExitDialog';
+
+// Task 1.5: SessionProgressBar
+export { SessionProgressBar } from './components/shared/SessionProgressBar';
+export type { SessionProgressBarProps } from './components/shared/SessionProgressBar';
+
+// Task 1.5: RoomCard
+export { RoomCard } from './components/shared/RoomCard';
+export type { RoomCardProps } from './components/shared/RoomCard';
+
+// Task 1.5: ItemTypeCard
+export { ItemTypeCard, ITEM_TYPE_ICONS } from './components/shared/ItemTypeCard';
+export type { ItemTypeCardProps } from './components/shared/ItemTypeCard';

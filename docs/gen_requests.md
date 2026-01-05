@@ -4990,3 +4990,35 @@ Reduces user abandonment rates by removing the risk of losing progress. Improves
 - [ ] When a workflow is marked as complete, the saved state is removed from browser storage
 - [ ] Multiple workflow sessions can be managed independently without conflicts
 
+---
+
+## REQ-097: Shared UI Components for Item Creation Workflow
+
+**Date**: 2026-01-05 18:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application should provide reusable UI components that maintain consistent design patterns across the item creation workflow and broader application.
+
+### Current Behavior
+The item creation workflow lacks standardized UI components for displaying progress, presenting room selections, and showing item type options. Each view must implement its own visual elements, leading to inconsistent styling and duplicated code.
+
+### Expected Behavior
+The application provides a library of shared components including a session progress indicator, standardized card layouts for room selections, and card layouts for item type choices. All components follow the established design system visual language with consistent spacing, typography, colors, and interaction patterns.
+
+### User Impact
+Users experience a cohesive, professional interface throughout the workflow with predictable visual patterns. The consistent design reduces cognitive load and makes the workflow feel more polished and trustworthy.
+
+### Business Value
+Accelerates future development by enabling component reuse. Ensures brand consistency across the application. Reduces maintenance overhead by centralizing design pattern implementations.
+
+### Acceptance Criteria
+- [ ] A progress indicator component displays the current step and total steps in the workflow
+- [ ] Room selection cards present property rooms with consistent visual hierarchy and spacing
+- [ ] Item type cards display available content types with recognizable icons and clear labels
+- [ ] All components apply the design system's color palette, typography scale, and spacing units
+- [ ] Components are responsive and function correctly on mobile, tablet, and desktop viewports
+- [ ] Components accept appropriate props for customization while maintaining visual consistency
+- [ ] Card components support hover states and visual feedback for interactive elements
+

@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-095 Task 1.3)
+ * @lastModified 2026-01-05 (REQ-097 Task 1.5)
  */
 
 // =============================================================================
@@ -18,20 +18,20 @@ export { ConfirmExitDialog } from './ConfirmExitDialog';
 export type { ConfirmExitDialogProps } from './ConfirmExitDialog';
 
 // Task 1.5: SessionProgressBar
-// export { SessionProgressBar } from './SessionProgressBar';
-// export type { SessionProgressBarProps } from './SessionProgressBar';
+export { SessionProgressBar } from './SessionProgressBar';
+export type { SessionProgressBarProps } from './SessionProgressBar';
 
 // =============================================================================
 // Selection Components (Phase 1 & 2)
 // =============================================================================
 
 // Task 1.5: RoomCard
-// export { RoomCard } from './RoomCard';
-// export type { RoomCardProps } from './RoomCard';
+export { RoomCard } from './RoomCard';
+export type { RoomCardProps } from './RoomCard';
 
 // Task 1.5: ItemTypeCard
-// export { ItemTypeCard } from './ItemTypeCard';
-// export type { ItemTypeCardProps } from './ItemTypeCard';
+export { ItemTypeCard, ITEM_TYPE_ICONS } from './ItemTypeCard';
+export type { ItemTypeCardProps } from './ItemTypeCard';
 
 // Task 2.3: SuggestionButton
 // export { SuggestionButton } from './SuggestionButton';
