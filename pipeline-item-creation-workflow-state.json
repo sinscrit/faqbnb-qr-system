@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T11:58:24.533833",
+  "updated_at": "2026-01-05T12:25:27.171691",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 18,
+  "current_task_index": 19,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
   "source_hash": "659aea0c3d990dc23caee3552a3172e7",
   "tasks": [
@@ -416,11 +416,19 @@
       "title": "PDF Generation Integration",
       "description": "[ ] Integrate existing PDF generation services\n[ ] Use `PDFExportOptions` component patterns\n[ ] Support standard paper sizes (Letter, A4)\n[ ] Include item name labels below QR codes",
       "raw_match": "#### Task 6.4: PDF Generation Integration [",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-112",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-05T12:25:27.171589",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-112",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-112-pdf-generation-integration-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-112-pdf-generation-integration-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "7.1",
@@ -501,8 +509,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 19,
-    "last_request_id": "REQ-111",
+    "total_requests_generated": 20,
+    "last_request_id": "REQ-112",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },

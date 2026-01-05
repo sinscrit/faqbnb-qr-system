@@ -10,6 +10,7 @@
  *
  * @module ItemCreationWorkflow/hooks/useUrlPreview
  * @see docs/REQ-104-url-content-with-preview-overview.md
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
  * @lastModified 2026-01-05
  */
 
@@ -28,6 +29,17 @@ export interface UseUrlPreviewOptions {
 }
 
 export type UrlPreviewStatus = 'idle' | 'loading' | 'success' | 'error';
+
+/** Network connectivity status */
+export type NetworkStatus = 'online' | 'offline' | 'unknown';
+
+/** Information about network errors */
+export interface NetworkErrorInfo {
+  /** Whether the error is due to network connectivity */
+  isNetworkError: boolean;
+  /** Current network status */
+  networkStatus: NetworkStatus;
+}
 
 export interface UseUrlPreviewReturn {
   /** Current preview data (null if not fetched yet or error) */
@@ -52,6 +64,12 @@ export interface UseUrlPreviewReturn {
   hasValidUrl: boolean;
   /** The current URL being previewed */
   currentUrl: string;
+  /** Whether the error is due to network connectivity */
+  isNetworkError: boolean;
+  /** Current network status */
+  networkStatus: NetworkStatus;
+  /** Retry the last fetch attempt */
+  retry: () => void;
 }
 
 // =============================================================================
@@ -119,10 +137,32 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
   const [status, setStatus] = useState<UrlPreviewStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
+  const [networkStatus, setNetworkStatus] = useState<NetworkStatus>('unknown');
 
   // Refs for cleanup and abort handling
   const abortControllerRef = useRef<AbortController | null>(null);
   const isUnmountedRef = useRef(false);
+  const lastUrlRef = useRef<string>('');
+
+  // Network status detection effect
+  useEffect(() => {
+    const updateNetworkStatus = () => {
+      setNetworkStatus(navigator.onLine ? 'online' : 'offline');
+    };
+
+    // Initial status
+    updateNetworkStatus();
+
+    // Listen for online/offline events
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    return () => {
+      window.removeEventListener('online', updateNetworkStatus);
+      window.removeEventListener('offline', updateNetworkStatus);
+    };
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -149,8 +189,12 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
       setStatus('error');
       setCurrentUrl(trimmedUrl);
       setData(null);
+      setIsNetworkError(false);
       return;
     }
+
+    // Store URL for retry
+    lastUrlRef.current = trimmedUrl;
 
     // Abort any existing request
     if (abortControllerRef.current) {
@@ -164,6 +208,7 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
     setCurrentUrl(trimmedUrl);
     setStatus('loading');
     setError(null);
+    setIsNetworkError(false);
 
     try {
       // Create timeout promise
@@ -193,6 +238,7 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
       setData(result.data);
       setStatus('success');
       setError(null);
+      setIsNetworkError(false);
 
     } catch (err) {
       // Skip if unmounted
@@ -203,9 +249,16 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
         return;
       }
 
+      // Detect network errors
+      const isNetwork = !navigator.onLine ||
+        (err instanceof TypeError && err.message === 'Failed to fetch') ||
+        (err instanceof Error && err.message === 'Request timed out');
+
+      setIsNetworkError(isNetwork);
+
       // Set error state but keep the URL
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch preview';
-      setError(errorMessage);
+      setError(isNetwork ? 'Preview unavailable - Network issue' : errorMessage);
       setStatus('error');
 
       // Create minimal data with just the URL so user can still proceed
@@ -227,7 +280,19 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
     setStatus('idle');
     setError(null);
     setCurrentUrl('');
+    setIsNetworkError(false);
+    lastUrlRef.current = '';
   }, []);
+
+  /**
+   * Retry the last fetch attempt.
+   * Useful when network connectivity is restored.
+   */
+  const retry = useCallback((): void => {
+    if (lastUrlRef.current) {
+      fetchPreview(lastUrlRef.current);
+    }
+  }, [fetchPreview]);
 
   // Computed values
   const isLoading = status === 'loading';
@@ -250,6 +315,9 @@ export function useUrlPreview(options: UseUrlPreviewOptions = {}): UseUrlPreview
     canProceed,
     hasValidUrl,
     currentUrl,
+    isNetworkError,
+    networkStatus,
+    retry,
   };
 }
 

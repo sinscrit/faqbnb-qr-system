@@ -211,3 +211,37 @@ export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
   'next-action': 90,
   'session-summary': 100,
 };
+
+// =============================================================================
+// Text Truncation Configuration
+// =============================================================================
+
+/** Default maximum length for item names in list displays */
+export const DEFAULT_TRUNCATE_LENGTH = 40;
+
+/**
+ * Truncates text to specified length with ellipsis.
+ * @param text - Text to truncate
+ * @param maxLength - Maximum length (default: DEFAULT_TRUNCATE_LENGTH)
+ * @returns Truncated text with ellipsis if needed
+ */
+export function truncateWithEllipsis(
+  text: string,
+  maxLength: number = DEFAULT_TRUNCATE_LENGTH
+): string {
+  if (!text || text.length <= maxLength) return text;
+  return `${text.substring(0, maxLength - 3)}...`;
+}
+
+/**
+ * Checks if text would need truncation.
+ * @param text - Text to check
+ * @param maxLength - Maximum length (default: DEFAULT_TRUNCATE_LENGTH)
+ * @returns true if text exceeds maxLength
+ */
+export function shouldTruncate(
+  text: string,
+  maxLength: number = DEFAULT_TRUNCATE_LENGTH
+): boolean {
+  return text?.length > maxLength;
+}

@@ -5576,3 +5576,49 @@ Completes the end-to-end item creation workflow by providing the final deliverab
 - [ ] Generation respects the user's item selection from the print options panel
 - [ ] Users see visual feedback during PDF generation for operations that take more than one second
 - [ ] Failed PDF generation displays a clear error message with recovery options
+
+---
+
+## REQ-113: Error Handling and Edge Case Improvements for Item Creation Workflow
+
+**Date**: 2026-01-05 12:26
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should gracefully handle error conditions and edge cases throughout the item creation workflow, providing clear feedback and recovery options when network connectivity fails, permissions are denied, or users encounter boundary conditions.
+
+### Current Behavior
+When unexpected conditions occur during the item creation workflow—such as network interruptions during URL preview fetching, camera permission denials, extremely long item names, empty sessions, or session refresh attempts—the system may exhibit unclear error states, provide insufficient feedback, or fail to offer recovery paths. Users encountering these situations may become confused or unable to proceed with their tasks.
+
+### Expected Behavior
+The system should anticipate and handle the following scenarios gracefully:
+
+**Network Interruptions**: When network connectivity is lost during URL preview generation, users see a clear indicator that the preview could not be loaded, with an option to retry or proceed without preview.
+
+**Camera Access**: When camera permissions are denied or unavailable, users are presented with alternative input methods (manual URL entry or file upload) without disrupting the workflow.
+
+**Long Item Names**: When item names exceed reasonable display lengths, they are truncated in list views with ellipsis, and the full name appears in a tooltip on hover or tap.
+
+**Empty Sessions**: When users attempt to complete a session without adding any items, they receive a friendly prompt asking if they want to add items or exit the session.
+
+**Session Recovery**: When users refresh the browser or navigate away during an active session, the system attempts to restore their work-in-progress state, including unsaved items and current step position.
+
+**Duplicate Names**: When users enter an item name that already exists in the current session, they see a warning indicator and are prompted to confirm whether they want to proceed with a duplicate name or modify it.
+
+### User Impact
+Users working in challenging environments (unstable connectivity, restricted device permissions) or encountering edge cases will experience a more robust and forgiving system. Instead of facing dead ends or confusing states, they receive clear guidance and alternative paths forward, reducing frustration and workflow abandonment.
+
+### Business Value
+Improved error handling reduces support requests, increases workflow completion rates, and builds user confidence in the platform's reliability. By gracefully handling edge cases, the system accommodates a wider range of real-world usage scenarios without requiring technical intervention.
+
+### Acceptance Criteria
+- [ ] When network connectivity fails during URL preview fetching, a "Preview unavailable" message displays with a retry button
+- [ ] When camera permissions are denied, the interface automatically switches to show manual URL entry and file upload options
+- [ ] Item names exceeding 40 characters are truncated with ellipsis in list displays, showing the full name on hover or long-press
+- [ ] Attempting to proceed from an empty session triggers a confirmation dialog asking "No items added yet. Add items or exit session?"
+- [ ] Refreshing the browser during an active session restores the user's position, step progress, and any items added to the session
+- [ ] When a duplicate item name is detected within the current session, a warning icon appears with the message "Similar name already used"
+- [ ] All error states include actionable recovery options rather than passive error messages
+- [ ] Network-related errors distinguish between temporary connectivity issues and permanent failures
+

@@ -9,10 +9,12 @@
  * - Session recovery with 24-hour expiration
  * - Support for multiple independent sessions
  * - Safe serialization of complex state (Dates, Files)
+ * - State structure validation for corrupted data detection
  *
  * @module ItemCreationWorkflow/utils/sessionStorage
  * @see docs/REQ-096-session-persistence-detailed.md
- * @lastModified 2026-01-05 (REQ-096 Task 1.4)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113 Task 5.2)
  */
 
 import type {
@@ -43,6 +45,9 @@ export const MAX_SESSION_AGE_MS = 24 * 60 * 60 * 1000;
 
 /** Maximum number of sessions to track in the index */
 const MAX_SESSIONS = 10;
+
+/** Current storage format version - increment when storage structure changes */
+export const STORAGE_VERSION = 1;
 
 // =============================================================================
 // Serialized Type Definitions
@@ -124,11 +129,15 @@ export interface SerializedWorkflowState {
 }
 
 /**
- * Wrapper for stored session with timestamp
+ * Wrapper for stored session with timestamp and version
  */
 export interface StoredSession {
+  /** Storage format version for migration compatibility */
+  version: number;
+  /** The serialized workflow state */
   state: SerializedWorkflowState;
-  savedAt: number; // Unix timestamp
+  /** Unix timestamp when session was saved */
+  savedAt: number;
 }
 
 /**
@@ -440,6 +449,70 @@ export function deserializeState(stored: SerializedWorkflowState): Partial<Workf
 }
 
 // =============================================================================
+// State Validation Functions
+// =============================================================================
+
+/**
+ * Validates the structure of a deserialized workflow state.
+ * Returns true if state has all required fields with correct types.
+ *
+ * @param state - State object to validate
+ * @returns true if valid, false otherwise
+ */
+export function isValidWorkflowState(state: unknown): state is SerializedWorkflowState {
+  if (!state || typeof state !== 'object') return false;
+
+  const s = state as Record<string, unknown>;
+
+  // Check required top-level fields
+  if (typeof s.currentStep !== 'string') return false;
+  if (!Array.isArray(s.stepHistory)) return false;
+  if (typeof s.canGoBack !== 'boolean') return false;
+  if (!s.session || typeof s.session !== 'object') return false;
+
+  // Check session fields
+  const session = s.session as Record<string, unknown>;
+  if (typeof session.id !== 'string') return false;
+  if (typeof session.startedAt !== 'string') return false;
+  if (!Array.isArray(session.items)) return false;
+
+  // Validate each session item has required fields
+  for (const item of session.items) {
+    if (!item || typeof item !== 'object') return false;
+    const itemObj = item as Record<string, unknown>;
+    if (typeof itemObj.id !== 'string') return false;
+    if (typeof itemObj.name !== 'string') return false;
+    if (typeof itemObj.room !== 'string') return false;
+    if (typeof itemObj.itemType !== 'string') return false;
+    if (!Array.isArray(itemObj.content)) return false;
+  }
+
+  return true;
+}
+
+/**
+ * Validates a StoredSession wrapper structure.
+ *
+ * @param stored - The stored session object to validate
+ * @returns true if valid, false otherwise
+ */
+export function isValidStoredSession(stored: unknown): stored is StoredSession {
+  if (!stored || typeof stored !== 'object') return false;
+
+  const s = stored as Record<string, unknown>;
+
+  // Check required wrapper fields
+  if (typeof s.savedAt !== 'number') return false;
+  if (!s.state || typeof s.state !== 'object') return false;
+
+  // Version is optional for backwards compatibility (defaults to 1)
+  if (s.version !== undefined && typeof s.version !== 'number') return false;
+
+  // Validate the state inside
+  return isValidWorkflowState(s.state);
+}
+
+// =============================================================================
 // Session Index Management
 // =============================================================================
 
@@ -546,6 +619,7 @@ export function saveWorkflowState(state: WorkflowState): boolean {
   try {
     const serialized = serializeState(state);
     const stored: StoredSession = {
+      version: STORAGE_VERSION,
       state: serialized,
       savedAt: Date.now(),
     };
@@ -565,10 +639,10 @@ export function saveWorkflowState(state: WorkflowState): boolean {
 
 /**
  * Loads workflow state from localStorage by session ID.
- * Returns null for expired or missing sessions.
+ * Returns null for expired, missing, or invalid sessions.
  *
  * @param sessionId - ID of the session to load
- * @returns Partial workflow state or null if not found/expired
+ * @returns Partial workflow state or null if not found/expired/invalid
  */
 export function loadWorkflowState(sessionId: string): Partial<WorkflowState> | null {
   if (!isLocalStorageAvailable()) {
@@ -583,11 +657,26 @@ export function loadWorkflowState(sessionId: string): Partial<WorkflowState> | n
       return null;
     }
 
-    const parsed: StoredSession = JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+
+    // Validate structure before using
+    if (!isValidStoredSession(parsed)) {
+      console.warn('Invalid workflow state structure, clearing:', sessionId);
+      clearWorkflowState(sessionId);
+      return null;
+    }
 
     // Check expiration
     if (Date.now() - parsed.savedAt > MAX_SESSION_AGE_MS) {
       console.info('Session expired, clearing:', sessionId);
+      clearWorkflowState(sessionId);
+      return null;
+    }
+
+    // Check version for future migration support
+    const version = parsed.version ?? 1;
+    if (version > STORAGE_VERSION) {
+      console.warn('Session from newer app version, clearing:', sessionId);
       clearWorkflowState(sessionId);
       return null;
     }

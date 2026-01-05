@@ -7,11 +7,12 @@
  * fetches metadata preview via API, and adds to item state.
  *
  * @module ItemCapture/components/steps/UrlInputStep
- * @lastModified 2026-01-05 (REQ-092)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113)
  */
 
-import React, { useState, useCallback } from 'react';
-import { Link, Loader2, ExternalLink, AlertCircle, Check, ArrowLeft, Plus, X } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Link, Loader2, ExternalLink, AlertCircle, Check, ArrowLeft, Plus, X, WifiOff, RefreshCw, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UrlItem, UrlMetadata, ItemCaptureState, WizardStep } from '../../ItemCapture.types';
 import { validateUrlFormat, normalizeUrl, isYouTubeUrl } from '../../utils/urlHelpers';
@@ -36,21 +37,28 @@ export default function UrlInputStep({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<UrlMetadata | null>(null);
+  const [isNetworkError, setIsNetworkError] = useState(false);
+  const [proceedWithoutPreview, setProceedWithoutPreview] = useState(false);
+  const lastUrlRef = useRef<string>('');
 
   const handleFetchMetadata = useCallback(async () => {
     // Validate URL format
     const validation = validateUrlFormat(urlInput.trim());
     if (!validation.isValid) {
       setError(validation.error || 'Invalid URL');
+      setIsNetworkError(false);
       return;
     }
 
     // Normalize URL (add https:// if needed)
     const normalizedUrl = normalizeUrl(urlInput.trim());
+    lastUrlRef.current = normalizedUrl;
 
     setIsLoading(true);
     setError(null);
     setPreview(null);
+    setIsNetworkError(false);
+    setProceedWithoutPreview(false);
 
     try {
       const response = await fetch('/api/url-metadata', {
@@ -69,29 +77,60 @@ export default function UrlInputStep({
 
       if (data.success && data.data) {
         setPreview(data.data);
+        setIsNetworkError(false);
       } else {
         throw new Error(data.error || 'No metadata returned');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch URL metadata');
+      // Detect network errors
+      const isNetwork = !navigator.onLine ||
+        (err instanceof TypeError && err.message === 'Failed to fetch') ||
+        (err instanceof Error && err.message.includes('network'));
+
+      setIsNetworkError(isNetwork);
+      setError(isNetwork
+        ? 'Preview unavailable - Network issue'
+        : (err instanceof Error ? err.message : 'Failed to fetch URL metadata')
+      );
     } finally {
       setIsLoading(false);
     }
   }, [urlInput]);
 
   const handleAddUrl = useCallback(() => {
-    if (!preview) return;
+    if (!preview && !proceedWithoutPreview) return;
+
+    // Create metadata - use preview if available, otherwise create minimal metadata
+    const metadata: UrlMetadata = preview || {
+      url: lastUrlRef.current,
+      title: '',
+      domain: '',
+      linkType: 'generic',
+    };
 
     const urlItem: UrlItem = {
       id: generateUUID(),
-      metadata: preview,
+      metadata,
       order: state.urlItems.length,
       addedAt: new Date(),
     };
 
     addUrl(urlItem);
     goToStep('add-more');
-  }, [preview, state.urlItems.length, addUrl, goToStep]);
+  }, [preview, proceedWithoutPreview, state.urlItems.length, addUrl, goToStep]);
+
+  const handleProceedWithoutPreview = useCallback(() => {
+    setProceedWithoutPreview(true);
+    setIsNetworkError(false);
+    setError(null);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    if (lastUrlRef.current) {
+      setUrlInput(lastUrlRef.current);
+      handleFetchMetadata();
+    }
+  }, [handleFetchMetadata]);
 
   const handlePaste = useCallback(async () => {
     try {
@@ -106,6 +145,9 @@ export default function UrlInputStep({
     setUrlInput('');
     setPreview(null);
     setError(null);
+    setIsNetworkError(false);
+    setProceedWithoutPreview(false);
+    lastUrlRef.current = '';
   }, []);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
@@ -174,8 +216,70 @@ export default function UrlInputStep({
           )}
         </div>
 
-        {/* Error Message */}
-        {error && (
+        {/* Network Error Indicator */}
+        {error && isNetworkError && !proceedWithoutPreview && (
+          <div
+            role="alert"
+            aria-live="polite"
+            className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 p-2 bg-amber-100 rounded-full">
+                <WifiOff className="w-5 h-5 text-amber-600" aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-medium text-amber-800">
+                  Preview unavailable
+                </h3>
+                <p className="mt-1 text-sm text-amber-700">
+                  Unable to load preview due to network connectivity issues.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
+              <button
+                type="button"
+                onClick={handleRetry}
+                disabled={isLoading}
+                className={cn(
+                  'inline-flex items-center justify-center gap-2',
+                  'px-4 py-3 sm:py-2 min-h-[48px] sm:min-h-0',
+                  'text-sm font-medium rounded-lg',
+                  'transition-colors duration-200',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500',
+                  isLoading
+                    ? 'bg-amber-200 text-amber-600 cursor-not-allowed'
+                    : 'bg-amber-600 text-white hover:bg-amber-700'
+                )}
+              >
+                <RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} aria-hidden="true" />
+                {isLoading ? 'Retrying...' : 'Try Again'}
+              </button>
+              <button
+                type="button"
+                onClick={handleProceedWithoutPreview}
+                disabled={isLoading}
+                className={cn(
+                  'inline-flex items-center justify-center gap-2',
+                  'px-4 py-3 sm:py-2 min-h-[48px] sm:min-h-0',
+                  'text-sm font-medium rounded-lg',
+                  'border border-amber-300',
+                  'transition-colors duration-200',
+                  'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500',
+                  isLoading
+                    ? 'bg-amber-50 text-amber-400 cursor-not-allowed'
+                    : 'bg-white text-amber-700 hover:bg-amber-50'
+                )}
+              >
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                Proceed Without Preview
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Standard Error Message (non-network errors) */}
+        {error && !isNetworkError && !proceedWithoutPreview && (
           <div id="url-error" className="mt-2 flex items-start gap-2 text-red-600 text-sm">
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" aria-hidden="true" />
             <span>{error}</span>
@@ -183,7 +287,7 @@ export default function UrlInputStep({
         )}
 
         {/* Fetch Button */}
-        {!preview && urlInput && (
+        {!preview && !proceedWithoutPreview && urlInput && !isNetworkError && (
           <div className="mt-4">
             <button
               type="button"
@@ -206,6 +310,54 @@ export default function UrlInputStep({
           </div>
         )}
       </div>
+
+      {/* Proceed Without Preview Card */}
+      {proceedWithoutPreview && !preview && lastUrlRef.current && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="flex items-start gap-2 mb-4 text-amber-600">
+            <WifiOff className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <span className="text-sm font-medium">Proceeding without preview</span>
+          </div>
+
+          <div className="flex gap-4">
+            {/* Placeholder Thumbnail */}
+            <div className="flex-shrink-0">
+              <div className="w-32 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Link className="w-8 h-8 text-gray-400" aria-hidden="true" />
+              </div>
+            </div>
+
+            {/* URL Info */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-600 mb-2">
+                The link will be added without a preview. You can edit the title later.
+              </p>
+              <span className="text-xs text-gray-500 truncate block">
+                {lastUrlRef.current}
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-4 flex gap-2">
+            <button
+              type="button"
+              onClick={handleAddUrl}
+              className="flex-1 px-4 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="w-5 h-5" aria-hidden="true" />
+              <span>Add Link Anyway</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Preview Card */}
       {preview && (

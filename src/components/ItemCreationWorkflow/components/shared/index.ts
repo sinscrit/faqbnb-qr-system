@@ -2,7 +2,7 @@
  * ItemCreationWorkflow Shared Components - Barrel Export
  *
  * @module ItemCreationWorkflow/components/shared
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @lastModified 2026-01-05 (REQ-113 Error Handling & Edge Cases)
  */
 
 // =============================================================================
@@ -84,3 +84,31 @@ export type {
 // Task 6.4.3: PDFExportDialog
 export { PDFExportDialog } from './PDFExportDialog';
 export type { PDFExportDialogProps } from './PDFExportDialog';
+
+// =============================================================================
+// Error Handling Components (Phase 7 - REQ-113)
+// =============================================================================
+
+// Task 7.1.2: NetworkErrorIndicator
+export { NetworkErrorIndicator } from './NetworkErrorIndicator';
+export type { NetworkErrorIndicatorProps } from './NetworkErrorIndicator';
+
+// Task 7.1.3: CameraPermissionFallback
+export { CameraPermissionFallback } from './CameraPermissionFallback';
+export type { CameraPermissionFallbackProps } from './CameraPermissionFallback';
+
+// Task 7.1.4: SessionRecoveryBanner
+export { SessionRecoveryBanner } from './SessionRecoveryBanner';
+export type { SessionRecoveryBannerProps } from './SessionRecoveryBanner';
+
+// Task 7.1.5: TruncatedText
+export { TruncatedText } from './TruncatedText';
+export type { TruncatedTextProps } from './TruncatedText';
+
+// Task 7.1.6: EmptySessionDialog
+export { EmptySessionDialog } from './EmptySessionDialog';
+export type { EmptySessionDialogProps } from './EmptySessionDialog';
+
+// Task 7.1.7: DuplicateNameWarning
+export { DuplicateNameWarning } from './DuplicateNameWarning';
+export type { DuplicateNameWarningProps } from './DuplicateNameWarning';

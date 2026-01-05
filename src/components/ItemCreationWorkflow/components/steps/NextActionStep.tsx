@@ -5,14 +5,17 @@
  * Step 8 of ItemCreationWorkflow - Decision point after item save.
  * @module ItemCreationWorkflow/components/steps/NextActionStep
  * @see docs/REQ-107-next-action-step-overview.md
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113 Error Handling & Edge Cases)
  */
 
-import { useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Plus, Tag, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 import { SessionProgressBar } from '../shared/SessionProgressBar';
+import { EmptySessionDialog } from '../shared/EmptySessionDialog';
+import { TruncatedText } from '../shared/TruncatedText';
 import { MAX_CONTENT_PIECES } from '../../utils/constants';
 
 // =============================================================================
@@ -128,6 +131,7 @@ function ActionCard({
 
 /**
  * Truncates a string to the specified max length with ellipsis.
+ * Kept for backward compatibility in description generation.
  * @param text - The text to truncate
  * @param maxLength - Maximum character length (default: 40)
  * @returns Truncated text with ellipsis if needed
@@ -150,6 +154,9 @@ export function NextActionStep({
   onDone,
   className,
 }: NextActionStepProps) {
+  // State for empty session dialog
+  const [showEmptySessionDialog, setShowEmptySessionDialog] = useState(false);
+
   // Refs for keyboard navigation
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -157,6 +164,32 @@ export function NextActionStep({
   const itemName = lastSavedItem?.name
     ? truncateText(lastSavedItem.name)
     : 'this item';
+
+  // Handle "I'm Done" click - show dialog if no items, otherwise proceed
+  const handleDoneClick = useCallback(() => {
+    if (itemsCreated === 0) {
+      setShowEmptySessionDialog(true);
+    } else {
+      onDone();
+    }
+  }, [itemsCreated, onDone]);
+
+  // Handle dialog close
+  const handleDialogClose = useCallback(() => {
+    setShowEmptySessionDialog(false);
+  }, []);
+
+  // Handle "Add Items" from dialog
+  const handleAddItemsFromDialog = useCallback(() => {
+    setShowEmptySessionDialog(false);
+    onTagNewItem();
+  }, [onTagNewItem]);
+
+  // Handle "Exit Session" from dialog
+  const handleExitSession = useCallback(() => {
+    setShowEmptySessionDialog(false);
+    onDone();
+  }, [onDone]);
 
   // Handle arrow key navigation between cards
   const handleContainerKeyDown = useCallback(
@@ -230,8 +263,10 @@ export function NextActionStep({
     icon: <Check className="w-6 h-6 text-[#FF385C]" aria-hidden="true" />,
     iconBgColor: 'bg-[#FF385C]/10',
     title: "I'm Done",
-    description: 'Review your items and print QR codes',
-    onClick: onDone,
+    description: itemsCreated === 0
+      ? 'Exit without creating items'
+      : 'Review your items and print QR codes',
+    onClick: handleDoneClick,
   });
 
   return (
@@ -276,6 +311,14 @@ export function NextActionStep({
       <div aria-live="polite" className="sr-only">
         Step: What's Next? - {itemsCreated} items created in this session.
       </div>
+
+      {/* Empty Session Dialog */}
+      <EmptySessionDialog
+        isOpen={showEmptySessionDialog}
+        onClose={handleDialogClose}
+        onAddItems={handleAddItemsFromDialog}
+        onExitSession={handleExitSession}
+      />
     </div>
   );
 }

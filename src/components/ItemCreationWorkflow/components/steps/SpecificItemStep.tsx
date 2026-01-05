@@ -9,14 +9,16 @@
  *
  * @module ItemCreationWorkflow/components/steps/SpecificItemStep
  * @see docs/REQ-100-specific-item-selection-step-overview.md
- * @lastModified 2026-01-05
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113)
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useSuggestions } from '../../hooks';
-import { SuggestionButton, ItemNameEditor } from '../shared';
+import { SuggestionButton, ItemNameEditor, DuplicateNameWarning } from '../shared';
 import { ROOM_LABELS } from '../../utils/constants';
+import { checkDuplicateName } from '../../utils/duplicateNameCheck';
 import type { RoomType, ItemType, SessionItem } from '../../ItemCreationWorkflow.types';
 
 export interface SpecificItemStepProps {
@@ -64,6 +66,18 @@ export function SpecificItemStep({
     itemType: currentItemType,
     existingItems: existingSessionItems,
   });
+
+  // Get existing item names for duplicate checking
+  const existingItemNames = useMemo(
+    () => existingSessionItems.map((item) => item.name),
+    [existingSessionItems]
+  );
+
+  // Check for duplicate name
+  const duplicateCheck = useMemo(
+    () => checkDuplicateName(currentItemName, existingItemNames),
+    [currentItemName, existingItemNames]
+  );
 
   // Handle suggestion selection
   const handleSuggestionSelect = useCallback(
@@ -191,6 +205,17 @@ export function SpecificItemStep({
             placeholder="Enter item name"
             maxLength={100}
           />
+
+          {/* Duplicate name warning */}
+          {duplicateCheck.isDuplicate && (
+            <div className="mt-3">
+              <DuplicateNameWarning
+                matchingNames={duplicateCheck.matchingNames}
+                matchType={duplicateCheck.matchType}
+                variant="block"
+              />
+            </div>
+          )}
         </div>
       )}
 
