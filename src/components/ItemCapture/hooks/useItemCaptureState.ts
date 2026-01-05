@@ -8,7 +8,7 @@
  *
  * @module ItemCapture/hooks/useItemCaptureState
  * @see docs/REQ-032-implement-core-state-machine-hook-detailed.md
- * @lastModified 2025-12-31 (REQ-054 - Added CLEANUP_ALL action for resource cleanup)
+ * @lastModified 2026-01-05 (REQ-092 Task 5 - Added URL support)
  */
 
 import { useReducer, useCallback, useMemo, useEffect } from 'react';
@@ -16,6 +16,7 @@ import type {
   WizardStep,
   ItemMetadata,
   MediaItem,
+  UrlItem,
   ItemCaptureState,
   ItemCaptureAction,
 } from '../ItemCapture.types';
@@ -31,11 +32,12 @@ import { revokeAllTrackedURLs, setURLManagerDebug } from '../utils/urlManager';
  */
 export const STEP_TRANSITIONS: Record<WizardStep, WizardStep[]> = {
   'metadata': ['content-type'],
-  'content-type': ['capture-video', 'capture-photo', 'upload-file', 'write-text'],
+  'content-type': ['capture-video', 'capture-photo', 'upload-file', 'write-text', 'add-url'],
   'capture-video': ['edit-media', 'add-more'],
   'capture-photo': ['edit-media', 'add-more'],
   'upload-file': ['edit-media', 'add-more'],
   'write-text': ['add-more', 'review'],
+  'add-url': ['add-more', 'review'],
   'edit-media': ['add-more', 'review'],
   'add-more': ['content-type', 'review'],
   'review': ['metadata', 'content-type'],
@@ -59,6 +61,7 @@ export const createInitialState = (): ItemCaptureState => ({
     applianceType: undefined,
   },
   mediaItems: [],
+  urlItems: [],
   instructions: '',
   errors: {},
   isRecording: false,
@@ -90,11 +93,11 @@ export function validateMetadata(metadata: ItemMetadata): Record<string, string>
 
 /**
  * Determines if the current state allows submission.
- * Requires title + at least one content item (media or text).
+ * Requires title + at least one content item (media, URL, or text).
  */
 export function canSubmitState(state: ItemCaptureState): boolean {
   if (!state.metadata.title.trim()) return false;
-  if (state.mediaItems.length === 0 && !state.instructions.trim()) return false;
+  if (state.mediaItems.length === 0 && state.urlItems.length === 0 && !state.instructions.trim()) return false;
   return true;
 }
 
@@ -280,6 +283,34 @@ function itemCaptureReducer(
       };
 
     // =========================================================================
+    // URL Actions (REQ-092)
+    // =========================================================================
+    case 'ADD_URL':
+      return {
+        ...state,
+        urlItems: [...state.urlItems, action.payload],
+        isDirty: true,
+      };
+
+    case 'REMOVE_URL':
+      return {
+        ...state,
+        urlItems: state.urlItems.filter(u => u.id !== action.payload),
+        isDirty: true,
+      };
+
+    case 'UPDATE_URL':
+      return {
+        ...state,
+        urlItems: state.urlItems.map(u =>
+          u.id === action.payload.id
+            ? { ...u, ...action.payload.updates }
+            : u
+        ),
+        isDirty: true,
+      };
+
+    // =========================================================================
     // Error Actions
     // =========================================================================
     case 'SET_ERROR':
@@ -396,6 +427,11 @@ export interface UseItemCaptureStateReturn {
   reorderMedia: (fromIndex: number, toIndex: number) => void;
   setInstructions: (text: string) => void;
 
+  // URL actions (REQ-092)
+  addUrl: (urlItem: UrlItem) => void;
+  removeUrl: (id: string) => void;
+  updateUrl: (id: string, updates: Partial<UrlItem>) => void;
+
   // Error actions
   setError: (field: string, message: string) => void;
   clearError: (field: string) => void;
@@ -464,6 +500,19 @@ export function useItemCaptureState(): UseItemCaptureStateReturn {
 
   const setInstructions = useCallback((text: string) => {
     dispatch({ type: 'SET_INSTRUCTIONS', payload: text });
+  }, []);
+
+  // URL actions (REQ-092)
+  const addUrl = useCallback((urlItem: UrlItem) => {
+    dispatch({ type: 'ADD_URL', payload: urlItem });
+  }, []);
+
+  const removeUrl = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_URL', payload: id });
+  }, []);
+
+  const updateUrl = useCallback((id: string, updates: Partial<UrlItem>) => {
+    dispatch({ type: 'UPDATE_URL', payload: { id, updates } });
   }, []);
 
   // Error actions
@@ -542,6 +591,9 @@ export function useItemCaptureState(): UseItemCaptureStateReturn {
     updateMedia,
     reorderMedia,
     setInstructions,
+    addUrl,
+    removeUrl,
+    updateUrl,
     setError,
     clearError,
     clearAllErrors,
