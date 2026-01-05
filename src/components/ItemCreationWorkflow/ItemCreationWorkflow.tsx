@@ -10,16 +10,18 @@
  * @see docs/REQ-095-main-workflow-component-overview.md
  * @see docs/REQ-111-qr-code-integration-overview.md
  * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @lastModified 2026-01-05 (REQ-112 PDF Generation Integration)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113 Session Recovery Banner)
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
-import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel } from './components/shared';
+import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
 import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
+import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 
 // =============================================================================
 // Step Placeholder Component
@@ -133,6 +135,45 @@ export function ItemCreationWorkflow({
   const [isPrinting, setIsPrinting] = useState(false);
   const [printError, setPrintError] = useState<string | null>(null);
   const [printStatus, setPrintStatus] = useState<string | undefined>(undefined);
+
+  // Task 5.3 (REQ-113): Session recovery state
+  const [showRecoveryBanner, setShowRecoveryBanner] = useState(false);
+  const [recoveredItemCount, setRecoveredItemCount] = useState(0);
+  const [contentNeedingReUpload, setContentNeedingReUpload] = useState(0);
+
+  // Task 5.3: Check for recoverable session on mount
+  useEffect(() => {
+    // Only check on initial mount when no items exist
+    if (itemCount === 0 && state.currentStep === 'room-selection') {
+      const recoveredState = loadMostRecentWorkflowState();
+      if (recoveredState && recoveredState.session?.items && recoveredState.session.items.length > 0) {
+        const itemsToRecover = recoveredState.session.items.length;
+        const reUploadCount = getContentNeedingReUpload(recoveredState);
+        setRecoveredItemCount(itemsToRecover);
+        setContentNeedingReUpload(reUploadCount);
+        setShowRecoveryBanner(true);
+      }
+    }
+  }, []); // Only run once on mount
+
+  // Task 5.3: Handle continue with recovered session
+  const handleRecoveryContinue = useCallback(() => {
+    // The session has already been loaded by the useWorkflowState hook
+    // We just need to dismiss the banner
+    setShowRecoveryBanner(false);
+  }, []);
+
+  // Task 5.3: Handle start fresh (clear recovered session)
+  const handleRecoveryStartFresh = useCallback(() => {
+    clearAllWorkflowStates();
+    reset();
+    setShowRecoveryBanner(false);
+  }, [reset]);
+
+  // Task 5.3: Handle recovery banner dismiss
+  const handleRecoveryDismiss = useCallback(() => {
+    setShowRecoveryBanner(false);
+  }, []);
 
   // Handle exit button click
   const handleExitClick = useCallback(() => {
@@ -485,6 +526,21 @@ export function ItemCreationWorkflow({
         onBack={showPrintPanel ? handleBackFromPrint : prevStep}
         onExit={handleExitClick}
       />
+
+      {/* Task 5.3 (REQ-113): Session recovery banner */}
+      {showRecoveryBanner && (
+        <div className="px-4 pt-4">
+          <SessionRecoveryBanner
+            itemCount={recoveredItemCount}
+            contentNeedingReUpload={contentNeedingReUpload}
+            onContinue={handleRecoveryContinue}
+            onStartFresh={handleRecoveryStartFresh}
+            onDismiss={handleRecoveryDismiss}
+            autoDismiss={true}
+            autoDismissDelay={10000}
+          />
+        </div>
+      )}
 
       {/* Main content area */}
       <main className="flex-1 flex flex-col">

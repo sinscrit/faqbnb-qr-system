@@ -8,7 +8,8 @@
  *
  * @module ItemCapture/components/steps/VideoCaptureStep
  * @see docs/REQ-038-implement-videocapturestep-detailed.md
- * @lastModified 2025-12-31 (REQ-054 - Enhanced URL cleanup for memory optimization)
+ * @see docs/REQ-113-error-handling-edge-cases-overview.md
+ * @lastModified 2026-01-05 (REQ-113 - Added CameraPermissionFallback integration)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CameraPreview } from '../shared/CameraPreview';
+import { CameraPermissionFallback } from '../shared/CameraPermissionFallback';
 import { useMediaCapture } from '../../hooks/useMediaCapture';
 import type {
   ItemCaptureState,
@@ -522,6 +524,16 @@ export function VideoCaptureStep({
   }, [startCamera, announce]);
 
   // ===========================================================================
+  // Upload Fallback Handler
+  // ===========================================================================
+
+  const handleUploadFile = useCallback(() => {
+    // Navigate to file upload step for video
+    cleanup();
+    goToStep('file-upload');
+  }, [cleanup, goToStep]);
+
+  // ===========================================================================
   // Keyboard Handler
   // ===========================================================================
 
@@ -547,6 +559,22 @@ export function VideoCaptureStep({
   // ===========================================================================
 
   if (componentError && mode !== 'review') {
+    // Use CameraPermissionFallback for permission denied errors
+    if (componentError.code === 'PERMISSION_DENIED') {
+      return (
+        <div className={className}>
+          <CameraPermissionFallback
+            contentType="video"
+            onUploadFile={handleUploadFile}
+            onTryAgain={handleRetry}
+          />
+          {/* Screen reader announcement */}
+          <div ref={announceRef} className="sr-only" aria-live="polite" aria-atomic="true" />
+        </div>
+      );
+    }
+
+    // Generic error display for other errors
     return (
       <div className={cn('flex flex-col items-center justify-center min-h-[400px] p-6', className)}>
         <div className="text-center max-w-md">

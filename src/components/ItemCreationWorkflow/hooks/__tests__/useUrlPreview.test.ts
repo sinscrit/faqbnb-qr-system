@@ -623,4 +623,212 @@ describe('useUrlPreview', () => {
       expect(result.current.error).toContain('timed out');
     });
   });
+
+  // ===========================================================================
+  // Network Error Detection Tests (REQ-113)
+  // ===========================================================================
+
+  describe('Network Error Detection', () => {
+    it('sets isNetworkError to true when fetch fails with TypeError', async () => {
+      const typeError = new TypeError('Failed to fetch');
+      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com');
+      });
+
+      expect(result.current.isNetworkError).toBe(true);
+      expect(result.current.status).toBe('error');
+    });
+
+    it('sets isNetworkError to true when request times out', async () => {
+      (global.fetch as jest.Mock).mockImplementationOnce(() =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              ok: true,
+              json: () => Promise.resolve({ success: true, data: {} }),
+            });
+          }, 20000);
+        })
+      );
+
+      const { result } = renderHook(() => useUrlPreview({ timeout: 100 }));
+
+      await act(async () => {
+        const fetchPromise = result.current.fetchPreview('https://example.com');
+        jest.advanceTimersByTime(200);
+        await fetchPromise;
+      });
+
+      expect(result.current.isNetworkError).toBe(true);
+      expect(result.current.error).toContain('Network issue');
+    });
+
+    it('clears isNetworkError on successful retry', async () => {
+      // First fetch fails with network error
+      const typeError = new TypeError('Failed to fetch');
+      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com');
+      });
+
+      expect(result.current.isNetworkError).toBe(true);
+
+      // Second fetch succeeds
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          success: true,
+          data: { url: 'https://example.com', title: 'Test', domain: 'example.com', linkType: 'generic' },
+        }),
+      });
+
+      await act(async () => {
+        await result.current.retry();
+      });
+
+      expect(result.current.isNetworkError).toBe(false);
+      expect(result.current.status).toBe('success');
+    });
+
+    it('retry function refetches the last URL', async () => {
+      // First fetch fails
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ success: false, error: 'Failed' }),
+      });
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com/specific-url');
+      });
+
+      // Second fetch succeeds
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          success: true,
+          data: { url: 'https://example.com/specific-url', title: 'Test', domain: 'example.com', linkType: 'generic' },
+        }),
+      });
+
+      await act(async () => {
+        await result.current.retry();
+      });
+
+      // Check that the correct URL was used
+      expect(global.fetch).toHaveBeenLastCalledWith(
+        '/api/url-metadata',
+        expect.objectContaining({
+          body: JSON.stringify({ url: 'https://example.com/specific-url' }),
+        })
+      );
+    });
+
+    it('retry does nothing when no URL has been fetched', async () => {
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.retry();
+      });
+
+      // fetch should not have been called
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================================
+  // Network Status Detection Tests (REQ-113)
+  // ===========================================================================
+
+  describe('Network Status Detection', () => {
+    const originalNavigator = global.navigator;
+
+    beforeEach(() => {
+      // Reset navigator.onLine to true
+      Object.defineProperty(global.navigator, 'onLine', {
+        value: true,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    afterEach(() => {
+      Object.defineProperty(global.navigator, 'onLine', {
+        value: originalNavigator.onLine,
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('initializes networkStatus to online when navigator.onLine is true', () => {
+      Object.defineProperty(global.navigator, 'onLine', { value: true, configurable: true });
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      // May need to wait for effect
+      expect(result.current.networkStatus).toBe('online');
+    });
+
+    it('sets isNetworkError when navigator.onLine is false during fetch', async () => {
+      // Set offline
+      Object.defineProperty(global.navigator, 'onLine', { value: false, configurable: true });
+
+      // Mock fetch to fail with TypeError (typical offline behavior)
+      const typeError = new TypeError('Failed to fetch');
+      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com');
+      });
+
+      expect(result.current.isNetworkError).toBe(true);
+    });
+
+    it('isNetworkError is false for non-network errors', async () => {
+      // Mock fetch to fail with a server error
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ success: false, error: 'Internal server error' }),
+      });
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com');
+      });
+
+      expect(result.current.isNetworkError).toBe(false);
+      expect(result.current.status).toBe('error');
+    });
+
+    it('clears isNetworkError when clearPreview is called', async () => {
+      // First fetch fails with network error
+      const typeError = new TypeError('Failed to fetch');
+      (global.fetch as jest.Mock).mockRejectedValueOnce(typeError);
+
+      const { result } = renderHook(() => useUrlPreview());
+
+      await act(async () => {
+        await result.current.fetchPreview('https://example.com');
+      });
+
+      expect(result.current.isNetworkError).toBe(true);
+
+      act(() => {
+        result.current.clearPreview();
+      });
+
+      expect(result.current.isNetworkError).toBe(false);
+    });
+  });
 });
