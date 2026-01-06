@@ -6407,3 +6407,35 @@ Reducing friction in the property creation workflow encourages users to add more
 - [ ] The modal is responsive and displays appropriately on mobile and desktop viewports
 - [ ] The form reuses the same component structure as the property edit modal to maintain consistency
 
+
+---
+
+## REQ-133: Integrate Property Section into Dashboard 2
+
+**Date**: 2026-01-06 (System generated)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The Dashboard 2 page should display property information using the PropertySection component instead of placeholder or legacy code.
+
+### Current Behavior
+Dashboard 2 either shows placeholder property display elements or uses legacy property display code that does not leverage the newly created PropertySection component.
+
+### Expected Behavior
+When users access Dashboard 2, they see their property information rendered through the PropertySection component, which displays property details, action buttons, and management controls in a consistent, responsive layout within the dashboard grid.
+
+### User Impact
+Property managers and owners viewing Dashboard 2 will have access to the full property management interface, including viewing property details, editing properties, and adding new properties through the integrated PropertySection component.
+
+### Business Value
+Completes the property management workflow in Dashboard 2 by connecting the view layer (PropertySection) with the dashboard page, enabling users to actually manage their properties through the modernized interface.
+
+### Acceptance Criteria
+- [ ] PropertySection component is rendered within Dashboard 2 page
+- [ ] Property data flows correctly from dashboard state to PropertySection
+- [ ] Component maintains responsive design within dashboard grid layout
+- [ ] All PropertySection features (view, edit, add property) function correctly when accessed through dashboard
+- [ ] Any placeholder or legacy property display code is removed
+- [ ] Page layout remains consistent with other Dashboard 2 sections
+
