@@ -1,0 +1,168 @@
+'use client';
+
+/**
+ * Dashboard2 Layout
+ *
+ * New dashboard layout integrating ItemCreationWorkflow and ItemManager.
+ * Features simplified navigation focused on item creation and management.
+ *
+ * @route /dashboard2
+ * @created 2026-01-06
+ */
+
+import { useRouter, usePathname } from 'next/navigation';
+import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
+import { CompactAccountSelector } from '@/components/AccountSelector';
+import { Account } from '@/types';
+import { PlusCircle, Package, LogOut, Home, Loader2 } from 'lucide-react';
+
+function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, loading, signOut, isAdmin } = useAuth();
+  const { currentAccount } = useAccountContext();
+
+  // Navigation items for the new dashboard
+  const navigationItems = [
+    { name: 'Home', href: '/dashboard2', icon: Home },
+    { name: 'Create Item', href: '/dashboard2/create', icon: PlusCircle },
+    { name: 'My Items', href: '/dashboard2/items', icon: Package },
+  ];
+
+  // Handle account change
+  const handleAccountChange = (account: Account | null) => {
+    console.log('Account changed:', account?.name || 'none');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">Please log in to access the dashboard.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => (window.location.href = '/')}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Go to Home
+            </button>
+            <button
+              onClick={() => (window.location.href = '/login')}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Left side - Title and user info */}
+            <div className="flex items-center space-x-4">
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
+                <div className="flex items-center space-x-2 mt-1">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                    }`}
+                  >
+                    {isAdmin ? 'Admin' : 'User'}
+                  </span>
+                  <span className="text-sm text-gray-600">{user?.email}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Account selector and logout */}
+            <div className="flex items-center space-x-3">
+              <CompactAccountSelector onAccountChange={handleAccountChange} className="w-64" />
+              <button
+                onClick={() => signOut()}
+                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8" aria-label="Dashboard Navigation">
+            {navigationItems.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard2' && pathname.startsWith(item.href));
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => router.push(item.href)}
+                  className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  {item.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
+      {/* Content */}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">{children}</div>
+      </main>
+    </div>
+  );
+}
+
+export default function Dashboard2Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <Dashboard2LayoutContent>{children}</Dashboard2LayoutContent>
+    </AuthProvider>
+  );
+}
