@@ -13,10 +13,13 @@
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlusCircle, Package, ArrowRight, Sparkles } from 'lucide-react';
+import { StatisticsCards } from '@/components/SimpleDashboard';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 
 export default function Dashboard2Page() {
   const router = useRouter();
   const { user } = useAuth();
+  const { stats, isLoading, error } = useDashboardStats();
 
   const firstName = user?.email?.split('@')[0] || 'there';
 
@@ -27,6 +30,9 @@ export default function Dashboard2Page() {
         <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
         <p className="text-white/80 text-lg">Create and manage your QR code items</p>
       </div>
+
+      {/* Statistics Cards */}
+      <StatisticsCards stats={stats} isLoading={isLoading} error={error} />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

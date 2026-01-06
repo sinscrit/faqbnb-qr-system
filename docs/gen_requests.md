@@ -5989,3 +5989,42 @@ Creates a responsive, real-time data experience that keeps users engaged with ac
 - [ ] The loading state does not display when refreshing already-loaded statistics
 - [ ] Error states from failed refresh attempts do not permanently block the interface
 
+
+---
+
+## REQ-124: Dashboard Statistics Cards Display Component
+
+**Date**: 2026-01-06 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Dashboard users should see three statistics cards displaying counts for Items, Rooms, and Tags in a horizontal layout with consistent visual styling.
+
+### Current Behavior
+The dashboard does not display statistics cards showing counts for Items, Rooms, and Tags.
+
+### Expected Behavior
+The dashboard displays three cards in a single horizontal row, each showing:
+- An icon representing the statistic type (package box, house, or tag)
+- A large number displaying the current count
+- A descriptive label below the number
+- Consistent styling matching the Airbnb design language
+- Smooth loading animation while data is being fetched
+- Zero values displayed as "0" when no data exists
+
+### User Impact
+Dashboard visitors will immediately see key metrics about their inventory (Items, Rooms, Tags) upon landing on the page, providing quick insight into system usage without navigating to other sections.
+
+### Business Value
+Provides at-a-glance visibility into core inventory metrics, improving user orientation and reducing navigation time to access basic system information.
+
+### Acceptance Criteria
+- [ ] Three cards are displayed horizontally in a single row
+- [ ] Each card shows an appropriate icon: package box for Items, house for Rooms, tag symbol for Tags
+- [ ] Numbers are displayed prominently in 32px bold text
+- [ ] Labels appear below numbers in 14px gray text
+- [ ] Cards have white backgrounds with 12px rounded corners and subtle shadows
+- [ ] During data loading, cards display a shimmer animation
+- [ ] When count is zero, cards display "0" rather than empty state or "No data" message
+- [ ] Visual styling matches Airbnb Design Language System standards

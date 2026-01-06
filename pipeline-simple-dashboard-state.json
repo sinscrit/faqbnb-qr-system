@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-06T01:46:06.179687",
-  "updated_at": "2026-01-06T03:49:21.844847",
+  "updated_at": "2026-01-06T04:03:09.775757",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 3,
+  "current_task_index": 4,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-001-Simple-Dashboard-Implementation-REVISED.md",
   "source_hash": "d613327bdfee57d025f931b2260debe6",
   "tasks": [
@@ -101,11 +101,19 @@
       "title": "Create useDashboardStats Hook",
       "description": "[ ] Fetch from `/api/user/dashboard/stats`\n[ ] Handle loading, error, refresh states\n[ ] Expose `refresh()` function for real-time updates",
       "raw_match": "**Task 2.2: Create useDashboardStats Hook**",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-123",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-06T04:03:09.775712",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-123",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-123-create-usedashboardstats-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-123-create-usedashboardstats-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     },
     {
       "id": "2.3",
@@ -342,8 +350,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 4,
-    "last_request_id": "REQ-122",
+    "total_requests_generated": 5,
+    "last_request_id": "REQ-123",
     "first_request_id": "REQ-119",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-simple-dashboard.yaml"
   },
