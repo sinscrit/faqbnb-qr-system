@@ -11,16 +11,13 @@
  */
 
 import { useRouter, usePathname } from 'next/navigation';
-import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
-import { CompactAccountSelector } from '@/components/AccountSelector';
-import { Account } from '@/types';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { PlusCircle, Package, LogOut, Home, Loader2 } from 'lucide-react';
 
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, signOut, isAdmin } = useAuth();
-  const { currentAccount } = useAccountContext();
+  const { user, loading, signOut } = useAuth();
 
   // Navigation items for the new dashboard
   const navigationItems = [
@@ -28,11 +25,6 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
     { name: 'Create Item', href: '/dashboard2/create', icon: PlusCircle },
     { name: 'My Items', href: '/dashboard2/items', icon: Package },
   ];
-
-  // Handle account change
-  const handleAccountChange = (account: Account | null) => {
-    console.log('Account changed:', account?.name || 'none');
-  };
 
   if (loading) {
     return (
@@ -91,26 +83,13 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <header className="border-b border-gray-200 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Title and user info */}
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                    }`}
-                  >
-                    {isAdmin ? 'Admin' : 'User'}
-                  </span>
-                  <span className="text-sm text-gray-600">{user?.email}</span>
-                </div>
-              </div>
+            {/* Left side - Title only */}
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
             </div>
 
-            {/* Right side - Account selector and logout */}
-            <div className="flex items-center space-x-3">
-              <CompactAccountSelector onAccountChange={handleAccountChange} className="w-64" />
+            {/* Right side - Logout only */}
+            <div className="flex items-center">
               <button
                 onClick={() => signOut()}
                 className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1"
