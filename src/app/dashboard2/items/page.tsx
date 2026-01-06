@@ -44,19 +44,25 @@ export default function ItemsPage() {
 
       if (response.success && response.data) {
         // Convert API response to ItemRecord format
+        // Note: API uses 'name' but ItemRecord uses 'title'
         const itemRecords: ItemRecord[] = response.data.map((item) => ({
           id: item.id,
+          title: item.name, // Map API 'name' to ItemRecord 'title'
+          location: undefined, // API doesn't provide location
+          tags: [], // API doesn't provide tags
+          contentType: 'mixed' as const, // Default content type
+          media: [], // Media items would need separate fetch
+          instructions: item.description || undefined,
+          createdAt: new Date(item.createdAt),
+          // Extended fields for ItemManager
           publicId: item.publicId,
-          name: item.name,
           description: item.description || '',
           propertyId: item.propertyId,
           qrCodeUrl: item.qrCodeUrl || `${window.location.origin}/items/${item.publicId}`,
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
           links: item.links || [],
-          media: [],
-          assets: [],
-        }));
+          name: item.name, // Keep name for backward compatibility
+        } as ItemRecord));
 
         setItems(itemRecords);
       } else {
@@ -128,11 +134,13 @@ export default function ItemsPage() {
       }
 
       try {
+        // Use title (which maps to API's name field) or fall back to name
+        const itemName = item.title || (item as ItemRecord & { name?: string }).name || '';
         await adminApi.updateItem(
-          item.publicId,
+          (item as ItemRecord & { publicId: string }).publicId,
           {
-            name: item.name,
-            description: item.description,
+            name: itemName,
+            description: item.instructions || (item as ItemRecord & { description?: string }).description || '',
           },
           headers
         );
@@ -160,12 +168,15 @@ export default function ItemsPage() {
       });
 
       try {
+        // Use title (which maps to API's name field) or fall back to name
+        const itemName = item.title || (item as ItemRecord & { name?: string }).name || 'Untitled';
+        const extendedItem = item as ItemRecord & { propertyId?: string; description?: string; links?: unknown[] };
         await adminApi.createItem({
           publicId: newPublicId,
-          name: `${item.name} (Copy)`,
-          description: item.description,
-          propertyId: item.propertyId,
-          links: item.links || [],
+          name: `${itemName} (Copy)`,
+          description: item.instructions || extendedItem.description || '',
+          propertyId: extendedItem.propertyId || '',
+          links: extendedItem.links || [],
         });
 
         // Refresh the list
