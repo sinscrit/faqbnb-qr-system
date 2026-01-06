@@ -153,7 +153,7 @@ export async function GET(
     }
 
     console.log(`Successfully loaded property ${propertyId} for user ${user.email}`);
-    
+
     return NextResponse.json({
       success: true,
       data: accessResult.property
@@ -161,6 +161,100 @@ export async function GET(
 
   } catch (error) {
     console.error('User property detail API error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error', code: 'INTERNAL_ERROR' },
+      { status: 500 }
+    );
+  }
+}
+
+// REQ-131: PUT /api/user/properties/[propertyId] - Update property
+// Task 9: API endpoint for property updates
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ propertyId: string }> }
+): Promise<NextResponse<PropertyDetailResponse>> {
+  try {
+    console.log('User property update API called - validating authentication...');
+
+    // Validate authentication
+    const authResult = await validateUserAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
+    const user = authResult.user;
+    const { propertyId } = await params;
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'User not found', code: 'USER_NOT_FOUND' },
+        { status: 401 }
+      );
+    }
+
+    // Check if user can access this property
+    const accessResult = await canAccessProperty(user, propertyId, supabase);
+    if (!accessResult.canAccess) {
+      const statusCode = accessResult.error === 'Property not found' ? 404 : 403;
+      return NextResponse.json(
+        {
+          success: false,
+          error: accessResult.error || 'Access denied',
+          code: statusCode === 404 ? 'NOT_FOUND' : 'ACCESS_DENIED'
+        },
+        { status: statusCode }
+      );
+    }
+
+    // Parse request body
+    const body = await request.json();
+
+    // Validate required fields
+    if (!body.nickname || typeof body.nickname !== 'string' || !body.nickname.trim()) {
+      return NextResponse.json(
+        { success: false, error: 'Property name is required', code: 'VALIDATION_ERROR' },
+        { status: 400 }
+      );
+    }
+
+    // Validate field lengths
+    if (body.nickname.trim().length > 100) {
+      return NextResponse.json(
+        { success: false, error: 'Property name must be 100 characters or less', code: 'VALIDATION_ERROR' },
+        { status: 400 }
+      );
+    }
+
+    // Update property
+    const { data: updatedProperty, error: updateError } = await supabase
+      .from('properties')
+      .update({
+        nickname: body.nickname.trim(),
+        address: body.address || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', propertyId)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Error updating property:', updateError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to update property', code: 'UPDATE_ERROR' },
+        { status: 500 }
+      );
+    }
+
+    console.log(`Successfully updated property ${propertyId} for user ${user.email}`);
+
+    return NextResponse.json({
+      success: true,
+      data: updatedProperty
+    });
+
+  } catch (error) {
+    console.error('User property update API error:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error', code: 'INTERNAL_ERROR' },
       { status: 500 }

@@ -6313,3 +6313,49 @@ Centralizing property access on the main dashboard improves discoverability and 
 - [ ] The component is fully keyboard accessible with proper focus management
 - [ ] The component follows the Airbnb design system color palette and styling conventions
 
+
+---
+
+## REQ-131: Property Edit Modal for Dashboard 2
+
+**Date**: 2026-01-06 15:03
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to edit existing property information through a modal dialog that presents all property fields in an organized form, validates input, and provides clear feedback on save or cancel actions.
+
+### Current Behavior
+Users can navigate to a property edit view from the property list, but no modal interface exists to capture and save property information changes.
+
+### Expected Behavior
+When a user clicks on a property from the property list, a modal dialog opens displaying the property's current information in editable form fields. The modal presents Property Name as a required field with a maximum of 100 characters, followed by optional address fields including Address Line 1 (max 200 characters), Address Line 2 (max 200 characters), City (max 100 characters), State/Province (max 100 characters), Postal Code (max 20 characters), and Country (presented as a dropdown selection). Users can modify any field and click Save to commit changes, which triggers a success notification and closes the modal. If users click Cancel, all changes are discarded and the modal closes without saving. If users attempt to save with validation errors such as an empty required field or exceeded character limits, appropriate error messages appear next to the affected fields.
+
+### User Impact
+Property managers can quickly update property details without leaving the main dashboard context, receive immediate validation feedback on their input, and clearly understand which changes were saved versus discarded through visual confirmation.
+
+### Business Value
+Streamlining property data management through an intuitive modal interface reduces user frustration, decreases support requests related to property editing, and ensures property data quality through inline validation.
+
+### Acceptance Criteria
+- [ ] A modal dialog opens when a user selects a property from the property list
+- [ ] The modal is implemented using Radix UI Dialog component
+- [ ] All existing property data is pre-populated in the form fields when the modal opens
+- [ ] Property Name field is marked as required and enforces a 100-character maximum
+- [ ] Address Line 1 field accepts up to 200 characters and is marked as optional
+- [ ] Address Line 2 field accepts up to 200 characters and is marked as optional
+- [ ] City field accepts up to 100 characters and is marked as optional
+- [ ] State/Province field accepts up to 100 characters and is marked as optional
+- [ ] Postal Code field accepts up to 20 characters and is marked as optional
+- [ ] Country field is presented as a dropdown selection and is marked as optional
+- [ ] Clicking the Save button commits all field changes and closes the modal
+- [ ] A success toast notification appears after successfully saving changes
+- [ ] Clicking the Cancel button discards all changes and closes the modal
+- [ ] Attempting to save with an empty Property Name field displays an error message
+- [ ] Attempting to save with any field exceeding its character limit displays an error message
+- [ ] Error messages appear adjacent to the field that failed validation
+- [ ] The modal can be dismissed by clicking outside the dialog or pressing the Escape key
+- [ ] The modal is fully keyboard accessible with proper focus management
+- [ ] The modal follows the Airbnb design system color palette and styling conventions
+- [ ] The modal is responsive and displays appropriately on mobile and desktop viewports
+
