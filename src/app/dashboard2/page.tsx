@@ -8,6 +8,7 @@
  * REQ-130: Added PropertySection component
  * REQ-131: Added PropertyEditModal integration
  * REQ-132: Added AddPropertyModal integration
+ * REQ-134: Added per-property statistics filtering
  *
  * @route /dashboard2
  * @created 2026-01-06
@@ -20,10 +21,18 @@ import { CheckCircle } from 'lucide-react';
 import { StatisticsCards, ActionButtons, PropertySection, PropertyEditModal, AddPropertyModal } from '@/components/SimpleDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { Property } from '@/types';
+import PropertySelector from '@/components/PropertySelector';
 
 export default function Dashboard2Page() {
-  const { user, getUserProperties } = useAuth();
-  const { stats, isLoading, error, refresh } = useDashboardStats();
+  const { user, getUserProperties, userProperties } = useAuth();
+
+  // REQ-134: State for property filter
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+
+  // REQ-134: Pass selected property to stats hook
+  const { stats, isLoading, error, refresh } = useDashboardStats(
+    selectedPropertyId || undefined
+  );
 
   // REQ-131: State for PropertyEditModal
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -91,6 +100,25 @@ export default function Dashboard2Page() {
         <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
         <p className="text-white/80 text-lg">Create and manage your QR code items</p>
       </div>
+
+      {/* REQ-134: Property Filter - only show for multi-property users */}
+      {userProperties && userProperties.length > 1 && (
+        <div className="flex items-center gap-4">
+          <label className="text-sm font-medium text-[#222222]">
+            View statistics for:
+          </label>
+          <div className="w-64">
+            <PropertySelector
+              properties={userProperties}
+              selectedPropertyId={selectedPropertyId}
+              onPropertyChange={setSelectedPropertyId}
+              variant="compact"
+              size="md"
+              placeholder="All Properties"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Statistics Cards */}
       <StatisticsCards stats={stats} isLoading={isLoading} error={error} />

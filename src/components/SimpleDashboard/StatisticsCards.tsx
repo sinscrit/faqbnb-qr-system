@@ -1,7 +1,8 @@
 // src/components/SimpleDashboard/StatisticsCards.tsx
 // REQ-124: Dashboard Statistics Cards Display Component
+// REQ-134: Added property context label display
 // Created: 2026-01-06 17:00:00 UTC
-// Last Modified: 2026-01-06 17:00:00 UTC
+// Last Modified: 2026-01-06
 
 'use client';
 
@@ -23,11 +24,16 @@ export interface StatisticsCardsProps {
 }
 
 /**
+ * REQ-134: Keys for numeric stats (excludes propertyContext)
+ */
+type NumericStatKey = 'itemCount' | 'roomCount' | 'tagCount';
+
+/**
  * Configuration for individual stat card
  */
 interface StatCardConfig {
-  /** Key matching DashboardStats property */
-  key: keyof DashboardStats;
+  /** Key matching DashboardStats numeric property */
+  key: NumericStatKey;
   /** Display label below the number */
   label: string;
   /** Lucide icon component */
@@ -152,14 +158,30 @@ export function StatisticsCards({
   }
 
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 ${className}`}>
-      {cardConfigs.map((config) => (
-        <StatCard
-          key={config.key}
-          config={config}
-          value={stats?.[config.key] ?? 0}
-        />
-      ))}
+    <div className={className}>
+      {/* REQ-134: Property context label - only show for multi-property users */}
+      {stats?.propertyContext && stats.propertyContext.totalProperties > 1 && (
+        <div className="mb-3 text-sm text-[#717171] flex items-center gap-1">
+          {stats.propertyContext.isFiltered ? (
+            <span className="font-medium text-[#222222]">
+              {stats.propertyContext.propertyName}
+            </span>
+          ) : (
+            <span>(all properties)</span>
+          )}
+        </div>
+      )}
+
+      {/* Statistics cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {cardConfigs.map((config) => (
+          <StatCard
+            key={config.key}
+            config={config}
+            value={stats?.[config.key] ?? 0}
+          />
+        ))}
+      </div>
     </div>
   );
 }

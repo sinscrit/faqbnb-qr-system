@@ -9,12 +9,24 @@ import { useState, useCallback, useEffect } from 'react';
 import { apiRequest, ApiError } from '@/lib/api';
 
 /**
+ * REQ-134: Property context for statistics filtering
+ */
+export interface PropertyContext {
+  isFiltered: boolean;
+  propertyId: string | null;
+  propertyName: string | null;
+  totalProperties: number;
+}
+
+/**
  * Dashboard statistics data shape from API
+ * REQ-134: Updated to include property context for filtering
  */
 export interface DashboardStats {
   itemCount: number;
   roomCount: number;
   tagCount: number;
+  propertyContext: PropertyContext;
 }
 
 /**
@@ -51,16 +63,19 @@ export interface UseDashboardStatsReturn {
 
 /**
  * Custom hook for fetching and managing dashboard statistics
+ * REQ-134: Added optional propertyId parameter for filtering
  *
  * Features:
  * - Auto-fetches on mount
  * - Separate loading states for initial fetch vs refresh
  * - Manual refresh capability with duplicate call prevention
  * - User-friendly error messages
+ * - Optional property filtering
  *
+ * @param propertyId - Optional property ID to filter statistics
  * @returns UseDashboardStatsReturn object with stats data and actions
  */
-export function useDashboardStats(): UseDashboardStatsReturn {
+export function useDashboardStats(propertyId?: string): UseDashboardStatsReturn {
   const DEBUG_PREFIX = '📊 DASHBOARD_STATS_HOOK:';
 
   const [state, setState] = useState<UseDashboardStatsState>({
@@ -86,8 +101,13 @@ export function useDashboardStats(): UseDashboardStatsReturn {
     }));
 
     try {
+      // REQ-134: Include propertyId in API request when provided
+      const endpoint = propertyId
+        ? `/user/dashboard/stats?propertyId=${encodeURIComponent(propertyId)}`
+        : '/user/dashboard/stats';
+
       const response = await apiRequest<DashboardStatsResponse>(
-        '/user/dashboard/stats',
+        endpoint,
         {},
         true
       );
@@ -121,7 +141,7 @@ export function useDashboardStats(): UseDashboardStatsReturn {
         error: errorMessage
       }));
     }
-  }, []);
+  }, [propertyId]); // REQ-134: Add propertyId dependency
 
   /**
    * Manually refresh statistics
@@ -137,11 +157,11 @@ export function useDashboardStats(): UseDashboardStatsReturn {
     await fetchStats(true);
   }, [state.isRefreshing, fetchStats]);
 
-  // Auto-fetch on mount
+  // REQ-134: Auto-fetch on mount or when propertyId changes
   useEffect(() => {
-    console.log(`${DEBUG_PREFIX} Auto-fetch on mount`);
+    console.log(`${DEBUG_PREFIX} Auto-fetch on mount or propertyId change`, { propertyId });
     fetchStats(false);
-  }, [fetchStats]);
+  }, [fetchStats, propertyId]);
 
   return {
     stats: state.stats,

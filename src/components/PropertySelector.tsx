@@ -1,3 +1,7 @@
+// src/components/PropertySelector.tsx
+// REQ-134: Updated Airbnb Design System colors
+// Last Modified: 2026-01-06
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -169,12 +173,12 @@ export default function PropertySelector({
         type="button"
         className={`
           ${sizeClasses.button}
-          w-full bg-white border border-gray-300 rounded-lg 
+          w-full bg-white border border-gray-300 rounded-lg
           flex items-center justify-between
-          hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+          hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:border-transparent
           disabled:opacity-50 disabled:cursor-not-allowed
           transition-colors duration-200
-          ${isOpen ? 'ring-2 ring-blue-500 border-transparent' : ''}
+          ${isOpen ? 'ring-2 ring-[#FF385C] border-transparent' : ''}
         `}
         onClick={() => {
           if (!disabled && !loading) {
@@ -211,13 +215,13 @@ export default function PropertySelector({
           role="listbox"
           aria-label="Property options"
         >
-          {/* All Properties option */}
+          {/* All Properties option - REQ-134: Updated to Airbnb DLS colors */}
           <div
             className={`
               ${sizeClasses.option}
               cursor-pointer hover:bg-gray-50 transition-colors duration-150
-              ${focusedIndex === 0 ? 'bg-blue-50 text-blue-900' : ''}
-              ${!selectedPropertyId ? 'bg-blue-50 text-blue-900' : ''}
+              ${focusedIndex === 0 ? 'bg-[#FFEEEF] text-[#222222]' : ''}
+              ${!selectedPropertyId ? 'bg-[#FFEEEF] text-[#222222]' : ''}
               flex items-center justify-between
             `}
             onClick={() => {
@@ -233,11 +237,11 @@ export default function PropertySelector({
               <span>{placeholder}</span>
             </div>
             {!selectedPropertyId && (
-              <Check className={`${sizeClasses.icon} text-blue-600`} />
+              <Check className={`${sizeClasses.icon} text-[#FF385C]`} />
             )}
           </div>
 
-          {/* Individual property options */}
+          {/* Individual property options - REQ-134: Updated to Airbnb DLS colors */}
           {properties.map((property, index) => {
             const optionIndex = index + 1;
             const isSelected = selectedPropertyId === property.id;
@@ -249,8 +253,8 @@ export default function PropertySelector({
                 className={`
                   ${sizeClasses.option}
                   cursor-pointer hover:bg-gray-50 transition-colors duration-150
-                  ${isFocused ? 'bg-blue-50 text-blue-900' : ''}
-                  ${isSelected ? 'bg-blue-50 text-blue-900' : ''}
+                  ${isFocused ? 'bg-[#FFEEEF] text-[#222222]' : ''}
+                  ${isSelected ? 'bg-[#FFEEEF] text-[#222222]' : ''}
                   flex items-center justify-between
                 `}
                 onClick={() => {
@@ -271,7 +275,7 @@ export default function PropertySelector({
                       {(property.property_types?.display_name || (isAdmin && property.users?.email)) && (
                         <div className="text-xs text-gray-500 truncate">
                           {property.property_types?.display_name}
-                          {isAdmin && property.users?.email && 
+                          {isAdmin && property.users?.email &&
                             ` • ${property.users.email}`
                           }
                         </div>
@@ -280,7 +284,7 @@ export default function PropertySelector({
                   </div>
                 </div>
                 {isSelected && (
-                  <Check className={`${sizeClasses.icon} text-blue-600 flex-shrink-0 ml-2`} />
+                  <Check className={`${sizeClasses.icon} text-[#FF385C] flex-shrink-0 ml-2`} />
                 )}
               </div>
             );
@@ -294,12 +298,12 @@ export default function PropertySelector({
         </div>
       )}
 
-      {/* Loading state */}
+      {/* Loading state - REQ-134: Updated to Airbnb DLS colors */}
       {loading && isOpen && (
         <div className={`absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg ${sizeClasses.dropdown}`}>
           <div className={`${sizeClasses.option} text-center text-gray-500`}>
             <div className="flex items-center justify-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FF385C]"></div>
               <span>Loading properties...</span>
             </div>
           </div>

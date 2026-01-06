@@ -6439,3 +6439,44 @@ Completes the property management workflow in Dashboard 2 by connecting the view
 - [ ] Any placeholder or legacy property display code is removed
 - [ ] Page layout remains consistent with other Dashboard 2 sections
 
+
+---
+
+## REQ-134: Filter Statistics by Individual Property
+
+**Date**: 2026-01-06 14:23
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Hosts with multiple properties should be able to view statistics filtered by a specific property or see aggregated totals across all their properties.
+
+### Current Behavior
+The statistics section displays aggregated totals across all properties without any indication that data spans multiple properties, and provides no way to view statistics for an individual property.
+
+### Expected Behavior
+- When a specific property is selected, statistics reflect only that property's data
+- When viewing all properties together, statistics show aggregated totals with a clear "(all properties)" label
+- The statistics section updates dynamically based on the current property filter selection
+- All statistical metrics (bookings, revenue, guest interactions, etc.) respect the property filter context
+
+### User Impact
+Hosts with multiple properties can now analyze performance metrics per property, enabling them to:
+- Compare performance across different properties
+- Identify which properties generate the most engagement
+- Make data-driven decisions about resource allocation per property
+- Understand property-specific trends and patterns
+
+### Business Value
+Enables multi-property hosts to gain actionable insights at the property level, improving their ability to optimize individual property performance and make informed business decisions.
+
+### Acceptance Criteria
+- [ ] Statistics API accepts an optional propertyId filter parameter
+- [ ] When propertyId is provided, API returns statistics for only that property
+- [ ] When no propertyId is provided, API returns aggregated totals across all properties
+- [ ] Statistics section displays "(all properties)" label when showing aggregated data
+- [ ] Statistics section displays the property name when filtered to a single property
+- [ ] All statistical metrics (counts, percentages, trends) accurately reflect the filtered scope
+- [ ] Property filter changes trigger statistics refresh with appropriate context
+- [ ] Edge case: Hosts with only one property see statistics without the "(all properties)" label
+
