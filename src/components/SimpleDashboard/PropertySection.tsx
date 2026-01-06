@@ -2,8 +2,9 @@
 // REQ-130: PropertySection Component for Dashboard 2
 // REQ-136: Added tier-aware rendering and SinglePropertyCard
 // REQ-137: Updated EmptyState with friendly messaging and CTA
+// REQ-140: Added min-h-[48px] to PropertyRow for touch target compliance
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-06 16:51:00 UTC
 
 'use client';
 
@@ -42,7 +43,7 @@ function PropertyRow({ property, onClick }: PropertyRowProps) {
       type="button"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className="w-full flex items-center justify-between p-4 bg-white border-b border-[#DDDDDD] last:border-b-0 hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset"
+      className="w-full flex items-center justify-between min-h-[48px] p-4 bg-white border-b border-[#DDDDDD] last:border-b-0 hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset"
       aria-label={`Edit property: ${property.nickname}`}
     >
       <span className="text-[#222222] font-medium">

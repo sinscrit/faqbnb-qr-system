@@ -6673,3 +6673,36 @@ Accessibility compliance expands the potential user base, demonstrates social re
 - [ ] When a modal opens, focus moves to the modal; when closed, focus returns to the triggering element
 - [ ] Focus is trapped within modal dialogs (tabbing cycles through modal elements only)
 - [ ] All functionality available via mouse is also available via keyboard
+
+---
+
+## REQ-140: Mobile-Responsive Dashboard Experience
+
+**Date**: 2026-01-06 11:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The dashboard must adapt its layout and interaction patterns to provide an optimal experience on mobile devices with touch-friendly controls and appropriate content stacking.
+
+### Current Behavior
+The dashboard layout is optimized for desktop viewports. On mobile devices, statistics cards may display in a grid that causes horizontal scrolling or cramped content. Action buttons may appear in a horizontal row that doesn't fit smaller screens. Modals may retain their desktop dimensions, creating awkward spacing or requiring unnecessary scrolling. Interactive elements may be smaller than recommended touch target sizes, making them difficult to activate accurately on touch devices.
+
+### Expected Behavior
+When viewed on mobile devices, the dashboard automatically reorganizes to a vertical, single-column layout. Statistics cards display one per row, stacked vertically for easy scanning. Action buttons stack vertically with appropriate spacing between them. Modal dialogs expand to utilize the full screen on mobile devices, maximizing visible content and minimizing scrolling. All interactive elements (buttons, links, form controls) meet or exceed 48-pixel minimum touch target dimensions to ensure comfortable, accurate tapping without precision difficulties.
+
+### User Impact
+Property managers and staff accessing the dashboard from mobile devices will experience a significantly improved interface. Content will be easier to read without horizontal scrolling or pinch-to-zoom. Actions will be easier to trigger without mis-taps. The mobile experience will feel intentionally designed for touch interaction rather than being a scaled-down desktop interface.
+
+### Business Value
+Mobile responsiveness is essential for modern web applications. Property managers often check dashboards while on-site or away from their desks, making mobile access critical for operational efficiency and timely decision-making.
+
+### Acceptance Criteria
+- [ ] Statistics cards display in a single-column layout (one card per row) on mobile viewports
+- [ ] Action buttons stack vertically with adequate spacing on mobile viewports
+- [ ] Modal dialogs utilize full-screen presentation on mobile devices
+- [ ] All interactive elements (buttons, links, inputs, controls) have minimum 48px tap targets on touch devices
+- [ ] Dashboard remains fully functional across mobile viewport sizes (320px width and up)
+- [ ] No horizontal scrolling occurs on mobile devices when viewed at standard zoom levels
+- [ ] Touch interactions (tap, swipe) work smoothly without requiring precise targeting
+

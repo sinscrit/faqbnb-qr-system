@@ -3,8 +3,9 @@
 // REQ-134: Added property context label display
 // REQ-136: Added tier-aware props for progressive UI
 // REQ-137: Added empty state handling for new users
+// REQ-140: Updated grid breakpoint from sm: to md: for Airbnb mobile alignment
 // Created: 2026-01-06 17:00:00 UTC
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-06 16:50:00 UTC
 
 'use client';
 
@@ -106,7 +107,7 @@ function StatCard({ config, value }: StatCardProps) {
 function LoadingSkeleton() {
   return (
     <SkeletonBase label="Loading statistics">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
           <div
             key={i}
@@ -232,7 +233,7 @@ export function StatisticsCards({
       )}
 
       {/* Statistics cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {cardConfigs.map((config) => (
           <StatCard
             key={config.key}

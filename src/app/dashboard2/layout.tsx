@@ -5,9 +5,11 @@
  *
  * New dashboard layout integrating ItemCreationWorkflow and ItemManager.
  * Features simplified navigation focused on item creation and management.
+ * REQ-140: Improved navigation touch targets on mobile
  *
  * @route /dashboard2
  * @created 2026-01-06
+ * @modified 2026-01-06 16:53:00 UTC
  */
 
 import { useRouter, usePathname } from 'next/navigation';
@@ -105,7 +107,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200" aria-label="Dashboard Navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+          <div className="flex space-x-4 sm:space-x-8">
             {navigationItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -116,7 +118,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
                   key={item.name}
                   onClick={() => router.push(item.href)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2 ${
+                  className={`inline-flex items-center px-3 sm:px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2 ${
                     isActive
                       ? 'border-[#FF385C] text-[#FF385C]'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'

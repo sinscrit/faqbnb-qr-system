@@ -11,10 +11,11 @@
  * REQ-134: Added per-property statistics filtering
  * REQ-136: Added progressive UI based on property count
  * REQ-137: Added new user welcome state and empty state guidance
+ * REQ-140: Added responsive padding and layout for mobile
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-06
+ * @modified 2026-01-06 16:52:00 UTC
  */
 
 import { useState, useCallback } from 'react';
@@ -180,8 +181,8 @@ export default function Dashboard2Page() {
         </div>
       ) : (
         <>
-          {/* Welcome Section with Settings */}
-          <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white relative">
+          {/* Welcome Section with Settings - REQ-140: Responsive padding */}
+          <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 text-white relative">
             {/* REQ-136: Settings Popover */}
             <div className="absolute top-4 right-4">
               <DashboardSettingsPopover
@@ -194,12 +195,13 @@ export default function Dashboard2Page() {
           </div>
 
           {/* REQ-136: Property Filter - using tier config instead of hardcoded check */}
+          {/* REQ-140: Responsive layout - stacks vertically on mobile */}
           {tierConfig.showPropertySelector && userProperties && (
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <label className="text-sm font-medium text-[#222222]">
                 View statistics for:
               </label>
-              <div className="w-64">
+              <div className="w-full sm:w-64">
                 <PropertySelector
                   properties={userProperties}
                   selectedPropertyId={selectedPropertyId}
