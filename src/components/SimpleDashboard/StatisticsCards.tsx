@@ -1,6 +1,7 @@
 // src/components/SimpleDashboard/StatisticsCards.tsx
 // REQ-124: Dashboard Statistics Cards Display Component
 // REQ-134: Added property context label display
+// REQ-136: Added tier-aware props for progressive UI
 // Created: 2026-01-06 17:00:00 UTC
 // Last Modified: 2026-01-06
 
@@ -8,6 +9,7 @@
 
 import { Package, Home, Tag, LucideIcon } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
+import { DashboardTier } from '@/hooks/useDashboardTier';
 
 /**
  * Props for the main StatisticsCards component
@@ -19,6 +21,12 @@ export interface StatisticsCardsProps {
   isLoading: boolean;
   /** Optional error message */
   error?: string | null;
+  /** REQ-136: Optional tier for tier-aware display */
+  tier?: DashboardTier;
+  /** REQ-136: Optional flag to show comparison view */
+  showComparisonView?: boolean;
+  /** REQ-136: Optional flag to show trend indicators */
+  showTrendIndicators?: boolean;
   /** Optional additional CSS classes */
   className?: string;
 }
@@ -115,16 +123,23 @@ function LoadingSkeleton() {
  * - Loading skeleton with shimmer animation
  * - Airbnb Design Language System styling
  * - Zero values displayed as "0"
+ * - REQ-136: Tier-aware rendering (property context hidden for single tier)
  *
  * @param stats - Statistics data from useDashboardStats hook
  * @param isLoading - Shows loading skeleton when true
  * @param error - Optional error message (currently unused, for future expansion)
+ * @param tier - Optional dashboard tier for tier-aware display
+ * @param showComparisonView - Show comparison mode (future enhancement)
+ * @param showTrendIndicators - Show trend indicators (future enhancement)
  * @param className - Optional additional CSS classes
  */
 export function StatisticsCards({
   stats,
   isLoading,
   error,
+  tier,
+  showComparisonView,
+  showTrendIndicators,
   className = ''
 }: StatisticsCardsProps) {
   // Card configuration with Airbnb DLS colors
@@ -157,10 +172,17 @@ export function StatisticsCards({
     return <LoadingSkeleton />;
   }
 
+  // REQ-136: Determine if property context should be shown
+  // Hide for single tier, show for multi-property users
+  const showPropertyContext = tier !== 'single' &&
+    stats?.propertyContext &&
+    stats.propertyContext.totalProperties > 1;
+
   return (
     <div className={className}>
       {/* REQ-134: Property context label - only show for multi-property users */}
-      {stats?.propertyContext && stats.propertyContext.totalProperties > 1 && (
+      {/* REQ-136: Hidden for single tier */}
+      {showPropertyContext && stats?.propertyContext && (
         <div className="mb-3 text-sm text-[#717171] flex items-center gap-1">
           {stats.propertyContext.isFiltered ? (
             <span className="font-medium text-[#222222]">

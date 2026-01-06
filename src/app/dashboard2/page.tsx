@@ -9,22 +9,45 @@
  * REQ-131: Added PropertyEditModal integration
  * REQ-132: Added AddPropertyModal integration
  * REQ-134: Added per-property statistics filtering
+ * REQ-136: Added progressive UI based on property count
  *
  * @route /dashboard2
  * @created 2026-01-06
  * @modified 2026-01-06
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle } from 'lucide-react';
-import { StatisticsCards, ActionButtons, PropertySection, PropertyEditModal, AddPropertyModal } from '@/components/SimpleDashboard';
+import {
+  ActionButtons,
+  PropertySection,
+  PropertyEditModal,
+  AddPropertyModal,
+  ProgressiveStatisticsSection,
+  AdvancedDashboardTools,
+  DashboardSettingsPopover,
+} from '@/components/SimpleDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useDashboardTier } from '@/hooks/useDashboardTier';
+import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { Property } from '@/types';
 import PropertySelector from '@/components/PropertySelector';
+import { GroupingOption } from '@/components/SimpleDashboard/PropertyGroupingControl';
 
 export default function Dashboard2Page() {
+  const router = useRouter();
   const { user, getUserProperties, userProperties } = useAuth();
+
+  // REQ-136: Get user preferences
+  const { preferences, setPreference } = useDashboardPreferences();
+
+  // REQ-136: Get tier configuration with preference overrides
+  const tierConfig = useDashboardTier(userProperties?.length ?? 0, {
+    forceAdvancedTools: preferences.forceAdvancedTools,
+    forcePortfolioView: preferences.forcePortfolioView,
+  });
 
   // REQ-134: State for property filter
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
@@ -43,6 +66,10 @@ export default function Dashboard2Page() {
 
   // REQ-132: State for success message (Task 5)
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // REQ-136: State for bulk operations
+  const [selectedPropertyIds, setSelectedPropertyIds] = useState<string[]>([]);
+  const [currentGrouping, setCurrentGrouping] = useState<GroupingOption>('none');
 
   const firstName = user?.email?.split('@')[0] || 'there';
 
@@ -85,8 +112,37 @@ export default function Dashboard2Page() {
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
+  // REQ-136: Handler for selecting all properties
+  const handleSelectAll = useCallback(() => {
+    if (userProperties) {
+      setSelectedPropertyIds(userProperties.map((p) => p.id));
+    }
+  }, [userProperties]);
+
+  // REQ-136: Handler for deselecting all properties
+  const handleDeselectAll = useCallback(() => {
+    setSelectedPropertyIds([]);
+  }, []);
+
+  // REQ-136: Handler for printing selected properties
+  const handlePrintSelected = useCallback(() => {
+    if (selectedPropertyIds.length === 0) return;
+
+    // Navigate to print flow with selected property IDs
+    const propertyIdsParam = selectedPropertyIds.join(',');
+    router.push(`/dashboard2/print?propertyIds=${propertyIdsParam}`);
+  }, [selectedPropertyIds, router]);
+
+  // REQ-136: Handler for grouping change
+  const handleGroupChange = useCallback((option: GroupingOption) => {
+    setCurrentGrouping(option);
+  }, []);
+
+  // REQ-136: Dynamic spacing based on tier
+  const mainSpacing = tierConfig.tier === 'single' ? 'space-y-6' : 'space-y-8';
+
   return (
-    <div className="space-y-8">
+    <div className={mainSpacing}>
       {/* REQ-132: Success Message Banner */}
       {successMessage && (
         <div className="bg-[#00A699] text-white px-4 py-3 rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -95,14 +151,21 @@ export default function Dashboard2Page() {
         </div>
       )}
 
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white">
+      {/* Welcome Section with Settings */}
+      <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white relative">
+        {/* REQ-136: Settings Popover */}
+        <div className="absolute top-4 right-4">
+          <DashboardSettingsPopover
+            preferences={preferences}
+            onPreferenceChange={setPreference}
+          />
+        </div>
         <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
         <p className="text-white/80 text-lg">Create and manage your QR code items</p>
       </div>
 
-      {/* REQ-134: Property Filter - only show for multi-property users */}
-      {userProperties && userProperties.length > 1 && (
+      {/* REQ-136: Property Filter - using tier config instead of hardcoded check */}
+      {tierConfig.showPropertySelector && userProperties && (
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium text-[#222222]">
             View statistics for:
@@ -120,14 +183,33 @@ export default function Dashboard2Page() {
         </div>
       )}
 
-      {/* Statistics Cards */}
-      <StatisticsCards stats={stats} isLoading={isLoading} error={error} />
+      {/* REQ-136: Progressive Statistics Section */}
+      <ProgressiveStatisticsSection
+        stats={stats}
+        isLoading={isLoading}
+        error={error}
+        overrides={{
+          forceAdvancedTools: preferences.forceAdvancedTools,
+          forcePortfolioView: preferences.forcePortfolioView,
+        }}
+      />
+
+      {/* REQ-136: Advanced Dashboard Tools */}
+      <AdvancedDashboardTools
+        selectedPropertyIds={selectedPropertyIds}
+        onSelectAll={handleSelectAll}
+        onDeselectAll={handleDeselectAll}
+        onPrintSelected={handlePrintSelected}
+        onGroupChange={handleGroupChange}
+        currentGrouping={currentGrouping}
+      />
 
       {/* Action Buttons - REQ-126 */}
       <ActionButtons />
 
-      {/* Property Section - REQ-130 */}
+      {/* Property Section - REQ-130, REQ-136: Now with tier prop */}
       <PropertySection
+        tier={tierConfig.tier}
         onPropertyEdit={handlePropertyEdit}
         onAddProperty={handleAddProperty}
       />

@@ -6518,3 +6518,44 @@ Reduces user error in multi-property scenarios, improving trust and satisfaction
 - [ ] Selected property context is passed forward to subsequent print flow steps
 - [ ] Property selector displays gracefully on both desktop and mobile devices
 - [ ] Single-property accounts skip the selector and proceed directly to print configuration
+
+---
+
+## REQ-136: Dashboard Progressive UI Based on Property Count
+
+**Date**: 2026-01-06 14:30
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The dashboard should automatically adapt its layout, components, and information density based on the number of properties a user manages.
+
+### Current Behavior
+The dashboard presents the same interface and level of detail regardless of whether a user manages one property or dozens of properties. This creates a suboptimal experience at both extremes: single-property users see unnecessary complexity, while multi-property users lack the aggregated views and navigation tools they need.
+
+### Expected Behavior
+The dashboard should progressively reveal features and adjust its presentation as the user's property portfolio grows:
+
+- **Single Property (1)**: Streamlined, focused view showing only that property's details without selectors or aggregation tools
+- **Few Properties (2-5)**: Introduction of property selector and basic comparison features
+- **Multiple Properties (6-15)**: Enhanced filtering, grouping capabilities, and summary statistics become prominent
+- **Many Properties (16+)**: Advanced navigation tools, bulk operations, portfolio-level analytics, and search functionality become available
+
+The transition between these states should feel natural and helpful, not abrupt or confusing.
+
+### User Impact
+All users managing properties will experience a dashboard tailored to their specific scale of operations. New users with single properties will find the system simpler and less intimidating, while power users managing larger portfolios will have access to advanced tools exactly when they need them.
+
+### Business Value
+Progressive UI reduces friction for new users during onboarding while simultaneously providing scalability for growing users. This supports user retention at both ends of the spectrum without requiring users to learn features they don't need or search for features they do need.
+
+### Acceptance Criteria
+- [ ] Dashboard detects the current property count and adjusts its layout accordingly
+- [ ] Single-property users see a simplified dashboard without property selection controls
+- [ ] Property selector appears when a user has 2 or more properties
+- [ ] Filtering and grouping controls become visible when a user has 6 or more properties
+- [ ] Advanced navigation tools (search, bulk actions, portfolio analytics) appear when a user has 16 or more properties
+- [ ] The transition between UI states occurs automatically when properties are added or removed
+- [ ] All functionality remains accessible regardless of property count (progressive disclosure, not removal)
+- [ ] Users can manually access advanced features even with fewer properties if desired (via settings or preferences)
+

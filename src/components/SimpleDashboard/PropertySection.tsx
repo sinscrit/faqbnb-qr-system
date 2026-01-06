@@ -1,13 +1,15 @@
 // src/components/SimpleDashboard/PropertySection.tsx
 // REQ-130: PropertySection Component for Dashboard 2
+// REQ-136: Added tier-aware rendering and SinglePropertyCard
 // Created: 2026-01-06
 // Last Modified: 2026-01-06
 
 'use client';
 
-import { ChevronRight, Home, Plus } from 'lucide-react';
+import { ChevronRight, Home, Plus, Pencil } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
+import { DashboardTier } from '@/hooks/useDashboardTier';
 
 /**
  * Props for PropertyRow sub-component
@@ -98,6 +100,57 @@ function EmptyState() {
 }
 
 /**
+ * REQ-136: Props for SinglePropertyCard sub-component
+ * Used when tier is 'single' for a more compact, focused display
+ */
+interface SinglePropertyCardProps {
+  /** Property data to display */
+  property: Property;
+  /** Callback when card is clicked */
+  onClick: (property: Property) => void;
+}
+
+/**
+ * REQ-136: Compact single-property card for 'single' tier
+ * Shows property prominently with edit icon instead of chevron
+ * Designed for users with only one property - no list styling
+ */
+function SinglePropertyCard({ property, onClick }: SinglePropertyCardProps) {
+  const handleClick = () => onClick(property);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick(property);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      className="w-full flex items-center justify-between min-h-[48px] p-4 bg-white hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset rounded-lg"
+      aria-label={`Edit property: ${property.nickname}`}
+    >
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-[#FFEEEF] rounded-lg flex items-center justify-center">
+          <Home className="w-5 h-5 text-[#FF385C]" />
+        </div>
+        <div className="text-left">
+          <span className="text-[#222222] font-medium block">
+            {property.nickname}
+          </span>
+          <span className="text-[#717171] text-sm">Tap to edit</span>
+        </div>
+      </div>
+      <div className="p-2 rounded-full hover:bg-[#F0F0F0] transition-colors">
+        <Pencil className="w-5 h-5 text-[#717171]" />
+      </div>
+    </button>
+  );
+}
+
+/**
  * Props for the main PropertySection component
  */
 export interface PropertySectionProps {
@@ -105,6 +158,8 @@ export interface PropertySectionProps {
   onPropertyEdit?: (property: Property) => void;
   /** Optional callback when add property is clicked */
   onAddProperty?: () => void;
+  /** REQ-136: Optional tier for tier-aware rendering */
+  tier?: DashboardTier;
   /** Optional additional CSS classes */
   className?: string;
 }
@@ -119,20 +174,26 @@ export interface PropertySectionProps {
  * - Loading skeleton state
  * - Empty state for new users
  * - Full keyboard accessibility
+ * - REQ-136: Tier-aware rendering (compact card for single tier)
  *
  * @param onPropertyEdit - Callback when property row is clicked
  * @param onAddProperty - Callback when Add button is clicked
+ * @param tier - Optional dashboard tier for tier-aware rendering
  * @param className - Optional additional CSS classes
  */
 export function PropertySection({
   onPropertyEdit,
   onAddProperty,
+  tier,
   className = '',
 }: PropertySectionProps) {
   const { userProperties, loading } = useAuth();
 
   // Dynamic heading based on property count
   const headingText = userProperties?.length === 1 ? 'My Property' : 'My Properties';
+
+  // REQ-136: Determine if we should use single property compact view
+  const useSingleView = tier === 'single' && userProperties?.length === 1;
 
   // Handle property row click
   const handlePropertyClick = (property: Property) => {
@@ -174,17 +235,28 @@ export function PropertySection({
         {headingText}
       </h2>
 
-      {/* Property List or Empty State */}
+      {/* REQ-136: Property List, Single Card, or Empty State */}
       {hasProperties ? (
-        <div role="list" aria-label="Your properties">
-          {userProperties.map((property) => (
-            <PropertyRow
-              key={property.id}
-              property={property}
+        useSingleView ? (
+          // Single tier: Compact card view
+          <div className="p-4">
+            <SinglePropertyCard
+              property={userProperties[0]}
               onClick={handlePropertyClick}
             />
-          ))}
-        </div>
+          </div>
+        ) : (
+          // Other tiers: List view
+          <div role="list" aria-label="Your properties">
+            {userProperties.map((property) => (
+              <PropertyRow
+                key={property.id}
+                property={property}
+                onClick={handlePropertyClick}
+              />
+            ))}
+          </div>
+        )
       ) : (
         <EmptyState />
       )}
