@@ -6028,3 +6028,41 @@ Provides at-a-glance visibility into core inventory metrics, improving user orie
 - [ ] During data loading, cards display a shimmer animation
 - [ ] When count is zero, cards display "0" rather than empty state or "No data" message
 - [ ] Visual styling matches Airbnb Design Language System standards
+
+---
+
+## REQ-125: Dashboard Page Statistics Display Integration
+
+**Date**: 2026-01-06 (Modified: 2026-01-06)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The Dashboard 2 page should display real-time statistics cards showing key metrics for properties, bookings, reviews, and revenue.
+
+### Current Behavior
+The Dashboard 2 page exists but does not display any statistics or metrics to the user. The statistics API, data hook, and display component exist but are not connected to the dashboard page.
+
+### Expected Behavior
+When a user navigates to the Dashboard 2 page, they should immediately see a set of statistics cards displaying:
+- Total number of properties
+- Total number of bookings
+- Total number of reviews
+- Total revenue amount
+
+The statistics should load automatically when the page is accessed and display loading states while data is being fetched. If data cannot be retrieved, appropriate error states should be shown.
+
+### User Impact
+Property managers and administrators will gain immediate visibility into their key business metrics when accessing the dashboard, eliminating the need to navigate to separate sections to understand their business performance at a glance.
+
+### Business Value
+Provides users with instant access to critical business metrics, improving decision-making efficiency and user satisfaction with the dashboard experience.
+
+### Acceptance Criteria
+- [ ] Dashboard 2 page displays statistics cards on page load
+- [ ] Statistics data is fetched automatically without user interaction
+- [ ] Loading indicators appear while statistics are being retrieved
+- [ ] All four metric cards (properties, bookings, reviews, revenue) are visible
+- [ ] Error states are handled gracefully if data retrieval fails
+- [ ] Statistics refresh appropriately when the page is revisited
+
