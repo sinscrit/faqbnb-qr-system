@@ -6559,3 +6559,45 @@ Progressive UI reduces friction for new users during onboarding while simultaneo
 - [ ] All functionality remains accessible regardless of property count (progressive disclosure, not removal)
 - [ ] Users can manually access advanced features even with fewer properties if desired (via settings or preferences)
 
+
+---
+
+## REQ-137: Empty State Guidance with Contextual CTAs
+
+**Date**: 2026-01-06 14:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+When users encounter screens with no data or content, the system should display friendly, helpful empty states that guide them toward the appropriate next action.
+
+### Current Behavior
+Screens with no content may show blank areas or generic messages that don't guide users on what to do next. New users or users without properties or items may not understand how to begin or what actions are available.
+
+### Expected Behavior
+The system displays context-aware empty states that:
+- Acknowledge the current empty condition with friendly, encouraging language
+- Explain why the screen is empty in a helpful way
+- Provide a clear call-to-action button or link to resolve the empty state
+- Use welcoming, Airbnb-style tone that makes users feel supported rather than lost
+
+Specific scenarios include:
+- New user with no items: Display a welcoming message encouraging them to create their first item
+- No properties available: Show a prompt inviting them to add their first property
+- Any other empty data views: Provide appropriate guidance with consistent visual and tonal patterns
+
+### User Impact
+New users and existing users encountering empty sections will have clear guidance on next steps, reducing confusion and abandonment. The friendly messaging creates a more welcoming experience that aligns with hospitality-focused brand expectations.
+
+### Business Value
+Improved onboarding and user activation by reducing friction when users encounter empty states. Better conversion from new signups to active users through clear, encouraging guidance.
+
+### Acceptance Criteria
+- [ ] New users see a welcoming empty state with "Create your first item" messaging and prominent CTA when no items exist
+- [ ] Users without properties see an encouraging empty state with "Add your first property" messaging and clear action button
+- [ ] All empty state messages use friendly, helpful tone consistent with Airbnb's communication style
+- [ ] Empty states include visual elements (icons or illustrations) that complement the messaging
+- [ ] Call-to-action buttons in empty states successfully navigate to or trigger the appropriate creation flow
+- [ ] Empty states are visually distinct from error states to avoid confusion
+- [ ] Messaging is concise and action-oriented, avoiding jargon or technical language
+

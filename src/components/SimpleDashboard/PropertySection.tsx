@@ -1,6 +1,7 @@
 // src/components/SimpleDashboard/PropertySection.tsx
 // REQ-130: PropertySection Component for Dashboard 2
 // REQ-136: Added tier-aware rendering and SinglePropertyCard
+// REQ-137: Updated EmptyState with friendly messaging and CTA
 // Created: 2026-01-06
 // Last Modified: 2026-01-06
 
@@ -10,6 +11,7 @@ import { ChevronRight, Home, Plus, Pencil } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
 import { DashboardTier } from '@/hooks/useDashboardTier';
+import { EmptyStateCard } from './EmptyStateCard';
 
 /**
  * Props for PropertyRow sub-component
@@ -82,20 +84,24 @@ function LoadingSkeleton() {
 }
 
 /**
- * Empty state when user has no properties
- * Displays friendly message and encourages adding first property
+ * REQ-137: Empty state when user has no properties
+ * Uses EmptyStateCard with friendly Airbnb-style messaging
  */
-function EmptyState() {
+interface PropertyEmptyStateProps {
+  /** Callback when CTA is clicked */
+  onAddProperty?: () => void;
+}
+
+function PropertyEmptyState({ onAddProperty }: PropertyEmptyStateProps) {
   return (
-    <div className="text-center py-8 px-4">
-      <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-        <Home className="w-6 h-6 text-[#717171]" />
-      </div>
-      <p className="text-[#222222] font-medium mb-1">No properties yet</p>
-      <p className="text-[#717171] text-sm">
-        Add your first property to get started
-      </p>
-    </div>
+    <EmptyStateCard
+      icon={Home}
+      title="Let's add your property"
+      description="A property is where your items live - like a vacation rental or home."
+      actionLabel={onAddProperty ? 'Add Property' : undefined}
+      onAction={onAddProperty}
+      variant="subtle"
+    />
   );
 }
 
@@ -258,7 +264,7 @@ export function PropertySection({
           </div>
         )
       ) : (
-        <EmptyState />
+        <PropertyEmptyState onAddProperty={onAddProperty} />
       )}
 
       {/* Add Property Button */}

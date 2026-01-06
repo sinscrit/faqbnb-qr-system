@@ -10,6 +10,7 @@
  * REQ-132: Added AddPropertyModal integration
  * REQ-134: Added per-property statistics filtering
  * REQ-136: Added progressive UI based on property count
+ * REQ-137: Added new user welcome state and empty state guidance
  *
  * @route /dashboard2
  * @created 2026-01-06
@@ -19,7 +20,7 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Home } from 'lucide-react';
 import {
   ActionButtons,
   PropertySection,
@@ -28,6 +29,7 @@ import {
   ProgressiveStatisticsSection,
   AdvancedDashboardTools,
   DashboardSettingsPopover,
+  EmptyStateCard,
 } from '@/components/SimpleDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardTier } from '@/hooks/useDashboardTier';
@@ -72,6 +74,15 @@ export default function Dashboard2Page() {
   const [currentGrouping, setCurrentGrouping] = useState<GroupingOption>('none');
 
   const firstName = user?.email?.split('@')[0] || 'there';
+
+  // REQ-137: Detect brand new user (no properties and no items)
+  const isNewUser = (!userProperties || userProperties.length === 0) &&
+    (stats?.itemCount === 0 || stats?.itemCount === undefined);
+
+  // REQ-137: Handler for empty state create item CTA
+  const handleCreateItem = useCallback(() => {
+    router.push('/dashboard2/create');
+  }, [router]);
 
   // REQ-131: Handler for property edit click
   const handlePropertyEdit = (property: Property) => {
@@ -151,68 +162,86 @@ export default function Dashboard2Page() {
         </div>
       )}
 
-      {/* Welcome Section with Settings */}
-      <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white relative">
-        {/* REQ-136: Settings Popover */}
-        <div className="absolute top-4 right-4">
-          <DashboardSettingsPopover
-            preferences={preferences}
-            onPreferenceChange={setPreference}
+      {/* REQ-137: New User Welcome State */}
+      {isNewUser && !isLoading ? (
+        <div className="bg-white rounded-xl shadow-sm">
+          <EmptyStateCard
+            icon={Home}
+            title="Welcome to FAQBNB!"
+            description="Get started by adding your first property. Then you can create QR codes to help guests find what they need."
+            actionLabel="Add Your First Property"
+            onAction={handleAddProperty}
+            variant="welcome"
           />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
-        <p className="text-white/80 text-lg">Create and manage your QR code items</p>
-      </div>
-
-      {/* REQ-136: Property Filter - using tier config instead of hardcoded check */}
-      {tierConfig.showPropertySelector && userProperties && (
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-[#222222]">
-            View statistics for:
-          </label>
-          <div className="w-64">
-            <PropertySelector
-              properties={userProperties}
-              selectedPropertyId={selectedPropertyId}
-              onPropertyChange={setSelectedPropertyId}
-              variant="compact"
-              size="md"
-              placeholder="All Properties"
-            />
+      ) : (
+        <>
+          {/* Welcome Section with Settings */}
+          <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white relative">
+            {/* REQ-136: Settings Popover */}
+            <div className="absolute top-4 right-4">
+              <DashboardSettingsPopover
+                preferences={preferences}
+                onPreferenceChange={setPreference}
+              />
+            </div>
+            <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
+            <p className="text-white/80 text-lg">Create and manage your QR code items</p>
           </div>
-        </div>
+
+          {/* REQ-136: Property Filter - using tier config instead of hardcoded check */}
+          {tierConfig.showPropertySelector && userProperties && (
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium text-[#222222]">
+                View statistics for:
+              </label>
+              <div className="w-64">
+                <PropertySelector
+                  properties={userProperties}
+                  selectedPropertyId={selectedPropertyId}
+                  onPropertyChange={setSelectedPropertyId}
+                  variant="compact"
+                  size="md"
+                  placeholder="All Properties"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* REQ-136: Progressive Statistics Section */}
+          {/* REQ-137: Pass onCreateItem for empty state CTA */}
+          <ProgressiveStatisticsSection
+            stats={stats}
+            isLoading={isLoading}
+            error={error}
+            overrides={{
+              forceAdvancedTools: preferences.forceAdvancedTools,
+              forcePortfolioView: preferences.forcePortfolioView,
+            }}
+            onCreateItem={handleCreateItem}
+          />
+
+          {/* REQ-136: Advanced Dashboard Tools */}
+          <AdvancedDashboardTools
+            selectedPropertyIds={selectedPropertyIds}
+            onSelectAll={handleSelectAll}
+            onDeselectAll={handleDeselectAll}
+            onPrintSelected={handlePrintSelected}
+            onGroupChange={handleGroupChange}
+            currentGrouping={currentGrouping}
+          />
+
+          {/* Action Buttons - REQ-126 */}
+          <ActionButtons />
+
+          {/* Property Section - REQ-130, REQ-136: Now with tier prop */}
+          <PropertySection
+            tier={tierConfig.tier}
+            onPropertyEdit={handlePropertyEdit}
+            onAddProperty={handleAddProperty}
+          />
+        </>
       )}
-
-      {/* REQ-136: Progressive Statistics Section */}
-      <ProgressiveStatisticsSection
-        stats={stats}
-        isLoading={isLoading}
-        error={error}
-        overrides={{
-          forceAdvancedTools: preferences.forceAdvancedTools,
-          forcePortfolioView: preferences.forcePortfolioView,
-        }}
-      />
-
-      {/* REQ-136: Advanced Dashboard Tools */}
-      <AdvancedDashboardTools
-        selectedPropertyIds={selectedPropertyIds}
-        onSelectAll={handleSelectAll}
-        onDeselectAll={handleDeselectAll}
-        onPrintSelected={handlePrintSelected}
-        onGroupChange={handleGroupChange}
-        currentGrouping={currentGrouping}
-      />
-
-      {/* Action Buttons - REQ-126 */}
-      <ActionButtons />
-
-      {/* Property Section - REQ-130, REQ-136: Now with tier prop */}
-      <PropertySection
-        tier={tierConfig.tier}
-        onPropertyEdit={handlePropertyEdit}
-        onAddProperty={handleAddProperty}
-      />
 
       {/* Property Edit Modal - REQ-131 */}
       <PropertyEditModal

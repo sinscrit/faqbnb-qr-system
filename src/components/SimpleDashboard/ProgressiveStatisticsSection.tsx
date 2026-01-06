@@ -1,5 +1,6 @@
 // src/components/SimpleDashboard/ProgressiveStatisticsSection.tsx
 // REQ-136: Progressive Statistics Section Wrapper
+// REQ-137: Added onCreateItem passthrough for empty states
 // Created: 2026-01-06
 // Last Modified: 2026-01-06
 
@@ -23,6 +24,8 @@ export interface ProgressiveStatisticsSectionProps {
   error?: string | null;
   /** Optional tier overrides for user preferences */
   overrides?: DashboardTierOverrides;
+  /** REQ-137: Callback for empty state CTA */
+  onCreateItem?: () => void;
   /** Optional additional CSS classes */
   className?: string;
 }
@@ -37,11 +40,13 @@ export interface ProgressiveStatisticsSectionProps {
  * - Few tier: Current behavior with property filter
  * - Multiple tier: Add comparison hint text (future enhancement)
  * - Many tier: Shows PortfolioSummary above StatisticsCards
+ * - REQ-137: Passes onCreateItem to StatisticsCards for empty states
  *
  * @param stats - Statistics data from useDashboardStats hook
  * @param isLoading - Loading state
  * @param error - Optional error message
  * @param overrides - Optional tier overrides for user preferences
+ * @param onCreateItem - Callback for empty state CTA
  * @param className - Optional additional CSS classes
  */
 export function ProgressiveStatisticsSection({
@@ -49,6 +54,7 @@ export function ProgressiveStatisticsSection({
   isLoading,
   error,
   overrides,
+  onCreateItem,
   className = '',
 }: ProgressiveStatisticsSectionProps) {
   const { userProperties } = useAuth();
@@ -76,11 +82,13 @@ export function ProgressiveStatisticsSection({
       )}
 
       {/* Statistics Cards with tier-aware rendering */}
+      {/* REQ-137: Pass onCreateItem for empty state CTA */}
       <StatisticsCards
         stats={stats}
         isLoading={isLoading}
         error={error}
         tier={tierConfig.tier}
+        onCreateItem={onCreateItem}
       />
     </div>
   );

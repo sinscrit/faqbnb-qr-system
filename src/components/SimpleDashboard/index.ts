@@ -5,6 +5,7 @@
 // REQ-131: PropertyEditModal Component
 // REQ-132: AddPropertyModal Component
 // REQ-136: Progressive UI Components
+// REQ-137: EmptyStateCard Component
 // Created: 2026-01-06 17:00:00 UTC
 // Last Modified: 2026-01-06
 
@@ -48,3 +49,7 @@ export type { AdvancedDashboardToolsProps } from './AdvancedDashboardTools';
 
 export { DashboardSettingsPopover } from './DashboardSettingsPopover';
 export type { DashboardSettingsPopoverProps } from './DashboardSettingsPopover';
+
+// REQ-137: Empty State Components
+export { EmptyStateCard } from './EmptyStateCard';
+export type { EmptyStateCardProps } from './EmptyStateCard';

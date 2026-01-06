@@ -2,6 +2,7 @@
 // REQ-124: Dashboard Statistics Cards Display Component
 // REQ-134: Added property context label display
 // REQ-136: Added tier-aware props for progressive UI
+// REQ-137: Added empty state handling for new users
 // Created: 2026-01-06 17:00:00 UTC
 // Last Modified: 2026-01-06
 
@@ -10,6 +11,7 @@
 import { Package, Home, Tag, LucideIcon } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { DashboardTier } from '@/hooks/useDashboardTier';
+import { EmptyStateCard } from './EmptyStateCard';
 
 /**
  * Props for the main StatisticsCards component
@@ -27,6 +29,8 @@ export interface StatisticsCardsProps {
   showComparisonView?: boolean;
   /** REQ-136: Optional flag to show trend indicators */
   showTrendIndicators?: boolean;
+  /** REQ-137: Callback for empty state CTA */
+  onCreateItem?: () => void;
   /** Optional additional CSS classes */
   className?: string;
 }
@@ -124,6 +128,7 @@ function LoadingSkeleton() {
  * - Airbnb Design Language System styling
  * - Zero values displayed as "0"
  * - REQ-136: Tier-aware rendering (property context hidden for single tier)
+ * - REQ-137: Empty state shown when all stats are zero
  *
  * @param stats - Statistics data from useDashboardStats hook
  * @param isLoading - Shows loading skeleton when true
@@ -131,6 +136,7 @@ function LoadingSkeleton() {
  * @param tier - Optional dashboard tier for tier-aware display
  * @param showComparisonView - Show comparison mode (future enhancement)
  * @param showTrendIndicators - Show trend indicators (future enhancement)
+ * @param onCreateItem - Callback for empty state CTA
  * @param className - Optional additional CSS classes
  */
 export function StatisticsCards({
@@ -140,6 +146,7 @@ export function StatisticsCards({
   tier,
   showComparisonView,
   showTrendIndicators,
+  onCreateItem,
   className = ''
 }: StatisticsCardsProps) {
   // Card configuration with Airbnb DLS colors
@@ -170,6 +177,28 @@ export function StatisticsCards({
   // Show loading skeleton while fetching data
   if (isLoading) {
     return <LoadingSkeleton />;
+  }
+
+  // REQ-137: Check if all stats are zero (new user / empty state)
+  const isEmptyState = stats &&
+    stats.itemCount === 0 &&
+    stats.roomCount === 0 &&
+    stats.tagCount === 0;
+
+  // REQ-137: Show empty state with CTA when all counts are zero
+  if (isEmptyState && onCreateItem) {
+    return (
+      <div className={`bg-white rounded-xl shadow-sm ${className}`}>
+        <EmptyStateCard
+          icon={Package}
+          title="Start tracking your items"
+          description="Once you create items, you'll see helpful stats about how guests use your QR codes."
+          actionLabel="Create Item"
+          onAction={onCreateItem}
+          variant="default"
+        />
+      </div>
+    );
   }
 
   // REQ-136: Determine if property context should be shown
