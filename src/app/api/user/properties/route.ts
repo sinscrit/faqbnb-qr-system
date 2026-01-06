@@ -192,3 +192,114 @@ export async function GET(request: NextRequest): Promise<NextResponse<PropertyRe
     );
   }
 }
+
+// POST /api/user/properties - Create a new property for the user
+// REQ-132: Added 2026-01-06
+export async function POST(request: NextRequest): Promise<NextResponse<PropertyResponse>> {
+  try {
+    console.log('Creating new property - validating authentication...');
+
+    // Task 1.2: Validate authentication
+    const authResult = await validateUserAuth(request);
+    if (authResult.error) {
+      return authResult.error;
+    }
+
+    const user = authResult.user;
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'User not found', code: 'USER_NOT_FOUND' },
+        { status: 401 }
+      );
+    }
+
+    // Get account context
+    const { currentAccount } = await getAccountContext(request, user.id, supabase);
+    if (!currentAccount) {
+      return NextResponse.json(
+        { success: false, error: 'No account context available', code: 'NO_ACCOUNT' },
+        { status: 400 }
+      );
+    }
+
+    // Task 1.3: Parse and validate request body
+    const body = await request.json();
+    const nickname = body.nickname?.trim();
+
+    if (!nickname) {
+      return NextResponse.json(
+        { success: false, error: 'Property name is required', code: 'VALIDATION_ERROR' },
+        { status: 400 }
+      );
+    }
+
+    if (nickname.length > 100) {
+      return NextResponse.json(
+        { success: false, error: 'Property name must be 100 characters or less', code: 'VALIDATION_ERROR' },
+        { status: 400 }
+      );
+    }
+
+    const address = body.address || null;
+
+    // Task 1.4: Get default property type
+    const { data: propertyType, error: typeError } = await supabase
+      .from('property_types')
+      .select('id')
+      .limit(1)
+      .single();
+
+    if (typeError || !propertyType) {
+      console.error('No property types available:', typeError);
+      return NextResponse.json(
+        { success: false, error: 'No property types configured', code: 'CONFIG_ERROR' },
+        { status: 500 }
+      );
+    }
+
+    // Task 1.5: Insert property into database
+    const { data: newProperty, error: insertError } = await supabase
+      .from('properties')
+      .insert({
+        user_id: user.id,
+        account_id: currentAccount.id,
+        property_type_id: propertyType.id,
+        nickname: nickname,
+        address: address,
+      })
+      .select(`
+        id,
+        nickname,
+        address,
+        created_at,
+        updated_at,
+        user_id,
+        account_id,
+        property_type_id
+      `)
+      .single();
+
+    if (insertError) {
+      console.error('Error creating property:', insertError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to create property', code: 'INSERT_ERROR' },
+        { status: 500 }
+      );
+    }
+
+    // Task 1.6: Return success response
+    console.log(`Property created: ${newProperty.nickname} by user ${user.email}`);
+
+    return NextResponse.json(
+      { success: true, data: newProperty },
+      { status: 201 }
+    );
+
+  } catch (error) {
+    console.error('Create property API error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error', code: 'INTERNAL_ERROR' },
+      { status: 500 }
+    );
+  }
+}

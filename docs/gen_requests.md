@@ -6359,3 +6359,51 @@ Streamlining property data management through an intuitive modal interface reduc
 - [ ] The modal follows the Airbnb design system color palette and styling conventions
 - [ ] The modal is responsive and displays appropriately on mobile and desktop viewports
 
+
+---
+
+## REQ-132: Property Creation Modal for Dashboard 2
+
+**Date**: 2026-01-06 16:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to create new properties through a modal dialog that presents the same form structure as the property edit modal, validates input, creates the property on save, and refreshes the property list to reflect the addition.
+
+### Current Behavior
+Users can initiate property creation by clicking the "Add New Property" button, but no modal interface exists to capture and save new property information.
+
+### Expected Behavior
+When a user clicks the "Add New Property" button, a modal dialog opens displaying empty form fields ready for data entry. The modal presents Property Name as a required field with a maximum of 100 characters, followed by optional address fields including Address Line 1 (max 200 characters), Address Line 2 (max 200 characters), City (max 100 characters), State/Province (max 100 characters), Postal Code (max 20 characters), and Country (presented as a dropdown selection). Users can fill in the fields and click Save to create the new property, which triggers property creation, closes the modal, displays a success notification, and refreshes the property list to show the newly added property. If users click Cancel, the modal closes without creating a property. If users attempt to save with validation errors such as an empty required field or exceeded character limits, appropriate error messages appear next to the affected fields.
+
+### User Impact
+Property managers can quickly add new properties to their portfolio without navigating away from the main dashboard, receive immediate validation feedback on their input, and see their new property appear in the list immediately upon successful creation.
+
+### Business Value
+Reducing friction in the property creation workflow encourages users to add more properties to the platform, increasing platform engagement and the total addressable inventory that can be managed through the system.
+
+### Acceptance Criteria
+- [ ] A modal dialog opens when a user clicks the "Add New Property" button
+- [ ] The modal is implemented using Radix UI Dialog component
+- [ ] All form fields are initially empty when the modal opens
+- [ ] Property Name field is marked as required and enforces a 100-character maximum
+- [ ] Address Line 1 field accepts up to 200 characters and is marked as optional
+- [ ] Address Line 2 field accepts up to 200 characters and is marked as optional
+- [ ] City field accepts up to 100 characters and is marked as optional
+- [ ] State/Province field accepts up to 100 characters and is marked as optional
+- [ ] Postal Code field accepts up to 20 characters and is marked as optional
+- [ ] Country field is presented as a dropdown selection and is marked as optional
+- [ ] Clicking the Save button creates the new property and closes the modal
+- [ ] A success toast notification appears after successfully creating the property
+- [ ] The property list refreshes automatically to display the newly created property
+- [ ] Clicking the Cancel button discards all input and closes the modal
+- [ ] Attempting to save with an empty Property Name field displays an error message
+- [ ] Attempting to save with any field exceeding its character limit displays an error message
+- [ ] Error messages appear adjacent to the field that failed validation
+- [ ] The modal can be dismissed by clicking outside the dialog or pressing the Escape key
+- [ ] The modal is fully keyboard accessible with proper focus management
+- [ ] The modal follows the Airbnb design system color palette and styling conventions
+- [ ] The modal is responsive and displays appropriately on mobile and desktop viewports
+- [ ] The form reuses the same component structure as the property edit modal to maintain consistency
+
