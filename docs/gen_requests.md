@@ -5916,3 +5916,40 @@ Aligning with the Airbnb design system elevates the application's professional a
 - [ ] No arbitrary color values remain in component implementations
 - [ ] Visual testing confirms color consistency across all major user flows
 - [ ] Accessibility audit verifies contrast compliance across the application
+
+---
+
+## REQ-122: Dashboard Statistics Summary API
+
+**Date**: 2026-01-06 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The dashboard should display summary statistics showing the user's total number of properties, distinct room locations, and unique tags across all their items.
+
+### Current Behavior
+The dashboard does not provide any statistical overview of the user's inventory. Users cannot quickly see how many properties they manage, how many distinct locations they have items in, or what tags are being used across their collection.
+
+### Expected Behavior
+The dashboard displays three key metrics in a statistics summary:
+- Total count of properties belonging to the current user
+- Total count of distinct room/location names across all items
+- Total count of unique tags applied across all items
+
+When a user has no data (zero properties, rooms, or tags), the statistics display zero values without errors or broken states.
+
+### User Impact
+Users viewing the dashboard immediately see high-level metrics that provide quick insight into the scope and organization of their inventory. This helps users understand at a glance how much content they've created and how it's being categorized.
+
+### Business Value
+Provides users with immediate value and context when they access the dashboard, reinforcing engagement by showing their accumulated data. Creates foundation for future analytics and insights features.
+
+### Acceptance Criteria
+- [ ] Statistics accurately reflect the current user's total property count
+- [ ] Room/location count represents distinct location names from all items belonging to the user
+- [ ] Tag count represents all unique tags applied across the user's items
+- [ ] All statistics display zero when the user has no data, without errors
+- [ ] Statistics update when the user creates, modifies, or deletes relevant data
+- [ ] API response time remains under 500ms for typical user data volumes
+
