@@ -6234,3 +6234,44 @@ Improves operational efficiency by providing a focused, property-scoped printing
 - ✅ API integration verified
 - ✅ Accessibility compliance verified (ARIA labels, focus states, keyboard navigation)
 
+
+---
+
+## REQ-129: Replace Legacy Action Cards with ActionButtons Component
+
+**Date**: 2026-01-06 14:30
+**Status**: COMPLETED (2026-01-06)
+**Verified By**: REQ-129-replace-existing-action-cards-detailed.md
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Dashboard 2 should use the new ActionButtons component instead of the legacy action card implementation to provide a consistent and maintainable user interface.
+
+### Current Behavior
+Dashboard 2 displays action cards using an older implementation pattern that may differ in styling, structure, or behavior from the newly standardized ActionButtons component.
+
+### Expected Behavior
+Dashboard 2 seamlessly renders the ActionButtons component in place of the previous action cards, displaying all available actions (View FAQs, Edit Properties, Print QR Codes) with identical functionality and visual appearance to the new standard.
+
+### User Impact
+Property managers experience a more consistent interface across the dashboard, with no disruption to their existing workflows for accessing FAQ management, property editing, or QR code printing features.
+
+### Business Value
+Consolidating to a single action button component reduces maintenance overhead and ensures future enhancements to action buttons propagate uniformly across the application.
+
+### Acceptance Criteria
+- [x] Dashboard 2 renders the ActionButtons component in the same layout position as the previous action cards
+- [x] All three action buttons (View FAQs, Edit Properties, Print QR Codes) function identically to their previous implementations
+- [x] Visual styling matches the design specifications for the new ActionButtons component
+- [x] No console errors or warnings appear when Dashboard 2 loads or when action buttons are clicked
+- [x] Dashboard layout remains responsive and properly aligned after the component replacement
+
+### Implementation Notes (2026-01-06)
+- ActionButtons component integrated via `src/components/SimpleDashboard/ActionButtons.tsx`
+- Three buttons: "Create New Item" (primary), "View Items" (secondary), "Print QR Code" (secondary)
+- Responsive layout: 1 column on mobile, 3 columns on desktop
+- WCAG 2.1 AA compliant with 48px touch targets and focus visible states
+- Print QR Code uses property-based navigation (single property → direct, multiple → selector)
+- No legacy action card code remains in dashboard2/page.tsx
+
