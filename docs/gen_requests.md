@@ -6275,3 +6275,41 @@ Consolidating to a single action button component reduces maintenance overhead a
 - Print QR Code uses property-based navigation (single property → direct, multiple → selector)
 - No legacy action card code remains in dashboard2/page.tsx
 
+
+---
+
+## REQ-130: Property List Section for Dashboard 2
+
+**Date**: 2026-01-06 14:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Dashboard 2 should display a property list section that shows all properties owned by the user, with each property row being clickable to navigate to an edit view, and an "Add New Property" button for creating additional properties.
+
+### Current Behavior
+Dashboard 2 does not currently display a dedicated section showing the user's properties in a navigable list format.
+
+### Expected Behavior
+Users see a clearly labeled section with a dynamic heading that reads "My Property" when they own exactly one property, or "My Properties" when they own multiple properties. Each property appears as a clickable row with a chevron icon indicating it can be expanded or navigated to. Clicking any property row opens that property's edit view. Below the list of properties, users see an "Add New Property" button that initiates the property creation flow.
+
+### User Impact
+Property managers can quickly view all their properties at a glance from the main dashboard, navigate directly to any property's edit interface with a single click, and easily add new properties without navigating through multiple menus or pages.
+
+### Business Value
+Centralizing property access on the main dashboard improves discoverability and reduces navigation friction, enabling property managers to maintain their property portfolio more efficiently and encouraging the addition of new properties to the platform.
+
+### Acceptance Criteria
+- [ ] A PropertySection component is displayed on Dashboard 2
+- [ ] The section heading displays "My Property" when the user owns exactly one property
+- [ ] The section heading displays "My Properties" when the user owns two or more properties
+- [ ] Each property appears as a distinct, clickable row in the section
+- [ ] Each property row displays a chevron icon positioned on the right side
+- [ ] Clicking any property row navigates the user to that property's edit view
+- [ ] An "Add New Property" button appears below the list of property rows
+- [ ] Clicking the "Add New Property" button initiates the property creation workflow
+- [ ] The component handles loading states while property data is being fetched
+- [ ] The component handles empty states appropriately when the user has no properties
+- [ ] The component is fully keyboard accessible with proper focus management
+- [ ] The component follows the Airbnb design system color palette and styling conventions
+
