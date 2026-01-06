@@ -1,7 +1,8 @@
 // src/components/SimpleDashboard/ActionButtons.tsx
 // REQ-126: Action Buttons Component for Dashboard Operations
+// REQ-127: Print QR Code Navigation Logic Enhancement
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-06 (REQ-127 verified)
 
 'use client';
 
@@ -125,6 +126,14 @@ export function ActionButtons({
    * Navigates based on user's property count per PRD Feature 2.3:
    * - Single property: Navigate directly to print flow with property ID
    * - Multiple/zero properties: Show property selector
+   * - Undefined properties (loading): Show property selector (safe default)
+   *
+   * Edge Case Behavior (REQ-127):
+   * - userProperties undefined → Routes to /dashboard2/print (selector page handles loading)
+   * - userProperties empty array → Routes to /dashboard2/print (selector shows empty state)
+   * - userProperties has 1 item → Routes to /dashboard2/print/[id] (direct flow)
+   * - userProperties has 2+ items → Routes to /dashboard2/print (selector grid)
+   * - onPrintClick callback present → Calls callback instead (overrides navigation)
    */
   const handlePrintQRCode = () => {
     // Allow custom handler to override

@@ -6105,3 +6105,54 @@ Streamlines the user workflow for critical operations, reducing clicks and navig
 - [ ] Hover interaction applies darker background color to each button
 - [ ] Button styling matches Airbnb Design Language System standards
 - [ ] Buttons remain accessible and usable on mobile, tablet, and desktop viewports
+
+---
+
+## REQ-127: Smart Navigation for QR Code Printing Based on Property Count
+
+**Date**: 2026-01-06 14:23
+**Completed**: 2026-01-06 20:30
+**Status**: ✅ COMPLETE
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+When a user initiates the QR code printing action, the system should intelligently route them either directly to the print interface (for single-property accounts) or to a property selection screen (for multi-property accounts).
+
+### Current Behavior
+The print QR code button routing does not differentiate between single-property and multi-property users, potentially requiring unnecessary navigation steps for users with only one property.
+
+### Expected Behavior
+- Users with exactly one property are taken directly to the print QR code interface for that property
+- Users with two or more properties are first presented with a property selector interface, then proceed to print the selected property's QR code
+- The navigation decision occurs immediately when the user clicks the print QR code action
+
+### User Impact
+Single-property owners experience a streamlined workflow with one fewer navigation step, while multi-property owners retain the ability to choose which property's QR code to print.
+
+### Business Value
+Reduces friction in the QR code generation workflow for the majority of users who manage a single property, improving task completion time and user satisfaction.
+
+### Acceptance Criteria
+- [x] When a user with one property clicks print QR code, they navigate directly to the print interface showing that property's QR code
+- [x] When a user with multiple properties clicks print QR code, they navigate to a property selection screen
+- [x] The property count determination is accurate and reflects the user's current accessible properties
+- [x] The navigation transition occurs without perceptible delay or loading states between decision and routing
+- [x] If property count cannot be determined, the system defaults to the multi-property flow (property selector first)
+
+### Implementation Details (Added 2026-01-06)
+
+**Files Created:**
+- `src/app/dashboard2/print/page.tsx` - Property selector page for multi-property users
+- `src/app/dashboard2/print/[propertyId]/page.tsx` - Print flow page with QRCodePrintManager integration
+
+**Files Modified:**
+- `src/components/SimpleDashboard/ActionButtons.tsx` - Enhanced JSDoc documentation
+
+**Key Features:**
+- Smart navigation logic in ActionButtons routes users based on property count
+- Property selector displays responsive grid with Airbnb design system styling
+- Print flow validates property access and fetches items via API
+- Full keyboard accessibility and ARIA labels throughout
+- Error handling with retry functionality for network failures
+
