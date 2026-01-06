@@ -10,6 +10,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Property } from '@/types';
+import { LoadingIndicator } from './LoadingIndicator';
 
 /**
  * Task 2: Country dropdown data with ISO 3166-1 alpha-2 codes
@@ -545,7 +546,7 @@ export function PropertyEditModal({
             >
               {isSubmitting ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <LoadingIndicator size="sm" color="white" label="Saving property" />
                   <span>Saving...</span>
                 </>
               ) : (

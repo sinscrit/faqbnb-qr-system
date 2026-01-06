@@ -6601,3 +6601,35 @@ Improved onboarding and user activation by reducing friction when users encounte
 - [ ] Empty states are visually distinct from error states to avoid confusion
 - [ ] Messaging is concise and action-oriented, avoiding jargon or technical language
 
+
+---
+
+## REQ-138: Shimmer Skeletons and Consistent Loading Indicators
+
+**Date**: 2026-01-06 10:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Display engaging shimmer skeleton placeholders during data loading and provide consistent loading indicators across all async operations to improve perceived performance and user experience.
+
+### Current Behavior
+Users encounter blank spaces, abrupt content shifts, or inconsistent loading feedback when data is being fetched. Some sections may show loading indicators while others display nothing, creating an inconsistent and potentially confusing experience.
+
+### Expected Behavior
+When content is loading, users see shimmer skeleton components that mirror the layout of the actual content (cards, lists, tables, etc.). All async operations display a consistent loading indicator (spinner or progress indicator) that clearly communicates system activity. The transition from skeleton to actual content is smooth and visually polished.
+
+### User Impact
+All users benefit from a more polished, responsive-feeling application. The shimmer effect reduces perceived wait time and provides clear visual feedback that the system is working. Users can anticipate content layout before data arrives, reducing cognitive load and layout shift jarring.
+
+### Business Value
+Improved perceived performance increases user satisfaction and reduces frustration during loading states. Professional, consistent loading experiences enhance brand perception and application polish.
+
+### Acceptance Criteria
+- [ ] All data-loading sections (dashboard, property lists, statistics, forms) display shimmer skeleton placeholders while fetching
+- [ ] Skeleton placeholders accurately reflect the layout and structure of the loaded content
+- [ ] All async operations (save, update, delete, fetch) show a consistent loading indicator
+- [ ] Loading states are visually distinct from empty states
+- [ ] Transitions between loading and loaded states are smooth without jarring layout shifts
+- [ ] Loading indicators automatically disappear when operations complete or error
+

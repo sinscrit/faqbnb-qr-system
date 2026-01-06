@@ -12,6 +12,7 @@ import { Package, Home, Tag, LucideIcon } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { DashboardTier } from '@/hooks/useDashboardTier';
 import { EmptyStateCard } from './EmptyStateCard';
+import { SkeletonBase } from './skeletons';
 
 /**
  * Props for the main StatisticsCards component
@@ -96,26 +97,29 @@ function StatCard({ config, value }: StatCardProps) {
 /**
  * Loading skeleton for statistics cards
  * Shows shimmer animation while data is loading
+ * REQ-138: Wrapped with SkeletonBase for accessibility
  */
 function LoadingSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {[1, 2, 3].map((i) => (
-        <div
-          key={i}
-          className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4 animate-pulse"
-        >
-          {/* Icon skeleton */}
-          <div className="w-12 h-12 bg-gray-200 rounded-xl" />
+    <SkeletonBase label="Loading statistics">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4"
+          >
+            {/* Icon skeleton */}
+            <div className="w-12 h-12 bg-gray-200 rounded-xl" />
 
-          {/* Content skeleton */}
-          <div className="flex-1">
-            <div className="h-8 w-16 bg-gray-200 rounded mb-1" />
-            <div className="h-4 w-12 bg-gray-200 rounded" />
+            {/* Content skeleton */}
+            <div className="flex-1">
+              <div className="h-8 w-16 bg-gray-200 rounded mb-1" />
+              <div className="h-4 w-12 bg-gray-200 rounded" />
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </SkeletonBase>
   );
 }
 

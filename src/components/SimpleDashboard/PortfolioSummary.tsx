@@ -7,6 +7,7 @@
 
 import { Building2, TrendingUp, Activity } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
+import { SkeletonBase } from './skeletons';
 
 /**
  * Props for PortfolioSummary component
@@ -24,23 +25,26 @@ export interface PortfolioSummaryProps {
 
 /**
  * Loading skeleton for PortfolioSummary
+ * REQ-138: Wrapped with SkeletonBase for accessibility
  */
 function LoadingSkeleton() {
   return (
-    <div className="bg-gradient-to-r from-[#E61E4D] to-[#D70466] rounded-xl p-6 text-white animate-pulse">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-white/20 rounded-lg" />
-        <div className="h-6 w-48 bg-white/20 rounded" />
+    <SkeletonBase label="Loading portfolio summary">
+      <div className="bg-gradient-to-r from-[#E61E4D] to-[#D70466] rounded-xl p-6 text-white">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-white/20 rounded-lg" />
+          <div className="h-6 w-48 bg-white/20 rounded" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white/10 rounded-lg p-4">
+              <div className="h-8 w-20 bg-white/20 rounded mb-2" />
+              <div className="h-4 w-24 bg-white/20 rounded" />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white/10 rounded-lg p-4">
-            <div className="h-8 w-20 bg-white/20 rounded mb-2" />
-            <div className="h-4 w-24 bg-white/20 rounded" />
-          </div>
-        ))}
-      </div>
-    </div>
+    </SkeletonBase>
   );
 }
 

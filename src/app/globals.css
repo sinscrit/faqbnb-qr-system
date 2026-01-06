@@ -226,3 +226,32 @@ body {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* =============================================================================
+ * Reduced Motion Support (REQ-138)
+ * Respects user preference for reduced motion
+ * @lastModified 2026-01-06
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable pulse animation for skeletons */
+  .animate-pulse {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  /* Disable spin animation for loaders */
+  .animate-spin {
+    animation: none;
+  }
+
+  /* Disable all custom animations */
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-modal-in,
+  .animate-modal-out,
+  .animate-drawer-in,
+  .animate-drawer-out {
+    animation: none;
+  }
+}

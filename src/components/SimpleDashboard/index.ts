@@ -53,3 +53,13 @@ export type { DashboardSettingsPopoverProps } from './DashboardSettingsPopover';
 // REQ-137: Empty State Components
 export { EmptyStateCard } from './EmptyStateCard';
 export type { EmptyStateCardProps } from './EmptyStateCard';
+
+// REQ-138: Skeleton Components
+export { SkeletonBase, SkeletonText, SkeletonCard } from './skeletons';
+export type { SkeletonBaseProps } from './skeletons/SkeletonBase';
+export type { SkeletonTextProps, SkeletonTextWidth, SkeletonTextHeight } from './skeletons/SkeletonText';
+export type { SkeletonCardProps, SkeletonCardPadding } from './skeletons/SkeletonCard';
+
+// REQ-138: Loading Indicator
+export { LoadingIndicator } from './LoadingIndicator';
+export type { LoadingIndicatorProps, LoadingIndicatorSize } from './LoadingIndicator';

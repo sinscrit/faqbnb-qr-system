@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
 import { DashboardTier } from '@/hooks/useDashboardTier';
 import { EmptyStateCard } from './EmptyStateCard';
+import { SkeletonBase } from './skeletons';
 
 /**
  * Props for PropertyRow sub-component
@@ -55,31 +56,34 @@ function PropertyRow({ property, onClick }: PropertyRowProps) {
 /**
  * Loading skeleton for PropertySection
  * Shows shimmer animation while property data loads
+ * REQ-138: Wrapped with SkeletonBase for accessibility
  */
 function LoadingSkeleton() {
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      {/* Header skeleton */}
-      <div className="p-4 border-b border-[#DDDDDD]">
-        <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
-      </div>
-
-      {/* Property row skeletons */}
-      {[1, 2].map((i) => (
-        <div
-          key={i}
-          className="flex items-center justify-between p-4 border-b border-[#DDDDDD] last:border-b-0"
-        >
-          <div className="h-5 w-40 bg-gray-200 rounded animate-pulse" />
-          <div className="h-5 w-5 bg-gray-200 rounded animate-pulse" />
+    <SkeletonBase label="Loading properties">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        {/* Header skeleton */}
+        <div className="p-4 border-b border-[#DDDDDD]">
+          <div className="h-6 w-32 bg-gray-200 rounded" />
         </div>
-      ))}
 
-      {/* Add button skeleton */}
-      <div className="p-4">
-        <div className="h-12 w-full bg-gray-200 rounded-lg animate-pulse" />
+        {/* Property row skeletons */}
+        {[1, 2].map((i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between p-4 border-b border-[#DDDDDD] last:border-b-0"
+          >
+            <div className="h-5 w-40 bg-gray-200 rounded" />
+            <div className="h-5 w-5 bg-gray-200 rounded" />
+          </div>
+        ))}
+
+        {/* Add button skeleton */}
+        <div className="p-4">
+          <div className="h-12 w-full bg-gray-200 rounded-lg" />
+        </div>
       </div>
-    </div>
+    </SkeletonBase>
   );
 }
 
