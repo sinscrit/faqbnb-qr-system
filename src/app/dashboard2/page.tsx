@@ -23,9 +23,9 @@ export default function Dashboard2Page() {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-[#E61E4D] via-[#E31C5F] to-[#D70466] rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
-        <p className="text-[#717171] text-lg">Create and manage your QR code items</p>
+        <p className="text-white/80 text-lg">Create and manage your QR code items</p>
       </div>
 
       {/* Quick Actions */}
@@ -33,19 +33,19 @@ export default function Dashboard2Page() {
         {/* Create New Item Card */}
         <button
           onClick={() => router.push('/dashboard2/create')}
-          className="group bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-500 p-8 text-left transition-all hover:shadow-lg"
+          className="group bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-[#FF385C] p-8 text-left transition-all hover:shadow-lg"
         >
           <div className="flex items-start justify-between">
-            <div className="bg-blue-100 rounded-xl p-4 group-hover:bg-blue-500 transition-colors">
-              <PlusCircle className="w-8 h-8 text-blue-600 group-hover:text-white" />
+            <div className="bg-[#FFEEEF] rounded-xl p-4 group-hover:bg-[#FF385C] transition-colors">
+              <PlusCircle className="w-8 h-8 text-[#FF385C] group-hover:text-white" />
             </div>
-            <ArrowRight className="w-6 h-6 text-gray-300 group-hover:text-blue-500 transition-colors" />
+            <ArrowRight className="w-6 h-6 text-gray-300 group-hover:text-[#FF385C] transition-colors" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-2">Create New Item</h2>
           <p className="text-gray-600">
             Start the guided workflow to create a new QR code item with step-by-step instructions.
           </p>
-          <div className="flex items-center gap-2 mt-4 text-blue-600">
+          <div className="flex items-center gap-2 mt-4 text-[#FF385C]">
             <Sparkles className="w-4 h-4" />
             <span className="text-sm font-medium">Guided 8-step workflow</span>
           </div>
@@ -79,7 +79,7 @@ export default function Dashboard2Page() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">What you can do</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
               <span className="text-lg">1</span>
             </div>
             <div>
@@ -88,7 +88,7 @@ export default function Dashboard2Page() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
               <span className="text-lg">2</span>
             </div>
             <div>
@@ -97,7 +97,7 @@ export default function Dashboard2Page() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
               <span className="text-lg">3</span>
             </div>
             <div>
@@ -106,7 +106,7 @@ export default function Dashboard2Page() {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
               <span className="text-lg">4</span>
             </div>
             <div>

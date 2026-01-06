@@ -5877,3 +5877,42 @@ Enforcing strict PRD compliance on the dashboard ensures the product vision is p
 - [ ] Dashboard functionality is validated to ensure no regressions in PRD-compliant features
 - [ ] Visual testing confirms dashboard appearance matches PRD specifications without account elements
 
+
+---
+
+## REQ-121: Apply Airbnb Design System Colors Throughout Application
+
+**Date**: 2026-01-06 03:09
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The application shall consistently use Airbnb design system colors across all user interface components to achieve visual cohesion and brand alignment as specified in the PRD.
+
+### Current Behavior
+Components throughout the application use inconsistent color schemes that do not align with the Airbnb design system. Color values are hardcoded with arbitrary choices including generic grays, blues, purples, and other colors that do not match the established Airbnb brand palette. Primary text appears in various shades rather than the standardized Airbnb text colors. Interactive elements like buttons and links use inconsistent accent colors instead of the defined brand primary color. Background colors and borders vary across components without adhering to a unified color token system.
+
+### Expected Behavior
+All interface elements display colors that strictly adhere to the Airbnb design system palette. Primary text appears in Mine Shaft (#222222) or Hof (#484848) for optimal readability. Secondary text and metadata use Foggy (#767676) or the lighter gray (#717171). Call-to-action buttons and interactive elements feature Radical Red (#FF385C) as the primary brand color. Success states display using Babu (#00A699), warning states use Arches (#FC642D), and error states use Rausch (#FF5A5F). Backgrounds consistently use White (#FFFFFF) or defined neutral variations. Borders appear in the standard border color (#DDDDDD). All color applications maintain WCAG 2.1 Level AA contrast ratios for accessibility compliance.
+
+### User Impact
+Users experience a visually unified interface that feels professional and cohesive across all application screens. The consistent color palette creates stronger brand recognition and visual hierarchy. Color usage becomes predictable, helping users quickly identify interactive elements, status indicators, and information hierarchy. Users with accessibility needs benefit from standardized contrast ratios that ensure text remains readable in all contexts.
+
+### Business Value
+Aligning with the Airbnb design system elevates the application's professional appearance and strengthens brand consistency. A unified color system reduces design debt and future maintenance costs by establishing clear standards for new features. Accessibility compliance through proper contrast ratios reduces legal risk and expands the potential user base.
+
+### Acceptance Criteria
+- [ ] Primary text throughout the application uses Mine Shaft (#222222) or Hof (#484848)
+- [ ] Secondary text and supporting information display in Foggy (#767676) or #717171
+- [ ] Primary call-to-action elements use Radical Red (#FF385C) as the brand color
+- [ ] Success states consistently display using Babu (#00A699)
+- [ ] Warning states consistently use Arches (#FC642D)
+- [ ] Error states consistently use Rausch (#FF5A5F)
+- [ ] Background colors use White (#FFFFFF) or approved neutral variations from the design system
+- [ ] Border colors consistently use #DDDDDD or defined system values
+- [ ] All text-on-background combinations maintain minimum 4.5:1 contrast ratio for normal text
+- [ ] All text-on-background combinations maintain minimum 3:1 contrast ratio for large text
+- [ ] Color tokens are defined in a centralized location for consistent reuse
+- [ ] No arbitrary color values remain in component implementations
+- [ ] Visual testing confirms color consistency across all major user flows
+- [ ] Accessibility audit verifies contrast compliance across the application

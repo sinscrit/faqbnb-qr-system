@@ -30,7 +30,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Loading dashboard...</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
             </button>
             <button
               onClick={() => (window.location.href = '/login')}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
             >
               Go to Login
             </button>
@@ -117,7 +117,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
                   onClick={() => router.push(item.href)}
                   className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-[#FF385C] text-[#FF385C]'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
