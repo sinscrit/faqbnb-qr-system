@@ -68,6 +68,7 @@ export interface Property {
   account_id: string | null; // NEW: Account association
   nickname: string;
   address: string | null;
+  thumbnail_url?: string | null; // REQ-135: Optional property image
   created_at: string | null;
   updated_at: string | null;
   // Populated relationships

@@ -6480,3 +6480,41 @@ Enables multi-property hosts to gain actionable insights at the property level, 
 - [ ] Property filter changes trigger statistics refresh with appropriate context
 - [ ] Edge case: Hosts with only one property see statistics without the "(all properties)" label
 
+
+
+---
+
+## REQ-135: Print Flow Property Selector
+
+**Date**: 2026-01-06 07:47
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should select which property's materials they want to print before accessing the print configuration screen.
+
+### Current Behavior
+The print flow proceeds directly to print configuration without prompting users to select which property's content they want to print, creating risk of printing materials for the wrong property in multi-property accounts.
+
+### Expected Behavior
+- A property selection step appears before the print configuration screen
+- Users see a list of their properties with names and thumbnail images (if available)
+- The currently active property in the application is pre-selected by default
+- Users must explicitly select a property before proceeding to print configuration
+- After selection, the print flow continues with configuration for the chosen property's content
+- The selected property context is maintained throughout the remainder of the print workflow
+
+### User Impact
+Hosts managing multiple properties gain confidence that they are printing the correct property's materials (QR codes, FAQ sheets). This prevents costly mistakes like printing QR codes that direct guests to the wrong property's information.
+
+### Business Value
+Reduces user error in multi-property scenarios, improving trust and satisfaction with the print functionality. Prevents support issues related to incorrect materials being printed and distributed to properties.
+
+### Acceptance Criteria
+- [ ] Property selection step is inserted as the first screen in the print flow
+- [ ] All properties belonging to the user are displayed with names and thumbnails
+- [ ] Currently active property is pre-selected if one exists in application state
+- [ ] Users cannot proceed to print configuration without selecting a property
+- [ ] Selected property context is passed forward to subsequent print flow steps
+- [ ] Property selector displays gracefully on both desktop and mobile devices
+- [ ] Single-property accounts skip the selector and proceed directly to print configuration

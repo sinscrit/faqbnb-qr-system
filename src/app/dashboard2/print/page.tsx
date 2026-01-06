@@ -1,14 +1,17 @@
 // src/app/dashboard2/print/page.tsx
 // REQ-127: Print Property Selector Page - Multi-property user property selection
+// REQ-135: Print Flow Property Selector Enhancements
 // Created: 2026-01-06
 // Last Modified: 2026-01-06
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { ArrowLeft, Building, QrCode, Loader2, Home } from 'lucide-react';
+import { useActiveProperty } from '@/hooks/useActiveProperty';
+import { usePropertyItemCounts } from '@/hooks/usePropertyItemCounts';
+import { ArrowLeft, Building, QrCode, Loader2, Home, Check } from 'lucide-react';
 import { Property } from '@/types';
 
 /**
@@ -52,25 +55,94 @@ function EmptyState({ onNavigateToCreate }: { onNavigateToCreate: () => void }) 
 }
 
 /**
+ * Property thumbnail component with image/icon fallback
+ * REQ-135: Displays property thumbnail with graceful fallback to Building icon
+ */
+function PropertyThumbnail({
+  thumbnailUrl,
+  nickname,
+  isSelected
+}: {
+  thumbnailUrl?: string | null;
+  nickname: string;
+  isSelected: boolean;
+}) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const showImage = thumbnailUrl && !imageError;
+  const iconBgClass = isSelected ? 'bg-[#FFEBEF]' : 'bg-[#F7F7F7]';
+  const iconColorClass = isSelected ? 'text-[#FF385C]' : 'text-[#717171]';
+
+  return (
+    <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden">
+      {showImage ? (
+        <>
+          {/* Loading skeleton */}
+          {!imageLoaded && (
+            <div className={`w-full h-full ${iconBgClass} animate-pulse`} />
+          )}
+          {/* Thumbnail image */}
+          <img
+            src={thumbnailUrl}
+            alt={`${nickname} thumbnail`}
+            className={`w-full h-full object-cover ${imageLoaded ? '' : 'hidden'}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
+          />
+        </>
+      ) : (
+        /* Fallback icon */
+        <div className={`${iconBgClass} w-full h-full flex items-center justify-center`}>
+          <Building className={`w-6 h-6 ${iconColorClass}`} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * Property card component for grid display
+ * REQ-135: Enhanced with selected state styling, item count display, and thumbnail support
  */
 function PropertyCard({
   property,
-  onClick
+  onClick,
+  isSelected = false,
+  itemCount = 0,
+  isLoadingCount = false
 }: {
   property: Property;
   onClick: () => void;
+  isSelected?: boolean;
+  itemCount?: number;
+  isLoadingCount?: boolean;
 }) {
+  // Build dynamic class names for selected state
+  const cardClasses = `
+    w-full text-left rounded-xl shadow-sm border p-6
+    transition-all duration-200
+    focus-visible:outline-none focus-visible:ring-2
+    focus-visible:ring-[#222222] focus-visible:ring-offset-2
+    ${isSelected
+      ? 'bg-[#FFF5F5] border-[#FF385C] ring-2 ring-[#FF385C] shadow-md'
+      : 'bg-white border-[#DDDDDD] hover:border-[#FF385C] hover:shadow-md'}
+  `;
+
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-white rounded-xl shadow-sm border border-[#DDDDDD] p-6 hover:border-[#FF385C] hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
-      aria-label={`Select ${property.nickname} to print QR codes`}
+      className={cardClasses}
+      aria-label={`Select ${property.nickname} to print QR codes${isSelected ? ' (currently selected)' : ''}`}
+      aria-pressed={isSelected}
     >
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 bg-[#F7F7F7] rounded-lg p-3">
-          <Building className="w-6 h-6 text-[#717171]" />
-        </div>
+        {/* REQ-135: Property thumbnail with fallback */}
+        <PropertyThumbnail
+          thumbnailUrl={property.thumbnail_url}
+          nickname={property.nickname}
+          isSelected={isSelected}
+        />
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-[#222222] truncate">
             {property.nickname}
@@ -85,9 +157,22 @@ function PropertyCard({
               {property.address}
             </p>
           )}
+          {/* Item count display - REQ-135 */}
+          <div className="flex items-center gap-1 text-sm text-[#717171] mt-2">
+            {isLoadingCount ? (
+              <span className="bg-gray-200 animate-pulse rounded w-16 h-4"></span>
+            ) : (
+              <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+            )}
+          </div>
         </div>
-        <div className="flex-shrink-0">
-          <QrCode className="w-5 h-5 text-[#717171]" />
+        <div className="flex-shrink-0 flex flex-col items-center gap-2">
+          {isSelected && (
+            <div className="bg-[#FF385C] rounded-full p-1">
+              <Check className="w-4 h-4 text-white" />
+            </div>
+          )}
+          <QrCode className={`w-5 h-5 ${isSelected ? 'text-[#FF385C]' : 'text-[#717171]'}`} />
         </div>
       </div>
     </button>
@@ -96,13 +181,20 @@ function PropertyCard({
 
 /**
  * Property grid component
+ * REQ-135: Enhanced with active property selection and item counts
  */
 function PropertyGrid({
   properties,
-  onSelectProperty
+  onSelectProperty,
+  activePropertyId,
+  itemCounts,
+  isLoadingCounts
 }: {
   properties: Property[];
   onSelectProperty: (propertyId: string) => void;
+  activePropertyId?: string | null;
+  itemCounts?: Record<string, number>;
+  isLoadingCounts?: boolean;
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -111,6 +203,9 @@ function PropertyGrid({
           key={property.id}
           property={property}
           onClick={() => onSelectProperty(property.id)}
+          isSelected={property.id === activePropertyId}
+          itemCount={itemCounts?.[property.id] || 0}
+          isLoadingCount={isLoadingCounts}
         />
       ))}
     </div>
@@ -157,10 +252,21 @@ function PageHeader({ onBack }: { onBack: () => void }) {
  * - Follows Airbnb design system styling
  * - Handles loading, empty, and populated states
  * - Full keyboard accessibility and ARIA labels
+ * - REQ-135: Pre-selection of previously selected property
+ * - REQ-135: Item counts displayed per property
  */
 export default function PrintPropertySelectorPage() {
   const router = useRouter();
   const { userProperties, loading } = useAuth();
+
+  // REQ-135: Get property IDs for active property hook
+  const propertyIds = userProperties?.map(p => p.id) || [];
+
+  // REQ-135: Active property persistence hook
+  const { activePropertyId, setActiveProperty } = useActiveProperty(propertyIds);
+
+  // REQ-135: Item counts hook (will be implemented in Task 4)
+  const { itemCounts, loading: countsLoading } = usePropertyItemCounts(propertyIds);
 
   // Handle single property case - redirect directly to print flow
   useEffect(() => {
@@ -174,7 +280,9 @@ export default function PrintPropertySelectorPage() {
     router.push('/dashboard2');
   };
 
+  // REQ-135: Update active property before navigation
   const handleSelectProperty = (propertyId: string) => {
+    setActiveProperty(propertyId);
     router.push(`/dashboard2/print/${propertyId}`);
   };
 
@@ -210,6 +318,9 @@ export default function PrintPropertySelectorPage() {
       <PropertyGrid
         properties={userProperties}
         onSelectProperty={handleSelectProperty}
+        activePropertyId={activePropertyId}
+        itemCounts={itemCounts}
+        isLoadingCounts={countsLoading}
       />
     </div>
   );
