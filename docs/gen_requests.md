@@ -6066,3 +6066,42 @@ Provides users with instant access to critical business metrics, improving decis
 - [ ] Error states are handled gracefully if data retrieval fails
 - [ ] Statistics refresh appropriately when the page is revisited
 
+
+---
+
+## REQ-126: Action Buttons Component for Dashboard Operations
+
+**Date**: 2026-01-06 15:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users should have quick access to primary dashboard actions through a set of three prominent, touch-friendly buttons: Create Item, View Items, and Print QR Codes.
+
+### Current Behavior
+The dashboard does not provide a centralized action button interface for common operations. Users must navigate through menus or other UI areas to access item creation, viewing, and QR code printing functionality.
+
+### Expected Behavior
+A row of three equal-width action buttons should be displayed prominently on the dashboard. Each button should:
+- Show both an icon and descriptive text label
+- Provide sufficient touch area for mobile and tablet users (minimum 48x48 pixels)
+- Use distinct visual styling: the Create button appears with a red gradient indicating primary action, while View and Print buttons use a white background with black borders
+- Respond to hover interactions with a subtle scale effect and background color change
+- Maintain consistent spacing and alignment across all viewport sizes
+
+### User Impact
+Property managers and administrators will experience faster access to the three most common dashboard operations. Mobile and tablet users will benefit from large, easy-to-tap targets that reduce interaction errors.
+
+### Business Value
+Streamlines the user workflow for critical operations, reducing clicks and navigation time while improving accessibility and mobile usability.
+
+### Acceptance Criteria
+- [ ] Three buttons are displayed in equal widths within a single row
+- [ ] Each button meets minimum touch target size of 48x48 pixels
+- [ ] Create button displays with red gradient background and white text
+- [ ] View and Print buttons display with white background, black border, and black text
+- [ ] All buttons show appropriate icons alongside text labels
+- [ ] Hover interaction triggers a 1.02x scale transformation
+- [ ] Hover interaction applies darker background color to each button
+- [ ] Button styling matches Airbnb Design Language System standards
+- [ ] Buttons remain accessible and usable on mobile, tablet, and desktop viewports
