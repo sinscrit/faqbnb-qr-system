@@ -5953,3 +5953,39 @@ Provides users with immediate value and context when they access the dashboard, 
 - [ ] Statistics update when the user creates, modifies, or deletes relevant data
 - [ ] API response time remains under 500ms for typical user data volumes
 
+
+---
+
+## REQ-123: Dashboard Statistics State Management Hook
+
+**Date**: 2026-01-06 11:23
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The dashboard statistics display should fetch data from the statistics API endpoint and provide a mechanism for users to refresh the displayed metrics on demand.
+
+### Current Behavior
+No client-side mechanism exists to fetch dashboard statistics from the API. The dashboard cannot retrieve or display the statistics data, and users have no way to request updated statistics without refreshing the entire page.
+
+### Expected Behavior
+When the dashboard loads, statistics automatically fetch from the API endpoint and display to the user. During the initial load, a loading indicator appears while the data is being retrieved. If the API request fails, an error state displays with appropriate user-facing messaging. After statistics load successfully, users can trigger a manual refresh to retrieve the latest data without reloading the page. The refresh operation updates the statistics display with current values while providing visual feedback that the refresh is in progress.
+
+### User Impact
+Users see their dashboard statistics immediately upon landing on the dashboard page. When users add new properties, rooms, or tags, they can manually refresh the statistics to see the updated counts reflected without losing their place or reloading the entire application. If network issues occur, users receive clear feedback about the problem rather than seeing stale or broken data.
+
+### Business Value
+Creates a responsive, real-time data experience that keeps users engaged with accurate information. Reduces perceived latency and improves user satisfaction by providing manual refresh capability. Establishes reusable patterns for state management that can be applied to other dashboard features.
+
+### Acceptance Criteria
+- [ ] Statistics automatically fetch when the dashboard component mounts
+- [ ] A loading state displays while statistics are being retrieved from the API
+- [ ] Statistics data populates the display once the API request completes successfully
+- [ ] An error state displays with user-friendly messaging if the API request fails
+- [ ] A refresh function is exposed that allows manual re-fetching of statistics
+- [ ] Calling the refresh function triggers a new API request and updates the displayed data
+- [ ] Visual feedback indicates when a refresh operation is in progress
+- [ ] Multiple rapid refresh calls are handled gracefully without duplicate requests
+- [ ] The loading state does not display when refreshing already-loaded statistics
+- [ ] Error states from failed refresh attempts do not permanently block the interface
+
