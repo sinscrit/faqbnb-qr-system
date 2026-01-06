@@ -156,8 +156,12 @@ export default function Dashboard2Page() {
     <div className={mainSpacing}>
       {/* REQ-132: Success Message Banner */}
       {successMessage && (
-        <div className="bg-[#00A699] text-white px-4 py-3 rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-          <CheckCircle className="w-5 h-5" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-[#00A699] text-white px-4 py-3 rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300"
+        >
+          <CheckCircle className="w-5 h-5" aria-hidden="true" />
           <span>{successMessage}</span>
         </div>
       )}

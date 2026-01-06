@@ -92,7 +92,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
             <div className="flex items-center">
               <button
                 onClick={() => signOut()}
-                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1"
+                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -103,9 +103,9 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-white border-b border-gray-200" aria-label="Dashboard Navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8" aria-label="Dashboard Navigation">
+          <div className="flex space-x-8">
             {navigationItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -115,7 +115,8 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
                 <button
                   key={item.name}
                   onClick={() => router.push(item.href)}
-                  className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors ${
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`inline-flex items-center px-1 pt-4 pb-4 border-b-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2 ${
                     isActive
                       ? 'border-[#FF385C] text-[#FF385C]'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'

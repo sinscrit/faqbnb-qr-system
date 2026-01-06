@@ -19,10 +19,14 @@ import { Property } from '@/types';
  */
 function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div
+      className="flex items-center justify-center min-h-[400px]"
+      role="status"
+      aria-label="Loading properties"
+    >
       <div className="text-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-        <p className="text-[#717171] text-lg">Loading properties...</p>
+        <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
+        <p className="text-[#717171] text-lg" aria-live="polite">Loading properties...</p>
       </div>
     </div>
   );
@@ -197,7 +201,11 @@ function PropertyGrid({
   isLoadingCounts?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      role="list"
+      aria-label="Select a property"
+    >
       {properties.map((property) => (
         <PropertyCard
           key={property.id}

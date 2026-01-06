@@ -75,10 +75,14 @@ function StatCard({ config, value }: StatCardProps) {
   const Icon = config.icon;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4">
+    <div
+      className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4"
+      role="group"
+      aria-label={`${config.label}: ${value}`}
+    >
       {/* Icon Container */}
       <div className={`p-3 rounded-xl ${config.iconBgColor}`}>
-        <Icon className={`w-6 h-6 ${config.iconColor}`} />
+        <Icon className={`w-6 h-6 ${config.iconColor}`} aria-hidden="true" />
       </div>
 
       {/* Value and Label */}
