@@ -5813,3 +5813,67 @@ Well-documented code reduces onboarding friction for new team members, decreases
 - [ ] Usage examples in README are tested to ensure they compile and execute without errors
 - [ ] Documentation is reviewed by at least one developer unfamiliar with the code to verify clarity and completeness
 
+---
+
+## REQ-119: Remove Account References from Layout Component
+
+**Date**: 2026-01-06 (Current Session)
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+The layout component contains account-related references that violate PRD requirements and must be removed to ensure compliance with the product specification.
+
+### Current Behavior
+Account-related UI elements, navigation items, or references appear in the layout component, creating functionality or visual elements that conflict with the approved product requirements document.
+
+### Expected Behavior
+The layout component displays only PRD-compliant elements with no account-related references, navigation items, or UI components visible to users.
+
+### User Impact
+Users currently see account-related interface elements that should not be present according to product specifications, potentially creating confusion about available functionality or access patterns.
+
+### Business Value
+Ensuring strict PRD compliance maintains product vision alignment and prevents users from encountering incomplete or unintended features that could negatively affect user experience or create support burden.
+
+### Acceptance Criteria
+- [ ] All account-related references are identified and catalogued from the layout component
+- [ ] Account-related UI elements are removed from the visual interface
+- [ ] Account-related navigation items are removed from menus and navigation structures
+- [ ] Layout renders successfully without account references on all supported viewport sizes
+- [ ] No console errors or warnings appear related to removed account functionality
+- [ ] Visual regression testing confirms layout appearance matches PRD specifications
+
+
+---
+
+## REQ-120: Remove Account References from Dashboard Page
+
+**Date**: 2026-01-06 16:45
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+The dashboard page displays account-related functionality or references that violate PRD requirements and must be removed to ensure full compliance with product specifications.
+
+### Current Behavior
+The dashboard page contains account-related UI elements, data displays, navigation items, or functional components that are not aligned with the approved product requirements document.
+
+### Expected Behavior
+The dashboard page operates without any account-related functionality, displaying only PRD-compliant features and data visualizations that align with the approved product vision.
+
+### User Impact
+Users accessing the dashboard currently see account-related elements that should not be present, which may create confusion about system capabilities, access patterns, or expected workflows.
+
+### Business Value
+Enforcing strict PRD compliance on the dashboard ensures the product vision is properly implemented and prevents users from encountering incomplete or unauthorized features that could undermine user experience quality or create unnecessary support inquiries.
+
+### Acceptance Criteria
+- [ ] All account-related references are identified and documented from the dashboard page
+- [ ] Account-related UI components are removed from the dashboard interface
+- [ ] Account-related data queries or API calls are removed from dashboard logic
+- [ ] Dashboard renders successfully without account references across all supported screen sizes
+- [ ] No console errors or warnings appear related to removed account functionality
+- [ ] Dashboard functionality is validated to ensure no regressions in PRD-compliant features
+- [ ] Visual testing confirms dashboard appearance matches PRD specifications without account elements
+

@@ -11,13 +11,12 @@
  */
 
 import { useRouter } from 'next/navigation';
-import { useAuth, useAccountContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { PlusCircle, Package, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function Dashboard2Page() {
   const router = useRouter();
   const { user } = useAuth();
-  const { currentAccount } = useAccountContext();
 
   const firstName = user?.email?.split('@')[0] || 'there';
 
@@ -26,11 +25,7 @@ export default function Dashboard2Page() {
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
-        <p className="text-blue-100 text-lg">
-          {currentAccount
-            ? `Managing items for ${currentAccount.name}`
-            : 'Create and manage your QR code items'}
-        </p>
+        <p className="text-[#717171] text-lg">Create and manage your QR code items</p>
       </div>
 
       {/* Quick Actions */}

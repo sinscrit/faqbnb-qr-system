@@ -3,8 +3,8 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-05T02:27:55.750446",
-  "updated_at": "2026-01-05T15:54:09.607020",
-  "status": "running",
+  "updated_at": "2026-01-05T22:04:10.979425",
+  "status": "completed",
   "current_stage": "request",
   "current_task_index": 24,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-093-Item-Creation-Workflow.md",
@@ -521,18 +521,21 @@
       "title": "Documentation",
       "description": "[ ] Update barrel exports documentation\n[ ] Add JSDoc comments to all public APIs\n[ ] Create usage examples in README",
       "raw_match": "#### Task 8.3: Documentation [",
-      "status": "pending",
-      "request_id": "REQ-117",
+      "status": "completed",
+      "request_id": "REQ-118",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-05T17:12:36.337150",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-117",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-117-documentation-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-117-documentation-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-118",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-118-documentation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-118-documentation-detailed.md",
+        "verification": true
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "implementation_completed": true,
+      "testcheck_completed": true
     }
   ],
   "stages": {
@@ -555,8 +558,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 24,
-    "last_request_id": "REQ-117",
+    "total_requests_generated": 1,
+    "last_request_id": "REQ-118",
     "first_request_id": "REQ-093",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-item-creation-workflow.yaml"
   },
@@ -570,5 +573,827 @@
         "notes": "Successfully connected to Chrome with CDP on port 9223. Browser snapshot captured showing new tab page."
       }
     }
+  },
+  "verification": {
+    "completed_at": "2026-01-05T17:12:36.337047",
+    "status": "completed",
+    "tasks_verified": 0,
+    "discrepancies": [],
+    "test_harness_url": "/test/item-creation-workflow",
+    "test_harness_path": "src/app/test/item-creation-workflow/page.tsx"
+  },
+  "testcheck_completed": true,
+  "usecases_completed": true,
+  "testcheck_completed_at": "2026-01-05T22:04:10.933756",
+  "usecases_completed_at": "2026-01-05T21:08:30.980100",
+  "usecases": {
+    "generated_at": "2026-01-05T21:30:00Z",
+    "count": 14,
+    "categories": {
+      "happy-path": 5,
+      "error-handling": 4,
+      "edge-case": 3,
+      "integration": 2
+    },
+    "items": [
+      {
+        "id": "UC-HP-001",
+        "title": "Complete Video Item Creation Flow",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User creates a new item with video content from start to finish, representing the primary use case for the workflow",
+        "preconditions": [
+          "User is logged in",
+          "Camera permissions granted",
+          "Property selected"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select 'Kitchen' room from the room grid",
+            "component": "RoomSelectionStep",
+            "expectedResult": "Kitchen room card shows selected state, navigation enabled"
+          },
+          {
+            "step": 2,
+            "action": "Select 'Appliance' item type",
+            "component": "ItemTypeStep",
+            "expectedResult": "Appliance card selected, proceeds to specific item step"
+          },
+          {
+            "step": 3,
+            "action": "Choose 'Coffee Machine' from suggestions or enter custom name",
+            "component": "SpecificItemStep",
+            "expectedResult": "Item name auto-generated as 'Kitchen - Coffee Machine'"
+          },
+          {
+            "step": 4,
+            "action": "Select 'Create Now' content source option",
+            "component": "ContentSourceStep",
+            "expectedResult": "Content source set, proceeds to content type selection"
+          },
+          {
+            "step": 5,
+            "action": "Select 'Record Video' content type",
+            "component": "ContentTypeStep",
+            "expectedResult": "Camera interface activates for video recording"
+          },
+          {
+            "step": 6,
+            "action": "Record 10-second instructional video",
+            "component": "ContentCreationStep",
+            "expectedResult": "Video captured, thumbnail generated, proceeds to preview"
+          },
+          {
+            "step": 7,
+            "action": "Review preview and click 'Save Item'",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved successfully, success toast displayed"
+          },
+          {
+            "step": 8,
+            "action": "Select 'I'm Done' at next action prompt",
+            "component": "NextActionStep",
+            "expectedResult": "Proceeds to session summary"
+          },
+          {
+            "step": 9,
+            "action": "Review session summary with created item",
+            "component": "SessionSummaryStep",
+            "expectedResult": "Item listed with thumbnail and QR code"
+          }
+        ],
+        "expectedOutcome": "Item saved with video content, QR code generated and visible in session summary",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep",
+          "NextActionStep",
+          "SessionSummaryStep"
+        ]
+      },
+      {
+        "id": "UC-HP-002",
+        "title": "Create Item with Uploaded Photo",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User uploads an existing photo for an item instead of creating new content",
+        "preconditions": [
+          "User is logged in",
+          "Has photo file ready on device"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select 'Laundry' room",
+            "component": "RoomSelectionStep",
+            "expectedResult": "Laundry room selected"
+          },
+          {
+            "step": 2,
+            "action": "Select 'Appliance' type",
+            "component": "ItemTypeStep",
+            "expectedResult": "Type selected"
+          },
+          {
+            "step": 3,
+            "action": "Choose 'Washer' from suggestions",
+            "component": "SpecificItemStep",
+            "expectedResult": "Item name set to 'Laundry - Washer'"
+          },
+          {
+            "step": 4,
+            "action": "Select 'I have content' option",
+            "component": "ContentSourceStep",
+            "expectedResult": "Upload options displayed"
+          },
+          {
+            "step": 5,
+            "action": "Select 'Upload Photo' content type",
+            "component": "ContentTypeStep",
+            "expectedResult": "File picker opens"
+          },
+          {
+            "step": 6,
+            "action": "Select photo file from device",
+            "component": "ContentCreationStep",
+            "expectedResult": "Photo uploaded and preview displayed"
+          },
+          {
+            "step": 7,
+            "action": "Save item",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved with photo content"
+          }
+        ],
+        "expectedOutcome": "Item created successfully with uploaded photo content",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep"
+        ]
+      },
+      {
+        "id": "UC-HP-003",
+        "title": "Create Item with URL Content",
+        "category": "happy-path",
+        "priority": "P1",
+        "description": "User creates an item by pasting a URL (e.g., YouTube instruction video or manufacturer manual)",
+        "preconditions": [
+          "User is logged in",
+          "Has URL copied to clipboard"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select 'Living Room' room",
+            "component": "RoomSelectionStep",
+            "expectedResult": "Room selected"
+          },
+          {
+            "step": 2,
+            "action": "Select 'Room Item' type",
+            "component": "ItemTypeStep",
+            "expectedResult": "Type selected"
+          },
+          {
+            "step": 3,
+            "action": "Choose 'TV/Entertainment Center'",
+            "component": "SpecificItemStep",
+            "expectedResult": "Item name set"
+          },
+          {
+            "step": 4,
+            "action": "Select 'I have content'",
+            "component": "ContentSourceStep",
+            "expectedResult": "Upload options displayed"
+          },
+          {
+            "step": 5,
+            "action": "Select 'Paste URL'",
+            "component": "ContentTypeStep",
+            "expectedResult": "URL input displayed"
+          },
+          {
+            "step": 6,
+            "action": "Paste YouTube setup video URL",
+            "component": "ContentCreationStep",
+            "expectedResult": "URL preview fetched with title and thumbnail"
+          },
+          {
+            "step": 7,
+            "action": "Save item",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved with URL content"
+          }
+        ],
+        "expectedOutcome": "Item created with URL content, Open Graph preview displayed",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep"
+        ]
+      },
+      {
+        "id": "UC-HP-004",
+        "title": "Create Text-Only Item for General Info",
+        "category": "happy-path",
+        "priority": "P1",
+        "description": "User creates a general information item with text instructions (e.g., WiFi password, house rules)",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select 'General' room",
+            "component": "RoomSelectionStep",
+            "expectedResult": "General room selected, item type step may be skipped"
+          },
+          {
+            "step": 2,
+            "action": "Select 'General Info' type if prompted",
+            "component": "ItemTypeStep",
+            "expectedResult": "Type selected or auto-selected"
+          },
+          {
+            "step": 3,
+            "action": "Enter 'WiFi Password' as item name",
+            "component": "SpecificItemStep",
+            "expectedResult": "Custom item name accepted"
+          },
+          {
+            "step": 4,
+            "action": "Select 'Create Now'",
+            "component": "ContentSourceStep",
+            "expectedResult": "Create options displayed"
+          },
+          {
+            "step": 5,
+            "action": "Select 'Write Text'",
+            "component": "ContentTypeStep",
+            "expectedResult": "Text editor displayed"
+          },
+          {
+            "step": 6,
+            "action": "Enter WiFi network name and password",
+            "component": "ContentCreationStep",
+            "expectedResult": "Text content captured"
+          },
+          {
+            "step": 7,
+            "action": "Save item",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved with text content"
+          }
+        ],
+        "expectedOutcome": "General info item created with text content",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep"
+        ]
+      },
+      {
+        "id": "UC-HP-005",
+        "title": "Create Multiple Items in Single Session",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User creates multiple items in sequence using 'Tag New Item' option",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Complete first item creation (Kitchen - Stove)",
+            "component": "Multiple Steps",
+            "expectedResult": "First item saved"
+          },
+          {
+            "step": 2,
+            "action": "At next action, select 'Tag New Item'",
+            "component": "NextActionStep",
+            "expectedResult": "Returns to room selection step"
+          },
+          {
+            "step": 3,
+            "action": "Create second item (Bathroom - Shower)",
+            "component": "Multiple Steps",
+            "expectedResult": "Second item saved"
+          },
+          {
+            "step": 4,
+            "action": "At next action, select 'Tag New Item'",
+            "component": "NextActionStep",
+            "expectedResult": "Returns to room selection"
+          },
+          {
+            "step": 5,
+            "action": "Create third item (Bedroom - Thermostat)",
+            "component": "Multiple Steps",
+            "expectedResult": "Third item saved"
+          },
+          {
+            "step": 6,
+            "action": "At next action, select 'I'm Done'",
+            "component": "NextActionStep",
+            "expectedResult": "Proceeds to session summary"
+          },
+          {
+            "step": 7,
+            "action": "Review all 3 items in summary",
+            "component": "SessionSummaryStep",
+            "expectedResult": "All 3 items displayed with thumbnails"
+          }
+        ],
+        "expectedOutcome": "Session summary shows all 3 created items with QR codes ready for printing",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep",
+          "NextActionStep",
+          "SessionSummaryStep"
+        ]
+      },
+      {
+        "id": "UC-ERR-001",
+        "title": "Handle Camera Permission Denied",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "System gracefully handles when user denies camera permission for video recording",
+        "preconditions": [
+          "User is logged in",
+          "Camera permission NOT granted"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to content creation with 'Record Video' selected",
+            "component": "ContentTypeStep",
+            "expectedResult": "Camera permission requested"
+          },
+          {
+            "step": 2,
+            "action": "Deny camera permission in browser prompt",
+            "component": "ContentCreationStep",
+            "expectedResult": "CameraPermissionFallback component displayed"
+          },
+          {
+            "step": 3,
+            "action": "View fallback UI options",
+            "component": "ContentCreationStep",
+            "expectedResult": "Options to retry, upload instead, or go back shown"
+          },
+          {
+            "step": 4,
+            "action": "Select 'Upload Video Instead' option",
+            "component": "ContentCreationStep",
+            "expectedResult": "File picker opens for video upload"
+          }
+        ],
+        "expectedOutcome": "User can still complete item creation by uploading video instead of recording",
+        "componentsInvolved": [
+          "ContentTypeStep",
+          "ContentCreationStep"
+        ]
+      },
+      {
+        "id": "UC-ERR-002",
+        "title": "Handle Network Error During URL Preview",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "System handles network failure when fetching URL metadata",
+        "preconditions": [
+          "User is logged in",
+          "Network connection unstable"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select 'Paste URL' content type",
+            "component": "ContentTypeStep",
+            "expectedResult": "URL input displayed"
+          },
+          {
+            "step": 2,
+            "action": "Paste a valid URL",
+            "component": "ContentCreationStep",
+            "expectedResult": "Loading state shown while fetching preview"
+          },
+          {
+            "step": 3,
+            "action": "Network request fails",
+            "component": "ContentCreationStep",
+            "expectedResult": "Error state displayed with retry option"
+          },
+          {
+            "step": 4,
+            "action": "Click 'Retry' button",
+            "component": "ContentCreationStep",
+            "expectedResult": "Preview fetch retried"
+          },
+          {
+            "step": 5,
+            "action": "Or select 'Continue Without Preview'",
+            "component": "ContentCreationStep",
+            "expectedResult": "URL saved without preview, warning displayed"
+          }
+        ],
+        "expectedOutcome": "User can proceed with URL content despite preview fetch failure",
+        "componentsInvolved": [
+          "ContentTypeStep",
+          "ContentCreationStep"
+        ]
+      },
+      {
+        "id": "UC-ERR-003",
+        "title": "Handle Empty Session Exit",
+        "category": "error-handling",
+        "priority": "P2",
+        "description": "Confirm dialog shown when user tries to exit without creating any items",
+        "preconditions": [
+          "User is logged in",
+          "No items created yet"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Start workflow and progress to any step",
+            "component": "WorkflowHeader",
+            "expectedResult": "Workflow in progress"
+          },
+          {
+            "step": 2,
+            "action": "Click exit/close button in header",
+            "component": "WorkflowHeader",
+            "expectedResult": "ConfirmExitDialog displayed"
+          },
+          {
+            "step": 3,
+            "action": "Dialog shows 'No items created yet' message",
+            "component": "ConfirmExitDialog",
+            "expectedResult": "Warning about losing progress shown"
+          },
+          {
+            "step": 4,
+            "action": "Click 'Continue Editing' to stay",
+            "component": "ConfirmExitDialog",
+            "expectedResult": "Dialog closes, user remains in workflow"
+          },
+          {
+            "step": 5,
+            "action": "Or click 'Exit Anyway' to leave",
+            "component": "ConfirmExitDialog",
+            "expectedResult": "Session discarded, user exits workflow"
+          }
+        ],
+        "expectedOutcome": "User is warned before accidentally losing an empty session",
+        "componentsInvolved": [
+          "WorkflowHeader",
+          "ConfirmExitDialog"
+        ]
+      },
+      {
+        "id": "UC-ERR-004",
+        "title": "Handle Duplicate Item Name",
+        "category": "error-handling",
+        "priority": "P2",
+        "description": "System handles attempt to create item with duplicate name",
+        "preconditions": [
+          "User is logged in",
+          "Item 'Kitchen - Stove' already exists"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select Kitchen room and Appliance type",
+            "component": "ItemTypeStep",
+            "expectedResult": "Navigates to specific item selection"
+          },
+          {
+            "step": 2,
+            "action": "Select 'Stove/Oven' from suggestions",
+            "component": "SpecificItemStep",
+            "expectedResult": "Name 'Kitchen - Stove' auto-generated"
+          },
+          {
+            "step": 3,
+            "action": "Previously created item shown grayed out",
+            "component": "SpecificItemStep",
+            "expectedResult": "Visual indicator that item exists"
+          },
+          {
+            "step": 4,
+            "action": "System suggests unique name 'Kitchen - Stove (2)'",
+            "component": "SpecificItemStep",
+            "expectedResult": "Duplicate name handled automatically"
+          },
+          {
+            "step": 5,
+            "action": "User can edit name manually if desired",
+            "component": "ItemNameEditor",
+            "expectedResult": "Custom unique name accepted"
+          }
+        ],
+        "expectedOutcome": "Duplicate names are automatically handled with incremental suffix",
+        "componentsInvolved": [
+          "SpecificItemStep",
+          "ItemNameEditor"
+        ]
+      },
+      {
+        "id": "UC-EDGE-001",
+        "title": "Session Recovery After Browser Refresh",
+        "category": "edge-case",
+        "priority": "P0",
+        "description": "Session state is preserved and recoverable after accidental browser refresh",
+        "preconditions": [
+          "User is logged in",
+          "Active session in progress"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Start workflow and complete 3 steps (room, type, item)",
+            "component": "Multiple Steps",
+            "expectedResult": "Session state saved to localStorage"
+          },
+          {
+            "step": 2,
+            "action": "Refresh browser (F5 or Cmd+R)",
+            "component": "Browser",
+            "expectedResult": "Page reloads"
+          },
+          {
+            "step": 3,
+            "action": "Return to workflow page",
+            "component": "ItemCreationWorkflow",
+            "expectedResult": "Session recovery banner displayed"
+          },
+          {
+            "step": 4,
+            "action": "Click 'Resume Session' in banner",
+            "component": "SessionRecoveryBanner",
+            "expectedResult": "Workflow restored to previous step"
+          },
+          {
+            "step": 5,
+            "action": "Verify previous selections preserved",
+            "component": "Multiple Steps",
+            "expectedResult": "Room, type, and item selections intact"
+          }
+        ],
+        "expectedOutcome": "User can continue from where they left off without data loss",
+        "componentsInvolved": [
+          "ItemCreationWorkflow",
+          "useSessionPersistence",
+          "SessionRecoveryBanner"
+        ]
+      },
+      {
+        "id": "UC-EDGE-002",
+        "title": "Long Item Name Truncation",
+        "category": "edge-case",
+        "priority": "P2",
+        "description": "System handles very long item names with proper truncation and tooltip",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Select room and item type",
+            "component": "Multiple Steps",
+            "expectedResult": "Navigates to specific item"
+          },
+          {
+            "step": 2,
+            "action": "Enter very long custom item name (100+ characters)",
+            "component": "ItemNameEditor",
+            "expectedResult": "Name accepted"
+          },
+          {
+            "step": 3,
+            "action": "View item in preview step",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Name truncated with ellipsis (...)"
+          },
+          {
+            "step": 4,
+            "action": "Hover over truncated name",
+            "component": "TruncatedText",
+            "expectedResult": "Full name shown in tooltip"
+          },
+          {
+            "step": 5,
+            "action": "Save item and view in session summary",
+            "component": "SessionSummaryStep",
+            "expectedResult": "Consistent truncation in SessionItemCard"
+          }
+        ],
+        "expectedOutcome": "Long names are truncated consistently with full text accessible via tooltip",
+        "componentsInvolved": [
+          "ItemNameEditor",
+          "PreviewSaveStep",
+          "SessionSummaryStep",
+          "TruncatedText"
+        ]
+      },
+      {
+        "id": "UC-EDGE-003",
+        "title": "Custom 'Other' Room Selection",
+        "category": "edge-case",
+        "priority": "P2",
+        "description": "User selects 'Other' room and enters custom room name",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Click 'Other' room option in grid",
+            "component": "RoomSelectionStep",
+            "expectedResult": "Custom input field appears"
+          },
+          {
+            "step": 2,
+            "action": "Enter custom room name 'Wine Cellar'",
+            "component": "RoomSelectionStep",
+            "expectedResult": "Custom name validated"
+          },
+          {
+            "step": 3,
+            "action": "Continue with item creation",
+            "component": "ItemTypeStep",
+            "expectedResult": "Suggestions may be generic or empty"
+          },
+          {
+            "step": 4,
+            "action": "Enter custom item name",
+            "component": "SpecificItemStep",
+            "expectedResult": "Name auto-generates as 'Wine Cellar - [item]'"
+          },
+          {
+            "step": 5,
+            "action": "Complete item creation",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved with custom room"
+          }
+        ],
+        "expectedOutcome": "Custom room name used in item naming and categorization",
+        "componentsInvolved": [
+          "RoomSelectionStep",
+          "ItemTypeStep",
+          "SpecificItemStep"
+        ]
+      },
+      {
+        "id": "UC-INT-001",
+        "title": "Multi-Content Item with Video and PDF",
+        "category": "integration",
+        "priority": "P1",
+        "description": "User creates an item with multiple content pieces using 'Add More to Item'",
+        "preconditions": [
+          "User is logged in",
+          "Camera permissions granted"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Create item with video content",
+            "component": "Multiple Steps",
+            "expectedResult": "Video captured for item"
+          },
+          {
+            "step": 2,
+            "action": "At next action, select 'Add More to This Item'",
+            "component": "NextActionStep",
+            "expectedResult": "Returns to content source selection"
+          },
+          {
+            "step": 3,
+            "action": "Select 'I have content' \u2192 'Upload PDF'",
+            "component": "ContentTypeStep",
+            "expectedResult": "File picker opens"
+          },
+          {
+            "step": 4,
+            "action": "Upload manufacturer manual PDF",
+            "component": "ContentCreationStep",
+            "expectedResult": "PDF added to content pieces"
+          },
+          {
+            "step": 5,
+            "action": "View preview with both content pieces",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Both video and PDF displayed"
+          },
+          {
+            "step": 6,
+            "action": "Reorder content pieces via drag-and-drop",
+            "component": "ContentPieceCard",
+            "expectedResult": "Order updated successfully"
+          },
+          {
+            "step": 7,
+            "action": "Save item",
+            "component": "PreviewSaveStep",
+            "expectedResult": "Item saved with multiple content pieces"
+          }
+        ],
+        "expectedOutcome": "Item contains both video and PDF content in user-specified order",
+        "componentsInvolved": [
+          "NextActionStep",
+          "ContentSourceStep",
+          "ContentTypeStep",
+          "ContentCreationStep",
+          "PreviewSaveStep",
+          "ContentPieceCard"
+        ]
+      },
+      {
+        "id": "UC-INT-002",
+        "title": "Generate and Print QR Codes PDF",
+        "category": "integration",
+        "priority": "P0",
+        "description": "User generates a PDF with QR codes for all session items and prints",
+        "preconditions": [
+          "User is logged in",
+          "Multiple items created in session"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Complete session with 3+ items created",
+            "component": "SessionSummaryStep",
+            "expectedResult": "Session summary displays all items"
+          },
+          {
+            "step": 2,
+            "action": "Open Print Options panel",
+            "component": "PrintOptionsPanel",
+            "expectedResult": "Print scope options displayed"
+          },
+          {
+            "step": 3,
+            "action": "Select 'All items' print scope",
+            "component": "PrintOptionsPanel",
+            "expectedResult": "All items selected for printing"
+          },
+          {
+            "step": 4,
+            "action": "Click 'Generate PDF' button",
+            "component": "PrintOptionsPanel",
+            "expectedResult": "QR code generation progress shown"
+          },
+          {
+            "step": 5,
+            "action": "QR codes generated for each item",
+            "component": "useQRCodeGeneration",
+            "expectedResult": "All QR codes ready"
+          },
+          {
+            "step": 6,
+            "action": "PDF generated with QR codes and labels",
+            "component": "PDF Generation",
+            "expectedResult": "PDF ready for download"
+          },
+          {
+            "step": 7,
+            "action": "Click 'Print Directly' option",
+            "component": "PrintOptionsPanel",
+            "expectedResult": "Print dialog opens"
+          }
+        ],
+        "expectedOutcome": "Printable PDF with QR codes for all session items, with item names as labels",
+        "componentsInvolved": [
+          "SessionSummaryStep",
+          "PrintOptionsPanel",
+          "useQRCodeGeneration",
+          "PDF Generation"
+        ]
+      }
+    ]
   }
 }

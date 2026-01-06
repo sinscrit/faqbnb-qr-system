@@ -943,9 +943,12 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     # Get pipeline and state file paths for testcheck stage
     pipeline_yaml_path = ''
     state_file_path = ''
+    total_tasks = 0
     if config:
         pipeline_yaml_path = config.get('_config_path', '')
         state_file_path = str(config.get('outputs', {}).get('_state_resolved', ''))
+    if state:
+        total_tasks = len(state.get('tasks', []))
 
     return template.format(
         task_id=task.id,
@@ -966,6 +969,7 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
         project_context=project_context,
         pipeline_yaml_path=pipeline_yaml_path,
         state_file_path=state_file_path,
+        total_tasks=total_tasks,
     )
 
 
@@ -1665,6 +1669,20 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
                 if stage_id == 'testcheck':
                     # Display test harness URLs
                     display_test_harness_urls(state, config)
+                    # Generate pipeline test harness and update master index
+                    generate_test_harnesses_after_testcheck(state, config)
+                elif stage_id == 'usecases':
+                    # Regenerate test harness to include use cases from state
+                    print(f"\n  Regenerating test harness with use cases...")
+                    # Reload state to get use cases added by 06b agent
+                    state_path = config.get('outputs', {}).get('_state_resolved')
+                    if state_path and state_path.exists():
+                        with open(state_path, 'r') as f:
+                            updated_state = json.load(f)
+                        state['usecases'] = updated_state.get('usecases', {})
+                    generate_pipeline_test_harness(state, config)
+                    usecase_count = len(state.get('usecases', {}).get('items', []))
+                    print(f"    Included {usecase_count} use cases in test harness")
             else:
                 logging.error(f"Agent {agent_name} failed for pipeline stage {stage_id}: {result.stderr[:200]}")
                 print(f"\n  ✗ Pipeline stage '{stage_id}' failed ({stage_elapsed_str})")
@@ -1708,6 +1726,7 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
 def display_test_harness_urls(state: dict, config: dict):
     """Display test harness URLs after testcheck stage completion."""
     import glob
+    import os
 
     verification = state.get('verification', {})
     test_page_url = verification.get('summary', {}).get('test_page_url', '')
@@ -1719,13 +1738,18 @@ def display_test_harness_urls(state: dict, config: dict):
     if test_page_url:
         print(f"    Local:    http://localhost:3000{test_page_url}")
     else:
-        # Try to find test harness files
-        test_files = glob.glob('src/app/test/*/page.tsx')
+        # Check for master test index page first
+        master_index = 'src/app/test/page.tsx'
+        if os.path.exists(master_index):
+            print(f"    Index:    http://localhost:3000/test")
+
+        # Then find individual test harness files
+        test_files = sorted(glob.glob('src/app/test/*/page.tsx'))
         if test_files:
             for f in test_files:
                 route = f.replace('src/app', '').replace('/page.tsx', '')
                 print(f"    Local:    http://localhost:3000{route}")
-        else:
+        elif not os.path.exists(master_index):
             print(f"    Local:    No test harness pages found")
 
     # Deployed URL
@@ -1744,6 +1768,1081 @@ def display_test_harness_urls(state: dict, config: dict):
     build_status = verification.get('build_status', 'unknown')
     if build_status:
         print(f"    Build:    {build_status}")
+
+
+def get_pipeline_name_from_config(config: dict, state: dict = None) -> str:
+    """Extract pipeline name from config file path for test harness URL.
+
+    Example: pipeline-item-creation-workflow.yaml -> item-creation-workflow
+    """
+    config_path = config.get('_config_path', '')
+
+    # Fallback to state metadata if config doesn't have the path
+    if not config_path and state:
+        config_path = state.get('metadata', {}).get('config_file', '')
+
+    if not config_path:
+        return ''
+
+    filename = os.path.basename(str(config_path))
+    # Remove 'pipeline-' prefix and '.yaml' suffix
+    name = filename.replace('pipeline-', '').replace('.yaml', '').replace('.yml', '')
+    return name
+
+
+def extract_prd_context(config: dict) -> dict:
+    """Extract key context from the PRD for test harness LLM instructions.
+
+    Looks for the PRD file in docs/prd/ matching the pipeline name.
+    Extracts: vision, user outcome, success metrics, scope.
+
+    Returns a dict with extracted context or defaults.
+    """
+    import re
+    import glob
+
+    prd_context = {
+        'vision': '',
+        'user_outcome': '',
+        'success_metrics': [],
+        'scope_in': [],
+        'scope_out': [],
+    }
+
+    # Try to find PRD file - look in source config or docs/prd/
+    prd_path = None
+
+    # Check if source.path points to a PRD
+    source_path = config.get('source', {}).get('path', '')
+    if source_path and os.path.exists(source_path):
+        # The source is usually the implementation plan, try to find associated PRD
+        plan_basename = os.path.basename(source_path)
+        # Look for PRD_*.md in docs/prd/
+        for prd_file in glob.glob('docs/prd/PRD_*.md'):
+            prd_path = prd_file
+            break
+
+    if not prd_path:
+        # Try docs/prd/PRD*.md
+        for prd_file in glob.glob('docs/prd/PRD*.md'):
+            prd_path = prd_file
+            break
+
+    if not prd_path or not os.path.exists(prd_path):
+        return prd_context
+
+    try:
+        with open(prd_path, 'r') as f:
+            content = f.read()
+
+        # Extract Product Vision section
+        vision_match = re.search(r'## Product Vision\s*\n(.*?)(?=\n##|\n---|\Z)', content, re.DOTALL)
+        if vision_match:
+            vision_text = vision_match.group(1).strip()
+            # Get first paragraph (vision statement)
+            lines = [l.strip() for l in vision_text.split('\n') if l.strip() and not l.startswith('#')]
+            if lines:
+                prd_context['vision'] = lines[0][:300]  # Limit length
+
+        # Extract User Outcome quote
+        outcome_match = re.search(r'### User Outcome\s*\n>\s*"([^"]+)"', content)
+        if outcome_match:
+            prd_context['user_outcome'] = outcome_match.group(1)[:200]
+
+        # Extract Business Outcomes metrics
+        metrics_section = re.search(r'### Business Outcomes.*?\|\s*Metric\s*\|.*?\n(.*?)(?=\n###|\n##|\Z)', content, re.DOTALL)
+        if metrics_section:
+            metrics_text = metrics_section.group(1)
+            for line in metrics_text.split('\n'):
+                if '|' in line and not line.strip().startswith('|--'):
+                    parts = [p.strip() for p in line.split('|') if p.strip()]
+                    if len(parts) >= 2 and parts[0] not in ['Metric', '------']:
+                        metric = f"{parts[0]}: {parts[1]}"
+                        prd_context['success_metrics'].append(metric[:100])
+
+        # Extract In Scope items
+        scope_in_match = re.search(r'### In Scope.*?\n(.*?)(?=\n###|\n##|\Z)', content, re.DOTALL)
+        if scope_in_match:
+            scope_text = scope_in_match.group(1)
+            for line in scope_text.split('\n'):
+                line = line.strip()
+                if line.startswith('- '):
+                    prd_context['scope_in'].append(line[2:][:80])
+
+        # Extract Out of Scope items
+        scope_out_match = re.search(r'### Out of Scope.*?\n(.*?)(?=\n###|\n##|\Z)', content, re.DOTALL)
+        if scope_out_match:
+            scope_text = scope_out_match.group(1)
+            for line in scope_text.split('\n'):
+                line = line.strip()
+                if line.startswith('- '):
+                    prd_context['scope_out'].append(line[2:][:80])
+
+    except Exception as e:
+        print(f"    Warning: Could not extract PRD context: {e}")
+
+    return prd_context
+
+
+def collect_pipeline_test_info(state: dict, config: dict) -> list:
+    """Collect test information for all tasks in a pipeline.
+
+    Returns list of dicts with test page info:
+    - request_id: REQ-XXX
+    - title: Task title
+    - test_path: /test/component-name (if exists)
+    - description: From detailed spec or task description
+    """
+    import glob
+    import re
+
+    tests = []
+    tasks = state.get('tasks', [])
+
+    # Get pipeline name to exclude self-references
+    pipeline_name = get_pipeline_name_from_config(config, state)
+
+    # Build a map of existing test pages (excluding the pipeline's own test harness)
+    existing_tests = {}
+    for test_file in glob.glob('src/app/test/*/page.tsx'):
+        route = test_file.replace('src/app', '').replace('/page.tsx', '')
+        test_name = os.path.basename(os.path.dirname(test_file))
+        # Exclude the pipeline's own test harness page to prevent self-reference
+        if test_name != pipeline_name:
+            existing_tests[test_name] = route
+
+    def title_to_slug(title: str) -> str:
+        """Convert a task title to a potential test page slug."""
+        # Remove common suffixes
+        title = re.sub(r'\s+(Step|Component|Panel|Modal|Editor|Viewer)$', '', title, flags=re.IGNORECASE)
+        # Convert to lowercase and replace spaces/special chars with hyphens
+        slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        return slug
+
+    def find_matching_test(title: str) -> str:
+        """Try to find a test page that matches the task title."""
+        # Direct slug match
+        slug = title_to_slug(title)
+        if slug in existing_tests:
+            return existing_tests[slug]
+
+        # Try with common suffixes
+        for suffix in ['-step', '-panel', '-modal', '-editor', '-viewer', '']:
+            test_slug = slug + suffix
+            if test_slug in existing_tests:
+                return existing_tests[test_slug]
+
+        # Try partial matching - find test pages that contain key words from title
+        title_words = set(slug.split('-'))
+        best_match = None
+        best_score = 0
+        for test_name, route in existing_tests.items():
+            test_words = set(test_name.split('-'))
+            # Count matching words
+            common = title_words & test_words
+            if len(common) >= 2:  # At least 2 words in common
+                score = len(common)
+                if score > best_score:
+                    best_score = score
+                    best_match = route
+
+        return best_match
+
+    for task in tasks:
+        request_id = task.get('request_id', '')
+        title = task.get('title', '')
+
+        # Try to find a matching test page
+        test_path = None
+        description = title
+
+        # Method 1: Check if there's a details file with test page info
+        details_file = task.get('files', {}).get('details', '')
+        if details_file and os.path.exists(details_file):
+            try:
+                with open(details_file, 'r') as f:
+                    content = f.read()
+                    # Look for test page references in the detailed spec
+                    # Find all test page references and pick the first one that's not the pipeline itself
+                    test_matches = re.findall(r'/test/([a-z0-9-]+)', content)
+                    for test_name in test_matches:
+                        # Skip self-references to the pipeline's test harness
+                        if test_name != pipeline_name and test_name in existing_tests:
+                            test_path = existing_tests[test_name]
+                            break
+            except Exception:
+                pass
+
+        # Method 2: Try to match task title to existing test pages
+        if not test_path:
+            test_path = find_matching_test(title)
+
+        tests.append({
+            'request_id': request_id,
+            'task_id': task.get('id', ''),
+            'title': title,
+            'test_path': test_path,
+            'description': description,
+            'status': task.get('status', 'pending'),
+        })
+
+    return tests
+
+
+def generate_pipeline_test_harness(state: dict, config: dict) -> str:
+    """Generate a test harness page for the pipeline.
+
+    Creates /test/[pipeline-name]/page.tsx with LLM-friendly sequential test navigation.
+    Tests are displayed inline (not navigating away) for easy sequential execution.
+    Returns the path to the generated file.
+    """
+    from datetime import datetime
+
+    pipeline_name = get_pipeline_name_from_config(config, state)
+    if not pipeline_name:
+        print("    Warning: Could not determine pipeline name from config")
+        return ''
+
+    # Collect test info
+    tests = collect_pipeline_test_info(state, config)
+
+    # Extract PRD context for LLM instructions
+    prd_context = extract_prd_context(config)
+
+    # Filter to only completed tasks with test paths
+    tests_with_pages = [t for t in tests if t.get('test_path')]
+    all_tests = tests  # Keep all for reference
+
+    # Generate the page content
+    test_dir = f'src/app/test/{pipeline_name}'
+    test_file = f'{test_dir}/page.tsx'
+
+    # Ensure directory exists
+    os.makedirs(test_dir, exist_ok=True)
+
+    # Build test links array with proper hrefs
+    test_links = []
+    for t in tests_with_pages:
+        # Escape quotes in strings and truncate description
+        title = t["title"][:40].replace("'", "\\'")
+        desc = t["description"][:60].replace("'", "\\'")
+        if len(t["description"]) > 60:
+            desc += "..."
+        test_links.append(f'''  {{
+    href: '{t["test_path"]}',
+    title: '{t["request_id"]}: {title}',
+    description: '{desc}',
+  }},''')
+
+    # Build all tasks summary
+    task_summary = []
+    for t in all_tests:
+        status_icon = '✅' if t['status'] == 'completed' else '🔄' if t['status'] == 'processing' else '⏳'
+        has_test = '🧪' if t.get('test_path') else ''
+        task_title = t['title'][:50].replace("'", "\\'")
+        task_summary.append(f"    {{ id: '{t['task_id']}', request: '{t['request_id']}', title: '{task_title}', status: '{status_icon}', hasTest: '{has_test}' }},")
+
+    pipeline_display_name = pipeline_name.replace('-', ' ').title()
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    # Build use cases from state if available
+    usecases_data = state.get('usecases', {})
+    usecase_items = usecases_data.get('items', [])
+
+    usecase_entries = []
+    for uc in usecase_items:
+        uc_id = uc.get('id', '').replace("'", "\\'")
+        uc_title = uc.get('title', '').replace("'", "\\'")
+        uc_category = uc.get('category', 'happy-path')
+        uc_priority = uc.get('priority', 'P1')
+        uc_description = uc.get('description', '').replace("'", "\\'")[:100]
+        uc_outcome = uc.get('expectedOutcome', '').replace("'", "\\'")
+
+        # Build steps array
+        steps_entries = []
+        for step in uc.get('steps', []):
+            step_action = step.get('action', '').replace("'", "\\'")
+            step_component = step.get('component', '').replace("'", "\\'")
+            step_result = step.get('expectedResult', '').replace("'", "\\'")
+            steps_entries.append(f"      {{ step: {step.get('step', 0)}, action: '{step_action}', component: '{step_component}', expectedResult: '{step_result}' }},")
+
+        steps_str = '\n'.join(steps_entries) if steps_entries else '      // No steps defined'
+
+        usecase_entries.append(f'''  {{
+    id: '{uc_id}',
+    title: '{uc_title}',
+    category: '{uc_category}',
+    priority: '{uc_priority}',
+    description: '{uc_description}',
+    expectedOutcome: '{uc_outcome}',
+    steps: [
+{steps_str}
+    ],
+  }},''')
+
+    usecases_content = chr(10).join(usecase_entries) if usecase_entries else '  // No use cases generated yet'
+
+    # Build LLM instructions from PRD context
+    prd_vision = prd_context.get('vision', '').replace("'", "\\'").replace('\n', ' ')
+    prd_user_outcome = prd_context.get('user_outcome', '').replace("'", "\\'").replace('\n', ' ')
+    prd_metrics = prd_context.get('success_metrics', [])
+    prd_scope_in = prd_context.get('scope_in', [])
+    prd_scope_out = prd_context.get('scope_out', [])
+
+    metrics_js = ', '.join([f"'{m.replace(chr(39), chr(92)+chr(39))}'" for m in prd_metrics[:5]])
+    scope_in_js = ', '.join([f"'{s.replace(chr(39), chr(92)+chr(39))}'" for s in prd_scope_in[:6]])
+    scope_out_js = ', '.join([f"'{s.replace(chr(39), chr(92)+chr(39))}'" for s in prd_scope_out[:4]])
+
+    page_content = f'''\'use client\';
+
+/**
+ * {pipeline_display_name} - Pipeline Test Harness
+ *
+ * Auto-generated LLM-friendly test harness for the {pipeline_name} pipeline.
+ * Features:
+ * - LLM Testing Instructions with workflow guidance
+ * - Sequential test navigation with Previous/Next buttons
+ * - Component tests displayed inline via iframe (no page navigation)
+ * - Use case tests with step-by-step instructions
+ * - Pipeline reference for context (informational only)
+ *
+ * @generated {timestamp}
+ * @pipeline {pipeline_name}
+ */
+
+import Link from 'next/link';
+import {{ useState }} from 'react';
+
+type TabId = 'instructions' | 'components' | 'usecases' | 'reference';
+
+// LLM Testing Instructions - PRD Context
+const llmInstructions = {{
+  vision: '{prd_vision}',
+  userOutcome: '{prd_user_outcome}',
+  successMetrics: [{metrics_js}],
+  scopeIn: [{scope_in_js}],
+  scopeOut: [{scope_out_js}],
+  workflow: [
+    'STEP 1: Read the Instructions tab first to understand the product context and testing workflow.',
+    'STEP 2: Complete Component Tests - These verify individual UI components work correctly in isolation.',
+    'STEP 3: Complete Use Case Tests - These verify end-to-end user workflows function properly.',
+    'STEP 4: SKIP Pipeline Reference - This tab is informational only, not for testing.',
+  ],
+  componentTestGuidance: 'For each component test: (1) Click to load the test page in the iframe below, (2) Interact with the component to verify it renders and responds correctly, (3) Use Previous/Next to move sequentially through all component tests.',
+  useCaseTestGuidance: 'For each use case: (1) Select the use case from the list, (2) Follow each numbered step in order, (3) Check off steps as you complete them, (4) Verify the expected outcome matches what you observe.',
+  importantNotes: [
+    'Component Tests should be completed BEFORE Use Case Tests',
+    'Pipeline Reference tab contains implementation status only - DO NOT test it',
+    'Use Previous/Next buttons to navigate sequentially',
+    'All tests are displayed inline - no need to navigate away from this page',
+  ],
+}};
+
+interface TestLink {{
+  href: string;
+  title: string;
+  description: string;
+}}
+
+interface UseCaseStep {{
+  step: number;
+  action: string;
+  component: string;
+  expectedResult: string;
+}}
+
+interface UseCase {{
+  id: string;
+  title: string;
+  category: 'happy-path' | 'error-handling' | 'edge-case' | 'integration';
+  priority: 'P0' | 'P1' | 'P2';
+  description: string;
+  expectedOutcome: string;
+  steps: UseCaseStep[];
+}}
+
+const componentTests: TestLink[] = [
+{chr(10).join(test_links) if test_links else '  // No component tests found'}
+];
+
+const allTasks = [
+{chr(10).join(task_summary)}
+];
+
+const useCases: UseCase[] = [
+{usecases_content}
+];
+
+const categoryColors: Record<string, string> = {{
+  'happy-path': 'bg-green-100 text-green-800',
+  'error-handling': 'bg-red-100 text-red-800',
+  'edge-case': 'bg-yellow-100 text-yellow-800',
+  'integration': 'bg-purple-100 text-purple-800',
+}};
+
+const priorityColors: Record<string, string> = {{
+  'P0': 'bg-red-500 text-white',
+  'P1': 'bg-orange-400 text-white',
+  'P2': 'bg-gray-400 text-white',
+}};
+
+export default function {pipeline_name.replace('-', '_').title().replace('_', '')}TestPage() {{
+  const [activeTab, setActiveTab] = useState<TabId>('instructions');
+  const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
+  const [selectedUseCaseIndex, setSelectedUseCaseIndex] = useState<number | null>(null);
+  const [completedSteps, setCompletedSteps] = useState<Record<string, Set<number>>>({{}}); // Track completed steps per use case
+
+  const tabs = [
+    {{ id: 'instructions' as TabId, label: '📖 LLM Instructions', count: null }},
+    {{ id: 'components' as TabId, label: '🧪 Component Tests', count: componentTests.length }},
+    {{ id: 'usecases' as TabId, label: '📝 Use Case Tests', count: useCases.length }},
+    {{ id: 'reference' as TabId, label: '📋 Pipeline Reference', count: allTasks.length }},
+  ];
+
+  // Toggle step completion for a use case
+  const toggleStep = (useCaseId: string, stepNum: number) => {{
+    setCompletedSteps(prev => {{
+      const current = prev[useCaseId] || new Set<number>();
+      const next = new Set(current);
+      if (next.has(stepNum)) {{
+        next.delete(stepNum);
+      }} else {{
+        next.add(stepNum);
+      }}
+      return {{ ...prev, [useCaseId]: next }};
+    }});
+  }};
+
+  // Check if all steps in a use case are completed
+  const isUseCaseComplete = (uc: UseCase) => {{
+    const completed = completedSteps[uc.id] || new Set<number>();
+    return uc.steps.length > 0 && uc.steps.every(s => completed.has(s.step));
+  }};
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {{/* Header */}}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <Link href="/test" className="text-blue-600 hover:underline text-sm mb-2 inline-block">
+            ← Back to All Pipelines
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900">{pipeline_display_name}</h1>
+          <p className="text-xs text-gray-400">Pipeline Test Harness • Generated: {timestamp}</p>
+        </div>
+      </div>
+
+      {{/* Tab Navigation */}}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex gap-1 py-2">
+            {{tabs.map((tab) => (
+              <button
+                key={{tab.id}}
+                onClick={{() => {{
+                  setActiveTab(tab.id);
+                  setSelectedComponentIndex(null);
+                  setSelectedUseCaseIndex(null);
+                }}}}
+                className={{`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${{
+                  activeTab === tab.id
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }}`}}
+              >
+                {{tab.label}}{{tab.count !== null && ` (${{tab.count}})`}}
+              </button>
+            ))}}
+          </div>
+        </div>
+      </div>
+
+      {{/* Tab Content */}}
+      <div className="max-w-7xl mx-auto px-4 py-4">
+
+        {{/* LLM Instructions Tab */}}
+        {{activeTab === 'instructions' && (
+          <div className="space-y-4">
+            {{/* Testing Workflow */}}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h2 className="text-lg font-bold text-blue-900 mb-3">🤖 LLM Testing Workflow</h2>
+              <ol className="space-y-2">
+                {{llmInstructions.workflow.map((step, idx) => (
+                  <li key={{idx}} className="flex items-start gap-3">
+                    <span className={{`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${{
+                      idx === 0 ? 'bg-blue-600 text-white' : 'bg-blue-200 text-blue-800'
+                    }}`}}>{{idx + 1}}</span>
+                    <span className="text-blue-800">{{step}}</span>
+                  </li>
+                ))}}
+              </ol>
+            </div>
+
+            {{/* Important Notes */}}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Important Notes</h3>
+              <ul className="space-y-1">
+                {{llmInstructions.importantNotes.map((note, idx) => (
+                  <li key={{idx}} className="text-yellow-800 text-sm flex items-start gap-2">
+                    <span>•</span>
+                    <span>{{note}}</span>
+                  </li>
+                ))}}
+              </ul>
+            </div>
+
+            {{/* Product Context */}}
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-800 mb-3">📋 Product Context</h3>
+
+              {{llmInstructions.vision && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-600 mb-1">Vision</h4>
+                  <p className="text-gray-800">{{llmInstructions.vision}}</p>
+                </div>
+              )}}
+
+              {{llmInstructions.userOutcome && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-600 mb-1">Target User Outcome</h4>
+                  <p className="text-gray-700 italic">"{{llmInstructions.userOutcome}}"</p>
+                </div>
+              )}}
+
+              {{llmInstructions.successMetrics.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-600 mb-1">Success Metrics</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    {{llmInstructions.successMetrics.map((metric, idx) => (
+                      <li key={{idx}} className="flex items-start gap-2">
+                        <span className="text-green-500">✓</span>
+                        <span>{{metric}}</span>
+                      </li>
+                    ))}}
+                  </ul>
+                </div>
+              )}}
+
+              {{llmInstructions.scopeIn.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-600 mb-1">In Scope (What to Test)</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    {{llmInstructions.scopeIn.map((item, idx) => (
+                      <li key={{idx}} className="flex items-start gap-2">
+                        <span className="text-blue-500">→</span>
+                        <span>{{item}}</span>
+                      </li>
+                    ))}}
+                  </ul>
+                </div>
+              )}}
+
+              {{llmInstructions.scopeOut.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-gray-600 mb-1">Out of Scope (DO NOT Test)</h4>
+                  <ul className="text-sm text-gray-500 space-y-1">
+                    {{llmInstructions.scopeOut.map((item, idx) => (
+                      <li key={{idx}} className="flex items-start gap-2">
+                        <span className="text-gray-400">✗</span>
+                        <span>{{item}}</span>
+                      </li>
+                    ))}}
+                  </ul>
+                </div>
+              )}}
+            </div>
+
+            {{/* Test-Specific Guidance */}}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-2">🧪 Component Test Guidance</h3>
+                <p className="text-sm text-gray-600">{{llmInstructions.componentTestGuidance}}</p>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-2">📝 Use Case Test Guidance</h3>
+                <p className="text-sm text-gray-600">{{llmInstructions.useCaseTestGuidance}}</p>
+              </div>
+            </div>
+
+            {{/* Start Testing Button */}}
+            <div className="text-center py-4">
+              <button
+                onClick={{() => setActiveTab('components')}}
+                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Start Component Tests →
+              </button>
+            </div>
+          </div>
+        )}}
+
+        {{/* Component Tests Tab - Sequential with Inline Display */}}
+        {{activeTab === 'components' && (
+          <div>
+            {{/* Test List */}}
+            <div className="bg-white rounded-lg border border-gray-200 mb-4">
+              <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <h2 className="font-semibold text-gray-800">Component Tests</h2>
+                <p className="text-xs text-gray-500 mt-1">Click a test to view it inline below. Use Previous/Next to navigate sequentially.</p>
+              </div>
+              {{componentTests.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {{componentTests.map((test, idx) => (
+                    <button
+                      key={{idx}}
+                      onClick={{() => setSelectedComponentIndex(idx)}}
+                      className={{`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 ${{
+                        selectedComponentIndex === idx ? 'bg-blue-100 border-l-4 border-blue-600' : ''
+                      }}`}}
+                    >
+                      <span className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        {{idx + 1}}
+                      </span>
+                      <div className="flex-grow min-w-0">
+                        <p className="font-medium text-gray-800 truncate">{{test.title}}</p>
+                        <p className="text-xs text-gray-500 truncate">{{test.description}}</p>
+                      </div>
+                      {{selectedComponentIndex === idx && (
+                        <span className="text-blue-600">▶</span>
+                      )}}
+                    </button>
+                  ))}}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <p className="text-gray-500">No component test pages found for this pipeline.</p>
+                </div>
+              )}}
+            </div>
+
+            {{/* Inline Test Display with iframe */}}
+            {{selectedComponentIndex !== null && componentTests[selectedComponentIndex] && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                {{/* Navigation Header */}}
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+                      Test {{selectedComponentIndex + 1}} of {{componentTests.length}}
+                    </span>
+                    <span className="font-medium text-gray-800">{{componentTests[selectedComponentIndex].title}}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={{() => setSelectedComponentIndex(Math.max(0, selectedComponentIndex - 1))}}
+                      disabled={{selectedComponentIndex === 0}}
+                      className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      ← Previous
+                    </button>
+                    <button
+                      onClick={{() => setSelectedComponentIndex(Math.min(componentTests.length - 1, selectedComponentIndex + 1))}}
+                      disabled={{selectedComponentIndex === componentTests.length - 1}}
+                      className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+                {{/* iframe for test page */}}
+                <div className="relative" style={{{{ height: '70vh' }}}}>
+                  <iframe
+                    src={{componentTests[selectedComponentIndex].href}}
+                    className="absolute inset-0 w-full h-full border-0"
+                    title={{componentTests[selectedComponentIndex].title}}
+                  />
+                </div>
+                {{/* Open in new tab link */}}
+                <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 text-center">
+                  <a
+                    href={{componentTests[selectedComponentIndex].href}}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Open in new tab ↗
+                  </a>
+                </div>
+              </div>
+            )}}
+          </div>
+        )}}
+
+        {{/* Use Cases Tab - Sequential with Step Tracking */}}
+        {{activeTab === 'usecases' && (
+          <div>
+            {{/* Use Case List */}}
+            <div className="bg-white rounded-lg border border-gray-200 mb-4">
+              <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <h2 className="font-semibold text-gray-800">Use Case Tests</h2>
+                <p className="text-xs text-gray-500 mt-1">Select a use case to see step-by-step instructions. Check off steps as you complete them.</p>
+              </div>
+              {{useCases.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {{useCases.map((uc, idx) => (
+                    <button
+                      key={{uc.id}}
+                      onClick={{() => setSelectedUseCaseIndex(idx)}}
+                      className={{`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 ${{
+                        selectedUseCaseIndex === idx ? 'bg-blue-100 border-l-4 border-blue-600' : ''
+                      }}`}}
+                    >
+                      <span className={{`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${{
+                        isUseCaseComplete(uc) ? 'bg-green-500 text-white' : 'bg-blue-500 text-white'
+                      }}`}}>
+                        {{isUseCaseComplete(uc) ? '✓' : idx + 1}}
+                      </span>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={{`px-1.5 py-0.5 text-xs font-medium rounded ${{priorityColors[uc.priority]}}`}}>
+                            {{uc.priority}}
+                          </span>
+                          <span className={{`px-1.5 py-0.5 text-xs font-medium rounded ${{categoryColors[uc.category]}}`}}>
+                            {{uc.category}}
+                          </span>
+                          <span className="font-mono text-xs text-gray-400">{{uc.id}}</span>
+                        </div>
+                        <p className="font-medium text-gray-800 truncate">{{uc.title}}</p>
+                      </div>
+                      {{selectedUseCaseIndex === idx && (
+                        <span className="text-blue-600">▶</span>
+                      )}}
+                    </button>
+                  ))}}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <p className="text-gray-500">No use cases generated yet. Run the usecases stage to generate.</p>
+                </div>
+              )}}
+            </div>
+
+            {{/* Inline Use Case Display */}}
+            {{selectedUseCaseIndex !== null && useCases[selectedUseCaseIndex] && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                {{/* Navigation Header */}}
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+                      Use Case {{selectedUseCaseIndex + 1}} of {{useCases.length}}
+                    </span>
+                    <span className="font-mono text-xs text-gray-500">{{useCases[selectedUseCaseIndex].id}}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={{() => setSelectedUseCaseIndex(Math.max(0, selectedUseCaseIndex - 1))}}
+                      disabled={{selectedUseCaseIndex === 0}}
+                      className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      ← Previous
+                    </button>
+                    <button
+                      onClick={{() => setSelectedUseCaseIndex(Math.min(useCases.length - 1, selectedUseCaseIndex + 1))}}
+                      disabled={{selectedUseCaseIndex === useCases.length - 1}}
+                      className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+
+                {{/* Use Case Content */}}
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{{useCases[selectedUseCaseIndex].title}}</h3>
+                  <p className="text-gray-600 mb-4">{{useCases[selectedUseCaseIndex].description}}</p>
+
+                  {{/* Steps with Checkboxes */}}
+                  <div className="mb-4">
+                    <h4 className="font-medium text-gray-700 mb-3">Steps to Execute:</h4>
+                    <ol className="space-y-3">
+                      {{useCases[selectedUseCaseIndex].steps.map((step) => {{
+                        const isCompleted = (completedSteps[useCases[selectedUseCaseIndex].id] || new Set()).has(step.step);
+                        return (
+                          <li
+                            key={{step.step}}
+                            className={{`flex gap-3 p-3 rounded-lg border transition-colors ${{
+                              isCompleted ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'
+                            }}`}}
+                          >
+                            <button
+                              onClick={{() => toggleStep(useCases[selectedUseCaseIndex].id, step.step)}}
+                              className={{`flex-shrink-0 w-7 h-7 rounded border-2 flex items-center justify-center transition-colors ${{
+                                isCompleted
+                                  ? 'bg-green-500 border-green-500 text-white'
+                                  : 'border-gray-300 hover:border-blue-500'
+                              }}`}}
+                            >
+                              {{isCompleted ? '✓' : step.step}}
+                            </button>
+                            <div className="flex-grow">
+                              <p className={{`font-medium ${{isCompleted ? 'text-green-800 line-through' : 'text-gray-800'}}`}}>
+                                {{step.action}}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                <span className="font-mono bg-gray-200 px-1 rounded">{{step.component}}</span>
+                                <span className="mx-2">→</span>
+                                <span className={{isCompleted ? 'text-green-600' : ''}}>{{step.expectedResult}}</span>
+                              </p>
+                            </div>
+                          </li>
+                        );
+                      }})}}
+                    </ol>
+                  </div>
+
+                  {{/* Expected Outcome */}}
+                  <div className={{`p-4 rounded-lg border ${{
+                    isUseCaseComplete(useCases[selectedUseCaseIndex])
+                      ? 'bg-green-100 border-green-300'
+                      : 'bg-blue-50 border-blue-200'
+                  }}`}}>
+                    <p className={{`text-sm ${{
+                      isUseCaseComplete(useCases[selectedUseCaseIndex]) ? 'text-green-800' : 'text-blue-800'
+                    }}`}}>
+                      <span className="font-medium">Expected Outcome:</span> {{useCases[selectedUseCaseIndex].expectedOutcome}}
+                    </p>
+                    {{isUseCaseComplete(useCases[selectedUseCaseIndex]) && (
+                      <p className="text-green-700 font-medium mt-2">✅ All steps completed!</p>
+                    )}}
+                  </div>
+                </div>
+              </div>
+            )}}
+          </div>
+        )}}
+
+        {{/* Pipeline Reference Tab */}}
+        {{activeTab === 'reference' && (
+          <div>
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <h2 className="font-semibold text-gray-800">Pipeline Reference</h2>
+                <p className="text-xs text-gray-500 mt-1">Complete list of all tasks implemented in this pipeline with their status and test coverage.</p>
+              </div>
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium text-gray-700">Task</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-700">Request</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-700">Title</th>
+                    <th className="px-4 py-3 text-center font-medium text-gray-700">Status</th>
+                    <th className="px-4 py-3 text-center font-medium text-gray-700">Test</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{allTasks.map((task, idx) => (
+                    <tr key={{idx}} className="border-t border-gray-100 hover:bg-gray-50">
+                      <td className="px-4 py-3 font-mono text-xs">{{task.id}}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-blue-600">{{task.request}}</td>
+                      <td className="px-4 py-3">{{task.title}}</td>
+                      <td className="px-4 py-3 text-center">{{task.status}}</td>
+                      <td className="px-4 py-3 text-center">{{task.hasTest}}</td>
+                    </tr>
+                  ))}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}}
+      </div>
+
+      {{/* Footer */}}
+      <footer className="text-center text-sm text-gray-500 py-4 border-t border-gray-200 bg-white">
+        Pipeline Test Harness • Auto-generated by pipeline orchestrator
+      </footer>
+    </div>
+  );
+}}
+'''
+
+    # Write the file
+    with open(test_file, 'w') as f:
+        f.write(page_content)
+
+    print(f"    Generated pipeline test harness: {test_file}")
+    return test_file
+
+
+def update_master_test_index(config: dict) -> str:
+    """Update the master /test/page.tsx to list pipeline test harnesses.
+
+    Scans for pipeline test harness directories and updates the master index.
+    Returns the path to the updated file.
+    """
+    import glob
+    from datetime import datetime
+
+    master_file = 'src/app/test/page.tsx'
+
+    # Find all pipeline test harness directories
+    # These are directories under /test that have a page.tsx AND are pipeline names
+    pipeline_tests = []
+
+    # Get list of pipeline config files to identify pipeline names
+    pipeline_configs = glob.glob('pipeline-*.yaml') + glob.glob('pipeline-*.yml')
+    pipeline_names = set()
+    for cfg in pipeline_configs:
+        name = os.path.basename(cfg).replace('pipeline-', '').replace('.yaml', '').replace('.yml', '')
+        pipeline_names.add(name)
+
+    # Find test directories that match pipeline names
+    for test_dir in sorted(glob.glob('src/app/test/*/')):
+        dir_name = os.path.basename(test_dir.rstrip('/'))
+        if dir_name in pipeline_names and os.path.exists(f'{test_dir}page.tsx'):
+            display_name = dir_name.replace('-', ' ').title()
+            pipeline_tests.append({
+                'href': f'/test/{dir_name}',
+                'name': dir_name,
+                'title': display_name,
+            })
+
+    # Also find other test directories (non-pipeline component tests)
+    component_tests = []
+    for test_dir in sorted(glob.glob('src/app/test/*/')):
+        dir_name = os.path.basename(test_dir.rstrip('/'))
+        if dir_name not in pipeline_names and os.path.exists(f'{test_dir}page.tsx'):
+            display_name = dir_name.replace('-', ' ').title()
+            component_tests.append({
+                'href': f'/test/{dir_name}',
+                'name': dir_name,
+                'title': display_name,
+            })
+
+    # Build pipeline links
+    pipeline_links = []
+    for p in pipeline_tests:
+        pipeline_links.append(f'''  {{
+    href: '{p["href"]}',
+    title: '{p["title"]}',
+    description: 'Test harness for {p["name"]} pipeline',
+  }},''')
+
+    # Build component links (for backwards compatibility)
+    component_links = []
+    for c in component_tests:
+        component_links.append(f'''  {{
+    href: '{c["href"]}',
+    title: '{c["title"]}',
+    description: 'Component test page',
+  }},''')
+
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    page_content = f'''\'use client\';
+
+/**
+ * Component Test Index Page
+ *
+ * Central hub for all pipeline and component test harnesses.
+ * Auto-generated by pipeline orchestrator.
+ *
+ * @route /test
+ * @generated {timestamp}
+ */
+
+import Link from 'next/link';
+
+interface TestLink {{
+  href: string;
+  title: string;
+  description: string;
+}}
+
+const pipelineTests: TestLink[] = [
+{chr(10).join(pipeline_links) if pipeline_links else '  // No pipeline test harnesses found'}
+];
+
+const componentTests: TestLink[] = [
+{chr(10).join(component_links) if component_links else '  // No standalone component tests'}
+];
+
+function TestLinkCard({{ href, title, description }}: TestLink) {{
+  return (
+    <Link
+      href={{href}}
+      className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+    >
+      <h3 className="font-semibold text-blue-600">{{title}}</h3>
+      <p className="text-sm text-gray-600 mt-1">{{description}}</p>
+    </Link>
+  );
+}}
+
+export default function TestIndexPage() {{
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        {{/* Header */}}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Test Harness Index</h1>
+          <p className="text-gray-600 mt-2">
+            Central hub for all pipeline and component test harnesses.
+          </p>
+          <p className="text-xs text-gray-400 mt-1">Last updated: {timestamp}</p>
+        </div>
+
+        {{/* Pipeline Test Harnesses */}}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">🚀 Pipeline Test Harnesses</h2>
+          {{pipelineTests.length > 0 ? (
+            <div className="grid gap-4">
+              {{pipelineTests.map((test) => (
+                <TestLinkCard key={{test.href}} {{...test}} />
+              ))}}
+            </div>
+          ) : (
+            <p className="text-gray-500">No pipeline test harnesses generated yet. Run testcheck stage to generate.</p>
+          )}}
+        </section>
+
+        {{/* Component Tests */}}
+        {{componentTests.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">🧩 Standalone Component Tests</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {{componentTests.map((test) => (
+                <TestLinkCard key={{test.href}} {{...test}} />
+              ))}}
+            </div>
+          </section>
+        )}}
+
+        {{/* Footer */}}
+        <footer className="text-center text-sm text-gray-500 py-4">
+          Test Harness Index • Auto-generated by pipeline orchestrator
+        </footer>
+      </div>
+    </div>
+  );
+}}
+'''
+
+    # Write the file
+    with open(master_file, 'w') as f:
+        f.write(page_content)
+
+    print(f"    Updated master test index: {master_file}")
+    return master_file
+
+
+def generate_test_harnesses_after_testcheck(state: dict, config: dict):
+    """Generate pipeline test harness and update master index after testcheck completes."""
+    print(f"\n  Generating test harnesses...")
+
+    # Generate pipeline-specific test harness
+    pipeline_harness = generate_pipeline_test_harness(state, config)
+
+    # Update master test index
+    master_index = update_master_test_index(config)
+
+    # Update state with generated files
+    if 'verification' not in state:
+        state['verification'] = {}
+
+    pipeline_name = get_pipeline_name_from_config(config, state)
+    state['verification']['test_harness_path'] = pipeline_harness
+    state['verification']['test_harness_url'] = f'/test/{pipeline_name}' if pipeline_name else None
+
+    return pipeline_harness, master_index
 
 
 def format_pipeline_stage_prompt(template: str, config: dict, state: dict) -> str:

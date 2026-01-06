@@ -1,28 +1,27 @@
 # =============================================================================
-# Pipeline Configuration: Item Creation Workflow Implementation
+# Pipeline Configuration: Simple Dashboard Implementation
 # =============================================================================
 #
-# Generated: 2026-01-05 09:30:00 UTC
-# Last Modified: 2026-01-05 09:30:00 UTC
-# Source: ./docs/prd/Plan-093-Item-Creation-Workflow.md
+# Generated: 2026-01-06 15:45:00 UTC
+# Last Modified: 2026-01-06 15:45:00 UTC
+# Source: ./docs/prd/Plan-001-Simple-Dashboard-Implementation-REVISED.md
 #
-# This file contains ALL project-specific configuration for the Item Creation
-# Workflow component implementation. The orchestrator reads this file and makes
-# no assumptions beyond it.
+# This pipeline processes the Simple Dashboard implementation plan which focuses
+# on fixing PRD violations and implementing missing dashboard features.
 #
 # Usage:
-#   python pipeline_orchestrator.py --config ./pipeline-item-creation-workflow.yaml
-#   python pipeline_orchestrator.py --config ./pipeline-item-creation-workflow.yaml --dry-run
-#   python pipeline_orchestrator.py --config ./pipeline-item-creation-workflow.yaml --list-tasks
-#   python pipeline_orchestrator.py --config ./pipeline-item-creation-workflow.yaml --tasks "1,2,3"
-#   python pipeline_orchestrator.py --config ./pipeline-item-creation-workflow.yaml --stages "request,overview"
+#   python pipeline_orchestrator.py --config ./pipeline-simple-dashboard.yaml
+#   python pipeline_orchestrator.py --config ./pipeline-simple-dashboard.yaml --dry-run
+#   python pipeline_orchestrator.py --config ./pipeline-simple-dashboard.yaml --list-tasks
+#   python pipeline_orchestrator.py --config ./pipeline-simple-dashboard.yaml --tasks "1,2,3"
+#   python pipeline_orchestrator.py --config ./pipeline-simple-dashboard.yaml --stages "request,overview"
 #
 # =============================================================================
 
 pipeline:
-  name: item-creation-workflow-implementation
+  name: simple-dashboard-implementation
   version: "1.0"
-  description: "Process Item Creation Workflow implementation plan through agent pipeline"
+  description: "Process Simple Dashboard implementation plan through agent pipeline"
 
   # Pipeline mode:
   #   - "horizontal": All tasks through stage 1, then all through stage 2, etc.
@@ -37,29 +36,30 @@ pipeline:
 # =============================================================================
 
 source:
-  path: ./docs/prd/Plan-093-Item-Creation-Workflow.md
+  path: ./docs/prd/Plan-001-Simple-Dashboard-Implementation-REVISED.md
 
   extraction:
-    # Pattern to match task headers like: #### Task 1.1: Component Scaffold & Type Definitions [1 day]
-    task_pattern: '^####\s+Task\s+(\d+\.\d+):\s+(.+?)\s*\['
+    # Pattern to match task headers like: **Task 1.1: Remove Account References from Layout**
+    task_pattern: '^\*\*Task\s+(\d+\.\d+):\s+(.+?)\*\*'
     task_groups:
       id: 1
       title: 2
-    # Pattern to match phases like: ### Phase 1: Foundation & Core Infrastructure [5 days]
-    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)\s*\['
+    # Pattern to match phases like: ### Phase 1: Fix PRD Violations (Critical Path) - 1 day
+    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)\s+[-\u2013]'
     phase_groups:
       number: 1
       name: 2
     description:
       mode: following_bullets
       end_patterns:
-        - '^####\s+Task'
+        - '^\*\*Task'
         - '^###\s+Phase'
         - '^##\s+'
-        - '^\*\*Files:\*\*'
-        - '^\*\*Acceptance'
-        - '^\*\*Implementation'
+        - '^\*\*Acceptance Criteria'
+        - '^\*\*Goal:'
         - '^---'
+        - '^File:'
+        - '^\*\*Files:\*\*'
 
 # =============================================================================
 # Output Locations
@@ -69,8 +69,8 @@ outputs:
   requests: ./docs/gen_requests.md
   overviews: ./docs/
   details: ./docs/
-  state: ./pipeline-item-creation-workflow-state.json
-  logs: ./pipeline-item-creation-workflow.log
+  state: ./pipeline-simple-dashboard-state.json
+  logs: ./pipeline-simple-dashboard.log
 
 # =============================================================================
 # Request Stages (Per-Request Mode)
@@ -130,16 +130,16 @@ request_stages:
         **Instructions**:
         1. Read the request from {requests_file_path} (find Request #{request_id_num})
         2. Read the implementation plan from {implementation_plan_path} for:
-           - Component hierarchy and file structure
-           - Phase dependencies and task relationships
-           - Technical decisions (state management, libraries, patterns)
-           - Integration with ItemCapture component
-           - Authorized files/locations for this component
+           - Current state assessment and PRD violations
+           - Airbnb Design System requirements
+           - Existing reusable components (QRCodePrintManager, PropertyForm, PropertySelector)
+           - Technical context and stack
+           - Files requiring modification vs. new files
         3. Investigate the codebase for existing patterns to follow:
-           - ItemCapture patterns (useReducer state management)
-           - ItemManager barrel exports and structure
-           - QR code generation patterns
-           - PDF generation services
+           - /src/app/dashboard2/ existing structure
+           - Airbnb color scheme application patterns
+           - Component patterns in /src/components/
+           - API route patterns in /src/app/api/
         4. Create the overview document following the standard structure
         5. Include an "Authorized Files and Functions for Modification" section
       command:
@@ -184,8 +184,9 @@ request_stages:
         **Pre-Analysis Steps**:
         1. Read the overview document at {overview_file}
         2. Review README.md for project conventions
-        3. Check existing ItemCapture/ItemManager patterns
-        4. Identify the "Authorized Files and Functions for Modification" from the overview
+        3. Check existing /src/app/dashboard2/ patterns
+        4. Review Airbnb Design System requirements from implementation plan
+        5. Identify the "Authorized Files and Functions for Modification" from the overview
 
         **Requirements**:
         - Each numbered task must be <= 1 story point (a few hours of focused work)
@@ -194,8 +195,8 @@ request_stages:
         - Use actual system date/time in the document header
         - All file paths relative to project root
         - Include verification steps for each task
-        - Solutions must be input-driven, not example-specific
-        - Follow established patterns from ItemCapture/ItemManager
+        - Follow Airbnb Design System color tokens from implementation plan
+        - Reuse existing components where specified (QRCodePrintManager, PropertyForm, etc.)
       command:
         - "claude"
         - "-p"
@@ -241,11 +242,12 @@ request_stages:
         5. Report final status with summary of completed/failed/blocked tasks
 
         **Key Patterns to Follow**:
-        - Use useReducer pattern for state management (like ItemCapture)
-        - Barrel export structure (like ItemManager)
-        - Colocated types (ComponentName.types.ts)
-        - Hooks directory for custom hooks
-        - Shared components in components/shared/
+        - Apply Airbnb Design System colors (use hex values: #FF385C, #222222, #717171, etc.)
+        - Remove account references per PRD Design Principle #1
+        - Reuse existing components (QRCodePrintManager, PropertyForm, PropertySelector)
+        - Follow existing /src/app/dashboard2/ structure
+        - Use Next.js App Router patterns
+        - Maintain Tailwind CSS 4 styling conventions
       command:
         - "claude"
         - "-p"
@@ -286,17 +288,18 @@ request_stages:
         - Collect all detailed spec files from docs/
 
         **Phase 2: Specification Analysis**
-        - Parse each detailed spec to extract components, exports, types, use cases
+        - Parse each detailed spec to extract components, modifications, new files
 
         **Phase 3: Implementation Verification**
-        - Verify files exist at src/components/ItemCreationWorkflow/
-        - Verify exports in index.ts
-        - Check types match specs
+        - Verify modified files at /src/app/dashboard2/
+        - Verify new components at /src/components/SimpleDashboard/
+        - Verify new API routes at /src/app/api/user/dashboard/
+        - Check PRD violations are fixed (no account refs, Airbnb colors applied)
         - Record any discrepancies
 
         **Phase 4: Test Harness Generation**
-        - Create/update test harness page at /src/app/test/item-creation-workflow/page.tsx
-        - Update test index at /src/app/test/page.tsx with use cases
+        - Create/update test harness page at /src/app/test/simple-dashboard/page.tsx
+        - Update test index at /src/app/test/page.tsx with dashboard use cases
 
         **Phase 5: Build & Deploy**
         - Run npm run build to verify no compilation errors
@@ -344,21 +347,21 @@ request_stages:
 
         **Phase 1: Intent Discovery**
         - Read the PRD/Implementation Plan at {implementation_plan_path}
-        - Extract user goals, journeys, success criteria, and edge cases
-        - Identify use case categories: happy-path, error-handling, edge-case, integration
+        - Extract dashboard features: statistics cards, action buttons, property section
+        - Identify use case categories: single-property, multi-property, empty states
 
         **Phase 2: Component Mapping**
         - Read the pipeline state to understand implemented components
-        - Map PRD intent to implemented components
-        - Identify integration points between components
+        - Map PRD features to implemented components
+        - Identify integration points (dashboard -> create/items/print flows)
 
         **Phase 3: Use Case Generation**
-        - Generate use cases from PRD sections (1-3 per feature/story)
+        - Generate use cases from PRD sections (1-3 per feature)
         - Include steps, expected outcomes, and components involved
-        - Prioritize: P0 (critical paths), P1 (error scenarios), P2 (edge cases)
+        - Prioritize: P0 (critical paths), P1 (multi-property), P2 (edge cases)
 
         **Phase 4: Test Page Update**
-        - Update the pipeline test harness at /src/app/test/item-creation-workflow/page.tsx
+        - Update the pipeline test harness at /src/app/test/simple-dashboard/page.tsx
         - Add "Use Cases" section with interactive test guides
         - Each use case as a clickable card with step-by-step instructions
 
@@ -366,7 +369,7 @@ request_stages:
         - Update state file with use case metadata
         - Log summary of generated use cases
 
-        Generate comprehensive use cases that validate the system works as a cohesive whole.
+        Generate comprehensive use cases that validate the dashboard works cohesively.
       command:
         - "claude"
         - "-p"
@@ -386,13 +389,13 @@ request_stages:
 
 implementation:
   technology:
-    # Database: none - ItemCreationWorkflow uses localStorage for session persistence
-    database: none
+    # Database: Supabase (used for dashboard stats and properties)
+    database: supabase
     # Browser testing required for UI components
     browser_testing: true
 
   required_tools:
-    - playwright_mcp  # Required for browser-based verification of UI components
+    - playwright_mcp  # Required for browser-based verification of dashboard UI
 
   precheck:
     timeout: 120  # 2 minutes

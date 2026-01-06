@@ -248,6 +248,40 @@ class PipelineState:
                 return task
         return None
 
+    def get_testcheck_status(self) -> Optional[dict]:
+        """Get testcheck stage status with its sub-phases (precheck, verification)."""
+        # Check if testcheck has run at all
+        has_precheck = bool(self.data.get("precheck"))
+        has_verification = bool(self.data.get("verification"))
+        testcheck_completed = self.data.get("testcheck_completed", False)
+
+        if not has_precheck and not has_verification and not testcheck_completed:
+            return None  # Testcheck stage hasn't run yet
+
+        result = {
+            "status": "completed" if testcheck_completed else "running",
+            "completed_at": self.data.get("testcheck_completed_at"),
+            "phases": {},
+        }
+
+        # Precheck phase
+        precheck = self.data.get("precheck", {})
+        if precheck:
+            result["phases"]["precheck"] = {
+                "status": precheck.get("status"),
+                "completed_at": precheck.get("completed_at"),
+            }
+
+        # Verification phase
+        verification = self.data.get("verification", {})
+        if verification:
+            result["phases"]["verification"] = {
+                "status": verification.get("status"),
+                "completed_at": verification.get("completed_at"),
+            }
+
+        return result
+
 
 def parse_subtasks_from_detailed(details_file: str) -> dict:
     """Parse subtasks from a detailed markdown file.
@@ -463,6 +497,36 @@ def create_header(pipelines: list) -> Panel:
             # Build the update line
             stale_indicator = " ⚠️ STALE" if is_stale else ""
             lines.append(f"  [dim]Updated:[/dim] [{time_color}]{time_ago}[/{time_color}]{stale_indicator} [dim](timeout: {timeout_str})[/dim]")
+
+        # Show testcheck stage status
+        testcheck = p.get_testcheck_status()
+        if testcheck:
+            tc_status = testcheck.get("status", "unknown")
+            if tc_status == "completed":
+                tc_display = "[green]✓ Testcheck[/green]"
+            elif tc_status == "running":
+                tc_display = "[yellow]▶ Testcheck[/yellow]"
+            else:
+                tc_display = f"[dim]Testcheck: {tc_status}[/dim]"
+
+            # Show sub-phases
+            phase_parts = []
+            for phase_name in ["precheck", "verification"]:
+                phase_info = testcheck.get("phases", {}).get(phase_name)
+                if phase_info:
+                    phase_status = phase_info.get("status", "unknown")
+                    if phase_status in ("passed", "completed"):
+                        phase_parts.append(f"[green]✓{phase_name}[/green]")
+                    elif phase_status == "failed":
+                        phase_parts.append(f"[red]✗{phase_name}[/red]")
+                    else:
+                        phase_parts.append(f"[dim]{phase_name}[/dim]")
+
+            if phase_parts:
+                lines.append(f"  {tc_display} ({', '.join(phase_parts)})")
+            else:
+                lines.append(f"  {tc_display}")
+
         lines.append("")
 
     return Panel(
