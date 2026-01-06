@@ -6156,3 +6156,81 @@ Reduces friction in the QR code generation workflow for the majority of users wh
 - Full keyboard accessibility and ARIA labels throughout
 - Error handling with retry functionality for network failures
 
+
+---
+
+## REQ-128: Property-Specific QR Code Print Flow Route
+
+**Date**: 2026-01-06
+**Completed**: 2026-01-06 21:00
+**Status**: ✅ COMPLETE
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to select a property and navigate to a dedicated print page where they can print QR codes for all items associated with that property.
+
+### Current Behavior
+There is no dedicated route or interface for users to select a property and access a print-specific view for that property's QR codes.
+
+### Expected Behavior
+After selecting a property from a property selector interface, users are navigated to a property-specific print page that displays all items associated with that property and provides QR code printing functionality. The print page is accessible via a predictable URL pattern that includes the property identifier.
+
+### User Impact
+Property managers and administrators who need to print QR codes for multiple items within a specific property will have a streamlined workflow. This eliminates the need to manually filter or search for items belonging to a particular property when preparing to print labels.
+
+### Business Value
+Improves operational efficiency by providing a focused, property-scoped printing interface that reduces the time and effort required to generate QR code labels for property items.
+
+### Acceptance Criteria
+- [x] A property selection interface is available that allows users to choose which property they want to print QR codes for (implemented via REQ-127)
+- [x] Upon property selection, users are navigated to a URL that includes the selected property's unique identifier (implemented via REQ-127)
+- [x] The print page displays all items that belong to the selected property (implemented via REQ-127)
+- [x] The print page includes functional QR code printing capabilities (QRCodePrintManager integration)
+- [x] The interface correctly filters and displays only items associated with the selected property (API filtering)
+- [x] Users can successfully generate and print QR codes for the property's items from this dedicated view (Full workflow verified)
+
+### Implementation Details (Added 2026-01-06)
+
+**Note**: REQ-128 was fully implemented as part of REQ-127 (Print QR Code Navigation Logic).
+
+**Files Implemented:**
+- `src/app/dashboard2/print/page.tsx` (217 lines) - Property selector page for multi-property users
+  - Responsive grid layout (1-3 columns based on viewport)
+  - Property cards with nickname, type, and address
+  - Loading state with Airbnb-styled spinner
+  - Empty state with "Add a Property" CTA
+  - Single-property auto-redirect
+  - Full keyboard accessibility with ARIA labels
+  - Back navigation to dashboard
+- `src/app/dashboard2/print/[propertyId]/page.tsx` (320 lines) - Print flow page with QRCodePrintManager integration
+  - Property access validation via AuthContext
+  - Items fetching from `/api/user/properties/[propertyId]/items`
+  - Breadcrumb navigation for multi-property users
+  - Error handling with retry functionality
+  - Loading states during auth and data fetch
+  - Invalid property redirect to selector
+  - QRCodePrintManager integration with all required props
+- `src/components/SimpleDashboard/ActionButtons.tsx` (191 lines) - Smart navigation logic based on property count
+  - Single property → Direct to `/dashboard2/print/{id}`
+  - Multiple properties → Navigate to `/dashboard2/print` selector
+
+**API Integration:**
+- `GET /api/user/properties/[propertyId]/items` - Fetches items filtered by property_id
+
+**Airbnb Design System Compliance:**
+- Primary gradient: `from-[#E61E4D] to-[#D70466]`
+- Primary text: `text-[#222222]`
+- Secondary text: `text-[#717171]`
+- Border: `border-[#DDDDDD]`
+- Card radius: `rounded-xl` (12px)
+- Focus ring: `focus-visible:ring-2 ring-[#222222]`
+
+**Verification Completed:**
+- ✅ Build successful (npm run build)
+- ✅ Property selector UI verified
+- ✅ Print flow page verified
+- ✅ ActionButtons navigation logic verified
+- ✅ API integration verified
+- ✅ Accessibility compliance verified (ARIA labels, focus states, keyboard navigation)
+
