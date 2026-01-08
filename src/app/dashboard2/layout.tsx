@@ -15,6 +15,8 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Package, LogOut, Home, Loader2, Building2 } from 'lucide-react';
+import { PropertyProvider } from '@/contexts/PropertyContext';
+import { PropertyDropdown } from '@/components/dashboard';
 
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -86,12 +88,17 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <header className="border-b border-gray-200 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Title only */}
+            {/* Left side - Title */}
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
             </div>
 
-            {/* Right side - Logout only */}
+            {/* Center - Property Dropdown (REQ-142) */}
+            <div className="flex-1 flex justify-center px-4">
+              <PropertyDropdown />
+            </div>
+
+            {/* Right side - Logout */}
             <div className="flex items-center">
               <button
                 onClick={() => signOut()}
@@ -145,7 +152,9 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
 export default function Dashboard2Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      <Dashboard2LayoutContent>{children}</Dashboard2LayoutContent>
+      <PropertyProvider>
+        <Dashboard2LayoutContent>{children}</Dashboard2LayoutContent>
+      </PropertyProvider>
     </AuthProvider>
   );
 }

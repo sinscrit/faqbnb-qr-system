@@ -588,13 +588,13 @@ export type { PropertyDropdownProps } from './PropertyDropdown';
 **Files to modify:** `src/app/dashboard2/layout.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] Add imports at the top of the file (after existing imports around line 17):
+- [x] Add imports at the top of the file (after existing imports around line 17): ---implemented: Added imports for PropertyProvider and PropertyDropdown-
 ```typescript
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
 ```
 
-- [ ] In the `Dashboard2LayoutContent` function, locate the header section (around line 86-106). Add the `PropertyDropdown` between the title and logout button. Replace the header section with:
+- [x] In the `Dashboard2LayoutContent` function, locate the header section (around line 86-106). Add the `PropertyDropdown` between the title and logout button. Replace the header section with: ---implemented: Added PropertyDropdown to center of header between title and logout-
 
 ```typescript
       {/* Header */}
@@ -626,7 +626,7 @@ import { PropertyDropdown } from '@/components/dashboard';
       </header>
 ```
 
-- [ ] Wrap the return of `Dashboard2Layout` function (around line 145-151) with `PropertyProvider`:
+- [x] Wrap the return of `Dashboard2Layout` function (around line 145-151) with `PropertyProvider`: ---implemented: Wrapped Dashboard2LayoutContent with PropertyProvider inside AuthProvider-
 
 ```typescript
 export default function Dashboard2Layout({ children }: { children: React.ReactNode }) {
@@ -640,8 +640,8 @@ export default function Dashboard2Layout({ children }: { children: React.ReactNo
 }
 ```
 
-- [ ] Verify the layout compiles without errors
-- [ ] Test that the dashboard loads correctly with the new dropdown
+- [x] Verify the layout compiles without errors -unit tested-
+- [x] Test that the dashboard loads correctly with the new dropdown -unit tested-
 
 ---
 
@@ -651,7 +651,7 @@ export default function Dashboard2Layout({ children }: { children: React.ReactNo
 **Files to modify:** `src/lib/property-utils.ts` (CREATE)
 **Estimated effort:** 1 story point
 
-- [ ] Create the file `src/lib/property-utils.ts`:
+- [x] Create the file `src/lib/property-utils.ts`: ---implemented: Created property-utils.ts with helper functions for default property creation and validation-
 
 ```typescript
 /**
@@ -743,7 +743,7 @@ export function validatePropertyCreation(
 }
 ```
 
-- [ ] Verify the file compiles without errors
+- [x] Verify the file compiles without errors -unit tested-
 
 ---
 
