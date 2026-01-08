@@ -35,7 +35,6 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardTier } from '@/hooks/useDashboardTier';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { Property } from '@/types';
-import PropertySelector from '@/components/PropertySelector';
 import { GroupingOption } from '@/components/SimpleDashboard/PropertyGroupingControl';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 
@@ -194,25 +193,7 @@ export default function Dashboard2Page() {
             <p className="text-white/80 text-lg">Create and manage your QR code items</p>
           </div>
 
-          {/* REQ-136: Property Filter - using tier config instead of hardcoded check */}
-          {/* REQ-140: Responsive layout - stacks vertically on mobile */}
-          {tierConfig.showPropertySelector && userProperties && (
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <label className="text-sm font-medium text-[#222222]">
-                View statistics for:
-              </label>
-              <div className="w-full sm:w-64">
-                <PropertySelector
-                  properties={userProperties}
-                  selectedPropertyId={selectedPropertyId || ''}
-                  onPropertyChange={(id) => setSelectedPropertyId(id || null)}
-                  variant="compact"
-                  size="md"
-                  placeholder="All Properties"
-                />
-              </div>
-            </div>
-          )}
+          {/* REQ-142: Property selection moved to header PropertyDropdown */}
 
           {/* REQ-136: Progressive Statistics Section */}
           {/* REQ-137: Pass onCreateItem for empty state CTA */}

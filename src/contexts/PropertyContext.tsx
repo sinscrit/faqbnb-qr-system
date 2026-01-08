@@ -129,11 +129,18 @@ export function PropertyProvider({ children }: PropertyProviderProps) {
     const persistedId = loadPersistedSelection();
     if (persistedId) {
       setSelectedPropertyIdState(persistedId);
+    } else {
+      // REQ-142: Default to first property if no persisted selection
+      const firstProperty = properties[0];
+      if (firstProperty) {
+        console.log('PropertyContext: Defaulting to first property', { propertyId: firstProperty.id, nickname: firstProperty.nickname });
+        setSelectedPropertyId(firstProperty.id);
+      }
     }
 
     setIsLoading(false);
     setIsInitialized(true);
-  }, [properties, loadPersistedSelection]);
+  }, [properties, loadPersistedSelection, setSelectedPropertyId]);
 
   // Handle case where selected property is deleted
   useEffect(() => {

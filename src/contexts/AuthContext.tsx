@@ -16,7 +16,7 @@ import {
   refreshSession,
   isSessionExpiringSoon,
   isAdmin,
-  getUserProperties,
+  getUserProperties as fetchUserPropertiesFromAuth,
   registerUser,
   switchAccount,
   getAccountsForUser,
@@ -1014,6 +1014,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
   const [switchingAccount, setSwitchingAccount] = useState(false);
 
+  // REQ-142: Wrapper function to fetch and store user properties
+  const getUserProperties = useCallback(async (userIdOverride?: string): Promise<void> => {
+    const targetUserId = userIdOverride || user?.id;
+    if (!targetUserId) {
+      console.log('getUserProperties: No user ID available, skipping fetch');
+      return;
+    }
+
+    try {
+      console.log('getUserProperties: Fetching properties for user', { userId: targetUserId });
+      const properties = await fetchUserPropertiesFromAuth(targetUserId, currentAccount?.id);
+      console.log('getUserProperties: Fetched properties', { count: properties.length });
+      setUserProperties(properties);
+    } catch (error) {
+      console.error('getUserProperties: Error fetching properties', error);
+      setUserProperties([]);
+    }
+  }, [user?.id, currentAccount?.id]);
+
   // Dashboard context state management (REQ-023)
   const [currentDashboardSection, setCurrentDashboardSection] = useState<DashboardSection>('dashboard');
   const [navigationHistory, setNavigationHistory] = useState<NavigationHistory[]>([]);
@@ -1278,6 +1297,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           ensureDefaultProperty();
         }
 
+        // REQ-142: Load user properties when authenticated
+        if (user && userProperties.length === 0) {
+          console.log('REQ-142: Loading user properties on authentication');
+          getUserProperties();
+        }
+
         break;
       }
 
@@ -1315,7 +1340,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         break;
       }
     }
-  }, [authState, user, session, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy]);
+  }, [authState, user, session, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy, userProperties, getUserProperties]);
 
   // Remove old individual useEffect hooks - now handled by state machine above
 

@@ -6802,3 +6802,42 @@ This feature enables the platform to serve multi-property users effectively, whi
 - [ ] Confirming deletion removes the item record and all associated media files from storage
 - [ ] The property dropdown gracefully handles scenarios where users have no properties or only one property
 
+
+---
+
+## REQ-143: Media Management on Edit Item Page
+
+**Date**: 2026-01-08 (Modified: 2026-01-08)
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+Users should be able to view, add, edit, delete, and reorder all media assets associated with an item directly from the Edit Item page.
+
+### Current Behavior
+The Edit Item page only allows users to modify the item's name and description. Media assets (YouTube videos, PDFs, images, text content) associated with the item cannot be viewed or managed from this page. Users must navigate elsewhere or use separate tools to see what media is attached to an item or to make changes to it.
+
+### Expected Behavior
+When editing an item, users should see a dedicated media management section that displays all existing media assets. From this section, users can:
+- See a list of all media currently associated with the item, with appropriate previews or thumbnails
+- Add new media by providing a title, URL, and selecting the media type
+- Edit the title, URL, or type of existing media
+- Remove media that is no longer needed
+- Reorder media to control the sequence in which it appears to end users
+
+### User Impact
+This affects property managers and administrators who need to curate the content available for each item. Currently, they must manage media separately from other item attributes, creating a fragmented editing experience. This enhancement consolidates all item-related editing tasks into a single interface, reducing navigation overhead and cognitive load.
+
+### Business Value
+Streamlining the media management workflow reduces the time required to maintain property content and decreases the likelihood of errors or omissions. A unified editing experience improves user satisfaction and makes the platform more competitive with other property management solutions.
+
+### Acceptance Criteria
+- [ ] All existing media assets linked to the item are displayed in the media management section
+- [ ] Each media entry shows its title, type, and a preview or thumbnail where applicable
+- [ ] Users can add a new media asset by specifying a title, URL, and type (YouTube, PDF, image, text)
+- [ ] Users can edit the title, URL, and type of any existing media asset
+- [ ] Users can delete any media asset, with confirmation to prevent accidental removal
+- [ ] Users can reorder media assets, and the new order is persisted
+- [ ] Changes to media assets are saved when the user saves the item
+- [ ] The media management section is visually integrated with the rest of the Edit Item page
+

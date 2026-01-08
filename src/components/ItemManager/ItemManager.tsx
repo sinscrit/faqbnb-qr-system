@@ -25,7 +25,7 @@ import { EmptyState } from './components/shared/EmptyState';
 import { LoadingState } from './components/shared/LoadingState';
 import { BulkActionsBar, BulkTagDialog, BulkMoveDialog } from './components/BulkActions';
 import { ConfirmDeleteDialog } from './components/dialogs';
-import { ItemPreviewModal } from './components/ItemPreview/ItemPreviewModal';
+// REQ-142: ItemPreviewModal removed - clicking items now navigates directly to edit page
 import type {
   ItemManagerProps,
   ItemManagerConfig,
@@ -584,12 +584,13 @@ export function ItemManager({
     }
 
     // Render items based on view mode
+    // REQ-142: Clicking on items now navigates directly to edit page
     if (state.viewMode === 'grid') {
       return (
         <div className={cn('flex-1 p-4', classNames?.itemGrid)}>
           <ItemGrid
             items={filteredItems}
-            onItemPreview={openPreview}
+            onItemPreview={onEditItem}
             onSelectionChange={(id, selected) => {
               if (selected) {
                 selectItem(id);
@@ -609,11 +610,12 @@ export function ItemManager({
     }
 
     // List view
+    // REQ-142: Clicking on items now navigates directly to edit page
     return (
       <div className={cn('flex-1 p-4', classNames?.itemList)}>
         <ItemList
           items={filteredItems}
-          onItemPreview={openPreview}
+          onItemPreview={onEditItem}
           onSelectionChange={(id, selected) => {
             if (selected) {
               selectItem(id);
@@ -767,60 +769,7 @@ export function ItemManager({
         />
       )}
 
-      {/* Preview Modal */}
-      {renderItemPreview ? (
-        state.previewItem && (
-          <div className={cn('fixed inset-0 z-50', classNames?.previewModal)}>
-            {renderItemPreview(state.previewItem)}
-          </div>
-        )
-      ) : (
-        <ItemPreviewModal
-          isOpen={!!state.previewItem}
-          onClose={closePreview}
-          item={state.previewItem}
-          onEditItem={onEditItem}
-          onDeleteItems={handleBulkDelete}
-          onManageAssets={openAssetPanel}
-          config={{ enableAssetManagement: effectiveConfig.enableAssetManagement }}
-          className={classNames?.previewModal}
-        >
-          {/* Item preview content */}
-          {state.previewItem && (
-            <div className="space-y-4">
-              {/* Description */}
-              {state.previewItem.description && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-1">Description</h4>
-                  <p className="text-gray-600">{state.previewItem.description}</p>
-                </div>
-              )}
-
-              {/* QR Code Preview */}
-              {state.previewItem.qrCodeUrl && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">QR Code</h4>
-                  <div className="flex justify-center">
-                    <img
-                      src={state.previewItem.qrCodeUrl}
-                      alt={`QR code for ${state.previewItem.name}`}
-                      className="w-32 h-32 border border-gray-200 rounded"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Created/Updated dates */}
-              <div className="text-xs text-gray-500 pt-2 border-t">
-                <p>Created: {new Date(state.previewItem.createdAt).toLocaleDateString()}</p>
-                {state.previewItem.updatedAt && (
-                  <p>Updated: {new Date(state.previewItem.updatedAt).toLocaleDateString()}</p>
-                )}
-              </div>
-            </div>
-          )}
-        </ItemPreviewModal>
-      )}
+      {/* REQ-142: Preview Modal removed - clicking items now navigates directly to edit page */}
 
       {/* Asset Panel placeholder (Phase 5) */}
       {state.assetPanelItem && (

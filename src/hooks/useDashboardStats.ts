@@ -158,10 +158,80 @@ export function useDashboardStats(propertyId?: string): UseDashboardStatsReturn 
   }, [state.isRefreshing, fetchStats]);
 
   // REQ-134: Auto-fetch on mount or when propertyId changes
+  // REQ-142: Use stale flag to prevent race conditions when propertyId changes rapidly
   useEffect(() => {
+    let isStale = false;
+
     console.log(`${DEBUG_PREFIX} Auto-fetch on mount or propertyId change`, { propertyId });
-    fetchStats(false);
-  }, [fetchStats, propertyId]);
+
+    const doFetch = async () => {
+      setState(prev => ({
+        ...prev,
+        isLoading: true,
+        error: null
+      }));
+
+      try {
+        const endpoint = propertyId
+          ? `/user/dashboard/stats?propertyId=${encodeURIComponent(propertyId)}`
+          : '/user/dashboard/stats';
+
+        const response = await apiRequest<DashboardStatsResponse>(
+          endpoint,
+          {},
+          true
+        );
+
+        // Check if this fetch is still relevant
+        if (isStale) {
+          console.log(`${DEBUG_PREFIX} Fetch completed but is stale, ignoring`, { propertyId });
+          return;
+        }
+
+        if (response.success && response.data) {
+          console.log(`${DEBUG_PREFIX} fetchStats success`, response.data);
+          setState(prev => ({
+            ...prev,
+            stats: response.data!,
+            isLoading: false,
+            isRefreshing: false,
+            error: null,
+            lastUpdated: Date.now()
+          }));
+        } else {
+          throw new Error(response.error || 'Failed to load statistics');
+        }
+      } catch (error) {
+        // Check if this fetch is still relevant
+        if (isStale) {
+          console.log(`${DEBUG_PREFIX} Fetch error but is stale, ignoring`, { propertyId });
+          return;
+        }
+
+        const errorMessage = error instanceof ApiError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred';
+
+        console.error(`${DEBUG_PREFIX} fetchStats error`, { error, errorMessage });
+
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isRefreshing: false,
+          error: errorMessage
+        }));
+      }
+    };
+
+    doFetch();
+
+    // Cleanup: mark this fetch as stale when propertyId changes
+    return () => {
+      isStale = true;
+    };
+  }, [propertyId]);
 
   return {
     stats: state.stats,
