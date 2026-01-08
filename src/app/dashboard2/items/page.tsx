@@ -94,8 +94,8 @@ export default function ItemsPage() {
   const handleEditItem = useCallback(
     (item: ItemRecord) => {
       console.log('Edit item:', item);
-      // Navigate to edit page (using existing dashboard route)
-      router.push(`/dashboard/items/${item.publicId}/edit`);
+      // REQ-142: Navigate to dashboard2 edit page
+      router.push(`/dashboard2/items/${item.publicId}/edit`);
     },
     [router]
   );
