@@ -6744,3 +6744,61 @@ Elevates property management to the same navigation hierarchy as other core feat
 - [ ] "Create New Item" button remains functional on the dashboard body
 - [ ] All navigation transitions work smoothly without broken routes or empty states
 
+
+---
+
+## REQ-142: Property Context System and Enhanced Item Management
+
+**Date**: 2026-01-08 14:35
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Users need the ability to switch between multiple properties in the dashboard, with all displayed data filtered to the currently selected property, and enhanced item management capabilities including view, edit, and delete actions.
+
+### Current Behavior
+The dashboard displays all items regardless of property association. Users cannot switch property context, and there is no automatic property creation for new users. Item management is limited, with no inline view, edit, or delete capabilities from the item list.
+
+### Expected Behavior
+**Property Context System:**
+- A property dropdown selector appears in the top navigation bar showing all properties belonging to the user
+- Selecting a property filters all dashboard data (items, rooms, statistics) to show only that property's data
+- New users automatically receive a default property named "My Property" upon first login
+- The selected property persists across browser sessions
+- All newly created items are automatically associated with the currently selected property
+
+**Enhanced Item Management:**
+- Each item displays three action buttons: View, Edit, and Delete
+- View action opens a modal showing item details (name, description, links, media, room, timestamps) styled according to the dashboard design system, without displaying the QR code
+- Edit action opens the item editor with current item data pre-populated
+- Delete action shows a confirmation dialog, with additional warnings if media is attached, and removes both the item and all associated media files upon confirmation
+
+### User Impact
+**Who is affected:**
+- New users who need an immediate starting point for organizing items
+- Property managers handling multiple properties who need to view data in isolation
+- All users who need to review, modify, or remove items from their dashboard
+
+**How their experience changes:**
+- Multi-property users can cleanly separate and view data by property without confusion
+- New users experience a seamless onboarding with an automatically created default property
+- Users can perform all item management tasks without navigating away from the dashboard
+- Item deletion becomes safer with confirmation dialogs and clear warnings about associated resources
+
+### Business Value
+This feature enables the platform to serve multi-property users effectively, which expands the addressable market beyond single-property managers. The enhanced item management reduces friction in the user workflow and prevents accidental data loss through proper confirmations.
+
+### Acceptance Criteria
+- [ ] Property dropdown appears in the top navigation bar and displays all properties belonging to the authenticated user
+- [ ] Selecting a property from the dropdown filters all dashboard content (items list, rooms list, statistics) to show only data associated with that property
+- [ ] First-time users automatically have a default property created with name "My Property" and appropriate default description
+- [ ] The selected property context persists across browser sessions using client-side storage
+- [ ] Items created while a property is selected are automatically associated with that property
+- [ ] Each item in the items list displays View, Edit, and Delete action buttons
+- [ ] View action opens a modal displaying item details styled according to dashboard design system, without showing the QR code
+- [ ] Edit action opens an editor pre-populated with the selected item's current data
+- [ ] Delete action displays a confirmation dialog before proceeding
+- [ ] Delete confirmation shows an additional warning when the item has associated media files
+- [ ] Confirming deletion removes the item record and all associated media files from storage
+- [ ] The property dropdown gracefully handles scenarios where users have no properties or only one property
+

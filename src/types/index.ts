@@ -284,6 +284,88 @@ export interface PropertySelectorProps {
   disabled?: boolean;
 }
 
+// REQ-142: Property Context System Types
+
+/**
+ * Property context state for dashboard filtering
+ */
+export interface PropertyContextState {
+  /** Currently selected property ID, null means "All Properties" */
+  selectedPropertyId: string | null;
+  /** List of available properties for the current user */
+  properties: Property[];
+  /** Loading state for properties */
+  isLoading: boolean;
+  /** Error state */
+  error: string | null;
+  /** Whether the context has been initialized */
+  isInitialized: boolean;
+}
+
+/**
+ * Property context value exposed by the provider
+ */
+export interface PropertyContextValue extends PropertyContextState {
+  /** Set the selected property ID */
+  setSelectedPropertyId: (propertyId: string | null) => void;
+  /** Refresh the properties list */
+  refreshProperties: () => Promise<void>;
+  /** Get the currently selected property object */
+  selectedProperty: Property | null;
+  /** Check if a specific property is selected */
+  isPropertySelected: (propertyId: string) => boolean;
+}
+
+/**
+ * Props for ItemViewModal component
+ */
+export interface ItemViewModalProps {
+  /** Whether the modal is open */
+  isOpen: boolean;
+  /** Callback when modal is closed */
+  onClose: () => void;
+  /** The item to display */
+  item: ItemWithDetails | null;
+  /** Callback when edit is clicked */
+  onEdit?: (item: ItemWithDetails) => void;
+  /** Callback when delete is clicked */
+  onDelete?: (item: ItemWithDetails) => void;
+}
+
+/**
+ * Extended item type with full details for view modal
+ */
+export interface ItemWithDetails {
+  id: string;
+  publicId: string;
+  name: string;
+  description: string | null;
+  propertyId: string;
+  property?: Property;
+  qrCodeUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+  links: ItemLink[];
+  /** Count of associated media files for delete warning */
+  mediaCount?: number;
+}
+
+/**
+ * Props for DeleteItemDialog component
+ */
+export interface DeleteItemDialogProps {
+  /** Whether the dialog is open */
+  isOpen: boolean;
+  /** The item to delete */
+  item: ItemWithDetails | null;
+  /** Callback when deletion is confirmed */
+  onConfirm: () => void;
+  /** Callback when dialog is cancelled */
+  onCancel: () => void;
+  /** Loading state during deletion */
+  isDeleting?: boolean;
+}
+
 // QR Code types
 export * from './qrcode';
 
