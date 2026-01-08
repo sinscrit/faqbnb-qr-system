@@ -16,11 +16,13 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { ItemManager, ItemRecord } from '@/components/ItemManager';
 import { Loader2, PlusCircle } from 'lucide-react';
+import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function ItemsPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
+  const { selectedPropertyId } = usePropertyContext();
 
   const [items, setItems] = useState<ItemRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,14 @@ export default function ItemsPage() {
     }
 
     try {
-      const response = await adminApi.listItems(undefined, undefined, 1, 100, headers);
+      // REQ-142: Include property filter from context
+      const response = await adminApi.listItems(
+        undefined, // search
+        selectedPropertyId || undefined, // propertyId filter
+        1,
+        100,
+        headers
+      );
 
       if (response.success && response.data) {
         // Convert API response to ItemRecord format
@@ -74,7 +83,7 @@ export default function ItemsPage() {
     } finally {
       setLoading(false);
     }
-  }, [user, currentAccount]);
+  }, [user, currentAccount, selectedPropertyId]);
 
   // Fetch items on mount and when account changes
   useEffect(() => {

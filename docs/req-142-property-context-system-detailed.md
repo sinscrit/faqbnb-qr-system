@@ -1002,19 +1002,19 @@ export async function POST(request: NextRequest) {
 
 This is already implemented. No changes needed for this file.
 
-- [ ] Update the Items page to use property context. Open `src/app/dashboard2/items/page.tsx` and add imports:
+- [x] Update the Items page to use property context. Open `src/app/dashboard2/items/page.tsx` and add imports: ---implemented: Added usePropertyContext import-
 
 ```typescript
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 ```
 
-- [ ] In the `ItemsPage` component, add the property context hook (after the existing hooks around line 23):
+- [x] In the `ItemsPage` component, add the property context hook (after the existing hooks around line 23): ---implemented: Added selectedPropertyId from usePropertyContext-
 
 ```typescript
   const { selectedPropertyId } = usePropertyContext();
 ```
 
-- [ ] Update the `fetchItems` callback to include propertyId in the API call. Find the `adminApi.listItems` call (around line 43) and modify it:
+- [x] Update the `fetchItems` callback to include propertyId in the API call. Find the `adminApi.listItems` call (around line 43) and modify it: ---implemented: Updated adminApi.listItems call to include selectedPropertyId filter-
 
 ```typescript
     try {
@@ -1028,13 +1028,13 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
       );
 ```
 
-- [ ] Add `selectedPropertyId` to the `fetchItems` dependency array (around line 77):
+- [x] Add `selectedPropertyId` to the `fetchItems` dependency array (around line 77): ---implemented: Added selectedPropertyId to dependency array-
 
 ```typescript
   }, [user, currentAccount, selectedPropertyId]);
 ```
 
-- [ ] Verify the page compiles without errors
+- [x] Verify the page compiles without errors -unit tested-
 
 ---
 
@@ -1044,31 +1044,31 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 **Files to modify:** `src/app/dashboard2/page.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] Add import for property context (after existing imports around line 31):
+- [x] Add import for property context (after existing imports around line 31): ---implemented: Added usePropertyContext import-
 
 ```typescript
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 ```
 
-- [ ] Replace the local `selectedPropertyId` state with the context value. Find and remove this line (around line 55):
+- [x] Replace the local `selectedPropertyId` state with the context value. Find and remove this line (around line 55): ---implemented: Removed local state and replaced with context-
 
 ```typescript
   // REQ-134: State for property filter
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
 ```
 
-- [ ] Add the property context hook after the tier config (around line 53):
+- [x] Add the property context hook after the tier config (around line 53): ---implemented: Added usePropertyContext hook call-
 
 ```typescript
   // REQ-142: Get property context for filtering
   const { selectedPropertyId, setSelectedPropertyId } = usePropertyContext();
 ```
 
-- [ ] Update the `useDashboardStats` call to use the context value (around line 58-60). The existing code already passes `selectedPropertyId` so this should work automatically.
+- [x] Update the `useDashboardStats` call to use the context value (around line 58-60). The existing code already passes `selectedPropertyId` so this should work automatically. ---implemented: Works automatically-
 
-- [ ] In the PropertySelector section (around line 198-214), the code already uses `selectedPropertyId` and `setSelectedPropertyId` from state. Since we've replaced these with context values, no changes needed to the JSX.
+- [x] In the PropertySelector section (around line 198-214), the code already uses `selectedPropertyId` and `setSelectedPropertyId` from state. Since we've replaced these with context values, no changes needed to the JSX. ---implemented: Updated PropertySelector to convert null to empty string for compatibility-
 
-- [ ] Verify the page compiles without errors
+- [x] Verify the page compiles without errors -unit tested-
 
 ---
 

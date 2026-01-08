@@ -37,6 +37,7 @@ import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { Property } from '@/types';
 import PropertySelector from '@/components/PropertySelector';
 import { GroupingOption } from '@/components/SimpleDashboard/PropertyGroupingControl';
+import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function Dashboard2Page() {
   const router = useRouter();
@@ -51,8 +52,8 @@ export default function Dashboard2Page() {
     forcePortfolioView: preferences.forcePortfolioView,
   });
 
-  // REQ-134: State for property filter
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('');
+  // REQ-142: Get property context for filtering
+  const { selectedPropertyId, setSelectedPropertyId } = usePropertyContext();
 
   // REQ-134: Pass selected property to stats hook
   const { stats, isLoading, error, refresh } = useDashboardStats(
@@ -203,8 +204,8 @@ export default function Dashboard2Page() {
               <div className="w-full sm:w-64">
                 <PropertySelector
                   properties={userProperties}
-                  selectedPropertyId={selectedPropertyId}
-                  onPropertyChange={setSelectedPropertyId}
+                  selectedPropertyId={selectedPropertyId || ''}
+                  onPropertyChange={(id) => setSelectedPropertyId(id || null)}
                   variant="compact"
                   size="md"
                   placeholder="All Properties"
