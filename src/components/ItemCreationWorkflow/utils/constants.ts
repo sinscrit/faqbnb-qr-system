@@ -193,7 +193,7 @@ export const WORKFLOW_STEPS = [
   'item-type-selection',
   'specific-item-selection',
   'content-source-selection',
-  'content-type-selection',
+  // 'content-type-selection' - removed as redundant (content type selected in ItemCapture)
   'content-creation',
   'preview-save',
   'next-action',
@@ -220,14 +220,13 @@ export const TOUCH_TARGET_MIN_SIZE = 48;
  * Used to calculate progress bar percentage.
  */
 export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
-  'room-selection': 10,
-  'item-type-selection': 20,
-  'specific-item-selection': 30,
-  'content-source-selection': 40,
-  'content-type-selection': 50,
-  'content-creation': 70,
-  'preview-save': 85,
-  'next-action': 90,
+  'room-selection': 12,
+  'item-type-selection': 25,
+  'specific-item-selection': 37,
+  'content-source-selection': 50,
+  'content-creation': 75,
+  'preview-save': 87,
+  'next-action': 93,
   'session-summary': 100,
 };
 

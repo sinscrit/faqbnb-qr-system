@@ -77,8 +77,8 @@ export const STEP_TRANSITIONS: Record<WorkflowStep, WorkflowStep[]> = {
   'room-selection': ['item-type-selection', 'specific-item-selection'],
   'item-type-selection': ['specific-item-selection'],
   'specific-item-selection': ['content-source-selection'],
-  'content-source-selection': ['content-type-selection'],
-  'content-type-selection': ['content-creation'],
+  'content-source-selection': ['content-creation'], // Skip content-type-selection - redundant
+  'content-type-selection': ['content-creation'], // Kept for backwards compatibility
   'content-creation': ['preview-save'],
   'preview-save': ['next-action'],
   'next-action': ['room-selection', 'session-summary', 'content-source-selection'],
