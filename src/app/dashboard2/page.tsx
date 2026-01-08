@@ -24,7 +24,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle, Home } from 'lucide-react';
 import {
   ActionButtons,
-  PropertySection,
   PropertyEditModal,
   AddPropertyModal,
   ProgressiveStatisticsSection,
@@ -240,12 +239,7 @@ export default function Dashboard2Page() {
           {/* Action Buttons - REQ-126 */}
           <ActionButtons />
 
-          {/* Property Section - REQ-130, REQ-136: Now with tier prop */}
-          <PropertySection
-            tier={tierConfig.tier}
-            onPropertyEdit={handlePropertyEdit}
-            onAddProperty={handleAddProperty}
-          />
+          {/* REQ-141: PropertySection removed from dashboard, moved to /dashboard2/properties */}
         </>
       )}
 

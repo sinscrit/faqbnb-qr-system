@@ -14,7 +14,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { PlusCircle, Package, LogOut, Home, Loader2 } from 'lucide-react';
+import { Package, LogOut, Home, Loader2, Building2 } from 'lucide-react';
 
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -22,10 +22,11 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const { user, loading, signOut } = useAuth();
 
   // Navigation items for the new dashboard
+  // REQ-141: Removed Create Item, added My Properties
   const navigationItems = [
     { name: 'Home', href: '/dashboard2', icon: Home },
-    { name: 'Create Item', href: '/dashboard2/create', icon: PlusCircle },
     { name: 'My Items', href: '/dashboard2/items', icon: Package },
+    { name: 'My Properties', href: '/dashboard2/properties', icon: Building2 },
   ];
 
   if (loading) {

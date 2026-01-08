@@ -6706,3 +6706,41 @@ Mobile responsiveness is essential for modern web applications. Property manager
 - [ ] No horizontal scrolling occurs on mobile devices when viewed at standard zoom levels
 - [ ] Touch interactions (tap, swipe) work smoothly without requiring precise targeting
 
+
+---
+
+## REQ-141: Dashboard Navigation Restructure - Properties Menu Integration
+
+**Date**: 2026-01-08 10:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The dashboard navigation should provide direct menu access to properties management while removing the properties tile from the main dashboard view.
+
+### Current Behavior
+- The top navigation bar displays "Home", "Create Item", and "My Items" menu options
+- A "My Properties" card appears in the dashboard body with an empty state message
+- Users access properties through the dashboard tile rather than top-level navigation
+
+### Expected Behavior
+- The top navigation bar displays "Home", "My Properties", and "My Items" menu options
+- The "Create Item" menu option is removed from the navigation bar
+- The "My Properties" card section is removed from the dashboard body
+- Users navigate to properties management through the top navigation menu
+- Item creation remains available through the existing "Create New Item" button on the dashboard body
+
+### User Impact
+Users managing multiple properties will have faster, more consistent access through top-level navigation rather than scrolling to find the properties section. The dashboard home view becomes cleaner and more focused on primary actions.
+
+### Business Value
+Elevates property management to the same navigation hierarchy as other core features, recognizing properties as a primary user workflow rather than a secondary dashboard feature.
+
+### Acceptance Criteria
+- [ ] Top navigation menu no longer displays "Create Item" option
+- [ ] Top navigation menu includes "My Properties" option in a logical position
+- [ ] Clicking "My Properties" in navigation routes to the properties management view
+- [ ] Dashboard body no longer displays the "My Properties" card/tile section
+- [ ] "Create New Item" button remains functional on the dashboard body
+- [ ] All navigation transitions work smoothly without broken routes or empty states
+

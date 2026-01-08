@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-06T01:46:06.179687",
-  "updated_at": "2026-01-06T09:51:41.192014",
-  "status": "running",
+  "updated_at": "2026-01-06T12:51:23.904894",
+  "status": "completed",
   "current_stage": "request",
-  "current_task_index": 20,
+  "current_task_index": 21,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-001-Simple-Dashboard-Implementation-REVISED.md",
   "source_hash": "d613327bdfee57d025f931b2260debe6",
   "tasks": [
@@ -458,11 +458,19 @@
       "title": "Mobile Responsive",
       "description": "[ ] Statistics cards stack on mobile (1 per row)\n[ ] Action buttons stack vertically on mobile\n[ ] Modal full-screen on mobile\n[ ] Touch-friendly tap targets (48px minimum)",
       "raw_match": "**Task 6.4: Mobile Responsive**",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-140",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-06T10:08:06.338157",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-140",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-140-mobile-responsive-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-140-mobile-responsive-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
     }
   ],
   "stages": {
@@ -478,8 +486,8 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 21,
-    "last_request_id": "REQ-139",
+    "total_requests_generated": 22,
+    "last_request_id": "REQ-140",
     "first_request_id": "REQ-119",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-simple-dashboard.yaml"
   },
@@ -493,5 +501,706 @@
         "notes": "Successfully connected to browser and captured snapshot. Browser is running with CDP on port 9223. Current page: https://faqbnb-staging.up.railway.app/dashboard/items"
       }
     }
+  },
+  "testcheck_completed": true,
+  "testcheck_completed_at": "2026-01-06T12:48:49.056298",
+  "verification": {
+    "test_harness_path": "src/app/test/simple-dashboard/page.tsx",
+    "test_harness_url": "/test/simple-dashboard"
+  },
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-06T12:51:23.818596",
+  "usecases": {
+    "generated_at": "2026-01-06T14:30:00Z",
+    "count": 15,
+    "categories": {
+      "happy-path": 6,
+      "error-handling": 3,
+      "edge-case": 3,
+      "integration": 3
+    },
+    "items": [
+      {
+        "id": "UC-HP-001",
+        "title": "View Dashboard with Statistics",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User navigates to dashboard and sees statistics cards displaying Items, Rooms, and Tags counts",
+        "preconditions": [
+          "User is logged in",
+          "User has at least one property with items"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with welcome header"
+          },
+          {
+            "step": 2,
+            "action": "Observe Statistics Cards section",
+            "component": "StatisticsCards",
+            "expectedResult": "Three cards display: Items count, Rooms count, Tags count"
+          },
+          {
+            "step": 3,
+            "action": "Verify counts are accurate",
+            "component": "useDashboardStats",
+            "expectedResult": "Counts match actual data in database"
+          }
+        ],
+        "expectedOutcome": "Dashboard displays accurate statistics for user's items, rooms, and tags",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "useDashboardStats",
+          "Dashboard Stats API"
+        ]
+      },
+      {
+        "id": "UC-HP-002",
+        "title": "Create New Item via Dashboard Action Button",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User clicks 'Create New Item' button and is navigated to item creation workflow",
+        "preconditions": [
+          "User is logged in",
+          "User has at least one property"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with action buttons"
+          },
+          {
+            "step": 2,
+            "action": "Click 'Create New Item' button",
+            "component": "ActionButtons",
+            "expectedResult": "Button has Airbnb gradient styling and hover effect"
+          },
+          {
+            "step": 3,
+            "action": "Verify navigation",
+            "component": "Router",
+            "expectedResult": "User is navigated to /dashboard2/create"
+          },
+          {
+            "step": 4,
+            "action": "Confirm item creation workflow loads",
+            "component": "ItemCreationWorkflow",
+            "expectedResult": "Item creation form is displayed"
+          }
+        ],
+        "expectedOutcome": "User successfully navigates from dashboard to item creation workflow",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "ActionButtons",
+          "ItemCreationWorkflow"
+        ]
+      },
+      {
+        "id": "UC-HP-003",
+        "title": "View Items via Dashboard Action Button",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User clicks 'View Items' button and is navigated to item management page",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with action buttons"
+          },
+          {
+            "step": 2,
+            "action": "Click 'View Items' button",
+            "component": "ActionButtons",
+            "expectedResult": "Button has secondary styling (white bg, dark border)"
+          },
+          {
+            "step": 3,
+            "action": "Verify navigation",
+            "component": "Router",
+            "expectedResult": "User is navigated to /dashboard2/items"
+          },
+          {
+            "step": 4,
+            "action": "Confirm items list loads",
+            "component": "ItemManager",
+            "expectedResult": "Items management page is displayed"
+          }
+        ],
+        "expectedOutcome": "User successfully navigates from dashboard to items management",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "ActionButtons",
+          "ItemManager"
+        ]
+      },
+      {
+        "id": "UC-HP-004",
+        "title": "Print QR Codes - Single Property Flow",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User with single property clicks 'Print QR Code' and goes directly to print flow",
+        "preconditions": [
+          "User is logged in",
+          "User has exactly one property",
+          "Property has at least one item"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with action buttons"
+          },
+          {
+            "step": 2,
+            "action": "Click 'Print QR Code' button",
+            "component": "ActionButtons",
+            "expectedResult": "Button has secondary styling"
+          },
+          {
+            "step": 3,
+            "action": "Verify direct navigation to print flow",
+            "component": "Router",
+            "expectedResult": "User is navigated to /dashboard2/print/[propertyId]"
+          },
+          {
+            "step": 4,
+            "action": "Confirm QR print manager loads",
+            "component": "QRCodePrintManager",
+            "expectedResult": "QR code selection and print interface displayed"
+          }
+        ],
+        "expectedOutcome": "Single-property user bypasses property selector and goes directly to print flow",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "ActionButtons",
+          "QRCodePrintManager"
+        ]
+      },
+      {
+        "id": "UC-HP-005",
+        "title": "Edit Property Details",
+        "category": "happy-path",
+        "priority": "P1",
+        "description": "User edits their property name and address through the property section",
+        "preconditions": [
+          "User is logged in",
+          "User has at least one property"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with property section"
+          },
+          {
+            "step": 2,
+            "action": "Click on property name in 'My Property' section",
+            "component": "PropertySection",
+            "expectedResult": "Property row has chevron icon, is clickable"
+          },
+          {
+            "step": 3,
+            "action": "Observe edit modal opens",
+            "component": "PropertyEditModal",
+            "expectedResult": "Modal dialog appears with property form pre-populated"
+          },
+          {
+            "step": 4,
+            "action": "Modify property name",
+            "component": "PropertyForm",
+            "expectedResult": "Input field accepts new text"
+          },
+          {
+            "step": 5,
+            "action": "Click Save button",
+            "component": "PropertyEditModal",
+            "expectedResult": "Modal closes, property list refreshes with new name"
+          }
+        ],
+        "expectedOutcome": "Property details are updated and persisted to database",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "PropertySection",
+          "PropertyEditModal",
+          "PropertyForm"
+        ]
+      },
+      {
+        "id": "UC-HP-006",
+        "title": "Add New Property",
+        "category": "happy-path",
+        "priority": "P1",
+        "description": "User adds a new property through the 'Add New Property' button",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with property section"
+          },
+          {
+            "step": 2,
+            "action": "Click 'Add New Property' button",
+            "component": "PropertySection",
+            "expectedResult": "Button is visible below property list"
+          },
+          {
+            "step": 3,
+            "action": "Observe add modal opens",
+            "component": "AddPropertyModal",
+            "expectedResult": "Modal dialog appears with empty property form"
+          },
+          {
+            "step": 4,
+            "action": "Enter property name (required)",
+            "component": "PropertyForm",
+            "expectedResult": "Input field accepts text"
+          },
+          {
+            "step": 5,
+            "action": "Enter optional address fields",
+            "component": "PropertyForm",
+            "expectedResult": "Address fields accept input"
+          },
+          {
+            "step": 6,
+            "action": "Click Save button",
+            "component": "AddPropertyModal",
+            "expectedResult": "Modal closes, property added to list"
+          }
+        ],
+        "expectedOutcome": "New property is created and appears in property section",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "PropertySection",
+          "AddPropertyModal",
+          "PropertyForm"
+        ]
+      },
+      {
+        "id": "UC-ERR-001",
+        "title": "Property Form Validation - Empty Name",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "User attempts to save property without entering required name field",
+        "preconditions": [
+          "User is logged in",
+          "Property modal is open"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Open property edit modal",
+            "component": "PropertyEditModal",
+            "expectedResult": "Modal opens with form"
+          },
+          {
+            "step": 2,
+            "action": "Clear the property name field",
+            "component": "PropertyForm",
+            "expectedResult": "Name field is empty"
+          },
+          {
+            "step": 3,
+            "action": "Click Save button",
+            "component": "PropertyEditModal",
+            "expectedResult": "Save is prevented, error message displayed"
+          },
+          {
+            "step": 4,
+            "action": "Verify error message",
+            "component": "PropertyForm",
+            "expectedResult": "Error indicates 'Property name is required'"
+          }
+        ],
+        "expectedOutcome": "Form validation prevents saving and shows clear error message",
+        "componentsInvolved": [
+          "PropertyEditModal",
+          "PropertyForm"
+        ]
+      },
+      {
+        "id": "UC-ERR-002",
+        "title": "Dashboard Loading Error State",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "Dashboard handles API errors gracefully when fetching statistics",
+        "preconditions": [
+          "User is logged in",
+          "API is temporarily unavailable"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2 when API fails",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads shell structure"
+          },
+          {
+            "step": 2,
+            "action": "Observe statistics cards section",
+            "component": "StatisticsCards",
+            "expectedResult": "Error state or retry option displayed"
+          },
+          {
+            "step": 3,
+            "action": "Click retry if available",
+            "component": "useDashboardStats",
+            "expectedResult": "Refresh is attempted"
+          }
+        ],
+        "expectedOutcome": "Dashboard displays graceful error state instead of crashing",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "useDashboardStats"
+        ]
+      },
+      {
+        "id": "UC-ERR-003",
+        "title": "Modal Cancel Discards Changes",
+        "category": "error-handling",
+        "priority": "P2",
+        "description": "User can cancel property edit and discard unsaved changes",
+        "preconditions": [
+          "User is logged in",
+          "User has at least one property"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Open property edit modal",
+            "component": "PropertyEditModal",
+            "expectedResult": "Modal opens with current property data"
+          },
+          {
+            "step": 2,
+            "action": "Modify property name",
+            "component": "PropertyForm",
+            "expectedResult": "Input field shows new text"
+          },
+          {
+            "step": 3,
+            "action": "Click Cancel button",
+            "component": "PropertyEditModal",
+            "expectedResult": "Modal closes without saving"
+          },
+          {
+            "step": 4,
+            "action": "Re-open same property",
+            "component": "PropertySection",
+            "expectedResult": "Original name is displayed (changes were discarded)"
+          }
+        ],
+        "expectedOutcome": "Cancel action properly discards unsaved changes",
+        "componentsInvolved": [
+          "PropertyEditModal",
+          "PropertyForm",
+          "PropertySection"
+        ]
+      },
+      {
+        "id": "UC-EDGE-001",
+        "title": "New User Empty State - No Items",
+        "category": "edge-case",
+        "priority": "P0",
+        "description": "New user with no items sees appropriate empty state with CTA",
+        "preconditions": [
+          "User is logged in",
+          "User has no items created yet"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads successfully"
+          },
+          {
+            "step": 2,
+            "action": "Observe statistics cards",
+            "component": "StatisticsCards",
+            "expectedResult": "Shows '0' for Items, Rooms, Tags (not 'No data')"
+          },
+          {
+            "step": 3,
+            "action": "Observe empty state guidance",
+            "component": "EmptyStateGuidance",
+            "expectedResult": "'Create your first item' CTA is prominently displayed"
+          },
+          {
+            "step": 4,
+            "action": "Click CTA button",
+            "component": "EmptyStateGuidance",
+            "expectedResult": "Navigates to item creation workflow"
+          }
+        ],
+        "expectedOutcome": "New users see encouraging empty state with clear call-to-action",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "EmptyStateGuidance"
+        ]
+      },
+      {
+        "id": "UC-EDGE-002",
+        "title": "No Properties State",
+        "category": "edge-case",
+        "priority": "P1",
+        "description": "User with no properties sees prompt to add one",
+        "preconditions": [
+          "User is logged in",
+          "User has no properties (unusual edge case)"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads successfully"
+          },
+          {
+            "step": 2,
+            "action": "Observe property section",
+            "component": "PropertySection",
+            "expectedResult": "Empty state message prompting to add property"
+          },
+          {
+            "step": 3,
+            "action": "Click 'Add Property' prompt",
+            "component": "PropertySection",
+            "expectedResult": "Add property modal opens"
+          }
+        ],
+        "expectedOutcome": "Users without properties are guided to create one",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "PropertySection",
+          "AddPropertyModal"
+        ]
+      },
+      {
+        "id": "UC-EDGE-003",
+        "title": "Mobile Responsive Layout",
+        "category": "edge-case",
+        "priority": "P2",
+        "description": "Dashboard layout adapts properly on mobile devices",
+        "preconditions": [
+          "User is logged in",
+          "Viewing on mobile device or narrow viewport"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2 on mobile",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with mobile layout"
+          },
+          {
+            "step": 2,
+            "action": "Observe statistics cards",
+            "component": "StatisticsCards",
+            "expectedResult": "Cards stack vertically (1 per row)"
+          },
+          {
+            "step": 3,
+            "action": "Observe action buttons",
+            "component": "ActionButtons",
+            "expectedResult": "Buttons stack vertically with full width"
+          },
+          {
+            "step": 4,
+            "action": "Test button tap targets",
+            "component": "ActionButtons",
+            "expectedResult": "Touch targets are at least 48px"
+          }
+        ],
+        "expectedOutcome": "Dashboard is fully usable on mobile devices",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "ActionButtons",
+          "PropertySection"
+        ]
+      },
+      {
+        "id": "UC-INT-001",
+        "title": "Multi-Property Print Flow with Property Selector",
+        "category": "integration",
+        "priority": "P0",
+        "description": "User with multiple properties uses property selector before print flow",
+        "preconditions": [
+          "User is logged in",
+          "User has 2+ properties"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads, property section shows 'My Properties' (plural)"
+          },
+          {
+            "step": 2,
+            "action": "Click 'Print QR Code' button",
+            "component": "ActionButtons",
+            "expectedResult": "Button navigates to property selector"
+          },
+          {
+            "step": 3,
+            "action": "Observe property selector page",
+            "component": "PrintPropertySelector",
+            "expectedResult": "Property cards displayed with names and item counts"
+          },
+          {
+            "step": 4,
+            "action": "Select a property",
+            "component": "PrintPropertySelector",
+            "expectedResult": "Navigates to /dashboard2/print/[selectedPropertyId]"
+          },
+          {
+            "step": 5,
+            "action": "Confirm print manager loads",
+            "component": "QRCodePrintManager",
+            "expectedResult": "QR print interface shows items for selected property only"
+          }
+        ],
+        "expectedOutcome": "Multi-property users can select which property to print QR codes for",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "ActionButtons",
+          "PrintPropertySelector",
+          "QRCodePrintManager"
+        ]
+      },
+      {
+        "id": "UC-INT-002",
+        "title": "Statistics Update After Item Creation",
+        "category": "integration",
+        "priority": "P1",
+        "description": "Statistics cards update automatically after user creates a new item",
+        "preconditions": [
+          "User is logged in",
+          "User has property with items"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Note current item count in statistics"
+          },
+          {
+            "step": 2,
+            "action": "Navigate to /dashboard2/create",
+            "component": "ActionButtons",
+            "expectedResult": "Item creation workflow loads"
+          },
+          {
+            "step": 3,
+            "action": "Complete item creation flow",
+            "component": "ItemCreationWorkflow",
+            "expectedResult": "New item is saved successfully"
+          },
+          {
+            "step": 4,
+            "action": "Navigate back to /dashboard2",
+            "component": "Router",
+            "expectedResult": "Dashboard loads"
+          },
+          {
+            "step": 5,
+            "action": "Verify statistics updated",
+            "component": "StatisticsCards",
+            "expectedResult": "Item count has increased by 1"
+          }
+        ],
+        "expectedOutcome": "Dashboard statistics reflect real-time data after item operations",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "ItemCreationWorkflow",
+          "useDashboardStats"
+        ]
+      },
+      {
+        "id": "UC-INT-003",
+        "title": "Full Dashboard Workflow - Login to QR Print",
+        "category": "integration",
+        "priority": "P0",
+        "description": "Complete end-to-end flow: view dashboard, create item, print QR code",
+        "preconditions": [
+          "User is logged in",
+          "User has at least one property"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to /dashboard2",
+            "component": "Dashboard2Page",
+            "expectedResult": "Dashboard loads with all sections visible"
+          },
+          {
+            "step": 2,
+            "action": "View statistics cards",
+            "component": "StatisticsCards",
+            "expectedResult": "Item, Room, Tag counts displayed"
+          },
+          {
+            "step": 3,
+            "action": "Click 'Create New Item'",
+            "component": "ActionButtons",
+            "expectedResult": "Navigate to item creation"
+          },
+          {
+            "step": 4,
+            "action": "Create and save new item",
+            "component": "ItemCreationWorkflow",
+            "expectedResult": "Item saved successfully"
+          },
+          {
+            "step": 5,
+            "action": "Return to dashboard",
+            "component": "Router",
+            "expectedResult": "Dashboard loads with updated stats"
+          },
+          {
+            "step": 6,
+            "action": "Click 'Print QR Code'",
+            "component": "ActionButtons",
+            "expectedResult": "Print flow initiated"
+          },
+          {
+            "step": 7,
+            "action": "Select items and generate PDF",
+            "component": "QRCodePrintManager",
+            "expectedResult": "PDF with QR codes generated"
+          }
+        ],
+        "expectedOutcome": "User completes full workflow from dashboard view to QR code printing",
+        "componentsInvolved": [
+          "Dashboard2Page",
+          "StatisticsCards",
+          "ActionButtons",
+          "ItemCreationWorkflow",
+          "QRCodePrintManager"
+        ]
+      }
+    ]
   }
 }
