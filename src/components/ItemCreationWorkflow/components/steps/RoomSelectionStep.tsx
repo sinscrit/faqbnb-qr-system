@@ -75,6 +75,17 @@ export function RoomSelectionStep({
     []
   );
 
+  // Auto-advance when a room is selected (except "other" which needs custom input)
+  const handleRoomSelect = useCallback((room: RoomType) => {
+    onSelectRoom(room);
+    // Auto-advance for non-"other" rooms after a brief visual feedback delay
+    if (room !== 'other') {
+      setTimeout(() => {
+        onNext();
+      }, 150);
+    }
+  }, [onSelectRoom, onNext]);
+
   // Compute validation state
   const isValidSelection = useMemo(() => {
     if (!currentRoom) return false;
@@ -113,7 +124,7 @@ export function RoomSelectionStep({
       columns: getColumns(),
       loop: true,
       onSelect: (index) => {
-        onSelectRoom(ROOM_TYPES[index] as RoomType);
+        handleRoomSelect(ROOM_TYPES[index] as RoomType);
       },
       onFocusChange: (index) => {
         setActiveIndex(index);
@@ -121,7 +132,7 @@ export function RoomSelectionStep({
     });
 
     handleNav(event);
-  }, [onSelectRoom]);
+  }, [handleRoomSelect]);
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
@@ -151,7 +162,7 @@ export function RoomSelectionStep({
             label={ROOM_LABELS[room]}
             icon={ROOM_ICONS[room]}
             isSelected={currentRoom === room}
-            onSelect={onSelectRoom}
+            onSelect={handleRoomSelect}
             tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}
