@@ -59,6 +59,7 @@ import {
   WORKFLOW_STEPS,
   MAX_CONTENT_PIECES,
 } from '../utils/constants';
+import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 
 // =============================================================================
 // Step Transitions
@@ -99,7 +100,7 @@ export const createInitialState = (): WorkflowState => ({
   stepHistory: [],
   canGoBack: false,
   session: {
-    id: crypto.randomUUID(),
+    id: generateUUID(),
     startedAt: new Date(),
     currentStep: 'room-selection',
     items: [],

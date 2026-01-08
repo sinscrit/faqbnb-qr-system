@@ -13,7 +13,7 @@
  */
 
 import { useMemo, useCallback } from 'react';
-import type { MediaItem, ItemMetadata } from '../ItemCapture.types';
+import type { MediaItem, ItemMetadata, UrlItem } from '../ItemCapture.types';
 import {
   validateItemCapture,
   validateTitle,
@@ -83,6 +83,7 @@ export interface UseItemValidationReturn {
  *
  * @param metadata - Item metadata including title, location, tags
  * @param mediaItems - Array of media items to validate
+ * @param urlItems - Array of URL items to validate
  * @param instructions - Text instructions to validate
  * @returns Validation state and utility functions
  *
@@ -95,7 +96,7 @@ export interface UseItemValidationReturn {
  *   calculateTotalSize,
  *   getRemainingSize,
  *   formatSize,
- * } = useItemValidation(metadata, mediaItems, instructions);
+ * } = useItemValidation(metadata, mediaItems, urlItems, instructions);
  *
  * // Display validation state
  * if (!isValid) {
@@ -111,6 +112,7 @@ export interface UseItemValidationReturn {
 export function useItemValidation(
   metadata: ItemMetadata,
   mediaItems: MediaItem[],
+  urlItems: UrlItem[],
   instructions: string
 ): UseItemValidationReturn {
   // ==========================================================================
@@ -122,8 +124,8 @@ export function useItemValidation(
    * Only re-runs when any of the inputs change.
    */
   const validation = useMemo((): ItemCaptureValidation => {
-    return validateItemCapture(metadata, mediaItems, instructions);
-  }, [metadata, mediaItems, instructions]);
+    return validateItemCapture(metadata, mediaItems, urlItems, instructions);
+  }, [metadata, mediaItems, urlItems, instructions]);
 
   // ==========================================================================
   // Derived Values
@@ -172,8 +174,8 @@ export function useItemValidation(
    * cases where you need to trigger validation imperatively.
    */
   const validateAll = useCallback((): ItemCaptureValidation => {
-    return validateItemCapture(metadata, mediaItems, instructions);
-  }, [metadata, mediaItems, instructions]);
+    return validateItemCapture(metadata, mediaItems, urlItems, instructions);
+  }, [metadata, mediaItems, urlItems, instructions]);
 
   /**
    * Calculate total size of all media items.

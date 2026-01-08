@@ -147,6 +147,7 @@ export function ItemCapture({
     const validation = validateItemCapture(
       state.metadata,
       state.mediaItems,
+      state.urlItems,
       state.instructions
     );
 
@@ -172,6 +173,7 @@ export function ItemCapture({
       const record = assembleItemRecord({
         metadata: state.metadata,
         mediaItems: state.mediaItems,
+        urlItems: state.urlItems,
         instructions: state.instructions,
       });
 
@@ -364,6 +366,7 @@ export function ItemCapture({
               const validation = validateItemCapture(
                 state.metadata,
                 state.mediaItems,
+                state.urlItems,
                 state.instructions
               );
               if (!validation.isValid) {

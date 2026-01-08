@@ -24,6 +24,7 @@ import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, C
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
+import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 
 // =============================================================================
 // Step Placeholder Component
@@ -270,7 +271,7 @@ export function ItemCreationWorkflow({
     setIsSaving(true);
     try {
       const sessionItem: SessionItem = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         name: state.currentItem.itemName,
         room: state.currentItem.room,
         itemType: state.currentItem.itemType,

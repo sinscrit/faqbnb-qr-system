@@ -320,7 +320,7 @@ export function ReviewStep({
     formatSize,
     maxTotalSize,
     hasContent,
-  } = useItemValidation(metadata, mediaItems, instructions);
+  } = useItemValidation(metadata, mediaItems, urlItems, instructions);
 
   // Calculate size values
   const totalSize = calculateTotalSize();

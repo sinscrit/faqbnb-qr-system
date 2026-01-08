@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { ItemCapture } from '@/components/ItemCapture';
 import { mapRoomTypeToLocation } from '@/components/ItemCapture/utils/roomMapping';
 import { mapSpecificItemToApplianceType } from '@/components/ItemCapture/utils/itemTypeMapping';
+import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 import type {
   ContentType,
   ContentPiece,
@@ -109,7 +110,7 @@ function transformRecordToContentPiece(
   record: ItemRecord,
   contentType: ContentType
 ): ContentPiece {
-  const id = crypto.randomUUID();
+  const id = generateUUID();
   const order = 0; // First piece in this creation step
 
   // Extract thumbnail from first media item if available
