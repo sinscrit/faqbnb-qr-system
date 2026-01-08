@@ -201,6 +201,15 @@ export function ContentTypeStep({
     ? 'Select the format of your existing content'
     : 'Choose how you want to capture this item';
 
+  // Auto-advance when a content type is selected
+  const handleContentTypeSelect = useCallback((type: ContentType) => {
+    onSelectContentType(type);
+    // Auto-advance after a brief visual feedback delay
+    setTimeout(() => {
+      onNext();
+    }, 150);
+  }, [onSelectContentType, onNext]);
+
   const handleContinue = useCallback(() => {
     if (canNext) {
       onNext();
@@ -224,7 +233,7 @@ export function ContentTypeStep({
       columns: getColumns(),
       loop: true,
       onSelect: (index) => {
-        onSelectContentType(contentOptions[index].type);
+        handleContentTypeSelect(contentOptions[index].type);
       },
       onFocusChange: (index) => {
         setActiveIndex(index);
@@ -232,7 +241,7 @@ export function ContentTypeStep({
     });
 
     handleNav(event);
-  }, [onSelectContentType, contentOptions]);
+  }, [handleContentTypeSelect, contentOptions]);
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
@@ -260,7 +269,7 @@ export function ContentTypeStep({
             ref={(el) => { cardRefs.current[index] = el; }}
             option={option}
             isSelected={currentContentType === option.type}
-            onSelect={onSelectContentType}
+            onSelect={handleContentTypeSelect}
             tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}

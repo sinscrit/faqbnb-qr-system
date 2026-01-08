@@ -54,6 +54,15 @@ export function ItemTypeStep({
   );
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  // Auto-advance when an item type is selected
+  const handleItemTypeSelect = useCallback((itemType: ItemType) => {
+    onSelectItemType(itemType);
+    // Auto-advance after a brief visual feedback delay
+    setTimeout(() => {
+      onNext();
+    }, 150);
+  }, [onSelectItemType, onNext]);
+
   // Handle Continue button click
   const handleContinue = useCallback(() => {
     if (canNext) {
@@ -71,7 +80,7 @@ export function ItemTypeStep({
       orientation: 'vertical',
       loop: true,
       onSelect: (index) => {
-        onSelectItemType(ITEM_TYPES[index] as ItemType);
+        handleItemTypeSelect(ITEM_TYPES[index] as ItemType);
       },
       onFocusChange: (index) => {
         setActiveIndex(index);
@@ -79,7 +88,7 @@ export function ItemTypeStep({
     });
 
     handleNav(event);
-  }, [onSelectItemType]);
+  }, [handleItemTypeSelect]);
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
@@ -110,7 +119,7 @@ export function ItemTypeStep({
             description={ITEM_TYPE_DESCRIPTIONS[type]}
             icon={ITEM_TYPE_ICONS[type]}
             isSelected={currentItemType === type}
-            onSelect={onSelectItemType}
+            onSelect={handleItemTypeSelect}
             tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}

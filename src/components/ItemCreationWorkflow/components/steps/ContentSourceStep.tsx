@@ -183,6 +183,15 @@ export function ContentSourceStep({
   canNext,
   className,
 }: ContentSourceStepProps) {
+  // Auto-advance when a content source is selected
+  const handleContentSourceSelect = useCallback((source: ContentSource) => {
+    onSelectContentSource(source);
+    // Auto-advance after a brief visual feedback delay
+    setTimeout(() => {
+      onNext();
+    }, 150);
+  }, [onSelectContentSource, onNext]);
+
   const handleContinue = useCallback(() => {
     if (canNext) {
       onNext();
@@ -215,7 +224,7 @@ export function ContentSourceStep({
             source={source}
             data={CONTENT_SOURCE_CARDS[source]}
             isSelected={currentContentSource === source}
-            onSelect={onSelectContentSource}
+            onSelect={handleContentSourceSelect}
           />
         ))}
       </div>

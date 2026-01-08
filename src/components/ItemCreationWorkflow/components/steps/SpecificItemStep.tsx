@@ -79,14 +79,18 @@ export function SpecificItemStep({
     [currentItemName, existingItemNames]
   );
 
-  // Handle suggestion selection
+  // Handle suggestion selection - auto-advance for pre-defined suggestions
   const handleSuggestionSelect = useCallback(
     (suggestion: string) => {
       setIsCustomMode(false);
       setCustomItemValue('');
       onSelectSpecificItem(suggestion);
+      // Auto-advance after a brief visual feedback delay
+      setTimeout(() => {
+        onNext();
+      }, 150);
     },
-    [onSelectSpecificItem]
+    [onSelectSpecificItem, onNext]
   );
 
   // Handle "Other" / custom option click
