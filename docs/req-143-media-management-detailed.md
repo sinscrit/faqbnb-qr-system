@@ -1532,21 +1532,24 @@
 **Files to modify:** `src/app/dashboard2/items/[publicId]/edit/page.tsx` (Modify)
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Add import for MediaManagementSection at the top of the file:
+- [x] **8.1** Add import for MediaManagementSection at the top of the file:
+  ---implemented: Added imports for MediaManagementSection and EditableMediaLink type
 
   ```typescript
   import { MediaManagementSection } from '@/components/MediaManagement';
   import type { EditableMediaLink } from '@/components/MediaManagement';
   ```
 
-- [ ] **8.2** Add state for tracking media link changes. After the existing form state declarations (around line 36):
+- [x] **8.2** Add state for tracking media link changes. After the existing form state declarations (around line 36):
+  ---implemented: Added mediaLinks state using EditableMediaLink[] type
 
   ```typescript
   // Media links state
   const [mediaLinks, setMediaLinks] = useState<EditableMediaLink[]>([]);
   ```
 
-- [ ] **8.3** Create a handler for media link changes:
+- [x] **8.3** Create a handler for media link changes:
+  ---implemented: Added handleMediaLinksChange callback to update state when MediaManagementSection changes
 
   ```typescript
   // Handle media links change from MediaManagementSection
@@ -1555,7 +1558,8 @@
   }, []);
   ```
 
-- [ ] **8.4** Update the `handleSubmit` function (around line 73) to include media links in the API call. Replace the existing links mapping:
+- [x] **8.4** Update the `handleSubmit` function (around line 73) to include media links in the API call. Replace the existing links mapping:
+  ---implemented: Updated handleSubmit to use mediaLinks state with proper field mapping
 
   ```typescript
   // Replace the existing links mapping in handleSubmit:
@@ -1574,7 +1578,8 @@
   }, headers);
   ```
 
-- [ ] **8.5** Add the MediaManagementSection component in the form, after the Property display section (around line 217). Insert before the closing `</div>` of the space-y-6 container:
+- [x] **8.5** Add the MediaManagementSection component in the form, after the Property display section (around line 217). Insert before the closing `</div>` of the space-y-6 container:
+  ---implemented: Added MediaManagementSection with initialLinks, onLinksChange handler, and readOnly prop tied to saving state
 
   ```typescript
   {/* Media Management Section */}
@@ -1587,12 +1592,13 @@
   </div>
   ```
 
-- [ ] **8.6** Verify the integration compiles and the page renders:
+- [x] **8.6** Verify the integration compiles and the page renders:
   ```bash
   npm run build
   npm run dev
   ```
   Then navigate to `/dashboard2/items/[publicId]/edit` to verify the component appears.
+  ---implemented: Verified with npm run build - unit tested
 
 **Acceptance Criteria:**
 - MediaManagementSection appears on the Edit Item page

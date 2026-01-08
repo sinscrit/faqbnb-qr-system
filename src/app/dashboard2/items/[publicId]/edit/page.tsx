@@ -17,6 +17,8 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2, ArrowLeft, Save } from 'lucide-react';
 import { ItemWithDetails } from '@/types';
+import { MediaManagementSection } from '@/components/MediaManagement';
+import type { EditableMediaLink } from '@/components/MediaManagement';
 
 export default function EditItemPage() {
   const router = useRouter();
@@ -34,6 +36,9 @@ export default function EditItemPage() {
   // Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+
+  // Media links state
+  const [mediaLinks, setMediaLinks] = useState<EditableMediaLink[]>([]);
 
   // Fetch item data
   const fetchItem = useCallback(async () => {
@@ -69,6 +74,11 @@ export default function EditItemPage() {
     fetchItem();
   }, [fetchItem]);
 
+  // Handle media links change from MediaManagementSection
+  const handleMediaLinksChange = useCallback((links: EditableMediaLink[]) => {
+    setMediaLinks(links);
+  }, []);
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,14 +98,14 @@ export default function EditItemPage() {
         name,
         description,
         propertyId: item.propertyId,
-        links: item.links?.map(link => ({
-          id: link.id,
+        links: mediaLinks.map((link, index) => ({
+          id: link.id, // undefined for new links
           title: link.title,
-          linkType: link.link_type,
+          linkType: link.linkType,
           url: link.url,
-          thumbnailUrl: link.thumbnail_url || undefined,
-          displayOrder: link.display_order,
-        })) || [],
+          thumbnailUrl: link.thumbnailUrl,
+          displayOrder: link.displayOrder,
+        })),
       }, headers);
 
       if (response.success) {
@@ -215,6 +225,15 @@ export default function EditItemPage() {
               </p>
             </div>
           )}
+
+          {/* Media Management Section */}
+          <div className="pt-4 border-t border-gray-200">
+            <MediaManagementSection
+              initialLinks={item?.links || []}
+              onLinksChange={handleMediaLinksChange}
+              readOnly={saving}
+            />
+          </div>
         </div>
 
         {/* Action Buttons */}
