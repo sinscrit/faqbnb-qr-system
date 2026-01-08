@@ -197,7 +197,7 @@ const getErrorGuidance = (code: string, maxPhotos: number): string => {
     case 'PERMISSION_DENIED':
       return 'Please enable camera access in your browser settings to capture photos.';
     case 'BROWSER_NOT_SUPPORTED':
-      return 'Please try Chrome, Safari, or Firefox.';
+      return 'Camera access requires HTTPS. Please go back and use "Upload Photo" instead, or access via HTTPS.';
     case 'CAPTURE_FAILED':
       return 'Please check your camera and try again.';
     case 'MAX_PHOTOS_REACHED':

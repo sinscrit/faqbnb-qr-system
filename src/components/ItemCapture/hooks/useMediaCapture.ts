@@ -203,12 +203,21 @@ function detectCapabilities(): BrowserCapabilities {
 
   let unsupportedReason: string | undefined;
   if (!isSupported) {
-    const missing: string[] = [];
-    if (!hasMediaDevices) missing.push('MediaDevices API');
-    if (!hasGetUserMedia) missing.push('getUserMedia');
-    if (!hasMediaRecorder) missing.push('MediaRecorder');
-    if (!hasEnumerateDevices) missing.push('enumerateDevices');
-    unsupportedReason = `Missing: ${missing.join(', ')}`;
+    // Check if this is likely an HTTPS issue (MediaDevices missing on non-localhost HTTP)
+    const isHttpNonLocalhost = typeof window !== 'undefined' &&
+      window.location.protocol === 'http:' &&
+      !['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+    if (isHttpNonLocalhost && !hasMediaDevices) {
+      unsupportedReason = 'Camera requires HTTPS connection';
+    } else {
+      const missing: string[] = [];
+      if (!hasMediaDevices) missing.push('MediaDevices API');
+      if (!hasGetUserMedia) missing.push('getUserMedia');
+      if (!hasMediaRecorder) missing.push('MediaRecorder');
+      if (!hasEnumerateDevices) missing.push('enumerateDevices');
+      unsupportedReason = `Missing: ${missing.join(', ')}`;
+    }
   }
 
   return {

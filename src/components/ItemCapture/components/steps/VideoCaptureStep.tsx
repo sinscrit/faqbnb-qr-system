@@ -197,7 +197,7 @@ const getErrorGuidance = (code: string): string => {
     case 'PERMISSION_DENIED':
       return 'Please enable camera access in your browser settings to record video.';
     case 'BROWSER_NOT_SUPPORTED':
-      return 'Please try Chrome, Safari, or Firefox.';
+      return 'Camera access requires HTTPS. Please go back and use "Upload Video" instead, or access via HTTPS.';
     case 'RECORDING_FAILED':
       return 'Please check your camera and try again.';
     case 'THUMBNAIL_FAILED':
