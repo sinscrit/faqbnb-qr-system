@@ -514,7 +514,8 @@
 **Files to modify:** `src/components/MediaManagement/MediaLinkList.tsx` (Create)
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Create `src/components/MediaManagement/MediaLinkList.tsx` with imports:
+- [x] **3.1** Create `src/components/MediaManagement/MediaLinkList.tsx` with imports:
+  ---implemented: Created MediaLinkList component with full @dnd-kit imports and implementation
 
   ```typescript
   'use client';
@@ -558,7 +559,8 @@
   import type { MediaLinkListProps, EditableMediaLink } from './MediaManagement.types';
   ```
 
-- [ ] **3.2** Create the SortableMediaLinkItem wrapper component:
+- [x] **3.2** Create the SortableMediaLinkItem wrapper component:
+  ---implemented: Created SortableMediaLinkItem with useSortable hook integration
 
   ```typescript
   interface SortableMediaLinkItemProps {
@@ -622,7 +624,8 @@
   }
   ```
 
-- [ ] **3.3** Implement the main MediaLinkList component:
+- [x] **3.3** Implement the main MediaLinkList component:
+  ---implemented: Full MediaLinkList with DndContext, sensors, accessibility announcements, and DragOverlay
 
   ```typescript
   export function MediaLinkList({
@@ -763,10 +766,11 @@
   export default MediaLinkList;
   ```
 
-- [ ] **3.4** Verify @dnd-kit dependencies are installed (they should be from existing codebase):
+- [x] **3.4** Verify @dnd-kit dependencies are installed (they should be from existing codebase):
   ```bash
   npm ls @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities @dnd-kit/modifiers
   ```
+  ---implemented: Verified all dependencies installed - unit tested
 
 **Acceptance Criteria:**
 - Drag-and-drop reordering works with mouse, touch, and keyboard
