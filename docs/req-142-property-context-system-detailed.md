@@ -1078,19 +1078,19 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 **Files to modify:** `src/app/dashboard2/create/page.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] Add import for property context (after existing imports around line 15):
+- [x] Add import for property context (after existing imports around line 15): ---implemented: Added usePropertyContext import-
 
 ```typescript
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 ```
 
-- [ ] Add the property context hook in the component (after line 28):
+- [x] Add the property context hook in the component (after line 28): ---implemented: Added selectedPropertyId and selectedProperty from context-
 
 ```typescript
   const { selectedPropertyId, selectedProperty } = usePropertyContext();
 ```
 
-- [ ] Update the `handleSaveItem` callback to prefer the selected property. Find the property selection logic (around lines 55-67) and replace it with:
+- [x] Update the `handleSaveItem` callback to prefer the selected property. Find the property selection logic (around lines 55-67) and replace it with: ---implemented: Updated to prefer selected property from context, falls back to first available-
 
 ```typescript
       try {
@@ -1114,7 +1114,7 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
         }
 ```
 
-- [ ] Verify the page compiles without errors
+- [x] Verify the page compiles without errors -unit tested-
 
 ---
 

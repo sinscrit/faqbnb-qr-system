@@ -21,11 +21,13 @@ import {
   SessionItem,
   PrintScope,
 } from '@/components/ItemCreationWorkflow';
+import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function CreateItemPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
+  const { selectedPropertyId, selectedProperty } = usePropertyContext();
   const [error, setError] = useState<string | null>(null);
 
   // Generate UUID for new items
@@ -52,14 +54,19 @@ export default function CreateItemPage() {
       }
 
       try {
-        // First we need to get a property to associate with
-        // In production, you'd want the user to select this
-        const propertiesResponse = await adminApi.listProperties(headers);
         let propertyId: string | undefined;
 
-        if (propertiesResponse.success && propertiesResponse.data && propertiesResponse.data.length > 0) {
-          // Use the first property for now
-          propertyId = propertiesResponse.data[0].id;
+        // REQ-142: Prefer currently selected property from context
+        if (selectedPropertyId) {
+          propertyId = selectedPropertyId;
+          console.log('Using selected property from context:', propertyId);
+        } else {
+          // Fall back to first available property
+          const propertiesResponse = await adminApi.listProperties(headers);
+          if (propertiesResponse.success && propertiesResponse.data && propertiesResponse.data.length > 0) {
+            propertyId = propertiesResponse.data[0].id;
+            console.log('Using first available property:', propertyId);
+          }
         }
 
         if (!propertyId) {
