@@ -48,6 +48,7 @@ export interface ItemCaptureConfig {
 
 /**
  * Main component props for ItemCapture.
+ * Supports optional pre-fill values for room and appliance type (REQ-144).
  */
 export interface ItemCaptureProps {
   /** Called when user successfully submits the item record */
@@ -61,6 +62,12 @@ export interface ItemCaptureProps {
 
   /** Optional CSS class name for the root element */
   className?: string;
+
+  /** Optional initial room/location to pre-fill in MetadataStep */
+  initialRoom?: string;
+
+  /** Optional initial appliance type to pre-fill in MetadataStep */
+  initialApplianceType?: ApplianceType;
 }
 
 // =============================================================================

@@ -6841,3 +6841,35 @@ Streamlining the media management workflow reduces the time required to maintain
 - [ ] Changes to media assets are saved when the user saves the item
 - [ ] The media management section is visually integrated with the rest of the Edit Item page
 
+
+---
+
+## REQ-144: Pre-fill Room and Item Type in Item Details Form
+
+**Date**: 2026-01-08 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+When users reach the Item Details form during item creation, the Room and Item Type fields should be automatically populated with the values they selected earlier in the workflow, eliminating redundant data entry.
+
+### Current Behavior
+Users select a Room in the first step of the item creation workflow, then select an Item Type in the second step. When they later reach the Item Details form (after recording or selecting media), both the Room and Item Type dropdown fields are empty, requiring users to re-enter information they already provided.
+
+### Expected Behavior
+When the Item Details form appears, the Room dropdown should display the room the user selected in the initial room selection step, and the Item Type dropdown should display the item type they chose in the item type selection step. Users can still change either value if needed, but they are not required to re-select them.
+
+### User Impact
+All users creating items will save time and experience less friction during the item creation process. This particularly benefits users creating multiple items in a single session, as they avoid repetitive selections for each item.
+
+### Business Value
+Reduces user frustration and time-to-completion for item creation, improving overall workflow efficiency and user satisfaction with the item management system.
+
+### Acceptance Criteria
+- [ ] When a user reaches the Item Details form, the Room field displays the room selected in the room selection step
+- [ ] When a user reaches the Item Details form, the Item Type field displays the item type selected in the item type selection step
+- [ ] Users can change the pre-filled Room value by selecting a different option from the dropdown
+- [ ] Users can change the pre-filled Item Type value by selecting a different option from the dropdown
+- [ ] If a user changes the pre-filled values, the new selections are saved with the item
+- [ ] Pre-filled values persist correctly if a user navigates backward and forward through the workflow steps
+

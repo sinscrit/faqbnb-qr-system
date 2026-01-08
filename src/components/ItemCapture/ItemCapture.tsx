@@ -71,7 +71,20 @@ export function ItemCapture({
   onCancel,
   config,
   className,
+  initialRoom,
+  initialApplianceType,
 }: ItemCaptureProps) {
+  // Prepare initial values for state hook
+  const initialValues = useMemo(() => {
+    if (!initialRoom && !initialApplianceType) {
+      return undefined;
+    }
+    return {
+      location: initialRoom,
+      applianceType: initialApplianceType,
+    };
+  }, [initialRoom, initialApplianceType]);
+
   // Initialize state management
   const {
     state,
@@ -99,7 +112,7 @@ export function ItemCapture({
     canGoNext,
     canGoBack,
     canSubmit,
-  } = useItemCaptureState();
+  } = useItemCaptureState(initialValues);
 
   // Debug logging helper
   const debugLog = useCallback(

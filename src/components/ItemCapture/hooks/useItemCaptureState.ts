@@ -19,8 +19,24 @@ import type {
   UrlItem,
   ItemCaptureState,
   ItemCaptureAction,
+  ApplianceType,
 } from '../ItemCapture.types';
 import { revokeAllTrackedURLs, setURLManagerDebug } from '../utils/urlManager';
+
+// =============================================================================
+// Initial Values Interface
+// =============================================================================
+
+/**
+ * Optional initial values for pre-filling state.
+ * Used when ItemCapture is launched with pre-selected values.
+ */
+export interface ItemCaptureInitialValues {
+  /** Initial location/room value */
+  location?: string;
+  /** Initial appliance type value */
+  applianceType?: ApplianceType;
+}
 
 // =============================================================================
 // Step Transitions
@@ -51,14 +67,16 @@ export const STEP_TRANSITIONS: Record<WizardStep, WizardStep[]> = {
  * Factory function to create fresh initial state.
  * Used by reducer RESET action and hook initialization.
  */
-export const createInitialState = (): ItemCaptureState => ({
+export const createInitialState = (
+  initialValues?: ItemCaptureInitialValues
+): ItemCaptureState => ({
   currentStep: 'metadata',
   stepHistory: [],
   metadata: {
     title: '',
-    location: '',
+    location: initialValues?.location ?? '',
     tags: [],
-    applianceType: undefined,
+    applianceType: initialValues?.applianceType ?? undefined,
   },
   mediaItems: [],
   urlItems: [],
@@ -461,8 +479,14 @@ export interface UseItemCaptureStateReturn {
 // Main Hook
 // =============================================================================
 
-export function useItemCaptureState(): UseItemCaptureStateReturn {
-  const [state, dispatch] = useReducer(itemCaptureReducer, undefined, createInitialState);
+export function useItemCaptureState(
+  initialValues?: ItemCaptureInitialValues
+): UseItemCaptureStateReturn {
+  const [state, dispatch] = useReducer(
+    itemCaptureReducer,
+    initialValues,
+    createInitialState
+  );
 
   // Navigation actions
   const goToStep = useCallback((step: WizardStep) => {

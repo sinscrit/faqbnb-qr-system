@@ -33,16 +33,31 @@ import type { ContentPiece, ContentType } from '../ItemCreationWorkflow.types';
 let capturedConfig: ItemCaptureConfig | undefined;
 let capturedOnComplete: ((record: ItemRecord) => void) | undefined;
 let capturedOnCancel: (() => void) | undefined;
+let capturedInitialRoom: string | undefined;
+let capturedInitialApplianceType: string | undefined;
 
 vi.mock('@/components/ItemCapture', () => ({
-  ItemCapture: ({ onComplete, onCancel, config }: ItemCaptureProps) => {
+  ItemCapture: ({
+    onComplete,
+    onCancel,
+    config,
+    initialRoom,
+    initialApplianceType,
+  }: ItemCaptureProps & {
+    initialRoom?: string;
+    initialApplianceType?: string;
+  }) => {
     capturedConfig = config;
     capturedOnComplete = onComplete;
     capturedOnCancel = onCancel;
+    capturedInitialRoom = initialRoom;
+    capturedInitialApplianceType = initialApplianceType;
 
     return (
       <div data-testid="mock-item-capture">
         <div data-testid="item-capture-config">{JSON.stringify(config)}</div>
+        <div data-testid="initial-room">{initialRoom || 'none'}</div>
+        <div data-testid="initial-appliance-type">{initialApplianceType || 'none'}</div>
         <button
           data-testid="complete-capture-btn"
           onClick={() => onComplete(createMockItemRecord('video'))}
@@ -124,6 +139,8 @@ describe('ItemCapture Integration Tests', () => {
     capturedConfig = undefined;
     capturedOnComplete = undefined;
     capturedOnCancel = undefined;
+    capturedInitialRoom = undefined;
+    capturedInitialApplianceType = undefined;
   });
 
   // ===========================================================================
@@ -386,6 +403,143 @@ describe('ItemCapture Integration Tests', () => {
       await waitFor(() => {
         expect(screen.getByText(/What would you like to document/i)).toBeInTheDocument();
       });
+    });
+  });
+
+  // ===========================================================================
+  // Task 11: Pre-fill Integration Tests (REQ-144)
+  // ===========================================================================
+  describe('Pre-fill Room and Item Type (REQ-144)', () => {
+    it('passes Kitchen as initialRoom when kitchen is selected', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow - selecting Kitchen
+      await user.click(screen.getByText('Kitchen'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Item type
+      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await user.click(screen.getByText('Appliance'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Specific item
+      await waitFor(() => expect(screen.getByText('Refrigerator')).toBeInTheDocument());
+      await user.click(screen.getByText('Refrigerator'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Content source
+      await waitFor(() => expect(screen.getByText(/How would you like to add content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Create now/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Content type
+      await waitFor(() => expect(screen.getByText(/What type of content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Video/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Wait for ItemCapture to render
+      await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
+
+      // Verify initialRoom was passed as "Kitchen"
+      expect(capturedInitialRoom).toBe('Kitchen');
+      expect(screen.getByTestId('initial-room')).toHaveTextContent('Kitchen');
+    });
+
+    it('passes Living Room as initialRoom for living-room selection', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow - selecting Living Room
+      await user.click(screen.getByText('Living Room'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Continue through steps...
+      await waitFor(() => expect(screen.getByText('Room Item')).toBeInTheDocument());
+      await user.click(screen.getByText('Room Item'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/What would you like to document/i)).toBeInTheDocument();
+      });
+      await user.click(screen.getByText(/TV/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/How would you like to add content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Create now/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/What type of content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Photo/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      // Wait for ItemCapture
+      await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
+
+      expect(capturedInitialRoom).toBe('Living Room');
+    });
+
+    it('passes Laundry Room as initialRoom for laundry selection', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      await user.click(screen.getByText('Laundry'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await user.click(screen.getByText('Appliance'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText('Washer')).toBeInTheDocument());
+      await user.click(screen.getByText('Washer'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/How would you like to add content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Create now/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/What type of content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Video/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
+
+      expect(capturedInitialRoom).toBe('Laundry Room');
+    });
+
+    it('passes undefined initialApplianceType (no pre-fill for appliance type)', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Use explicit navigation
+      await user.click(screen.getByText('Kitchen'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await user.click(screen.getByText('Appliance'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText('Refrigerator')).toBeInTheDocument());
+      await user.click(screen.getByText('Refrigerator'));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/How would you like to add content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Create now/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByText(/What type of content/i)).toBeInTheDocument());
+      await user.click(screen.getByText(/Video/i));
+      await user.click(screen.getByRole('button', { name: /continue/i }));
+
+      await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
+
+      // As per design, itemType mapping returns undefined (user should select specific appliance)
+      expect(capturedInitialApplianceType).toBeUndefined();
+      expect(screen.getByTestId('initial-appliance-type')).toHaveTextContent('none');
     });
   });
 });

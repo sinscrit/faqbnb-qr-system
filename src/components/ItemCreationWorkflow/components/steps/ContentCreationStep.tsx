@@ -14,6 +14,8 @@
 import { useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { ItemCapture } from '@/components/ItemCapture';
+import { mapRoomTypeToLocation } from '@/components/ItemCapture/utils/roomMapping';
+import { mapItemTypeToApplianceType } from '@/components/ItemCapture/utils/itemTypeMapping';
 import type {
   ContentType,
   ContentPiece,
@@ -198,6 +200,18 @@ export function ContentCreationStep({
     [currentContentType, currentContentSource]
   );
 
+  // Map workflow room selection to ItemCapture location format
+  const initialRoom = useMemo(() => {
+    if (!currentItem?.room) return undefined;
+    return mapRoomTypeToLocation(currentItem.room);
+  }, [currentItem?.room]);
+
+  // Map workflow item type to ItemCapture appliance type
+  const initialApplianceType = useMemo(() => {
+    if (!currentItem?.itemType) return undefined;
+    return mapItemTypeToApplianceType(currentItem.itemType);
+  }, [currentItem?.itemType]);
+
   // Handle ItemCapture completion - transform and add content
   const handleComplete = useCallback(
     (record: ItemRecord) => {
@@ -224,6 +238,8 @@ export function ContentCreationStep({
         config={config}
         onComplete={handleComplete}
         onCancel={handleCancel}
+        initialRoom={initialRoom}
+        initialApplianceType={initialApplianceType}
       />
     </div>
   );
