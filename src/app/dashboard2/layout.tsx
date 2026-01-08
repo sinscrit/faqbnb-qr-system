@@ -9,7 +9,7 @@
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-06 16:53:00 UTC
+ * @modified 2026-01-08 - Mobile header optimization
  */
 
 import { useRouter, usePathname } from 'next/navigation';
@@ -99,13 +99,14 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Right side - Logout */}
-            <div className="flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <button
                 onClick={() => signOut()}
-                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
+                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 p-1.5 sm:px-3 sm:py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
+                aria-label="Logout"
               >
-                <LogOut className="w-4 h-4" />
-                Logout
+                <LogOut className="w-4 h-4 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>

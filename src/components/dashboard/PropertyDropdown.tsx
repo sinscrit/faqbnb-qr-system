@@ -8,6 +8,7 @@
  *
  * REQ-142: Property Context System
  * @created 2026-01-08
+ * @modified 2026-01-08 - Mobile responsive: truncated property name
  */
 
 import { useState, useRef, useEffect } from 'react';
@@ -65,7 +66,11 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
   };
 
   // Display text for the button
-  const displayText = selectedProperty?.nickname || 'All Properties';
+  // Full name for desktop, truncated (first 3 chars) for mobile
+  const fullDisplayText = selectedProperty?.nickname || 'All Properties';
+  const mobileDisplayText = selectedProperty?.nickname
+    ? selectedProperty.nickname.substring(0, 3) + '...'
+    : 'All';
 
   // Don't render if only 0 or 1 property (no need for selector)
   if (!isLoading && properties.length <= 1) {
@@ -83,18 +88,20 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
         aria-expanded={isOpen}
         aria-label="Select property"
         className={cn(
-          'flex items-center gap-2 px-3 py-2 rounded-lg',
+          'flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg',
           'border border-gray-200 bg-white',
           'text-sm font-medium text-gray-700',
           'hover:bg-gray-50 hover:border-gray-300',
           'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2',
           'transition-colors duration-150',
-          'min-w-[160px] max-w-[240px]',
+          'min-w-0 sm:min-w-[160px] max-w-[120px] sm:max-w-[240px]',
           isLoading && 'opacity-70 cursor-not-allowed'
         )}
       >
         <Building2 className="w-4 h-4 text-gray-500 flex-shrink-0" aria-hidden="true" />
-        <span className="truncate flex-1 text-left">{displayText}</span>
+        {/* Mobile: truncated name, Desktop: full name */}
+        <span className="truncate flex-1 text-left sm:hidden">{mobileDisplayText}</span>
+        <span className="truncate flex-1 text-left hidden sm:block">{fullDisplayText}</span>
         {isLoading ? (
           <Loader2 className="w-4 h-4 animate-spin text-gray-400 flex-shrink-0" aria-hidden="true" />
         ) : (
