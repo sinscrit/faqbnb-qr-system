@@ -9,7 +9,8 @@
 export { PropertyDropdown } from './PropertyDropdown';
 export type { PropertyDropdownProps } from './PropertyDropdown';
 
-// Item Management Components (to be added in later tasks)
-// export { ItemViewModal } from './ItemViewModal';
-// export { ItemActionButtons } from './ItemActionButtons';
-// export { DeleteItemDialog } from './DeleteItemDialog';
+// Item Management Components
+export { ItemViewModal } from './ItemViewModal';
+export type { ItemViewModalProps } from '@/types';
+export { DeleteItemDialog } from './DeleteItemDialog';
+export type { DeleteItemDialogProps } from '@/types';

@@ -1124,7 +1124,7 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 **Files to modify:** `src/components/dashboard/ItemViewModal.tsx` (CREATE)
 **Estimated effort:** 1 story point
 
-- [ ] Create the file `src/components/dashboard/ItemViewModal.tsx`:
+- [x] Create the file `src/components/dashboard/ItemViewModal.tsx`: ---implemented: Created ItemViewModal component with Radix Dialog, mobile responsive, displays item details and links-
 
 ```typescript
 'use client';
@@ -1391,8 +1391,8 @@ export function ItemViewModal({
 export default ItemViewModal;
 ```
 
-- [ ] Verify the component compiles without errors
-- [ ] Update the barrel export in `src/components/dashboard/index.ts` to include:
+- [x] Verify the component compiles without errors -unit tested-
+- [x] Update the barrel export in `src/components/dashboard/index.ts` to include: ---implemented: Updated barrel export-
 ```typescript
 export { ItemViewModal } from './ItemViewModal';
 export type { ItemViewModalProps } from '@/types';
@@ -1406,7 +1406,7 @@ export type { ItemViewModalProps } from '@/types';
 **Files to modify:** `src/components/dashboard/DeleteItemDialog.tsx` (CREATE)
 **Estimated effort:** 1 story point
 
-- [ ] Create the file `src/components/dashboard/DeleteItemDialog.tsx`:
+- [x] Create the file `src/components/dashboard/DeleteItemDialog.tsx`: ---implemented: Created DeleteItemDialog component with media warning, displays cascading deletion info-
 
 ```typescript
 'use client';
@@ -1571,13 +1571,13 @@ export function DeleteItemDialog({
 export default DeleteItemDialog;
 ```
 
-- [ ] Update the barrel export in `src/components/dashboard/index.ts`:
+- [x] Update the barrel export in `src/components/dashboard/index.ts`: ---implemented: Updated barrel export-
 ```typescript
 export { DeleteItemDialog } from './DeleteItemDialog';
 export type { DeleteItemDialogProps } from '@/types';
 ```
 
-- [ ] Verify the component compiles without errors
+- [x] Verify the component compiles without errors -unit tested-
 
 ---
 
@@ -1587,7 +1587,7 @@ export type { DeleteItemDialogProps } from '@/types';
 **Files to modify:** `src/lib/item-utils.ts` (CREATE)
 **Estimated effort:** 1 story point
 
-- [ ] Create the file `src/lib/item-utils.ts`:
+- [x] Create the file `src/lib/item-utils.ts`: ---implemented: Created item-utils.ts with helpers for counting media, formatting items for deletion, extracting media URLs-
 
 ```typescript
 /**
@@ -1684,7 +1684,7 @@ export function parseStoragePath(url: string): string | null {
 }
 ```
 
-- [ ] Verify the utility compiles without errors
+- [x] Verify the utility compiles without errors -unit tested-
 
 ---
 
