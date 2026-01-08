@@ -5,12 +5,12 @@
  *
  * First step in the ItemCapture wizard. Collects item metadata including:
  * - Title (required)
- * - Location (optional, with presets + custom input)
+ * - Room (optional, with presets + custom input)
  * - Tags (optional, pill-based multi-select)
- * - Appliance Type (optional dropdown)
+ * - Item Type (optional dropdown)
  *
  * @module ItemCapture/components/steps/MetadataStep
- * @lastModified 2025-12-31 (REQ-034)
+ * @lastModified 2026-01-08 (Label updates: Location->Room, Appliance Type->Item Type)
  */
 
 import React, { useState, useCallback, useRef, useEffect, useId } from 'react';
@@ -378,13 +378,13 @@ export function MetadataStep({
         </p>
       </div>
 
-      {/* Location Field (Optional with Dropdown) */}
+      {/* Room Field (Optional with Dropdown) */}
       <div ref={locationDropdownRef} className="relative">
         <label
           htmlFor={locationId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Location
+          Room
         </label>
         <div className="relative">
           <input
@@ -396,7 +396,7 @@ export function MetadataStep({
             onKeyDown={handleLocationKeyDown}
             onFocus={() => setIsLocationOpen(true)}
             maxLength={METADATA_CONSTRAINTS.location.maxLength}
-            placeholder="Select or type a location..."
+            placeholder="Select or type a room..."
             aria-expanded={isLocationOpen}
             aria-haspopup="listbox"
             aria-invalid={!!errors.location}
@@ -419,7 +419,7 @@ export function MetadataStep({
               locationInputRef.current?.focus();
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
-            aria-label="Toggle location options"
+            aria-label="Toggle room options"
           >
             <ChevronDown
               className={cn(
@@ -435,7 +435,7 @@ export function MetadataStep({
           <div
             className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
             role="listbox"
-            aria-label="Location options"
+            aria-label="Room options"
           >
             {filteredLocations.map((location, index) => (
               <div
@@ -475,7 +475,7 @@ export function MetadataStep({
 
             {filteredLocations.length === 0 && !locationSearchTerm && (
               <div className="px-4 py-3 text-gray-500 text-center">
-                No locations available
+                No rooms available
               </div>
             )}
           </div>
@@ -586,13 +586,13 @@ export function MetadataStep({
         )}
       </div>
 
-      {/* Appliance Type Field (Optional Dropdown) */}
+      {/* Item Type Field (Optional Dropdown) */}
       <div>
         <label
           htmlFor={applianceId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Appliance Type
+          Item Type
         </label>
         <div className="relative">
           <select
@@ -607,7 +607,7 @@ export function MetadataStep({
               'pr-10'
             )}
           >
-            <option value="">Select appliance type...</option>
+            <option value="">Select item type...</option>
             {APPLIANCE_TYPES.map(({ value, label }) => (
               <option key={value} value={value}>
                 {label}

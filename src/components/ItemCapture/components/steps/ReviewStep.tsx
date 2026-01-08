@@ -425,18 +425,18 @@ export function ReviewStep({
             </dd>
           </div>
 
-          {/* Location (conditional) */}
+          {/* Room (conditional) */}
           {metadata.location && (
             <div>
-              <dt className="text-sm font-medium text-gray-500">Location</dt>
+              <dt className="text-sm font-medium text-gray-500">Room</dt>
               <dd className="mt-1 text-sm text-gray-900">{metadata.location}</dd>
             </div>
           )}
 
-          {/* Appliance Type (conditional) */}
+          {/* Item Type (conditional) */}
           {metadata.applianceType && (
             <div>
-              <dt className="text-sm font-medium text-gray-500">Appliance Type</dt>
+              <dt className="text-sm font-medium text-gray-500">Item Type</dt>
               <dd className="mt-1 text-sm text-gray-900">
                 {getApplianceTypeLabel(metadata.applianceType)}
               </dd>

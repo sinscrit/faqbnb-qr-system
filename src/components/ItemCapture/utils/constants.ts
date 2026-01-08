@@ -15,8 +15,8 @@ import type { ApplianceType } from '../ItemCapture.types';
 // =============================================================================
 
 /**
- * Common room/location names for property items.
- * Used in the MetadataStep location dropdown.
+ * Common room names for property items.
+ * Used in the MetadataStep room dropdown.
  */
 export const PRESET_LOCATIONS = [
   'Kitchen',
