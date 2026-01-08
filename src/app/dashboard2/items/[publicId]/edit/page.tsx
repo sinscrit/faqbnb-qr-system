@@ -94,10 +94,18 @@ export default function EditItemPage() {
     }
 
     try {
+      // Get propertyId from item.propertyId or item.property.id
+      const propertyId = item.propertyId || item.property?.id;
+      if (!propertyId) {
+        setError('Property ID is missing');
+        setSaving(false);
+        return;
+      }
+
       const response = await adminApi.updateItem(publicId, {
         name,
         description,
-        propertyId: item.propertyId,
+        propertyId,
         links: mediaLinks.map((link, index) => ({
           id: link.id, // undefined for new links
           title: link.title,

@@ -80,8 +80,11 @@ function SortableMediaLinkItem({
     zIndex: isDragging ? 10 : 0,
   };
 
+  // Don't spread attributes that disable child elements when editing
+  const safeAttributes = isEditing ? {} : attributes;
+
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
+    <div ref={setNodeRef} style={style} {...safeAttributes}>
       <MediaLinkItem
         link={link}
         index={index}

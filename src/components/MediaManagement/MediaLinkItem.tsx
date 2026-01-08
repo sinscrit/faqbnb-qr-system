@@ -179,6 +179,7 @@ export function MediaLinkItem({
         {/* Actions */}
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={handleStartEdit}
             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
             aria-label="Edit link"
@@ -186,6 +187,7 @@ export function MediaLinkItem({
             <Pencil className="w-4 h-4" />
           </button>
           <button
+            type="button"
             onClick={() => onDelete(link)}
             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             aria-label="Delete link"
@@ -244,12 +246,14 @@ export function MediaLinkItem({
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 pt-2">
           <button
+            type="button"
             onClick={onCancelEdit}
             className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSave}
             disabled={!canSave}
             className="px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"

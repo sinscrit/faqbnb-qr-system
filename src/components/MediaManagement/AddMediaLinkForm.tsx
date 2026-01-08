@@ -96,9 +96,7 @@ export function AddMediaLinkForm({
   }, [resetForm, onCancel]);
 
   // Handle submit
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = useCallback(() => {
     if (!title.trim()) {
       return;
     }
@@ -125,7 +123,7 @@ export function AddMediaLinkForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+    <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
       <div className="space-y-4">
         {/* Title */}
         <div>
@@ -225,7 +223,8 @@ export function AddMediaLinkForm({
             Cancel
           </button>
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             disabled={!canSubmit}
             className="px-4 py-2 text-sm text-white bg-[#FF385C] hover:bg-[#E31C5F] rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
@@ -234,7 +233,7 @@ export function AddMediaLinkForm({
           </button>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
 

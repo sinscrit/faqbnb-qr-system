@@ -367,9 +367,9 @@ export async function GET(
     // Get item links
     const { data: links, error: linksError } = await supabase
       .from('item_links')
-      .select('id, title, url, created_at')
+      .select('id, title, link_type, url, thumbnail_url, display_order, created_at')
       .eq('item_id', itemData.id)
-      .order('created_at', { ascending: true });
+      .order('display_order', { ascending: true });
 
     if (linksError) {
       console.error('Links fetch error:', linksError);
@@ -512,12 +512,11 @@ export async function PUT(
       }
     }
     
-    // Create authenticated Supabase client for the update operations
-    const cookieStore = await cookies();
-    const supabaseClient = createRouteHandlerClient<Database>({ cookies: () => cookieStore });
-    
+    // Use the authenticated Supabase client from validateAdminAuth
+    // Note: 'supabase' is already authenticated from line 427
+
     // Verify the property exists and belongs to the current account context
-    let propertyQuery = supabaseClient
+    let propertyQuery = supabase
       .from('properties')
       .select('id, account_id, user_id')
       .eq('id', body.propertyId);
@@ -552,7 +551,7 @@ export async function PUT(
     console.log('Property verified within account context, updating item...');
 
     // Update the item
-    const { data: updatedItem, error: updateError } = await supabaseClient
+    const { data: updatedItem, error: updateError } = await supabase
       .from('items')
       .update({
         name: body.name,
@@ -576,7 +575,7 @@ export async function PUT(
     console.log('Item updated successfully:', updatedItem.id);
     
     // Delete existing links
-    const { error: deleteLinksError } = await supabaseClient
+    const { error: deleteLinksError } = await supabase
       .from('item_links')
       .delete()
       .eq('item_id', item.id);
@@ -603,7 +602,7 @@ export async function PUT(
         display_order: link.displayOrder !== undefined ? link.displayOrder : index,
       }));
       
-      const { data: newLinks, error: linksError } = await supabaseClient
+      const { data: newLinks, error: linksError } = await supabase
         .from('item_links')
         .insert(linksToInsert)
         .select();
