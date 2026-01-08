@@ -788,7 +788,8 @@
 **Files to modify:** `src/components/MediaManagement/AddMediaLinkForm.tsx` (Create)
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create `src/components/MediaManagement/AddMediaLinkForm.tsx`:
+- [x] **4.1** Create `src/components/MediaManagement/AddMediaLinkForm.tsx`:
+  ---implemented: Created AddMediaLinkForm component with all imports and functionality
 
   ```typescript
   'use client';
@@ -810,7 +811,8 @@
   import type { LinkType } from '@/types';
   ```
 
-- [ ] **4.2** Implement URL validation and type auto-detection:
+- [x] **4.2** Implement URL validation and type auto-detection:
+  ---implemented: Added isValidUrl and detectLinkType functions with support for YouTube, PDF, and image detection
 
   ```typescript
   /**
@@ -852,7 +854,8 @@
   }
   ```
 
-- [ ] **4.3** Implement the AddMediaLinkForm component:
+- [x] **4.3** Implement the AddMediaLinkForm component:
+  ---implemented: Full form implementation with title, URL, type fields, auto-detection, validation, and Airbnb accent color (#FF385C) - unit tested
 
   ```typescript
   export function AddMediaLinkForm({
