@@ -1273,6 +1273,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           loadDashboardPermissions();
         }
 
+        // REQ-142: Ensure user has default property
+        if (user) {
+          ensureDefaultProperty();
+        }
+
         break;
       }
 
@@ -1543,6 +1548,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('🔄 REFRESH_ACCOUNT_CONTEXT: Failed to refresh account context:', error);
     }
   }, [user]);
+
+  // REQ-142: Ensure user has at least one property
+  const ensureDefaultProperty = useCallback(async (): Promise<void> => {
+    if (!user) return;
+
+    try {
+      console.log('REQ-142: Checking for default property...');
+
+      const response = await fetch('/api/user/properties/default', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.created) {
+          console.log('REQ-142: Default property created');
+          // Refresh user properties to include the new default
+          if (getUserProperties) {
+            await getUserProperties();
+          }
+        } else {
+          console.log('REQ-142: User already has properties');
+        }
+      } else {
+        console.error('REQ-142: Failed to ensure default property:', result.error);
+      }
+    } catch (error) {
+      console.error('REQ-142: Error ensuring default property:', error);
+    }
+  }, [user, getUserProperties]);
 
   // REQ-025: Clear current account function
   const clearCurrentAccount = useCallback(() => {
