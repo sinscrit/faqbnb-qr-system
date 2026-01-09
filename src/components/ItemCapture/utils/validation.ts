@@ -407,6 +407,17 @@ export function validateImageCount(mediaItems: MediaItem[]): ValidationResult {
 // =============================================================================
 
 /**
+ * Normalize MIME type by removing codec information.
+ * e.g., "video/mp4; codecs=avc1.42000a,mp4a.40.2" -> "video/mp4"
+ *
+ * @param mimeType - MIME type string potentially with codec info
+ * @returns Normalized MIME type without codec information
+ */
+function normalizeMimeType(mimeType: string): string {
+  return mimeType.split(';')[0].trim();
+}
+
+/**
  * Validate a file's MIME type against supported formats.
  *
  * @param mimeType - MIME type string to validate
@@ -422,8 +433,9 @@ export function validateMimeType(
   mediaType: 'video' | 'image' | 'pdf'
 ): ValidationResult {
   const supportedFormats = SUPPORTED_FORMATS[mediaType];
+  const normalizedMimeType = normalizeMimeType(mimeType);
 
-  if (!supportedFormats.includes(mimeType as never)) {
+  if (!supportedFormats.includes(normalizedMimeType as never)) {
     return {
       isValid: false,
       error: `File type '${mimeType}' is not supported for ${mediaType}`,
@@ -440,13 +452,14 @@ export function validateMimeType(
  * @returns Media type or null if not recognized
  */
 export function getMediaTypeFromMime(mimeType: string): 'video' | 'image' | 'pdf' | null {
-  if (SUPPORTED_FORMATS.image.includes(mimeType as never)) {
+  const normalizedMimeType = normalizeMimeType(mimeType);
+  if (SUPPORTED_FORMATS.image.includes(normalizedMimeType as never)) {
     return 'image';
   }
-  if (SUPPORTED_FORMATS.video.includes(mimeType as never)) {
+  if (SUPPORTED_FORMATS.video.includes(normalizedMimeType as never)) {
     return 'video';
   }
-  if (SUPPORTED_FORMATS.pdf.includes(mimeType as never)) {
+  if (SUPPORTED_FORMATS.pdf.includes(normalizedMimeType as never)) {
     return 'pdf';
   }
   return null;

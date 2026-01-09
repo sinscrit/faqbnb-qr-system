@@ -26,10 +26,16 @@ const ALLOWED_MIME_TYPES: Record<string, string[]> = {
   pdf: ['application/pdf'],
 };
 
+// Normalize MIME type by removing codec information (e.g., "video/mp4; codecs=..." -> "video/mp4")
+function normalizeMimeType(mimeType: string): string {
+  return mimeType.split(';')[0].trim();
+}
+
 // Get file category from MIME type
 function getFileCategory(mimeType: string): string | null {
+  const normalizedType = normalizeMimeType(mimeType);
   for (const [category, types] of Object.entries(ALLOWED_MIME_TYPES)) {
-    if (types.includes(mimeType)) {
+    if (types.includes(normalizedType)) {
       return category;
     }
   }

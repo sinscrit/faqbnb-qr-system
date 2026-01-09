@@ -188,16 +188,26 @@ function bytesToMB(bytes: number): string {
 }
 
 /**
+ * Normalize MIME type by removing codec information.
+ * e.g., "video/mp4; codecs=avc1.42000a,mp4a.40.2" -> "video/mp4"
+ */
+function normalizeMimeType(mimeType: string): string {
+  return mimeType.split(';')[0].trim();
+}
+
+/**
  * Check if a MIME type matches an allowed pattern.
  * Supports wildcard patterns like "image/*".
+ * Normalizes MIME types by stripping codec information before comparison.
  */
 function matchesMimeType(fileMime: string, allowedMime: string): boolean {
-  if (allowedMime === '*/*' || allowedMime === fileMime) {
+  const normalizedFileMime = normalizeMimeType(fileMime);
+  if (allowedMime === '*/*' || allowedMime === normalizedFileMime) {
     return true;
   }
   if (allowedMime.endsWith('/*')) {
     const prefix = allowedMime.slice(0, -1); // Remove trailing '*'
-    return fileMime.startsWith(prefix);
+    return normalizedFileMime.startsWith(prefix);
   }
   return false;
 }
