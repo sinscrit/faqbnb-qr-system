@@ -702,6 +702,13 @@ export function useFileUpload(
 
   /**
    * Check if dragged items appear to be valid file types.
+   *
+   * IMPORTANT: This is intentionally VERY lenient because:
+   * 1. Browsers may not expose MIME types during drag (security reasons)
+   * 2. Different OS/browsers report MIME types inconsistently
+   * 3. Strict validation happens on drop anyway
+   *
+   * We accept ANY file during drag to provide good UX, then validate on drop.
    */
   const checkDragValidity = useCallback(
     (dataTransfer: DataTransfer): boolean => {
@@ -709,21 +716,18 @@ export function useFileUpload(
         return false;
       }
 
-      // Check first item's type (limited info available during drag)
+      // Check if there's at least one file item - if so, accept it
+      // The actual validation happens on drop
       for (const item of Array.from(dataTransfer.items)) {
-        if (item.kind !== 'file') continue;
-        if (!item.type) {
-          // Type unknown during drag - assume valid
-          return true;
-        }
-        if (isMimeTypeAllowed(item.type, allowedMimeTypes)) {
+        if (item.kind === 'file') {
+          // Accept ANY file during drag - we validate strictly on drop
           return true;
         }
       }
 
       return false;
     },
-    [allowedMimeTypes]
+    []
   );
 
   const handleDragEnter = useCallback(
@@ -839,8 +843,10 @@ export function useFileUpload(
   // ==========================================================================
 
   useEffect(() => {
+    // IMPORTANT: Reset unmounted flag when effect runs (handles React Strict Mode remounting)
+    isUnmountedRef.current = false;
+
     return () => {
-      log('Unmounting, cleaning up...');
       isUnmountedRef.current = true;
 
       // Revoke all preview URLs
@@ -849,7 +855,7 @@ export function useFileUpload(
       });
       previewUrlsRef.current.clear();
     };
-  }, [log]);
+  }, []);
 
   // ==========================================================================
   // Return

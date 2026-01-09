@@ -90,8 +90,15 @@ function buildItemCaptureConfig(
   contentType: ContentType,
   contentSource: 'existing' | 'create-new'
 ): ItemCaptureConfig {
+  // When user selects "I have content" (existing), allow all media types
+  // since they can upload videos, photos, or PDFs
+  // When "create-new", respect the specific content type selected
+  const allowedMediaTypes = contentSource === 'existing'
+    ? ['video', 'image', 'pdf'] as ('video' | 'image' | 'pdf')[]
+    : mapContentTypeToMediaTypes(contentType);
+
   return {
-    allowedMediaTypes: mapContentTypeToMediaTypes(contentType),
+    allowedMediaTypes,
     maxVideoDuration: 120,
     maxFileSize: 100 * 1024 * 1024, // 100MB
     debug: process.env.NODE_ENV === 'development',

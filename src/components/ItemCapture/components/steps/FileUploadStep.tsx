@@ -32,8 +32,7 @@ import { usePDFThumbnail } from '../../hooks/usePDFThumbnail';
 import { PDFPlaceholder } from '../shared/PDFPlaceholder';
 import { PageCountBadge } from '../shared/PageCountBadge';
 import {
-  SUPPORTED_IMAGE_TYPES,
-  SUPPORTED_VIDEO_TYPES,
+  SUPPORTED_FORMATS,
 } from '../../utils/constants';
 import type {
   ValidatedFile,
@@ -462,19 +461,24 @@ export function FileUploadStep({
   const maxTotalSize = config.maxTotalSize ?? DEFAULT_MAX_TOTAL_SIZE;
   const maxFiles = config.maxPhotos ?? DEFAULT_MAX_FILES;
 
-  // Build allowed MIME types from config
+  // Build allowed MIME types from config using WILDCARD patterns
+  // Wildcards (image/*, video/*) are more lenient and handle browser inconsistencies
+  // when files are dropped from the OS file manager
   const allowedMimeTypes = React.useMemo(() => {
     const types: string[] = [];
     const allowed = config.allowedMediaTypes ?? ['image', 'video', 'pdf'];
 
     if (allowed.includes('image')) {
-      types.push(...SUPPORTED_IMAGE_TYPES);
+      // Use wildcard pattern to accept all image types
+      types.push('image/*');
     }
     if (allowed.includes('video')) {
-      types.push(...SUPPORTED_VIDEO_TYPES);
+      // Use wildcard pattern to accept all video types
+      types.push('video/*');
     }
     if (allowed.includes('pdf')) {
-      types.push(...SUPPORTED_PDF_TYPES);
+      // PDF has a specific MIME type
+      types.push('application/pdf');
     }
 
     return types;
