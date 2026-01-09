@@ -493,7 +493,7 @@ export async function PUT(
     }
     
     // Validate link types and URLs
-    const validLinkTypes = ['youtube', 'pdf', 'image', 'text'];
+    const validLinkTypes = ['youtube', 'pdf', 'image', 'text', 'video'];
     for (const link of body.links || []) {
       if (!validLinkTypes.includes(link.linkType)) {
         return NextResponse.json(

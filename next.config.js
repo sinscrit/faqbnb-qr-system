@@ -2,8 +2,24 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+// Get git commit hash at build time
+const { execSync } = require('child_process');
+let gitCommitHash = 'unknown';
+let gitCommitDate = 'unknown';
+try {
+  gitCommitHash = execSync('git rev-parse --short HEAD').toString().trim();
+  gitCommitDate = execSync('git log -1 --format=%ci').toString().trim().split(' ')[0];
+} catch (e) {
+  console.warn('Could not get git info:', e.message);
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Inject version info at build time
+  env: {
+    NEXT_PUBLIC_GIT_COMMIT: gitCommitHash,
+    NEXT_PUBLIC_BUILD_DATE: gitCommitDate,
+  },
   // Remove static export for development
   // output: 'export',
   images: {

@@ -22,6 +22,7 @@ import {
   PrintScope,
 } from '@/components/ItemCreationWorkflow';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
+import { uploadMediaFile } from '@/lib/uploadMedia';
 
 export default function CreateItemPage() {
   const router = useRouter();
@@ -74,18 +75,87 @@ export default function CreateItemPage() {
         }
 
         // Create the item
+        // Convert content pieces to links, uploading media files as needed
+        const links: Array<{ linkType: string; url: string; title?: string }> = [];
+
+        for (const piece of item.content || []) {
+          if (piece.type === 'url' && piece.data && typeof piece.data === 'object' && 'url' in piece.data) {
+            const urlData = piece.data as { url: string; title?: string };
+            const url = urlData.url;
+            // Detect YouTube URLs
+            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+            links.push({
+              linkType: isYouTube ? 'youtube' : 'text', // Generic URLs stored as text type
+              url: url,
+              title: urlData.title || (isYouTube ? 'YouTube Video' : 'Link'),
+            });
+          } else if (piece.type === 'text' && piece.data && typeof piece.data === 'object' && 'text' in piece.data) {
+            const textData = piece.data as { text: string };
+            // Text content: store as a data URI with text content
+            // The API expects a URL, so we encode the text
+            const textDataUri = `data:text/plain;base64,${btoa(encodeURIComponent(textData.text))}`;
+            links.push({
+              linkType: 'text',
+              url: textDataUri,
+              title: 'Text Instructions',
+            });
+          } else if (piece.type === 'pdf' && piece.data && typeof piece.data === 'object' && 'file' in piece.data) {
+            // Upload PDF file to storage
+            const pdfData = piece.data as { file: File | Blob };
+            console.log('Uploading PDF file...');
+            try {
+              const uploadResult = await uploadMediaFile(pdfData.file, 'document.pdf');
+              links.push({
+                linkType: 'pdf',
+                url: uploadResult.url,
+                title: 'PDF Document',
+              });
+              console.log('PDF uploaded successfully:', uploadResult.url);
+            } catch (uploadErr) {
+              console.error('Failed to upload PDF:', uploadErr);
+              throw new Error(`Failed to upload PDF: ${uploadErr instanceof Error ? uploadErr.message : 'Unknown error'}`);
+            }
+          } else if (piece.type === 'video' && piece.data && typeof piece.data === 'object' && 'file' in piece.data) {
+            // Upload video file to storage
+            const videoData = piece.data as { file: File | Blob };
+            console.log('Uploading video file...');
+            try {
+              const uploadResult = await uploadMediaFile(videoData.file, 'video.mp4');
+              links.push({
+                linkType: 'video',
+                url: uploadResult.url,
+                title: 'Video',
+              });
+              console.log('Video uploaded successfully:', uploadResult.url);
+            } catch (uploadErr) {
+              console.error('Failed to upload video:', uploadErr);
+              throw new Error(`Failed to upload video: ${uploadErr instanceof Error ? uploadErr.message : 'Unknown error'}`);
+            }
+          } else if (piece.type === 'photo' && piece.data && typeof piece.data === 'object' && 'file' in piece.data) {
+            // Upload photo file to storage
+            const photoData = piece.data as { file: File | Blob };
+            console.log('Uploading photo file...');
+            try {
+              const uploadResult = await uploadMediaFile(photoData.file, 'photo.jpg');
+              links.push({
+                linkType: 'image',
+                url: uploadResult.url,
+                title: 'Photo',
+              });
+              console.log('Photo uploaded successfully:', uploadResult.url);
+            } catch (uploadErr) {
+              console.error('Failed to upload photo:', uploadErr);
+              throw new Error(`Failed to upload photo: ${uploadErr instanceof Error ? uploadErr.message : 'Unknown error'}`);
+            }
+          }
+        }
+
         const itemData = {
           publicId,
           name: item.name,
           description: item.room ? `${item.room} - ${item.itemType || 'item'}` : undefined,
           propertyId,
-          // Content from the workflow will be stored as links
-          links: item.content?.map((c) => ({
-            type: c.type,
-            title: c.type === 'url' ? 'Link' : c.type,
-            url: c.type === 'url' && c.data && typeof c.data === 'object' && 'url' in c.data ? (c.data as { url: string }).url : undefined,
-            content: c.type === 'text' && c.data && typeof c.data === 'object' && 'text' in c.data ? (c.data as { text: string }).text : undefined,
-          })) || [],
+          links,
         };
 
         const response = await adminApi.createItem(itemData);

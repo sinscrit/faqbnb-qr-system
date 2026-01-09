@@ -6873,3 +6873,101 @@ Reduces user frustration and time-to-completion for item creation, improving ove
 - [ ] If a user changes the pre-filled values, the new selections are saved with the item
 - [ ] Pre-filled values persist correctly if a user navigates backward and forward through the workflow steps
 
+---
+
+## REQ-145: Support Video Link Type in Items API
+
+**Date**: 2026-01-09 20:15
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The system should accept 'video' as a valid link type when creating or updating items through the API, enabling users to attach video content directly to items.
+
+### Current Behavior
+When creating or updating an item, the API only accepts four link types: 'youtube', 'pdf', 'image', and 'text'. Attempting to save an item with a 'video' link type results in validation failure, preventing users from uploading video content through the item creation workflow.
+
+### Expected Behavior
+Users can successfully create or update items with link type set to 'video'. The API accepts the 'video' link type during validation and processes it the same way it handles other media types like 'image' and 'pdf'.
+
+### User Impact
+All users creating items with video content will be able to upload and attach videos directly to their items, expanding the types of instructional or informational content they can provide to guests.
+
+### Business Value
+Enables video upload functionality as part of a larger file upload feature rollout. This is a prerequisite for implementing the complete video upload workflow, allowing properties to provide richer, more engaging content to their guests.
+
+### Acceptance Criteria
+- [ ] Items can be created with link type 'video' without triggering validation errors
+- [ ] Items can be updated to change their link type to 'video' without triggering validation errors
+- [ ] Existing items with other link types can be updated to 'video' without data loss
+- [ ] The API returns appropriate success responses when handling 'video' link type
+- [ ] No existing functionality for other link types (youtube, pdf, image, text) is affected
+
+
+---
+
+## REQ-146: File Upload API Endpoint for Item Media
+
+**Date**: 2026-01-09 19:35
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+System should provide a secure endpoint that accepts file uploads from authenticated users and stores them in cloud storage, returning a publicly accessible URL.
+
+### Current Behavior
+No API endpoint exists to handle file uploads. Users can only reference external URLs or upload files directly to storage without server-side validation or authentication.
+
+### Expected Behavior
+Users submit files through a POST request to an API endpoint. The system validates file type and size, authenticates the user, generates a unique filename, stores the file in cloud storage, and returns the public URL along with file metadata. If validation fails or the user is not authenticated, appropriate error responses are returned.
+
+### User Impact
+Authenticated users creating or editing items will be able to upload videos, photos, and PDFs through a reliable server-side endpoint. This removes the need for client-side direct uploads and provides consistent validation and error handling.
+
+### Business Value
+Centralizes file upload logic with proper authentication and validation, reducing security risks and ensuring consistent file naming conventions. Enables future client implementations to upload media without duplicating validation logic.
+
+### Acceptance Criteria
+- [ ] Endpoint accepts POST requests with multipart form data containing a file
+- [ ] Endpoint rejects files that are not videos, images, or PDFs
+- [ ] Endpoint rejects files exceeding size limits: 50MB for videos, 10MB for photos, 20MB for PDFs
+- [ ] Endpoint returns 401 error when user is not authenticated
+- [ ] Endpoint generates unique filenames using user ID, timestamp, and UUID
+- [ ] Endpoint stores files in cloud storage and returns public URL with metadata
+- [ ] Endpoint returns appropriate error messages for validation failures and upload errors
+- [ ] Response includes original filename, file size, content type, and public URL
+
+
+---
+
+## REQ-147: Integrate File Upload into Item Creation Workflow
+
+**Date**: 2026-01-09 12:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Enable users to record videos, capture photos, and upload PDFs during item creation, with automatic upload to cloud storage before saving.
+
+### Current Behavior
+When users capture or select media content (video, photo, PDF) during the item creation workflow, the system skips saving that content because it contains File or Blob data instead of URLs. Captured media is lost when the item is saved.
+
+### Expected Behavior
+When users capture video, take photos, or upload PDFs during item creation, the system automatically uploads these files to cloud storage before saving the item. The upload shows progress feedback, handles errors gracefully, and replaces the captured File or Blob data with the returned storage URL. All captured content is persisted and viewable by guests.
+
+### User Impact
+Property owners can create items with rich media content including recorded videos, captured photos, and uploaded PDFs. Previously captured media that was being discarded will now be saved and displayed to guests, making the item creation workflow fully functional for all content types.
+
+### Business Value
+Completes the file upload feature implementation, making the item creation workflow production-ready for all media types. Enables property owners to provide richer, more helpful content to their guests through video demonstrations and visual guides.
+
+### Acceptance Criteria
+- [ ] Video, photo, and PDF files are uploaded to cloud storage before item save
+- [ ] Upload progress indicator displays during file upload operations
+- [ ] Failed uploads display clear error messages and allow retry
+- [ ] Uploaded files are correctly mapped to appropriate content link types (video, image, pdf)
+- [ ] Users cannot submit the form while uploads are in progress
+- [ ] URL and text content continues to work as before without modification
+- [ ] Large video files show progress feedback throughout the upload process
+- [ ] Multiple files within the same item are uploaded sequentially or in parallel as appropriate
+
