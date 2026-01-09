@@ -23,6 +23,7 @@ import {
 } from '@/components/ItemCreationWorkflow';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { uploadMediaFile } from '@/lib/uploadMedia';
+import { generateQRCode } from '@/lib/qrcode-utils';
 
 export default function CreateItemPage() {
   const router = useRouter();
@@ -161,11 +162,12 @@ export default function CreateItemPage() {
         const response = await adminApi.createItem(itemData);
 
         if (response.success && response.data) {
-          // Generate QR code URL - this would be the item's public page
-          const qrCodeUrl = `${window.location.origin}/items/${publicId}`;
+          // Generate actual QR code image encoding the item's public page URL
+          const itemUrl = `${window.location.origin}/items/${publicId}`;
+          const qrCodeDataUrl = await generateQRCode(itemUrl);
           return {
             id: publicId,
-            qrCodeUrl,
+            qrCodeUrl: qrCodeDataUrl,
           };
         } else {
           throw new Error(response.error || 'Failed to create item');
@@ -175,7 +177,7 @@ export default function CreateItemPage() {
         throw err;
       }
     },
-    [currentAccount, generateUUID]
+    [currentAccount, generateUUID, selectedPropertyId]
   );
 
   // Fetch existing items for the user
