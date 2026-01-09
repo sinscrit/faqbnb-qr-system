@@ -2,21 +2,20 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-// Get version info at build time
-// Version format: 0.X where X = number of commits since v0fea415 (base version)
-const { execSync } = require('child_process');
-const BASE_COMMIT = '0fea415';
+// Get version info from version.json (updated before each commit)
+const fs = require('fs');
+const path = require('path');
 let appVersion = '0.0';
 let gitCommitHash = 'unknown';
 let gitCommitDate = 'unknown';
 try {
-  gitCommitHash = execSync('git rev-parse --short HEAD').toString().trim();
-  gitCommitDate = execSync('git log -1 --format=%ci').toString().trim().split(' ')[0];
-  // Count commits since base version
-  const commitCount = execSync(`git rev-list --count ${BASE_COMMIT}..HEAD`).toString().trim();
-  appVersion = `0.${commitCount}`;
+  const versionFile = path.join(__dirname, 'version.json');
+  const versionData = JSON.parse(fs.readFileSync(versionFile, 'utf8'));
+  appVersion = versionData.version || '0.0';
+  gitCommitHash = versionData.commit || 'unknown';
+  gitCommitDate = versionData.date || 'unknown';
 } catch (e) {
-  console.warn('Could not get git info:', e.message);
+  console.warn('Could not read version.json:', e.message);
 }
 
 /** @type {import('next').NextConfig} */
