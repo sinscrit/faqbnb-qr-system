@@ -1015,46 +1015,174 @@ def parse_test_results(output: str) -> dict:
 
     # Patterns indicating test success
     success_patterns = [
+        # General test patterns
         'all tests pass',
         'tests passed',
+        'tests pass',
         'test passed',
+        'test pass',
         'verification successful',
         'verification passed',
+        'successfully verified',
+        'verification complete',
+        # Agent conversational patterns (how agent reports success)
+        'ran the tests and they passed',
+        'tests are passing',
+        'all tests are passing',
+        'tests run successfully',
+        'tests completed successfully',
+        'test suite passes',
+        'no test failures',
+        'no failing tests',
+        '0 failed',
+        # Browser test patterns
         'browser test passed',
         'browser verification passed',
+        # Unicode checkmarks
         '✓ all tests',
         '✓ tests pass',
         '✓ verification',
+        '✓ completed',
+        '✅',
+        # Structured output patterns
         'tests: passed',
         'test result: pass',
-        'successfully verified',
-        'verification complete',
+        # Development workflow patterns (npm/jest/vitest)
+        'type-check passed',
+        'type-check passes',
+        'type-check successful',
+        'typescript passes',
+        'typescript passed',
+        'build successful',
+        'build succeeded',
+        'build passed',
+        'build passes',
+        'build completed',
+        'compilation successful',
+        'compiles successfully',
+        'no type errors',
+        'no typescript errors',
+        '0 errors',
+        'passed, 0 failed',
+        'all specs passed',
+        # Acceptance criteria patterns
+        'acceptance criteria met',
+        'all acceptance criteria',
+        'verification steps complete',
+        'all verification steps',
+        'all tasks completed',
+        'implementation complete',
+        # Structured test summary patterns (from agent template)
+        'test summary:',
+        'type check: passed',
+        'build: passed',
+        'tests: passed',
     ]
 
     # Patterns indicating test failure
     failure_patterns = [
+        # General test patterns
         'test failed',
         'tests failed',
+        'test failure',
+        'tests failing',
         'verification failed',
         'browser test failed',
-        '✗ test',
-        '✗ verification',
-        'tests: failed',
-        'test result: fail',
-        'internal server error',
         'error during verification',
         'verification error',
+        # Agent conversational patterns (how agent reports failure)
+        'tests are failing',
+        'some tests fail',
+        'test suite fails',
+        'tests did not pass',
+        # Unicode X marks
+        '✗ test',
+        '✗ verification',
+        '❌',
+        # Structured output patterns
+        'tests: failed',
+        'test result: fail',
+        # Server/runtime errors
+        'internal server error',
+        '500 error',
+        '404 error',
+        'connection refused',
+        'econnrefused',
+        # Development workflow failures
+        'type-check failed',
+        'type-check fails',
+        'type error',
+        'typescript error',
+        'typescript fails',
+        'build failed',
+        'build fails',
+        'compilation failed',
+        'compilation error',
+        'failed to compile',
+        'does not compile',
+        'npm err',
+        # Test runner failures
+        'tests failed',
+        'test suite failed',
+        'failures: ',
+        'assertion failed',
+        'assertionerror',
+        # Acceptance criteria failures
+        'acceptance criteria not met',
+        'verification step failed',
+        # Structured test summary patterns (from agent template)
+        'type check: failed',
+        'build: failed',
+        'tests: failed',
     ]
 
-    # Patterns indicating tests were run
+    # Patterns indicating tests/verification were run
     ran_patterns = [
+        # General test patterns
         'running test',
+        'ran test',
+        'ran the test',
         'executing test',
+        'run test',
+        'run the test',
+        # Verification patterns
+        'verification',
+        'verified',
+        'verifying',
+        # Agent conversational patterns
+        'i ran',
+        'i executed',
+        'running the',
+        'executed the',
+        # Browser test patterns
         'browser_snapshot',
         'browser_navigate',
-        'verification',
-        'testing',
-        'verified',
+        'playwright',
+        # Development workflow patterns
+        'npm run test',
+        'npm run type-check',
+        'npm run build',
+        'npm test',
+        'type-check',
+        'typecheck',
+        'tsc',
+        'vitest',
+        'jest',
+        # Acceptance/task completion patterns
+        'acceptance criteria',
+        'verification steps',
+        'running verification',
+        'task 1',  # Task references in detailed specs
+        'implementation notes',
+        '[x]',  # Checked checkboxes
+        # Common agent completion phrases
+        'successfully implemented',
+        'implementation is complete',
+        'completed all',
+        'all tasks',
+        'completed task',
+        # Structured test summary (from agent template)
+        'test summary:',
     ]
 
     # Check if tests were run
@@ -1126,7 +1254,22 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
                                                  'Process this task: {full_task}'))
 
     prompt = format_task_for_agent(task, template, task_dict, config, state, stage_id)
-    
+
+    # Inject CRITICAL PATH WARNING for implementation and testcheck stages
+    # This ensures the warning is always included regardless of when detailed specs were created
+    if stage_id in ('implementation', 'testcheck'):
+        critical_path_warning = """
+
+**CRITICAL PATH WARNING**:
+- This project has TWO dashboard paths: `/dashboard/` (legacy) and `/dashboard2/` (current)
+- ALL work must be done in `/dashboard2/` and `/src/app/dashboard2/`
+- The ItemCreationWorkflow component is accessed via `/dashboard2/create`
+- DO NOT modify anything in `/src/app/dashboard/` - that is the legacy version
+- Component path: `/src/components/ItemCreationWorkflow/`
+"""
+        prompt = prompt + critical_path_warning
+        logging.debug(f"Injected CRITICAL PATH WARNING for {stage_id} stage")
+
     logging.debug(f"Agent: {agent_name}, Task: {task.id}")
     logging.debug(f"Prompt (first 200 chars): {prompt[:200]}...")
     

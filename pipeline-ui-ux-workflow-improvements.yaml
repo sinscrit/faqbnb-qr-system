@@ -377,13 +377,28 @@ request_stages:
 
         {project_context}
 
+        **CRITICAL PATH WARNING**:
+        - This project has TWO dashboard paths: `/dashboard/` (legacy) and `/dashboard2/` (current)
+        - ALL work must be done in `/dashboard2/` and `/src/app/dashboard2/`
+        - The ItemCreationWorkflow component is accessed via `/dashboard2/create`
+        - DO NOT modify anything in `/src/app/dashboard/` - that is the legacy version
+        - Component path: `/src/components/ItemCreationWorkflow/`
+
         **Instructions**:
         1. Read the detailed specification at {details_file}
         2. Execute all tasks following the per-task workflow:
            - Implement -> Verify -> Update Doc -> Build -> Commit
         3. Mark completed tasks with [x] and add implementation notes
         4. Continue autonomously until all required tasks are complete
-        5. Report final status with summary of completed/failed/blocked tasks
+        5. Run verification: `npm run type-check` and `npm run build`
+        6. Report final status with summary of completed/failed/blocked tasks
+        7. **IMPORTANT**: End your response with a test summary in this format:
+           ```
+           TEST SUMMARY:
+           - Type Check: PASSED/FAILED
+           - Build: PASSED/FAILED
+           - Tests: PASSED/FAILED (if tests were run)
+           ```
 
         **Key Patterns to Follow**:
         - Use useReducer pattern for state management (like ItemCreationWorkflow)
@@ -429,6 +444,13 @@ request_stages:
         **State File**: {state_file_path}
         **Implementation Plan**: {implementation_plan_path}
         **Total Tasks**: {total_tasks}
+
+        **CRITICAL PATH WARNING**:
+        - This project has TWO dashboard paths: `/dashboard/` (legacy) and `/dashboard2/` (current)
+        - ALL verification must target `/dashboard2/` and `/src/app/dashboard2/`
+        - The ItemCreationWorkflow component is accessed via `/dashboard2/create`
+        - DO NOT verify or modify anything in `/src/app/dashboard/` - that is the legacy version
+        - Component path: `/src/components/ItemCreationWorkflow/`
 
         Follow the workflow defined in ~/.claude/agents/06a-pipeline-testcheck.md:
 
