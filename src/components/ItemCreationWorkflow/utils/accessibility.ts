@@ -502,7 +502,7 @@ export const STEP_NAMES: Record<string, string> = {
   'room-selection': 'Select a room',
   'item-type-selection': 'Choose item type',
   'specific-item-selection': 'Name your item',
-  'content-source-selection': 'Select content source',
+  'purpose-selection': 'Select purpose',      // Updated for Plan-094
   'content-type-selection': 'Choose content type',
   'content-creation': 'Create content',
   'preview-save': 'Preview and save',

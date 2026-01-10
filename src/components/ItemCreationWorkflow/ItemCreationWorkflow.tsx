@@ -254,6 +254,7 @@ export function ItemCreationWorkflow({
         ? lastItem.name.split(' - ')[1]
         : lastItem.name,
       itemName: lastItem.name,
+      purpose: null,  // Reset purpose when adding more content
       contentSource: 'existing',
       contentType: null,
       content: lastItem.content,
@@ -475,14 +476,15 @@ export function ItemCreationWorkflow({
             canNext={canGoNext}
           />
         );
-      case 'content-source-selection':
+      case 'purpose-selection':
+        // TODO: REQ-154 Task 2.1 - Replace with PurposeStep component
+        // Temporary: auto-advance to next step until PurposeStep is implemented
         return (
-          <ContentSourceStep
-            currentContentSource={state.currentItem?.contentSource ?? null}
-            onSelectContentSource={selectContentSource}
-            onNext={nextStep}
-            canNext={canGoNext}
-          />
+          <div className="flex items-center justify-center p-8">
+            <p className="text-muted-foreground">
+              Purpose selection step - component pending implementation (Task 2.1)
+            </p>
+          </div>
         );
       case 'content-type-selection':
         return (

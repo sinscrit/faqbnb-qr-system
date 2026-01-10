@@ -38,7 +38,7 @@
  * @see ItemCreationWorkflow - Main component that uses this hook
  * @see WorkflowAction for available action types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md for implementation details
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
@@ -52,6 +52,7 @@ import type {
   ContentPiece,
   SessionItem,
   CurrentItemState,
+  PurposeType,
 } from '../ItemCreationWorkflow.types';
 import {
   ROOM_LABELS,
@@ -69,6 +70,12 @@ import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
  * Valid transitions from each step.
  * Used to validate GO_TO_STEP actions and determine NEXT_STEP targets.
  *
+ * Updated for Plan-094:
+ * - specific-item-selection now goes to purpose-selection
+ * - purpose-selection added, goes to content-type-selection
+ * - content-source-selection removed from transitions
+ * - next-action updated to go to content-type-selection for "add more"
+ *
  * Notes on conditional transitions:
  * - room-selection: Goes to specific-item-selection if room is 'general' (skips item-type)
  * - next-action: Goes to room-selection for "Tag New Item" or session-summary for "I'm Done"
@@ -76,12 +83,12 @@ import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 export const STEP_TRANSITIONS: Record<WorkflowStep, WorkflowStep[]> = {
   'room-selection': ['item-type-selection', 'specific-item-selection'],
   'item-type-selection': ['specific-item-selection'],
-  'specific-item-selection': ['content-source-selection'],
-  'content-source-selection': ['content-creation'], // Skip content-type-selection - redundant
-  'content-type-selection': ['content-creation'], // Kept for backwards compatibility
+  'specific-item-selection': ['purpose-selection'],         // UPDATED: was content-source-selection
+  'purpose-selection': ['content-type-selection'],          // NEW
+  'content-type-selection': ['content-creation'],           // UPDATED: single transition
   'content-creation': ['preview-save'],
   'preview-save': ['next-action'],
-  'next-action': ['room-selection', 'session-summary', 'content-source-selection'],
+  'next-action': ['room-selection', 'session-summary', 'content-type-selection'], // UPDATED
   'session-summary': [],
 };
 
@@ -247,6 +254,7 @@ export function workflowReducer(
         itemType: itemType as ItemType,
         specificItem: '',
         itemName: '',
+        purpose: null,            // NEW: Initialize purpose to null
         contentSource: 'existing',
         contentType: null,
         content: [],
@@ -304,6 +312,23 @@ export function workflowReducer(
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
         itemName: action.payload,
+      };
+      return {
+        ...state,
+        currentItem: updatedItem,
+        isDirty: true,
+        session: {
+          ...state.session,
+          currentItem: updatedItem,
+        },
+      };
+    }
+
+    case 'SELECT_PURPOSE': {
+      if (!state.currentItem) return state;
+      const updatedItem: CurrentItemState = {
+        ...state.currentItem,
+        purpose: action.payload,
       };
       return {
         ...state,
@@ -481,14 +506,14 @@ export function workflowReducer(
       const newHistory = [...state.stepHistory, state.currentStep];
       return {
         ...state,
-        currentStep: 'content-source-selection',
+        currentStep: 'content-type-selection',  // UPDATED: was content-source-selection
         stepHistory: newHistory,
         canGoBack: true,
         currentItem: restoredItem,
         isDirty: true,
         session: {
           ...state.session,
-          currentStep: 'content-source-selection',
+          currentStep: 'content-type-selection',  // UPDATED: was content-source-selection
           currentItem: restoredItem,
         },
       };
@@ -609,6 +634,8 @@ export interface UseWorkflowStateReturn {
   selectSpecificItem: (item: string) => void;
   /** Set a custom item name (overrides auto-generated) */
   setItemName: (name: string) => void;
+  /** Select a purpose for the current item (Plan-094) */
+  selectPurpose: (purpose: PurposeType) => void;
 
   // Content actions
   /** Select content source (existing or create-new) */
@@ -718,6 +745,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     dispatch({ type: 'SET_ITEM_NAME', payload: name });
   }, []);
 
+  const selectPurpose = useCallback((purpose: PurposeType) => {
+    dispatch({ type: 'SELECT_PURPOSE', payload: purpose });
+  }, []);
+
   // =========================================================================
   // Content Actions
   // =========================================================================
@@ -810,8 +841,8 @@ export function useWorkflowState(): UseWorkflowStateReturn {
         return state.currentItem?.itemType != null;
       case 'specific-item-selection':
         return (state.currentItem?.specificItem ?? '').length > 0;
-      case 'content-source-selection':
-        return state.currentItem?.contentSource != null;
+      case 'purpose-selection':                         // NEW
+        return state.currentItem?.purpose != null;      // NEW
       case 'content-type-selection':
         return state.currentItem?.contentType != null;
       case 'content-creation':
@@ -852,6 +883,7 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     selectItemType,
     selectSpecificItem,
     setItemName,
+    selectPurpose,
     selectContentSource,
     selectContentType,
     addContentPiece,

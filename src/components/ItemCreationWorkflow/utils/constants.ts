@@ -25,7 +25,7 @@
  *
  * @module ItemCreationWorkflow/utils/constants
  * @see SUGGESTION_MATRIX for item suggestions per room
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
  */
 
 // =============================================================================
@@ -163,6 +163,72 @@ export const CONTENT_SOURCE_OPTIONS = {
 } as const;
 
 // =============================================================================
+// Purpose Type Configuration
+// =============================================================================
+
+/**
+ * Available purpose types for item content.
+ * Describes the intent/goal of the content being created.
+ * Based on Plan-094 UI/UX Workflow Improvements.
+ */
+export const PURPOSE_TYPES = [
+  'how-to-use',
+  'how-to-clean',
+  'troubleshooting',
+  'safety-info',
+  'maintenance',
+  'features',
+  'other',
+] as const;
+
+/**
+ * Type for purpose values derived from PURPOSE_TYPES constant.
+ */
+export type PurposeTypeConst = (typeof PURPOSE_TYPES)[number];
+
+/**
+ * Human-readable labels for each purpose type.
+ * Displayed as card titles in PurposeStep.
+ */
+export const PURPOSE_LABELS: Record<PurposeTypeConst, string> = {
+  'how-to-use': 'How to Use',
+  'how-to-clean': 'How to Clean',
+  'troubleshooting': 'Troubleshooting',
+  'safety-info': 'Safety Information',
+  'maintenance': 'Maintenance',
+  'features': 'Features & Tips',
+  'other': 'Other',
+};
+
+/**
+ * Descriptive text for each purpose type.
+ * Displayed as helper text in PurposeStep cards.
+ */
+export const PURPOSE_DESCRIPTIONS: Record<PurposeTypeConst, string> = {
+  'how-to-use': 'Operating instructions and controls',
+  'how-to-clean': 'Cleaning and care instructions',
+  'troubleshooting': 'Common issues and fixes',
+  'safety-info': 'Safety warnings and precautions',
+  'maintenance': 'Regular maintenance tasks',
+  'features': 'Special features and tips',
+  'other': 'General information',
+};
+
+/**
+ * Icon identifiers for each purpose type.
+ * Uses Lucide React icon names for consistency.
+ */
+export const PURPOSE_ICONS: Record<PurposeTypeConst, string> = {
+  'how-to-use': 'play-circle',
+  'how-to-clean': 'sparkles',
+  'troubleshooting': 'wrench',
+  'safety-info': 'alert-triangle',
+  'maintenance': 'settings',
+  'features': 'star',
+  'other': 'info',
+};
+
+// =============================================================================
 // Workflow Configuration
 // =============================================================================
 
@@ -187,13 +253,17 @@ export const MAX_CONTENT_PIECES = 10;
 /**
  * Ordered list of all workflow steps.
  * Used for navigation logic and progress calculation.
+ *
+ * Updated for Plan-094:
+ * - Removed: content-source-selection (redundant)
+ * - Added: purpose-selection (new step after specific-item)
  */
 export const WORKFLOW_STEPS = [
   'room-selection',
   'item-type-selection',
   'specific-item-selection',
-  'content-source-selection',
-  // 'content-type-selection' - removed as redundant (content type selected in ItemCapture)
+  'purpose-selection',        // NEW - replaces content-source-selection
+  'content-type-selection',   // Now part of main flow
   'content-creation',
   'preview-save',
   'next-action',
@@ -218,15 +288,17 @@ export const TOUCH_TARGET_MIN_SIZE = 48;
 /**
  * Progress weights for each step.
  * Used to calculate progress bar percentage.
+ * Updated for Plan-094 workflow changes.
  */
 export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
-  'room-selection': 12,
-  'item-type-selection': 25,
-  'specific-item-selection': 37,
-  'content-source-selection': 50,
-  'content-creation': 75,
-  'preview-save': 87,
-  'next-action': 93,
+  'room-selection': 11,
+  'item-type-selection': 22,
+  'specific-item-selection': 33,
+  'purpose-selection': 44,        // NEW
+  'content-type-selection': 55,   // Added to main flow
+  'content-creation': 66,
+  'preview-save': 77,
+  'next-action': 88,
   'session-summary': 100,
 };
 

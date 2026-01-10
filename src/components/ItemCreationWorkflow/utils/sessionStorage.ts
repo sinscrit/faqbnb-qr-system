@@ -83,6 +83,7 @@ export interface SerializedCurrentItemState {
   itemType: ItemType;
   specificItem: string;
   itemName: string;
+  purpose: string | null;  // PurposeType stored as string
   contentSource: 'existing' | 'create-new';
   contentType: ContentType | null;
   content: SerializedContentPiece[];
@@ -262,6 +263,7 @@ function serializeCurrentItem(item: CurrentItemState): SerializedCurrentItemStat
     itemType: item.itemType,
     specificItem: item.specificItem,
     itemName: item.itemName,
+    purpose: item.purpose,
     contentSource: item.contentSource,
     contentType: item.contentType,
     content: serializeContentPieces(item.content),
@@ -392,6 +394,7 @@ function deserializeCurrentItem(item: SerializedCurrentItemState): CurrentItemSt
     itemType: item.itemType,
     specificItem: item.specificItem,
     itemName: item.itemName,
+    purpose: (item.purpose as CurrentItemState['purpose']) ?? null,
     contentSource: item.contentSource,
     contentType: item.contentType,
     content: deserializeContentPieces(item.content),

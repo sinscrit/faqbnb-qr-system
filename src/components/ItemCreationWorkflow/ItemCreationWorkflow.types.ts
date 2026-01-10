@@ -7,7 +7,7 @@
  *
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-05 (REQ-109 Session Summary Step)
+ * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
  */
 
 // =============================================================================
@@ -90,18 +90,33 @@ export type ItemType = 'appliance' | 'room-item' | 'general-info';
  */
 export type ContentType = 'video' | 'photo' | 'pdf' | 'text' | 'url';
 
+/**
+ * Purpose/Intent categories for item content.
+ * Describes why the user is creating content for this item.
+ * Based on Plan-094 UI/UX Workflow Improvements.
+ */
+export type PurposeType =
+  | 'how-to-use'
+  | 'how-to-clean'
+  | 'troubleshooting'
+  | 'safety-info'
+  | 'maintenance'
+  | 'features'
+  | 'other';
+
 // =============================================================================
 // Session Types
 // =============================================================================
 
 /**
  * Workflow step identifiers for navigation state machine.
+ * Updated for Plan-094: removed content-source-selection, added purpose-selection
  */
 export type WorkflowStep =
   | 'room-selection'
   | 'item-type-selection'
   | 'specific-item-selection'
-  | 'content-source-selection'
+  | 'purpose-selection'           // NEW - replaces content-source-selection
   | 'content-type-selection'
   | 'content-creation'
   | 'preview-save'
@@ -145,6 +160,9 @@ export interface CurrentItemState {
 
   /** Display name for the item (auto-generated or user-edited) */
   itemName: string;
+
+  /** Purpose/intent for this item content (Plan-094) */
+  purpose: PurposeType | null;
 
   /** Content source choice: existing upload or create new */
   contentSource: 'existing' | 'create-new';
@@ -329,6 +347,9 @@ export type WorkflowAction =
   | { type: 'SELECT_ITEM_TYPE'; payload: ItemType }
   | { type: 'SELECT_SPECIFIC_ITEM'; payload: string }
   | { type: 'SET_ITEM_NAME'; payload: string }
+
+  // Purpose selection action (Plan-094)
+  | { type: 'SELECT_PURPOSE'; payload: PurposeType }
 
   // Content actions
   | { type: 'SELECT_CONTENT_SOURCE'; payload: 'existing' | 'create-new' }
