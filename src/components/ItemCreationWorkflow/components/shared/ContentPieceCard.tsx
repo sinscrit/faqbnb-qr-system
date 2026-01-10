@@ -336,7 +336,7 @@ export function ContentPieceCard({
                 'p-1.5 bg-white rounded hover:bg-gray-100 transition-colors',
                 'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
-                'min-w-[44px] min-h-[44px] flex items-center justify-center'
+                'min-w-[48px] min-h-[48px] flex items-center justify-center'
               )}
               aria-label="Retake content"
             >
@@ -353,7 +353,7 @@ export function ContentPieceCard({
                 'p-1.5 bg-white rounded hover:bg-red-100 transition-colors',
                 'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
-                'min-w-[44px] min-h-[44px] flex items-center justify-center'
+                'min-w-[48px] min-h-[48px] flex items-center justify-center'
               )}
               aria-label="Remove content"
             >
