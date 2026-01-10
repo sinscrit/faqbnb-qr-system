@@ -5,7 +5,7 @@
  * consistent test setup and common test patterns.
  *
  * @module ItemCreationWorkflow/__tests__/helpers/testUtils
- * @lastModified 2026-01-05 (REQ-116 Integration Tests)
+ * @lastModified 2026-01-10 (REQ-171 Update Tests)
  */
 
 import React from 'react';
@@ -40,13 +40,40 @@ export const TEST_ITEM_TYPES = ['appliance', 'room-item', 'general-info'] as con
 export const TEST_CONTENT_TYPES = ['video', 'photo', 'pdf', 'text', 'url'] as const;
 
 /**
+ * Purpose type values for test parameterization (REQ-171).
+ */
+export const PURPOSE_TYPES = [
+  'how-to-use',
+  'how-to-clean',
+  'troubleshooting',
+  'safety-info',
+  'maintenance',
+  'features',
+  'other',
+] as const;
+
+/**
+ * Purpose labels mapping for test display validation (REQ-171).
+ */
+export const PURPOSE_LABELS: Record<string, string> = {
+  'how-to-use': 'How to Use',
+  'how-to-clean': 'How to Clean',
+  'troubleshooting': 'Troubleshooting',
+  'safety-info': 'Safety Information',
+  'maintenance': 'Maintenance',
+  'features': 'Features & Tips',
+  'other': 'Other',
+};
+
+/**
  * Ordered list of all workflow steps for navigation testing.
+ * Updated for Plan-094: removed content-source-selection, added purpose-selection
  */
 export const WORKFLOW_STEPS_ORDER: WorkflowStep[] = [
   'room-selection',
   'item-type-selection',
   'specific-item-selection',
-  'content-source-selection',
+  'purpose-selection',
   'content-type-selection',
   'content-creation',
   'preview-save',
@@ -56,12 +83,13 @@ export const WORKFLOW_STEPS_ORDER: WorkflowStep[] = [
 
 /**
  * Step labels as displayed in the UI.
+ * Updated for Plan-094: removed content-source-selection, added purpose-selection
  */
 export const STEP_DISPLAY_LABELS: Record<WorkflowStep, string> = {
   'room-selection': 'Room Selection',
   'item-type-selection': 'Item Type',
   'specific-item-selection': 'Specific Item',
-  'content-source-selection': 'Content Source',
+  'purpose-selection': 'Purpose',
   'content-type-selection': 'Content Type',
   'content-creation': 'Content Creation',
   'preview-save': 'Preview',

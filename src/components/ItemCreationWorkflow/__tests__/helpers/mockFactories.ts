@@ -5,7 +5,7 @@
  * for consistent and maintainable test data generation.
  *
  * @module ItemCreationWorkflow/__tests__/helpers/mockFactories
- * @lastModified 2026-01-05 (REQ-116 Integration Tests)
+ * @lastModified 2026-01-10 (REQ-171 Update Tests)
  */
 
 import type {
@@ -19,7 +19,11 @@ import type {
   RoomType,
   ItemType,
   WorkflowStep,
+  PurposeType,
 } from '../../ItemCreationWorkflow.types';
+
+import { PURPOSE_LABELS } from '../../utils/constants';
+import type { ContentPreviewProps } from '../../components/shared/ContentPreview';
 
 import type { ItemRecord, MediaItem, MediaMetadata } from '@/components/ItemCapture/ItemCapture.types';
 
@@ -154,9 +158,55 @@ export const createMockCurrentItemState = (
   itemType: 'appliance',
   specificItem: 'Refrigerator',
   itemName: 'Kitchen - Refrigerator',
+  purpose: null,
   contentSource: 'existing',
   contentType: null,
   content: [],
+  ...overrides,
+});
+
+// =============================================================================
+// Purpose-Based Factories (REQ-171)
+// =============================================================================
+
+/**
+ * Creates a mock CurrentItemState with purpose field populated.
+ *
+ * @param purpose - The purpose type for the item
+ * @param overrides - Partial CurrentItemState to override defaults
+ * @returns CurrentItemState with purpose
+ */
+export const createMockCurrentItemWithPurpose = (
+  purpose: PurposeType,
+  overrides?: Partial<CurrentItemState>
+): CurrentItemState => {
+  const specificItem = overrides?.specificItem ?? 'Refrigerator';
+  const purposeLabel = PURPOSE_LABELS[purpose];
+  const itemName = `${purposeLabel} - ${specificItem}`;
+
+  return {
+    ...createMockCurrentItemState(),
+    purpose,
+    itemName,
+    ...overrides,
+  };
+};
+
+/**
+ * Creates mock props for ContentPreview component testing.
+ *
+ * @param type - The content type to create props for
+ * @param overrides - Partial props to override defaults
+ * @returns ContentPreviewProps for testing
+ */
+export const createMockContentPreviewProps = (
+  type: ContentType = 'video',
+  overrides?: Partial<ContentPreviewProps>
+): ContentPreviewProps => ({
+  content: createMockContentPiece(type),
+  size: 'medium',
+  showRemove: false,
+  onRemove: undefined,
   ...overrides,
 });
 

@@ -4,7 +4,7 @@
  * Barrel export file for all test helper functions and utilities.
  *
  * @module ItemCreationWorkflow/__tests__/helpers
- * @lastModified 2026-01-05 (REQ-116 Integration Tests)
+ * @lastModified 2026-01-10 (REQ-171 Update Tests)
  */
 
 // Mock factories
@@ -14,6 +14,8 @@ export {
   createMockContentPiece,
   createMockWorkflowSession,
   createMockCurrentItemState,
+  createMockCurrentItemWithPurpose,
+  createMockContentPreviewProps,
   createMockWorkflowState,
   createMockMediaMetadata,
   createMockMediaItem,
@@ -34,5 +36,8 @@ export {
   TEST_ROOMS,
   TEST_ITEM_TYPES,
   TEST_CONTENT_TYPES,
+  PURPOSE_TYPES,
+  PURPOSE_LABELS,
   WORKFLOW_STEPS_ORDER,
+  STEP_DISPLAY_LABELS,
 } from './testUtils';
