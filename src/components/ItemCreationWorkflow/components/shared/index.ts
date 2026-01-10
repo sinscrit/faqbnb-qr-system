@@ -6,7 +6,7 @@
  *
  * - **Layout**: WorkflowHeader, ConfirmExitDialog, SessionProgressBar
  * - **Selection**: RoomCard, ItemTypeCard, SuggestionButton, ItemNameEditor
- * - **Content**: ContentPieceCard, SortableContentPieceCard
+ * - **Content**: ContentPieceCard, SortableContentPieceCard, ContentPreview
  * - **Summary**: SessionItemCard, RemoveItemDialog, PrintOptionsPanel, PDFExportDialog
  * - **Error Handling**: NetworkErrorIndicator, CameraPermissionFallback, SessionRecoveryBanner
  *
@@ -24,7 +24,7 @@
  *
  * @module ItemCreationWorkflow/components/shared
  * @see README.md for complete component documentation
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-167 ContentPreview Component)
  */
 
 // =============================================================================
@@ -74,6 +74,9 @@ export type { ContentPieceCardProps } from './ContentPieceCard';
 
 export { SortableContentPieceCard } from './SortableContentPieceCard';
 export type { SortableContentPieceCardProps } from './SortableContentPieceCard';
+
+export { ContentPreview, SIZE_CONFIG as CONTENT_PREVIEW_SIZE_CONFIG, TYPE_CONFIG as CONTENT_PREVIEW_TYPE_CONFIG } from './ContentPreview';
+export type { ContentPreviewProps, ContentPreviewSize } from './ContentPreview';
 
 // =============================================================================
 // Summary Components
