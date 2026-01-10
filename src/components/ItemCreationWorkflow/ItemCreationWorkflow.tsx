@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
@@ -111,6 +111,7 @@ export function ItemCreationWorkflow({
     selectItemType,
     selectSpecificItem,
     setItemName,
+    selectPurpose,
     selectContentSource,
     selectContentType,
     addContentPiece,
@@ -477,14 +478,13 @@ export function ItemCreationWorkflow({
           />
         );
       case 'purpose-selection':
-        // TODO: REQ-154 Task 2.1 - Replace with PurposeStep component
-        // Temporary: auto-advance to next step until PurposeStep is implemented
         return (
-          <div className="flex items-center justify-center p-8">
-            <p className="text-muted-foreground">
-              Purpose selection step - component pending implementation (Task 2.1)
-            </p>
-          </div>
+          <PurposeStep
+            currentPurpose={state.currentItem?.purpose ?? null}
+            onSelectPurpose={selectPurpose}
+            onNext={nextStep}
+            canNext={canGoNext}
+          />
         );
       case 'content-type-selection':
         return (
@@ -549,7 +549,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
