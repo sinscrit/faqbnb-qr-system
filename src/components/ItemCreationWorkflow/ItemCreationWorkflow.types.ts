@@ -5,9 +5,15 @@
  * component. These types define the component's props, configuration options,
  * output data structures, and internal state management.
  *
+ * Updated for Plan-094:
+ * - Added PurposeType for content purpose/intent selection
+ * - Added purpose field to CurrentItemState
+ * - Added SELECT_PURPOSE action type
+ *
  * @module ItemCreationWorkflow/types
- * @see docs/prd/Plan-093-Item-Creation-Workflow.md
- * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
+ * @see docs/prd/Plan-093-Item-Creation-Workflow.md (original)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 // =============================================================================

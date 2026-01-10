@@ -3,12 +3,19 @@
 /**
  * ContentCreationStep Component
  *
- * Step 6 of the item creation workflow.
+ * Step 6 of ItemCreationWorkflow - Content creation/capture.
  * Wraps ItemCapture component and transforms its output to ContentPiece format.
+ *
+ * Navigation Changes (Plan-094):
+ * - Navigation handled by ItemCapture's internal step navigation
+ * - Bottom navigation in content input steps is inline (Back/Continue)
+ * - Before content added: Back button only
+ * - After content added: Back + Continue buttons
  *
  * @module ItemCreationWorkflow/components/steps/ContentCreationStep
  * @see docs/REQ-105-content-creation-step-overview.md
- * @lastModified 2026-01-05
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 4
+ * @lastModified 2026-01-10 (Plan-094 Phase 4, REQ-175)
  */
 
 import { useCallback, useMemo } from 'react';

@@ -4,20 +4,24 @@
  * PreviewSaveStep Component
  *
  * Step 7 of ItemCreationWorkflow - Preview and save captured content.
- * Displays item details (room, type, purpose), allows title editing,
- * shows content preview, and handles save.
  *
- * Features:
- * - Pre-populated metadata fields (room, item type, purpose) as read-only
- * - Auto-generated title with inline editing capability
- * - Content preview grid with drag-and-drop reordering
- * - Accessible definition list for metadata display
+ * Redesigned in Plan-094 to show:
+ * - Item Details section with pre-populated fields (title editable, room/type/purpose read-only)
+ * - Content section with actual previews using ContentPreview component
+ * - Small "+ Add More" link instead of large CTAs
+ * - Content count badge
+ * - Drag-to-reorder capability with keyboard support
+ *
+ * Key Changes (Plan-094):
+ * - Removed large "Add Media" / "Add Link" buttons
+ * - Added pre-populated fields from user selections
+ * - Integrated ContentPreview for actual content display
+ * - Simplified visual hierarchy to prioritize review over adding
  *
  * @module ItemCreationWorkflow/components/steps/PreviewSaveStep
- * @see docs/REQ-106-preview-save-step-overview.md
- * @see docs/REQ-168-redesign-previewsavestep-layout-overview.md
- * @see docs/REQ-170-pre-populate-fields-detailed.md
- * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
+ * @see docs/REQ-106-preview-save-step-overview.md (original)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
+ * @lastModified 2026-01-10 (Plan-094 Phase 5 Redesign, REQ-175)
  */
 
 import { useState, useCallback, useMemo } from 'react';

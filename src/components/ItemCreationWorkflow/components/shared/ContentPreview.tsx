@@ -3,21 +3,31 @@
 /**
  * ContentPreview Component
  *
- * Displays standardized, visually informative previews of various content types.
- * Supports video, photo, PDF, text, and URL content with size variants and loading states.
+ * Reusable component for rendering content previews across different media types.
+ * Handles video, photo, PDF, text, and URL content with appropriate displays.
+ *
+ * Features:
+ * - Video: Thumbnail with duration badge
+ * - Photo: Image thumbnail with loading state
+ * - PDF: Thumbnail with page count indicator
+ * - Text: Truncated preview with text icon
+ * - URL: Favicon, title, and domain display
+ * - Loading and error states for all types
  *
  * @example
  * ```tsx
  * <ContentPreview
  *   content={contentPiece}
  *   size="medium"
- *   showTypeBadge={true}
+ *   showRemove={true}
+ *   onRemove={() => handleRemove(contentPiece.id)}
  * />
  * ```
  *
  * @module ItemCreationWorkflow/components/shared/ContentPreview
- * @see PreviewSaveStep for primary usage context
- * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
+ * @created 2026-01-09 (Plan-094 Phase 5)
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';

@@ -3,16 +3,24 @@
 /**
  * ItemCreationWorkflow Component
  *
- * Main orchestrating component for the multi-step item creation workflow.
- * Manages step rendering, integrates state management, and handles navigation.
+ * Main orchestrator component for the multi-step item creation workflow.
+ * Manages step navigation, state, and integration with ItemCapture component.
  *
- * @module ItemCreationWorkflow
- * @see docs/REQ-095-main-workflow-component-overview.md
- * @see docs/REQ-111-qr-code-integration-overview.md
- * @see docs/REQ-112-pdf-generation-integration-overview.md
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ * Workflow Steps (Plan-094):
+ * 1. room-selection → 2. item-type-selection → 3. specific-item-selection →
+ * 4. purpose-selection (NEW) → 5. content-type-selection → 6. content-creation →
+ * 7. preview-save → 8. next-action → 9. session-summary
+ *
+ * Key Changes (Plan-094):
+ * - Added step 4 (purpose-selection) for content purpose/intent
+ * - Removed content-source-selection step (consolidated into content-type-selection)
+ * - Updated step rendering for PurposeStep component
+ * - Updated progress calculation for new step order
+ *
+ * @module ItemCreationWorkflow/ItemCreationWorkflow
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
+ * @see useWorkflowState hook for state machine logic
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';

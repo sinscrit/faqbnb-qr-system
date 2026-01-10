@@ -2,12 +2,22 @@
 
 /**
  * NextActionStep Component
- * Step 8 of ItemCreationWorkflow - Decision point after content creation.
- * Presents exactly three options: Review & Submit, Add More Content, or Cancel.
+ *
+ * Step 8 of ItemCreationWorkflow - Choose next action after content creation.
+ *
+ * Simplified in Plan-094 to exactly 3 action cards (no bottom navigation):
+ * 1. Review & Submit - Proceed to session summary
+ * 2. Add More Content - Return to add additional content to same item
+ * 3. Cancel - Exit workflow with confirmation dialog
+ *
+ * Key Changes (Plan-094):
+ * - Removed bottom navigation bar completely
+ * - Standardized on 3 action cards only
+ * - Added confirmation dialog for Cancel action
  *
  * @module ItemCreationWorkflow/components/steps/NextActionStep
- * @see docs/REQ-166-fix-nextactionstep-overview.md
- * @lastModified 2026-01-10 (REQ-166 Fix NextActionStep)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 4
+ * @lastModified 2026-01-10 (Plan-094 Phase 4, REQ-175)
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';

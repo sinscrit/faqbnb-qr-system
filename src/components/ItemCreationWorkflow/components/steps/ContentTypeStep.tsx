@@ -3,17 +3,23 @@
 /**
  * ContentTypeStep Component
  *
- * Displays unified content options in a single grid.
- * Users select from: Record Video, Take Photo, Write Text,
- * Upload File, or Add Link.
+ * Step 5 of ItemCreationWorkflow - Select content type/format.
  *
- * Updated in REQ-162 to consolidate content source and content type
- * into a single step, eliminating the need for ContentSourceStep.
+ * Consolidated in Plan-094 (formerly separate content-source-selection step):
+ * - Record Video - Capture video with device camera
+ * - Take Photo - Capture photo with device camera
+ * - Write Text - Create text instructions
+ * - Upload File - Upload video, image, PDF, or text files
+ * - Add Link - Add URL/web link
+ *
+ * Key Changes (Plan-094):
+ * - Now shows all 5 options in single view (consolidated)
+ * - "Upload File" label updated with supported format hints
+ * - Removed separate "I have content" / "Create new" selection
  *
  * @module ItemCreationWorkflow/components/steps/ContentTypeStep
- * @see docs/REQ-162-consolidate-content-options-overview.md
- * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 3
+ * @lastModified 2026-01-10 (Plan-094 Phase 3, REQ-175)
  */
 
 import { useCallback, useRef, useState, forwardRef } from 'react';

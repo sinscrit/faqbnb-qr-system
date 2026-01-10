@@ -22,7 +22,7 @@
  *
  * @module ItemCreationWorkflow/utils
  * @see README.md for complete API documentation
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 // =============================================================================

@@ -5,6 +5,7 @@
  * - Room types and labels
  * - Item type categories
  * - Content type options
+ * - Purpose type configuration
  * - Workflow step configuration
  * - UI/UX constants
  *
@@ -15,6 +16,8 @@
  *   ROOM_LABELS,
  *   ITEM_TYPES,
  *   WORKFLOW_STEPS,
+ *   PURPOSE_TYPES,
+ *   PURPOSE_LABELS,
  * } from '@/components/ItemCreationWorkflow/utils/constants';
  *
  * const roomOptions = ROOM_TYPES.map(room => ({
@@ -25,7 +28,7 @@
  *
  * @module ItemCreationWorkflow/utils/constants
  * @see SUGGESTION_MATRIX for item suggestions per room
- * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175 Documentation Sync)
  */
 
 // =============================================================================
@@ -238,13 +241,25 @@ export const UNIFIED_CONTENT_OPTIONS: UnifiedContentOption[] = [
 ];
 
 // =============================================================================
-// Purpose Type Configuration
+// Purpose Type Configuration (Plan-094)
 // =============================================================================
 
 /**
- * Available purpose types for item content.
- * Describes the intent/goal of the content being created.
- * Based on Plan-094 UI/UX Workflow Improvements.
+ * Available purpose/intent types for item content.
+ *
+ * Purpose Types:
+ * - how-to-use       - Operating instructions and controls
+ * - how-to-clean     - Cleaning and care instructions
+ * - troubleshooting  - Common issues and fixes
+ * - safety-info      - Safety warnings and precautions
+ * - maintenance      - Regular maintenance tasks
+ * - features         - Special features and tips
+ * - other            - General information
+ *
+ * @see PurposeStep component for UI implementation
+ * @see generateArticleTitle() for title generation using purpose
+ * @created 2026-01-09 (Plan-094 Phase 2)
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 export const PURPOSE_TYPES = [
   'how-to-use',
@@ -263,7 +278,11 @@ export type PurposeTypeConst = (typeof PURPOSE_TYPES)[number];
 
 /**
  * Human-readable labels for each purpose type.
+ * Used for display in UI selection components and title generation.
  * Displayed as card titles in PurposeStep.
+ *
+ * @see generateArticleTitle() - uses labels for title format
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 export const PURPOSE_LABELS: Record<PurposeTypeConst, string> = {
   'how-to-use': 'How to Use',
@@ -277,7 +296,9 @@ export const PURPOSE_LABELS: Record<PurposeTypeConst, string> = {
 
 /**
  * Descriptive text for each purpose type.
- * Displayed as helper text in PurposeStep cards.
+ * Displayed as helper text in PurposeStep selection UI cards.
+ *
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 export const PURPOSE_DESCRIPTIONS: Record<PurposeTypeConst, string> = {
   'how-to-use': 'Operating instructions and controls',
@@ -327,18 +348,41 @@ export const MAX_CONTENT_PIECES = 10;
 
 /**
  * Ordered list of all workflow steps.
- * Used for navigation logic and progress calculation.
  *
- * Updated for Plan-094:
- * - Removed: content-source-selection (redundant)
- * - Added: purpose-selection (new step after specific-item)
+ * ## Step Flow (Plan-094 UI/UX Improvements)
+ *
+ * ```
+ * 1. room-selection        → Select room category
+ * 2. item-type-selection   → Select item type (skips if 'general' room)
+ * 3. specific-item-selection → Name the specific item
+ * 4. purpose-selection     → Select content purpose (NEW)
+ * 5. content-type-selection → Select content format (consolidated)
+ * 6. content-creation      → Create/upload content
+ * 7. preview-save          → Preview with actual content, edit title (redesigned)
+ * 8. next-action           → Choose next step (simplified: 3 options)
+ * 9. session-summary       → Review all items, generate QR codes
+ * ```
+ *
+ * ## Changes from Original Flow
+ * - ADDED: `purpose-selection` after specific-item (Phase 2)
+ * - REMOVED: `content-source-selection` merged into content-type-selection (Phase 3)
+ * - MODIFIED: `preview-save` redesigned with actual content previews (Phase 5)
+ * - MODIFIED: `next-action` simplified to 3 options (Phase 4)
+ *
+ * ## Skip Conditions
+ * - `item-type-selection`: Skipped when room is 'general'
+ *
+ * @see Plan-094-UI-UX-Workflow-Improvements.md for implementation details
+ * @see STEP_TRANSITIONS in useWorkflowState.ts for navigation logic
+ * @see PROGRESS_WEIGHTS for progress calculation
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 export const WORKFLOW_STEPS = [
   'room-selection',
   'item-type-selection',
   'specific-item-selection',
-  'purpose-selection',        // NEW - replaces content-source-selection
-  'content-type-selection',   // Now part of main flow
+  'purpose-selection',        // NEW: Added in Plan-094 Phase 2
+  'content-type-selection',   // Consolidated (content-source-selection removed)
   'content-creation',
   'preview-save',
   'next-action',
@@ -363,7 +407,14 @@ export const TOUCH_TARGET_MIN_SIZE = 48;
 /**
  * Progress weights for each step.
  * Used to calculate progress bar percentage.
- * Updated for Plan-094 workflow changes.
+ *
+ * Updated for Plan-094 workflow changes:
+ * - Added weight for `purpose-selection` step (44%)
+ * - Recalculated weights to distribute evenly across 9 steps
+ * - Weights increase by ~11% per step to reach 100% at session-summary
+ *
+ * @see WORKFLOW_STEPS for step order
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
   'room-selection': 11,

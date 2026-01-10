@@ -51,8 +51,8 @@
  *
  * @module ItemCreationWorkflow
  * @see README.md for comprehensive usage documentation
- * @see docs/prd/Plan-093-Item-Creation-Workflow.md for implementation details
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md for implementation details
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 // =============================================================================
@@ -63,7 +63,7 @@
  * Import these types to properly type your callback handlers and state management.
  *
  * - **Configuration**: Props and config for the main component
- * - **Domain**: Room, item, and content type identifiers
+ * - **Domain**: Room, item, content, and purpose type identifiers
  * - **Session**: State structures for workflow and items
  * - **Output**: Return types from callbacks
  */
@@ -76,6 +76,7 @@ export type {
   RoomType,
   ItemType,
   ContentType,
+  PurposeType,  // NEW: Plan-094
 
   // Session types
   WorkflowSession,
@@ -128,6 +129,12 @@ export {
   CONTENT_TYPE_LABELS,
   CONTENT_SOURCE_OPTIONS,
 
+  // Purpose type configuration (NEW: Plan-094)
+  PURPOSE_TYPES,
+  PURPOSE_LABELS,
+  PURPOSE_DESCRIPTIONS,
+  PURPOSE_ICONS,
+
   // Workflow configuration
   WORKFLOW_CONFIG_DEFAULTS,
   WORKFLOW_STEPS,
@@ -142,7 +149,17 @@ export type {
   ItemTypeConst,
   ContentTypeConst,
   WorkflowStepConst,
+  PurposeTypeConst,  // NEW: Plan-094
 } from './utils/constants';
+
+// =============================================================================
+// Title Generator Export (NEW: Plan-094)
+// =============================================================================
+/**
+ * Title generation utility for auto-generating article titles.
+ */
+export { generateArticleTitle } from './utils/titleGenerator';
+export type { TitleGeneratorInput } from './utils/titleGenerator';
 
 // =============================================================================
 // Suggestion Matrix Export
@@ -254,6 +271,10 @@ export type { ContentPieceCardProps } from './components/shared/ContentPieceCard
 
 export { SortableContentPieceCard } from './components/shared/SortableContentPieceCard';
 export type { SortableContentPieceCardProps } from './components/shared/SortableContentPieceCard';
+
+// Content preview (NEW: Plan-094)
+export { ContentPreview } from './components/shared/ContentPreview';
+export type { ContentPreviewProps, ContentPreviewSize } from './components/shared/ContentPreview';
 
 // Summary components
 export { SessionItemCard } from './components/shared/SessionItemCard';

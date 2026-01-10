@@ -10,10 +10,16 @@
  *
  * ## Features
  * - Multi-step navigation with history tracking
- * - Room/item type/content selection state
+ * - Room/item type/content/purpose selection state
  * - Session management with multiple items
  * - Progress calculation and validation
  * - Error handling and submission state
+ *
+ * ## Plan-094 Updates
+ * - Added purpose-selection step after specific-item-selection
+ * - Removed content-source-selection (merged into content-type-selection)
+ * - Updated STEP_TRANSITIONS for new flow
+ * - Added SELECT_PURPOSE action handling
  *
  * @example Basic usage
  * ```tsx
@@ -37,8 +43,8 @@
  * @module ItemCreationWorkflow/hooks/useWorkflowState
  * @see ItemCreationWorkflow - Main component that uses this hook
  * @see WorkflowAction for available action types
- * @see docs/prd/Plan-093-Item-Creation-Workflow.md for implementation details
- * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md for implementation details
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
@@ -68,18 +74,19 @@ import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 // =============================================================================
 
 /**
- * Valid transitions from each step.
- * Used to validate GO_TO_STEP actions and determine NEXT_STEP targets.
+ * Step transition map defining valid navigation paths.
  *
- * Updated for Plan-094:
- * - specific-item-selection now goes to purpose-selection
- * - purpose-selection added, goes to content-type-selection
- * - content-source-selection removed from transitions
- * - next-action updated to go to content-type-selection for "add more"
+ * Updated in Plan-094:
+ * - Added purpose-selection step after specific-item-selection
+ * - Removed content-source-selection (merged into content-type-selection)
+ * - Updated next-action transitions for simplified flow
  *
  * Notes on conditional transitions:
  * - room-selection: Goes to specific-item-selection if room is 'general' (skips item-type)
  * - next-action: Goes to room-selection for "Tag New Item" or session-summary for "I'm Done"
+ *
+ * @see WORKFLOW_STEPS in constants.ts for step order
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 export const STEP_TRANSITIONS: Record<WorkflowStep, WorkflowStep[]> = {
   'room-selection': ['item-type-selection', 'specific-item-selection'],

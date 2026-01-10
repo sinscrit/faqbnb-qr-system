@@ -1,18 +1,26 @@
 /**
- * Title Generator Utility for ItemCreationWorkflow
+ * Title Generator Utility
  *
- * Generates article titles based on user selections during the
- * item creation workflow. Titles follow the format:
- * "[Purpose Label] - [Item Name]"
+ * Generates article titles based on user selections (purpose + item).
+ * Creates titles in the format: "[Purpose Label] - [Item Name]"
  *
- * Examples:
- * - "How to Clean - Fridge"
- * - "Troubleshooting - Dishwasher"
- * - "Safety Information - Oven"
+ * @example
+ * ```ts
+ * generateArticleTitle({ specificItem: "Fridge", purpose: "how-to-clean" })
+ * // Returns: "How to Clean - Fridge"
+ *
+ * generateArticleTitle({ specificItem: "Oven", purpose: "troubleshooting" })
+ * // Returns: "Troubleshooting - Oven"
+ * ```
+ *
+ * Note: This generates the ARTICLE title, not the Item name.
+ * - Item name: "Fridge" (physical object, unchanged)
+ * - Article title: "How to Clean - Fridge" (content topic)
  *
  * @module ItemCreationWorkflow/utils/titleGenerator
- * @see Plan-094-UI-UX-Workflow-Improvements.md
- * @lastModified 2026-01-10 (REQ-155 Create Title Generator Utility)
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Appendix B
+ * @created 2026-01-09 (Plan-094 Phase 1)
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 
 import { PURPOSE_LABELS } from './constants';

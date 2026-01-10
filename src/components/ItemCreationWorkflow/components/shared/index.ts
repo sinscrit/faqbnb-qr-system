@@ -24,7 +24,7 @@
  *
  * @module ItemCreationWorkflow/components/shared
  * @see README.md for complete component documentation
- * @lastModified 2026-01-10 (REQ-167 ContentPreview Component)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 // =============================================================================

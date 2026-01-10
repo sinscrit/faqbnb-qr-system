@@ -3,13 +3,22 @@
 /**
  * PurposeStep Component
  *
- * Step 4 of the item creation workflow.
- * Allows users to select the purpose/intent of their item content.
- * Implements keyboard navigation and accessibility support.
+ * Step 4 of ItemCreationWorkflow - Purpose/Intent selection.
+ * Allows users to select the purpose for their content (e.g., how-to-use,
+ * how-to-clean, troubleshooting). This selection drives automatic title
+ * generation for the article.
+ *
+ * Features:
+ * - Grid layout of purpose options with icons
+ * - Keyboard navigation (arrow keys, Enter/Space to select)
+ * - Auto-advance on selection (with visual feedback delay)
+ * - Screen reader announcements for selection
  *
  * @module ItemCreationWorkflow/components/steps/PurposeStep
- * @see docs/REQ-157-create-purposestep-component-overview.md
- * @lastModified 2026-01-10
+ * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 2
+ * @see generateArticleTitle() for title generation
+ * @created 2026-01-09 (Plan-094 Phase 2)
+ * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
  */
 
 import { useCallback, useRef, useState } from 'react';

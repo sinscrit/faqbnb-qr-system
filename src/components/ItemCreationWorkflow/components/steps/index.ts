@@ -35,7 +35,7 @@
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175)
  */
 
 // =============================================================================

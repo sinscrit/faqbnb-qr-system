@@ -1,6 +1,6 @@
 # ItemCreationWorkflow Component
 
-> **Last Modified:** 2026-01-05 (REQ-118 Documentation Updates)
+> **Last Modified:** 2026-01-10 (Plan-094 UI/UX Improvements, REQ-175)
 
 A guided multi-step workflow for creating and tagging household items with QR codes. Property owners can select rooms, categorize items, add content (videos, photos, PDFs, text, or URLs), and generate printable QR code sheets.
 
@@ -342,6 +342,7 @@ function ConfiguredWorkflow() {
 - **`RoomType`** - Room type identifiers: `'kitchen'` | `'laundry'` | `'bedroom'` | `'bathroom'` | `'living-room'` | `'garage'` | `'outdoor'` | `'general'` | `'other'`
 - **`ItemType`** - Item categories: `'appliance'` | `'room-item'` | `'general-info'`
 - **`ContentType`** - Content type options: `'video'` | `'photo'` | `'pdf'` | `'text'` | `'url'`
+- **`PurposeType`** - NEW: Purpose/intent categories: `'how-to-use'` | `'how-to-clean'` | `'troubleshooting'` | `'safety-info'` | `'maintenance'` | `'features'` | `'other'`
 
 ### Session Types
 
@@ -500,29 +501,37 @@ The workflow guides users through a 9-step process:
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
-│ 4. Content Source   │  Choose: "I have content" or "Create new"
-└──────────┬──────────┘
+│ 4. Purpose          │  NEW: Select purpose (how-to-use, how-to-clean, etc.)
+└──────────┬──────────┘  * Drives automatic title generation
            ▼
 ┌─────────────────────┐
 │ 5. Content Type     │  Select type: video, photo, PDF, text, URL
-└──────────┬──────────┘
+└──────────┬──────────┘  * All options in single view (consolidated)
            ▼
 ┌─────────────────────┐
 │ 6. Content Creation │  Create/upload content (uses ItemCapture)
 └──────────┬──────────┘
            ▼
 ┌─────────────────────┐
-│ 7. Preview & Save   │  Preview item, edit name, reorder content
-└──────────┬──────────┘
+│ 7. Preview & Save   │  Preview actual content, edit auto-generated title
+└──────────┬──────────┘  * Shows pre-populated fields (room, type, purpose)
            ▼
 ┌─────────────────────┐
-│ 8. Next Action      │  "Add more content" | "New item" | "Done"
-└──────────┬──────────┘
+│ 8. Next Action      │  "Review & Submit" | "Add More" | "Cancel"
+└──────────┬──────────┘  * Simplified to 3 options with confirmation on Cancel
            ▼
 ┌─────────────────────┐
 │ 9. Session Summary  │  Review all items, generate QR codes, print
 └─────────────────────┘
 ```
+
+### Changes from Previous Workflow (Plan-094)
+
+- **NEW Step 4 (Purpose)**: Added purpose selection that drives automatic title generation
+- **Removed Step**: Content Source Selection merged into Content Type Selection
+- **Preview Redesign**: Step 7 now shows actual content previews and pre-populated fields
+- **NextAction Simplified**: Step 8 reduced to 3 clear options with Cancel confirmation
+- **Navigation Cleanup**: Removed duplicate bottom navigation from content input steps
 
 ### Step Navigation
 
@@ -530,6 +539,37 @@ The workflow guides users through a 9-step process:
 - **Skip Conditions**:
   - Step 2 (Item Type) skips automatically if "General" room is selected
 - **Looping**: From step 8, users can loop back to add more content or create new items
+
+## New Utilities (Plan-094)
+
+### generateArticleTitle
+
+Auto-generates article titles from purpose and item selections.
+
+```tsx
+import { generateArticleTitle } from '@/components/ItemCreationWorkflow';
+
+const title = generateArticleTitle({
+  specificItem: 'Fridge',
+  purpose: 'how-to-clean',
+});
+// Result: "How to Clean - Fridge"
+```
+
+### ContentPreview Component
+
+Reusable content preview component for all media types.
+
+```tsx
+import { ContentPreview } from '@/components/ItemCreationWorkflow';
+
+<ContentPreview
+  content={contentPiece}
+  size="medium"
+  showRemove={true}
+  onRemove={() => handleRemove(contentPiece.id)}
+/>
+```
 
 ## Exported Constants
 
@@ -543,6 +583,9 @@ import {
   ITEM_TYPE_DESCRIPTIONS,
   CONTENT_TYPES,
   CONTENT_TYPE_LABELS,
+  PURPOSE_TYPES,         // NEW
+  PURPOSE_LABELS,        // NEW
+  PURPOSE_DESCRIPTIONS,  // NEW
   WORKFLOW_STEPS,
   WORKFLOW_CONFIG_DEFAULTS,
 } from '@/components/ItemCreationWorkflow';
@@ -614,10 +657,11 @@ onSaveItem={async (item) => {
 
 ## Related Documentation
 
-- **Implementation Plan**: `docs/prd/Plan-093-Item-Creation-Workflow.md`
+- **Implementation Plan (Original)**: `docs/prd/Plan-093-Item-Creation-Workflow.md`
+- **UI/UX Improvements Plan**: `docs/prd/Plan-094-UI-UX-Workflow-Improvements.md`
 - **ItemCapture Component**: `src/components/ItemCapture/README.md`
 - **ItemManager Component**: `src/components/ItemManager/README.md`
 
 ---
 
-*Generated: 2026-01-05 (REQ-118 Documentation Updates)*
+*Generated: 2026-01-10 (Plan-094 UI/UX Improvements, REQ-175)*
