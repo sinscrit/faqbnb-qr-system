@@ -47,7 +47,7 @@ import {
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { cn } from '@/lib/utils';
 import type { CurrentItemState, ContentPiece } from '../../ItemCreationWorkflow.types';
-import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard } from '../shared';
+import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';
 import {
   MAX_CONTENT_PIECES,
   ROOM_LABELS,
@@ -67,6 +67,8 @@ export interface PreviewSaveStepProps {
   currentItem: CurrentItemState;
   /** Callback when item name changes */
   onUpdateItemName: (name: string) => void;
+  /** Callback when tags change (REQ-177) */
+  onUpdateTags: (tags: string[]) => void;
   /** Callback to remove a content piece */
   onRemoveContent: (contentId: string) => void;
   /** Callback to reorder content pieces */
@@ -173,12 +175,14 @@ function ItemDetailsDisplay({ room, itemType, purpose }: ItemDetailsDisplayProps
 interface ItemDetailsSectionProps {
   currentItem: CurrentItemState;
   onUpdateItemName: (name: string) => void;
+  onUpdateTags: (tags: string[]) => void;
   disabled?: boolean;
 }
 
 function ItemDetailsSection({
   currentItem,
   onUpdateItemName,
+  onUpdateTags,
   disabled,
 }: ItemDetailsSectionProps) {
   return (
@@ -199,6 +203,19 @@ function ItemDetailsSection({
         itemType={currentItem.itemType}
         purpose={currentItem.purpose}
       />
+
+      {/* Tags Editor - REQ-177 */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-[#717171] mb-2">
+          Tags
+        </label>
+        <TagsEditor
+          selectedTags={currentItem.tags || []}
+          onTagsChange={onUpdateTags}
+          disabled={disabled}
+          maxTags={10}
+        />
+      </div>
 
       {/* Editable Title - using existing ItemNameEditor */}
       <div className="mt-6 pt-6 border-t border-gray-100">
@@ -413,6 +430,7 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
 export function PreviewSaveStep({
   currentItem,
   onUpdateItemName,
+  onUpdateTags,
   onRemoveContent,
   onReorderContent,
   onRetake,
@@ -577,6 +595,7 @@ export function PreviewSaveStep({
       <ItemDetailsSection
         currentItem={currentItem}
         onUpdateItemName={onUpdateItemName}
+        onUpdateTags={onUpdateTags}
         disabled={isSaving}
       />
 

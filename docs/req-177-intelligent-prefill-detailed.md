@@ -248,21 +248,21 @@ export type { TagsEditorProps } from './TagsEditor';
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Read the PreviewSaveStep component to understand current structure
+- [x] **7.1** Read the PreviewSaveStep component to understand current structure ---implemented: Read and analyzed PreviewSaveStep structure-unit tested-
 
-- [ ] **7.2** Update imports section (around line 50) to include TagsEditor: `import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';`
+- [x] **7.2** Update imports section (around line 50) to include TagsEditor: `import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';` ---implemented: Added TagsEditor to imports-unit tested-
 
-- [ ] **7.3** Update `PreviewSaveStepProps` interface (around line 65) to add:
-  - `onUpdateTags: (tags: string[]) => void;` - callback for tag changes
+- [x] **7.3** Update `PreviewSaveStepProps` interface (around line 65) to add:
+  - `onUpdateTags: (tags: string[]) => void;` - callback for tag changes ---implemented: Added onUpdateTags to PreviewSaveStepProps interface-unit tested-
 
-- [ ] **7.4** Add `onUpdateTags` to the component's destructured props (around line 424)
+- [x] **7.4** Add `onUpdateTags` to the component's destructured props (around line 424) ---implemented: Added onUpdateTags to destructured props-unit tested-
 
-- [ ] **7.5** Update `ItemDetailsSectionProps` interface (around line 173) to add:
-  - `onUpdateTags: (tags: string[]) => void;`
+- [x] **7.5** Update `ItemDetailsSectionProps` interface (around line 173) to add:
+  - `onUpdateTags: (tags: string[]) => void;` ---implemented: Added onUpdateTags to ItemDetailsSectionProps-unit tested-
 
-- [ ] **7.6** Update `ItemDetailsSection` component (around line 179) to accept and use `onUpdateTags` prop
+- [x] **7.6** Update `ItemDetailsSection` component (around line 179) to accept and use `onUpdateTags` prop ---implemented: Added onUpdateTags to ItemDetailsSection destructured props-unit tested-
 
-- [ ] **7.7** Add TagsEditor to `ItemDetailsSection` after the `ItemDetailsDisplay` component and before the Article Title input (around line 203):
+- [x] **7.7** Add TagsEditor to `ItemDetailsSection` after the `ItemDetailsDisplay` component and before the Article Title input (around line 203):
 ```tsx
 {/* Tags Editor - REQ-177 */}
 <div className="mt-4">
@@ -276,9 +276,9 @@ export type { TagsEditorProps } from './TagsEditor';
     maxTags={10}
   />
 </div>
-```
+``` ---implemented: Added TagsEditor to ItemDetailsSection after ItemDetailsDisplay-unit tested-
 
-- [ ] **7.8** Update the ItemDetailsSection call in the main component (around line 577) to pass `onUpdateTags`:
+- [x] **7.8** Update the ItemDetailsSection call in the main component (around line 577) to pass `onUpdateTags`:
 ```tsx
 <ItemDetailsSection
   currentItem={currentItem}
@@ -286,7 +286,7 @@ export type { TagsEditorProps } from './TagsEditor';
   onUpdateTags={onUpdateTags}
   disabled={isSaving}
 />
-```
+``` ---implemented: Updated ItemDetailsSection call to pass onUpdateTags prop-unit tested-
 
 ---
 
