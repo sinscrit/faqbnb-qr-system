@@ -31,9 +31,10 @@ import type { ItemCaptureProps } from '@/components/ItemCapture/ItemCapture.type
 // =============================================================================
 
 /**
- * New workflow steps order reflecting Plan-094 changes.
- * - Removed: content-source-selection
- * - Added: purpose-selection after specific-item-selection
+ * New workflow steps order reflecting Plan-094 and REQ-176 changes.
+ * - Removed: content-source-selection (Plan-094)
+ * - Added: purpose-selection after specific-item-selection (Plan-094)
+ * - Added: media-capture after content-type-selection (REQ-176)
  */
 export const NEW_WORKFLOW_STEPS_ORDER: WorkflowStep[] = [
   'room-selection',
@@ -41,6 +42,7 @@ export const NEW_WORKFLOW_STEPS_ORDER: WorkflowStep[] = [
   'specific-item-selection',
   'purpose-selection',
   'content-type-selection',
+  'media-capture',
   'content-creation',
   'preview-save',
   'next-action',
@@ -56,6 +58,7 @@ export const NEW_STEP_DISPLAY_LABELS: Record<WorkflowStep, string> = {
   'specific-item-selection': 'What specific item',
   'purpose-selection': "What's the purpose of this content",
   'content-type-selection': 'What content would you like to add',
+  'media-capture': 'Capture Content',
   'content-creation': 'Content Creation',
   'preview-save': 'Review',
   'next-action': 'What would you like to do next',

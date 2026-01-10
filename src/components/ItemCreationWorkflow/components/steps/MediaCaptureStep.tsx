@@ -24,6 +24,13 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CurrentItemState, ContentPiece } from '../../ItemCreationWorkflow.types';
+import {
+  VideoCaptureAdapter,
+  PhotoCaptureAdapter,
+  FileUploadAdapter,
+  TextEditorAdapter,
+  UrlInputAdapter,
+} from './adapters';
 
 // =============================================================================
 // Types
@@ -84,24 +91,58 @@ export default function MediaCaptureStep({
   // Route to appropriate adapter based on contentType and contentSource
   const { contentType, contentSource } = currentItem;
 
-  // Placeholder for adapter routing logic
-  // Will be implemented in Task 11 after adapters are created
-  return (
-    <div className={cn('flex flex-col items-center justify-center min-h-[400px] p-6', className)}>
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 max-w-md">
-        <h2 className="text-lg font-semibold text-blue-900 mb-2">
-          MediaCaptureStep Router
-        </h2>
-        <p className="text-blue-700 mb-4">
-          Content Type: <strong>{contentType}</strong>
-        </p>
-        <p className="text-blue-700 mb-4">
-          Content Source: <strong>{contentSource}</strong>
-        </p>
-        <p className="text-sm text-blue-600">
-          Adapter components will be integrated in Task 11.
-        </p>
-      </div>
-    </div>
-  );
+  // Common adapter props
+  const adapterProps = {
+    currentItem,
+    onAddContent,
+    onComplete,
+    onBack,
+  };
+
+  // Route to appropriate adapter
+  // Priority: contentSource 'existing' always uses FileUploadAdapter
+  // Then route by contentType for 'create-new' source
+  if (contentSource === 'existing') {
+    // File upload for any existing content (video, photo, pdf)
+    return <FileUploadAdapter {...adapterProps} />;
+  }
+
+  // Create-new routing based on content type
+  switch (contentType) {
+    case 'video':
+      return <VideoCaptureAdapter {...adapterProps} />;
+
+    case 'photo':
+      return <PhotoCaptureAdapter {...adapterProps} />;
+
+    case 'text':
+      return <TextEditorAdapter {...adapterProps} />;
+
+    case 'url':
+      return <UrlInputAdapter {...adapterProps} />;
+
+    case 'pdf':
+      // PDFs are always uploaded, never created
+      return <FileUploadAdapter {...adapterProps} />;
+
+    default:
+      // Unknown content type - show error
+      return (
+        <div className={cn('flex flex-col items-center justify-center min-h-[400px] p-6', className)}>
+          <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Unsupported Content Type
+          </h2>
+          <p className="text-gray-600 text-center max-w-md mb-6">
+            The content type "{contentType}" is not supported. Please go back and select a different option.
+          </p>
+          <button
+            onClick={onBack}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      );
+  }
 }

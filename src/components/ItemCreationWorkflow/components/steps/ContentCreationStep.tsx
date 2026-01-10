@@ -3,6 +3,9 @@
 /**
  * ContentCreationStep Component
  *
+ * @deprecated Use MediaCaptureStep instead. This component will be removed in a future version.
+ * Kept for backward compatibility during transition period (REQ-176).
+ *
  * Step 6 of ItemCreationWorkflow - Content creation/capture.
  * Wraps ItemCapture component and transforms its output to ContentPiece format.
  *
@@ -15,7 +18,8 @@
  * @module ItemCreationWorkflow/components/steps/ContentCreationStep
  * @see docs/REQ-105-content-creation-step-overview.md
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 4
- * @lastModified 2026-01-10 (Plan-094 Phase 4, REQ-175)
+ * @see MediaCaptureStep for replacement component
+ * @lastModified 2026-01-10 (REQ-176 Deprecated in favor of MediaCaptureStep)
  */
 
 import { useCallback, useMemo } from 'react';

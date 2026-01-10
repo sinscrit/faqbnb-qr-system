@@ -5,17 +5,18 @@
  * Steps are rendered by the main ItemCreationWorkflow component based on
  * the current workflow state.
  *
- * ## Step Flow (Updated REQ-162)
+ * ## Step Flow (Updated REQ-176)
  * ```
  * 1. RoomSelectionStep      - Select room (kitchen, bedroom, etc.)
  * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
  * 3. SpecificItemStep       - Select/name specific item with suggestions
  * 4. PurposeStep            - Select content purpose (how-to-use, troubleshooting, etc.)
  * 5. ContentTypeStep        - Select unified content option (5 choices)
- * 6. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
- * 7. PreviewSaveStep        - Preview and save the item
- * 8. NextActionStep         - Add more content, new item, or finish
- * 9. SessionSummaryStep     - Review all items and print QR codes
+ * 6. MediaCaptureStep       - Route to appropriate capture UI (NEW - REQ-176)
+ * 7. ContentCreationStep    - Create/upload content (DEPRECATED - kept for compatibility)
+ * 8. PreviewSaveStep        - Preview and save the item
+ * 9. NextActionStep         - Add more content, new item, or finish
+ * 10. SessionSummaryStep    - Review all items and print QR codes
  * ```
  *
  * NOTE: ContentSourceStep removed per REQ-162 - content options consolidated
@@ -35,7 +36,7 @@
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 
 // =============================================================================
@@ -76,11 +77,22 @@ export { ContentTypeStep } from './ContentTypeStep';
 export type { ContentTypeStepProps } from './ContentTypeStep';
 
 // =============================================================================
-// Content Creation Steps (Steps 6-7)
+// Media Capture Step (Step 6 - NEW)
+// =============================================================================
+/**
+ * Media capture routing step.
+ * Routes to appropriate adapter based on content type and source.
+ * NEW in REQ-176 to provide direct routing to capture components.
+ */
+export { default as MediaCaptureStep } from './MediaCaptureStep';
+export type { MediaCaptureStepProps } from './MediaCaptureStep';
+
+// =============================================================================
+// Content Creation Steps (Steps 7-8)
 // =============================================================================
 /**
  * Content creation and preview steps.
- * ContentCreationStep delegates to ItemCapture for actual capture/upload.
+ * ContentCreationStep DEPRECATED - use MediaCaptureStep instead (kept for compatibility).
  */
 export { ContentCreationStep } from './ContentCreationStep';
 export type { ContentCreationStepProps } from './ContentCreationStep';

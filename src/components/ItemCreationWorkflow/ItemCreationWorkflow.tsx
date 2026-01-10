@@ -6,10 +6,10 @@
  * Main orchestrator component for the multi-step item creation workflow.
  * Manages step navigation, state, and integration with ItemCapture component.
  *
- * Workflow Steps (Plan-094):
+ * Workflow Steps (REQ-176):
  * 1. room-selection → 2. item-type-selection → 3. specific-item-selection →
- * 4. purpose-selection (NEW) → 5. content-type-selection → 6. content-creation →
- * 7. preview-save → 8. next-action → 9. session-summary
+ * 4. purpose-selection → 5. content-type-selection → 6. media-capture (NEW) →
+ * 7. content-creation (DEPRECATED) → 8. preview-save → 9. next-action → 10. session-summary
  *
  * Key Changes (Plan-094):
  * - Added step 4 (purpose-selection) for content purpose/intent
@@ -17,10 +17,16 @@
  * - Updated step rendering for PurposeStep component
  * - Updated progress calculation for new step order
  *
+ * Key Changes (REQ-176):
+ * - Added step 6 (media-capture) for direct routing to capture components
+ * - Deprecated content-creation step (kept for backward compatibility)
+ * - MediaCaptureStep routes to appropriate adapter based on content type/source
+ *
  * @module ItemCreationWorkflow/ItemCreationWorkflow
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
+ * @see docs/req-176-media-capture-step-detailed.md
  * @see useWorkflowState hook for state machine logic
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -28,7 +34,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, MediaCaptureStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
@@ -513,6 +519,15 @@ export function ItemCreationWorkflow({
             onSelectContent={handleUnifiedContentSelect}
             onNext={nextStep}
             canNext={canGoNext}
+          />
+        );
+      case 'media-capture':
+        return (
+          <MediaCaptureStep
+            currentItem={state.currentItem!}
+            onAddContent={addContentPiece}
+            onComplete={() => goToStep('preview-save')}
+            onBack={() => goToStep('content-type-selection')}
           />
         );
       case 'content-creation':

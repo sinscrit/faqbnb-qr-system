@@ -497,13 +497,15 @@ export function getStepAnnouncement(
 
 /**
  * Step names for announcement purposes
+ * Updated for REQ-176: Added media-capture step
  */
 export const STEP_NAMES: Record<string, string> = {
   'room-selection': 'Select a room',
   'item-type-selection': 'Choose item type',
   'specific-item-selection': 'Name your item',
-  'purpose-selection': 'Select purpose',      // Updated for Plan-094
+  'purpose-selection': 'Select purpose',
   'content-type-selection': 'Choose content type',
+  'media-capture': 'Capture content',         // NEW - REQ-176
   'content-creation': 'Create content',
   'preview-save': 'Preview and save',
   'next-action': 'Choose next action',
