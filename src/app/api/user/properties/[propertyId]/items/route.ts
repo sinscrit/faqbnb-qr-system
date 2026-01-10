@@ -1,69 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServer } from '@/lib/supabase-server';
 
 interface ItemsResponse {
   success: boolean;
   data?: any[];
   error?: string;
   code?: string;
-}
-
-// Validate user authentication (non-admin users allowed)
-async function validateUserAuth(request: NextRequest) {
-  try {
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      // Try to get session from cookie (supabase already imported)
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.access_token) {
-        return {
-          error: NextResponse.json(
-            { success: false, error: 'Missing or invalid authorization header', code: 'UNAUTHORIZED' },
-            { status: 401 }
-          )
-        };
-      }
-      
-      // Use session token for auth
-      const { data: { user }, error: userError } = await supabase.auth.getUser(session.access_token);
-      
-      if (userError || !user) {
-        return {
-          error: NextResponse.json(
-            { success: false, error: 'Invalid session token', code: 'INVALID_TOKEN' },
-            { status: 401 }
-          )
-        };
-      }
-      
-      return { user, session };
-    }
-    
-    const token = authHeader.replace('Bearer ', '');
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
-    if (userError || !user) {
-      return {
-        error: NextResponse.json(
-          { success: false, error: 'Invalid authorization token', code: 'INVALID_TOKEN' },
-          { status: 401 }
-        )
-      };
-    }
-    
-    return { user };
-  } catch (error) {
-    console.error('Auth validation error:', error);
-    return {
-      error: NextResponse.json(
-        { success: false, error: 'Authentication validation failed', code: 'AUTH_ERROR' },
-        { status: 500 }
-      )
-    };
-  }
 }
 
 // Check if user can access the property
@@ -110,27 +52,23 @@ export async function GET(
 ): Promise<NextResponse<ItemsResponse>> {
   try {
     console.log('User property items API called - validating authentication...');
-    
-    // Validate authentication
-    const authResult = await validateUserAuth(request);
-    if (authResult.error) {
-      return authResult.error;
-    }
-    
-    const user = authResult.user;
-    const { propertyId } = await params;
-    
-    console.log('Authentication successful for user:', user?.email, 'requesting items for property:', propertyId);
-    
-    if (!user) {
+
+    // Create server-side Supabase client and get authenticated user
+    const supabase = await createSupabaseServer();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.log('User property items API: User not authenticated');
       return NextResponse.json(
-        { success: false, error: 'User not found', code: 'USER_NOT_FOUND' },
+        { success: false, error: 'Authentication required', code: 'UNAUTHORIZED' },
         { status: 401 }
       );
     }
 
-    // Use imported supabase client
-    
+    const { propertyId } = await params;
+
+    console.log('Authentication successful for user:', user?.email, 'requesting items for property:', propertyId);
+
     // Check if user can access this property
     const accessResult = await canAccessProperty(user, propertyId, supabase);
     if (!accessResult.canAccess) {
@@ -165,7 +103,7 @@ export async function GET(
     }
 
     console.log(`Successfully loaded ${items?.length || 0} items for property ${propertyId}, user ${user.email}`);
-    
+
     return NextResponse.json({
       success: true,
       data: items || []
