@@ -533,14 +533,17 @@ export function ItemCreationWorkflow({
           />
         );
       case 'next-action': {
-        const lastSavedItem = state.session.items[state.session.items.length - 1] || null;
+        // Determine if user has unsaved content that would be lost on cancel
+        const hasUnsavedContent = state.currentItem !== null && (
+          state.currentItem.content.length > 0 || state.isDirty
+        );
         return (
           <NextActionStep
             itemsCreated={itemCount}
-            lastSavedItem={lastSavedItem}
-            onAddMore={handleAddMore}
-            onTagNewItem={startNewItem}
-            onDone={completeSession}
+            hasUnsavedContent={hasUnsavedContent}
+            onReviewSubmit={() => goToStep('preview-save')}
+            onAddMoreContent={() => goToStep('content-type-selection')}
+            onCancel={handleExitClick}
           />
         );
       }
@@ -560,7 +563,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, handleUnifiedContentSelect, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
+  }, [state.currentStep, state.currentItem, state.session.items, state.isDirty, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, handleUnifiedContentSelect, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, startNewItem, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint, handleExitClick]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>

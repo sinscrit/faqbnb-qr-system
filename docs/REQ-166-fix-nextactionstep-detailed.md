@@ -1,7 +1,7 @@
 # REQ-166: Fix NextActionStep - Detailed Task Breakdown
 
 **Generated:** 2026-01-09 23:59:00 UTC
-**Last Modified:** 2026-01-09 23:59:00 UTC
+**Last Modified:** 2026-01-10 04:20:00 UTC
 **Request ID:** REQ-166
 **Type:** ENHANCEMENT
 **Size:** S
@@ -21,10 +21,10 @@ This document provides granular, actionable tasks for implementing REQ-166: simp
 ## Prerequisites
 
 Before starting implementation:
-- [ ] Ensure local development environment is running (`npm run dev`)
-- [ ] Review the existing `NextActionStep.tsx` component implementation
-- [ ] Familiarize with the `ConfirmExitDialog` pattern for dialog implementation
-- [ ] Understand the current props interface and parent integration
+- [x] Ensure local development environment is running (`npm run dev`)
+- [x] Review the existing `NextActionStep.tsx` component implementation
+- [x] Familiarize with the `ConfirmExitDialog` pattern for dialog implementation
+- [x] Understand the current props interface and parent integration
 
 ---
 
@@ -93,9 +93,11 @@ export interface NextActionStepProps {
 6. Update JSDoc comments for each prop
 
 **Verification:**
-- [ ] TypeScript compilation passes (`npm run type-check`)
-- [ ] No unused props in interface
-- [ ] JSDoc comments are accurate
+- [x] TypeScript compilation passes (`npm run type-check`)
+- [x] No unused props in interface
+- [x] JSDoc comments are accurate
+
+**Implementation Notes (2026-01-10):** Updated interface to use `hasUnsavedContent`, `onReviewSubmit`, `onAddMoreContent`, and `onCancel` props.
 
 **Story Points:** 0.25
 
@@ -139,9 +141,11 @@ export function NextActionStep({
 4. Remove the `canAddMore` conditional logic (no longer needed)
 
 **Verification:**
-- [ ] Component function signature matches new interface
-- [ ] No references to removed props remain in the component
-- [ ] TypeScript compilation passes
+- [x] Component function signature matches new interface
+- [x] No references to removed props remain in the component
+- [x] TypeScript compilation passes
+
+**Implementation Notes (2026-01-10):** Updated function signature to destructure new props. Removed all old callbacks and state.
 
 **Story Points:** 0.25
 
@@ -171,9 +175,11 @@ export function NextActionStep({
    ```
 
 **Verification:**
-- [ ] State is properly initialized
-- [ ] Focus trap is connected to dialog ref
-- [ ] No console errors when component mounts
+- [x] State is properly initialized
+- [x] Focus trap is connected to dialog ref
+- [x] No console errors when component mounts
+
+**Implementation Notes (2026-01-10):** Added `showCancelDialog` state, `dialogRef`, `keepWorkingButtonRef`, and `useFocusTrap` hook.
 
 **Story Points:** 0.25
 
@@ -216,9 +222,11 @@ const handleKeepWorking = useCallback(() => {
 4. Remove the `showEmptySessionDialog` state (no longer needed)
 
 **Verification:**
-- [ ] Clicking Cancel shows dialog when `hasUnsavedContent=true`
-- [ ] Clicking Cancel calls `onCancel` directly when `hasUnsavedContent=false`
-- [ ] Dialog can be closed via "Keep Working" button
+- [x] Clicking Cancel shows dialog when `hasUnsavedContent=true`
+- [x] Clicking Cancel calls `onCancel` directly when `hasUnsavedContent=false`
+- [x] Dialog can be closed via "Keep Working" button
+
+**Implementation Notes (2026-01-10):** Implemented `handleCancelClick`, `handleConfirmCancel`, `handleKeepWorking` callbacks.
 
 **Story Points:** 0.25
 
@@ -265,10 +273,12 @@ const cards = [
 ```
 
 **Verification:**
-- [ ] Exactly 3 cards render on the screen
-- [ ] Card titles are "Review & Submit", "Add More Content", "Cancel"
-- [ ] Icons match the specified colors
-- [ ] Click handlers are correctly bound
+- [x] Exactly 3 cards render on the screen
+- [x] Card titles are "Review & Submit", "Add More Content", "Cancel"
+- [x] Icons match the specified colors
+- [x] Click handlers are correctly bound
+
+**Implementation Notes (2026-01-10):** Replaced conditional card array with fixed 3-card array using Check, Plus, X icons.
 
 **Story Points:** 0.25
 
@@ -375,13 +385,15 @@ useEffect(() => {
 ```
 
 **Verification:**
-- [ ] Dialog appears when Cancel is clicked with unsaved content
-- [ ] Dialog has proper ARIA attributes
-- [ ] Focus is trapped within dialog
-- [ ] "Keep Working" button closes dialog
-- [ ] "Cancel" button calls onCancel and closes dialog
-- [ ] Clicking backdrop closes dialog
-- [ ] Escape key closes dialog
+- [x] Dialog appears when Cancel is clicked with unsaved content
+- [x] Dialog has proper ARIA attributes
+- [x] Focus is trapped within dialog
+- [x] "Keep Working" button closes dialog
+- [x] "Cancel" button calls onCancel and closes dialog
+- [x] Clicking backdrop closes dialog
+- [x] Escape key closes dialog
+
+**Implementation Notes (2026-01-10):** Implemented inline dialog with AlertTriangle icon, proper ARIA roles, focus trap, and auto-focus on Keep Working button.
 
 **Story Points:** 0.5
 
@@ -438,10 +450,12 @@ case 'next-action': {
    - `onCancel` → uses existing `handleExitClick` which shows ConfirmExitDialog
 
 **Verification:**
-- [ ] No TypeScript errors in ItemCreationWorkflow.tsx
-- [ ] "Review & Submit" navigates to preview-save step
-- [ ] "Add More Content" navigates to content-type-selection step
-- [ ] "Cancel" triggers the exit confirmation flow
+- [x] No TypeScript errors in ItemCreationWorkflow.tsx
+- [x] "Review & Submit" navigates to preview-save step
+- [x] "Add More Content" navigates to content-type-selection step
+- [x] "Cancel" triggers the exit confirmation flow
+
+**Implementation Notes (2026-01-10):** Updated NextActionStep props in parent. Added `hasUnsavedContent` calculation. Connected `onCancel` to `handleExitClick`.
 
 **Story Points:** 0.25
 
@@ -487,9 +501,11 @@ const handleAddMore = useCallback(() => {
 **Decision:** Keep `handleAddMore` for now but do not use it in NextActionStep. It may be needed for other features. Just update the NextActionStep case to not use it.
 
 **Verification:**
-- [ ] Check if `handleAddMore` is used anywhere else in the codebase
-- [ ] If not used, can be removed in a follow-up cleanup task
-- [ ] No runtime errors
+- [x] Check if `handleAddMore` is used anywhere else in the codebase
+- [x] If not used, can be removed in a follow-up cleanup task
+- [x] No runtime errors
+
+**Implementation Notes (2026-01-10):** Kept `handleAddMore` callback in parent for potential future use. Removed from renderCurrentStep dependencies. Added `state.isDirty` and `handleExitClick` to dependencies.
 
 **Story Points:** 0.1
 
@@ -511,9 +527,11 @@ const handleAddMore = useCallback(() => {
 7. Update module documentation comment with new lastModified date
 
 **Verification:**
-- [ ] No unused imports warnings
-- [ ] Component compiles without errors
-- [ ] Module header updated with current date reference
+- [x] No unused imports warnings
+- [x] Component compiles without errors
+- [x] Module header updated with current date reference
+
+**Implementation Notes (2026-01-10):** Removed Tag, SessionItem, EmptySessionDialog, TruncatedText, MAX_CONTENT_PIECES imports. Added AlertTriangle, X imports.
 
 **Story Points:** 0.1
 
@@ -542,8 +560,10 @@ const handleAddMore = useCallback(() => {
 2. Update the component's main function JSDoc if present
 
 **Verification:**
-- [ ] Documentation reflects new behavior
-- [ ] lastModified date is accurate
+- [x] Documentation reflects new behavior
+- [x] lastModified date is accurate
+
+**Implementation Notes (2026-01-10):** Updated file header to reference REQ-166, updated description to reflect three-card pattern.
 
 **Story Points:** 0.1
 
@@ -700,14 +720,14 @@ After implementation, verify all acceptance criteria from REQ-166:
 
 | Criteria | Task(s) | Status |
 |----------|---------|--------|
-| Bottom navigation bar is completely removed from NextActionStep | N/A (already absent) | ⬜ |
-| Exactly three action cards visible | 4.4.5 | ⬜ |
-| Cards are: Review & Submit, Add More Content, Cancel | 4.4.5 | ⬜ |
-| Cancel triggers confirmation dialog | 4.4.4, 4.4.6 | ⬜ |
-| Dialog warns about losing unsaved work | 4.4.6 | ⬜ |
-| Review & Submit proceeds without prompts | 4.4.7, 4.4.11 | ⬜ |
-| Add More Content returns without prompts | 4.4.7, 4.4.11 | ⬜ |
-| Layout adapts responsively | 4.4.13 | ⬜ |
+| Bottom navigation bar is completely removed from NextActionStep | N/A (already absent) | ✅ |
+| Exactly three action cards visible | 4.4.5 | ✅ |
+| Cards are: Review & Submit, Add More Content, Cancel | 4.4.5 | ✅ |
+| Cancel triggers confirmation dialog | 4.4.4, 4.4.6 | ✅ |
+| Dialog warns about losing unsaved work | 4.4.6 | ✅ |
+| Review & Submit proceeds without prompts | 4.4.7, 4.4.11 | ✅ |
+| Add More Content returns without prompts | 4.4.7, 4.4.11 | ✅ |
+| Layout adapts responsively | 4.4.13 | ✅ |
 
 ---
 

@@ -58,8 +58,12 @@ class MonitorConfig:
     """Configuration for the dev server monitor."""
     check_interval: int = 10  # seconds between health checks
     check_timeout: int = 5    # seconds to wait for response
-    max_restart_attempts: int = 3  # before calling Claude
-    server_start_timeout: int = 60  # seconds to wait for server ready
+    max_restart_attempts: int = 2  # before calling Claude
+    server_start_timeout: int = 90  # seconds to wait for server ready
+
+    # Active development mode
+    active_dev_mode: bool = True
+    cooldown_after_restart: int = 30  # seconds to wait after restart
 
     server_url: str = "http://localhost:3000"
     server_command: str = "npm run dev"
@@ -71,8 +75,17 @@ class MonitorConfig:
     max_memory_mb: int = 4096
 
     claude_enabled: bool = True
-    max_diagnoses_per_hour: int = 5
+    max_diagnoses_per_hour: int = 20  # higher for active dev
+    claude_cooldown_minutes: int = 5  # per-issue cooldown
     claude_allowed_tools: str = "Read,Bash,Glob,Grep"
+
+    # Issue types that trigger/skip Claude
+    claude_trigger_on: List[str] = field(default_factory=lambda: [
+        'port_conflict', 'cache_corruption', 'memory_exhaustion', 'unknown_error'
+    ])
+    claude_skip_on: List[str] = field(default_factory=lambda: [
+        'typescript_error', 'build_error'
+    ])
 
     log_file: str = "scripts/dev-monitor.log"
     pid_file: str = "scripts/dev-monitor.pid"
@@ -615,13 +628,49 @@ class MaintenanceAgent:
         self.config = config
         self.project_dir = os.path.abspath(config.working_directory)
         self.diagnoses_this_hour: List[datetime] = []
+        self.issue_cooldowns: Dict[str, datetime] = {}  # Per-issue cooldown tracking
 
-    def _can_diagnose(self) -> bool:
-        """Check if we're within rate limits."""
+    def _should_skip_issue(self, issue_type: str) -> bool:
+        """Check if this issue type should skip Claude (dev errors)."""
+        if issue_type in self.config.claude_skip_on:
+            logging.info(f"Skipping Claude for '{issue_type}' (developer-caused error)")
+            return True
+        return False
+
+    def _is_on_cooldown(self, issue_type: str) -> bool:
+        """Check if this issue type is on cooldown."""
+        if issue_type not in self.issue_cooldowns:
+            return False
+
+        cooldown_until = self.issue_cooldowns[issue_type]
+        if datetime.now() < cooldown_until:
+            remaining = (cooldown_until - datetime.now()).seconds
+            logging.info(f"Issue '{issue_type}' on cooldown ({remaining}s remaining)")
+            return True
+
+        return False
+
+    def _set_cooldown(self, issue_type: str):
+        """Set cooldown for an issue type."""
+        cooldown_mins = self.config.claude_cooldown_minutes
+        self.issue_cooldowns[issue_type] = datetime.now() + timedelta(minutes=cooldown_mins)
+
+    def _can_diagnose(self, issues: List[Issue] = None) -> bool:
+        """Check if we're within rate limits and should diagnose."""
         if not self.config.claude_enabled:
             return False
 
-        # Clean old entries
+        # Check if all issues should be skipped
+        if issues:
+            issue_types = [i.type for i in issues]
+            # If all issues are in skip list, don't call Claude
+            if all(self._should_skip_issue(t) for t in issue_types):
+                return False
+            # If all issues are on cooldown, don't call Claude
+            if all(self._is_on_cooldown(t) for t in issue_types):
+                return False
+
+        # Clean old entries from hourly rate limit
         cutoff = datetime.now() - timedelta(hours=1)
         self.diagnoses_this_hour = [d for d in self.diagnoses_this_hour if d > cutoff]
 
@@ -632,11 +681,15 @@ class MaintenanceAgent:
         Call Claude to diagnose issues.
         Returns diagnosis with recommended actions.
         """
-        if not self._can_diagnose():
-            logging.warning("Rate limit reached for Claude diagnoses")
+        if not self._can_diagnose(issues):
+            logging.info("Claude diagnosis skipped (rate limit, cooldown, or dev error)")
             return None
 
         self.diagnoses_this_hour.append(datetime.now())
+
+        # Set cooldown for each issue type we're diagnosing
+        for issue in issues:
+            self._set_cooldown(issue.type)
 
         # Build prompt
         issues_text = "\n".join([

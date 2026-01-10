@@ -10,8 +10,12 @@
 monitor:
   check_interval: 10        # Seconds between health checks
   check_timeout: 5          # Seconds to wait for server response
-  max_restart_attempts: 3   # Restart attempts before calling Claude
-  server_start_timeout: 60  # Seconds to wait for server to be ready
+  max_restart_attempts: 2   # Restart attempts before escalating
+  server_start_timeout: 90  # Seconds to wait for server to be ready (longer for dev)
+
+  # Active development mode - expects frequent changes
+  active_dev_mode: true
+  cooldown_after_restart: 30  # Seconds to wait after restart before checking again
 
 server:
   url: http://localhost:3000
@@ -26,8 +30,21 @@ auto_fix:
 
 claude:
   enabled: true
-  max_diagnoses_per_hour: 5   # Rate limit for Claude calls
+  max_diagnoses_per_hour: 20  # Higher limit for active dev
+  cooldown_minutes: 5         # Don't call Claude again for same issue within 5 min
   allowed_tools: Read,Bash,Glob,Grep
+
+  # Only call Claude for these issue types (skip known dev errors)
+  trigger_on:
+    - port_conflict
+    - cache_corruption
+    - memory_exhaustion
+    - unknown_error
+
+  # Skip Claude for these (developer is likely aware)
+  skip_on:
+    - typescript_error    # Dev knows they broke something
+    - build_error         # Dev is actively changing code
 
 # File paths (relative to project root)
 files:

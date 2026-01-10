@@ -2,21 +2,19 @@
 
 /**
  * NextActionStep Component
- * Step 8 of ItemCreationWorkflow - Decision point after item save.
+ * Step 8 of ItemCreationWorkflow - Decision point after content creation.
+ * Presents exactly three options: Review & Submit, Add More Content, or Cancel.
+ *
  * @module ItemCreationWorkflow/components/steps/NextActionStep
- * @see docs/REQ-107-next-action-step-overview.md
- * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113 Error Handling & Edge Cases)
+ * @see docs/REQ-166-fix-nextactionstep-overview.md
+ * @lastModified 2026-01-10 (REQ-166 Fix NextActionStep)
  */
 
-import { useState, useRef, useCallback } from 'react';
-import { Plus, Tag, Check } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Check, Plus, X, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { SessionItem } from '../../ItemCreationWorkflow.types';
 import { SessionProgressBar } from '../shared/SessionProgressBar';
-import { EmptySessionDialog } from '../shared/EmptySessionDialog';
-import { TruncatedText } from '../shared/TruncatedText';
-import { MAX_CONTENT_PIECES } from '../../utils/constants';
+import { useFocusTrap } from '../../utils/accessibility';
 
 // =============================================================================
 // Type Definitions
@@ -46,16 +44,14 @@ interface ActionCardProps {
 export interface NextActionStepProps {
   /** Number of items created in this session */
   itemsCreated: number;
-  /** Last saved item in the session (null if no items saved yet) */
-  lastSavedItem: SessionItem | null;
-  /** Number of content pieces in the last saved item */
-  lastItemContentCount?: number;
-  /** Callback when user wants to add more content to the last item */
-  onAddMore: () => void;
-  /** Callback when user wants to start a new item */
-  onTagNewItem: () => void;
-  /** Callback when user is done with the session */
-  onDone: () => void;
+  /** Whether user has added any content that would be lost on cancel */
+  hasUnsavedContent: boolean;
+  /** Callback when user selects "Review & Submit" */
+  onReviewSubmit: () => void;
+  /** Callback when user selects "Add More Content" */
+  onAddMoreContent: () => void;
+  /** Callback when user confirms cancel action */
+  onCancel: () => void;
   /** Optional CSS class name */
   className?: string;
 }
@@ -126,70 +122,57 @@ function ActionCard({
 }
 
 // =============================================================================
-// Helper Functions
-// =============================================================================
-
-/**
- * Truncates a string to the specified max length with ellipsis.
- * Kept for backward compatibility in description generation.
- * @param text - The text to truncate
- * @param maxLength - Maximum character length (default: 40)
- * @returns Truncated text with ellipsis if needed
- */
-function truncateText(text: string, maxLength: number = 40): string {
-  if (text.length <= maxLength) return text;
-  return `${text.substring(0, maxLength - 3)}...`;
-}
-
-// =============================================================================
 // Main Component
 // =============================================================================
 
 export function NextActionStep({
   itemsCreated,
-  lastSavedItem,
-  lastItemContentCount = 0,
-  onAddMore,
-  onTagNewItem,
-  onDone,
+  hasUnsavedContent,
+  onReviewSubmit,
+  onAddMoreContent,
+  onCancel,
   className,
 }: NextActionStepProps) {
-  // State for empty session dialog
-  const [showEmptySessionDialog, setShowEmptySessionDialog] = useState(false);
+  // State for cancel confirmation dialog
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
-  // Refs for keyboard navigation
+  // Refs for keyboard navigation and focus management
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const keepWorkingButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Get item name for "Add More" description
-  const itemName = lastSavedItem?.name
-    ? truncateText(lastSavedItem.name)
-    : 'this item';
+  // Focus trap for the dialog
+  useFocusTrap(dialogRef, showCancelDialog);
 
-  // Handle "I'm Done" click - show dialog if no items, otherwise proceed
-  const handleDoneClick = useCallback(() => {
-    if (itemsCreated === 0) {
-      setShowEmptySessionDialog(true);
+  // Handle Cancel card click - show dialog if unsaved content, otherwise cancel directly
+  const handleCancelClick = useCallback(() => {
+    if (hasUnsavedContent) {
+      setShowCancelDialog(true);
     } else {
-      onDone();
+      // No unsaved content, cancel immediately
+      onCancel();
     }
-  }, [itemsCreated, onDone]);
+  }, [hasUnsavedContent, onCancel]);
 
-  // Handle dialog close
-  const handleDialogClose = useCallback(() => {
-    setShowEmptySessionDialog(false);
+  // Handle confirm cancel from dialog
+  const handleConfirmCancel = useCallback(() => {
+    setShowCancelDialog(false);
+    onCancel();
+  }, [onCancel]);
+
+  // Handle keep working from dialog
+  const handleKeepWorking = useCallback(() => {
+    setShowCancelDialog(false);
   }, []);
 
-  // Handle "Add Items" from dialog
-  const handleAddItemsFromDialog = useCallback(() => {
-    setShowEmptySessionDialog(false);
-    onTagNewItem();
-  }, [onTagNewItem]);
-
-  // Handle "Exit Session" from dialog
-  const handleExitSession = useCallback(() => {
-    setShowEmptySessionDialog(false);
-    onDone();
-  }, [onDone]);
+  // Auto-focus "Keep Working" button when dialog opens
+  useEffect(() => {
+    if (showCancelDialog && keepWorkingButtonRef.current) {
+      requestAnimationFrame(() => {
+        keepWorkingButtonRef.current?.focus();
+      });
+    }
+  }, [showCancelDialog]);
 
   // Handle arrow key navigation between cards
   const handleContainerKeyDown = useCallback(
@@ -219,55 +202,33 @@ export function NextActionStep({
     []
   );
 
-  // Build list of visible cards
-  const cards: {
-    key: string;
-    icon: React.ReactNode;
-    iconBgColor: string;
-    title: string;
-    description: string;
-    onClick: () => void;
-  }[] = [];
-
-  // "Add More to This Item" card - only show if:
-  // 1. There's a last saved item, AND
-  // 2. The item hasn't reached the content limit
-  const canAddMore = lastSavedItem && lastItemContentCount < MAX_CONTENT_PIECES;
-
-  if (canAddMore) {
-    cards.push({
-      key: 'add-more',
+  // Fixed array of exactly three action cards
+  const cards = [
+    {
+      key: 'review-submit',
+      icon: <Check className="w-6 h-6 text-green-600" aria-hidden="true" />,
+      iconBgColor: 'bg-green-100',
+      title: 'Review & Submit',
+      description: 'Review your content and submit this item',
+      onClick: onReviewSubmit,
+    },
+    {
+      key: 'add-more-content',
       icon: <Plus className="w-6 h-6 text-blue-600" aria-hidden="true" />,
       iconBgColor: 'bg-blue-100',
-      title: 'Add More to This Item',
-      description: lastItemContentCount >= MAX_CONTENT_PIECES - 1
-        ? `Add one more piece to "${itemName}" (at limit after)`
-        : `Add another video, photo, or document to "${itemName}"`,
-      onClick: onAddMore,
-    });
-  }
-
-  // "Tag New Item" card - always visible
-  cards.push({
-    key: 'tag-new',
-    icon: <Tag className="w-6 h-6 text-green-600" aria-hidden="true" />,
-    iconBgColor: 'bg-green-100',
-    title: 'Tag New Item',
-    description: 'Start creating another item for your property',
-    onClick: onTagNewItem,
-  });
-
-  // "I'm Done" card - always visible
-  cards.push({
-    key: 'done',
-    icon: <Check className="w-6 h-6 text-[#FF385C]" aria-hidden="true" />,
-    iconBgColor: 'bg-[#FF385C]/10',
-    title: "I'm Done",
-    description: itemsCreated === 0
-      ? 'Exit without creating items'
-      : 'Review your items and print QR codes',
-    onClick: handleDoneClick,
-  });
+      title: 'Add More Content',
+      description: 'Add another video, photo, or document',
+      onClick: onAddMoreContent,
+    },
+    {
+      key: 'cancel',
+      icon: <X className="w-6 h-6 text-red-600" aria-hidden="true" />,
+      iconBgColor: 'bg-red-100',
+      title: 'Cancel',
+      description: 'Discard changes and exit',
+      onClick: handleCancelClick,
+    },
+  ];
 
   return (
     <div
@@ -312,13 +273,82 @@ export function NextActionStep({
         Step: What's Next? - {itemsCreated} items created in this session.
       </div>
 
-      {/* Empty Session Dialog */}
-      <EmptySessionDialog
-        isOpen={showEmptySessionDialog}
-        onClose={handleDialogClose}
-        onAddItems={handleAddItemsFromDialog}
-        onExitSession={handleExitSession}
-      />
+      {/* Cancel Confirmation Dialog */}
+      {showCancelDialog && (
+        <div
+          ref={dialogRef}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && handleKeepWorking()}
+          onKeyDown={(e) => e.key === 'Escape' && handleKeepWorking()}
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="cancel-dialog-title"
+          aria-describedby="cancel-dialog-description"
+        >
+          <div
+            className={cn(
+              "bg-white rounded-lg shadow-xl max-w-md w-full mx-4",
+              "animate-in fade-in zoom-in-95 duration-200",
+              "motion-reduce:animate-none"
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header with warning icon */}
+            <div className="flex items-start gap-4 p-6 pb-4">
+              <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="w-6 h-6 text-red-600" aria-hidden="true" />
+              </div>
+              <div className="flex-1">
+                <h3
+                  id="cancel-dialog-title"
+                  className="text-lg font-semibold text-[#222222]"
+                >
+                  Cancel Item Creation?
+                </h3>
+                <p
+                  id="cancel-dialog-description"
+                  className="mt-2 text-sm text-[#717171]"
+                >
+                  You will lose any unsaved content. Are you sure you want to cancel?
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 p-6 pt-4 border-t border-gray-100">
+              <button
+                ref={keepWorkingButtonRef}
+                type="button"
+                onClick={handleKeepWorking}
+                className={cn(
+                  "flex-1 px-4 py-2.5 text-sm font-medium rounded-lg",
+                  "text-gray-700 bg-gray-100",
+                  "hover:bg-gray-200 active:bg-gray-300",
+                  "transition-colors duration-150",
+                  "motion-reduce:transition-none",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                )}
+              >
+                Keep Working
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmCancel}
+                className={cn(
+                  "flex-1 px-4 py-2.5 text-sm font-medium rounded-lg",
+                  "text-white bg-red-500",
+                  "hover:bg-red-600 active:bg-red-700",
+                  "transition-colors duration-150",
+                  "motion-reduce:transition-none",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                )}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
