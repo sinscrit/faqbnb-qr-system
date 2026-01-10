@@ -56,3 +56,12 @@ export * from './sessionStorage';
  * Accessibility utilities for ARIA labels and focus management.
  */
 export * from './accessibility';
+
+// =============================================================================
+// Title Generator
+// =============================================================================
+/**
+ * Title generation utilities for auto-generating article titles.
+ * @see docs/REQ-155-create-title-generator-utility-overview.md
+ */
+export * from './titleGenerator';

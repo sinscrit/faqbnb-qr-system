@@ -25,6 +25,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -570,6 +571,22 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
     print(f"  Timeout: {precheck_timeout}s")
     print(f"{'='*60}")
 
+    # Clear .next cache to prevent corrupted cache issues
+    cache_cleared = False
+    project_dir = config.get('_config_dir', Path.cwd())
+    next_cache_dir = Path(project_dir) / '.next'
+    if next_cache_dir.exists():
+        try:
+            shutil.rmtree(next_cache_dir)
+            cache_cleared = True
+            print(f"  ✓ Cleared .next cache directory (prevents corrupted cache issues)")
+            logging.info(f"Cleared .next cache at {next_cache_dir}")
+        except Exception as e:
+            print(f"  ⚠ Failed to clear .next cache: {e}")
+            logging.warning(f"Failed to clear .next cache: {e}")
+    else:
+        print(f"  ○ No .next cache found (clean state)")
+
     # Build prompt
     prompt = build_precheck_prompt(config)
 
@@ -621,6 +638,7 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
                 'completed_at': datetime.now().isoformat(),
                 'elapsed': elapsed_str,
                 'tools': tools_result,
+                'next_cache_cleared': cache_cleared,
             }
 
             if all_passed:
@@ -645,7 +663,8 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
                 'completed_at': datetime.now().isoformat(),
                 'elapsed': elapsed_str,
                 'tools': {tool: {'available': False, 'notes': 'Agent failed'} for tool in required_tools},
-                'error': error_msg
+                'error': error_msg,
+                'next_cache_cleared': cache_cleared,
             }
             print(f"  ✗ Precheck agent failed ({elapsed_str}): {error_msg[:60]}...")
             return False, precheck_result
@@ -656,7 +675,8 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
             'status': 'failed',
             'completed_at': datetime.now().isoformat(),
             'tools': {tool: {'available': False, 'notes': 'Timeout'} for tool in required_tools},
-            'error': f'Timeout after {precheck_timeout}s'
+            'error': f'Timeout after {precheck_timeout}s',
+            'next_cache_cleared': cache_cleared,
         }
         print(f"  ✗ Precheck timed out after {precheck_timeout}s")
         return False, precheck_result
@@ -666,7 +686,8 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
             'status': 'failed',
             'completed_at': datetime.now().isoformat(),
             'tools': {tool: {'available': False, 'notes': str(e)} for tool in required_tools},
-            'error': str(e)
+            'error': str(e),
+            'next_cache_cleared': cache_cleared,
         }
         print(f"  ✗ Precheck error: {e}")
         return False, precheck_result
@@ -973,6 +994,111 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     )
 
 
+def parse_test_results(output: str) -> dict:
+    """
+    Parse agent output to extract test verification results.
+
+    Returns:
+        dict with:
+            - tests_ran: bool - whether tests were executed
+            - tests_passed: bool or None - True if passed, False if failed, None if unknown
+            - test_summary: str - brief summary of test results
+    """
+    if not output:
+        return {
+            'tests_ran': False,
+            'tests_passed': None,
+            'test_summary': 'No output to parse'
+        }
+
+    output_lower = output.lower()
+
+    # Patterns indicating test success
+    success_patterns = [
+        'all tests pass',
+        'tests passed',
+        'test passed',
+        'verification successful',
+        'verification passed',
+        'browser test passed',
+        'browser verification passed',
+        '✓ all tests',
+        '✓ tests pass',
+        '✓ verification',
+        'tests: passed',
+        'test result: pass',
+        'successfully verified',
+        'verification complete',
+    ]
+
+    # Patterns indicating test failure
+    failure_patterns = [
+        'test failed',
+        'tests failed',
+        'verification failed',
+        'browser test failed',
+        '✗ test',
+        '✗ verification',
+        'tests: failed',
+        'test result: fail',
+        'internal server error',
+        'error during verification',
+        'verification error',
+    ]
+
+    # Patterns indicating tests were run
+    ran_patterns = [
+        'running test',
+        'executing test',
+        'browser_snapshot',
+        'browser_navigate',
+        'verification',
+        'testing',
+        'verified',
+    ]
+
+    # Check if tests were run
+    tests_ran = any(pattern in output_lower for pattern in ran_patterns)
+
+    # Check for explicit success
+    has_success = any(pattern in output_lower for pattern in success_patterns)
+
+    # Check for explicit failure
+    has_failure = any(pattern in output_lower for pattern in failure_patterns)
+
+    # Determine test result
+    if has_failure:
+        tests_passed = False
+        test_summary = 'Tests failed or verification error detected'
+    elif has_success:
+        tests_passed = True
+        test_summary = 'Tests passed successfully'
+    elif tests_ran:
+        # Tests ran but no clear pass/fail indicator
+        tests_passed = None
+        test_summary = 'Tests executed but result unclear'
+    else:
+        tests_passed = None
+        test_summary = 'No test execution detected'
+
+    return {
+        'tests_ran': tests_ran,
+        'tests_passed': tests_passed,
+        'test_summary': test_summary
+    }
+
+
+@dataclass
+class AgentResult:
+    """Result from agent invocation."""
+    success: bool
+    error: Optional[str] = None
+    stdout: str = ''
+    stderr: str = ''
+    elapsed: float = 0.0
+    test_results: Optional[dict] = None
+
+
 def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
                  task_dict: dict = None, config: dict = None,
                  state: dict = None, stage_id: str = None) -> tuple[bool, Optional[str]]:
@@ -1048,10 +1174,38 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
         if result.returncode == 0:
             logging.info(f"Agent {agent_name} completed successfully for task {task.id}{req_info} in {elapsed_str}")
             logging.debug(f"Stdout (first 500 chars): {result.stdout[:500] if result.stdout else 'empty'}")
+
+            # Parse test results for implementation stage
+            if stage_id == 'implementation' and task_dict is not None:
+                test_results = parse_test_results(result.stdout)
+                task_dict['test_results'] = test_results
+                task_dict['tests_ran'] = test_results.get('tests_ran', False)
+                task_dict['tests_passed'] = test_results.get('tests_passed')
+                task_dict['test_summary'] = test_results.get('test_summary', '')
+
+                # Log test results
+                if test_results.get('tests_ran'):
+                    if test_results.get('tests_passed') is True:
+                        logging.info(f"Task {task.id}: Tests PASSED - {test_results.get('test_summary')}")
+                    elif test_results.get('tests_passed') is False:
+                        logging.warning(f"Task {task.id}: Tests FAILED - {test_results.get('test_summary')}")
+                    else:
+                        logging.info(f"Task {task.id}: Test status unclear - {test_results.get('test_summary')}")
+
             return True, None
         else:
             error_msg = f"Exit code {result.returncode}: {result.stderr[:500]}"
             logging.error(f"Agent {agent_name} failed for task {task.id}{req_info} after {elapsed_str}: {error_msg}")
+
+            # Still try to parse test results from failed run
+            if stage_id == 'implementation' and task_dict is not None:
+                combined_output = (result.stdout or '') + (result.stderr or '')
+                test_results = parse_test_results(combined_output)
+                task_dict['test_results'] = test_results
+                task_dict['tests_ran'] = test_results.get('tests_ran', False)
+                task_dict['tests_passed'] = test_results.get('tests_passed', False)  # Assume failed if agent failed
+                task_dict['test_summary'] = test_results.get('test_summary', 'Agent failed')
+
             return False, error_msg
             
     except subprocess.TimeoutExpired:
@@ -1270,6 +1424,24 @@ def run_task_stages(
                 print(f"    ✓ Verification complete - test harness deployed ({stage_elapsed_str})")
             else:
                 print(f"    ✓ Verified ({stage_elapsed_str})")
+
+        elif stage_id == 'implementation' and not dry_run:
+            # Show test results for implementation stage
+            tests_passed = task_dict.get('tests_passed')
+            tests_ran = task_dict.get('tests_ran', False)
+            test_summary = task_dict.get('test_summary', '')
+
+            if tests_ran:
+                if tests_passed is True:
+                    print(f"    ✓ Implemented & Tests PASSED ({stage_elapsed_str})")
+                elif tests_passed is False:
+                    print(f"    ⚠ Implemented but Tests FAILED ({stage_elapsed_str})")
+                    if test_summary:
+                        print(f"      → {test_summary}")
+                else:
+                    print(f"    ✓ Implemented - test status unclear ({stage_elapsed_str})")
+            else:
+                print(f"    ✓ Implemented - no tests detected ({stage_elapsed_str})")
         else:
             if not dry_run:
                 print(f"    ✓ Completed ({stage_elapsed_str})")

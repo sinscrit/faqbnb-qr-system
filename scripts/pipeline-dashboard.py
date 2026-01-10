@@ -500,20 +500,61 @@ def create_task_card(task: dict, compact: bool = False) -> Panel:
 def get_stage_indicators(task: dict) -> str:
     """Get stage completion indicators for a task.
 
-    Returns something like: [R✓O✓D✓I○] showing which stages are complete.
+    Returns something like: [R✓O✓D✓I✓T✓] showing which stages are complete.
+    Implementation shows test status:
+    - I✓ (green) = implemented & tests passed
+    - I⚠ (yellow) = implemented but tests failed
+    - I? (cyan) = implemented but test status unclear
+    - I○ (dim) = not implemented
+    T indicator shows explicit test verification:
+    - T✓ (green) = tests passed
+    - T✗ (red) = tests failed
+    - (no T) = no test info
     """
     r = "✓" if task.get("request_completed") else "○"
     o = "✓" if task.get("overview_completed") else "○"
     d = "✓" if task.get("details_completed") else "○"
-    i = "✓" if task.get("implementation_completed") else "○"
 
     # Color the indicators
     r_color = "green" if task.get("request_completed") else "dim"
     o_color = "green" if task.get("overview_completed") else "dim"
     d_color = "green" if task.get("details_completed") else "dim"
-    i_color = "green" if task.get("implementation_completed") else "dim"
 
-    return f"[{r_color}]R{r}[/{r_color}][{o_color}]O{o}[/{o_color}][{d_color}]D{d}[/{d_color}][{i_color}]I{i}[/{i_color}]"
+    # Implementation indicator with test status
+    impl_completed = task.get("implementation_completed", False)
+    tests_passed = task.get("tests_passed")
+    tests_ran = task.get("tests_ran", False)
+
+    if not impl_completed:
+        i = "○"
+        i_color = "dim"
+    elif tests_ran:
+        if tests_passed is True:
+            i = "✓"
+            i_color = "green"
+        elif tests_passed is False:
+            i = "⚠"
+            i_color = "yellow"
+        else:
+            i = "?"
+            i_color = "cyan"
+    else:
+        i = "✓"
+        i_color = "green"  # No tests, but implementation done
+
+    # Build the indicator string
+    result = f"[{r_color}]R{r}[/{r_color}][{o_color}]O{o}[/{o_color}][{d_color}]D{d}[/{d_color}][{i_color}]I{i}[/{i_color}]"
+
+    # Add explicit test indicator if tests were run
+    if tests_ran:
+        if tests_passed is True:
+            result += "[green]T✓[/green]"
+        elif tests_passed is False:
+            result += "[red]T✗[/red]"
+        else:
+            result += "[cyan]T?[/cyan]"
+
+    return result
 
 
 def create_column(title: str, tasks: list, max_items: int = 8) -> Panel:

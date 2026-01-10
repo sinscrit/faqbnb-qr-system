@@ -407,6 +407,68 @@ Each stage represents a transformation step, typically backed by an AI agent.
 
 ---
 
+## Precheck
+
+The precheck phase runs before pipeline execution to verify the environment is ready.
+
+### What Precheck Does
+
+1. **Clear .next Cache** - Removes the `.next` directory if present to prevent corrupted cache issues that can cause Internal Server Errors during testing
+2. **Verify Required Tools** - Uses a lightweight Claude agent to verify tools like `playwright_mcp` are available
+
+### Precheck Behavior
+
+| Scenario | Behavior |
+|----------|----------|
+| First run | Precheck runs automatically |
+| `--resume` | Precheck skipped if previously passed |
+| `--precheck` | Force re-run precheck |
+
+### Example Output
+
+```
+============================================================
+Running Precheck
+  Required tools: playwright_mcp
+  Timeout: 120s
+============================================================
+  ✓ Cleared .next cache directory (prevents corrupted cache issues)
+  ✓ Precheck passed (8.2s)
+    ✓ playwright_mcp: Browser snapshot successful
+```
+
+### Precheck Result in State
+
+```json
+{
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2025-01-10T12:34:56",
+    "elapsed": "8.2s",
+    "next_cache_cleared": true,
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Browser snapshot successful"
+      }
+    }
+  }
+}
+```
+
+### When to Force Precheck
+
+Use `--precheck` flag when:
+- You've restarted Chrome/CDP
+- You're experiencing Internal Server Errors
+- The `.next` cache may be corrupted (after crashes or interruptions)
+
+```bash
+python pipeline_orchestrator.py --config ./pipeline.yaml --resume --precheck
+```
+
+---
+
 ## Dependency Tracking
 
 Dependencies are tracked incrementally to support any execution mode.
@@ -763,6 +825,7 @@ request_tracking:
 | `--config FILE` | Path to pipeline YAML configuration (required) |
 | `--dry-run` | Show what would execute without running |
 | `--resume` | Continue from last saved state |
+| `--precheck` | Force re-run precheck even if already passed |
 | `--keep` | Keep state file after completion |
 | `--list-tasks` | Print extracted tasks and exit |
 | `--tasks IDS` | Run only specified tasks (comma-separated) |
@@ -836,6 +899,51 @@ The dashboard provides real-time visibility into pipeline progress.
 | `[✗]` | Failed |
 | `[⊘]` | Skipped |
 
+### Stage Indicators
+
+Each task shows stage completion indicators:
+
+```
+R✓O✓D✓I✓T✓  - All stages complete, tests passed
+R✓O✓D✓I⚠T✗  - Implementation done but tests failed
+R✓O✓D✓I?T?  - Implementation done, test status unclear
+R✓O✓D✓I○    - Details done, implementation pending
+R✓O✓D○I○    - Overview done, details pending
+```
+
+| Indicator | Meaning |
+|-----------|---------|
+| `R✓` | Request stage completed |
+| `O✓` | Overview stage completed |
+| `D✓` | Details stage completed |
+| `I✓` | Implementation completed, tests passed |
+| `I⚠` | Implementation completed, tests FAILED |
+| `I?` | Implementation completed, test status unclear |
+| `I○` | Implementation pending |
+| `T✓` | Tests explicitly passed |
+| `T✗` | Tests explicitly failed |
+| `T?` | Test status unknown |
+
+### Test Result Tracking
+
+The orchestrator automatically parses agent output to detect test results:
+
+- **Tests Passed**: Output contains patterns like "tests passed", "verification successful"
+- **Tests Failed**: Output contains "test failed", "Internal Server Error", "verification failed"
+- **Tests Ran**: Any verification/testing activity detected
+- **No Tests**: No test execution detected in output
+
+Test results are stored in each task:
+
+```json
+{
+  "implementation_completed": true,
+  "tests_ran": true,
+  "tests_passed": true,
+  "test_summary": "Tests passed successfully"
+}
+```
+
 ### Worktree View (with `--worktrees`)
 
 ```
@@ -893,6 +1001,18 @@ Error: Merge conflict in cluster-1 branch
 Error: fatal: 'path' is already checked out
 ```
 **Solution:** Remove stale worktrees: `git worktree prune`
+
+#### Internal Server Error during tests
+```
+Error: Test returned "Internal Server Error"
+```
+**Cause:** Corrupted `.next` cache directory from previous builds or crashes.
+
+**Solution:**
+1. Run precheck with force flag: `--precheck`
+2. Or manually clear cache: `rm -rf .next`
+
+The precheck phase now automatically clears `.next` cache to prevent this issue.
 
 ### Debugging Tips
 
