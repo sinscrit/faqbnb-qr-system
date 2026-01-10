@@ -820,6 +820,21 @@ export function VideoCaptureStep({
         {!hasMultipleCameras && <div className="w-14" />}
       </div>
 
+      {/* Back Navigation - Only show in preview mode */}
+      {mode === 'preview' && (
+        <div className="mt-6">
+          <div className="flex justify-start">
+            <button
+              type="button"
+              onClick={prevStep}
+              className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Timer aria-live region for screen readers */}
       {mode === 'recording' && (
         <div className="sr-only" aria-live="polite">

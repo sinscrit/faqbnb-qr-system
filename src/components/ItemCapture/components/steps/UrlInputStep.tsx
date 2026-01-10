@@ -441,15 +441,17 @@ export default function UrlInputStep({
       )}
 
       {/* Back Button */}
-      <div className="flex justify-start">
-        <button
-          type="button"
-          onClick={prevStep}
-          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
-        >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-          <span>Back</span>
-        </button>
+      <div className="mt-6">
+        <div className="flex justify-start">
+          <button
+            type="button"
+            onClick={prevStep}
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+          >
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+            <span>Back</span>
+          </button>
+        </div>
       </div>
 
       {/* Debug Info */}

@@ -1,0 +1,36 @@
+# =============================================================================
+# Dev Server Monitor Configuration
+# =============================================================================
+# Created: 2026-01-10
+#
+# This file configures the dev-monitor.py daemon that monitors the Next.js
+# development server and automatically handles common issues.
+# =============================================================================
+
+monitor:
+  check_interval: 10        # Seconds between health checks
+  check_timeout: 5          # Seconds to wait for server response
+  max_restart_attempts: 3   # Restart attempts before calling Claude
+  server_start_timeout: 60  # Seconds to wait for server to be ready
+
+server:
+  url: http://localhost:3000
+  command: npm run dev
+  working_directory: .
+
+auto_fix:
+  enabled: true
+  clear_cache: true          # Clear .next/cache on corruption
+  kill_port_conflicts: true  # Kill non-node processes on port 3000
+  max_memory_mb: 4096        # Memory limit for node restart
+
+claude:
+  enabled: true
+  max_diagnoses_per_hour: 5   # Rate limit for Claude calls
+  allowed_tools: Read,Bash,Glob,Grep
+
+# File paths (relative to project root)
+files:
+  log_file: scripts/dev-monitor.log
+  pid_file: scripts/dev-monitor.pid
+  server_log_file: /tmp/dev-server.log
