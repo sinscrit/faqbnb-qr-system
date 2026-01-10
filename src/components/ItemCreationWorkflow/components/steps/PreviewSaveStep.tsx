@@ -4,15 +4,16 @@
  * PreviewSaveStep Component
  *
  * Step 7 of ItemCreationWorkflow - Preview and save captured content.
- * Displays content preview, allows item name editing, and handles save.
+ * Displays item details section (title, room, type, purpose) and
+ * content preview section with count badge and "+ Add More" link.
  *
  * @module ItemCreationWorkflow/components/steps/PreviewSaveStep
- * @see docs/REQ-106-preview-save-step-overview.md
- * @lastModified 2026-01-05 (REQ-108 Multi-Content Item Support)
+ * @see docs/REQ-168-redesign-previewsavestep-layout-overview.md
+ * @lastModified 2026-01-10 (REQ-168 Redesign PreviewSaveStep Layout)
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { ArrowLeft, Check, Loader2, RotateCcw, Plus } from 'lucide-react';
+import { ArrowLeft, Check, Loader2, Plus } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -33,9 +34,17 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { cn } from '@/lib/utils';
-import type { CurrentItemState } from '../../ItemCreationWorkflow.types';
+import type { CurrentItemState, ContentPiece } from '../../ItemCreationWorkflow.types';
 import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard } from '../shared';
-import { MAX_CONTENT_PIECES } from '../../utils/constants';
+import {
+  MAX_CONTENT_PIECES,
+  ROOM_LABELS,
+  ITEM_TYPE_LABELS,
+  PURPOSE_LABELS,
+  type RoomTypeConst,
+  type ItemTypeConst,
+  type PurposeTypeConst,
+} from '../../utils/constants';
 
 // =============================================================================
 // Types
@@ -85,6 +94,215 @@ function EmptyContentState({ onAddContent }: EmptyContentStateProps) {
         Add Content
       </button>
     </div>
+  );
+}
+
+// =============================================================================
+// ReadOnlyField Sub-Component
+// =============================================================================
+
+interface ReadOnlyFieldProps {
+  label: string;
+  value: string;
+  className?: string;
+}
+
+function ReadOnlyField({ label, value, className }: ReadOnlyFieldProps) {
+  return (
+    <div className={cn('flex justify-between items-center py-2', className)}>
+      <span className="text-sm text-[#717171]">{label}</span>
+      <span className="text-sm font-medium text-[#222222]">{value}</span>
+    </div>
+  );
+}
+
+// =============================================================================
+// ItemDetailsSection Sub-Component
+// =============================================================================
+
+interface ItemDetailsSectionProps {
+  currentItem: CurrentItemState;
+  onUpdateItemName: (name: string) => void;
+  disabled?: boolean;
+}
+
+function ItemDetailsSection({
+  currentItem,
+  onUpdateItemName,
+  disabled,
+}: ItemDetailsSectionProps) {
+  // Get human-readable labels from constants
+  const roomLabel = ROOM_LABELS[currentItem.room as RoomTypeConst] || currentItem.room;
+  const itemTypeLabel = ITEM_TYPE_LABELS[currentItem.itemType as ItemTypeConst] || currentItem.itemType;
+
+  // Purpose label from constants
+  const purposeLabel = currentItem.purpose
+    ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
+    : 'Not specified';
+
+  return (
+    <section
+      className="bg-white rounded-lg border border-gray-200 p-6"
+      aria-labelledby="item-details-heading"
+    >
+      <h3
+        id="item-details-heading"
+        className="text-lg font-medium text-[#222222] mb-4"
+      >
+        Item Details
+      </h3>
+
+      {/* Editable Title - using existing ItemNameEditor */}
+      <ItemNameEditor
+        value={currentItem.itemName}
+        onChange={onUpdateItemName}
+        disabled={disabled}
+        maxLength={100}
+        placeholder="Enter item title"
+      />
+
+      {/* Read-only metadata fields */}
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <ReadOnlyField label="Room" value={roomLabel} />
+        <ReadOnlyField label="Item Type" value={itemTypeLabel} />
+        <ReadOnlyField label="Purpose" value={purposeLabel} />
+      </div>
+    </section>
+  );
+}
+
+// =============================================================================
+// ContentSection Sub-Component
+// =============================================================================
+
+interface ContentSectionProps {
+  content: ContentPiece[];
+  sensors: ReturnType<typeof useSensors>;
+  activeId: string | null;
+  activeContent: ContentPiece | null;
+  announcements: Announcements;
+  onDragStart: (event: DragStartEvent) => void;
+  onDragEnd: (event: DragEndEvent) => void;
+  onDragCancel: () => void;
+  onRemoveContent: (contentId: string) => void;
+  onRetake: () => void;
+  onAddMore: () => void;
+  maxContentPieces: number;
+  disabled?: boolean;
+}
+
+function ContentSection({
+  content,
+  sensors,
+  activeId,
+  activeContent,
+  announcements,
+  onDragStart,
+  onDragEnd,
+  onDragCancel,
+  onRemoveContent,
+  onRetake,
+  onAddMore,
+  maxContentPieces,
+  disabled,
+}: ContentSectionProps) {
+  const contentCount = content.length;
+  const canAddMore = contentCount < maxContentPieces;
+
+  return (
+    <section
+      className="bg-white rounded-lg border border-gray-200 p-6"
+      aria-labelledby="content-section-heading"
+    >
+      {/* Header with count badge */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <h3
+            id="content-section-heading"
+            className="text-lg font-medium text-[#222222]"
+          >
+            Content
+          </h3>
+          <span
+            className="px-2 py-0.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full"
+            aria-label={`${contentCount} content pieces`}
+          >
+            {contentCount}
+          </span>
+        </div>
+        {contentCount >= maxContentPieces && (
+          <span className="text-sm text-amber-600 font-medium">
+            Maximum reached
+          </span>
+        )}
+      </div>
+
+      {/* Content grid with previews */}
+      {contentCount === 0 ? (
+        <EmptyContentState onAddContent={onAddMore} />
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragCancel={onDragCancel}
+          modifiers={[restrictToParentElement]}
+          accessibility={{ announcements }}
+        >
+          <SortableContext
+            items={content.map(c => c.id)}
+            strategy={rectSortingStrategy}
+          >
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+              role="list"
+              aria-label="Content pieces - drag to reorder"
+            >
+              {content.map((piece) => (
+                <SortableContentPieceCard
+                  key={piece.id}
+                  id={piece.id}
+                  content={piece}
+                  onRemove={onRemoveContent}
+                  onRetake={onRetake}
+                  disabled={disabled}
+                  totalCount={contentCount}
+                />
+              ))}
+            </div>
+          </SortableContext>
+
+          {/* Drag Overlay - floating preview during drag */}
+          <DragOverlay>
+            {activeContent && (
+              <ContentPieceCard
+                content={activeContent}
+                className="shadow-xl ring-2 ring-[#FF385C] rotate-2 scale-105"
+              />
+            )}
+          </DragOverlay>
+        </DndContext>
+      )}
+
+      {/* Small "+ Add More" link - de-emphasized compared to old large button */}
+      {canAddMore && contentCount > 0 && (
+        <button
+          type="button"
+          onClick={onAddMore}
+          disabled={disabled}
+          className={cn(
+            'mt-4 text-sm text-[#FF385C] hover:text-[#E31C5F]',
+            'focus:outline-none focus:underline focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2 rounded',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'flex items-center gap-1'
+          )}
+        >
+          <Plus className="w-4 h-4" aria-hidden="true" />
+          Add More
+        </button>
+      )}
+    </section>
   );
 }
 
@@ -308,100 +526,29 @@ export function PreviewSaveStep({
         </h2>
       </div>
 
-      {/* Item Name Section */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-[#222222]">Item Name</h3>
-        </div>
-        <ItemNameEditor
-          value={currentItem.itemName}
-          onChange={onUpdateItemName}
-          disabled={isSaving}
-          maxLength={100}
-          placeholder="Enter item name"
-        />
-      </section>
+      {/* Item Details Section with metadata */}
+      <ItemDetailsSection
+        currentItem={currentItem}
+        onUpdateItemName={onUpdateItemName}
+        disabled={isSaving}
+      />
 
-      {/* Content Section */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-[#222222]">
-            Content ({currentItem.content.length} of {MAX_CONTENT_PIECES} pieces)
-          </h3>
-          {currentItem.content.length >= MAX_CONTENT_PIECES && (
-            <span className="text-sm text-amber-600 font-medium">
-              Maximum reached
-            </span>
-          )}
-        </div>
-
-        {currentItem.content.length === 0 ? (
-          <EmptyContentState onAddContent={onRetake} />
-        ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={handleDragCancel}
-            modifiers={[restrictToParentElement]}
-            accessibility={{ announcements }}
-          >
-            <SortableContext
-              items={currentItem.content.map(c => c.id)}
-              strategy={rectSortingStrategy}
-            >
-              <div
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
-                role="list"
-                aria-label="Content pieces - drag to reorder"
-              >
-                {currentItem.content.map((piece) => (
-                  <SortableContentPieceCard
-                    key={piece.id}
-                    id={piece.id}
-                    content={piece}
-                    onRemove={handleRemoveClick}
-                    onRetake={() => onRetake()}
-                    disabled={isSaving}
-                    totalCount={currentItem.content.length}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-
-            {/* Drag Overlay - floating preview during drag */}
-            <DragOverlay>
-              {activeContent && (
-                <ContentPieceCard
-                  content={activeContent}
-                  className="shadow-xl ring-2 ring-[#FF385C] rotate-2 scale-105"
-                />
-              )}
-            </DragOverlay>
-          </DndContext>
-        )}
-      </section>
-
-      {/* Retake / Replace All Button */}
-      {currentItem.content.length > 0 && (
-        <button
-          type="button"
-          onClick={onRetake}
-          disabled={isSaving}
-          className={cn(
-            'w-full py-3 border-2 border-gray-200 rounded-lg',
-            'flex items-center justify-center gap-2',
-            'text-[#222222] font-medium',
-            'hover:border-gray-300 hover:bg-gray-50 transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2',
-            'disabled:opacity-50 disabled:cursor-not-allowed'
-          )}
-        >
-          <RotateCcw className="w-5 h-5" aria-hidden="true" />
-          Retake / Replace All
-        </button>
-      )}
+      {/* Content Section with count badge and small add more link */}
+      <ContentSection
+        content={currentItem.content}
+        sensors={sensors}
+        activeId={activeId}
+        activeContent={activeContent}
+        announcements={announcements}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+        onRemoveContent={handleRemoveClick}
+        onRetake={onRetake}
+        onAddMore={onRetake}
+        maxContentPieces={MAX_CONTENT_PIECES}
+        disabled={isSaving}
+      />
 
       {/* Error Display */}
       {saveError && (
