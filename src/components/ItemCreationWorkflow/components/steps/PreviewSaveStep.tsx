@@ -4,12 +4,20 @@
  * PreviewSaveStep Component
  *
  * Step 7 of ItemCreationWorkflow - Preview and save captured content.
- * Displays item details section (title, room, type, purpose) and
- * content preview section with count badge and "+ Add More" link.
+ * Displays item details (room, type, purpose), allows title editing,
+ * shows content preview, and handles save.
+ *
+ * Features:
+ * - Pre-populated metadata fields (room, item type, purpose) as read-only
+ * - Auto-generated title with inline editing capability
+ * - Content preview grid with drag-and-drop reordering
+ * - Accessible definition list for metadata display
  *
  * @module ItemCreationWorkflow/components/steps/PreviewSaveStep
+ * @see docs/REQ-106-preview-save-step-overview.md
  * @see docs/REQ-168-redesign-previewsavestep-layout-overview.md
- * @lastModified 2026-01-10 (REQ-168 Redesign PreviewSaveStep Layout)
+ * @see docs/REQ-170-pre-populate-fields-detailed.md
+ * @lastModified 2026-01-10 (REQ-170 Pre-populate Fields)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -98,21 +106,59 @@ function EmptyContentState({ onAddContent }: EmptyContentStateProps) {
 }
 
 // =============================================================================
-// ReadOnlyField Sub-Component
+// ItemDetailsDisplay Sub-Component (Accessible Definition List)
 // =============================================================================
 
-interface ReadOnlyFieldProps {
-  label: string;
-  value: string;
-  className?: string;
+/**
+ * ItemDetailsDisplay - Read-only metadata display
+ *
+ * Displays pre-populated item metadata (room, type, purpose) as a
+ * semantic definition list. All fields are read-only and use label constants
+ * for consistent display. Uses <dl>/<dt>/<dd> for accessibility.
+ *
+ * @param room - Room type for the item
+ * @param itemType - Item type category
+ * @param purpose - Purpose/intent (nullable)
+ * @returns Definition list with item metadata
+ */
+interface ItemDetailsDisplayProps {
+  room: string;
+  itemType: string;
+  purpose: string | null;
 }
 
-function ReadOnlyField({ label, value, className }: ReadOnlyFieldProps) {
+function ItemDetailsDisplay({ room, itemType, purpose }: ItemDetailsDisplayProps) {
+  // Get human-readable labels from constants
+  const roomLabel = ROOM_LABELS[room as RoomTypeConst] || room;
+  const itemTypeLabel = ITEM_TYPE_LABELS[itemType as ItemTypeConst] || itemType;
+  const purposeLabel = purpose
+    ? PURPOSE_LABELS[purpose as PurposeTypeConst]
+    : 'Not specified';
+
   return (
-    <div className={cn('flex justify-between items-center py-2', className)}>
-      <span className="text-sm text-[#717171]">{label}</span>
-      <span className="text-sm font-medium text-[#222222]">{value}</span>
-    </div>
+    <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Room Field */}
+      <div className="space-y-1">
+        <dt className="text-sm font-medium text-[#717171]">Room</dt>
+        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
+          {roomLabel}
+        </dd>
+      </div>
+      {/* Item Type Field */}
+      <div className="space-y-1">
+        <dt className="text-sm font-medium text-[#717171]">Item Type</dt>
+        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
+          {itemTypeLabel}
+        </dd>
+      </div>
+      {/* Purpose Field */}
+      <div className="space-y-1">
+        <dt className="text-sm font-medium text-[#717171]">Purpose</dt>
+        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
+          {purposeLabel}
+        </dd>
+      </div>
+    </dl>
   );
 }
 
@@ -131,15 +177,6 @@ function ItemDetailsSection({
   onUpdateItemName,
   disabled,
 }: ItemDetailsSectionProps) {
-  // Get human-readable labels from constants
-  const roomLabel = ROOM_LABELS[currentItem.room as RoomTypeConst] || currentItem.room;
-  const itemTypeLabel = ITEM_TYPE_LABELS[currentItem.itemType as ItemTypeConst] || currentItem.itemType;
-
-  // Purpose label from constants
-  const purposeLabel = currentItem.purpose
-    ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
-    : 'Not specified';
-
   return (
     <section
       className="bg-white rounded-lg border border-gray-200 p-6"
@@ -152,20 +189,25 @@ function ItemDetailsSection({
         Item Details
       </h3>
 
-      {/* Editable Title - using existing ItemNameEditor */}
-      <ItemNameEditor
-        value={currentItem.itemName}
-        onChange={onUpdateItemName}
-        disabled={disabled}
-        maxLength={100}
-        placeholder="Enter item title"
+      {/* Read-only metadata fields - displayed first for context */}
+      <ItemDetailsDisplay
+        room={currentItem.room}
+        itemType={currentItem.itemType}
+        purpose={currentItem.purpose}
       />
 
-      {/* Read-only metadata fields */}
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <ReadOnlyField label="Room" value={roomLabel} />
-        <ReadOnlyField label="Item Type" value={itemTypeLabel} />
-        <ReadOnlyField label="Purpose" value={purposeLabel} />
+      {/* Editable Title - using existing ItemNameEditor */}
+      <div className="mt-6 pt-6 border-t border-gray-100">
+        <label className="block text-sm font-medium text-[#717171] mb-2">
+          Article Title
+        </label>
+        <ItemNameEditor
+          value={currentItem.itemName}
+          onChange={onUpdateItemName}
+          disabled={disabled}
+          maxLength={100}
+          placeholder="Enter article title"
+        />
       </div>
     </section>
   );
