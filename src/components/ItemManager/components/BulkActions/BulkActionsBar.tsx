@@ -43,7 +43,7 @@ interface ActionButtonProps {
  * Variant-based styling for action buttons
  */
 const variantStyles = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800',
+  primary: 'bg-[#FF385C] text-white hover:bg-[#E31C5F] active:bg-[#D70466]',
   secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300',
   destructive: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
 };
@@ -88,7 +88,7 @@ function ActionButton({
         'transition-colors duration-150',
         // Focus ring for keyboard navigation
         'focus:outline-none focus:ring-2 focus:ring-offset-2',
-        'focus:ring-blue-500 focus:ring-offset-white',
+        'focus:ring-[#FF385C] focus:ring-offset-white',
         // Variant styles
         variantStyles[variant],
         // Disabled state
@@ -173,10 +173,10 @@ export function BulkActionsBar({
           {/* Left section: Selection count indicator */}
           <div className="flex items-center gap-2 min-w-0">
             <div
-              className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 flex-shrink-0"
+              className="flex items-center justify-center h-8 w-8 rounded-full bg-[#FFF0F3] flex-shrink-0"
               aria-hidden="true"
             >
-              <Check className="h-4 w-4 text-blue-600" />
+              <Check className="h-4 w-4 text-[#FF385C]" />
             </div>
             <span className="text-sm font-medium text-gray-900 truncate">
               {selectedCount} selected
@@ -259,7 +259,7 @@ export function BulkActionsBar({
                 'rounded-md',
                 'text-gray-500 hover:text-gray-700 hover:bg-gray-100',
                 'transition-colors duration-150',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2'
               )}
             >
               <X className="h-5 w-5" aria-hidden="true" />

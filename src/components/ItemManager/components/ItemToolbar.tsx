@@ -60,10 +60,10 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
         className={cn(
           'inline-flex items-center justify-center rounded-md text-sm font-medium transition-all',
           'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:px-3 md:py-1.5',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
           'touch-manipulation [-webkit-tap-highlight-color:transparent]',
           viewMode === 'grid'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
         aria-label="Grid view"
@@ -80,10 +80,10 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
         className={cn(
           'inline-flex items-center justify-center rounded-md text-sm font-medium transition-all',
           'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:px-3 md:py-1.5',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+          'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
           'touch-manipulation [-webkit-tap-highlight-color:transparent]',
           viewMode === 'list'
-            ? 'bg-blue-600 text-white shadow-sm'
+            ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
         aria-label="List view"
@@ -154,7 +154,7 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
         'min-h-[48px]',
         'text-sm font-medium text-gray-600',
         'hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+        'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
         'transition-colors',
         'touch-manipulation [-webkit-tap-highlight-color:transparent]',
         className
@@ -205,7 +205,7 @@ function SelectionIndicator({
       role="status"
       aria-live="polite"
       className={cn(
-        'flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full',
+        'flex items-center gap-2 px-3 py-1.5 bg-[#FFF0F3] text-[#E31C5F] rounded-full',
         className
       )}
     >
@@ -219,8 +219,8 @@ function SelectionIndicator({
         type="button"
         onClick={onClearSelection}
         className={cn(
-          'ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1'
+          'ml-1 hover:bg-[#FFE4E9] rounded-full p-0.5 transition-colors',
+          'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
         )}
         aria-label="Clear selection"
       >
@@ -230,12 +230,12 @@ function SelectionIndicator({
       {/* Select all link (if not all selected) */}
       {onSelectAll && !allSelected && totalCount > 0 && (
         <>
-          <span className="text-blue-400 mx-1" aria-hidden="true">|</span>
+          <span className="text-[#FF385C]/50 mx-1" aria-hidden="true">|</span>
           <button
             type="button"
             onClick={onSelectAll}
             className={cn(
-              'text-sm font-medium text-blue-600 hover:text-blue-800',
+              'text-sm font-medium text-[#FF385C] hover:text-[#E31C5F]',
               'focus:outline-none focus:underline'
             )}
           >

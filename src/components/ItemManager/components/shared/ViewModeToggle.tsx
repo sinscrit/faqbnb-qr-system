@@ -38,9 +38,9 @@ export function ViewModeToggle({
         aria-pressed={viewMode === 'grid'}
         className={cn(
           "p-2 rounded-md transition-all duration-200",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] focus-visible:ring-offset-2",
           viewMode === 'grid'
-            ? "bg-white text-blue-600 shadow-sm"
+            ? "bg-white text-[#FF385C] shadow-sm"
             : "text-gray-500 hover:text-gray-700 hover:bg-gray-50",
           disabled && "pointer-events-none"
         )}
@@ -55,9 +55,9 @@ export function ViewModeToggle({
         aria-pressed={viewMode === 'list'}
         className={cn(
           "p-2 rounded-md transition-all duration-200",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] focus-visible:ring-offset-2",
           viewMode === 'list'
-            ? "bg-white text-blue-600 shadow-sm"
+            ? "bg-white text-[#FF385C] shadow-sm"
             : "text-gray-500 hover:text-gray-700 hover:bg-gray-50",
           disabled && "pointer-events-none"
         )}
