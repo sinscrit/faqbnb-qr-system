@@ -11,17 +11,17 @@
  * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
  * 3. SpecificItemStep       - Select/name specific item with suggestions
  * 4. PurposeStep            - Select content purpose (how-to-use, troubleshooting, etc.)
- * 5. ContentSourceStep      - Choose existing content or create new
- * 6. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
- * 7. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
- * 8. PreviewSaveStep        - Preview and save the item
- * 9. NextActionStep         - Add more content, new item, or finish
- * 10. SessionSummaryStep    - Review all items and print QR codes
+ * 5. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
+ * 6. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
+ * 7. PreviewSaveStep        - Preview and save the item
+ * 8. NextActionStep         - Add more content, new item, or finish
+ * 9. SessionSummaryStep     - Review all items and print QR codes
  * ```
+ *
+ * Note: ContentSourceStep removed in REQ-160 (Phase 3, Task 3.1) - component file retained for potential reuse
  *
  * ## Skip Conditions
  * - ItemTypeStep skips if "General" room selected
- * - Some steps may skip based on content source selection
  *
  * @example Importing step components (for testing/custom workflows)
  * ```tsx
@@ -34,7 +34,7 @@
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-10 (REQ-157 PurposeStep Component)
+ * @lastModified 2026-01-10 (REQ-160 Remove ContentSourceStep)
  */
 
 // =============================================================================
@@ -64,20 +64,18 @@ export { PurposeStep } from './PurposeStep';
 export type { PurposeStepProps } from './PurposeStep';
 
 // =============================================================================
-// Content Selection Steps (Steps 5-6)
+// Content Selection Step (Step 5)
 // =============================================================================
 /**
- * Content source and type selection steps.
- * Determine whether user has content or will create it, and what type.
+ * Content type selection step.
+ * Determines what type of content user will create/upload.
+ * Note: ContentSourceStep removed in REQ-160 - component file retained for potential reuse
  */
-export { ContentSourceStep } from './ContentSourceStep';
-export type { ContentSourceStepProps } from './ContentSourceStep';
-
 export { ContentTypeStep } from './ContentTypeStep';
 export type { ContentTypeStepProps } from './ContentTypeStep';
 
 // =============================================================================
-// Content Creation Steps (Steps 7-8)
+// Content Creation Steps (Steps 6-7)
 // =============================================================================
 /**
  * Content creation and preview steps.
@@ -90,7 +88,7 @@ export { PreviewSaveStep } from './PreviewSaveStep';
 export type { PreviewSaveStepProps } from './PreviewSaveStep';
 
 // =============================================================================
-// Session Flow Steps (Step 9)
+// Session Flow Steps (Step 8)
 // =============================================================================
 /**
  * Decision point for what to do next after saving an item.
@@ -100,7 +98,7 @@ export { NextActionStep } from './NextActionStep';
 export type { NextActionStepProps } from './NextActionStep';
 
 // =============================================================================
-// Summary Steps (Step 10)
+// Summary Steps (Step 9)
 // =============================================================================
 /**
  * Final step for reviewing session and printing QR codes.

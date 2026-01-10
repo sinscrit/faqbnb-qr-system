@@ -12,7 +12,7 @@
  * @see docs/REQ-112-pdf-generation-integration-overview.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility & Mobile Optimization)
+ * @lastModified 2026-01-10 (REQ-160 Remove ContentSourceStep)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentSourceStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
 import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
@@ -112,7 +112,6 @@ export function ItemCreationWorkflow({
     selectSpecificItem,
     setItemName,
     selectPurpose,
-    selectContentSource,
     selectContentType,
     addContentPiece,
     removeContentPiece,
@@ -549,7 +548,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, selectContentSource, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
