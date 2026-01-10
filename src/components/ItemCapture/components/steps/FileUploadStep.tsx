@@ -12,7 +12,7 @@
  * @module ItemCapture/components/steps/FileUploadStep
  * @see docs/REQ-042-implement-fileuploadstep-detailed.md
  * @see docs/REQ-043-add-pdf-thumbnail-generation-detailed.md
- * @lastModified 2025-12-31 (REQ-054 - URL cleanup via useFileUpload hook)
+ * @lastModified 2026-01-10 (REQ-165 - Sticky navigation with conditional Continue button)
  */
 
 import React, { useCallback, useState, useEffect } from 'react';
@@ -705,29 +705,30 @@ export function FileUploadStep({
         {hasFiles && `${files.length} files uploaded`}
       </div>
 
-      {/* Step Navigation */}
-      <div className="mt-6">
+      {/* Sticky Navigation Footer (REQ-165) */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 mt-6 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex justify-between items-center">
           <button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+            className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
             Back
           </button>
-          <button
-            type="button"
-            onClick={handleContinue}
-            className={cn(
-              'px-6 py-2 rounded-lg transition-colors',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-              hasFiles
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            )}
-          >
-            {hasFiles ? 'Continue' : 'Skip'}
-          </button>
+
+          {hasFiles && (
+            <button
+              type="button"
+              onClick={handleContinue}
+              className={cn(
+                'px-6 py-2 min-h-[48px] rounded-lg transition-colors',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                'bg-blue-600 text-white hover:bg-blue-700'
+              )}
+            >
+              Continue
+            </button>
+          )}
         </div>
       </div>
     </div>

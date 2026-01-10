@@ -1,7 +1,7 @@
 # REQ-165: Update Button Logic - Detailed Task Breakdown
 
 **Document Created**: 2026-01-09 22:15:00 UTC
-**Last Modified**: 2026-01-09 22:15:00 UTC
+**Last Modified**: 2026-01-10 04:15:00 UTC
 **Phase**: 4 - Remove Duplicate Navigation
 **Task ID**: 4.3
 **Overview Document**: `/docs/REQ-165-update-button-logic-overview.md`
@@ -737,18 +737,53 @@ export type { ContentStepNavigationProps } from './ContentStepNavigation';
 
 | Task | Description | Story Points | Status |
 |------|-------------|--------------|--------|
-| 1 | Update TextEditorStep navigation | 0.5 | ⬜ Pending |
-| 2 | Update FileUploadStep navigation | 0.5 | ⬜ Pending |
-| 3 | Add Back to VideoCaptureStep preview | 0.75 | ⬜ Pending |
-| 4 | Update PhotoCaptureStep navigation | 0.5 | ⬜ Pending |
-| 5 | Update UrlInputStep navigation | 0.5 | ⬜ Pending |
-| 6 | (Optional) Create shared component | 0.75 | ⬜ Optional |
-| 7 | Cross-screen sticky testing | 0.5 | ⬜ Pending |
-| 8 | Mobile viewport testing | 0.5 | ⬜ Pending |
-| 9 | Accessibility verification | 0.5 | ⬜ Pending |
-| 10 | End-to-end button logic testing | 0.5 | ⬜ Pending |
+| 1 | Update TextEditorStep navigation | 0.5 | ✅ Completed |
+| 2 | Update FileUploadStep navigation | 0.5 | ✅ Completed |
+| 3 | Add Back to VideoCaptureStep preview | 0.75 | ✅ Completed |
+| 4 | Update PhotoCaptureStep navigation | 0.5 | ✅ Completed |
+| 5 | Update UrlInputStep navigation | 0.5 | ✅ Completed |
+| 6 | (Optional) Create shared component | 0.75 | ⬜ Skipped |
+| 7 | Cross-screen sticky testing | 0.5 | 🔄 Manual verification needed |
+| 8 | Mobile viewport testing | 0.5 | 🔄 Manual verification needed |
+| 9 | Accessibility verification | 0.5 | 🔄 Manual verification needed |
+| 10 | End-to-end button logic testing | 0.5 | 🔄 Manual verification needed |
 | **Total (excluding optional)** | | **4.75** | |
 | **Total (with optional)** | | **5.5** | |
+
+### Implementation Notes (2026-01-10)
+
+**Tasks 1-5 completed with the following changes:**
+
+1. **TextEditorStep** (`src/components/ItemCapture/components/steps/TextEditorStep.tsx`):
+   - Added sticky navigation with `sticky bottom-0 bg-white border-t border-gray-200`
+   - Continue button now only renders when `localContent.trim()` has content
+   - Removed "Skip" option entirely
+   - Added `min-h-[48px]` for 48px touch targets
+   - Added `-mx-4 px-4 sm:mx-0 sm:px-0` for full-width mobile
+
+2. **FileUploadStep** (`src/components/ItemCapture/components/steps/FileUploadStep.tsx`):
+   - Added sticky navigation styling
+   - Continue button only renders when `hasFiles` is true
+   - Removed "Skip" option
+   - Added 48px touch targets
+
+3. **VideoCaptureStep** (`src/components/ItemCapture/components/steps/VideoCaptureStep.tsx`):
+   - Updated existing Back button in preview mode to use sticky positioning
+   - Added 48px touch target
+   - Review mode (Retake/Accept) unchanged as per spec
+
+4. **PhotoCaptureStep** (`src/components/ItemCapture/components/steps/PhotoCaptureStep.tsx`):
+   - Added sticky navigation
+   - Continue button only renders when `capturedPhotos.length > 0`
+   - Removed "Skip" option
+   - Added 48px touch targets
+
+5. **UrlInputStep** (`src/components/ItemCapture/components/steps/UrlInputStep.tsx`):
+   - Made Back button sticky with consistent styling
+   - Maintains Back-only pattern (forward navigation via "Add Link" button)
+   - Added 48px touch target
+
+**Build Status:** ✅ Build passes successfully
 
 ---
 
@@ -779,13 +814,14 @@ export type { ContentStepNavigationProps } from './ContentStepNavigation';
 
 ## Definition of Done
 
-- [ ] All tasks completed (Tasks 1-5 required; Task 6 optional)
-- [ ] TypeScript check passes (`npm run type-check`)
-- [ ] All acceptance criteria verified
-- [ ] Cross-screen sticky testing completed (Task 7)
-- [ ] Mobile viewport testing completed (Task 8)
-- [ ] Accessibility verification completed (Task 9)
-- [ ] End-to-end button logic testing completed (Task 10)
+- [x] All tasks completed (Tasks 1-5 required; Task 6 optional - skipped)
+- [x] TypeScript check passes (`npx tsc --noEmit` - pre-existing test file errors only)
+- [x] Build passes (`npm run build` - ✅ completed successfully)
+- [ ] All acceptance criteria verified (manual testing needed)
+- [ ] Cross-screen sticky testing completed (Task 7 - manual)
+- [ ] Mobile viewport testing completed (Task 8 - manual)
+- [ ] Accessibility verification completed (Task 9 - manual)
+- [ ] End-to-end button logic testing completed (Task 10 - manual)
 - [ ] No console errors in development
 - [ ] Code committed with descriptive message
 

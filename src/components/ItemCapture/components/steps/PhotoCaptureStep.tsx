@@ -10,7 +10,7 @@
  * @module ItemCapture/components/steps/PhotoCaptureStep
  * @see docs/REQ-039-implement-photocapturestep-detailed.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113 - Added CameraPermissionFallback integration)
+ * @lastModified 2026-01-10 (REQ-165 - Sticky navigation with conditional Continue button)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -963,29 +963,30 @@ export function PhotoCaptureStep({
         </div>
       )}
 
-      {/* Step Navigation */}
-      <div className="mt-6">
+      {/* Sticky Navigation Footer (REQ-165) */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 mt-6 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex justify-between items-center">
           <button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+            className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
             Back
           </button>
-          <button
-            type="button"
-            onClick={handleContinue}
-            className={cn(
-              'px-6 py-2 rounded-lg transition-colors',
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-              capturedPhotos.length > 0
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            )}
-          >
-            {capturedPhotos.length > 0 ? 'Continue' : 'Skip'}
-          </button>
+
+          {capturedPhotos.length > 0 && (
+            <button
+              type="button"
+              onClick={handleContinue}
+              className={cn(
+                'px-6 py-2 min-h-[48px] rounded-lg transition-colors',
+                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                'bg-blue-600 text-white hover:bg-blue-700'
+              )}
+            >
+              Continue
+            </button>
+          )}
         </div>
       </div>
 

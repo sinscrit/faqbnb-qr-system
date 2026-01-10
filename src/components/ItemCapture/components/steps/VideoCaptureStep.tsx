@@ -9,7 +9,7 @@
  * @module ItemCapture/components/steps/VideoCaptureStep
  * @see docs/REQ-038-implement-videocapturestep-detailed.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113 - Added CameraPermissionFallback integration)
+ * @lastModified 2026-01-10 (REQ-165 - Sticky navigation in preview mode)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -820,14 +820,14 @@ export function VideoCaptureStep({
         {!hasMultipleCameras && <div className="w-14" />}
       </div>
 
-      {/* Back Navigation - Only show in preview mode */}
+      {/* Sticky Back Navigation - Only show in preview mode (REQ-165) */}
       {mode === 'preview' && (
-        <div className="mt-6">
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 mt-6 -mx-4 px-4 sm:mx-0 sm:px-0">
           <div className="flex justify-start">
             <button
               type="button"
               onClick={prevStep}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+              className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
             >
               Back
             </button>

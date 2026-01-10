@@ -8,7 +8,7 @@
  *
  * @module ItemCapture/components/steps/UrlInputStep
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113)
+ * @lastModified 2026-01-10 (REQ-165 - Sticky navigation)
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -440,13 +440,13 @@ export default function UrlInputStep({
         </div>
       )}
 
-      {/* Back Button */}
-      <div className="mt-6">
+      {/* Sticky Back Navigation (REQ-165) */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 mt-6 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex justify-start">
           <button
             type="button"
             onClick={prevStep}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
+            className="flex items-center gap-2 px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             <span>Back</span>
