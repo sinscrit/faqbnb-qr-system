@@ -13,7 +13,7 @@
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175, REQ-177 Tags)
  */
 
 // =============================================================================
@@ -181,6 +181,9 @@ export interface CurrentItemState {
 
   /** Content pieces added to this item */
   content: ContentPiece[];
+
+  /** Auto-generated tags based on workflow selections (REQ-177) */
+  tags: string[];
 }
 
 /**
@@ -208,6 +211,9 @@ export interface SessionItem {
 
   /** Generated QR code URL (populated after save) */
   qrCodeUrl?: string;
+
+  /** Tags for categorization (optional, REQ-177) */
+  tags?: string[];
 }
 
 /**
@@ -356,6 +362,8 @@ export type WorkflowAction =
   | { type: 'SELECT_ITEM_TYPE'; payload: ItemType }
   | { type: 'SELECT_SPECIFIC_ITEM'; payload: string }
   | { type: 'SET_ITEM_NAME'; payload: string }
+  // Tags action (REQ-177)
+  | { type: 'SET_TAGS'; payload: string[] }
 
   // Purpose selection action (Plan-094)
   | { type: 'SELECT_PURPOSE'; payload: PurposeType }
