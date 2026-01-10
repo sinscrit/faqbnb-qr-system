@@ -67,6 +67,7 @@ import {
   MAX_CONTENT_PIECES,
 } from '../utils/constants';
 import { generateArticleTitle } from '../utils/titleGenerator';
+import { generateTags } from '../utils/tagMapper';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 
 // =============================================================================
@@ -273,6 +274,7 @@ export function workflowReducer(
         contentSource: 'existing',
         contentType: null,
         content: [],
+        tags: [],                 // NEW: Initialize tags (REQ-177)
       };
       return {
         ...state,
@@ -339,6 +341,23 @@ export function workflowReducer(
       };
     }
 
+    case 'SET_TAGS': {
+      if (!state.currentItem) return state;
+      const updatedItem: CurrentItemState = {
+        ...state.currentItem,
+        tags: action.payload,
+      };
+      return {
+        ...state,
+        currentItem: updatedItem,
+        isDirty: true,
+        session: {
+          ...state.session,
+          currentItem: updatedItem,
+        },
+      };
+    }
+
     case 'SELECT_PURPOSE': {
       if (!state.currentItem) return state;
 
@@ -350,11 +369,19 @@ export function workflowReducer(
         purpose: purpose,
       });
 
+      // Auto-generate tags based on selections (REQ-177)
+      const autoTags = generateTags({
+        room: state.currentItem.room,
+        itemType: state.currentItem.itemType,
+        purpose: purpose,
+      });
+
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
         purpose: purpose,
         // Auto-generate the article title (user can edit later with SET_ITEM_NAME)
         itemName: articleTitle,
+        tags: autoTags,
       };
 
       return {
@@ -661,6 +688,8 @@ export interface UseWorkflowStateReturn {
   selectSpecificItem: (item: string) => void;
   /** Set a custom item name (overrides auto-generated) */
   setItemName: (name: string) => void;
+  /** Set tags for the current item (REQ-177) */
+  setTags: (tags: string[]) => void;
   /** Select a purpose for the current item (Plan-094) */
   selectPurpose: (purpose: PurposeType) => void;
 
@@ -770,6 +799,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
 
   const setItemName = useCallback((name: string) => {
     dispatch({ type: 'SET_ITEM_NAME', payload: name });
+  }, []);
+
+  const setTags = useCallback((tags: string[]) => {
+    dispatch({ type: 'SET_TAGS', payload: tags });
   }, []);
 
   const selectPurpose = useCallback((purpose: PurposeType) => {
@@ -912,6 +945,7 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     selectItemType,
     selectSpecificItem,
     setItemName,
+    setTags,
     selectPurpose,
     selectContentSource,
     selectContentType,
