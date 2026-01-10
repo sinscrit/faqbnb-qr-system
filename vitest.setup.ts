@@ -1,12 +1,18 @@
 /**
  * Vitest Setup File
  *
- * Configures global test environment with jest-dom matchers and mock setup.
+ * Configures global test environment with jest-dom matchers, axe-core
+ * accessibility testing, and mock setup.
  *
- * @lastModified 2026-01-05 (REQ-115)
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 import '@testing-library/jest-dom';
+import * as axeMatchers from 'vitest-axe/matchers';
+import { expect } from 'vitest';
+
+// Extend vitest expect with axe matchers for accessibility testing
+expect.extend(axeMatchers);
 
 // Mock localStorage for tests
 const localStorageMock = {

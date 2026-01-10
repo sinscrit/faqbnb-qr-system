@@ -17,7 +17,7 @@
  * @see docs/REQ-106-preview-save-step-overview.md
  * @see docs/REQ-168-redesign-previewsavestep-layout-overview.md
  * @see docs/REQ-170-pre-populate-fields-detailed.md
- * @lastModified 2026-01-10 (REQ-170 Pre-populate Fields)
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -562,7 +562,7 @@ export function PreviewSaveStep({
           )}
           aria-label="Go back"
         >
-          <ArrowLeft className="w-5 h-5 text-[#222222]" />
+          <ArrowLeft className="w-5 h-5 text-[#222222]" aria-hidden="true" />
         </button>
         <h2 className="text-xl font-semibold text-[#222222]">
           Preview & Save

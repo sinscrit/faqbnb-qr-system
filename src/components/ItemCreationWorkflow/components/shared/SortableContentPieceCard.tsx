@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/SortableContentPieceCard
  * @see docs/REQ-108-multi-content-item-support-detailed.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-10 (REQ-174 Accessibility - fixed listitem role hierarchy)
  */
 
 import { useSortable } from '@dnd-kit/sortable';
@@ -73,11 +73,18 @@ export function SortableContentPieceCard({
   // Only show drag handle when there's more than one content piece
   const showDragHandle = totalCount > 1 && !disabled;
 
+  // Extract role from attributes - we need to override it to listitem for proper
+  // list hierarchy. The useSortable hook adds role="button" by default, but we
+  // need role="listitem" when used inside a list context.
+  const { role: _role, ...otherAttributes } = attributes;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
+      role="listitem"
+      aria-label={`${content.type.charAt(0).toUpperCase() + content.type.slice(1)} content piece`}
+      {...otherAttributes}
     >
       <ContentPieceCard
         content={content}
@@ -87,6 +94,7 @@ export function SortableContentPieceCard({
         showDragHandle={showDragHandle}
         dragHandleProps={listeners}
         isDragging={isDragging}
+        isInSortableContext={true}
       />
     </div>
   );

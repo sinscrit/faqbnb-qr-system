@@ -4,7 +4,7 @@
  * Barrel export file for all test helper functions and utilities.
  *
  * @module ItemCreationWorkflow/__tests__/helpers
- * @lastModified 2026-01-10 (REQ-172 E2E Flow Testing)
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 // Mock factories
@@ -54,3 +54,22 @@ export {
   WORKFLOW_STEPS_ORDER,
   STEP_DISPLAY_LABELS,
 } from './testUtils';
+
+// Accessibility test utilities
+export {
+  checkA11y,
+  getA11yViolations,
+  verifyAriaAttributes,
+  hasAriaRole,
+  verifyAriaDescribedBy,
+  simulateKeyboardNavigation,
+  getTabOrder,
+  hasFocusIndicator,
+  verifyAllFocusIndicators,
+  getLiveRegionContents,
+  waitForAnnouncement,
+  verifyHeadingHierarchy,
+  hasVisibleText,
+  type AxeConfig,
+  type KeyboardNavigationResult,
+} from './a11yTestUtils';

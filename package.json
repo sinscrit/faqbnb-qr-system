@@ -55,6 +55,7 @@
     "@types/react-image-crop": "^8.1.6",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.16",
+    "axe-core": "^4.11.1",
     "dotenv": "^17.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
@@ -63,7 +64,8 @@
     "playwright": "^1.55.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "vitest-axe": "^0.1.0"
   },
   "engines": {
     "node": ">=22.0.0",

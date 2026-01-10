@@ -17,7 +17,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/ContentPreview
  * @see PreviewSaveStep for primary usage context
- * @lastModified 2026-01-10
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -147,9 +147,11 @@ interface PhotoPreviewProps {
   data: Extract<ContentData, { type: 'photo' }>;
   size: ContentPreviewSize;
   urlsRef: React.MutableRefObject<string[]>;
+  /** Content title for alt text */
+  contentTitle?: string;
 }
 
-function PhotoPreview({ data, size, urlsRef }: PhotoPreviewProps) {
+function PhotoPreview({ data, size, urlsRef, contentTitle }: PhotoPreviewProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const sizeConfig = SIZE_CONFIG[size];
@@ -177,7 +179,7 @@ function PhotoPreview({ data, size, urlsRef }: PhotoPreviewProps) {
   return (
     <img
       src={imageUrl}
-      alt="Photo content preview"
+      alt={contentTitle ? `Photo: ${contentTitle}` : 'Photo content preview'}
       className="w-full h-full object-cover"
       onError={() => setHasError(true)}
     />
@@ -282,7 +284,7 @@ function UrlPreview({ data, size }: UrlPreviewProps) {
     return (
       <img
         src={data.thumbnailUrl}
-        alt={data.title || 'URL preview'}
+        alt={data.title ? `Link preview: ${data.title}` : `Link preview for ${domain}`}
         className="w-full h-full object-cover"
       />
     );
@@ -295,6 +297,7 @@ function UrlPreview({ data, size }: UrlPreviewProps) {
         <img
           src={data.faviconUrl}
           alt=""
+          aria-hidden="true"
           className={cn(
             size === 'small' ? 'w-4 h-4' : 'w-6 h-6',
             'mb-1'
@@ -424,6 +427,10 @@ export function ContentPreview({
     }
   };
 
+  // Use role="figure" when interactive controls are present, otherwise role="img"
+  // This avoids nested-interactive violation when remove button is shown
+  const containerRole = showRemove && onRemove ? 'figure' : 'img';
+
   return (
     <div
       className={cn(
@@ -431,7 +438,7 @@ export function ContentPreview({
         className
       )}
       style={{ width: sizeConfig.width, height: sizeConfig.height }}
-      role="img"
+      role={containerRole}
       aria-label={`${typeConfig.label} content preview`}
     >
       {/* Content preview */}
@@ -463,9 +470,9 @@ export function ContentPreview({
             'hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500',
             'min-w-[28px] min-h-[28px] flex items-center justify-center'
           )}
-          aria-label="Remove content"
+          aria-label={`Remove ${typeConfig.label.toLowerCase()} content`}
         >
-          <X className="w-3.5 h-3.5 text-red-600" />
+          <X className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
         </button>
       )}
     </div>

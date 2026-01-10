@@ -20,7 +20,7 @@
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
  * @see PreviewSaveStep for usage context
  * @see SortableContentPieceCard for sortable version
- * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -49,6 +49,8 @@ export interface ContentPieceCardProps {
   isDragging?: boolean;
   /** Optional CSS class */
   className?: string;
+  /** Whether this card is used inside a SortableContext (parent has listitem role) */
+  isInSortableContext?: boolean;
 }
 
 // =============================================================================
@@ -238,6 +240,7 @@ export function ContentPieceCard({
   dragHandleProps,
   isDragging = false,
   className,
+  isInSortableContext = false,
 }: ContentPieceCardProps) {
   // Ref for tracking object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
@@ -270,6 +273,11 @@ export function ContentPieceCard({
     }
   };
 
+  // Only use role="listitem" when not in a sortable context
+  // When in sortable context, the parent wrapper has the listitem role
+  const containerRole = isInSortableContext ? undefined : 'listitem';
+  const containerAriaLabel = isInSortableContext ? undefined : `${config.label} content piece`;
+
   return (
     <div
       className={cn(
@@ -279,8 +287,8 @@ export function ContentPieceCard({
         isDragging && 'ring-2 ring-[#FF385C] shadow-lg',
         className
       )}
-      role="listitem"
-      aria-label={`${config.label} content piece`}
+      role={containerRole}
+      aria-label={containerAriaLabel}
     >
       {/* Content preview */}
       {renderContent()}

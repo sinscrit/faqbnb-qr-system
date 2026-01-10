@@ -12,7 +12,7 @@
  *
  * @module ItemCreationWorkflow/utils/accessibility
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility & Mobile Optimization)
+ * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
