@@ -575,6 +575,39 @@ export function PreviewSaveStep({
   // Check if save button should be disabled
   const canSave = contentArray.length > 0 && currentItem?.itemName?.trim().length > 0;
 
+  // If showing success overlay, only render that (currentItem is null after save)
+  if (showSuccess && savedResult) {
+    return (
+      <div className={cn('flex flex-col gap-6 p-6', className)}>
+        <SuccessOverlay
+          itemName={savedResult.itemName}
+          qrCodeUrl={savedResult.qrCodeUrl}
+          onContinue={handleContinue}
+        />
+      </div>
+    );
+  }
+
+  // Guard: If currentItem is null (e.g., after save and returning from What's Next),
+  // show a message instead of crashing. This can happen if the workflow state isn't
+  // properly restored when navigating back to this step.
+  if (!currentItem) {
+    return (
+      <div className={cn('flex flex-col items-center justify-center gap-4 p-6 min-h-[300px]', className)}>
+        <p className="text-[#717171] text-center">
+          No item data available. Please start a new item.
+        </p>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-6 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={cn('flex flex-col gap-6 p-6', className)}>
       {/* Header with back button */}
@@ -664,15 +697,6 @@ export function PreviewSaveStep({
           </>
         )}
       </button>
-
-      {/* Success Overlay */}
-      {showSuccess && savedResult && (
-        <SuccessOverlay
-          itemName={savedResult.itemName}
-          qrCodeUrl={savedResult.qrCodeUrl}
-          onContinue={handleContinue}
-        />
-      )}
 
       {/* Screen Reader Announcements */}
       <div aria-live="polite" className="sr-only">
