@@ -295,7 +295,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
       
       // Should be routed to beta template
       expect(template.subject).toContain('Beta');
-      expect(template.body).toContain('beta'));
+      expect(template.body).toContain('beta');
     });
 
     test('should use regular template for non-beta requests', () => {

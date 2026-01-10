@@ -5,7 +5,7 @@
  * for consistent and maintainable test data generation.
  *
  * @module ItemCreationWorkflow/__tests__/helpers/mockFactories
- * @lastModified 2026-01-10 (REQ-171 Update Tests)
+ * @lastModified 2026-01-10 (REQ-172 E2E Flow Testing)
  */
 
 import type {
@@ -394,13 +394,14 @@ export const createMockWorkflowStateAtStep = (
 
 /**
  * Helper to generate step history for a given step.
+ * Updated for Plan-094: replaced content-source-selection with purpose-selection.
  */
-const getStepHistory = (targetStep: WorkflowStep): WorkflowStep[] => {
+export const getStepHistory = (targetStep: WorkflowStep): WorkflowStep[] => {
   const stepOrder: WorkflowStep[] = [
     'room-selection',
     'item-type-selection',
     'specific-item-selection',
-    'content-source-selection',
+    'purpose-selection',
     'content-type-selection',
     'content-creation',
     'preview-save',

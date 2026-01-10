@@ -425,7 +425,7 @@ export function PreviewSaveStep({
 
   // Removal confirmation state
   const [pieceToRemove, setPieceToRemove] = useState<string | null>(null);
-  const isRemovingLastPiece = pieceToRemove !== null && currentItem.content.length === 1;
+  const isRemovingLastPiece = pieceToRemove !== null && currentItem?.content?.length === 1;
 
   // Drag and drop state
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -445,9 +445,9 @@ export function PreviewSaveStep({
 
   // Get active content piece for drag overlay
   const activeContent = useMemo(() => {
-    if (!activeId) return null;
+    if (!activeId || !currentItem?.content) return null;
     return currentItem.content.find(c => c.id === activeId) ?? null;
-  }, [activeId, currentItem.content]);
+  }, [activeId, currentItem?.content]);
 
   // Drag event handlers
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -458,7 +458,7 @@ export function PreviewSaveStep({
     const { active, over } = event;
     setActiveId(null);
 
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id || !currentItem?.content) return;
 
     const oldIndex = currentItem.content.findIndex(c => c.id === active.id);
     const newIndex = currentItem.content.findIndex(c => c.id === over.id);
@@ -466,51 +466,52 @@ export function PreviewSaveStep({
     if (oldIndex >= 0 && newIndex >= 0) {
       onReorderContent(oldIndex, newIndex);
     }
-  }, [currentItem.content, onReorderContent]);
+  }, [currentItem?.content, onReorderContent]);
 
   const handleDragCancel = useCallback(() => {
     setActiveId(null);
   }, []);
 
   // Accessibility announcements for screen readers
+  const contentArray = currentItem?.content ?? [];
   const announcements: Announcements = useMemo(() => ({
     onDragStart({ active }) {
-      const piece = currentItem.content.find(c => c.id === active.id);
-      const position = currentItem.content.findIndex(c => c.id === active.id) + 1;
+      const piece = contentArray.find(c => c.id === active.id);
+      const position = contentArray.findIndex(c => c.id === active.id) + 1;
       const typeName = piece ? `${piece.type} content` : 'content piece';
-      return `Picked up ${typeName}. Current position: ${position} of ${currentItem.content.length}. Use arrow keys to move.`;
+      return `Picked up ${typeName}. Current position: ${position} of ${contentArray.length}. Use arrow keys to move.`;
     },
     onDragOver({ over }) {
       if (over) {
-        const position = currentItem.content.findIndex(c => c.id === over.id) + 1;
+        const position = contentArray.findIndex(c => c.id === over.id) + 1;
         return `Over position ${position}`;
       }
       return undefined;
     },
     onDragEnd({ active, over }) {
       if (over && active.id !== over.id) {
-        const piece = currentItem.content.find(c => c.id === active.id);
+        const piece = contentArray.find(c => c.id === active.id);
         const typeName = piece ? `${piece.type} content` : 'content piece';
-        const newPosition = currentItem.content.findIndex(c => c.id === over.id) + 1;
-        return `Dropped ${typeName}. New position: ${newPosition} of ${currentItem.content.length}`;
+        const newPosition = contentArray.findIndex(c => c.id === over.id) + 1;
+        return `Dropped ${typeName}. New position: ${newPosition} of ${contentArray.length}`;
       }
       return 'Position unchanged.';
     },
     onDragCancel() {
       return 'Drag cancelled. Content returned to original position.';
     },
-  }), [currentItem.content]);
+  }), [contentArray]);
 
   // Handle remove button click - show confirmation for last piece
   const handleRemoveClick = useCallback((contentId: string) => {
-    if (currentItem.content.length === 1) {
+    if (contentArray.length === 1) {
       // Show confirmation for last piece
       setPieceToRemove(contentId);
     } else {
       // Remove immediately for non-last pieces
       onRemoveContent(contentId);
     }
-  }, [currentItem.content.length, onRemoveContent]);
+  }, [contentArray.length, onRemoveContent]);
 
   // Handle confirmation of last piece removal
   const handleConfirmRemove = useCallback(() => {
@@ -544,7 +545,7 @@ export function PreviewSaveStep({
   }, [onComplete]);
 
   // Check if save button should be disabled
-  const canSave = currentItem.content.length > 0 && currentItem.itemName.trim().length > 0;
+  const canSave = contentArray.length > 0 && currentItem?.itemName?.trim().length > 0;
 
   return (
     <div className={cn('flex flex-col gap-6 p-6', className)}>
@@ -577,7 +578,7 @@ export function PreviewSaveStep({
 
       {/* Content Section with count badge and small add more link */}
       <ContentSection
-        content={currentItem.content}
+        content={contentArray}
         sensors={sensors}
         activeId={activeId}
         activeContent={activeContent}

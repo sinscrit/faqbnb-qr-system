@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { ItemNameEditor } from '../ItemNameEditor';
 
 describe('ItemNameEditor', () => {
-  const mockOnChange = jest.fn();
+  const mockOnChange = vi.fn();
 
   beforeEach(() => {
     mockOnChange.mockClear();
@@ -130,7 +130,7 @@ describe('ItemNameEditor', () => {
     it('shows counter in amber when near limit (80%+)', () => {
       render(
         <ItemNameEditor
-          value="A".repeat(85)
+          value={"A".repeat(85)}
           onChange={mockOnChange}
           maxLength={100}
         />

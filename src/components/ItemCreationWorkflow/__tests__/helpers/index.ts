@@ -4,7 +4,7 @@
  * Barrel export file for all test helper functions and utilities.
  *
  * @module ItemCreationWorkflow/__tests__/helpers
- * @lastModified 2026-01-10 (REQ-171 Update Tests)
+ * @lastModified 2026-01-10 (REQ-172 E2E Flow Testing)
  */
 
 // Mock factories
@@ -23,6 +23,7 @@ export {
   createMockSessionItems,
   createMockSessionItemWithContent,
   createMockWorkflowStateAtStep,
+  getStepHistory,
 } from './mockFactories';
 
 // Test utilities
@@ -30,9 +31,21 @@ export {
   renderWithProviders,
   createMockWorkflowProps,
   waitForStepTransition,
+  waitForLoadingToFinish,
   simulateStepNavigation,
   createMockQRGenerationHook,
   createMockSessionQRGenerationHook,
+  navigateToRoomSelection,
+  navigateToItemTypeSelection,
+  navigateToSpecificItemSelection,
+  navigateToPurposeSelection,
+  navigateToContentSourceSelection,
+  navigateToContentTypeSelection,
+  navigateToContentCreation,
+  waitForPurposeStep,
+  assertTextInDocument,
+  assertCurrentStep,
+  assertStepNumber,
   TEST_ROOMS,
   TEST_ITEM_TYPES,
   TEST_CONTENT_TYPES,

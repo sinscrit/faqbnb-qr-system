@@ -5,7 +5,7 @@
  * consistent test setup and common test patterns.
  *
  * @module ItemCreationWorkflow/__tests__/helpers/testUtils
- * @lastModified 2026-01-10 (REQ-171 Update Tests)
+ * @lastModified 2026-01-10 (REQ-172 E2E Flow Testing)
  */
 
 import React from 'react';
@@ -301,7 +301,39 @@ export const navigateToSpecificItemSelection = async (
 };
 
 /**
+ * Navigates from initial state to purpose-selection step (Plan-094 new flow).
+ *
+ * @param user - UserEvent instance
+ * @param room - Room to select (default: 'Kitchen')
+ * @param itemType - Item type to select (default: 'Appliance')
+ * @param specificItem - Specific item to select (default: 'Refrigerator')
+ */
+export const navigateToPurposeSelection = async (
+  user: UserEvent,
+  room: string = 'Kitchen',
+  itemType: string = 'Appliance',
+  specificItem: string = 'Refrigerator'
+): Promise<void> => {
+  await navigateToSpecificItemSelection(user, room, itemType);
+  await user.click(screen.getByText(specificItem));
+  await waitForPurposeStep();
+};
+
+/**
+ * Waits for the purpose selection step to be displayed.
+ */
+export const waitForPurposeStep = async (timeout: number = 5000): Promise<void> => {
+  await waitFor(
+    () => {
+      expect(screen.getByText(/What's the purpose of this content/i)).toBeInTheDocument();
+    },
+    { timeout }
+  );
+};
+
+/**
  * Navigates from initial state to content-source-selection.
+ * @deprecated Use navigateToPurposeSelection for new workflow.
  *
  * @param user - UserEvent instance
  */
@@ -315,17 +347,18 @@ export const navigateToContentSourceSelection = async (
 
 /**
  * Navigates from initial state to content-type-selection.
+ * Updated for Plan-094: Now goes through purpose-selection step.
  *
  * @param user - UserEvent instance
- * @param contentSource - Content source to select (default: 'Create now')
+ * @param purposeLabel - Purpose to select (default: 'How to Use')
  */
 export const navigateToContentTypeSelection = async (
   user: UserEvent,
-  contentSource: string = 'Create now'
+  purposeLabel: string = 'How to Use'
 ): Promise<void> => {
-  await navigateToContentSourceSelection(user);
-  await user.click(screen.getByText(contentSource));
-  await waitForStepTransition(/Content Type/i);
+  await navigateToPurposeSelection(user);
+  await user.click(screen.getByText(purposeLabel));
+  await waitForStepTransition(/What content would you like to add/i);
 };
 
 /**
