@@ -20,7 +20,7 @@
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
  * @see PreviewSaveStep for usage context
  * @see SortableContentPieceCard for sortable version
- * @lastModified 2026-01-10 (REQ-169 Mobile Remove Button Visibility)
+ * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -306,7 +306,7 @@ export function ContentPieceCard({
             'absolute top-1 right-1 z-10',
             'p-1.5 bg-white/90 backdrop-blur-sm rounded',
             'cursor-grab active:cursor-grabbing touch-none',
-            'min-w-[44px] min-h-[44px] flex items-center justify-center',
+            'min-w-[48px] min-h-[48px] flex items-center justify-center',
             'hover:bg-white hover:shadow-sm transition-all',
             'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
           )}

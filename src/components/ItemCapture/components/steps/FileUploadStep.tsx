@@ -12,7 +12,7 @@
  * @module ItemCapture/components/steps/FileUploadStep
  * @see docs/REQ-042-implement-fileuploadstep-detailed.md
  * @see docs/REQ-043-add-pdf-thumbnail-generation-detailed.md
- * @lastModified 2026-01-10 (REQ-165 - Sticky navigation with conditional Continue button)
+ * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
  */
 
 import React, { useCallback, useState, useEffect } from 'react';
@@ -208,6 +208,7 @@ function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
         className={cn(
           'absolute top-1 right-1 p-2 rounded-full',
           'bg-red-100 text-red-600',
+          'min-w-[48px] min-h-[48px] flex items-center justify-center',
           'opacity-100 sm:opacity-0 sm:group-hover:opacity-100',
           'transition-opacity hover:bg-red-200',
           'focus:outline-none focus:ring-2 focus:ring-red-500 focus:opacity-100'
@@ -282,6 +283,7 @@ function FileCard({ file, onRemove }: FileCardProps) {
         className={cn(
           'absolute top-1 right-1 p-2 rounded-full',
           'bg-red-100 text-red-600',
+          'min-w-[48px] min-h-[48px] flex items-center justify-center',
           'opacity-100 sm:opacity-0 sm:group-hover:opacity-100',
           'transition-opacity hover:bg-red-200',
           'focus:outline-none focus:ring-2 focus:ring-red-500 focus:opacity-100'

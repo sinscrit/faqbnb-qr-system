@@ -19,7 +19,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/ItemNameEditor
  * @see SpecificItemStep for usage context
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
  */
 
 import { useCallback } from 'react';
@@ -80,6 +80,7 @@ export function ItemNameEditor({
           disabled={disabled}
           className={cn(
             'w-full px-4 py-3 pr-16 border-2 rounded-lg',
+            'min-h-[48px]', // Touch target minimum (REQ-173)
             'text-base text-[#222222] placeholder:text-[#717171]',
             'transition-colors duration-150',
             'focus:outline-none focus:border-[#222222]',
