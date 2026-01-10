@@ -74,7 +74,7 @@ async function canAccessProperty(user: any, propertyId: string, supabase: any): 
       .from('properties')
       .select(`
         id,
-        name,
+        nickname,
         account_id
       `)
       .eq('id', propertyId)
