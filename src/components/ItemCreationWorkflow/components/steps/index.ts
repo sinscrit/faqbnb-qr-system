@@ -5,20 +5,21 @@
  * Steps are rendered by the main ItemCreationWorkflow component based on
  * the current workflow state.
  *
- * ## Step Flow
+ * ## Step Flow (Updated REQ-162)
  * ```
  * 1. RoomSelectionStep      - Select room (kitchen, bedroom, etc.)
  * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
  * 3. SpecificItemStep       - Select/name specific item with suggestions
  * 4. PurposeStep            - Select content purpose (how-to-use, troubleshooting, etc.)
- * 5. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
+ * 5. ContentTypeStep        - Select unified content option (5 choices)
  * 6. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
  * 7. PreviewSaveStep        - Preview and save the item
  * 8. NextActionStep         - Add more content, new item, or finish
  * 9. SessionSummaryStep     - Review all items and print QR codes
  * ```
  *
- * Note: ContentSourceStep removed in REQ-160 (Phase 3, Task 3.1) - component file retained for potential reuse
+ * NOTE: ContentSourceStep removed per REQ-162 - content options consolidated
+ *       into ContentTypeStep. Component file retained for reference only.
  *
  * ## Skip Conditions
  * - ItemTypeStep skips if "General" room selected
@@ -34,7 +35,7 @@
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-10 (REQ-160 Remove ContentSourceStep)
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
  */
 
 // =============================================================================

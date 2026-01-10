@@ -3,18 +3,20 @@
 /**
  * ContentTypeStep Component
  *
- * Step 5 of the item creation workflow.
- * Displays content type options dynamically based on the user's content source selection.
- * For "I have content": Upload Video, Upload Photo, Upload PDF, Paste Text, Paste URL
- * For "Create now": Record Video, Take Photo, Write Text
+ * Displays unified content options in a single grid.
+ * Users select from: Record Video, Take Photo, Write Text,
+ * Upload File, or Add Link.
+ *
+ * Updated in REQ-162 to consolidate content source and content type
+ * into a single step, eliminating the need for ContentSourceStep.
  *
  * @module ItemCreationWorkflow/components/steps/ContentTypeStep
- * @see docs/REQ-103-content-type-step-overview.md
+ * @see docs/REQ-162-consolidate-content-options-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-10 (REQ-161 Update ContentTypeStep Labels - Added format hint subtitles)
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
  */
 
-import { useCallback, useMemo, useRef, useState, forwardRef } from 'react';
+import { useCallback, useRef, useState, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { createKeyboardNavigator } from '../../utils/accessibility';
 import {
@@ -30,26 +32,24 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { ContentType } from '../../ItemCreationWorkflow.types';
+import { UNIFIED_CONTENT_OPTIONS, type UnifiedContentOption } from '../../utils/constants';
 
 // =============================================================================
 // Type Definitions
 // =============================================================================
 
-interface ContentTypeOption {
-  type: ContentType;
-  label: string;
-  icon: LucideIcon;
-  /** Optional subtitle for format hints (e.g., "MP4, MOV, WebM") */
-  subtitle?: string;
-}
-
+/**
+ * Props interface for ContentTypeStep.
+ * Updated for REQ-162 unified content options.
+ */
 export interface ContentTypeStepProps {
-  /** Current content source from state (determines available options) */
-  currentContentSource: 'existing' | 'create-new';
-  /** Current selected content type from state */
-  currentContentType: ContentType | null;
-  /** Handler to select a content type */
-  onSelectContentType: (type: ContentType) => void;
+  /** Current selected option id (for visual highlight) */
+  currentSelection: string | null;
+  /** Handler when content option is selected - receives both type and source */
+  onSelectContent: (
+    contentType: ContentType | 'file-upload',
+    contentSource: 'existing' | 'create-new'
+  ) => void;
   /** Handler for proceeding to next step */
   onNext: () => void;
   /** Whether next step navigation is allowed */
@@ -59,31 +59,44 @@ export interface ContentTypeStepProps {
 }
 
 // =============================================================================
-// Content Type Option Data
+// Icon Mapping
 // =============================================================================
 
-const EXISTING_CONTENT_OPTIONS: ContentTypeOption[] = [
-  { type: 'video', label: 'Upload Video', icon: Upload, subtitle: 'MP4, MOV, WebM' },
-  { type: 'photo', label: 'Upload Photo', icon: ImageIcon, subtitle: 'JPG, PNG, WebP' },
-  { type: 'pdf', label: 'Upload PDF', icon: FileText, subtitle: 'PDF documents' },
-  { type: 'text', label: 'Paste Text', icon: Type },
-  { type: 'url', label: 'Paste URL', icon: Link },
-];
+/**
+ * Maps icon name strings to Lucide icon components.
+ */
+const ICON_MAP: Record<string, LucideIcon> = {
+  Video,
+  Camera,
+  PenLine,
+  Upload,
+  ImageIcon,
+  FileText,
+  Type,
+  Link,
+};
 
-const CREATE_NEW_OPTIONS: ContentTypeOption[] = [
-  { type: 'video', label: 'Record Video', icon: Video },
-  { type: 'photo', label: 'Take Photo', icon: Camera },
-  { type: 'text', label: 'Write Text', icon: PenLine },
-];
+/**
+ * Gets the icon component for a given icon name.
+ * Falls back to Upload icon if name not found.
+ */
+const getIconComponent = (iconName: string): LucideIcon => {
+  return ICON_MAP[iconName] || Upload;
+};
 
 // =============================================================================
 // ContentTypeCard Inline Component
 // =============================================================================
 
 interface ContentTypeCardProps {
-  option: ContentTypeOption;
+  option: {
+    type: string;
+    label: string;
+    subtitle?: string;
+    icon: LucideIcon;
+  };
   isSelected: boolean;
-  onSelect: (type: ContentType) => void;
+  onSelect: () => void;
   tabIndex?: number;
 }
 
@@ -91,12 +104,12 @@ const ContentTypeCard = forwardRef<HTMLButtonElement, ContentTypeCardProps>(
   function ContentTypeCard({ option, isSelected, onSelect, tabIndex }, ref) {
     const Icon = option.icon;
 
-    const handleClick = () => onSelect(option.type);
+    const handleClick = () => onSelect();
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onSelect(option.type);
+        onSelect();
       }
     };
 
@@ -184,45 +197,35 @@ const ContentTypeCard = forwardRef<HTMLButtonElement, ContentTypeCardProps>(
 // =============================================================================
 
 export function ContentTypeStep({
-  currentContentSource,
-  currentContentType,
-  onSelectContentType,
+  currentSelection,
+  onSelectContent,
   onNext,
   canNext,
   className,
 }: ContentTypeStepProps) {
-  // Determine which options to show based on content source
-  const contentOptions = useMemo(() => {
-    return currentContentSource === 'existing'
-      ? EXISTING_CONTENT_OPTIONS
-      : CREATE_NEW_OPTIONS;
-  }, [currentContentSource]);
+  // Use unified options directly from constants
+  const contentOptions = UNIFIED_CONTENT_OPTIONS;
 
   // REQ-114: Refs for keyboard navigation (roving tabindex)
   const [activeIndex, setActiveIndex] = useState(() => {
-    if (!currentContentType) return 0;
-    const idx = contentOptions.findIndex(opt => opt.type === currentContentType);
+    if (!currentSelection) return 0;
+    const idx = contentOptions.findIndex(opt => opt.id === currentSelection);
     return idx >= 0 ? idx : 0;
   });
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // Dynamic header text based on content source
-  const headerText = currentContentSource === 'existing'
-    ? 'What type of content will you upload?'
-    : 'What type of content will you create?';
+  // Updated header text for unified options
+  const headerText = 'What content would you like to add?';
+  const descriptionText = 'Choose how you want to add information for this item';
 
-  const descriptionText = currentContentSource === 'existing'
-    ? 'Select the format of your existing content'
-    : 'Choose how you want to capture this item';
-
-  // Auto-advance when a content type is selected
-  const handleContentTypeSelect = useCallback((type: ContentType) => {
-    onSelectContentType(type);
+  // Handle unified content selection - sets both type and source, then auto-advances
+  const handleContentSelect = useCallback((option: UnifiedContentOption) => {
+    onSelectContent(option.contentType, option.contentSource);
     // Auto-advance after a brief visual feedback delay
     setTimeout(() => {
       onNext();
     }, 150);
-  }, [onSelectContentType, onNext]);
+  }, [onSelectContent, onNext]);
 
   const handleContinue = useCallback(() => {
     if (canNext) {
@@ -247,7 +250,7 @@ export function ContentTypeStep({
       columns: getColumns(),
       loop: true,
       onSelect: (index) => {
-        handleContentTypeSelect(contentOptions[index].type);
+        handleContentSelect(contentOptions[index]);
       },
       onFocusChange: (index) => {
         setActiveIndex(index);
@@ -255,7 +258,7 @@ export function ContentTypeStep({
     });
 
     handleNav(event);
-  }, [handleContentTypeSelect, contentOptions]);
+  }, [handleContentSelect, contentOptions]);
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
@@ -279,11 +282,16 @@ export function ContentTypeStep({
       >
         {contentOptions.map((option, index) => (
           <ContentTypeCard
-            key={option.type}
+            key={option.id}
             ref={(el) => { cardRefs.current[index] = el; }}
-            option={option}
-            isSelected={currentContentType === option.type}
-            onSelect={handleContentTypeSelect}
+            option={{
+              type: option.id,
+              label: option.label,
+              subtitle: option.subtitle,
+              icon: getIconComponent(option.icon),
+            }}
+            isSelected={currentSelection === option.id}
+            onSelect={() => handleContentSelect(option)}
             tabIndex={index === activeIndex ? 0 : -1}
           />
         ))}

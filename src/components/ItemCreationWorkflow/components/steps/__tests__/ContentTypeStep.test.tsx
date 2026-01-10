@@ -1,194 +1,131 @@
 /**
  * ContentTypeStep Component Tests
  *
+ * Updated for REQ-162: Unified content options consolidation.
+ * Tests all 5 content options, subtitle rendering, selection handling,
+ * and keyboard navigation.
+ *
  * @module ItemCreationWorkflow/components/steps/__tests__/ContentTypeStep.test
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ContentTypeStep } from '../ContentTypeStep';
+import { UNIFIED_CONTENT_OPTIONS } from '../../../utils/constants';
 
 describe('ContentTypeStep', () => {
-  const defaultPropsExisting = {
-    currentContentSource: 'existing' as const,
-    currentContentType: null,
-    onSelectContentType: jest.fn(),
-    onNext: jest.fn(),
-    canNext: false,
-  };
-
-  const defaultPropsCreateNew = {
-    currentContentSource: 'create-new' as const,
-    currentContentType: null,
-    onSelectContentType: jest.fn(),
-    onNext: jest.fn(),
+  const defaultProps = {
+    currentSelection: null,
+    onSelectContent: vi.fn(),
+    onNext: vi.fn(),
     canNext: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
   });
 
   // ===========================================================================
-  // Task 6: Rendering Tests - Existing Content Source
+  // Rendering Tests - All 5 Unified Options
   // ===========================================================================
 
-  describe('Rendering for existing content source', () => {
-    it('renders exactly five content type options', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+  describe('Rendering unified content options', () => {
+    it('renders all 5 unified content options', () => {
+      render(<ContentTypeStep {...defaultProps} />);
+
+      expect(screen.getByText('Record Video')).toBeInTheDocument();
+      expect(screen.getByText('Take Photo')).toBeInTheDocument();
+      expect(screen.getByText('Write Text')).toBeInTheDocument();
+      expect(screen.getByText('Upload File')).toBeInTheDocument();
+      expect(screen.getByText('Add Link')).toBeInTheDocument();
+    });
+
+    it('renders exactly 5 radio buttons', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
       const radioButtons = screen.getAllByRole('radio');
       expect(radioButtons).toHaveLength(5);
     });
 
-    it('displays correct labels for existing content', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
-
-      expect(screen.getByText('Upload Video')).toBeInTheDocument();
-      expect(screen.getByText('Upload Photo')).toBeInTheDocument();
-      expect(screen.getByText('Upload PDF')).toBeInTheDocument();
-      expect(screen.getByText('Paste Text')).toBeInTheDocument();
-      expect(screen.getByText('Paste URL')).toBeInTheDocument();
-    });
-
-    it('renders correct header for upload context', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+    it('renders correct header for unified options', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
       expect(screen.getByRole('heading')).toHaveTextContent(
-        'What type of content will you upload?'
+        'What content would you like to add?'
       );
     });
 
-    it('renders correct description for existing content', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+    it('renders correct description for unified options', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
-      expect(screen.getByText('Select the format of your existing content')).toBeInTheDocument();
+      expect(screen.getByText('Choose how you want to add information for this item')).toBeInTheDocument();
     });
 
     it('renders Continue button', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument();
     });
   });
 
   // ===========================================================================
-  // Rendering Tests - Create New Content Source
+  // Subtitle Rendering Tests
   // ===========================================================================
 
-  describe('Rendering for create-new content source', () => {
-    it('renders exactly three content type options', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
+  describe('Subtitle rendering', () => {
+    it('displays subtitle for Upload File option', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
-      const radioButtons = screen.getAllByRole('radio');
-      expect(radioButtons).toHaveLength(3);
+      expect(screen.getByText('Video, Image, PDF, Text')).toBeInTheDocument();
     });
 
-    it('displays correct labels for create-new content', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
+    it('does not render subtitles for options without them', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
-      expect(screen.getByText('Record Video')).toBeInTheDocument();
-      expect(screen.getByText('Take Photo')).toBeInTheDocument();
-      expect(screen.getByText('Write Text')).toBeInTheDocument();
-    });
+      // Record Video, Take Photo, Write Text, Add Link should not have subtitles
+      const recordVideoCard = screen.getByText('Record Video').closest('button');
+      const takePhotoCard = screen.getByText('Take Photo').closest('button');
+      const writeTextCard = screen.getByText('Write Text').closest('button');
+      const addLinkCard = screen.getByText('Add Link').closest('button');
 
-    it('renders correct header for creation context', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      expect(screen.getByRole('heading')).toHaveTextContent(
-        'What type of content will you create?'
-      );
-    });
-
-    it('renders correct description for create-new content', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      expect(screen.getByText('Choose how you want to capture this item')).toBeInTheDocument();
-    });
-
-    it('does not show upload-only options', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      expect(screen.queryByText('Upload PDF')).not.toBeInTheDocument();
-      expect(screen.queryByText('Paste URL')).not.toBeInTheDocument();
-      expect(screen.queryByText('Upload Video')).not.toBeInTheDocument();
-      expect(screen.queryByText('Upload Photo')).not.toBeInTheDocument();
+      // Check that these cards don't have the subtitle text element (the subtitle container would have text-xs class)
+      expect(recordVideoCard?.querySelectorAll('.text-xs, .sm\\:text-sm').length).toBeLessThanOrEqual(1);
+      expect(takePhotoCard?.querySelectorAll('.text-xs, .sm\\:text-sm').length).toBeLessThanOrEqual(1);
+      expect(writeTextCard?.querySelectorAll('.text-xs, .sm\\:text-sm').length).toBeLessThanOrEqual(1);
+      expect(addLinkCard?.querySelectorAll('.text-xs, .sm\\:text-sm').length).toBeLessThanOrEqual(1);
     });
   });
 
   // ===========================================================================
-  // Task 7: Selection Tests
+  // Selection Tests
   // ===========================================================================
 
   describe('Selection', () => {
-    it('calls onSelectContentType with video when Upload Video is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+    it.each([
+      ['Record Video', 'video', 'create-new'],
+      ['Take Photo', 'photo', 'create-new'],
+      ['Write Text', 'text', 'create-new'],
+      ['Upload File', 'file-upload', 'existing'],
+      ['Add Link', 'url', 'existing'],
+    ])('selecting %s calls onSelectContent with (%s, %s)', async (label, contentType, contentSource) => {
+      const mockSelect = vi.fn();
+      render(<ContentTypeStep {...defaultProps} onSelectContent={mockSelect} />);
 
-      fireEvent.click(screen.getByText('Upload Video'));
+      fireEvent.click(screen.getByText(label));
 
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('video');
-    });
-
-    it('calls onSelectContentType with photo when Upload Photo is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
-
-      fireEvent.click(screen.getByText('Upload Photo'));
-
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('photo');
-    });
-
-    it('calls onSelectContentType with pdf when Upload PDF is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
-
-      fireEvent.click(screen.getByText('Upload PDF'));
-
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('pdf');
-    });
-
-    it('calls onSelectContentType with text when Paste Text is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
-
-      fireEvent.click(screen.getByText('Paste Text'));
-
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('text');
-    });
-
-    it('calls onSelectContentType with url when Paste URL is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
-
-      fireEvent.click(screen.getByText('Paste URL'));
-
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('url');
-    });
-
-    it('calls onSelectContentType with video when Record Video is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      fireEvent.click(screen.getByText('Record Video'));
-
-      expect(defaultPropsCreateNew.onSelectContentType).toHaveBeenCalledWith('video');
-    });
-
-    it('calls onSelectContentType with photo when Take Photo is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      fireEvent.click(screen.getByText('Take Photo'));
-
-      expect(defaultPropsCreateNew.onSelectContentType).toHaveBeenCalledWith('photo');
-    });
-
-    it('calls onSelectContentType with text when Write Text is clicked', () => {
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
-
-      fireEvent.click(screen.getByText('Write Text'));
-
-      expect(defaultPropsCreateNew.onSelectContentType).toHaveBeenCalledWith('text');
+      expect(mockSelect).toHaveBeenCalledWith(contentType, contentSource);
     });
 
     it('shows selected styling when option is selected', () => {
       render(
-        <ContentTypeStep {...defaultPropsExisting} currentContentType="video" />
+        <ContentTypeStep {...defaultProps} currentSelection="record-video" />
       );
 
       const selectedCard = screen.getByRole('radio', { checked: true });
@@ -198,15 +135,15 @@ describe('ContentTypeStep', () => {
 
     it('shows aria-checked true for selected option', () => {
       render(
-        <ContentTypeStep {...defaultPropsExisting} currentContentType="pdf" />
+        <ContentTypeStep {...defaultProps} currentSelection="upload-file" />
       );
 
-      const pdfCard = screen.getByText('Upload PDF').closest('button');
-      expect(pdfCard).toHaveAttribute('aria-checked', 'true');
+      const uploadFileCard = screen.getByText('Upload File').closest('button');
+      expect(uploadFileCard).toHaveAttribute('aria-checked', 'true');
     });
 
     it('displays checkmark on selected option', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} currentContentType="video" />);
+      render(<ContentTypeStep {...defaultProps} currentSelection="record-video" />);
 
       const selectedCard = screen.getByRole('radio', { checked: true });
       // Check icon exists via aria-hidden
@@ -214,13 +151,25 @@ describe('ContentTypeStep', () => {
     });
 
     it('shows unselected state for non-selected options', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} currentContentType="video" />);
+      render(<ContentTypeStep {...defaultProps} currentSelection="record-video" />);
 
       const unselectedCards = screen.getAllByRole('radio', { checked: false });
       unselectedCards.forEach((card) => {
         expect(card).toHaveClass('border-gray-200');
         expect(card).toHaveClass('bg-white');
       });
+    });
+
+    it('auto-advances after selection', async () => {
+      const mockNext = vi.fn();
+      render(<ContentTypeStep {...defaultProps} onNext={mockNext} />);
+
+      fireEvent.click(screen.getByText('Record Video'));
+
+      // Advance timers to trigger auto-advance
+      vi.advanceTimersByTime(200);
+
+      expect(mockNext).toHaveBeenCalled();
     });
   });
 
@@ -230,38 +179,40 @@ describe('ContentTypeStep', () => {
 
   describe('Navigation', () => {
     it('enables Continue button when canNext is true', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={true} />);
+      render(<ContentTypeStep {...defaultProps} canNext={true} />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).not.toBeDisabled();
     });
 
     it('disables Continue button when canNext is false', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={false} />);
+      render(<ContentTypeStep {...defaultProps} canNext={false} />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).toBeDisabled();
     });
 
     it('calls onNext when Continue is clicked and canNext is true', async () => {
+      vi.useRealTimers();
       const user = userEvent.setup();
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={true} />);
+      const mockOnNext = vi.fn();
+      render(<ContentTypeStep {...defaultProps} canNext={true} onNext={mockOnNext} />);
 
       await user.click(screen.getByRole('button', { name: /continue/i }));
 
-      expect(defaultPropsExisting.onNext).toHaveBeenCalledTimes(1);
+      expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
 
     it('does not call onNext when Continue is clicked and canNext is false', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={false} />);
+      render(<ContentTypeStep {...defaultProps} canNext={false} />);
 
       fireEvent.click(screen.getByRole('button', { name: /continue/i }));
 
-      expect(defaultPropsExisting.onNext).not.toHaveBeenCalled();
+      expect(defaultProps.onNext).not.toHaveBeenCalled();
     });
 
     it('Continue button has disabled styling when canNext is false', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={false} />);
+      render(<ContentTypeStep {...defaultProps} canNext={false} />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).toHaveClass('bg-gray-200');
@@ -269,14 +220,14 @@ describe('ContentTypeStep', () => {
     });
 
     it('Continue button has enabled styling when canNext is true', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={true} currentContentType="video" />);
+      render(<ContentTypeStep {...defaultProps} canNext={true} currentSelection="record-video" />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).toHaveClass('bg-[#FF385C]');
     });
 
     it('Continue button has minimum touch target height', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).toHaveClass('min-h-[56px]');
@@ -284,18 +235,18 @@ describe('ContentTypeStep', () => {
   });
 
   // ===========================================================================
-  // Task 8: Accessibility Tests
+  // Accessibility Tests
   // ===========================================================================
 
   describe('Accessibility', () => {
     it('has radiogroup role on container', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       expect(screen.getByRole('radiogroup')).toBeInTheDocument();
     });
 
     it('has aria-label on radiogroup', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       expect(screen.getByRole('radiogroup')).toHaveAttribute(
         'aria-label',
@@ -304,41 +255,45 @@ describe('ContentTypeStep', () => {
     });
 
     it('supports keyboard selection with Enter key', async () => {
+      vi.useRealTimers();
       const user = userEvent.setup();
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      const mockSelect = vi.fn();
+      render(<ContentTypeStep {...defaultProps} onSelectContent={mockSelect} />);
 
-      const card = screen.getByText('Upload Video').closest('button');
+      const card = screen.getByText('Record Video').closest('button');
       card?.focus();
       await user.keyboard('{Enter}');
 
-      expect(defaultPropsExisting.onSelectContentType).toHaveBeenCalledWith('video');
+      expect(mockSelect).toHaveBeenCalledWith('video', 'create-new');
     });
 
     it('supports keyboard selection with Space key', async () => {
+      vi.useRealTimers();
       const user = userEvent.setup();
-      render(<ContentTypeStep {...defaultPropsCreateNew} />);
+      const mockSelect = vi.fn();
+      render(<ContentTypeStep {...defaultProps} onSelectContent={mockSelect} />);
 
       const card = screen.getByText('Write Text').closest('button');
       card?.focus();
       await user.keyboard(' ');
 
-      expect(defaultPropsCreateNew.onSelectContentType).toHaveBeenCalledWith('text');
+      expect(mockSelect).toHaveBeenCalledWith('text', 'create-new');
     });
 
     it('each card has correct aria-checked state', () => {
       render(
-        <ContentTypeStep {...defaultPropsExisting} currentContentType="pdf" />
+        <ContentTypeStep {...defaultProps} currentSelection="upload-file" />
       );
 
-      const pdfCard = screen.getByText('Upload PDF').closest('button');
-      const videoCard = screen.getByText('Upload Video').closest('button');
+      const uploadFileCard = screen.getByText('Upload File').closest('button');
+      const recordVideoCard = screen.getByText('Record Video').closest('button');
 
-      expect(pdfCard).toHaveAttribute('aria-checked', 'true');
-      expect(videoCard).toHaveAttribute('aria-checked', 'false');
+      expect(uploadFileCard).toHaveAttribute('aria-checked', 'true');
+      expect(recordVideoCard).toHaveAttribute('aria-checked', 'false');
     });
 
     it('has proper focus styling classes', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const cards = screen.getAllByRole('radio');
       cards.forEach((card) => {
@@ -348,14 +303,14 @@ describe('ContentTypeStep', () => {
     });
 
     it('Continue button has aria-disabled when disabled', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} canNext={false} />);
+      render(<ContentTypeStep {...defaultProps} canNext={false} />);
 
       const button = screen.getByRole('button', { name: /continue/i });
       expect(button).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('cards are focusable and have correct focus classes', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const radios = screen.getAllByRole('radio');
       radios.forEach((radio) => {
@@ -363,6 +318,12 @@ describe('ContentTypeStep', () => {
         expect(radio).toHaveClass('focus-visible:ring-2');
         expect(radio).toHaveClass('focus-visible:ring-offset-2');
       });
+    });
+
+    it('has screen reader help text', () => {
+      render(<ContentTypeStep {...defaultProps} />);
+
+      expect(screen.getByText('Use arrow keys to navigate. Press Enter or Space to select.')).toBeInTheDocument();
     });
   });
 
@@ -372,23 +333,16 @@ describe('ContentTypeStep', () => {
 
   describe('Edge Cases', () => {
     it('applies custom className', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} className="custom-test-class" />);
+      render(<ContentTypeStep {...defaultProps} className="custom-test-class" />);
 
       const container = screen
-        .getByRole('heading', { name: /what type of content will you upload/i })
+        .getByRole('heading', { name: /what content would you like to add/i })
         .closest('div[class*="flex-col"]');
       expect(container).toHaveClass('custom-test-class');
     });
 
-    it('renders with pre-selected content type if provided', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} currentContentType="photo" />);
-
-      const photoButton = screen.getByText('Upload Photo').closest('button');
-      expect(photoButton).toHaveAttribute('aria-checked', 'true');
-    });
-
     it('displays grid layout for cards', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const radiogroup = screen.getByRole('radiogroup');
       expect(radiogroup).toHaveClass('grid');
@@ -397,7 +351,7 @@ describe('ContentTypeStep', () => {
     });
 
     it('each card has proper touch optimization classes', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const radios = screen.getAllByRole('radio');
       radios.forEach((radio) => {
@@ -407,7 +361,7 @@ describe('ContentTypeStep', () => {
     });
 
     it('each card has transition classes', () => {
-      render(<ContentTypeStep {...defaultPropsExisting} />);
+      render(<ContentTypeStep {...defaultProps} />);
 
       const radios = screen.getAllByRole('radio');
       radios.forEach((radio) => {
@@ -416,20 +370,26 @@ describe('ContentTypeStep', () => {
       });
     });
 
-    it('renders different options based on content source', () => {
-      const { rerender } = render(<ContentTypeStep {...defaultPropsExisting} />);
-      expect(screen.getAllByRole('radio')).toHaveLength(5);
+    it('matches UNIFIED_CONTENT_OPTIONS from constants', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
-      rerender(<ContentTypeStep {...defaultPropsCreateNew} />);
-      expect(screen.getAllByRole('radio')).toHaveLength(3);
+      // Verify all options from constants are rendered
+      UNIFIED_CONTENT_OPTIONS.forEach((option) => {
+        expect(screen.getByText(option.label)).toBeInTheDocument();
+      });
     });
 
-    it('updates header text when content source changes', () => {
-      const { rerender } = render(<ContentTypeStep {...defaultPropsExisting} />);
-      expect(screen.getByRole('heading')).toHaveTextContent('What type of content will you upload?');
+    it('options are in correct order matching constants', () => {
+      render(<ContentTypeStep {...defaultProps} />);
 
-      rerender(<ContentTypeStep {...defaultPropsCreateNew} />);
-      expect(screen.getByRole('heading')).toHaveTextContent('What type of content will you create?');
+      const radios = screen.getAllByRole('radio');
+      const labels = radios.map((radio) => {
+        const labelEl = radio.querySelector('.text-base, .sm\\:text-lg');
+        return labelEl?.textContent;
+      });
+
+      const expectedOrder = UNIFIED_CONTENT_OPTIONS.map((opt) => opt.label);
+      expect(labels).toEqual(expectedOrder);
     });
   });
 });

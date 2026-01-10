@@ -25,7 +25,7 @@
  *
  * @module ItemCreationWorkflow/utils/constants
  * @see SUGGESTION_MATRIX for item suggestions per room
- * @lastModified 2026-01-10 (REQ-154 Purpose Selection Step - Plan-094)
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
  */
 
 // =============================================================================
@@ -161,6 +161,81 @@ export const CONTENT_SOURCE_OPTIONS = {
     text: 'Write Text',
   },
 } as const;
+
+// =============================================================================
+// Unified Content Options (REQ-162)
+// =============================================================================
+
+/**
+ * Interface for unified content options displayed in ContentTypeStep.
+ * Consolidates both existing and create-new content types into single grid.
+ *
+ * @see REQ-162 for consolidation requirements
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ */
+export interface UnifiedContentOption {
+  /** Unique identifier for the option */
+  id: string;
+  /** Display label for the option */
+  label: string;
+  /** Optional subtitle text (e.g., supported formats) */
+  subtitle?: string;
+  /** Icon component name from Lucide React */
+  icon: string;
+  /** Content type this option creates */
+  contentType: ContentTypeConst | 'file-upload';
+  /** Content source classification */
+  contentSource: 'existing' | 'create-new';
+}
+
+/**
+ * Unified content options for single-grid selection.
+ * All five options are displayed together, eliminating the need
+ * for separate ContentSourceStep.
+ *
+ * Order determines display order in UI grid.
+ *
+ * @see REQ-162 for consolidation requirements
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
+ */
+export const UNIFIED_CONTENT_OPTIONS: UnifiedContentOption[] = [
+  {
+    id: 'record-video',
+    label: 'Record Video',
+    icon: 'Video',
+    contentType: 'video',
+    contentSource: 'create-new',
+  },
+  {
+    id: 'take-photo',
+    label: 'Take Photo',
+    icon: 'Camera',
+    contentType: 'photo',
+    contentSource: 'create-new',
+  },
+  {
+    id: 'write-text',
+    label: 'Write Text',
+    icon: 'PenLine',
+    contentType: 'text',
+    contentSource: 'create-new',
+  },
+  {
+    id: 'upload-file',
+    label: 'Upload File',
+    subtitle: 'Video, Image, PDF, Text',
+    icon: 'Upload',
+    contentType: 'file-upload',
+    contentSource: 'existing',
+  },
+  {
+    id: 'add-link',
+    label: 'Add Link',
+    icon: 'Link',
+    contentType: 'url',
+    contentSource: 'existing',
+  },
+];
 
 // =============================================================================
 // Purpose Type Configuration

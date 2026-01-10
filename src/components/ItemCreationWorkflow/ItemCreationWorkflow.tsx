@@ -12,7 +12,7 @@
  * @see docs/REQ-112-pdf-generation-integration-overview.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-10 (REQ-160 Remove ContentSourceStep)
+ * @lastModified 2026-01-10 (REQ-162 Consolidate Content Options)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -21,7 +21,7 @@ import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkfl
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
 import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
-import type { SessionItem, CurrentItemState } from './ItemCreationWorkflow.types';
+import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
@@ -112,6 +112,7 @@ export function ItemCreationWorkflow({
     selectSpecificItem,
     setItemName,
     selectPurpose,
+    selectContentSource,
     selectContentType,
     addContentPiece,
     removeContentPiece,
@@ -262,6 +263,18 @@ export function ItemCreationWorkflow({
 
     addMoreToItem(restoredItem);
   }, [state.session.items, addMoreToItem]);
+
+  // REQ-162: Handle unified content selection
+  const handleUnifiedContentSelect = useCallback((
+    contentType: ContentType | 'file-upload',
+    contentSource: 'existing' | 'create-new'
+  ) => {
+    selectContentSource(contentSource);
+    if (contentType !== 'file-upload') {
+      selectContentType(contentType as ContentType);
+    }
+    // For 'file-upload', contentType will be determined by FileUploadStep
+  }, [selectContentSource, selectContentType]);
 
   // Handle save item
   const handleSaveItem = useCallback(async () => {
@@ -488,9 +501,8 @@ export function ItemCreationWorkflow({
       case 'content-type-selection':
         return (
           <ContentTypeStep
-            currentContentSource={state.currentItem?.contentSource ?? 'existing'}
-            currentContentType={state.currentItem?.contentType ?? null}
-            onSelectContentType={selectContentType}
+            currentSelection={state.currentItem?.contentType ?? null}
+            onSelectContent={handleUnifiedContentSelect}
             onNext={nextStep}
             canNext={canGoNext}
           />
@@ -548,7 +560,7 @@ export function ItemCreationWorkflow({
       default:
         return <StepPlaceholder step={state.currentStep} {...commonProps} />;
     }
-  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, selectContentType, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
+  }, [state.currentStep, state.currentItem, state.session.items, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, handleUnifiedContentSelect, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, handleAddMore, startNewItem, completeSession, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
