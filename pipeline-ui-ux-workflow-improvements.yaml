@@ -472,8 +472,10 @@ request_stages:
 
         **Phase 4: Test Harness Generation**
         - Update test harness page at /src/app/test/item-creation-workflow/page.tsx
+          → Access at: http://localhost:3000/test/item-creation-workflow
         - Add UI/UX improvement test scenarios
         - Update test index at /src/app/test/page.tsx with new use cases
+          → Access at: http://localhost:3000/test
 
         **Phase 5: Build & Deploy**
         - Run npm run build to verify no compilation errors
@@ -537,6 +539,7 @@ request_stages:
 
         **Phase 4: Test Page Update**
         - Update the pipeline test harness at /src/app/test/item-creation-workflow/page.tsx
+          → Access at: http://localhost:3000/test/item-creation-workflow
         - Add "UI/UX Improvements Use Cases" section with interactive test guides
         - Each use case as a clickable card with step-by-step instructions
 

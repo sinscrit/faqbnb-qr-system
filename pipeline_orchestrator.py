@@ -1966,10 +1966,37 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
         stage_id = stage['id']
         agent_name = stage.get('agent', {}).get('name', stage_id)
 
-        # Check if already completed
-        if state.get(f'{stage_id}_completed') and not dry_run:
-            print(f"\nPipeline stage '{stage_id}' already completed, skipping")
-            continue
+        # Stages that should always regenerate (not skip if completed)
+        always_regenerate = ['testcheck', 'usecases']
+
+        # Check if already completed (skip check for always_regenerate stages)
+        if stage_id not in always_regenerate:
+            if state.get(f'{stage_id}_completed') and not dry_run:
+                print(f"\nPipeline stage '{stage_id}' already completed, skipping")
+                continue
+        else:
+            # For testcheck/usecases, clear completed flag to regenerate
+            if state.get(f'{stage_id}_completed'):
+                print(f"\nPipeline stage '{stage_id}' will regenerate (always runs fresh)")
+                state[f'{stage_id}_completed'] = False
+
+        # Prerequisite check: testcheck requires at least one implementation completed
+        if stage_id == 'testcheck':
+            tasks = state.get('tasks', [])
+            implementations_completed = sum(
+                1 for t in tasks if t.get('implementation_completed', False)
+            )
+            if implementations_completed == 0:
+                print(f"\n{'='*60}")
+                print(f"Pipeline Stage: {stage.get('name', stage_id)}")
+                print(f"{'='*60}")
+                print(f"\n  ✗ Skipping: No implementations completed yet")
+                print(f"    testcheck requires at least one task to have implementation_completed=True")
+                print(f"    Run implementation stage first, then testcheck")
+                logging.warning(f"Skipping testcheck: no implementations completed")
+                continue
+            else:
+                print(f"\n  Found {implementations_completed} completed implementation(s)")
 
         print(f"\n{'='*60}")
         print(f"Pipeline Stage: {stage.get('name', stage_id)} ({agent_name})")
@@ -2074,33 +2101,33 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
 
 
 def display_test_harness_urls(state: dict, config: dict):
-    """Display test harness URLs after testcheck stage completion."""
-    import glob
+    """Display test harness URLs after testcheck stage completion.
+
+    Shows only the current pipeline's test URL, not all test pages.
+    """
     import os
 
     verification = state.get('verification', {})
     test_page_url = verification.get('summary', {}).get('test_page_url', '')
     deployed_url = verification.get('deployed_url', '')
 
+    # Get current pipeline name to show only its test URL
+    pipeline_name = get_pipeline_name_from_config(config, state)
+
     print(f"\n  Test Harness URLs:")
 
-    # Local URL
+    # Local URL - show only current pipeline's test URL
     if test_page_url:
         print(f"    Local:    http://localhost:3000{test_page_url}")
+    elif pipeline_name:
+        # Check if this pipeline's test harness exists
+        pipeline_test_file = f'src/app/test/{pipeline_name}/page.tsx'
+        if os.path.exists(pipeline_test_file):
+            print(f"    Local:    http://localhost:3000/test/{pipeline_name}")
+        else:
+            print(f"    Local:    Test harness not yet generated for this pipeline")
     else:
-        # Check for master test index page first
-        master_index = 'src/app/test/page.tsx'
-        if os.path.exists(master_index):
-            print(f"    Index:    http://localhost:3000/test")
-
-        # Then find individual test harness files
-        test_files = sorted(glob.glob('src/app/test/*/page.tsx'))
-        if test_files:
-            for f in test_files:
-                route = f.replace('src/app', '').replace('/page.tsx', '')
-                print(f"    Local:    http://localhost:3000{route}")
-        elif not os.path.exists(master_index):
-            print(f"    Local:    No test harness pages found")
+        print(f"    Local:    Could not determine pipeline name")
 
     # Deployed URL
     if deployed_url:
@@ -3008,7 +3035,12 @@ export default function {pipeline_name.replace('-', '_').title().replace('_', ''
     with open(test_file, 'w') as f:
         f.write(page_content)
 
+    # Convert file path to localhost URL
+    route = test_file.replace('src/app', '').replace('/page.tsx', '')
+    localhost_url = f"http://localhost:3000{route}"
+
     print(f"    Generated pipeline test harness: {test_file}")
+    print(f"    Test URL: {localhost_url}")
     return test_file
 
 

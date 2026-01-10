@@ -117,6 +117,8 @@ export type PurposeType =
 /**
  * Workflow step identifiers for navigation state machine.
  * Updated for Plan-094: removed content-source-selection, added purpose-selection
+ * Updated for REQ-176: added media-capture step between content-type-selection and content-creation
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 export type WorkflowStep =
   | 'room-selection'
@@ -124,6 +126,7 @@ export type WorkflowStep =
   | 'specific-item-selection'
   | 'purpose-selection'           // NEW - replaces content-source-selection
   | 'content-type-selection'
+  | 'media-capture'                // NEW - REQ-176: Direct media capture routing
   | 'content-creation'
   | 'preview-save'
   | 'next-action'

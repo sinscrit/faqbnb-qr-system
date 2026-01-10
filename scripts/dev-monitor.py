@@ -385,6 +385,25 @@ class AutoFixer:
         self.project_dir = os.path.abspath(config.working_directory)
         self.actions_taken: List[Dict[str, Any]] = []
 
+        # Self-identify: store our PID and all ancestor PIDs to avoid killing ourselves
+        self.protected_pids = self._get_self_and_ancestors()
+        logging.debug(f"Protected PIDs (self + ancestors): {self.protected_pids}")
+
+    def _get_self_and_ancestors(self) -> set:
+        """Get our own PID and all ancestor PIDs."""
+        protected = {os.getpid()}
+
+        if HAS_PSUTIL:
+            try:
+                proc = psutil.Process()
+                while proc.parent() and proc.parent().pid != 1:
+                    protected.add(proc.parent().pid)
+                    proc = proc.parent()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
+
+        return protected
+
     def fix(self, issue: Issue) -> bool:
         """
         Attempt to fix an issue.
@@ -423,6 +442,10 @@ class AutoFixer:
 
         pids = issue.details.get('pids', [])
         for pid in pids:
+            # Don't kill ourselves or our ancestors
+            if pid in self.protected_pids:
+                logging.info(f"Process {pid} on port 3000 is protected (our process tree), skipping")
+                continue
             try:
                 subprocess.run(['kill', str(pid)], timeout=5)
                 logging.info(f"Killed process {pid} using port 3000")
@@ -469,19 +492,41 @@ class AutoFixer:
         return True
 
     def _fix_zombie_processes(self, issue: Issue) -> bool:
-        """Kill zombie processes."""
+        """Handle zombie processes.
+
+        Note: Zombies can't actually be killed - they're already dead.
+        The only way to clean them up is to kill the parent or wait for parent to exit.
+        We log this as informational and let the restart handle it.
+        """
         pids = issue.details.get('pids', [])
-        for pid in pids:
-            try:
-                subprocess.run(['kill', '-9', str(pid)], timeout=5)
-                logging.info(f"Force killed zombie process {pid}")
-                self.actions_taken.append({
-                    'action': 'kill_zombie',
-                    'pid': pid,
-                    'time': datetime.now().isoformat()
-                })
-            except:
-                pass
+        if not pids:
+            return True
+
+        logging.info(f"Found {len(pids)} zombie process(es) - attempting to clean up")
+
+        # Try to kill parent processes, but protect ourselves
+        if HAS_PSUTIL:
+            for pid in pids:
+                try:
+                    proc = psutil.Process(pid)
+                    parent = proc.parent()
+                    if parent and parent.pid != 1:
+                        if parent.pid in self.protected_pids:
+                            logging.info(f"Zombie {pid} parent {parent.pid} is protected (our process tree), skipping")
+                            continue
+                        logging.info(f"Killing parent process {parent.pid} of zombie {pid}")
+                        parent.terminate()
+                        self.actions_taken.append({
+                            'action': 'kill_zombie_parent',
+                            'zombie_pid': pid,
+                            'parent_pid': parent.pid,
+                            'time': datetime.now().isoformat()
+                        })
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    pass
+                except Exception as e:
+                    logging.debug(f"Error handling zombie {pid}: {e}")
+
         return True
 
 
@@ -499,6 +544,7 @@ class AutoRestarter:
         self.restart_count = 0
         self.last_restart: Optional[datetime] = None
         self.increased_memory = False
+        self.restart_in_progress = False  # Prevent concurrent restarts
 
     def stop_server(self) -> bool:
         """Stop any running dev server."""
@@ -598,9 +644,18 @@ class AutoRestarter:
 
     def restart(self) -> bool:
         """Stop and start the server."""
-        self.stop_server()
-        time.sleep(2)
-        return self.start_server()
+        # Prevent concurrent restarts
+        if self.restart_in_progress:
+            logging.warning("Restart already in progress, skipping")
+            return False
+
+        self.restart_in_progress = True
+        try:
+            self.stop_server()
+            time.sleep(2)  # Wait for port to be released
+            return self.start_server()
+        finally:
+            self.restart_in_progress = False
 
     def get_server_logs(self, lines: int = 100) -> str:
         """Get recent server logs."""
@@ -803,9 +858,25 @@ Respond in JSON format:
             logging.info(f"Executing fix command: {cmd}")
             try:
                 # Safety check - don't run destructive commands
-                dangerous = ['rm -rf /', 'rm -rf ~', 'sudo', ':(){', 'mkfs', 'dd if=']
-                if any(d in cmd for d in dangerous):
+                # Allow .next deletion (safe) but block system-wide destruction
+                dangerous = ['rm -rf /', 'rm -rf ~', 'rm -rf /*', 'sudo rm', ':(){', 'mkfs', 'dd if=']
+                is_dangerous = False
+                for d in dangerous:
+                    if d in cmd:
+                        # Exception: allow rm -rf .next or rm -rf /path/to/project/.next
+                        if 'rm -rf' in cmd and '.next' in cmd and '/.next' not in d:
+                            continue  # This is safe
+                        is_dangerous = True
+                        break
+
+                if is_dangerous:
                     logging.warning(f"Skipping potentially dangerous command: {cmd}")
+                    continue
+
+                # Skip long-running server commands - these should be handled by restarter
+                server_commands = ['npm run dev', 'npm start', 'next dev', 'yarn dev']
+                if any(sc in cmd for sc in server_commands):
+                    logging.info(f"Skipping server command (handled by restarter): {cmd}")
                     continue
 
                 result = subprocess.run(
@@ -823,6 +894,9 @@ Respond in JSON format:
                 else:
                     logging.info(f"Command succeeded")
 
+            except subprocess.TimeoutExpired:
+                logging.warning(f"Command timed out (60s): {cmd}")
+                success = False
             except Exception as e:
                 logging.error(f"Error executing command: {e}")
                 success = False
@@ -893,6 +967,8 @@ class DevServerMonitor:
             if self.health_checker.consecutive_failures > 0:
                 # Just recovered
                 logging.info("Server recovered")
+            # Reset restart count on recovery
+            self.restarter.restart_count = 0
             return
 
         # Server is unhealthy
@@ -910,22 +986,33 @@ class DevServerMonitor:
                 logging.info(f"  - {issue.type}: {issue.description}")
 
         # Try auto-fixes first
+        fixes_applied = 0
         for issue in issues:
             if issue.auto_fixable:
                 if self.auto_fixer.fix(issue):
                     self.total_fixes += 1
+                    fixes_applied += 1
 
-        # Attempt restart
-        if self.restarter.restart_count < self.config.max_restart_attempts:
-            logging.info(f"Attempting restart ({self.restarter.restart_count + 1}/{self.config.max_restart_attempts})")
-            if self.restarter.restart():
-                self.total_restarts += 1
-                logging.info("Restart successful")
-                return
-            else:
-                logging.warning("Restart failed")
+        # Wait for fixes to take effect before restart
+        if fixes_applied > 0:
+            logging.info(f"Waiting 3s for {fixes_applied} fix(es) to take effect...")
+            time.sleep(3)
 
-        # If we've exhausted restarts, call Claude
+        # Reset restart count every 10 failures to keep trying
+        if failures > 0 and failures % 10 == 0:
+            logging.info(f"Resetting restart count after {failures} consecutive failures")
+            self.restarter.restart_count = 0
+
+        # Always attempt restart (the key fix!)
+        logging.info(f"Attempting restart ({self.restarter.restart_count + 1}/{self.config.max_restart_attempts})")
+        if self.restarter.restart():
+            self.total_restarts += 1
+            logging.info("Restart successful")
+            return
+        else:
+            logging.warning("Restart failed")
+
+        # If we've hit max restarts without success, call Claude for help
         if self.restarter.restart_count >= self.config.max_restart_attempts:
             logging.warning("Max restart attempts reached, calling Claude for diagnosis")
 
@@ -938,9 +1025,8 @@ class DevServerMonitor:
 
                 if diagnosis.get('can_auto_fix'):
                     if self.maintenance_agent.execute_fix(diagnosis):
-                        # Reset restart count and try again
-                        self.restarter.restart_count = 0
-                        self.restarter.restart()
+                        logging.info("Claude fix applied, will retry restart on next cycle")
+                        # Don't reset restart_count here - let the periodic reset handle it
                 else:
                     logging.error("Manual intervention required")
                     if diagnosis.get('requires_manual'):

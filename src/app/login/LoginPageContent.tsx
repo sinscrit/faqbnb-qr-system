@@ -49,7 +49,7 @@ export default function LoginPageContent() {
     // This prevents race conditions and ensures sequential state loading is complete
     if (authState === 'AUTHENTICATED' && user) {
       // Determine redirect path based on user role
-      const redirectPath = user.role === 'admin' || user.role === 'owner' ? '/admin' : '/dashboard';
+      const redirectPath = user.role === 'admin' || user.role === 'owner' ? '/admin' : '/dashboard2';
 
       console.log(`${DEBUG_PREFIX} TRIGGERING_SEQUENTIAL_REDIRECT`, {
         timestamp: new Date().toISOString(),

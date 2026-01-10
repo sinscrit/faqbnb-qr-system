@@ -9,17 +9,18 @@
  * - Sequential test navigation with Previous/Next buttons
  * - Component tests displayed inline via iframe (no page navigation)
  * - Use case tests with step-by-step instructions
+ * - UI/UX Improvement use cases for Plan-094 validation
  * - Pipeline reference for context (informational only)
  *
  * @generated 2026-01-05 22:04
- * @lastModified 2026-01-10 (Added UI/UX Improvements verification)
+ * @lastModified 2026-01-10T14:30:00Z (Added UI/UX Improvements Use Cases - 06b-usecase-generator)
  * @pipeline item-creation-workflow
  */
 
 import Link from 'next/link';
 import { useState } from 'react';
 
-type TabId = 'instructions' | 'components' | 'usecases' | 'reference';
+type TabId = 'instructions' | 'components' | 'usecases' | 'uiux-usecases' | 'reference';
 
 // LLM Testing Instructions - PRD Context
 const llmInstructions = {
@@ -373,6 +374,345 @@ const useCases: UseCase[] = [
   },
 ];
 
+/**
+ * UI/UX Improvements Use Cases (Plan-094)
+ * Generated: 2026-01-10T14:30:00Z by 06b-usecase-generator
+ *
+ * These use cases validate the UI/UX improvements from Plan-094:
+ * 1. New Purpose/Intent selection step
+ * 2. Removal of redundant ContentSourceStep
+ * 3. Content preview on review screen
+ * 4. Auto-generated article titles
+ * 5. Streamlined navigation
+ * 6. Cancel confirmation dialog
+ */
+const uiuxUseCases: UseCase[] = [
+  // === HAPPY PATH: Purpose Selection ===
+  {
+    id: 'UC-UIUX-HP-001',
+    title: 'Complete Flow with Purpose Selection',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'User creates an item using the new workflow with purpose/intent selection. The article title is auto-generated based on purpose and item name.',
+    expectedOutcome: 'Article created with title format "How to Clean - Fridge", content previews displayed on review screen',
+    steps: [
+      { step: 1, action: 'Select "Kitchen" room from the room grid', component: 'RoomSelectionStep', expectedResult: 'Kitchen room selected, proceeds to item type' },
+      { step: 2, action: 'Select "Appliance" item type', component: 'ItemTypeStep', expectedResult: 'Appliance type selected' },
+      { step: 3, action: 'Choose "Fridge" from suggestions', component: 'SpecificItemStep', expectedResult: 'Item name set to "Fridge"' },
+      { step: 4, action: 'Select "How to Clean" purpose', component: 'PurposeStep', expectedResult: 'Purpose selected, article title auto-generates as "How to Clean - Fridge"' },
+      { step: 5, action: 'Select "Record Video" content type (note: NO ContentSourceStep)', component: 'ContentTypeStep', expectedResult: 'All 5 content options displayed in single grid, camera activates' },
+      { step: 6, action: 'Record instructional video', component: 'VideoCaptureStep', expectedResult: 'Video captured, proceeds to preview' },
+      { step: 7, action: 'Review screen shows: article title, room, item type, purpose, and actual video preview', component: 'PreviewSaveStep', expectedResult: 'All fields pre-populated, video thumbnail visible, small "+ Add More" link (not large CTA)' },
+      { step: 8, action: 'Edit article title if desired (optional)', component: 'PreviewSaveStep', expectedResult: 'Title is editable inline' },
+      { step: 9, action: 'Save article', component: 'PreviewSaveStep', expectedResult: 'Article saved with item_article record in database' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-HP-002',
+    title: 'All Purpose Types Generate Correct Titles',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'Verify each purpose type generates the correct article title format',
+    expectedOutcome: 'Each purpose creates the expected title pattern: "[Purpose Label] - [Item Name]"',
+    steps: [
+      { step: 1, action: 'Create item with purpose "How to Use"', component: 'PurposeStep', expectedResult: 'Title generates as "How to Use - [Item]"' },
+      { step: 2, action: 'Create item with purpose "How to Clean"', component: 'PurposeStep', expectedResult: 'Title generates as "How to Clean - [Item]"' },
+      { step: 3, action: 'Create item with purpose "Troubleshooting"', component: 'PurposeStep', expectedResult: 'Title generates as "Troubleshooting - [Item]"' },
+      { step: 4, action: 'Create item with purpose "Safety Information"', component: 'PurposeStep', expectedResult: 'Title generates as "Safety Information - [Item]"' },
+      { step: 5, action: 'Create item with purpose "Maintenance"', component: 'PurposeStep', expectedResult: 'Title generates as "Maintenance - [Item]"' },
+      { step: 6, action: 'Create item with purpose "Features & Tips"', component: 'PurposeStep', expectedResult: 'Title generates as "Features & Tips - [Item]"' },
+      { step: 7, action: 'Create item with purpose "Other"', component: 'PurposeStep', expectedResult: 'Title generates as item name only (fallback)' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-HP-003',
+    title: 'Streamlined Content Type Selection',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'User sees all content options in single step (ContentSourceStep removed). Upload File shows supported formats.',
+    expectedOutcome: 'All 5 content options visible in one grid, Upload File shows "Video, Image, PDF, Text" subtitle',
+    steps: [
+      { step: 1, action: 'Navigate to content type selection (after purpose step)', component: 'ContentTypeStep', expectedResult: 'ContentSourceStep is SKIPPED - goes directly from PurposeStep to ContentTypeStep' },
+      { step: 2, action: 'Verify 5 content options visible: Record Video, Take Photo, Write Text, Upload File, Add Link', component: 'ContentTypeStep', expectedResult: 'All 5 options in single grid layout' },
+      { step: 3, action: 'Check "Upload File" option', component: 'ContentTypeStep', expectedResult: 'Shows subtitle "Video, Image, PDF, Text"' },
+      { step: 4, action: 'Select "Upload File"', component: 'ContentTypeStep', expectedResult: 'File picker opens with correct file type filters' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-HP-004',
+    title: 'Content Preview on Review Screen',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'Review screen shows actual content previews instead of empty placeholders',
+    expectedOutcome: 'Each content type displays appropriate preview with thumbnail/icon',
+    steps: [
+      { step: 1, action: 'Create item with video content', component: 'VideoCaptureStep', expectedResult: 'Video captured' },
+      { step: 2, action: 'View preview step', component: 'PreviewSaveStep', expectedResult: 'Video thumbnail visible with duration badge' },
+      { step: 3, action: 'Create item with photo content', component: 'PhotoCaptureStep', expectedResult: 'Photo captured' },
+      { step: 4, action: 'View preview step', component: 'PreviewSaveStep', expectedResult: 'Photo thumbnail visible' },
+      { step: 5, action: 'Create item with PDF content', component: 'FileUploadStep', expectedResult: 'PDF uploaded' },
+      { step: 6, action: 'View preview step', component: 'PreviewSaveStep', expectedResult: 'PDF icon with page count badge' },
+      { step: 7, action: 'Create item with text content', component: 'TextEditorStep', expectedResult: 'Text entered' },
+      { step: 8, action: 'View preview step', component: 'PreviewSaveStep', expectedResult: 'Truncated text preview with icon' },
+      { step: 9, action: 'Create item with URL content', component: 'UrlInputStep', expectedResult: 'URL entered' },
+      { step: 10, action: 'View preview step', component: 'PreviewSaveStep', expectedResult: 'URL preview with favicon, title, and domain' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-HP-005',
+    title: 'Pre-populated Review Fields',
+    category: 'happy-path',
+    priority: 'P1',
+    description: 'Review screen displays all selections made during workflow',
+    expectedOutcome: 'Room, Item Type, Purpose, and auto-generated Title all visible and correct',
+    steps: [
+      { step: 1, action: 'Complete workflow: Kitchen -> Appliance -> Oven -> How to Use -> Record Video', component: 'Multiple Steps', expectedResult: 'All selections captured' },
+      { step: 2, action: 'Arrive at preview step', component: 'PreviewSaveStep', expectedResult: 'All fields displayed' },
+      { step: 3, action: 'Verify Title shows "How to Use - Oven"', component: 'PreviewSaveStep', expectedResult: 'Auto-generated title displayed' },
+      { step: 4, action: 'Verify Room shows "Kitchen"', component: 'PreviewSaveStep', expectedResult: 'Room displayed as read-only' },
+      { step: 5, action: 'Verify Item Type shows "Appliance"', component: 'PreviewSaveStep', expectedResult: 'Item type displayed as read-only' },
+      { step: 6, action: 'Verify Purpose shows "How to Use"', component: 'PreviewSaveStep', expectedResult: 'Purpose displayed as read-only' },
+    ],
+  },
+
+  // === HAPPY PATH: Navigation Improvements ===
+  {
+    id: 'UC-UIUX-HP-006',
+    title: 'Clean Navigation Without Duplicate Bars',
+    category: 'happy-path',
+    priority: 'P1',
+    description: 'Content input screens have single navigation pattern, no duplicate bottom bars',
+    expectedOutcome: 'Each content screen shows only inline Back/Continue buttons, no bottom navigation bar',
+    steps: [
+      { step: 1, action: 'Navigate to TextEditorStep', component: 'TextEditorStep', expectedResult: 'NO bottom navigation bar visible' },
+      { step: 2, action: 'Navigate to FileUploadStep', component: 'FileUploadStep', expectedResult: 'NO bottom navigation bar visible' },
+      { step: 3, action: 'Navigate to VideoCaptureStep', component: 'VideoCaptureStep', expectedResult: 'NO bottom navigation bar visible' },
+      { step: 4, action: 'Navigate to PhotoCaptureStep', component: 'PhotoCaptureStep', expectedResult: 'NO bottom navigation bar visible' },
+      { step: 5, action: 'Navigate to UrlInputStep', component: 'UrlInputStep', expectedResult: 'NO bottom navigation bar visible' },
+      { step: 6, action: 'Verify Back button visible before content added', component: 'All Content Steps', expectedResult: 'Only Back button shown' },
+      { step: 7, action: 'Add content, verify Continue button appears', component: 'All Content Steps', expectedResult: 'Back + Continue buttons shown after content' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-HP-007',
+    title: 'NextActionStep Has Exactly 3 Options',
+    category: 'happy-path',
+    priority: 'P1',
+    description: 'NextActionStep shows only 3 action cards, no bottom navigation',
+    expectedOutcome: 'Exactly 3 cards visible: Review & Submit, Add More Content, Cancel',
+    steps: [
+      { step: 1, action: 'Create content and proceed to NextActionStep', component: 'NextActionStep', expectedResult: 'NextActionStep displayed' },
+      { step: 2, action: 'Count visible action cards', component: 'NextActionStep', expectedResult: 'Exactly 3 cards visible' },
+      { step: 3, action: 'Verify "Review & Submit" card present', component: 'NextActionStep', expectedResult: 'Card 1 present' },
+      { step: 4, action: 'Verify "Add More Content" card present', component: 'NextActionStep', expectedResult: 'Card 2 present' },
+      { step: 5, action: 'Verify "Cancel" card present', component: 'NextActionStep', expectedResult: 'Card 3 present' },
+      { step: 6, action: 'Verify NO bottom navigation bar', component: 'NextActionStep', expectedResult: 'No bottom nav bar visible' },
+    ],
+  },
+
+  // === ERROR HANDLING ===
+  {
+    id: 'UC-UIUX-ERR-001',
+    title: 'Cancel Confirmation When Content Added',
+    category: 'error-handling',
+    priority: 'P0',
+    description: 'User sees confirmation dialog when clicking Cancel after adding any content (upload, text, recording)',
+    expectedOutcome: 'Confirmation dialog displayed warning about losing work, with Continue Editing and Exit Anyway options',
+    steps: [
+      { step: 1, action: 'Start workflow and add any content (text, photo, video, etc.)', component: 'Content Steps', expectedResult: 'Content captured in session' },
+      { step: 2, action: 'Click "Cancel" at NextActionStep', component: 'NextActionStep', expectedResult: 'Confirmation dialog appears' },
+      { step: 3, action: 'Verify dialog warns about losing work', component: 'ConfirmCancelDialog', expectedResult: 'Warning message displayed' },
+      { step: 4, action: 'Click "Continue Editing"', component: 'ConfirmCancelDialog', expectedResult: 'Dialog closes, user stays in workflow' },
+      { step: 5, action: 'Click Cancel again, then "Exit Anyway"', component: 'ConfirmCancelDialog', expectedResult: 'Session cancelled, work discarded' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-ERR-002',
+    title: 'Cancel Without Content - No Confirmation',
+    category: 'error-handling',
+    priority: 'P2',
+    description: 'Cancel without having added any content should NOT show confirmation',
+    expectedOutcome: 'No confirmation dialog when no content has been added',
+    steps: [
+      { step: 1, action: 'Start workflow, select room, item type, specific item, purpose', component: 'Multiple Steps', expectedResult: 'Selections made but no content' },
+      { step: 2, action: 'Navigate to ContentTypeStep', component: 'ContentTypeStep', expectedResult: 'At content type selection' },
+      { step: 3, action: 'Click Back multiple times to exit or use Cancel if available', component: 'Navigation', expectedResult: 'No confirmation dialog shown (no content to lose)' },
+    ],
+  },
+
+  // === EDGE CASES ===
+  {
+    id: 'UC-UIUX-EDGE-001',
+    title: 'Purpose Step Keyboard Navigation',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'PurposeStep supports full keyboard navigation (arrow keys, Enter to select)',
+    expectedOutcome: 'User can navigate and select purpose using keyboard only',
+    steps: [
+      { step: 1, action: 'Navigate to PurposeStep', component: 'PurposeStep', expectedResult: 'Purpose options displayed in grid' },
+      { step: 2, action: 'Press Tab to focus purpose grid', component: 'PurposeStep', expectedResult: 'First option receives focus' },
+      { step: 3, action: 'Press Arrow Right/Down to move between options', component: 'PurposeStep', expectedResult: 'Focus moves between purpose cards' },
+      { step: 4, action: 'Press Enter or Space to select', component: 'PurposeStep', expectedResult: 'Purpose selected, auto-advances to next step' },
+      { step: 5, action: 'Verify aria labels on all options', component: 'PurposeStep', expectedResult: 'Screen reader announces option names and descriptions' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-EDGE-002',
+    title: 'Purpose Step Auto-Advance',
+    category: 'edge-case',
+    priority: 'P2',
+    description: 'Selecting a purpose auto-advances to next step with visual feedback delay',
+    expectedOutcome: 'Brief visual feedback on selection, then auto-advance to ContentTypeStep',
+    steps: [
+      { step: 1, action: 'Navigate to PurposeStep', component: 'PurposeStep', expectedResult: 'Purpose options displayed' },
+      { step: 2, action: 'Click a purpose option', component: 'PurposeStep', expectedResult: 'Option shows selected state (highlight/checkmark)' },
+      { step: 3, action: 'Wait ~300ms', component: 'PurposeStep', expectedResult: 'Visual feedback visible briefly' },
+      { step: 4, action: 'Observe auto-advance', component: 'PurposeStep', expectedResult: 'Automatically navigates to ContentTypeStep' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-EDGE-003',
+    title: 'Multi-Content Preview with Reorder',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'Multiple content pieces can be reordered via drag-and-drop on preview screen',
+    expectedOutcome: 'User can drag content pieces to reorder, order persists on save',
+    steps: [
+      { step: 1, action: 'Add first content piece (video)', component: 'VideoCaptureStep', expectedResult: 'Video captured' },
+      { step: 2, action: 'Select "Add More Content" at NextActionStep', component: 'NextActionStep', expectedResult: 'Returns to ContentTypeStep' },
+      { step: 3, action: 'Add second content piece (PDF)', component: 'FileUploadStep', expectedResult: 'PDF uploaded' },
+      { step: 4, action: 'View preview step with both pieces', component: 'PreviewSaveStep', expectedResult: 'Both content pieces visible in grid' },
+      { step: 5, action: 'Drag video below PDF using drag handles', component: 'ContentPieceCard', expectedResult: 'Order updated: PDF first, video second' },
+      { step: 6, action: 'Save article', component: 'PreviewSaveStep', expectedResult: 'Order preserved in saved article' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-EDGE-004',
+    title: 'Title Editing on Preview Screen',
+    category: 'edge-case',
+    priority: 'P2',
+    description: 'Auto-generated title can be edited before saving',
+    expectedOutcome: 'User can modify auto-generated title, edited title is saved',
+    steps: [
+      { step: 1, action: 'Complete workflow to preview step', component: 'PreviewSaveStep', expectedResult: 'Auto-generated title displayed: e.g., "How to Clean - Fridge"' },
+      { step: 2, action: 'Click edit icon/button on title field', component: 'PreviewSaveStep', expectedResult: 'Title becomes editable (inline or modal)' },
+      { step: 3, action: 'Change title to "Cleaning Your Fridge - Quick Guide"', component: 'PreviewSaveStep', expectedResult: 'New title accepted' },
+      { step: 4, action: 'Save article', component: 'PreviewSaveStep', expectedResult: 'Custom title saved instead of auto-generated' },
+    ],
+  },
+
+  // === INTEGRATION ===
+  {
+    id: 'UC-UIUX-INT-001',
+    title: 'Database Article Model Integration',
+    category: 'integration',
+    priority: 'P0',
+    description: 'Saved articles create item_article records with proper purpose, title, and linked content',
+    expectedOutcome: 'Database contains: item_article record with purpose, title; item_links with article_id FK',
+    steps: [
+      { step: 1, action: 'Complete full workflow with purpose "How to Clean"', component: 'Multiple Steps', expectedResult: 'Article ready to save' },
+      { step: 2, action: 'Save article', component: 'PreviewSaveStep', expectedResult: 'Save succeeds' },
+      { step: 3, action: 'Query item_articles table', component: 'Database', expectedResult: 'Record exists with purpose="how_to_clean", title="How to Clean - [Item]"' },
+      { step: 4, action: 'Query item_links for the article', component: 'Database', expectedResult: 'item_links records have article_id pointing to new article' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-INT-002',
+    title: 'Multiple Articles per Item',
+    category: 'integration',
+    priority: 'P1',
+    description: 'Same physical item can have multiple articles with different purposes',
+    expectedOutcome: 'Item "Fridge" has articles: "How to Clean - Fridge" AND "Troubleshooting - Fridge"',
+    steps: [
+      { step: 1, action: 'Create first article: Kitchen -> Appliance -> Fridge -> How to Clean -> Video', component: 'Multiple Steps', expectedResult: 'First article saved' },
+      { step: 2, action: 'Start new article for same item', component: 'ItemCreationWorkflow', expectedResult: 'New workflow session' },
+      { step: 3, action: 'Select same item: Kitchen -> Appliance -> Fridge', component: 'Multiple Steps', expectedResult: 'Same item selected' },
+      { step: 4, action: 'Select different purpose: "Troubleshooting"', component: 'PurposeStep', expectedResult: 'Different purpose selected' },
+      { step: 5, action: 'Add content and save', component: 'Multiple Steps', expectedResult: 'Second article saved' },
+      { step: 6, action: 'Verify item has two articles in database', component: 'Database', expectedResult: 'Two item_article records linked to same item_id' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-INT-003',
+    title: 'Updated API Response with Articles',
+    category: 'integration',
+    priority: 'P1',
+    description: 'GET /api/admin/items returns articles with nested links structure',
+    expectedOutcome: 'API response includes articles array with nested links for each article',
+    steps: [
+      { step: 1, action: 'Create item with article', component: 'ItemCreationWorkflow', expectedResult: 'Item saved with article' },
+      { step: 2, action: 'Call GET /api/admin/items endpoint', component: 'API', expectedResult: 'Response received' },
+      { step: 3, action: 'Verify item has "articles" array', component: 'API Response', expectedResult: 'articles: [] property exists' },
+      { step: 4, action: 'Verify article has purpose, title, links', component: 'API Response', expectedResult: 'Article structure matches ItemArticle interface' },
+    ],
+  },
+
+  // === ACCESSIBILITY ===
+  {
+    id: 'UC-UIUX-A11Y-001',
+    title: 'Full Keyboard Navigation Through New Flow',
+    category: 'edge-case',
+    priority: 'P0',
+    description: 'Entire workflow can be completed using keyboard only',
+    expectedOutcome: 'All steps navigable and interactive via keyboard',
+    steps: [
+      { step: 1, action: 'Tab to room selection, use arrow keys, press Enter', component: 'RoomSelectionStep', expectedResult: 'Room selected via keyboard' },
+      { step: 2, action: 'Tab to item type, use arrow keys, press Enter', component: 'ItemTypeStep', expectedResult: 'Item type selected via keyboard' },
+      { step: 3, action: 'Tab to item suggestions or custom input, press Enter', component: 'SpecificItemStep', expectedResult: 'Item selected via keyboard' },
+      { step: 4, action: 'Tab to purpose options, use arrow keys, press Enter', component: 'PurposeStep', expectedResult: 'Purpose selected via keyboard' },
+      { step: 5, action: 'Tab to content type, press Enter', component: 'ContentTypeStep', expectedResult: 'Content type selected via keyboard' },
+      { step: 6, action: 'Complete content creation via keyboard where possible', component: 'Content Steps', expectedResult: 'Content captured' },
+      { step: 7, action: 'Tab to Save button, press Enter', component: 'PreviewSaveStep', expectedResult: 'Article saved via keyboard' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-A11Y-002',
+    title: 'Screen Reader Announcements',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'Screen reader announces step changes, selections, and auto-generated title',
+    expectedOutcome: 'ARIA live regions announce important state changes',
+    steps: [
+      { step: 1, action: 'Enable screen reader (VoiceOver, NVDA, etc.)', component: 'System', expectedResult: 'Screen reader active' },
+      { step: 2, action: 'Navigate through workflow', component: 'Multiple Steps', expectedResult: 'Step titles announced on navigation' },
+      { step: 3, action: 'Select a purpose', component: 'PurposeStep', expectedResult: 'Selection announced' },
+      { step: 4, action: 'Arrive at preview step', component: 'PreviewSaveStep', expectedResult: 'Auto-generated title announced' },
+      { step: 5, action: 'Focus on content previews', component: 'PreviewSaveStep', expectedResult: 'Content type and description announced' },
+    ],
+  },
+
+  // === MOBILE RESPONSIVENESS ===
+  {
+    id: 'UC-UIUX-MOBILE-001',
+    title: 'Touch Targets Meet 48px Minimum',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'All interactive elements meet WCAG 48px minimum touch target on mobile',
+    expectedOutcome: 'All buttons, cards, and interactive elements are at least 48x48px on mobile viewport',
+    steps: [
+      { step: 1, action: 'Set viewport to 375px (iPhone SE size)', component: 'Browser DevTools', expectedResult: 'Mobile viewport active' },
+      { step: 2, action: 'Inspect purpose option cards', component: 'PurposeStep', expectedResult: 'Cards are at least 48px tall' },
+      { step: 3, action: 'Inspect content type buttons', component: 'ContentTypeStep', expectedResult: 'Buttons are at least 48px' },
+      { step: 4, action: 'Inspect Back/Continue buttons', component: 'Navigation', expectedResult: 'Buttons are at least 48px' },
+      { step: 5, action: 'Inspect content preview remove buttons', component: 'PreviewSaveStep', expectedResult: 'Remove buttons are at least 48px' },
+    ],
+  },
+  {
+    id: 'UC-UIUX-MOBILE-002',
+    title: 'Drag-to-Reorder Works on Touch',
+    category: 'edge-case',
+    priority: 'P2',
+    description: 'Content piece reordering works with touch gestures on mobile',
+    expectedOutcome: 'Touch drag works to reorder content pieces',
+    steps: [
+      { step: 1, action: 'Add multiple content pieces on mobile device', component: 'Multiple Steps', expectedResult: 'Multiple pieces visible on preview' },
+      { step: 2, action: 'Long-press on drag handle of first piece', component: 'ContentPieceCard', expectedResult: 'Piece enters drag mode' },
+      { step: 3, action: 'Drag to new position', component: 'ContentPieceCard', expectedResult: 'Visual feedback during drag' },
+      { step: 4, action: 'Release to drop', component: 'ContentPieceCard', expectedResult: 'Order updated' },
+    ],
+  },
+];
+
 const categoryColors: Record<string, string> = {
   'happy-path': 'bg-green-100 text-green-800',
   'error-handling': 'bg-red-100 text-red-800',
@@ -390,13 +730,15 @@ export default function ItemCreationWorkflowTestPage() {
   const [activeTab, setActiveTab] = useState<TabId>('instructions');
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
   const [selectedUseCaseIndex, setSelectedUseCaseIndex] = useState<number | null>(null);
+  const [selectedUIUXUseCaseIndex, setSelectedUIUXUseCaseIndex] = useState<number | null>(null);
   const [completedSteps, setCompletedSteps] = useState<Record<string, Set<number>>>({}); // Track completed steps per use case
 
   const tabs = [
-    { id: 'instructions' as TabId, label: '📖 LLM Instructions', count: null },
-    { id: 'components' as TabId, label: '🧪 Component Tests', count: componentTests.length },
-    { id: 'usecases' as TabId, label: '📝 Use Case Tests', count: useCases.length },
-    { id: 'reference' as TabId, label: '📋 Pipeline Reference', count: allTasks.length },
+    { id: 'instructions' as TabId, label: 'LLM Instructions', count: null },
+    { id: 'components' as TabId, label: 'Component Tests', count: componentTests.length },
+    { id: 'usecases' as TabId, label: 'Use Cases (Original)', count: useCases.length },
+    { id: 'uiux-usecases' as TabId, label: 'UI/UX Use Cases (Plan-094)', count: uiuxUseCases.length },
+    { id: 'reference' as TabId, label: 'Pipeline Reference', count: allTasks.length },
   ];
 
   // Toggle step completion for a use case
@@ -443,6 +785,7 @@ export default function ItemCreationWorkflowTestPage() {
                   setActiveTab(tab.id);
                   setSelectedComponentIndex(null);
                   setSelectedUseCaseIndex(null);
+                  setSelectedUIUXUseCaseIndex(null);
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === tab.id
@@ -802,6 +1145,175 @@ export default function ItemCreationWorkflowTestPage() {
                     </p>
                     {isUseCaseComplete(useCases[selectedUseCaseIndex]) && (
                       <p className="text-green-700 font-medium mt-2">✅ All steps completed!</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* UI/UX Improvements Use Cases Tab (Plan-094) */}
+        {activeTab === 'uiux-usecases' && (
+          <div>
+            {/* Header with summary */}
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <h2 className="text-lg font-bold text-orange-900 mb-2">UI/UX Workflow Improvements Use Cases (Plan-094)</h2>
+              <p className="text-sm text-orange-700 mb-3">
+                These use cases validate the UI/UX improvements from Plan-094: Purpose selection, streamlined content options,
+                content preview on review screen, auto-generated article titles, and cancel confirmation dialog.
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="bg-white px-3 py-1 rounded border border-orange-200">
+                  <span className="font-medium text-orange-800">Total:</span> {uiuxUseCases.length} use cases
+                </div>
+                <div className="bg-green-100 px-3 py-1 rounded border border-green-200">
+                  <span className="font-medium text-green-800">Happy Path:</span> {uiuxUseCases.filter(uc => uc.category === 'happy-path').length}
+                </div>
+                <div className="bg-red-100 px-3 py-1 rounded border border-red-200">
+                  <span className="font-medium text-red-800">Error Handling:</span> {uiuxUseCases.filter(uc => uc.category === 'error-handling').length}
+                </div>
+                <div className="bg-yellow-100 px-3 py-1 rounded border border-yellow-200">
+                  <span className="font-medium text-yellow-800">Edge Cases:</span> {uiuxUseCases.filter(uc => uc.category === 'edge-case').length}
+                </div>
+                <div className="bg-purple-100 px-3 py-1 rounded border border-purple-200">
+                  <span className="font-medium text-purple-800">Integration:</span> {uiuxUseCases.filter(uc => uc.category === 'integration').length}
+                </div>
+              </div>
+            </div>
+
+            {/* Use Case List */}
+            <div className="bg-white rounded-lg border border-gray-200 mb-4">
+              <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <h2 className="font-semibold text-gray-800">UI/UX Improvement Use Cases</h2>
+                <p className="text-xs text-gray-500 mt-1">Select a use case to see step-by-step instructions. Check off steps as you complete them.</p>
+              </div>
+              {uiuxUseCases.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {uiuxUseCases.map((uc, idx) => (
+                    <button
+                      key={uc.id}
+                      onClick={() => setSelectedUIUXUseCaseIndex(idx)}
+                      className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors flex items-center gap-3 ${
+                        selectedUIUXUseCaseIndex === idx ? 'bg-orange-100 border-l-4 border-orange-600' : ''
+                      }`}
+                    >
+                      <span className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        isUseCaseComplete(uc) ? 'bg-green-500 text-white' : 'bg-orange-500 text-white'
+                      }`}>
+                        {isUseCaseComplete(uc) ? '✓' : idx + 1}
+                      </span>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${priorityColors[uc.priority]}`}>
+                            {uc.priority}
+                          </span>
+                          <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${categoryColors[uc.category]}`}>
+                            {uc.category}
+                          </span>
+                          <span className="font-mono text-xs text-gray-400">{uc.id}</span>
+                        </div>
+                        <p className="font-medium text-gray-800 truncate">{uc.title}</p>
+                      </div>
+                      {selectedUIUXUseCaseIndex === idx && (
+                        <span className="text-orange-600">▶</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <p className="text-gray-500">No UI/UX use cases found.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Inline Use Case Display */}
+            {selectedUIUXUseCaseIndex !== null && uiuxUseCases[selectedUIUXUseCaseIndex] && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                {/* Navigation Header */}
+                <div className="px-4 py-3 border-b border-gray-200 bg-orange-50 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-orange-600 text-white px-2 py-1 rounded text-sm font-medium">
+                      Use Case {selectedUIUXUseCaseIndex + 1} of {uiuxUseCases.length}
+                    </span>
+                    <span className="font-mono text-xs text-gray-500">{uiuxUseCases[selectedUIUXUseCaseIndex].id}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSelectedUIUXUseCaseIndex(Math.max(0, selectedUIUXUseCaseIndex - 1))}
+                      disabled={selectedUIUXUseCaseIndex === 0}
+                      className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => setSelectedUIUXUseCaseIndex(Math.min(uiuxUseCases.length - 1, selectedUIUXUseCaseIndex + 1))}
+                      disabled={selectedUIUXUseCaseIndex === uiuxUseCases.length - 1}
+                      className="px-3 py-1 text-sm bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+
+                {/* Use Case Content */}
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{uiuxUseCases[selectedUIUXUseCaseIndex].title}</h3>
+                  <p className="text-gray-600 mb-4">{uiuxUseCases[selectedUIUXUseCaseIndex].description}</p>
+
+                  {/* Steps with Checkboxes */}
+                  <div className="mb-4">
+                    <h4 className="font-medium text-gray-700 mb-3">Steps to Execute:</h4>
+                    <ol className="space-y-3">
+                      {uiuxUseCases[selectedUIUXUseCaseIndex].steps.map((step) => {
+                        const isCompleted = (completedSteps[uiuxUseCases[selectedUIUXUseCaseIndex].id] || new Set()).has(step.step);
+                        return (
+                          <li
+                            key={step.step}
+                            className={`flex gap-3 p-3 rounded-lg border transition-colors ${
+                              isCompleted ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <button
+                              onClick={() => toggleStep(uiuxUseCases[selectedUIUXUseCaseIndex].id, step.step)}
+                              className={`flex-shrink-0 w-7 h-7 rounded border-2 flex items-center justify-center transition-colors ${
+                                isCompleted
+                                  ? 'bg-green-500 border-green-500 text-white'
+                                  : 'border-gray-300 hover:border-orange-500'
+                              }`}
+                            >
+                              {isCompleted ? '✓' : step.step}
+                            </button>
+                            <div className="flex-grow">
+                              <p className={`font-medium ${isCompleted ? 'text-green-800 line-through' : 'text-gray-800'}`}>
+                                {step.action}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                <span className="font-mono bg-orange-100 text-orange-800 px-1 rounded">{step.component}</span>
+                                <span className="mx-2">-&gt;</span>
+                                <span className={isCompleted ? 'text-green-600' : ''}>{step.expectedResult}</span>
+                              </p>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </div>
+
+                  {/* Expected Outcome */}
+                  <div className={`p-4 rounded-lg border ${
+                    isUseCaseComplete(uiuxUseCases[selectedUIUXUseCaseIndex])
+                      ? 'bg-green-100 border-green-300'
+                      : 'bg-orange-50 border-orange-200'
+                  }`}>
+                    <p className={`text-sm ${
+                      isUseCaseComplete(uiuxUseCases[selectedUIUXUseCaseIndex]) ? 'text-green-800' : 'text-orange-800'
+                    }`}>
+                      <span className="font-medium">Expected Outcome:</span> {uiuxUseCases[selectedUIUXUseCaseIndex].expectedOutcome}
+                    </p>
+                    {isUseCaseComplete(uiuxUseCases[selectedUIUXUseCaseIndex]) && (
+                      <p className="text-green-700 font-medium mt-2">All steps completed!</p>
                     )}
                   </div>
                 </div>

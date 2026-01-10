@@ -126,6 +126,7 @@ export async function middleware(req: NextRequest) {
     // if user is not signed in and trying to access protected routes, redirect to login
     const isProtectedRoute = req.nextUrl.pathname.startsWith('/admin') ||
                             req.nextUrl.pathname.startsWith('/user') ||
+                            req.nextUrl.pathname.startsWith('/dashboard2') ||
                             req.nextUrl.pathname.startsWith('/dashboard');
 
     if (!session?.user && isProtectedRoute) {
@@ -143,17 +144,17 @@ export async function middleware(req: NextRequest) {
     }
     
     // FIXED: Add specific check for authenticated users trying to access login page
-    // Redirect all users to unified dashboard (REQ-023 unified route architecture)
+    // Redirect all users to dashboard2 (current dashboard)
     if (session?.user && req.nextUrl.pathname === '/login') {
       console.log('🔄 MIDDLEWARE_REDIRECT_DEBUG: AUTHENTICATED_USER_ON_LOGIN', {
         timestamp: new Date().toISOString(),
         userId: session.user.id,
         userEmail: session.user.email,
-        redirectingTo: '/dashboard',
-        reason: 'User already authenticated, redirecting to unified dashboard (REQ-023)',
+        redirectingTo: '/dashboard2',
+        reason: 'User already authenticated, redirecting to dashboard2',
         routeType: 'unified'
       });
-      return NextResponse.redirect(new URL('/dashboard', req.url))
+      return NextResponse.redirect(new URL('/dashboard2', req.url))
     }
 
     console.log('[MIDDLEWARE-DEBUG] Allowing request to proceed');
@@ -173,6 +174,8 @@ export const config = {
     '/user',
     '/dashboard/:path*',
     '/dashboard',
+    '/dashboard2/:path*',
+    '/dashboard2',
     '/login',
     '/auth/oauth/callback',
     '/register'

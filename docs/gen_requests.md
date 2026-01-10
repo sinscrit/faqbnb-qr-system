@@ -7934,3 +7934,98 @@ Reduces maintenance costs by preventing misunderstandings about system behavior,
 - [ ] README files (if present) are updated to reflect current component architecture and workflow
 - [ ] No documentation references deprecated features or removed functionality
 - [ ] Code examples in documentation execute successfully against current implementation
+
+
+---
+
+## REQ-176: Add Missing Media Capture Step to Item Creation Workflow
+
+**Date**: 2026-01-10 12:05
+**Type**: BUG FIX
+**Size**: M
+**Depends On**: None
+**Blocks**: REQ-177
+
+### Summary
+The item creation workflow is missing the media capture step. After selecting a content type, the workflow should present the appropriate capture interface before showing Item Details.
+
+### Current Behavior
+After selecting a content type (Record Video, Take Photo, Write Text, Upload File, Add Link) at Step 5, the workflow immediately jumps to the "Item Details" form. The user never gets to actually capture or upload their media.
+
+### Expected Behavior
+After content type selection:
+1. **Record Video** → Opens camera interface with record/stop controls, preview, and confirm button
+2. **Take Photo** → Opens camera interface with capture button, preview, and confirm button
+3. **Upload File** → Opens file picker, shows preview of selected file, confirm button
+4. **Write Text** → Shows text editor with save/confirm action
+5. **Add Link** → Shows URL input field with validation and confirm button
+
+Only after the user captures/provides media AND confirms it should the workflow proceed to Item Details.
+
+### User Impact
+The workflow is fundamentally broken - users cannot actually add the content they intended. They select "Record Video" but never see a camera. This makes the entire item creation feature non-functional for media content.
+
+### Business Value
+This fix makes the item creation feature actually work as designed. Without this, users cannot create items with video, photo, or file content.
+
+### Acceptance Criteria
+- [ ] After content type selection, system displays the appropriate capture interface
+- [ ] Video recording option opens camera interface with record/stop controls and confirmation step
+- [ ] Photo capture option opens camera interface with capture button and confirmation step
+- [ ] File upload option opens file picker with preview and confirmation step
+- [ ] Text writing option shows text editor with save/confirm action
+- [ ] Link addition option shows URL input with validation and confirmation step
+- [ ] Item Details form only appears after media capture is confirmed
+- [ ] User can go back from capture step to change content type selection
+- [ ] Workflow can be tested end-to-end for all five content type paths
+
+### Technical Notes
+- Component: `/src/components/ItemCreationWorkflow/`
+- Route: `/dashboard2/create`
+- The workflow step progression logic needs to be updated to include the capture step
+
+---
+
+## REQ-177: Intelligent Pre-filling of Item Details Based on Workflow Choices
+
+**Date**: 2026-01-10 12:15
+**Type**: ENHANCEMENT
+**Size**: M
+**Depends On**: REQ-176
+
+### Summary
+When the Item Details form is displayed (after media capture), fields should be intelligently pre-filled based on choices the user made in earlier workflow steps, minimizing or eliminating the need for manual data entry.
+
+### Current Behavior
+When the Item Details form appears, all fields are blank. Users must manually type the item name, select the article purpose, and choose tags - even though the system already knows the item type, category, and purpose from earlier steps in the workflow.
+
+### Expected Behavior
+Item Details form fields are pre-populated:
+1. **Item Name** - Generated from item type + category (e.g., "Kitchen Appliance" or "Living Room Furniture")
+2. **Article Purpose** - Pre-selected based on the purpose chosen in earlier workflow step
+3. **Tags** - Automatically selected based on logical mapping:
+   - Item type → relevant type tag
+   - Category → relevant category tag
+   - Purpose → relevant purpose tag (e.g., "how-to", "safety", "maintenance")
+
+In simple/basic cases, the user should be able to just review the pre-filled values and confirm without typing anything.
+
+### User Impact
+Reduces friction and repetitive data entry. Users don't have to re-type information they already provided implicitly through their workflow choices. Faster item creation, fewer errors, better UX.
+
+### Business Value
+Demonstrates system intelligence. Reduces time-to-completion for item creation. Improves user satisfaction and completion rates.
+
+### Acceptance Criteria
+- [ ] Item Name field is pre-populated based on item type and category from earlier steps
+- [ ] Article Purpose field is pre-populated based on purpose selection from earlier steps
+- [ ] Tags are automatically selected based on logical mapping of item type, category, and purpose
+- [ ] Pre-filled values are clearly visible but editable by the user
+- [ ] User can clear or modify any pre-filled value before submission
+- [ ] Pre-filling logic handles edge cases (missing data gracefully defaults to empty)
+- [ ] Simple workflow path (e.g., Kitchen > Appliance > How-to-use > Photo) requires zero typing
+
+### Technical Notes
+- Requires mapping logic: workflow state → field defaults
+- Component: `/src/components/ItemCreationWorkflow/`
+- Depends on REQ-176 being complete (media capture step must exist first)

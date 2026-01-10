@@ -11,7 +11,7 @@
  * - Use case tests with step-by-step instructions
  * - Pipeline reference for context (informational only)
  *
- * @generated 2026-01-10 01:20
+ * @generated 2026-01-10 11:42
  * @pipeline ui-ux-workflow-improvements
  */
 
@@ -81,7 +81,7 @@ const allTasks = [
     { id: '1.2', request: 'REQ-155', title: 'Create Title Generator Utility', status: '✅', hasTest: '' },
     { id: '1.3', request: 'REQ-156', title: 'Update State Machine', status: '✅', hasTest: '' },
     { id: '2.1', request: 'REQ-157', title: 'Create PurposeStep Component', status: '✅', hasTest: '' },
-    { id: '2.2', request: 'REQ-158', title: 'Integrate PurposeStep into Workflow', status: '✅', hasTest: '' },
+    { id: '2.2', request: 'REQ-158', title: 'Integrate PurposeStep into Workflow', status: '⏳', hasTest: '' },
     { id: '2.3', request: 'REQ-159', title: 'Create Unit Tests', status: '✅', hasTest: '' },
     { id: '3.1', request: 'REQ-160', title: 'Remove ContentSourceStep', status: '✅', hasTest: '' },
     { id: '3.2', request: 'REQ-161', title: 'Update ContentTypeStep Labels', status: '✅', hasTest: '' },
@@ -102,7 +102,226 @@ const allTasks = [
 ];
 
 const useCases: UseCase[] = [
-  // No use cases generated yet
+  {
+    id: 'UC-HP-001',
+    title: 'Complete Item Creation with Purpose Selection',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'User creates a new item using the streamlined workflow with purpose selection, verifying the new 7-s',
+    expectedOutcome: 'Item saved with article grouping, auto-generated title, QR code generated',
+    steps: [
+      { step: 1, action: 'Select \'Kitchen\' room from the room grid', component: 'RoomSelectionStep', expectedResult: 'Kitchen room card shows selected state, navigation enabled' },
+      { step: 2, action: 'Select \'Appliance\' item type', component: 'ItemTypeStep', expectedResult: 'Appliance card selected, proceeds to specific item step' },
+      { step: 3, action: 'Choose \'Coffee Machine\' from suggestions', component: 'SpecificItemStep', expectedResult: 'Item name set, proceeds directly to purpose selection (no content source step)' },
+      { step: 4, action: 'Select \'How to Use\' purpose', component: 'PurposeStep', expectedResult: 'Purpose selected, auto-generated title shows as "How to Use - Coffee Machine"' },
+      { step: 5, action: 'Select \'Record Video\' from consolidated content options', component: 'ContentTypeStep', expectedResult: 'All 5 content options visible (Record Video, Take Photo, Write Text, Upload File, Add Link)' },
+      { step: 6, action: 'Record 10-second instructional video', component: 'ContentCreationStep', expectedResult: 'Video captured, proceeds to preview' },
+      { step: 7, action: 'Review preview with actual content visible', component: 'PreviewSaveStep', expectedResult: 'Content preview shows video thumbnail, item details pre-filled, title editable' },
+      { step: 8, action: 'Save item', component: 'PreviewSaveStep', expectedResult: 'Item saved successfully with article created' },
+    ],
+  },
+  {
+    id: 'UC-HP-002',
+    title: 'Verify Auto-Generated Article Title',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'Verify that article titles are auto-generated in the format "Purpose - Item" and can be edited',
+    expectedOutcome: 'Article title auto-generated correctly and editable by user',
+    steps: [
+      { step: 1, action: 'Complete room, type, and specific item selection', component: 'Multiple Steps', expectedResult: 'Navigates to PurposeStep' },
+      { step: 2, action: 'Select \'How to Clean\' purpose', component: 'PurposeStep', expectedResult: 'Purpose captured' },
+      { step: 3, action: 'Complete content creation', component: 'ContentCreationStep', expectedResult: 'Proceeds to preview' },
+      { step: 4, action: 'View auto-generated title in preview', component: 'PreviewSaveStep', expectedResult: 'Title shows "How to Clean - [Item Name]" format' },
+      { step: 5, action: 'Click edit button on title', component: 'PreviewSaveStep', expectedResult: 'Title becomes editable' },
+      { step: 6, action: 'Modify title and save', component: 'PreviewSaveStep', expectedResult: 'Custom title saved with item' },
+    ],
+  },
+  {
+    id: 'UC-HP-003',
+    title: 'Verify Content Preview on Review Screen',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'Verify that the review screen shows actual content previews instead of empty placeholders',
+    expectedOutcome: 'Review screen displays actual content with proper previews, not empty placeholders',
+    steps: [
+      { step: 1, action: 'Create item with video content', component: 'ContentCreationStep', expectedResult: 'Video recorded successfully' },
+      { step: 2, action: 'Navigate to preview screen', component: 'PreviewSaveStep', expectedResult: 'Preview screen loads' },
+      { step: 3, action: 'Verify video thumbnail visible', component: 'ContentPreview', expectedResult: 'Video thumbnail displayed with duration badge' },
+      { step: 4, action: 'Verify item details pre-filled', component: 'PreviewSaveStep', expectedResult: 'Room, Item Type, Purpose all displayed as read-only' },
+      { step: 5, action: 'Verify content count badge', component: 'PreviewSaveStep', expectedResult: 'Badge shows "1 content piece" or similar' },
+    ],
+  },
+  {
+    id: 'UC-HP-004',
+    title: 'Verify All Purpose Types Work',
+    category: 'happy-path',
+    priority: 'P1',
+    description: 'Verify all 7 purpose types are selectable and generate correct titles',
+    expectedOutcome: 'All 7 purpose types work correctly with keyboard and mouse',
+    steps: [
+      { step: 1, action: 'Verify 7 purpose cards displayed', component: 'PurposeStep', expectedResult: 'All purposes visible: How to Use, How to Clean, Troubleshooting, Safety Info, Maintenance, Features, Other' },
+      { step: 2, action: 'Select each purpose type sequentially', component: 'PurposeStep', expectedResult: 'Each purpose card shows selected state with icon' },
+      { step: 3, action: 'Verify keyboard navigation works', component: 'PurposeStep', expectedResult: 'Arrow keys navigate between purpose cards' },
+      { step: 4, action: 'Verify Enter key selects purpose', component: 'PurposeStep', expectedResult: 'Enter confirms selection and auto-advances' },
+    ],
+  },
+  {
+    id: 'UC-HP-005',
+    title: 'Verify Consolidated Content Options',
+    category: 'happy-path',
+    priority: 'P0',
+    description: 'Verify that content type step shows all 5 options in a single view (no content source step)',
+    expectedOutcome: 'Streamlined content selection with all options visible at once',
+    steps: [
+      { step: 1, action: 'Arrive at ContentTypeStep from PurposeStep', component: 'ContentTypeStep', expectedResult: 'No intermediate "content source" step' },
+      { step: 2, action: 'Verify 5 content options visible', component: 'ContentTypeStep', expectedResult: 'Record Video, Take Photo, Write Text, Upload File, Add Link all displayed' },
+      { step: 3, action: 'Verify \'Upload File\' shows format hints', component: 'ContentTypeStep', expectedResult: 'Subtitle shows "Video, Image, PDF, Text"' },
+      { step: 4, action: 'Select any content option', component: 'ContentTypeStep', expectedResult: 'Navigates directly to content creation for that type' },
+    ],
+  },
+  {
+    id: 'UC-HP-006',
+    title: 'Verify No Duplicate Bottom Navigation',
+    category: 'happy-path',
+    priority: 'P1',
+    description: 'Verify that content input screens no longer have duplicate bottom navigation bars',
+    expectedOutcome: 'All content screens have clean, single navigation pattern',
+    steps: [
+      { step: 1, action: 'Navigate to TextEditorStep', component: 'TextEditorStep', expectedResult: 'Only inline Back/Continue buttons, no bottom bar' },
+      { step: 2, action: 'Navigate to FileUploadStep', component: 'FileUploadStep', expectedResult: 'Only inline navigation, no bottom bar' },
+      { step: 3, action: 'Navigate to VideoCaptureStep', component: 'VideoCaptureStep', expectedResult: 'No duplicate bottom bar' },
+      { step: 4, action: 'Navigate to PhotoCaptureStep', component: 'PhotoCaptureStep', expectedResult: 'No duplicate bottom bar' },
+      { step: 5, action: 'Navigate to UrlInputStep', component: 'UrlInputStep', expectedResult: 'No duplicate bottom bar' },
+      { step: 6, action: 'Navigate to NextActionStep', component: 'NextActionStep', expectedResult: 'Only 3 action cards, no bottom navigation bar' },
+    ],
+  },
+  {
+    id: 'UC-ERR-001',
+    title: 'Cancel Confirmation with Content Added',
+    category: 'error-handling',
+    priority: 'P0',
+    description: 'Verify confirmation dialog appears when user clicks Cancel after adding content',
+    expectedOutcome: 'User is warned before accidentally losing created content',
+    steps: [
+      { step: 1, action: 'Create item and add video content', component: 'ContentCreationStep', expectedResult: 'Content added to item' },
+      { step: 2, action: 'Navigate to NextActionStep', component: 'NextActionStep', expectedResult: 'Three action options displayed' },
+      { step: 3, action: 'Click \'Cancel\' action card', component: 'NextActionStep', expectedResult: 'ConfirmExitDialog appears' },
+      { step: 4, action: 'Verify warning message displayed', component: 'ConfirmExitDialog', expectedResult: 'Dialog warns about losing work' },
+      { step: 5, action: 'Click \'Continue Editing\'', component: 'ConfirmExitDialog', expectedResult: 'Dialog closes, user stays in workflow' },
+      { step: 6, action: 'Repeat and click \'Exit Anyway\'', component: 'ConfirmExitDialog', expectedResult: 'Workflow exits, content discarded' },
+    ],
+  },
+  {
+    id: 'UC-ERR-002',
+    title: 'Handle Missing Purpose Selection',
+    category: 'error-handling',
+    priority: 'P1',
+    description: 'Verify workflow handles case where user tries to proceed without selecting purpose',
+    expectedOutcome: 'User cannot skip purpose selection step',
+    steps: [
+      { step: 1, action: 'Arrive at PurposeStep without selection', component: 'PurposeStep', expectedResult: 'No purpose cards selected initially' },
+      { step: 2, action: 'Attempt to click Next/Continue', component: 'PurposeStep', expectedResult: 'Button disabled or navigation blocked' },
+      { step: 3, action: 'Select a purpose', component: 'PurposeStep', expectedResult: 'Navigation enabled' },
+    ],
+  },
+  {
+    id: 'UC-ERR-003',
+    title: 'Handle Empty Title Generation',
+    category: 'error-handling',
+    priority: 'P2',
+    description: 'Verify title generator handles edge case where inputs are missing',
+    expectedOutcome: 'Title generator handles fallback cases gracefully',
+    steps: [
+      { step: 1, action: 'Select \'Other\' purpose type', component: 'PurposeStep', expectedResult: 'Purpose set to Other' },
+      { step: 2, action: 'View generated title in preview', component: 'PreviewSaveStep', expectedResult: 'Title falls back to item name only' },
+      { step: 3, action: 'Verify title is still editable', component: 'PreviewSaveStep', expectedResult: 'User can provide custom title' },
+    ],
+  },
+  {
+    id: 'UC-EDGE-001',
+    title: 'Mobile Touch Target Compliance',
+    category: 'edge-case',
+    priority: 'P0',
+    description: 'Verify all interactive elements meet 48px minimum touch target on mobile',
+    expectedOutcome: 'All UI elements meet WCAG touch target requirements on mobile',
+    steps: [
+      { step: 1, action: 'Navigate workflow on 320px viewport', component: 'All Steps', expectedResult: 'All cards and buttons are tappable' },
+      { step: 2, action: 'Tap purpose cards', component: 'PurposeStep', expectedResult: 'Touch targets are 48px minimum' },
+      { step: 3, action: 'Tap content type cards', component: 'ContentTypeStep', expectedResult: 'Touch targets are 48px minimum' },
+      { step: 4, action: 'Verify drag handles on content reorder', component: 'PreviewSaveStep', expectedResult: 'Drag handles meet touch target size' },
+    ],
+  },
+  {
+    id: 'UC-EDGE-002',
+    title: 'Keyboard Navigation Through Entire Flow',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'Verify entire workflow can be completed using only keyboard',
+    expectedOutcome: 'Full keyboard accessibility throughout workflow',
+    steps: [
+      { step: 1, action: 'Tab through room selection cards', component: 'RoomSelectionStep', expectedResult: 'Focus visible on each room card' },
+      { step: 2, action: 'Press Enter to select room', component: 'RoomSelectionStep', expectedResult: 'Room selected, advances to next step' },
+      { step: 3, action: 'Use arrow keys in PurposeStep', component: 'PurposeStep', expectedResult: 'Arrow keys navigate between purpose cards' },
+      { step: 4, action: 'Complete entire flow with keyboard', component: 'All Steps', expectedResult: 'All steps accessible via keyboard' },
+    ],
+  },
+  {
+    id: 'UC-EDGE-003',
+    title: 'Screen Reader Announcements',
+    category: 'edge-case',
+    priority: 'P1',
+    description: 'Verify screen readers announce step changes and selections correctly',
+    expectedOutcome: 'Screen reader users can understand workflow state at all times',
+    steps: [
+      { step: 1, action: 'Navigate to PurposeStep', component: 'PurposeStep', expectedResult: 'Screen reader announces "Purpose Selection, Step 4 of 7"' },
+      { step: 2, action: 'Select a purpose card', component: 'PurposeStep', expectedResult: 'Announces selected purpose and auto-advance' },
+      { step: 3, action: 'Navigate to PreviewSaveStep', component: 'PreviewSaveStep', expectedResult: 'Announces item details and content count' },
+    ],
+  },
+  {
+    id: 'UC-INT-001',
+    title: 'Multi-Content Item with Article Grouping',
+    category: 'integration',
+    priority: 'P0',
+    description: 'Verify multiple content pieces are grouped under the same article',
+    expectedOutcome: 'Multiple content pieces grouped under single article with correct display order',
+    steps: [
+      { step: 1, action: 'Create item with video content', component: 'ContentCreationStep', expectedResult: 'Video added' },
+      { step: 2, action: 'Navigate to preview, then "Add More Content"', component: 'PreviewSaveStep', expectedResult: 'Returns to content type selection' },
+      { step: 3, action: 'Add PDF manual', component: 'ContentCreationStep', expectedResult: 'PDF added to same article' },
+      { step: 4, action: 'View preview with both content pieces', component: 'PreviewSaveStep', expectedResult: 'Both video and PDF displayed in content grid' },
+      { step: 5, action: 'Reorder content via drag-and-drop', component: 'ContentPieceCard', expectedResult: 'Order updated' },
+      { step: 6, action: 'Save item', component: 'PreviewSaveStep', expectedResult: 'Item saved with article containing 2 links' },
+    ],
+  },
+  {
+    id: 'UC-INT-002',
+    title: 'API Article Creation Flow',
+    category: 'integration',
+    priority: 'P0',
+    description: 'Verify backend creates article record when item is saved',
+    expectedOutcome: 'Database correctly stores article hierarchy',
+    steps: [
+      { step: 1, action: 'Complete item creation with purpose', component: 'Workflow', expectedResult: 'Item ready to save' },
+      { step: 2, action: 'Click Save', component: 'PreviewSaveStep', expectedResult: 'API call made' },
+      { step: 3, action: 'Verify item_articles record created', component: 'Database', expectedResult: 'Article with purpose and auto-title exists' },
+      { step: 4, action: 'Verify item_links reference article_id', component: 'Database', expectedResult: 'Content links associated with article' },
+    ],
+  },
+  {
+    id: 'UC-INT-003',
+    title: 'Session Summary Shows Articles',
+    category: 'integration',
+    priority: 'P1',
+    description: 'Verify session summary displays items with their article titles',
+    expectedOutcome: 'Session summary correctly displays items with article metadata',
+    steps: [
+      { step: 1, action: 'Create 2-3 items with different purposes', component: 'Workflow', expectedResult: 'Items saved' },
+      { step: 2, action: 'Navigate to SessionSummaryStep', component: 'SessionSummaryStep', expectedResult: 'All items listed' },
+      { step: 3, action: 'Verify article titles displayed', component: 'SessionItemCard', expectedResult: 'Titles show "Purpose - Item" format' },
+      { step: 4, action: 'Verify QR codes generated', component: 'SessionSummaryStep', expectedResult: 'QR codes ready for each item' },
+    ],
+  },
 ];
 
 const categoryColors: Record<string, string> = {
@@ -160,7 +379,7 @@ export default function UiUxWorkflowImprovementsTestPage() {
             ← Back to All Pipelines
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Ui Ux Workflow Improvements</h1>
-          <p className="text-xs text-gray-400">Pipeline Test Harness • Generated: 2026-01-10 01:20</p>
+          <p className="text-xs text-gray-400">Pipeline Test Harness • Generated: 2026-01-10 11:42</p>
         </div>
       </div>
 

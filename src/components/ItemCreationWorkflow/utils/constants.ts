@@ -349,7 +349,7 @@ export const MAX_CONTENT_PIECES = 10;
 /**
  * Ordered list of all workflow steps.
  *
- * ## Step Flow (Plan-094 UI/UX Improvements)
+ * ## Step Flow (Plan-094 UI/UX Improvements + REQ-176 Media Capture)
  *
  * ```
  * 1. room-selection        → Select room category
@@ -357,15 +357,17 @@ export const MAX_CONTENT_PIECES = 10;
  * 3. specific-item-selection → Name the specific item
  * 4. purpose-selection     → Select content purpose (NEW)
  * 5. content-type-selection → Select content format (consolidated)
- * 6. content-creation      → Create/upload content
- * 7. preview-save          → Preview with actual content, edit title (redesigned)
- * 8. next-action           → Choose next step (simplified: 3 options)
- * 9. session-summary       → Review all items, generate QR codes
+ * 6. media-capture         → Direct media capture routing (REQ-176)
+ * 7. content-creation      → Create/upload content (keep for compatibility)
+ * 8. preview-save          → Preview with actual content, edit title (redesigned)
+ * 9. next-action           → Choose next step (simplified: 3 options)
+ * 10. session-summary      → Review all items, generate QR codes
  * ```
  *
  * ## Changes from Original Flow
  * - ADDED: `purpose-selection` after specific-item (Phase 2)
  * - REMOVED: `content-source-selection` merged into content-type-selection (Phase 3)
+ * - ADDED: `media-capture` for direct routing to capture components (REQ-176)
  * - MODIFIED: `preview-save` redesigned with actual content previews (Phase 5)
  * - MODIFIED: `next-action` simplified to 3 options (Phase 4)
  *
@@ -375,7 +377,7 @@ export const MAX_CONTENT_PIECES = 10;
  * @see Plan-094-UI-UX-Workflow-Improvements.md for implementation details
  * @see STEP_TRANSITIONS in useWorkflowState.ts for navigation logic
  * @see PROGRESS_WEIGHTS for progress calculation
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 export const WORKFLOW_STEPS = [
   'room-selection',
@@ -383,7 +385,8 @@ export const WORKFLOW_STEPS = [
   'specific-item-selection',
   'purpose-selection',        // NEW: Added in Plan-094 Phase 2
   'content-type-selection',   // Consolidated (content-source-selection removed)
-  'content-creation',
+  'media-capture',            // NEW: Added in REQ-176 for direct media capture
+  'content-creation',         // Keep for backward compatibility
   'preview-save',
   'next-action',
   'session-summary',
@@ -413,17 +416,23 @@ export const TOUCH_TARGET_MIN_SIZE = 48;
  * - Recalculated weights to distribute evenly across 9 steps
  * - Weights increase by ~11% per step to reach 100% at session-summary
  *
+ * Updated for REQ-176 Media Capture:
+ * - Added weight for `media-capture` step (60%)
+ * - Recalculated weights to distribute across 10 steps
+ * - Weights increase by ~10% per step to reach 100% at session-summary
+ *
  * @see WORKFLOW_STEPS for step order
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
-  'room-selection': 11,
-  'item-type-selection': 22,
-  'specific-item-selection': 33,
-  'purpose-selection': 44,        // NEW
-  'content-type-selection': 55,   // Added to main flow
-  'content-creation': 66,
-  'preview-save': 77,
+  'room-selection': 10,
+  'item-type-selection': 20,
+  'specific-item-selection': 30,
+  'purpose-selection': 40,
+  'content-type-selection': 50,
+  'media-capture': 60,            // NEW - REQ-176
+  'content-creation': 65,         // Keep slightly higher for compatibility
+  'preview-save': 75,
   'next-action': 88,
   'session-summary': 100,
 };

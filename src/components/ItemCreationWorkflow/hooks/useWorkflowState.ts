@@ -81,22 +81,29 @@ import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
  * - Removed content-source-selection (merged into content-type-selection)
  * - Updated next-action transitions for simplified flow
  *
+ * Updated in REQ-176:
+ * - Added media-capture step between content-type-selection and preview-save
+ * - content-type-selection now routes to media-capture (was content-creation)
+ * - media-capture routes to preview-save
+ * - content-creation kept for backward compatibility
+ *
  * Notes on conditional transitions:
  * - room-selection: Goes to specific-item-selection if room is 'general' (skips item-type)
  * - next-action: Goes to room-selection for "Tag New Item" or session-summary for "I'm Done"
  *
  * @see WORKFLOW_STEPS in constants.ts for step order
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
  */
 export const STEP_TRANSITIONS: Record<WorkflowStep, WorkflowStep[]> = {
   'room-selection': ['item-type-selection', 'specific-item-selection'],
   'item-type-selection': ['specific-item-selection'],
-  'specific-item-selection': ['purpose-selection'],         // UPDATED: was content-source-selection
-  'purpose-selection': ['content-type-selection'],          // NEW
-  'content-type-selection': ['content-creation'],           // UPDATED: single transition
-  'content-creation': ['preview-save'],
+  'specific-item-selection': ['purpose-selection'],
+  'purpose-selection': ['content-type-selection'],
+  'content-type-selection': ['media-capture'],              // UPDATED: was content-creation
+  'media-capture': ['preview-save'],                        // NEW - REQ-176
+  'content-creation': ['preview-save'],                     // Keep for compatibility
   'preview-save': ['next-action'],
-  'next-action': ['room-selection', 'session-summary', 'content-type-selection'], // UPDATED
+  'next-action': ['room-selection', 'session-summary', 'content-type-selection'],
   'session-summary': [],
 };
 
@@ -861,10 +868,12 @@ export function useWorkflowState(): UseWorkflowStateReturn {
         return state.currentItem?.itemType != null;
       case 'specific-item-selection':
         return (state.currentItem?.specificItem ?? '').length > 0;
-      case 'purpose-selection':                         // NEW
-        return state.currentItem?.purpose != null;      // NEW
+      case 'purpose-selection':
+        return state.currentItem?.purpose != null;
       case 'content-type-selection':
         return state.currentItem?.contentType != null;
+      case 'media-capture':                             // NEW - REQ-176
+        return (state.currentItem?.content?.length ?? 0) > 0;
       case 'content-creation':
         return (state.currentItem?.content?.length ?? 0) > 0;
       case 'preview-save':
