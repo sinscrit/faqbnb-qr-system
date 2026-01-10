@@ -568,7 +568,15 @@ export function ItemCreationWorkflow({
           <NextActionStep
             itemsCreated={itemCount}
             hasUnsavedContent={hasUnsavedContent}
-            onReviewSubmit={() => goToStep('preview-save')}
+            onReviewSubmit={() => {
+              // If currentItem is null (already saved), go to session summary or exit
+              if (state.currentItem === null) {
+                // Item was already saved, go to session summary to review all items
+                goToStep('session-summary');
+              } else {
+                goToStep('preview-save');
+              }
+            }}
             onAddMoreContent={() => goToStep('content-type-selection')}
             onCancel={handleExitClick}
           />
