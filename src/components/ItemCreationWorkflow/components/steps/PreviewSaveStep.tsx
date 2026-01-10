@@ -550,13 +550,15 @@ export function PreviewSaveStep({
 
   // Handle save
   const handleSave = useCallback(async () => {
+    // Capture itemName BEFORE calling onSave, as onSave resets currentItem to null
+    const itemNameToSave = currentItem?.itemName || 'Item';
     setSaveError(null);
     try {
       const result = await onSave();
-      // Store itemName with result so it persists even if currentItem is reset
+      // Store captured itemName with result
       setSavedResult({
         ...result,
-        itemName: currentItem?.itemName || 'Item'
+        itemName: itemNameToSave
       });
       setShowSuccess(true);
     } catch (error) {
