@@ -1,7 +1,7 @@
 # REQ-157: Create PurposeStep Component - Detailed Task Breakdown
 
 **Generated:** 2026-01-09 22:15:00 UTC
-**Last Modified:** 2026-01-09 22:15:00 UTC
+**Last Modified:** 2026-01-10 (Implementation complete)
 **Request ID:** REQ-157
 **Phase:** 2 - New Purpose Step
 **Task ID:** 2.1
@@ -857,25 +857,25 @@ export default PurposeStep;
 
 ## Definition of Done
 
-- [ ] PurposeStep.tsx created following ItemTypeStep pattern exactly
-- [ ] All 7 purpose types render with correct icons, labels, descriptions
-- [ ] Click/tap selection works and calls onSelectPurpose
-- [ ] Auto-advance fires after 150ms delay on selection
-- [ ] Keyboard navigation works (Arrow keys, Enter, Space, Home, End)
-- [ ] Roving tabindex implemented correctly (only active item has tabIndex=0)
-- [ ] ARIA attributes present and correct:
-  - [ ] `role="radiogroup"` on container
-  - [ ] `role="radio"` on each card
-  - [ ] `aria-checked` reflects selection state
-  - [ ] `aria-label` on radiogroup
-  - [ ] `aria-describedby` on each card linking to description
-- [ ] Screen reader help text included with `sr-only` class
-- [ ] Export added to `steps/index.ts`
-- [ ] No TypeScript compilation errors
-- [ ] No ESLint errors or warnings
-- [ ] Component renders without console errors
-- [ ] Responsive layout works on mobile (320px width)
-- [ ] Touch targets meet 48px minimum height
+- [x] PurposeStep.tsx created following ItemTypeStep pattern exactly
+- [x] All 7 purpose types render with correct icons, labels, descriptions
+- [x] Click/tap selection works and calls onSelectPurpose
+- [x] Auto-advance fires after 150ms delay on selection
+- [x] Keyboard navigation works (Arrow keys, Enter, Space, Home, End)
+- [x] Roving tabindex implemented correctly (only active item has tabIndex=0)
+- [x] ARIA attributes present and correct:
+  - [x] `role="radiogroup"` on container
+  - [x] `role="radio"` on each card
+  - [x] `aria-checked` reflects selection state
+  - [x] `aria-label` on radiogroup
+  - [x] `aria-describedby` on each card linking to description
+- [x] Screen reader help text included with `sr-only` class
+- [x] Export added to `steps/index.ts`
+- [x] No TypeScript compilation errors
+- [x] No ESLint errors or warnings
+- [x] Component renders without console errors
+- [x] Responsive layout works on mobile (320px width)
+- [x] Touch targets meet 48px minimum height
 
 ---
 
@@ -883,15 +883,15 @@ export default PurposeStep;
 
 | Requirement | Implementation | Verified |
 |-------------|----------------|----------|
-| Radiogroup role | `role="radiogroup"` on container div | [ ] |
-| Radio role | `role="radio"` on each button | [ ] |
-| Selection state | `aria-checked={isSelected}` | [ ] |
-| Group label | `aria-label="Select content purpose"` | [ ] |
-| Option descriptions | `aria-describedby={type}-description` | [ ] |
-| Screen reader help | `<p id="purpose-help" className="sr-only">` | [ ] |
-| Focus visibility | `focus-visible:ring-2 focus-visible:ring-blue-500` | [ ] |
-| Reduced motion | `motion-reduce:transition-none` | [ ] |
-| Touch targets | `min-h-[100px]` on cards, `min-h-[56px]` on button | [ ] |
+| Radiogroup role | `role="radiogroup"` on container div | [x] |
+| Radio role | `role="radio"` on each button | [x] |
+| Selection state | `aria-checked={isSelected}` | [x] |
+| Group label | `aria-label="Select content purpose"` | [x] |
+| Option descriptions | `aria-describedby={type}-description` | [x] |
+| Screen reader help | `<p id="purpose-help" className="sr-only">` | [x] |
+| Focus visibility | `focus-visible:ring-2 focus-visible:ring-blue-500` | [x] |
+| Reduced motion | `motion-reduce:transition-none` | [x] |
+| Touch targets | `min-h-[100px]` on cards, `min-h-[56px]` on button | [x] |
 
 ---
 

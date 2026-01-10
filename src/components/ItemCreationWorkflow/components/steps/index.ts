@@ -10,12 +10,13 @@
  * 1. RoomSelectionStep      - Select room (kitchen, bedroom, etc.)
  * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
  * 3. SpecificItemStep       - Select/name specific item with suggestions
- * 4. ContentSourceStep      - Choose existing content or create new
- * 5. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
- * 6. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
- * 7. PreviewSaveStep        - Preview and save the item
- * 8. NextActionStep         - Add more content, new item, or finish
- * 9. SessionSummaryStep     - Review all items and print QR codes
+ * 4. PurposeStep            - Select content purpose (how-to-use, troubleshooting, etc.)
+ * 5. ContentSourceStep      - Choose existing content or create new
+ * 6. ContentTypeStep        - Select content type (video, photo, pdf, etc.)
+ * 7. ContentCreationStep    - Create/upload content (delegates to ItemCapture)
+ * 8. PreviewSaveStep        - Preview and save the item
+ * 9. NextActionStep         - Add more content, new item, or finish
+ * 10. SessionSummaryStep    - Review all items and print QR codes
  * ```
  *
  * ## Skip Conditions
@@ -33,7 +34,7 @@
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-157 PurposeStep Component)
  */
 
 // =============================================================================
@@ -53,7 +54,17 @@ export { SpecificItemStep } from './SpecificItemStep';
 export type { SpecificItemStepProps } from './SpecificItemStep';
 
 // =============================================================================
-// Content Selection Steps (Steps 4-5)
+// Purpose Selection Step (Step 4 - NEW)
+// =============================================================================
+/**
+ * Purpose selection for item content.
+ * Determines the intent of the content being created.
+ */
+export { PurposeStep } from './PurposeStep';
+export type { PurposeStepProps } from './PurposeStep';
+
+// =============================================================================
+// Content Selection Steps (Steps 5-6)
 // =============================================================================
 /**
  * Content source and type selection steps.
@@ -66,7 +77,7 @@ export { ContentTypeStep } from './ContentTypeStep';
 export type { ContentTypeStepProps } from './ContentTypeStep';
 
 // =============================================================================
-// Content Creation Steps (Steps 6-7)
+// Content Creation Steps (Steps 7-8)
 // =============================================================================
 /**
  * Content creation and preview steps.
@@ -79,7 +90,7 @@ export { PreviewSaveStep } from './PreviewSaveStep';
 export type { PreviewSaveStepProps } from './PreviewSaveStep';
 
 // =============================================================================
-// Session Flow Steps (Step 8)
+// Session Flow Steps (Step 9)
 // =============================================================================
 /**
  * Decision point for what to do next after saving an item.
@@ -89,7 +100,7 @@ export { NextActionStep } from './NextActionStep';
 export type { NextActionStepProps } from './NextActionStep';
 
 // =============================================================================
-// Summary Steps (Step 9)
+// Summary Steps (Step 10)
 // =============================================================================
 /**
  * Final step for reviewing session and printing QR codes.
