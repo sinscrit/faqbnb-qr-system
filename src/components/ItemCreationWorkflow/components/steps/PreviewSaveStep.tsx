@@ -442,7 +442,7 @@ export function PreviewSaveStep({
 }: PreviewSaveStepProps) {
   // Local state
   const [showSuccess, setShowSuccess] = useState(false);
-  const [savedResult, setSavedResult] = useState<{ id: string; qrCodeUrl: string } | null>(null);
+  const [savedResult, setSavedResult] = useState<{ id: string; qrCodeUrl: string; itemName: string } | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Removal confirmation state
@@ -553,12 +553,16 @@ export function PreviewSaveStep({
     setSaveError(null);
     try {
       const result = await onSave();
-      setSavedResult(result);
+      // Store itemName with result so it persists even if currentItem is reset
+      setSavedResult({
+        ...result,
+        itemName: currentItem?.itemName || 'Item'
+      });
       setShowSuccess(true);
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Failed to save item');
     }
-  }, [onSave]);
+  }, [onSave, currentItem?.itemName]);
 
   // Handle continue after success
   const handleContinue = useCallback(() => {
@@ -662,7 +666,7 @@ export function PreviewSaveStep({
       {/* Success Overlay */}
       {showSuccess && savedResult && (
         <SuccessOverlay
-          itemName={currentItem.itemName}
+          itemName={savedResult.itemName}
           qrCodeUrl={savedResult.qrCodeUrl}
           onContinue={handleContinue}
         />
