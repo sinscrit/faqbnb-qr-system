@@ -4,16 +4,17 @@
 // REQ-137: Updated EmptyState with friendly messaging and CTA
 // REQ-140: Added min-h-[48px] to PropertyRow for touch target compliance
 // Created: 2026-01-06
-// Last Modified: 2026-01-06 16:51:00 UTC
+// Last Modified: 2026-01-11 - Added item counts display
 
 'use client';
 
-import { ChevronRight, Home, Plus, Pencil } from 'lucide-react';
+import { ChevronRight, Home, Plus, Pencil, Package, DoorOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
 import { DashboardTier } from '@/hooks/useDashboardTier';
 import { EmptyStateCard } from './EmptyStateCard';
 import { SkeletonBase } from './skeletons';
+import { usePropertyItemCounts } from '@/hooks/usePropertyItemCounts';
 
 /**
  * Props for PropertyRow sub-component
@@ -23,13 +24,19 @@ interface PropertyRowProps {
   property: Property;
   /** Callback when row is clicked */
   onClick: (property: Property) => void;
+  /** Number of items in this property */
+  itemCount?: number;
+  /** Number of unique rooms in this property */
+  roomCount?: number;
+  /** Whether counts are loading */
+  countsLoading?: boolean;
 }
 
 /**
  * Individual property row with click interaction
- * Displays property nickname and chevron icon
+ * Displays property nickname, item count, room count, and chevron icon
  */
-function PropertyRow({ property, onClick }: PropertyRowProps) {
+function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false }: PropertyRowProps) {
   const handleClick = () => onClick(property);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -46,9 +53,27 @@ function PropertyRow({ property, onClick }: PropertyRowProps) {
       className="w-full flex items-center justify-between min-h-[48px] p-4 bg-white border-b border-[#DDDDDD] last:border-b-0 hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset"
       aria-label={`Edit property: ${property.nickname}`}
     >
-      <span className="text-[#222222] font-medium">
-        {property.nickname}
-      </span>
+      <div className="flex flex-col items-start gap-0.5">
+        <span className="text-[#222222] font-medium">
+          {property.nickname}
+        </span>
+        <div className="flex items-center gap-3 text-sm text-[#717171]">
+          {countsLoading ? (
+            <span className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+          ) : (
+            <>
+              <span className="flex items-center gap-1">
+                <Package className="w-3.5 h-3.5" />
+                {itemCount} {itemCount === 1 ? 'item' : 'items'}
+              </span>
+              <span className="flex items-center gap-1">
+                <DoorOpen className="w-3.5 h-3.5" />
+                {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+              </span>
+            </>
+          )}
+        </div>
+      </div>
       <ChevronRight className="w-5 h-5 text-[#717171]" />
     </button>
   );
@@ -119,6 +144,12 @@ interface SinglePropertyCardProps {
   property: Property;
   /** Callback when card is clicked */
   onClick: (property: Property) => void;
+  /** Number of items in this property */
+  itemCount?: number;
+  /** Number of unique rooms in this property */
+  roomCount?: number;
+  /** Whether counts are loading */
+  countsLoading?: boolean;
 }
 
 /**
@@ -126,7 +157,7 @@ interface SinglePropertyCardProps {
  * Shows property prominently with edit icon instead of chevron
  * Designed for users with only one property - no list styling
  */
-function SinglePropertyCard({ property, onClick }: SinglePropertyCardProps) {
+function SinglePropertyCard({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false }: SinglePropertyCardProps) {
   const handleClick = () => onClick(property);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -151,7 +182,22 @@ function SinglePropertyCard({ property, onClick }: SinglePropertyCardProps) {
           <span className="text-[#222222] font-medium block">
             {property.nickname}
           </span>
-          <span className="text-[#717171] text-sm">Tap to edit</span>
+          <div className="flex items-center gap-3 text-sm text-[#717171]">
+            {countsLoading ? (
+              <span className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+            ) : (
+              <>
+                <span className="flex items-center gap-1">
+                  <Package className="w-3.5 h-3.5" />
+                  {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                </span>
+                <span className="flex items-center gap-1">
+                  <DoorOpen className="w-3.5 h-3.5" />
+                  {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div className="p-2 rounded-full hover:bg-[#F0F0F0] transition-colors">
@@ -199,6 +245,12 @@ export function PropertySection({
   className = '',
 }: PropertySectionProps) {
   const { userProperties, loading } = useAuth();
+
+  // Get property IDs for fetching item and room counts
+  const propertyIds = userProperties?.map(p => p.id) || [];
+
+  // Fetch item counts and room counts for all properties
+  const { itemCounts, roomCounts, loading: countsLoading } = usePropertyItemCounts(propertyIds);
 
   // Dynamic heading based on property count
   const headingText = userProperties?.length === 1 ? 'My Property' : 'My Properties';
@@ -254,6 +306,9 @@ export function PropertySection({
             <SinglePropertyCard
               property={userProperties[0]}
               onClick={handlePropertyClick}
+              itemCount={itemCounts[userProperties[0].id] || 0}
+              roomCount={roomCounts[userProperties[0].id] || 0}
+              countsLoading={countsLoading}
             />
           </div>
         ) : (
@@ -264,6 +319,9 @@ export function PropertySection({
                 key={property.id}
                 property={property}
                 onClick={handlePropertyClick}
+                itemCount={itemCounts[property.id] || 0}
+                roomCount={roomCounts[property.id] || 0}
+                countsLoading={countsLoading}
               />
             ))}
           </div>

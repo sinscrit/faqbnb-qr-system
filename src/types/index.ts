@@ -11,6 +11,7 @@ export interface Item {
   qrCodeUrl: string | null;
   qrCodeUploadedAt: string | null;
   propertyId: string; // NEW: Association with property
+  tags: string[]; // Tags for categorization, room tags use format #room.roomname
   createdAt: string;
   updatedAt: string;
 }

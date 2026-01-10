@@ -88,6 +88,7 @@ export async function GET(
         description,
         property_id,
         qr_code_url,
+        tags,
         created_at,
         updated_at
       `)
