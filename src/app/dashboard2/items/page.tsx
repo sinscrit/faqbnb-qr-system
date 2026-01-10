@@ -210,7 +210,7 @@ export default function ItemsPage() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" />
           <p className="text-gray-600">Loading items...</p>
         </div>
       </div>
@@ -229,7 +229,7 @@ export default function ItemsPage() {
         </div>
         <button
           onClick={() => router.push('/dashboard2/create')}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
         >
           <PlusCircle className="w-4 h-4 mr-2" />
           Create New Item
