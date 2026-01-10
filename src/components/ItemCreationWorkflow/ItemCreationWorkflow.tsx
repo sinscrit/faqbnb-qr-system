@@ -125,6 +125,7 @@ export function ItemCreationWorkflow({
     selectItemType,
     selectSpecificItem,
     setItemName,
+    setTags,
     selectPurpose,
     selectContentSource,
     selectContentType,
@@ -273,6 +274,7 @@ export function ItemCreationWorkflow({
       contentSource: 'existing',
       contentType: null,
       content: lastItem.content,
+      tags: lastItem.tags || [],
     };
 
     addMoreToItem(restoredItem);
@@ -304,6 +306,7 @@ export function ItemCreationWorkflow({
         room: state.currentItem.room,
         itemType: state.currentItem.itemType,
         content: state.currentItem.content,
+        tags: state.currentItem.tags || [],
         createdAt: new Date(),
       };
 
@@ -546,6 +549,7 @@ export function ItemCreationWorkflow({
           <PreviewSaveStep
             currentItem={state.currentItem!}
             onUpdateItemName={setItemName}
+            onUpdateTags={setTags}
             onRemoveContent={removeContentPiece}
             onReorderContent={reorderContent}
             onRetake={() => goToStep('content-creation')}

@@ -299,17 +299,17 @@ export type { TagsEditorProps } from './TagsEditor';
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Read the ItemCreationWorkflow component to understand the current save flow
+- [x] **8.1** Read the ItemCreationWorkflow component to understand the current save flow ---implemented: Read and analyzed ItemCreationWorkflow save flow-unit tested-
 
-- [ ] **8.2** Update the destructured return from `useWorkflowState()` (around line 112) to include `setTags`:
+- [x] **8.2** Update the destructured return from `useWorkflowState()` (around line 112) to include `setTags`:
 ```typescript
 const {
   // ... existing properties
   setTags,
 } = useWorkflowState();
-```
+``` ---implemented: Added setTags to destructured values from useWorkflowState-unit tested-
 
-- [ ] **8.3** Update the `handleSaveItem` function (around line 294) to include tags in the `SessionItem`:
+- [x] **8.3** Update the `handleSaveItem` function (around line 294) to include tags in the `SessionItem`:
 ```typescript
 const sessionItem: SessionItem = {
   id: generateUUID(),
@@ -320,9 +320,9 @@ const sessionItem: SessionItem = {
   tags: state.currentItem.tags || [],  // Add this line
   createdAt: new Date(),
 };
-```
+``` ---implemented: Added tags field to SessionItem in handleSaveItem-unit tested-
 
-- [ ] **8.4** Update the PreviewSaveStep rendering (around line 544) to pass `onUpdateTags`:
+- [x] **8.4** Update the PreviewSaveStep rendering (around line 544) to pass `onUpdateTags`:
 ```tsx
 <PreviewSaveStep
   currentItem={state.currentItem!}
@@ -331,16 +331,16 @@ const sessionItem: SessionItem = {
   onRemoveContent={removeContentPiece}
   // ... rest of props
 />
-```
+``` ---implemented: Added onUpdateTags prop to PreviewSaveStep rendering-unit tested-
 
-- [ ] **8.5** Update the `handleAddMore` callback (around line 260) to preserve tags when reconstructing CurrentItemState:
+- [x] **8.5** Update the `handleAddMore` callback (around line 260) to preserve tags when reconstructing CurrentItemState:
 ```typescript
 const restoredItem: CurrentItemState = {
   // ... existing fields
   tags: lastItem.tags || [],  // Add this line
   content: lastItem.content,
 };
-```
+``` ---implemented: Added tags field to restoredItem in handleAddMore-unit tested-
 
 ---
 
