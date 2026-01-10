@@ -215,6 +215,7 @@ export type Database = {
           display_order: number | null
           id: string
           item_id: string | null
+          article_id: string | null  // REQ-151: Link to article
           link_type: string
           thumbnail_url: string | null
           title: string
@@ -225,6 +226,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           item_id?: string | null
+          article_id?: string | null  // REQ-151: Link to article
           link_type: string
           thumbnail_url?: string | null
           title: string
@@ -235,6 +237,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           item_id?: string | null
+          article_id?: string | null  // REQ-151: Link to article
           link_type?: string
           thumbnail_url?: string | null
           title?: string
@@ -248,6 +251,55 @@ export type Database = {
             referencedRelation: "items"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "item_links_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "item_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      // REQ-151: Item articles table for grouped content
+      item_articles: {
+        Row: {
+          id: string
+          item_id: string
+          purpose: string
+          title: string
+          description: string | null
+          display_order: number | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          purpose: string
+          title: string
+          description?: string | null
+          display_order?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          purpose?: string
+          title?: string
+          description?: string | null
+          display_order?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_articles_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          }
         ]
       }
       items: {

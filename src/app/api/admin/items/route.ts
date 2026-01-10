@@ -4,6 +4,7 @@ import { ItemsListResponse, CreateItemRequest, ItemResponse } from '@/types';
 import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 import { validateAdminAuth } from '@/lib/auth-server';
+import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -177,6 +178,12 @@ export async function GET(request: NextRequest) {
           .select('*', { count: 'exact', head: true })
           .eq('item_id', item.id);
 
+        // REQ-151: Get articles count
+        const { count: articlesCount } = await supabase
+          .from('item_articles')
+          .select('*', { count: 'exact', head: true })
+          .eq('item_id', item.id);
+
         // Get visit analytics
         const now = new Date();
         const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -221,6 +228,7 @@ export async function GET(request: NextRequest) {
           propertyId: item.property_id,
           property: item.properties,
           linksCount: linksCount || 0,
+          articlesCount: articlesCount || 0,  // REQ-151: Include articles count
           analytics: {
             visits: visitCounts,
             reactions: reactionCounts,
@@ -340,7 +348,24 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
+    // REQ-151: Validate article field if provided
+    const bodyWithArticle = body as CreateItemRequest & {
+      article?: {
+        purpose: string;
+        title?: string;
+        description?: string;
+      }
+    };
+    if (bodyWithArticle.article) {
+      if (!bodyWithArticle.article.purpose || !isValidPurposeType(bodyWithArticle.article.purpose)) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid or missing article purpose' },
+          { status: 400 }
+        );
+      }
+    }
+
     console.log('Validation passed, checking property within account context...');
     
     // Verify the property exists and belongs to the current account context
@@ -407,40 +432,79 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('Item created successfully:', newItem.id);
-    
+
+    // REQ-151: Create article if article data provided
+    let createdArticle: any = null;
+    if (bodyWithArticle.article) {
+      const articleTitle = bodyWithArticle.article.title || generateArticleTitle({
+        itemName: body.name,
+        purpose: bodyWithArticle.article.purpose as any
+      });
+
+      const { data: newArticle, error: articleError } = await supabase
+        .from('item_articles')
+        .insert({
+          item_id: newItem.id,
+          purpose: bodyWithArticle.article.purpose,
+          title: articleTitle,
+          description: bodyWithArticle.article.description || null,
+          display_order: 0
+        })
+        .select()
+        .single();
+
+      if (articleError) {
+        console.error('Article creation error:', articleError);
+        // Clean up item if article creation fails
+        await supabase.from('items').delete().eq('id', newItem.id);
+        return NextResponse.json(
+          { success: false, error: 'Failed to create article' },
+          { status: 500 }
+        );
+      }
+
+      createdArticle = newArticle;
+      console.log('Article created successfully:', newArticle.id);
+    }
+
     // Create links if provided
-    const createdLinks = [];
+    const createdLinks: any[] = [];
     if (body.links && body.links.length > 0) {
       const linksToInsert = body.links.map((link, index) => ({
         item_id: newItem.id,
+        article_id: createdArticle?.id || null,  // REQ-151: Associate with article
         title: link.title,
         link_type: link.linkType,
         url: link.url,
         thumbnail_url: link.thumbnailUrl || null,
         display_order: link.displayOrder || index,
       }));
-      
+
       const { data: newLinks, error: linksError } = await supabase
         .from('item_links')
         .insert(linksToInsert)
         .select();
-        
+
       if (linksError) {
         console.error('Links creation error:', linksError);
-        // Clean up the item if links failed
+        // Clean up the item and article if links failed
+        if (createdArticle) {
+          await supabase.from('item_articles').delete().eq('id', createdArticle.id);
+        }
         await supabase.from('items').delete().eq('id', newItem.id);
         return NextResponse.json(
           { success: false, error: 'Failed to create links' },
           { status: 500 }
         );
       }
-      
+
       createdLinks.push(...(newLinks || []));
       console.log('Links created successfully:', createdLinks.length);
     }
     
     // Transform response to match ItemResponse type
-    const response: ItemResponse = {
+    // REQ-151: Include articles array in response
+    const response = {
       success: true,
       data: {
         id: newItem.id,
@@ -457,6 +521,24 @@ export async function POST(request: NextRequest) {
           thumbnailUrl: link.thumbnail_url || undefined,
           displayOrder: link.display_order || 0,
         })),
+        // REQ-151: Include articles array
+        articles: createdArticle ? [{
+          id: createdArticle.id,
+          purpose: createdArticle.purpose,
+          title: createdArticle.title,
+          description: createdArticle.description,
+          displayOrder: createdArticle.display_order || 0,
+          createdAt: createdArticle.created_at,
+          updatedAt: createdArticle.updated_at,
+          links: createdLinks.map(link => ({
+            id: link.id,
+            title: link.title,
+            linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
+            url: link.url,
+            thumbnailUrl: link.thumbnail_url || undefined,
+            displayOrder: link.display_order || 0,
+          }))
+        }] : [],
       },
       accountContext: {
         accountId,

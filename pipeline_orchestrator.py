@@ -1558,7 +1558,12 @@ def run_stage(state: dict, config: dict, stage_id: str, dry_run: bool = False, t
 
 
 def run_pipeline(state: dict, config: dict, dry_run: bool = False, task_indices: Optional[List[int]] = None, horizontal: bool = False, stage_filter: Optional[List[str]] = None):
-    """Run pipeline in configured mode (horizontal or per_request)."""
+    """Run pipeline in configured mode (horizontal or per_request).
+
+    Stage execution order respects the order specified in stage_filter.
+    For example: --stages "implementation,testcheck,usecases" runs
+    implementation (per-task) BEFORE testcheck/usecases (pipeline-level).
+    """
     # Check for pipeline-level stages first
     request_stages = config.get('request_stages', []) or config.get('stages', [])
 
@@ -1566,27 +1571,57 @@ def run_pipeline(state: dict, config: dict, dry_run: bool = False, task_indices:
     pipeline_stages = [s for s in request_stages if s.get('mode') == 'pipeline']
     per_task_stages = [s for s in request_stages if s.get('mode') != 'pipeline']
 
-    # If stage_filter is specified, check if any are pipeline-level
-    if stage_filter:
-        pipeline_stage_ids = {s['id'] for s in pipeline_stages}
-        filtered_pipeline_stages = [sid for sid in stage_filter if sid in pipeline_stage_ids]
-        filtered_per_task_stages = [sid for sid in stage_filter if sid not in pipeline_stage_ids]
-
-        # Run pipeline-level stages
-        if filtered_pipeline_stages:
-            run_pipeline_level_stages(state, config, dry_run, filtered_pipeline_stages)
-            # If only pipeline stages were requested, we're done
-            if not filtered_per_task_stages:
-                return
-            # Update stage_filter to only include per-task stages
-            stage_filter = filtered_per_task_stages
-
     # CLI flag overrides config
     if horizontal:
         mode = 'horizontal'
     else:
         mode = config.get('pipeline', {}).get('mode', 'per_request')
 
+    # If stage_filter is specified, respect the order of stages
+    if stage_filter:
+        pipeline_stage_ids = {s['id'] for s in pipeline_stages}
+        filtered_pipeline_stages = [sid for sid in stage_filter if sid in pipeline_stage_ids]
+        filtered_per_task_stages = [sid for sid in stage_filter if sid not in pipeline_stage_ids]
+
+        # If we have both types, determine order based on first occurrence
+        if filtered_pipeline_stages and filtered_per_task_stages:
+            # Find first index of each type in the original stage_filter
+            first_pipeline_idx = min(stage_filter.index(sid) for sid in filtered_pipeline_stages)
+            first_per_task_idx = min(stage_filter.index(sid) for sid in filtered_per_task_stages)
+
+            if first_per_task_idx < first_pipeline_idx:
+                # Per-task stages come first (e.g., "implementation,testcheck,usecases")
+                print(f"\nRunning per-task stages first: {filtered_per_task_stages}")
+                if mode == 'horizontal':
+                    run_pipeline_horizontal(state, config, dry_run, task_indices, filtered_per_task_stages)
+                else:
+                    run_pipeline_per_request(state, config, dry_run, task_indices, filtered_per_task_stages)
+
+                print(f"\nRunning pipeline-level stages: {filtered_pipeline_stages}")
+                run_pipeline_level_stages(state, config, dry_run, filtered_pipeline_stages)
+            else:
+                # Pipeline-level stages come first (e.g., "testcheck,implementation")
+                print(f"\nRunning pipeline-level stages first: {filtered_pipeline_stages}")
+                run_pipeline_level_stages(state, config, dry_run, filtered_pipeline_stages)
+
+                print(f"\nRunning per-task stages: {filtered_per_task_stages}")
+                if mode == 'horizontal':
+                    run_pipeline_horizontal(state, config, dry_run, task_indices, filtered_per_task_stages)
+                else:
+                    run_pipeline_per_request(state, config, dry_run, task_indices, filtered_per_task_stages)
+            return
+
+        # Only pipeline-level stages
+        if filtered_pipeline_stages and not filtered_per_task_stages:
+            run_pipeline_level_stages(state, config, dry_run, filtered_pipeline_stages)
+            return
+
+        # Only per-task stages - continue to normal flow
+        if filtered_per_task_stages and not filtered_pipeline_stages:
+            stage_filter = filtered_per_task_stages
+            # Fall through to normal per-task processing below
+
+    # No stage filter or only per-task stages - run normal flow
     if mode == 'horizontal':
         run_pipeline_horizontal(state, config, dry_run, task_indices, stage_filter)
     else:

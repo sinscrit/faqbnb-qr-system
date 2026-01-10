@@ -44,6 +44,45 @@ export async function GET(
       );
     }
 
+    // REQ-151: Fetch articles for this item
+    const { data: articles, error: articlesError } = await supabase
+      .from('item_articles')
+      .select('*')
+      .eq('item_id', item.id)
+      .order('display_order', { ascending: true });
+
+    if (articlesError) {
+      console.error('Error fetching articles:', articlesError);
+      // Don't fail, continue without articles
+    }
+
+    // REQ-151: Build articles with nested links
+    const articlesWithLinks = await Promise.all(
+      (articles || []).map(async (article) => {
+        const { data: articleLinks } = await supabase
+          .from('item_links')
+          .select('*')
+          .eq('article_id', article.id)
+          .order('display_order', { ascending: true });
+
+        return {
+          id: article.id,
+          purpose: article.purpose,
+          title: article.title,
+          description: article.description,
+          displayOrder: article.display_order || 0,
+          links: (articleLinks || []).map(link => ({
+            id: link.id,
+            title: link.title,
+            linkType: link.link_type,
+            url: link.url,
+            thumbnailUrl: link.thumbnail_url,
+            displayOrder: link.display_order || 0
+          }))
+        };
+      })
+    );
+
     // Transform the data to match the expected format
     const itemWithLinks = {
       id: item.id,
@@ -52,6 +91,7 @@ export async function GET(
       description: item.description,
       createdAt: item.created_at,
       updatedAt: item.updated_at,
+      articles: articlesWithLinks,  // REQ-151: Articles with nested links
       links: (links || []).map(link => ({
         id: link.id,
         title: link.title,

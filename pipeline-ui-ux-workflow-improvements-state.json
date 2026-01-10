@@ -1,0 +1,2225 @@
+{
+  "pipeline": "ui-ux-workflow-improvements",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-09T19:56:36.263400",
+  "updated_at": "2026-01-10T02:18:32.807112",
+  "status": "running",
+  "current_stage": "request",
+  "current_task_index": 4,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-094-UI-UX-Workflow-Improvements.md",
+  "source_hash": "6c740dc5b5ca40f9505ac54f9e408408",
+  "tasks": [
+    {
+      "id": "0.1",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Create `item_articles` Table",
+      "description": "[ ] Create migration for `item_articles` table: ```sql CREATE TABLE item_articles ( id UUID PRIMARY KEY DEFAULT gen_random_uuid(), item_id UUID NOT NULL REFERENCES items(id) ON DELETE CASCADE, purpose VARCHAR(50) NOT NULL,  -- 'how_to_use', 'how_to_clean', 'troubleshooting', etc. title VARCHAR(255) NOT NULL,   -- Auto-generated: \"How to Clean - Fridge\" description TEXT,              -- Optional description display_order INTEGER DEFAULT 0, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now() ); -- Index for faster lookups CREATE INDEX idx_item_articles_item_id ON item_articles(item_id); -- RLS policies (similar to item_links) ALTER TABLE item_articles ENABLE ROW LEVEL SECURITY; ```",
+      "raw_match": "#### Task 0.1: Create `item_articles` Table",
+      "status": "completed",
+      "request_id": "REQ-148",
+      "error": null,
+      "processed_at": "2026-01-10T01:48:40.174432",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-148",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-148-create-itemarticles-table-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-148-create-itemarticles-table-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "0.2",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Add `article_id` to `item_links` Table",
+      "description": "[ ] Create migration to add `article_id` column: ```sql -- Add article_id column (nullable for backwards compatibility) ALTER TABLE item_links ADD COLUMN article_id UUID REFERENCES item_articles(id) ON DELETE CASCADE; -- Index for faster lookups CREATE INDEX idx_item_links_article_id ON item_links(article_id); ```",
+      "raw_match": "#### Task 0.2: Add `article_id` to `item_links` Table",
+      "status": "completed",
+      "request_id": "REQ-149",
+      "error": null,
+      "processed_at": "2026-01-10T01:55:32.705295",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-149",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-149-add-articleid-to-itemlinks-table-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-149-add-articleid-to-itemlinks-table-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "0.3",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Create RLS Policies for `item_articles`",
+      "description": "[ ] Create RLS policies matching existing item security: ```sql -- Users can view articles for items in their properties CREATE POLICY \"Users can view own item articles\" ON item_articles FOR SELECT USING ( EXISTS ( SELECT 1 FROM items i JOIN properties p ON i.property_id = p.id WHERE i.id = item_articles.item_id AND p.user_id = auth.uid() ) ); -- Users can insert articles for their items CREATE POLICY \"Users can insert own item articles\" ON item_articles FOR INSERT WITH CHECK ( EXISTS ( SELECT 1 FROM items i JOIN properties p ON i.property_id = p.id WHERE i.id = item_articles.item_id AND p.user_id = auth.uid() ) ); -- Users can update their own item articles CREATE POLICY \"Users can update own item articles\" ON item_articles FOR UPDATE USING ( EXISTS ( SELECT 1 FROM items i JOIN properties p ON i.property_id = p.id WHERE i.id = item_articles.item_id AND p.user_id = auth.uid() ) ); -- Users can delete their own item articles CREATE POLICY \"Users can delete own item articles\" ON item_articles FOR DELETE USING ( EXISTS ( SELECT 1 FROM items i JOIN properties p ON i.property_id = p.id WHERE i.id = item_articles.item_id AND p.user_id = auth.uid() ) ); -- Public can view articles (for QR code access) CREATE POLICY \"Public can view item articles\" ON item_articles FOR SELECT USING (true); ```",
+      "raw_match": "#### Task 0.3: Create RLS Policies for `item_articles`",
+      "status": "completed",
+      "request_id": "REQ-150",
+      "error": null,
+      "processed_at": "2026-01-10T02:01:50.345256",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-150",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-150-create-rls-policies-for-itemarticles-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-150-create-rls-policies-for-itemarticles-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "0.4",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Update API Endpoints",
+      "description": "[ ] Update `/api/admin/items` POST to create article when saving item\n[ ] Update `/api/admin/items` GET to include articles with nested links\n[ ] Create `/api/admin/articles` endpoints (CRUD operations)\n[ ] Update item display page to group content by article",
+      "raw_match": "#### Task 0.4: Update API Endpoints",
+      "status": "completed",
+      "request_id": "REQ-151",
+      "error": null,
+      "processed_at": "2026-01-10T02:12:20.649628",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-151",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-151-update-api-endpoints-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-151-update-api-endpoints-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "0.5",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Update TypeScript Types",
+      "description": "[ ] Add `ItemArticle` interface: ```typescript interface ItemArticle { id: string; itemId: string; purpose: PurposeType; title: string; description?: string; displayOrder: number; createdAt: string; updatedAt: string; links?: ItemLink[];  // Nested media/links } ```\n[ ] Update `Item` interface to include `articles: ItemArticle[]`\n[ ] Update admin API types",
+      "raw_match": "#### Task 0.5: Update TypeScript Types",
+      "status": "completed",
+      "request_id": "REQ-152",
+      "error": null,
+      "processed_at": "2026-01-10T02:18:32.806974",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-152",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-152-update-typescript-types-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-152-update-typescript-types-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "implementation_completed": true
+    },
+    {
+      "id": "0.6",
+      "phase": "0",
+      "phase_name": "Database Refactoring",
+      "title": "Data Migration (if needed)",
+      "description": "[ ] Script to migrate existing `item_links` to articles (optional, for existing data): ```sql -- Create default articles for existing items with links INSERT INTO item_articles (item_id, purpose, title) SELECT DISTINCT il.item_id, 'other', COALESCE(i.name, 'Content') FROM item_links il JOIN items i ON il.item_id = i.id WHERE il.article_id IS NULL; -- Update existing links to reference new articles UPDATE item_links il SET article_id = ( SELECT ia.id FROM item_articles ia WHERE ia.item_id = il.item_id LIMIT 1 ) WHERE il.article_id IS NULL; ```",
+      "raw_match": "#### Task 0.6: Data Migration (if needed)",
+      "status": "completed",
+      "request_id": "REQ-153",
+      "error": null,
+      "processed_at": "2026-01-09T21:09:57.240635",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-153",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-153-data-migration-if-needed-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-153-data-migration-if-needed-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Update Types and Constants",
+      "description": "[ ] Add `PurposeType` to `ItemCreationWorkflow.types.ts`\n[ ] Add `purpose` field to `CurrentItemState` interface\n[ ] Add `SELECT_PURPOSE` action to `WorkflowAction` union\n[ ] Update `WorkflowStep` type to include `'purpose-selection'`\n[ ] Add `PURPOSE_TYPES` constant array to `constants.ts`\n[ ] Add `PURPOSE_LABELS` and `PURPOSE_DESCRIPTIONS` to `constants.ts`\n[ ] Update `WORKFLOW_STEPS` array (remove content-source-selection, add purpose-selection)\n[ ] Update `PROGRESS_WEIGHTS` for new step order\n[ ] Update `STEP_TRANSITIONS` in `useWorkflowState.ts`",
+      "raw_match": "#### Task 1.1: Update Types and Constants",
+      "status": "completed",
+      "request_id": "REQ-154",
+      "error": null,
+      "processed_at": "2026-01-09T21:14:45.843983",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-154",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-154-update-types-and-constants-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-154-update-types-and-constants-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Create Title Generator Utility",
+      "description": "[ ] Create `/utils/titleGenerator.ts`\n[ ] Implement `generateItemTitle()` function\n[ ] Handle all purpose type combinations\n[ ] Add fallback for missing purpose\n[ ] Export from utils/index.ts",
+      "raw_match": "#### Task 1.2: Create Title Generator Utility",
+      "status": "completed",
+      "request_id": "REQ-155",
+      "error": null,
+      "processed_at": "2026-01-09T21:19:21.028470",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-155",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-155-create-title-generator-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-155-create-title-generator-utility-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Foundation",
+      "title": "Update State Machine",
+      "description": "[ ] Add `SELECT_PURPOSE` case to reducer\n[ ] Remove `content-source-selection` from step flow\n[ ] Update `getNextStep()` function for new flow\n[ ] Add title auto-generation on purpose selection\n[ ] Update `canGoNext` computed value for purpose step\n[ ] Add tests for new reducer cases",
+      "raw_match": "#### Task 1.3: Update State Machine",
+      "status": "completed",
+      "request_id": "REQ-156",
+      "error": null,
+      "processed_at": "2026-01-09T21:25:28.009483",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-156",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-156-update-state-machine-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-156-update-state-machine-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "New Purpose Step",
+      "title": "Create PurposeStep Component",
+      "description": "[ ] Create `/components/steps/PurposeStep.tsx`\n[ ] Implement purpose card grid (similar to ItemTypeStep pattern)\n[ ] Add icons for each purpose type\n[ ] Implement keyboard navigation (arrow keys)\n[ ] Add auto-advance on selection (with delay for visual feedback)\n[ ] Add aria labels and screen reader support\n[ ] Export from steps/index.ts",
+      "raw_match": "#### Task 2.1: Create PurposeStep Component",
+      "status": "completed",
+      "request_id": "REQ-157",
+      "error": null,
+      "processed_at": "2026-01-09T21:30:20.270607",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-157",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-157-create-purposestep-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-157-create-purposestep-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "New Purpose Step",
+      "title": "Integrate PurposeStep into Workflow",
+      "description": "[ ] Add PurposeStep import to `ItemCreationWorkflow.tsx`\n[ ] Add case for 'purpose-selection' in `renderCurrentStep()`\n[ ] Connect to `selectPurpose` action\n[ ] Test navigation flow",
+      "raw_match": "#### Task 2.2: Integrate PurposeStep into Workflow",
+      "status": "completed",
+      "request_id": "REQ-158",
+      "error": null,
+      "processed_at": "2026-01-09T21:35:12.612919",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-158",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-158-integrate-purposestep-into-workflow-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-158-integrate-purposestep-into-workflow-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "New Purpose Step",
+      "title": "Create Unit Tests",
+      "description": "[ ] Test purpose selection updates state\n[ ] Test auto-advance behavior\n[ ] Test keyboard navigation\n[ ] Test accessibility attributes",
+      "raw_match": "#### Task 2.3: Create Unit Tests",
+      "status": "completed",
+      "request_id": "REQ-159",
+      "error": null,
+      "processed_at": "2026-01-09T21:41:27.723630",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-159",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-159-create-unit-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-159-create-unit-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Remove Redundant Step & Update Labels",
+      "title": "Remove ContentSourceStep",
+      "description": "[ ] Remove `content-source-selection` from `WORKFLOW_STEPS`\n[ ] Update `STEP_TRANSITIONS` to skip removed step\n[ ] Remove ContentSourceStep rendering case\n[ ] Update step index calculations\n[ ] Verify navigation still works",
+      "raw_match": "#### Task 3.1: Remove ContentSourceStep",
+      "status": "completed",
+      "request_id": "REQ-160",
+      "error": null,
+      "processed_at": "2026-01-09T21:45:51.790221",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-160",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-160-remove-contentsourcestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-160-remove-contentsourcestep-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Remove Redundant Step & Update Labels",
+      "title": "Update ContentTypeStep Labels",
+      "description": "[ ] Change \"Upload File\" label to \"Upload File\"\n[ ] Add subtitle: \"Video, Image, PDF, Text\"\n[ ] Update `CONTENT_TYPE_OPTIONS` to show format hints\n[ ] Ensure icon still displays correctly",
+      "raw_match": "#### Task 3.2: Update ContentTypeStep Labels",
+      "status": "completed",
+      "request_id": "REQ-161",
+      "error": null,
+      "processed_at": "2026-01-09T21:49:50.178398",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-161",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-161-update-contenttypestep-labels-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-161-update-contenttypestep-labels-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Remove Redundant Step & Update Labels",
+      "title": "Consolidate Content Options",
+      "description": "[ ] Merge ContentSourceStep options into ContentTypeStep\n[ ] Display all 5 options in single grid:\nRecord Video\nTake Photo\nWrite Text\nUpload File (Video, Image, PDF, Text)\nAdd Link",
+      "raw_match": "#### Task 3.3: Consolidate Content Options",
+      "status": "completed",
+      "request_id": "REQ-162",
+      "error": null,
+      "processed_at": "2026-01-09T21:54:58.360380",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-162",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-162-consolidate-content-options-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-162-consolidate-content-options-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Remove Duplicate Navigation",
+      "title": "Audit All Content Input Screens",
+      "description": "[ ] List all screens with bottom navigation:\nTextEditorStep\nFileUploadStep\nVideoCaptureStep\nPhotoCaptureStep\nUrlInputStep\nNextActionStep",
+      "raw_match": "#### Task 4.1: Audit All Content Input Screens",
+      "status": "completed",
+      "request_id": "REQ-163",
+      "error": null,
+      "processed_at": "2026-01-09T21:59:27.003431",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-163",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-163-audit-all-content-input-screens-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-163-audit-all-content-input-screens-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Remove Duplicate Navigation",
+      "title": "Remove Bottom Navigation from Content Screens",
+      "description": "[ ] TextEditorStep: Remove bottom bar, keep inline Back/Continue\n[ ] FileUploadStep: Remove bottom bar, keep inline navigation\n[ ] VideoCaptureStep: Remove bottom bar\n[ ] PhotoCaptureStep: Remove bottom bar\n[ ] UrlInputStep: Remove bottom bar\n[ ] Ensure consistent button placement across all screens",
+      "raw_match": "#### Task 4.2: Remove Bottom Navigation from Content Screens",
+      "status": "completed",
+      "request_id": "REQ-164",
+      "error": null,
+      "processed_at": "2026-01-09T22:04:31.816604",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-164",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-164-remove-bottom-navigation-from-content-screens-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-164-remove-bottom-navigation-from-content-screens-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Remove Duplicate Navigation",
+      "title": "Update Button Logic",
+      "description": "[ ] Before content: Show only \"Back\" button\n[ ] After content: Show \"Back\" + \"Continue\" buttons\n[ ] Ensure buttons are always visible (not scrolled off)\n[ ] Test on mobile viewport sizes",
+      "raw_match": "#### Task 4.3: Update Button Logic",
+      "status": "completed",
+      "request_id": "REQ-165",
+      "error": null,
+      "processed_at": "2026-01-09T22:10:55.056759",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-165",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-165-update-button-logic-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-165-update-button-logic-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Remove Duplicate Navigation",
+      "title": "Fix NextActionStep",
+      "description": "[ ] Remove bottom navigation bar completely\n[ ] Keep exactly 3 action cards: 1. Review & Submit 2. Add More Content 3. Cancel\n[ ] Add confirmation dialog for Cancel action\n[ ] Update dialog to warn about losing work",
+      "raw_match": "#### Task 4.4: Fix NextActionStep",
+      "status": "completed",
+      "request_id": "REQ-166",
+      "error": null,
+      "processed_at": "2026-01-09T22:15:29.698739",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-166",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-166-fix-nextactionstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-166-fix-nextactionstep-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Redesign Review Screen",
+      "title": "Create ContentPreview Component",
+      "description": "[ ] Create `/components/shared/ContentPreview.tsx`\n[ ] Handle video preview (thumbnail + duration badge)\n[ ] Handle photo preview (image thumbnail)\n[ ] Handle PDF preview (thumbnail + page count)\n[ ] Handle text preview (truncated text + icon)\n[ ] Handle URL preview (favicon + title + domain)\n[ ] Add loading states\n[ ] Export from shared/index.ts",
+      "raw_match": "#### Task 5.1: Create ContentPreview Component",
+      "status": "completed",
+      "request_id": "REQ-167",
+      "error": null,
+      "processed_at": "2026-01-09T22:21:18.904001",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-167",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-167-create-contentpreview-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-167-create-contentpreview-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Redesign Review Screen",
+      "title": "Redesign PreviewSaveStep Layout",
+      "description": "[ ] Remove large \"Add Media\" / \"Add Link\" buttons\n[ ] Show Item Details section with pre-filled data:\nTitle (auto-generated, editable)\nRoom (read-only, from selection)\nItem Type (read-only, from selection)\nPurpose (read-only, from selection)\n[ ] Show Content section with actual previews\n[ ] Add small \"+ Add More\" link (not large CTA)\n[ ] Show content count badge",
+      "raw_match": "#### Task 5.2: Redesign PreviewSaveStep Layout",
+      "status": "completed",
+      "request_id": "REQ-168",
+      "error": null,
+      "processed_at": "2026-01-09T22:26:55.896784",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-168",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-168-redesign-previewsavestep-layout-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-168-redesign-previewsavestep-layout-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Redesign Review Screen",
+      "title": "Update Content Display",
+      "description": "[ ] Use ContentPreview for each content piece\n[ ] Display in grid layout for multiple pieces\n[ ] Add reorder capability (drag handles)\n[ ] Add remove button on each piece\n[ ] Show empty state only when truly empty",
+      "raw_match": "#### Task 5.3: Update Content Display",
+      "status": "completed",
+      "request_id": "REQ-169",
+      "error": null,
+      "processed_at": "2026-01-09T22:33:00.636065",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-169",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-169-update-content-display-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-169-update-content-display-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Redesign Review Screen",
+      "title": "Pre-populate Fields",
+      "description": "[ ] Auto-fill Title from `generateItemTitle()`\n[ ] Display Room from `currentItem.room`\n[ ] Display Item Type from `currentItem.itemType`\n[ ] Display Purpose from `currentItem.purpose`\n[ ] Allow title editing (inline or modal)",
+      "raw_match": "#### Task 5.4: Pre-populate Fields",
+      "status": "completed",
+      "request_id": "REQ-170",
+      "error": null,
+      "processed_at": "2026-01-09T22:38:05.535013",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-170",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-170-pre-populate-fields-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-170-pre-populate-fields-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.5",
+      "phase": "5",
+      "phase_name": "Redesign Review Screen",
+      "title": "Update Tests",
+      "description": "[ ] Test content preview rendering for each type\n[ ] Test pre-populated fields display correctly\n[ ] Test title editing works\n[ ] Test empty state handling",
+      "raw_match": "#### Task 5.5: Update Tests",
+      "status": "completed",
+      "request_id": "REQ-171",
+      "error": null,
+      "processed_at": "2026-01-09T22:46:38.635603",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-171",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-171-update-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-171-update-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Integration & Polish",
+      "title": "End-to-End Flow Testing",
+      "description": "[ ] Test complete flow: Room -> Item Type -> Purpose -> Content Type -> Create -> Review -> Save\n[ ] Verify auto-generated title appears correctly\n[ ] Verify all pre-filled fields display correctly\n[ ] Test \"Add More Content\" flow\n[ ] Test Cancel with confirmation dialog",
+      "raw_match": "#### Task 6.1: End-to-End Flow Testing",
+      "status": "completed",
+      "request_id": "REQ-172",
+      "error": null,
+      "processed_at": "2026-01-09T22:53:43.553368",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-172",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-172-end-to-end-flow-testing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-172-end-to-end-flow-testing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Integration & Polish",
+      "title": "Mobile Responsiveness",
+      "description": "[ ] Test on small viewport (320px width)\n[ ] Verify touch targets meet 48px minimum\n[ ] Test drag-to-reorder on mobile\n[ ] Verify content previews scale appropriately",
+      "raw_match": "#### Task 6.2: Mobile Responsiveness",
+      "status": "completed",
+      "request_id": "REQ-173",
+      "error": null,
+      "processed_at": "2026-01-09T22:59:04.588386",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-173",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-173-mobile-responsiveness-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-173-mobile-responsiveness-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.3",
+      "phase": "6",
+      "phase_name": "Integration & Polish",
+      "title": "Accessibility Audit",
+      "description": "[ ] Verify all new components have aria labels\n[ ] Test keyboard navigation through entire flow\n[ ] Test screen reader announcements\n[ ] Verify focus management on step transitions",
+      "raw_match": "#### Task 6.3: Accessibility Audit",
+      "status": "completed",
+      "request_id": "REQ-174",
+      "error": null,
+      "processed_at": "2026-01-09T23:05:11.696503",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-174",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-174-accessibility-audit-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-174-accessibility-audit-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.4",
+      "phase": "6",
+      "phase_name": "Integration & Polish",
+      "title": "Update Documentation",
+      "description": "[ ] Update WORKFLOW_STEPS comments\n[ ] Update component JSDoc comments\n[ ] Update README if exists\n[ ] Add @lastModified dates to modified files",
+      "raw_match": "#### Task 6.4: Update Documentation",
+      "status": "completed",
+      "request_id": "REQ-175",
+      "error": null,
+      "processed_at": "2026-01-09T23:11:59.294011",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-175",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-175-update-documentation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-175-update-documentation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "disabled",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 0,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [],
+  "metadata": {
+    "total_requests_generated": 5,
+    "last_request_id": "REQ-175",
+    "first_request_id": "REQ-148",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-ui-ux-workflow-improvements.yaml"
+  },
+  "dependencies": {
+    "tasks": {
+      "0.1": {
+        "task_id": "0.1",
+        "depends_on": [],
+        "blocks": [
+          "0.2",
+          "0.3",
+          "0.4",
+          "0.5",
+          "0.6"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "4.2",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.352944",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-148-create-itemarticles-table-overview.md"
+      },
+      "0.2": {
+        "task_id": "0.2",
+        "depends_on": [
+          "0.1"
+        ],
+        "blocks": [
+          "0.3",
+          "0.4",
+          "0.5",
+          "0.6"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "4.2",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.352990",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-149-add-articleid-to-itemlinks-table-overview.md"
+      },
+      "0.3": {
+        "task_id": "0.3",
+        "depends_on": [
+          "0.2",
+          "0.1"
+        ],
+        "blocks": [
+          "0.4",
+          "0.6"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "4.2",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.352999",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-150-create-rls-policies-for-itemarticles-overview.md"
+      },
+      "0.4": {
+        "task_id": "0.4",
+        "depends_on": [
+          "0.2",
+          "0.3",
+          "0.1"
+        ],
+        "blocks": [
+          "0.5",
+          "0.6"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "4.2",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353004",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-151-update-api-endpoints-overview.md"
+      },
+      "0.5": {
+        "task_id": "0.5",
+        "depends_on": [
+          "0.2",
+          "0.4",
+          "0.1"
+        ],
+        "blocks": [
+          "0.6"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "4.2",
+          "0.3",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353008",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-152-update-typescript-types-overview.md"
+      },
+      "0.6": {
+        "task_id": "0.6",
+        "depends_on": [
+          "0.2",
+          "0.1",
+          "0.4",
+          "0.3",
+          "0.5"
+        ],
+        "blocks": [
+          "1.1"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "5.3",
+          "3.2",
+          "6.3",
+          "4.2",
+          "6.1",
+          "2.3",
+          "2.1",
+          "6.2",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "5.1",
+          "5.5",
+          "5.2",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353012",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-153-data-migration-if-needed-overview.md"
+      },
+      "1.1": {
+        "task_id": "1.1",
+        "depends_on": [
+          "0.6"
+        ],
+        "blocks": [
+          "1.2",
+          "1.3",
+          "2.1",
+          "2.2",
+          "2.3",
+          "5.2",
+          "5.4",
+          "5.5",
+          "6.2"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/hooks/useWorkflowState.ts",
+          "src/components/ItemCreationWorkflow/ItemCreationWorkflow.types.ts",
+          "src/components/ItemCreationWorkflow/utils/constants.ts"
+        ],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "6.3",
+          "4.4",
+          "0.2",
+          "4.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "5.3",
+          "3.2",
+          "0.3",
+          "0.5",
+          "6.4",
+          "5.1",
+          "3.3",
+          "6.1",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353024",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-154-update-types-and-constants-overview.md"
+      },
+      "1.2": {
+        "task_id": "1.2",
+        "depends_on": [
+          "1.1"
+        ],
+        "blocks": [
+          "1.3",
+          "2.2",
+          "5.2",
+          "5.4",
+          "6.2"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/utils/titleGenerator.ts",
+          "src/components/ItemCreationWorkflow/utils/index.ts"
+        ],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "5.3",
+          "3.2",
+          "6.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "6.1",
+          "2.3",
+          "2.1",
+          "6.4",
+          "3.3",
+          "4.3",
+          "0.2",
+          "5.1",
+          "5.5",
+          "0.6",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353029",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-155-create-title-generator-utility-overview.md"
+      },
+      "1.3": {
+        "task_id": "1.3",
+        "depends_on": [
+          "1.1",
+          "1.2"
+        ],
+        "blocks": [
+          "2.1",
+          "2.2",
+          "5.2",
+          "5.4",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "5.3",
+          "3.2",
+          "6.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "6.1",
+          "2.3",
+          "6.4",
+          "3.3",
+          "4.3",
+          "0.2",
+          "5.1",
+          "5.5",
+          "0.6",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353033",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-156-update-state-machine-overview.md"
+      },
+      "2.1": {
+        "task_id": "2.1",
+        "depends_on": [
+          "1.1",
+          "1.3"
+        ],
+        "blocks": [
+          "2.2",
+          "2.3",
+          "5.4",
+          "5.5",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "5.3",
+          "3.2",
+          "6.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "5.2",
+          "6.1",
+          "6.4",
+          "1.2",
+          "3.3",
+          "4.3",
+          "0.2",
+          "5.1",
+          "0.6",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353038",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-157-create-purposestep-component-overview.md"
+      },
+      "2.2": {
+        "task_id": "2.2",
+        "depends_on": [
+          "1.1",
+          "1.3",
+          "2.1",
+          "1.2"
+        ],
+        "blocks": [
+          "2.3",
+          "5.4",
+          "5.5",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "5.3",
+          "3.2",
+          "6.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "5.2",
+          "6.1",
+          "6.4",
+          "3.3",
+          "4.3",
+          "0.2",
+          "5.1",
+          "0.6",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353042",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-158-integrate-purposestep-into-workflow-overview.md"
+      },
+      "2.3": {
+        "task_id": "2.3",
+        "depends_on": [
+          "1.1",
+          "2.2",
+          "2.1"
+        ],
+        "blocks": [
+          "3.1",
+          "6.2"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/components/steps/__tests__/PurposeStep.test.tsx"
+        ],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "3.3",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353046",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-159-create-unit-tests-overview.md"
+      },
+      "3.1": {
+        "task_id": "3.1",
+        "depends_on": [
+          "2.3"
+        ],
+        "blocks": [
+          "3.2",
+          "3.3",
+          "5.4",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "2.2",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353050",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-160-remove-contentsourcestep-overview.md"
+      },
+      "3.2": {
+        "task_id": "3.2",
+        "depends_on": [
+          "3.1"
+        ],
+        "blocks": [
+          "3.3",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353053",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-161-update-contenttypestep-labels-overview.md"
+      },
+      "3.3": {
+        "task_id": "3.3",
+        "depends_on": [
+          "3.1",
+          "3.2"
+        ],
+        "blocks": [
+          "4.1"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353056",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-162-consolidate-content-options-overview.md"
+      },
+      "4.1": {
+        "task_id": "4.1",
+        "depends_on": [
+          "3.3"
+        ],
+        "blocks": [
+          "4.2",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353061",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-163-audit-all-content-input-screens-overview.md"
+      },
+      "4.2": {
+        "task_id": "4.2",
+        "depends_on": [
+          "4.1"
+        ],
+        "blocks": [
+          "4.3",
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353066",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-164-remove-bottom-navigation-from-content-screens-overview.md"
+      },
+      "4.3": {
+        "task_id": "4.3",
+        "depends_on": [
+          "4.2"
+        ],
+        "blocks": [
+          "4.4"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353071",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-165-update-button-logic-overview.md"
+      },
+      "4.4": {
+        "task_id": "4.4",
+        "depends_on": [
+          "4.3"
+        ],
+        "blocks": [
+          "5.1"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353074",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-166-fix-nextactionstep-overview.md"
+      },
+      "5.1": {
+        "task_id": "5.1",
+        "depends_on": [
+          "4.4"
+        ],
+        "blocks": [
+          "5.2",
+          "5.3"
+        ],
+        "files_touched": [
+          "/src/components/ItemCreationWorkflow/components/shared/ContentPreview.tsx",
+          "/src/components/ItemCreationWorkflow/components/shared/__tests__/ContentPreview.test.tsx"
+        ],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "2.1",
+          "6.2",
+          "3.2",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.5",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353078",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-167-create-contentpreview-component-overview.md"
+      },
+      "5.2": {
+        "task_id": "5.2",
+        "depends_on": [
+          "1.3",
+          "1.2",
+          "1.1",
+          "5.1"
+        ],
+        "blocks": [
+          "5.3",
+          "5.4"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/components/steps/PreviewSaveStep.tsx"
+        ],
+        "conflicts_with": [
+          "5.3"
+        ],
+        "safe_to_parallelize": [
+          "4.4",
+          "3.2",
+          "6.3",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "6.1",
+          "2.3",
+          "2.1",
+          "6.2",
+          "6.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "0.2",
+          "5.5",
+          "0.6",
+          "3.1",
+          "4.1"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353082",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-168-redesign-previewsavestep-layout-overview.md"
+      },
+      "5.3": {
+        "task_id": "5.3",
+        "depends_on": [
+          "5.2",
+          "5.1"
+        ],
+        "blocks": [
+          "5.4"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/components/shared/ContentPieceCard.tsx",
+          "src/components/ItemCreationWorkflow/components/steps/PreviewSaveStep.tsx",
+          "src/components/ItemCreationWorkflow/components/shared/SortableContentPieceCard.tsx"
+        ],
+        "conflicts_with": [
+          "5.2"
+        ],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "6.4",
+          "1.2",
+          "1.3",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.5",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353086",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-169-update-content-display-overview.md"
+      },
+      "5.4": {
+        "task_id": "5.4",
+        "depends_on": [
+          "2.1",
+          "5.3",
+          "1.1",
+          "1.2",
+          "1.3",
+          "2.2",
+          "5.2",
+          "3.1"
+        ],
+        "blocks": [
+          "5.5"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "6.3",
+          "4.4",
+          "0.2",
+          "4.3",
+          "0.1",
+          "4.2",
+          "6.2",
+          "0.4",
+          "3.2",
+          "0.3",
+          "0.5",
+          "6.4",
+          "5.1",
+          "3.3",
+          "0.6",
+          "6.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353092",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-170-pre-populate-fields-overview.md"
+      },
+      "5.5": {
+        "task_id": "5.5",
+        "depends_on": [
+          "2.2",
+          "5.4",
+          "2.1",
+          "1.1"
+        ],
+        "blocks": [
+          "6.1"
+        ],
+        "files_touched": [
+          "src/components/ItemCreationWorkflow/components/shared/__tests__/ContentPreview.test.tsx",
+          "src/components/ItemCreationWorkflow/utils/__tests__/titleGenerator.test.ts",
+          "src/components/ItemCreationWorkflow/__tests__/ReviewScreenRedesign.integration.test.tsx"
+        ],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "6.2",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "3.3",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "5.1",
+          "5.2",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353096",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-171-update-tests-overview.md"
+      },
+      "6.1": {
+        "task_id": "6.1",
+        "depends_on": [
+          "5.5"
+        ],
+        "blocks": [
+          "6.2"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "3.2",
+          "5.3",
+          "6.4",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "6.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.2",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353100",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-172-end-to-end-flow-testing-overview.md"
+      },
+      "6.2": {
+        "task_id": "6.2",
+        "depends_on": [
+          "2.1",
+          "4.2",
+          "3.2",
+          "1.1",
+          "1.3",
+          "1.2",
+          "2.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "blocks": [
+          "6.3"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "0.2",
+          "4.4",
+          "0.6",
+          "0.1",
+          "0.4",
+          "0.3",
+          "5.3",
+          "0.5",
+          "6.4",
+          "5.1",
+          "5.4",
+          "5.5",
+          "3.3",
+          "5.2",
+          "4.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353103",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-173-mobile-responsiveness-overview.md"
+      },
+      "6.3": {
+        "task_id": "6.3",
+        "depends_on": [
+          "6.2"
+        ],
+        "blocks": [
+          "6.4"
+        ],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "3.2",
+          "5.3",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353107",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-174-accessibility-audit-overview.md"
+      },
+      "6.4": {
+        "task_id": "6.4",
+        "depends_on": [
+          "6.3"
+        ],
+        "blocks": [],
+        "files_touched": [],
+        "conflicts_with": [],
+        "safe_to_parallelize": [
+          "4.4",
+          "2.1",
+          "6.2",
+          "3.2",
+          "5.3",
+          "1.2",
+          "1.3",
+          "5.4",
+          "2.2",
+          "3.3",
+          "4.3",
+          "0.2",
+          "0.6",
+          "0.1",
+          "4.2",
+          "0.4",
+          "0.3",
+          "0.5",
+          "1.1",
+          "5.1",
+          "5.5",
+          "5.2",
+          "6.1",
+          "3.1",
+          "4.1",
+          "2.3"
+        ],
+        "extracted_at": "2026-01-10T00:16:00.353114",
+        "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-175-update-documentation-overview.md"
+      }
+    },
+    "graph": {
+      "nodes": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+        "2.2",
+        "2.3",
+        "3.1",
+        "3.2",
+        "3.3",
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4",
+        "5.5",
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4"
+      ],
+      "edges": [
+        [
+          "0.1",
+          "0.2"
+        ],
+        [
+          "0.2",
+          "0.3"
+        ],
+        [
+          "0.1",
+          "0.3"
+        ],
+        [
+          "0.2",
+          "0.4"
+        ],
+        [
+          "0.3",
+          "0.4"
+        ],
+        [
+          "0.1",
+          "0.4"
+        ],
+        [
+          "0.2",
+          "0.5"
+        ],
+        [
+          "0.4",
+          "0.5"
+        ],
+        [
+          "0.1",
+          "0.5"
+        ],
+        [
+          "0.2",
+          "0.6"
+        ],
+        [
+          "0.1",
+          "0.6"
+        ],
+        [
+          "0.4",
+          "0.6"
+        ],
+        [
+          "0.3",
+          "0.6"
+        ],
+        [
+          "0.5",
+          "0.6"
+        ],
+        [
+          "0.6",
+          "1.1"
+        ],
+        [
+          "1.1",
+          "1.2"
+        ],
+        [
+          "1.1",
+          "1.3"
+        ],
+        [
+          "1.2",
+          "1.3"
+        ],
+        [
+          "1.1",
+          "2.1"
+        ],
+        [
+          "1.3",
+          "2.1"
+        ],
+        [
+          "1.1",
+          "2.2"
+        ],
+        [
+          "1.3",
+          "2.2"
+        ],
+        [
+          "2.1",
+          "2.2"
+        ],
+        [
+          "1.2",
+          "2.2"
+        ],
+        [
+          "1.1",
+          "2.3"
+        ],
+        [
+          "2.2",
+          "2.3"
+        ],
+        [
+          "2.1",
+          "2.3"
+        ],
+        [
+          "2.3",
+          "3.1"
+        ],
+        [
+          "3.1",
+          "3.2"
+        ],
+        [
+          "3.1",
+          "3.3"
+        ],
+        [
+          "3.2",
+          "3.3"
+        ],
+        [
+          "3.3",
+          "4.1"
+        ],
+        [
+          "4.1",
+          "4.2"
+        ],
+        [
+          "4.2",
+          "4.3"
+        ],
+        [
+          "4.3",
+          "4.4"
+        ],
+        [
+          "4.4",
+          "5.1"
+        ],
+        [
+          "1.3",
+          "5.2"
+        ],
+        [
+          "1.2",
+          "5.2"
+        ],
+        [
+          "1.1",
+          "5.2"
+        ],
+        [
+          "5.1",
+          "5.2"
+        ],
+        [
+          "5.2",
+          "5.3"
+        ],
+        [
+          "5.1",
+          "5.3"
+        ],
+        [
+          "2.1",
+          "5.4"
+        ],
+        [
+          "5.3",
+          "5.4"
+        ],
+        [
+          "1.1",
+          "5.4"
+        ],
+        [
+          "1.2",
+          "5.4"
+        ],
+        [
+          "1.3",
+          "5.4"
+        ],
+        [
+          "2.2",
+          "5.4"
+        ],
+        [
+          "5.2",
+          "5.4"
+        ],
+        [
+          "3.1",
+          "5.4"
+        ],
+        [
+          "2.2",
+          "5.5"
+        ],
+        [
+          "5.4",
+          "5.5"
+        ],
+        [
+          "2.1",
+          "5.5"
+        ],
+        [
+          "1.1",
+          "5.5"
+        ],
+        [
+          "5.5",
+          "6.1"
+        ],
+        [
+          "2.1",
+          "6.2"
+        ],
+        [
+          "4.2",
+          "6.2"
+        ],
+        [
+          "3.2",
+          "6.2"
+        ],
+        [
+          "1.1",
+          "6.2"
+        ],
+        [
+          "1.3",
+          "6.2"
+        ],
+        [
+          "1.2",
+          "6.2"
+        ],
+        [
+          "2.2",
+          "6.2"
+        ],
+        [
+          "6.1",
+          "6.2"
+        ],
+        [
+          "3.1",
+          "6.2"
+        ],
+        [
+          "4.1",
+          "6.2"
+        ],
+        [
+          "2.3",
+          "6.2"
+        ],
+        [
+          "6.2",
+          "6.3"
+        ],
+        [
+          "6.3",
+          "6.4"
+        ]
+      ],
+      "roots": [
+        "0.1"
+      ],
+      "leaves": [
+        "6.4"
+      ]
+    },
+    "execution": {
+      "topological_order": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+        "2.2",
+        "2.3",
+        "3.1",
+        "3.2",
+        "3.3",
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4",
+        "5.5",
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4"
+      ],
+      "critical_path": [
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+        "2.2",
+        "2.3",
+        "3.1",
+        "3.2",
+        "3.3",
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4",
+        "5.5",
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4"
+      ],
+      "parallel_clusters": [
+        [
+          "0.1"
+        ],
+        [
+          "0.2"
+        ],
+        [
+          "0.3"
+        ],
+        [
+          "0.4"
+        ],
+        [
+          "0.5"
+        ],
+        [
+          "0.6"
+        ],
+        [
+          "1.1"
+        ],
+        [
+          "1.2"
+        ],
+        [
+          "1.3"
+        ],
+        [
+          "2.1"
+        ],
+        [
+          "2.2"
+        ],
+        [
+          "2.3"
+        ],
+        [
+          "3.1"
+        ],
+        [
+          "3.2"
+        ],
+        [
+          "3.3"
+        ],
+        [
+          "4.1"
+        ],
+        [
+          "4.2"
+        ],
+        [
+          "4.3"
+        ],
+        [
+          "4.4"
+        ],
+        [
+          "5.1"
+        ],
+        [
+          "5.2"
+        ],
+        [
+          "5.3"
+        ],
+        [
+          "5.4"
+        ],
+        [
+          "5.5"
+        ],
+        [
+          "6.1"
+        ],
+        [
+          "6.2"
+        ],
+        [
+          "6.3"
+        ],
+        [
+          "6.4"
+        ]
+      ],
+      "has_cycles": false,
+      "cycle_tasks": []
+    },
+    "last_updated": "2026-01-10T00:16:00.353569"
+  },
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2026-01-10T01:14:01.692522",
+    "elapsed": "20.0s",
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Successfully connected to Chrome via CDP and captured browser snapshot. Chrome is running with remote debugging enabled on port 9223."
+      }
+    }
+  },
+  "testcheck_completed": true,
+  "testcheck_completed_at": "2026-01-10T01:20:57.255313",
+  "verification": {
+    "test_harness_path": "src/app/test/ui-ux-workflow-improvements/page.tsx",
+    "test_harness_url": "/test/ui-ux-workflow-improvements"
+  }
+}

@@ -6971,3 +6971,966 @@ Completes the file upload feature implementation, making the item creation workf
 - [ ] Large video files show progress feedback throughout the upload process
 - [ ] Multiple files within the same item are uploaded sequentially or in parallel as appropriate
 
+
+
+---
+
+## REQ-148: Support Item-Related Articles with Purpose Categories
+
+**Date**: 2026-01-09 21:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should store and organize articles associated with items, allowing categorization by purpose such as usage instructions, cleaning procedures, and troubleshooting guides.
+
+### Current Behavior
+No structured storage exists for item-related articles. Content that could help guests use, maintain, or troubleshoot items cannot be organized by purpose or easily retrieved.
+
+### Expected Behavior
+Property owners can associate multiple articles with any item, each categorized by its purpose (how to use, how to clean, troubleshooting, etc.). Articles are automatically titled based on their purpose and the item name. Articles can be ordered for display and are automatically removed when their parent item is deleted.
+
+### User Impact
+Property owners will have a structured way to provide comprehensive guidance to guests about items in their property. Guests will be able to access categorized help content, making it easier to find the specific information they need.
+
+### Business Value
+Creates the foundation for rich, organized documentation about property items. Enables property owners to provide better guest experiences through structured help content, potentially reducing support requests and improving guest satisfaction.
+
+### Acceptance Criteria
+- [ ] Articles can be created and linked to specific items
+- [ ] Each article has a purpose category that indicates its content type
+- [ ] Articles have titles that can be automatically generated from purpose and item name
+- [ ] Articles can include optional detailed descriptions
+- [ ] Multiple articles for the same item can be ordered for display
+- [ ] Articles are automatically deleted when their parent item is deleted
+- [ ] Articles can be efficiently retrieved by item identifier
+- [ ] Access to articles respects security policies similar to other item-related data
+- [ ] Creation and modification timestamps are tracked for each article
+
+
+
+---
+
+## REQ-149: Link Items to Articles for Relationship Mapping
+
+**Date**: 2026-01-09 22:15
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system should establish a direct relationship between items and articles through a database link, allowing articles to be properly associated with the items they describe.
+
+### Current Behavior
+The item links table stores references to various content types associated with items, but cannot reference articles. This prevents items from having a structured relationship to their instructional or informational articles.
+
+### Expected Behavior
+Items can be linked to articles through a dedicated reference that maintains referential integrity. When an article is deleted, any links to it are automatically removed. The system can efficiently query which articles are associated with a given item and vice versa.
+
+### User Impact
+Property owners will be able to create rich connections between items and their documentation. Guests viewing an item will be able to access all related articles through a unified interface.
+
+### Business Value
+Completes the foundational data model for item-article relationships, enabling the full implementation of item documentation features. Supports backwards compatibility with existing item links while enabling new article-based features.
+
+### Acceptance Criteria
+- [ ] Items can be linked to articles through a database relationship
+- [ ] Links to articles are automatically removed when the article is deleted
+- [ ] Existing item links continue to function without disruption
+- [ ] The system can efficiently find all articles linked to a specific item
+- [ ] The relationship respects database constraints and referential integrity
+- [ ] NULL values are supported for links that do not reference articles
+
+
+---
+
+## REQ-150: Implement Row Level Security Policies for Item Articles
+
+**Date**: 2026-01-09 14:32
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system must enforce access control policies on item articles, ensuring users can only access articles associated with their own properties while allowing public read access for QR code scanning scenarios.
+
+### Current Behavior
+The item articles table exists without Row Level Security policies, meaning access control is not enforced at the database level and must be manually implemented in application logic.
+
+### Expected Behavior
+- Users can view, create, modify, and remove articles only for items they own through property ownership
+- Authenticated users cannot access articles belonging to other users' properties
+- Public users (unauthenticated) can view any article when accessed through its public identifier
+- The database automatically enforces these rules regardless of how the data is accessed
+
+### User Impact
+Property owners gain confidence that their item article data is protected and cannot be accessed or modified by other users, while maintaining the ability to share articles publicly via QR codes for guest access.
+
+### Business Value
+Enforcing security at the database level provides defense-in-depth protection and reduces the risk of security vulnerabilities in the application layer exposing sensitive property and item information.
+
+### Acceptance Criteria
+- [ ] Authenticated users can view articles for items in properties they own
+- [ ] Authenticated users can create new articles for items in properties they own
+- [ ] Authenticated users can modify existing articles for items in properties they own
+- [ ] Authenticated users can remove articles for items in properties they own
+- [ ] Authenticated users cannot view articles for items in properties owned by others
+- [ ] Unauthenticated users can view any article regardless of ownership
+- [ ] All access control is enforced at the database level through RLS policies
+
+
+
+---
+
+## REQ-151: API Endpoint Updates for Article-Based Content Structure
+
+**Date**: 2026-01-09 22:45
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The system's API endpoints must be updated to support creating, retrieving, and managing articles alongside items, enabling the transition to an article-based content organization model.
+
+### Current Behavior
+The items API endpoints create and return item data with direct links to content, but do not handle article creation or retrieval. There is no dedicated API for managing articles separately. The display interface organizes content by link type rather than by conceptual grouping.
+
+### Expected Behavior
+When an item is saved, the API automatically creates the associated article records based on the content provided. When items are retrieved, the response includes their related articles with nested link information. A complete set of CRUD endpoints exists for managing articles independently. The display interface groups and presents content by article, making it easier for users to understand the organized structure of information about each item.
+
+### User Impact
+Property owners will experience a more intuitive content management workflow where articles are created automatically during item creation. Guests viewing items will see content organized by article topics rather than scattered across different content types, improving comprehension and usability.
+
+### Business Value
+Enables the full implementation of the article-based content structure, providing a more scalable and maintainable approach to organizing item-related information. Improves both the content authoring experience and the end-user consumption experience.
+
+### Acceptance Criteria
+- [ ] Saving an item through POST to items endpoint automatically creates article records for included content
+- [ ] Retrieving items through GET from items endpoint returns articles with their nested links
+- [ ] Full CRUD operations are available for articles through dedicated endpoints
+- [ ] The item display interface visually groups content by article rather than by content type
+- [ ] Article creation during item save respects purpose categories and maintains proper relationships
+- [ ] API responses maintain backward compatibility where possible with existing client implementations
+- [ ] Error handling provides clear feedback when article operations fail
+- [ ] Performance remains acceptable when loading items with multiple articles and nested content
+
+
+
+
+---
+
+## REQ-152: Update Type Definitions for Article-Based Data Structure
+
+**Date**: 2026-01-09 22:52
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application's TypeScript type definitions must be updated to reflect the new article-based content organization model, ensuring type safety and developer clarity throughout the codebase.
+
+### Current Behavior
+The existing type definitions represent items with directly attached links and content, but lack any representation of articles as an intermediate organizational layer. The type system does not enforce or communicate the article-based structure to developers.
+
+### Expected Behavior
+Type definitions accurately model the article-based structure where items contain articles, and articles contain links. Developers working with item data receive intellisense and type checking that guides them toward the correct article-based data structure. Admin API type definitions align with the updated data model.
+
+### User Impact
+Developers working on the system will have clearer guidance through type safety when building features that interact with item and article data, reducing bugs and improving code quality. This indirectly benefits property owners and guests through more reliable application behavior.
+
+### Business Value
+Ensures type safety during the database refactoring phase, catching potential errors at compile time rather than runtime. Provides self-documenting code that helps current and future developers understand the article-based content model.
+
+### Acceptance Criteria
+- [ ] An ItemArticle type exists representing article records with all required fields
+- [ ] The ItemArticle type includes support for nested links
+- [ ] The ItemArticle type includes purpose, title, description, and display order fields
+- [ ] The Item type is updated to include an articles property containing an array of ItemArticle
+- [ ] Admin API type definitions reflect the article-based structure
+- [ ] All timestamp fields are properly typed
+- [ ] Type definitions support optional fields where the schema permits nulls
+- [ ] Existing code using the old Item type surface compilation errors that guide refactoring
+
+
+---
+
+## REQ-153: Migrate Existing Item Links to Article Structure
+
+**Date**: 2026-01-09 
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Existing items with associated links must be migrated to use the new article-based structure without losing data or breaking existing functionality.
+
+### Current Behavior
+Items have links stored directly against them without an intermediate article grouping. When the database schema changes to require articles, existing link data could become orphaned or inaccessible.
+
+### Expected Behavior
+When the database schema is updated, all existing item links are automatically preserved by creating appropriate article records and updating link associations. Users continue to see all their existing content without interruption.
+
+### User Impact
+Users with existing items that have attached links will retain full access to their content after the system upgrade. No manual data re-entry or recovery is required.
+
+### Business Value
+Ensures zero data loss during schema migration and maintains user trust by preserving all existing work during system improvements.
+
+### Acceptance Criteria
+- [ ] All existing items with links have at least one article record created automatically
+- [ ] All existing links are successfully associated with an article after migration
+- [ ] No item links are orphaned or inaccessible after the migration completes
+- [ ] The migration can be run safely on production data without requiring downtime
+- [ ] Migration can be re-run safely if interrupted (idempotent behavior)
+
+
+
+---
+
+## REQ-154: Introduce Purpose Selection Step in Item Creation Workflow
+
+**Date**: 2026-01-09 16:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Users must select the purpose or intent of their item before proceeding with content creation, replacing the current content source selection as the first step in the workflow.
+
+### Current Behavior
+The item creation workflow begins with a content source selection step where users choose how they will provide content. The workflow does not explicitly capture the user's intent or purpose for creating the item.
+
+### Expected Behavior
+When creating a new item, users first encounter a purpose selection step that allows them to choose the intended use or goal of the item they are creating. This replaces the content source selection as the initial workflow step and establishes context for subsequent creation steps.
+
+### User Impact
+Property owners creating items will have a clearer, more intentional workflow that begins by defining why they are creating content rather than how they will create it. This change affects all users creating new items and provides better context for the remaining workflow steps.
+
+### Business Value
+Improves user experience by establishing intent before execution, allowing the system to better tailor subsequent steps based on the selected purpose. Creates foundation for purpose-driven content recommendations and workflow optimizations.
+
+### Acceptance Criteria
+- [ ] Users see a purpose selection interface as the first step when creating an item
+- [ ] Multiple purpose options are available for selection with clear labels and descriptions
+- [ ] The selected purpose is captured and maintained throughout the item creation workflow
+- [ ] The content source selection step is removed from the workflow
+- [ ] Progress indicators reflect the updated workflow step sequence
+- [ ] Navigation between workflow steps accounts for the new step ordering
+- [ ] Workflow state properly tracks the selected purpose value
+- [ ] All step transitions function correctly with the updated workflow structure
+
+
+---
+
+## REQ-155: Generate Appropriate Titles Based on Item Purpose
+
+**Date**: 2026-01-09 20:11
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system must automatically generate appropriate descriptive titles for items based on their selected purpose type, ensuring consistent and meaningful naming across all content.
+
+### Current Behavior
+Items do not have automatically generated titles. Users must manually create titles, or titles may be missing or inconsistent when items are created programmatically without explicit title input.
+
+### Expected Behavior
+When an item is created with a purpose type, the system automatically generates a contextually appropriate title that describes the item's intended use. The generated title adapts to the specific purpose selected (e.g., "Check-in Instructions", "House Rules", "Welcome Guide"). If purpose information is missing, the system provides a sensible fallback title.
+
+### User Impact
+Property owners benefit from automatically generated, professional titles that clearly communicate the purpose of each item without requiring manual input. This reduces cognitive load during content creation and ensures consistency across all items of the same type.
+
+### Business Value
+Improves content organization and discoverability by ensuring all items have meaningful, purpose-driven titles. Reduces user friction during item creation by eliminating the need to think about appropriate naming conventions.
+
+### Acceptance Criteria
+- [ ] Items created with a purpose type receive an automatically generated title
+- [ ] Generated titles accurately reflect the selected purpose type
+- [ ] All supported purpose type combinations produce appropriate titles
+- [ ] A fallback title is provided when purpose information is unavailable
+- [ ] The title generation logic is centralized and reusable across the application
+- [ ] Generated titles are clear, professional, and user-friendly
+- [ ] The utility can be called from any part of the application that creates items
+
+---
+
+## REQ-156: Streamline Workflow by Removing Content Source Selection Step
+
+**Date**: 2026-01-09 10:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The item creation workflow should simplify the user journey by removing the content source selection step and automatically generating titles when users select their item's purpose.
+
+### Current Behavior
+Users navigate through multiple steps in the creation workflow, including a separate content source selection step that adds friction to the process. Title generation is a separate, manual action that occurs independently of purpose selection.
+
+### Expected Behavior
+When users select the purpose of their item, the system automatically generates an appropriate title and the workflow bypasses the content source selection step entirely. The state machine transitions directly to the next relevant step after purpose selection, creating a more streamlined experience.
+
+### User Impact
+All users creating new items will experience a faster, more intuitive workflow with fewer decision points and automatic helpful defaults. This reduces cognitive load and time-to-completion for item creation.
+
+### Business Value
+Simplifying the creation workflow reduces user friction and abandonment, leading to higher completion rates and improved user satisfaction with the platform.
+
+### Acceptance Criteria
+- [ ] Selecting an item purpose automatically generates an appropriate title
+- [ ] The content source selection step no longer appears in the creation flow
+- [ ] Users can proceed to the next step immediately after selecting a purpose
+- [ ] The system correctly determines which step follows purpose selection
+- [ ] Users cannot advance from the purpose step until a valid purpose is selected
+- [ ] All workflow transitions maintain data integrity across the simplified flow
+
+
+---
+
+## REQ-157: Implement Interactive Purpose Selection Interface
+
+**Date**: 2026-01-09 20:13
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need an interactive, accessible interface to select the purpose of their item from a grid of clearly labeled options with visual icons and smooth navigation.
+
+### Current Behavior
+The system has a purpose selection step defined in the workflow, but there is no interactive user interface component to present purpose options and capture user selection in an engaging, accessible manner.
+
+### Expected Behavior
+Users see a visually appealing grid of purpose cards, each with a distinctive icon and clear label. They can select a purpose using mouse clicks, touch gestures, or keyboard navigation. Upon selection, visual feedback confirms their choice before the workflow automatically advances to the next step. Screen readers announce options and selections appropriately.
+
+### User Impact
+All users creating items will interact with this interface as their first step. The experience must be intuitive for mouse users, touch device users, keyboard-only users, and assistive technology users alike. A polished, responsive interface improves user confidence and reduces confusion during item creation.
+
+### Business Value
+A well-designed purpose selection interface sets a professional tone for the entire item creation experience. Proper accessibility ensures compliance and inclusivity, while smooth interactions reduce abandonment and support requests.
+
+### Acceptance Criteria
+- [ ] Purpose options are displayed in a responsive grid layout that adapts to screen size
+- [ ] Each purpose option displays a distinctive icon and clear text label
+- [ ] Users can select a purpose by clicking or tapping on a card
+- [ ] Keyboard users can navigate between purpose cards using arrow keys
+- [ ] Pressing Enter or Space on a focused card selects that purpose
+- [ ] Selected card displays visual feedback before automatic workflow advancement
+- [ ] A brief delay between selection and advancement provides time for users to see their choice confirmed
+- [ ] Screen readers announce each purpose option and the current selection state
+- [ ] All interactive elements include appropriate ARIA labels and roles
+- [ ] The component follows the established pattern used in similar selection steps
+- [ ] The component is properly exported and integrated into the workflow step sequence
+
+</EOF>
+
+---
+
+## REQ-158: Integrate Purpose Selection Step into Item Creation Workflow
+
+**Date**: 2026-01-09 23:32
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The purpose selection interface component must be integrated into the main item creation workflow so users can access and interact with it during the creation process.
+
+### Current Behavior
+The purpose selection component exists as a standalone element but is not connected to the item creation workflow. Users navigating through the workflow cannot access the purpose selection interface, making it impossible to specify the purpose of their item during creation.
+
+### Expected Behavior
+When users reach the purpose selection stage of the workflow, they see and can interact with the purpose selection interface. Their selection triggers the appropriate workflow action, and the workflow advances to the next step after a purpose is chosen. The interface displays correctly within the workflow layout and responds to all workflow state changes.
+
+### User Impact
+All users creating new items will be able to access the purpose selection step as a natural part of their creation journey. Without this integration, the purpose selection feature remains inaccessible to users, blocking the entire purpose-driven workflow enhancement.
+
+### Business Value
+Completing this integration is essential to deliver the purpose-based workflow improvements to users. This represents a critical path item that unlocks the value of related purpose-driven features.
+
+### Acceptance Criteria
+- [ ] The purpose selection component appears when the workflow reaches the purpose selection step
+- [ ] Users can interact with all purpose selection interface elements within the workflow
+- [ ] Selecting a purpose triggers the correct workflow state transition
+- [ ] The workflow advances to the appropriate next step after purpose selection
+- [ ] The purpose selection step displays consistently with other workflow steps
+- [ ] Navigation between workflow steps functions correctly before and after the purpose selection step
+- [ ] All workflow state data related to purpose selection is properly maintained
+
+---
+
+## REQ-159: Unit Tests for Purpose Selection Step Component
+
+**Date**: 2026-01-09 20:15
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The purpose selection step component requires comprehensive unit tests to verify state management, navigation, auto-advance behavior, and accessibility compliance.
+
+### Current Behavior
+The purpose selection step component exists and functions within the workflow, but lacks automated test coverage. Without tests, regressions could be introduced during future changes, and there is no verification that the component meets accessibility standards or handles keyboard navigation correctly.
+
+### Expected Behavior
+A complete test suite validates all critical behaviors of the purpose selection step. Tests confirm that selecting a purpose updates state correctly, the step auto-advances after selection, keyboard navigation works as intended, and all accessibility attributes are properly configured. Tests execute quickly, provide clear failure messages, and maintain high code coverage for the component.
+
+### User Impact
+All users benefit from a more reliable and accessible purpose selection experience. Users who rely on keyboard navigation or assistive technologies will have confidence that the interface has been validated for their needs. Developers gain confidence when making changes to the component.
+
+### Business Value
+Test coverage reduces the risk of bugs in production and ensures accessibility compliance, which broadens the user base and reduces potential legal exposure. Automated tests accelerate development velocity by catching issues early.
+
+### Acceptance Criteria
+- [ ] Tests verify that selecting a purpose correctly updates the component state
+- [ ] Tests verify the step auto-advances to the next step after purpose selection
+- [ ] Tests verify keyboard navigation allows users to navigate and select purposes using keyboard only
+- [ ] Tests verify proper ARIA labels, roles, and other accessibility attributes are present
+- [ ] Tests achieve at least 90% code coverage for the purpose selection component
+- [ ] All tests pass consistently and execute in under 5 seconds
+- [ ] Test descriptions clearly communicate what behavior is being validated
+
+
+---
+
+## REQ-160: Remove Content Source Selection Step from Workflow
+
+**Date**: 2026-01-09 20:17
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Users should proceed directly through the creation workflow without encountering the content source selection step, which has been identified as redundant.
+
+### Current Behavior
+The workflow includes a content source selection step that users must navigate through during the creation process. This step appears as part of the standard workflow sequence, requiring users to interact with or pass through it even when it does not add meaningful value to their workflow.
+
+### Expected Behavior
+The content source selection step no longer appears in the workflow. Users move seamlessly from the preceding step to the following step without interruption. The workflow maintains logical progression and all navigation controls function correctly despite the removal of this intermediate step. Step numbering and progress indicators automatically adjust to reflect the shortened workflow.
+
+### User Impact
+All users creating new items experience a more streamlined workflow with fewer steps to complete. The reduction in workflow length decreases time-to-completion and simplifies the overall user journey. Users no longer encounter a step that may have caused confusion or appeared unnecessary.
+
+### Business Value
+Removing redundant steps improves user satisfaction and reduces workflow abandonment rates. A leaner workflow demonstrates attention to user experience efficiency and reduces cognitive load during the creation process.
+
+### Acceptance Criteria
+- [ ] The content source selection step no longer appears in the workflow sequence
+- [ ] Users navigate from the previous step directly to the next step without errors
+- [ ] Step numbering and progress indicators reflect the correct total number of remaining steps
+- [ ] All forward and backward navigation functions work correctly across the modified workflow
+- [ ] No errors or warnings appear in the console related to the removed step
+- [ ] The workflow can be completed end-to-end successfully
+- [ ] Step index calculations remain accurate throughout the workflow
+
+
+---
+
+## REQ-161: Enhanced Content Type Step Labels with Format Guidance
+
+**Date**: 2026-01-09 11:45
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The content type selection screen should display clearer labels and inform users about supported file formats before they attempt to upload.
+
+### Current Behavior
+Users see a "Upload File" option without immediate visibility into what file types are accepted, requiring them to click through to discover supported formats.
+
+### Expected Behavior
+Users see "Upload File" as the primary label with a subtitle displaying "Video, Image, PDF, Text" directly beneath it. Format hints appear alongside each content type option in the selection interface, providing upfront clarity about what can be uploaded.
+
+### User Impact
+All users creating items will benefit from reduced confusion and fewer failed upload attempts. Users will make more informed decisions about content type selection before proceeding to upload.
+
+### Business Value
+Reduces user frustration and support inquiries related to unsupported file formats. Improves workflow completion rates by setting clear expectations upfront.
+
+### Acceptance Criteria
+- [ ] "Upload File" label remains visible as the primary heading for the upload content type
+- [ ] Subtitle text "Video, Image, PDF, Text" appears beneath the upload file label
+- [ ] Content type selection options display format hints indicating supported file types
+- [ ] Existing icon graphics remain properly aligned and visible
+- [ ] Label changes do not break mobile responsive layout
+- [ ] All text follows application typography and accessibility standards
+
+
+---
+
+## REQ-162: Consolidate Content Options into Single Selection Grid
+
+**Date**: 2026-01-09 16:32
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should select from all available content creation methods in a single unified interface rather than navigating through multiple selection steps.
+
+### Current Behavior
+The workflow presents content options across separate steps, requiring users to first choose between different content sources before seeing the full range of content type options. This multi-step approach segments related choices and extends the workflow unnecessarily.
+
+### Expected Behavior
+Users encounter a single content selection screen displaying all five content creation options in a unified grid layout: Record Video, Take Photo, Write Text, Upload File (with subtitle: Video, Image, PDF, Text), and Add Link. All options appear simultaneously with equal visual prominence, allowing users to understand all available choices at once and select their preferred method in a single interaction.
+
+### User Impact
+All users creating items will experience a more direct workflow with fewer clicks required to begin content creation. Users can quickly scan all available options and make informed decisions without navigating back and forth between steps. The streamlined interface reduces decision fatigue and accelerates the path to content creation.
+
+### Business Value
+Consolidating content options simplifies the user experience and reduces workflow abandonment by eliminating redundant navigation steps. A cleaner, more intuitive interface improves user satisfaction and demonstrates a modern, thoughtful approach to workflow design. Reduced step count directly correlates with higher completion rates.
+
+### Acceptance Criteria
+- [ ] A single content selection screen displays all five content options in a grid layout
+- [ ] All options are presented with equal visual weight and clear labeling
+- [ ] The "Upload File" option displays the subtitle "Video, Image, PDF, Text" beneath the main label
+- [ ] Users can select any content option and immediately proceed to the corresponding content creation interface
+- [ ] Grid layout adapts responsively for mobile, tablet, and desktop screen sizes
+- [ ] Selection state is clearly indicated when a user hovers over or focuses on an option
+- [ ] Workflow navigation correctly routes users to the appropriate next step based on selection
+- [ ] No redundant selection steps remain in the workflow sequence
+
+---
+
+## REQ-163: Audit Content Input Screens for Duplicate Navigation
+
+**Date**: 2026-01-09 14:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+Identify and document all content input screens that currently display bottom navigation controls.
+
+### Current Behavior
+Content input screens may have bottom navigation that duplicates other navigation mechanisms in the application, but there is no comprehensive inventory of which screens are affected.
+
+### Expected Behavior
+A complete documented list of all content input screens showing bottom navigation exists, enabling informed decisions about navigation consolidation.
+
+### User Impact
+This audit enables the design team and developers to understand the full scope of navigation duplication across content input workflows, ensuring consistent improvements can be planned and executed.
+
+### Business Value
+Provides the foundation for streamlining navigation patterns, which will reduce cognitive load and improve user experience consistency across all content input flows.
+
+### Acceptance Criteria
+- [ ] All content input screens with bottom navigation are identified and documented
+- [ ] The following screens are confirmed to be included in the audit: TextEditorStep, FileUploadStep, VideoCaptureStep, PhotoCaptureStep, UrlInputStep, and NextActionStep
+- [ ] Documentation clearly indicates which navigation elements appear on each screen
+- [ ] Findings are available for review by stakeholders planning navigation improvements
+
+
+---
+
+## REQ-164: Remove Bottom Navigation from Content Screens
+
+**Date**: 2026-01-09 11:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Remove redundant bottom navigation bars from content input screens while preserving inline navigation controls.
+
+### Current Behavior
+Content input screens display both inline navigation buttons (Back/Continue) and a bottom navigation bar, creating duplicate navigation elements that clutter the interface and confuse users about which controls to use.
+
+### Expected Behavior
+Content input screens show only inline navigation controls without a bottom navigation bar. Users interact with a single, clear set of navigation controls positioned contextually within each screen.
+
+### User Impact
+Users creating FAQ content experience a cleaner, less cluttered interface with unambiguous navigation controls. The streamlined design reduces cognitive load and makes the content creation workflow feel more professional and polished.
+
+### Business Value
+Improves user experience consistency across the content creation workflow and reduces interface clutter, leading to higher user satisfaction and reduced support inquiries about navigation.
+
+### Acceptance Criteria
+- [ ] Text editor screen displays no bottom navigation bar
+- [ ] File upload screen displays no bottom navigation bar
+- [ ] Video capture screen displays no bottom navigation bar
+- [ ] Photo capture screen displays no bottom navigation bar
+- [ ] URL input screen displays no bottom navigation bar
+- [ ] All affected screens maintain functional inline navigation controls
+- [ ] Navigation button placement is visually consistent across all content input screens
+- [ ] Users can complete the entire content creation workflow without encountering duplicate navigation elements
+
+---
+
+## REQ-165: Implement Context-Aware Navigation Button Display
+
+**Date**: 2026-01-09 12:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The navigation buttons at the bottom of content screens should display different combinations based on whether the user has viewed the content, and must remain persistently visible without scrolling.
+
+### Current Behavior
+Navigation buttons may not be properly contextualized to the user's viewing state, and may become hidden when users scroll through content on various screen sizes.
+
+### Expected Behavior
+When a user first arrives at a content screen (before viewing), only a "Back" button is visible. After the user has viewed or scrolled through the content, both "Back" and "Continue" buttons appear. These navigation buttons remain anchored and visible at all times, regardless of scroll position or viewport size.
+
+### User Impact
+All users navigating through content screens will benefit from clearer navigation options that adapt to their progress. Mobile users will particularly benefit from buttons that remain accessible without needing to scroll to find them.
+
+### Business Value
+Reduces navigation confusion and friction in the user journey, leading to higher completion rates and better user experience across all device types.
+
+### Acceptance Criteria
+- [ ] Before viewing content, only "Back" button is displayed
+- [ ] After viewing or interacting with content, both "Back" and "Continue" buttons are displayed
+- [ ] Navigation buttons remain visible and accessible at all times during scrolling
+- [ ] Button visibility and positioning works correctly on mobile viewport sizes (tested at minimum 320px width)
+- [ ] Button container does not obscure content or create usability issues
+
+
+---
+
+## REQ-166: Streamline NextActionStep Navigation with Confirmation Dialog
+
+**Date**: 2026-01-09 15:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Simplify the NextActionStep screen by removing the bottom navigation bar and standardizing on exactly three action cards with a confirmation dialog for the cancel action.
+
+### Current Behavior
+The NextActionStep screen displays both action cards and a bottom navigation bar, creating redundant navigation controls. The cancel action may not adequately warn users about potential data loss.
+
+### Expected Behavior
+The NextActionStep screen displays exactly three action cards without any bottom navigation bar: "Review & Submit," "Add More Content," and "Cancel." When users select the Cancel action, a confirmation dialog appears warning them that they will lose unsaved work before proceeding.
+
+### User Impact
+Users completing the item creation workflow encounter a cleaner, more focused interface with clear next-step options. Users attempting to cancel are protected from accidental data loss through an explicit confirmation step.
+
+### Business Value
+Aligns the NextActionStep screen with the broader UI/UX cleanup initiative to eliminate redundant navigation, while improving user experience by preventing accidental workflow abandonment and data loss.
+
+### Acceptance Criteria
+- [ ] Bottom navigation bar is completely removed from the NextActionStep screen
+- [ ] Exactly three action cards are visible: Review & Submit, Add More Content, and Cancel
+- [ ] Selecting Cancel triggers a confirmation dialog before proceeding
+- [ ] The confirmation dialog explicitly warns users about losing unsaved work
+- [ ] Selecting "Review & Submit" proceeds to the review step without additional prompts
+- [ ] Selecting "Add More Content" returns users to add additional items without additional prompts
+- [ ] The layout adapts responsively across mobile, tablet, and desktop viewports
+
+
+---
+
+## REQ-167: ContentPreview Shared Component for Multi-Format Media Display
+
+**Date**: 2026-01-09 19:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should see consistent, visually informative previews of various content types throughout the application, regardless of whether the content is a video, photo, PDF, text, or URL.
+
+### Current Behavior
+The application lacks a unified component for displaying content previews across different media types. Preview implementations are inconsistent or missing, leading to varied user experiences when viewing different content formats.
+
+### Expected Behavior
+When viewing any content item, users see a standardized preview that adapts to the content type: videos display a thumbnail with duration badge, photos show an image thumbnail, PDFs display a thumbnail with page count indicator, text content shows a truncated preview with an identifying icon, and URLs show a favicon with the page title and domain. All previews include appropriate loading states while content is being processed.
+
+### User Impact
+All users interacting with content items across different screens benefit from a consistent, professional preview experience that helps them quickly identify and understand content without needing to open it. The visual consistency reduces cognitive load and makes the interface feel more polished and unified.
+
+### Business Value
+Establishes a reusable component pattern that reduces code duplication, accelerates future development, and ensures brand consistency across the application. Improves overall user experience by providing clear visual feedback about content types.
+
+### Acceptance Criteria
+- [ ] Video content displays a thumbnail image with a visible duration badge
+- [ ] Photo content displays a thumbnail of the image
+- [ ] PDF content displays a thumbnail with a page count indicator
+- [ ] Text content displays truncated preview text with a recognizable icon
+- [ ] URL content displays the site favicon, page title, and domain name
+- [ ] All content types show appropriate loading states while being processed
+- [ ] The component handles error states gracefully when previews cannot be generated
+- [ ] The component is exported from the shared component barrel for use throughout the application
+- [ ] The component adapts responsively to different container sizes
+- [ ] The preview appearance is visually consistent with the application's design system
+
+
+---
+
+## REQ-168: Redesign PreviewSaveStep Layout
+
+**Date**: 2026-01-09 22:35
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should see a clean, information-rich preview screen displaying item details and content previews before saving, rather than being presented with large action buttons encouraging them to add more content.
+
+### Current Behavior
+The PreviewSaveStep screen displays prominent "Add Media" and "Add Link" call-to-action buttons, creating visual clutter and suggesting users should add more content rather than review what they've already created. Item metadata and content previews are not clearly displayed, making it difficult for users to verify their work before saving.
+
+### Expected Behavior
+When users reach the preview and save screen, they see an organized layout with two clear sections: an Item Details section showing the auto-generated title (editable), room (read-only), item type (read-only), and purpose (read-only); and a Content section displaying actual previews of all captured content with a content count badge. Instead of large call-to-action buttons, users see a small, unobtrusive "+ Add More" link that allows adding additional content without dominating the screen layout.
+
+### User Impact
+Users completing the item creation workflow encounter a focused review experience that helps them verify item details and content before saving. The redesigned layout reduces visual noise, makes important information easier to scan, and shifts emphasis from adding more content to reviewing existing work.
+
+### Business Value
+Aligns the preview screen with Phase 5 UI/UX improvements by creating a cleaner, more professional interface that prioritizes information clarity over action prompts. Reduces cognitive load during the final review step and improves the overall quality of submitted items.
+
+### Acceptance Criteria
+- [ ] Large "Add Media" and "Add Link" buttons are completely removed from the screen
+- [ ] Item Details section displays title (editable field), room (read-only), item type (read-only), and purpose (read-only)
+- [ ] The auto-generated title can be edited inline by the user
+- [ ] Content section displays actual previews of all content items using appropriate preview components
+- [ ] A content count badge displays the total number of content items
+- [ ] A small "+ Add More" link is available for adding additional content
+- [ ] The "+ Add More" link is visually de-emphasized compared to primary actions
+- [ ] The layout adapts responsively across mobile, tablet, and desktop viewports
+- [ ] All content previews render correctly for different media types (video, photo, PDF, text, URL)
+- [ ] The visual hierarchy prioritizes reviewing existing content over adding new content
+
+
+
+---
+
+## REQ-169: Update Content Display with Grid Layout and Reordering
+
+**Date**: 2026-01-09 22:58
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Users should be able to view, reorder, and remove individual content pieces in a grid layout with interactive controls, replacing the current static content display.
+
+### Current Behavior
+Content items are displayed in a simple list or card format without interactive controls. Users cannot change the order of content pieces after they are added, cannot remove individual pieces without clearing all content, and lack visual feedback about the organization of multiple content items. The display does not differentiate between truly empty states and states with content.
+
+### Expected Behavior
+When users view their content collection, each piece is displayed using a consistent preview component arranged in a responsive grid layout. Users can drag content pieces to reorder them using visible drag handles, and each piece includes a remove button for individual deletion. When the content collection is genuinely empty (no items exist), users see an appropriate empty state message. When content exists, the grid displays all pieces with full interaction capabilities.
+
+### User Impact
+Users managing multiple content pieces gain precise control over content organization and composition. The ability to reorder content ensures users can present information in their preferred sequence, while individual removal buttons eliminate the frustration of having to delete and re-add content to fix mistakes.
+
+### Business Value
+Enhances the Phase 5 UI/UX improvements by providing professional-grade content management capabilities that match user expectations from modern content creation tools. Reduces user frustration and support requests related to content organization, and improves the quality of final output by giving users full control over content presentation.
+
+### Acceptance Criteria
+- [ ] Each content piece is rendered using a shared ContentPreview component
+- [ ] Content pieces are arranged in a responsive grid layout that adapts to screen size
+- [ ] Each content piece displays a visible drag handle for reordering
+- [ ] Users can drag and drop content pieces to change their order in the collection
+- [ ] Each content piece includes a clearly labeled remove button
+- [ ] Clicking the remove button deletes that specific content piece from the collection
+- [ ] The empty state message only appears when the content collection contains zero items
+- [ ] When content exists, the grid displays all pieces without showing the empty state
+- [ ] Reordering and removal operations update the content collection state immediately
+- [ ] The grid layout maintains visual consistency across different content types (video, photo, PDF, text, URL)
+
+
+
+---
+
+## REQ-170: Pre-populate Fields in Review Screen
+
+**Date**: 2026-01-09 22:59
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Users should see their item's title, room, item type, and purpose automatically displayed in the review screen with the ability to edit the title inline or through a modal.
+
+### Current Behavior
+When users reach the review screen during item creation, fields are empty or not displayed, requiring users to manually reference or remember the metadata they entered in previous steps. The auto-generated title from the item creation logic is not visible, and room, item type, and purpose information is not carried forward for review.
+
+### Expected Behavior
+When users arrive at the review screen, they immediately see the item title auto-filled using the generateItemTitle() function, with the room displayed from the current item's room selection, the item type shown from the current item's itemType selection, and the purpose displayed from the current item's purpose selection. Users can click the title to edit it either inline or through a modal dialog, while room, item type, and purpose remain read-only as reference information.
+
+### User Impact
+Users completing the item creation workflow experience a smoother, more efficient review process. They can verify that metadata was captured correctly without navigating back through previous steps, and they can make final title adjustments without disrupting their workflow.
+
+### Business Value
+Completes the Phase 5 redesign of the review screen by ensuring all relevant metadata is visible and editable where appropriate. Reduces user friction during the final review step and improves data quality by making it easier for users to verify and refine item information before saving.
+
+### Acceptance Criteria
+- [ ] The title field is automatically populated using the generateItemTitle() function when the review screen loads
+- [ ] The room field displays the value from currentItem.room as read-only text
+- [ ] The item type field displays the value from currentItem.itemType as read-only text
+- [ ] The purpose field displays the value from currentItem.purpose as read-only text
+- [ ] Users can click or tap the title to edit it
+- [ ] Title editing works either inline (directly in the field) or through a modal dialog
+- [ ] Changes to the title are persisted to the item's metadata
+- [ ] All pre-populated fields are visible and readable on mobile and desktop viewports
+- [ ] The title editing interface provides clear visual feedback when entering edit mode
+
+
+---
+
+## REQ-171: Update Test Coverage for Review Screen Redesign
+
+**Date**: 2026-01-09 10:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Ensure comprehensive test coverage validates the redesigned review screen behavior, including content preview rendering, field pre-population, title editing, and empty state handling.
+
+### Current Behavior
+Test coverage may not adequately verify all aspects of the redesigned review screen, including the new content preview feature, pre-populated field display, title editing capability, and empty state scenarios.
+
+### Expected Behavior
+The test suite validates that:
+- Content previews render correctly for all supported content types
+- Pre-populated fields display accurate information from the source content
+- Users can successfully edit titles before finalizing
+- The screen handles empty or missing content gracefully
+
+### User Impact
+Users and stakeholders benefit from increased confidence that the redesigned review screen functions correctly across all scenarios, reducing the likelihood of defects in production.
+
+### Business Value
+Comprehensive test coverage reduces regression risk and enables faster, safer iteration on the review screen feature, ultimately improving product quality and user satisfaction.
+
+### Acceptance Criteria
+- [ ] Tests verify content preview renders correctly for each supported content type
+- [ ] Tests confirm pre-populated fields display accurate source information
+- [ ] Tests validate title editing functionality works as expected
+- [ ] Tests ensure empty state scenarios are handled gracefully without errors
+- [ ] All new tests pass consistently in the test suite
+
+---
+
+## REQ-172: Comprehensive End-to-End Item Creation Workflow Testing
+
+**Date**: 2026-01-09 20:28
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Perform comprehensive end-to-end testing of the complete item creation workflow to validate all user interactions, data flows, state transitions, and integration points function correctly from start to finish.
+
+### Current Behavior
+While individual components and steps may be tested in isolation, there is no comprehensive end-to-end validation ensuring the entire workflow operates smoothly when users navigate through all steps sequentially, handling various user decisions and edge cases.
+
+### Expected Behavior
+The complete item creation flow functions correctly when users:
+- Navigate through all steps in sequence: room selection, item type selection, purpose selection, content type selection, content creation, review, and save
+- See auto-generated titles displayed accurately based on their selections
+- View all pre-filled fields populated correctly in the review screen
+- Choose to add additional content to the same item
+- Cancel the workflow at any point and receive proper confirmation
+- Experience consistent behavior across different content types and purposes
+
+### User Impact
+Users creating items benefit from a reliable, predictable workflow that handles all scenarios gracefully. Testing ensures users can trust the system to preserve their input, generate appropriate titles, and complete operations without unexpected errors or data loss.
+
+### Business Value
+Comprehensive end-to-end testing reduces production defects, improves user confidence in the system, and validates that all UI/UX improvements integrate correctly to deliver the intended seamless experience.
+
+### Acceptance Criteria
+- [ ] Complete workflow tested from room selection through final save operation
+- [ ] Auto-generated title generation verified for multiple purpose and item type combinations
+- [ ] Pre-filled field display confirmed accurate for all content types
+- [ ] "Add More Content" flow tested to ensure additional content associates correctly with the item
+- [ ] Cancel confirmation dialog tested at multiple workflow stages
+- [ ] Navigation between steps validated for forward and backward movement
+- [ ] Error handling verified when invalid data is submitted at any step
+- [ ] Session persistence tested to ensure workflow state survives page refresh
+- [ ] Mobile and desktop experiences tested for consistent behavior
+
+
+---
+
+## REQ-173: Mobile Responsiveness and Touch Interaction Support
+
+**Date**: 2026-01-09 20:48
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Ensure the application provides an optimal mobile experience with proper responsive layouts, appropriately sized touch targets, and fully functional touch interactions including drag-to-reorder capabilities.
+
+### Current Behavior
+The application may not be fully optimized for mobile devices, potentially presenting users with interface elements that are difficult to interact with on touchscreens, layouts that don't adapt to small viewports, or touch gestures that don't function as expected.
+
+### Expected Behavior
+When users access the application on mobile devices:
+- All interface elements display properly on viewports as small as 320px width
+- Interactive elements present touch targets that meet or exceed 48px minimum size for comfortable tapping
+- Drag-to-reorder functionality works smoothly with touch gestures
+- Content previews scale appropriately to remain legible and functional on small screens
+- Navigation elements remain accessible without requiring zooming or horizontal scrolling
+- Text input fields display mobile-friendly keyboards when focused
+
+### User Impact
+Mobile users experience a first-class interface designed specifically for their device constraints. They can comfortably tap buttons, rearrange items through intuitive touch gestures, and read content without frustration, matching the quality of the desktop experience.
+
+### Business Value
+Mobile-optimized experiences expand the application's usability to users on-the-go, increase engagement across all device types, and demonstrate professional interface design standards that build user trust and satisfaction.
+
+### Acceptance Criteria
+- [ ] All screens display correctly and remain functional at 320px viewport width
+- [ ] Interactive elements (buttons, links, form inputs) meet minimum 48px touch target size
+- [ ] Drag-to-reorder functionality responds accurately to touch gestures without conflicts with scrolling
+- [ ] Content previews scale proportionally and remain readable on small screens
+- [ ] No horizontal scrolling required for primary content at mobile viewport sizes
+- [ ] Touch interactions feel responsive with appropriate visual feedback
+- [ ] Forms display appropriate mobile keyboard types (numeric, email, etc.) based on input type
+
+---
+
+## REQ-174: Accessibility Compliance Verification for Upload Flow
+
+**Date**: 2026-01-09 14:32
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All components and interactions within the upload flow must meet accessibility standards to ensure equal access for users with disabilities.
+
+### Current Behavior
+Accessibility features may be incomplete or inconsistent across newly developed components, potentially creating barriers for users who rely on assistive technologies, keyboard navigation, or screen readers.
+
+### Expected Behavior
+The entire upload flow provides a fully accessible experience where:
+- All interactive elements are reachable and operable via keyboard alone
+- Screen readers announce meaningful context at each step
+- Visual focus indicators are clear and follow logical tab order
+- ARIA labels provide appropriate semantic information for all components
+
+### User Impact
+Users who rely on assistive technologies (screen readers, keyboard-only navigation, voice control) will have equal access to the upload functionality. This affects users with visual impairments, motor disabilities, and those who prefer or require keyboard navigation.
+
+### Business Value
+Ensures legal compliance with accessibility standards (WCAG 2.1 AA) and expands the user base by removing barriers for disabled users, while improving overall usability for all users.
+
+### Acceptance Criteria
+- [ ] All interactive components have appropriate ARIA labels that describe their purpose
+- [ ] Complete upload workflow can be navigated using only keyboard (Tab, Enter, Space, Arrow keys)
+- [ ] Screen reader testing confirms meaningful announcements at step transitions and state changes
+- [ ] Focus management correctly moves to relevant elements when transitioning between steps
+- [ ] All form inputs, buttons, and custom controls are keyboard accessible
+- [ ] Focus visible indicators meet contrast requirements and are never hidden
+
+
+---
+
+## REQ-175: Synchronize Documentation with Implementation Changes
+
+**Date**: 2026-01-09 16:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+All code documentation, inline comments, and external documentation files must be updated to accurately reflect the changes made during the UI/UX workflow improvements implementation.
+
+### Current Behavior
+Documentation may contain outdated workflow descriptions, missing JSDoc comments on modified components, stale inline comments describing previous behavior, and README files that don't reflect current functionality or component structure.
+
+### Expected Behavior
+Documentation is comprehensive and current across all modified areas:
+- Workflow step comments accurately describe the current user journey
+- Component-level JSDoc includes complete parameter descriptions and usage examples
+- Modified files include timestamp annotations indicating last modification date
+- README files (if present) reflect current architecture, component structure, and usage patterns
+
+### User Impact
+Developers maintaining or extending the application can quickly understand component behavior and workflow logic without archaeology through git history or experimentation. New team members can onboard faster with accurate, comprehensive documentation.
+
+### Business Value
+Reduces maintenance costs by preventing misunderstandings about system behavior, accelerates feature development by providing clear component contracts, and improves code quality through better developer understanding of existing implementations.
+
+### Acceptance Criteria
+- [ ] All WORKFLOW_STEPS constant comments match the current step sequence and behavior
+- [ ] JSDoc comments exist for all modified components with complete parameter and return type documentation
+- [ ] Modified files include @lastModified annotations with date in YYYY-MM-DD format
+- [ ] README files (if present) are updated to reflect current component architecture and workflow
+- [ ] No documentation references deprecated features or removed functionality
+- [ ] Code examples in documentation execute successfully against current implementation

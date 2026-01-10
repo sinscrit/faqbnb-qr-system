@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { UpdateItemRequest, ItemResponse } from '@/types';
 import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
+import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
@@ -376,6 +377,48 @@ export async function GET(
       // Don't fail the request, just return empty links
     }
 
+    // REQ-151: Fetch articles for this item
+    const { data: articles, error: articlesError } = await supabase
+      .from('item_articles')
+      .select('*')
+      .eq('item_id', itemData.id)
+      .order('display_order', { ascending: true });
+
+    if (articlesError) {
+      console.error('Articles fetch error:', articlesError);
+      // Don't fail the request, just log the error
+    }
+
+    // REQ-151: For each article, get associated links
+    const articlesWithLinks = await Promise.all(
+      (articles || []).map(async (article) => {
+        const { data: articleLinks } = await supabase
+          .from('item_links')
+          .select('id, title, link_type, url, thumbnail_url, display_order, created_at')
+          .eq('article_id', article.id)
+          .order('display_order', { ascending: true });
+
+        return {
+          id: article.id,
+          itemId: article.item_id,
+          purpose: article.purpose,
+          title: article.title,
+          description: article.description,
+          displayOrder: article.display_order || 0,
+          createdAt: article.created_at,
+          updatedAt: article.updated_at,
+          links: (articleLinks || []).map(link => ({
+            id: link.id,
+            title: link.title,
+            linkType: link.link_type,
+            url: link.url,
+            thumbnailUrl: link.thumbnail_url,
+            displayOrder: link.display_order || 0
+          }))
+        };
+      })
+    );
+
     console.log('Item fetched successfully:', itemData.id);
 
     const response = {
@@ -390,7 +433,8 @@ export async function GET(
         created_at: itemData.created_at,
         updated_at: itemData.updated_at,
         property: itemData.properties,
-        links: links || []
+        articles: articlesWithLinks,  // REQ-151: Articles with nested links
+        links: links || []  // Keep for backward compatibility
       },
       accountContext: {
         accountId,
@@ -511,7 +555,24 @@ export async function PUT(
         );
       }
     }
-    
+
+    // REQ-151: Validate article field if provided
+    const bodyWithArticle = body as UpdateItemRequest & {
+      article?: {
+        purpose: string;
+        title?: string;
+        description?: string;
+      }
+    };
+    if (bodyWithArticle.article) {
+      if (!bodyWithArticle.article.purpose || !isValidPurposeType(bodyWithArticle.article.purpose)) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid or missing article purpose' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Use the authenticated Supabase client from validateAdminAuth
     // Note: 'supabase' is already authenticated from line 427
 
@@ -618,9 +679,78 @@ export async function PUT(
       createdLinks.push(...(newLinks || []));
       console.log('New links created successfully:', createdLinks.length);
     }
-    
+
+    // REQ-151: Handle article creation/update if article data provided
+    let updatedArticle: any = null;
+    if (bodyWithArticle.article) {
+      const articleTitle = bodyWithArticle.article.title || generateArticleTitle({
+        itemName: body.name,
+        purpose: bodyWithArticle.article.purpose as any
+      });
+
+      // Check if article with this purpose already exists for this item
+      const { data: existingArticle } = await supabase
+        .from('item_articles')
+        .select('id')
+        .eq('item_id', updatedItem.id)
+        .eq('purpose', bodyWithArticle.article.purpose)
+        .single();
+
+      if (existingArticle) {
+        // Update existing article
+        const { data: updated, error: updateError } = await supabase
+          .from('item_articles')
+          .update({
+            title: articleTitle,
+            description: bodyWithArticle.article.description || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingArticle.id)
+          .select()
+          .single();
+
+        if (updateError) {
+          console.error('Article update error:', updateError);
+        } else {
+          updatedArticle = updated;
+          console.log('Article updated successfully:', updated.id);
+        }
+      } else {
+        // Create new article
+        const { data: newArticle, error: articleError } = await supabase
+          .from('item_articles')
+          .insert({
+            item_id: updatedItem.id,
+            purpose: bodyWithArticle.article.purpose,
+            title: articleTitle,
+            description: bodyWithArticle.article.description || null,
+            display_order: 0
+          })
+          .select()
+          .single();
+
+        if (articleError) {
+          console.error('Article creation error:', articleError);
+        } else {
+          updatedArticle = newArticle;
+          console.log('Article created successfully:', newArticle.id);
+        }
+      }
+
+      // Associate newly created links with article
+      if (updatedArticle && createdLinks.length > 0) {
+        const linkIds = createdLinks.map(link => link.id);
+        await supabase
+          .from('item_links')
+          .update({ article_id: updatedArticle.id })
+          .in('id', linkIds);
+        console.log('Links associated with article:', linkIds.length);
+      }
+    }
+
     // Transform response to match ItemResponse type
-    const response: ItemResponse = {
+    // REQ-151: Include articles in response
+    const response = {
       success: true,
       data: {
         id: updatedItem.id,
@@ -637,6 +767,24 @@ export async function PUT(
           thumbnailUrl: link.thumbnail_url || undefined,
           displayOrder: link.display_order || 0,
         })),
+        // REQ-151: Include article if created/updated
+        articles: updatedArticle ? [{
+          id: updatedArticle.id,
+          purpose: updatedArticle.purpose,
+          title: updatedArticle.title,
+          description: updatedArticle.description,
+          displayOrder: updatedArticle.display_order || 0,
+          createdAt: updatedArticle.created_at,
+          updatedAt: updatedArticle.updated_at,
+          links: createdLinks.map(link => ({
+            id: link.id,
+            title: link.title,
+            linkType: link.link_type as 'youtube' | 'pdf' | 'image' | 'text',
+            url: link.url,
+            thumbnailUrl: link.thumbnail_url || undefined,
+            displayOrder: link.display_order || 0,
+          }))
+        }] : [],
       },
       accountContext: {
         accountId,

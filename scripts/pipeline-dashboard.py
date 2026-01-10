@@ -74,6 +74,14 @@ STATUS_EMOJIS = {
     "failed": "❌",
 }
 
+# Worktree status colors
+WORKTREE_COLORS = {
+    "active": "green",
+    "merging": "yellow",
+    "conflict": "red",
+    "idle": "dim",
+}
+
 # =============================================================================
 # Pipeline State Reader
 # =============================================================================
@@ -224,21 +232,42 @@ class PipelineState:
         return self.data.get("tasks", [])
 
     def get_tasks_by_status(self) -> dict:
-        """Group tasks by status."""
+        """Group tasks by status based on stage completion flags.
+
+        A task is considered:
+        - Done: implementation_completed is True
+        - In Progress: currently processing OR implementation started but not complete
+        - Failed: has errors
+        - Backlog: everything else (including tasks with only request/overview/details done)
+        """
         result = {col: [] for col in STATUS_COLUMNS.values()}
         result["Failed"] = []  # Ensure Failed column exists
 
         for task in self.tasks:
-            status = task.get("status", "pending")
-            column = STATUS_COLUMNS.get(status, "Backlog")
-            result[column].append(task)
+            # Check stage completion flags
+            impl_completed = task.get("implementation_completed", False)
+            impl_started = task.get("files", {}).get("details") and not impl_completed
+
+            # Check if task has failed
+            if task.get("status") == "failed" or task.get("error"):
+                result["Failed"].append(task)
+            # Implementation completed = Done
+            elif impl_completed:
+                result["Done"].append(task)
+            # Currently processing
+            elif task.get("status") == "processing":
+                result["In Progress"].append(task)
+            # Has details file but no implementation = ready for implementation (Backlog)
+            else:
+                result["Backlog"].append(task)
 
         return result
 
     def get_progress(self) -> tuple:
-        """Return (completed, total) task counts."""
+        """Return (completed, total) task counts based on implementation completion."""
         tasks = self.tasks
-        completed = sum(1 for t in tasks if t.get("status") == "completed")
+        # Count tasks where implementation is actually completed
+        completed = sum(1 for t in tasks if t.get("implementation_completed", False))
         return completed, len(tasks)
 
     def get_current_task(self) -> Optional[dict]:
@@ -281,6 +310,75 @@ class PipelineState:
             }
 
         return result
+
+    def get_dependencies_info(self) -> Optional[dict]:
+        """Get dependency tracking information from state."""
+        deps = self.data.get("dependencies")
+        if not deps:
+            return None
+
+        tasks_deps = deps.get("tasks", {})
+        graph = deps.get("graph", {})
+        execution = deps.get("execution", {})
+
+        return {
+            "tasks_count": len(tasks_deps),
+            "nodes": len(graph.get("nodes", [])),
+            "edges": len(graph.get("edges", [])),
+            "roots": graph.get("roots", []),
+            "leaves": graph.get("leaves", []),
+            "has_cycles": execution.get("has_cycles", False),
+            "cycle_tasks": execution.get("cycle_tasks", []),
+            "critical_path": execution.get("critical_path", []),
+            "parallel_clusters": execution.get("parallel_clusters", []),
+            "topological_order": execution.get("topological_order", []),
+            "last_updated": deps.get("last_updated"),
+        }
+
+    def get_worktree_info(self) -> Optional[dict]:
+        """Get worktree/parallel execution information from state."""
+        parallel = self.data.get("parallelization")
+        if not parallel:
+            return None
+
+        return {
+            "enabled": parallel.get("enabled", False),
+            "active_worktrees": parallel.get("active_worktrees", []),
+            "completed_clusters": parallel.get("completed_clusters", []),
+            "pending_clusters": parallel.get("pending_clusters", []),
+            "merge_queue": parallel.get("merge_queue", []),
+        }
+
+    def get_task_by_id(self, task_id: str) -> Optional[dict]:
+        """Get a specific task by its ID."""
+        for task in self.tasks:
+            if task.get("id") == task_id:
+                return task
+        return None
+
+    def get_ready_tasks(self) -> list:
+        """Get tasks that are ready to execute (all dependencies satisfied)."""
+        deps_info = self.data.get("dependencies", {})
+        tasks_deps = deps_info.get("tasks", {})
+
+        completed_ids = set(
+            t.get("id") for t in self.tasks if t.get("status") == "completed"
+        )
+
+        ready = []
+        for task in self.tasks:
+            task_id = task.get("id")
+            if task.get("status") != "pending":
+                continue
+
+            # Check if all dependencies are satisfied
+            task_dep_info = tasks_deps.get(task_id, {})
+            upstream = set(task_dep_info.get("depends_on", []))
+
+            if upstream <= completed_ids:
+                ready.append(task)
+
+        return ready
 
 
 def parse_subtasks_from_detailed(details_file: str) -> dict:
@@ -399,6 +497,25 @@ def create_task_card(task: dict, compact: bool = False) -> Panel:
     )
 
 
+def get_stage_indicators(task: dict) -> str:
+    """Get stage completion indicators for a task.
+
+    Returns something like: [R✓O✓D✓I○] showing which stages are complete.
+    """
+    r = "✓" if task.get("request_completed") else "○"
+    o = "✓" if task.get("overview_completed") else "○"
+    d = "✓" if task.get("details_completed") else "○"
+    i = "✓" if task.get("implementation_completed") else "○"
+
+    # Color the indicators
+    r_color = "green" if task.get("request_completed") else "dim"
+    o_color = "green" if task.get("overview_completed") else "dim"
+    d_color = "green" if task.get("details_completed") else "dim"
+    i_color = "green" if task.get("implementation_completed") else "dim"
+
+    return f"[{r_color}]R{r}[/{r_color}][{o_color}]O{o}[/{o_color}][{d_color}]D{d}[/{d_color}][{i_color}]I{i}[/{i_color}]"
+
+
 def create_column(title: str, tasks: list, max_items: int = 8) -> Panel:
     """Create a Kanban column panel."""
     color = COLUMN_COLORS.get(title, "white")
@@ -412,12 +529,14 @@ def create_column(title: str, tasks: list, max_items: int = 8) -> Panel:
             task_title = task.get("title", "Unknown")
             req_id = task.get("request_id", "")
             status = task.get("status", "pending")
-            emoji = STATUS_EMOJIS.get(status, "")
+
+            # Get stage indicators instead of simple emoji
+            stage_ind = get_stage_indicators(task)
 
             # Truncate title if too long
-            display_title = task_title[:35] + "..." if len(task_title) > 35 else task_title
+            display_title = task_title[:30] + "..." if len(task_title) > 30 else task_title
 
-            line = f"{emoji} [bold]{task_id}[/bold] {display_title}"
+            line = f"{stage_ind} [bold]{task_id}[/bold] {display_title}"
             if req_id:
                 line += f" [dim]({req_id})[/dim]"
             items.append(line)
@@ -527,6 +646,64 @@ def create_header(pipelines: list) -> Panel:
             else:
                 lines.append(f"  {tc_display}")
 
+        # Show dependency information
+        deps_info = p.get_dependencies_info()
+        if deps_info:
+            deps_display = f"[cyan]📊 Dependencies:[/cyan] "
+            deps_display += f"{deps_info['tasks_count']} tasks tracked, "
+            deps_display += f"{deps_info['edges']} edges"
+
+            if deps_info['has_cycles']:
+                deps_display += f" [red]⚠ CYCLES: {deps_info['cycle_tasks']}[/red]"
+
+            lines.append(f"  {deps_display}")
+
+            # Show critical path
+            if deps_info['critical_path']:
+                cp_display = " → ".join(deps_info['critical_path'][:5])
+                if len(deps_info['critical_path']) > 5:
+                    cp_display += f" → ... ({len(deps_info['critical_path'])} total)"
+                lines.append(f"  [dim]Critical path: {cp_display}[/dim]")
+
+            # Show parallel clusters count
+            clusters = deps_info['parallel_clusters']
+            if clusters:
+                lines.append(f"  [dim]Parallel clusters: {len(clusters)} identified[/dim]")
+
+        # Show worktree information
+        wt_info = p.get_worktree_info()
+        if wt_info and wt_info.get('enabled'):
+            active = wt_info.get('active_worktrees', [])
+            completed = wt_info.get('completed_clusters', [])
+            pending = wt_info.get('pending_clusters', [])
+
+            wt_display = f"[magenta]🌳 Worktrees:[/magenta] "
+            if active:
+                wt_display += f"[green]{len(active)} active[/green] "
+            if completed:
+                wt_display += f"[dim]{len(completed)} merged[/dim] "
+            if pending:
+                wt_display += f"[yellow]{len(pending)} pending[/yellow]"
+
+            lines.append(f"  {wt_display}")
+
+            # Show active worktree details
+            for wt in active[:3]:
+                wt_name = wt.get('name', 'unknown')
+                wt_cluster = wt.get('cluster', [])
+                wt_status = wt.get('status', 'unknown')
+                color = WORKTREE_COLORS.get(wt_status, 'dim')
+                lines.append(f"    [{color}]• {wt_name}: {wt_cluster}[/{color}]")
+
+        # Show ready tasks (tasks whose dependencies are satisfied)
+        ready_tasks = p.get_ready_tasks()
+        if ready_tasks and p.status not in ('completed', 'not_started'):
+            ready_ids = [t.get('id') for t in ready_tasks[:5]]
+            ready_display = ", ".join(ready_ids)
+            if len(ready_tasks) > 5:
+                ready_display += f" (+{len(ready_tasks) - 5} more)"
+            lines.append(f"  [green]🚀 Ready to run:[/green] {ready_display}")
+
         lines.append("")
 
     return Panel(
@@ -601,8 +778,8 @@ def create_dashboard(pipelines: list, use_layout: bool = True) -> Layout:
 # Main Application
 # =============================================================================
 
-def find_state_files(directory: str = ".") -> list:
-    """Find all pipeline state JSON files in the directory."""
+def find_state_files(directory: str = ".", include_worktrees: bool = False) -> list:
+    """Find all pipeline state JSON files in the directory and optionally worktrees."""
     patterns = [
         "pipeline-state.json",
         "pipeline-*-state.json",
@@ -611,6 +788,36 @@ def find_state_files(directory: str = ".") -> list:
     files = []
     for pattern in patterns:
         files.extend(glob.glob(os.path.join(directory, pattern)))
+
+    # Also check for worktree state files
+    if include_worktrees:
+        # Check standard worktree location
+        worktree_base = os.path.join(os.path.dirname(directory), ".worktrees")
+        if os.path.isdir(worktree_base):
+            for wt_dir in os.listdir(worktree_base):
+                wt_path = os.path.join(worktree_base, wt_dir)
+                if os.path.isdir(wt_path):
+                    for pattern in patterns:
+                        files.extend(glob.glob(os.path.join(wt_path, pattern)))
+
+        # Try to get worktrees from git
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["git", "worktree", "list", "--porcelain"],
+                capture_output=True,
+                text=True,
+                cwd=directory
+            )
+            if result.returncode == 0:
+                for line in result.stdout.split('\n'):
+                    if line.startswith('worktree '):
+                        wt_path = line[9:].strip()
+                        if wt_path != os.path.abspath(directory):
+                            for pattern in patterns:
+                                files.extend(glob.glob(os.path.join(wt_path, pattern)))
+        except Exception:
+            pass
 
     return sorted(set(files))
 
@@ -694,6 +901,21 @@ def main():
         action="store_true",
         help="Render once and exit (no live updates)"
     )
+    parser.add_argument(
+        "--deps",
+        action="store_true",
+        help="Show detailed dependency graph information"
+    )
+    parser.add_argument(
+        "--worktrees", "-w",
+        action="store_true",
+        help="Include state files from git worktrees"
+    )
+    parser.add_argument(
+        "--latest", "-l",
+        action="store_true",
+        help="Show only the most recently modified pipeline"
+    )
 
     args = parser.parse_args()
 
@@ -701,7 +923,23 @@ def main():
     if args.file:
         state_files = args.file
     else:
-        state_files = find_state_files(args.dir)
+        state_files = find_state_files(args.dir, include_worktrees=args.worktrees)
+
+    # Filter to latest if requested
+    if args.latest and state_files:
+        # Sort by modification time, most recent first
+        state_files_with_mtime = []
+        for f in state_files:
+            try:
+                mtime = os.path.getmtime(f)
+                state_files_with_mtime.append((f, mtime))
+            except OSError:
+                pass
+
+        if state_files_with_mtime:
+            state_files_with_mtime.sort(key=lambda x: x[1], reverse=True)
+            state_files = [state_files_with_mtime[0][0]]
+            print(f"[--latest] Showing most recent: {state_files[0]}")
 
     run_dashboard(state_files, args.refresh, args.once)
 

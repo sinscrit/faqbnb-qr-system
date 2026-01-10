@@ -191,11 +191,47 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
               Instructions & Resources
             </h2>
             <span className="text-sm text-gray-500">
-              {item.links.length} {item.links.length === 1 ? 'item' : 'items'}
+              {/* REQ-151: Show articles count if available, otherwise links count */}
+              {(item as any).articles && (item as any).articles.length > 0
+                ? `${(item as any).articles.length} ${(item as any).articles.length === 1 ? 'section' : 'sections'}`
+                : `${item.links.length} ${item.links.length === 1 ? 'item' : 'items'}`
+              }
             </span>
           </div>
 
-          {item.links.length === 0 ? (
+          {/* REQ-151: Check if articles exist and render grouped view */}
+          {(item as any).articles && (item as any).articles.length > 0 ? (
+            // Grouped by article view
+            <div className="space-y-8">
+              {(item as any).articles.map((article: any) => (
+                <div key={article.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                  <h3 className="text-md font-medium text-gray-800 mb-2">
+                    {article.title}
+                  </h3>
+                  {article.description && (
+                    <p className="text-sm text-gray-600 mb-4">{article.description}</p>
+                  )}
+                  {article.links && article.links.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {article.links.map((link: any) => (
+                        <LinkCard
+                          key={link.id}
+                          title={link.title}
+                          linkType={link.linkType}
+                          url={link.url}
+                          thumbnailUrl={link.thumbnailUrl}
+                          onClick={() => handleLinkClick(link.url, link.linkType)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">No resources in this section.</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : item.links.length === 0 ? (
+            // Empty state
             <div className="text-center py-12">
               <div className="text-gray-400 mb-3">
                 <ExternalLink className="w-12 h-12 mx-auto" />
@@ -203,6 +239,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
               <p className="text-gray-500">No resources available for this item.</p>
             </div>
           ) : (
+            // Fallback: flat links view (existing code - backward compatibility)
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {item.links.map((link) => (
                 <LinkCard
