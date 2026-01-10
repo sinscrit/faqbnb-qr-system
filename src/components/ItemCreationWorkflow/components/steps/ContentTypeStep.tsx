@@ -11,7 +11,7 @@
  * @module ItemCreationWorkflow/components/steps/ContentTypeStep
  * @see docs/REQ-103-content-type-step-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
+ * @lastModified 2026-01-10 (REQ-161 Update ContentTypeStep Labels - Added format hint subtitles)
  */
 
 import { useCallback, useMemo, useRef, useState, forwardRef } from 'react';
@@ -39,6 +39,8 @@ interface ContentTypeOption {
   type: ContentType;
   label: string;
   icon: LucideIcon;
+  /** Optional subtitle for format hints (e.g., "MP4, MOV, WebM") */
+  subtitle?: string;
 }
 
 export interface ContentTypeStepProps {
@@ -61,9 +63,9 @@ export interface ContentTypeStepProps {
 // =============================================================================
 
 const EXISTING_CONTENT_OPTIONS: ContentTypeOption[] = [
-  { type: 'video', label: 'Upload Video', icon: Upload },
-  { type: 'photo', label: 'Upload Photo', icon: ImageIcon },
-  { type: 'pdf', label: 'Upload PDF', icon: FileText },
+  { type: 'video', label: 'Upload Video', icon: Upload, subtitle: 'MP4, MOV, WebM' },
+  { type: 'photo', label: 'Upload Photo', icon: ImageIcon, subtitle: 'JPG, PNG, WebP' },
+  { type: 'pdf', label: 'Upload PDF', icon: FileText, subtitle: 'PDF documents' },
   { type: 'text', label: 'Paste Text', icon: Type },
   { type: 'url', label: 'Paste URL', icon: Link },
 ];
@@ -145,14 +147,26 @@ const ContentTypeCard = forwardRef<HTMLButtonElement, ContentTypeCardProps>(
         </div>
 
         {/* Label Section */}
-        <span
-          className={cn(
-            'flex-1 text-left text-base sm:text-lg font-medium',
-            isSelected ? 'text-blue-700' : 'text-gray-900'
+        <div className="flex-1 text-left">
+          <span
+            className={cn(
+              'block text-base sm:text-lg font-medium',
+              isSelected ? 'text-blue-700' : 'text-gray-900'
+            )}
+          >
+            {option.label}
+          </span>
+          {option.subtitle && (
+            <span
+              className={cn(
+                'block text-xs sm:text-sm mt-0.5',
+                isSelected ? 'text-blue-500' : 'text-gray-500'
+              )}
+            >
+              {option.subtitle}
+            </span>
           )}
-        >
-          {option.label}
-        </span>
+        </div>
 
         {/* Checkmark indicator for selected state */}
         {isSelected && (
