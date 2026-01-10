@@ -60,6 +60,7 @@ import {
   WORKFLOW_STEPS,
   MAX_CONTENT_PIECES,
 } from '../utils/constants';
+import { generateArticleTitle } from '../utils/titleGenerator';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 
 // =============================================================================
@@ -326,10 +327,22 @@ export function workflowReducer(
 
     case 'SELECT_PURPOSE': {
       if (!state.currentItem) return state;
+
+      const purpose = action.payload;
+
+      // Generate article title based on purpose and item (REQ-156)
+      const articleTitle = generateArticleTitle({
+        specificItem: state.currentItem.specificItem,
+        purpose: purpose,
+      });
+
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
-        purpose: action.payload,
+        purpose: purpose,
+        // Auto-generate the article title (user can edit later with SET_ITEM_NAME)
+        itemName: articleTitle,
       };
+
       return {
         ...state,
         currentItem: updatedItem,

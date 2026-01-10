@@ -7,7 +7,7 @@
  *
  * @module ItemCreationWorkflow/hooks/__tests__/useWorkflowState.test
  * @vitest-environment jsdom
- * @lastModified 2026-01-05 (REQ-115 - Added large session handling tests)
+ * @lastModified 2026-01-10 (REQ-156 - Update State Machine for Purpose Selection)
  */
 
 import { describe, it, expect, vi } from 'vitest';
@@ -125,11 +125,21 @@ describe('getNextStep', () => {
   it('returns single transition for single-transition steps', () => {
     const state = createInitialState();
     expect(getNextStep('item-type-selection', state)).toBe('specific-item-selection');
-    expect(getNextStep('specific-item-selection', state)).toBe('content-source-selection');
-    expect(getNextStep('content-source-selection', state)).toBe('content-type-selection');
+    expect(getNextStep('specific-item-selection', state)).toBe('purpose-selection');
+    expect(getNextStep('purpose-selection', state)).toBe('content-type-selection');
     expect(getNextStep('content-type-selection', state)).toBe('content-creation');
     expect(getNextStep('content-creation', state)).toBe('preview-save');
     expect(getNextStep('preview-save', state)).toBe('next-action');
+  });
+
+  it('returns purpose-selection after specific-item-selection', () => {
+    const state = createInitialState();
+    expect(getNextStep('specific-item-selection', state)).toBe('purpose-selection');
+  });
+
+  it('returns content-type-selection after purpose-selection', () => {
+    const state = createInitialState();
+    expect(getNextStep('purpose-selection', state)).toBe('content-type-selection');
   });
 });
 
@@ -138,13 +148,13 @@ describe('getNextStep', () => {
 // =============================================================================
 
 describe('STEP_TRANSITIONS', () => {
-  it('covers all 9 workflow steps', () => {
+  it('covers all 9 workflow steps (Plan-094 workflow)', () => {
     const steps = Object.keys(STEP_TRANSITIONS);
     expect(steps).toHaveLength(9);
     expect(steps).toContain('room-selection');
     expect(steps).toContain('item-type-selection');
     expect(steps).toContain('specific-item-selection');
-    expect(steps).toContain('content-source-selection');
+    expect(steps).toContain('purpose-selection');        // Plan-094: added
     expect(steps).toContain('content-type-selection');
     expect(steps).toContain('content-creation');
     expect(steps).toContain('preview-save');
@@ -161,9 +171,18 @@ describe('STEP_TRANSITIONS', () => {
     expect(STEP_TRANSITIONS['room-selection']).toContain('specific-item-selection');
   });
 
-  it('next-action can go to room-selection or session-summary', () => {
+  it('next-action can go to room-selection, session-summary, or content-type-selection', () => {
     expect(STEP_TRANSITIONS['next-action']).toContain('room-selection');
     expect(STEP_TRANSITIONS['next-action']).toContain('session-summary');
+    expect(STEP_TRANSITIONS['next-action']).toContain('content-type-selection');
+  });
+
+  it('specific-item-selection transitions to purpose-selection', () => {
+    expect(STEP_TRANSITIONS['specific-item-selection']).toContain('purpose-selection');
+  });
+
+  it('purpose-selection transitions to content-type-selection', () => {
+    expect(STEP_TRANSITIONS['purpose-selection']).toContain('content-type-selection');
   });
 });
 
@@ -207,7 +226,7 @@ describe('workflowReducer - Navigation', () => {
     it('allows navigation to any step in history', () => {
       const initialState: WorkflowState = {
         ...createInitialState(),
-        currentStep: 'content-source-selection',
+        currentStep: 'purpose-selection',
         stepHistory: ['room-selection', 'item-type-selection', 'specific-item-selection'],
       };
 
@@ -225,7 +244,7 @@ describe('workflowReducer - Navigation', () => {
       const initialState: WorkflowState = {
         ...createInitialState(),
         currentStep: 'preview-save',
-        stepHistory: ['room-selection', 'item-type-selection', 'specific-item-selection', 'content-source-selection', 'content-type-selection', 'content-creation'],
+        stepHistory: ['room-selection', 'item-type-selection', 'specific-item-selection', 'purpose-selection', 'content-type-selection', 'content-creation'],
       };
 
       const newState = workflowReducer(initialState, {
@@ -449,6 +468,127 @@ describe('workflowReducer - Selection', () => {
 
       expect(newState.currentItem?.itemName).toBe('My Custom Fridge Name');
       expect(newState.isDirty).toBe(true);
+    });
+  });
+
+  // REQ-156: SELECT_PURPOSE tests
+  describe('SELECT_PURPOSE', () => {
+    it('sets purpose on current item', () => {
+      let state = workflowReducer(createInitialState(), {
+        type: 'SELECT_ROOM',
+        payload: 'kitchen',
+      });
+      state = workflowReducer(state, {
+        type: 'SELECT_SPECIFIC_ITEM',
+        payload: 'Fridge',
+      });
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'how-to-clean',
+      });
+
+      expect(newState.currentItem?.purpose).toBe('how-to-clean');
+    });
+
+    it('auto-generates article title when purpose is selected', () => {
+      let state = workflowReducer(createInitialState(), {
+        type: 'SELECT_ROOM',
+        payload: 'kitchen',
+      });
+      state = workflowReducer(state, {
+        type: 'SELECT_SPECIFIC_ITEM',
+        payload: 'Fridge',
+      });
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'how-to-clean',
+      });
+
+      expect(newState.currentItem?.itemName).toBe('How to Clean - Fridge');
+    });
+
+    it('generates correct title for different purposes', () => {
+      let state = workflowReducer(createInitialState(), {
+        type: 'SELECT_ROOM',
+        payload: 'kitchen',
+      });
+      state = workflowReducer(state, {
+        type: 'SELECT_SPECIFIC_ITEM',
+        payload: 'Oven',
+      });
+
+      // Test troubleshooting purpose
+      let newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'troubleshooting',
+      });
+      expect(newState.currentItem?.itemName).toBe('Troubleshooting - Oven');
+
+      // Test maintenance purpose
+      newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'maintenance',
+      });
+      expect(newState.currentItem?.itemName).toBe('Maintenance - Oven');
+
+      // Test how-to-use purpose
+      newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'how-to-use',
+      });
+      expect(newState.currentItem?.itemName).toBe('How to Use - Oven');
+    });
+
+    it('marks state as dirty when purpose is selected', () => {
+      let state = workflowReducer(createInitialState(), {
+        type: 'SELECT_ROOM',
+        payload: 'kitchen',
+      });
+      state = workflowReducer(state, {
+        type: 'SELECT_SPECIFIC_ITEM',
+        payload: 'Fridge',
+      });
+      // Reset isDirty for clean test
+      state = { ...state, isDirty: false };
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'troubleshooting',
+      });
+
+      expect(newState.isDirty).toBe(true);
+    });
+
+    it('returns unchanged state when currentItem is null', () => {
+      const state = createInitialState();
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'how-to-use',
+      });
+
+      expect(newState).toBe(state);
+    });
+
+    it('syncs purpose to session.currentItem', () => {
+      let state = workflowReducer(createInitialState(), {
+        type: 'SELECT_ROOM',
+        payload: 'kitchen',
+      });
+      state = workflowReducer(state, {
+        type: 'SELECT_SPECIFIC_ITEM',
+        payload: 'Dishwasher',
+      });
+
+      const newState = workflowReducer(state, {
+        type: 'SELECT_PURPOSE',
+        payload: 'maintenance',
+      });
+
+      expect(newState.session.currentItem?.purpose).toBe('maintenance');
+      expect(newState.session.currentItem?.itemName).toBe('Maintenance - Dishwasher');
     });
   });
 });
@@ -1044,5 +1184,143 @@ describe('workflowReducer - Large Session Handling', () => {
 
       expect(newState.session.items).toHaveLength(50);
     });
+  });
+});
+
+// =============================================================================
+// REQ-156: Full Flow Integration Tests with Purpose Step
+// =============================================================================
+
+describe('workflowReducer - Full Flow Integration (REQ-156)', () => {
+  it('completes full workflow with purpose step', () => {
+    let state = createInitialState();
+
+    // Room selection
+    state = workflowReducer(state, { type: 'SELECT_ROOM', payload: 'kitchen' });
+    expect(state.currentItem?.room).toBe('kitchen');
+
+    // Navigate to item-type
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('item-type-selection');
+
+    // Select item type
+    state = workflowReducer(state, { type: 'SELECT_ITEM_TYPE', payload: 'appliance' });
+    expect(state.currentItem?.itemType).toBe('appliance');
+
+    // Navigate to specific-item
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('specific-item-selection');
+
+    // Select specific item
+    state = workflowReducer(state, { type: 'SELECT_SPECIFIC_ITEM', payload: 'Dishwasher' });
+    expect(state.currentItem?.specificItem).toBe('Dishwasher');
+
+    // Navigate to purpose-selection (NEW in Plan-094)
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('purpose-selection');
+
+    // Select purpose - should auto-generate title
+    state = workflowReducer(state, { type: 'SELECT_PURPOSE', payload: 'maintenance' });
+    expect(state.currentItem?.purpose).toBe('maintenance');
+    expect(state.currentItem?.itemName).toBe('Maintenance - Dishwasher');
+
+    // Navigate to content-type-selection
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('content-type-selection');
+
+    // Verify history includes purpose-selection
+    expect(state.stepHistory).toContain('purpose-selection');
+  });
+
+  it('allows back navigation from purpose-selection', () => {
+    let state = createInitialState();
+
+    // Navigate to purpose-selection step
+    state = workflowReducer(state, { type: 'SELECT_ROOM', payload: 'kitchen' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    state = workflowReducer(state, { type: 'SELECT_ITEM_TYPE', payload: 'appliance' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    state = workflowReducer(state, { type: 'SELECT_SPECIFIC_ITEM', payload: 'Oven' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+
+    expect(state.currentStep).toBe('purpose-selection');
+    expect(state.canGoBack).toBe(true);
+
+    // Go back
+    state = workflowReducer(state, { type: 'PREV_STEP' });
+    expect(state.currentStep).toBe('specific-item-selection');
+  });
+
+  it('preserves purpose across back navigation', () => {
+    let state = createInitialState();
+
+    // Navigate to purpose-selection and select purpose
+    state = workflowReducer(state, { type: 'SELECT_ROOM', payload: 'bathroom' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' }); // to item-type
+    state = workflowReducer(state, { type: 'SELECT_ITEM_TYPE', payload: 'room-item' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' }); // to specific-item
+    state = workflowReducer(state, { type: 'SELECT_SPECIFIC_ITEM', payload: 'Shower' });
+    state = workflowReducer(state, { type: 'NEXT_STEP' }); // to purpose-selection
+    state = workflowReducer(state, { type: 'SELECT_PURPOSE', payload: 'how-to-clean' });
+
+    expect(state.currentItem?.purpose).toBe('how-to-clean');
+    expect(state.currentItem?.itemName).toBe('How to Clean - Shower');
+
+    // Navigate forward and back
+    state = workflowReducer(state, { type: 'NEXT_STEP' }); // to content-type-selection
+    state = workflowReducer(state, { type: 'PREV_STEP' }); // back to purpose-selection
+
+    // Purpose should be preserved
+    expect(state.currentItem?.purpose).toBe('how-to-clean');
+    expect(state.currentItem?.itemName).toBe('How to Clean - Shower');
+  });
+
+  it('validates purpose requirement on purpose-selection step', () => {
+    // Create state at purpose-selection step without purpose
+    const state: WorkflowState = {
+      ...createInitialState(),
+      currentStep: 'purpose-selection',
+      currentItem: {
+        room: 'kitchen',
+        itemType: 'appliance',
+        specificItem: 'Fridge',
+        itemName: 'Kitchen - Fridge',
+        purpose: null,  // No purpose selected
+        contentSource: 'existing',
+        contentType: null,
+        content: [],
+      },
+    };
+
+    // Verify purpose is null - canGoNext logic tested in hook
+    expect(state.currentItem?.purpose).toBeNull();
+
+    // After selecting purpose
+    const withPurpose = workflowReducer(state, {
+      type: 'SELECT_PURPOSE',
+      payload: 'how-to-use',
+    });
+
+    expect(withPurpose.currentItem?.purpose).toBe('how-to-use');
+  });
+
+  it('skips item-type for general room and proceeds to purpose-selection', () => {
+    let state = createInitialState();
+
+    // Select general room
+    state = workflowReducer(state, { type: 'SELECT_ROOM', payload: 'general' });
+    expect(state.currentItem?.room).toBe('general');
+    expect(state.currentItem?.itemType).toBe('general-info');
+
+    // Should skip item-type-selection and go to specific-item-selection
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('specific-item-selection');
+
+    // Select specific item
+    state = workflowReducer(state, { type: 'SELECT_SPECIFIC_ITEM', payload: 'WiFi Info' });
+
+    // Should go to purpose-selection
+    state = workflowReducer(state, { type: 'NEXT_STEP' });
+    expect(state.currentStep).toBe('purpose-selection');
   });
 });
