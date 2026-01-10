@@ -24,7 +24,7 @@
  *
  * @module ItemCreationWorkflow/components/shared
  * @see README.md for complete component documentation
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175, REQ-177 Tags)
  */
 
 // =============================================================================
@@ -61,6 +61,16 @@ export type { SuggestionButtonProps } from './SuggestionButton';
 
 export { ItemNameEditor } from './ItemNameEditor';
 export type { ItemNameEditorProps } from './ItemNameEditor';
+
+// =============================================================================
+// Tags Components (REQ-177)
+// =============================================================================
+/**
+ * Tag management components for item categorization.
+ * Used in PreviewSaveStep for displaying and editing auto-generated tags.
+ */
+export { TagsEditor } from './TagsEditor';
+export type { TagsEditorProps } from './TagsEditor';
 
 // =============================================================================
 // Content Components
