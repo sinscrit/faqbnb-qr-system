@@ -28,7 +28,7 @@
  *
  * @module ItemCreationWorkflow/utils/constants
  * @see SUGGESTION_MATRIX for item suggestions per room
- * @lastModified 2026-01-10 (Plan-094, REQ-175 Documentation Sync)
+ * @lastModified 2026-01-10 (Plan-094, REQ-175 Documentation Sync, REQ-177 Tags)
  */
 
 // =============================================================================
@@ -322,6 +322,74 @@ export const PURPOSE_ICONS: Record<PurposeTypeConst, string> = {
   'maintenance': 'settings',
   'features': 'star',
   'other': 'info',
+};
+
+// =============================================================================
+// Tags Configuration (REQ-177)
+// =============================================================================
+
+/**
+ * Available tags for item categorization.
+ * Tags are auto-generated based on room, item type, and purpose selections,
+ * and can be manually edited by users in the PreviewSaveStep.
+ *
+ * Tag Categories:
+ * - Room tags: kitchen, laundry, bedroom, bathroom, living-room, garage, outdoor
+ * - General tags: general
+ * - Item type tags: appliance, room-item
+ * - Purpose tags: instructions, cleaning, troubleshooting, safety, maintenance, features, info
+ *
+ * @see tagMapper.ts for auto-generation logic
+ * @see TagsEditor component for UI implementation
+ * @created 2026-01-10 (REQ-177 Intelligent Pre-filling)
+ */
+export const AVAILABLE_TAGS = [
+  'kitchen',
+  'laundry',
+  'bedroom',
+  'bathroom',
+  'living-room',
+  'garage',
+  'outdoor',
+  'general',
+  'appliance',
+  'room-item',
+  'instructions',
+  'cleaning',
+  'troubleshooting',
+  'safety',
+  'maintenance',
+  'features',
+  'info',
+] as const;
+
+/**
+ * Type for tag values derived from AVAILABLE_TAGS constant.
+ */
+export type TagTypeConst = (typeof AVAILABLE_TAGS)[number];
+
+/**
+ * Human-readable labels for each tag.
+ * Used for display in TagsEditor component.
+ */
+export const TAG_LABELS: Record<TagTypeConst, string> = {
+  kitchen: 'Kitchen',
+  laundry: 'Laundry',
+  bedroom: 'Bedroom',
+  bathroom: 'Bathroom',
+  'living-room': 'Living Room',
+  garage: 'Garage',
+  outdoor: 'Outdoor',
+  general: 'General',
+  appliance: 'Appliance',
+  'room-item': 'Room Item',
+  instructions: 'Instructions',
+  cleaning: 'Cleaning',
+  troubleshooting: 'Troubleshooting',
+  safety: 'Safety',
+  maintenance: 'Maintenance',
+  features: 'Features',
+  info: 'Info',
 };
 
 // =============================================================================
