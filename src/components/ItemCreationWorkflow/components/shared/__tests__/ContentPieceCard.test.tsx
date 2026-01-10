@@ -2,16 +2,17 @@
  * ContentPieceCard Component Tests
  *
  * @module ItemCreationWorkflow/components/shared/__tests__/ContentPieceCard.test
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-10 (REQ-169 Mobile visibility tests)
  */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { ContentPieceCard } from '../ContentPieceCard';
 import type { ContentPiece } from '../../../ItemCreationWorkflow.types';
 
 // Mock URL.createObjectURL and revokeObjectURL
-const mockCreateObjectURL = jest.fn(() => 'blob:test-url');
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn(() => 'blob:test-url');
+const mockRevokeObjectURL = vi.fn();
 
 beforeAll(() => {
   global.URL.createObjectURL = mockCreateObjectURL;
@@ -19,7 +20,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // =============================================================================
@@ -69,13 +70,13 @@ const mockUrlContent: ContentPiece = {
 describe('ContentPieceCard', () => {
   const defaultProps = {
     content: mockPhotoContent,
-    onRemove: jest.fn(),
-    onRetake: jest.fn(),
+    onRemove: vi.fn(),
+    onRetake: vi.fn(),
     disabled: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -201,13 +202,13 @@ describe('ContentPieceCard', () => {
     });
 
     it('hides remove button when onRemove not provided', () => {
-      render(<ContentPieceCard content={mockPhotoContent} onRetake={jest.fn()} />);
+      render(<ContentPieceCard content={mockPhotoContent} onRetake={vi.fn()} />);
 
       expect(screen.queryByRole('button', { name: /remove content/i })).not.toBeInTheDocument();
     });
 
     it('hides retake button when onRetake not provided', () => {
-      render(<ContentPieceCard content={mockPhotoContent} onRemove={jest.fn()} />);
+      render(<ContentPieceCard content={mockPhotoContent} onRemove={vi.fn()} />);
 
       expect(screen.queryByRole('button', { name: /retake content/i })).not.toBeInTheDocument();
     });
@@ -303,6 +304,32 @@ describe('ContentPieceCard', () => {
 
       expect(removeButton).toHaveClass('min-w-[44px]', 'min-h-[44px]');
       expect(retakeButton).toHaveClass('min-w-[44px]', 'min-h-[44px]');
+    });
+  });
+
+  // ===========================================================================
+  // Mobile Visibility Tests (REQ-169)
+  // ===========================================================================
+
+  describe('mobile visibility', () => {
+    it('action buttons container has mobile-first visible classes', () => {
+      const { container } = render(<ContentPieceCard {...defaultProps} />);
+
+      // Find the action button container (div containing the buttons)
+      const removeButton = screen.getByRole('button', { name: /remove content/i });
+      const actionContainer = removeButton.parentElement?.parentElement;
+
+      // Container should have opacity-100 for mobile visibility
+      expect(actionContainer).toHaveClass('opacity-100');
+
+      // Container should have md:opacity-0 for desktop hover behavior
+      expect(actionContainer).toHaveClass('md:opacity-0');
+
+      // Container should have md:group-hover:opacity-100 for desktop hover
+      expect(actionContainer).toHaveClass('md:group-hover:opacity-100');
+
+      // Container should have md:focus-within:opacity-100 for keyboard accessibility
+      expect(actionContainer).toHaveClass('md:focus-within:opacity-100');
     });
   });
 

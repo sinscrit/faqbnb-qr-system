@@ -6,24 +6,25 @@
  *
  * @module ItemCreationWorkflow/components/shared/__tests__/SortableContentPieceCard
  * @see docs/REQ-108-multi-content-item-support-detailed.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-10 (REQ-169 vitest migration)
  */
 
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { SortableContentPieceCard } from '../SortableContentPieceCard';
 import type { ContentPiece } from '../../../ItemCreationWorkflow.types';
 
 // Mock @dnd-kit/sortable
-const mockUseSortable = jest.fn();
-jest.mock('@dnd-kit/sortable', () => ({
+const mockUseSortable = vi.fn();
+vi.mock('@dnd-kit/sortable', () => ({
   useSortable: (args: unknown) => mockUseSortable(args),
 }));
 
 // Mock @dnd-kit/utilities
-jest.mock('@dnd-kit/utilities', () => ({
+vi.mock('@dnd-kit/utilities', () => ({
   CSS: {
     Transform: {
-      toString: jest.fn((transform) =>
+      toString: vi.fn((transform) =>
         transform ? `translate(${transform.x || 0}px, ${transform.y || 0}px)` : null
       ),
     },
@@ -59,7 +60,7 @@ const mockVideoContent: ContentPiece = {
 const defaultUseSortableReturn = {
   attributes: { 'data-sortable': 'true' },
   listeners: { 'data-listeners': 'true' },
-  setNodeRef: jest.fn(),
+  setNodeRef: vi.fn(),
   transform: null,
   transition: null,
   isDragging: false,
@@ -71,7 +72,7 @@ const defaultUseSortableReturn = {
 
 describe('SortableContentPieceCard', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseSortable.mockReturnValue(defaultUseSortableReturn);
   });
 
@@ -286,7 +287,7 @@ describe('SortableContentPieceCard', () => {
 
   describe('callbacks', () => {
     it('calls onRemove with correct id', async () => {
-      const mockOnRemove = jest.fn();
+      const mockOnRemove = vi.fn();
       const user = await import('@testing-library/user-event');
 
       render(
@@ -310,7 +311,7 @@ describe('SortableContentPieceCard', () => {
     });
 
     it('calls onRetake with correct id', async () => {
-      const mockOnRetake = jest.fn();
+      const mockOnRetake = vi.fn();
       const user = await import('@testing-library/user-event');
 
       render(

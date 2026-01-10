@@ -20,7 +20,7 @@
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
  * @see PreviewSaveStep for usage context
  * @see SortableContentPieceCard for sortable version
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-10 (REQ-169 Mobile Remove Button Visibility)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -316,8 +316,15 @@ export function ContentPieceCard({
         </button>
       )}
 
-      {/* Action buttons (bottom) - visible on hover */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+      {/* Action buttons (bottom) - always visible on mobile, hover on desktop */}
+      <div className={cn(
+        'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-2',
+        'transition-opacity',
+        // Mobile: always visible
+        'opacity-100',
+        // Desktop (md+): hover to show
+        'md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100'
+      )}>
         <div className="flex items-center justify-center gap-2">
           {/* Retake button */}
           {onRetake && (
