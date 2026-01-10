@@ -79,6 +79,8 @@ export interface Property {
 export interface ItemLink {
   id: string;
   item_id: string;
+  /** Optional reference to parent article (FK → item_articles.id) */
+  article_id?: string | null;
   title: string;
   link_type: LinkType;
   url: string;
@@ -88,6 +90,29 @@ export interface ItemLink {
 }
 
 export type LinkType = 'youtube' | 'pdf' | 'image' | 'text';
+
+// Purpose categories for item articles (REQ-151)
+export type PurposeType =
+  | 'how-to-use'
+  | 'how-to-clean'
+  | 'troubleshooting'
+  | 'safety-info'
+  | 'maintenance'
+  | 'features'
+  | 'other';
+
+// Article representing grouped content by purpose (REQ-151)
+export interface ItemArticle {
+  id: string;
+  itemId: string;
+  purpose: PurposeType;
+  title: string;
+  description?: string | null;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+  links?: ItemLink[];
+}
 
 // API Response types
 export interface ItemResponse {
@@ -101,11 +126,29 @@ export interface ItemResponse {
     qrCodeUploadedAt?: string;
     links: {
       id: string;
+      /** Reference to parent article (optional for backward compatibility) */
+      articleId?: string;
       title: string;
       linkType: LinkType;
       url: string;
       thumbnailUrl?: string;
       displayOrder: number;
+    }[];
+    /** Grouped content organized by article/purpose */
+    articles?: {
+      id: string;
+      purpose: PurposeType;
+      title: string;
+      description?: string;
+      displayOrder: number;
+      links: {
+        id: string;
+        title: string;
+        linkType: LinkType;
+        url: string;
+        thumbnailUrl?: string;
+        displayOrder: number;
+      }[];
     }[];
   };
   error?: string;
@@ -126,6 +169,7 @@ export interface ItemsListResponse {
     propertyId: string;
     property: any; // Property object with account info
     linksCount: number;
+    articlesCount: number; // REQ-151: Article count
     analytics: {
       visits: {
         last24Hours: number;
@@ -184,6 +228,75 @@ export interface UsersListResponse {
   error?: string;
 }
 
+// Article API Request/Response Types (REQ-151, REQ-152)
+/**
+ * Request payload for creating an article.
+ * @see Plan-094 Phase 0 Task 0.4
+ */
+export interface CreateArticleRequest {
+  /** Item ID this article belongs to */
+  itemId: string;
+  /** Purpose/intent category */
+  purpose: PurposeType;
+  /** Article title (typically auto-generated from purpose + item name) */
+  title?: string;
+  /** Optional description */
+  description?: string;
+  /** Display order (defaults to end of list if not specified) */
+  displayOrder?: number;
+  /** Links to include in this article (optional for initial creation) */
+  links?: {
+    title: string;
+    linkType: LinkType;
+    url: string;
+    thumbnailUrl?: string;
+    displayOrder: number;
+  }[];
+}
+
+/**
+ * Request payload for updating an existing article.
+ */
+export interface UpdateArticleRequest {
+  /** Updated purpose/intent category */
+  purpose?: PurposeType;
+  /** Updated article title */
+  title?: string;
+  /** Updated description */
+  description?: string | null;
+  /** Updated display order */
+  displayOrder?: number;
+  /** Updated links (replaces existing if provided) */
+  links?: {
+    id?: string;
+    title: string;
+    linkType: LinkType;
+    url: string;
+    thumbnailUrl?: string;
+    displayOrder: number;
+  }[];
+}
+
+export interface ArticleResponse {
+  success: boolean;
+  data?: ItemArticle;
+  error?: string;
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
+}
+
+export interface ArticlesListResponse {
+  success: boolean;
+  data?: ItemArticle[];
+  error?: string;
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
+}
+
 // Form types
 export interface CreateItemRequest {
   publicId: string;
@@ -198,6 +311,24 @@ export interface CreateItemRequest {
     thumbnailUrl?: string;
     displayOrder: number;
   }[];
+  /**
+   * Optional articles with nested links for article-based creation.
+   * When provided, links are organized under articles instead of flat list.
+   * @see Plan-094 Article-based content model
+   */
+  articles?: {
+    purpose: PurposeType;
+    title: string;
+    description?: string;
+    displayOrder: number;
+    links?: {
+      title: string;
+      linkType: LinkType;
+      url: string;
+      thumbnailUrl?: string;
+      displayOrder: number;
+    }[];
+  }[];
 }
 
 export interface UpdateItemRequest extends CreateItemRequest {
@@ -210,6 +341,25 @@ export interface UpdateItemRequest extends CreateItemRequest {
     url: string;
     thumbnailUrl?: string;
     displayOrder: number;
+  }[];
+  /**
+   * Optional articles with nested links for article-based updates.
+   * When provided, replaces existing articles with the new set.
+   */
+  articles?: {
+    id?: string;
+    purpose: PurposeType;
+    title: string;
+    description?: string;
+    displayOrder: number;
+    links?: {
+      id?: string;
+      title: string;
+      linkType: LinkType;
+      url: string;
+      thumbnailUrl?: string;
+      displayOrder: number;
+    }[];
   }[];
 }
 
@@ -346,6 +496,8 @@ export interface ItemWithDetails {
   createdAt: string;
   updatedAt: string;
   links: ItemLink[];
+  /** Grouped content organized by article/purpose (populated when joined) */
+  articles?: ItemArticle[];
   /** Count of associated media files for delete warning */
   mediaCount?: number;
 }
