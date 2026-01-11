@@ -7,7 +7,7 @@
 
 daemon:
   # Directory monitoring
-  inbox_dir: ./claude-pipelines/inbox
+  inbox_dir: /Users/shinyqk/Downloads/tailscale
   processed_dir: ./claude-pipelines/processed
   failed_dir: ./claude-pipelines/failed
   rejected_dir: ./claude-pipelines/rejected    # PDFs with unknown project codes

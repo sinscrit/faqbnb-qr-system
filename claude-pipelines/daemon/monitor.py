@@ -134,6 +134,8 @@ def show_status(state_path: Path, config: Optional[DaemonConfig] = None) -> None
     status_table.add_column("Value")
 
     status_table.add_row("Status", f"[{status_style}]{state.status.upper()}[/{status_style}]")
+    if config:
+        status_table.add_row("Inbox", f"[cyan]{config.daemon.inbox_dir}[/cyan]")
     if state.started_at:
         status_table.add_row("Started", format_time_ago(state.started_at))
     if state.stopped_at:
@@ -248,7 +250,7 @@ def create_dashboard_layout(state: DaemonState, log_lines: List[str],
 
     # Split into top and bottom
     layout.split_column(
-        Layout(name="header", size=3),
+        Layout(name="header", size=5),
         Layout(name="main"),
         Layout(name="logs", size=14),
     )
@@ -266,6 +268,8 @@ def create_dashboard_layout(state: DaemonState, log_lines: List[str],
     header_text.append("  |  Status: ")
     header_text.append(state.status.upper(), style=status_style)
     header_text.append(f"  |  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    if config:
+        header_text.append(f"\nInbox: {config.daemon.inbox_dir}", style="cyan")
     layout["header"].update(Panel(header_text, border_style="blue"))
 
     # Status panel with stats
