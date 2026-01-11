@@ -449,8 +449,8 @@ export function ItemRow({
         )}
       </div>
 
-      {/* Location Column (Task 5) */}
-      <div className="hidden md:flex w-24 items-center">
+      {/* Location Column (Task 5) - visible on md+ screens */}
+      <div className="hidden md:flex w-24 items-center flex-shrink-0">
         {effectiveEnableInlineEdit ? (
           <div data-inline-edit onClick={(e) => e.stopPropagation()} className="w-full">
             <InlineEdit
@@ -471,8 +471,8 @@ export function ItemRow({
         )}
       </div>
 
-      {/* Content Type Badge (Task 6) */}
-      <div className="hidden sm:flex w-20 items-center">
+      {/* Content Type Badge (Task 6) - visible on md+ screens */}
+      <div className="hidden md:flex w-20 items-center flex-shrink-0">
         <span
           className={cn(
             'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
@@ -500,8 +500,8 @@ export function ItemRow({
         )}
       </div>
 
-      {/* Date Column (Task 8) */}
-      <div className="hidden md:flex w-28 items-center text-sm text-gray-500">
+      {/* Date Column (Task 8) - visible on md+ screens */}
+      <div className="hidden md:flex w-28 items-center flex-shrink-0 text-sm text-gray-500">
         {formatDate(item.createdAt)}
       </div>
 
@@ -523,8 +523,8 @@ export function ItemRow({
         )}
       </div>
 
-      {/* Kebab Menu - 48px touch target on mobile */}
-      <div className="flex-shrink-0 relative" ref={menuRef}>
+      {/* Kebab Menu - 48px touch target on mobile, sticky on right for horizontal scroll */}
+      <div className="flex-shrink-0 relative sticky right-0 bg-white" ref={menuRef}>
         <button
           ref={menuButtonRef}
           type="button"
