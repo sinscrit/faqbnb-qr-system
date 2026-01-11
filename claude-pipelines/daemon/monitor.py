@@ -58,6 +58,31 @@ def check_rich_available() -> bool:
     return True
 
 
+def check_daemon_process(pid_file: Path) -> tuple[bool, Optional[int]]:
+    """
+    Check if daemon process is actually running.
+
+    Args:
+        pid_file: Path to PID file
+
+    Returns:
+        Tuple of (is_running, pid)
+    """
+    import os
+    import signal
+
+    if not pid_file.exists():
+        return False, None
+
+    try:
+        pid = int(pid_file.read_text().strip())
+        # Check if process exists by sending signal 0
+        os.kill(pid, 0)
+        return True, pid
+    except (ValueError, ProcessLookupError, PermissionError):
+        return False, None
+
+
 def format_duration(seconds: float) -> str:
     """Format duration in human-readable form."""
     if seconds < 60:
@@ -119,6 +144,19 @@ def show_status(state_path: Path, config: Optional[DaemonConfig] = None) -> None
     console = Console()
     state = load_state(state_path)
 
+    # Check actual process status
+    is_running, pid = False, None
+    if config:
+        is_running, pid = check_daemon_process(config.daemon.pid_file)
+
+    # Determine actual status
+    if is_running:
+        actual_status = "running"
+    elif state.status == "running":
+        actual_status = "stale"  # State says running but process is dead
+    else:
+        actual_status = state.status
+
     # Header
     console.print()
     console.print(Panel.fit(
@@ -128,12 +166,19 @@ def show_status(state_path: Path, config: Optional[DaemonConfig] = None) -> None
     console.print()
 
     # Status info
-    status_style = get_status_style(state.status)
+    status_style = get_status_style(actual_status if actual_status != "stale" else "error")
     status_table = Table(show_header=False, box=box.SIMPLE, padding=(0, 2))
     status_table.add_column("Key", style="dim")
     status_table.add_column("Value")
 
-    status_table.add_row("Status", f"[{status_style}]{state.status.upper()}[/{status_style}]")
+    if actual_status == "stale":
+        status_table.add_row("Status", "[bold red]NOT RUNNING[/bold red] [dim](stale state)[/dim]")
+    else:
+        status_table.add_row("Status", f"[{status_style}]{actual_status.upper()}[/{status_style}]")
+
+    if is_running and pid:
+        status_table.add_row("PID", f"[green]{pid}[/green]")
+
     if config:
         status_table.add_row("Inbox", f"[cyan]{config.daemon.inbox_dir}[/cyan]")
     if state.started_at:
@@ -244,7 +289,8 @@ def read_log_tail(log_path: Path, lines: int = 10) -> List[str]:
 
 
 def create_dashboard_layout(state: DaemonState, log_lines: List[str],
-                           config: Optional[DaemonConfig] = None) -> Layout:
+                           config: Optional[DaemonConfig] = None,
+                           is_running: bool = False, pid: Optional[int] = None) -> Layout:
     """Create the dashboard layout."""
     layout = Layout()
 
@@ -261,12 +307,26 @@ def create_dashboard_layout(state: DaemonState, log_lines: List[str],
         Layout(name="jobs", ratio=2),
     )
 
+    # Determine actual status
+    if is_running:
+        actual_status = "running"
+    elif state.status == "running":
+        actual_status = "stale"
+    else:
+        actual_status = state.status
+
     # Header
-    status_style = get_status_style(state.status)
+    status_style = get_status_style(actual_status if actual_status != "stale" else "error")
     header_text = Text()
     header_text.append("PDF Pipeline Daemon", style="bold blue")
     header_text.append("  |  Status: ")
-    header_text.append(state.status.upper(), style=status_style)
+    if actual_status == "stale":
+        header_text.append("NOT RUNNING", style="bold red")
+        header_text.append(" (stale)", style="dim")
+    else:
+        header_text.append(actual_status.upper(), style=status_style)
+    if is_running and pid:
+        header_text.append(f"  |  PID: {pid}", style="green")
     header_text.append(f"  |  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     if config:
         header_text.append(f"\nInbox: {config.daemon.inbox_dir}", style="cyan")
@@ -371,11 +431,14 @@ def run_dashboard(state_path: Path, config: DaemonConfig,
                 # Reload state
                 state = load_state(state_path)
 
+                # Check actual process status
+                is_running, pid = check_daemon_process(config.daemon.pid_file)
+
                 # Read recent logs
                 log_lines = read_log_tail(log_path, lines=10)
 
                 # Create and display layout
-                layout = create_dashboard_layout(state, log_lines, config)
+                layout = create_dashboard_layout(state, log_lines, config, is_running, pid)
                 live.update(layout)
 
                 time.sleep(refresh_interval)

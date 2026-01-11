@@ -956,7 +956,19 @@ Examples:
 
     # Start daemon
     daemon = PipelineDaemon(config)
-    daemon.start()
+
+    # Write PID file for foreground mode too
+    if not args.daemon:
+        config.daemon.pid_file.parent.mkdir(parents=True, exist_ok=True)
+        config.daemon.pid_file.write_text(str(os.getpid()))
+
+    try:
+        daemon.start()
+    finally:
+        # Clean up PID file on exit
+        if config.daemon.pid_file.exists():
+            config.daemon.pid_file.unlink()
+
     return 0
 
 
