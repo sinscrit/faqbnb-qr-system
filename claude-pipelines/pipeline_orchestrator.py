@@ -3997,6 +3997,23 @@ Examples:
         help='Display test harness URL(s) from state file and exit'
     )
 
+    # Health check flags
+    parser.add_argument(
+        '--health-check',
+        action='store_true',
+        help='Run pipeline health check and exit'
+    )
+    parser.add_argument(
+        '--health-check-json',
+        action='store_true',
+        help='Run health check and output as JSON'
+    )
+    parser.add_argument(
+        '--skip-claude-checks',
+        action='store_true',
+        help='Skip Claude CLI checks in health check (faster)'
+    )
+
     args = parser.parse_args()
     
     # Load configuration
@@ -4031,7 +4048,40 @@ Examples:
     if args.test_harness:
         cmd_show_test_harness(config)
         return
-    
+
+    if args.health_check or args.health_check_json:
+        # Run pipeline health check
+        try:
+            # Try importing from claude_pipelines package
+            from health_check import run_health_check, CheckStatus
+        except ImportError:
+            try:
+                # Try relative to this file
+                import sys
+                sys.path.insert(0, str(Path(__file__).parent))
+                from health_check import run_health_check, CheckStatus
+            except ImportError:
+                print("Error: health_check.py not found")
+                print("Expected at: claude-pipelines/health_check.py")
+                sys.exit(1)
+
+        report = run_health_check(
+            skip_claude=args.skip_claude_checks,
+            verbose=args.verbose and not args.health_check_json,
+        )
+
+        if args.health_check_json:
+            print(report.to_json())
+        else:
+            print(report.to_table())
+
+        # Exit with appropriate code
+        if report.overall_status == CheckStatus.FAIL:
+            sys.exit(1)
+        elif report.overall_status == CheckStatus.WARN:
+            sys.exit(2)
+        return
+
     # Extract tasks
     print(f"Loading: {config['source']['_resolved_path']}")
     try:

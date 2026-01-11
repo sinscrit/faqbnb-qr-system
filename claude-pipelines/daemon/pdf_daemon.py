@@ -647,6 +647,9 @@ Examples:
   %(prog)s --config daemon_config.yaml --daemon  Start as background daemon
   %(prog)s --status                              Show daemon status
   %(prog)s --single /path/to/file.pdf            Process single PDF
+  %(prog)s --health-check                        Run pipeline health check
+  %(prog)s --health-check --verbose              Health check with progress
+  %(prog)s --health-check-json                   Health check as JSON
         """
     )
 
@@ -681,6 +684,21 @@ Examples:
         action="store_true",
         help="Enable verbose logging"
     )
+    parser.add_argument(
+        "--health-check",
+        action="store_true",
+        help="Run health check on entire pipeline chain"
+    )
+    parser.add_argument(
+        "--health-check-json",
+        action="store_true",
+        help="Run health check and output as JSON"
+    )
+    parser.add_argument(
+        "--skip-claude-checks",
+        action="store_true",
+        help="Skip Claude CLI checks in health check (faster)"
+    )
 
     args = parser.parse_args()
 
@@ -691,6 +709,34 @@ Examples:
     setup_logging(config, args.verbose)
 
     # Handle commands
+    if args.health_check or args.health_check_json:
+        # Import health check module
+        try:
+            from claude_pipelines.health_check import run_health_check
+        except ImportError:
+            # Try relative import
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from health_check import run_health_check
+
+        report = run_health_check(
+            skip_claude=args.skip_claude_checks,
+            verbose=args.verbose and not args.health_check_json,
+        )
+
+        if args.health_check_json:
+            print(report.to_json())
+        else:
+            print(report.to_table())
+
+        # Exit with appropriate code
+        from health_check import CheckStatus
+        if report.overall_status == CheckStatus.FAIL:
+            return 1
+        elif report.overall_status == CheckStatus.WARN:
+            return 2
+        return 0
+
     if args.status:
         status = get_status(config)
         print(json.dumps(status, indent=2))
