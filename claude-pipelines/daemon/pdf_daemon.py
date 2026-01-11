@@ -2,7 +2,7 @@
 # claude-pipelines/daemon/pdf_daemon.py
 # PDF Pipeline Daemon - Main Entry Point
 # Created: 2026-01-11
-# Last Modified: 2026-01-11
+# Last Modified: 2026-01-11 (added 24-hour file age filter)
 #
 # Automated daemon for PDF → Pipeline processing.
 # Monitors inbox, extracts requests, invokes agents, runs pipelines.
@@ -39,6 +39,7 @@ import argparse
 import subprocess
 import shutil
 import re
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, List, Dict, Any
@@ -286,6 +287,14 @@ class PipelineDaemon:
             # Skip if already processing
             if self.state.get_active_job(str(pdf_path)):
                 logger.debug(f"Skipping {pdf_path.name}, already processing")
+                continue
+
+            # Skip files older than 24 hours
+            file_age_seconds = time.time() - pdf_path.stat().st_mtime
+            max_age_seconds = 24 * 60 * 60  # 24 hours
+            if file_age_seconds > max_age_seconds:
+                logger.debug(f"Ignoring {pdf_path.name}: file is older than 24 hours "
+                           f"({file_age_seconds / 3600:.1f} hours old)")
                 continue
 
             # Validate filename format
