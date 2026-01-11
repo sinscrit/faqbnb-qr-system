@@ -425,12 +425,18 @@ def run_dashboard(state_path: Path, config: DaemonConfig,
     console.print("[dim]Press Ctrl+C to exit[/dim]\n")
     time.sleep(1)
 
+    # Suppress all console logging during dashboard to prevent flickering
+    import logging
+    for handler in logging.root.handlers[:]:
+        if isinstance(handler, logging.StreamHandler):
+            handler.setLevel(logging.CRITICAL)
+
     try:
         # Use vertical_overflow="crop" and fixed height to prevent flickering
         with Live(console=console, refresh_per_second=1, screen=False,
                   vertical_overflow="crop") as live:
             while True:
-                # Reload state
+                # Reload state (logging suppressed)
                 state = load_state(state_path)
 
                 # Check actual process status
