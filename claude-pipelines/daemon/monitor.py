@@ -292,12 +292,12 @@ def create_dashboard_layout(state: DaemonState, log_lines: List[str],
                            config: Optional[DaemonConfig] = None,
                            is_running: bool = False, pid: Optional[int] = None) -> Layout:
     """Create the dashboard layout."""
-    layout = Layout()
+    layout = Layout(size=30)  # Fixed total height
 
-    # Split into top and bottom
+    # Split into top and bottom with fixed sizes
     layout.split_column(
         Layout(name="header", size=5),
-        Layout(name="main"),
+        Layout(name="main", size=11),
         Layout(name="logs", size=14),
     )
 
@@ -426,7 +426,9 @@ def run_dashboard(state_path: Path, config: DaemonConfig,
     time.sleep(1)
 
     try:
-        with Live(console=console, refresh_per_second=1, screen=True) as live:
+        # Use vertical_overflow="crop" and fixed height to prevent flickering
+        with Live(console=console, refresh_per_second=1, screen=False,
+                  vertical_overflow="crop") as live:
             while True:
                 # Reload state
                 state = load_state(state_path)
