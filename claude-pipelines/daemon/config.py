@@ -35,6 +35,7 @@ DEFAULTS = {
         "pdf_prefix": "CPL",
         "project_code_length": 6,
         "approved_projects": ["FAQBNB"],
+        "pipeline_depth": "full",  # extract_only, parse_only, plan_only, full
         "poll_interval": 30,
         "log_file": "./claude-pipelines/daemon/logs/daemon.log",
         "state_file": "./claude-pipelines/daemon/state/daemon-state.json",
@@ -82,6 +83,7 @@ class DaemonSettings:
     pdf_prefix: str
     project_code_length: int
     approved_projects: list
+    pipeline_depth: str  # extract_only, parse_only, plan_only, full
     poll_interval: int
     log_file: Path
     state_file: Path
@@ -169,6 +171,12 @@ class DaemonConfig:
         if self.notifications.on_failure not in valid_notifications:
             errors.append(f"Invalid on_failure: {self.notifications.on_failure}")
 
+        # Check pipeline depth
+        valid_depths = ("extract_only", "parse_only", "plan_only", "full")
+        if self.daemon.pipeline_depth not in valid_depths:
+            errors.append(f"Invalid pipeline_depth: {self.daemon.pipeline_depth}. "
+                         f"Must be one of: {', '.join(valid_depths)}")
+
         # Check PDF naming settings
         if not self.daemon.pdf_prefix:
             errors.append("pdf_prefix cannot be empty")
@@ -239,6 +247,7 @@ def load_config(config_path: Optional[Path] = None, project_root: Optional[Path]
             pdf_prefix=config_data["daemon"]["pdf_prefix"],
             project_code_length=int(config_data["daemon"]["project_code_length"]),
             approved_projects=list(config_data["daemon"]["approved_projects"]),
+            pipeline_depth=config_data["daemon"]["pipeline_depth"],
             poll_interval=int(config_data["daemon"]["poll_interval"]),
             log_file=Path(config_data["daemon"]["log_file"]),
             state_file=Path(config_data["daemon"]["state_file"]),

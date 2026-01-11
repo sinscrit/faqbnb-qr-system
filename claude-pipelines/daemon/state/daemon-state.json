@@ -1,16 +1,24 @@
 {
   "version": "1.0",
-  "status": "stopped",
-  "started_at": null,
+  "status": "running",
+  "started_at": "2026-01-11T18:34:56.190986Z",
   "stopped_at": null,
   "stats": {
     "pdfs_processed": 0,
-    "pdfs_failed": 0,
+    "pdfs_failed": 1,
     "requests_generated": 0,
     "pipelines_created": 0,
     "total_runtime_seconds": 0.0
   },
   "active_jobs": [],
   "history": [],
-  "failed": []
+  "failed": [
+    {
+      "pdf_path": "/Users/shinyqk/Downloads/tailscale/CPL-FAQBNB-Review-2026-01-11.pdf",
+      "failed_at": "2026-01-11T18:35:02.707901Z",
+      "stage": "processing",
+      "error": "Parser skill returned code -15",
+      "request_index": null
+    }
+  ]
 }

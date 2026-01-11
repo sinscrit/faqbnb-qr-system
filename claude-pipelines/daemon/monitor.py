@@ -181,6 +181,7 @@ def show_status(state_path: Path, config: Optional[DaemonConfig] = None) -> None
 
     if config:
         status_table.add_row("Inbox", f"[cyan]{config.daemon.inbox_dir}[/cyan]")
+        status_table.add_row("Depth", f"[yellow]{config.daemon.pipeline_depth}[/yellow]")
     if state.started_at:
         status_table.add_row("Started", format_time_ago(state.started_at))
     if state.stopped_at:
@@ -330,6 +331,7 @@ def create_dashboard_layout(state: DaemonState, log_lines: List[str],
     header_text.append(f"  |  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     if config:
         header_text.append(f"\nInbox: {config.daemon.inbox_dir}", style="cyan")
+        header_text.append(f"  |  Depth: {config.daemon.pipeline_depth}", style="yellow")
     layout["header"].update(Panel(header_text, border_style="blue"))
 
     # Status panel with stats

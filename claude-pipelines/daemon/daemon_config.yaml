@@ -22,6 +22,14 @@ daemon:
   approved_projects:
     - FAQBNB                                   # FAQ BnB main project
 
+  # Pipeline depth - how far to process
+  # Options: extract_only, parse_only, plan_only, full
+  #   extract_only - just extract text from PDF
+  #   parse_only   - extract + parse into PRD files
+  #   plan_only    - extract + parse + create implementation plans (Agent 00)
+  #   full         - complete pipeline through orchestrator
+  pipeline_depth: plan_only
+
   # Daemon behavior
   poll_interval: 30          # seconds between inbox checks
   log_file: ./claude-pipelines/daemon/logs/daemon.log

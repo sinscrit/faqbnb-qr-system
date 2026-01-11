@@ -360,6 +360,15 @@ class PipelineDaemon:
 
             logger.info(f"Extracted {len(extraction.text)} chars from {extraction.page_count} pages")
 
+            # Check if we should stop at extraction
+            depth = self.config.daemon.pipeline_depth
+            if depth == "extract_only":
+                logger.info(f"Pipeline depth is 'extract_only', stopping after extraction")
+                self._move_to_processed(pdf_path)
+                self.state.complete_job(str(pdf_path), 0, [])
+                save_state(self.state, self.config.daemon.state_file)
+                return
+
             # Step 2: Parse requests using Claude skill
             self.state.update_job(str(pdf_path), "parsing")
             save_state(self.state, self.config.daemon.state_file)
@@ -431,10 +440,17 @@ class PipelineDaemon:
         """
         logger.info(f"Processing request #{request.id}: {request.title}")
 
+        depth = self.config.daemon.pipeline_depth
+
         try:
             # Create PRD file
             prd_path = self._create_prd_file(request, session_info)
             logger.info(f"Created PRD: {prd_path}")
+
+            # Stop here if parse_only
+            if depth == "parse_only":
+                logger.info(f"Pipeline depth is 'parse_only', stopping after PRD creation")
+                return prd_path
 
             # Agent 00: Create implementation plan
             self.state.update_job(str(source_pdf), "agent_00", request_id=str(request.id))
@@ -447,6 +463,11 @@ class PipelineDaemon:
 
             logger.info(f"Implementation plan: {plan_path}")
 
+            # Stop here if plan_only
+            if depth == "plan_only":
+                logger.info(f"Pipeline depth is 'plan_only', stopping after implementation plan")
+                return plan_path
+
             # Agent 00b: Create pipeline YAML
             self.state.update_job(str(source_pdf), "agent_00b", request_id=str(request.id))
             save_state(self.state, self.config.daemon.state_file)
@@ -458,7 +479,7 @@ class PipelineDaemon:
 
             logger.info(f"Pipeline YAML: {yaml_path}")
 
-            # Run orchestrator
+            # Run orchestrator (only if depth is 'full')
             self.state.update_job(str(source_pdf), "orchestrator", request_id=str(request.id))
             save_state(self.state, self.config.daemon.state_file)
 
