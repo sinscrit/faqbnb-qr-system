@@ -40,8 +40,13 @@ try:
 except ImportError:
     RICH_AVAILABLE = False
 
-from .state import DaemonState, load_state
-from .config import DaemonConfig, load_config
+# Local imports - handle both module and direct execution
+try:
+    from .state import DaemonState, load_state
+    from .config import DaemonConfig, load_config
+except ImportError:
+    from state import DaemonState, load_state
+    from config import DaemonConfig, load_config
 
 
 def check_rich_available() -> bool:

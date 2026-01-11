@@ -45,10 +45,15 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
 
-# Local imports
-from .pdf_extractor import extract_pdf_text, ExtractionResult
-from .config import load_config, DaemonConfig
-from .state import DaemonState, load_state, save_state
+# Local imports - handle both module and direct execution
+try:
+    from .pdf_extractor import extract_pdf_text, ExtractionResult
+    from .config import load_config, DaemonConfig
+    from .state import DaemonState, load_state, save_state
+except ImportError:
+    from pdf_extractor import extract_pdf_text, ExtractionResult
+    from config import load_config, DaemonConfig
+    from state import DaemonState, load_state, save_state
 
 # Setup logging
 logger = logging.getLogger(__name__)
