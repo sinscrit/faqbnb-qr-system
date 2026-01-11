@@ -1,0 +1,46 @@
+# PDF Pipeline Daemon Configuration
+# Created: 2026-01-11
+# Last Modified: 2026-01-11
+#
+# Configuration for the automated PDF → Pipeline daemon system.
+# See claude-pipelines/docs/pdf-daemon-implementation-plan.md for details.
+
+daemon:
+  # Directory monitoring
+  inbox_dir: ./claude-pipelines/inbox
+  processed_dir: ./claude-pipelines/processed
+  failed_dir: ./claude-pipelines/failed
+
+  # Daemon behavior
+  poll_interval: 30          # seconds between inbox checks
+  log_file: ./claude-pipelines/daemon/logs/daemon.log
+  state_file: ./claude-pipelines/daemon/state/daemon-state.json
+  pid_file: ./claude-pipelines/daemon/daemon.pid
+
+pdf_extraction:
+  library: pdfplumber        # pdfplumber (recommended) or pypdf2
+  timeout: 30                # seconds
+
+parser_skill:
+  skill_file: ./claude-pipelines/skills/pdf-request-parser.md
+  timeout: 120               # seconds (Claude skill execution)
+  output_dir: ./docs/prd/intake
+
+agents:
+  implementation_planner:
+    name: 00-implementation-planner
+    timeout: 600             # 10 minutes
+    allowed_tools: Read,Write,Bash,Glob,Grep,Task,Edit
+
+  pipeline_creator:
+    name: 00b-pipeline-creator
+    timeout: 300             # 5 minutes
+    allowed_tools: Read,Write,Glob,Grep,Edit
+
+orchestrator:
+  script: ./claude-pipelines/pipeline_orchestrator.py
+  default_timeout: 900       # 15 minutes per stage
+
+notifications:
+  on_complete: log           # none, log, slack
+  on_failure: log
