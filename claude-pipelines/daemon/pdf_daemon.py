@@ -530,15 +530,29 @@ class PipelineDaemon:
             # Parse JSON from output
             output = result.stdout.strip()
 
-            # Try to find JSON in output
+            # Claude's --output-format json wraps the result
+            # Format: {"type":"result","result":"```json\n{...}\n```"}
             try:
-                return json.loads(output)
+                wrapper = json.loads(output)
+                if isinstance(wrapper, dict) and "result" in wrapper:
+                    # Extract inner content from wrapper
+                    inner = wrapper["result"]
+                    # Strip markdown code fences if present
+                    if inner.startswith("```"):
+                        inner = re.sub(r'^```(?:json)?\n?', '', inner)
+                        inner = re.sub(r'\n?```$', '', inner)
+                    return json.loads(inner)
+                # Not a wrapper, try direct parse
+                if isinstance(wrapper, dict) and "requests" in wrapper:
+                    return wrapper
             except json.JSONDecodeError:
-                # Try to extract JSON from response
-                json_match = re.search(r'\{[\s\S]*\}', output)
-                if json_match:
-                    return json.loads(json_match.group())
-                raise Exception("Could not parse JSON from skill output")
+                pass
+
+            # Fallback: try to extract JSON from response
+            json_match = re.search(r'\{[\s\S]*"requests"[\s\S]*\}', output)
+            if json_match:
+                return json.loads(json_match.group())
+            raise Exception("Could not parse JSON from skill output")
 
         except subprocess.TimeoutExpired:
             raise Exception(f"Parser skill timed out after {self.config.parser_skill.timeout}s")

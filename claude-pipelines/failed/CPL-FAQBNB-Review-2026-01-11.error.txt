@@ -1,2 +1,2 @@
-Failed: 2026-01-11T19:35:02.713678
-Error: Parser skill returned code -15
+Failed: 2026-01-11T20:00:25.493064
+Error: Parser skill timed out after 120s
