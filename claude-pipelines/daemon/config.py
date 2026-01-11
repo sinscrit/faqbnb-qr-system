@@ -31,6 +31,10 @@ DEFAULTS = {
         "inbox_dir": "./claude-pipelines/inbox",
         "processed_dir": "./claude-pipelines/processed",
         "failed_dir": "./claude-pipelines/failed",
+        "rejected_dir": "./claude-pipelines/rejected",
+        "pdf_prefix": "CPL",
+        "project_code_length": 6,
+        "approved_projects": ["FAQBNB"],
         "poll_interval": 30,
         "log_file": "./claude-pipelines/daemon/logs/daemon.log",
         "state_file": "./claude-pipelines/daemon/state/daemon-state.json",
@@ -74,6 +78,10 @@ class DaemonSettings:
     inbox_dir: Path
     processed_dir: Path
     failed_dir: Path
+    rejected_dir: Path
+    pdf_prefix: str
+    project_code_length: int
+    approved_projects: list
     poll_interval: int
     log_file: Path
     state_file: Path
@@ -161,6 +169,20 @@ class DaemonConfig:
         if self.notifications.on_failure not in valid_notifications:
             errors.append(f"Invalid on_failure: {self.notifications.on_failure}")
 
+        # Check PDF naming settings
+        if not self.daemon.pdf_prefix:
+            errors.append("pdf_prefix cannot be empty")
+        if self.daemon.project_code_length < 1:
+            errors.append("project_code_length must be at least 1")
+        if not self.daemon.approved_projects:
+            errors.append("approved_projects cannot be empty")
+        for project in self.daemon.approved_projects:
+            if len(project) != self.daemon.project_code_length:
+                errors.append(
+                    f"Project code '{project}' must be exactly "
+                    f"{self.daemon.project_code_length} characters"
+                )
+
         return errors
 
 
@@ -213,6 +235,10 @@ def load_config(config_path: Optional[Path] = None, project_root: Optional[Path]
             inbox_dir=Path(config_data["daemon"]["inbox_dir"]),
             processed_dir=Path(config_data["daemon"]["processed_dir"]),
             failed_dir=Path(config_data["daemon"]["failed_dir"]),
+            rejected_dir=Path(config_data["daemon"]["rejected_dir"]),
+            pdf_prefix=config_data["daemon"]["pdf_prefix"],
+            project_code_length=int(config_data["daemon"]["project_code_length"]),
+            approved_projects=list(config_data["daemon"]["approved_projects"]),
             poll_interval=int(config_data["daemon"]["poll_interval"]),
             log_file=Path(config_data["daemon"]["log_file"]),
             state_file=Path(config_data["daemon"]["state_file"]),

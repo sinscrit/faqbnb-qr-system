@@ -10,6 +10,17 @@ daemon:
   inbox_dir: ./claude-pipelines/inbox
   processed_dir: ./claude-pipelines/processed
   failed_dir: ./claude-pipelines/failed
+  rejected_dir: ./claude-pipelines/rejected    # PDFs with unknown project codes
+
+  # PDF naming convention: {prefix}-{project_code}-{identifier}.pdf
+  # Example: CPL-FAQBNB-review-20260111.pdf
+  pdf_prefix: CPL                              # Required prefix for all PDFs
+  project_code_length: 6                       # Fixed length for project codes
+
+  # Approved project codes (6 characters each)
+  # PDFs with unrecognized project codes are moved to rejected_dir
+  approved_projects:
+    - FAQBNB                                   # FAQ BnB main project
 
   # Daemon behavior
   poll_interval: 30          # seconds between inbox checks

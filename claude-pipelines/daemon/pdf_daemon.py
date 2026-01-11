@@ -54,6 +54,98 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class PDFFileInfo:
+    """Parsed information from PDF filename."""
+    filename: str
+    prefix: str
+    project_code: str
+    identifier: str
+    is_valid: bool
+    rejection_reason: Optional[str] = None
+
+
+def parse_pdf_filename(
+    filename: str,
+    expected_prefix: str,
+    project_code_length: int
+) -> PDFFileInfo:
+    """
+    Parse a PDF filename to extract prefix, project code, and identifier.
+
+    Expected format: {prefix}-{project_code}-{identifier}.pdf
+    Example: CPL-FAQBNB-review-20260111.pdf
+
+    Args:
+        filename: PDF filename (not full path)
+        expected_prefix: Expected prefix (e.g., "CPL")
+        project_code_length: Expected length of project code (e.g., 6)
+
+    Returns:
+        PDFFileInfo with parsed components and validation status
+    """
+    # Must be a PDF
+    if not filename.lower().endswith('.pdf'):
+        return PDFFileInfo(
+            filename=filename,
+            prefix="",
+            project_code="",
+            identifier="",
+            is_valid=False,
+            rejection_reason="Not a PDF file"
+        )
+
+    # Remove .pdf extension
+    name = filename[:-4]
+
+    # Split by hyphen
+    parts = name.split('-', 2)  # Split into at most 3 parts
+
+    # Must have at least prefix-project-identifier
+    if len(parts) < 3:
+        return PDFFileInfo(
+            filename=filename,
+            prefix=parts[0] if parts else "",
+            project_code="",
+            identifier="",
+            is_valid=False,
+            rejection_reason=None  # Silent ignore - doesn't match pattern
+        )
+
+    prefix, project_code, identifier = parts[0], parts[1], parts[2]
+
+    # Check prefix matches
+    if prefix != expected_prefix:
+        return PDFFileInfo(
+            filename=filename,
+            prefix=prefix,
+            project_code=project_code,
+            identifier=identifier,
+            is_valid=False,
+            rejection_reason=None  # Silent ignore - wrong prefix
+        )
+
+    # Check project code length
+    if len(project_code) != project_code_length:
+        return PDFFileInfo(
+            filename=filename,
+            prefix=prefix,
+            project_code=project_code,
+            identifier=identifier,
+            is_valid=False,
+            rejection_reason=None  # Silent ignore - wrong project code length
+        )
+
+    # Valid format - project code will be validated against approved list separately
+    return PDFFileInfo(
+        filename=filename,
+        prefix=prefix,
+        project_code=project_code,
+        identifier=identifier,
+        is_valid=True
+    )
+
+
+@dataclass
 class ParsedRequest:
     """A single parsed request from the PDF."""
     id: int
@@ -142,6 +234,7 @@ class PipelineDaemon:
             self.config.daemon.inbox_dir,
             self.config.daemon.processed_dir,
             self.config.daemon.failed_dir,
+            self.config.daemon.rejected_dir,
             self.config.parser_skill.output_dir,
             self.config.daemon.state_file.parent,
             self.config.daemon.log_file.parent,
@@ -184,7 +277,7 @@ class PipelineDaemon:
         pdfs = list(inbox.glob("*.pdf"))
 
         if pdfs:
-            logger.info(f"Found {len(pdfs)} PDF(s) in inbox")
+            logger.debug(f"Found {len(pdfs)} PDF(s) in inbox")
 
         for pdf_path in pdfs:
             if not self.running:
@@ -195,21 +288,49 @@ class PipelineDaemon:
                 logger.debug(f"Skipping {pdf_path.name}, already processing")
                 continue
 
+            # Validate filename format
+            file_info = parse_pdf_filename(
+                pdf_path.name,
+                self.config.daemon.pdf_prefix,
+                self.config.daemon.project_code_length
+            )
+
+            # Silently ignore files that don't match the expected pattern
+            if not file_info.is_valid:
+                logger.debug(f"Ignoring {pdf_path.name}: does not match pattern "
+                           f"{self.config.daemon.pdf_prefix}-XXXXXX-*.pdf")
+                continue
+
+            # Check if project code is in approved list
+            if file_info.project_code not in self.config.daemon.approved_projects:
+                logger.warning(f"Rejecting {pdf_path.name}: unknown project code "
+                             f"'{file_info.project_code}'")
+                self._move_to_rejected(
+                    pdf_path,
+                    f"Unknown project code: {file_info.project_code}. "
+                    f"Approved: {self.config.daemon.approved_projects}"
+                )
+                continue
+
+            # Valid file - process it
+            logger.info(f"Processing: {pdf_path.name} (project: {file_info.project_code})")
+
             try:
-                self.process_pdf(pdf_path)
+                self.process_pdf(pdf_path, file_info.project_code)
             except Exception as e:
                 logger.error(f"Unexpected error processing {pdf_path.name}: {e}")
                 self._move_to_failed(pdf_path, str(e))
 
-    def process_pdf(self, pdf_path: Path) -> None:
+    def process_pdf(self, pdf_path: Path, project_code: Optional[str] = None) -> None:
         """
         Process a single PDF through the full pipeline.
 
         Args:
             pdf_path: Path to the PDF file
+            project_code: Project code from filename (e.g., "FAQBNB")
         """
         logger.info(f"Processing: {pdf_path.name}")
-        self.state.start_job(str(pdf_path), "extracting")
+        self.state.start_job(str(pdf_path), "extracting", project_code=project_code)
         save_state(self.state, self.config.daemon.state_file)
 
         try:
@@ -572,6 +693,20 @@ class PipelineDaemon:
         error_log.write_text(f"Failed: {datetime.now().isoformat()}\nError: {error}\n")
 
         logger.info(f"Moved to failed: {dest}")
+
+    def _move_to_rejected(self, pdf_path: Path, reason: str) -> None:
+        """Move PDF to rejected directory with rejection reason."""
+        dest = self.config.daemon.rejected_dir / pdf_path.name
+        shutil.move(str(pdf_path), str(dest))
+
+        # Write rejection log
+        rejection_log = dest.with_suffix('.rejected.txt')
+        rejection_log.write_text(
+            f"Rejected: {datetime.now().isoformat()}\n"
+            f"Reason: {reason}\n"
+        )
+
+        logger.info(f"Moved to rejected: {dest}")
 
     def process_single(self, pdf_path: Path) -> bool:
         """

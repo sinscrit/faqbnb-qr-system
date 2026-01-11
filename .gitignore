@@ -60,3 +60,4 @@ Thumbs.db
 *.pem
 .vercel
 .netlify
+__pycache__/

@@ -38,6 +38,7 @@ class ActiveJob:
     pdf_path: str
     stage: str  # parsing, agent_00, agent_00b, orchestrator
     started_at: str
+    project_code: Optional[str] = None
     request_index: int = 0
     request_total: int = 0
     current_request_id: Optional[str] = None
@@ -48,6 +49,7 @@ class ActiveJob:
             pdf_path=data.get("pdf_path", ""),
             stage=data.get("stage", "unknown"),
             started_at=data.get("started_at", ""),
+            project_code=data.get("project_code"),
             request_index=data.get("request_index", 0),
             request_total=data.get("request_total", 0),
             current_request_id=data.get("current_request_id"),
@@ -62,6 +64,7 @@ class CompletedJob:
     completed_at: str
     pipelines_created: List[str] = field(default_factory=list)
     duration_seconds: float = 0.0
+    project_code: Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: dict) -> 'CompletedJob':
@@ -71,6 +74,7 @@ class CompletedJob:
             completed_at=data.get("completed_at", ""),
             pipelines_created=data.get("pipelines_created", []),
             duration_seconds=data.get("duration_seconds", 0.0),
+            project_code=data.get("project_code"),
         )
 
 
@@ -139,13 +143,15 @@ class DaemonState:
         self.stopped_at = datetime.utcnow().isoformat() + "Z"
         logger.info(f"Daemon state: stopped at {self.stopped_at}")
 
-    def start_job(self, pdf_path: str, stage: str = "parsing") -> ActiveJob:
+    def start_job(self, pdf_path: str, stage: str = "parsing",
+                  project_code: Optional[str] = None) -> ActiveJob:
         """
         Start tracking a new job.
 
         Args:
             pdf_path: Path to the PDF being processed
             stage: Initial processing stage
+            project_code: Project code from PDF filename
 
         Returns:
             The new ActiveJob instance
@@ -154,9 +160,10 @@ class DaemonState:
             pdf_path=str(pdf_path),
             stage=stage,
             started_at=datetime.utcnow().isoformat() + "Z",
+            project_code=project_code,
         )
         self.active_jobs.append(job)
-        logger.info(f"Job started: {pdf_path} (stage: {stage})")
+        logger.info(f"Job started: {pdf_path} (project: {project_code}, stage: {stage})")
         return job
 
     def update_job(self, pdf_path: str, stage: str, request_index: int = 0,
@@ -189,10 +196,12 @@ class DaemonState:
                 job_to_remove = job
                 break
 
+        project_code = None
         if job_to_remove:
             self.active_jobs.remove(job_to_remove)
             started = datetime.fromisoformat(job_to_remove.started_at.rstrip("Z"))
             duration = (datetime.utcnow() - started).total_seconds()
+            project_code = job_to_remove.project_code
         else:
             duration = 0.0
 
@@ -203,6 +212,7 @@ class DaemonState:
             completed_at=datetime.utcnow().isoformat() + "Z",
             pipelines_created=pipelines_created,
             duration_seconds=duration,
+            project_code=project_code,
         )
         self.history.append(completed)
 

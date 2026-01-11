@@ -1,7 +1,7 @@
 # PDF Request Parser Skill
 
 **Created:** 2026-01-11
-**Last Modified:** 2026-01-11
+**Last Modified:** 2026-01-11 (removed LLM instructions section expectation)
 **Purpose:** Parse extracted PDF text into structured feature requests
 
 ---
@@ -23,15 +23,12 @@ Raw text extracted from a PDF file, passed as the content after this skill promp
 The input text will contain:
 
 1. **Header Section**
-   - "FAQBNB Application Review"
+   - Application Review title (e.g., "FAQBNB Application Review")
    - Session date/time
    - Reviewer identification
+   - Optional: General context information about the project
 
-2. **Instructions Section**
-   - Yellow-highlighted instructions for LLM agents
-   - Processing guidelines
-
-3. **Request Sections** (1 or more)
+2. **Request Sections** (1 or more)
    Each request follows this format:
    ```
    REQUEST N: [Title]
@@ -49,10 +46,10 @@ The input text will contain:
    • [Change 2]
    ```
 
-4. **Summary Table**
+3. **Summary Table**
    - Table listing all requests with priorities
 
-5. **Pipeline Instructions**
+4. **Pipeline Instructions**
    - Processing order recommendations
    - Dependency information
 
