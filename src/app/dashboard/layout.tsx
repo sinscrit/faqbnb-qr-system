@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { LayoutDashboard, Package, Home, BarChart3 } from 'lucide-react';
 import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { CompactAccountSelector } from '@/components/AccountSelector';
 import { Account } from '@/types';
@@ -91,20 +92,20 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   // Role-based navigation items for unified dashboard
   const getNavigationItems = () => {
     const baseItems = [
-      { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-      { name: 'Items', href: '/dashboard/items', icon: '📦' },
+      { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+      { name: 'Items', href: '/dashboard/items', icon: <Package className="h-5 w-5" /> },
     ];
 
     if (isAdmin) {
       return [
         ...baseItems,
-        { name: 'Properties', href: '/dashboard/properties', icon: '🏠' },
-        { name: 'Analytics', href: '/dashboard/analytics', icon: '📈' },
+        { name: 'Properties', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
+        { name: 'Analytics', href: '/dashboard/analytics', icon: <BarChart3 className="h-5 w-5" /> },
       ];
     } else {
       return [
         ...baseItems,
-        { name: 'My Properties', href: '/dashboard/properties', icon: '🏠' },
+        { name: 'My Properties', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
         // Analytics removed - only for admin users
       ];
     }

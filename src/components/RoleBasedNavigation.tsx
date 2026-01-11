@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { LayoutDashboard, Package, Home, BarChart3, Crown } from 'lucide-react';
 import { User, AccountRole } from '../types';
 // REQ-023: Unified Route Architecture - Navigation Integration
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,7 +11,7 @@ import { DashboardSection, PERMISSIONS, type PermissionKey } from '@/types/permi
 export interface NavigationItem {
   name: string;
   href: string;
-  icon: string;
+  icon: React.ReactNode;
   description?: string;
   requiredPermissions?: PermissionKey[];
   dashboardSection?: DashboardSection;
@@ -63,7 +64,7 @@ export function RoleBasedNavigation({
       items.push({
         name: compactMode ? 'Home' : 'Dashboard',
         href: '/dashboard',
-        icon: '📊',
+        icon: <LayoutDashboard className="h-5 w-5" />,
         description: 'Overview and key metrics',
         dashboardSection: DashboardSection.dashboard,
         requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
@@ -75,7 +76,7 @@ export function RoleBasedNavigation({
       items.push({
         name: 'Items',
         href: '/dashboard/items',
-        icon: '📦',
+        icon: <Package className="h-5 w-5" />,
         description: 'Manage QR code items',
         dashboardSection: DashboardSection.items,
         requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
@@ -87,7 +88,7 @@ export function RoleBasedNavigation({
       items.push({
         name: 'Properties',
         href: '/dashboard/properties',
-        icon: '🏠',
+        icon: <Home className="h-5 w-5" />,
         description: 'Property management',
         dashboardSection: DashboardSection.properties,
         requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
@@ -99,7 +100,7 @@ export function RoleBasedNavigation({
       items.push({
         name: 'Analytics',
         href: '/dashboard/analytics',
-        icon: '📈',
+        icon: <BarChart3 className="h-5 w-5" />,
         description: 'View analytics and insights',
         dashboardSection: DashboardSection.analytics,
         requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
@@ -111,7 +112,7 @@ export function RoleBasedNavigation({
       items.push({
         name: compactMode ? 'Admin' : 'System Admin',
         href: '/admin/system',
-        icon: '👑',
+        icon: <Crown className="h-5 w-5" />,
         description: 'System administration',
         dashboardSection: DashboardSection.systemAdmin,
         systemAdminOnly: true,
@@ -308,7 +309,7 @@ export function getNavigationItemsForUser(
     items.push({
       name: compactMode ? 'Home' : 'Dashboard',
       href: '/dashboard',
-      icon: '📊',
+      icon: <LayoutDashboard className="h-5 w-5" />,
       description: 'Overview and key metrics',
       dashboardSection: DashboardSection.dashboard,
       requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
@@ -320,7 +321,7 @@ export function getNavigationItemsForUser(
     items.push({
       name: 'Items',
       href: '/dashboard/items',
-      icon: '📦',
+      icon: <Package className="h-5 w-5" />,
       description: 'Manage QR code items',
       dashboardSection: DashboardSection.items,
       requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
@@ -332,7 +333,7 @@ export function getNavigationItemsForUser(
     items.push({
       name: 'Properties',
       href: '/dashboard/properties',
-      icon: '🏠',
+      icon: <Home className="h-5 w-5" />,
       description: 'Property management',
       dashboardSection: DashboardSection.properties,
       requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
@@ -344,7 +345,7 @@ export function getNavigationItemsForUser(
     items.push({
       name: 'Analytics',
       href: '/dashboard/analytics',
-      icon: '📈',
+      icon: <BarChart3 className="h-5 w-5" />,
       description: 'View analytics and insights',
       dashboardSection: DashboardSection.analytics,
       requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
@@ -356,7 +357,7 @@ export function getNavigationItemsForUser(
     items.push({
       name: compactMode ? 'Admin' : 'System Admin',
       href: '/admin/system',
-      icon: '👑',
+      icon: <Crown className="h-5 w-5" />,
       description: 'System administration',
       dashboardSection: DashboardSection.systemAdmin,
       systemAdminOnly: true,
