@@ -105,7 +105,9 @@ export function ItemRow({
 
   // Menu state
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // Calculate effective inline edit state - disable when in selection mode
   const effectiveEnableInlineEdit = enableInlineEdit && !isSelectionMode && !!onUpdateItem;
@@ -189,6 +191,41 @@ export function ItemRow({
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
+
+  // Calculate menu position when opening using fixed positioning
+  const handleMenuToggle = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!menuOpen && menuButtonRef.current) {
+      const buttonRect = menuButtonRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const menuWidth = 192; // w-48 = 12rem = 192px
+      const menuHeight = 160; // 3 items * ~48px + padding
+
+      const spaceAbove = buttonRect.top;
+      const spaceBelow = viewportHeight - buttonRect.bottom;
+
+      // Calculate fixed position
+      const style: React.CSSProperties = {
+        position: 'fixed',
+        right: window.innerWidth - buttonRect.right,
+        width: menuWidth,
+      };
+
+      // Choose the direction with more available space
+      if (spaceBelow >= menuHeight || spaceBelow >= spaceAbove) {
+        // Open below
+        style.top = buttonRect.bottom + 4;
+      } else {
+        // Open above
+        style.bottom = viewportHeight - buttonRect.top + 4;
+      }
+
+      setMenuStyle(style);
+    }
+
+    setMenuOpen(!menuOpen);
   }, [menuOpen]);
 
   // Get content type badge info
@@ -489,11 +526,9 @@ export function ItemRow({
       {/* Kebab Menu - 48px touch target on mobile */}
       <div className="flex-shrink-0 relative" ref={menuRef}>
         <button
+          ref={menuButtonRef}
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
+          onClick={handleMenuToggle}
           className={cn(
             'flex items-center justify-center',
             'text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg',
@@ -512,7 +547,8 @@ export function ItemRow({
           <div
             role="menu"
             aria-label={`Actions for ${item.title}`}
-            className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20"
+            className="bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+            style={menuStyle}
           >
             {menuItems
               .filter((menuItem) => menuItem.show !== false)
