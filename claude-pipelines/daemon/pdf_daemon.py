@@ -789,7 +789,9 @@ def main():
 Examples:
   %(prog)s --config daemon_config.yaml           Start daemon in foreground
   %(prog)s --config daemon_config.yaml --daemon  Start as background daemon
-  %(prog)s --status                              Show daemon status
+  %(prog)s --status                              Show formatted daemon status
+  %(prog)s --status --status-json                Show status as JSON
+  %(prog)s --monitor                             Live monitoring dashboard
   %(prog)s --single /path/to/file.pdf            Process single PDF
   %(prog)s --health-check                        Run pipeline health check
   %(prog)s --health-check --verbose              Health check with progress
@@ -843,6 +845,16 @@ Examples:
         action="store_true",
         help="Skip Claude CLI checks in health check (faster)"
     )
+    parser.add_argument(
+        "--monitor", "-m",
+        action="store_true",
+        help="Run live monitoring dashboard"
+    )
+    parser.add_argument(
+        "--status-json",
+        action="store_true",
+        help="Output status as JSON (default is rich formatted)"
+    )
 
     args = parser.parse_args()
 
@@ -882,8 +894,24 @@ Examples:
         return 0
 
     if args.status:
-        status = get_status(config)
-        print(json.dumps(status, indent=2))
+        if args.status_json:
+            status = get_status(config)
+            print(json.dumps(status, indent=2))
+        else:
+            # Use rich formatted status
+            try:
+                from .monitor import show_status
+            except ImportError:
+                from monitor import show_status
+            show_status(config.daemon.state_file, config)
+        return 0
+
+    if args.monitor:
+        try:
+            from .monitor import run_dashboard
+        except ImportError:
+            from monitor import run_dashboard
+        run_dashboard(config.daemon.state_file, config)
         return 0
 
     if args.stop:

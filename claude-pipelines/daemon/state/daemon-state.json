@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "status": "running",
+  "started_at": "2026-01-11T17:57:57.463215Z",
+  "stopped_at": null,
+  "stats": {
+    "pdfs_processed": 6,
+    "pdfs_failed": 0,
+    "requests_generated": 15,
+    "pipelines_created": 12,
+    "total_runtime_seconds": 0.0
+  },
+  "active_jobs": [],
+  "history": [
+    {
+      "pdf_path": "inbox/CPL-FAQBNB-review.pdf",
+      "requests_count": 3,
+      "completed_at": "2026-01-11T17:57:57.464098Z",
+      "pipelines_created": [
+        "pipeline-1.yaml",
+        "pipeline-2.yaml"
+      ],
+      "duration_seconds": 4.6e-05,
+      "project_code": "FAQBNB"
+    }
+  ],
+  "failed": []
+}
