@@ -20,7 +20,7 @@ import { adminApi } from '@/lib/api';
 import { extractRoomFromTags } from '@/lib/room-utils';
 import { InstructionsTable } from '@/components/InstructionsTable';
 import type { InstructionRow } from '@/components/InstructionsTable';
-import { FileText, Loader2 } from 'lucide-react';
+import { FileText, Loader2, FileQuestion } from 'lucide-react';
 import Link from 'next/link';
 
 // ============================================================================
@@ -198,18 +198,29 @@ export default function InstructionsPage() {
   // Empty state
   if (articles.length === 0) {
     return (
-      <div className="text-center py-12">
-        <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" aria-hidden="true" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">No instructions found</h2>
-        <p className="text-gray-600 mb-6">
-          Create items with instruction articles to get started.
-        </p>
-        <Link
-          href="/dashboard2/create"
-          className="inline-flex items-center px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
-        >
-          Create Item
-        </Link>
+      <div className="max-w-2xl mx-auto text-center py-16">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+          <FileQuestion className="w-16 h-16 text-gray-400 mx-auto mb-6" aria-hidden="true" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">No instructions yet</h2>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            Create items and add instruction articles to get started. Instructions help guests
+            understand how to use items in your property.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/dashboard2/create"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#FF385C] text-white text-base font-medium rounded-lg hover:bg-[#E31C5F] transition-colors shadow-sm"
+            >
+              Create Your First Item
+            </Link>
+            <Link
+              href="/dashboard2/help"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 text-base font-medium rounded-lg hover:bg-gray-50 transition-colors border border-gray-300"
+            >
+              Learn More
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
