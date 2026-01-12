@@ -203,7 +203,7 @@ Based on Supabase schema analysis:
 **Files to modify:** `src/components/InstructionEditor/components/ContentEditSection.tsx` (Create)
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Create `src/components/InstructionEditor/components/ContentEditSection.tsx` with imports:
+- [x] **3.1** Create `src/components/InstructionEditor/components/ContentEditSection.tsx` with imports:
   ```typescript
   'use client';
 
@@ -232,8 +232,9 @@ Based on Supabase schema analysis:
   import type { ContentPiece } from '@/components/ItemCreationWorkflow/ItemCreationWorkflow.types';
   import type { ContentPieceState } from '../InstructionEditor.types';
   ```
+---implemented: Created ContentEditSection.tsx with all required imports
 
-- [ ] **3.2** Define component props interface:
+- [x] **3.2** Define component props interface:
   ```typescript
   export interface ContentEditSectionProps {
     content: ContentPieceState[];
@@ -243,35 +244,42 @@ Based on Supabase schema analysis:
     disabled?: boolean;
   }
   ```
+---implemented: Defined ContentEditSectionProps interface
 
-- [ ] **3.3** Implement sensor configuration (copy pattern from PreviewSaveStep lines 537-547):
+- [x] **3.3** Implement sensor configuration (copy pattern from PreviewSaveStep lines 537-547):
   - PointerSensor with distance constraint of 8px
   - TouchSensor with 250ms delay and 5px tolerance
   - KeyboardSensor with sortableKeyboardCoordinates
+---implemented: Implemented sensor configuration matching PreviewSaveStep pattern
 
-- [ ] **3.4** Implement drag state management:
+- [x] **3.4** Implement drag state management:
   - `activeId` state for tracking currently dragged item
   - `handleDragStart`, `handleDragEnd`, `handleDragCancel` handlers
   - Compute `activeContent` for DragOverlay
+---implemented: Implemented drag state management with activeId state, drag handlers, and activeContent computation
 
-- [ ] **3.5** Implement accessibility announcements (copy from PreviewSaveStep lines 580-606)
+- [x] **3.5** Implement accessibility announcements (copy from PreviewSaveStep lines 580-606)
+---implemented: Implemented accessibility announcements for screen readers with onDragStart, onDragOver, onDragEnd, and onDragCancel
 
-- [ ] **3.6** Implement the render structure:
+- [x] **3.6** Implement the render structure:
   - Section header with "Content" title and count badge
   - DndContext wrapping SortableContext
   - Grid layout: `grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`
   - Map content to `SortableContentPieceCard` components
   - DragOverlay with `ContentPieceCard`
   - "+ Add Content" button at bottom
+---implemented: Implemented complete render structure with DndContext, SortableContext, content grid, DragOverlay, and Add Content button
 
-- [ ] **3.7** Add helper function to convert `ContentPieceState` to `ContentPiece` format for card rendering:
+- [x] **3.7** Add helper function to convert `ContentPieceState` to `ContentPiece` format for card rendering:
   ```typescript
   function toContentPiece(piece: ContentPieceState): ContentPiece {
     // Map ContentPieceState to ContentPiece expected by SortableContentPieceCard
   }
   ```
+---implemented: Added toContentPiece helper function to convert ContentPieceState to ContentPiece format
 
-- [ ] **3.8** Implement remove button with confirmation dialog for last item (follow PreviewSaveStep pattern)
+- [x] **3.8** Implement remove button with confirmation dialog for last item (follow PreviewSaveStep pattern)
+---implemented: Implemented remove handling with confirmation dialog for last content piece, immediate removal for other pieces
 
 ---
 
