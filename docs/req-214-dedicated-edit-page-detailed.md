@@ -356,7 +356,7 @@ Based on Supabase schema analysis:
 **Files to modify:** `src/components/InstructionEditor/InstructionEditor.tsx` (Create)
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Create `src/components/InstructionEditor/InstructionEditor.tsx` with imports:
+- [x] **5.1** Create `src/components/InstructionEditor/InstructionEditor.tsx` with imports:
   ```typescript
   'use client';
 
@@ -373,8 +373,9 @@ Based on Supabase schema analysis:
     UpdateArticlePayload,
   } from './InstructionEditor.types';
   ```
+---implemented: Created InstructionEditor.tsx with all required imports
 
-- [ ] **5.2** Implement component state:
+- [x] **5.2** Implement component state:
   ```typescript
   // Editable article title
   const [articleTitle, setArticleTitle] = useState(articleData.title);
@@ -393,8 +394,9 @@ Based on Supabase schema analysis:
   // Track if any changes made
   const [isDirty, setIsDirty] = useState(false);
   ```
+---implemented: Implemented component state with articleTitle, tags, content, isAddModalOpen, and isDirty
 
-- [ ] **5.3** Create transformation helper:
+- [x] **5.3** Create transformation helper:
   ```typescript
   function transformLinksToContentState(links: ArticleLinkData[]): ContentPieceState[] {
     return links.map(link => ({
@@ -423,8 +425,9 @@ Based on Supabase schema analysis:
     }
   }
   ```
+---implemented: Created transformation helpers transformLinksToContentState, mapLinkTypeToContentType, and mapContentTypeToLinkType
 
-- [ ] **5.4** Implement content handlers:
+- [x] **5.4** Implement content handlers:
   ```typescript
   const handleReorderContent = useCallback((fromIndex: number, toIndex: number) => {
     setContent(prev => {
@@ -447,8 +450,9 @@ Based on Supabase schema analysis:
     setIsDirty(true);
   }, []);
   ```
+---implemented: Implemented content handlers handleReorderContent, handleRemoveContent, and handleAddContent with proper state updates and isDirty tracking
 
-- [ ] **5.5** Implement save handler:
+- [x] **5.5** Implement save handler:
   ```typescript
   const handleSave = useCallback(async () => {
     const payload: UpdateArticlePayload = {
@@ -466,8 +470,9 @@ Based on Supabase schema analysis:
     await onSave(payload);
   }, [articleTitle, content, tags, onSave]);
   ```
+---implemented: Implemented save handler with UpdateArticlePayload construction including title, links with file support, and conditional itemTags
 
-- [ ] **5.6** Implement render structure:
+- [x] **5.6** Implement render structure:
   ```tsx
   <div className="flex flex-col gap-6 max-w-4xl mx-auto p-6">
     {/* Read-only context section */}
@@ -523,8 +528,9 @@ Based on Supabase schema analysis:
     />
   </div>
   ```
+---implemented: Implemented complete render structure with ReadOnlyContextSection, article title input, TagsEditor, ContentEditSection, action buttons with sticky positioning, and AddContentModal
 
-- [ ] **5.7** Implement cancel handler with unsaved changes warning:
+- [x] **5.7** Implement cancel handler with unsaved changes warning:
   ```typescript
   const handleCancel = useCallback(() => {
     if (isDirty) {
@@ -534,6 +540,7 @@ Based on Supabase schema analysis:
     onCancel();
   }, [isDirty, onCancel]);
   ```
+---implemented: Implemented cancel handler with unsaved changes confirmation dialog using window.confirm
 
 ---
 

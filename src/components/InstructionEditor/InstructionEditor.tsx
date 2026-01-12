@@ -1,0 +1,271 @@
+'use client';
+
+import { useState, useCallback, useMemo } from 'react';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { TagsEditor } from '@/components/ItemCreationWorkflow/components/shared';
+import { ReadOnlyContextSection } from './components/ReadOnlyContextSection';
+import { ContentEditSection } from './components/ContentEditSection';
+import { AddContentModal } from './components/AddContentModal';
+import type {
+  InstructionEditorProps,
+  ContentPieceState,
+  UpdateArticlePayload,
+  ArticleLinkData,
+} from './InstructionEditor.types';
+
+/**
+ * Helper function to map link type from API to content type
+ */
+function mapLinkTypeToContentType(linkType: string): ContentPieceState['type'] {
+  switch (linkType) {
+    case 'youtube':
+    case 'video':
+      return 'video';
+    case 'image':
+      return 'photo';
+    case 'pdf':
+      return 'pdf';
+    case 'text':
+      return 'text';
+    default:
+      return 'url';
+  }
+}
+
+/**
+ * Helper function to map content type to link type for API
+ */
+function mapContentTypeToLinkType(contentType: ContentPieceState['type']): string {
+  switch (contentType) {
+    case 'video':
+      return 'video';
+    case 'photo':
+      return 'image';
+    case 'pdf':
+      return 'pdf';
+    case 'text':
+      return 'text';
+    case 'url':
+      return 'url';
+    default:
+      return 'url';
+  }
+}
+
+/**
+ * Transform API links to internal ContentPieceState format
+ */
+function transformLinksToContentState(links: ArticleLinkData[]): ContentPieceState[] {
+  return links.map(link => ({
+    id: link.id,
+    type: mapLinkTypeToContentType(link.linkType),
+    title: link.title,
+    url: link.url,
+    thumbnailUrl: link.thumbnailUrl,
+    displayOrder: link.displayOrder,
+  }));
+}
+
+/**
+ * InstructionEditor - Main container component for editing instructions
+ *
+ * Single-page edit experience that:
+ * - Shows read-only item context (Room, Item Type, Item Name)
+ * - Allows editing Article Title, Tags, and Content/Media
+ * - No workflow steps, no back arrow
+ * - Save and Cancel actions
+ */
+export function InstructionEditor({
+  articleData,
+  onSave,
+  onCancel,
+  isSaving = false,
+}: InstructionEditorProps) {
+  // Editable article title
+  const [articleTitle, setArticleTitle] = useState(articleData.title);
+
+  // Tags (stored on item, but editable here)
+  const [tags, setTags] = useState<string[]>(articleData.item.tags);
+
+  // Content pieces state
+  const [content, setContent] = useState<ContentPieceState[]>(() =>
+    transformLinksToContentState(articleData.links)
+  );
+
+  // Add content modal state
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Track if any changes made
+  const [isDirty, setIsDirty] = useState(false);
+
+  // Content handlers
+  const handleReorderContent = useCallback((fromIndex: number, toIndex: number) => {
+    setContent(prev => {
+      const newContent = [...prev];
+      const [moved] = newContent.splice(fromIndex, 1);
+      newContent.splice(toIndex, 0, moved);
+      // Update displayOrder for all items
+      return newContent.map((item, idx) => ({ ...item, displayOrder: idx }));
+    });
+    setIsDirty(true);
+  }, []);
+
+  const handleRemoveContent = useCallback((id: string) => {
+    setContent(prev => prev.filter(c => c.id !== id));
+    setIsDirty(true);
+  }, []);
+
+  const handleAddContent = useCallback((newContent: ContentPieceState) => {
+    setContent(prev => [...prev, { ...newContent, displayOrder: prev.length }]);
+    setIsDirty(true);
+  }, []);
+
+  // Check if tags have changed
+  const tagsChanged = useMemo(() => {
+    return JSON.stringify(tags) !== JSON.stringify(articleData.item.tags);
+  }, [tags, articleData.item.tags]);
+
+  // Save handler
+  const handleSave = useCallback(async () => {
+    const payload: UpdateArticlePayload = {
+      title: articleTitle,
+      links: content.map(c => ({
+        id: c.isNew ? undefined : c.id,
+        title: c.title,
+        linkType: mapContentTypeToLinkType(c.type),
+        url: c.url,
+        thumbnailUrl: c.thumbnailUrl || undefined,
+        displayOrder: c.displayOrder,
+        file: c.file, // Include file for upload handling
+      })),
+      itemTags: tagsChanged ? tags : undefined,
+    };
+    await onSave(payload);
+  }, [articleTitle, content, tags, tagsChanged, onSave]);
+
+  // Cancel handler with unsaved changes warning
+  const handleCancel = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
+      if (!confirmed) return;
+    }
+    onCancel();
+  }, [isDirty, onCancel]);
+
+  // Check if save is allowed
+  const canSave = useMemo(() => {
+    return (
+      !isSaving &&
+      articleTitle.trim().length > 0 &&
+      content.length > 0
+    );
+  }, [isSaving, articleTitle, content.length]);
+
+  return (
+    <div className="flex flex-col gap-6 max-w-4xl mx-auto p-6">
+      {/* Read-only context section */}
+      <ReadOnlyContextSection articleData={articleData} />
+
+      {/* Editable Article Title */}
+      <section className="bg-white rounded-lg border border-gray-200 p-6">
+        <label
+          htmlFor="article-title"
+          className="block text-sm font-medium text-[#717171] mb-2"
+        >
+          Article Title
+        </label>
+        <input
+          id="article-title"
+          type="text"
+          value={articleTitle}
+          onChange={(e) => {
+            setArticleTitle(e.target.value);
+            setIsDirty(true);
+          }}
+          disabled={isSaving}
+          className={cn(
+            'w-full px-4 py-3 border-2 rounded-lg',
+            'min-h-[48px]',
+            'text-base text-[#222222] placeholder:text-[#717171]',
+            'transition-colors duration-150',
+            'focus:outline-none focus:border-[#222222]',
+            isSaving
+              ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
+              : 'border-gray-300 hover:border-gray-400'
+          )}
+          placeholder="Enter article title"
+          maxLength={100}
+        />
+      </section>
+
+      {/* Tags Editor */}
+      <section className="bg-white rounded-lg border border-gray-200 p-6">
+        <label className="block text-sm font-medium text-[#717171] mb-2">
+          Tags
+        </label>
+        <TagsEditor
+          selectedTags={tags}
+          onTagsChange={(newTags) => {
+            setTags(newTags);
+            setIsDirty(true);
+          }}
+          disabled={isSaving}
+        />
+      </section>
+
+      {/* Content Edit Section */}
+      <ContentEditSection
+        content={content}
+        onReorder={handleReorderContent}
+        onRemove={handleRemoveContent}
+        onAddContent={() => setIsAddModalOpen(true)}
+        disabled={isSaving}
+      />
+
+      {/* Action Buttons */}
+      <div className="flex gap-4 justify-end sticky bottom-0 bg-white p-4 border-t border-gray-200 rounded-lg shadow-lg">
+        <button
+          type="button"
+          onClick={handleCancel}
+          disabled={isSaving}
+          className={cn(
+            'px-6 py-3 border-2 border-gray-300 rounded-lg',
+            'text-[#222222] font-medium',
+            'transition-colors duration-150',
+            isSaving
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-gray-50'
+          )}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={!canSave}
+          className={cn(
+            'px-6 py-3 rounded-lg',
+            'font-medium',
+            'transition-colors duration-150',
+            'flex items-center gap-2',
+            canSave
+              ? 'bg-[#FF385C] text-white hover:bg-[#E31C5F]'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          )}
+        >
+          {isSaving && <Loader2 className="w-5 h-5 animate-spin" />}
+          {isSaving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </div>
+
+      {/* Add Content Modal */}
+      <AddContentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddContent={handleAddContent}
+        currentContentCount={content.length}
+      />
+    </div>
+  );
+}
