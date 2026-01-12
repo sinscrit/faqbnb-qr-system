@@ -144,10 +144,18 @@ export default function InstructionsPage() {
 
   // Handle edit article action
   const handleEditArticle = useCallback((articleId: string) => {
-    console.log('Edit article:', articleId);
-    // TODO: Navigate to article edit page when route is defined
-    // For now, just log the action
-  }, []);
+    if (!articleId || typeof articleId !== 'string') {
+      console.error('Invalid articleId:', articleId);
+      return;
+    }
+
+    try {
+      // Navigate to edit page with article ID
+      router.push(`/dashboard2/instructions/${articleId}/edit`);
+    } catch (error) {
+      console.error('Error navigating to edit page:', error);
+    }
+  }, [router]);
 
   // Authentication check
   if (!user) {
