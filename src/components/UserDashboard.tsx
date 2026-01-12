@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { BarChart3, Building2, Eye, Plus, TrendingUp, RefreshCw, Calendar, Activity } from 'lucide-react';
 
@@ -33,6 +34,16 @@ interface PropertySummary {
   itemCount: number;
   lastActivity: string | null;
   totalViews: number;
+}
+
+// Stats Card Interface
+interface StatsCard {
+  title: string;
+  value: number;
+  subtitle: string;
+  icon: React.ReactNode;
+  color: string;
+  href?: string;
 }
 
 interface UserDashboardProps {
@@ -148,28 +159,31 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
     }] : [])
   ];
 
-  // Stats cards
-  const statsCards = [
+  // Stats cards with navigation links
+  const statsCards: StatsCard[] = [
     {
       title: 'Properties',
       value: stats.totalProperties,
       subtitle: 'Total properties',
       icon: <Building2 className="w-6 h-6" />,
-      color: 'bg-green-100 text-green-600'
+      color: 'bg-green-100 text-green-600',
+      href: '/dashboard/properties'
     },
     {
       title: 'Items',
       value: stats.totalItems,
       subtitle: `${stats.recentItems} created recently`,
       icon: <BarChart3 className="w-6 h-6" />,
-      color: 'bg-blue-100 text-blue-600'
+      color: 'bg-blue-100 text-blue-600',
+      href: '/dashboard/items'
     },
     {
       title: 'Total Views',
       value: stats.totalViews,
       subtitle: `${stats.last7DaysViews} in last 7 days`,
       icon: <Eye className="w-6 h-6" />,
-      color: 'bg-purple-100 text-purple-600'
+      color: 'bg-purple-100 text-purple-600',
+      href: isAdmin ? '/dashboard/analytics' : undefined
     },
     {
       title: 'Activity',
@@ -177,6 +191,7 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
       subtitle: 'Recent actions',
       icon: <Activity className="w-6 h-6" />,
       color: 'bg-orange-100 text-orange-600'
+      // No href - informational only
     }
   ];
 
@@ -247,24 +262,56 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {statsCards.map((card, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">{card.title}</h3>
-              <div className={`p-2 rounded-full ${card.color}`}>
-                {card.icon}
+        {statsCards.map((card, index) => {
+          // Base card styles
+          const baseStyles = "bg-white rounded-lg shadow-sm border border-gray-200 p-6";
+
+          // Interactive styles for clickable cards
+          const interactiveStyles = card.href
+            ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            : "";
+
+          // Card content (reused for both Link and div)
+          const cardContent = (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-gray-600">{card.title}</h3>
+                <div className={`p-2 rounded-full ${card.color}`}>
+                  {card.icon}
+                </div>
               </div>
+              <div className="mb-2">
+                <span className="text-2xl font-bold text-gray-900">
+                  {loading ? '...' : card.value}
+                </span>
+              </div>
+              {card.subtitle && (
+                <p className="text-xs text-gray-500">{card.subtitle}</p>
+              )}
+            </>
+          );
+
+          // Render as Link if href is provided
+          if (card.href) {
+            return (
+              <Link
+                key={index}
+                href={card.href}
+                className={`${baseStyles} ${interactiveStyles} block`}
+                aria-label={`Navigate to ${card.title}`}
+              >
+                {cardContent}
+              </Link>
+            );
+          }
+
+          // Default: non-clickable div
+          return (
+            <div key={index} className={baseStyles}>
+              {cardContent}
             </div>
-            <div className="mb-2">
-              <span className="text-2xl font-bold text-gray-900">
-                {loading ? '...' : card.value}
-              </span>
-            </div>
-            {card.subtitle && (
-              <p className="text-xs text-gray-500">{card.subtitle}</p>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Main Content Grid */}
