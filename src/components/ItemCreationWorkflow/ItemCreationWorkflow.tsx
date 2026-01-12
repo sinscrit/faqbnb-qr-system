@@ -26,7 +26,7 @@
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
  * @see docs/req-176-media-capture-step-detailed.md
  * @see useWorkflowState hook for state machine logic
- * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
+ * @lastModified 2026-01-12 (REQ-198 Hide step counter on post-workflow screens)
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -39,6 +39,7 @@ import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationW
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
+import { POST_WORKFLOW_SCREENS } from './utils/constants';
 
 // =============================================================================
 // Step Placeholder Component
@@ -138,6 +139,10 @@ export function ItemCreationWorkflow({
     addMoreToItem,
     removeSessionItem,
   } = useWorkflowState();
+
+  // REQ-198: Determine if current step is a post-workflow screen
+  // Post-workflow screens (next-action, session-summary) should not show step counter
+  const isPostWorkflow = (POST_WORKFLOW_SCREENS as readonly string[]).includes(state.currentStep);
 
   // Save operation state
   const [isSaving, setIsSaving] = useState(false);
@@ -615,13 +620,15 @@ export function ItemCreationWorkflow({
         Skip to main content
       </a>
 
+      {/* REQ-198: Hide step counter on post-workflow screens */}
       <WorkflowHeader
         currentStepIndex={currentStepIndex}
         totalSteps={totalSteps}
         progressPercent={progressPercent}
-        canGoBack={showPrintPanel ? true : canGoBack}
+        canGoBack={showPrintPanel ? true : (isPostWorkflow ? false : canGoBack)}
         onBack={showPrintPanel ? handleBackFromPrint : prevStep}
         onExit={handleExitClick}
+        showStepCounter={!isPostWorkflow}
       />
 
       {/* Task 5.3 (REQ-113): Session recovery banner */}

@@ -2,7 +2,7 @@
  * WorkflowHeader Component Tests
  *
  * @module ItemCreationWorkflow/components/shared/__tests__/WorkflowHeader.test
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-12 (REQ-198 showStepCounter prop tests)
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -14,12 +14,12 @@ describe('WorkflowHeader', () => {
     totalSteps: 9,
     progressPercent: 30,
     canGoBack: true,
-    onBack: jest.fn(),
-    onExit: jest.fn(),
+    onBack: vi.fn(),
+    onExit: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders step indicator correctly', () => {
@@ -99,5 +99,98 @@ describe('WorkflowHeader', () => {
   it('maintains header element structure', () => {
     render(<WorkflowHeader {...defaultProps} />);
     expect(screen.getByRole('banner')).toBeInTheDocument(); // <header> has role="banner"
+  });
+
+  // =============================================================================
+  // showStepCounter prop tests (REQ-198)
+  // =============================================================================
+
+  describe('showStepCounter prop', () => {
+    it('shows step indicator and progress bar by default (no prop)', () => {
+      render(<WorkflowHeader {...defaultProps} />);
+
+      // Step indicator should be visible
+      expect(screen.getByText('Step 3 of 9')).toBeInTheDocument();
+
+      // Progress bar should be visible
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+
+    it('shows step indicator and progress bar when showStepCounter is true', () => {
+      render(<WorkflowHeader {...defaultProps} showStepCounter={true} />);
+
+      expect(screen.getByText('Step 3 of 9')).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+
+    it('hides step indicator when showStepCounter is false', () => {
+      render(<WorkflowHeader {...defaultProps} showStepCounter={false} />);
+
+      expect(screen.queryByText('Step 3 of 9')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Step \d+ of \d+/)).not.toBeInTheDocument();
+    });
+
+    it('hides progress bar when showStepCounter is false', () => {
+      render(<WorkflowHeader {...defaultProps} showStepCounter={false} />);
+
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    it('keeps exit button visible when showStepCounter is false', () => {
+      render(<WorkflowHeader {...defaultProps} showStepCounter={false} />);
+
+      expect(screen.getByLabelText('Exit workflow')).toBeInTheDocument();
+    });
+
+    it('maintains header element structure when showStepCounter is false', () => {
+      render(<WorkflowHeader {...defaultProps} showStepCounter={false} />);
+
+      // Header element should still exist
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+    });
+
+    it('keeps back button behavior when showStepCounter is false', () => {
+      const onBack = vi.fn();
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          showStepCounter={false}
+          canGoBack={true}
+          onBack={onBack}
+        />
+      );
+
+      const backButton = screen.getByLabelText('Go back to previous step');
+      expect(backButton).toBeInTheDocument();
+
+      fireEvent.click(backButton);
+      expect(onBack).toHaveBeenCalledTimes(1);
+    });
+
+    it('hides back button when both showStepCounter is false and canGoBack is false', () => {
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          showStepCounter={false}
+          canGoBack={false}
+        />
+      );
+
+      expect(screen.queryByLabelText('Go back to previous step')).not.toBeInTheDocument();
+    });
+
+    it('calls onExit when exit button clicked with showStepCounter false', () => {
+      const onExit = vi.fn();
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          showStepCounter={false}
+          onExit={onExit}
+        />
+      );
+
+      fireEvent.click(screen.getByLabelText('Exit workflow'));
+      expect(onExit).toHaveBeenCalledTimes(1);
+    });
   });
 });

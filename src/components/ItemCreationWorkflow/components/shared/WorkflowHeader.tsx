@@ -21,7 +21,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/WorkflowHeader
  * @see ItemCreationWorkflow for usage context
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-12 (REQ-198 Hide step counter on post-workflow screens)
  */
 
 import { ArrowLeft, X } from 'lucide-react';
@@ -46,6 +46,12 @@ export interface WorkflowHeaderProps {
   onExit?: () => void;
   /** Optional CSS class name */
   className?: string;
+  /**
+   * Whether to show the step counter and progress bar.
+   * Set to false for post-workflow screens (next-action, session-summary).
+   * @default true
+   */
+  showStepCounter?: boolean;
 }
 
 // =============================================================================
@@ -60,6 +66,7 @@ export function WorkflowHeader({
   onBack,
   onExit,
   className,
+  showStepCounter = true,
 }: WorkflowHeaderProps) {
   return (
     <header
@@ -68,23 +75,25 @@ export function WorkflowHeader({
         className
       )}
     >
-      {/* Progress bar */}
-      <div
-        className="w-full h-1 bg-gray-200"
-        role="progressbar"
-        aria-valuenow={progressPercent}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Step ${currentStepIndex + 1} of ${totalSteps}`}
-      >
+      {/* Progress bar - conditionally rendered (REQ-198) */}
+      {showStepCounter && (
         <div
-          className="h-full transition-all duration-300 ease-out"
-          style={{
-            width: `${progressPercent}%`,
-            backgroundColor: '#FF385C', // Airbnb brand primary
-          }}
-        />
-      </div>
+          className="w-full h-1 bg-gray-200"
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Step ${currentStepIndex + 1} of ${totalSteps}`}
+        >
+          <div
+            className="h-full transition-all duration-300 ease-out"
+            style={{
+              width: `${progressPercent}%`,
+              backgroundColor: '#FF385C', // Airbnb brand primary
+            }}
+          />
+        </div>
+      )}
 
       {/* Navigation controls */}
       <div className="flex items-center justify-between px-4 py-3">
@@ -108,10 +117,14 @@ export function WorkflowHeader({
           )}
         </div>
 
-        {/* Step indicator */}
-        <div className="text-sm font-medium text-gray-700">
-          Step {currentStepIndex + 1} of {totalSteps}
-        </div>
+        {/* Step indicator - conditionally rendered (REQ-198) */}
+        {showStepCounter ? (
+          <div className="text-sm font-medium text-gray-700">
+            Step {currentStepIndex + 1} of {totalSteps}
+          </div>
+        ) : (
+          <div className="flex-1" aria-hidden="true" />
+        )}
 
         {/* Exit button */}
         <div className="w-12">
