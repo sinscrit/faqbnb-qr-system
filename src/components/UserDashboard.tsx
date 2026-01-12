@@ -266,9 +266,9 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
           // Base card styles
           const baseStyles = "bg-white rounded-lg shadow-sm border border-gray-200 p-6";
 
-          // Interactive styles for clickable cards
+          // Interactive styles for clickable cards (hover, focus, active, cursor)
           const interactiveStyles = card.href
-            ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             : "";
 
           // Card content (reused for both Link and div)
@@ -401,7 +401,7 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
               <a
                 key={property.id}
                 href={`/dashboard/properties/${property.id}`}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer block"
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 cursor-pointer transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 block"
               >
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-medium text-gray-900 truncate">{property.nickname}</h4>

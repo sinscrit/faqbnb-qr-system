@@ -65,9 +65,9 @@ function KPICard({ title, value, subtitle, icon, trend, loading, href, onClick }
   // Base card styles
   const baseStyles = "bg-white rounded-lg shadow-sm border border-gray-200 p-6";
 
-  // Interactive styles for clickable cards (hover, focus, cursor)
+  // Interactive styles for clickable cards (hover, focus, active, cursor)
   const interactiveStyles = isClickable
-    ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
     : "";
 
   // Render as Link if href is provided
