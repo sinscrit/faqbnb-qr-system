@@ -14,22 +14,59 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { Package, LogOut, Home, Loader2, Building2 } from 'lucide-react';
+import { Building2, FileText, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
+
+/**
+ * Navigation item configuration for dashboard navigation menu.
+ * REQ-205: Updated navigation structure per FAQBNB Review ITEM-04
+ */
+interface NavItem {
+  /** Display name for the navigation item */
+  name: string;
+  /** Optional abbreviated label for mobile viewports */
+  mobileLabel?: string;
+  /** Route path for navigation */
+  href: string;
+  /** Lucide icon component */
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+// Navigation items for the dashboard
+// REQ-205: Updated navigation structure per FAQBNB Review ITEM-04
+// Order: Dashboard → Items → Instructions → Properties
+const navigationItems: NavItem[] = [
+  {
+    name: 'Dashboard',
+    mobileLabel: 'D/B',
+    href: '/dashboard2',
+    icon: LayoutDashboard,
+  },
+  {
+    name: 'Items',
+    mobileLabel: 'Items',
+    href: '/dashboard2/items',
+    icon: Package,
+  },
+  {
+    name: 'Instructions',
+    mobileLabel: 'Instr.',
+    href: '/dashboard2/instructions',
+    icon: FileText,
+  },
+  {
+    name: 'Properties',
+    mobileLabel: 'Prop.',
+    href: '/dashboard2/properties',
+    icon: Building2,
+  },
+];
 
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading, signOut } = useAuth();
-
-  // Navigation items for the new dashboard
-  // REQ-141: Removed Create Item, added My Properties
-  const navigationItems = [
-    { name: 'Home', href: '/dashboard2', icon: Home },
-    { name: 'My Items', href: '/dashboard2/items', icon: Package },
-    { name: 'My Properties', href: '/dashboard2/properties', icon: Building2 },
-  ];
 
   if (loading) {
     return (
