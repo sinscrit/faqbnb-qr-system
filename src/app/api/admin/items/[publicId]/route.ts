@@ -349,6 +349,7 @@ export async function GET(
         name,
         description,
         property_id,
+        tags,
         qr_code_url,
         created_at,
         updated_at,
@@ -429,6 +430,7 @@ export async function GET(
         name: itemData.name,
         description: itemData.description,
         property_id: itemData.property_id,
+        tags: itemData.tags || [],  // REQ-215: Include tags
         qr_code_url: itemData.qr_code_url,
         created_at: itemData.created_at,
         updated_at: itemData.updated_at,
@@ -618,6 +620,7 @@ export async function PUT(
         name: body.name,
         description: body.description || null,
         property_id: body.propertyId,
+        tags: body.tags || [],  // REQ-215: Support tags update
         qr_code_url: body.qrCodeUrl || null,
         qr_code_uploaded_at: body.qrCodeUrl ? new Date().toISOString() : null,
       })

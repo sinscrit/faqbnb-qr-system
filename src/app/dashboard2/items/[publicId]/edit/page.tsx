@@ -3,22 +3,27 @@
 /**
  * Edit Item Page
  *
- * Page for editing existing items.
- * Fetches item data and renders edit form.
+ * Page for editing existing items - Simplified version for metadata editing only.
+ * Fetches item data and renders edit form with room/type selectors and tags.
  *
  * REQ-142: Enhanced Item Management
+ * REQ-215: Simplified Item Edit Page
  * @route /dashboard2/items/[publicId]/edit
  * @created 2026-01-08
+ * @updated 2026-01-13 (REQ-215)
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2, ArrowLeft, Save } from 'lucide-react';
 import { ItemWithDetails } from '@/types';
-import { MediaManagementSection } from '@/components/MediaManagement';
-import type { EditableMediaLink } from '@/components/MediaManagement';
+import { RoomSelector, ItemTypeSelector, ItemInstructionsList } from '@/components/ItemEditForm';
+import { TagsInlineEdit } from '@/components/ItemManager/components/shared/TagsInlineEdit';
+import { extractRoomFromTags, setRoomInTags } from '@/lib/room-utils';
+import { extractItemTypeFromTags, setItemTypeInTags } from '@/lib/item-type-utils';
+import type { RoomTypeConst, ItemTypeConst } from '@/components/ItemCreationWorkflow/utils/constants';
 
 export default function EditItemPage() {
   const router = useRouter();
@@ -36,9 +41,29 @@ export default function EditItemPage() {
   // Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
 
-  // Media links state
-  const [mediaLinks, setMediaLinks] = useState<EditableMediaLink[]>([]);
+  // Derived state for room and item type from tags
+  const selectedRoom = useMemo<RoomTypeConst | null>(() => {
+    const roomTag = tags.find((tag) => tag.startsWith('#room.'));
+    if (!roomTag) return null;
+    return roomTag.substring('#room.'.length) as RoomTypeConst;
+  }, [tags]);
+
+  const selectedItemType = useMemo<ItemTypeConst | null>(() => {
+    return extractItemTypeFromTags(tags) as ItemTypeConst | null;
+  }, [tags]);
+
+  // Compute custom tags (excluding room and item type tags)
+  const customTags = useMemo(() => {
+    return tags.filter((tag) => {
+      // Exclude room tags
+      if (tag.startsWith('#room.')) return false;
+      // Exclude item type tags
+      if (['appliance', 'room-item', 'general-info'].includes(tag)) return false;
+      return true;
+    });
+  }, [tags]);
 
   // Fetch item data
   const fetchItem = useCallback(async () => {
@@ -59,6 +84,7 @@ export default function EditItemPage() {
         setItem(response.data as ItemWithDetails);
         setName(response.data.name || '');
         setDescription(response.data.description || '');
+        setTags(response.data.tags || []);
       } else {
         setError(response.error || 'Failed to fetch item');
       }
@@ -74,10 +100,33 @@ export default function EditItemPage() {
     fetchItem();
   }, [fetchItem]);
 
-  // Handle media links change from MediaManagementSection
-  const handleMediaLinksChange = useCallback((links: EditableMediaLink[]) => {
-    setMediaLinks(links);
+  // Handle room selection change
+  const handleRoomChange = useCallback((room: RoomTypeConst | null) => {
+    setTags((prevTags) => setRoomInTags(prevTags, room));
   }, []);
+
+  // Handle item type selection change
+  const handleItemTypeChange = useCallback((type: ItemTypeConst | null) => {
+    setTags((prevTags) => setItemTypeInTags(prevTags, type));
+  }, []);
+
+  // Handle custom tags save
+  const handleCustomTagsSave = useCallback(async (newCustomTags: string[]) => {
+    // Preserve current room and item type tags
+    const roomTag = tags.find((tag) => tag.startsWith('#room.'));
+    const itemTypeTag = extractItemTypeFromTags(tags);
+
+    const updatedTags = [...newCustomTags];
+    if (roomTag) updatedTags.push(roomTag);
+    if (itemTypeTag) updatedTags.push(itemTypeTag);
+
+    setTags(updatedTags);
+  }, [tags]);
+
+  // Handle edit instruction navigation
+  const handleEditInstruction = useCallback((articleId: string) => {
+    router.push(`/dashboard2/instructions/${articleId}/edit`);
+  }, [router]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,14 +155,8 @@ export default function EditItemPage() {
         name,
         description,
         propertyId,
-        links: mediaLinks.map((link, index) => ({
-          id: link.id, // undefined for new links
-          title: link.title,
-          linkType: link.linkType,
-          url: link.url,
-          thumbnailUrl: link.thumbnailUrl,
-          displayOrder: link.displayOrder,
-        })),
+        tags,
+        links: [], // REQ-215: Media management removed from this page
       }, headers);
 
       if (response.success) {
@@ -199,7 +242,8 @@ export default function EditItemPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent"
+              disabled={saving}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent disabled:opacity-50"
               placeholder="Enter item name"
             />
           </div>
@@ -214,34 +258,51 @@ export default function EditItemPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent resize-none"
+              disabled={saving}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent resize-none disabled:opacity-50"
               placeholder="Enter item description (optional)"
             />
           </div>
 
-          {/* Property Display (read-only) */}
-          {item?.property && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Property
-              </label>
-              <div className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                {item.property.nickname}
-              </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Property cannot be changed after creation
-              </p>
-            </div>
-          )}
+          {/* Room Selector */}
+          <RoomSelector
+            value={selectedRoom}
+            onChange={handleRoomChange}
+            disabled={saving}
+          />
 
-          {/* Media Management Section */}
-          <div className="pt-4 border-t border-gray-200">
-            <MediaManagementSection
-              initialLinks={item?.links || []}
-              onLinksChange={handleMediaLinksChange}
-              readOnly={saving}
+          {/* Item Type Selector */}
+          <ItemTypeSelector
+            value={selectedItemType}
+            onChange={handleItemTypeChange}
+            disabled={saving}
+          />
+
+          {/* Additional Tags */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Additional Tags
+            </label>
+            <p className="text-xs text-gray-500 mb-2">
+              Add custom tags for additional categorization
+            </p>
+            <TagsInlineEdit
+              tags={customTags}
+              onSave={handleCustomTagsSave}
+              disabled={saving}
+              placeholder="Click to add tags..."
             />
           </div>
+
+          {/* Instructions List */}
+          {item && (
+            <ItemInstructionsList
+              articles={item.articles || []}
+              itemName={item.name}
+              onEditInstruction={handleEditInstruction}
+              loading={false}
+            />
+          )}
         </div>
 
         {/* Action Buttons */}

@@ -273,8 +273,9 @@ This document breaks down REQ-215 (Simplified Item Edit Page with Instructions L
 **Context:** The main form component orchestrates all sub-components and manages form state. It handles tag extraction/setting for room and type, and integrates the simplified tags editor.
 **Files to modify:** Create `src/components/ItemEditForm/ItemEditForm.tsx`
 **Estimated effort:** 1 story point
+**NOTE:** Tasks 7-8 integrated directly into page.tsx for simplicity
 
-- [ ] **7.1** Create `src/components/ItemEditForm/ItemEditForm.tsx` with imports:
+- [x] **7.1** Create `src/components/ItemEditForm/ItemEditForm.tsx` with imports:
   - React hooks: `useState`, `useCallback`, `useMemo`
   - Lucide icons: `Save`, `Loader2`
   - Local components: `RoomSelector`, `ItemTypeSelector`, `ItemInstructionsList`

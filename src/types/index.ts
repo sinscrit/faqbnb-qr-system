@@ -312,6 +312,7 @@ export interface CreateItemRequest {
   name: string;
   description: string;
   propertyId: string; // NEW: Required property association
+  tags?: string[]; // Optional tags for categorization (REQ-215)
   qrCodeUrl?: string;
   links: {
     title: string;
@@ -501,6 +502,7 @@ export interface ItemWithDetails {
   description: string | null;
   propertyId: string;
   property?: Property;
+  tags: string[]; // Tags for categorization, room tags use format #room.roomname
   qrCodeUrl: string | null;
   createdAt: string;
   updatedAt: string;
