@@ -17,11 +17,11 @@ import type { PDFExportSettings } from '@/types/pdf';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 
 // Mock the pdf-generator library
-jest.mock('@/lib/pdf-generator');
+vi.mock('@/lib/pdf-generator');
 
-const mockedGeneratePDFFromQRCodes = generatePDFFromQRCodes as jest.MockedFunction<typeof generatePDFFromQRCodes>;
-const mockedDownloadPDFBlob = downloadPDFBlob as jest.MockedFunction<typeof downloadPDFBlob>;
-const mockedConvertPDFToBlob = convertPDFToBlob as jest.MockedFunction<typeof convertPDFToBlob>;
+const mockedGeneratePDFFromQRCodes = generatePDFFromQRCodes as vi.MockedFunction<typeof generatePDFFromQRCodes>;
+const mockedDownloadPDFBlob = downloadPDFBlob as vi.MockedFunction<typeof downloadPDFBlob>;
+const mockedConvertPDFToBlob = convertPDFToBlob as vi.MockedFunction<typeof convertPDFToBlob>;
 
 // =============================================================================
 // Test Fixtures
@@ -59,7 +59,7 @@ const createMockPDFBytes = (): Uint8Array => {
 
 describe('usePDFGeneration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -272,7 +272,7 @@ describe('usePDFGeneration', () => {
       });
       mockedConvertPDFToBlob.mockReturnValue(mockBlob);
 
-      const onProgress = jest.fn();
+      const onProgress = vi.fn();
       const { result } = renderHook(() =>
         usePDFGeneration({ settings: createDefaultSettings(), onProgress })
       );

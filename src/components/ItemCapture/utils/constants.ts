@@ -5,10 +5,11 @@
  * including preset locations, appliance types, suggested tags, and validation constraints.
  *
  * @module ItemCapture/utils/constants
- * @lastModified 2026-01-05 (REQ-092 Task 3)
+ * @lastModified 2026-01-12 (REQ-183: Added CONTENT_PURPOSE_OPTIONS)
  */
 
 import type { ApplianceType } from '../ItemCapture.types';
+import type { PurposeType } from '@/types';
 
 // =============================================================================
 // Preset Locations
@@ -61,6 +62,25 @@ export const APPLIANCE_TYPES: { value: ApplianceType; label: string }[] = [
   { value: 'entertainment', label: 'Entertainment System' },
   { value: 'pool_spa', label: 'Pool/Spa Equipment' },
   { value: 'garage', label: 'Garage Door Opener' },
+  { value: 'other', label: 'Other' },
+];
+
+// =============================================================================
+// Content Purpose Options (REQ-183)
+// =============================================================================
+
+/**
+ * Content purpose options for the MetadataStep dropdown.
+ * Matches PurposeType values from the Article data model.
+ * @see REQ-183 - Add Content Purpose Dropdown to Item Capture Flow
+ */
+export const CONTENT_PURPOSE_OPTIONS: { value: PurposeType; label: string }[] = [
+  { value: 'how-to-use', label: 'How-To Instructions' },
+  { value: 'how-to-clean', label: 'Cleaning Guide' },
+  { value: 'troubleshooting', label: 'Troubleshooting' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'safety-info', label: 'Safety Information' },
+  { value: 'features', label: 'Features & Tips' },
   { value: 'other', label: 'Other' },
 ];
 

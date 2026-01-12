@@ -62,10 +62,10 @@ const mockItemManyTags: ItemRecord = {
 };
 
 // Default mock props
-const mockOnClose = jest.fn();
-const mockOnEditItem = jest.fn();
-const mockOnDeleteItems = jest.fn();
-const mockOnManageAssets = jest.fn();
+const mockOnClose = vi.fn();
+const mockOnEditItem = vi.fn();
+const mockOnDeleteItems = vi.fn();
+const mockOnManageAssets = vi.fn();
 
 const defaultProps = {
   isOpen: true,
@@ -79,7 +79,7 @@ const defaultProps = {
 // =============================================================================
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // =============================================================================

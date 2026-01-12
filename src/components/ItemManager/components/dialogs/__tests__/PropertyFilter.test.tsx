@@ -181,7 +181,7 @@ describe('PropertyFilter', () => {
 
   describe('interactions', () => {
     it('toggles property selection when clicked', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -198,7 +198,7 @@ describe('PropertyFilter', () => {
     });
 
     it('removes property from selection when clicking selected', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -214,7 +214,7 @@ describe('PropertyFilter', () => {
     });
 
     it('supports multiple selections', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -248,7 +248,7 @@ describe('PropertyFilter', () => {
     });
 
     it('prevents clicks when disabled', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -302,7 +302,7 @@ describe('PropertyFilter', () => {
     });
 
     it('Enter key toggles selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -320,7 +320,7 @@ describe('PropertyFilter', () => {
     });
 
     it('Space key toggles selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(

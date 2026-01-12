@@ -6,10 +6,15 @@
  * Main orchestrator component for the multi-step item creation workflow.
  * Manages step navigation, state, and integration with ItemCapture component.
  *
- * Workflow Steps (REQ-176):
+ * Workflow Steps (REQ-176, REQ-201):
+ * User-visible steps (1-8):
  * 1. room-selection → 2. item-type-selection → 3. specific-item-selection →
- * 4. purpose-selection → 5. content-type-selection → 6. media-capture (NEW) →
- * 7. content-creation (DEPRECATED) → 8. preview-save → 9. next-action → 10. session-summary
+ * 4. purpose-selection → 5. content-type-selection → 6. media-capture →
+ * 7. content-creation (legacy) → 8. preview-save (FINAL step)
+ *
+ * Post-workflow screens (not numbered):
+ * - next-action (WhatsNextStep - 4 option decision menu)
+ * - session-summary
  *
  * Key Changes (Plan-094):
  * - Added step 4 (purpose-selection) for content purpose/intent
@@ -26,20 +31,20 @@
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
  * @see docs/req-176-media-capture-step-detailed.md
  * @see useWorkflowState hook for state machine logic
- * @lastModified 2026-01-12 (REQ-198 Hide step counter on post-workflow screens)
+ * @lastModified 2026-01-12 (REQ-201 WhatsNextStep integration)
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, MediaCaptureStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep } from './components/steps';
+import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, MediaCaptureStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep, WhatsNextStep } from './components/steps';
 import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
-import { POST_WORKFLOW_SCREENS } from './utils/constants';
+import { POST_WORKFLOW_SCREENS, USER_VISIBLE_STEPS } from './utils/constants';
 
 // =============================================================================
 // Step Placeholder Component
@@ -144,6 +149,16 @@ export function ItemCreationWorkflow({
   // Post-workflow screens (next-action, session-summary) should not show step counter
   const isPostWorkflow = (POST_WORKFLOW_SCREENS as readonly string[]).includes(state.currentStep);
 
+  // REQ-199: Compute display values using USER_VISIBLE_STEPS
+  // These values are used for UI display; internal navigation uses full WORKFLOW_STEPS
+  const displayStepIndex = useMemo(() => {
+    const index = (USER_VISIBLE_STEPS as readonly string[]).indexOf(state.currentStep);
+    // For post-workflow screens, return last visible step index
+    return index >= 0 ? index : USER_VISIBLE_STEPS.length - 1;
+  }, [state.currentStep]);
+
+  const displayTotalSteps = USER_VISIBLE_STEPS.length; // 8 user-visible steps
+
   // Save operation state
   const [isSaving, setIsSaving] = useState(false);
 
@@ -186,12 +201,21 @@ export function ItemCreationWorkflow({
   }, []); // Only run once on mount
 
   // REQ-114: Announce step changes to screen readers and manage focus
+  // REQ-199: Use display values for accurate step announcements
   useEffect(() => {
     // Only announce if step actually changed
     if (previousStepRef.current !== state.currentStep) {
       const stepName = STEP_NAMES[state.currentStep] || state.currentStep;
-      const announcement = getStepAnnouncement(currentStepIndex + 1, totalSteps, stepName);
-      announce(announcement);
+
+      // Only announce step numbers for user-visible steps
+      // Post-workflow screens don't get step number announcements
+      if (!isPostWorkflow) {
+        const announcement = getStepAnnouncement(displayStepIndex + 1, displayTotalSteps, stepName);
+        announce(announcement);
+      } else {
+        // For post-workflow, just announce the screen name
+        announce(stepName);
+      }
 
       // Focus main content area for keyboard navigation
       if (mainContentRef.current) {
@@ -208,7 +232,7 @@ export function ItemCreationWorkflow({
 
       previousStepRef.current = state.currentStep;
     }
-  }, [state.currentStep, currentStepIndex, totalSteps, announce]);
+  }, [state.currentStep, displayStepIndex, displayTotalSteps, isPostWorkflow, announce]);
 
   // Task 5.3: Handle continue with recovered session
   const handleRecoveryContinue = useCallback(() => {
@@ -565,25 +589,39 @@ export function ItemCreationWorkflow({
           />
         );
       case 'next-action': {
-        // Determine if user has unsaved content that would be lost on cancel
-        const hasUnsavedContent = state.currentItem !== null && (
-          state.currentItem.content.length > 0 || state.isDirty
-        );
+        // Get the most recently saved item from session for display
+        const lastSavedItem = state.session.items[state.session.items.length - 1];
+
+        // Fallback if no item was saved (shouldn't happen in normal flow)
+        if (!lastSavedItem) {
+          console.warn('[ItemCreationWorkflow] next-action reached without saved item, redirecting to session-summary');
+          goToStep('session-summary');
+          return null;
+        }
+
         return (
-          <NextActionStep
-            itemsCreated={itemCount}
-            hasUnsavedContent={hasUnsavedContent}
-            onReviewSubmit={() => {
-              // If currentItem is null (already saved), go to session summary or exit
-              if (state.currentItem === null) {
-                // Item was already saved, go to session summary to review all items
-                goToStep('session-summary');
-              } else {
-                goToStep('preview-save');
-              }
+          <WhatsNextStep
+            savedItemId={lastSavedItem.id}
+            savedItemName={lastSavedItem.name}
+            onEditInstructions={() => {
+              // TODO REQ-201: Navigate to item edit view when implemented
+              // For now, go to session summary where edit is available
+              console.log('[ItemCreationWorkflow] Edit instructions requested for:', lastSavedItem.id);
+              goToStep('session-summary');
             }}
-            onAddMoreContent={() => goToStep('content-type-selection')}
-            onCancel={handleExitClick}
+            onAddNewInstructions={() => {
+              // Add more content to same item concept - restart from content-type
+              // Keep the current item context for adding new instructions
+              goToStep('content-type-selection');
+            }}
+            onCreateNewItem={() => {
+              // Start completely fresh with a new item
+              startNewItem();
+            }}
+            onDone={() => {
+              // Exit workflow and return to dashboard
+              handleFinishWithoutPrint();
+            }}
           />
         );
       }
@@ -621,9 +659,10 @@ export function ItemCreationWorkflow({
       </a>
 
       {/* REQ-198: Hide step counter on post-workflow screens */}
+      {/* REQ-199: Use display values for step counting (8 steps, not 10) */}
       <WorkflowHeader
-        currentStepIndex={currentStepIndex}
-        totalSteps={totalSteps}
+        currentStepIndex={displayStepIndex}
+        totalSteps={displayTotalSteps}
         progressPercent={progressPercent}
         canGoBack={showPrintPanel ? true : (isPostWorkflow ? false : canGoBack)}
         onBack={showPrintPanel ? handleBackFromPrint : prevStep}

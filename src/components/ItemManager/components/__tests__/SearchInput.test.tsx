@@ -53,7 +53,7 @@ describe('SearchInput', () => {
     });
 
     it('debounces onChange callback', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={onChange} debounceMs={300} />);
@@ -71,7 +71,7 @@ describe('SearchInput', () => {
     });
 
     it('only calls onChange once for rapid typing', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={onChange} debounceMs={300} />);
@@ -105,7 +105,7 @@ describe('SearchInput', () => {
     });
 
     it('clears input immediately when clear button clicked', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="test" onChange={onChange} />);
@@ -133,7 +133,7 @@ describe('SearchInput', () => {
 
   describe('keyboard shortcuts', () => {
     it('clears input on Escape key when has value', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={onChange} />);
@@ -174,7 +174,7 @@ describe('SearchInput', () => {
     });
 
     it('prevents typing when disabled', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={onChange} disabled />);
@@ -234,7 +234,7 @@ describe('SearchInput', () => {
     });
 
     it('calls onFocus callback when focused', async () => {
-      const onFocus = jest.fn();
+      const onFocus = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={() => {}} onFocus={onFocus} />);
@@ -246,7 +246,7 @@ describe('SearchInput', () => {
     });
 
     it('calls onBlur callback when blurred', async () => {
-      const onBlur = jest.fn();
+      const onBlur = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(
@@ -280,7 +280,7 @@ describe('SearchInput', () => {
 
   describe('zero debounce', () => {
     it('calls onChange immediately when debounceMs is 0', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
 
       render(<SearchInput value="" onChange={onChange} debounceMs={0} />);

@@ -447,8 +447,9 @@ const handleAuthErrorRecovery = async (
 
 /**
  * Fallback authentication strategy
+ * @param updateStateFn - Function to update global auth state (passed from component)
  */
-const fallbackAuthenticationStrategy = async (): Promise<any> => {
+const fallbackAuthenticationStrategy = async (updateStateFn?: (updates: any) => void): Promise<any> => {
   console.log('🔄 AUTH_FALLBACK: Attempting fallback authentication strategy');
 
   try {
@@ -457,13 +458,15 @@ const fallbackAuthenticationStrategy = async (): Promise<any> => {
     if (restoredState && restoredState.authState === AuthState.AUTHENTICATED) {
       console.log('🔄 AUTH_FALLBACK: Successfully restored from persisted state');
 
-      updateGlobalAuthState({
-        user: restoredState.user,
-        session: restoredState.session,
-        accounts: restoredState.accounts,
-        currentAccount: restoredState.currentAccount,
-        authState: restoredState.authState
-      });
+      if (updateStateFn) {
+        updateStateFn({
+          user: restoredState.user,
+          session: restoredState.session,
+          accounts: restoredState.accounts,
+          currentAccount: restoredState.currentAccount,
+          authState: restoredState.authState
+        });
+      }
 
       return { success: true, strategy: 'persisted_state' };
     }
@@ -482,16 +485,19 @@ const fallbackAuthenticationStrategy = async (): Promise<any> => {
 
 /**
  * Enhanced error state recovery
+ * @param updateStateFn - Function to update global auth state (passed from component)
  */
-const recoverFromErrorState = async (): Promise<boolean> => {
+const recoverFromErrorState = async (updateStateFn?: (updates: any) => void): Promise<boolean> => {
   console.log('🔄 ERROR_STATE_RECOVERY: Attempting to recover from error state');
 
   try {
     // Strategy 1: Clear error state and try fresh authentication
-    updateGlobalAuthState({
-      authState: AuthState.UNAUTHORIZED,
-      error: undefined
-    });
+    if (updateStateFn) {
+      updateStateFn({
+        authState: AuthState.UNAUTHORIZED,
+        error: undefined
+      });
+    }
 
     // Wait a moment for state to settle
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -505,7 +511,7 @@ const recoverFromErrorState = async (): Promise<boolean> => {
     }
 
     // Strategy 3: If authentication fails, try fallback
-    const fallbackResult = await fallbackAuthenticationStrategy();
+    const fallbackResult = await fallbackAuthenticationStrategy(updateStateFn);
     if (fallbackResult.success) {
       console.log('🔄 ERROR_STATE_RECOVERY: Successfully recovered using fallback strategy');
       return true;
@@ -518,14 +524,16 @@ const recoverFromErrorState = async (): Promise<boolean> => {
     console.error('🔄 ERROR_STATE_RECOVERY: Recovery process failed:', recoveryError);
 
     // Reset to clean unauthorized state
-    updateGlobalAuthState({
-      authState: AuthState.UNAUTHORIZED,
-      user: null,
-      session: null,
-      accounts: [],
-      currentAccount: null,
-      error: 'Recovery failed. Please try logging in again.'
-    });
+    if (updateStateFn) {
+      updateStateFn({
+        authState: AuthState.UNAUTHORIZED,
+        user: null,
+        session: null,
+        accounts: [],
+        currentAccount: null,
+        error: 'Recovery failed. Please try logging in again.'
+      });
+    }
 
     return false;
   }
@@ -1124,6 +1132,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Call authentication orchestrator with enhanced sequential loading and error recovery
         console.log('🔄 ABOUT_TO_CALL_PERFORM_AUTH: About to call performAuthentication');
 
+        // Initialize timing metrics
+        const authMetricId = startTiming('AUTH_ORCHESTRATOR', { attempt: 'initial' });
+        const stepMetricId = startTiming('AUTH_STEP', { step: 'authenticateUser' });
+
         const performAuthentication = async () => {
           console.log('🔄 PERFORM_AUTH_CALLED: Starting authentication process');
 
@@ -1207,9 +1219,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             });
           })
           .catch(error => {
-            const authDuration = performance.now() - authStartTime;
             console.error('🔄 AUTH_DIRECT_ERROR:', error, {
-              authDuration: `${authDuration.toFixed(2)}ms`,
               authState,
               errorMessage: error.message
             });
@@ -1318,7 +1328,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // REQ-025: Attempt automatic error recovery
         console.log('🚨 ERROR_STATE: Attempting automatic recovery');
 
-        recoverFromErrorState().then(recovered => {
+        recoverFromErrorState(updateGlobalAuthState).then(recovered => {
           if (recovered) {
             console.log('🚨 ERROR_STATE: Automatic recovery successful');
           } else {
@@ -1341,7 +1351,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         break;
       }
     }
-  }, [authState, user, session, updateGlobalAuthState, recoverFromErrorState, handleAuthErrorRecovery, fallbackAuthenticationStrategy, userProperties, getUserProperties]);
+  }, [authState, user, session, updateGlobalAuthState, userProperties, getUserProperties]);
 
   // Remove old individual useEffect hooks - now handled by state machine above
 

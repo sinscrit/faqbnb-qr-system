@@ -64,6 +64,8 @@ import {
   ROOM_LABELS,
   PROGRESS_WEIGHTS,
   WORKFLOW_STEPS,
+  USER_VISIBLE_STEPS,
+  POST_WORKFLOW_SCREENS,
   MAX_CONTENT_PIECES,
 } from '../utils/constants';
 import { generateArticleTitle } from '../utils/titleGenerator';
@@ -270,11 +272,18 @@ export function workflowReducer(
         itemType: itemType as ItemType,
         specificItem: '',
         itemName: '',
-        purpose: null,            // NEW: Initialize purpose to null
+        // REQ-209: New nested structure for article
+        currentArticle: {
+          title: '',
+          purpose: null,
+          content: [],
+        },
         contentSource: 'existing',
         contentType: null,
+        tags: [],                 // Initialize tags (REQ-177)
+        // Deprecated fields (mirrored for backward compatibility)
+        purpose: null,
         content: [],
-        tags: [],                 // NEW: Initialize tags (REQ-177)
       };
       return {
         ...state,
@@ -363,7 +372,7 @@ export function workflowReducer(
 
       const purpose = action.payload;
 
-      // Generate article title based on purpose and item (REQ-156)
+      // Generate article title based on purpose and item (REQ-156, REQ-209)
       const articleTitle = generateArticleTitle({
         specificItem: state.currentItem.specificItem,
         purpose: purpose,
@@ -378,10 +387,16 @@ export function workflowReducer(
 
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
-        purpose: purpose,
-        // Auto-generate the article title (user can edit later with SET_ITEM_NAME)
-        itemName: articleTitle,
+        // REQ-209: Update nested currentArticle structure
+        currentArticle: {
+          ...state.currentItem.currentArticle,
+          title: articleTitle,
+          purpose: purpose,
+        },
+        // itemName stays as physical item name (NOT overwritten by article title)
         tags: autoTags,
+        // Mirror to deprecated fields for backward compatibility
+        purpose: purpose,
       };
 
       return {
@@ -436,15 +451,25 @@ export function workflowReducer(
     case 'ADD_CONTENT_PIECE': {
       if (!state.currentItem) return state;
 
+      // REQ-209: Use currentArticle.content for content management
+      const articleContent = state.currentItem.currentArticle?.content ?? [];
+
       // Enforce maximum content pieces limit
-      if (state.currentItem.content.length >= MAX_CONTENT_PIECES) {
+      if (articleContent.length >= MAX_CONTENT_PIECES) {
         console.warn(`Cannot add content: maximum limit of ${MAX_CONTENT_PIECES} pieces reached`);
         return state;
       }
 
+      const newContent = [...articleContent, action.payload];
+
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
-        content: [...state.currentItem.content, action.payload],
+        currentArticle: {
+          ...state.currentItem.currentArticle,
+          content: newContent,
+        },
+        // Mirror to deprecated field for backward compatibility
+        content: newContent,
       };
       return {
         ...state,
@@ -459,9 +484,19 @@ export function workflowReducer(
 
     case 'REMOVE_CONTENT_PIECE': {
       if (!state.currentItem) return state;
+
+      // REQ-209: Use currentArticle.content for content management
+      const articleContent = state.currentItem.currentArticle?.content ?? [];
+      const filteredContent = articleContent.filter(c => c.id !== action.payload);
+
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
-        content: state.currentItem.content.filter(c => c.id !== action.payload),
+        currentArticle: {
+          ...state.currentItem.currentArticle,
+          content: filteredContent,
+        },
+        // Mirror to deprecated field
+        content: filteredContent,
       };
       return {
         ...state,
@@ -477,25 +512,31 @@ export function workflowReducer(
     case 'REORDER_CONTENT': {
       if (!state.currentItem) return state;
       const { fromIndex, toIndex } = action.payload;
-      const content = [...state.currentItem.content];
+      // REQ-209: Use currentArticle.content for content management
+      const articleContent = [...(state.currentItem.currentArticle?.content ?? [])];
 
       // Validate indices
-      if (fromIndex < 0 || fromIndex >= content.length ||
-          toIndex < 0 || toIndex >= content.length) {
+      if (fromIndex < 0 || fromIndex >= articleContent.length ||
+          toIndex < 0 || toIndex >= articleContent.length) {
         return state;
       }
 
-      const [removed] = content.splice(fromIndex, 1);
-      content.splice(toIndex, 0, removed);
+      const [removed] = articleContent.splice(fromIndex, 1);
+      articleContent.splice(toIndex, 0, removed);
 
       // Update order property on each piece
-      const reorderedContent = content.map((item, index) => ({
+      const reorderedContent = articleContent.map((item, index) => ({
         ...item,
         order: index,
       }));
 
       const updatedItem: CurrentItemState = {
         ...state.currentItem,
+        currentArticle: {
+          ...state.currentItem.currentArticle,
+          content: reorderedContent,
+        },
+        // Mirror to deprecated field
         content: reorderedContent,
       };
       return {
@@ -740,12 +781,20 @@ export interface UseWorkflowStateReturn {
   canGoBack: boolean;
   /** Current progress percentage (0-100) */
   progressPercent: number;
-  /** Index of current step in WORKFLOW_STEPS */
+  /** Index of current step in WORKFLOW_STEPS (includes all 10 steps) */
   currentStepIndex: number;
-  /** Total number of workflow steps */
+  /** Total number of workflow steps (includes post-workflow, always 10) */
   totalSteps: number;
   /** Number of items created in this session */
   itemCount: number;
+
+  // User-visible step tracking (REQ-200 / Task 1.5)
+  /** Whether current step is a post-workflow screen (no step counter shown) */
+  isPostWorkflowStep: boolean;
+  /** User-visible step index (0-7 for steps 1-8, returns 7 for post-workflow) */
+  userVisibleStepIndex: number;
+  /** Total user-visible steps (always 8) */
+  userVisibleTotalSteps: number;
 }
 
 // =============================================================================
@@ -905,10 +954,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
         return state.currentItem?.purpose != null;
       case 'content-type-selection':
         return state.currentItem?.contentType != null;
-      case 'media-capture':                             // NEW - REQ-176
-        return (state.currentItem?.content?.length ?? 0) > 0;
+      case 'media-capture':                             // REQ-176, REQ-209
+        return (state.currentItem?.currentArticle?.content?.length ?? 0) > 0;
       case 'content-creation':
-        return (state.currentItem?.content?.length ?? 0) > 0;
+        return (state.currentItem?.currentArticle?.content?.length ?? 0) > 0;
       case 'preview-save':
         return true; // Can always proceed to next-action
       case 'next-action':
@@ -929,6 +978,39 @@ export function useWorkflowState(): UseWorkflowStateReturn {
   const currentStepIndex = useMemo(() => {
     return WORKFLOW_STEPS.indexOf(state.currentStep);
   }, [state.currentStep]);
+
+  // REQ-200: User-visible step tracking
+  /**
+   * Whether the current step is a post-workflow screen (not numbered).
+   * Post-workflow screens: next-action, session-summary
+   * @see POST_WORKFLOW_SCREENS constant
+   */
+  const isPostWorkflowStep = useMemo(() => {
+    return POST_WORKFLOW_SCREENS.includes(
+      state.currentStep as (typeof POST_WORKFLOW_SCREENS)[number]
+    );
+  }, [state.currentStep]);
+
+  /**
+   * User-visible step index (0-based) for the 8-step workflow.
+   * Returns 7 (last visible step) for post-workflow screens.
+   * Use this for step counter display instead of currentStepIndex.
+   * @see USER_VISIBLE_STEPS constant
+   */
+  const userVisibleStepIndex = useMemo(() => {
+    const index = USER_VISIBLE_STEPS.indexOf(
+      state.currentStep as (typeof USER_VISIBLE_STEPS)[number]
+    );
+    // If not found in user-visible steps (post-workflow), return last visible index
+    return index >= 0 ? index : USER_VISIBLE_STEPS.length - 1;
+  }, [state.currentStep]);
+
+  /**
+   * Total number of user-visible steps (always 8).
+   * Use this as the denominator for step counter display.
+   * @see USER_VISIBLE_STEPS constant
+   */
+  const userVisibleTotalSteps = USER_VISIBLE_STEPS.length;
 
   const totalSteps = WORKFLOW_STEPS.length;
 
@@ -969,6 +1051,10 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     currentStepIndex,
     totalSteps,
     itemCount,
+    // REQ-200: User-visible step tracking
+    isPostWorkflowStep,
+    userVisibleStepIndex,
+    userVisibleTotalSteps,
   };
 }
 

@@ -185,12 +185,12 @@ describe('ConfirmDeleteDialog', () => {
   const defaultProps = {
     isOpen: true,
     items: mockItems,
-    onConfirm: jest.fn(),
-    onCancel: jest.fn(),
+    onConfirm: vi.fn(),
+    onCancel: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Rendering', () => {

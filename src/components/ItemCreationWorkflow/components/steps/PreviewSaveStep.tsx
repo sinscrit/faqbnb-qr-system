@@ -21,7 +21,8 @@
  * @module ItemCreationWorkflow/components/steps/PreviewSaveStep
  * @see docs/REQ-106-preview-save-step-overview.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
- * @lastModified 2026-01-10 (Plan-094 Phase 5 Redesign, REQ-175)
+ * @see docs/REQ-210-update-previewsavestep-display-detailed.md
+ * @lastModified 2026-01-12 (REQ-210: Separate Item Name from Article Title display)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -65,8 +66,10 @@ import {
 export interface PreviewSaveStepProps {
   /** Current item state from workflow */
   currentItem: CurrentItemState;
-  /** Callback when item name changes */
+  /** Callback when physical item name changes (for QR code label) */
   onUpdateItemName: (name: string) => void;
+  /** Callback when article title changes (optional) (REQ-210) */
+  onUpdateArticleTitle?: (title: string) => void;
   /** Callback when tags change (REQ-177) */
   onUpdateTags: (tags: string[]) => void;
   /** Callback to remove a content piece */
@@ -75,8 +78,8 @@ export interface PreviewSaveStepProps {
   onReorderContent: (fromIndex: number, toIndex: number) => void;
   /** Callback to retake/replace content - navigates back to content creation */
   onRetake: () => void;
-  /** Callback when save is triggered */
-  onSave: () => Promise<{ id: string; qrCodeUrl: string }>;
+  /** Callback when save is triggered. Returns QR code info and optionally the clean item name. */
+  onSave: () => Promise<{ id: string; qrCodeUrl: string; itemName?: string }>;
   /** Callback when user cancels (goes back) */
   onCancel: () => void;
   /** Callback when save completes and user continues */
@@ -174,7 +177,11 @@ function ItemDetailsDisplay({ room, itemType, purpose }: ItemDetailsDisplayProps
 
 interface ItemDetailsSectionProps {
   currentItem: CurrentItemState;
+  /** Callback when physical item name changes (QR code label) */
   onUpdateItemName: (name: string) => void;
+  /** Callback when article title changes (optional, defaults to derived from purpose) */
+  onUpdateArticleTitle?: (title: string) => void;
+  /** Callback when tags change */
   onUpdateTags: (tags: string[]) => void;
   disabled?: boolean;
 }
@@ -182,9 +189,16 @@ interface ItemDetailsSectionProps {
 function ItemDetailsSection({
   currentItem,
   onUpdateItemName,
+  onUpdateArticleTitle,
   onUpdateTags,
   disabled,
 }: ItemDetailsSectionProps) {
+  // Derive article title from purpose (REQ-210)
+  const articleTitle = currentItem.currentArticle?.title ||
+    (currentItem.purpose
+      ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
+      : 'Instructions');
+
   return (
     <section
       className="bg-white rounded-lg border border-gray-200 p-6"
@@ -197,15 +211,72 @@ function ItemDetailsSection({
         Item Details
       </h3>
 
-      {/* Read-only metadata fields - displayed first for context */}
-      <ItemDetailsDisplay
-        room={currentItem.room}
-        itemType={currentItem.itemType}
-        purpose={currentItem.purpose}
-      />
+      {/* Item Properties Group */}
+      <div className="space-y-4 pb-4 border-b border-gray-100">
+        <h4 className="text-sm font-semibold text-[#484848] uppercase tracking-wide">
+          Physical Item
+        </h4>
 
-      {/* Tags Editor - REQ-177 */}
-      <div className="mt-4">
+        {/* Read-only metadata fields */}
+        <ItemDetailsDisplay
+          room={currentItem.room}
+          itemType={currentItem.itemType}
+          purpose={currentItem.purpose}
+        />
+
+        {/* Item Name field - physical item name for QR code label */}
+        <div>
+          <span className="text-xs text-gray-500 block mb-2">
+            (appears on QR code label)
+          </span>
+          <ItemNameEditor
+            value={currentItem.specificItem}
+            onChange={onUpdateItemName}
+            disabled={disabled}
+            maxLength={50}
+            placeholder="Enter item name"
+          />
+        </div>
+      </div>
+
+      {/* Article Properties Group */}
+      <div className="space-y-4 pt-4 pb-4 border-b border-gray-100">
+        <h4 className="text-sm font-semibold text-[#484848] uppercase tracking-wide">
+          Article / Instructions
+        </h4>
+
+        {/* Article Title field */}
+        <div>
+          <label
+            htmlFor="article-title-editor"
+            className="block text-sm font-medium text-[#717171] mb-2"
+          >
+            Article Title
+          </label>
+          <input
+            id="article-title-editor"
+            type="text"
+            value={articleTitle}
+            onChange={(e) => (onUpdateArticleTitle || (() => {}))(e.target.value)}
+            disabled={disabled || !onUpdateArticleTitle}
+            maxLength={100}
+            placeholder="Enter article title"
+            className={cn(
+              'w-full px-4 py-3 border-2 rounded-lg',
+              'min-h-[48px]',
+              'text-base text-[#222222] placeholder:text-[#717171]',
+              'transition-colors duration-150',
+              'focus:outline-none focus:border-[#222222]',
+              disabled || !onUpdateArticleTitle
+                ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                : 'bg-white border-gray-200 hover:border-gray-300'
+            )}
+          />
+        </div>
+      </div>
+
+      {/* Tags (applies to both item and article) */}
+      <div className="pt-4">
         <label className="block text-sm font-medium text-[#717171] mb-2">
           Tags
         </label>
@@ -214,20 +285,6 @@ function ItemDetailsSection({
           onTagsChange={onUpdateTags}
           disabled={disabled}
           maxTags={10}
-        />
-      </div>
-
-      {/* Editable Title - using existing ItemNameEditor */}
-      <div className="mt-6 pt-6 border-t border-gray-100">
-        <label className="block text-sm font-medium text-[#717171] mb-2">
-          Article Title
-        </label>
-        <ItemNameEditor
-          value={currentItem.itemName}
-          onChange={onUpdateItemName}
-          disabled={disabled}
-          maxLength={100}
-          placeholder="Enter article title"
         />
       </div>
     </section>
@@ -373,9 +430,32 @@ function ContentSection({
 // SuccessOverlay Sub-Component
 // =============================================================================
 
+/**
+ * SuccessOverlay Sub-Component
+ *
+ * Displays the success state after saving an item, showing:
+ * - Success confirmation icon
+ * - Generated QR code image
+ * - Physical item name as QR label
+ * - Continue button to proceed to next step
+ *
+ * IMPORTANT (REQ-211): The itemName displayed is the physical item name
+ * (e.g., "Cabinets"), NOT an article title (e.g., "How to Clean - Cabinets").
+ * QR codes represent physical Items that can have multiple Articles.
+ * Scanning the QR code leads to the Item landing page showing all Articles.
+ *
+ * @see docs/REQ-211-update-qr-code-generation-overview.md
+ */
 interface SuccessOverlayProps {
+  /**
+   * Physical item name to display as QR label.
+   * Should be the item identity (e.g., "Cabinets", "Fridge"),
+   * not an article title (e.g., "How to Clean").
+   */
   itemName: string;
+  /** Base64 data URL of the generated QR code image */
   qrCodeUrl: string;
+  /** Callback when user clicks Continue button */
   onContinue: () => void;
 }
 
@@ -430,6 +510,7 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
 export function PreviewSaveStep({
   currentItem,
   onUpdateItemName,
+  onUpdateArticleTitle,  // REQ-210: Optional callback for article title changes
   onUpdateTags,
   onRemoveContent,
   onReorderContent,
@@ -548,23 +629,31 @@ export function PreviewSaveStep({
     setPieceToRemove(null);
   }, []);
 
-  // Handle save
+  /**
+   * Handle save button click.
+   * Calls onSave() and displays success overlay with QR code.
+   *
+   * REQ-211: Uses clean item name for QR code label:
+   * 1. Prefers result.itemName from save operation (already cleaned)
+   * 2. Falls back to currentItem.specificItem (physical item name)
+   * 3. Last resort: currentItem.itemName or 'Item'
+   */
   const handleSave = useCallback(async () => {
-    // Capture itemName BEFORE calling onSave, as onSave resets currentItem to null
-    const itemNameToSave = currentItem?.itemName || 'Item';
+    // Fallback item name if result doesn't provide one
+    const fallbackItemName = currentItem?.specificItem || currentItem?.itemName || 'Item';
     setSaveError(null);
     try {
       const result = await onSave();
-      // Store captured itemName with result
       setSavedResult({
         ...result,
-        itemName: itemNameToSave
+        // REQ-211: Prefer clean item name from save result, fall back to specificItem
+        itemName: result.itemName || fallbackItemName
       });
       setShowSuccess(true);
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Failed to save item');
     }
-  }, [onSave, currentItem?.itemName]);
+  }, [onSave, currentItem?.specificItem, currentItem?.itemName]);
 
   // Handle continue after success
   const handleContinue = useCallback(() => {
@@ -573,7 +662,9 @@ export function PreviewSaveStep({
   }, [onComplete]);
 
   // Check if save button should be disabled
-  const canSave = contentArray.length > 0 && currentItem?.itemName?.trim().length > 0;
+  // REQ-210: Use specificItem for validation (physical item name)
+  const canSave = contentArray.length > 0 &&
+    (currentItem?.specificItem?.trim().length > 0 || currentItem?.itemName?.trim().length > 0);
 
   // If showing success overlay, only render that (currentItem is null after save)
   if (showSuccess && savedResult) {
@@ -630,10 +721,11 @@ export function PreviewSaveStep({
         </h2>
       </div>
 
-      {/* Item Details Section with metadata */}
+      {/* Item Details Section with metadata (REQ-210: Separate Item/Article fields) */}
       <ItemDetailsSection
         currentItem={currentItem}
         onUpdateItemName={onUpdateItemName}
+        onUpdateArticleTitle={onUpdateArticleTitle}
         onUpdateTags={onUpdateTags}
         disabled={isSaving}
       />

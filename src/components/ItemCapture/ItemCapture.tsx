@@ -12,7 +12,7 @@
  * @lastModified 2025-12-31 (REQ-053 Task 5)
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useItemCaptureState } from './hooks/useItemCaptureState';
 import { assembleItemRecord } from './utils/assembleItemRecord';
@@ -27,6 +27,7 @@ import { TextEditorStep } from './components/steps/TextEditorStep';
 import { UrlInputStep } from './components/steps/UrlInputStep';
 import { MediaEditorStep } from './components/steps/MediaEditorStep';
 import { ReviewStep } from './components/steps/ReviewStep';
+import { WhatsNextStep } from './components/steps/WhatsNextStep';
 import type {
   ItemCaptureProps,
   ItemRecord,
@@ -114,6 +115,9 @@ export function ItemCapture({
     canSubmit,
   } = useItemCaptureState(initialValues);
 
+  // State for tracking saved item info for WhatsNextStep (REQ-189)
+  const [savedItem, setSavedItem] = useState<{ id: string; name: string } | null>(null);
+
   // Debug logging helper
   const debugLog = useCallback(
     (...args: unknown[]) => {
@@ -196,10 +200,16 @@ export function ItemCapture({
       // Emit the record via callback
       onComplete(record);
 
-      // Reset state after successful submission
-      reset();
+      // Store saved item info for WhatsNextStep (REQ-189)
+      setSavedItem({ id: record.id, name: record.title });
 
-      debugLog('Submission successful');
+      // Transition to What's Next screen instead of resetting
+      goToStep('whats-next');
+
+      // Clear submitting state
+      setSubmitting(false);
+
+      debugLog('Submission successful, transitioning to whats-next');
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Failed to assemble record';
@@ -213,13 +223,14 @@ export function ItemCapture({
   }, [
     state.metadata,
     state.mediaItems,
+    state.urlItems,
     state.instructions,
     onComplete,
     config?.debug,
     setError,
     clearAllErrors,
     setSubmitting,
-    reset,
+    goToStep,
     debugLog,
   ]);
 
@@ -346,6 +357,54 @@ export function ItemCapture({
     },
     [addMedia, handleCaptureComplete]
   );
+
+  // ==========================================================================
+  // WhatsNextStep Handlers (REQ-189)
+  // ==========================================================================
+
+  /**
+   * Handle Edit Instructions action from WhatsNextStep.
+   * TODO: Navigate to edit view for the saved item once edit route exists.
+   */
+  const handleEditInstructions = useCallback(() => {
+    debugLog('Edit Instructions clicked for item:', savedItem?.id);
+    // For now, reset and return - full implementation requires edit route
+    // Future: router.push(`/dashboard/items/${savedItem?.id}/edit`)
+    setSavedItem(null);
+    reset();
+  }, [savedItem, reset, debugLog]);
+
+  /**
+   * Handle Add New Instructions action from WhatsNextStep.
+   * Keeps the saved item reference and goes to content-type step.
+   */
+  const handleAddNewInstructions = useCallback(() => {
+    debugLog('Add New Instructions clicked');
+    // Reset the media and instructions but keep going
+    // Note: This implementation goes to content-type to add more content
+    goToStep('content-type');
+  }, [goToStep, debugLog]);
+
+  /**
+   * Handle Create New Item action from WhatsNextStep.
+   * Full reset and start fresh from metadata step.
+   */
+  const handleCreateNewItem = useCallback(() => {
+    debugLog('Create New Item clicked');
+    setSavedItem(null);
+    reset();
+  }, [reset, debugLog]);
+
+  /**
+   * Handle Done action from WhatsNextStep.
+   * Reset state and potentially navigate to dashboard.
+   */
+  const handleDone = useCallback(() => {
+    debugLog('Done clicked, returning to initial state');
+    setSavedItem(null);
+    reset();
+    // Parent component can handle dashboard navigation via onComplete callback
+  }, [reset, debugLog]);
 
   // ==========================================================================
   // Step Rendering
@@ -509,6 +568,25 @@ export function ItemCapture({
           />
         );
 
+      case 'whats-next':
+        // REQ-189: Post-save decision screen
+        if (!savedItem) {
+          // Safety check - shouldn't happen but handle gracefully
+          debugLog('WhatsNextStep rendered without savedItem, resetting');
+          reset();
+          return null;
+        }
+        return (
+          <WhatsNextStep
+            savedItemId={savedItem.id}
+            savedItemName={savedItem.name}
+            onEditInstructions={handleEditInstructions}
+            onAddNewInstructions={handleAddNewInstructions}
+            onCreateNewItem={handleCreateNewItem}
+            onDone={handleDone}
+          />
+        );
+
       default:
         debugLog('Unknown step:', state.currentStep);
         return null;
@@ -517,9 +595,11 @@ export function ItemCapture({
     state.currentStep,
     state.metadata,
     state.mediaItems,
+    state.urlItems,
     state.instructions,
     state.errors,
     state.isSubmitting,
+    savedItem,
     setMetadata,
     setError,
     handleContentTypeSelect,
@@ -530,12 +610,17 @@ export function ItemCapture({
     handleReorderMedia,
     handleEditMedia,
     handleSubmit,
+    handleEditInstructions,
+    handleAddNewInstructions,
+    handleCreateNewItem,
+    handleDone,
     addMedia,
     updateMedia,
     removeMedia,
     setInstructions,
     goToStep,
     onCancel,
+    reset,
     config,
     debugLog,
   ]);
@@ -544,8 +629,8 @@ export function ItemCapture({
   // Wizard Navigation Visibility
   // ==========================================================================
 
-  // Determine if we should show the wizard navigation (not needed for review step)
-  const showWizardNav = state.currentStep !== 'review';
+  // Don't show wizard navigation on review or whats-next steps (REQ-189)
+  const showWizardNav = state.currentStep !== 'review' && state.currentStep !== 'whats-next';
 
   // ==========================================================================
   // Render

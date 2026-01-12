@@ -18,13 +18,13 @@ describe('SessionRecoveryBanner', () => {
   const defaultProps = {
     itemCount: 3,
     contentNeedingReUpload: 0,
-    onContinue: jest.fn(),
-    onStartFresh: jest.fn(),
-    onDismiss: jest.fn(),
+    onContinue: vi.fn(),
+    onStartFresh: vi.fn(),
+    onDismiss: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     jest.clearAllTimers();
   });
 

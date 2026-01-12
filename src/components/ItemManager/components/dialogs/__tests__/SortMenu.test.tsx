@@ -10,7 +10,7 @@ import { SortMenu } from '../SortMenu';
 import type { SortOption } from '../../../ItemManager.types';
 
 describe('SortMenu', () => {
-  const mockOnSortChange = jest.fn();
+  const mockOnSortChange = vi.fn();
   const defaultProps = {
     currentSort: 'created-desc' as SortOption,
     onSortChange: mockOnSortChange,

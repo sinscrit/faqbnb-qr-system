@@ -12,9 +12,9 @@ import { useQRCodeGeneration } from '@/hooks/useQRCodeGeneration';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 
 // Mock the underlying useQRCodeGeneration hook
-jest.mock('@/hooks/useQRCodeGeneration');
+vi.mock('@/hooks/useQRCodeGeneration');
 
-const mockedUseQRCodeGeneration = useQRCodeGeneration as jest.MockedFunction<typeof useQRCodeGeneration>;
+const mockedUseQRCodeGeneration = useQRCodeGeneration as vi.MockedFunction<typeof useQRCodeGeneration>;
 
 // =============================================================================
 // Test Fixtures
@@ -44,10 +44,10 @@ const createDefaultMockHook = () => ({
   progress: 0,
   error: null,
   failedItems: new Set<string>(),
-  generateQRCodes: jest.fn().mockResolvedValue(undefined),
-  retryFailedItems: jest.fn().mockResolvedValue(undefined),
-  clearQRCache: jest.fn(),
-  getStats: jest.fn().mockReturnValue({
+  generateQRCodes: vi.fn().mockResolvedValue(undefined),
+  retryFailedItems: vi.fn().mockResolvedValue(undefined),
+  clearQRCache: vi.fn(),
+  getStats: vi.fn().mockReturnValue({
     total: 0,
     completed: 0,
     failed: 0,
@@ -61,7 +61,7 @@ const createDefaultMockHook = () => ({
 
 describe('useSessionQRGeneration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -110,7 +110,7 @@ describe('useSessionQRGeneration', () => {
 
   describe('generateForItems', () => {
     it('transforms SessionItems to Items and calls generateQRCodes', async () => {
-      const mockGenerateQRCodes = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateQRCodes = vi.fn().mockResolvedValue(undefined);
       const mockHook = {
         ...createDefaultMockHook(),
         generateQRCodes: mockGenerateQRCodes,
@@ -145,7 +145,7 @@ describe('useSessionQRGeneration', () => {
     });
 
     it('skips items that already have qrCodeUrl', async () => {
-      const mockGenerateQRCodes = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateQRCodes = vi.fn().mockResolvedValue(undefined);
       const mockHook = {
         ...createDefaultMockHook(),
         generateQRCodes: mockGenerateQRCodes,
@@ -171,7 +171,7 @@ describe('useSessionQRGeneration', () => {
     });
 
     it('does not call generateQRCodes when all items already have QR codes', async () => {
-      const mockGenerateQRCodes = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateQRCodes = vi.fn().mockResolvedValue(undefined);
       const mockHook = {
         ...createDefaultMockHook(),
         generateQRCodes: mockGenerateQRCodes,
@@ -199,7 +199,7 @@ describe('useSessionQRGeneration', () => {
 
   describe('retryFailed', () => {
     it('retries only failed items', async () => {
-      const mockRetryFailedItems = jest.fn().mockResolvedValue(undefined);
+      const mockRetryFailedItems = vi.fn().mockResolvedValue(undefined);
       const mockHook = {
         ...createDefaultMockHook(),
         failedItems: new Set(['item-1']),
@@ -226,7 +226,7 @@ describe('useSessionQRGeneration', () => {
     });
 
     it('does nothing when no items have failed', async () => {
-      const mockRetryFailedItems = jest.fn().mockResolvedValue(undefined);
+      const mockRetryFailedItems = vi.fn().mockResolvedValue(undefined);
       const mockHook = {
         ...createDefaultMockHook(),
         failedItems: new Set<string>(),
@@ -255,7 +255,7 @@ describe('useSessionQRGeneration', () => {
 
   describe('cancel', () => {
     it('calls clearQRCache to abort generation', () => {
-      const mockClearQRCache = jest.fn();
+      const mockClearQRCache = vi.fn();
       const mockHook = {
         ...createDefaultMockHook(),
         clearQRCache: mockClearQRCache,
@@ -287,7 +287,7 @@ describe('useSessionQRGeneration', () => {
 
       const mockHook = {
         ...createDefaultMockHook(),
-        getStats: jest.fn().mockReturnValue(expectedStats),
+        getStats: vi.fn().mockReturnValue(expectedStats),
       };
       mockedUseQRCodeGeneration.mockReturnValue(mockHook);
 

@@ -11,14 +11,14 @@ import { ConfirmExitDialog } from '../ConfirmExitDialog';
 describe('ConfirmExitDialog', () => {
   const defaultProps = {
     isOpen: true,
-    onClose: jest.fn(),
-    onConfirmExit: jest.fn(),
+    onClose: vi.fn(),
+    onConfirmExit: vi.fn(),
     itemCount: 0,
     hasUnsavedChanges: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('returns null when isOpen is false', () => {

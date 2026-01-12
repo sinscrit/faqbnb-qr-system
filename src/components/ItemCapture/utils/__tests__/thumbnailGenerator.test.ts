@@ -281,7 +281,7 @@ describe('thumbnailGenerator', () => {
 
     it('detects video type from Blob type', async () => {
       const videoBlob = new Blob([], { type: 'video/webm' });
-      const spy = jest.spyOn(console, 'error').mockImplementation();
+      const spy = vi.spyOn(console, 'error').mockImplementation();
 
       await generateThumbnail(videoBlob);
 
@@ -347,8 +347,8 @@ describe('thumbnailGenerator', () => {
 
   describe('Memory Management', () => {
     it('revokes object URLs after image thumbnail generation', async () => {
-      const revokeObjectURL = jest.spyOn(URL, 'revokeObjectURL');
-      const createObjectURL = jest.spyOn(URL, 'createObjectURL');
+      const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL');
+      const createObjectURL = vi.spyOn(URL, 'createObjectURL');
 
       const blob = await createTestImageBlob(800, 600);
       await generateImageThumbnail(blob);
@@ -363,8 +363,8 @@ describe('thumbnailGenerator', () => {
     });
 
     it('revokes object URLs even on error', async () => {
-      const revokeObjectURL = jest.spyOn(URL, 'revokeObjectURL');
-      const createObjectURL = jest.spyOn(URL, 'createObjectURL');
+      const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL');
+      const createObjectURL = vi.spyOn(URL, 'createObjectURL');
 
       // Create an invalid image that will fail to load
       const invalidBlob = new Blob(['invalid'], { type: 'image/jpeg' });
@@ -380,8 +380,8 @@ describe('thumbnailGenerator', () => {
     });
 
     it('handles rapid sequential generations without memory leaks', async () => {
-      const revokeObjectURL = jest.spyOn(URL, 'revokeObjectURL');
-      const createObjectURL = jest.spyOn(URL, 'createObjectURL');
+      const revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL');
+      const createObjectURL = vi.spyOn(URL, 'createObjectURL');
 
       const blob = await createTestImageBlob(400, 300);
 

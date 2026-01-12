@@ -8029,3 +8029,1216 @@ Demonstrates system intelligence. Reduces time-to-completion for item creation. 
 - Requires mapping logic: workflow state → field defaults
 - Component: `/src/components/ItemCreationWorkflow/`
 - Depends on REQ-176 being complete (media capture step must exist first)
+
+---
+
+## REQ-178: Update Navigation Menu Icons to Match New Layout
+
+**Date**: 2026-01-11 12:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+Navigation menu should display a grid icon for the Dashboard item and a document icon for the Instructions item to better reflect their purpose and improve visual consistency.
+
+### Current Behavior
+The Dashboard menu item uses a house icon (Home icon from Lucide), which visually suggests a homepage rather than a dashboard view. The Instructions menu item lacks an appropriate icon to indicate documentation or help content.
+
+### Expected Behavior
+Navigation menu displays:
+1. A grid icon (LayoutDashboard from Lucide) for the Dashboard menu item, visually conveying the dashboard's multi-panel layout
+2. A document icon (FileText from Lucide) for the Instructions menu item, clearly indicating textual help content
+
+### User Impact
+Users can more quickly recognize menu items by their intuitive icons. The visual language of the navigation becomes clearer and more aligned with common UI patterns (grids for dashboards, documents for instructions).
+
+### Business Value
+Improves usability through better visual affordances. Reduces cognitive load by using standard iconography conventions.
+
+### Acceptance Criteria
+- [ ] Dashboard menu item displays LayoutDashboard icon instead of Home icon
+- [ ] Instructions menu item displays FileText icon
+- [ ] Icon imports are updated in all navigation-related components
+- [ ] Icons render correctly at all supported screen sizes
+- [ ] No visual regressions in navigation menu layout or spacing
+
+
+---
+
+## REQ-179: Update MetadataStep Field Labels for Item vs Article Clarity
+
+**Date**: 2026-01-11 00:00
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The MetadataStep component should display field labels that properly distinguish between "Item Name" and "Article Title" to reflect the correct terminology throughout the UI.
+
+### Current Behavior
+Field labels in the MetadataStep component do not clearly differentiate between item-level metadata (Item Name) and article-level metadata (Article Title), potentially causing confusion about which entity is being edited.
+
+### Expected Behavior
+The MetadataStep component displays clear, distinct labels:
+- "Item Name" when referring to the physical item or object being cataloged
+- "Article Title" when referring to the content or article associated with the item
+
+Users immediately understand which field corresponds to which entity based on the label text.
+
+### User Impact
+All users creating or editing items through the workflow experience clearer guidance and reduced confusion about field purposes, leading to more accurate data entry and fewer errors.
+
+### Business Value
+Improved label clarity reduces user confusion, decreases data entry errors, and creates consistency with the underlying data model terminology.
+
+### Acceptance Criteria
+- [ ] MetadataStep component displays "Item Name" label for item-level name field
+- [ ] MetadataStep component displays "Article Title" label for article-level title field
+- [ ] Field labels are visually consistent with other form labels in the application
+- [ ] Labels are properly internationalized if i18n is in use
+- [ ] No other UI components are affected by this change
+
+
+
+---
+
+## REQ-180: Update MetadataStep Item Name Field Label and Helper Text
+
+**Date**: 2026-01-11 15:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The Item Name field in MetadataStep should display "Item Name" as its label instead of "Title", with updated placeholder text and helper text that clarifies this field refers to the physical object receiving the QR code.
+
+### Current Behavior
+The field label reads "Title" which does not clearly convey that this input captures the name of a physical object. The placeholder and helper text do not reinforce the distinction between items (physical objects) and articles (instructional content).
+
+### Expected Behavior
+The field displays:
+1. Label: "Item Name" with required indicator asterisk
+2. Placeholder: "Enter item name..." with examples like "Steamer" or "Coffee Maker"
+3. Helper text: "The physical item this QR code will be attached to"
+
+This clearly distinguishes the item (physical object) from articles (content describing how to use it).
+
+### User Impact
+All users creating items through the workflow immediately understand they are naming a physical object rather than creating a content title. This reduces confusion between item-level and article-level metadata.
+
+### Business Value
+Aligns the UI terminology with the underlying data model structure, preventing downstream confusion and data entry errors. Critical for the REQ-2 data model fix to separate items from articles.
+
+### Acceptance Criteria
+- [ ] Label text changes from "Title" to "Item Name" with red asterisk
+- [ ] Placeholder updates to "Enter item name..." with relevant examples
+- [ ] Helper text "The physical item this QR code will be attached to" appears below the field
+- [ ] Helper text is visually consistent with other helper text in the application
+- [ ] Field validation and required behavior remain unchanged
+- [ ] No visual regressions in form layout or spacing
+
+
+
+
+---
+
+## REQ-181: Enhance MetadataStep Placeholder and Error Messaging for Physical Item Clarity
+
+**Date**: 2026-01-11 16:00
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The Item Name field in MetadataStep should have enhanced placeholder text emphasizing physical item names only, helper text explaining the distinction between items and articles, and error messages that reference "Item name" instead of "Title".
+
+### Current Behavior
+The placeholder text and error messaging do not clearly emphasize that this field is specifically for physical object names. There is no inline guidance explaining that instructional content (like "How to Clean") is captured separately as articles. Error messages may reference generic terms like "Title" that don't reinforce the item/article distinction.
+
+### Expected Behavior
+The Item Name field displays:
+1. Placeholder text that emphasizes physical item names only (e.g., "e.g., Steamer, Coffee Maker, Hair Dryer")
+2. Helper text that reads: "This is the name of the physical item (e.g., 'Steamer'). Instructions like 'How to Clean' are captured separately as articles."
+3. Error messages that reference "Item name" when validation fails (e.g., "Item name is required" instead of "Title is required")
+
+### User Impact
+All users creating items receive immediate, inline guidance that prevents confusion between item metadata (physical object name) and article metadata (instructional content titles). This reduces incorrect data entry and support requests.
+
+### Business Value
+Provides proactive user education at the point of data entry, reducing errors and improving data quality. Essential for successful adoption of the item/article separation introduced in the data model restructure.
+
+### Acceptance Criteria
+- [ ] Placeholder text explicitly shows examples of physical item names only
+- [ ] Helper text appears below the field explaining the item vs article distinction
+- [ ] Helper text mentions that instructions like "How to Clean" are captured as articles
+- [ ] Error messages use "Item name" terminology consistently
+- [ ] All text changes are visually consistent with existing UI patterns
+- [ ] No validation logic changes are introduced
+
+---
+
+## REQ-182: Update ReviewStep Labels to Distinguish Item Name from Article Purpose
+
+**Date**: 2026-01-12 (Created via formal requirement process)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The review step should display "Item Name" instead of "Title" and include a separate section for article purpose information when the workflow captures article-based content.
+
+### Current Behavior
+The review screen shows a generic "Title" label that does not distinguish between the physical item being tagged and the article or instructional content associated with it. Users cannot differentiate between what they are naming the physical object versus what purpose the article serves. The QR code preview may show ambiguous information that does not clearly indicate it represents the physical item.
+
+### Expected Behavior
+The review screen displays clear, distinct labels that separate physical item identification from article purpose. The "Item Name" label appears for the physical object being tagged. When article content is captured, a separate "Purpose/Article" section shows what kind of instructional or informational content is attached. The QR code preview displays only the item name to reinforce that the code identifies the physical object, not the article.
+
+### User Impact
+Users creating items with attached articles will understand exactly what information describes the physical object versus the instructional content. Property managers reviewing items before saving will see clear separation between item identification and article categorization. Users scanning QR codes will see consistent item naming that matches the physical tag placement.
+
+### Business Value
+Reduces user confusion during the review phase by providing clear semantic labels that match the mental model of tagging physical items with instructional content. Ensures QR codes accurately represent what they identify.
+
+### Acceptance Criteria
+- [ ] Label changes from "Title" to "Item Name" in the review display
+- [ ] Article purpose information appears in a dedicated section labeled "Purpose/Article" when workflow captures article content
+- [ ] QR code preview component shows only the item name without mixing in article information
+- [ ] Visual hierarchy clearly separates item identification from article metadata
+- [ ] Review screen layout accommodates both item name and article purpose without appearing cluttered
+
+
+---
+
+## REQ-183: Add Content Purpose Dropdown to Item Capture Flow (Future Enhancement)
+
+**Date**: 2026-01-12 15:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The item capture flow should include an optional "Content Purpose" dropdown field that allows users to classify the type of instructional content being created during initial capture, enabling faster content classification without requiring post-capture editing.
+
+### Current Behavior
+The Item Name field captures only the physical item name. The purpose of associated articles (e.g., troubleshooting guide, how-to instructions, FAQ, safety information) must be set during the content editing and organization phase after initial item capture is complete. There is no mechanism during the capture workflow to indicate what type of instructional content will be associated with the physical item.
+
+### Expected Behavior
+During the item capture workflow, users see an optional "Content Purpose" dropdown field that allows them to pre-classify the article type. The dropdown includes common content purposes such as troubleshooting, how-to, FAQ, maintenance guide, safety instructions, and warranty information. This selection is stored with the item metadata and pre-populates article classification fields during the content editing phase. Users can skip this field if they are unsure or prefer to classify content later.
+
+### User Impact
+Property managers and content creators who know the intended purpose of their instructional content at capture time can classify it immediately, reducing the need for post-capture organization work. Users who prefer to classify content during editing can continue to skip this field and organize later without workflow disruption.
+
+### Business Value
+Streamlines the content creation workflow for users who have clear intent about article purpose at capture time. Improves content organization efficiency by reducing the need to revisit items purely for classification purposes. Supports better analytics and reporting on content types being created across the platform.
+
+### Acceptance Criteria
+- [ ] Content Purpose dropdown appears in the item capture flow after the Item Name field
+- [ ] Dropdown is clearly marked as optional and does not block workflow progression
+- [ ] Dropdown includes standard purpose options: Troubleshooting, How-To, FAQ, Maintenance, Safety, Warranty
+- [ ] Selected purpose value is stored with item metadata
+- [ ] Selected purpose pre-populates article classification during content editing phase
+- [ ] Users can skip the field entirely without validation errors
+- [ ] Field placement does not disrupt existing workflow layout or user experience
+
+---
+
+## REQ-184: Simplify QR Code Label Display to Show Item Name Only
+
+**Date**: 2026-01-12 (Phase 0, Task 0.4)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+QR code labels should display only the Item Name instead of combining Purpose with Item Name to improve clarity and simplicity.
+
+### Current Behavior
+QR code labels currently display in the format "Purpose - Item Name" when generated and exported to PDF, combining two pieces of information into a single label.
+
+### Expected Behavior
+QR code labels should display only the Item Name, both in the preview interface and in PDF exports. The Purpose field information should not be included in the QR code label display.
+
+### User Impact
+Users capturing items will see cleaner, simpler QR code labels that focus on the essential identifier (Item Name) without additional context that may cause visual clutter or confusion.
+
+### Business Value
+Simplifying the QR code label display aligns with the broader data model clarification effort (Phase 0) and ensures consistency across the application where Item Name is the primary identifier for captured items.
+
+### Acceptance Criteria
+- [ ] QR code preview displays only the Item Name as the label
+- [ ] PDF exports show QR codes with Item Name only (not "Purpose - Item Name")
+- [ ] All QR code generation logic uses Item Name consistently
+- [ ] Existing QR codes continue to function with the updated label format
+
+
+---
+
+## REQ-185: Fix Workflow Step Count Display Inconsistency
+
+**Date**: 2026-01-12 22:30
+**Type**: BUG FIX
+**Size**: S
+
+### Summary
+The workflow progress display shows an incorrect step count that does not match the actual number of stages users navigate through during item creation.
+
+### Current Behavior
+The system displays a step counter showing "8 of 10" or similar count that does not align with the four logical stages represented in the ProgressIndicator component. The ProgressIndicator correctly maps multiple wizard steps to four display stages, but another component or counter is displaying an inconsistent total step count.
+
+### Expected Behavior
+The workflow progress display consistently shows the correct number of stages throughout the item creation process. All step counters and progress indicators align with the actual four-stage workflow structure. Users see accurate progress information that matches their position in the workflow.
+
+### User Impact
+Users completing the item creation workflow see confusing or inaccurate progress information that misrepresents how far they have progressed through the process. This creates uncertainty about workflow length and completion status.
+
+### Business Value
+Accurate progress indicators improve user confidence and reduce workflow abandonment by providing clear, truthful feedback about task completion status.
+
+### Acceptance Criteria
+- [ ] All workflow step counters display the correct total number of stages
+- [ ] Step count display remains consistent across all workflow screens
+- [ ] Progress indicators accurately reflect user position within the four-stage structure
+- [ ] No components display step counts that exceed or contradict the actual workflow structure
+
+
+
+---
+
+## REQ-186: Ensure Save Is the Final Workflow Step
+
+**Date**: 2026-01-12 22:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The item creation workflow should end immediately after the save action, with no additional mandatory steps appearing in the step progression flow.
+
+### Current Behavior
+After users save their item, the workflow may include additional steps in the step counter or progression sequence. The "What's Next" screen appears as part of the numbered step flow, creating the impression that the workflow is incomplete even after the save operation has finished.
+
+### Expected Behavior
+When users complete the save action, the workflow ends immediately. The step counter stops at the save step with no additional steps indicated. The "What's Next" screen appears as a post-workflow menu or success state, clearly separate from the step progression and not counted as part of the workflow stages. Users understand that saving represents full completion of the capture process.
+
+### User Impact
+Users completing item creation receive clear confirmation that they have finished all required steps when they save. There is no confusion about whether additional actions are required to complete the workflow. Users can confidently proceed to post-workflow options without feeling obligated to continue through more stages.
+
+### Business Value
+Clarifying workflow completion reduces user confusion and abandonment during the critical save operation. Clear completion signals improve user confidence and support higher workflow completion rates. Separating post-workflow options from the main flow allows for better extensibility without artificially inflating perceived workflow complexity.
+
+### Acceptance Criteria
+- [ ] Step counter shows save as the final step in the numbered progression
+- [ ] No additional steps appear after save in the workflow step count
+- [ ] "What's Next" screen appears outside the step progression flow
+- [ ] "What's Next" screen does not increment the step counter
+- [ ] Save action provides clear completion feedback indicating workflow end
+- [ ] Post-workflow menu options are visually distinct from workflow steps
+
+
+
+
+---
+
+## REQ-187: Update Mobile View Step Count to Match Desktop Workflow
+
+**Date**: 2026-01-12 23:12
+**Type**: BUG FIX
+**Size**: XS
+
+### Summary
+The step counter in the mobile view of the item creation workflow should display the correct total number of stages, matching the four-stage structure shown on desktop.
+
+### Current Behavior
+The mobile view displays an incorrect total stage count in the workflow progress indicator. The `totalStages` variable may show a number different from 4, creating inconsistency between mobile and desktop experiences and misrepresenting the actual workflow length.
+
+### Expected Behavior
+The mobile view displays "X of 4" throughout the workflow, accurately reflecting the four distinct stages in the item creation process. The stage count matches the desktop experience and aligns with the ProgressIndicator component's stage mapping logic.
+
+### User Impact
+Mobile users see accurate progress information that matches their actual position in the four-stage workflow. Users switching between devices encounter consistent progress displays. Mobile users have the same clear understanding of workflow length and completion status as desktop users.
+
+### Business Value
+Consistent progress indicators across devices reduce user confusion and build trust in the application. Accurate mobile progress displays prevent workflow abandonment caused by unclear or misleading completion status.
+
+### Acceptance Criteria
+- [ ] Mobile view displays correct total stage count of 4
+- [ ] Step counter on mobile matches desktop step counter behavior
+- [ ] Mobile progress display updates correctly as users move through workflow stages
+- [ ] No discrepancy exists between mobile and desktop total stage counts
+
+
+
+
+---
+
+## REQ-188: Add WhatsNextStep to Wizard Step Type Definitions
+
+**Date**: 2026-01-12 00:10
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The wizard type system should recognize 'whats-next' as a valid step type while ensuring this step is excluded from progress counting logic.
+
+### Current Behavior
+The WizardStep union type does not include a 'whats-next' value. When the What's Next screen is rendered, the type system does not recognize it as a valid wizard step, potentially causing type errors or requiring workarounds. The absence of this step type in the type definitions creates inconsistency between the implementation and the type system.
+
+### Expected Behavior
+The WizardStep union type includes 'whats-next' as a recognized step value. Components can reference this step type without type errors. The progress counter logic explicitly excludes 'whats-next' from step counting calculations, ensuring it appears outside the numbered workflow progression. Type definitions clearly document that this step does not contribute to workflow progress.
+
+### User Impact
+Users experience a seamless transition to the What's Next screen without encountering system errors. The progress indicator correctly excludes this post-workflow screen from the step count, providing clear confirmation that the workflow is complete. Users see consistent behavior between the workflow's final save step and the subsequent options menu.
+
+### Business Value
+Proper type system support prevents runtime errors and improves code maintainability. Excluding the What's Next screen from progress counting provides clearer workflow completion signals, reducing user confusion and potential abandonment. Clean separation of workflow steps from post-workflow screens enables future expansion of completion options without impacting perceived workflow complexity.
+
+### Acceptance Criteria
+- [ ] WizardStep union type includes 'whats-next' as a valid value
+- [ ] Progress counter logic explicitly excludes 'whats-next' from step counting
+- [ ] TypeScript compilation succeeds with no type errors related to 'whats-next' step
+- [ ] Documentation or code comments indicate 'whats-next' is not counted in progress
+- [ ] Existing workflow step counting behavior remains unchanged for all other steps
+
+
+
+
+---
+
+## REQ-189: Integrate WhatsNextStep Component into ItemCapture Wizard Flow
+
+**Date**: 2026-01-12 10:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The item creation workflow should display a "What's Next" options screen immediately after successful item save, providing users with clear post-completion actions without counting this screen as part of the workflow progression.
+
+### Current Behavior
+After users save an item, the workflow may end abruptly without clear guidance on available next actions, or may display a generic completion message. Users are left uncertain about how to proceed with printing QR codes, creating additional items, or managing their saved content. The transition from workflow completion to next steps lacks structure and actionable options.
+
+### Expected Behavior
+Immediately following successful item save, users see a dedicated "What's Next" screen presenting clear action options. This screen displays outside the numbered workflow progression, appearing as a post-workflow menu rather than an additional required step. Users can choose to print QR codes for the newly created item, create another item, view their item list, or return to the dashboard. The transition feels purposeful and provides immediate value through actionable next steps.
+
+### User Impact
+Users completing item creation receive immediate, actionable guidance on productive next steps. The post-completion experience feels polished and purposeful rather than abrupt. Users can efficiently continue their workflow by printing QR codes or creating additional items without navigating through multiple screens. First-time users discover key features like QR code printing immediately after their first successful item creation.
+
+### Business Value
+Structured post-completion options increase user engagement by surfacing high-value actions at the optimal moment. Immediate QR code printing prompts drive adoption of the core product feature. Seamless "create another item" option encourages batch operations and increases overall item creation volume. Clear next steps reduce user drop-off after completion and improve perceived application polish.
+
+### Acceptance Criteria
+- [ ] WhatsNextStep component renders immediately after successful item save
+- [ ] Screen displays outside the numbered workflow progression (not counted in steps)
+- [ ] Users can select "Print QR Codes" to initiate printing for the newly created item
+- [ ] Users can select "Create Another Item" to restart the workflow with cleared state
+- [ ] Users can select "View Items" to navigate to the item management screen
+- [ ] Users can select "Go to Dashboard" to return to the main dashboard
+- [ ] Workflow state transitions cleanly to the WhatsNextStep without progress counter incrementing
+- [ ] Component integrates with existing ItemCapture wizard navigation system
+- [ ] Mobile and desktop views display the options screen with appropriate responsive layout
+
+---
+
+## REQ-190: Remove Navigation Controls from WhatsNextStep Completion Screen
+
+**Date**: 2026-01-12 14:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The "What's Next" screen should not display any navigation controls, progress indicators, or workflow step counters, presenting only the four action options as a clean post-completion menu.
+
+### Current Behavior
+The "What's Next" screen appears as part of the numbered workflow progression, displaying navigation controls such as back buttons, cancel buttons, and step counter indicators. This creates confusion as users cannot undo a completed save operation, have nothing to cancel, and the screen should not be counted as a workflow step. The presence of these controls suggests the workflow is still in progress when it has actually completed.
+
+### Expected Behavior
+The "What's Next" screen displays as a standalone completion menu without any workflow navigation controls. Users see only the four action options (Print QR Codes, Create Another Item, View Items, Go to Dashboard) without back buttons, cancel buttons, or numbered progress indicators. The screen clearly communicates that the item creation workflow has completed and the user is now choosing their next action.
+
+### User Impact
+Users completing item creation receive a clear visual signal that the workflow has finished successfully. The absence of navigation controls eliminates confusion about whether additional steps remain or if changes can be undone. The clean presentation focuses attention entirely on the available next actions, creating a decisive transition point between workflow completion and subsequent activities.
+
+### Business Value
+Removing navigation controls from the completion screen reduces user confusion and reinforces the successful completion of item creation. The simplified interface increases the likelihood users will engage with one of the four next action options rather than attempting to navigate backward or cancel. Clear workflow boundaries improve perceived application quality and reduce support requests about post-completion navigation.
+
+### Acceptance Criteria
+- [ ] WhatsNextStep does not display a back button
+- [ ] WhatsNextStep does not display a cancel button  
+- [ ] WhatsNextStep is not included in the numbered progress indicator display
+- [ ] Progress indicator component hides itself or shows no active step when WhatsNextStep is active
+- [ ] Only the four action option buttons are visible on the WhatsNextStep screen
+- [ ] Screen maintains consistent layout and spacing without navigation controls
+- [ ] Mobile and desktop views both exclude navigation controls appropriately
+
+---
+
+
+## REQ-191: Wire Up Dashboard Card Navigation Links
+
+**Date**: 2026-01-12 15:23
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Dashboard cards should navigate users to their corresponding destinations when clicked, creating an interactive entry point for all major application features.
+
+### Current Behavior
+Dashboard cards display static information about properties, items, and system features but do not respond to user clicks. Users must navigate through separate menu options or buttons to access the features represented by these cards. The cards serve only as informational displays rather than actionable navigation elements.
+
+### Expected Behavior
+Users can click on any dashboard card to navigate directly to the relevant section of the application. Property cards navigate to property-specific views, item statistics cards navigate to item management filtered by the corresponding category, and feature cards navigate to their respective functional areas. The cards provide visual feedback on hover and click states, making their interactive nature immediately apparent.
+
+### User Impact
+Users gain rapid access to application features directly from the dashboard overview. A single click on a property card takes them to that property's detail or management view. Clicking item statistics navigates to pre-filtered item lists, reducing the number of steps needed to find relevant content. The dashboard transforms from a passive display into an active navigation hub, improving workflow efficiency.
+
+### Business Value
+Interactive dashboard cards reduce navigation friction and accelerate user task completion. Direct card-to-feature navigation improves feature discoverability by providing contextual entry points from summary statistics. Enhanced dashboard interactivity increases user engagement with secondary features that might otherwise remain hidden in menu structures. The improved user experience supports higher retention and more frequent application usage.
+
+### Acceptance Criteria
+- [ ] All dashboard cards respond to click interactions with appropriate navigation
+- [ ] Property cards navigate to property-specific detail or management views
+- [ ] Item statistics cards navigate to item management with appropriate category filters applied
+- [ ] Feature action cards navigate to their corresponding functional sections
+- [ ] Cards display hover states indicating clickability (cursor change, visual highlight)
+- [ ] Click interactions work consistently across desktop and mobile devices
+- [ ] Navigation preserves application state and allows users to return to the dashboard
+- [ ] Card click targets are appropriately sized for touch interactions on mobile devices
+- [ ] Screen readers announce cards as interactive navigation elements
+
+---
+
+## REQ-192: Add Navigation Links to UserDashboard Statistics Cards
+
+**Date**: 2026-01-12 15:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Statistics cards in the UserDashboard should include navigation links to their corresponding sections, allowing users to navigate directly from dashboard metrics to detailed views.
+
+### Current Behavior
+The UserDashboard displays statistics cards showing property counts, item counts, and other metrics. These cards are purely informational and do not provide any navigation functionality. Users must use separate navigation menus to access the detailed views of properties, items, or other features represented by the statistics.
+
+### Expected Behavior
+Each statistics card becomes a clickable navigation element that directs users to the relevant section of the application. When a user clicks on the Properties card, they navigate to the properties listing page. Clicking the Items card takes them to the items management view. Each card shows appropriate visual feedback on hover to indicate it is interactive.
+
+### User Impact
+Users can navigate directly from the dashboard overview to detailed views with a single click on any statistics card. This reduces the number of steps needed to access specific sections and creates a more intuitive browsing experience. Dashboard metrics become actionable entry points rather than passive information displays.
+
+### Business Value
+Streamlined navigation from dashboard cards improves user efficiency and reduces friction in common workflows. Direct access from statistics to detailed views encourages users to explore and engage with application features more actively. Enhanced dashboard interactivity creates a more polished and professional user experience.
+
+### Acceptance Criteria
+- [ ] Each statistics card in the statsCards array includes an href property pointing to its corresponding route
+- [ ] Properties card navigates to /dashboard/properties
+- [ ] Items card navigates to /dashboard/items
+- [ ] Additional statistics cards include appropriate navigation paths
+- [ ] Card rendering uses Next.js Link component to enable navigation
+- [ ] Cards display hover states indicating they are clickable
+- [ ] Navigation works correctly on both desktop and mobile devices
+- [ ] Card click targets are appropriately sized for touch interaction
+- [ ] Screen readers identify cards as navigational links
+
+
+
+## REQ-193: Add Visual Feedback for Clickable Dashboard Cards
+
+**Date**: 2026-01-12 16:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+Dashboard cards should provide clear visual feedback through hover, active, and focus states to indicate their interactive nature and improve accessibility.
+
+### Current Behavior
+Dashboard cards either lack visual feedback when users interact with them, or the feedback is minimal and does not clearly communicate that the cards are clickable elements. Users may not immediately recognize cards as interactive navigation components, and keyboard users may not see clear focus indicators when navigating through cards.
+
+### Expected Behavior
+Dashboard cards respond to user interactions with distinct visual states. On hover, the card shadow increases and the border color subtly changes, drawing attention to the interactive element. When clicked, the card applies a slight scale reduction to provide tactile feedback. Keyboard navigation displays a visible focus ring around the active card, ensuring accessibility compliance. The cursor changes to a pointer when hovering over any card, immediately signaling clickability.
+
+### User Impact
+Users receive immediate visual confirmation that dashboard cards are interactive elements. The hover and cursor changes reduce uncertainty about whether cards can be clicked. Keyboard users benefit from clear focus indicators that make navigation predictable and accessible. The active state provides satisfying feedback during the click interaction, improving the perceived responsiveness of the interface.
+
+### Business Value
+Clear visual feedback reduces user hesitation and encourages exploration of dashboard features. Proper focus states ensure WCAG accessibility compliance, expanding the application's usable audience. Polished interaction states contribute to a professional, modern user experience that reflects positively on product quality. Enhanced affordances lead to higher engagement rates with dashboard navigation features.
+
+### Acceptance Criteria
+- [ ] Cards display increased shadow elevation on hover state
+- [ ] Card border color changes subtly on hover state
+- [ ] Cards apply slight scale reduction (transform: scale) on active state
+- [ ] Cards display visible focus ring when focused via keyboard navigation
+- [ ] Focus ring meets WCAG contrast requirements for visibility
+- [ ] Cursor changes to pointer when hovering over cards
+- [ ] All visual state transitions use smooth CSS transitions
+- [ ] Visual feedback works consistently across desktop and mobile devices
+- [ ] Touch interactions on mobile devices show appropriate active states
+- [ ] Visual states do not interfere with card content readability
+
+---
+
+## REQ-194: Add Mobile Label Support to Navigation Menu
+
+**Date**: 2026-01-12 (Created by FA Agent)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Navigation menu items should display mobile-optimized labels on small screens that may differ from desktop labels to ensure clarity within limited screen space.
+
+### Current Behavior
+Navigation items display the same label text across all viewport sizes, which may not be optimal for mobile devices where screen real estate is limited.
+
+### Expected Behavior
+On mobile devices, navigation items adapt their label text to shorter, space-optimized versions when appropriate, while maintaining the same navigation functionality and full labels on desktop viewports.
+
+### User Impact
+Mobile users will experience improved navigation clarity with labels that fit better within the constrained mobile viewport, reducing visual clutter and improving readability.
+
+### Business Value
+Enhances mobile user experience by ensuring navigation labels are appropriately sized and readable on all devices, leading to better mobile engagement and usability.
+
+### Acceptance Criteria
+- [ ] Navigation items can accept both desktop and mobile label configurations
+- [ ] Mobile labels display on viewports below a defined breakpoint (typically tablet size)
+- [ ] Desktop labels display on larger viewports without modification
+- [ ] Label transitions are handled smoothly during viewport resize
+- [ ] All navigation functionality remains consistent regardless of which label variant is displayed
+- [ ] Screen readers announce the appropriate label based on the current viewport
+
+---
+
+## REQ-195: Update Dashboard Layout Navigation to Align with RoleBasedNavigation
+
+**Date**: 2026-01-12 17:45 (Created by FA Agent)
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The Dashboard Layout Navigation component needs to be updated to align with the RoleBasedNavigation changes, add an Instructions menu item, and update mobile labels for improved mobile user experience.
+
+### Current Behavior
+The Dashboard Layout Navigation component may have navigation items that do not align with the recently updated RoleBasedNavigation component. The navigation lacks an Instructions menu item, and mobile labels may not be optimized for smaller screen sizes, potentially causing layout issues or unclear navigation on mobile devices.
+
+### Expected Behavior
+The Dashboard Layout Navigation component aligns completely with RoleBasedNavigation changes, ensuring consistency across the application's navigation systems. An Instructions menu item is added to provide users with access to application instructions and help content. Mobile labels are updated to display shortened, space-optimized text on mobile viewports while showing full labels on desktop. The navigation maintains visual and functional consistency with the RoleBasedNavigation component.
+
+### User Impact
+Users will experience consistent navigation across all parts of the application, reducing confusion when switching between dashboard views. The addition of the Instructions menu item provides easy access to help content, improving user onboarding and self-service support. Mobile users will benefit from optimized labels that fit better within the constrained viewport, improving readability and navigation efficiency.
+
+### Business Value
+Consistent navigation patterns across components reduce development complexity and improve maintainability. The Instructions menu item reduces support requests by making help content easily discoverable. Optimized mobile labels enhance the mobile user experience, which is critical for users who primarily access the application on smaller devices. Alignment with RoleBasedNavigation reduces code duplication and ensures updates propagate consistently.
+
+### Acceptance Criteria
+- [ ] Dashboard Layout Navigation component aligns with RoleBasedNavigation structure and styling
+- [ ] Instructions menu item is added to the navigation
+- [ ] Instructions menu item navigates to the appropriate help/instructions page
+- [ ] Mobile labels are implemented for navigation items requiring shortened text
+- [ ] Mobile labels display on viewports below the defined breakpoint
+- [ ] Desktop labels display on larger viewports
+- [ ] Navigation icons remain consistent with RoleBasedNavigation
+- [ ] Menu item order matches RoleBasedNavigation where applicable
+- [ ] All navigation functionality works correctly on both desktop and mobile devices
+- [ ] Component passes accessibility requirements for navigation elements
+
+---
+
+## REQ-196: Separate User-Visible and Internal Workflow Steps Constants
+
+**Date**: 2026-01-12 18:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The workflow step counter should display steps 1-8 for user-visible progress, while internal navigation includes additional post-workflow screens that are not counted or numbered.
+
+### Current Behavior
+The workflow uses a single WORKFLOW_STEPS constant that includes both numbered workflow steps and unnumbered post-workflow screens. The progress indicator and step counter treat all steps equally, causing confusion when users see step numbers on screens that should not be counted as part of the main workflow. Progress weights may not reach 100% at the intended final step.
+
+### Expected Behavior
+The system separates user-facing workflow steps from internal navigation steps. A USER_VISIBLE_STEPS constant contains the first 8 steps that users see numbered in the progress indicator. A POST_WORKFLOW_SCREENS constant contains screens like next-action and session-summary that appear after workflow completion without step numbers. The complete WORKFLOW_STEPS constant combines both for internal navigation purposes. Progress weights are calibrated to reach 100% completion at the preview-save step, which represents the final numbered step in the user's journey.
+
+### User Impact
+Users will see a clear 8-step workflow with numbered progress, reinforcing that the main workflow is complete after saving their item. Post-workflow screens like "What's Next" and "Session Summary" will appear as natural continuations without creating confusion about whether additional numbered steps remain. Progress indicators will accurately reflect 100% completion at the appropriate point.
+
+### Business Value
+Clear workflow progression improves user confidence and reduces abandonment by setting accurate expectations about workflow length. Proper separation of numbered steps from post-workflow screens supports better onboarding and user guidance. Accurate progress indication at 100% provides psychological completion cues that encourage continued engagement with post-workflow features.
+
+### Acceptance Criteria
+- [ ] USER_VISIBLE_STEPS constant is created containing the first 8 workflow steps
+- [ ] POST_WORKFLOW_SCREENS constant is created containing next-action and session-summary
+- [ ] WORKFLOW_STEPS constant combines both arrays for internal navigation
+- [ ] Progress weights are updated to reach 100% at preview-save step
+- [ ] Step counter displays numbers only for USER_VISIBLE_STEPS
+- [ ] Post-workflow screens do not display step numbers
+- [ ] Progress indicator shows 100% completion when users reach preview-save
+- [ ] Navigation flow continues to work correctly through all screens
+- [ ] Type definitions are updated to reflect the new constants structure
+
+---
+
+## REQ-197: Update PROGRESS_WEIGHTS Constant to Reflect Correct Step Count
+
+**Date**: 2026-01-12 19:00
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The PROGRESS_WEIGHTS constant in the ItemCapture workflow should be updated to accurately reflect the 8-step user workflow with proper weight distribution.
+
+### Current Behavior
+The PROGRESS_WEIGHTS constant may contain weights for steps that are no longer part of the numbered user workflow, or may have incorrect weight distributions that do not align with the actual 8-step flow. Progress calculations may not accurately reflect user position within the workflow, potentially showing incorrect completion percentages at various stages.
+
+### Expected Behavior
+The PROGRESS_WEIGHTS constant contains exactly 8 entries corresponding to the USER_VISIBLE_STEPS workflow stages. Each step is assigned an appropriate weight value that reflects its relative contribution to overall workflow progress. The sum of all weights totals 100, ensuring the progress bar reaches full completion at the preview-save step. Weight distribution reflects the actual time and effort typically required for each step, providing meaningful progress feedback to users.
+
+### User Impact
+Users will see accurate progress indication as they move through the workflow. The progress bar will advance in meaningful increments that match their actual advancement through the creation process, improving the sense of accomplishment and providing clear expectations about remaining effort.
+
+### Business Value
+Accurate progress indication reduces user anxiety about workflow length and improves completion rates by providing clear visual feedback. Proper weight distribution helps users understand which steps require more attention without artificially inflating or minimizing progress at any stage.
+
+### Acceptance Criteria
+- [ ] PROGRESS_WEIGHTS constant contains exactly 8 entries
+- [ ] Weight values sum to 100 for complete workflow coverage
+- [ ] Weights are ordered to match USER_VISIBLE_STEPS sequence
+- [ ] Progress bar reaches 100% completion at preview-save step
+- [ ] Weight distribution reflects reasonable time allocation for each step
+- [ ] Progress calculations use the updated PROGRESS_WEIGHTS correctly
+- [ ] Progress indicator displays smooth, logical advancement through all steps
+
+---
+
+---
+
+## REQ-198: Hide Workflow Header on Post-Workflow Screens
+
+**Date**: 2026-01-12 13:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The workflow header displaying step navigation should not appear on post-workflow confirmation and navigation screens.
+
+### Current Behavior
+The workflow header with step numbers and navigation controls appears on all screens in the item capture flow, including the final "What's Next" screen that appears after an item is successfully captured and saved.
+
+### Expected Behavior
+The workflow header should automatically hide itself when the user reaches post-workflow screens. These screens serve as confirmation and navigation points rather than data entry steps, and should not display step counts or navigation controls.
+
+### User Impact
+Users completing the item capture workflow see misleading step navigation on the final confirmation screen, which may cause confusion about whether additional steps remain or whether they can safely navigate away.
+
+### Business Value
+Eliminates visual confusion at the end of the workflow, providing clear confirmation that the process is complete and reducing user uncertainty about the workflow state.
+
+### Acceptance Criteria
+- [ ] Workflow header does not appear on the "What's Next" screen after item capture
+- [ ] Workflow header continues to appear normally on all data entry and capture steps
+- [ ] No step counting or progress indication appears on post-workflow screens
+- [ ] Screen layout adjusts appropriately when header is hidden (no empty space or layout shift)
+- [ ] Behavior is consistent across mobile and desktop viewports
+
+
+---
+
+## REQ-199: Update ItemCreationWorkflow to Use USER_VISIBLE_STEPS Constant
+
+**Date**: 2026-01-12 16:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The ItemCreationWorkflow component should use the centralized USER_VISIBLE_STEPS constant instead of hardcoded step counts for displaying workflow progress and step navigation.
+
+### Current Behavior
+The ItemCreationWorkflow component contains hardcoded references to the number of steps in the workflow. When the step count changes due to workflow modifications, these hardcoded values become outdated, causing the displayed step count to misalign with the actual number of user-facing steps in the wizard.
+
+### Expected Behavior
+The ItemCreationWorkflow component references the USER_VISIBLE_STEPS constant to determine the total number of steps. When the workflow changes, only the USER_VISIBLE_STEPS constant requires updating, and all components automatically reflect the correct step count. The workflow header, progress indicators, and navigation controls all display consistent, accurate step information.
+
+### User Impact
+Users see consistent step counts throughout the item capture workflow. The displayed step information (e.g., "Step 3 of 8") accurately reflects their position in the wizard, preventing confusion about how many steps remain and providing reliable progress feedback.
+
+### Business Value
+Centralizing step count logic reduces maintenance burden and prevents inconsistencies when workflow steps are added or removed. This improves code maintainability and ensures users always receive accurate progress information.
+
+### Acceptance Criteria
+- [ ] ItemCreationWorkflow imports and uses USER_VISIBLE_STEPS constant from constants file
+- [ ] All hardcoded step count references in ItemCreationWorkflow are replaced with USER_VISIBLE_STEPS
+- [ ] Workflow header displays step count using USER_VISIBLE_STEPS
+- [ ] Progress calculations use USER_VISIBLE_STEPS as the denominator
+- [ ] Step navigation logic references USER_VISIBLE_STEPS for boundary checks
+- [ ] No hardcoded step numbers remain in ItemCreationWorkflow component
+- [ ] All existing tests pass with the updated implementation
+
+
+---
+
+## REQ-200: Update useWorkflowState Hook to Handle Step Counting and Navigation Logic
+
+**Date**: 2026-01-12 12:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The workflow state management hook should correctly calculate and track the total number of steps in the ItemCapture wizard, accounting for the new final step that appears after the save action.
+
+### Current Behavior
+The workflow state management logic does not properly account for all steps in the wizard sequence, particularly the step that appears after users complete the save/review action. This causes the step indicator to display incorrect progress information.
+
+### Expected Behavior
+The workflow state management should accurately track the total step count throughout the entire wizard flow, including the final step that appears after save. The step counter should show users their correct position in the workflow at all times, with proper navigation state management.
+
+### User Impact
+Users completing the item capture workflow see accurate progress indicators that reflect their true position in the multi-step process, improving their understanding of how many steps remain.
+
+### Business Value
+Accurate progress tracking reduces user confusion and abandonment during the multi-step workflow, improving completion rates and user satisfaction with the item capture feature.
+
+### Acceptance Criteria
+- [ ] The state management logic correctly calculates total steps including the final post-save step
+- [ ] Step count remains accurate as users navigate through the entire workflow
+- [ ] Navigation logic properly handles transitions between all steps in the sequence
+- [ ] The step indicator displays correct current/total values at every stage
+- [ ] Existing workflow functionality continues to work without regression
+
+
+---
+
+## REQ-201: Integrate WhatsNextStep Component into ItemCreationWorkflow
+
+**Date**: 2026-01-12 13:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The ItemCreationWorkflow should present users with a clear decision menu after successfully saving an item, allowing them to choose their next action from four distinct options.
+
+### Current Behavior
+After saving an item in the ItemCreationWorkflow, users encounter a NextActionStep component that does not provide a clear, intuitive interface for deciding what to do next. The existing WhatsNextStep component (already implemented in the ItemCapture flow) has the correct four-option interface but is not yet integrated into the ItemCreationWorkflow.
+
+### Expected Behavior
+After successfully saving an item, users see a friendly success confirmation displaying the saved item's name, followed by four clearly labeled action options:
+1. Edit Instructions - Review and modify the instructions just created
+2. Add New Instructions - Create different instructions for the same item
+3. Create New Item - Start the workflow fresh with a different item
+4. Done - Exit the workflow and return to the dashboard
+
+Each option is presented as a distinct, clickable card with an icon, title, and description. The "Add New Instructions" option is visually emphasized as the recommended next action.
+
+### User Impact
+Users completing the item creation workflow have clear, actionable next steps immediately after saving. They understand their options without confusion and can quickly continue their work pattern (whether adding more instructions to the same item, creating new items, or returning to the dashboard).
+
+### Business Value
+Providing clear post-save navigation options improves workflow efficiency and encourages users to create comprehensive documentation by making it easy to add multiple instruction sets to a single item. This reduces friction in the content creation process and increases user productivity.
+
+### Acceptance Criteria
+- [ ] NextActionStep component accepts savedItem object containing id, name, and articleTitle
+- [ ] NextActionStep component accepts four callback props: onEditInstructions, onAddNewInstructions, onCreateNewItem, and onDone
+- [ ] The WhatsNextStep component implementation is reused or refactored to serve both ItemCapture and ItemCreationWorkflow flows
+- [ ] Success confirmation displays the saved item's name correctly
+- [ ] All four action options are clearly visible with appropriate icons and descriptions
+- [ ] "Add New Instructions" option has visual emphasis (primary variant styling)
+- [ ] Clicking each option triggers the appropriate callback function
+- [ ] The interface is accessible with proper ARIA labels and keyboard navigation
+- [ ] Existing ItemCreationWorkflow tests are updated to cover the new interface
+
+
+---
+
+## REQ-202: Remove Back Navigation from Post-Workflow Header
+
+**Date**: 2026-01-12 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The workflow header should not display a back arrow or navigation control after users complete the item capture workflow and reach the "What's Next" screen.
+
+### Current Behavior
+When users arrive at the final "What's Next" screen after completing the item capture workflow, the header may still display a back arrow or navigation control that allows them to return to previous steps. This creates confusion about whether the workflow is truly complete and whether users can or should modify their saved work.
+
+### Expected Behavior
+After users save their item and reach the "What's Next" decision screen, no back arrow or navigation control appears in the header. The header remains visible for branding consistency but clearly signals that the workflow is complete and users should choose one of the four presented action options rather than attempting to navigate backward.
+
+### User Impact
+Users completing the item capture workflow receive clear visual signals that they have successfully finished the process. The absence of backward navigation prevents confusion about whether changes can still be made and encourages users to consciously choose their next action from the provided options.
+
+### Business Value
+Preventing post-completion navigation reduces user confusion and helps maintain data integrity by discouraging users from attempting to modify already-saved items through the workflow interface. This improves the perceived quality of the completion experience.
+
+### Acceptance Criteria
+- [ ] No back arrow appears in the header when WhatsNextStep is displayed
+- [ ] Header remains visible for branding and context
+- [ ] Users cannot navigate backward from WhatsNextStep using header controls
+- [ ] The header styling appropriately reflects the completion state
+- [ ] Existing navigation functionality on other steps remains unaffected
+- [ ] Tests verify that back navigation is not rendered on WhatsNextStep
+
+
+---
+
+## REQ-203: Update StatisticsCards Component for Click Navigation
+
+**Date**: 2026-01-12 18:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Dashboard statistics cards should function as clickable navigation elements that direct users to relevant sections of the application when selected.
+
+### Current Behavior
+The StatisticsCards component displays key metrics (total items, properties, recent items, items needing attention) as static informational cards. Users can view the statistics but cannot interact with them to navigate to related content or take action on the displayed metrics.
+
+### Expected Behavior
+Each statistics card becomes an interactive element that responds to user clicks. When users select a card, the application navigates them to the appropriate section where they can view detailed information or take action related to that metric. For example, clicking the "Total Items" card navigates to the item manager, while clicking "Items Needing Attention" filters to show items requiring updates or review.
+
+### User Impact
+Users gain the ability to quickly navigate from dashboard overview metrics directly to detailed views, reducing the number of steps needed to take action on important statistics. This creates a more efficient workflow where the dashboard serves as both an information hub and a navigation tool.
+
+### Business Value
+Making statistics cards clickable improves user engagement with the dashboard and reduces friction in common navigation patterns. Users can move more quickly from metrics to action, increasing productivity and making the dashboard feel more dynamic and responsive to user needs.
+
+### Acceptance Criteria
+- [ ] All four statistics cards become clickable with appropriate visual feedback
+- [ ] Each card navigates to the correct destination when clicked
+- [ ] Cards display hover states that indicate they are interactive
+- [ ] Keyboard navigation allows users to activate cards using Enter or Space
+- [ ] Screen readers announce cards as clickable buttons with proper labels
+- [ ] Click areas encompass the entire card surface for easy targeting
+- [ ] Navigation maintains proper routing history for browser back functionality
+- [ ] Cards remain visually consistent with existing design while indicating interactivity
+- [ ] Tests verify that clicking each card triggers the correct navigation
+
+
+
+---
+
+## REQ-204: Create Placeholder Routes for Rooms and Tags Navigation
+
+**Date**: 2026-01-12 19:15
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The application should provide dedicated routes for Rooms and Tags sections that users can navigate to from the dashboard, either showing filtered item views or placeholder content until full feature implementation.
+
+### Current Behavior
+Dashboard navigation cards for Rooms and Tags exist but lack corresponding route destinations. When users attempt to navigate to these sections, they encounter missing routes or broken navigation, creating a incomplete user experience.
+
+### Expected Behavior
+Users clicking Rooms or Tags navigation elements are directed to dedicated pages at `/dashboard2/rooms` and `/dashboard2/tags` respectively. These pages either redirect users to the item manager with appropriate filters applied (showing only items in a selected room or with selected tags) or display placeholder content that acknowledges the feature and sets expectations for future functionality.
+
+### User Impact
+Users exploring the dashboard navigation find all paths lead to valid destinations, creating confidence in the application's completeness. Even if full Rooms and Tags management features are not yet implemented, users receive clear feedback about these sections and can access filtered views of their items organized by these attributes.
+
+### Business Value
+Providing working routes for all navigation elements prevents user frustration and maintains the perception of a polished, complete application. This allows dashboard navigation to be fully functional while room and tag management features continue development.
+
+### Acceptance Criteria
+- [ ] Route exists at `/dashboard2/rooms/page.tsx` that renders without errors
+- [ ] Route exists at `/dashboard2/tags/page.tsx` that renders without errors
+- [ ] Both routes are accessible through standard Next.js routing patterns
+- [ ] Pages either redirect to item manager with appropriate filters or show placeholder content
+- [ ] Placeholder content (if used) clearly communicates the section purpose and sets expectations
+- [ ] Navigation from dashboard to these routes functions correctly
+- [ ] Browser back button works properly when navigating away from these pages
+- [ ] Routes follow existing authentication and authorization patterns
+- [ ] Page components match the visual design language of other dashboard sections
+
+---
+
+## REQ-205: Update Navigation Menu Configuration in Dashboard Layout
+
+**Date**: 2026-01-12 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Update the navigationItems configuration in the dashboard layout to provide proper navigation structure for the application menu.
+
+### Current Behavior
+The dashboard layout contains a navigationItems configuration that may not reflect the complete or correct navigation structure needed for the application. The navigation menu may be missing items, have incorrect routing, or lack proper organization for the user experience.
+
+### Expected Behavior
+The navigationItems configuration should define a complete, well-organized navigation menu that allows users to access all major application features. Each navigation item should have correct routing paths, appropriate labels, and proper icon associations that align with the application's information architecture.
+
+### User Impact
+All authenticated users navigating through the dashboard will benefit from a properly configured navigation menu that provides clear access paths to application features and follows consistent organizational patterns.
+
+### Business Value
+A well-structured navigation menu improves user orientation, reduces confusion, and increases feature discoverability, leading to higher engagement and better overall user experience.
+
+### Acceptance Criteria
+- [ ] Navigation configuration includes all primary application features and routes
+- [ ] Each navigation item has an appropriate label that clearly indicates its purpose
+- [ ] Navigation items are organized in a logical hierarchy or grouping
+- [ ] All navigation paths route correctly to their intended destinations
+- [ ] Navigation structure is consistent with the application's information architecture
+- [ ] Icons or visual indicators are properly associated with each navigation item where applicable
+
+
+---
+
+## REQ-206: Add Mobile Label Display Logic to Navigation Menu
+
+**Date**: 2026-01-12 (Current Session)
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The navigation menu should display mobile-optimized labels on smaller screens to improve readability and maintain usability in constrained viewport widths.
+
+### Current Behavior
+The navigation menu displays the same labels across all screen sizes. On mobile devices, longer navigation labels may be truncated, difficult to read, or cause layout issues due to limited horizontal space.
+
+### Expected Behavior
+When users access the application on mobile devices, the navigation menu automatically switches to display abbreviated or mobile-optimized labels. The labels remain clear and readable while fitting within the constrained mobile viewport. On larger screens, the full-length labels continue to display normally.
+
+### User Impact
+Mobile users will experience improved navigation usability with labels that are appropriately sized for their device. The interface will feel more polished and professional, with navigation items that are easier to tap and read on smaller touchscreens.
+
+### Business Value
+Enhancing mobile navigation usability reduces friction for users accessing the application from smartphones and tablets, which increasingly represents a significant portion of web traffic. Clear, readable navigation improves user confidence and reduces support inquiries related to mobile interface issues.
+
+### Acceptance Criteria
+- [ ] Navigation items display alternative labels on mobile viewports (typically below 768px width)
+- [ ] Mobile labels are visually distinct but maintain semantic consistency with their full-length counterparts
+- [ ] The transition between mobile and desktop labels occurs smoothly during viewport resizing
+- [ ] All navigation functionality remains intact when mobile labels are displayed
+- [ ] Mobile labels are configured through the navigation items configuration structure
+- [ ] The implementation follows responsive design patterns consistent with the rest of the application
+
+
+---
+
+## REQ-207: Create Instructions Page for User Guidance
+
+**Date**: 2026-01-12 19:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application should provide a dedicated Instructions page that guides users through the features and workflows available in FAQBNB, accessible from the main navigation menu.
+
+### Current Behavior
+Users navigating through the application lack a centralized location for learning how to use various features. When users need guidance on workflows such as creating items, managing properties, or generating QR codes, they must rely on contextual help or trial and error. There is no comprehensive instructions page accessible from the navigation menu.
+
+### Expected Behavior
+Users can access a well-organized Instructions page from the navigation menu that provides clear, step-by-step guidance on using key application features. The page presents information in an easy-to-scan format with sections covering common workflows such as property setup, item creation, QR code generation, and item management. Users can quickly find answers to how-to questions without leaving the application.
+
+### User Impact
+All users, particularly new users onboarding to the platform, benefit from having accessible, comprehensive instructions. Users spend less time confused about feature functionality and more time productively managing their property inventories. The Instructions page reduces the learning curve and builds user confidence in using the application independently.
+
+### Business Value
+Providing clear user guidance reduces support burden, improves user retention during onboarding, and increases feature adoption rates. Users who understand how to use the application effectively are more likely to remain engaged and recommend the platform to others.
+
+### Acceptance Criteria
+- [ ] Instructions page exists at a dedicated route accessible from the navigation menu
+- [ ] Page follows authentication and authorization patterns consistent with other dashboard pages
+- [ ] Instructions content is organized into logical sections covering major application workflows
+- [ ] Page layout is responsive and readable on both desktop and mobile devices
+- [ ] Navigation menu includes a clearly labeled link to the Instructions page
+- [ ] Instructions page matches the visual design language and component patterns of the application
+- [ ] Page can be accessed by all authenticated users regardless of role or property count
+- [ ] Content is written in clear, user-friendly language avoiding technical jargon where possible
+
+
+---
+
+## REQ-208: Update Type Definitions to Separate Item from Article
+
+**Date**: 2026-01-12 19:45
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The application's type definitions should clearly separate the concept of a physical Item from its associated Article content, establishing a one-to-many relationship where each Item can have multiple Articles with different purposes.
+
+### Current Behavior
+The current type system conflates physical Items with their instructional content. An Item record contains content pieces directly, making it difficult to manage multiple sets of instructions for the same physical object. Users cannot create separate articles for different purposes (cleaning instructions, troubleshooting guides, usage tips) for a single physical item. The QR code links directly to mixed content rather than to a well-organized collection of purpose-specific articles.
+
+### Expected Behavior
+The type definitions distinguish between a physical Item (which receives one QR code and has a name and location) and an Article (which contains purpose-specific instructional content). Each Item can be associated with multiple Articles, where each Article has a clear purpose type that determines its title (such as "How to Clean" or "Troubleshooting Guide"). The Item name appears on the QR code label, while Articles contain the actual instructional content pieces. The data model reflects this separation with proper interface definitions, maintaining backward compatibility through deprecated legacy fields.
+
+### User Impact
+Users managing property inventories gain the ability to organize multiple types of instructions for each physical item without confusion between the item's identity and its documentation. When scanning a QR code, users see a clear separation between what the physical item is and the various instruction articles available for it. Content creators can add new article types to existing items without restructuring the entire item record.
+
+### Business Value
+Properly separating Items from Articles creates a more scalable content architecture that supports richer documentation capabilities. This separation enables future features like article templates, shared articles across similar items, and purpose-specific content recommendations. The clearer data model reduces technical debt and makes the codebase more maintainable for ongoing development.
+
+### Acceptance Criteria
+- [ ] Article interface includes id, title, purpose, content array, and createdAt timestamp
+- [ ] Article purpose field uses a PurposeType enum that drives the article title
+- [ ] SessionItem interface includes physical item attributes: id, name, room, itemType, createdAt
+- [ ] SessionItem interface includes an optional articles array containing Article objects
+- [ ] SessionItem retains a deprecated content field marked with @deprecated JSDoc for compatibility
+- [ ] QR code URL field remains on SessionItem as an optional property
+- [ ] Tags remain on SessionItem as optional property for item categorization
+- [ ] Type definitions include proper JSDoc comments explaining the purpose and usage of each field
+- [ ] The one-to-many relationship between Item and Article is clear from the type structure
+- [ ] All date fields use Date type consistently across both interfaces
+
+
+---
+
+## REQ-209: Update CurrentItemState to Reflect Item-Article Separation
+
+**Date**: 2026-01-12 20:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The CurrentItemState interface used in the Item Capture wizard should be restructured to properly distinguish between physical Item properties and Article content properties, aligning with the new data model architecture.
+
+### Current Behavior
+The CurrentItemState interface currently mixes physical item attributes with article content attributes in a single flat structure. Properties like item name, room, and item type are stored alongside article content arrays and article-specific fields. This conflation makes it unclear which fields describe the physical object versus which fields describe the instructional content. State management hooks and components must work with an ambiguous data structure that does not reflect the proper relationship between Items and Articles.
+
+### Expected Behavior
+The CurrentItemState interface separates physical item properties from article properties into distinct nested objects. The top level contains item-specific attributes: item name, room, item type, and QR code URL. Article-related fields are grouped under an article object containing purpose, content array, and article title. Components consuming this state can clearly distinguish between setting item metadata versus building article content. State transitions during the wizard flow maintain clear separation between item selection steps and content creation steps.
+
+### User Impact
+Users progressing through the Item Capture wizard experience no visible changes to their workflow, but the underlying state management correctly maps their inputs to either the physical Item or the Article being created. Developers working with the state management hooks benefit from clearer separation of concerns and more maintainable code. Future enhancements that require managing multiple articles per item become significantly easier to implement due to the properly structured state.
+
+### Business Value
+Refactoring the state management to match the corrected data model eliminates a major source of technical debt and architectural confusion. This enables future features like multiple articles per item, article templates, and purpose-driven content creation. The clearer state structure reduces bugs related to data mapping and makes the codebase more understandable for ongoing development efforts.
+
+### Acceptance Criteria
+- [ ] CurrentItemState interface includes a top-level item property containing name, room, itemType, and optional qrCodeUrl
+- [ ] CurrentItemState interface includes a top-level article property containing purpose, content array, and title
+- [ ] The content array within article property maintains its current structure with type, data, thumbnailUrl, and metadata fields
+- [ ] Tags remain at the top level of CurrentItemState as they can apply to both items and articles
+- [ ] State management hooks that consume CurrentItemState are updated to access properties through the new nested structure
+- [ ] All components reading from or updating CurrentItemState use the correct property paths for item versus article data
+- [ ] Type errors are resolved throughout the codebase after the interface restructure
+- [ ] JSDoc comments clearly document which properties describe the physical Item versus the Article content
+- [ ] Legacy code paths or deprecated fields are clearly marked if backward compatibility is required during transition
+
+
+
+---
+
+## REQ-210: Update PreviewSaveStep Display to Separate Item Name from Article Title
+
+**Date**: 2026-01-12 20:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The PreviewSaveStep component should display physical Item properties separately from Article properties, showing "Item Name" for the physical object and "Article Title" for the purpose-derived instructional content, with QR code previews showing only the item name.
+
+### Current Behavior
+The PreviewSaveStep currently displays a single title field without distinguishing between the physical item name and the article's purpose-driven title. Users reviewing their content before saving cannot clearly see the separation between what the physical item is called versus what the instructional article is titled. The QR code preview may display mixed information rather than focusing on the physical item name that should appear on the printed label. This conflation creates confusion about what will appear on the QR label versus what will appear as the article heading.
+
+### Expected Behavior
+The PreviewSaveStep displays two distinct fields during review: an "Item Name" field showing the physical item such as "Cabinets" and an "Article Title" field showing the purpose-derived title such as "How to Clean Cabinets". The QR code preview section clearly shows only the item name as it will appear on the printed QR label. Users reviewing their content can easily verify that the physical item is correctly named and that the article title appropriately describes the instructional content purpose. The visual layout makes the distinction between item and article properties immediately clear.
+
+### User Impact
+Users completing the item creation workflow gain clarity about what information will appear on the QR code label versus what will appear as content titles when someone scans the code. This reduces confusion during the review step and helps users catch mistakes where the physical item name might be confused with the article purpose. Property managers printing QR labels have confidence that the labels will show concise, appropriate item names rather than lengthy article titles.
+
+### Business Value
+Clearly separating item name from article title in the preview step reduces user errors and support requests related to QR code label content. Users have better understanding of the data model, making them more confident in creating additional articles for existing items in future interactions. The improved clarity supports the architectural goal of separating physical items from their instructional content.
+
+### Acceptance Criteria
+- [ ] PreviewSaveStep displays an "Item Name" field showing the physical item name entered by the user
+- [ ] PreviewSaveStep displays an "Article Title" field showing the purpose-derived article title
+- [ ] QR code preview section shows only the item name, not the article title
+- [ ] Visual layout clearly distinguishes between item properties and article properties through section grouping or visual separation
+- [ ] Field labels use consistent terminology with other parts of the application
+- [ ] The distinction between Item Name and Article Title is visually clear on both desktop and mobile layouts
+- [ ] All text labels and helper text refer to "Item Name" for physical objects and "Article Title" for instructional content
+- [ ] The review step accurately reflects the data that will be saved to the database in the separated Item and Article structure
+
+---
+
+## REQ-211: Update QR Code Generation to Encode Item IDs
+
+**Date**: 2026-01-12 21:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+QR code generation should encode Item IDs that link to the physical item's landing page, which then displays all associated articles, rather than encoding direct links to individual article content.
+
+### Current Behavior
+QR codes generated during the item creation workflow may encode URLs that link directly to article content or use ambiguous identifiers that conflate items with articles. When users scan a QR code, they arrive at a page that assumes a one-to-one relationship between the physical item and its instructional content. The QR generation utilities do not properly distinguish between Item IDs and Article IDs, leading to confusion in the data flow and potential routing issues as the system evolves to support multiple articles per item.
+
+### Expected Behavior
+The QR code generation process creates codes that encode Item IDs exclusively, producing URLs in the format that routes to an item landing page. When a user scans the QR code, they see the item name and a list of all available articles for that physical item, organized by purpose type. The QR generation hook receives item metadata and generates codes based on the Item ID, not the Article ID. Storage of the QR code URL remains with the Item record, as each physical item receives exactly one QR code regardless of how many articles document it.
+
+### User Impact
+Property managers scanning QR codes arrive at a unified view of all documentation available for a physical item, rather than being linked to a single article that might not cover their current need. Users creating items during the workflow see QR codes that properly represent the physical item identity. When multiple articles are added to an item in future interactions, the same QR code continues to work correctly, routing to an updated landing page showing all articles.
+
+### Business Value
+Properly structuring QR codes around Item IDs rather than Article IDs ensures the QR code system scales correctly as the platform evolves to support richer content organization. QR codes remain stable and do not need regeneration when new articles are added to existing items. The architecture supports future features like article recommendations, shared articles, and purpose-based content filtering at the item landing page.
+
+### Acceptance Criteria
+- [ ] QR code generation utilities accept Item ID as the primary identifier for encoding
+- [ ] Generated QR code URLs follow a consistent format that routes to item landing pages
+- [ ] The useSessionQRGeneration hook uses Item IDs when creating QR codes for captured items
+- [ ] QR code URLs stored in the database are associated with Item records, not Article records
+- [ ] QR code generation logic does not reference Article IDs in URL construction
+- [ ] Generated QR codes produce scannable URLs that resolve correctly to item landing pages
+- [ ] The QR code generation process maintains compatibility with existing print workflows
+- [ ] Documentation clearly explains that QR codes represent physical items, not individual articles
+- [ ] All QR code generation occurs after the Item ID is known or can be deterministically generated
+
+
+---
+
+## REQ-212: Instructions List Page
+
+**Date**: 2026-01-12 (Document created/modified)
+**Type**: NEW FEATURE
+**Size**: M
+**Target**: `/dashboard2/` (NOT legacy `/dashboard/`)
+
+### Summary
+Property owners should be able to view all their instructions in a centralized list page at `/dashboard2/instructions`, accessible from the dashboard2 sidebar navigation.
+
+### Current Behavior
+Once instructions are created, there is no dedicated page where property owners can see all their instructions at once. Instructions are scattered across items and difficult to locate. The dashboard2 sidebar has an "Instructions" nav item but it doesn't link to a functional page.
+
+### Expected Behavior
+Property owners can navigate to an "Instructions" page from the **dashboard2 sidebar** (at `/dashboard2/instructions`) where they see a complete list of all instructions for the selected property. Each instruction displays its title (e.g., "How to Use - Refrigerator"), associated item name, and room location.
+
+### User Impact
+Property owners gain visibility over their instructional content. They can easily locate instructions and see what content exists for each item.
+
+### Business Value
+Provides essential read capability for instructions. Foundation for future edit functionality (REQ-213).
+
+### Acceptance Criteria
+- [ ] An "Instructions" navigation item appears in the dashboard2 sidebar and links to `/dashboard2/instructions`
+- [ ] The instructions list page displays all instructions (from `item_articles` table) for the currently selected property
+- [ ] Each instruction in the list shows: instruction title, associated item name, and room (from item tags)
+- [ ] Empty state message shown when no instructions exist
+- [ ] Loading state shown while fetching data
+
+
+---
+
+## REQ-213: Edit Instruction Flow
+
+**Date**: 2026-01-12 (Document created/modified)
+**Type**: NEW FEATURE
+**Size**: L
+**Depends On**: REQ-212
+
+### Summary
+Property owners should be able to edit existing instructions using the same workflow they used to create them, but in a read-only item context where only content can be modified.
+
+### Current Behavior
+There is no way to edit instructions after they are created. Users must delete and recreate if changes are needed.
+
+### Expected Behavior
+Clicking an instruction from the list (REQ-212) opens the ItemCreationWorkflow in "edit mode". The item context (room, item type, specific item, purpose) is pre-populated and read-only. Users can add, remove, or modify content items (videos, photos, PDFs, text, URLs). Saving updates the existing instruction and content records.
+
+### User Impact
+Property owners can maintain accurate, up-to-date instructions as item details change or content needs improvement. Reduces friction in content management.
+
+### Business Value
+Completes CRUD operations for instructions. Reduces support burden from owners struggling to update their content.
+
+### Acceptance Criteria
+- [ ] Clicking an instruction from the list page navigates to edit mode (e.g., `/dashboard2/instructions/[articleId]/edit`)
+- [ ] Edit mode pre-populates item context (room, item type, specific item, purpose) as read-only/display-only
+- [ ] Edit mode loads existing content pieces from `item_links` where `article_id` matches
+- [ ] User can add new content pieces to the instruction
+- [ ] User can remove existing content pieces
+- [ ] User can modify content order
+- [ ] Saving persists changes to the existing `item_articles` and `item_links` records
+- [ ] After saving, user returns to instructions list with confirmation message
+- [ ] Cancel returns to instructions list without saving changes
+

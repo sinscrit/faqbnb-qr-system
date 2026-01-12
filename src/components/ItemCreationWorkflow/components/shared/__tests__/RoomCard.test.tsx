@@ -15,11 +15,11 @@ describe('RoomCard', () => {
     label: 'Kitchen',
     icon: 'chef-hat',
     isSelected: false,
-    onSelect: jest.fn(),
+    onSelect: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders room label correctly', () => {

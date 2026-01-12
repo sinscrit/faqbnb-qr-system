@@ -14,8 +14,8 @@ import { PhotoViewer } from '../PhotoViewer';
 
 // Mock URL.createObjectURL for blob handling
 beforeAll(() => {
-  global.URL.createObjectURL = jest.fn(() => 'blob:test-url');
-  global.URL.revokeObjectURL = jest.fn();
+  global.URL.createObjectURL = vi.fn(() => 'blob:test-url');
+  global.URL.revokeObjectURL = vi.fn();
 });
 
 describe('PhotoViewer', () => {
@@ -26,7 +26,7 @@ describe('PhotoViewer', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -303,7 +303,7 @@ describe('PhotoViewer', () => {
 
   describe('Callbacks', () => {
     it('onClose is triggered when Escape key is pressed', async () => {
-      const mockOnClose = jest.fn();
+      const mockOnClose = vi.fn();
       render(<PhotoViewer {...defaultProps} onClose={mockOnClose} />);
 
       // Press Escape key
@@ -313,7 +313,7 @@ describe('PhotoViewer', () => {
     });
 
     it('onClose is not triggered when enableZoom is false and Escape pressed', async () => {
-      const mockOnClose = jest.fn();
+      const mockOnClose = vi.fn();
       render(<PhotoViewer {...defaultProps} onClose={mockOnClose} enableZoom={false} />);
 
       // Press Escape key - should still work as it's independent of zoom

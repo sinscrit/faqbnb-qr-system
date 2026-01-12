@@ -163,7 +163,7 @@ describe('LocationFilter', () => {
 
   describe('selection', () => {
     it('selects location when clicked', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -244,7 +244,7 @@ describe('LocationFilter', () => {
     });
 
     it('clears selection when clear button clicked', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -284,7 +284,7 @@ describe('LocationFilter', () => {
     });
 
     it('selects first matching location on Enter', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(

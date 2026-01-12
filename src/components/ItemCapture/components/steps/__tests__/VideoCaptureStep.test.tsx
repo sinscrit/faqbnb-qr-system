@@ -52,15 +52,15 @@ interface VideoCaptureStepProps {
 // Mock useMediaCapture Hook
 // =============================================================================
 
-const mockStartCamera = jest.fn().mockResolvedValue(true);
-const mockStopCamera = jest.fn();
-const mockStartRecording = jest.fn().mockResolvedValue(true);
-const mockStopRecording = jest.fn().mockResolvedValue(new Blob(['test video'], { type: 'video/mp4' }));
-const mockToggleFacingMode = jest.fn().mockResolvedValue(true);
-const mockCleanup = jest.fn();
+const mockStartCamera = vi.fn().mockResolvedValue(true);
+const mockStopCamera = vi.fn();
+const mockStartRecording = vi.fn().mockResolvedValue(true);
+const mockStopRecording = vi.fn().mockResolvedValue(new Blob(['test video'], { type: 'video/mp4' }));
+const mockToggleFacingMode = vi.fn().mockResolvedValue(true);
+const mockCleanup = vi.fn();
 
-jest.mock('../../../hooks/useMediaCapture', () => ({
-  useMediaCapture: jest.fn(() => ({
+vi.mock('../../../hooks/useMediaCapture', () => ({
+  useMediaCapture: vi.fn(() => ({
     stream: new MediaStream(),
     isCameraActive: true,
     isRecording: false,
@@ -91,7 +91,7 @@ jest.mock('../../../hooks/useMediaCapture', () => ({
 // Mock CameraPreview Component
 // =============================================================================
 
-jest.mock('../../shared/CameraPreview', () => ({
+vi.mock('../../shared/CameraPreview', () => ({
   CameraPreview: ({ stream, isLoading, error }: { stream: MediaStream | null; isLoading: boolean; error: unknown }) => (
     <div data-testid="camera-preview">
       {isLoading && <span>Loading...</span>}
@@ -121,16 +121,16 @@ const createMockState = (overrides: Partial<ItemCaptureState> = {}): ItemCapture
 
 const createDefaultProps = (overrides: Partial<VideoCaptureStepProps> = {}): VideoCaptureStepProps => ({
   state: createMockState(),
-  addMedia: jest.fn(),
-  goToStep: jest.fn(),
-  prevStep: jest.fn(),
+  addMedia: vi.fn(),
+  goToStep: vi.fn(),
+  prevStep: vi.fn(),
   config: { maxVideoDuration: 120 },
   ...overrides,
 });
 
 describe('VideoCaptureStep', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     jest.useFakeTimers();
   });
 
@@ -463,8 +463,8 @@ describe('VideoCaptureStep', () => {
 
   describe('MediaItem creation', () => {
     it('calls addMedia with correct MediaItem structure on accept', async () => {
-      const addMedia = jest.fn();
-      const goToStep = jest.fn();
+      const addMedia = vi.fn();
+      const goToStep = vi.fn();
 
       render(<VideoCaptureStep {...createDefaultProps({ addMedia, goToStep })} />);
 
@@ -505,7 +505,7 @@ describe('VideoCaptureStep', () => {
     });
 
     it('navigates to add-more step after accepting video', async () => {
-      const goToStep = jest.fn();
+      const goToStep = vi.fn();
 
       render(<VideoCaptureStep {...createDefaultProps({ goToStep })} />);
 
@@ -536,7 +536,7 @@ describe('VideoCaptureStep', () => {
     });
 
     it('sets correct order based on existing mediaItems', async () => {
-      const addMedia = jest.fn();
+      const addMedia = vi.fn();
       const existingMedia = [
         { id: '1', type: 'image' as const, file: new Blob(), order: 0, metadata: { mimeType: 'image/jpeg', fileSize: 100, source: 'capture' as const } },
         { id: '2', type: 'image' as const, file: new Blob(), order: 1, metadata: { mimeType: 'image/jpeg', fileSize: 100, source: 'capture' as const } },

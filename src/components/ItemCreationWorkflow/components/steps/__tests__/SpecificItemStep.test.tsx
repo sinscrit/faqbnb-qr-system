@@ -17,14 +17,14 @@ describe('SpecificItemStep', () => {
     currentSpecificItem: '',
     currentItemName: '',
     existingSessionItems: [] as SessionItem[],
-    onSelectSpecificItem: jest.fn(),
-    onSetItemName: jest.fn(),
-    onNext: jest.fn(),
+    onSelectSpecificItem: vi.fn(),
+    onSetItemName: vi.fn(),
+    onNext: vi.fn(),
     canNext: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -88,7 +88,7 @@ describe('SpecificItemStep', () => {
       const suggestions = ['Stove/Oven', 'Refrigerator', 'Microwave'];
 
       suggestions.forEach((suggestion) => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         const { unmount } = render(<SpecificItemStep {...defaultProps} />);
         fireEvent.click(screen.getByText(suggestion));
         expect(defaultProps.onSelectSpecificItem).toHaveBeenCalledWith(suggestion);

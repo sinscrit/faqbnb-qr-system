@@ -49,7 +49,7 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
-// Mock ItemCapture component
+// Mock ItemCapture component (legacy - kept for backwards compatibility)
 vi.mock('@/components/ItemCapture', () => ({
   ItemCapture: ({ onComplete, onCancel, config }: ItemCaptureProps) => (
     <div data-testid="mock-item-capture">
@@ -63,6 +63,70 @@ vi.mock('@/components/ItemCapture', () => ({
       <button data-testid="cancel-capture-btn" onClick={onCancel}>
         Cancel
       </button>
+    </div>
+  ),
+}));
+
+// Mock MediaCaptureStep adapters (new workflow - REQ-176)
+vi.mock('../../components/steps/adapters', () => ({
+  VideoCaptureAdapter: ({ onAddContent, onComplete, onBack }: any) => (
+    <div data-testid="mock-item-capture">
+      <button
+        data-testid="complete-capture-btn"
+        onClick={() => {
+          onAddContent({
+            id: 'test-content-id',
+            type: 'video',
+            data: { type: 'video', file: new File([''], 'test.mp4', { type: 'video/mp4' }), duration: 30 },
+            order: 0,
+          });
+          onComplete();
+        }}
+      >
+        Complete Capture
+      </button>
+      <button data-testid="cancel-capture-btn" onClick={onBack}>
+        Cancel
+      </button>
+    </div>
+  ),
+  PhotoCaptureAdapter: ({ onAddContent, onComplete, onBack }: any) => (
+    <div data-testid="mock-item-capture">
+      <button
+        data-testid="complete-capture-btn"
+        onClick={() => {
+          onAddContent({
+            id: 'test-content-id',
+            type: 'photo',
+            data: { type: 'photo', file: new File([''], 'test.jpg', { type: 'image/jpeg' }) },
+            order: 0,
+          });
+          onComplete();
+        }}
+      >
+        Complete Capture
+      </button>
+      <button data-testid="cancel-capture-btn" onClick={onBack}>
+        Cancel
+      </button>
+    </div>
+  ),
+  FileUploadAdapter: ({ onComplete, onBack }: any) => (
+    <div data-testid="mock-file-upload">
+      <button data-testid="complete-upload-btn" onClick={onComplete}>Complete Upload</button>
+      <button data-testid="cancel-upload-btn" onClick={onBack}>Cancel</button>
+    </div>
+  ),
+  TextEditorAdapter: ({ onComplete, onBack }: any) => (
+    <div data-testid="mock-text-editor">
+      <button data-testid="complete-text-btn" onClick={onComplete}>Complete Text</button>
+      <button data-testid="cancel-text-btn" onClick={onBack}>Cancel</button>
+    </div>
+  ),
+  UrlInputAdapter: ({ onComplete, onBack }: any) => (
+    <div data-testid="mock-url-input">
+      <button data-testid="complete-url-btn" onClick={onComplete}>Complete URL</button>
+      <button data-testid="cancel-url-btn" onClick={onBack}>Cancel</button>
     </div>
   ),
 }));
@@ -101,36 +165,31 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Step 1: Room Selection
+      // Step 1: Room Selection (auto-advances after click)
       expect(screen.getByText('Select a Room')).toBeInTheDocument();
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
 
-      // Step 2: Item Type Selection
+      // Step 2: Item Type Selection (auto-advances after click)
       await waitFor(() => {
         expect(screen.getByText('What type of item is this?')).toBeInTheDocument();
       });
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
 
-      // Step 3: Specific Item Selection
+      // Step 3: Specific Item Selection (auto-advances after click)
       await waitFor(() => {
         expect(screen.getByText(/What specific item/i)).toBeInTheDocument();
       });
       await user.click(screen.getByText('Refrigerator'));
-      await clickContinue(user);
 
-      // Step 4: Purpose Selection (NEW in Plan-094)
+      // Step 4: Purpose Selection (auto-advances after click)
       await waitForPurposeStep();
       await user.click(screen.getByText('How to Clean'));
-      await clickContinue(user);
 
-      // Step 5: Content Type Selection
+      // Step 5: Content Type Selection (auto-advances after click)
       await waitFor(() => {
         expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument();
       });
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
 
       // Step 6: Content Creation (mock)
       await waitFor(() => {
@@ -190,44 +249,32 @@ describe('Complete Flow Navigation E2E Tests', () => {
         const props = createMockWorkflowProps();
         render(<ItemCreationWorkflow {...props} />);
 
-        // Room selection (capitalize for display)
+        // Room selection (auto-advances after click)
         const roomLabel = room.charAt(0).toUpperCase() + room.slice(1);
         await user.click(screen.getByText(new RegExp(roomLabel, 'i')));
-        await clickContinue(user);
 
-        // Item type selection
+        // Item type selection (auto-advances after click)
         await waitFor(() => {
           expect(screen.getByText('What type of item is this?')).toBeInTheDocument();
         });
         await user.click(screen.getByText(itemType));
-        await clickContinue(user);
 
-        // Specific item selection
+        // Specific item selection (auto-advances after click)
         await waitFor(() => {
-          // Look for the item button
-          const itemBtn = screen.queryByText(item);
-          if (itemBtn) return true;
-          return false;
+          expect(screen.getByText(item)).toBeInTheDocument();
         });
+        await user.click(screen.getByText(item));
 
-        const itemBtn = screen.queryByText(item);
-        if (itemBtn) {
-          await user.click(itemBtn);
-        }
-        await clickContinue(user);
-
-        // Purpose selection
+        // Purpose selection (auto-advances after click)
         await waitForPurposeStep();
         const purposeLabel = PURPOSE_TYPE_LABELS[purpose as PurposeType];
         await user.click(screen.getByText(purposeLabel));
-        await clickContinue(user);
 
-        // Content type selection
+        // Content type selection (auto-advances after click)
         await waitFor(() => {
           expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument();
         });
         await user.click(screen.getByText('Record Video'));
-        await clickContinue(user);
 
         // Content creation
         await waitFor(() => {
@@ -250,21 +297,16 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Create first item with "How to Use" purpose
+      // Create first item with "How to Use" purpose (all steps auto-advance)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Refrigerator')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText(/What specific item/i)).toBeInTheDocument());
       await user.click(screen.getByText('Refrigerator'));
-      await clickContinue(user);
       await waitForPurposeStep();
       await user.click(screen.getByText('How to Use'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument());
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
       await user.click(screen.getByTestId('complete-capture-btn'));
       await waitForPreviewSaveStep();
@@ -275,22 +317,17 @@ describe('Complete Flow Navigation E2E Tests', () => {
       // Choose to add another item
       await user.click(screen.getByText(/Tag New Item/i));
 
-      // Create second item with "Troubleshooting" purpose
+      // Create second item with "Troubleshooting" purpose (all steps auto-advance)
       await waitFor(() => expect(screen.getByText('Select a Room')).toBeInTheDocument());
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Dishwasher')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText(/What specific item/i)).toBeInTheDocument());
       await user.click(screen.getByText('Dishwasher'));
-      await clickContinue(user);
       await waitForPurposeStep();
       await user.click(screen.getByText('Troubleshooting'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument());
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
       await user.click(screen.getByTestId('complete-capture-btn'));
       await waitForPreviewSaveStep();
@@ -320,9 +357,8 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to item type
+      // Navigate to item type (auto-advances after click)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
 
       // Go back
@@ -335,12 +371,10 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to specific item
+      // Navigate to specific item (auto-advances after each click)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByText(/What specific item/i)).toBeInTheDocument());
 
       // Go back
@@ -379,10 +413,9 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to content creation
+      // Navigate to content creation (auto-advances after click)
       await navigateToContentTypeStep(user);
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
 
       // Cancel capture (goes back)
@@ -395,27 +428,22 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to purpose
+      // Navigate to content type step (all steps auto-advance)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Refrigerator')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText(/What specific item/i)).toBeInTheDocument());
       await user.click(screen.getByText('Refrigerator'));
-      await clickContinue(user);
       await waitForPurposeStep();
       await user.click(screen.getByText('How to Clean'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument());
 
       // Go back to purpose
       await clickBack(user);
       await waitForPurposeStep();
 
-      // Verify purpose still selected (or can be re-selected)
-      // Go forward again
-      await clickContinue(user);
+      // Verify we can re-select purpose and advance
+      await user.click(screen.getByText('How to Clean'));
       await waitFor(() => expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument());
     });
 
@@ -424,15 +452,12 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate forward several steps
+      // Navigate forward several steps (all auto-advance)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Refrigerator')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText(/What specific item/i)).toBeInTheDocument());
       await user.click(screen.getByText('Refrigerator'));
-      await clickContinue(user);
       await waitForPurposeStep();
 
       // Navigate back through all steps
@@ -459,9 +484,8 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Select General room
+      // Select General room (auto-advances)
       await user.click(screen.getByText(/General/i));
-      await clickContinue(user);
 
       // Should skip item type selection and go to specific item
       await waitFor(() => {
@@ -477,9 +501,8 @@ describe('Complete Flow Navigation E2E Tests', () => {
       // Navigate to purpose step
       await navigateToPurposeStep(user);
 
-      // Select "Other" purpose
+      // Select "Other" purpose (auto-advances)
       await user.click(screen.getByText('Other'));
-      await clickContinue(user);
 
       // Should proceed to content type selection
       await waitFor(() => {
@@ -487,12 +510,12 @@ describe('Complete Flow Navigation E2E Tests', () => {
       });
     });
 
-    it('prevents navigation forward when required fields missing', async () => {
+    it('shows Continue button as fallback navigation option', async () => {
       const user = userEvent.setup();
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Continue button should be disabled without room selection
+      // Continue button should be visible but disabled without room selection
       const continueBtn = screen.getByRole('button', { name: /continue/i });
       expect(continueBtn).toBeDisabled();
 
@@ -508,12 +531,10 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to specific item step
+      // Navigate to specific item step (auto-advances after each click)
       await user.click(screen.getByText('Kitchen'));
-      await clickContinue(user);
-      await waitFor(() => expect(screen.getByText('Appliance')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('What type of item is this?')).toBeInTheDocument());
       await user.click(screen.getByText('Appliance'));
-      await clickContinue(user);
 
       // Verify custom input is available
       await waitFor(() => {
@@ -590,10 +611,9 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to content creation
+      // Navigate to content creation (auto-advances after click)
       await navigateToContentTypeStep(user);
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
 
       // Cancel
@@ -604,9 +624,8 @@ describe('Complete Flow Navigation E2E Tests', () => {
         expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument();
       });
 
-      // Retry - should work
+      // Retry - should work (auto-advances after click)
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
 
       // Complete this time
@@ -620,10 +639,9 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Navigate to content creation and cancel
+      // Navigate to content creation and cancel (auto-advances after click)
       await navigateToContentTypeStep(user);
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
 
       // Cancel
@@ -632,9 +650,8 @@ describe('Complete Flow Navigation E2E Tests', () => {
       // Back at content type, workflow should still work
       await waitFor(() => expect(screen.getByText(/What content would you like to add/i)).toBeInTheDocument());
 
-      // Complete flow successfully
+      // Complete flow successfully (auto-advances after click)
       await user.click(screen.getByText('Record Video'));
-      await clickContinue(user);
       await waitFor(() => expect(screen.getByTestId('mock-item-capture')).toBeInTheDocument());
       await user.click(screen.getByTestId('complete-capture-btn'));
       await waitForPreviewSaveStep();
@@ -643,6 +660,144 @@ describe('Complete Flow Navigation E2E Tests', () => {
       const saveBtn = screen.getByRole('button', { name: /save/i });
       await user.click(saveBtn);
       await waitFor(() => expect(screen.getByText(/What would you like to do next/i)).toBeInTheDocument());
+    });
+  });
+
+  // ===========================================================================
+  // Post-workflow Header State Tests (REQ-202)
+  // ===========================================================================
+  describe('Post-workflow header state (REQ-202)', () => {
+    it('should show back arrow on preview-save step (before save)', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow to preview-save
+      await navigateToPreviewSaveStep(user);
+
+      // At preview-save, back button should be visible
+      expect(screen.getByLabelText('Go back to previous step')).toBeInTheDocument();
+
+      // Step counter should also be visible
+      expect(screen.getByText(/Step 8 of 8/i)).toBeInTheDocument();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+
+    it('should hide back arrow when reaching next-action step after saving item', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow to preview-save
+      await navigateToPreviewSaveStep(user);
+
+      // At preview-save, back button should be visible
+      expect(screen.getByLabelText('Go back to previous step')).toBeInTheDocument();
+
+      // Save the item and proceed to next-action
+      const saveButton = screen.getByRole('button', { name: /save/i });
+      await user.click(saveButton);
+
+      // Wait for save to complete and navigate to next-action
+      await waitFor(() => {
+        expect(screen.getByText(/What would you like to do next/i)).toBeInTheDocument();
+      });
+
+      // Back button should NOT be visible on post-workflow screen
+      expect(screen.queryByLabelText('Go back to previous step')).not.toBeInTheDocument();
+
+      // Exit button should still be available
+      expect(screen.getByLabelText('Exit workflow')).toBeInTheDocument();
+
+      // Step counter should be hidden
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Step \d+ of \d+/)).not.toBeInTheDocument();
+    });
+
+    it('should hide back arrow on session-summary step', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow to next-action
+      await navigateToNextActionStep(user);
+
+      // Verify we're at next-action
+      expect(screen.getByText(/What would you like to do next/i)).toBeInTheDocument();
+
+      // Back button should NOT be visible
+      expect(screen.queryByLabelText('Go back to previous step')).not.toBeInTheDocument();
+
+      // Click "I'm Done" to go to session-summary
+      await user.click(screen.getByText(/I'm Done/i));
+
+      // Wait for session-summary
+      await waitFor(() => {
+        expect(screen.getByText(/Session Summary/i)).toBeInTheDocument();
+      });
+
+      // Back button should NOT be visible on session-summary either
+      expect(screen.queryByLabelText('Go back to previous step')).not.toBeInTheDocument();
+
+      // Step counter should still be hidden
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Step \d+ of \d+/)).not.toBeInTheDocument();
+
+      // Exit button should remain available
+      expect(screen.getByLabelText('Exit workflow')).toBeInTheDocument();
+    });
+
+    it('exit button remains functional on post-workflow screens', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate through workflow to next-action
+      await navigateToNextActionStep(user);
+
+      // Verify we're at next-action
+      expect(screen.getByText(/What would you like to do next/i)).toBeInTheDocument();
+
+      // Exit button should be clickable
+      const exitButton = screen.getByLabelText('Exit workflow');
+      expect(exitButton).toBeInTheDocument();
+
+      // Click exit button
+      await user.click(exitButton);
+
+      // Should trigger exit flow (either dialog or immediate exit depending on state)
+      // If there are items, a dialog should appear; if not, it should exit immediately
+      await waitFor(() => {
+        // Check for either exit or dialog
+        expect(
+          props.onSessionExit.mock.calls.length > 0 ||
+          screen.queryByRole('alertdialog') ||
+          screen.queryByText(/are you sure/i) ||
+          screen.queryByText(/session complete/i)
+        ).toBeTruthy();
+      });
+    });
+
+    it('header structure remains clean on post-workflow screens', async () => {
+      const user = userEvent.setup();
+      const props = createMockWorkflowProps();
+      const { container } = render(<ItemCreationWorkflow {...props} />);
+
+      // Navigate to next-action
+      await navigateToNextActionStep(user);
+
+      // Header banner should exist
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+
+      // The header navigation controls container should have proper structure
+      // even when back button and step counter are hidden
+      const headerNav = container.querySelector('header .flex.items-center.justify-between');
+      expect(headerNav).toBeInTheDocument();
+
+      // Should have exit button as the only button in header
+      const headerButtons = within(screen.getByRole('banner')).getAllByRole('button');
+      expect(headerButtons).toHaveLength(1);
+      expect(headerButtons[0]).toHaveAttribute('aria-label', 'Exit workflow');
     });
   });
 });

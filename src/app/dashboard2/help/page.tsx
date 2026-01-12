@@ -1,12 +1,13 @@
 'use client';
 
 /**
- * Instructions Page - Dashboard2
+ * Moved from /dashboard2/instructions on 2026-01-12 for REQ-212
+ * Last Modified: 2026-01-12
+ *
+ * Help Page - Dashboard2
  *
  * REQ-207: Create Instructions Page for User Guidance
  * Phase 4, Task 4.3
- *
- * Last Modified: 2026-01-12
  *
  * Provides comprehensive user guidance for key application workflows:
  * - Getting Started
@@ -15,7 +16,7 @@
  * - QR Code Generation
  * - Item Management
  *
- * @route /dashboard2/instructions
+ * @route /dashboard2/help
  * @see docs/REQ-207-create-instructions-page-detailed.md
  */
 
@@ -314,7 +315,7 @@ function InstructionCard({ section }: { section: InstructionSection }) {
 // Main Page Component
 // ============================================================================
 
-export default function InstructionsPage() {
+export default function HelpPage() {
   const router = useRouter();
   const { user, loading: authLoading, currentAccount } = useAuth();
   const { useCanAccess, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
@@ -338,7 +339,7 @@ export default function InstructionsPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication Required</h2>
-        <p className="text-gray-600 mb-6">Please log in to access instructions.</p>
+        <p className="text-gray-600 mb-6">Please log in to access help.</p>
         <button
           onClick={() => router.push('/login')}
           className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
@@ -368,15 +369,15 @@ export default function InstructionsPage() {
 
   // Main content
   return (
-    <div role="main" aria-labelledby="instructions-title">
+    <div role="main" aria-labelledby="help-title">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-[#FF385C]" aria-hidden="true" />
-              <h1 id="instructions-title" className="text-2xl font-bold text-gray-900">
-                Instructions & Help
+              <h1 id="help-title" className="text-2xl font-bold text-gray-900">
+                Help & User Guide
               </h1>
             </div>
             <p className="text-gray-600 mt-1">

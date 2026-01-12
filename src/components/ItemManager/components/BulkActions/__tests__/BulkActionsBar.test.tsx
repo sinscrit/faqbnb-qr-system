@@ -19,18 +19,18 @@ import { BulkActionsBar } from '../BulkActionsBar';
 
 const defaultProps = {
   selectedCount: 5,
-  onDelete: jest.fn(),
-  onAddTag: jest.fn(),
-  onRemoveTag: jest.fn(),
-  onExitSelection: jest.fn(),
+  onDelete: vi.fn(),
+  onAddTag: vi.fn(),
+  onRemoveTag: vi.fn(),
+  onExitSelection: vi.fn(),
 };
 
 const createProps = (overrides = {}) => ({
   ...defaultProps,
-  onDelete: jest.fn(),
-  onAddTag: jest.fn(),
-  onRemoveTag: jest.fn(),
-  onExitSelection: jest.fn(),
+  onDelete: vi.fn(),
+  onAddTag: vi.fn(),
+  onRemoveTag: vi.fn(),
+  onExitSelection: vi.fn(),
   ...overrides,
 });
 
@@ -40,7 +40,7 @@ const createProps = (overrides = {}) => ({
 
 describe('BulkActionsBar', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -114,7 +114,7 @@ describe('BulkActionsBar', () => {
     it('shows Move button when multiPropertyMode is true', () => {
       const props = createProps({
         multiPropertyMode: true,
-        onMoveToProperty: jest.fn(),
+        onMoveToProperty: vi.fn(),
       });
       render(<BulkActionsBar {...props} />);
 
@@ -178,7 +178,7 @@ describe('BulkActionsBar', () => {
     });
 
     it('calls onMoveToProperty when Move button is clicked', async () => {
-      const onMoveToProperty = jest.fn();
+      const onMoveToProperty = vi.fn();
       const props = createProps({
         multiPropertyMode: true,
         onMoveToProperty,
@@ -262,7 +262,7 @@ describe('BulkActionsBar', () => {
     it('all action buttons have aria-label attributes', () => {
       const props = createProps({
         multiPropertyMode: true,
-        onMoveToProperty: jest.fn(),
+        onMoveToProperty: vi.fn(),
       });
       render(<BulkActionsBar {...props} />);
 
@@ -390,7 +390,7 @@ describe('BulkActionsBar', () => {
     it('does not break with falsy multiPropertyMode but truthy onMoveToProperty', () => {
       const props = createProps({
         multiPropertyMode: false,
-        onMoveToProperty: jest.fn(),
+        onMoveToProperty: vi.fn(),
       });
       render(<BulkActionsBar {...props} />);
 

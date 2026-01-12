@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, Home, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Package, Home, BarChart3, FileText } from 'lucide-react';
 import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { CompactAccountSelector } from '@/components/AccountSelector';
 import { Account } from '@/types';
@@ -92,20 +92,21 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   // Role-based navigation items for unified dashboard
   const getNavigationItems = () => {
     const baseItems = [
-      { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
-      { name: 'Items', href: '/dashboard/items', icon: <Package className="h-5 w-5" /> },
+      { name: 'Dashboard', mobileName: 'D/B', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+      { name: 'Items', mobileName: 'Items', href: '/dashboard/items', icon: <Package className="h-5 w-5" /> },
+      { name: 'Instructions', mobileName: 'Instr.', href: '/dashboard/instructions', icon: <FileText className="h-5 w-5" /> },
     ];
 
     if (isAdmin) {
       return [
         ...baseItems,
-        { name: 'Properties', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
-        { name: 'Analytics', href: '/dashboard/analytics', icon: <BarChart3 className="h-5 w-5" /> },
+        { name: 'Properties', mobileName: 'Prop.', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
+        { name: 'Analytics', mobileName: 'Analytics', href: '/dashboard/analytics', icon: <BarChart3 className="h-5 w-5" /> },
       ];
     } else {
       return [
         ...baseItems,
-        { name: 'My Properties', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
+        { name: 'Properties', mobileName: 'Prop.', href: '/dashboard/properties', icon: <Home className="h-5 w-5" /> },
         // Analytics removed - only for admin users
       ];
     }
@@ -228,7 +229,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Navigation */}
       <div className="bg-white border-b border-gray-200 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8" aria-label="Dashboard Navigation">
+          <nav className="flex space-x-4 sm:space-x-8" aria-label="Dashboard Navigation">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
               return (
@@ -242,7 +243,9 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                   }`}
                 >
                   <span className="mr-2">{item.icon}</span>
-                  {item.name}
+                  {/* Desktop: show full name, Mobile: show mobileName */}
+                  <span className="hidden sm:inline">{item.name}</span>
+                  <span className="sm:hidden">{item.mobileName || item.name}</span>
                 </button>
               );
             })}

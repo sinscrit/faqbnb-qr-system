@@ -180,7 +180,7 @@ describe('FilterPanel', () => {
     });
 
     it('calls onClearFilters when Clear All clicked', async () => {
-      const onClearFilters = jest.fn();
+      const onClearFilters = vi.fn();
       const user = userEvent.setup();
 
       const filters: FilterState = {
@@ -206,7 +206,7 @@ describe('FilterPanel', () => {
 
   describe('filter changes', () => {
     it('propagates content type changes to onFiltersChange', async () => {
-      const onFiltersChange = jest.fn();
+      const onFiltersChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -228,7 +228,7 @@ describe('FilterPanel', () => {
     });
 
     it('propagates tag changes to onFiltersChange', async () => {
-      const onFiltersChange = jest.fn();
+      const onFiltersChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -251,7 +251,7 @@ describe('FilterPanel', () => {
     });
 
     it('propagates location changes to onFiltersChange', async () => {
-      const onFiltersChange = jest.fn();
+      const onFiltersChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -274,7 +274,7 @@ describe('FilterPanel', () => {
     });
 
     it('propagates property changes when multiPropertyMode is true', async () => {
-      const onFiltersChange = jest.fn();
+      const onFiltersChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -365,7 +365,7 @@ describe('FilterPanel', () => {
     });
 
     it('calls onOpenChange(false) when overlay clicked', async () => {
-      const onOpenChange = jest.fn();
+      const onOpenChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -391,7 +391,7 @@ describe('FilterPanel', () => {
     });
 
     it('calls onOpenChange(false) when Apply Filters clicked', async () => {
-      const onOpenChange = jest.fn();
+      const onOpenChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -413,7 +413,7 @@ describe('FilterPanel', () => {
     });
 
     it('calls onOpenChange(false) when close button clicked', async () => {
-      const onOpenChange = jest.fn();
+      const onOpenChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -480,7 +480,7 @@ describe('FilterPanel', () => {
     });
 
     it('prevents filter changes when disabled', async () => {
-      const onFiltersChange = jest.fn();
+      const onFiltersChange = vi.fn();
       const user = userEvent.setup();
 
       render(

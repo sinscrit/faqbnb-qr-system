@@ -66,7 +66,7 @@ describe('TagFilter', () => {
 
   describe('removing tags', () => {
     it('removes tag when X button clicked', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -157,7 +157,7 @@ describe('TagFilter', () => {
 
   describe('adding tags', () => {
     it('adds tag when clicked in dropdown', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -217,7 +217,7 @@ describe('TagFilter', () => {
     });
 
     it('selects first matching tag on Enter', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(

@@ -52,7 +52,7 @@
  * @module ItemCreationWorkflow
  * @see README.md for comprehensive usage documentation
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md for implementation details
- * @lastModified 2026-01-10 (Plan-094, REQ-175)
+ * @lastModified 2026-01-12 (REQ-208: Added Article type export)
  */
 
 // =============================================================================
@@ -64,6 +64,7 @@
  *
  * - **Configuration**: Props and config for the main component
  * - **Domain**: Room, item, content, and purpose type identifiers
+ * - **Article**: Content grouped by purpose (REQ-208)
  * - **Session**: State structures for workflow and items
  * - **Output**: Return types from callbacks
  */
@@ -77,6 +78,9 @@ export type {
   ItemType,
   ContentType,
   PurposeType,  // NEW: Plan-094
+
+  // Article types (REQ-208)
+  Article,
 
   // Session types
   WorkflowSession,

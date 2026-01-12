@@ -261,20 +261,96 @@ class PipelineState:
             else:
                 result["Backlog"].append(task)
 
+        # Reverse Done list so most recently completed appears first
+        result["Done"] = list(reversed(result["Done"]))
+
         return result
 
     def get_progress(self) -> tuple:
+        """Return (completed_work_units, total_work_units) for overall progress.
+
+        Calculates progress across all 4 stages (request, overview, details, implementation).
+        Each stage completion for each task counts as 1 work unit.
+        Total = tasks * 4 stages.
+        """
+        tasks = self.tasks
+        total_tasks = len(tasks)
+
+        if total_tasks == 0:
+            return 0, 0
+
+        # Count completed stage flags across all tasks
+        stages = ["request", "overview", "details", "implementation"]
+        completed_units = 0
+
+        for task in tasks:
+            for stage in stages:
+                if task.get(f"{stage}_completed", False):
+                    completed_units += 1
+
+        total_units = total_tasks * len(stages)
+        return completed_units, total_units
+
+    def get_tasks_completed(self) -> tuple:
         """Return (completed, total) task counts based on implementation completion."""
         tasks = self.tasks
-        # Count tasks where implementation is actually completed
         completed = sum(1 for t in tasks if t.get("implementation_completed", False))
         return completed, len(tasks)
 
     def get_current_task(self) -> Optional[dict]:
-        """Get the currently processing task."""
+        """Get the currently processing task based on stage completion flags."""
+        stage_order = ["request", "overview", "details", "implementation"]
+
+        # Method 1: Check stage status for running stage
+        stages = self.data.get("stages", {})
+        for stage_id in stage_order:
+            stage_data = stages.get(stage_id, {})
+            if stage_data.get("status") == "running":
+                stage_completed_key = f"{stage_id}_completed"
+                for task in self.tasks:
+                    if not task.get(stage_completed_key, False):
+                        if stage_id == "request":
+                            return task
+                        elif stage_id == "overview" and task.get("request_completed"):
+                            return task
+                        elif stage_id == "details" and task.get("overview_completed"):
+                            return task
+                        elif stage_id == "implementation" and task.get("details_completed"):
+                            return task
+                break
+
+        # Method 2: Infer current task from completion flags (when stage status not tracked)
+        # Find first task that hasn't completed all stages
         for task in self.tasks:
-            if task.get("status") == "processing":
-                return task
+            if task.get("implementation_completed"):
+                continue  # Fully done
+
+            # Find which stage this task is at
+            if not task.get("request_completed"):
+                return task  # In request stage
+            elif not task.get("overview_completed"):
+                return task  # In overview stage
+            elif not task.get("details_completed"):
+                return task  # In details stage
+            elif not task.get("implementation_completed"):
+                return task  # In implementation stage
+
+        return None
+
+    def get_current_stage_name(self) -> Optional[str]:
+        """Get the name of the current stage being worked on."""
+        current_task = self.get_current_task()
+        if not current_task:
+            return None
+
+        if not current_task.get("request_completed"):
+            return "request"
+        elif not current_task.get("overview_completed"):
+            return "overview"
+        elif not current_task.get("details_completed"):
+            return "details"
+        elif not current_task.get("implementation_completed"):
+            return "implementation"
         return None
 
     def get_testcheck_status(self) -> Optional[dict]:
@@ -379,6 +455,250 @@ class PipelineState:
                 ready.append(task)
 
         return ready
+
+    def get_etc_estimates(self) -> dict:
+        """
+        Calculate estimated time to completion (ETC) for stages and pipeline.
+
+        Returns dict with:
+        - current_stage: {name, elapsed, completed, remaining, avg_per_task, etc_seconds, etc_display}
+        - pipeline: {elapsed, completed, remaining, avg_per_task, etc_seconds, etc_display}
+        - phases: list of {name, status, duration, etc_display}
+        """
+        from datetime import datetime
+
+        result = {
+            "current_stage": None,
+            "pipeline": None,
+            "phases": [],
+        }
+
+        stages = self.data.get("stages", {})
+        tasks = self.tasks
+        total_tasks = len(tasks)
+
+        if total_tasks == 0:
+            return result
+
+        now = datetime.now()
+
+        # Get current stage from task flags (fallback when stage status not tracked)
+        inferred_stage = self.get_current_stage_name()
+
+        # Calculate per-stage ETCs
+        stage_order = ["request", "overview", "details", "implementation"]
+
+        for stage_id in stage_order:
+            stage_data = stages.get(stage_id, {})
+
+            # Count completed tasks for this stage from task flags
+            stage_completed_key = f"{stage_id}_completed"
+            tasks_completed_from_flags = sum(1 for t in tasks if t.get(stage_completed_key, False))
+
+            status = stage_data.get("status", "pending") if stage_data else "pending"
+            started_at_str = stage_data.get("started_at") if stage_data else None
+            completed_at_str = stage_data.get("completed_at") if stage_data else None
+            tasks_completed = stage_data.get("tasks_completed", tasks_completed_from_flags) if stage_data else tasks_completed_from_flags
+
+            # Infer status from task flags if not explicitly set
+            if status == "pending" and tasks_completed_from_flags > 0:
+                if tasks_completed_from_flags >= total_tasks:
+                    status = "completed"
+                elif inferred_stage == stage_id:
+                    status = "running"
+
+            phase_info = {
+                "name": stage_id,
+                "status": status,
+                "duration": None,
+                "etc_display": None,
+                "tasks_completed": tasks_completed_from_flags,
+                "tasks_total": total_tasks,
+            }
+
+            if status == "completed" and started_at_str and completed_at_str:
+                # Completed stage - show actual duration
+                started_at = datetime.fromisoformat(started_at_str)
+                completed_at = datetime.fromisoformat(completed_at_str)
+                duration = (completed_at - started_at).total_seconds()
+                phase_info["duration"] = duration
+                phase_info["etc_display"] = self._format_duration(duration)
+
+            elif status == "running":
+                # Running stage - calculate ETC
+                # Use explicit started_at if available, otherwise estimate from pipeline created_at
+                if started_at_str:
+                    started_at = datetime.fromisoformat(started_at_str)
+                    elapsed = (now - started_at).total_seconds()
+                else:
+                    # Fallback: estimate stage start from pipeline creation + completed stage times
+                    # or just use a portion of total pipeline time
+                    created_at_str = self.data.get("created_at")
+                    if created_at_str:
+                        created_at = datetime.fromisoformat(created_at_str)
+                        total_elapsed = (now - created_at).total_seconds()
+                        # Estimate: each prior stage took proportional time
+                        stages_before = stage_order.index(stage_id)
+                        total_stages = len(stage_order)
+                        if stages_before > 0 and total_tasks > 0:
+                            # Completed tasks in prior stages estimate prior time
+                            prior_tasks_completed = 0
+                            for prior_stage in stage_order[:stages_before]:
+                                prior_key = f"{prior_stage}_completed"
+                                prior_tasks_completed += sum(1 for t in tasks if t.get(prior_key, False))
+                            # Current stage started after prior work completed
+                            if prior_tasks_completed > 0:
+                                avg_per_prior_task = total_elapsed / (prior_tasks_completed + tasks_completed_from_flags) if (prior_tasks_completed + tasks_completed_from_flags) > 0 else 60
+                                estimated_prior_time = prior_tasks_completed * avg_per_prior_task
+                                elapsed = total_elapsed - estimated_prior_time
+                                elapsed = max(30, elapsed)  # At least 30s running
+                            else:
+                                elapsed = total_elapsed / total_stages
+                        else:
+                            elapsed = total_elapsed
+                    else:
+                        elapsed = 60  # Default fallback
+
+                remaining_tasks = total_tasks - tasks_completed
+
+                if tasks_completed > 0 and elapsed > 0:
+                    avg_per_task = elapsed / tasks_completed
+                    etc_seconds = remaining_tasks * avg_per_task
+                    phase_info["elapsed"] = elapsed
+                    phase_info["avg_per_task"] = avg_per_task
+                    phase_info["etc_seconds"] = etc_seconds
+                    phase_info["etc_display"] = f"~{self._format_duration(etc_seconds)} remaining"
+
+                    # Calculate current task ETC (countdown)
+                    # Use updated_at as proxy for when last task completed (= current task started)
+                    updated_at_str = self.data.get("updated_at")
+                    if updated_at_str:
+                        updated_at = datetime.fromisoformat(updated_at_str)
+                        task_elapsed = (now - updated_at).total_seconds()
+                    else:
+                        # Fallback: estimate from stage progress
+                        task_elapsed = elapsed - (tasks_completed * avg_per_task)
+                        task_elapsed = max(0, task_elapsed)
+
+                    task_etc_seconds = max(0, avg_per_task - task_elapsed)
+
+                    # Set as current stage with task ETC
+                    result["current_stage"] = {
+                        "name": stage_id,
+                        "elapsed": elapsed,
+                        "completed": tasks_completed,
+                        "remaining": remaining_tasks,
+                        "avg_per_task": avg_per_task,
+                        "avg_per_task_display": self._format_duration(avg_per_task),
+                        "etc_seconds": etc_seconds,
+                        "etc_display": self._format_duration(etc_seconds),
+                        "task_elapsed": task_elapsed,
+                        "task_etc_seconds": task_etc_seconds,
+                        "current_task_etc": self._format_duration(task_etc_seconds) if task_etc_seconds > 0 else "any moment",
+                    }
+                elif elapsed > 0:
+                    # No tasks completed yet in this stage, estimate from overall avg
+                    created_at_str = self.data.get("created_at")
+                    if created_at_str:
+                        created_at = datetime.fromisoformat(created_at_str)
+                        total_elapsed = (now - created_at).total_seconds()
+                        # Count all completed work units across all stages
+                        total_completed = sum(
+                            sum(1 for t in tasks if t.get(f"{s}_completed", False))
+                            for s in stage_order
+                        )
+                        if total_completed > 0:
+                            avg_per_task = total_elapsed / total_completed
+                            etc_seconds = remaining_tasks * avg_per_task
+                            phase_info["avg_per_task"] = avg_per_task
+                            phase_info["etc_seconds"] = etc_seconds
+                            phase_info["etc_display"] = f"~{self._format_duration(etc_seconds)} remaining"
+
+                            # Task ETC when none completed in this stage yet
+                            updated_at_str = self.data.get("updated_at")
+                            if updated_at_str:
+                                updated_at = datetime.fromisoformat(updated_at_str)
+                                task_elapsed = (now - updated_at).total_seconds()
+                                task_etc_seconds = max(0, avg_per_task - task_elapsed)
+                            else:
+                                task_etc_seconds = avg_per_task
+
+                            result["current_stage"] = {
+                                "name": stage_id,
+                                "elapsed": elapsed,
+                                "completed": 0,
+                                "remaining": remaining_tasks,
+                                "avg_per_task": avg_per_task,
+                                "avg_per_task_display": self._format_duration(avg_per_task),
+                                "etc_seconds": etc_seconds,
+                                "etc_display": self._format_duration(etc_seconds),
+                                "task_elapsed": task_elapsed if updated_at_str else 0,
+                                "task_etc_seconds": task_etc_seconds,
+                                "current_task_etc": self._format_duration(task_etc_seconds) if task_etc_seconds > 0 else "any moment",
+                            }
+                        else:
+                            phase_info["etc_display"] = "calculating..."
+                    else:
+                        phase_info["etc_display"] = "calculating..."
+                else:
+                    phase_info["etc_display"] = "calculating..."
+
+            result["phases"].append(phase_info)
+
+        # Calculate overall pipeline ETC
+        created_at_str = self.data.get("created_at")
+        if created_at_str:
+            created_at = datetime.fromisoformat(created_at_str)
+            total_elapsed = (now - created_at).total_seconds()
+
+            # Count fully completed tasks (implementation_completed)
+            completed_tasks = sum(1 for t in tasks if t.get("implementation_completed", False))
+            remaining_tasks = total_tasks - completed_tasks
+
+            if completed_tasks > 0 and total_elapsed > 0:
+                avg_per_task = total_elapsed / completed_tasks
+                etc_seconds = remaining_tasks * avg_per_task
+
+                result["pipeline"] = {
+                    "elapsed": total_elapsed,
+                    "elapsed_display": self._format_duration(total_elapsed),
+                    "completed": completed_tasks,
+                    "remaining": remaining_tasks,
+                    "avg_per_task": avg_per_task,
+                    "avg_display": self._format_duration(avg_per_task),
+                    "etc_seconds": etc_seconds,
+                    "etc_display": self._format_duration(etc_seconds),
+                }
+            elif total_elapsed > 0:
+                # No tasks completed yet - estimate from current stage progress
+                current = result.get("current_stage")
+                if current and current.get("avg_per_task"):
+                    # Estimate: 4 stages * avg_per_task * remaining_tasks
+                    stages_remaining = 4  # request, overview, details, implementation
+                    etc_seconds = stages_remaining * current["avg_per_task"] * remaining_tasks
+                    result["pipeline"] = {
+                        "elapsed": total_elapsed,
+                        "elapsed_display": self._format_duration(total_elapsed),
+                        "completed": 0,
+                        "remaining": remaining_tasks,
+                        "etc_seconds": etc_seconds,
+                        "etc_display": f"~{self._format_duration(etc_seconds)} (estimated)",
+                    }
+
+        return result
+
+    def _format_duration(self, seconds: float) -> str:
+        """Format seconds into human-readable duration."""
+        if seconds < 60:
+            return f"{int(seconds)}s"
+        elif seconds < 3600:
+            mins = int(seconds // 60)
+            secs = int(seconds % 60)
+            return f"{mins}m {secs}s" if secs > 0 else f"{mins}m"
+        else:
+            hours = int(seconds // 3600)
+            mins = int((seconds % 3600) // 60)
+            return f"{hours}h {mins}m" if mins > 0 else f"{hours}h"
 
 
 def parse_subtasks_from_detailed(details_file: str) -> dict:
@@ -610,8 +930,13 @@ def create_header(pipelines: list) -> Panel:
     ]
 
     for p in pipelines:
-        completed, total = p.get_progress()
-        pct = (completed / total * 100) if total > 0 else 0
+        # Get work unit progress (stages completed across all tasks)
+        completed_units, total_units = p.get_progress()
+        pct = (completed_units / total_units * 100) if total_units > 0 else 0
+
+        # Get task completion count
+        tasks_done, tasks_total = p.get_tasks_completed()
+
         status = p.status
 
         # Create progress bar
@@ -622,7 +947,7 @@ def create_header(pipelines: list) -> Panel:
         status_color = "green" if status == "completed" else "yellow" if status == "running" else "white"
 
         lines.append(f"[bold]{p.name}[/bold]")
-        lines.append(f"  Status: [{status_color}]{status}[/{status_color}] | Progress: [{status_color}]{bar}[/{status_color}] {completed}/{total} ({pct:.0f}%)")
+        lines.append(f"  Status: [{status_color}]{status}[/{status_color}] | Progress: [{status_color}]{bar}[/{status_color}] {pct:.0f}% ({tasks_done}/{tasks_total} tasks done)")
 
         current = p.get_current_task()
         if current:
@@ -641,6 +966,46 @@ def create_header(pipelines: list) -> Panel:
                 if subtasks["pending"]:
                     next_sub = subtasks["pending"][0]
                     lines.append(f"    [dim]Next: {next_sub['id']} - {next_sub['title'][:40]}{'...' if len(next_sub['title']) > 40 else ''}[/dim]")
+
+        # Show ETC estimates
+        etc = p.get_etc_estimates()
+        if etc:
+            current_stage = etc.get("current_stage")
+            pipeline = etc.get("pipeline")
+
+            # Build consolidated ETC line
+            etc_parts = []
+
+            # Current task ETC (based on avg of completed tasks in this stage)
+            if current_stage:
+                task_etc = current_stage.get("current_task_etc")
+                if task_etc:
+                    etc_parts.append(f"[yellow]task[/yellow]: ~{task_etc}")
+
+            # Current stage ETC
+            if current_stage:
+                stage_name = current_stage["name"]
+                stage_etc = current_stage["etc_display"]
+                stage_done = current_stage["completed"]
+                stage_total = stage_done + current_stage["remaining"]
+                etc_parts.append(f"[cyan]{stage_name}[/cyan]: ~{stage_etc} ({stage_done}/{stage_total})")
+
+            # Pipeline ETC
+            if pipeline:
+                pipe_etc = pipeline["etc_display"]
+                pipe_done = pipeline["completed"]
+                pipe_total = pipe_done + pipeline["remaining"]
+                etc_parts.append(f"[magenta]pipeline[/magenta]: ~{pipe_etc} ({pipe_done}/{pipe_total})")
+
+            if etc_parts:
+                lines.append(f"  [bold]⏱ ETC:[/bold] " + " | ".join(etc_parts))
+
+            # Show phase timeline (completed phases only, running phase shown in ETC line above)
+            phases = etc.get("phases", [])
+            completed_phases = [ph for ph in phases if ph["status"] == "completed"]
+            if completed_phases:
+                phase_strs = [f"[green]✓{ph['name']}[/green] ({ph['etc_display']})" for ph in completed_phases]
+                lines.append(f"  [dim]Completed:[/dim] " + " → ".join(phase_strs))
 
         # Show time since last update with staleness based on YAML timeout
         time_ago = p.get_time_since_update()
@@ -863,25 +1228,42 @@ def find_state_files(directory: str = ".", include_worktrees: bool = False) -> l
     return sorted(set(files))
 
 
-def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = False):
-    """Run the live dashboard."""
+def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = False,
+                  watch_new: bool = False, search_dir: str = ".", include_worktrees: bool = False,
+                  latest_only: bool = False):
+    """Run the live dashboard.
+
+    Args:
+        state_files: Initial list of state files to monitor
+        refresh_interval: Seconds between refreshes
+        once: If True, render once and exit
+        watch_new: If True, continuously scan for new state files
+        search_dir: Directory to scan for new state files (when watch_new=True)
+        include_worktrees: Include state files from git worktrees
+        latest_only: If True with watch_new, only show the most recent pipeline (not all)
+    """
     console = Console()
 
-    if not state_files:
+    if not state_files and not watch_new:
         console.print("[red]No pipeline state files found![/red]")
         console.print("Looking for: pipeline-state.json, pipeline-*-state.json")
         return
 
-    console.print(f"[green]Found {len(state_files)} state file(s):[/green]")
-    for f in state_files:
-        console.print(f"  - {f}")
-    console.print()
+    if state_files:
+        console.print(f"[green]Found {len(state_files)} state file(s):[/green]")
+        for f in state_files:
+            console.print(f"  - {f}")
+        console.print()
+
+    if watch_new:
+        console.print(f"[cyan]--watch-new enabled: scanning for new pipelines in {search_dir}[/cyan]")
+        console.print()
 
     # Load pipelines
     pipelines = [PipelineState(f) for f in state_files]
     pipelines = [p for p in pipelines if p.data]
 
-    if not pipelines:
+    if not pipelines and not watch_new:
         console.print("[red]No valid pipeline state files found[/red]")
         return
 
@@ -891,13 +1273,43 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
         console.print(dashboard)
         return
 
-    console.print(f"[dim]Refreshing every {refresh_interval} seconds. Press Ctrl+C to exit.[/dim]")
+    mode_info = f"Refreshing every {refresh_interval} seconds"
+    if watch_new:
+        mode_info += " + watching for new pipelines"
+    console.print(f"[dim]{mode_info}. Press Ctrl+C to exit.[/dim]")
     console.print()
     time.sleep(1)
+
+    # Track known state files for watch_new mode
+    known_files = set(state_files)
 
     try:
         with Live(console=console, refresh_per_second=1, screen=True) as live:
             while True:
+                # If watch_new is enabled, scan for new state files
+                if watch_new:
+                    current_files = find_state_files(search_dir, include_worktrees=include_worktrees)
+
+                    if latest_only:
+                        # Only show the most recently modified file
+                        if current_files:
+                            files_with_mtime = []
+                            for f in current_files:
+                                try:
+                                    mtime = os.path.getmtime(f)
+                                    files_with_mtime.append((f, mtime))
+                                except OSError:
+                                    pass
+                            if files_with_mtime:
+                                files_with_mtime.sort(key=lambda x: x[1], reverse=True)
+                                state_files = [files_with_mtime[0][0]]
+                    else:
+                        # Accumulate all new files
+                        new_files = set(current_files) - known_files
+                        if new_files:
+                            known_files.update(new_files)
+                            state_files = list(known_files)
+
                 # Reload all state files
                 pipelines = [PipelineState(f) for f in state_files]
 
@@ -905,7 +1317,14 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
                 pipelines = [p for p in pipelines if p.data]
 
                 if not pipelines:
-                    live.update(Panel("[red]No valid pipeline state files found[/red]"))
+                    if watch_new:
+                        live.update(Panel(
+                            "[yellow]Waiting for pipeline state files...[/yellow]\n"
+                            f"[dim]Scanning: {search_dir}[/dim]",
+                            title="[cyan]--watch-new[/cyan]"
+                        ))
+                    else:
+                        live.update(Panel("[red]No valid pipeline state files found[/red]"))
                 else:
                     dashboard = create_dashboard(pipelines)
                     live.update(dashboard)
@@ -957,6 +1376,11 @@ def main():
         action="store_true",
         help="Show only the most recently modified pipeline"
     )
+    parser.add_argument(
+        "--watch-new",
+        action="store_true",
+        help="Continuously scan for new pipeline state files (useful when daemon creates new pipelines)"
+    )
 
     args = parser.parse_args()
 
@@ -982,7 +1406,15 @@ def main():
             state_files = [state_files_with_mtime[0][0]]
             print(f"[--latest] Showing most recent: {state_files[0]}")
 
-    run_dashboard(state_files, args.refresh, args.once)
+    run_dashboard(
+        state_files,
+        refresh_interval=args.refresh,
+        once=args.once,
+        watch_new=args.watch_new,
+        search_dir=args.dir,
+        include_worktrees=args.worktrees,
+        latest_only=args.latest
+    )
 
 
 if __name__ == "__main__":

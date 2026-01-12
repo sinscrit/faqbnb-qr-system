@@ -43,15 +43,15 @@ interface MediaItem {
 // Mock Setup
 // =============================================================================
 
-const mockStartCamera = jest.fn().mockResolvedValue(true);
-const mockStopCamera = jest.fn();
-const mockStartRecording = jest.fn().mockResolvedValue(true);
-const mockStopRecording = jest.fn().mockResolvedValue(new Blob(['test video'], { type: 'video/mp4' }));
-const mockToggleFacingMode = jest.fn().mockResolvedValue(true);
-const mockCleanup = jest.fn();
+const mockStartCamera = vi.fn().mockResolvedValue(true);
+const mockStopCamera = vi.fn();
+const mockStartRecording = vi.fn().mockResolvedValue(true);
+const mockStopRecording = vi.fn().mockResolvedValue(new Blob(['test video'], { type: 'video/mp4' }));
+const mockToggleFacingMode = vi.fn().mockResolvedValue(true);
+const mockCleanup = vi.fn();
 
-jest.mock('../hooks/useMediaCapture', () => ({
-  useMediaCapture: jest.fn(() => ({
+vi.mock('../hooks/useMediaCapture', () => ({
+  useMediaCapture: vi.fn(() => ({
     stream: new MediaStream(),
     isCameraActive: true,
     isRecording: false,
@@ -78,7 +78,7 @@ jest.mock('../hooks/useMediaCapture', () => ({
   })),
 }));
 
-jest.mock('../components/shared/CameraPreview', () => ({
+vi.mock('../components/shared/CameraPreview', () => ({
   CameraPreview: ({ stream }: { stream: MediaStream | null }) => (
     <div data-testid="camera-preview">{stream ? 'Stream Active' : 'No Stream'}</div>
   ),
@@ -104,7 +104,7 @@ const createMockState = (overrides: Partial<ItemCaptureState> = {}): ItemCapture
 
 describe('VideoCaptureStep Integration Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     jest.useFakeTimers();
   });
 
@@ -118,9 +118,9 @@ describe('VideoCaptureStep Integration Tests', () => {
 
   describe('wizard integration', () => {
     it('receives correct props from wizard context', () => {
-      const addMedia = jest.fn();
-      const goToStep = jest.fn();
-      const prevStep = jest.fn();
+      const addMedia = vi.fn();
+      const goToStep = vi.fn();
+      const prevStep = vi.fn();
 
       render(
         <VideoCaptureStep
@@ -137,15 +137,15 @@ describe('VideoCaptureStep Integration Tests', () => {
     });
 
     it('addMedia correctly adds to wizard state', async () => {
-      const addMedia = jest.fn();
-      const goToStep = jest.fn();
+      const addMedia = vi.fn();
+      const goToStep = vi.fn();
 
       render(
         <VideoCaptureStep
           state={createMockState()}
           addMedia={addMedia}
           goToStep={goToStep}
-          prevStep={jest.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -180,14 +180,14 @@ describe('VideoCaptureStep Integration Tests', () => {
     });
 
     it('goToStep navigates within wizard', async () => {
-      const goToStep = jest.fn();
+      const goToStep = vi.fn();
 
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
+          addMedia={vi.fn()}
           goToStep={goToStep}
-          prevStep={jest.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -223,15 +223,15 @@ describe('VideoCaptureStep Integration Tests', () => {
 
   describe('full capture flow', () => {
     it('completes full record → review → accept flow', async () => {
-      const addMedia = jest.fn();
-      const goToStep = jest.fn();
+      const addMedia = vi.fn();
+      const goToStep = vi.fn();
 
       render(
         <VideoCaptureStep
           state={createMockState()}
           addMedia={addMedia}
           goToStep={goToStep}
-          prevStep={jest.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -285,15 +285,15 @@ describe('VideoCaptureStep Integration Tests', () => {
     });
 
     it('completes full record → review → retake → accept flow', async () => {
-      const addMedia = jest.fn();
-      const goToStep = jest.fn();
+      const addMedia = vi.fn();
+      const goToStep = vi.fn();
 
       render(
         <VideoCaptureStep
           state={createMockState()}
           addMedia={addMedia}
           goToStep={goToStep}
-          prevStep={jest.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -357,13 +357,13 @@ describe('VideoCaptureStep Integration Tests', () => {
 
   describe('cancel flow', () => {
     it('handles Escape key to return to previous step in preview mode', async () => {
-      const prevStep = jest.fn();
+      const prevStep = vi.fn();
 
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
           prevStep={prevStep}
           config={{ maxVideoDuration: 120 }}
         />
@@ -381,9 +381,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -419,9 +419,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -440,9 +440,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -454,9 +454,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       const { unmount } = render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -470,9 +470,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );
@@ -488,9 +488,9 @@ describe('VideoCaptureStep Integration Tests', () => {
       render(
         <VideoCaptureStep
           state={createMockState()}
-          addMedia={jest.fn()}
-          goToStep={jest.fn()}
-          prevStep={jest.fn()}
+          addMedia={vi.fn()}
+          goToStep={vi.fn()}
+          prevStep={vi.fn()}
           config={{ maxVideoDuration: 120 }}
         />
       );

@@ -193,4 +193,86 @@ describe('WorkflowHeader', () => {
       expect(onExit).toHaveBeenCalledTimes(1);
     });
   });
+
+  // =============================================================================
+  // Post-workflow configuration tests (REQ-202)
+  // =============================================================================
+
+  describe('post-workflow configuration (REQ-202)', () => {
+    it('renders correctly with canGoBack=false and showStepCounter=false (post-workflow state)', () => {
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          canGoBack={false}
+          showStepCounter={false}
+        />
+      );
+
+      // Back button should NOT be rendered
+      expect(screen.queryByLabelText('Go back to previous step')).not.toBeInTheDocument();
+
+      // Step counter should NOT be rendered
+      expect(screen.queryByText(/Step \d+ of \d+/)).not.toBeInTheDocument();
+
+      // Progress bar should NOT be rendered
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+
+      // Exit button SHOULD still be rendered
+      expect(screen.getByLabelText('Exit workflow')).toBeInTheDocument();
+
+      // Header structure should remain
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+    });
+
+    it('maintains accessibility with post-workflow configuration', () => {
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          canGoBack={false}
+          showStepCounter={false}
+        />
+      );
+
+      // Exit button should be keyboard focusable
+      const exitButton = screen.getByLabelText('Exit workflow');
+      expect(exitButton).not.toHaveAttribute('tabindex', '-1');
+
+      // No orphaned interactive elements - only exit button
+      const buttons = screen.getAllByRole('button');
+      expect(buttons).toHaveLength(1); // Only exit button
+    });
+
+    it('maintains consistent layout when all optional elements are hidden', () => {
+      const { container } = render(
+        <WorkflowHeader
+          {...defaultProps}
+          canGoBack={false}
+          showStepCounter={false}
+        />
+      );
+
+      // Header element should exist
+      const header = screen.getByRole('banner');
+      expect(header).toBeInTheDocument();
+
+      // Navigation controls container should still exist
+      const navControls = container.querySelector('.flex.items-center.justify-between');
+      expect(navControls).toBeInTheDocument();
+    });
+
+    it('exit button remains functional in post-workflow state', () => {
+      const onExit = vi.fn();
+      render(
+        <WorkflowHeader
+          {...defaultProps}
+          canGoBack={false}
+          showStepCounter={false}
+          onExit={onExit}
+        />
+      );
+
+      fireEvent.click(screen.getByLabelText('Exit workflow'));
+      expect(onExit).toHaveBeenCalledTimes(1);
+    });
+  });
 });

@@ -1389,7 +1389,8 @@ def run_task_stages(
     config: dict,
     state: dict,
     dry_run: bool = False,
-    stage_filter: Optional[List[str]] = None
+    stage_filter: Optional[List[str]] = None,
+    state_path: Optional[Path] = None
 ) -> bool:
     """
     Run all stages for a single task (vertical/per-request mode).
@@ -1397,6 +1398,7 @@ def run_task_stages(
 
     Args:
         stage_filter: Optional list of stage IDs to run. If None, run all stages.
+        state_path: Path to state file for incremental saves after each stage.
     """
     import time
 
@@ -1410,10 +1412,14 @@ def run_task_stages(
         if not stage.get('enabled', True):
             continue
 
+        # Skip pipeline-level stages (these run once after all tasks complete, not per-task)
+        if stage.get('mode') == 'pipeline':
+            continue
+
         # Skip stages not in filter (if filter is specified)
         if stage_filter and stage['id'] not in stage_filter:
             continue
-        
+
         stage_id = stage['id']
         agent_name = stage.get('agent', {}).get('name', stage_id)
 
@@ -1590,6 +1596,11 @@ def run_task_stages(
                 print(f"    ✓ Completed ({stage_elapsed_str})")
             else:
                 print(f"    ✓ Completed")
+
+        # Save state after each stage (incremental progress tracking)
+        if state_path and not dry_run:
+            state['updated_at'] = datetime.now().isoformat()
+            save_state(state, state_path)
 
     return True
 
@@ -3324,7 +3335,7 @@ def run_pipeline_per_request(state: dict, config: dict, dry_run: bool = False, t
         
         # Run all stages for this task
         task_start = time.time()
-        success = run_task_stages(task, task_dict, config, state, dry_run, stage_filter)
+        success = run_task_stages(task, task_dict, config, state, dry_run, stage_filter, state_path)
         task_elapsed = time.time() - task_start
         task_elapsed_str = format_duration(task_elapsed)
         
@@ -4056,8 +4067,7 @@ Examples:
             from health_check import run_health_check, CheckStatus
         except ImportError:
             try:
-                # Try relative to this file
-                import sys
+                # Try relative to this file (sys already imported at module level)
                 sys.path.insert(0, str(Path(__file__).parent))
                 from health_check import run_health_check, CheckStatus
             except ImportError:

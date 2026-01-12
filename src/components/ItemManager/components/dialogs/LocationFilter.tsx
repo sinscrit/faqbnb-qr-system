@@ -188,7 +188,7 @@ export function LocationFilter({
       <p className="text-sm font-medium text-gray-700">{label}</p>
 
       {/* Dropdown Trigger */}
-      <div className="relative">
+      <div className="relative flex items-center gap-1">
         <button
           type="button"
           onClick={toggleDropdown}
@@ -196,7 +196,7 @@ export function LocationFilter({
           aria-expanded={isOpen}
           aria-haspopup="listbox"
           className={cn(
-            'flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors',
+            'flex items-center gap-2 flex-1 px-3 py-2 rounded-lg text-sm transition-colors',
             'min-h-[44px]', // Touch target
             'bg-white text-left',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
@@ -223,21 +223,6 @@ export function LocationFilter({
             {selectedLocation || placeholder}
           </span>
 
-          {/* Clear Button */}
-          {selectedLocation && !disabled && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className={cn(
-                'p-1 hover:bg-blue-100 rounded-full transition-colors',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
-              )}
-              aria-label="Clear location selection"
-            >
-              <X className="h-4 w-4 text-blue-600" />
-            </button>
-          )}
-
           <ChevronDown
             className={cn(
               'h-4 w-4 flex-shrink-0 transition-transform',
@@ -246,6 +231,22 @@ export function LocationFilter({
             )}
           />
         </button>
+
+        {/* Clear Button - Outside the main button to avoid nesting */}
+        {selectedLocation && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className={cn(
+              'p-2 hover:bg-blue-100 rounded-full transition-colors',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+              'min-h-[44px] min-w-[44px] flex items-center justify-center'
+            )}
+            aria-label="Clear location selection"
+          >
+            <X className="h-4 w-4 text-blue-600" />
+          </button>
+        )}
 
         {/* Dropdown Menu */}
         {isOpen && (

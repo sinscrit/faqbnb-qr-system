@@ -9,7 +9,7 @@
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-08 - Mobile header optimization
+ * @modified 2026-01-12 - REQ-206: Added responsive mobile label display logic
  */
 
 import { useRouter, usePathname } from 'next/navigation';
@@ -171,7 +171,9 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
-                  {item.name}
+                  {/* REQ-206: Desktop shows full label, Mobile shows abbreviated */}
+                  <span className="hidden md:inline">{item.name}</span>
+                  <span className="md:hidden">{item.mobileLabel || item.name}</span>
                 </button>
               );
             })}

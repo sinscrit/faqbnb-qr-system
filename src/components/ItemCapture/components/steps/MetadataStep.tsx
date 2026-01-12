@@ -4,24 +4,27 @@
  * MetadataStep Component
  *
  * First step in the ItemCapture wizard. Collects item metadata including:
- * - Title (required)
+ * - Item Name (required) - the physical item this QR code will be attached to
+ * - Content Purpose (optional) - classify the type of instructions (REQ-183)
  * - Room (optional, with presets + custom input)
  * - Tags (optional, pill-based multi-select)
  * - Item Type (optional dropdown)
  *
  * @module ItemCapture/components/steps/MetadataStep
- * @lastModified 2026-01-08 (Label updates: Location->Room, Appliance Type->Item Type)
+ * @lastModified 2026-01-12 (REQ-183: Added Content Purpose dropdown field)
  */
 
 import React, { useState, useCallback, useRef, useEffect, useId } from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronDown, X } from 'lucide-react';
 import type { ItemMetadata, ApplianceType } from '../../ItemCapture.types';
+import type { PurposeType } from '@/types';
 import {
   PRESET_LOCATIONS,
   APPLIANCE_TYPES,
   SUGGESTED_TAGS,
   METADATA_CONSTRAINTS,
+  CONTENT_PURPOSE_OPTIONS,
 } from '../../utils/constants';
 
 // =============================================================================
@@ -50,11 +53,11 @@ export interface MetadataStepProps {
 export function validateMetadata(metadata: ItemMetadata): Record<string, string> {
   const errors: Record<string, string> = {};
 
-  // Title validation (required)
+  // Item Name validation (required)
   if (!metadata.title?.trim()) {
-    errors.title = 'Title is required';
+    errors.title = 'Item name is required';
   } else if (metadata.title.length > METADATA_CONSTRAINTS.title.maxLength) {
-    errors.title = `Title must be ${METADATA_CONSTRAINTS.title.maxLength} characters or less`;
+    errors.title = `Item name must be ${METADATA_CONSTRAINTS.title.maxLength} characters or less`;
   }
 
   // Location validation (optional, but check length if provided)
@@ -92,6 +95,7 @@ export function MetadataStep({
   const uniqueId = useId();
   const titleId = `title-${uniqueId}`;
   const titleErrorId = `title-error-${uniqueId}`;
+  const purposeId = `purpose-${uniqueId}`;
   const locationId = `location-${uniqueId}`;
   const locationErrorId = `location-error-${uniqueId}`;
   const tagsId = `tags-${uniqueId}`;
@@ -314,6 +318,18 @@ export function MetadataStep({
     [onUpdate]
   );
 
+  /**
+   * Handle content purpose dropdown selection.
+   * Clears selection if empty string selected (back to "Select...").
+   * @see REQ-183
+   */
+  const handlePurposeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    onUpdate({
+      contentPurpose: value === '' ? undefined : (value as PurposeType),
+    });
+  }, [onUpdate]);
+
   // Filter suggestions to exclude already selected tags
   const availableSuggestions = SUGGESTED_TAGS.filter(
     tag => !(metadata.tags || []).some(t => t.toLowerCase() === tag.toLowerCase())
@@ -342,7 +358,7 @@ export function MetadataStep({
           htmlFor={titleId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Title <span className="text-red-500">*</span>
+          Item Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -351,7 +367,7 @@ export function MetadataStep({
           onChange={handleTitleChange}
           onBlur={handleTitleBlur}
           maxLength={METADATA_CONSTRAINTS.title.maxLength}
-          placeholder="Enter item title..."
+          placeholder="e.g., Steamer, Coffee Maker, Hair Dryer"
           aria-required="true"
           aria-invalid={!!errors.title}
           aria-describedby={errors.title ? titleErrorId : undefined}
@@ -373,8 +389,51 @@ export function MetadataStep({
             {errors.title}
           </p>
         )}
+        {/* Helper text explaining Item Name purpose */}
         <p className="text-gray-500 text-xs mt-1">
+          This is the name of the physical item (e.g., &apos;Steamer&apos;). Instructions like &apos;How to Clean&apos; are captured separately as articles.
+        </p>
+        <p className="text-gray-400 text-xs mt-0.5">
           {metadata.title.length}/{METADATA_CONSTRAINTS.title.maxLength} characters
+        </p>
+      </div>
+
+      {/* Content Purpose Field (Optional) - REQ-183 */}
+      <div>
+        <label
+          htmlFor={purposeId}
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Content Purpose
+          <span className="text-gray-400 font-normal ml-1">(optional)</span>
+        </label>
+        <div className="relative">
+          <select
+            id={purposeId}
+            value={metadata.contentPurpose || ''}
+            onChange={handlePurposeChange}
+            className={cn(
+              'w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+              'hover:border-gray-400 transition-colors',
+              'min-h-[48px] bg-white pr-10'
+            )}
+            aria-describedby={`${purposeId}-help`}
+          >
+            <option value="">Select content type...</option>
+            {CONTENT_PURPOSE_OPTIONS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+            aria-hidden="true"
+          />
+        </div>
+        <p id={`${purposeId}-help`} className="text-gray-500 text-xs mt-1">
+          Optionally classify what type of instructions you&apos;re creating
         </p>
       </div>
 

@@ -10,8 +10,8 @@ import { SessionSummaryStep } from '../SessionSummaryStep';
 import type { SessionItem, ContentPiece } from '../../../ItemCreationWorkflow.types';
 
 // Mock URL.createObjectURL and revokeObjectURL (needed for SessionItemCard thumbnails)
-const mockCreateObjectURL = jest.fn(() => 'blob:test-url');
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn(() => 'blob:test-url');
+const mockRevokeObjectURL = vi.fn();
 
 beforeAll(() => {
   global.URL.createObjectURL = mockCreateObjectURL;
@@ -19,7 +19,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // =============================================================================
@@ -51,15 +51,15 @@ describe('SessionSummaryStep', () => {
     ],
     existingItems: [],
     isLoadingExisting: false,
-    onEditItem: jest.fn(),
-    onRemoveItem: jest.fn(),
-    onAddMoreItems: jest.fn(),
-    onProceedToPrint: jest.fn(),
-    onFinishWithoutPrint: jest.fn(),
+    onEditItem: vi.fn(),
+    onRemoveItem: vi.fn(),
+    onAddMoreItems: vi.fn(),
+    onProceedToPrint: vi.fn(),
+    onFinishWithoutPrint: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

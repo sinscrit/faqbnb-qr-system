@@ -1,0 +1,658 @@
+# =============================================================================
+# Pipeline Configuration: FAQBNB Review Implementation (Plan-104)
+# =============================================================================
+#
+# Generated: 2026-01-11 23:50:00 PST
+# Last Modified: 2026-01-11 23:50:00 PST
+# Source: ./docs/prd/Plan-104-FAQBNB-Review-2026-01-11-Implementation.md
+#
+# This pipeline processes the FAQBNB Review implementation plan (Plan-104)
+# through the agent workflow system. Plan-104 addresses 5 change requests:
+# REQ-1 (Dashboard Cards), REQ-2 (Data Model), REQ-3 (What's Next),
+# REQ-4 (Navigation), REQ-5 (Step Count).
+#
+# Usage:
+#   python pipeline_orchestrator.py --config ./pipeline-faqbnb-review-104.yaml
+#   python pipeline_orchestrator.py --config ./pipeline-faqbnb-review-104.yaml --dry-run
+#   python pipeline_orchestrator.py --config ./pipeline-faqbnb-review-104.yaml --list-tasks
+#   python pipeline_orchestrator.py --config ./pipeline-faqbnb-review-104.yaml --tasks "1,2,3"
+#   python pipeline_orchestrator.py --config ./pipeline-faqbnb-review-104.yaml --stages "request,overview"
+#
+# =============================================================================
+
+pipeline:
+  name: faqbnb-review-104
+  version: "1.0"
+  description: "Process FAQBNB Review implementation plan (Plan-104: 5 change requests) through agent pipeline"
+
+  # Pipeline mode:
+  #   - "horizontal": All tasks through stage 1, then all through stage 2, etc.
+  #   - "per_request": All stages for each task before moving to next task.
+  #   - "hybrid": Stages 1-2 horizontal → dependency analysis → Stages 3-4 in dependency order
+  mode: hybrid
+
+  # Global default timeout for agent invocations (in seconds)
+  default_timeout: 900  # 15 minutes
+
+# =============================================================================
+# Parallelization Configuration
+# =============================================================================
+
+parallelization:
+  enabled: false
+  max_concurrent: 3
+  branch_pattern: "pipeline/{pipeline_name}/{cluster_id}"
+  worktree_dir: "../.worktrees/{pipeline_name}/{cluster_id}"
+  merge_strategy: "sequential"
+  cleanup_worktrees: true
+  on_merge_conflict: "pause_and_notify"
+
+# =============================================================================
+# Dependency Tracking Configuration
+# =============================================================================
+
+dependency_tracking:
+  enabled: true
+
+  extraction:
+    section_pattern: "^## Dependencies"
+    depends_on_pattern: "^### Depends On"
+    blocks_pattern: "^### Blocks"
+    parallel_safety_pattern: "^### Parallel Safety"
+    task_ref_pattern: "Task\\s+(\\d+\\.\\d+)"
+    files_touched_pattern: "Files touched:\\s*(.+)"
+
+  state_schema:
+    tasks: {}
+    graph:
+      nodes: []
+      edges: []
+      roots: []
+      leaves: []
+    execution:
+      topological_order: []
+      critical_path: []
+      parallel_clusters: []
+
+  validation:
+    fail_on_cycles: true
+    warn_on_no_dependencies: true
+    warn_on_unknown_reference: true
+    fail_on_missing_reference: false
+
+  recompute_clusters:
+    on_extraction: true
+    on_mode_switch: true
+    on_demand: true
+
+# =============================================================================
+# Source Document
+# =============================================================================
+
+source:
+  path: ./docs/prd/Plan-104-FAQBNB-Review-2026-01-11-Implementation.md
+
+  extraction:
+    # Pattern to match tasks like: - [ ] **Task 0.1:** Update MetadataStep.tsx - Change "Title" label to "Item Name"
+    task_pattern: '^\s*-\s*\[\s*\]\s*\*\*Task\s+(\d+\.\d+):\*\*\s+(.+?)$'
+    task_groups:
+      id: 1
+      title: 2
+
+    # Pattern to match phases like: ## Phase 0: REQ-2 - Fix Data Model (CRITICAL)
+    phase_pattern: '^##\s+Phase\s+(\d+):\s+(.+?)$'
+    phase_groups:
+      number: 1
+      name: 2
+
+    description:
+      mode: following_bullets
+      end_patterns:
+        - '^\s*-\s*\[\s*\]\s*\*\*Task'  # Next task
+        - '^##\s+Phase'                  # Next phase
+        - '^##\s+'                       # Major section
+        - '^###\s+'                      # Subsection
+        - '^---'                         # Section divider
+
+# =============================================================================
+# Output Locations
+# =============================================================================
+
+outputs:
+  requests: ./docs/gen_requests.md
+  overviews: ./docs/
+  details: ./docs/
+  state: ./pipeline-faqbnb-review-104-state.json
+  logs: ./pipeline-faqbnb-review-104.log
+
+# =============================================================================
+# Request Stages (Per-Request Mode)
+# =============================================================================
+
+request_stages:
+  # -------------------------------------------------------------------------
+  # Stage 1: Create Request
+  # -------------------------------------------------------------------------
+  - id: request
+    name: "Create Request"
+    description: "Convert implementation task into formal requirement"
+    enabled: true
+
+    agent:
+      name: "01-request-fa"
+      invocation_template: |
+        use agent 01-request-fa to create the request for: {full_task}
+
+        IMPORTANT: Before creating the request:
+        1. Read docs/gen_requests.md to find the HIGHEST existing REQ-XXX number
+        2. Use the NEXT sequential number (e.g., if REQ-180 exists, use REQ-181)
+        3. Format MUST be REQ-XXX (three digits minimum, e.g., REQ-181, not REQ-2)
+        4. Append the new request to docs/gen_requests.md
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 240  # 4 minutes
+
+    output:
+      type: append
+      file: ./docs/gen_requests.md
+
+  # -------------------------------------------------------------------------
+  # Stage 2: Create Overview
+  # -------------------------------------------------------------------------
+  - id: overview
+    name: "Create Overview"
+    description: "Pull relevant context from codebase for the request"
+    enabled: true
+
+    agent:
+      name: "02-techlead-overview"
+      invocation_template: |
+        Acting as a Technical Lead, create an implementation breakdown document for:
+        {requests_file_path} - Request #{request_id_num}
+
+        **Implementation Plan Reference**: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+        - Details:
+            {task_description_formatted}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-overview.md
+
+        **Instructions**:
+        1. Read the request from {requests_file_path} (find Request #{request_id_num})
+        2. Read the implementation plan from {implementation_plan_path} for context on:
+           - REQ-2 (Phase 0): Data model UI clarity (Item vs Article separation)
+           - REQ-5 (Phase 1): Workflow step count fix (8 steps, not 10)
+           - REQ-3 (Phase 2): What's Next screen refactor (PostWorkflowMenu component)
+           - REQ-1 (Phase 3): Dashboard card clickability
+           - REQ-4 (Phase 4): Navigation menu updates (Instructions menu item)
+        3. Investigate the codebase for existing patterns:
+           - Dashboard components (UserDashboard.tsx, KPIDashboardOverview.tsx)
+           - Navigation patterns (RoleBasedNavigation.tsx, dashboard/layout.tsx)
+           - ItemCapture workflow (ItemCapture.tsx, ProgressIndicator.tsx, CaptureWizard.tsx)
+           - Data model types (src/types/index.ts, ItemCapture.types.ts)
+        4. Create the overview document following the standard structure
+        5. Include an "Authorized Files and Functions for Modification" section
+
+        **CRITICAL: Dependency Analysis Section**
+        You MUST include a "## Dependencies" section in the overview document with:
+
+        ```markdown
+        ## Dependencies
+
+        ### Depends On (upstream)
+        <!-- Tasks that MUST complete before this task can start -->
+        - Task X.Y: [reason]
+
+        ### Blocks (downstream)
+        <!-- Tasks that cannot start until this task completes -->
+        - Task A.B: [reason]
+
+        ### Parallel Safety
+        <!-- Can this task run in parallel with others? -->
+        - Files touched: [list files this task modifies]
+        - Conflicts with: [tasks that modify same files]
+        - Safe to parallelize with: [tasks with no file overlap]
+        ```
+
+        Consider these known dependencies from the implementation plan:
+        - Phase 0 (REQ-2) is CRITICAL and should complete first (establishes Item vs Article terminology)
+        - Phase 1 (REQ-5) depends on Phase 0 (workflow uses correct data model)
+        - Phase 2 (REQ-3) depends on Phase 0 & Phase 1 (post-workflow menu uses correct terminology and step count)
+        - Phase 3 (REQ-1) is independent - can parallelize with Phase 2
+        - Phase 4 (REQ-4) is independent - can parallelize with Phase 2 and Phase 3
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 660  # 11 minutes
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-overview.md"
+
+    post_stage:
+      action: extract_dependencies
+
+  # -------------------------------------------------------------------------
+  # Stage 3: Create Detailed Task Breakdown
+  # -------------------------------------------------------------------------
+  - id: details
+    name: "Create Detailed Tasks"
+    description: "Break request into 1-point implementation tasks"
+    enabled: true
+
+    agent:
+      name: "03-senior-dev-task-breakdown"
+      invocation_template: |
+        Create a detailed task breakdown document for Request #{request_id_num}
+
+        **Input Documents** (you MUST read these first):
+        - Overview document: {overview_file}
+        - Requirements: {requests_file_path} (find Request #{request_id_num})
+        - Implementation Plan: {implementation_plan_path}
+        - Project README: README.md
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-detailed.md
+
+        **Pre-Analysis Steps**:
+        1. Read the overview document at {overview_file}
+        2. Review README.md for project conventions
+        3. Check existing component patterns
+        4. Identify authorized files from the overview
+
+        **Requirements**:
+        - Each numbered task must be <= 1 story point
+        - Include testing tasks for each implementation
+        - Only modify files listed in the authorized section
+        - Use actual system date/time in the document header (2026-01-11)
+        - All file paths relative to project root
+        - Include verification steps
+        - Follow established patterns
+        - For UI tasks: include accessibility verification (ARIA labels, keyboard nav)
+        - For workflow tasks: include state management verification
+        - For data model changes: ensure UI-only, no database schema changes
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 480  # 8 minutes
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-detailed.md"
+
+  # -------------------------------------------------------------------------
+  # Stage 4: Implementation
+  # -------------------------------------------------------------------------
+  - id: implementation
+    name: "Implementation"
+    description: "Autonomously implement all tasks from the detailed specification"
+    enabled: true
+
+    agent:
+      name: "05-spec-implementation"
+      invocation_template: |
+        Implement all tasks from the detailed specification for Request #{request_id_num}
+
+        **Detailed Specification**: {details_file}
+
+        **Task Context**:
+        - Request ID: {request_id}
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        {project_context}
+
+        **Instructions**:
+        1. Read the detailed specification at {details_file}
+        2. Execute all tasks following the per-task workflow:
+           - Implement -> Verify -> Update Doc -> Build -> Commit
+        3. Mark completed tasks with [x] and add implementation notes
+        4. Continue autonomously until all required tasks are complete
+        5. Run verification: `npm run type-check` and `npm run build`
+        6. Report final status with summary of completed/failed/blocked tasks
+        7. **IMPORTANT**: End your response with a test summary in this format:
+           ```
+           TEST SUMMARY:
+           - Type Check: PASSED/FAILED
+           - Build: PASSED/FAILED
+           - Tests: PASSED/FAILED (if tests were run)
+           ```
+
+        **Key Patterns to Follow**:
+        - Next.js Link component for navigation
+        - Lucide React icons for UI consistency
+        - Tailwind CSS v4 for styling
+        - React Context/hooks for state management
+        - Responsive design with Tailwind breakpoints (md:, lg:)
+        - Component colocation patterns
+        - TypeScript strict mode compliance
+
+        **Special Considerations by Phase**:
+        - Phase 0 (REQ-2 - Data Model Clarity):
+          → UI labels only, NO database changes
+          → Item Name = physical object identifier (e.g., "Steamer")
+          → Article Title/Purpose = instruction type (e.g., "How to Clean")
+          → QR code label = Item Name only
+          → Update MetadataStep, ReviewStep, ItemCapture.types.ts, QR generation
+
+        - Phase 1 (REQ-5 - Workflow Step Count):
+          → Locate component showing "Step X of 10"
+          → Update total step count from 10 to 8
+          → Ensure "Save Item" is step 8 (final numbered step)
+          → Post-workflow menu is NOT numbered
+
+        - Phase 2 (REQ-3 - What's Next Screen):
+          → Remove Cancel button and back arrow from post-save menu
+          → Create 4 clear action options:
+            • Edit Instructions
+            • Add New Instructions
+            • Create New Item
+            • Done
+          → Implement navigation handlers for each option
+          → Remove step indicator from this screen
+
+        - Phase 3 (REQ-1 - Dashboard Cards):
+          → Add navigation hrefs to stats cards structure
+          → Convert from static div to clickable elements (Link wrapper)
+          → Add visual feedback (hover, focus states, cursor-pointer)
+          → Add ARIA labels for accessibility
+          → Properties → /dashboard/properties, Items → /dashboard/items
+
+        - Phase 4 (REQ-4 - Navigation Menu):
+          → Add "Instructions" navigation item with FileText icon
+          → Mobile label abbreviations: D/B, Instr., Prop.
+          → Create Instructions page at /dashboard/instructions
+          → Add Instructions to DashboardSection enum
+          → Verify Dashboard uses LayoutDashboard icon (not Home)
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__playwright__*"
+      timeout: 1800  # 30 minutes
+
+    output:
+      type: implementation
+
+  # -------------------------------------------------------------------------
+  # Stage 5: Test Verification & Harness Generation (Pipeline-Level)
+  # -------------------------------------------------------------------------
+  - id: testcheck
+    name: "Test Verification"
+    description: "Verify implementation against specs and create/deploy test harness"
+    enabled: true
+    mode: pipeline
+
+    agent:
+      name: "06a-pipeline-testcheck"
+      invocation_template: |
+        Execute the 06a-pipeline-testcheck agent for the pipeline.
+
+        **Pipeline Config**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+
+        Follow the workflow defined in ~/.claude/agents/06a-pipeline-testcheck.md:
+
+        **Phase 1: Discovery**
+        - Read the pipeline YAML and state file
+        - Collect all detailed spec files from docs/
+
+        **Phase 2: Specification Analysis**
+        - Parse each detailed spec to extract components, exports, types, use cases
+        - Identify UI/UX changes across all 5 REQs (Plan-104)
+
+        **Phase 3: Implementation Verification**
+        - REQ-2 (Data Model): Verify Item vs Article UI labels
+          → MetadataStep: "Item Name" field with helper text
+          → ReviewStep: "Item Name" in summary (not "Title")
+          → ItemCapture.types.ts: JSDoc clarifies title = Item Name
+          → QR labels: Item Name only (verify in QR generation utilities)
+
+        - REQ-5 (Step Count): Verify workflow step count
+          → Step counter displays "Step X of 8" (not 10)
+          → "Save Item" is step 8 (final numbered step)
+          → "Item Saved!" with QR code = end of workflow
+          → "Continue" leads to post-workflow menu (no step number)
+
+        - REQ-3 (What's Next): Verify post-workflow menu structure
+          → No Cancel button on post-save screen
+          → No back arrow on post-save screen
+          → 4 menu options present: Edit Instructions, Add New Instructions, Create New Item, Done
+          → Each option has proper handler implementation
+          → No step indicator on this screen
+
+        - REQ-1 (Dashboard Cards): Verify dashboard card clickability
+          → UserDashboard stats cards: href property, Link wrapper
+          → Hover states: shadow-md, border changes, transitions
+          → Keyboard accessibility: focus states, role attributes
+          → Navigation: Properties → /dashboard/properties, Items → /dashboard/items
+
+        - REQ-4 (Navigation): Verify navigation menu
+          → Dashboard icon is LayoutDashboard (NOT Home icon)
+          → "Instructions" menu item exists with FileText icon
+          → Mobile labels: compactMode logic or mobileLabel prop
+          → Instructions page exists at /dashboard/instructions
+          → DashboardSection enum includes instructions
+
+        - Check types match specs
+        - Record any discrepancies
+
+        **Phase 4: Test Harness Generation**
+        - Create/update test harness page at /src/app/test/faqbnb-review-104/page.tsx
+          → Access at: http://localhost:3000/test/faqbnb-review-104
+        - Add test scenarios for all 5 change requests
+        - Update test index at /src/app/test/page.tsx
+          → Access at: http://localhost:3000/test
+
+        **Phase 5: Build & Deploy**
+        - Run npm run build to verify no compilation errors
+        - Deploy to Railway (after user confirmation)
+        - Verify deployed URL is accessible
+
+        **Phase 6: State Update**
+        - Update state file with verification results
+
+        Report findings including discrepancies, test harness status, build status, and deployed URL.
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,WebFetch"
+      timeout: 900  # 15 minutes
+
+    output:
+      type: verification
+
+  # -------------------------------------------------------------------------
+  # Stage 6: Use Case Test Generation (Pipeline-Level)
+  # -------------------------------------------------------------------------
+  - id: usecases
+    name: "Use Case Generation"
+    description: "Generate aggregate end-to-end test scenarios from PRD intent"
+    enabled: true
+    mode: pipeline
+
+    agent:
+      name: "06b-usecase-generator"
+      invocation_template: |
+        Execute the 06b-usecase-generator agent for the pipeline.
+
+        **Pipeline Config**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **PRD/Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+
+        Follow the workflow defined in ~/.claude/agents/06b-usecase-generator.md:
+
+        **Phase 1: Intent Discovery**
+        - Read the Implementation Plan at {implementation_plan_path}
+        - Extract user goals, UI/UX improvements, success criteria
+        - Identify use case categories: happy-path, error-handling, edge-case
+
+        **Phase 2: Component Mapping**
+        - Read the pipeline state to understand implemented components
+        - Map PRD intent to implemented components
+        - Identify integration points across the 5 REQs
+
+        **Phase 3: Use Case Generation**
+        - Generate comprehensive use cases from Implementation Plan (1-3 per REQ)
+        - Include steps, expected outcomes, components involved
+        - Prioritize: P0 (critical paths), P1 (error scenarios), P2 (edge cases)
+        - Focus on:
+          - REQ-2: Item vs Article terminology clarity in workflow
+          - REQ-5: Workflow step count display (8 numbered steps)
+          - REQ-3: Post-workflow menu (4 action cards, no Cancel/Back)
+          - REQ-1: Dashboard card navigation flow
+          - REQ-4: Navigation menu and Instructions page access
+
+        - Cross-REQ integration scenarios:
+          - Complete workflow: Item creation → Save → PostWorkflowMenu (REQ-2, REQ-5, REQ-3)
+          - Dashboard navigation → Items/Instructions pages (REQ-1, REQ-4)
+          - QR code generation with correct Item Name labels (REQ-2)
+          - Mobile navigation with abbreviated labels (REQ-4)
+
+        **Phase 4: Test Page Update**
+        - Update the pipeline test harness at /src/app/test/faqbnb-review-104/page.tsx
+          → Access at: http://localhost:3000/test/faqbnb-review-104
+        - Add "FAQBNB Review Use Cases (Plan-104)" section with interactive test guides
+        - Each use case as a clickable card with step-by-step instructions
+
+        **Phase 5: Documentation Update**
+        - Update state file with use case metadata
+        - Log summary of generated use cases
+
+        Generate comprehensive use cases that validate the FAQBNB review changes work cohesively.
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep"
+      timeout: 600  # 10 minutes
+
+    output:
+      type: usecases
+
+# =============================================================================
+# Implementation Configuration
+# =============================================================================
+
+implementation:
+  technology:
+    database: supabase
+    browser_testing: true
+
+  required_tools:
+    - playwright_mcp
+
+  precheck:
+    timeout: 120
+
+# =============================================================================
+# Retry Configuration
+# =============================================================================
+
+retry:
+  max_attempts: 2
+  on_failure: skip_and_log
+
+# =============================================================================
+# Legacy Stages (Horizontal Mode - Not Used in hybrid mode)
+# =============================================================================
+
+stages:
+  - id: request
+    name: "Request Generation"
+    enabled: false
+    agent:
+      name: "01-request-fa"
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+    retry:
+      max_attempts: 2
+      on_failure: skip_and_log
+    stop_hook: false
+
+# =============================================================================
+# Expected Task Dependencies (Plan-104)
+# =============================================================================
+#
+# Phase 0: REQ-2 - Fix Data Model (CRITICAL)
+#   - Task 0.1: Update MetadataStep.tsx - Change "Title" label to "Item Name"
+#   - Task 0.2: Update ReviewStep.tsx - Change summary label from "Title" to "Item Name"
+#   - Task 0.3: Update type documentation in ItemCapture.types.ts
+#   - Task 0.4: Verify QR code generation uses Item Name correctly
+#   Files: MetadataStep.tsx, ReviewStep.tsx, ItemCapture.types.ts, qr-generation.ts
+#
+# Phase 1: REQ-5 - Fix Workflow Step Count (HIGH)
+#   - Task 1.1: Locate the component displaying "Step X of 10"
+#   - Task 1.2: Update total step count constant (10 → 8)
+#   - Task 1.3: Update step progression logic
+#   - Task 1.4: Update "Continue" button behavior
+#   Files: ProgressIndicator.tsx or workflow orchestrator component
+#
+# Phase 2: REQ-3 - Fix "What's Next" Screen (HIGH)
+#   - Task 2.1: Remove Cancel button from post-save menu
+#   - Task 2.2: Remove back arrow/button from post-save menu
+#   - Task 2.3: Update menu options to 4 clear choices
+#   - Task 2.4: Implement handler for each option
+#   - Task 2.5: Remove step indicator from this screen
+#   Files: NextActionStep.tsx or PostWorkflowMenu.tsx (NEW), workflow orchestrator
+#
+# Phase 3: REQ-1 - Make Dashboard Cards Clickable (HIGH)
+#   - Task 3.1: Update statsCards structure to include navigation hrefs
+#   - Task 3.2: Convert stats card rendering from div to clickable elements
+#   - Task 3.3: Add visual feedback for interactive cards
+#   - Task 3.4: Add accessibility attributes
+#   - Task 3.5: Consider adding "Rooms" and "Tags" cards if applicable
+#   Files: UserDashboard.tsx, KPIDashboardOverview.tsx
+#
+# Phase 4: REQ-4 - Update Navigation Menu (MEDIUM)
+#   - Task 4.1: Add "Instructions" navigation item
+#   - Task 4.2: Update mobile labels for compact display
+#   - Task 4.3: Implement responsive label switching
+#   - Task 4.4: Create Instructions page route
+#   - Task 4.5: Add Instructions to DashboardSection enum
+#   - Task 4.6: Update dashboard layout navigation if needed
+#   Files: RoleBasedNavigation.tsx, layout.tsx, instructions/page.tsx (NEW),
+#          permissions.ts
+#
+# Dependency Order:
+#   1. Phase 0 (CRITICAL - foundation, REQ-2)
+#   2. Phase 1 (depends on Phase 0, REQ-5)
+#   3. Phase 2 (depends on Phase 0 & Phase 1, REQ-3)
+#   4. Phase 3 (independent, can parallelize with Phase 2, REQ-1)
+#   5. Phase 4 (independent, can parallelize with Phase 2 & Phase 3, REQ-4)
+#
+# Total Estimated Effort: 13-19 hours
+# Total Tasks: 24 tasks across 5 phases (0-4)
+#
+# =============================================================================

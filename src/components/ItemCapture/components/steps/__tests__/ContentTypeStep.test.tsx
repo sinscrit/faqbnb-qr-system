@@ -14,11 +14,11 @@ import { ContentTypeStep, type ContentType } from '../ContentTypeStep';
 describe('ContentTypeStep', () => {
   const defaultProps = {
     selectedType: null as ContentType | null,
-    onSelect: jest.fn(),
+    onSelect: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

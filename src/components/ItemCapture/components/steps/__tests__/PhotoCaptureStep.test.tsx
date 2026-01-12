@@ -54,14 +54,14 @@ interface PhotoCaptureStepProps {
 // Mock useMediaCapture Hook
 // =============================================================================
 
-const mockStartCamera = jest.fn().mockResolvedValue(true);
-const mockStopCamera = jest.fn();
-const mockCapturePhoto = jest.fn().mockResolvedValue(new Blob(['test image'], { type: 'image/jpeg' }));
-const mockToggleFacingMode = jest.fn().mockResolvedValue(true);
-const mockCleanup = jest.fn();
+const mockStartCamera = vi.fn().mockResolvedValue(true);
+const mockStopCamera = vi.fn();
+const mockCapturePhoto = vi.fn().mockResolvedValue(new Blob(['test image'], { type: 'image/jpeg' }));
+const mockToggleFacingMode = vi.fn().mockResolvedValue(true);
+const mockCleanup = vi.fn();
 
-jest.mock('../../../hooks/useMediaCapture', () => ({
-  useMediaCapture: jest.fn(() => ({
+vi.mock('../../../hooks/useMediaCapture', () => ({
+  useMediaCapture: vi.fn(() => ({
     stream: new MediaStream(),
     isCameraActive: true,
     isRecording: false,
@@ -91,7 +91,7 @@ jest.mock('../../../hooks/useMediaCapture', () => ({
 // Mock CameraPreview Component
 // =============================================================================
 
-jest.mock('../../shared/CameraPreview', () => ({
+vi.mock('../../shared/CameraPreview', () => ({
   CameraPreview: ({ stream, isLoading, error }: { stream: MediaStream | null; isLoading: boolean; error: unknown }) => (
     <div data-testid="camera-preview">
       {isLoading && <span>Loading...</span>}
@@ -105,8 +105,8 @@ jest.mock('../../shared/CameraPreview', () => ({
 // Mock URL.createObjectURL and URL.revokeObjectURL
 // =============================================================================
 
-const mockCreateObjectURL = jest.fn((blob: Blob) => `blob:mock-url-${Math.random()}`);
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn((blob: Blob) => `blob:mock-url-${Math.random()}`);
+const mockRevokeObjectURL = vi.fn();
 
 beforeAll(() => {
   global.URL.createObjectURL = mockCreateObjectURL;
@@ -117,7 +117,7 @@ beforeAll(() => {
 // Mock navigator.vibrate
 // =============================================================================
 
-const mockVibrate = jest.fn().mockReturnValue(true);
+const mockVibrate = vi.fn().mockReturnValue(true);
 
 beforeAll(() => {
   Object.defineProperty(navigator, 'vibrate', {
@@ -146,16 +146,16 @@ const createMockState = (overrides: Partial<ItemCaptureState> = {}): ItemCapture
 
 const createDefaultProps = (overrides: Partial<PhotoCaptureStepProps> = {}): PhotoCaptureStepProps => ({
   state: createMockState(),
-  addMedia: jest.fn(),
-  goToStep: jest.fn(),
-  prevStep: jest.fn(),
+  addMedia: vi.fn(),
+  goToStep: vi.fn(),
+  prevStep: vi.fn(),
   config: { maxPhotos: 10 },
   ...overrides,
 });
 
 describe('PhotoCaptureStep', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockCreateObjectURL.mockClear();
     mockRevokeObjectURL.mockClear();
     mockVibrate.mockClear();
@@ -667,7 +667,7 @@ describe('PhotoCaptureStep', () => {
 
   describe('MediaItem creation', () => {
     it('calls addMedia with correct MediaItem structure on accept', async () => {
-      const addMedia = jest.fn();
+      const addMedia = vi.fn();
 
       render(<PhotoCaptureStep {...createDefaultProps({ addMedia })} />);
 
@@ -701,7 +701,7 @@ describe('PhotoCaptureStep', () => {
     });
 
     it('sets correct order based on existing image mediaItems', async () => {
-      const addMedia = jest.fn();
+      const addMedia = vi.fn();
       const existingMedia = [
         { id: '1', type: 'image' as const, file: new Blob(), order: 0, metadata: { mimeType: 'image/jpeg', fileSize: 100, source: 'capture' as const } },
         { id: '2', type: 'image' as const, file: new Blob(), order: 1, metadata: { mimeType: 'image/jpeg', fileSize: 100, source: 'capture' as const } },
@@ -741,7 +741,7 @@ describe('PhotoCaptureStep', () => {
 
   describe('navigation', () => {
     it('calls prevStep when back button is clicked', async () => {
-      const prevStep = jest.fn();
+      const prevStep = vi.fn();
 
       render(<PhotoCaptureStep {...createDefaultProps({ prevStep })} />);
 
@@ -782,7 +782,7 @@ describe('PhotoCaptureStep', () => {
     });
 
     it('calls goToStep with add-more when continue is clicked', async () => {
-      const goToStep = jest.fn();
+      const goToStep = vi.fn();
 
       render(<PhotoCaptureStep {...createDefaultProps({ goToStep })} />);
 

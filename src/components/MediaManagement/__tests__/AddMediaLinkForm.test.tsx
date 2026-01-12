@@ -8,13 +8,13 @@ import { AddMediaLinkForm } from '../AddMediaLinkForm';
 
 describe('AddMediaLinkForm', () => {
   const defaultProps = {
-    onAdd: jest.fn(),
-    onCancel: jest.fn(),
+    onAdd: vi.fn(),
+    onCancel: vi.fn(),
     isExpanded: true,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders form fields when expanded', () => {

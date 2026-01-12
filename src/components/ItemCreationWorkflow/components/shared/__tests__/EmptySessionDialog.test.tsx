@@ -14,13 +14,13 @@ import { EmptySessionDialog } from '../EmptySessionDialog';
 describe('EmptySessionDialog', () => {
   const defaultProps = {
     isOpen: true,
-    onClose: jest.fn(),
-    onAddItems: jest.fn(),
-    onExitSession: jest.fn(),
+    onClose: vi.fn(),
+    onAddItems: vi.fn(),
+    onExitSession: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

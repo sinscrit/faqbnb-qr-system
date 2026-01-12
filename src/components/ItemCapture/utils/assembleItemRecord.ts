@@ -8,7 +8,7 @@
  *
  * @module ItemCapture/utils/assembleItemRecord
  * @see docs/REQ-053-implement-oncomplete-assembly-detailed.md
- * @lastModified 2025-12-31 (REQ-053 Tasks 2, 3)
+ * @lastModified 2026-01-12 (REQ-183: Added contentPurpose to record assembly)
  */
 
 import { generateUUID } from './generateUUID';
@@ -19,6 +19,7 @@ import type {
   MediaMetadata,
   UrlItem,
 } from '../ItemCapture.types';
+import type { PurposeType } from '@/types';
 
 // =============================================================================
 // Internal Types
@@ -47,6 +48,7 @@ export interface InternalState {
     location?: string;
     tags?: string[];
     applianceType?: ApplianceType;
+    contentPurpose?: PurposeType;
   };
   mediaItems: InternalMediaItem[];
   urlItems: UrlItem[];
@@ -230,6 +232,11 @@ export function assembleItemRecord(
   // Add optional appliance type if provided
   if (state.metadata.applianceType) {
     record.applianceType = state.metadata.applianceType;
+  }
+
+  // Add optional content purpose if provided (REQ-183)
+  if (state.metadata.contentPurpose) {
+    record.contentPurpose = state.metadata.contentPurpose;
   }
 
   // Add optional instructions if provided and non-empty

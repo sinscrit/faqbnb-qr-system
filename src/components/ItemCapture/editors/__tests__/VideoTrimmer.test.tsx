@@ -26,10 +26,10 @@ beforeAll(() => {
   });
 
   // Mock play
-  HTMLMediaElement.prototype.play = jest.fn().mockResolvedValue(undefined);
+  HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined);
 
   // Mock pause
-  HTMLMediaElement.prototype.pause = jest.fn();
+  HTMLMediaElement.prototype.pause = vi.fn();
 
   // Mock currentTime setter
   let _currentTime = 0;
@@ -43,7 +43,7 @@ beforeAll(() => {
   });
 
   // Mock load
-  HTMLMediaElement.prototype.load = jest.fn();
+  HTMLMediaElement.prototype.load = vi.fn();
 });
 
 // =============================================================================
@@ -55,8 +55,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     const video = document.querySelector('video');
@@ -67,8 +67,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     expect(screen.getByText(/loading video/i)).toBeInTheDocument();
@@ -78,8 +78,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
@@ -89,8 +89,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     expect(screen.getByRole('button', { name: /apply trim/i })).toBeInTheDocument();
@@ -100,8 +100,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     expect(screen.getByRole('button', { name: /apply trim/i })).toBeDisabled();
@@ -111,8 +111,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
     expect(screen.getByLabelText(/skip to start/i)).toBeInTheDocument();
@@ -124,8 +124,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
         debug={true}
       />
     );
@@ -137,8 +137,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
         debug={false}
       />
     );
@@ -150,8 +150,8 @@ describe('VideoTrimmer rendering', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
         className="custom-class"
       />
     );
@@ -167,11 +167,11 @@ describe('VideoTrimmer rendering', () => {
 
 describe('VideoTrimmer callbacks', () => {
   it('calls onCancel when Cancel button clicked', () => {
-    const onCancel = jest.fn();
+    const onCancel = vi.fn();
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
+        onTrimComplete={vi.fn()}
         onCancel={onCancel}
       />
     );
@@ -180,11 +180,11 @@ describe('VideoTrimmer callbacks', () => {
   });
 
   it('calls onCancel on Escape key press', () => {
-    const onCancel = jest.fn();
+    const onCancel = vi.fn();
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
+        onTrimComplete={vi.fn()}
         onCancel={onCancel}
       />
     );
@@ -202,8 +202,8 @@ describe('VideoTrimmer metadata loading', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -221,8 +221,8 @@ describe('VideoTrimmer metadata loading', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -244,8 +244,8 @@ describe('VideoTrimmer playback controls', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -258,8 +258,8 @@ describe('VideoTrimmer playback controls', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -274,13 +274,13 @@ describe('VideoTrimmer playback controls', () => {
   });
 
   it('clicking play button calls video.play()', async () => {
-    const playSpy = jest.spyOn(HTMLMediaElement.prototype, 'play');
+    const playSpy = vi.spyOn(HTMLMediaElement.prototype, 'play');
 
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -311,8 +311,8 @@ describe('VideoTrimmer initial trim', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
         initialTrim={initialTrim}
         debug={true}
       />
@@ -340,8 +340,8 @@ describe('VideoTrimmer error handling', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -355,8 +355,8 @@ describe('VideoTrimmer error handling', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -376,8 +376,8 @@ describe('VideoTrimmer accessibility', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -397,8 +397,8 @@ describe('VideoTrimmer accessibility', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -424,8 +424,8 @@ describe('VideoTrimmer duration display', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 
@@ -442,8 +442,8 @@ describe('VideoTrimmer duration display', () => {
     render(
       <VideoTrimmer
         videoSrc="test.mp4"
-        onTrimComplete={jest.fn()}
-        onCancel={jest.fn()}
+        onTrimComplete={vi.fn()}
+        onCancel={vi.fn()}
       />
     );
 

@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { MarkdownEditor } from '../MarkdownEditor';
 
 // Mock react-markdown for faster tests
-jest.mock('react-markdown', () => {
+vi.mock('react-markdown', () => {
   return function MockReactMarkdown({ children }: { children: string }) {
     return <div data-testid="markdown-preview">{children}</div>;
   };
@@ -19,11 +19,11 @@ jest.mock('react-markdown', () => {
 describe('MarkdownEditor', () => {
   const defaultProps = {
     value: '',
-    onChange: jest.fn(),
+    onChange: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('rendering', () => {
@@ -90,7 +90,7 @@ describe('MarkdownEditor', () => {
 
   describe('onChange', () => {
     it('calls onChange when typing', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup();
       render(<MarkdownEditor {...defaultProps} onChange={onChange} />);
 
@@ -328,7 +328,7 @@ describe('MarkdownEditor', () => {
 
   describe('formatting', () => {
     it('applies bold format via toolbar button', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup();
       render(<MarkdownEditor {...defaultProps} onChange={onChange} value="" />);
 
@@ -339,7 +339,7 @@ describe('MarkdownEditor', () => {
     });
 
     it('applies italic format via toolbar button', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup();
       render(<MarkdownEditor {...defaultProps} onChange={onChange} value="" />);
 
@@ -350,7 +350,7 @@ describe('MarkdownEditor', () => {
     });
 
     it('applies heading1 format via toolbar button', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup();
       render(<MarkdownEditor {...defaultProps} onChange={onChange} value="" />);
 
@@ -361,7 +361,7 @@ describe('MarkdownEditor', () => {
     });
 
     it('applies link format via toolbar button', async () => {
-      const onChange = jest.fn();
+      const onChange = vi.fn();
       const user = userEvent.setup();
       render(<MarkdownEditor {...defaultProps} onChange={onChange} value="" />);
 

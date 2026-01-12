@@ -1,0 +1,126 @@
+{
+  "prd_path": "docs/prd/intake/prd-CPL-FAQBNB-Review-2026-01-11b-20260112-132632.md",
+  "project_root": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus",
+  "framework_detected": "nextjs_app_router",
+  "routes_found": [
+    "/dashboard2/rooms",
+    "/dashboard2/create",
+    "/dashboard2/",
+    "/dashboard2/tags",
+    "/dashboard2/items"
+  ],
+  "traces": [
+    {
+      "route": "/dashboard2/rooms",
+      "page_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx",
+      "page_file_exists": true,
+      "primary_component": "SimpleDashboard",
+      "component_directory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard",
+      "all_imports": [
+        "@/components/SimpleDashboard",
+        "@/components/SimpleDashboard/PropertyGroupingControl"
+      ],
+      "framework": "nextjs_app_router",
+      "verification_hints": [
+        "Read /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx to confirm it renders <SimpleDashboard>",
+        "Check /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard/ for step/progress related code",
+        "Look for constants.ts, types.ts, or state hooks in the component directory",
+        "This is Next.js App Router - check for 'use client' directive",
+        "Page file contains step/workflow references - verify these match PRD"
+      ],
+      "error": null
+    },
+    {
+      "route": "/dashboard2/create",
+      "page_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/create/page.tsx",
+      "page_file_exists": true,
+      "primary_component": "ItemCreationWorkflow",
+      "component_directory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemCreationWorkflow",
+      "all_imports": [
+        "@/components/ItemCreationWorkflow"
+      ],
+      "framework": "nextjs_app_router",
+      "verification_hints": [
+        "Read /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/create/page.tsx to confirm it renders <ItemCreationWorkflow>",
+        "Check /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemCreationWorkflow/ for step/progress related code",
+        "Look for constants.ts, types.ts, or state hooks in the component directory",
+        "This is Next.js App Router - check for 'use client' directive",
+        "Page file contains step/workflow references - verify these match PRD"
+      ],
+      "error": null
+    },
+    {
+      "route": "/dashboard2/",
+      "page_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx",
+      "page_file_exists": true,
+      "primary_component": "SimpleDashboard",
+      "component_directory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard",
+      "all_imports": [
+        "@/components/SimpleDashboard",
+        "@/components/SimpleDashboard/PropertyGroupingControl"
+      ],
+      "framework": "nextjs_app_router",
+      "verification_hints": [
+        "Read /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx to confirm it renders <SimpleDashboard>",
+        "Check /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard/ for step/progress related code",
+        "Look for constants.ts, types.ts, or state hooks in the component directory",
+        "This is Next.js App Router - check for 'use client' directive",
+        "Page file contains step/workflow references - verify these match PRD"
+      ],
+      "error": null
+    },
+    {
+      "route": "/dashboard2/tags",
+      "page_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx",
+      "page_file_exists": true,
+      "primary_component": "SimpleDashboard",
+      "component_directory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard",
+      "all_imports": [
+        "@/components/SimpleDashboard",
+        "@/components/SimpleDashboard/PropertyGroupingControl"
+      ],
+      "framework": "nextjs_app_router",
+      "verification_hints": [
+        "Read /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/page.tsx to confirm it renders <SimpleDashboard>",
+        "Check /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard/ for step/progress related code",
+        "Look for constants.ts, types.ts, or state hooks in the component directory",
+        "This is Next.js App Router - check for 'use client' directive",
+        "Page file contains step/workflow references - verify these match PRD"
+      ],
+      "error": null
+    },
+    {
+      "route": "/dashboard2/items",
+      "page_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/items/page.tsx",
+      "page_file_exists": true,
+      "primary_component": "ItemManager",
+      "component_directory": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemManager",
+      "all_imports": [
+        "@/components/ItemManager"
+      ],
+      "framework": "nextjs_app_router",
+      "verification_hints": [
+        "Read /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/app/dashboard2/items/page.tsx to confirm it renders <ItemManager>",
+        "Check /Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemManager/ for step/progress related code",
+        "Look for constants.ts, types.ts, or state hooks in the component directory",
+        "This is Next.js App Router - check for 'use client' directive"
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "total_routes": 5,
+    "routes_found": 5,
+    "components_identified": 5,
+    "unique_components": [
+      "ItemCreationWorkflow",
+      "SimpleDashboard",
+      "ItemManager"
+    ],
+    "unique_directories": [
+      "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/SimpleDashboard",
+      "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemManager",
+      "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/src/components/ItemCreationWorkflow"
+    ]
+  }
+}

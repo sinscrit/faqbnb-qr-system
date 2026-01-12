@@ -29,8 +29,8 @@ const createMockMetadata = (overrides?: Partial<ItemMetadata>): ItemMetadata => 
 const defaultProps = {
   metadata: createMockMetadata(),
   errors: {},
-  onUpdate: jest.fn(),
-  onValidate: jest.fn(() => true),
+  onUpdate: vi.fn(),
+  onValidate: vi.fn(() => true),
 };
 
 // =============================================================================
@@ -141,7 +141,7 @@ describe('validateMetadata', () => {
 
 describe('MetadataStep Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('rendering', () => {
@@ -190,7 +190,7 @@ describe('MetadataStep Component', () => {
 
   describe('title field interactions', () => {
     it('calls onUpdate when title is changed', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       render(<MetadataStep {...defaultProps} onUpdate={onUpdate} />);
 
       const titleInput = screen.getByLabelText(/title/i);
@@ -200,7 +200,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('calls onValidate on blur', async () => {
-      const onValidate = jest.fn();
+      const onValidate = vi.fn();
       render(<MetadataStep {...defaultProps} onValidate={onValidate} />);
 
       const titleInput = screen.getByLabelText(/title/i);
@@ -267,7 +267,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('calls onUpdate when preset location is selected', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       render(<MetadataStep {...defaultProps} onUpdate={onUpdate} />);
 
       const locationInput = screen.getByLabelText(/location/i);
@@ -312,7 +312,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('removes tag when X button is clicked', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       const props = {
         ...defaultProps,
         metadata: createMockMetadata({ tags: ['How-to', 'Setup'] }),
@@ -327,7 +327,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('adds tag on Enter key', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       render(<MetadataStep {...defaultProps} onUpdate={onUpdate} />);
 
       const tagInput = screen.getByPlaceholderText(/add a tag/i);
@@ -346,7 +346,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('adds suggested tag when clicked', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       render(<MetadataStep {...defaultProps} onUpdate={onUpdate} />);
 
       const suggestedTag = screen.getByText(`+ ${SUGGESTED_TAGS[0]}`);
@@ -387,7 +387,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('calls onUpdate when appliance type is selected', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       render(<MetadataStep {...defaultProps} onUpdate={onUpdate} />);
 
       const select = screen.getByLabelText(/appliance type/i);
@@ -397,7 +397,7 @@ describe('MetadataStep Component', () => {
     });
 
     it('calls onUpdate with undefined when cleared', async () => {
-      const onUpdate = jest.fn();
+      const onUpdate = vi.fn();
       const props = {
         ...defaultProps,
         metadata: createMockMetadata({ applianceType: 'washer' }),

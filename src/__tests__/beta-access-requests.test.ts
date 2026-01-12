@@ -12,14 +12,14 @@ import { validateBetaAccessRequest } from '@/lib/access-management';
 import { generateBetaAccessApprovalEmail, generateAccessApprovalEmail } from '@/lib/email-templates';
 
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_APP_URL = 'https://faqbnb.com';
 
 describe('REQ-017: Beta Access Request Functionality', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('1. Type System Validation', () => {
@@ -70,7 +70,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse
       });
@@ -104,7 +104,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse
       });
@@ -132,7 +132,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse
       });
@@ -213,7 +213,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       ];
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           success: true,
@@ -238,7 +238,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         notes: 'Auto-created from beta waitlist'
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           success: true,
@@ -402,7 +402,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock)
+      (global.fetch as vi.Mock)
         .mockResolvedValueOnce({ ok: true, json: async () => signupResponse })
         .mockResolvedValueOnce({ ok: true, json: async () => dashboardResponse })
         .mockResolvedValueOnce({ ok: true, json: async () => approvalResponse });
@@ -441,7 +441,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as vi.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => partialSuccessResponse
       });
@@ -483,7 +483,7 @@ describe('REQ-017: Beta Access Request Functionality', () => {
         }
       };
 
-      (global.fetch as jest.Mock)
+      (global.fetch as vi.Mock)
         .mockResolvedValueOnce({ ok: true, json: async () => firstResponse })
         .mockResolvedValueOnce({ ok: true, json: async () => secondResponse });
 

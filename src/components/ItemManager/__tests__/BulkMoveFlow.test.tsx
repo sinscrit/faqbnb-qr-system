@@ -62,9 +62,9 @@ const createDefaultProps = (overrides = {}) => ({
   items: mockItems,
   properties: mockProperties,
   loading: false,
-  onEditItem: jest.fn(),
-  onDeleteItems: jest.fn(),
-  onUpdateItem: jest.fn().mockResolvedValue(undefined),
+  onEditItem: vi.fn(),
+  onDeleteItems: vi.fn(),
+  onUpdateItem: vi.fn().mockResolvedValue(undefined),
   config: {
     enableBulkActions: true,
     multiPropertyMode: true,
@@ -78,7 +78,7 @@ const createDefaultProps = (overrides = {}) => ({
 
 describe('BulkMoveFlow Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -300,7 +300,7 @@ describe('BulkMoveFlow Integration', () => {
 
   describe('error handling', () => {
     it('handles onUpdateItem failure gracefully', async () => {
-      const mockUpdateItem = jest.fn().mockRejectedValue(new Error('Update failed'));
+      const mockUpdateItem = vi.fn().mockRejectedValue(new Error('Update failed'));
       const props = createDefaultProps({ onUpdateItem: mockUpdateItem });
       render(<ItemManager {...props} />);
 
@@ -346,7 +346,7 @@ describe('BulkMoveFlow Integration', () => {
     it('disables tag buttons while move is in progress', async () => {
       // Create a slow update function
       let resolveUpdate: () => void;
-      const mockUpdateItem = jest.fn().mockImplementation(() => {
+      const mockUpdateItem = vi.fn().mockImplementation(() => {
         return new Promise((resolve) => {
           resolveUpdate = resolve;
         });

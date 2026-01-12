@@ -42,8 +42,9 @@ export default function CreateItemPage() {
   }, []);
 
   // Save a single item to the backend
+  // REQ-211: Returns itemName for QR code label display
   const handleSaveItem = useCallback(
-    async (item: SessionItem): Promise<{ id: string; qrCodeUrl: string }> => {
+    async (item: SessionItem): Promise<{ id: string; qrCodeUrl: string; itemName?: string }> => {
       console.log('Saving item:', item);
 
       // Generate a public ID for this item
@@ -165,9 +166,16 @@ export default function CreateItemPage() {
           // Generate actual QR code image encoding the item's public page URL
           const itemUrl = `${window.location.origin}/items/${publicId}`;
           const qrCodeDataUrl = await generateQRCode(itemUrl);
+
+          // REQ-211: Return clean item name for QR code label
+          // SessionItem.name is the physical item name (e.g., "Cabinets"),
+          // not an article title (e.g., "How to Clean - Cabinets")
+          const cleanItemName = item.name;
+
           return {
             id: publicId,
             qrCodeUrl: qrCodeDataUrl,
+            itemName: cleanItemName,
           };
         } else {
           throw new Error(response.error || 'Failed to create item');

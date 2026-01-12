@@ -4,12 +4,14 @@
 // REQ-136: Added tier-aware props for progressive UI
 // REQ-137: Added empty state handling for new users
 // REQ-140: Updated grid breakpoint from sm: to md: for Airbnb mobile alignment
+// REQ-203: Added click navigation to stat cards
 // Created: 2026-01-06 17:00:00 UTC
-// Last Modified: 2026-01-06 16:50:00 UTC
+// Last Modified: 2026-01-12 20:30:00 UTC
 
 'use client';
 
-import { Package, Home, Tag, LucideIcon } from 'lucide-react';
+import Link from 'next/link';
+import { Package, Home, Tag, ChevronRight, LucideIcon } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { DashboardTier } from '@/hooks/useDashboardTier';
 import { EmptyStateCard } from './EmptyStateCard';
@@ -56,6 +58,8 @@ interface StatCardConfig {
   iconColor: string;
   /** Tailwind class for icon background */
   iconBgColor: string;
+  /** Navigation target URL when card is clicked */
+  href: string;
 }
 
 /**
@@ -70,16 +74,20 @@ interface StatCardProps {
 
 /**
  * Individual statistics card component
- * Displays icon, large number, and label
+ * REQ-203: Now renders as a clickable Link with navigation
+ * Displays icon, large number, label, and chevron indicator
  */
 function StatCard({ config, value }: StatCardProps) {
   const Icon = config.icon;
 
   return (
-    <div
-      className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4"
-      role="group"
-      aria-label={`${config.label}: ${value}`}
+    <Link
+      href={config.href}
+      className="bg-white rounded-xl shadow-sm p-6 flex items-center gap-4
+                 hover:shadow-md hover:bg-gray-50 transition-all cursor-pointer
+                 focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2
+                 active:scale-[0.98]"
+      aria-label={`View ${config.label}: ${value}`}
     >
       {/* Icon Container */}
       <div className={`p-3 rounded-xl ${config.iconBgColor}`}>
@@ -87,7 +95,7 @@ function StatCard({ config, value }: StatCardProps) {
       </div>
 
       {/* Value and Label */}
-      <div>
+      <div className="flex-1">
         <p className="text-[32px] font-bold text-[#222222] leading-tight">
           {value}
         </p>
@@ -95,7 +103,10 @@ function StatCard({ config, value }: StatCardProps) {
           {config.label}
         </p>
       </div>
-    </div>
+
+      {/* Chevron indicator for clickability */}
+      <ChevronRight className="w-5 h-5 text-gray-400" aria-hidden="true" />
+    </Link>
   );
 }
 
@@ -159,27 +170,31 @@ export function StatisticsCards({
   className = ''
 }: StatisticsCardsProps) {
   // Card configuration with Airbnb DLS colors
+  // REQ-203: Added navigation URLs for click navigation
   const cardConfigs: StatCardConfig[] = [
     {
       key: 'itemCount',
       label: 'Items',
       icon: Package,
       iconColor: 'text-[#FF385C]',
-      iconBgColor: 'bg-[#FFEEEF]'
+      iconBgColor: 'bg-[#FFEEEF]',
+      href: '/dashboard2/items'
     },
     {
       key: 'roomCount',
       label: 'Rooms',
       icon: Home,
       iconColor: 'text-[#00A699]',
-      iconBgColor: 'bg-[#E6F7F6]'
+      iconBgColor: 'bg-[#E6F7F6]',
+      href: '/dashboard2/items?filter=room'
     },
     {
       key: 'tagCount',
       label: 'Tags',
       icon: Tag,
       iconColor: 'text-[#484848]',
-      iconBgColor: 'bg-gray-100'
+      iconBgColor: 'bg-gray-100',
+      href: '/dashboard2/items?filter=tags'
     }
   ];
 

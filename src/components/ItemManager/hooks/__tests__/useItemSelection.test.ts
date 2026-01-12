@@ -643,7 +643,7 @@ describe('useItemSelection', () => {
 
   describe('Callbacks', () => {
     it('should call onSelectionChange when selection changes', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const { result } = renderHook(() =>
         useItemSelection({ onSelectionChange })
       );
@@ -656,7 +656,7 @@ describe('useItemSelection', () => {
     });
 
     it('should call onSelectionChange with array of IDs', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const { result } = renderHook(() =>
         useItemSelection({ onSelectionChange })
       );
@@ -674,7 +674,7 @@ describe('useItemSelection', () => {
     });
 
     it('should call onSelectionChange when clearing', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const { result } = renderHook(() =>
         useItemSelection({ onSelectionChange, initialSelection: ['1', '2'] })
       );

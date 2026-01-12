@@ -27,15 +27,15 @@ import { VideoPlayer } from '../VideoPlayer';
 // =============================================================================
 
 // Mock URL.createObjectURL and revokeObjectURL
-const mockCreateObjectURL = jest.fn(() => 'blob:mock-url');
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn(() => 'blob:mock-url');
+const mockRevokeObjectURL = vi.fn();
 global.URL.createObjectURL = mockCreateObjectURL;
 global.URL.revokeObjectURL = mockRevokeObjectURL;
 
 // Mock HTMLMediaElement methods
-window.HTMLMediaElement.prototype.play = jest.fn(() => Promise.resolve());
-window.HTMLMediaElement.prototype.pause = jest.fn();
-window.HTMLMediaElement.prototype.load = jest.fn();
+window.HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.pause = vi.fn();
+window.HTMLMediaElement.prototype.load = vi.fn();
 
 // =============================================================================
 // formatTime Tests
@@ -172,7 +172,7 @@ describe('VideoPlayer', () => {
   const mockFile = new File(['mock video content'], 'test.mp4', { type: 'video/mp4' });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('rendering', () => {
@@ -225,7 +225,7 @@ describe('VideoPlayer', () => {
         configurable: true,
       });
       Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', {
-        value: jest.fn(),
+        value: vi.fn(),
         configurable: true,
       });
 
@@ -277,7 +277,7 @@ describe('VideoPlayer', () => {
 
   describe('callbacks', () => {
     it('calls onEnded when video ends', () => {
-      const onEnded = jest.fn();
+      const onEnded = vi.fn();
       render(<VideoPlayer src="https://example.com/video.mp4" onEnded={onEnded} />);
 
       const video = document.querySelector('video');
@@ -290,7 +290,7 @@ describe('VideoPlayer', () => {
     });
 
     it('calls onError when video fails to load', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
       render(<VideoPlayer src="https://example.com/video.mp4" onError={onError} />);
 
       const video = document.querySelector('video');

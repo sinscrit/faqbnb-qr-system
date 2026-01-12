@@ -12,12 +12,12 @@ describe('RemoveItemDialog', () => {
   const defaultProps = {
     isOpen: true,
     itemName: 'Test Dishwasher',
-    onClose: jest.fn(),
-    onConfirmRemove: jest.fn(),
+    onClose: vi.fn(),
+    onConfirmRemove: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -126,12 +126,12 @@ describe('RemoveItemDialog', () => {
       expect(defaultProps.onClose).not.toHaveBeenCalled();
     });
 
-    it('focuses the confirm button when dialog opens', () => {
+    it('focuses the cancel button when dialog opens', () => {
       render(<RemoveItemDialog {...defaultProps} />);
 
-      // The Remove button should be focused
-      const removeButton = screen.getByText('Remove');
-      expect(document.activeElement).toBe(removeButton);
+      // The Cancel button should be focused (safer default for destructive dialog)
+      const cancelButton = screen.getByText('Cancel');
+      expect(document.activeElement).toBe(cancelButton);
     });
   });
 

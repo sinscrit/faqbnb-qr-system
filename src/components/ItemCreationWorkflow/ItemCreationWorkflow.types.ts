@@ -13,7 +13,7 @@
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
- * @lastModified 2026-01-10 (Plan-094, REQ-175, REQ-177 Tags)
+ * @lastModified 2026-01-12 (REQ-208: Separate Item from Article types)
  */
 
 // =============================================================================
@@ -54,8 +54,31 @@ export interface ItemCreationWorkflowProps {
   /** Called to fetch existing items for display in summary */
   onFetchExistingItems: () => Promise<SessionItem[]>;
 
-  /** Called to persist a new item to database */
-  onSaveItem: (item: SessionItem) => Promise<{ id: string; qrCodeUrl: string }>;
+  /**
+   * Called to persist a new item to database.
+   * Returns the saved item's ID, QR code data URL, and optionally the clean item name.
+   *
+   * @param item - The SessionItem to save
+   * @returns Promise resolving to:
+   *   - id: The saved item's public ID (used in QR URL)
+   *   - qrCodeUrl: Base64 data URL of the generated QR code image
+   *   - itemName: Optional physical item name for QR label (falls back to input item.name)
+   *
+   * Note: itemName should be the physical item name only (e.g., "Cabinets"),
+   * not an article title (e.g., "How to Clean - Cabinets"). This ensures
+   * QR code labels accurately represent the physical item identity.
+   *
+   * @see docs/REQ-211-update-qr-code-generation-overview.md
+   * @lastModified 2026-01-12 (REQ-211: Return clean item name for QR label)
+   */
+  onSaveItem: (item: SessionItem) => Promise<{
+    /** The saved item's public ID (used in QR URL) */
+    id: string;
+    /** Base64 data URL of the generated QR code image */
+    qrCodeUrl: string;
+    /** Optional: Physical item name for QR label display. If omitted, caller should use item.specificItem. */
+    itemName?: string;
+  }>;
 
   /** Optional: Pre-populate with existing session (resume) */
   initialSession?: WorkflowSession;
@@ -111,6 +134,41 @@ export type PurposeType =
   | 'other';
 
 // =============================================================================
+// Article Types (REQ-208)
+// =============================================================================
+
+/**
+ * An Article/Instruction associated with an Item.
+ * Multiple articles can exist per item, each with a different purpose.
+ * The article title is derived from the purpose type.
+ *
+ * @example
+ * ```typescript
+ * const article: Article = {
+ *   id: 'article-123',
+ *   title: 'How to Clean',
+ *   purpose: 'how-to-clean',
+ *   content: [contentPiece1, contentPiece2],
+ *   createdAt: new Date(),
+ * };
+ * ```
+ *
+ * @see REQ-208 - Update Type Definitions to Separate Item from Article
+ */
+export interface Article {
+  /** Unique article identifier (UUID) */
+  id: string;
+  /** Article title (derived from purpose, e.g., "How to Clean") */
+  title: string;
+  /** Purpose type that determines the article title and categorization */
+  purpose: PurposeType;
+  /** Content pieces for this article (videos, photos, text, etc.) */
+  content: ContentPiece[];
+  /** When the article was created */
+  createdAt: Date;
+}
+
+// =============================================================================
 // Session Types
 // =============================================================================
 
@@ -156,6 +214,12 @@ export interface WorkflowSession {
 /**
  * State for the item currently being created.
  * Progressively filled as user moves through steps.
+ * Updated to separate physical item properties from current article being created.
+ *
+ * - Item properties: room, itemType, specificItem (physical identity)
+ * - Article properties: currentArticle (content being created)
+ *
+ * @see REQ-208 - CurrentItemState now separates item from article
  */
 export interface CurrentItemState {
   /** Selected room for this item */
@@ -167,11 +231,27 @@ export interface CurrentItemState {
   /** Specific item name from suggestions or custom input */
   specificItem: string;
 
-  /** Display name for the item (auto-generated or user-edited) */
+  /** Physical item name - equals specificItem, shown on QR code label */
   itemName: string;
 
-  /** Purpose/intent for this item content (Plan-094) */
-  purpose: PurposeType | null;
+  /**
+   * Current article being created for this item.
+   * Contains article-specific properties separated from item identity.
+   */
+  currentArticle: {
+    /** Article title derived from purpose (e.g., "How to Clean") */
+    title: string;
+    /** Purpose selection for the article */
+    purpose: PurposeType | null;
+    /** Content pieces for this article */
+    content: ContentPiece[];
+  };
+
+  /**
+   * Purpose/intent for this item content (Plan-094)
+   * @deprecated Use currentArticle.purpose instead. Kept for backward compatibility.
+   */
+  purpose?: PurposeType | null;
 
   /** Content source choice: existing upload or create new */
   contentSource: 'existing' | 'create-new';
@@ -179,22 +259,41 @@ export interface CurrentItemState {
   /** Selected content type (null until chosen) */
   contentType: ContentType | null;
 
-  /** Content pieces added to this item */
-  content: ContentPiece[];
+  /**
+   * Content pieces added to this item
+   * @deprecated Use currentArticle.content instead. Kept for backward compatibility.
+   */
+  content?: ContentPiece[];
 
   /** Auto-generated tags based on workflow selections (REQ-177) */
   tags: string[];
 }
 
 /**
- * A completed item within the session.
- * Contains all data needed for display and persistence.
+ * A physical Item that gets ONE QR code.
+ * Updated to separate item name from article content.
+ * An item can have multiple articles with different purposes.
+ *
+ * @example
+ * ```typescript
+ * const item: SessionItem = {
+ *   id: 'item-123',
+ *   name: 'Cabinets',  // Physical item name, appears on QR code
+ *   room: 'kitchen',
+ *   itemType: 'appliance',
+ *   content: [],  // Deprecated, use articles[].content
+ *   createdAt: new Date(),
+ *   articles: [article1, article2],
+ * };
+ * ```
+ *
+ * @see REQ-208 - Item now has articles array
  */
 export interface SessionItem {
   /** Unique item identifier (UUID) */
   id: string;
 
-  /** Display name for the item */
+  /** Physical item name (e.g., "Cabinets", "Fridge") - appears on QR code label */
   name: string;
 
   /** Room where the item is located */
@@ -203,7 +302,10 @@ export interface SessionItem {
   /** Item type category */
   itemType: ItemType;
 
-  /** All content pieces attached to this item */
+  /**
+   * All content pieces attached to this item
+   * @deprecated Use articles[].content instead. Kept for backward compatibility.
+   */
   content: ContentPiece[];
 
   /** When the item was created */
@@ -214,6 +316,9 @@ export interface SessionItem {
 
   /** Tags for categorization (optional, REQ-177) */
   tags?: string[];
+
+  /** Articles/instructions for this item (one-to-many relationship) */
+  articles?: Article[];
 }
 
 /**

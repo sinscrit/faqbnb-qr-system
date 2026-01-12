@@ -16,10 +16,10 @@ import type { AspectRatioPreset } from '../ImageCropper';
 // =============================================================================
 
 // Mock the CSS import
-jest.mock('../imageCropper.css', () => ({}));
+vi.mock('../imageCropper.css', () => ({}));
 
 // Mock react-image-crop with a simplified implementation
-jest.mock('react-image-crop', () => {
+vi.mock('react-image-crop', () => {
   const React = require('react');
 
   const ReactCrop = ({
@@ -76,14 +76,14 @@ jest.mock('react-image-crop', () => {
 });
 
 // Mock cropUtils
-jest.mock('../cropUtils', () => ({
-  executeCrop: jest.fn().mockImplementation(() => {
+vi.mock('../cropUtils', () => ({
+  executeCrop: vi.fn().mockImplementation(() => {
     return Promise.resolve(
       new Blob(['cropped image data'], { type: 'image/jpeg' })
     );
   }),
-  calculateScaleFactors: jest.fn().mockReturnValue({ scaleX: 1, scaleY: 1 }),
-  isValidCrop: jest.fn().mockReturnValue(true),
+  calculateScaleFactors: vi.fn().mockReturnValue({ scaleX: 1, scaleY: 1 }),
+  isValidCrop: vi.fn().mockReturnValue(true),
 }));
 
 // =============================================================================
@@ -105,8 +105,8 @@ function createTestImageUrl(): string {
 
 const defaultProps = {
   imageSrc: createTestImageUrl(),
-  onCropComplete: jest.fn(),
-  onCancel: jest.fn(),
+  onCropComplete: vi.fn(),
+  onCancel: vi.fn(),
 };
 
 // =============================================================================
@@ -115,14 +115,14 @@ const defaultProps = {
 
 describe('ImageCropper', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset URL mock
-    jest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test-url');
-    jest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test-url');
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // =============================================================================
@@ -221,7 +221,7 @@ describe('ImageCropper', () => {
     });
 
     it('calls onCancel when Cancel button is clicked', async () => {
-      const onCancel = jest.fn();
+      const onCancel = vi.fn();
       const user = userEvent.setup();
       render(<ImageCropper {...defaultProps} onCancel={onCancel} />);
 
@@ -265,7 +265,7 @@ describe('ImageCropper', () => {
     });
 
     it('calls onCropComplete with Blob when Apply is clicked', async () => {
-      const onCropComplete = jest.fn();
+      const onCropComplete = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -294,7 +294,7 @@ describe('ImageCropper', () => {
     });
 
     it('shows "Applying..." text while processing', async () => {
-      const onCropComplete = jest.fn().mockImplementation(() => {
+      const onCropComplete = vi.fn().mockImplementation(() => {
         return new Promise((resolve) => setTimeout(resolve, 100));
       });
       const user = userEvent.setup();

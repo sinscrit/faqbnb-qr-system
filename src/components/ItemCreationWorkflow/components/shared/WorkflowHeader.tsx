@@ -9,9 +9,10 @@
  *
  * @example
  * ```tsx
+ * // REQ-199: 8 user-visible steps (not 10)
  * <WorkflowHeader
  *   currentStepIndex={2}
- *   totalSteps={9}
+ *   totalSteps={8}
  *   progressPercent={25}
  *   canGoBack={true}
  *   onBack={() => prevStep()}

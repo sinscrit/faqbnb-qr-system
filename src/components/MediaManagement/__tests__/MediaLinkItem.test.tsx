@@ -20,14 +20,14 @@ describe('MediaLinkItem', () => {
   const defaultProps = {
     link: mockLink,
     index: 0,
-    onEdit: jest.fn(),
-    onDelete: jest.fn(),
-    onSave: jest.fn(),
-    onCancelEdit: jest.fn(),
+    onEdit: vi.fn(),
+    onDelete: vi.fn(),
+    onSave: vi.fn(),
+    onCancelEdit: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders link title and URL', () => {

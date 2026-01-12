@@ -2,24 +2,58 @@
 # =============================================================================
 # Pipeline Dashboard Launcher
 # =============================================================================
-# Quick launcher for the pipeline dashboard TUI.
+# Quick launcher for the pipeline dashboard TUI and PDF daemon monitor.
 #
 # Usage:
-#   ./scripts/dashboard.sh              # Run with defaults
+#   ./scripts/dashboard.sh              # Run pipeline dashboard with defaults
 #   ./scripts/dashboard.sh --once       # Single render (no live update)
 #   ./scripts/dashboard.sh -r 5         # Refresh every 5 seconds
 #   ./scripts/dashboard.sh --worktrees  # Include worktree state files
 #   ./scripts/dashboard.sh --deps       # Show dependency graph
 #   ./scripts/dashboard.sh --latest     # Show only the most recent pipeline
 #
+# PDF Daemon commands:
+#   ./scripts/dashboard.sh daemon       # Start PDF daemon in foreground
+#   ./scripts/dashboard.sh monitor      # Run daemon monitor dashboard
+#   ./scripts/dashboard.sh status       # Show daemon status
+#   ./scripts/dashboard.sh stop         # Stop running daemon
+#
 # Created: 2026-01-05
-# Last Modified: 2026-01-10
+# Last Modified: 2026-01-11
 # =============================================================================
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$( dirname "$SCRIPT_DIR" )"
 
 cd "$PROJECT_DIR"
+
+# Handle daemon commands
+case "$1" in
+    daemon)
+        shift
+        python3 claude-pipelines/daemon/pdf_daemon.py "$@"
+        exit $?
+        ;;
+    monitor)
+        shift
+        python3 claude-pipelines/daemon/pdf_daemon.py --monitor "$@"
+        exit $?
+        ;;
+    status)
+        shift
+        python3 claude-pipelines/daemon/pdf_daemon.py --status "$@"
+        exit $?
+        ;;
+    stop)
+        python3 claude-pipelines/daemon/pdf_daemon.py --stop
+        exit $?
+        ;;
+    health|health-check)
+        shift
+        python3 claude-pipelines/daemon/pdf_daemon.py --health-check "$@"
+        exit $?
+        ;;
+esac
 
 # Check for active worktrees and add their state files automatically
 WORKTREE_ARGS=""
@@ -55,4 +89,4 @@ if [[ -d "$WORKTREE_DIR" ]]; then
     done
 fi
 
-/Library/Developer/CommandLineTools/usr/bin/python3 "$SCRIPT_DIR/pipeline-dashboard.py" $WORKTREE_ARGS "$@"
+python3 "$PROJECT_DIR/claude-pipelines/pipeline-dashboard.py" $WORKTREE_ARGS "$@"

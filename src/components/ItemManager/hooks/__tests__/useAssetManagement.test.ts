@@ -23,19 +23,19 @@ beforeEach(() => {
   urlCounter = 0;
   mockObjectUrls.clear();
 
-  global.URL.createObjectURL = jest.fn((blob: Blob) => {
+  global.URL.createObjectURL = vi.fn((blob: Blob) => {
     const url = `blob:mock-url-${urlCounter++}`;
     mockObjectUrls.set(url, true);
     return url;
   });
 
-  global.URL.revokeObjectURL = jest.fn((url: string) => {
+  global.URL.revokeObjectURL = vi.fn((url: string) => {
     mockObjectUrls.delete(url);
   });
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 // Helper to create mock File objects

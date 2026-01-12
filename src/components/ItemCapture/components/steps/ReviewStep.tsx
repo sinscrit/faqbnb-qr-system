@@ -4,11 +4,12 @@
  * ReviewStep Component
  *
  * Final step of the ItemCapture wizard where users can review all captured
- * content before submission. Displays metadata summary, media gallery,
- * and instructions preview with options to edit, reorder, or remove items.
+ * content before submission. Displays item details summary (Item Name, Room,
+ * Item Type, Content Purpose, Tags), media gallery, and instructions preview
+ * with options to edit, reorder, or remove items.
  *
  * @module ItemCapture/components/steps/ReviewStep
- * @lastModified 2025-12-31 (REQ-054 - URL cleanup with urlsRef pattern)
+ * @lastModified 2026-01-12 (REQ-183 - Added Content Purpose display in metadata section)
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -31,8 +32,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MediaItem, ItemMetadata, ApplianceType, UrlItem } from '../../ItemCapture.types';
+import type { PurposeType } from '@/types';
 import { UrlPreview } from '../shared/UrlPreview';
-import { APPLIANCE_TYPES } from '../../utils/constants';
+import { APPLIANCE_TYPES, CONTENT_PURPOSE_OPTIONS } from '../../utils/constants';
 import { useItemValidation } from '../../hooks/useItemValidation';
 import { ValidationMessage, ValidationMessageList } from '../shared/ValidationMessage';
 
@@ -107,6 +109,17 @@ interface MediaItemCardProps {
 function getApplianceTypeLabel(type: ApplianceType): string {
   const typeEntry = APPLIANCE_TYPES.find(t => t.value === type);
   return typeEntry?.label ?? type;
+}
+
+/**
+ * Get user-friendly label for a content purpose value.
+ * @param purpose - The PurposeType value
+ * @returns The display label or the raw value if not found
+ * @see REQ-183
+ */
+function getContentPurposeLabel(purpose: PurposeType): string {
+  const option = CONTENT_PURPOSE_OPTIONS.find(opt => opt.value === purpose);
+  return option?.label || purpose;
 }
 
 // =============================================================================
@@ -417,9 +430,9 @@ export function ReviewStep({
 
         {/* Description list */}
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Title */}
+          {/* Item Name */}
           <div>
-            <dt className="text-sm font-medium text-gray-500">Title</dt>
+            <dt className="text-sm font-medium text-gray-500">Item Name</dt>
             <dd className="mt-1 text-sm text-gray-900">
               {metadata.title.trim() || <span className="text-gray-400">&mdash;</span>}
             </dd>
@@ -443,6 +456,16 @@ export function ReviewStep({
             </div>
           )}
 
+          {/* Content Purpose (conditional) - REQ-183 */}
+          {metadata.contentPurpose && (
+            <div>
+              <dt className="text-sm font-medium text-gray-500">Content Purpose</dt>
+              <dd className="mt-1 text-sm text-gray-900">
+                {getContentPurposeLabel(metadata.contentPurpose)}
+              </dd>
+            </div>
+          )}
+
           {/* Tags (conditional, spans 2 columns) */}
           {metadata.tags && metadata.tags.length > 0 && (
             <div className="md:col-span-2">
@@ -459,7 +482,16 @@ export function ReviewStep({
               </dd>
             </div>
           )}
+
         </dl>
+
+        {/* QR Code Label Preview */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <p className="text-xs text-gray-500">
+            <span className="font-medium">QR Code Label:</span>{' '}
+            {metadata.title.trim() || <span className="italic">Item Name</span>}
+          </p>
+        </div>
       </section>
 
       {/* =================================================================== */}

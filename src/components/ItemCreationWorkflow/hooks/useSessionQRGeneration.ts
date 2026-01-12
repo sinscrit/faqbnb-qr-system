@@ -3,9 +3,22 @@
 /**
  * useSessionQRGeneration - QR code generation for session items
  *
- * Generates QR codes for items created in the current session.
- * Wraps the existing useQRCodeGeneration hook with session-specific
- * functionality and progress tracking.
+ * Generates QR codes for Items created in the current session.
+ *
+ * ## IMPORTANT: QR Code Semantics (REQ-211)
+ *
+ * QR codes represent **physical Items**, NOT individual Articles.
+ *
+ * Key principles:
+ * - Each physical Item gets exactly ONE QR code
+ * - The QR URL points to the Item landing page: `/item/{itemId}`
+ * - Multiple Articles can exist per Item; they share the same QR code
+ * - QR labels should show the physical item name (e.g., "Cabinets"),
+ *   NOT the article title (e.g., "How to Clean")
+ * - When new Articles are added to an Item, the QR code remains unchanged
+ *
+ * This design ensures QR codes are stable and don't need regeneration
+ * when content is added or modified.
  *
  * ## Features
  * - Batch generation with configurable batch size
@@ -25,22 +38,16 @@
  *
  * const handlePrint = async () => {
  *   await generateForItems(session.items);
- *   // stats contains { total, completed, failed, remaining }
+ *   // qrCodes map contains item.id -> QR data URL
+ *   // Each QR encodes: /item/{itemId}
  * };
- *
- * return (
- *   <QRGenerationProgress
- *     isGenerating={isGenerating}
- *     progress={progress}
- *     stats={stats}
- *   />
- * );
  * ```
  *
  * @module ItemCreationWorkflow/hooks/useSessionQRGeneration
  * @see QRGenerationProgress for progress UI
  * @see useQRCodeGeneration for underlying implementation
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @see docs/REQ-211-update-qr-code-generation-overview.md
+ * @lastModified 2026-01-12 (REQ-211 QR Code Semantics Documentation)
  */
 
 import { useCallback, useMemo } from 'react';

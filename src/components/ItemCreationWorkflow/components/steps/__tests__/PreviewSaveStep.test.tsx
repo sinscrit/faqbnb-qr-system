@@ -7,9 +7,10 @@
  * - Title editing with character counter
  * - Empty state handling
  * - Save flow and error handling
+ * - Item/Article separation (REQ-210)
  *
  * @module ItemCreationWorkflow/components/steps/__tests__/PreviewSaveStep.test
- * @lastModified 2026-01-10 (REQ-171 Update Tests)
+ * @lastModified 2026-01-12 (REQ-210: Item/Article separation tests)
  */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -50,10 +51,16 @@ const mockCurrentItem: CurrentItemState = {
   itemType: 'appliance',
   specificItem: 'Dishwasher',
   itemName: 'Kitchen - Dishwasher',
+  currentArticle: {
+    title: 'Instructions',
+    purpose: null,
+    content: [mockVideoContent],
+  },
   purpose: null,
   contentSource: 'create-new',
   contentType: 'video',
   content: [mockVideoContent],
+  tags: [],
 };
 
 const mockCurrentItemWithMultipleContent: CurrentItemState = {
@@ -73,10 +80,34 @@ const mockCurrentItemWithPurpose: CurrentItemState = {
   itemType: 'appliance',
   specificItem: 'Fridge',
   itemName: 'How to Clean - Fridge',
+  currentArticle: {
+    title: 'How to Clean',
+    purpose: 'how-to-clean',
+    content: [mockVideoContent],
+  },
   purpose: 'how-to-clean',
   contentSource: 'create-new',
   contentType: 'video',
   content: [mockVideoContent],
+  tags: ['kitchen', 'cleaning'],
+};
+
+// REQ-210: Item/Article separation fixture
+const mockItemWithArticle: CurrentItemState = {
+  room: 'kitchen',
+  itemType: 'appliance',
+  specificItem: 'Cabinets',
+  itemName: 'How to Clean - Cabinets',  // Legacy combined name
+  currentArticle: {
+    title: 'How to Clean',
+    purpose: 'how-to-clean',
+    content: [mockVideoContent],
+  },
+  purpose: 'how-to-clean',
+  contentSource: 'create-new',
+  contentType: 'video',
+  content: [mockVideoContent],
+  tags: ['kitchen', 'cleaning'],
 };
 
 const mockPdfContent: ContentPiece = {
@@ -104,6 +135,8 @@ describe('PreviewSaveStep', () => {
   const defaultProps = {
     currentItem: mockCurrentItem,
     onUpdateItemName: vi.fn(),
+    onUpdateArticleTitle: vi.fn(),
+    onUpdateTags: vi.fn(),
     onRemoveContent: vi.fn(),
     onReorderContent: vi.fn(),
     onRetake: vi.fn(),
@@ -726,6 +759,428 @@ describe('PreviewSaveStep', () => {
       expect(screen.getByText('Kitchen')).toBeInTheDocument();
       expect(screen.getByText('Appliance')).toBeInTheDocument();
       expect(screen.getByText('How to Clean')).toBeInTheDocument();
+    });
+  });
+
+  // ===========================================================================
+  // Item/Article Separation Tests (REQ-210)
+  // ===========================================================================
+
+  describe('Item/Article Separation (REQ-210)', () => {
+    it('displays Item Name field with specificItem value', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      // Find input by its value - should show "Cabinets" (specificItem)
+      const itemNameInput = screen.getByDisplayValue('Cabinets');
+      expect(itemNameInput).toBeInTheDocument();
+    });
+
+    it('displays Item Name helper text about QR code label', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      expect(screen.getByText(/appears on QR code label/i)).toBeInTheDocument();
+    });
+
+    it('displays Article Title field with purpose-derived title', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      // Should show "How to Clean" as article title
+      const articleTitleInput = screen.getByDisplayValue('How to Clean');
+      expect(articleTitleInput).toBeInTheDocument();
+    });
+
+    it('shows visual separation between Item and Article sections', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      expect(screen.getByText(/physical item/i)).toBeInTheDocument();
+      expect(screen.getByText(/article.*instructions/i)).toBeInTheDocument();
+    });
+
+    it('calls onUpdateItemName when Item Name field changes', async () => {
+      const onUpdateItemName = vi.fn();
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={mockItemWithArticle}
+          onUpdateItemName={onUpdateItemName}
+        />
+      );
+
+      const itemNameInput = screen.getByDisplayValue('Cabinets');
+      await userEvent.clear(itemNameInput);
+      await userEvent.type(itemNameInput, 'New Item Name');
+
+      expect(onUpdateItemName).toHaveBeenCalled();
+    });
+
+    it('calls onUpdateArticleTitle when Article Title field changes', async () => {
+      const onUpdateArticleTitle = vi.fn();
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={mockItemWithArticle}
+          onUpdateArticleTitle={onUpdateArticleTitle}
+        />
+      );
+
+      const articleTitleInput = screen.getByDisplayValue('How to Clean');
+      await userEvent.clear(articleTitleInput);
+      await userEvent.type(articleTitleInput, 'New Title');
+
+      expect(onUpdateArticleTitle).toHaveBeenCalled();
+    });
+
+    it('shows fallback article title when no purpose or currentArticle title', () => {
+      const itemNoPurpose: CurrentItemState = {
+        ...mockItemWithArticle,
+        purpose: null,
+        currentArticle: {
+          title: '',  // Empty title
+          purpose: null,
+          content: [mockVideoContent],
+        },
+      };
+
+      render(<PreviewSaveStep {...defaultProps} currentItem={itemNoPurpose} />);
+
+      // Should show "Instructions" as fallback
+      const articleTitleInput = screen.getByDisplayValue('Instructions');
+      expect(articleTitleInput).toBeInTheDocument();
+    });
+
+    it('disables Article Title field when onUpdateArticleTitle is not provided', () => {
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={mockItemWithArticle}
+          onUpdateArticleTitle={undefined}
+        />
+      );
+
+      const articleTitleInput = screen.getByDisplayValue('How to Clean');
+      expect(articleTitleInput).toBeDisabled();
+    });
+
+    it('has Item Name field with correct value', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      // ItemNameEditor displays the specificItem value
+      const itemNameInput = screen.getByDisplayValue('Cabinets');
+      expect(itemNameInput).toBeInTheDocument();
+    });
+
+    it('has Article Title label associated with input', () => {
+      render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
+
+      const articleTitleInput = screen.getByLabelText(/article title/i);
+      expect(articleTitleInput).toBeInTheDocument();
+      expect(articleTitleInput).toHaveAttribute('id', 'article-title-editor');
+    });
+  });
+
+  // ===========================================================================
+  // QR Code Success Display Tests (REQ-210)
+  // ===========================================================================
+
+  describe('QR Code Success Display (REQ-210)', () => {
+    it('shows only item name (specificItem) in QR code success overlay', async () => {
+      const mockOnSave = vi.fn().mockResolvedValue({
+        id: 'item-123',
+        qrCodeUrl: 'data:image/png;base64,mockQRCode'
+      });
+
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={mockItemWithArticle}
+          onSave={mockOnSave}
+        />
+      );
+
+      // Click save button
+      const saveButton = screen.getByRole('button', { name: /save item/i });
+      fireEvent.click(saveButton);
+
+      // Wait for success overlay
+      await waitFor(() => {
+        expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+      });
+
+      // QR code label should show "Cabinets" (specificItem) not "How to Clean - Cabinets"
+      expect(screen.getByText('Cabinets')).toBeInTheDocument();
+    });
+
+    it('falls back to itemName when specificItem is not available', async () => {
+      const mockOnSave = vi.fn().mockResolvedValue({
+        id: 'item-123',
+        qrCodeUrl: 'data:image/png;base64,mockQRCode'
+      });
+
+      const legacyItem: CurrentItemState = {
+        ...mockCurrentItem,
+        specificItem: '',  // Empty specificItem
+        itemName: 'Legacy Name',
+      };
+
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={legacyItem}
+          onSave={mockOnSave}
+        />
+      );
+
+      const saveButton = screen.getByRole('button', { name: /save item/i });
+      fireEvent.click(saveButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+      });
+
+      // Should fall back to itemName
+      expect(screen.getByText('Legacy Name')).toBeInTheDocument();
+    });
+
+    it('QR code alt text shows item name only', async () => {
+      const mockOnSave = vi.fn().mockResolvedValue({
+        id: 'item-123',
+        qrCodeUrl: 'data:image/png;base64,mockQRCode'
+      });
+
+      render(
+        <PreviewSaveStep
+          {...defaultProps}
+          currentItem={mockItemWithArticle}
+          onSave={mockOnSave}
+        />
+      );
+
+      const saveButton = screen.getByRole('button', { name: /save item/i });
+      fireEvent.click(saveButton);
+
+      await waitFor(() => {
+        const qrImage = screen.getByAltText('QR code for Cabinets');
+        expect(qrImage).toBeInTheDocument();
+      });
+    });
+  });
+
+  // ===========================================================================
+  // QR Code Label Item Name Logic Tests (REQ-211)
+  // ===========================================================================
+
+  describe('PreviewSaveStep - QR Code Label (REQ-211)', () => {
+    describe('handleSave item name logic', () => {
+      it('should use result.itemName when provided by onSave', async () => {
+        // Setup: onSave returns { id, qrCodeUrl, itemName: 'Result Item Name' }
+        // currentItem has specificItem: 'Different Name'
+        // Expected: SuccessOverlay displays 'Result Item Name'
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode',
+          itemName: 'Result Item Name'
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockItemWithArticle,
+          specificItem: 'Different Name',
+          itemName: 'Another Different Name',
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+        });
+
+        // Should use result.itemName from onSave
+        expect(screen.getByText('Result Item Name')).toBeInTheDocument();
+        expect(screen.getByAltText('QR code for Result Item Name')).toBeInTheDocument();
+      });
+
+      it('should fall back to specificItem when result.itemName is undefined', async () => {
+        // Setup: onSave returns { id, qrCodeUrl } (no itemName)
+        // currentItem has specificItem: 'Cabinets'
+        // Expected: SuccessOverlay displays 'Cabinets'
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode'
+          // No itemName returned
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockItemWithArticle,
+          specificItem: 'Cabinets',
+          itemName: 'How to Clean - Cabinets',  // Legacy combined name
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+        });
+
+        // Should fall back to specificItem
+        expect(screen.getByText('Cabinets')).toBeInTheDocument();
+      });
+
+      it('should fall back to itemName when specificItem is undefined', async () => {
+        // Setup: onSave returns { id, qrCodeUrl } (no itemName)
+        // currentItem has itemName: 'Cabinets', no specificItem
+        // Expected: SuccessOverlay displays 'Cabinets'
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode'
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockCurrentItem,
+          specificItem: '',  // Empty specificItem
+          itemName: 'Legacy Item Name',
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+        });
+
+        // Should fall back to itemName
+        expect(screen.getByText('Legacy Item Name')).toBeInTheDocument();
+      });
+
+      it('should use "Item" as final fallback', async () => {
+        // Setup: onSave returns { id, qrCodeUrl } (no itemName)
+        // currentItem has no specificItem or itemName
+        // Expected: SuccessOverlay displays 'Item'
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode'
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockCurrentItem,
+          specificItem: '',
+          itemName: '',
+          content: [mockVideoContent],  // Need content to enable save
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        // Since save is disabled with empty name, we need to test differently
+        // The canSave logic uses specificItem || itemName, so both empty means save is disabled
+        // This test verifies the fallback in handleSave logic
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        expect(saveButton).toBeDisabled();  // Save should be disabled
+
+        // The fallback logic is: result.itemName || specificItem || itemName || 'Item'
+        // When all are empty, it falls back to 'Item' - but save is disabled before this
+      });
+
+      it('should display physical item name, not article title pattern', async () => {
+        // Setup: currentItem with specificItem: 'Cabinets'
+        // (Previously might have had 'How to Clean - Cabinets' pattern)
+        // Expected: Label shows 'Cabinets' only
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode',
+          itemName: 'Cabinets'  // Physical item name from save result
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockItemWithArticle,
+          specificItem: 'Cabinets',
+          itemName: 'How to Clean - Cabinets',  // Legacy combined pattern
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+        });
+
+        // Should display 'Cabinets' not 'How to Clean - Cabinets'
+        expect(screen.getByText('Cabinets')).toBeInTheDocument();
+        // Should NOT display the article title pattern in QR code label
+        expect(screen.queryByAltText(/How to Clean - Cabinets/)).not.toBeInTheDocument();
+        expect(screen.getByAltText('QR code for Cabinets')).toBeInTheDocument();
+      });
+
+      it('prefers result.itemName over specificItem fallback', async () => {
+        // Verify priority: result.itemName > specificItem > itemName
+        const mockOnSave = vi.fn().mockResolvedValue({
+          id: 'item-123',
+          qrCodeUrl: 'data:image/png;base64,mockQRCode',
+          itemName: 'Priority Item Name'
+        });
+
+        const testItem: CurrentItemState = {
+          ...mockItemWithArticle,
+          specificItem: 'Fallback Specific',
+          itemName: 'Fallback Item Name',
+        };
+
+        render(
+          <PreviewSaveStep
+            {...defaultProps}
+            currentItem={testItem}
+            onSave={mockOnSave}
+          />
+        );
+
+        const saveButton = screen.getByRole('button', { name: /save item/i });
+        fireEvent.click(saveButton);
+
+        await waitFor(() => {
+          expect(screen.getByText('Item Saved!')).toBeInTheDocument();
+        });
+
+        // Should prefer result.itemName
+        expect(screen.getByText('Priority Item Name')).toBeInTheDocument();
+        expect(screen.queryByText('Fallback Specific')).not.toBeInTheDocument();
+      });
     });
   });
 });

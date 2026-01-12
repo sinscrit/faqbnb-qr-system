@@ -47,13 +47,13 @@ const originalCreateObjectURL = URL.createObjectURL;
 const originalRevokeObjectURL = URL.revokeObjectURL;
 
 beforeAll(() => {
-  URL.createObjectURL = jest.fn((blob: Blob) => {
+  URL.createObjectURL = vi.fn((blob: Blob) => {
     const url = `blob:mock-url-${++mockUrlCounter}`;
     mockObjectUrls.push(url);
     return url;
   });
 
-  URL.revokeObjectURL = jest.fn((url: string) => {
+  URL.revokeObjectURL = vi.fn((url: string) => {
     const index = mockObjectUrls.indexOf(url);
     if (index > -1) {
       mockObjectUrls.splice(index, 1);
@@ -69,7 +69,7 @@ afterAll(() => {
 beforeEach(() => {
   mockObjectUrls.length = 0;
   mockUrlCounter = 0;
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // =============================================================================
@@ -98,7 +98,7 @@ function createMockMediaItem(
 function renderMediaThumbnail(props: Partial<MediaThumbnailProps> = {}) {
   const defaultProps: MediaThumbnailProps = {
     media: createMockMediaItem('image'),
-    onDelete: jest.fn(),
+    onDelete: vi.fn(),
     ...props,
   };
 
@@ -417,7 +417,7 @@ describe('MediaThumbnail - Delete Button', () => {
   });
 
   it('calls onDelete with correct id when delete button is clicked', () => {
-    const onDelete = jest.fn();
+    const onDelete = vi.fn();
     const imageMedia = createMockMediaItem('image', { id: 'test-media-123' });
 
     renderMediaThumbnail({ media: imageMedia, onDelete });
@@ -430,8 +430,8 @@ describe('MediaThumbnail - Delete Button', () => {
   });
 
   it('delete click does not trigger container onClick', () => {
-    const onDelete = jest.fn();
-    const onClick = jest.fn();
+    const onDelete = vi.fn();
+    const onClick = vi.fn();
 
     renderMediaThumbnail({ onDelete, onClick });
 
@@ -456,7 +456,7 @@ describe('MediaThumbnail - Delete Button', () => {
 
 describe('MediaThumbnail - Click Handler', () => {
   it('container onClick calls onClick prop with media id', () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const imageMedia = createMockMediaItem('image', { id: 'click-test-456' });
 
     const { container } = renderMediaThumbnail({ media: imageMedia, onClick });
@@ -495,7 +495,7 @@ describe('MediaThumbnail - Memory Cleanup', () => {
 
     const { unmount } = renderMediaThumbnail({ media: imageMedia });
 
-    const createCallCount = (URL.createObjectURL as jest.Mock).mock.calls.length;
+    const createCallCount = (URL.createObjectURL as vi.Mock).mock.calls.length;
     expect(createCallCount).toBeGreaterThan(0);
 
     unmount();
@@ -538,7 +538,7 @@ describe('MediaThumbnail - Memory Cleanup', () => {
 
 describe('MediaThumbnail - Integration Scenarios', () => {
   it('handles complete image workflow: load -> display -> delete', async () => {
-    const onDelete = jest.fn();
+    const onDelete = vi.fn();
     const imageMedia = createMockMediaItem('image', {
       id: 'workflow-test',
       thumbnail: new Blob(['thumbnail'], { type: 'image/jpeg' }),
@@ -567,7 +567,7 @@ describe('MediaThumbnail - Integration Scenarios', () => {
   });
 
   it('handles video thumbnail with play overlay', async () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const videoMedia = createMockMediaItem('video', {
       id: 'video-workflow',
       thumbnail: new Blob(['thumbnail'], { type: 'image/jpeg' }),

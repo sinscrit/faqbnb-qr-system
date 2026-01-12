@@ -5,18 +5,25 @@
  * Steps are rendered by the main ItemCreationWorkflow component based on
  * the current workflow state.
  *
- * ## Step Flow (Updated REQ-176)
+ * ## Step Flow (Updated REQ-201)
+ *
+ * ### User-Visible Steps (1-8, shown in progress indicator)
  * ```
  * 1. RoomSelectionStep      - Select room (kitchen, bedroom, etc.)
  * 2. ItemTypeStep           - Select category (appliance, room-item, general-info)
  * 3. SpecificItemStep       - Select/name specific item with suggestions
  * 4. PurposeStep            - Select content purpose (how-to-use, troubleshooting, etc.)
  * 5. ContentTypeStep        - Select unified content option (5 choices)
- * 6. MediaCaptureStep       - Route to appropriate capture UI (NEW - REQ-176)
- * 7. ContentCreationStep    - Create/upload content (DEPRECATED - kept for compatibility)
- * 8. PreviewSaveStep        - Preview and save the item
- * 9. NextActionStep         - Add more content, new item, or finish
- * 10. SessionSummaryStep    - Review all items and print QR codes
+ * 6. MediaCaptureStep       - Route to appropriate capture UI
+ * 7. ContentCreationStep    - Create/upload content (legacy - use MediaCaptureStep)
+ * 8. PreviewSaveStep        - Preview and save the item (FINAL numbered step)
+ * ```
+ *
+ * ### Post-Workflow Screens (no step counter)
+ * ```
+ * - WhatsNextStep           - 4-option decision menu (REQ-201, replaces NextActionStep)
+ * - NextActionStep          - DEPRECATED, kept for compatibility
+ * - SessionSummaryStep      - Review all items and print QR codes
  * ```
  *
  * NOTE: ContentSourceStep removed per REQ-162 - content options consolidated
@@ -30,13 +37,14 @@
  * import {
  *   RoomSelectionStep,
  *   SessionSummaryStep,
+ *   WhatsNextStep,
  * } from '@/components/ItemCreationWorkflow/components/steps';
  * ```
  *
  * @module ItemCreationWorkflow/components/steps
  * @see useWorkflowState for navigation logic
  * @see README.md for complete workflow documentation
- * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
+ * @lastModified 2026-01-12 (REQ-201 WhatsNextStep integration)
  */
 
 // =============================================================================
@@ -106,9 +114,29 @@ export type { PreviewSaveStepProps } from './PreviewSaveStep';
 /**
  * Decision point for what to do next after saving an item.
  * Options: add more content, create new item, or finish session.
+ * @deprecated Use WhatsNextStep for the post-workflow menu
  */
 export { NextActionStep } from './NextActionStep';
 export type { NextActionStepProps } from './NextActionStep';
+
+// =============================================================================
+// Post-Workflow Menu (Phase 2 ITEM-03, REQ-201)
+// =============================================================================
+/**
+ * Post-save decision menu with 4 action options.
+ * Re-exported from ItemCapture for consistency.
+ * Replaces NextActionStep for the post-save flow.
+ *
+ * Options:
+ * 1. Edit Instructions - Navigate to edit the article just created
+ * 2. Add New Instructions - Create different instructions for same item
+ * 3. Create New Item - Start fresh with a different item
+ * 4. Done - Exit the workflow completely
+ *
+ * @see REQ-201 for requirements
+ * @see Plan-109 Phase 2 for implementation context
+ */
+export { WhatsNextStep, type WhatsNextStepProps } from '@/components/ItemCapture/components/steps/WhatsNextStep';
 
 // =============================================================================
 // Summary Steps (Step 9)

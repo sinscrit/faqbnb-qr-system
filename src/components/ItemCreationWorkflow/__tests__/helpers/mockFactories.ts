@@ -5,7 +5,7 @@
  * for consistent and maintainable test data generation.
  *
  * @module ItemCreationWorkflow/__tests__/helpers/mockFactories
- * @lastModified 2026-01-10 (REQ-172 E2E Flow Testing)
+ * @lastModified 2026-01-12 (REQ-208: Added Article factories and currentArticle support)
  */
 
 import type {
@@ -20,6 +20,7 @@ import type {
   ItemType,
   WorkflowStep,
   PurposeType,
+  Article,  // REQ-208
 } from '../../ItemCreationWorkflow.types';
 
 import { PURPOSE_LABELS } from '../../utils/constants';
@@ -45,11 +46,85 @@ export const createMockSessionItem = (
   name: 'Test Item',
   room: 'kitchen',
   itemType: 'appliance',
-  content: [],
+  content: [],  // Deprecated, kept for compatibility
   createdAt: new Date(),
   qrCodeUrl: undefined,
+  tags: [],
+  articles: [],  // REQ-208: Empty by default
   ...overrides,
 });
+
+// =============================================================================
+// Article Factory (REQ-208)
+// =============================================================================
+
+/**
+ * Creates a mock Article with sensible defaults.
+ * All properties can be overridden via the overrides parameter.
+ *
+ * @param overrides - Partial Article to override defaults
+ * @returns A complete Article instance
+ */
+export const createMockArticle = (
+  overrides?: Partial<Article>
+): Article => {
+  const purpose = overrides?.purpose ?? 'how-to-use';
+  const purposeLabel = PURPOSE_LABELS[purpose];
+
+  return {
+    id: crypto.randomUUID(),
+    title: purposeLabel,
+    purpose,
+    content: [],
+    createdAt: new Date(),
+    ...overrides,
+  };
+};
+
+/**
+ * Creates a mock Article with content pieces.
+ *
+ * @param purpose - The purpose type for the article
+ * @param contentTypes - Array of content types to create pieces for
+ * @param overrides - Partial Article to override defaults
+ * @returns Article with content pieces
+ */
+export const createMockArticleWithContent = (
+  purpose: PurposeType = 'how-to-use',
+  contentTypes: ContentType[] = ['video'],
+  overrides?: Partial<Article>
+): Article => {
+  const content = contentTypes.map((type, index) =>
+    createMockContentPiece(type, { order: index })
+  );
+
+  return createMockArticle({
+    purpose,
+    content,
+    ...overrides,
+  });
+};
+
+/**
+ * Creates a mock SessionItem with articles.
+ *
+ * @param purposes - Array of purpose types to create articles for
+ * @param overrides - Partial SessionItem to override defaults
+ * @returns SessionItem with articles
+ */
+export const createMockSessionItemWithArticles = (
+  purposes: PurposeType[] = ['how-to-use'],
+  overrides?: Partial<SessionItem>
+): SessionItem => {
+  const articles = purposes.map((purpose) =>
+    createMockArticle({ purpose })
+  );
+
+  return createMockSessionItem({
+    articles,
+    ...overrides,
+  });
+};
 
 // =============================================================================
 // ContentPiece Factory
@@ -147,6 +222,7 @@ export const createMockWorkflowSession = (
 
 /**
  * Creates a mock CurrentItemState with sensible defaults.
+ * Updated for REQ-208 to include currentArticle nested object.
  *
  * @param overrides - Partial CurrentItemState to override defaults
  * @returns A complete CurrentItemState instance
@@ -157,11 +233,17 @@ export const createMockCurrentItemState = (
   room: 'kitchen',
   itemType: 'appliance',
   specificItem: 'Refrigerator',
-  itemName: 'Kitchen - Refrigerator',
-  purpose: null,
+  itemName: 'Refrigerator',  // REQ-208: Physical item name only
+  currentArticle: {
+    title: '',
+    purpose: null,
+    content: [],
+  },
+  purpose: null,     // Deprecated
   contentSource: 'existing',
   contentType: null,
-  content: [],
+  content: [],       // Deprecated
+  tags: [],
   ...overrides,
 });
 
@@ -171,10 +253,11 @@ export const createMockCurrentItemState = (
 
 /**
  * Creates a mock CurrentItemState with purpose field populated.
+ * Updated for REQ-208: Now also populates currentArticle with purpose and title.
  *
  * @param purpose - The purpose type for the item
  * @param overrides - Partial CurrentItemState to override defaults
- * @returns CurrentItemState with purpose
+ * @returns CurrentItemState with purpose in both legacy and new fields
  */
 export const createMockCurrentItemWithPurpose = (
   purpose: PurposeType,
@@ -182,12 +265,18 @@ export const createMockCurrentItemWithPurpose = (
 ): CurrentItemState => {
   const specificItem = overrides?.specificItem ?? 'Refrigerator';
   const purposeLabel = PURPOSE_LABELS[purpose];
-  const itemName = `${purposeLabel} - ${specificItem}`;
+  const itemName = specificItem;  // REQ-208: Item name is now physical item only
+  const articleTitle = purposeLabel;  // REQ-208: Article title from purpose
 
   return {
     ...createMockCurrentItemState(),
-    purpose,
     itemName,
+    currentArticle: {
+      title: articleTitle,
+      purpose,
+      content: [],
+    },
+    purpose,  // Deprecated, kept for compatibility
     ...overrides,
   };
 };

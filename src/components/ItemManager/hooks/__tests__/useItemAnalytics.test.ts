@@ -7,7 +7,7 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useItemAnalytics } from '../useItemAnalytics';
 
 // Mock fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const mockReactionsResponse = {
@@ -28,7 +28,7 @@ const mockAnalyticsResponse = {
 
 describe('useItemAnalytics', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     jest.useFakeTimers();
   });
 

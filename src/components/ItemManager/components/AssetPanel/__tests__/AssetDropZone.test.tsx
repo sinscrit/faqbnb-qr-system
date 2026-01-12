@@ -16,7 +16,7 @@ import { AssetDropZone, AssetDropZoneProps } from '../AssetDropZone';
 // =============================================================================
 
 const defaultProps: AssetDropZoneProps = {
-  onFilesSelected: jest.fn(),
+  onFilesSelected: vi.fn(),
 };
 
 function renderDropZone(props: Partial<AssetDropZoneProps> = {}) {
@@ -44,10 +44,10 @@ function createDataTransfer(files: File[]): DataTransfer {
     types: ['Files'],
     dropEffect: 'none' as DataTransfer['dropEffect'],
     effectAllowed: 'all' as DataTransfer['effectAllowed'],
-    setData: jest.fn(),
-    getData: jest.fn(),
-    clearData: jest.fn(),
-    setDragImage: jest.fn(),
+    setData: vi.fn(),
+    getData: vi.fn(),
+    clearData: vi.fn(),
+    setDragImage: vi.fn(),
   };
   return dataTransfer as unknown as DataTransfer;
 }
@@ -58,7 +58,7 @@ function createDataTransfer(files: File[]): DataTransfer {
 
 describe('AssetDropZone', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -111,7 +111,7 @@ describe('AssetDropZone', () => {
     });
 
     it('prevents interaction when disabled', () => {
-      const onFilesSelected = jest.fn();
+      const onFilesSelected = vi.fn();
       renderDropZone({ disabled: true, onFilesSelected });
 
       const dropZone = screen.getByRole('button');
@@ -204,7 +204,7 @@ describe('AssetDropZone', () => {
     });
 
     it('calls onFilesSelected with valid files on drop', async () => {
-      const onFilesSelected = jest.fn();
+      const onFilesSelected = vi.fn();
       renderDropZone({ onFilesSelected });
 
       const dropZone = screen.getByRole('button');
@@ -230,7 +230,7 @@ describe('AssetDropZone', () => {
 
   describe('File Type Validation', () => {
     it('accepts images when allowedMediaTypes includes image', async () => {
-      const onFilesSelected = jest.fn();
+      const onFilesSelected = vi.fn();
       renderDropZone({ allowedMediaTypes: ['image'], onFilesSelected });
 
       const dropZone = screen.getByRole('button');
@@ -245,7 +245,7 @@ describe('AssetDropZone', () => {
     });
 
     it('accepts videos when allowedMediaTypes includes video', async () => {
-      const onFilesSelected = jest.fn();
+      const onFilesSelected = vi.fn();
       renderDropZone({ allowedMediaTypes: ['video'], onFilesSelected });
 
       const dropZone = screen.getByRole('button');
@@ -260,7 +260,7 @@ describe('AssetDropZone', () => {
     });
 
     it('accepts PDFs when allowedMediaTypes includes pdf', async () => {
-      const onFilesSelected = jest.fn();
+      const onFilesSelected = vi.fn();
       renderDropZone({ allowedMediaTypes: ['pdf'], onFilesSelected });
 
       const dropZone = screen.getByRole('button');

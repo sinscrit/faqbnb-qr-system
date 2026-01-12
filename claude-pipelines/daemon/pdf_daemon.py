@@ -2,16 +2,22 @@
 # claude-pipelines/daemon/pdf_daemon.py
 # PDF Pipeline Daemon - Main Entry Point
 # Created: 2026-01-11
-# Last Modified: 2026-01-11 (added 24-hour file age filter)
+# Last Modified: 2026-01-11 (refactored: PDF = single PRD, Agent 00 handles holistically)
 #
 # Automated daemon for PDF → Pipeline processing.
-# Monitors inbox, extracts requests, invokes agents, runs pipelines.
+# Monitors inbox, processes PDF as a single PRD through agent pipeline.
 
 """
 PDF Pipeline Daemon
 
-Watches an inbox directory for PDF files containing feature requests,
-extracts and parses them, then processes through the agent pipeline.
+Watches an inbox directory for PDF files containing feature requests.
+Treats each PDF as a SINGLE PRD document and processes holistically:
+
+Workflow:
+  1. PDF (the PRD) → Extract text
+  2. Agent 00 → Creates global implementation plan (may add requests)
+  3. Agent 00b → Creates pipeline YAML
+  4. Agent 01 (via orchestrator) → Breaks down into individual requests
 
 Usage:
     # Start daemon in foreground
@@ -40,23 +46,90 @@ import subprocess
 import shutil
 import re
 import time
+import yaml
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field, asdict
 
 # Local imports - handle both module and direct execution
 try:
     from .pdf_extractor import extract_pdf_text, ExtractionResult
     from .config import load_config, DaemonConfig
     from .state import DaemonState, load_state, save_state
+    from .route_tracer import trace_prd_routes, save_trace_result
 except ImportError:
     from pdf_extractor import extract_pdf_text, ExtractionResult
     from config import load_config, DaemonConfig
     from state import DaemonState, load_state, save_state
+    from route_tracer import trace_prd_routes, save_trace_result
 
 # Setup logging
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class PDFJobState:
+    """
+    Tracks progress for a single PDF through the pipeline.
+    Enables resumption if interrupted.
+    """
+    pdf_path: str
+    project_code: Optional[str] = None
+    stage: str = "pending"  # pending, extracting, creating_prd, agent_00, agent_00b, orchestrator, completed, failed
+    started_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+    # Paths to intermediate outputs (for resumption)
+    prd_path: Optional[str] = None
+    plan_path: Optional[str] = None
+    yaml_path: Optional[str] = None
+
+    # Error info
+    error: Optional[str] = None
+
+    def save(self, state_dir: Path) -> Path:
+        """Save job state to YAML file."""
+        state_dir.mkdir(parents=True, exist_ok=True)
+        filename = Path(self.pdf_path).stem + ".job.yaml"
+        state_file = state_dir / filename
+        self.updated_at = datetime.now().isoformat()
+
+        with open(state_file, 'w') as f:
+            yaml.dump(asdict(self), f, default_flow_style=False)
+        return state_file
+
+    @classmethod
+    def load(cls, state_file: Path) -> Optional['PDFJobState']:
+        """Load job state from YAML file."""
+        if not state_file.exists():
+            return None
+        try:
+            with open(state_file, 'r') as f:
+                data = yaml.safe_load(f)
+            return cls(**data)
+        except Exception:
+            return None
+
+    @classmethod
+    def find_incomplete(cls, state_dir: Path) -> List['PDFJobState']:
+        """Find all incomplete job states, including failed jobs that can be resumed."""
+        incomplete = []
+        if not state_dir.exists():
+            return incomplete
+        for state_file in state_dir.glob("*.job.yaml"):
+            job = cls.load(state_file)
+            if not job:
+                continue
+            # Include incomplete jobs
+            if job.stage not in ("completed", "failed"):
+                incomplete.append(job)
+            # Also include "failed" jobs that have yaml_path - these failed at orchestrator
+            # stage and can be resumed from there
+            elif job.stage == "failed" and job.yaml_path:
+                job.stage = "orchestrator"  # Reset to orchestrator for retry
+                incomplete.append(job)
+        return incomplete
 
 
 @dataclass
@@ -259,7 +332,11 @@ class PipelineDaemon:
         logger.info("PDF Pipeline Daemon started")
         logger.info(f"  Inbox: {self.config.daemon.inbox_dir}")
         logger.info(f"  Poll interval: {self.config.daemon.poll_interval}s")
+        logger.info(f"  Pipeline depth: {self.config.daemon.pipeline_depth}")
         logger.info("=" * 60)
+
+        # Check for incomplete jobs to resume
+        self._resume_incomplete_jobs()
 
         try:
             while self.running:
@@ -269,6 +346,44 @@ class PipelineDaemon:
                     time.sleep(self.config.daemon.poll_interval)
         finally:
             self.stop()
+
+    def _resume_incomplete_jobs(self) -> None:
+        """Check for and resume any incomplete jobs from previous runs."""
+        job_state_dir = self.config.daemon.state_file.parent / "jobs"
+        incomplete_jobs = PDFJobState.find_incomplete(job_state_dir)
+
+        if not incomplete_jobs:
+            logger.info("No incomplete jobs to resume")
+            return
+
+        logger.info(f"Found {len(incomplete_jobs)} incomplete job(s) to resume")
+
+        for job in incomplete_jobs:
+            if not self.running:
+                break
+
+            pdf_path = Path(job.pdf_path)
+
+            # Check if PDF still exists (might be in inbox, processed, or failed)
+            if not pdf_path.exists():
+                # Check in failed directory
+                failed_path = self.config.daemon.failed_dir / pdf_path.name
+                if failed_path.exists():
+                    # Move back to process
+                    logger.info(f"Moving {pdf_path.name} from failed back to inbox for resumption")
+                    shutil.move(str(failed_path), str(pdf_path))
+                else:
+                    logger.warning(f"Cannot resume {pdf_path.name}: PDF not found")
+                    job.stage = "failed"
+                    job.error = "PDF file not found for resumption"
+                    job.save(job_state_dir)
+                    continue
+
+            logger.info(f"Resuming job: {pdf_path.name} from stage '{job.stage}'")
+            try:
+                self.process_pdf(pdf_path, job.project_code, job)
+            except Exception as e:
+                logger.error(f"Failed to resume {pdf_path.name}: {e}")
 
     def stop(self) -> None:
         """Stop the daemon gracefully."""
@@ -335,161 +450,257 @@ class PipelineDaemon:
                 logger.error(f"Unexpected error processing {pdf_path.name}: {e}")
                 self._move_to_failed(pdf_path, str(e))
 
-    def process_pdf(self, pdf_path: Path, project_code: Optional[str] = None) -> None:
+    def process_pdf(self, pdf_path: Path, project_code: Optional[str] = None,
+                     job: Optional[PDFJobState] = None) -> None:
         """
         Process a single PDF through the full pipeline.
+        Supports resumption from any stage using job state.
+
+        The PDF is treated as a SINGLE PRD document. Agent 00 looks at the
+        totality of requests to create a global implementation plan.
+
+        Workflow:
+          1. Extract text from PDF
+          2. Create PRD markdown from extracted text
+          3. Agent 00: Create global implementation plan (holistic view)
+          4. Agent 00b: Create pipeline YAML
+          5. Orchestrator runs (Agent 01 breaks down into individual requests)
 
         Args:
             pdf_path: Path to the PDF file
             project_code: Project code from filename (e.g., "FAQBNB")
+            job: Optional existing job state for resumption
         """
         logger.info(f"Processing: {pdf_path.name}")
-        self.state.start_job(str(pdf_path), "extracting", project_code=project_code)
+
+        # Get job state directory
+        job_state_dir = self.config.daemon.state_file.parent / "jobs"
+
+        # Create or load job state
+        if job is None:
+            job = PDFJobState(
+                pdf_path=str(pdf_path),
+                project_code=project_code,
+                stage="pending",
+                started_at=datetime.now().isoformat()
+            )
+        else:
+            logger.info(f"Resuming from stage: {job.stage}")
+
+        self.state.start_job(str(pdf_path), job.stage, project_code=project_code)
         save_state(self.state, self.config.daemon.state_file)
 
+        depth = self.config.daemon.pipeline_depth
+
+        # Stage order for resumption logic
+        stages = ["pending", "extracting", "creating_prd", "agent_00", "agent_00b", "orchestrator"]
+        current_stage_idx = stages.index(job.stage) if job.stage in stages else 0
+
         try:
-            # Step 1: Extract text from PDF
-            logger.info("Step 1: Extracting text from PDF")
-            extraction = extract_pdf_text(pdf_path, timeout=self.config.pdf_extraction.timeout)
+            # Step 1: Extract text from PDF (skip if already done)
+            if current_stage_idx <= stages.index("extracting"):
+                job.stage = "extracting"
+                job.save(job_state_dir)
 
-            if not extraction.success:
-                raise Exception(f"PDF extraction failed: {extraction.error}")
+                logger.info("Step 1: Extracting text from PDF")
+                extraction = extract_pdf_text(pdf_path, timeout=self.config.pdf_extraction.timeout)
 
-            if extraction.is_empty:
-                raise Exception("PDF extraction returned empty text")
+                if not extraction.success:
+                    raise Exception(f"PDF extraction failed: {extraction.error}")
 
-            logger.info(f"Extracted {len(extraction.text)} chars from {extraction.page_count} pages")
+                if extraction.is_empty:
+                    raise Exception("PDF extraction returned empty text")
+
+                logger.info(f"Extracted {len(extraction.text)} chars from {extraction.page_count} pages")
+                self._last_extraction_text = extraction.text  # Cache for PRD creation
+            else:
+                logger.info("Step 1: Skipped (already extracted)")
 
             # Check if we should stop at extraction
-            depth = self.config.daemon.pipeline_depth
             if depth == "extract_only":
-                logger.info(f"Pipeline depth is 'extract_only', stopping after extraction")
+                logger.info("Pipeline depth is 'extract_only', stopping after extraction")
+                job.stage = "completed"
+                job.save(job_state_dir)
                 self._move_to_processed(pdf_path)
                 self.state.complete_job(str(pdf_path), 0, [])
                 save_state(self.state, self.config.daemon.state_file)
                 return
 
-            # Step 2: Parse requests using Claude skill
-            self.state.update_job(str(pdf_path), "parsing")
-            save_state(self.state, self.config.daemon.state_file)
+            # Step 2: Create PRD from entire PDF content (skip if already done)
+            prd_path = Path(job.prd_path) if job.prd_path else None
 
-            logger.info("Step 2: Parsing requests with Claude skill")
-            parsed = self._invoke_parser_skill(extraction.text, pdf_path.name)
-
-            if not parsed.get("requests"):
-                raise Exception("No requests found in PDF")
-
-            requests = parsed["requests"]
-            session_info = parsed.get("session", {})
-            logger.info(f"Parsed {len(requests)} request(s)")
-
-            # Step 3: Process each request
-            pipelines_created = []
-            for i, req_data in enumerate(requests):
-                if not self.running:
-                    logger.info("Shutdown requested, stopping at current request")
-                    break
-
-                self.state.update_job(
-                    str(pdf_path), "processing",
-                    request_index=i + 1,
-                    request_total=len(requests)
-                )
+            if current_stage_idx <= stages.index("creating_prd") or not prd_path or not prd_path.exists():
+                job.stage = "creating_prd"
+                self.state.update_job(str(pdf_path), "creating_prd")
                 save_state(self.state, self.config.daemon.state_file)
+                job.save(job_state_dir)
 
-                request = ParsedRequest(
-                    id=req_data.get("id", i + 1),
-                    title=req_data.get("title", f"Request {i+1}"),
-                    screen=req_data.get("screen", "Unknown"),
-                    priority=req_data.get("priority", "medium"),
-                    current_state=req_data.get("current_state", ""),
-                    problem=req_data.get("problem", ""),
-                    required_changes=req_data.get("required_changes", []),
-                )
+                logger.info("Step 2: Creating PRD from PDF content")
+                # Re-extract if needed (for resumption)
+                if not hasattr(self, '_last_extraction_text'):
+                    extraction = extract_pdf_text(pdf_path, timeout=self.config.pdf_extraction.timeout)
+                    self._last_extraction_text = extraction.text
 
-                pipeline_yaml = self._process_request(request, session_info, pdf_path)
-                if pipeline_yaml:
-                    pipelines_created.append(str(pipeline_yaml))
+                prd_path = self._create_prd_from_pdf(pdf_path, self._last_extraction_text, project_code)
+                job.prd_path = str(prd_path)
+                job.save(job_state_dir)
+                logger.info(f"Created PRD: {prd_path}")
+            else:
+                logger.info(f"Step 2: Skipped (PRD exists: {prd_path})")
 
-            # Step 4: Move to processed
-            if self.running:
+            # Check if we should stop at PRD creation
+            if depth == "parse_only":
+                logger.info("Pipeline depth is 'parse_only', stopping after PRD creation")
+                job.stage = "completed"
+                job.save(job_state_dir)
                 self._move_to_processed(pdf_path)
-                self.state.complete_job(str(pdf_path), len(requests), pipelines_created)
+                self.state.complete_job(str(pdf_path), 1, [str(prd_path)])
                 save_state(self.state, self.config.daemon.state_file)
-                logger.info(f"Successfully processed {pdf_path.name}")
+                return
+
+            # Step 3: Agent 00 - Create global implementation plan (skip if already done)
+            plan_path = Path(job.plan_path) if job.plan_path else None
+
+            if current_stage_idx <= stages.index("agent_00") or not plan_path or not plan_path.exists():
+                job.stage = "agent_00"
+                self.state.update_job(str(pdf_path), "agent_00")
+                save_state(self.state, self.config.daemon.state_file)
+                job.save(job_state_dir)
+
+                logger.info("Step 3: Agent 00 - Creating global implementation plan")
+                plan_path = self._invoke_agent_00(prd_path)
+
+                if not plan_path:
+                    raise Exception("Agent 00 did not produce implementation plan")
+
+                job.plan_path = str(plan_path)
+                job.save(job_state_dir)
+                logger.info(f"Implementation plan: {plan_path}")
+            else:
+                logger.info(f"Step 3: Skipped (plan exists: {plan_path})")
+
+            # Check if we should stop at plan
+            if depth == "plan_only":
+                logger.info("Pipeline depth is 'plan_only', stopping after implementation plan")
+                job.stage = "completed"
+                job.save(job_state_dir)
+                self._move_to_processed(pdf_path)
+                self.state.complete_job(str(pdf_path), 1, [str(plan_path)])
+                save_state(self.state, self.config.daemon.state_file)
+                return
+
+            # Step 4: Agent 00b - Create pipeline YAML (skip if already done)
+            yaml_path = Path(job.yaml_path) if job.yaml_path else None
+
+            if current_stage_idx <= stages.index("agent_00b") or not yaml_path or not yaml_path.exists():
+                job.stage = "agent_00b"
+                self.state.update_job(str(pdf_path), "agent_00b")
+                save_state(self.state, self.config.daemon.state_file)
+                job.save(job_state_dir)
+
+                logger.info("Step 4: Agent 00b - Creating pipeline YAML")
+                yaml_path = self._invoke_agent_00b(plan_path)
+
+                if not yaml_path:
+                    raise Exception("Agent 00b did not produce pipeline YAML")
+
+                job.yaml_path = str(yaml_path)
+                job.save(job_state_dir)
+                logger.info(f"Pipeline YAML: {yaml_path}")
+            else:
+                logger.info(f"Step 4: Skipped (YAML exists: {yaml_path})")
+
+            # Step 5: Run orchestrator (includes Agent 01 for request breakdown)
+            job.stage = "orchestrator"
+            self.state.update_job(str(pdf_path), "orchestrator")
+            save_state(self.state, self.config.daemon.state_file)
+            job.save(job_state_dir)
+
+            logger.info("Step 5: Running orchestrator (Agent 01 will break down into requests)")
+            success = self._run_orchestrator(yaml_path)
+
+            if not success:
+                raise Exception("Orchestrator failed")
+
+            # Complete successfully
+            job.stage = "completed"
+            job.save(job_state_dir)
+            self._move_to_processed(pdf_path)
+            self.state.complete_job(str(pdf_path), 1, [str(yaml_path)])
+            save_state(self.state, self.config.daemon.state_file)
+            logger.info(f"Successfully processed {pdf_path.name}")
 
         except Exception as e:
             error_msg = str(e)
             logger.error(f"Failed to process {pdf_path.name}: {error_msg}")
+            job.error = error_msg
+            job.stage = "failed"
+            job.save(job_state_dir)
             self.state.fail_job(str(pdf_path), "processing", error_msg)
             save_state(self.state, self.config.daemon.state_file)
             self._move_to_failed(pdf_path, error_msg)
 
-    def _process_request(self, request: ParsedRequest, session_info: Dict[str, Any],
-                         source_pdf: Path) -> Optional[Path]:
+    def _create_prd_from_pdf(self, pdf_path: Path, extracted_text: str,
+                              project_code: Optional[str] = None) -> Path:
         """
-        Process a single request through agents and orchestrator.
+        Create a PRD markdown file from the entire PDF content.
+
+        The PDF is treated as a single PRD document. This method converts
+        the extracted text into a properly formatted PRD markdown file.
 
         Args:
-            request: ParsedRequest to process
-            session_info: Session metadata from PDF
-            source_pdf: Source PDF path for tracking
+            pdf_path: Original PDF path (for naming)
+            extracted_text: Full extracted text from PDF
+            project_code: Project code from filename
 
         Returns:
-            Path to created pipeline YAML, or None if failed
+            Path to created PRD file
         """
-        logger.info(f"Processing request #{request.id}: {request.title}")
+        output_dir = self.config.parser_skill.output_dir
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-        depth = self.config.daemon.pipeline_depth
+        # Generate filename from PDF name
+        pdf_stem = pdf_path.stem  # e.g., "CPL-FAQBNB-Review-2026-01-11"
+        timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+        filename = f"prd-{pdf_stem}-{timestamp}.md"
+        prd_path = output_dir / filename
 
-        try:
-            # Create PRD file
-            prd_path = self._create_prd_file(request, session_info)
-            logger.info(f"Created PRD: {prd_path}")
+        # Create PRD content
+        content = f"""# {pdf_stem}
 
-            # Stop here if parse_only
-            if depth == "parse_only":
-                logger.info(f"Pipeline depth is 'parse_only', stopping after PRD creation")
-                return prd_path
+**Created:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+**Source:** {pdf_path.name}
+**Project:** {project_code or 'Unknown'}
 
-            # Agent 00: Create implementation plan
-            self.state.update_job(str(source_pdf), "agent_00", request_id=str(request.id))
-            save_state(self.state, self.config.daemon.state_file)
+---
 
-            plan_path = self._invoke_agent_00(prd_path)
-            if not plan_path:
-                logger.warning(f"Agent 00 did not produce implementation plan for {request.title}")
-                return None
+## Overview
 
-            logger.info(f"Implementation plan: {plan_path}")
+This PRD was generated from a PDF review document containing multiple feature requests.
+Agent 00 should analyze all requests holistically to create a comprehensive implementation plan.
 
-            # Stop here if plan_only
-            if depth == "plan_only":
-                logger.info(f"Pipeline depth is 'plan_only', stopping after implementation plan")
-                return plan_path
+---
 
-            # Agent 00b: Create pipeline YAML
-            self.state.update_job(str(source_pdf), "agent_00b", request_id=str(request.id))
-            save_state(self.state, self.config.daemon.state_file)
+## PDF Content
 
-            yaml_path = self._invoke_agent_00b(plan_path)
-            if not yaml_path:
-                logger.warning(f"Agent 00b did not produce pipeline YAML for {request.title}")
-                return None
+{extracted_text}
 
-            logger.info(f"Pipeline YAML: {yaml_path}")
+---
 
-            # Run orchestrator (only if depth is 'full')
-            self.state.update_job(str(source_pdf), "orchestrator", request_id=str(request.id))
-            save_state(self.state, self.config.daemon.state_file)
+## Processing Instructions
 
-            self._run_orchestrator(yaml_path)
+This document contains multiple requests that may have dependencies or overlapping concerns.
+The implementation plan should:
 
-            return yaml_path
+1. Identify all distinct requests/features
+2. Analyze dependencies between requests
+3. Determine optimal implementation order
+4. Identify any additional requests needed for completeness
+5. Create a unified implementation strategy
 
-        except Exception as e:
-            logger.error(f"Failed processing request #{request.id}: {e}")
-            return None
+"""
+        prd_path.write_text(content)
+        return prd_path
 
     def _invoke_parser_skill(self, text: str, source_filename: str) -> Dict[str, Any]:
         """
@@ -557,35 +768,71 @@ class PipelineDaemon:
         except subprocess.TimeoutExpired:
             raise Exception(f"Parser skill timed out after {self.config.parser_skill.timeout}s")
 
-    def _create_prd_file(self, request: ParsedRequest, session_info: Dict[str, Any]) -> Path:
+    def _format_route_trace_for_prompt(self, trace_result) -> str:
         """
-        Create PRD file from parsed request.
+        Format route trace result into a readable string for Agent 00 prompt.
 
         Args:
-            request: ParsedRequest to convert
-            session_info: Session metadata
+            trace_result: RouteTraceResult from route_tracer
 
         Returns:
-            Path to created PRD file
+            Formatted string with trace data
         """
-        output_dir = self.config.parser_skill.output_dir
-        output_dir.mkdir(parents=True, exist_ok=True)
+        lines = []
 
-        # Generate filename
-        safe_title = re.sub(r'[^\w\s-]', '', request.title.lower())
-        safe_title = re.sub(r'[\s]+', '-', safe_title)[:50]
-        filename = f"prd-{safe_title}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"
-        prd_path = output_dir / filename
+        # Header
+        lines.append(f"**Framework:** {trace_result.framework_detected}")
+        lines.append(f"**Project Root:** {trace_result.project_root}")
+        lines.append("")
 
-        # Write PRD content
-        content = request.to_prd_content(session_info)
-        prd_path.write_text(content)
+        # Summary
+        lines.append("### Summary")
+        lines.append(f"- Routes found: {trace_result.summary['total_routes']}")
+        lines.append(f"- Components identified: {trace_result.summary['components_identified']}")
+        if trace_result.summary.get('unique_components'):
+            lines.append(f"- Unique components: {', '.join(trace_result.summary['unique_components'])}")
+        lines.append("")
 
-        return prd_path
+        # Detailed traces
+        lines.append("### Route → Component Mapping")
+        lines.append("")
+        lines.append("| Route | Page File | Component | Directory |")
+        lines.append("|-------|-----------|-----------|-----------|")
+
+        for trace in trace_result.traces:
+            status = "✓" if trace.page_file_exists else "✗"
+            page = trace.page_file if trace.page_file_exists else f"NOT FOUND: {trace.page_file}"
+            comp = trace.primary_component or "UNKNOWN"
+            comp_dir = trace.component_directory or "N/A"
+            # Shorten paths for readability
+            if trace.page_file:
+                page_short = trace.page_file.replace(trace_result.project_root, "").lstrip("/")
+            else:
+                page_short = "N/A"
+            if trace.component_directory:
+                dir_short = trace.component_directory.replace(trace_result.project_root, "").lstrip("/")
+            else:
+                dir_short = "N/A"
+            lines.append(f"| {status} {trace.route} | {page_short} | {comp} | {dir_short} |")
+
+        lines.append("")
+
+        # Verification hints
+        lines.append("### Verification Hints")
+        lines.append("")
+        for trace in trace_result.traces:
+            if trace.verification_hints:
+                lines.append(f"**{trace.route}:**")
+                for hint in trace.verification_hints:
+                    lines.append(f"- {hint}")
+                lines.append("")
+
+        return "\n".join(lines)
 
     def _invoke_agent_00(self, prd_path: Path) -> Optional[Path]:
         """
         Invoke implementation planner agent.
+        Only reuses existing plan if a YAML also exists (proving plan was completed).
 
         Args:
             prd_path: Path to PRD file
@@ -593,7 +840,128 @@ class PipelineDaemon:
         Returns:
             Path to generated implementation plan, or None
         """
-        prompt = f"Use agent 00-implementation-planner for PRD at {prd_path}"
+        docs_prd = self.config.project_root / "docs" / "prd"
+        pipelines_dir = self.config.project_root / "claude-pipelines"
+        prd_stem = prd_path.stem
+
+        # ================================================================
+        # ROUTE TRACING (Layer 1 verification)
+        # Pre-trace routes from PRD to identify correct components
+        # ================================================================
+        route_trace_data = None
+        route_trace_path = None
+        try:
+            logger.info("Running route tracer to identify target components...")
+            trace_result = trace_prd_routes(prd_path, self.config.project_root)
+
+            # Save trace result to JSON file alongside PRD
+            route_trace_path = prd_path.parent / f"{prd_stem}-route-trace.json"
+            save_trace_result(trace_result, route_trace_path)
+            logger.info(f"Route trace saved: {route_trace_path}")
+
+            # Format trace data for prompt
+            route_trace_data = self._format_route_trace_for_prompt(trace_result)
+
+            # Log summary
+            logger.info(f"Route trace: {trace_result.summary['routes_found']} routes found, "
+                       f"{trace_result.summary['components_identified']} components identified")
+            for trace in trace_result.traces:
+                status = "✓" if trace.page_file_exists else "✗"
+                comp = trace.primary_component or "UNKNOWN"
+                logger.info(f"  {status} {trace.route} → {comp}")
+
+        except Exception as e:
+            logger.warning(f"Route tracing failed (non-fatal): {e}")
+            route_trace_data = "Route tracing was not available for this PRD."
+
+        # Check if a plan already exists for this PRD
+        existing_plan = None
+        for search_dir in [docs_prd, prd_path.parent]:
+            for pattern in ["*Implementation*.md", "*implementation*.md", "*Plan*.md", "*plan*.md"]:
+                for plan_file in search_dir.glob(pattern):
+                    # Check if plan references this PRD
+                    try:
+                        with open(plan_file, 'r') as f:
+                            content = f.read()
+                        if prd_path.name in content or prd_stem in content:
+                            existing_plan = plan_file
+                            break
+                    except Exception:
+                        continue
+                if existing_plan:
+                    break
+            if existing_plan:
+                break
+
+        # Only reuse plan if a YAML also exists that references it
+        # This proves the plan was fully completed (Agent 00b ran after Agent 00)
+        if existing_plan:
+            plan_stem = existing_plan.stem
+            yaml_exists = False
+            for yaml_file in pipelines_dir.glob("*.yaml"):
+                try:
+                    with open(yaml_file, 'r') as f:
+                        yaml_content = f.read()
+                    if existing_plan.name in yaml_content or plan_stem in yaml_content:
+                        yaml_exists = True
+                        break
+                except Exception:
+                    continue
+
+            if yaml_exists:
+                logger.info(f"Found verified implementation plan (YAML exists): {existing_plan}")
+                return existing_plan
+            else:
+                logger.info(f"Found plan but no YAML - uncertain state, will recreate: {existing_plan}")
+                # Don't reuse - fall through to create new plan
+
+        # Record existing plan files BEFORE invoking agent
+        existing_files = set()
+        for pattern in ["*Implementation*.md", "*implementation*.md", "*Plan*.md", "*plan*.md"]:
+            existing_files.update(docs_prd.glob(pattern))
+            existing_files.update(prd_path.parent.glob(pattern))
+
+        # Build prompt with route trace data
+        prompt = f"""Use agent 00-implementation-planner for PRD at {prd_path}
+
+## Route-to-Component Trace Data (Pre-verified by Daemon)
+
+{route_trace_data}
+
+## Your Task
+
+1. Review the route trace data above - it maps PRD routes to actual page files and components
+2. Perform SEMANTIC VERIFICATION: Confirm the traced component matches PRD description
+   - If PRD says "Step X of 10", verify the component has 10 steps
+   - If PRD shows specific UI elements, verify the component has them
+3. If there's a mismatch, search for the correct component before proceeding
+4. Create a comprehensive implementation plan targeting the VERIFIED component
+
+## CRITICAL: Anti-Rationalization Rules
+
+When the PRD description doesn't match the component you find, DO NOT:
+- ❌ Conclude "the PRD must be outdated"
+- ❌ Conclude "the screenshot is from an older version"
+- ❌ Target a child/wrapper component instead of the traced component
+- ❌ Rationalize the mismatch away
+
+Instead, you MUST:
+- ✓ Check if the TRACED component (not its children) has the described behavior
+- ✓ Look for MULTIPLE step/stage systems (parent vs child components may differ)
+- ✓ The PRD is the source of truth - find the component that SHOULD match, then plan changes to MAKE it match
+- ✓ If traced component has 10 steps and PRD says "8 steps", plan to CHANGE it to 8 steps
+
+Example: If route tracer says `/dashboard2/create → ItemCreationWorkflow`:
+- Check ItemCreationWorkflow.tsx for step definitions (e.g., WORKFLOW_STEPS)
+- Do NOT immediately dive into child components like ItemCapture
+- If ItemCreationWorkflow has WORKFLOW_STEPS with 10 entries and PRD says "8 of 8", plan to reduce to 8
+- The child component's PROGRESS_STAGES (4 stages) is a DIFFERENT concept - don't confuse them
+
+IMPORTANT: Include a "Route-to-Component Verification" section in your plan documenting:
+- The route trace results
+- Your semantic verification findings
+- Confirmation or correction of the target component
+- Which specific file/constant defines the step count you're modifying"""
 
         try:
             result = subprocess.run(
@@ -611,12 +979,22 @@ class PipelineDaemon:
                 logger.error(f"Agent 00 failed: {result.stderr[:500]}")
                 return None
 
-            # Find the generated plan file
-            return self._find_output_file(
-                prd_path.parent,
-                pattern="*implementation-plan*.md",
-                after=datetime.now()
-            )
+            # Find NEW plan files created by agent (comparing before/after)
+            new_files = set()
+            for pattern in ["*Implementation*.md", "*implementation*.md", "*Plan*.md", "*plan*.md"]:
+                new_files.update(docs_prd.glob(pattern))
+                new_files.update(prd_path.parent.glob(pattern))
+
+            created_files = new_files - existing_files
+
+            if created_files:
+                # Return the most recently modified new file
+                newest = max(created_files, key=lambda f: f.stat().st_mtime)
+                logger.info(f"Agent 00 created: {newest}")
+                return newest
+
+            logger.error("Agent 00 did not create any new plan files")
+            return None
 
         except subprocess.TimeoutExpired:
             logger.error(f"Agent 00 timed out after {self.config.implementation_planner.timeout}s")
@@ -625,6 +1003,7 @@ class PipelineDaemon:
     def _invoke_agent_00b(self, plan_path: Path) -> Optional[Path]:
         """
         Invoke pipeline creator agent.
+        Only creates a new YAML if none exists for this plan.
 
         Args:
             plan_path: Path to implementation plan
@@ -632,7 +1011,60 @@ class PipelineDaemon:
         Returns:
             Path to generated pipeline YAML, or None
         """
-        prompt = f"Use agent 00b-pipeline-creator for plan at {plan_path}"
+        pipelines_dir = self.config.project_root / "claude-pipelines"
+        project_root = self.config.project_root
+
+        # Check if a pipeline YAML already exists for this plan
+        # Look for YAMLs that might be related to this plan
+        # Search both claude-pipelines/ and project root
+        plan_stem = plan_path.stem
+        existing_yaml = None
+
+        # Check for exact match first in both directories
+        for search_dir in [pipelines_dir, project_root]:
+            for pattern in [f"pipeline-*{plan_stem[:30]}*.yaml", "pipeline*.yaml"]:
+                for yaml_file in search_dir.glob(pattern):
+                    # Read YAML to check if it references this plan
+                    try:
+                        with open(yaml_file, 'r') as f:
+                            content = f.read()
+                        if plan_path.name in content or plan_stem in content:
+                            existing_yaml = yaml_file
+                            break
+                    except Exception:
+                        continue
+                if existing_yaml:
+                    break
+            if existing_yaml:
+                break
+
+        if existing_yaml:
+            logger.info(f"Found existing pipeline YAML for this plan: {existing_yaml}")
+            return existing_yaml
+
+        # Record existing pipeline YAML files BEFORE invoking agent
+        # Search both claude-pipelines/ and project root
+        existing_files = set(pipelines_dir.glob("pipeline*.yaml"))
+        existing_files.update(pipelines_dir.glob("*.yaml"))
+        existing_files.update(project_root.glob("pipeline*.yaml"))
+        existing_files.update(project_root.glob("*.yaml"))
+
+        prompt = f"""Use agent 00b-pipeline-creator for plan at {plan_path}
+
+Create a pipeline YAML configuration for this implementation plan.
+
+IMPORTANT: For the request stage (01-request-fa), use this invocation_template:
+
+  invocation_template: |
+    use agent 01-request-fa to create the request for: {{full_task}}
+
+    IMPORTANT: Before creating the request:
+    1. Read docs/gen_requests.md to find the HIGHEST existing REQ-XXX number
+    2. Use the NEXT sequential number (e.g., if REQ-180 exists, use REQ-181)
+    3. Format MUST be REQ-XXX (three digits minimum, e.g., REQ-181, not REQ-2)
+    4. Append the new request to docs/gen_requests.md
+
+Reference template: claude-pipelines/templates/request-stage-template.yaml"""
 
         try:
             result = subprocess.run(
@@ -650,12 +1082,23 @@ class PipelineDaemon:
                 logger.error(f"Agent 00b failed: {result.stderr[:500]}")
                 return None
 
-            # Find the generated YAML file
-            return self._find_output_file(
-                self.config.project_root,
-                pattern="pipeline-*.yaml",
-                after=datetime.now()
-            )
+            # Find NEW YAML files created by agent (comparing before/after)
+            # Search both claude-pipelines/ and project root (agents may create in either)
+            new_files = set(pipelines_dir.glob("pipeline*.yaml"))
+            new_files.update(pipelines_dir.glob("*.yaml"))
+            new_files.update(project_root.glob("pipeline*.yaml"))
+            new_files.update(project_root.glob("*.yaml"))
+
+            created_files = new_files - existing_files
+
+            if created_files:
+                # Return the most recently modified new file
+                newest = max(created_files, key=lambda f: f.stat().st_mtime)
+                logger.info(f"Agent 00b created: {newest}")
+                return newest
+
+            logger.error("Agent 00b did not create any new pipeline YAML files")
+            return None
 
         except subprocess.TimeoutExpired:
             logger.error(f"Agent 00b timed out after {self.config.pipeline_creator.timeout}s")
@@ -663,7 +1106,11 @@ class PipelineDaemon:
 
     def _run_orchestrator(self, yaml_path: Path) -> bool:
         """
-        Run the pipeline orchestrator.
+        Run the pipeline orchestrator in 3 phases.
+
+        Phase 1: request,overview (horizontal) - all tasks get requests/overviews first
+        Phase 2: details,implementation (per-task) - detailed work per task
+        Phase 3: testcheck,usecases (pipeline-level) - verification after all tasks complete
 
         Args:
             yaml_path: Path to pipeline YAML
@@ -673,28 +1120,53 @@ class PipelineDaemon:
         """
         logger.info(f"Running orchestrator with: {yaml_path}")
 
-        try:
-            result = subprocess.run(
-                [
-                    "python", str(self.config.orchestrator.script),
-                    "--config", str(yaml_path),
-                ],
-                capture_output=True,
-                text=True,
-                cwd=self.config.project_root,
-                # No timeout - let orchestrator manage its own
-            )
+        # Define the 3 orchestrator phases
+        # --keep: Skip rerun prompt, keep existing requests and continue
+        # --force: Continue even if precheck fails
+        phases = [
+            {
+                "name": "Planning (horizontal)",
+                "args": ["--stages", "request,overview", "--horizontal", "--keep", "--force"],
+            },
+            {
+                "name": "Detailed work (per-task)",
+                "args": ["--stages", "details,implementation", "--keep", "--force"],
+            },
+            {
+                "name": "Verification (pipeline-level)",
+                "args": ["--stages", "testcheck,usecases", "--keep", "--force"],
+            },
+        ]
 
-            if result.returncode != 0:
-                logger.error(f"Orchestrator failed: {result.stderr[:1000]}")
+        base_cmd = ["python", str(self.config.orchestrator.script), "--config", str(yaml_path)]
+
+        for i, phase in enumerate(phases, 1):
+            logger.info(f"Orchestrator phase {i}/3: {phase['name']}")
+
+            try:
+                result = subprocess.run(
+                    base_cmd + phase["args"],
+                    capture_output=True,
+                    text=True,
+                    cwd=self.config.project_root,
+                    # No timeout - let orchestrator manage its own
+                )
+
+                if result.returncode != 0:
+                    logger.error(f"Orchestrator phase {i} failed: {result.stderr[:1000]}")
+                    # Continue to next phase even if one fails (orchestrator handles partial state)
+                    # Only return False if it's a critical failure
+                    if "critical" in result.stderr.lower() or "fatal" in result.stderr.lower():
+                        return False
+
+                logger.info(f"Orchestrator phase {i} completed")
+
+            except Exception as e:
+                logger.error(f"Orchestrator phase {i} error: {e}")
                 return False
 
-            logger.info("Orchestrator completed successfully")
-            return True
-
-        except Exception as e:
-            logger.error(f"Orchestrator error: {e}")
-            return False
+        logger.info("Orchestrator completed all 3 phases successfully")
+        return True
 
     def _find_output_file(self, directory: Path, pattern: str,
                           after: datetime) -> Optional[Path]:
@@ -773,12 +1245,20 @@ class PipelineDaemon:
             logger.error(f"PDF not found: {pdf_path}")
             return False
 
+        # Set status to running so monitor shows activity
+        self.state.start()
+        save_state(self.state, self.config.daemon.state_file)
+
         try:
             self.process_pdf(pdf_path)
             return True
         except Exception as e:
             logger.error(f"Processing failed: {e}")
             return False
+        finally:
+            # Set status back to stopped
+            self.state.stop()
+            save_state(self.state, self.config.daemon.state_file)
 
 
 def setup_logging(config: DaemonConfig, verbose: bool = False) -> None:

@@ -1,0 +1,1208 @@
+{
+  "pipeline": "faqbnb-review-105",
+  "version": "1.0",
+  "mode": "hybrid",
+  "created_at": "2026-01-11T23:25:57.086237",
+  "updated_at": "2026-01-12T05:02:01.487134",
+  "status": "partial",
+  "current_stage": "request",
+  "current_task_index": 18,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-105-FAQBNB-Review-2026-01-11-Comprehensive-Implementation.md",
+  "source_hash": "b58cabe0c9316ea107d58a9737d6a869",
+  "tasks": [
+    {
+      "id": "0.1",
+      "phase": "0",
+      "phase_name": "REQ-2 - Data Model UI Clarification",
+      "title": "Update MetadataStep Labels and Help Text",
+      "description": "Verify placeholder text emphasizes physical item names only\nAdd helper text explaining: \"This is the name of the physical item (e.g., 'Steamer'). Instructions like 'How to Clean' are captured separately as articles.\"\nEnsure the error message refers to \"Item name\" not \"Title\"",
+      "raw_match": "#### Task 0.1: Update MetadataStep Labels and Help Text",
+      "status": "processing",
+      "request_id": "REQ-181",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-181",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-181-update-metadatastep-labels-and-help-text-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-181-update-metadatastep-labels-and-help-text-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true,
+      "testcheck_completed": false
+    },
+    {
+      "id": "0.2",
+      "phase": "0",
+      "phase_name": "REQ-2 - Data Model UI Clarification",
+      "title": "Update ReviewStep to Show Correct Labels",
+      "description": "Change label from \"Title\" to \"Item Name\"\nAdd a section for \"Purpose/Article\" if the workflow captures article info\nEnsure QR code preview shows only item name",
+      "raw_match": "#### Task 0.2: Update ReviewStep to Show Correct Labels",
+      "status": "completed",
+      "request_id": "REQ-182",
+      "error": null,
+      "processed_at": "2026-01-12T01:13:42.055160",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-182",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-182-update-reviewstep-to-show-correct-labels-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-182-update-reviewstep-to-show-correct-labels-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "0.3",
+      "phase": "0",
+      "phase_name": "REQ-2 - Data Model UI Clarification",
+      "title": "Add Article Purpose Field (Future Enhancement)",
+      "description": "The Item Name field should capture only the physical item name\nArticle purpose will be set during content editing/organization **Deferred to Future:** Add a \"Content Purpose\" dropdown in the capture flow",
+      "raw_match": "#### Task 0.3: Add Article Purpose Field (Future Enhancement)",
+      "status": "completed",
+      "request_id": "REQ-183",
+      "error": null,
+      "processed_at": "2026-01-12T01:29:42.194473",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-183",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-183-add-article-purpose-field-future-enhancement-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-183-add-article-purpose-field-future-enhancement-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "0.4",
+      "phase": "0",
+      "phase_name": "REQ-2 - Data Model UI Clarification",
+      "title": "Update QR Code Label Display",
+      "description": "`src/hooks/useQRCodeGeneration.ts`\nAny QR code preview/display components **Required Changes:**\nEnsure QR code labels display Item Name only (not \"Purpose - Item Name\")\nVerify PDF export shows correct labels",
+      "raw_match": "#### Task 0.4: Update QR Code Label Display",
+      "status": "completed",
+      "request_id": "REQ-184",
+      "error": null,
+      "processed_at": "2026-01-12T01:38:09.029649",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-184",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-184-update-qr-code-label-display-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-184-update-qr-code-label-display-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "REQ-5 - Fix Workflow Step Count",
+      "title": "Update Progress Stages Constant",
+      "description": "Check if there's a separate step counter that shows \"8 of 10\"\nThe current `ProgressIndicator` correctly maps multiple wizard steps to 4 display stages\nIf the issue exists elsewhere, identify and fix that component",
+      "raw_match": "#### Task 1.1: Update Progress Stages Constant",
+      "status": "completed",
+      "request_id": "REQ-185",
+      "error": null,
+      "processed_at": "2026-01-12T01:52:31.555512",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-185",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-185-update-progress-stages-constant-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-185-update-progress-stages-constant-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "REQ-5 - Fix Workflow Step Count",
+      "title": "Ensure Save Is Final Step",
+      "description": "Confirm there are no additional steps after the submit action\nThe \"What's Next\" screen (REQ-3) should be a POST-workflow menu, not part of the step flow",
+      "raw_match": "#### Task 1.2: Ensure Save Is Final Step",
+      "status": "completed",
+      "request_id": "REQ-186",
+      "error": null,
+      "processed_at": "2026-01-12T02:00:53.297797",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-186",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-186-ensure-save-is-final-step-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-186-ensure-save-is-final-step-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "REQ-5 - Fix Workflow Step Count",
+      "title": "Update Step Count in Mobile View",
+      "description": "Ensure `totalStages` reflects the correct count (currently 4)\nNo changes needed if the count is already correct",
+      "raw_match": "#### Task 1.3: Update Step Count in Mobile View",
+      "status": "completed",
+      "request_id": "REQ-187",
+      "error": null,
+      "processed_at": "2026-01-12T02:08:05.809009",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-187",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-187-update-step-count-in-mobile-view-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-187-update-step-count-in-mobile-view-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "REQ-3 - Fix \"What's Next\" Screen",
+      "title": "Create WhatsNextStep Component",
+      "description": "WhatsNextStep Component *\nPost-save menu displayed after an item is successfully saved.\nThis is NOT a numbered workflow step - it's a post-workflow decision point. *\nOptions:\n1. Edit Instructions - Navigate to edit the article just created\n2. Add New Instructions - Create different instructions for same item\n3. Create New Item - Start fresh with a different item\n4. Done - Exit the workflow completely *\n@module ItemCapture/components/steps/WhatsNextStep\n@see REQ-3 from PRD CPL-FAQBNB-Review-2026-01-11 */ import React from 'react'; import { Edit, PlusCircle, Package, CheckCircle } from 'lucide-react'; import { cn } from '@/lib/utils'; export interface WhatsNextStepProps { /** The item that was just saved */ savedItemId: string; savedItemName: string; /** Callback for Edit Instructions action */ onEditInstructions: () => void; /** Callback for Add New Instructions action */ onAddNewInstructions: () => void; /** Callback for Create New Item action */ onCreateNewItem: () => void; /** Callback for Done action */ onDone: () => void; /** Optional CSS class */ className?: string; } interface ActionCardProps { icon: React.ReactNode; title: string; description: string; onClick: () => void; variant?: 'default' | 'primary'; } function ActionCard({ icon, title, description, onClick, variant = 'default' }: ActionCardProps) { return ( <button type=\"button\" onClick={onClick} className={cn( \"flex items-start gap-4 p-4 rounded-lg border-2 text-left transition-all w-full\", \"focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2\", variant === 'primary' ? \"border-blue-500 bg-blue-50 hover:bg-blue-100\" : \"border-gray-200 hover:border-gray-300 hover:bg-gray-50\" )} > <div className={cn( \"p-2 rounded-lg\", variant === 'primary' ? \"bg-blue-100 text-blue-600\" : \"bg-gray-100 text-gray-600\" )}> {icon} </div> <div> <h3 className={cn( \"font-semibold\", variant === 'primary' ? \"text-blue-900\" : \"text-gray-900\" )}> {title} </h3> <p className={cn( \"text-sm mt-1\", variant === 'primary' ? \"text-blue-700\" : \"text-gray-600\" )}> {description} </p> </div> </button> ); } export function WhatsNextStep({ savedItemId, savedItemName, onEditInstructions, onAddNewInstructions, onCreateNewItem, onDone, className, }: WhatsNextStepProps) { return ( <div className={cn(\"flex flex-col items-center py-8 px-4\", className)}> {/* Success Header */} <div className=\"text-center mb-8\"> <div className=\"w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4\"> <CheckCircle className=\"w-8 h-8 text-green-600\" /> </div> <h2 className=\"text-2xl font-bold text-gray-900\">Item Saved!</h2> <p className=\"text-gray-600 mt-2\"> <span className=\"font-medium\">{savedItemName}</span> has been saved successfully. </p> <p className=\"text-gray-500 text-sm mt-1\">What would you like to do next?</p> </div> {/* Action Options */} <div className=\"w-full max-w-md space-y-3\"> <ActionCard icon={<Edit className=\"w-5 h-5\" />} title=\"Edit Instructions\" description=\"Review and modify the instructions you just created\" onClick={onEditInstructions} /> <ActionCard icon={<PlusCircle className=\"w-5 h-5\" />} title=\"Add New Instructions\" description={`Create different instructions for \"${savedItemName}\"`} onClick={onAddNewInstructions} variant=\"primary\" /> <ActionCard icon={<Package className=\"w-5 h-5\" />} title=\"Create New Item\" description=\"Start fresh with a different item\" onClick={onCreateNewItem} /> <div className=\"pt-4 border-t border-gray-200 mt-4\"> <button type=\"button\" onClick={onDone} className=\"w-full py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors\" > Done - Return to Dashboard </button> </div> </div> </div> ); } export default WhatsNextStep; ```",
+      "raw_match": "#### Task 2.1: Create WhatsNextStep Component",
+      "status": "completed",
+      "request_id": "REQ-187",
+      "error": null,
+      "processed_at": "2026-01-12T02:21:33.723684",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-187",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-187-create-whatsnextstep-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-187-create-whatsnextstep-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "REQ-3 - Fix \"What's Next\" Screen",
+      "title": "Add WhatsNextStep to Wizard Types",
+      "description": "Add `'whats-next'` to the WizardStep union type\nNote: This step should NOT be included in the progress counter",
+      "raw_match": "#### Task 2.2: Add WhatsNextStep to Wizard Types",
+      "status": "completed",
+      "request_id": "REQ-188",
+      "error": null,
+      "processed_at": "2026-01-12T02:32:27.985136",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-188",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-188-add-whatsnextstep-to-wizard-types-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-188-add-whatsnextstep-to-wizard-types-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "REQ-3 - Fix \"What's Next\" Screen",
+      "title": "Integrate WhatsNextStep into ItemCapture Flow",
+      "description": "",
+      "raw_match": "#### Task 2.3: Integrate WhatsNextStep into ItemCapture Flow",
+      "status": "completed",
+      "request_id": "REQ-189",
+      "error": null,
+      "processed_at": "2026-01-12T02:45:41.522234",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-189",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-189-integrate-whatsnextstep-into-itemcapture-flow-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-189-integrate-whatsnextstep-into-itemcapture-flow-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "REQ-3 - Fix \"What's Next\" Screen",
+      "title": "Ensure No Navigation Controls on WhatsNextStep",
+      "description": "NOT have a back button (can't undo a save)\nNOT have a cancel button (nothing to cancel)\nNOT be part of the numbered progress indicator\nOnly show the 4 action options **File:** `src/components/ItemCapture/components/shared/ProgressIndicator.tsx` **Changes:**\nUpdate `STEP_TO_STAGE_INDEX` to NOT include 'whats-next' (or map it to -1)\nOr: Hide the progress indicator entirely when on 'whats-next' step",
+      "raw_match": "#### Task 2.4: Ensure No Navigation Controls on WhatsNextStep",
+      "status": "completed",
+      "request_id": "REQ-190",
+      "error": null,
+      "processed_at": "2026-01-12T03:04:13.937965",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-190",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-190-ensure-no-navigation-controls-on-whatsnextstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-190-ensure-no-navigation-controls-on-whatsnextstep-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "REQ-1 - Make Dashboard Cards Clickable",
+      "title": "Update KPIDashboardOverview Cards",
+      "description": "",
+      "raw_match": "#### Task 3.1: Update KPIDashboardOverview Cards",
+      "status": "completed",
+      "request_id": "REQ-190",
+      "error": null,
+      "processed_at": "2026-01-12T03:16:20.664736",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-190",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-190-update-kpidashboardoverview-cards-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-190-update-kpidashboardoverview-cards-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "REQ-1 - Make Dashboard Cards Clickable",
+      "title": "Wire Up Navigation Links",
+      "description": "",
+      "raw_match": "#### Task 3.2: Wire Up Navigation Links",
+      "status": "completed",
+      "request_id": "REQ-191",
+      "error": null,
+      "processed_at": "2026-01-12T03:28:37.502112",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-191",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-191-wire-up-navigation-links-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-191-wire-up-navigation-links-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "REQ-1 - Make Dashboard Cards Clickable",
+      "title": "Update UserDashboard Cards",
+      "description": "Add `href` to the statsCards array items\nUpdate card rendering to use Link component ```tsx const statsCards = [ { title: 'Properties', value: stats.totalProperties, subtitle: 'Total properties', icon: <Building2 className=\"w-6 h-6\" />, color: 'bg-green-100 text-green-600', href: '/dashboard/properties'  // NEW }, { title: 'Items', value: stats.totalItems, subtitle: `${stats.recentItems} created recently`, icon: <BarChart3 className=\"w-6 h-6\" />, color: 'bg-blue-100 text-blue-600', href: '/dashboard/items'  // NEW }, // ... other cards with appropriate hrefs ]; ```",
+      "raw_match": "#### Task 3.3: Update UserDashboard Cards",
+      "status": "completed",
+      "request_id": "REQ-192",
+      "error": null,
+      "processed_at": "2026-01-12T03:40:13.903587",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-192",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-192-update-userdashboard-cards-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-192-update-userdashboard-cards-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "REQ-1 - Make Dashboard Cards Clickable",
+      "title": "Add Visual Feedback for Clickable Cards",
+      "description": "Hover state: shadow increase, subtle border color change\nActive state: slight scale reduction\nFocus state: visible focus ring for accessibility\nCursor: pointer",
+      "raw_match": "#### Task 3.4: Add Visual Feedback for Clickable Cards",
+      "status": "completed",
+      "request_id": "REQ-193",
+      "error": null,
+      "processed_at": "2026-01-12T03:49:26.712308",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-193",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-193-add-visual-feedback-for-clickable-cards-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-193-add-visual-feedback-for-clickable-cards-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "REQ-4 - Update Navigation Menu",
+      "title": "Update Navigation Items Configuration",
+      "description": "",
+      "raw_match": "#### Task 4.1: Update Navigation Items Configuration",
+      "status": "completed",
+      "request_id": "REQ-193",
+      "error": null,
+      "processed_at": "2026-01-12T04:02:05.361310",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-193",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-193-update-navigation-items-configuration-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-193-update-navigation-items-configuration-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "REQ-4 - Update Navigation Menu",
+      "title": "Add Mobile Label Support",
+      "description": "",
+      "raw_match": "#### Task 4.2: Add Mobile Label Support",
+      "status": "completed",
+      "request_id": "REQ-194",
+      "error": null,
+      "processed_at": "2026-01-12T04:09:03.551197",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-194",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-194-add-mobile-label-support-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-194-add-mobile-label-support-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "REQ-4 - Update Navigation Menu",
+      "title": "Update Dashboard Layout Navigation",
+      "description": "Align with RoleBasedNavigation changes\nAdd Instructions menu item\nUpdate mobile labels",
+      "raw_match": "#### Task 4.3: Update Dashboard Layout Navigation",
+      "status": "completed",
+      "request_id": "REQ-195",
+      "error": null,
+      "processed_at": "2026-01-12T04:22:45.392351",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-195",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-195-update-dashboard-layout-navigation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-195-update-dashboard-layout-navigation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "REQ-4 - Update Navigation Menu",
+      "title": "Create Instructions Page (Placeholder)",
+      "description": "",
+      "raw_match": "#### Task 4.4: Create Instructions Page (Placeholder)",
+      "status": "completed",
+      "request_id": "REQ-195",
+      "error": null,
+      "processed_at": "2026-01-12T04:47:37.164236",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-195",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-195-create-instructions-page-placeholder-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-195-create-instructions-page-placeholder-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "completed",
+      "started_at": "2026-01-12T00:00:12.221225",
+      "completed_at": "2026-01-12T00:24:16.229939",
+      "tasks_total": 0,
+      "tasks_completed": 18,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "completed",
+      "tasks_total": 19,
+      "tasks_completed": 18,
+      "tasks_failed": 0,
+      "current_task_index": 0,
+      "started_at": "2026-01-12T00:24:16.229986",
+      "completed_at": "2026-01-12T01:05:49.589443"
+    }
+  },
+  "errors": [],
+  "metadata": {
+    "total_requests_generated": 18,
+    "last_request_id": "REQ-195",
+    "first_request_id": "REQ-181",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-faqbnb-review-105.yaml"
+  },
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2026-01-11T23:26:33.236788",
+    "elapsed": "33.0s",
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Successfully connected to Chrome with CDP. Browser snapshot captured showing localhost:3001/dashboard2/items page."
+      }
+    },
+    "next_cache_cleared": true
+  },
+  "testcheck_completed": true,
+  "usecases_completed": true,
+  "testcheck_completed_at": "2026-01-12T04:55:22.458821",
+  "verification": {
+    "test_harness_path": "src/app/test/faqbnb-review-105/page.tsx",
+    "test_harness_url": "/test/faqbnb-review-105"
+  },
+  "usecases_completed_at": "2026-01-12T05:02:01.468916",
+  "usecases": {
+    "generated_at": "2026-01-12T05:15:00Z",
+    "count": 12,
+    "categories": {
+      "happy-path": 5,
+      "error-handling": 2,
+      "edge-case": 2,
+      "integration": 3
+    },
+    "items": [
+      {
+        "id": "UC-HP-001",
+        "title": "Complete Item Creation with Correct Terminology",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "User creates a new item through the full wizard workflow, verifying that 'Item Name' terminology is used consistently throughout MetadataStep and ReviewStep",
+        "preconditions": [
+          "User is logged in",
+          "User has property access"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to Items page and click 'Add Item'",
+            "component": "ItemCapture",
+            "expectedResult": "Item capture wizard opens at MetadataStep"
+          },
+          {
+            "step": 2,
+            "action": "Verify 'Item Name' label is displayed (not 'Title' or 'Article Title')",
+            "component": "MetadataStep",
+            "expectedResult": "Label shows 'Item Name' with helper text explaining physical item concept"
+          },
+          {
+            "step": 3,
+            "action": "Enter 'Coffee Maker' as Item Name",
+            "component": "MetadataStep",
+            "expectedResult": "Item name accepted, field validated"
+          },
+          {
+            "step": 4,
+            "action": "Complete content capture steps (photo/video/text)",
+            "component": "ContentCapture",
+            "expectedResult": "Content captured successfully"
+          },
+          {
+            "step": 5,
+            "action": "Proceed to ReviewStep",
+            "component": "ReviewStep",
+            "expectedResult": "Review screen shows 'Item Name: Coffee Maker' (not 'Title')"
+          },
+          {
+            "step": 6,
+            "action": "Click Save to complete workflow",
+            "component": "ReviewStep",
+            "expectedResult": "Item saved, transitions to WhatsNextStep"
+          }
+        ],
+        "expectedOutcome": "Item saved with correct terminology displayed throughout workflow. 'Item Name' used consistently, not 'Title' or 'Article Title'",
+        "componentsInvolved": [
+          "ItemCapture",
+          "MetadataStep",
+          "ReviewStep",
+          "WhatsNextStep"
+        ]
+      },
+      {
+        "id": "UC-HP-002",
+        "title": "Workflow Step Counter Shows 4 Stages",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "Verify the progress indicator shows correct step count as user progresses through wizard, with Save being part of the final stage (not a separate step)",
+        "preconditions": [
+          "User is logged in",
+          "Item capture wizard started"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Start item capture workflow",
+            "component": "ItemCapture",
+            "expectedResult": "Progress indicator shows 'Step 1 of 4' on mobile or stage 1 highlighted"
+          },
+          {
+            "step": 2,
+            "action": "Progress through Details stage",
+            "component": "ProgressIndicator",
+            "expectedResult": "Stage 1 (Details) shows as current/completed"
+          },
+          {
+            "step": 3,
+            "action": "Move to Content stage",
+            "component": "ProgressIndicator",
+            "expectedResult": "Stage 2 (Content) shows as current"
+          },
+          {
+            "step": 4,
+            "action": "Complete content and move to Edit stage",
+            "component": "ProgressIndicator",
+            "expectedResult": "Stage 3 (Edit) shows as current"
+          },
+          {
+            "step": 5,
+            "action": "Move to Review stage",
+            "component": "ProgressIndicator",
+            "expectedResult": "Stage 4 (Review) shows as current - this is final numbered stage"
+          },
+          {
+            "step": 6,
+            "action": "Click Save to submit",
+            "component": "ReviewStep",
+            "expectedResult": "Transitions to WhatsNextStep with NO step number visible"
+          }
+        ],
+        "expectedOutcome": "Progress shows 4 stages total (Details, Content, Edit, Review). Save action is part of Review stage. WhatsNextStep has no progress indicator",
+        "componentsInvolved": [
+          "ProgressIndicator",
+          "ItemCapture",
+          "ReviewStep",
+          "WhatsNextStep"
+        ]
+      },
+      {
+        "id": "UC-HP-003",
+        "title": "Post-Save WhatsNextStep Menu Options",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "After saving an item, user sees the WhatsNextStep menu with 4 action options and no navigation controls (no back, no cancel)",
+        "preconditions": [
+          "User just saved an item successfully"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Complete item save from ReviewStep",
+            "component": "ReviewStep",
+            "expectedResult": "WhatsNextStep screen displays with success header"
+          },
+          {
+            "step": 2,
+            "action": "Verify success message shows saved item name",
+            "component": "WhatsNextStep",
+            "expectedResult": "'Item Saved!' header with item name displayed"
+          },
+          {
+            "step": 3,
+            "action": "Verify 'Edit Instructions' button is present",
+            "component": "WhatsNextStep",
+            "expectedResult": "Edit Instructions button with Edit icon visible"
+          },
+          {
+            "step": 4,
+            "action": "Verify 'Add New Instructions' button with primary styling",
+            "component": "WhatsNextStep",
+            "expectedResult": "Add New Instructions button highlighted as primary action (blue)"
+          },
+          {
+            "step": 5,
+            "action": "Verify 'Create New Item' button is present",
+            "component": "WhatsNextStep",
+            "expectedResult": "Create New Item button with Package icon visible"
+          },
+          {
+            "step": 6,
+            "action": "Verify 'Done' text button is present",
+            "component": "WhatsNextStep",
+            "expectedResult": "Done button at bottom to return to dashboard"
+          },
+          {
+            "step": 7,
+            "action": "Verify NO back arrow or Cancel button exists",
+            "component": "WhatsNextStep",
+            "expectedResult": "No navigation controls present (can't undo a save)"
+          }
+        ],
+        "expectedOutcome": "WhatsNextStep shows 4 menu options with correct icons. No Cancel/Back buttons. Progress indicator hidden. 'Add New Instructions' is primary action",
+        "componentsInvolved": [
+          "WhatsNextStep",
+          "ItemCapture"
+        ]
+      },
+      {
+        "id": "UC-HP-004",
+        "title": "Dashboard Cards Navigate to List Views",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "Dashboard KPI cards (Properties, Items) are clickable and navigate to their respective list views when clicked",
+        "preconditions": [
+          "User is logged in",
+          "User is on dashboard page"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Navigate to main Dashboard",
+            "component": "Dashboard",
+            "expectedResult": "Dashboard displays with KPI cards"
+          },
+          {
+            "step": 2,
+            "action": "Hover over 'Properties' card",
+            "component": "UserDashboard",
+            "expectedResult": "Card shows hover state (shadow increase, cursor pointer)"
+          },
+          {
+            "step": 3,
+            "action": "Click 'Properties' card",
+            "component": "UserDashboard",
+            "expectedResult": "Navigates to /dashboard/properties"
+          },
+          {
+            "step": 4,
+            "action": "Return to Dashboard",
+            "component": "Navigation",
+            "expectedResult": "Back on dashboard"
+          },
+          {
+            "step": 5,
+            "action": "Click 'Items' card",
+            "component": "UserDashboard",
+            "expectedResult": "Navigates to /dashboard/items"
+          },
+          {
+            "step": 6,
+            "action": "Verify keyboard focus works on cards",
+            "component": "UserDashboard",
+            "expectedResult": "Cards show visible focus ring when tabbed to"
+          }
+        ],
+        "expectedOutcome": "All dashboard KPI cards are clickable with hover/focus states. Clicking navigates to correct list view. Works on both UserDashboard and KPIDashboardOverview",
+        "componentsInvolved": [
+          "UserDashboard",
+          "KPIDashboardOverview",
+          "Navigation"
+        ]
+      },
+      {
+        "id": "UC-HP-005",
+        "title": "Navigation Menu Shows Instructions with Mobile Labels",
+        "category": "happy-path",
+        "priority": "P0",
+        "description": "Navigation menu displays correctly with Instructions item and abbreviated labels on mobile viewport",
+        "preconditions": [
+          "User is logged in"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "View navigation menu on desktop",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Shows: Dashboard, Items, Instructions, Properties with full labels"
+          },
+          {
+            "step": 2,
+            "action": "Verify Dashboard uses grid icon (LayoutDashboard)",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Dashboard icon is grid/layout pattern, NOT house"
+          },
+          {
+            "step": 3,
+            "action": "Verify Instructions menu item exists with FileText icon",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Instructions menu item present with document icon"
+          },
+          {
+            "step": 4,
+            "action": "Click Instructions menu item",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Navigates to /dashboard/instructions"
+          },
+          {
+            "step": 5,
+            "action": "Resize to mobile viewport (< 768px)",
+            "component": "Navigation",
+            "expectedResult": "Mobile navigation visible"
+          },
+          {
+            "step": 6,
+            "action": "Verify mobile labels: D/B, Items, Instr., Prop.",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Abbreviated labels displayed on mobile"
+          }
+        ],
+        "expectedOutcome": "Navigation menu shows 4 items with correct icons. Mobile shows abbreviated labels (D/B, Instr., Prop.). Instructions page accessible",
+        "componentsInvolved": [
+          "RoleBasedNavigation",
+          "DashboardLayout",
+          "InstructionsPage"
+        ]
+      },
+      {
+        "id": "UC-ERR-001",
+        "title": "Item Name Validation Error Message",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "When Item Name field is empty or invalid, error message correctly references 'Item name' not 'Title'",
+        "preconditions": [
+          "User is on MetadataStep"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Leave Item Name field empty",
+            "component": "MetadataStep",
+            "expectedResult": "Field shows empty state"
+          },
+          {
+            "step": 2,
+            "action": "Try to proceed to next step",
+            "component": "MetadataStep",
+            "expectedResult": "Validation error appears"
+          },
+          {
+            "step": 3,
+            "action": "Verify error message text",
+            "component": "MetadataStep",
+            "expectedResult": "Error says 'Item name is required' NOT 'Title is required'"
+          }
+        ],
+        "expectedOutcome": "Validation error uses 'Item name' terminology consistently",
+        "componentsInvolved": [
+          "MetadataStep"
+        ]
+      },
+      {
+        "id": "UC-ERR-002",
+        "title": "Dashboard Card Click with Loading State",
+        "category": "error-handling",
+        "priority": "P1",
+        "description": "Dashboard cards remain clickable and functional even when showing loading state",
+        "preconditions": [
+          "User is on dashboard",
+          "Data is loading"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Observe dashboard during data load",
+            "component": "UserDashboard",
+            "expectedResult": "Cards may show loading skeleton or spinner"
+          },
+          {
+            "step": 2,
+            "action": "Click on a card during loading state",
+            "component": "UserDashboard",
+            "expectedResult": "Navigation still works, goes to list view"
+          },
+          {
+            "step": 3,
+            "action": "Wait for data to load on list view",
+            "component": "ItemsList",
+            "expectedResult": "List view loads with data"
+          }
+        ],
+        "expectedOutcome": "Card navigation works regardless of loading state. Users are not blocked by loading spinners",
+        "componentsInvolved": [
+          "UserDashboard",
+          "KPIDashboardOverview"
+        ]
+      },
+      {
+        "id": "UC-EDGE-001",
+        "title": "QR Code Label Shows Item Name Only",
+        "category": "edge-case",
+        "priority": "P1",
+        "description": "When QR code is generated, the label displays only the Item Name, not a combination of 'Purpose - Item Name'",
+        "preconditions": [
+          "User completed item creation",
+          "QR code generated"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Create item named 'Steamer'",
+            "component": "ItemCapture",
+            "expectedResult": "Item saved with name 'Steamer'"
+          },
+          {
+            "step": 2,
+            "action": "View generated QR code",
+            "component": "QRCodeDisplay",
+            "expectedResult": "QR code visible"
+          },
+          {
+            "step": 3,
+            "action": "Check QR code label text",
+            "component": "QRCodeDisplay",
+            "expectedResult": "Label shows 'Steamer' NOT 'How to Clean - Steamer'"
+          }
+        ],
+        "expectedOutcome": "QR code label displays Item Name only. Article purpose/title not included in QR label",
+        "componentsInvolved": [
+          "useQRCodeGeneration",
+          "QRCodeDisplay"
+        ]
+      },
+      {
+        "id": "UC-EDGE-002",
+        "title": "WhatsNextStep Action Handlers All Functional",
+        "category": "edge-case",
+        "priority": "P1",
+        "description": "All four action buttons on WhatsNextStep trigger their respective handlers correctly",
+        "preconditions": [
+          "User on WhatsNextStep after saving item"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Click 'Edit Instructions'",
+            "component": "WhatsNextStep",
+            "expectedResult": "onEditInstructions handler called, navigates to edit view"
+          },
+          {
+            "step": 2,
+            "action": "Return to WhatsNextStep, click 'Add New Instructions'",
+            "component": "WhatsNextStep",
+            "expectedResult": "onAddNewInstructions handler called, starts new instruction for same item"
+          },
+          {
+            "step": 3,
+            "action": "Return to WhatsNextStep, click 'Create New Item'",
+            "component": "WhatsNextStep",
+            "expectedResult": "onCreateNewItem handler called, resets wizard for new item"
+          },
+          {
+            "step": 4,
+            "action": "Return to WhatsNextStep, click 'Done'",
+            "component": "WhatsNextStep",
+            "expectedResult": "onDone handler called, returns to dashboard"
+          }
+        ],
+        "expectedOutcome": "All 4 action buttons work correctly. Each triggers appropriate navigation or state change",
+        "componentsInvolved": [
+          "WhatsNextStep",
+          "ItemCapture"
+        ]
+      },
+      {
+        "id": "UC-INT-001",
+        "title": "Complete Item Creation to Dashboard Navigation Flow",
+        "category": "integration",
+        "priority": "P0",
+        "description": "Full end-to-end flow: Create item \u2192 Save \u2192 WhatsNextStep \u2192 Done \u2192 Dashboard \u2192 Click Items card \u2192 See new item",
+        "preconditions": [
+          "User is logged in with property access"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Start item creation from Dashboard",
+            "component": "Dashboard",
+            "expectedResult": "ItemCapture wizard opens"
+          },
+          {
+            "step": 2,
+            "action": "Enter 'Test Appliance' as Item Name",
+            "component": "MetadataStep",
+            "expectedResult": "Name field shows 'Item Name' label"
+          },
+          {
+            "step": 3,
+            "action": "Complete workflow through to Review (Stage 4 of 4)",
+            "component": "ItemCapture",
+            "expectedResult": "ReviewStep shows 'Item Name: Test Appliance'"
+          },
+          {
+            "step": 4,
+            "action": "Click Save",
+            "component": "ReviewStep",
+            "expectedResult": "Item saved, WhatsNextStep appears"
+          },
+          {
+            "step": 5,
+            "action": "Click 'Done - Return to Dashboard'",
+            "component": "WhatsNextStep",
+            "expectedResult": "Returns to Dashboard"
+          },
+          {
+            "step": 6,
+            "action": "Click Items card on Dashboard",
+            "component": "UserDashboard",
+            "expectedResult": "Navigates to /dashboard/items"
+          },
+          {
+            "step": 7,
+            "action": "Verify 'Test Appliance' appears in list",
+            "component": "ItemsList",
+            "expectedResult": "New item visible in list"
+          }
+        ],
+        "expectedOutcome": "Complete user journey works. Terminology consistent. Dashboard cards navigate correctly. New item appears in list",
+        "componentsInvolved": [
+          "Dashboard",
+          "ItemCapture",
+          "MetadataStep",
+          "ReviewStep",
+          "WhatsNextStep",
+          "UserDashboard",
+          "ItemsList"
+        ]
+      },
+      {
+        "id": "UC-INT-002",
+        "title": "Mobile Responsive Navigation Integration",
+        "category": "integration",
+        "priority": "P1",
+        "description": "Navigation and dashboard work correctly on mobile viewport with abbreviated labels",
+        "preconditions": [
+          "User is logged in",
+          "Mobile viewport (< 768px)"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "Load dashboard on mobile",
+            "component": "Dashboard",
+            "expectedResult": "Mobile layout displays correctly"
+          },
+          {
+            "step": 2,
+            "action": "Verify navigation shows abbreviated labels",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Shows D/B, Items, Instr., Prop."
+          },
+          {
+            "step": 3,
+            "action": "Tap Items card",
+            "component": "UserDashboard",
+            "expectedResult": "Card responds to tap, navigates to items"
+          },
+          {
+            "step": 4,
+            "action": "Tap 'Instr.' in navigation",
+            "component": "RoleBasedNavigation",
+            "expectedResult": "Navigates to Instructions page"
+          },
+          {
+            "step": 5,
+            "action": "Start item creation",
+            "component": "ItemCapture",
+            "expectedResult": "Mobile progress shows 'Step X of 4'"
+          }
+        ],
+        "expectedOutcome": "Mobile experience works end-to-end. Abbreviated labels display. Touch interactions work. Progress indicator mobile-friendly",
+        "componentsInvolved": [
+          "RoleBasedNavigation",
+          "UserDashboard",
+          "ItemCapture",
+          "ProgressIndicator"
+        ]
+      },
+      {
+        "id": "UC-INT-003",
+        "title": "Admin Dashboard Cards Integration",
+        "category": "integration",
+        "priority": "P1",
+        "description": "Admin/KPI dashboard cards are also clickable and navigate correctly (KPIDashboardOverview)",
+        "preconditions": [
+          "Admin user logged in",
+          "On admin dashboard view"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "action": "View admin KPI dashboard",
+            "component": "KPIDashboardOverview",
+            "expectedResult": "KPI cards displayed with analytics data"
+          },
+          {
+            "step": 2,
+            "action": "Click 'Total Properties' card",
+            "component": "KPIDashboardOverview",
+            "expectedResult": "Navigates to /dashboard/properties"
+          },
+          {
+            "step": 3,
+            "action": "Return and click 'Total Items' card",
+            "component": "KPIDashboardOverview",
+            "expectedResult": "Navigates to /dashboard/items"
+          },
+          {
+            "step": 4,
+            "action": "Verify hover states on cards",
+            "component": "KPIDashboardOverview",
+            "expectedResult": "Cards show shadow/border changes on hover"
+          }
+        ],
+        "expectedOutcome": "KPIDashboardOverview cards work same as UserDashboard cards. Consistent UX across dashboard types",
+        "componentsInvolved": [
+          "KPIDashboardOverview",
+          "Navigation"
+        ]
+      }
+    ]
+  }
+}

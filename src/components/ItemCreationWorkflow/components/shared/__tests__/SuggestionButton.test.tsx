@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { SuggestionButton } from '../SuggestionButton';
 
 describe('SuggestionButton', () => {
-  const mockOnSelect = jest.fn();
+  const mockOnSelect = vi.fn();
 
   beforeEach(() => {
     mockOnSelect.mockClear();

@@ -12,13 +12,13 @@ import { RoomSelectionStep } from '../RoomSelectionStep';
 describe('RoomSelectionStep', () => {
   const defaultProps = {
     currentRoom: null,
-    onSelectRoom: jest.fn(),
-    onNext: jest.fn(),
+    onSelectRoom: vi.fn(),
+    onNext: vi.fn(),
     canNext: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -94,7 +94,7 @@ describe('RoomSelectionStep', () => {
       ];
 
       roomMappings.forEach(({ label, type }) => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         fireEvent.click(screen.getByText(label));
         expect(defaultProps.onSelectRoom).toHaveBeenCalledWith(type);
       });

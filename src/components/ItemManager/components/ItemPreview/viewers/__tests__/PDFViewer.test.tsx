@@ -13,26 +13,26 @@ import userEvent from '@testing-library/user-event';
 import { PDFViewer } from '../PDFViewer';
 
 // Mock pdfjs-dist
-jest.mock('pdfjs-dist', () => {
+vi.mock('pdfjs-dist', () => {
   const mockPage = {
-    getViewport: jest.fn(() => ({
+    getViewport: vi.fn(() => ({
       width: 800,
       height: 600,
     })),
-    render: jest.fn(() => ({
+    render: vi.fn(() => ({
       promise: Promise.resolve(),
-      cancel: jest.fn(),
+      cancel: vi.fn(),
     })),
   };
 
   const mockDocument = {
     numPages: 5,
-    getPage: jest.fn(() => Promise.resolve(mockPage)),
-    destroy: jest.fn(),
+    getPage: vi.fn(() => Promise.resolve(mockPage)),
+    destroy: vi.fn(),
   };
 
   return {
-    getDocument: jest.fn(() => ({
+    getDocument: vi.fn(() => ({
       promise: Promise.resolve(mockDocument),
     })),
     GlobalWorkerOptions: { workerSrc: '' },
@@ -41,19 +41,19 @@ jest.mock('pdfjs-dist', () => {
 });
 
 // Mock ResizeObserver
-const mockResizeObserver = jest.fn();
+const mockResizeObserver = vi.fn();
 mockResizeObserver.mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 window.ResizeObserver = mockResizeObserver;
 
 // Mock canvas context
-HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
-  clearRect: jest.fn(),
-  scale: jest.fn(),
-  drawImage: jest.fn(),
+HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
+  clearRect: vi.fn(),
+  scale: vi.fn(),
+  drawImage: vi.fn(),
 }));
 
 describe('PDFViewer', () => {
@@ -63,7 +63,7 @@ describe('PDFViewer', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -97,7 +97,7 @@ describe('PDFViewer', () => {
     });
 
     it('calls onLoadComplete callback on successful load', async () => {
-      const mockOnLoadComplete = jest.fn();
+      const mockOnLoadComplete = vi.fn();
       render(<PDFViewer {...defaultProps} onLoadComplete={mockOnLoadComplete} />);
 
       await waitFor(() => {
@@ -189,7 +189,7 @@ describe('PDFViewer', () => {
     });
 
     it('calls onPageChange callback on navigation', async () => {
-      const mockOnPageChange = jest.fn();
+      const mockOnPageChange = vi.fn();
       render(<PDFViewer {...defaultProps} onPageChange={mockOnPageChange} />);
 
       await waitFor(() => {
@@ -306,13 +306,13 @@ describe('PDFViewer', () => {
         .mockReturnValueOnce({
           promise: Promise.resolve({
             numPages: 5,
-            getPage: jest.fn(() =>
+            getPage: vi.fn(() =>
               Promise.resolve({
-                getViewport: jest.fn(() => ({ width: 800, height: 600 })),
-                render: jest.fn(() => ({ promise: Promise.resolve(), cancel: jest.fn() })),
+                getViewport: vi.fn(() => ({ width: 800, height: 600 })),
+                render: vi.fn(() => ({ promise: Promise.resolve(), cancel: vi.fn() })),
               })
             ),
-            destroy: jest.fn(),
+            destroy: vi.fn(),
           }),
         });
 
@@ -336,7 +336,7 @@ describe('PDFViewer', () => {
         promise: Promise.reject(new Error('Failed to load PDF')),
       });
 
-      const mockOnLoadComplete = jest.fn();
+      const mockOnLoadComplete = vi.fn();
       render(<PDFViewer pdfSrc="invalid.pdf" onLoadComplete={mockOnLoadComplete} />);
 
       await waitFor(() => {

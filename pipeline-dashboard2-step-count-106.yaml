@@ -1,0 +1,388 @@
+# =============================================================================
+# Pipeline Configuration: Dashboard2 Workflow Step Count Fix (Plan-106)
+# =============================================================================
+#
+# Generated: 2026-01-12 12:00:00 PST
+# Last Modified: 2026-01-12 12:00:00 PST
+# Source: ./docs/prd/Plan-106-Dashboard2-Workflow-Step-Count-Fix.md
+#
+# This pipeline fixes the step count issue in the ItemCreationWorkflow
+# component at /dashboard2/create. The workflow currently shows 10 steps
+# but should show 8 numbered steps with 'preview-save' as the final step.
+#
+# IMPORTANT: This targets ItemCreationWorkflow (NOT ItemCapture)
+# - Route: /dashboard2/create
+# - Component: src/components/ItemCreationWorkflow/
+#
+# Usage:
+#   python pipeline_orchestrator.py --config ./pipeline-dashboard2-step-count-106.yaml
+#   python pipeline_orchestrator.py --config ./pipeline-dashboard2-step-count-106.yaml --dry-run
+#   python pipeline_orchestrator.py --config ./pipeline-dashboard2-step-count-106.yaml --list-tasks
+#
+# =============================================================================
+
+pipeline:
+  name: dashboard2-step-count-106
+  version: "1.0"
+  description: "Fix ItemCreationWorkflow step count from 10 to 8 at /dashboard2/create"
+
+  mode: per_request
+  default_timeout: 900
+
+# =============================================================================
+# Parallelization Configuration
+# =============================================================================
+
+parallelization:
+  enabled: false
+  max_concurrent: 2
+
+# =============================================================================
+# Source Document
+# =============================================================================
+
+source:
+  path: ./docs/prd/Plan-106-Dashboard2-Workflow-Step-Count-Fix.md
+
+  extraction:
+    task_pattern: '^####\s+Task\s+(\d+\.\d+):\s+(.+?)$'
+    task_groups:
+      id: 1
+      title: 2
+
+    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)$'
+    phase_groups:
+      number: 1
+      name: 2
+
+    description:
+      mode: following_bullets
+      end_patterns:
+        - '^####\s+Task'
+        - '^###\s+Phase'
+        - '^##\s+'
+        - '^---'
+
+# =============================================================================
+# Output Locations
+# =============================================================================
+
+outputs:
+  requests: ./docs/gen_requests.md
+  overviews: ./docs/
+  details: ./docs/
+  state: ./pipeline-dashboard2-step-count-106-state.json
+  logs: ./pipeline-dashboard2-step-count-106.log
+
+# =============================================================================
+# Request Stages
+# =============================================================================
+
+request_stages:
+  # -------------------------------------------------------------------------
+  # Stage 1: Create Request
+  # -------------------------------------------------------------------------
+  - id: request
+    name: "Create Request"
+    description: "Convert implementation task into formal requirement"
+    enabled: true
+
+    agent:
+      name: "01-request-fa"
+      invocation_template: |
+        use agent 01-request-fa to create the request for: {full_task}
+
+        IMPORTANT CONTEXT:
+        - This is for ItemCreationWorkflow at /dashboard2/create (NOT ItemCapture)
+        - Target files are in src/components/ItemCreationWorkflow/
+        - The goal is to reduce step count from 10 to 8 numbered steps
+
+        Before creating the request:
+        1. Read docs/gen_requests.md to find the HIGHEST existing REQ-XXX number
+        2. Use the NEXT sequential number
+        3. Append the new request to docs/gen_requests.md
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 240
+
+    output:
+      type: append
+      file: ./docs/gen_requests.md
+
+  # -------------------------------------------------------------------------
+  # Stage 2: Create Overview
+  # -------------------------------------------------------------------------
+  - id: overview
+    name: "Create Overview"
+    description: "Pull relevant context from codebase for the request"
+    enabled: true
+
+    agent:
+      name: "02-techlead-overview"
+      invocation_template: |
+        Acting as a Technical Lead, create an implementation breakdown document for:
+        {requests_file_path} - Request #{request_id_num}
+
+        **Implementation Plan Reference**: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+        - Details:
+            {task_description_formatted}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-overview.md
+
+        **CRITICAL: Target Component**
+        This is for ItemCreationWorkflow at /dashboard2/create, NOT ItemCapture.
+
+        **Key Files to Investigate:**
+        - src/components/ItemCreationWorkflow/utils/constants.ts - WORKFLOW_STEPS, PROGRESS_WEIGHTS
+        - src/components/ItemCreationWorkflow/ItemCreationWorkflow.tsx - Main orchestrator
+        - src/components/ItemCreationWorkflow/hooks/useWorkflowState.ts - State machine
+        - src/components/ItemCreationWorkflow/ItemCreationWorkflow.types.ts - Types
+        - src/components/ItemCreationWorkflow/components/steps/NextActionStep.tsx - Post-workflow
+        - src/components/ItemCreationWorkflow/components/steps/SessionSummaryStep.tsx - Summary
+        - src/app/dashboard2/create/page.tsx - Route entry point
+
+        **Goal:**
+        - Reduce visible step count from 10 to 8
+        - 'preview-save' should be Step 8 (final numbered step)
+        - 'next-action' and 'session-summary' should NOT be numbered
+        - Progress bar should reach 100% at preview-save
+
+        Create the overview document following the standard structure.
+        Include an "Authorized Files and Functions for Modification" section.
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 660
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-overview.md"
+
+  # -------------------------------------------------------------------------
+  # Stage 3: Create Detailed Task Breakdown
+  # -------------------------------------------------------------------------
+  - id: details
+    name: "Create Detailed Tasks"
+    description: "Break request into 1-point implementation tasks"
+    enabled: true
+
+    agent:
+      name: "03-senior-dev-task-breakdown"
+      invocation_template: |
+        Create a detailed task breakdown document for Request #{request_id_num}
+
+        **Input Documents** (you MUST read these first):
+        - Overview document: {overview_file}
+        - Requirements: {requests_file_path} (find Request #{request_id_num})
+        - Implementation Plan: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-detailed.md
+
+        **CRITICAL: Target Component**
+        This is for ItemCreationWorkflow at /dashboard2/create, NOT ItemCapture.
+
+        **Requirements**:
+        - Each numbered task must be <= 1 story point
+        - Include testing tasks for each implementation
+        - Only modify files in src/components/ItemCreationWorkflow/
+        - Use actual system date/time in the document header
+        - All file paths relative to project root
+        - Include verification steps
+
+        **Key Implementation Details:**
+        - Create NUMBERED_WORKFLOW_STEPS (8 steps) and POST_WORKFLOW_STEPS (2 steps)
+        - Update PROGRESS_WEIGHTS so preview-save = 100%
+        - Hide step indicator for next-action and session-summary
+        - Remove back/cancel from NextActionStep per PDF REQUEST 3
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 480
+
+    output:
+      type: file
+      directory: ./docs/
+      filename: "{request_id}-{task_title_slug}-detailed.md"
+
+  # -------------------------------------------------------------------------
+  # Stage 4: Implementation
+  # -------------------------------------------------------------------------
+  - id: implementation
+    name: "Implementation"
+    description: "Autonomously implement all tasks from the detailed specification"
+    enabled: true
+
+    agent:
+      name: "05-spec-implementation"
+      invocation_template: |
+        Implement all tasks from the detailed specification for Request #{request_id_num}
+
+        **Detailed Specification**: {details_file}
+
+        **Task Context**:
+        - Request ID: {request_id}
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **CRITICAL: Target Component**
+        This is for ItemCreationWorkflow at /dashboard2/create, NOT ItemCapture.
+
+        **Key Files to Modify:**
+        - src/components/ItemCreationWorkflow/utils/constants.ts
+        - src/components/ItemCreationWorkflow/ItemCreationWorkflow.tsx
+        - src/components/ItemCreationWorkflow/hooks/useWorkflowState.ts
+        - src/components/ItemCreationWorkflow/ItemCreationWorkflow.types.ts
+        - src/components/ItemCreationWorkflow/components/steps/NextActionStep.tsx
+        - src/components/ItemCreationWorkflow/components/steps/SessionSummaryStep.tsx
+
+        **Instructions**:
+        1. Read the detailed specification at {details_file}
+        2. Execute all tasks following the per-task workflow:
+           - Implement -> Verify -> Update Doc -> Build -> Commit
+        3. Mark completed tasks with [x] and add implementation notes
+        4. Run verification: `npm run type-check` and `npm run build`
+        5. Test in browser at http://localhost:3001/dashboard2/create
+        6. Report final status
+
+        **Success Criteria:**
+        - Room selection shows "Step 1 of 8"
+        - Preview-save shows "Step 8 of 8"
+        - Next-action shows NO step indicator, NO back button, NO cancel
+        - Session-summary shows NO step indicator
+        - Progress bar reaches 100% at preview-save
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__playwright__*"
+      timeout: 1800
+
+    output:
+      type: implementation
+
+  # -------------------------------------------------------------------------
+  # Stage 5: Test Verification
+  # -------------------------------------------------------------------------
+  - id: testcheck
+    name: "Test Verification"
+    description: "Verify implementation against specs"
+    enabled: true
+    mode: pipeline
+
+    agent:
+      name: "06a-pipeline-testcheck"
+      invocation_template: |
+        Execute verification for the dashboard2 step count fix.
+
+        **Pipeline Config**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+
+        **Verification Checklist:**
+
+        1. Open browser to http://localhost:3001/dashboard2/create
+        2. Verify step counter displays:
+           - Step 1: "Step 1 of 8" (room-selection)
+           - Step 8: "Step 8 of 8" (preview-save)
+        3. Verify NO step indicator on:
+           - next-action step
+           - session-summary step
+        4. Verify next-action step:
+           - NO back button
+           - NO cancel button
+           - 4 action options present
+        5. Verify progress bar:
+           - Reaches 100% at preview-save
+           - Stays at 100% for post-workflow steps
+
+        **Build Verification:**
+        - npm run type-check
+        - npm run build
+
+        Report findings with pass/fail for each criteria.
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__playwright__*"
+      timeout: 900
+
+    output:
+      type: verification
+
+# =============================================================================
+# Implementation Configuration
+# =============================================================================
+
+implementation:
+  technology:
+    database: supabase
+    browser_testing: true
+
+  required_tools:
+    - playwright_mcp
+
+  precheck:
+    timeout: 120
+
+# =============================================================================
+# Retry Configuration
+# =============================================================================
+
+retry:
+  max_attempts: 2
+  on_failure: skip_and_log
+
+# =============================================================================
+# Expected Task Dependencies (Plan-106)
+# =============================================================================
+#
+# Phase 1: Update Constants (REQ-5 Core Fix)
+#   - Task 1.1: Add NUMBERED_WORKFLOW_STEPS and POST_WORKFLOW_STEPS
+#   - Task 1.2: Update Step Count Display Logic
+#   - Task 1.3: Update useWorkflowState Hook
+#   Files: constants.ts, ItemCreationWorkflow.tsx, useWorkflowState.ts
+#
+# Phase 2: Update UI Components
+#   - Task 2.1: Update Progress Indicator
+#   - Task 2.2: Update NextActionStep to Remove Navigation Controls
+#   - Task 2.3: Update SessionSummaryStep
+#   Files: ItemCreationWorkflow.tsx, NextActionStep.tsx, SessionSummaryStep.tsx
+#   Depends on: Phase 1
+#
+# Phase 3: Update Types
+#   - Task 3.1: Add Type Helpers
+#   Files: ItemCreationWorkflow.types.ts
+#
+# Phase 4: Testing & Verification
+#   - Task 4.1: Manual Browser Testing
+#   - Task 4.2: Build Verification
+#
+# Total Tasks: 9 across 4 phases
+# Estimated Effort: 4-6 hours
+#
+# =============================================================================

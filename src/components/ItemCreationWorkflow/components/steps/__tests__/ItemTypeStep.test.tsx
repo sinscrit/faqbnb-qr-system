@@ -12,13 +12,13 @@ import { ItemTypeStep } from '../ItemTypeStep';
 describe('ItemTypeStep', () => {
   const defaultProps = {
     currentItemType: null as const,
-    onSelectItemType: jest.fn(),
-    onNext: jest.fn(),
+    onSelectItemType: vi.fn(),
+    onNext: vi.fn(),
     canNext: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -111,7 +111,7 @@ describe('ItemTypeStep', () => {
       ];
 
       typeMappings.forEach(({ label, type }) => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         const { unmount } = render(<ItemTypeStep {...defaultProps} />);
         fireEvent.click(screen.getByText(label));
         expect(defaultProps.onSelectItemType).toHaveBeenCalledWith(type);

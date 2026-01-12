@@ -365,11 +365,11 @@ export const navigateToContentTypeSelection = async (
  * Navigates from initial state to content-creation step.
  *
  * @param user - UserEvent instance
- * @param contentType - Content type to select (default: 'Video')
+ * @param contentType - Content type to select (default: 'Record Video')
  */
 export const navigateToContentCreation = async (
   user: UserEvent,
-  contentType: string = 'Video'
+  contentType: string = 'Record Video'
 ): Promise<void> => {
   await navigateToContentTypeSelection(user);
   await user.click(screen.getByText(contentType));

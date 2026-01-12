@@ -569,7 +569,7 @@ describe('canSubmitState', () => {
 });
 
 describe('STEP_TRANSITIONS', () => {
-  it('covers all 9 wizard steps', () => {
+  it('covers all 11 wizard steps including whats-next', () => {
     const allSteps = [
       'metadata',
       'content-type',
@@ -577,9 +577,11 @@ describe('STEP_TRANSITIONS', () => {
       'capture-photo',
       'upload-file',
       'write-text',
+      'add-url',
       'edit-media',
       'add-more',
       'review',
+      'whats-next',
     ];
 
     allSteps.forEach(step => {
@@ -596,10 +598,28 @@ describe('STEP_TRANSITIONS', () => {
     expect(STEP_TRANSITIONS['content-type']).toContain('capture-photo');
     expect(STEP_TRANSITIONS['content-type']).toContain('upload-file');
     expect(STEP_TRANSITIONS['content-type']).toContain('write-text');
+    expect(STEP_TRANSITIONS['content-type']).toContain('add-url');
   });
 
   it('review can go back to metadata or content-type', () => {
     expect(STEP_TRANSITIONS['review']).toContain('metadata');
+    expect(STEP_TRANSITIONS['review']).toContain('content-type');
+  });
+
+  // REQ-189: WhatsNextStep integration tests
+  it('allows transition from review to whats-next', () => {
+    expect(STEP_TRANSITIONS['review']).toContain('whats-next');
+  });
+
+  it('whats-next is a terminal step with no transitions', () => {
+    expect(STEP_TRANSITIONS['whats-next']).toEqual([]);
+  });
+
+  it('allows transition from review to metadata for editing', () => {
+    expect(STEP_TRANSITIONS['review']).toContain('metadata');
+  });
+
+  it('allows transition from review to content-type for editing', () => {
     expect(STEP_TRANSITIONS['review']).toContain('content-type');
   });
 });

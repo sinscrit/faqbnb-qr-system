@@ -7,10 +7,12 @@
  * - Section and heading structure
  * - Drag and drop announcements
  * - Modal dialog accessibility
+ * - Item/Article field accessibility (REQ-210)
  *
  * @module ItemCreationWorkflow/components/steps/__tests__/PreviewSaveStep.a11y.test
  * @see docs/REQ-174-accessibility-audit-detailed.md
- * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
+ * @see docs/REQ-210-update-previewsavestep-display-detailed.md
+ * @lastModified 2026-01-12 (REQ-210: Item/Article separation a11y tests)
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -35,15 +37,26 @@ const createMockContentPiece = (overrides?: Partial<ContentPiece>): ContentPiece
 const createMockCurrentItem = (overrides?: Partial<CurrentItemState>): CurrentItemState => ({
   room: 'living-room',
   itemType: 'appliance',
+  specificItem: 'TV',
   purpose: 'how-to-use',
   itemName: 'Living Room TV',
+  currentArticle: {
+    title: 'How to Use',
+    purpose: 'how-to-use',
+    content: [createMockContentPiece({ id: 'content-1' })],
+  },
   content: [createMockContentPiece({ id: 'content-1' })],
+  contentSource: 'create-new',
+  contentType: 'photo',
+  tags: [],
   ...overrides,
 });
 
 const createMockProps = (overrides?: Partial<PreviewSaveStepProps>): PreviewSaveStepProps => ({
   currentItem: createMockCurrentItem(),
   onUpdateItemName: vi.fn(),
+  onUpdateArticleTitle: vi.fn(),
+  onUpdateTags: vi.fn(),
   onRemoveContent: vi.fn(),
   onReorderContent: vi.fn(),
   onRetake: vi.fn(),
@@ -363,6 +376,82 @@ describe('PreviewSaveStep Accessibility', () => {
       // DnDContext should have announcements configured
       const contentList = screen.getByRole('list', { name: /content pieces/i });
       expect(contentList).toBeInTheDocument();
+    });
+  });
+
+  // ===========================================================================
+  // Item/Article Separation Accessibility Tests (REQ-210)
+  // ===========================================================================
+
+  describe('Item/Article separation accessibility (REQ-210)', () => {
+    it('should have proper ARIA labels for Item Name field', () => {
+      render(<PreviewSaveStep {...createMockProps()} />);
+
+      // ItemNameEditor provides its own label "Item Name"
+      const itemNameInput = screen.getByLabelText(/item name/i);
+      expect(itemNameInput).toBeInTheDocument();
+      expect(itemNameInput).toHaveAttribute('id', 'item-name-editor');
+    });
+
+    it('should have proper ARIA labels for Article Title field', () => {
+      render(<PreviewSaveStep {...createMockProps()} />);
+
+      const articleTitleInput = screen.getByLabelText(/article title/i);
+      expect(articleTitleInput).toBeInTheDocument();
+      expect(articleTitleInput).toHaveAttribute('id', 'article-title-editor');
+    });
+
+    it('should have section subheadings for Physical Item and Article/Instructions', () => {
+      render(<PreviewSaveStep {...createMockProps()} />);
+
+      // Verify visual section headings exist
+      expect(screen.getByText(/physical item/i)).toBeInTheDocument();
+      expect(screen.getByText(/article.*instructions/i)).toBeInTheDocument();
+    });
+
+    it('should have h3 and h4 headings providing navigation landmarks', () => {
+      render(<PreviewSaveStep {...createMockProps()} />);
+
+      // Main section has h3
+      expect(screen.getByRole('heading', { name: /item details/i, level: 3 })).toBeInTheDocument();
+
+      // Sub-sections have h4 headings
+      const h4Headings = screen.getAllByRole('heading', { level: 4 });
+      expect(h4Headings.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should have no accessibility violations with Item/Article fields', async () => {
+      const props = createMockProps({
+        currentItem: createMockCurrentItem({
+          specificItem: 'Refrigerator',
+          currentArticle: {
+            title: 'How to Clean',
+            purpose: 'how-to-clean',
+            content: [createMockContentPiece({ id: 'content-1' })],
+          },
+        }),
+      });
+      const { container } = render(<PreviewSaveStep {...props} />);
+      await checkA11y(container);
+    });
+
+    it('should have helper text for QR code label visible for screen readers', () => {
+      render(<PreviewSaveStep {...createMockProps()} />);
+
+      expect(screen.getByText(/appears on QR code label/i)).toBeInTheDocument();
+    });
+
+    it('should mark Article Title input as disabled when callback not provided', () => {
+      render(
+        <PreviewSaveStep
+          {...createMockProps({
+            onUpdateArticleTitle: undefined,
+          })}
+        />
+      );
+
+      const articleTitleInput = screen.getByLabelText(/article title/i);
+      expect(articleTitleInput).toBeDisabled();
     });
   });
 });

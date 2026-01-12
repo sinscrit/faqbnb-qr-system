@@ -13,12 +13,12 @@ import { NetworkErrorIndicator } from '../NetworkErrorIndicator';
 
 describe('NetworkErrorIndicator', () => {
   const defaultProps = {
-    onRetry: jest.fn(),
-    onProceedWithoutPreview: jest.fn(),
+    onRetry: vi.fn(),
+    onProceedWithoutPreview: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

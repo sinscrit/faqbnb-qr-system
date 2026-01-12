@@ -12,7 +12,7 @@ import { PDFExportDialog } from '../PDFExportDialog';
 import type { PDFExportSettings } from '@/types/pdf';
 
 // Mock PDFExportOptions component
-jest.mock('@/components/PDFExportOptions', () => ({
+vi.mock('@/components/PDFExportOptions', () => ({
   PDFExportOptions: ({ settings, onSettingsChange, disabled }: any) => (
     <div data-testid="pdf-export-options" data-disabled={disabled}>
       <button onClick={() => onSettingsChange({ qrSize: 50 })}>
@@ -40,14 +40,14 @@ const createDefaultSettings = (): PDFExportSettings => ({
 
 const createDefaultProps = () => ({
   isOpen: true,
-  onClose: jest.fn(),
-  onExport: jest.fn().mockResolvedValue(undefined),
+  onClose: vi.fn(),
+  onExport: vi.fn().mockResolvedValue(undefined),
   itemCount: 5,
   settings: createDefaultSettings(),
-  onSettingsChange: jest.fn(),
+  onSettingsChange: vi.fn(),
   isGenerating: false,
   error: null,
-  onClearError: jest.fn(),
+  onClearError: vi.fn(),
 });
 
 // =============================================================================
@@ -56,7 +56,7 @@ const createDefaultProps = () => ({
 
 describe('PDFExportDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

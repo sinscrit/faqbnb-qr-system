@@ -16,32 +16,32 @@ import type { CurrentItemState, ContentPiece } from '../../../ItemCreationWorkfl
 import { MAX_CONTENT_PIECES } from '../../../utils/constants';
 
 // Mock @dnd-kit modules
-jest.mock('@dnd-kit/core', () => ({
+vi.mock('@dnd-kit/core', () => ({
   DndContext: ({ children }: { children: React.ReactNode }) => <div data-testid="dnd-context">{children}</div>,
-  closestCenter: jest.fn(),
-  KeyboardSensor: jest.fn(),
-  PointerSensor: jest.fn(),
-  TouchSensor: jest.fn(),
-  useSensor: jest.fn(() => ({})),
-  useSensors: jest.fn(() => []),
+  closestCenter: vi.fn(),
+  KeyboardSensor: vi.fn(),
+  PointerSensor: vi.fn(),
+  TouchSensor: vi.fn(),
+  useSensor: vi.fn(() => ({})),
+  useSensors: vi.fn(() => []),
   DragOverlay: ({ children }: { children: React.ReactNode }) => <div data-testid="drag-overlay">{children}</div>,
 }));
 
-jest.mock('@dnd-kit/sortable', () => ({
+vi.mock('@dnd-kit/sortable', () => ({
   SortableContext: ({ children }: { children: React.ReactNode }) => <div data-testid="sortable-context">{children}</div>,
-  sortableKeyboardCoordinates: jest.fn(),
+  sortableKeyboardCoordinates: vi.fn(),
   rectSortingStrategy: {},
   useSortable: () => ({
     attributes: {},
     listeners: {},
-    setNodeRef: jest.fn(),
+    setNodeRef: vi.fn(),
     transform: null,
     transition: null,
     isDragging: false,
   }),
 }));
 
-jest.mock('@dnd-kit/modifiers', () => ({
+vi.mock('@dnd-kit/modifiers', () => ({
   restrictToParentElement: {},
 }));
 
@@ -58,24 +58,35 @@ const createMockContentPiece = (index: number, type: 'photo' | 'video' = 'photo'
   order: index,
 });
 
-const createMockItem = (contentCount: number): CurrentItemState => ({
-  room: 'kitchen',
-  itemType: 'appliance',
-  specificItem: 'Refrigerator',
-  itemName: 'Kitchen - Refrigerator',
-  contentSource: 'existing',
-  contentType: 'photo',
-  content: Array.from({ length: contentCount }, (_, i) => createMockContentPiece(i)),
-});
+const createMockItem = (contentCount: number): CurrentItemState => {
+  const content = Array.from({ length: contentCount }, (_, i) => createMockContentPiece(i));
+  return {
+    room: 'kitchen',
+    itemType: 'appliance',
+    specificItem: 'Refrigerator',
+    itemName: 'Kitchen - Refrigerator',
+    currentArticle: {
+      title: 'Instructions',
+      purpose: null,
+      content: content,
+    },
+    contentSource: 'existing',
+    contentType: 'photo',
+    content: content,
+    tags: [],
+  };
+};
 
 const defaultMockProps = {
-  onUpdateItemName: jest.fn(),
-  onRemoveContent: jest.fn(),
-  onReorderContent: jest.fn(),
-  onRetake: jest.fn(),
-  onSave: jest.fn().mockResolvedValue({ id: 'item-1', qrCodeUrl: 'data:image/png;base64,...' }),
-  onCancel: jest.fn(),
-  onComplete: jest.fn(),
+  onUpdateItemName: vi.fn(),
+  onUpdateArticleTitle: vi.fn(),
+  onUpdateTags: vi.fn(),
+  onRemoveContent: vi.fn(),
+  onReorderContent: vi.fn(),
+  onRetake: vi.fn(),
+  onSave: vi.fn().mockResolvedValue({ id: 'item-1', qrCodeUrl: 'data:image/png;base64,...' }),
+  onCancel: vi.fn(),
+  onComplete: vi.fn(),
 };
 
 // =============================================================================
@@ -84,7 +95,7 @@ const defaultMockProps = {
 
 describe('PreviewSaveStep Content Reordering', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('content display', () => {

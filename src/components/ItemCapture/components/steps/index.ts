@@ -19,3 +19,6 @@ export type { VideoCaptureStepProps } from './VideoCaptureStep';
 
 export { PhotoCaptureStep } from './PhotoCaptureStep';
 export type { PhotoCaptureStepProps } from './PhotoCaptureStep';
+
+export { WhatsNextStep } from './WhatsNextStep';
+export type { WhatsNextStepProps } from './WhatsNextStep';

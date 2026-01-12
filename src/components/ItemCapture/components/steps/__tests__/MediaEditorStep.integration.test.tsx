@@ -17,7 +17,7 @@ import { MediaEditorStep } from '../MediaEditorStep';
 import type { MediaItem, MediaMetadata } from '../../../ItemCapture.types';
 
 // Mock the dynamic imports with component-specific identifiers
-jest.mock('next/dynamic', () => {
+vi.mock('next/dynamic', () => {
   return (importFunc: () => Promise<{ default: React.ComponentType<unknown> }>) => {
     // Return a mock component based on the import path
     const MockImageCropper = (props: { onCancel: () => void; onCropComplete: (blob: Blob) => void }) => (
@@ -56,16 +56,16 @@ jest.mock('next/dynamic', () => {
 });
 
 // Mock useMediaEditor hook
-jest.mock('../../../hooks/useMediaEditor', () => ({
+vi.mock('../../../hooks/useMediaEditor', () => ({
   useMediaEditor: () => ({
-    startEditing: jest.fn(),
-    getEditState: jest.fn(),
-    setCrop: jest.fn(),
-    setRotation: jest.fn(),
-    setTrim: jest.fn(),
-    confirmEdits: jest.fn().mockResolvedValue({ success: true }),
-    cancelEdits: jest.fn(),
-    hasPendingEdits: jest.fn().mockReturnValue(false),
+    startEditing: vi.fn(),
+    getEditState: vi.fn(),
+    setCrop: vi.fn(),
+    setRotation: vi.fn(),
+    setTrim: vi.fn(),
+    confirmEdits: vi.fn().mockResolvedValue({ success: true }),
+    cancelEdits: vi.fn(),
+    hasPendingEdits: vi.fn().mockReturnValue(false),
   }),
 }));
 
@@ -92,12 +92,12 @@ function createMockMediaItem(
 }
 
 describe('MediaEditorStep Integration', () => {
-  const mockOnComplete = jest.fn();
-  const mockOnUpdateMedia = jest.fn();
-  const mockOnCancel = jest.fn();
+  const mockOnComplete = vi.fn();
+  const mockOnUpdateMedia = vi.fn();
+  const mockOnCancel = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Editor Component Rendering', () => {

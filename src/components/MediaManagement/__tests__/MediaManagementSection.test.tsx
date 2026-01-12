@@ -33,11 +33,11 @@ const mockLinks: ItemLink[] = [
 describe('MediaManagementSection', () => {
   const defaultProps = {
     initialLinks: mockLinks,
-    onLinksChange: jest.fn(),
+    onLinksChange: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders existing links', () => {

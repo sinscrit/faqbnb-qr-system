@@ -99,7 +99,7 @@ describe('ContentTypeFilter', () => {
 
   describe('interactions', () => {
     it('clicking unselected type adds it to selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -115,7 +115,7 @@ describe('ContentTypeFilter', () => {
     });
 
     it('clicking selected type removes it from selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -131,7 +131,7 @@ describe('ContentTypeFilter', () => {
     });
 
     it('supports multiple selections', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -164,7 +164,7 @@ describe('ContentTypeFilter', () => {
     });
 
     it('prevents clicks when disabled', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -215,7 +215,7 @@ describe('ContentTypeFilter', () => {
     });
 
     it('Enter key toggles selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(
@@ -232,7 +232,7 @@ describe('ContentTypeFilter', () => {
     });
 
     it('Space key toggles selection', async () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       const user = userEvent.setup();
 
       render(

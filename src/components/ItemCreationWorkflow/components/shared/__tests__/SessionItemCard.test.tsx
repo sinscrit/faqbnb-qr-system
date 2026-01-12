@@ -10,8 +10,8 @@ import { SessionItemCard } from '../SessionItemCard';
 import type { SessionItem, ContentPiece } from '../../../ItemCreationWorkflow.types';
 
 // Mock URL.createObjectURL and revokeObjectURL
-const mockCreateObjectURL = jest.fn(() => 'blob:test-url');
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn(() => 'blob:test-url');
+const mockRevokeObjectURL = vi.fn();
 
 beforeAll(() => {
   global.URL.createObjectURL = mockCreateObjectURL;
@@ -19,7 +19,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // =============================================================================
@@ -79,12 +79,12 @@ const createMockItem = (overrides?: Partial<SessionItem>): SessionItem => ({
 describe('SessionItemCard', () => {
   const defaultProps = {
     item: createMockItem(),
-    onEdit: jest.fn(),
-    onRemove: jest.fn(),
+    onEdit: vi.fn(),
+    onRemove: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================
@@ -211,13 +211,13 @@ describe('SessionItemCard', () => {
     });
 
     it('hides edit button when onEdit not provided', () => {
-      render(<SessionItemCard item={createMockItem()} onRemove={jest.fn()} />);
+      render(<SessionItemCard item={createMockItem()} onRemove={vi.fn()} />);
 
       expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
     });
 
     it('hides remove button when onRemove not provided', () => {
-      render(<SessionItemCard item={createMockItem()} onEdit={jest.fn()} />);
+      render(<SessionItemCard item={createMockItem()} onEdit={vi.fn()} />);
 
       expect(screen.queryByRole('button', { name: /remove/i })).not.toBeInTheDocument();
     });
@@ -331,7 +331,9 @@ describe('SessionItemCard', () => {
       render(<SessionItemCard {...defaultProps} item={longNameItem} />);
 
       const heading = screen.getByRole('heading', { level: 3 });
-      expect(heading).toHaveClass('truncate');
+      // TruncatedText component truncates text with JS (substring + ellipsis)
+      // rather than CSS truncate class
+      expect(heading.textContent).toContain('...');
     });
 
     it('handles PDF without page count', () => {

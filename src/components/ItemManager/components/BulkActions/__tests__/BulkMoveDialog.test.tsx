@@ -58,8 +58,8 @@ const mockProperties: Property[] = [
 const createDefaultProps = (overrides = {}) => ({
   selectedItems: mockItems.slice(0, 2),
   properties: mockProperties,
-  onConfirm: jest.fn(),
-  onCancel: jest.fn(),
+  onConfirm: vi.fn(),
+  onCancel: vi.fn(),
   loading: false,
   ...overrides,
 });
@@ -70,7 +70,7 @@ const createDefaultProps = (overrides = {}) => ({
 
 describe('BulkMoveDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset body overflow
     document.body.style.overflow = '';
   });

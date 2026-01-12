@@ -4,11 +4,12 @@
  * Tests for ProgressIndicator, StepNavigation, and CaptureWizard components.
  *
  * @module ItemCapture/components/__tests__/wizard-navigation
- * @lastModified 2025-12-31 (REQ-033 Task 10)
+ * @lastModified 2026-01-12 (REQ-185 - Added add-url step tests)
  */
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { ProgressIndicator, getCurrentStageIndex, PROGRESS_STAGES } from '../shared/ProgressIndicator';
 import { StepNavigation } from '../shared/StepNavigation';
 import { CaptureWizard } from '../CaptureWizard';
@@ -25,7 +26,7 @@ describe('ProgressIndicator', () => {
     });
 
     it('returns 1 for content capture steps', () => {
-      const contentSteps: WizardStep[] = ['content-type', 'capture-video', 'capture-photo', 'upload-file', 'write-text', 'add-more'];
+      const contentSteps: WizardStep[] = ['content-type', 'capture-video', 'capture-photo', 'upload-file', 'write-text', 'add-url', 'add-more'];
       contentSteps.forEach(step => {
         expect(getCurrentStageIndex(step)).toBe(1);
       });
@@ -48,7 +49,9 @@ describe('ProgressIndicator', () => {
 
     it('displays current step label on mobile', () => {
       render(<ProgressIndicator currentStep="metadata" />);
-      expect(screen.getByText('Details')).toBeInTheDocument();
+      // Label appears in both mobile and desktop views
+      const labels = screen.getAllByText('Details');
+      expect(labels.length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders progress bar with correct width', () => {
@@ -57,10 +60,26 @@ describe('ProgressIndicator', () => {
       expect(progressBar).toBeInTheDocument();
     });
 
+    it('displays correct step count for add-url step', () => {
+      render(<ProgressIndicator currentStep="add-url" />);
+      expect(screen.getByText('Step 2 of 4')).toBeInTheDocument();
+      // Content label appears in both mobile and desktop views
+      const labels = screen.getAllByText('Content');
+      expect(labels.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('renders progress bar with correct width for add-url step', () => {
+      const { container } = render(<ProgressIndicator currentStep="add-url" />);
+      const progressBar = container.querySelector('[style*="width: 50%"]');
+      expect(progressBar).toBeInTheDocument();
+    });
+
     it('shows 4 stages on desktop', () => {
       render(<ProgressIndicator currentStep="metadata" />);
       PROGRESS_STAGES.forEach(stage => {
-        expect(screen.getByText(stage.label)).toBeInTheDocument();
+        // Stage labels may appear in both mobile and desktop views
+        const labels = screen.getAllByText(stage.label);
+        expect(labels.length).toBeGreaterThanOrEqual(1);
       });
     });
 
@@ -98,6 +117,12 @@ describe('ProgressIndicator', () => {
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toHaveAttribute('aria-label', 'Step 2 of 4: Content');
     });
+
+    it('has descriptive aria-label for add-url step', () => {
+      render(<ProgressIndicator currentStep="add-url" />);
+      const progressbar = screen.getByRole('progressbar');
+      expect(progressbar).toHaveAttribute('aria-label', 'Step 2 of 4: Content');
+    });
   });
 });
 
@@ -107,15 +132,15 @@ describe('ProgressIndicator', () => {
 
 describe('StepNavigation', () => {
   const defaultProps = {
-    onNext: jest.fn(),
-    onBack: jest.fn(),
-    onCancel: jest.fn(),
+    onNext: vi.fn(),
+    onBack: vi.fn(),
+    onCancel: vi.fn(),
     canGoNext: true,
     canGoBack: true,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('rendering', () => {
@@ -255,15 +280,15 @@ describe('StepNavigation', () => {
 describe('CaptureWizard', () => {
   const defaultProps = {
     currentStep: 'metadata' as WizardStep,
-    onNext: jest.fn(),
-    onBack: jest.fn(),
-    onCancel: jest.fn(),
+    onNext: vi.fn(),
+    onBack: vi.fn(),
+    onCancel: vi.fn(),
     canGoNext: true,
     canGoBack: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('rendering', () => {

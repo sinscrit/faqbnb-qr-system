@@ -1,0 +1,34 @@
+# Template for request stage in pipeline YAMLs
+# Agent 00b should use this format when generating pipeline configurations
+# Last Modified: 2026-01-11
+
+# This is the correct invocation_template for the request stage
+# It ensures agents check gen_requests.md and use proper REQ-XXX format
+
+request_stage_template:
+  - id: request
+    name: "Create Request"
+    description: "Convert implementation task into formal requirement"
+    enabled: true
+
+    agent:
+      name: "01-request-fa"
+      invocation_template: |
+        use agent 01-request-fa to create the request for: {full_task}
+
+        IMPORTANT: Before creating the request:
+        1. Read docs/gen_requests.md to find the HIGHEST existing REQ-XXX number
+        2. Use the NEXT sequential number (e.g., if REQ-180 exists, use REQ-181)
+        3. Format MUST be REQ-XXX (three digits minimum, e.g., REQ-181, not REQ-2)
+        4. Append the new request to docs/gen_requests.md
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 240  # 4 minutes
+
+    output:
+      type: append
+      file: ./docs/gen_requests.md

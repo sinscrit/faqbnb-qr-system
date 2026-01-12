@@ -1,0 +1,530 @@
+{
+  "pipeline": "faqbnb-review-109",
+  "version": "1.0",
+  "mode": "hybrid",
+  "created_at": "2026-01-12T13:35:24.578259",
+  "updated_at": "2026-01-12T18:43:40.936318",
+  "status": "completed",
+  "current_stage": "request",
+  "current_task_index": 15,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/prd/Plan-109-FAQBNB-Review-2026-01-11b-Complete-Implementation.md",
+  "source_hash": "037325970319bde8598fdaeaa20d700b",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Fix Workflow Step Count (ITEM-05) - HIGH Priority",
+      "title": "Update WORKFLOW_STEPS constant",
+      "description": "Create new constant `USER_VISIBLE_STEPS` with first 8 steps\nKeep `WORKFLOW_STEPS` for internal navigation (includes post-workflow)\nUpdate `PROGRESS_WEIGHTS` to reach 100% at `preview-save` ```typescript /**\nUser-visible workflow steps (for progress indicator).\nSteps 1-8 are numbered; post-workflow screens are not counted. */ export const USER_VISIBLE_STEPS = [ 'room-selection',           // Step 1 'item-type-selection',      // Step 2 'specific-item-selection',  // Step 3 'purpose-selection',        // Step 4 'content-type-selection',   // Step 5 'media-capture',            // Step 6 'content-creation',         // Step 7 (when used) 'preview-save',             // Step 8 - FINAL ] as const; /**\nPost-workflow screens (no step counter shown). */ export const POST_WORKFLOW_SCREENS = [ 'next-action', 'session-summary', ] as const; /**\nComplete navigation flow (internal use). */ export const WORKFLOW_STEPS = [ ...USER_VISIBLE_STEPS, ...POST_WORKFLOW_SCREENS, ] as const; ```",
+      "raw_match": "#### Task 1.1: Update WORKFLOW_STEPS constant",
+      "status": "completed",
+      "request_id": "REQ-196",
+      "error": null,
+      "processed_at": "2026-01-12T14:44:15.212169",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-196",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-196-update-workflowsteps-constant-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-196-update-workflowsteps-constant-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Fix Workflow Step Count (ITEM-05) - HIGH Priority",
+      "title": "Update PROGRESS_WEIGHTS",
+      "description": "",
+      "raw_match": "#### Task 1.2: Update PROGRESS_WEIGHTS",
+      "status": "completed",
+      "request_id": "REQ-197",
+      "error": null,
+      "processed_at": "2026-01-12T14:50:36.457358",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-197",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-197-update-progressweights-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-197-update-progressweights-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Fix Workflow Step Count (ITEM-05) - HIGH Priority",
+      "title": "Update WorkflowHeader to hide on post-workflow screens",
+      "description": "",
+      "raw_match": "#### Task 1.3: Update WorkflowHeader to hide on post-workflow screens",
+      "status": "completed",
+      "request_id": "REQ-198",
+      "error": null,
+      "processed_at": "2026-01-12T15:00:56.543211",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-198",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-198-update-workflowheader-to-hide-on-post-workflow-scr-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-198-update-workflowheader-to-hide-on-post-workflow-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Fix Workflow Step Count (ITEM-05) - HIGH Priority",
+      "title": "Update ItemCreationWorkflow to use USER_VISIBLE_STEPS",
+      "description": "",
+      "raw_match": "#### Task 1.4: Update ItemCreationWorkflow to use USER_VISIBLE_STEPS",
+      "status": "completed",
+      "request_id": "REQ-199",
+      "error": null,
+      "processed_at": "2026-01-12T15:09:42.569412",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-199",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-199-update-itemcreationworkflow-to-use-uservisiblestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-199-update-itemcreationworkflow-to-use-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Fix Workflow Step Count (ITEM-05) - HIGH Priority",
+      "title": "Update useWorkflowState hook",
+      "description": "",
+      "raw_match": "#### Task 1.5: Update useWorkflowState hook",
+      "status": "completed",
+      "request_id": "REQ-200",
+      "error": null,
+      "processed_at": "2026-01-12T15:18:08.554778",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-200",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-200-update-useworkflowstate-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-200-update-useworkflowstate-hook-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Fix \"What's Next\" Screen (ITEM-03) - HIGH Priority",
+      "title": "Update NextActionStep component",
+      "description": "Edit Instructions\nAdd New Instructions\nCreate New Item\nDone **New interface:** ```typescript export interface NextActionStepProps { /** The saved item details */ savedItem: { id: string; name: string; articleTitle: string; }; /** Callback: Edit the article just created */ onEditInstructions: () => void; /** Callback: Add new instructions to same item */ onAddNewInstructions: () => void; /** Callback: Start workflow for a new item */ onCreateNewItem: () => void; /** Callback: Exit workflow entirely */ onDone: () => void; } ``` **Integrate existing WhatsNextStep component:**\nThere's already a `WhatsNextStep` component at `src/components/ItemCapture/components/steps/WhatsNextStep.tsx`\nThis component has the correct 4 options\nMove or refactor to use this implementation in ItemCreationWorkflow",
+      "raw_match": "#### Task 2.1: Update NextActionStep component",
+      "status": "completed",
+      "request_id": "REQ-201",
+      "error": null,
+      "processed_at": "2026-01-12T15:30:44.445579",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-201",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-201-update-nextactionstep-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-201-update-nextactionstep-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Fix \"What's Next\" Screen (ITEM-03) - HIGH Priority",
+      "title": "Remove back arrow from post-workflow header",
+      "description": "",
+      "raw_match": "#### Task 2.2: Remove back arrow from post-workflow header",
+      "status": "completed",
+      "request_id": "REQ-202",
+      "error": null,
+      "processed_at": "2026-01-12T15:44:39.497523",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-202",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-202-remove-back-arrow-from-post-workflow-header-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-202-remove-back-arrow-from-post-workflow-header-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Make Dashboard Cards Clickable (ITEM-01) - HIGH Priority",
+      "title": "Update StatisticsCards component",
+      "description": "",
+      "raw_match": "#### Task 3.1: Update StatisticsCards component",
+      "status": "completed",
+      "request_id": "REQ-203",
+      "error": null,
+      "processed_at": "2026-01-12T16:11:37.008391",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-203",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-203-update-statisticscards-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-203-update-statisticscards-component-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Make Dashboard Cards Clickable (ITEM-01) - HIGH Priority",
+      "title": "Create placeholder routes for Rooms and Tags",
+      "description": "`src/app/dashboard2/rooms/page.tsx` (if not exists)\n`src/app/dashboard2/tags/page.tsx` (if not exists) These can initially redirect to items with a filter or show a placeholder.",
+      "raw_match": "#### Task 3.2: Create placeholder routes for Rooms and Tags",
+      "status": "completed",
+      "request_id": "REQ-204",
+      "error": null,
+      "processed_at": "2026-01-12T16:19:43.340140",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-204",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-204-create-placeholder-routes-for-rooms-and-tags-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-204-create-placeholder-routes-for-rooms-and-tags-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Update Navigation Menu (ITEM-04) - MEDIUM Priority",
+      "title": "Update navigationItems in layout",
+      "description": "",
+      "raw_match": "#### Task 4.1: Update navigationItems in layout",
+      "status": "completed",
+      "request_id": "REQ-205",
+      "error": null,
+      "processed_at": "2026-01-12T16:33:47.588360",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-205",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-205-update-navigationitems-in-layout-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-205-update-navigationitems-in-layout-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Update Navigation Menu (ITEM-04) - MEDIUM Priority",
+      "title": "Add mobile label display logic",
+      "description": "",
+      "raw_match": "#### Task 4.2: Add mobile label display logic",
+      "status": "completed",
+      "request_id": "REQ-206",
+      "error": null,
+      "processed_at": "2026-01-12T16:49:04.006391",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-206",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-206-add-mobile-label-display-logic-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-206-add-mobile-label-display-logic-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Update Navigation Menu (ITEM-04) - MEDIUM Priority",
+      "title": "Create Instructions page",
+      "description": "",
+      "raw_match": "#### Task 4.3: Create Instructions page",
+      "status": "completed",
+      "request_id": "REQ-207",
+      "error": null,
+      "processed_at": "2026-01-12T16:57:44.432450",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-207",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-207-create-instructions-page-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-207-create-instructions-page-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Fix Data Model - Separate Item from Article (ITEM-02) - CRITICAL Priority",
+      "title": "Update type definitions",
+      "description": "An Article/Instruction associated with an Item.\nMultiple articles can exist per item. */ export interface Article { /** Unique article identifier */ id: string; /** Article title (equals purpose label, e.g., \"How to Clean\") */ title: string; /** Purpose type that determines the article title */ purpose: PurposeType; /** Content pieces for this article */ content: ContentPiece[]; /** When the article was created */ createdAt: Date; } /**\nA physical Item that gets ONE QR code.\nUpdated to separate item name from article content. */ export interface SessionItem { /** Unique item identifier (UUID) */ id: string; /** Physical item name (e.g., \"Cabinets\", \"Fridge\") - appears on QR code */ name: string; /** Room where the item is located */ room: RoomType; /** Item type category */ itemType: ItemType; /** When the item was created */ createdAt: Date; /** Generated QR code URL (populated after save) */ qrCodeUrl?: string; /** Tags for categorization */ tags?: string[]; /** Articles/instructions for this item */ articles?: Article[]; // Legacy field - kept for compatibility /** @deprecated Use articles[].content instead */ content?: ContentPiece[]; } ```",
+      "raw_match": "#### Task 5.1: Update type definitions",
+      "status": "completed",
+      "request_id": "REQ-208",
+      "error": null,
+      "processed_at": "2026-01-12T17:38:29.417323",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-208",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-208-update-type-definitions-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-208-update-type-definitions-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Fix Data Model - Separate Item from Article (ITEM-02) - CRITICAL Priority",
+      "title": "Update CurrentItemState",
+      "description": "",
+      "raw_match": "#### Task 5.2: Update CurrentItemState",
+      "status": "completed",
+      "request_id": "REQ-209",
+      "error": null,
+      "processed_at": "2026-01-12T17:53:37.195694",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-209",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-209-update-currentitemstate-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-209-update-currentitemstate-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Fix Data Model - Separate Item from Article (ITEM-02) - CRITICAL Priority",
+      "title": "Update PreviewSaveStep display",
+      "description": "\"Item Name\" field: Shows physical item (e.g., \"Cabinets\")\n\"Article Title\" field: Shows purpose-derived title (e.g., \"How to Clean\")\nQR Code preview: Shows item name only",
+      "raw_match": "#### Task 5.3: Update PreviewSaveStep display",
+      "status": "completed",
+      "request_id": "REQ-210",
+      "error": null,
+      "processed_at": "2026-01-12T18:08:17.906447",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-210",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-210-update-previewsavestep-display-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-210-update-previewsavestep-display-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Fix Data Model - Separate Item from Article (ITEM-02) - CRITICAL Priority",
+      "title": "Update QR code generation",
+      "description": "",
+      "raw_match": "#### Task 5.4: Update QR code generation",
+      "status": "completed",
+      "request_id": "REQ-211",
+      "error": null,
+      "processed_at": "2026-01-12T18:23:00.942104",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/gen_requests.md#REQ-211",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-211-update-qr-code-generation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-211-update-qr-code-generation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "completed",
+      "started_at": "2026-01-12T13:35:24.580907",
+      "completed_at": "2026-01-12T13:58:53.555278",
+      "tasks_total": 0,
+      "tasks_completed": 16,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "completed",
+      "tasks_total": 16,
+      "tasks_completed": 16,
+      "tasks_failed": 0,
+      "current_task_index": 0,
+      "started_at": "2026-01-12T13:58:53.555358",
+      "completed_at": "2026-01-12T14:31:54.841099"
+    }
+  },
+  "errors": [
+    {
+      "stage": "usecases",
+      "type": "pipeline_stage",
+      "error": "Timeout after 600s",
+      "timestamp": "2026-01-12T18:43:40.883226"
+    }
+  ],
+  "metadata": {
+    "total_requests_generated": 16,
+    "last_request_id": "REQ-211",
+    "first_request_id": "REQ-196",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipeline-faqbnb-review-109.yaml"
+  },
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2026-01-12T14:32:25.123391",
+    "elapsed": "25.9s",
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Successfully connected to Chrome via CDP on port 9223. Browser snapshot captured showing a Next.js app at localhost:3001 (404 page on /items/create)."
+      }
+    },
+    "next_cache_cleared": true
+  },
+  "testcheck_completed": true,
+  "testcheck_completed_at": "2026-01-12T18:33:40.759575",
+  "verification": {
+    "test_harness_path": "src/app/test/faqbnb-review-109/page.tsx",
+    "test_harness_url": "/test/faqbnb-review-109"
+  }
+}

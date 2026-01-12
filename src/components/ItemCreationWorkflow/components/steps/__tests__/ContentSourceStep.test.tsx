@@ -12,13 +12,13 @@ import { ContentSourceStep } from '../ContentSourceStep';
 describe('ContentSourceStep', () => {
   const defaultProps = {
     currentContentSource: null as 'existing' | 'create-new' | null,
-    onSelectContentSource: jest.fn(),
-    onNext: jest.fn(),
+    onSelectContentSource: vi.fn(),
+    onNext: vi.fn(),
     canNext: false,
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

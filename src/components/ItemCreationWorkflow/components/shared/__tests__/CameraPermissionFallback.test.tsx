@@ -14,12 +14,12 @@ import { CameraPermissionFallback } from '../CameraPermissionFallback';
 describe('CameraPermissionFallback', () => {
   const defaultProps = {
     contentType: 'video' as const,
-    onUploadFile: jest.fn(),
-    onTryAgain: jest.fn(),
+    onUploadFile: vi.fn(),
+    onTryAgain: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ===========================================================================

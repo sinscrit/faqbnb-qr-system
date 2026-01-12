@@ -28,7 +28,7 @@ daemon:
   #   parse_only   - extract + parse into PRD files
   #   plan_only    - extract + parse + create implementation plans (Agent 00)
   #   full         - complete pipeline through orchestrator
-  pipeline_depth: plan_only
+  pipeline_depth: full
 
   # Daemon behavior
   poll_interval: 30          # seconds between inbox checks

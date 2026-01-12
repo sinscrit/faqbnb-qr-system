@@ -91,11 +91,12 @@ describe('ItemCreationWorkflow Accessibility', () => {
   });
 
   describe('getStepAnnouncement utility', () => {
+    // REQ-199: Updated from 9 to 8 for USER_VISIBLE_STEPS count
     it('should format step announcements correctly', async () => {
       const { getStepAnnouncement } = await import('../utils/accessibility');
 
-      const announcement = getStepAnnouncement(4, 9, 'Select purpose');
-      expect(announcement).toBe('Step 4 of 9: Select purpose');
+      const announcement = getStepAnnouncement(4, 8, 'Select purpose');
+      expect(announcement).toBe('Step 4 of 8: Select purpose');
     });
   });
 

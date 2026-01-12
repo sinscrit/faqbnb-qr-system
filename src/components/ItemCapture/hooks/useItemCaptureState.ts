@@ -56,7 +56,8 @@ export const STEP_TRANSITIONS: Record<WizardStep, WizardStep[]> = {
   'add-url': ['add-more', 'review'],
   'edit-media': ['add-more', 'review'],
   'add-more': ['content-type', 'review'],
-  'review': ['metadata', 'content-type'],
+  'review': ['metadata', 'content-type', 'whats-next'],
+  'whats-next': [],  // Terminal step - no forward navigation allowed
 };
 
 // =============================================================================

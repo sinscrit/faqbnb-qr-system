@@ -221,7 +221,7 @@ describe('QRGenerationProgress', () => {
 
   describe('cancel button', () => {
     it('shows cancel button only during generation', () => {
-      const onCancel = jest.fn();
+      const onCancel = vi.fn();
 
       const { rerender } = render(
         <QRGenerationProgress
@@ -252,7 +252,7 @@ describe('QRGenerationProgress', () => {
     });
 
     it('calls onCancel when cancel button clicked', () => {
-      const onCancel = jest.fn();
+      const onCancel = vi.fn();
 
       render(
         <QRGenerationProgress
@@ -276,7 +276,7 @@ describe('QRGenerationProgress', () => {
 
   describe('retry buttons', () => {
     it('shows retry button on failed items', () => {
-      const onRetryItem = jest.fn();
+      const onRetryItem = vi.fn();
 
       render(
         <QRGenerationProgress
@@ -292,7 +292,7 @@ describe('QRGenerationProgress', () => {
     });
 
     it('calls onRetryItem with item ID when retry clicked', () => {
-      const onRetryItem = jest.fn();
+      const onRetryItem = vi.fn();
 
       render(
         <QRGenerationProgress
@@ -394,7 +394,7 @@ describe('QRGenerationProgress', () => {
     });
 
     it('calls onRetry when Retry Failed clicked', () => {
-      const onRetry = jest.fn();
+      const onRetry = vi.fn();
 
       render(
         <QRGenerationProgress
@@ -412,7 +412,7 @@ describe('QRGenerationProgress', () => {
     });
 
     it('calls onContinue when Skip & Continue clicked', () => {
-      const onContinue = jest.fn();
+      const onContinue = vi.fn();
 
       render(
         <QRGenerationProgress

@@ -12,13 +12,13 @@ import { useSessionQRGeneration } from '../../../hooks';
 import type { SessionItem, ContentPiece, PrintScope } from '../../../ItemCreationWorkflow.types';
 
 // Mock the useSessionQRGeneration hook
-jest.mock('../../../hooks/useSessionQRGeneration');
+vi.mock('../../../hooks/useSessionQRGeneration');
 
 // Mock URL.createObjectURL and revokeObjectURL
-const mockCreateObjectURL = jest.fn(() => 'blob:test-url');
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn(() => 'blob:test-url');
+const mockRevokeObjectURL = vi.fn();
 
-const mockedUseSessionQRGeneration = useSessionQRGeneration as jest.MockedFunction<typeof useSessionQRGeneration>;
+const mockedUseSessionQRGeneration = useSessionQRGeneration as vi.MockedFunction<typeof useSessionQRGeneration>;
 
 // Create default mock for QR hook
 const createQRHookMock = (overrides = {}) => ({
@@ -29,10 +29,10 @@ const createQRHookMock = (overrides = {}) => ({
   error: null,
   failedItemIds: new Set<string>(),
   itemStatuses: new Map<string, string>(),
-  generateForItems: jest.fn().mockResolvedValue(undefined),
-  retryFailed: jest.fn().mockResolvedValue(undefined),
-  cancel: jest.fn(),
-  clear: jest.fn(),
+  generateForItems: vi.fn().mockResolvedValue(undefined),
+  retryFailed: vi.fn().mockResolvedValue(undefined),
+  cancel: vi.fn(),
+  clear: vi.fn(),
   ...overrides,
 });
 
@@ -42,7 +42,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockedUseSessionQRGeneration.mockReturnValue(createQRHookMock());
 });
 
@@ -82,9 +82,9 @@ const createMockProps = (overrides = {}) => ({
   existingItems: [
     createMockSessionItem({ id: 'existing-1', name: 'Refrigerator' }),
   ],
-  onGeneratePDF: jest.fn().mockResolvedValue(undefined),
-  onPrintDirect: jest.fn().mockResolvedValue(undefined),
-  onSkipPrint: jest.fn(),
+  onGeneratePDF: vi.fn().mockResolvedValue(undefined),
+  onPrintDirect: vi.fn().mockResolvedValue(undefined),
+  onSkipPrint: vi.fn(),
   ...overrides,
 });
 
@@ -491,7 +491,7 @@ describe('PrintOptionsPanel', () => {
     it('displays error with dismiss button', () => {
       const props = createMockProps({
         error: 'Failed to generate PDF',
-        onClearError: jest.fn()
+        onClearError: vi.fn()
       });
       render(<PrintOptionsPanel {...props} />);
 
@@ -501,7 +501,7 @@ describe('PrintOptionsPanel', () => {
     it('dismiss button calls onClearError', () => {
       const props = createMockProps({
         error: 'Failed to generate PDF',
-        onClearError: jest.fn()
+        onClearError: vi.fn()
       });
       render(<PrintOptionsPanel {...props} />);
 
@@ -692,7 +692,7 @@ describe('PrintOptionsPanel', () => {
 
   describe('QR code generation integration', () => {
     it('triggers QR code generation when Generate PDF clicked', async () => {
-      const mockGenerateForItems = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateForItems = vi.fn().mockResolvedValue(undefined);
       mockedUseSessionQRGeneration.mockReturnValue(createQRHookMock({
         generateForItems: mockGenerateForItems,
       }));
@@ -709,7 +709,7 @@ describe('PrintOptionsPanel', () => {
     });
 
     it('triggers QR code generation when Print Directly clicked', async () => {
-      const mockGenerateForItems = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateForItems = vi.fn().mockResolvedValue(undefined);
       mockedUseSessionQRGeneration.mockReturnValue(createQRHookMock({
         generateForItems: mockGenerateForItems,
       }));
@@ -726,7 +726,7 @@ describe('PrintOptionsPanel', () => {
     });
 
     it('skips QR generation for items that already have qrCodeUrl', async () => {
-      const mockGenerateForItems = jest.fn().mockResolvedValue(undefined);
+      const mockGenerateForItems = vi.fn().mockResolvedValue(undefined);
       mockedUseSessionQRGeneration.mockReturnValue(createQRHookMock({
         generateForItems: mockGenerateForItems,
       }));
@@ -790,10 +790,10 @@ describe('PrintOptionsPanel', () => {
 
       mockedUseSessionQRGeneration.mockReturnValue(createQRHookMock({
         qrCodes: qrCodesMap,
-        generateForItems: jest.fn().mockImplementation(() => generatePromise),
+        generateForItems: vi.fn().mockImplementation(() => generatePromise),
       }));
 
-      const onQRGenerationComplete = jest.fn();
+      const onQRGenerationComplete = vi.fn();
       const props = createMockProps({
         onQRGenerationComplete,
       });

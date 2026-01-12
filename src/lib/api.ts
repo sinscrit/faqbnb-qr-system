@@ -1,4 +1,4 @@
-import { ItemResponse, ItemsListResponse, CreateItemRequest, UpdateItemRequest } from '@/types';
+import { ItemResponse, ItemsListResponse, CreateItemRequest, UpdateItemRequest, ArticlesListResponse } from '@/types';
 import { AnalyticsResponse, SystemAnalyticsResponse } from '@/types/analytics';
 import { ReactionResponse, ReactionSubmissionRequest, ReactionType } from '@/types/reactions';
 import { getSession, refreshSession } from '@/lib/auth';
@@ -278,6 +278,28 @@ export const adminApi = {
       method: 'DELETE',
       headers
     }, true);
+  },
+
+  /**
+   * List articles with optional filtering by item or property
+   * @param itemId Optional item ID to filter articles by item
+   * @param propertyId Optional property ID to filter articles by property
+   * @param page Page number for pagination (default: 1)
+   * @param limit Number of articles per page (default: 20)
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
+   * @returns Promise resolving to articles list response
+   */
+  async listArticles(itemId?: string, propertyId?: string, page: number = 1, limit: number = 20, headers?: Record<string, string>): Promise<ArticlesListResponse> {
+    const params = new URLSearchParams();
+    if (itemId) params.set('item_id', itemId);
+    if (propertyId) params.set('property_id', propertyId);
+    if (page !== 1) params.set('page', page.toString());
+    if (limit !== 20) params.set('limit', limit.toString());
+
+    const queryString = params.toString();
+    const endpoint = queryString ? `/admin/articles?${queryString}` : '/admin/articles';
+
+    return apiRequest<ArticlesListResponse>(endpoint, { headers }, true);
   },
 
   /**

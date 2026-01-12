@@ -17,11 +17,11 @@ describe('ItemTypeCard', () => {
     description: 'Washer, dryer, stove, refrigerator, etc.',
     icon: Zap,
     isSelected: false,
-    onSelect: jest.fn(),
+    onSelect: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders label correctly', () => {
