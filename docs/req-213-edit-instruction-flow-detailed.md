@@ -179,7 +179,7 @@ Based on Supabase database analysis:
 
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Create a new function `handleUpdateArticle` inside ItemCreationWorkflow component
+- [ ] **7.1** Create a new function `handleUpdateArticle` inside ItemCreationWorkflow component---⛔ REQUIRES SCOPE EXPANSION: adminApi.updateArticle, adminApi.deleteLink, adminApi.createLink methods need to be implemented first-
 - [ ] **7.2** Extract current content pieces from `currentItem.currentArticle.content`
 - [ ] **7.3** Calculate which content pieces are new (no existing ID or ID not in `initialArticleData.existingContent`)
 - [ ] **7.4** Calculate which content pieces were removed (IDs in `initialArticleData.existingContent` but not in current content)
@@ -266,15 +266,15 @@ Based on Supabase database analysis:
 
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** After successful `handleUpdateArticle` completion, store success message in session storage or URL params: `sessionStorage.setItem('editSuccess', 'true')`
-- [ ] **11.2** Navigate to `/dashboard2/instructions` using router.push
-- [ ] **11.3** Modify `/dashboard2/instructions/page.tsx` to check for success flag on mount
-- [ ] **11.4** In instructions page, use `useEffect` to read session storage: `const success = sessionStorage.getItem('editSuccess')`
-- [ ] **11.5** If success flag exists, display a toast notification or banner: "Instruction updated successfully"
-- [ ] **11.6** Clear the success flag from session storage after displaying: `sessionStorage.removeItem('editSuccess')`
-- [ ] **11.7** Use a toast library (if available) or create a simple banner component with green background and checkmark icon
-- [ ] **11.8** Auto-dismiss the success message after 3-5 seconds
-- [ ] **11.9** Test the full flow: edit an article, save, verify redirect and success message appears
+- [x] **11.1** After successful `handleUpdateArticle` completion, store success message in session storage or URL params: `sessionStorage.setItem('editSuccess', 'true')`---implemented:handleSessionComplete in edit page sets editSuccess in sessionStorage---unit tested-
+- [x] **11.2** Navigate to `/dashboard2/instructions` using router.push---implemented:handleSessionComplete navigates to instructions page---unit tested-
+- [x] **11.3** Modify `/dashboard2/instructions/page.tsx` to check for success flag on mount---implemented:Added useEffect to check editSuccess on component mount---unit tested-
+- [x] **11.4** In instructions page, use `useEffect` to read session storage: `const success = sessionStorage.getItem('editSuccess')`---implemented:useEffect reads and removes editSuccess flag from sessionStorage---unit tested-
+- [x] **11.5** If success flag exists, display a toast notification or banner: "Instruction updated successfully"---implemented:Display green success banner with checkmark icon and message---unit tested-
+- [x] **11.6** Clear the success flag from session storage after displaying: `sessionStorage.removeItem('editSuccess')`---implemented:sessionStorage.removeItem called after setting showSuccess state---unit tested-
+- [x] **11.7** Use a toast library (if available) or create a simple banner component with green background and checkmark icon---implemented:Created inline banner with green-50 background, green-600 checkmark icon---unit tested-
+- [x] **11.8** Auto-dismiss the success message after 3-5 seconds---implemented:setTimeout dismisses banner after 5 seconds, cleanup in useEffect return---unit tested-
+- [ ] **11.9** Test the full flow: edit an article, save, verify redirect and success message appears---TEST PENDING: Will be tested in Task 13 end-to-end testing-
 
 ---
 

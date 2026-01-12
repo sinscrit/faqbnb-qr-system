@@ -38,6 +38,9 @@ export default function InstructionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // REQ-213: Success message state for edit operations
+  const [showSuccess, setShowSuccess] = useState(false);
+
   // Fetch articles and items from backend
   const fetchArticles = useCallback(async () => {
     if (!user) return;
@@ -142,6 +145,22 @@ export default function InstructionsPage() {
     fetchArticles();
   }, [fetchArticles]);
 
+  // REQ-213: Check for edit success message on mount
+  useEffect(() => {
+    const editSuccess = sessionStorage.getItem('editSuccess');
+    if (editSuccess === 'true') {
+      setShowSuccess(true);
+      sessionStorage.removeItem('editSuccess');
+
+      // Auto-dismiss after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // Handle edit article action
   const handleEditArticle = useCallback((articleId: string) => {
     if (!articleId || typeof articleId !== 'string') {
@@ -236,6 +255,38 @@ export default function InstructionsPage() {
   // Main content
   return (
     <div role="main" aria-labelledby="instructions-title">
+      {/* REQ-213: Success message banner */}
+      {showSuccess && (
+        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center justify-between animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <svg
+              className="w-5 h-5 text-green-600 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p className="text-sm font-medium text-green-800">
+              Instruction updated successfully
+            </p>
+          </div>
+          <button
+            onClick={() => setShowSuccess(false)}
+            className="text-green-600 hover:text-green-800 transition-colors"
+            aria-label="Dismiss success message"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
