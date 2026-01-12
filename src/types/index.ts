@@ -282,6 +282,8 @@ export interface UpdateArticleRequest {
     thumbnailUrl?: string;
     displayOrder: number;
   }[];
+  /** Optional: Update item's tags (REQ-214) */
+  itemTags?: string[];
 }
 
 export interface ArticleResponse {

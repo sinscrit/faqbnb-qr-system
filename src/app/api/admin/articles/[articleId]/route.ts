@@ -316,6 +316,25 @@ export async function PUT(
       );
     }
 
+    // Handle item tags update if provided (REQ-214)
+    if (body.itemTags !== undefined) {
+      const { error: tagsError } = await supabase
+        .from('items')
+        .update({
+          tags: body.itemTags,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', article.item_id);
+
+      if (tagsError) {
+        console.error('Failed to update item tags:', tagsError);
+        // Non-blocking: article was saved, tags update failed
+        // Could add warning to response in future
+      } else {
+        console.log('Item tags updated successfully for item:', article.item_id);
+      }
+    }
+
     // Handle links updates if provided
     if (body.links !== undefined) {
       // Get existing links
