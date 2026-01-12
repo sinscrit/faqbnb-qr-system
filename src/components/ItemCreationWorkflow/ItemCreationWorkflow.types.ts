@@ -13,7 +13,8 @@
  * @module ItemCreationWorkflow/types
  * @see docs/prd/Plan-093-Item-Creation-Workflow.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md
- * @lastModified 2026-01-12 (REQ-208: Separate Item from Article types)
+ * @see docs/req-213-edit-instruction-flow-overview.md (REQ-213: Edit mode support)
+ * @lastModified 2026-01-12 (REQ-213: Added edit mode types and props)
  */
 
 // =============================================================================
@@ -35,8 +36,52 @@ export interface WorkflowConfig {
   debug?: boolean;
 }
 
+// =============================================================================
+// Edit Mode Types (REQ-213)
+// =============================================================================
+
+/**
+ * Data structure for edit mode initialization.
+ * Contains all necessary information to pre-populate the workflow when editing an existing article.
+ *
+ * @see REQ-213 - Edit Instruction Flow
+ * @since 2026-01-12
+ */
+export interface EditModeData {
+  /** Article ID being edited */
+  articleId: string;
+
+  /** Item ID that the article belongs to */
+  itemId: string;
+
+  /** Physical item name (e.g., "Cabinets") */
+  itemName: string;
+
+  /** Room where the item is located */
+  room: RoomType;
+
+  /** Item type category */
+  itemType: ItemType;
+
+  /** Purpose/intent of the article */
+  purpose: PurposeType;
+
+  /** Tags associated with the item */
+  tags: string[];
+
+  /** Existing content pieces to pre-populate */
+  existingContent: ContentPiece[];
+}
+
 /**
  * Main component props for ItemCreationWorkflow.
+ *
+ * Edit Mode Support (REQ-213):
+ * When editMode is true, the workflow starts at content selection step and
+ * item context (room, item type, item name, purpose) is displayed as read-only.
+ * The workflow will update an existing article instead of creating a new item.
+ *
+ * @see REQ-213 - Edit Instruction Flow
  */
 export interface ItemCreationWorkflowProps {
   /** Called when user completes session (with or without printing) */
@@ -88,6 +133,29 @@ export interface ItemCreationWorkflowProps {
 
   /** Optional: CSS class name for the root element */
   className?: string;
+
+  /**
+   * Optional: Enable edit mode for updating an existing article.
+   * When true, the workflow starts at content selection and item context is read-only.
+   * @see REQ-213 - Edit Instruction Flow
+   * @since 2026-01-12
+   */
+  editMode?: boolean;
+
+  /**
+   * Optional: Article ID to edit (required when editMode is true).
+   * @see REQ-213 - Edit Instruction Flow
+   * @since 2026-01-12
+   */
+  initialArticleId?: string;
+
+  /**
+   * Optional: Pre-populated article data for edit mode.
+   * Contains item context and existing content to display.
+   * @see REQ-213 - Edit Instruction Flow
+   * @since 2026-01-12
+   */
+  initialArticleData?: EditModeData;
 }
 
 // =============================================================================
