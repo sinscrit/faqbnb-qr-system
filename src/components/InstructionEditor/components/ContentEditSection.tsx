@@ -37,13 +37,59 @@ export interface ContentEditSectionProps {
  * Helper function to convert ContentPieceState to ContentPiece format for card rendering
  */
 function toContentPiece(piece: ContentPieceState): ContentPiece {
+  // Create the appropriate ContentData based on type
+  let data: any;
+
+  if (piece.type === 'text') {
+    // For text content, decode from data URL if needed
+    let textContent = piece.url;
+    if (textContent.startsWith('data:text/plain;base64,')) {
+      try {
+        textContent = atob(textContent.substring('data:text/plain;base64,'.length));
+      } catch (e) {
+        textContent = '';
+      }
+    }
+    data = { type: 'text', text: textContent };
+  } else if (piece.type === 'url') {
+    data = {
+      type: 'url',
+      url: piece.url,
+      title: piece.title,
+      thumbnailUrl: piece.thumbnailUrl || undefined,
+    };
+  } else if (piece.type === 'video') {
+    data = {
+      type: 'video',
+      file: piece.file || new Blob(),
+      url: piece.url,
+      title: piece.title,
+      thumbnailUrl: piece.thumbnailUrl || undefined,
+    };
+  } else if (piece.type === 'photo') {
+    data = {
+      type: 'photo',
+      file: piece.file || new Blob(),
+      url: piece.url,
+      thumbnailUrl: piece.thumbnailUrl || undefined,
+    };
+  } else if (piece.type === 'pdf') {
+    data = {
+      type: 'pdf',
+      file: piece.file || new Blob(),
+      url: piece.url,
+      title: piece.title,
+    };
+  } else {
+    // Fallback to URL type
+    data = { type: 'url', url: piece.url, title: piece.title };
+  }
+
   return {
     id: piece.id,
     type: piece.type,
-    title: piece.title,
-    url: piece.url,
-    thumbnailUrl: piece.thumbnailUrl,
-    file: piece.file,
+    data,
+    order: piece.displayOrder,
   };
 }
 

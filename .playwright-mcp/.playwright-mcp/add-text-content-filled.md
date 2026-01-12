@@ -1,0 +1,101 @@
+### Open tabs
+- 0: (current) [FAQBNB - QR Item Display System] (http://localhost:3000/dashboard2/instructions/6f58ce5a-5113-4224-a0d1-6081a53a9754/edit)
+- 1: [FAQBNB - QR Item Display System] (http://localhost:3000/dashboard2)
+
+### Page state
+- Page URL: http://localhost:3000/dashboard2/instructions/6f58ce5a-5113-4224-a0d1-6081a53a9754/edit
+- Page Title: FAQBNB - QR Item Display System
+- Page Snapshot:
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e324]:
+    - banner [ref=e325]:
+      - generic [ref=e327]:
+        - heading "FAQBNB" [level=1] [ref=e329]
+        - button "Select property" [ref=e332]:
+          - img [ref=e333]
+          - generic [ref=e337]: Test Property - UPDATED
+          - img [ref=e338]
+        - button "Logout" [ref=e341]:
+          - img [ref=e342]
+          - generic [ref=e345]: Logout
+    - navigation "Dashboard Navigation" [ref=e346]:
+      - generic [ref=e348]:
+        - button "Dashboard" [ref=e349]:
+          - img [ref=e350]
+          - generic [ref=e355]: Dashboard
+        - button "Items" [ref=e356]:
+          - img [ref=e357]
+          - generic [ref=e361]: Items
+        - button "Instructions" [ref=e362]:
+          - img [ref=e363]
+          - generic [ref=e366]: Instructions
+        - button "Properties" [ref=e367]:
+          - img [ref=e368]
+          - generic [ref=e372]: Properties
+    - main [ref=e373]:
+      - generic [ref=e522]:
+        - generic [ref=e523]:
+          - 'heading "Editing Instruction For: How to Use - Bathtub" [level=1] [ref=e524]'
+          - generic [ref=e526]:
+            - generic [ref=e527]:
+              - term [ref=e528]: Room
+              - definition [ref=e529]: Unknown Room
+            - generic [ref=e530]:
+              - term [ref=e531]: Item Type
+              - definition [ref=e532]: Appliance
+            - generic [ref=e533]:
+              - term [ref=e534]: Item Name
+              - definition [ref=e535]: How to Use - Bathtub
+        - generic [ref=e536]:
+          - generic [ref=e537]: Article Title
+          - textbox "Article Title" [ref=e538]:
+            - /placeholder: Enter article title
+            - text: How to Use - Bathtub
+        - generic [ref=e539]:
+          - generic [ref=e540]: Tags
+          - generic [ref=e541]:
+            - generic [ref=e543]: 0 / 10
+            - button "Add tag" [ref=e545]:
+              - img [ref=e546]
+              - generic [ref=e547]: Add Tag
+        - generic [ref=e548]:
+          - heading "Content(0 pieces)" [level=2] [ref=e550]:
+            - text: Content
+            - generic [ref=e551]: (0 pieces)
+          - list "Content pieces - drag to reorder"
+          - status [ref=e552]
+          - button "Add Content" [ref=e553]:
+            - img [ref=e554]
+            - generic [ref=e555]: Add Content
+        - generic [ref=e556]:
+          - button "Cancel" [ref=e557]
+          - button "Save Changes" [disabled] [ref=e558]
+        - dialog "Create Content" [ref=e587]:
+          - generic [ref=e560]:
+            - generic [ref=e561]:
+              - heading "Create Content" [level=2] [ref=e588]
+              - button "Close modal" [ref=e563]:
+                - img [ref=e564]
+            - generic [ref=e589]:
+              - generic [ref=e590]:
+                - generic [ref=e591]: Title (Optional)
+                - textbox "Title (Optional)" [ref=e592]:
+                  - /placeholder: Enter a title for this content
+              - generic [ref=e593]:
+                - generic [ref=e594]: Text Content *
+                - textbox "Text Content *" [active] [ref=e595]:
+                  - /placeholder: Enter your text content here...
+                  - text: This is a test instruction for using the bathtub. Fill the tub with warm water and enjoy a relaxing bath.
+                - paragraph [ref=e596]: 105 / 5000 characters
+            - generic [ref=e585]:
+              - button "Back" [ref=e597]
+              - button "Cancel" [ref=e586]
+              - button "Add Content" [ref=e598]
+  - contentinfo [ref=e322]:
+    - generic [ref=e323]: v0.2
+    - text: "|55881d9|2026-01-09"
+  - button "Open Next.js Dev Tools" [ref=e445] [cursor=pointer]:
+    - img [ref=e446]
+  - alert [ref=e451]: FAQBNB - QR Item Display System
+```

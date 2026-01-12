@@ -960,29 +960,34 @@ Based on Supabase schema analysis:
 **Files to modify:** None (testing only)
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Test navigation to edit page:
+- [x] **11.1** Test navigation to edit page:
   - Navigate to `/dashboard2/instructions`
   - Click edit button on an instruction
   - Verify edit page loads with correct data
+---implemented: Successfully navigated to instructions list and clicked edit on "How to Use - Bathtub" instruction. Edit page loaded correctly with all article data -unit tested-
 
-- [ ] **11.2** Test read-only section:
+- [x] **11.2** Test read-only section:
   - Verify header shows "Editing Instruction For: [Article Title]"
   - Verify Room, Item Type, Item Name display correctly
   - Verify Purpose is NOT displayed
+---implemented: ReadOnlyContextSection displays correctly with header "Editing Instruction For: How to Use - Bathtub", showing Room (Unknown Room), Item Type (Appliance), and Item Name. Purpose is correctly NOT shown -unit tested-
 
-- [ ] **11.3** Test article title editing:
+- [x] **11.3** Test article title editing:
   - Change article title
   - Verify unsaved changes warning on cancel
   - Save and verify title updated
+---implemented: Successfully changed title to "How to Use - Bathtub (Updated Title)". Cancel button triggered unsaved changes warning dialog. After saving, title updated correctly in database and appears in instructions list -unit tested-
 
 - [ ] **11.4** Test tags editing:
   - Add a new tag
   - Remove an existing tag
   - Save and verify tags updated on item
+---Note: Tags functionality present but not tested in this session. API endpoint supports itemTags update (Task 8)
 
 - [ ] **11.5** Test content reordering:
   - Drag a content piece to new position
   - Save and verify order persisted
+---Note: Drag-and-drop UI present with DndKit but not tested in this session. Visual inspection shows content cards ready for reordering
 
 - [ ] **11.6** Test content removal:
   - Remove a content piece (not last)
@@ -990,25 +995,29 @@ Based on Supabase schema analysis:
   - Remove last content piece
   - Verify confirmation dialog appears
   - Confirm removal
+---Note: Remove buttons visible on content cards but not tested in this session. Confirmation dialog code present for last piece
 
-- [ ] **11.7** Test adding new content:
+- [x] **11.7** Test adding new content:
   - Click Add Content button
   - Select content type (text)
   - Enter text content
   - Verify new content appears in list
   - Save and verify content saved to database
+---implemented: Successfully added text content "This is a test instruction for using the bathtub. Fill the tub with warm water and enjoy a relaxing bath." Content appeared immediately in list. Also tested adding URL content "Official Bathtub Care Guide". Both saved successfully to database. Fixed ContentPiece data conversion bug in ContentEditSection.tsx toContentPiece function -unit tested-
 
-- [ ] **11.8** Test save and cancel:
+- [x] **11.8** Test save and cancel:
   - Make changes and click Cancel
   - Verify warning dialog
   - Click Cancel, confirm, verify redirect
   - Make changes and click Save
   - Verify success message on list page
+---implemented: Cancel button with unsaved changes triggered browser confirm dialog with message "You have unsaved changes. Are you sure you want to cancel?". Dismissed dialog successfully. Save button successfully updated article and redirected to instructions list with "Instruction updated successfully" message banner -unit tested-
 
 - [ ] **11.9** Test accessibility:
   - Navigate using keyboard only
   - Verify drag-and-drop keyboard support
   - Test with screen reader (announcements)
+---Note: Accessibility features implemented (announcements, semantic HTML, ARIA labels) but not manually tested with keyboard/screen reader in this session
 
 ---
 
@@ -1033,3 +1042,4 @@ Based on Supabase schema analysis:
 ---
 
 *Document generated: 2026-01-12 23:38:36 CET*
+*Last modified: 2026-01-13 00:03:00 CET*
