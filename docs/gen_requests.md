@@ -9242,3 +9242,48 @@ Completes CRUD operations for instructions. Reduces support burden from owners s
 - [ ] After saving, user returns to instructions list with confirmation message
 - [ ] Cancel returns to instructions list without saving changes
 
+
+
+---
+
+## REQ-214: Dedicated Single-Page Edit Experience for Instructions
+
+**Date**: 2026-01-12 23:21
+**Type**: ENHANCEMENT
+**Size**: M
+**Supersedes**: REQ-213 (replaces workflow-based edit with dedicated page)
+
+### Summary
+Property owners should edit instructions on a dedicated single-page form rather than navigating through the full multi-step item creation workflow, which incorrectly starts at step 1 (room selection) when accessed in edit mode.
+
+### Current Behavior
+Editing an instruction navigates to the ItemCreationWorkflow component starting at step 1 (room selection), presenting all eight workflow steps even though most of the item context (room, item type, item name, purpose) should not be editable. The workflow UI includes step progress indicators, back arrows, and multi-step navigation inappropriate for editing existing content. Users must click through multiple screens to reach the content editing section.
+
+### Expected Behavior
+Clicking an instruction from the list opens a dedicated edit page at `/dashboard2/instructions/[articleId]/edit`. The page displays a single form divided into two sections: a read-only context section at the top showing the header "Editing Instruction For: [Article Title]" along with the room, item type, and item name (but not purpose), and an editable section below for article title, tags, and content pieces. Users can modify the title and tags, add/remove/edit/reorder content pieces, and see Save and Cancel buttons. No step indicators, progress bars, or back arrows appear. After saving, users return to the instructions list with a success message.
+
+### User Impact
+Property owners experience a streamlined editing flow appropriate for modifying existing content without navigating unnecessary workflow steps. Editing takes fewer clicks and presents only relevant, editable fields. The interface clearly distinguishes between fixed item context and modifiable instruction content.
+
+### Business Value
+Improves user experience by matching the editing interface to the actual editing task rather than reusing creation workflows. Reduces confusion and time spent navigating irrelevant screens. Aligns with standard web application patterns where editing uses simpler, focused forms rather than creation wizards.
+
+### Acceptance Criteria
+- [ ] Edit page renders at `/dashboard2/instructions/[articleId]/edit` when navigating from instructions list
+- [ ] Page displays header "Editing Instruction For: [Article Title]" where title reflects current article title
+- [ ] Read-only section groups room, item type, and item name together at top of page
+- [ ] Read-only section does not display purpose field
+- [ ] Article title field is editable and shows current title value
+- [ ] Tags display current tags and allow adding/removing tags
+- [ ] Content section lists all current content pieces from article
+- [ ] Users can add new content pieces of any supported type
+- [ ] Users can delete existing content pieces
+- [ ] Users can reorder content pieces using drag and drop
+- [ ] Users can edit existing content pieces
+- [ ] Save button persists all changes to article title, tags, and content
+- [ ] Cancel button returns to instructions list without saving
+- [ ] Success message displays on instructions list after successful save
+- [ ] No step progress indicators appear on edit page
+- [ ] No back arrow navigation appears on edit page
+- [ ] No multi-step workflow navigation appears on edit page
+

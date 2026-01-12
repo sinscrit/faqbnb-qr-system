@@ -113,6 +113,12 @@ export interface ItemArticle {
   createdAt: string;
   updatedAt: string;
   links?: ItemLink[];
+  // REQ-212: Item data included when listing articles by property_id
+  item?: {
+    id: string;
+    name: string;
+    tags: string[];
+  };
 }
 
 // API Response types

@@ -155,17 +155,15 @@ export default function EditArticlePage() {
 
       const article = articleResponse.data;
 
-      // Fetch the associated item to get item name, tags, and other details
-      const itemResponse = await adminApi.getItem(article.itemId, headers);
+      // REQ-213: Item data is now included in the article response
+      const item = (article as any).item;
 
-      if (!itemResponse.success || !itemResponse.data) {
-        throw new Error(itemResponse.error || 'Failed to fetch item data');
+      if (!item) {
+        throw new Error('Item data not found in article response');
       }
 
-      const item = itemResponse.data;
-
-      // Extract tags from item (use type assertion for now until ItemResponse is updated)
-      const itemTags = (item as any).tags || [];
+      // Extract tags from item
+      const itemTags = item.tags || [];
 
       // Extract room from item tags
       const room = extractRoomType(itemTags);
@@ -267,6 +265,120 @@ export default function EditArticlePage() {
     }
   }, [articleId, user, fetchArticleData]);
 
+  // REQ-213: Define all callback handlers BEFORE conditional returns (React hooks rules)
+  const handleSessionComplete = useCallback(() => {
+    sessionStorage.setItem('editSuccess', 'true');
+    router.push('/dashboard2/instructions');
+  }, [router]);
+
+  const handleSessionExit = useCallback(() => {
+    router.push('/dashboard2/instructions');
+  }, [router]);
+
+  const handleGeneratePDF = useCallback(async () => {
+    throw new Error('PDF generation not supported in edit mode');
+  }, []);
+
+  const handlePrintDirect = useCallback(async () => {
+    throw new Error('Direct print not supported in edit mode');
+  }, []);
+
+  const handleFetchExistingItems = useCallback(async () => {
+    return [];
+  }, []);
+
+  const handleSaveItem = useCallback(async (item: SessionItem) => {
+    if (!editData || !currentAccount) {
+      throw new Error('Missing edit data or account context');
+    }
+
+    try {
+      const headers: Record<string, string> = {
+        'x-current-account': currentAccount.id,
+      };
+
+      const links = item.content.map((piece, index) => {
+        const linkData: {
+          id?: string;
+          title: string;
+          linkType: 'youtube' | 'pdf' | 'image' | 'text' | 'video' | 'url';
+          url: string;
+          thumbnailUrl?: string;
+          displayOrder: number;
+        } = {
+          title: '',
+          linkType: 'url',
+          url: '',
+          displayOrder: piece.order ?? index,
+        };
+
+        const data = piece.data as any;
+
+        switch (piece.type) {
+          case 'video':
+            linkData.linkType = data.type === 'video' ? 'video' : 'youtube';
+            linkData.url = data.url || '';
+            linkData.title = data.title || 'Video';
+            linkData.thumbnailUrl = data.thumbnailUrl;
+            break;
+          case 'photo':
+            linkData.linkType = 'image';
+            linkData.url = data.url || '';
+            linkData.title = data.title || 'Photo';
+            linkData.thumbnailUrl = data.thumbnailUrl;
+            break;
+          case 'pdf':
+            linkData.linkType = 'pdf';
+            linkData.url = data.url || '';
+            linkData.title = data.title || 'PDF Document';
+            break;
+          case 'text':
+            linkData.linkType = 'text';
+            linkData.url = data.text || '';
+            linkData.title = 'Text Note';
+            break;
+          case 'url':
+          default:
+            linkData.linkType = 'url';
+            linkData.url = data.url || '';
+            linkData.title = data.title || 'Link';
+            linkData.thumbnailUrl = data.thumbnailUrl;
+            break;
+        }
+
+        if (piece.id && piece.id.length > 10) {
+          linkData.id = piece.id;
+        }
+
+        return linkData;
+      });
+
+      const response = await adminApi.updateArticle(
+        articleId,
+        {
+          purpose: editData.purpose,
+          links: links as any,
+        },
+        headers
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update article');
+      }
+
+      console.log('Article updated successfully:', response.data);
+
+      return {
+        id: articleId,
+        qrCodeUrl: '',
+        itemName: editData.itemName,
+      };
+    } catch (error) {
+      console.error('Error saving article:', error);
+      throw error;
+    }
+  }, [articleId, editData, currentAccount]);
+
   // Authentication check rendering
   if (!user) {
     return (
@@ -316,142 +428,6 @@ export default function EditArticlePage() {
       </div>
     );
   }
-
-  // Callback handlers for ItemCreationWorkflow
-  const handleSessionComplete = useCallback(() => {
-    // REQ-213: Navigate back to instructions list with success message
-    sessionStorage.setItem('editSuccess', 'true');
-    router.push('/dashboard2/instructions');
-  }, [router]);
-
-  const handleSessionExit = useCallback(() => {
-    // REQ-213: Navigate back to instructions list
-    router.push('/dashboard2/instructions');
-  }, [router]);
-
-  const handleGeneratePDF = useCallback(async () => {
-    // Not supported in edit mode
-    throw new Error('PDF generation not supported in edit mode');
-  }, []);
-
-  const handlePrintDirect = useCallback(async () => {
-    // Not supported in edit mode
-    throw new Error('Direct print not supported in edit mode');
-  }, []);
-
-  const handleFetchExistingItems = useCallback(async () => {
-    // Not needed in edit mode
-    return [];
-  }, []);
-
-  /**
-   * Save handler for edit mode.
-   * Transforms content pieces to links format and calls the updateArticle API.
-   * @param item SessionItem from ItemCreationWorkflow containing updated content
-   * @returns Promise with articleId and empty qrCodeUrl (QR codes not regenerated in edit mode)
-   * @see REQ-213 Task 7
-   */
-  const handleSaveItem = useCallback(async (item: SessionItem) => {
-    if (!editData || !currentAccount) {
-      throw new Error('Missing edit data or account context');
-    }
-
-    try {
-      // Prepare headers with account context
-      const headers: Record<string, string> = {
-        'x-current-account': currentAccount.id,
-      };
-
-      // Transform ContentPiece[] to UpdateArticleRequest links format
-      const links = item.content.map((piece, index) => {
-        // Base link structure - using string for linkType to support all database values
-        const linkData: {
-          id?: string;
-          title: string;
-          linkType: 'youtube' | 'pdf' | 'image' | 'text' | 'video' | 'url';
-          url: string;
-          thumbnailUrl?: string;
-          displayOrder: number;
-        } = {
-          title: '',
-          linkType: 'url',
-          url: '',
-          displayOrder: piece.order ?? index,
-        };
-
-        // Set link_type and extract data based on content type
-        // Cast data to any for now since ContentData is a union type
-        const data = piece.data as any;
-
-        switch (piece.type) {
-          case 'video':
-            linkData.linkType = data.type === 'video' ? 'video' : 'youtube';
-            linkData.url = data.url || '';
-            linkData.title = data.title || 'Video';
-            linkData.thumbnailUrl = data.thumbnailUrl;
-            break;
-          case 'photo':
-            linkData.linkType = 'image';
-            linkData.url = data.url || '';
-            linkData.title = data.title || 'Photo';
-            linkData.thumbnailUrl = data.thumbnailUrl;
-            break;
-          case 'pdf':
-            linkData.linkType = 'pdf';
-            linkData.url = data.url || '';
-            linkData.title = data.title || 'PDF Document';
-            break;
-          case 'text':
-            linkData.linkType = 'text';
-            linkData.url = data.text || ''; // Text stored in url field
-            linkData.title = 'Text Note';
-            break;
-          case 'url':
-          default:
-            linkData.linkType = 'url';
-            linkData.url = data.url || '';
-            linkData.title = data.title || 'Link';
-            linkData.thumbnailUrl = data.thumbnailUrl;
-            break;
-        }
-
-        // Include existing ID if this is an existing piece
-        if (piece.id && piece.id.length > 10) { // UUID format check
-          linkData.id = piece.id;
-        }
-
-        return linkData;
-      });
-
-      // Call API to update article with new links array
-      // Cast linkType to LinkType since the database supports more types than the TypeScript type
-      const response = await adminApi.updateArticle(
-        articleId,
-        {
-          // Keep existing purpose (not changed in edit mode currently)
-          purpose: editData.purpose,
-          links: links as any, // Type assertion needed due to LinkType mismatch with database
-        },
-        headers
-      );
-
-      if (!response.success) {
-        throw new Error(response.error || 'Failed to update article');
-      }
-
-      console.log('Article updated successfully:', response.data);
-
-      // Return expected format - QR code not regenerated in edit mode
-      return {
-        id: articleId,
-        qrCodeUrl: '', // Empty for edit mode
-        itemName: editData.itemName,
-      };
-    } catch (error) {
-      console.error('Error saving article:', error);
-      throw error;
-    }
-  }, [articleId, editData, currentAccount]);
 
   // Render ItemCreationWorkflow in edit mode
   if (!editData) {

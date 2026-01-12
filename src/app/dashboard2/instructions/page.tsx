@@ -45,6 +45,15 @@ export default function InstructionsPage() {
   const fetchArticles = useCallback(async () => {
     if (!user) return;
 
+    // REQ-212: Need a selected property to fetch articles
+    if (!selectedPropertyId) {
+      console.log('No property selected, skipping article fetch');
+      setArticles([]);
+      setInstructionsData([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -55,80 +64,42 @@ export default function InstructionsPage() {
     }
 
     try {
-      // NOTE: The API currently requires item_id parameter, so we need to fetch
-      // items first and then fetch articles for each item (Task 8)
-      // For now, we'll fetch all items and then fetch articles for each
-      const itemsResponse = await adminApi.listItems(
-        undefined, // search
-        selectedPropertyId || undefined, // propertyId filter
+      // REQ-212: Fetch all articles for the selected property in one call
+      // The API now supports property_id filter and returns item data with each article
+      const articlesResponse = await adminApi.listArticles(
+        undefined, // itemId - not needed when using propertyId
+        selectedPropertyId, // propertyId filter (already validated above)
         1,
         100,
         headers
       );
 
-      if (!itemsResponse.success || !itemsResponse.data) {
-        throw new Error(itemsResponse.error || 'Failed to fetch items');
+      if (!articlesResponse.success) {
+        throw new Error(articlesResponse.error || 'Failed to fetch articles');
       }
 
-      const items = itemsResponse.data;
-
-      // If no items, set empty articles and return
-      if (items.length === 0) {
-        setArticles([]);
-        setInstructionsData([]);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch articles for all items
-      const allArticles: any[] = [];
-      for (const item of items) {
-        try {
-          const articlesResponse = await adminApi.listArticles(
-            item.id, // itemId
-            undefined, // propertyId
-            1,
-            100,
-            headers
-          );
-
-          if (articlesResponse.success && articlesResponse.data) {
-            // Add item reference to each article
-            articlesResponse.data.forEach((article: any) => {
-              allArticles.push({
-                ...article,
-                item: {
-                  id: item.id,
-                  name: item.name,
-                  tags: item.tags || []
-                }
-              });
-            });
-          }
-        } catch (err) {
-          console.error(`Error fetching articles for item ${item.id}:`, err);
-          // Continue with other items even if one fails
-        }
-      }
-
+      const allArticles = articlesResponse.data || [];
       setArticles(allArticles);
 
       // Process articles into InstructionRow format with room extraction
-      const processedInstructions: InstructionRow[] = allArticles.map((article) => {
-        const item = article.item;
-        const room = extractRoomFromTags(item.tags || []);
+      // Filter out articles without item data (defensive coding)
+      const processedInstructions: InstructionRow[] = allArticles
+        .filter((article) => article.item)
+        .map((article) => {
+          const item = article.item;
+          const room = extractRoomFromTags(item.tags || []);
 
-        return {
-          id: `${article.id}-${item.id}`, // Composite key for uniqueness
-          articleId: article.id,
-          articleTitle: article.title || 'Untitled',
-          itemName: item.name || 'Unknown Item',
-          itemId: item.id,
-          room: room,
-          purpose: article.purpose || 'other',
-          createdAt: article.createdAt || new Date().toISOString(),
-        };
-      });
+          return {
+            id: `${article.id}-${item.id}`, // Composite key for uniqueness
+            articleId: article.id,
+            articleTitle: article.title || 'Untitled',
+            itemName: item.name || 'Unknown Item',
+            itemId: item.id,
+            room: room,
+            purpose: article.purpose || 'other',
+            createdAt: article.createdAt || new Date().toISOString(),
+          };
+        });
 
       setInstructionsData(processedInstructions);
       console.log('Processed instructions data:', processedInstructions);

@@ -160,12 +160,26 @@ export async function GET(
 
     const { article } = accessResult;
 
+    // REQ-213: Extract item data from the joined query result
+    const itemData = (article as any).items;
+
     // Get associated links
     const { data: articleLinks } = await supabase
       .from('item_links')
       .select('id, title, link_type, url, thumbnail_url, display_order, created_at')
       .eq('article_id', article.id)
       .order('display_order', { ascending: true });
+
+    // REQ-213: Get item tags for edit mode
+    let itemTags: string[] = [];
+    if (itemData?.id) {
+      const { data: fullItem } = await supabase
+        .from('items')
+        .select('tags')
+        .eq('id', itemData.id)
+        .single();
+      itemTags = fullItem?.tags || [];
+    }
 
     const response: ArticleResponse = {
       success: true,
@@ -188,7 +202,13 @@ export async function GET(
           thumbnail_url: link.thumbnail_url,
           display_order: link.display_order || 0,
           created_at: link.created_at || new Date().toISOString()
-        }))
+        })),
+        // REQ-213: Include item data for edit mode
+        item: itemData ? {
+          id: itemData.id,
+          name: itemData.name,
+          tags: itemTags
+        } : undefined
       },
       accountContext: { accountId, accountRole }
     };
