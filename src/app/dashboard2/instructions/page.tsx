@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
+import { extractRoomFromTags } from '@/lib/room-utils';
 import { FileText, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -124,6 +125,26 @@ export default function InstructionsPage() {
       }
 
       setArticles(allArticles);
+
+      // Process articles into InstructionRow format with room extraction
+      const processedInstructions: InstructionRow[] = allArticles.map((article) => {
+        const item = article.item;
+        const room = extractRoomFromTags(item.tags || []);
+
+        return {
+          id: `${article.id}-${item.id}`, // Composite key for uniqueness
+          articleId: article.id,
+          articleTitle: article.title || 'Untitled',
+          itemName: item.name || 'Unknown Item',
+          itemId: item.id,
+          room: room,
+          purpose: article.purpose || 'other',
+          createdAt: article.createdAt || new Date().toISOString(),
+        };
+      });
+
+      setInstructionsData(processedInstructions);
+      console.log('Processed instructions data:', processedInstructions);
     } catch (err) {
       console.error('Error fetching articles:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch articles'));
@@ -231,7 +252,7 @@ export default function InstructionsPage() {
       <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
         InstructionsTable component will be added here
         <div className="mt-4 text-sm">
-          Found {articles.length} instructions
+          Found {instructionsData.length} instructions
         </div>
       </div>
     </div>

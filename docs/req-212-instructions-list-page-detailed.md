@@ -83,14 +83,14 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create TypeScript interface `InstructionRow` in the page file with fields: `id: string`, `articleId: string`, `articleTitle: string`, `itemName: string`, `itemId: string`, `room: string | null`, `purpose: string`, `createdAt: string`
-- [ ] **4.2** Create helper function `extractRoomFromTags(tags: string[]): string | null` that finds tag starting with `#room.`, extracts room name after dot, replaces hyphens with spaces, and returns capitalized string or null if not found
-- [ ] **4.3** In `fetchArticles` callback, after receiving articles response, map over articles array to transform into `InstructionRow[]` format
-- [ ] **4.4** For each article, extract item name from article.item.name (assuming API returns joined item data)
-- [ ] **4.5** For each article, call `extractRoomFromTags(article.item.tags || [])` to get room name
-- [ ] **4.6** Store processed `InstructionRow[]` array in state variable `instructionsData` (add new state variable)
-- [ ] **4.7** Update the placeholder div to show count of processed instructions: "Found X instructions"
-- [ ] **4.8** Test data processing by logging `instructionsData` to console after articles are fetched
+- [x] **4.1** Create TypeScript interface `InstructionRow` in the page file with fields: `id: string`, `articleId: string`, `articleTitle: string`, `itemName: string`, `itemId: string`, `room: string | null`, `purpose: string`, `createdAt: string`---implemented: Created InstructionRow interface with all required fields
+- [x] **4.2** Create helper function `extractRoomFromTags(tags: string[]): string | null` that finds tag starting with `#room.`, extracts room name after dot, replaces hyphens with spaces, and returns capitalized string or null if not found---implemented: Created room-utils.ts with extractRoomFromTags function with full JSDoc
+- [x] **4.3** In `fetchArticles` callback, after receiving articles response, map over articles array to transform into `InstructionRow[]` format---implemented: Added mapping logic after setting articles
+- [x] **4.4** For each article, extract item name from article.item.name (assuming API returns joined item data)---implemented: Extracted item.name with fallback to "Unknown Item"
+- [x] **4.5** For each article, call `extractRoomFromTags(article.item.tags || [])` to get room name---implemented: Called extractRoomFromTags for each article's item tags
+- [x] **4.6** Store processed `InstructionRow[]` array in state variable `instructionsData` (add new state variable)---implemented: Added instructionsData state and setInstructionsData call
+- [x] **4.7** Update the placeholder div to show count of processed instructions: "Found X instructions"---implemented: Updated placeholder to show instructionsData.length
+- [x] **4.8** Test data processing by logging `instructionsData` to console after articles are fetched---implemented: Added console.log for processed instructions data-unit tested-
 
 ---
 
