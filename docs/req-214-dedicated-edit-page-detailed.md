@@ -550,7 +550,7 @@ Based on Supabase schema analysis:
 **Files to modify:** `src/app/dashboard2/instructions/[articleId]/edit/page.tsx` (Replace)
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Update imports in `src/app/dashboard2/instructions/[articleId]/edit/page.tsx`:
+- [x] **6.1** Update imports in `src/app/dashboard2/instructions/[articleId]/edit/page.tsx`:
   ```typescript
   // Remove ItemCreationWorkflow import
   // import { ItemCreationWorkflow } from '@/components/ItemCreationWorkflow';
@@ -559,13 +559,15 @@ Based on Supabase schema analysis:
   import { InstructionEditor } from '@/components/InstructionEditor';
   import type { ArticleEditData, UpdateArticlePayload } from '@/components/InstructionEditor';
   ```
+---implemented: Updated imports to use InstructionEditor instead of ItemCreationWorkflow
 
-- [ ] **6.2** Simplify state - remove EditModeData, use ArticleEditData:
+- [x] **6.2** Simplify state - remove EditModeData, use ArticleEditData:
   ```typescript
   const [articleData, setArticleData] = useState<ArticleEditData | null>(null);
   ```
+---implemented: Simplified state to use ArticleEditData, added isSaving state
 
-- [ ] **6.3** Update `fetchArticleData` function to return `ArticleEditData` format:
+- [x] **6.3** Update `fetchArticleData` function to return `ArticleEditData` format:
   ```typescript
   const fetchArticleData = useCallback(async (articleId: string) => {
     // ... existing auth check and API call ...
@@ -597,8 +599,9 @@ Based on Supabase schema analysis:
     setArticleData(editData);
   }, [user, currentAccount]);
   ```
+---implemented: Updated fetchArticleData to transform API response into ArticleEditData format
 
-- [ ] **6.4** Implement new save handler:
+- [x] **6.4** Implement new save handler:
   ```typescript
   const handleSave = useCallback(async (payload: UpdateArticlePayload) => {
     if (!articleData || !currentAccount) {
@@ -633,15 +636,17 @@ Based on Supabase schema analysis:
     router.push('/dashboard2/instructions');
   }, [articleId, articleData, currentAccount, router]);
   ```
+---implemented: Implemented save handler with file upload processing placeholder (Task 7), API call, and success redirect
 
-- [ ] **6.5** Implement cancel handler:
+- [x] **6.5** Implement cancel handler:
   ```typescript
   const handleCancel = useCallback(() => {
     router.push('/dashboard2/instructions');
   }, [router]);
   ```
+---implemented: Implemented cancel handler with redirect to instructions list
 
-- [ ] **6.6** Update render to use InstructionEditor:
+- [x] **6.6** Update render to use InstructionEditor:
   ```tsx
   // Replace ItemCreationWorkflow with InstructionEditor
   if (!articleData) {
@@ -657,16 +662,19 @@ Based on Supabase schema analysis:
     />
   );
   ```
+---implemented: Updated render to use InstructionEditor component
 
-- [ ] **6.7** Remove unused callback handlers:
+- [x] **6.7** Remove unused callback handlers:
   - `handleSessionComplete`
   - `handleSessionExit`
   - `handleGeneratePDF`
   - `handlePrintDirect`
   - `handleFetchExistingItems`
   - `handleSaveItem`
+---implemented: Removed all ItemCreationWorkflow-specific handlers
 
-- [ ] **6.8** Remove unused type imports and helper functions that are no longer needed
+- [x] **6.8** Remove unused type imports and helper functions that are no longer needed
+---implemented: Removed EditModeData, SessionItem, ContentPiece and related types; removed helper functions mapLinkTypeToContentType (from old code), extractRoomType, extractItemType
 
 ---
 
