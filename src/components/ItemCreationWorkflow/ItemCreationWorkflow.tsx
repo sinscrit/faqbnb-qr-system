@@ -38,7 +38,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
-import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner } from './components/shared';
+import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner, ItemContextDisplay } from './components/shared';
 import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, MediaCaptureStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep, WhatsNextStep } from './components/steps';
 import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
@@ -571,21 +571,47 @@ export function ItemCreationWorkflow({
         );
       case 'content-type-selection':
         return (
-          <ContentTypeStep
-            currentSelection={state.currentItem?.contentType ?? null}
-            onSelectContent={handleUnifiedContentSelect}
-            onNext={nextStep}
-            canNext={canGoNext}
-          />
+          <>
+            {/* REQ-213: Display read-only item context in edit mode */}
+            {editMode && initialArticleData && (
+              <div className="px-4 sm:px-6 pb-4">
+                <ItemContextDisplay
+                  room={initialArticleData.room}
+                  itemType={initialArticleData.itemType}
+                  itemName={initialArticleData.itemName}
+                  purpose={initialArticleData.purpose}
+                />
+              </div>
+            )}
+            <ContentTypeStep
+              currentSelection={state.currentItem?.contentType ?? null}
+              onSelectContent={handleUnifiedContentSelect}
+              onNext={nextStep}
+              canNext={canGoNext}
+            />
+          </>
         );
       case 'media-capture':
         return (
-          <MediaCaptureStep
-            currentItem={state.currentItem!}
-            onAddContent={addContentPiece}
-            onComplete={() => goToStep('preview-save')}
-            onBack={() => goToStep('content-type-selection')}
-          />
+          <>
+            {/* REQ-213: Display read-only item context in edit mode */}
+            {editMode && initialArticleData && (
+              <div className="px-4 sm:px-6 pb-4">
+                <ItemContextDisplay
+                  room={initialArticleData.room}
+                  itemType={initialArticleData.itemType}
+                  itemName={initialArticleData.itemName}
+                  purpose={initialArticleData.purpose}
+                />
+              </div>
+            )}
+            <MediaCaptureStep
+              currentItem={state.currentItem!}
+              onAddContent={addContentPiece}
+              onComplete={() => goToStep('preview-save')}
+              onBack={() => goToStep('content-type-selection')}
+            />
+          </>
         );
       case 'content-creation':
         return (
@@ -600,18 +626,31 @@ export function ItemCreationWorkflow({
         );
       case 'preview-save':
         return (
-          <PreviewSaveStep
-            currentItem={state.currentItem!}
-            onUpdateItemName={setItemName}
-            onUpdateTags={setTags}
-            onRemoveContent={removeContentPiece}
-            onReorderContent={reorderContent}
-            onRetake={() => goToStep('content-creation')}
-            onSave={handleSaveItem}
+          <>
+            {/* REQ-213: Display read-only item context in edit mode */}
+            {editMode && initialArticleData && (
+              <div className="px-4 sm:px-6 pb-4">
+                <ItemContextDisplay
+                  room={initialArticleData.room}
+                  itemType={initialArticleData.itemType}
+                  itemName={initialArticleData.itemName}
+                  purpose={initialArticleData.purpose}
+                />
+              </div>
+            )}
+            <PreviewSaveStep
+              currentItem={state.currentItem!}
+              onUpdateItemName={setItemName}
+              onUpdateTags={setTags}
+              onRemoveContent={removeContentPiece}
+              onReorderContent={reorderContent}
+              onRetake={() => goToStep('content-creation')}
+              onSave={handleSaveItem}
             onCancel={prevStep}
             onComplete={() => goToStep('next-action')}
             isSaving={isSaving}
           />
+          </>
         );
       case 'next-action': {
         // Get the most recently saved item from session for display

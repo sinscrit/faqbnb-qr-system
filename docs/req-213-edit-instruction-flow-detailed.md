@@ -155,18 +155,18 @@ Based on Supabase database analysis:
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Create file `src/components/ItemCreationWorkflow/components/shared/ItemContextDisplay.tsx`
-- [ ] **6.2** Define props interface: `interface ItemContextDisplayProps { room: RoomType; itemType: ItemType; itemName: string; purpose: PurposeType; }`
-- [ ] **6.3** Import necessary types from `ItemCreationWorkflow.types.ts`
-- [ ] **6.4** Create a functional component that displays a styled card/box with four read-only fields
-- [ ] **6.5** Display room as a badge with icon (e.g., use room icons from existing codebase if available)
-- [ ] **6.6** Display item type as a text label (convert to human-readable: 'appliance' -> 'Appliance', 'room-item' -> 'Room Item', etc.)
-- [ ] **6.7** Display item name prominently as the main heading
-- [ ] **6.8** Display purpose as a label (convert purpose to human-readable: 'how-to-use' -> 'How to Use', etc.)
-- [ ] **6.9** Style the component with Tailwind CSS to match the existing design system (use gray background, rounded borders, padding)
-- [ ] **6.10** Add a lock icon or "Read-only" badge to indicate these fields cannot be changed
-- [ ] **6.11** Import and render `ItemContextDisplay` at the top of the ItemCreationWorkflow component when in edit mode
-- [ ] **6.12** Pass props from `currentItem` state: `<ItemContextDisplay room={currentItem.room} itemType={currentItem.itemType} itemName={currentItem.itemName} purpose={currentItem.currentArticle.purpose} />`
+- [x] **6.1** Create file `src/components/ItemCreationWorkflow/components/shared/ItemContextDisplay.tsx`---implemented:Created ItemContextDisplay.tsx component file---unit tested-
+- [x] **6.2** Define props interface: `interface ItemContextDisplayProps { room: RoomType; itemType: ItemType; itemName: string; purpose: PurposeType; }`---implemented:Defined ItemContextDisplayProps interface with all required fields---unit tested-
+- [x] **6.3** Import necessary types from `ItemCreationWorkflow.types.ts`---implemented:Imported RoomType, ItemType, and PurposeType from types file---unit tested-
+- [x] **6.4** Create a functional component that displays a styled card/box with four read-only fields---implemented:Created functional component with gray background card displaying all fields---unit tested-
+- [x] **6.5** Display room as a badge with icon (e.g., use room icons from existing codebase if available)---implemented:Used Lucide icons mapped from ROOM_ICON_MAP, displayed with room label---unit tested-
+- [x] **6.6** Display item type as a text label (convert to human-readable: 'appliance' -> 'Appliance', 'room-item' -> 'Room Item', etc.)---implemented:Used ITEM_TYPE_LABELS constant for human-readable conversion---unit tested-
+- [x] **6.7** Display item name prominently as the main heading---implemented:Displayed itemName as h2 with text-xl/text-2xl and font-bold styling---unit tested-
+- [x] **6.8** Display purpose as a label (convert purpose to human-readable: 'how-to-use' -> 'How to Use', etc.)---implemented:Used PURPOSE_LABELS constant for human-readable conversion---unit tested-
+- [x] **6.9** Style the component with Tailwind CSS to match the existing design system (use gray background, rounded borders, padding)---implemented:Used bg-gray-50, border-gray-200, rounded-lg consistent with existing design---unit tested-
+- [x] **6.10** Add a lock icon or "Read-only" badge to indicate these fields cannot be changed---implemented:Added Lock icon and "Read-only" badge in header section---unit tested-
+- [x] **6.11** Import and render `ItemContextDisplay` at the top of the ItemCreationWorkflow component when in edit mode---implemented:Rendered ItemContextDisplay conditionally at content-type-selection, media-capture, and preview-save steps---unit tested-
+- [x] **6.12** Pass props from `currentItem` state: `<ItemContextDisplay room={currentItem.room} itemType={currentItem.itemType} itemName={currentItem.itemName} purpose={currentItem.currentArticle.purpose} />`---implemented:Passed props from initialArticleData (room, itemType, itemName, purpose)---unit tested-
 
 ---
 

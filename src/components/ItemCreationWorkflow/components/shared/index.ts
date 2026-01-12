@@ -145,3 +145,13 @@ export type { EmptySessionDialogProps } from './EmptySessionDialog';
 
 export { DuplicateNameWarning } from './DuplicateNameWarning';
 export type { DuplicateNameWarningProps } from './DuplicateNameWarning';
+
+// =============================================================================
+// Edit Mode Components (REQ-213)
+// =============================================================================
+/**
+ * Components for edit mode functionality.
+ * Display read-only item context when editing existing instructions.
+ */
+export { ItemContextDisplay } from './ItemContextDisplay';
+export type { ItemContextDisplayProps } from './ItemContextDisplay';
