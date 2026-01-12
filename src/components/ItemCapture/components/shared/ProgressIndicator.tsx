@@ -8,7 +8,7 @@
  * - Desktop: Step indicators with labels and connector lines
  *
  * @module ItemCapture/components/shared/ProgressIndicator
- * @lastModified 2025-12-31 (REQ-033 Tasks 1-4)
+ * @lastModified 2026-01-12 (REQ-188: Added 'whats-next' step support)
  */
 
 import React from 'react';
@@ -61,6 +61,7 @@ export const PROGRESS_STAGES: StepDefinition[] = [
 /**
  * Maps internal wizard steps to display stage indices.
  * Used to determine which progress stage to highlight.
+ * Steps with index -1 are post-workflow and hide the progress indicator.
  */
 export const STEP_TO_STAGE_INDEX: Record<WizardStep, number> = {
   'metadata': 0,        // Stage 1: Details
@@ -69,15 +70,18 @@ export const STEP_TO_STAGE_INDEX: Record<WizardStep, number> = {
   'capture-photo': 1,   // Stage 2: Content
   'upload-file': 1,     // Stage 2: Content
   'write-text': 1,      // Stage 2: Content
+  'add-url': 1,         // Stage 2: Content
   'edit-media': 2,      // Stage 3: Edit
   'add-more': 1,        // Stage 2: Content (returning)
   'review': 3,          // Stage 4: Review
+  'whats-next': -1,     // Post-workflow: not displayed in progress indicator
 };
 
 /**
  * Gets the display stage index for a given wizard step.
  * @param step - Current wizard step
- * @returns Zero-based stage index
+ * @returns Zero-based stage index (0-3), or -1 for post-workflow steps
+ *          that should not be displayed in the progress indicator
  */
 export function getCurrentStageIndex(step: WizardStep): number {
   return STEP_TO_STAGE_INDEX[step] ?? 0;
@@ -95,6 +99,7 @@ export function getCurrentStageIndex(step: WizardStep): number {
  * - Desktop: Visual step indicators with checkmarks for completed stages
  * - Smooth transitions between steps
  * - Full ARIA accessibility support
+ * - Hides automatically for post-workflow steps (e.g., 'whats-next')
  *
  * @example
  * ```tsx
@@ -105,6 +110,12 @@ export function ProgressIndicator({
   currentStep,
   className,
 }: ProgressIndicatorProps) {
+  // Hide progress indicator for post-workflow steps
+  // These steps have index -1 in STEP_TO_STAGE_INDEX
+  if (currentStep === 'whats-next') {
+    return null;
+  }
+
   const currentIndex = getCurrentStageIndex(currentStep);
   const totalStages = PROGRESS_STAGES.length;
   const progressPercent = ((currentIndex + 1) / totalStages) * 100;

@@ -7,10 +7,11 @@
  *
  * @module ItemCapture/types
  * @see docs/prd/item-capture-implementation-plan.md
- * @lastModified 2026-01-05 (REQ-092 Task 1)
+ * @lastModified 2026-01-12 (REQ-188: Added 'whats-next' to WizardStep type)
  */
 
 import type { PDFErrorCode } from './utils/pdfConstants';
+import type { PurposeType } from '@/types';
 
 // =============================================================================
 // Configuration Types
@@ -211,7 +212,7 @@ export interface ItemRecord {
   /** Local UUID generated for this item */
   id: string;
 
-  /** User-provided title (required) */
+  /** User-provided title (Item Name - required) */
   title: string;
 
   /** Optional location within property (e.g., "Kitchen", "Master Bathroom") */
@@ -222,6 +223,9 @@ export interface ItemRecord {
 
   /** Optional appliance type from predefined list */
   applianceType?: ApplianceType;
+
+  /** Optional content purpose for article pre-classification (REQ-183) */
+  contentPurpose?: PurposeType;
 
   /** Type of content combination */
   contentType: 'media' | 'text-only' | 'pdf-only' | 'url-only' | 'mixed';
@@ -242,6 +246,7 @@ export interface ItemRecord {
 
 /**
  * Wizard step identifiers for navigation state machine.
+ * Note: 'whats-next' is a post-workflow step that is NOT counted in progress display.
  */
 export type WizardStep =
   | 'metadata'
@@ -253,13 +258,14 @@ export type WizardStep =
   | 'add-url'
   | 'edit-media'
   | 'add-more'
-  | 'review';
+  | 'review'
+  | 'whats-next';  // Post-workflow decision point (not counted in progress)
 
 /**
  * Internal metadata state interface for form handling.
  */
 export interface ItemMetadata {
-  /** User-provided title */
+  /** User-provided title (Item Name - the physical item this QR code will be attached to) */
   title: string;
 
   /** Optional location within property */
@@ -270,6 +276,9 @@ export interface ItemMetadata {
 
   /** Optional appliance type */
   applianceType?: ApplianceType;
+
+  /** Optional content purpose for article pre-classification (REQ-183) */
+  contentPurpose?: PurposeType;
 }
 
 /**
