@@ -105,20 +105,20 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Create directory `src/components/InstructionsTable`
-- [ ] **5.2** Create `InstructionsTable.types.ts` with exported interfaces: `InstructionRow` (same fields as Task 4.1) and `InstructionsTableProps` with fields: `instructions: InstructionRow[]`, `onEdit?: (articleId: string) => void`, `loading?: boolean`
-- [ ] **5.3** Create `InstructionsTable.tsx` with function component that accepts `InstructionsTableProps`
-- [ ] **5.4** Implement table structure with semantic HTML: `<table>`, `<thead>`, `<tbody>` with classes for styling (use Tailwind classes matching dashboard2 style)
-- [ ] **5.5** Add table header row with columns: "Title", "Item", "Room", "Purpose", "Actions" (use responsive classes to hide less important columns on mobile)
-- [ ] **5.6** Map over `instructions` prop to render table rows with `<tr>` and `<td>` elements for each instruction
-- [ ] **5.7** Display article title in first column (bold text, truncate if too long with ellipsis)
-- [ ] **5.8** Display item name in second column (gray text)
-- [ ] **5.9** Display room in third column (show badge style with background color if room exists, show "-" if null)
-- [ ] **5.10** Display purpose in fourth column as badge with color coding (use switch statement: how_to_use=blue, troubleshooting=orange, how_to_clean=green, etc.)
-- [ ] **5.11** Add "Edit" button in actions column that calls `onEdit?.(instruction.articleId)` when clicked (use Pencil icon from lucide-react)
-- [ ] **5.12** Handle empty state: if `instructions` array is empty, render single table row with colspan message "No instructions available"
-- [ ] **5.13** Handle loading state: if `loading` prop is true, render skeleton rows (3 rows with animated pulse backgrounds)
-- [ ] **5.14** Create `index.ts` barrel export: `export { InstructionsTable } from './InstructionsTable'; export type { InstructionRow, InstructionsTableProps } from './InstructionsTable.types';`
+- [x] **5.1** Create directory `src/components/InstructionsTable`---implemented: Created directory
+- [x] **5.2** Create `InstructionsTable.types.ts` with exported interfaces: `InstructionRow` (same fields as Task 4.1) and `InstructionsTableProps` with fields: `instructions: InstructionRow[]`, `onEdit?: (articleId: string) => void`, `loading?: boolean`---implemented: Created types file with InstructionRow and InstructionsTableProps interfaces
+- [x] **5.3** Create `InstructionsTable.tsx` with function component that accepts `InstructionsTableProps`---implemented: Created component with proper props
+- [x] **5.4** Implement table structure with semantic HTML: `<table>`, `<thead>`, `<tbody>` with classes for styling (use Tailwind classes matching dashboard2 style)---implemented: Full table structure with Tailwind styling
+- [x] **5.5** Add table header row with columns: "Title", "Item", "Room", "Purpose", "Actions" (use responsive classes to hide less important columns on mobile)---implemented: Headers with hidden md:table-cell and hidden sm:table-cell for responsive behavior
+- [x] **5.6** Map over `instructions` prop to render table rows with `<tr>` and `<td>` elements for each instruction---implemented: Mapped instructions with hover effects
+- [x] **5.7** Display article title in first column (bold text, truncate if too long with ellipsis)---implemented: Title with font-medium and truncate with max-w-xs
+- [x] **5.8** Display item name in second column (gray text)---implemented: Item name with text-gray-500
+- [x] **5.9** Display room in third column (show badge style with background color if room exists, show "-" if null)---implemented: Indigo badge for room or gray dash if null
+- [x] **5.10** Display purpose in fourth column as badge with color coding (use switch statement: how_to_use=blue, troubleshooting=orange, how_to_clean=green, etc.)---implemented: getPurposeBadgeColor function with full color switch statement
+- [x] **5.11** Add "Edit" button in actions column that calls `onEdit?.(instruction.articleId)` when clicked (use Pencil icon from lucide-react)---implemented: Edit button with Pencil icon and FAQBNB red hover color
+- [x] **5.12** Handle empty state: if `instructions` array is empty, render single table row with colspan message "No instructions available"---implemented: Empty state with colspan=5
+- [x] **5.13** Handle loading state: if `loading` prop is true, render skeleton rows (3 rows with animated pulse backgrounds)---implemented: Loading skeleton with 3 animated pulse rows
+- [x] **5.14** Create `index.ts` barrel export: `export { InstructionsTable } from './InstructionsTable'; export type { InstructionRow, InstructionsTableProps } from './InstructionsTable.types';`---implemented: Created index.ts with all exports-unit tested-
 
 ---
 
