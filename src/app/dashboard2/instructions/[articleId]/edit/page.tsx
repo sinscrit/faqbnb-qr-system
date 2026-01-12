@@ -19,6 +19,7 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
+import { ItemCreationWorkflow } from '@/components/ItemCreationWorkflow';
 import type {
   EditModeData,
   RoomType,
@@ -162,14 +163,17 @@ export default function EditArticlePage() {
 
       const item = itemResponse.data;
 
+      // Extract tags from item (use type assertion for now until ItemResponse is updated)
+      const itemTags = (item as any).tags || [];
+
       // Extract room from item tags
-      const room = extractRoomType(item.tags || []);
+      const room = extractRoomType(itemTags);
 
       // Extract item type from item tags
-      const itemType = extractItemType(item.tags || []);
+      const itemType = extractItemType(itemTags);
 
       // Transform article links into ContentPiece format
-      const existingContent: ContentPiece[] = (article.links || []).map((link, index) => {
+      const existingContent: ContentPiece[] = (article.links || []).map((link: any, index: number) => {
         const contentType = mapLinkTypeToContentType(link.linkType);
 
         // Create appropriate ContentData based on type
@@ -233,7 +237,7 @@ export default function EditArticlePage() {
         room,
         itemType,
         purpose: article.purpose as PurposeType,
-        tags: item.tags || [],
+        tags: itemTags,
         existingContent,
       };
 
@@ -312,16 +316,60 @@ export default function EditArticlePage() {
     );
   }
 
-  // Placeholder for ItemCreationWorkflow (will be connected in later tasks)
+  // Callback handlers for ItemCreationWorkflow
+  const handleSessionComplete = useCallback(() => {
+    // REQ-213: Navigate back to instructions list with success message
+    sessionStorage.setItem('editSuccess', 'true');
+    router.push('/dashboard2/instructions');
+  }, [router]);
+
+  const handleSessionExit = useCallback(() => {
+    // REQ-213: Navigate back to instructions list
+    router.push('/dashboard2/instructions');
+  }, [router]);
+
+  const handleGeneratePDF = useCallback(async () => {
+    // Not supported in edit mode
+    throw new Error('PDF generation not supported in edit mode');
+  }, []);
+
+  const handlePrintDirect = useCallback(async () => {
+    // Not supported in edit mode
+    throw new Error('Direct print not supported in edit mode');
+  }, []);
+
+  const handleFetchExistingItems = useCallback(async () => {
+    // Not needed in edit mode
+    return [];
+  }, []);
+
+  const handleSaveItem = useCallback(async () => {
+    // REQ-213: Will be implemented in Task 7
+    // For now, simulate save and return dummy data
+    console.log('Save handler - to be implemented in Task 7');
+    return {
+      id: articleId,
+      qrCodeUrl: '',
+      itemName: editData?.itemName,
+    };
+  }, [articleId, editData]);
+
+  // Render ItemCreationWorkflow in edit mode
+  if (!editData) {
+    return null; // Should not reach here due to loading/error checks above
+  }
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Edit Instruction</h1>
-        <p className="text-gray-600">ItemCreationWorkflow will be connected here in Task 5</p>
-        <div className="mt-4">
-          <p className="text-sm text-gray-500">Article ID: {articleId}</p>
-        </div>
-      </div>
-    </div>
+    <ItemCreationWorkflow
+      editMode={true}
+      initialArticleId={articleId}
+      initialArticleData={editData}
+      onSessionComplete={handleSessionComplete}
+      onSessionExit={handleSessionExit}
+      onGeneratePDF={handleGeneratePDF}
+      onPrintDirect={handlePrintDirect}
+      onFetchExistingItems={handleFetchExistingItems}
+      onSaveItem={handleSaveItem}
+    />
   );
 }
