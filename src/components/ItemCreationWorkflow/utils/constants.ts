@@ -414,50 +414,107 @@ export const WORKFLOW_CONFIG_DEFAULTS = {
  */
 export const MAX_CONTENT_PIECES = 10;
 
+// =============================================================================
+// Workflow Step Separation (REQ-196)
+// =============================================================================
+
 /**
- * Ordered list of all workflow steps.
+ * User-visible workflow steps (for progress indicator).
+ * Steps 1-8 are numbered; post-workflow screens are not counted.
  *
- * ## Step Flow (Plan-094 UI/UX Improvements + REQ-176 Media Capture)
+ * Step Flow:
+ * 1. room-selection        → Select room category
+ * 2. item-type-selection   → Select item type (skips if 'general' room)
+ * 3. specific-item-selection → Name the specific item
+ * 4. purpose-selection     → Select content purpose
+ * 5. content-type-selection → Select content format
+ * 6. media-capture         → Direct media capture routing
+ * 7. content-creation      → Create/upload content (when used)
+ * 8. preview-save          → Preview with content, final step
+ *
+ * @see POST_WORKFLOW_SCREENS for screens after workflow completion
+ * @see WORKFLOW_STEPS for complete navigation flow
+ * @created 2026-01-12 (REQ-196 Step Count Fix)
+ */
+export const USER_VISIBLE_STEPS = [
+  'room-selection',           // Step 1
+  'item-type-selection',      // Step 2
+  'specific-item-selection',  // Step 3
+  'purpose-selection',        // Step 4
+  'content-type-selection',   // Step 5
+  'media-capture',            // Step 6
+  'content-creation',         // Step 7 (when used)
+  'preview-save',             // Step 8 - FINAL user-visible step
+] as const;
+
+/**
+ * Type for user-visible step values derived from USER_VISIBLE_STEPS constant.
+ */
+export type UserVisibleStepConst = (typeof USER_VISIBLE_STEPS)[number];
+
+/**
+ * Post-workflow screens (no step counter shown).
+ * These screens appear after the main workflow is complete.
+ * The progress bar should show 100% on these screens.
+ *
+ * - next-action: User decides what to do next
+ * - session-summary: Review all items in session
+ *
+ * @see USER_VISIBLE_STEPS for numbered workflow steps
+ * @created 2026-01-12 (REQ-196 Step Count Fix)
+ */
+export const POST_WORKFLOW_SCREENS = [
+  'next-action',
+  'session-summary',
+] as const;
+
+/**
+ * Type for post-workflow screen values derived from POST_WORKFLOW_SCREENS constant.
+ */
+export type PostWorkflowScreenConst = (typeof POST_WORKFLOW_SCREENS)[number];
+
+/**
+ * Complete navigation flow (internal use).
+ * Combines user-visible steps with post-workflow screens.
+ *
+ * For UI display (step counters, progress bars), use:
+ * - USER_VISIBLE_STEPS: Steps 1-8 that are numbered
+ * - POST_WORKFLOW_SCREENS: Screens after workflow (no counter)
+ *
+ * This constant is used internally for:
+ * - Navigation state machine
+ * - Step transitions
+ * - Route validation
+ *
+ * ## Step Flow (Plan-094 UI/UX Improvements + REQ-176 Media Capture + REQ-196)
  *
  * ```
  * 1. room-selection        → Select room category
  * 2. item-type-selection   → Select item type (skips if 'general' room)
  * 3. specific-item-selection → Name the specific item
- * 4. purpose-selection     → Select content purpose (NEW)
+ * 4. purpose-selection     → Select content purpose
  * 5. content-type-selection → Select content format (consolidated)
  * 6. media-capture         → Direct media capture routing (REQ-176)
  * 7. content-creation      → Create/upload content (keep for compatibility)
- * 8. preview-save          → Preview with actual content, edit title (redesigned)
+ * 8. preview-save          → Preview with actual content, FINAL numbered step
+ * -- Post-workflow (no step counter) --
  * 9. next-action           → Choose next step (simplified: 3 options)
  * 10. session-summary      → Review all items, generate QR codes
  * ```
  *
- * ## Changes from Original Flow
- * - ADDED: `purpose-selection` after specific-item (Phase 2)
- * - REMOVED: `content-source-selection` merged into content-type-selection (Phase 3)
- * - ADDED: `media-capture` for direct routing to capture components (REQ-176)
- * - MODIFIED: `preview-save` redesigned with actual content previews (Phase 5)
- * - MODIFIED: `next-action` simplified to 3 options (Phase 4)
- *
  * ## Skip Conditions
  * - `item-type-selection`: Skipped when room is 'general'
  *
+ * @see USER_VISIBLE_STEPS for numbered steps
+ * @see POST_WORKFLOW_SCREENS for post-workflow screens
  * @see Plan-094-UI-UX-Workflow-Improvements.md for implementation details
  * @see STEP_TRANSITIONS in useWorkflowState.ts for navigation logic
  * @see PROGRESS_WEIGHTS for progress calculation
- * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
+ * @lastModified 2026-01-12 (REQ-196 Step Count Fix)
  */
 export const WORKFLOW_STEPS = [
-  'room-selection',
-  'item-type-selection',
-  'specific-item-selection',
-  'purpose-selection',        // NEW: Added in Plan-094 Phase 2
-  'content-type-selection',   // Consolidated (content-source-selection removed)
-  'media-capture',            // NEW: Added in REQ-176 for direct media capture
-  'content-creation',         // Keep for backward compatibility
-  'preview-save',
-  'next-action',
-  'session-summary',
+  ...USER_VISIBLE_STEPS,
+  ...POST_WORKFLOW_SCREENS,
 ] as const;
 
 /**
@@ -479,30 +536,27 @@ export const TOUCH_TARGET_MIN_SIZE = 48;
  * Progress weights for each step.
  * Used to calculate progress bar percentage.
  *
- * Updated for Plan-094 workflow changes:
- * - Added weight for `purpose-selection` step (44%)
- * - Recalculated weights to distribute evenly across 9 steps
- * - Weights increase by ~11% per step to reach 100% at session-summary
+ * REQ-196 Update: Weights recalculated for 8-step workflow.
+ * - Progress reaches 100% at preview-save (step 8 of 8)
+ * - Post-workflow screens maintain 100% (no regression)
+ * - Weights distributed evenly: ~12.5% per step
+ * - Rounded to clean numbers for visual consistency
  *
- * Updated for REQ-176 Media Capture:
- * - Added weight for `media-capture` step (60%)
- * - Recalculated weights to distribute across 10 steps
- * - Weights increase by ~10% per step to reach 100% at session-summary
- *
- * @see WORKFLOW_STEPS for step order
- * @lastModified 2026-01-10 (REQ-176 Media Capture Step)
+ * @see USER_VISIBLE_STEPS for the 8 user-visible steps
+ * @see POST_WORKFLOW_SCREENS for post-workflow screens
+ * @lastModified 2026-01-12 (REQ-196 Step Count Fix)
  */
 export const PROGRESS_WEIGHTS: Record<WorkflowStepConst, number> = {
-  'room-selection': 10,
-  'item-type-selection': 20,
-  'specific-item-selection': 30,
-  'purpose-selection': 40,
-  'content-type-selection': 50,
-  'media-capture': 60,            // NEW - REQ-176
-  'content-creation': 65,         // Keep slightly higher for compatibility
-  'preview-save': 75,
-  'next-action': 88,
-  'session-summary': 100,
+  'room-selection': 12,           // Step 1 of 8
+  'item-type-selection': 25,      // Step 2 of 8
+  'specific-item-selection': 37,  // Step 3 of 8
+  'purpose-selection': 50,        // Step 4 of 8
+  'content-type-selection': 62,   // Step 5 of 8
+  'media-capture': 75,            // Step 6 of 8
+  'content-creation': 87,         // Step 7 of 8
+  'preview-save': 100,            // Step 8 of 8 - FINAL
+  'next-action': 100,             // Post-workflow (progress bar hidden or stays at 100%)
+  'session-summary': 100,         // Post-workflow (progress bar hidden or stays at 100%)
 };
 
 // =============================================================================

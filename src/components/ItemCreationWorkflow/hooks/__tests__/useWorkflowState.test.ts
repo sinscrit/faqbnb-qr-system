@@ -127,8 +127,9 @@ describe('getNextStep', () => {
     expect(getNextStep('item-type-selection', state)).toBe('specific-item-selection');
     expect(getNextStep('specific-item-selection', state)).toBe('purpose-selection');
     expect(getNextStep('purpose-selection', state)).toBe('content-type-selection');
-    expect(getNextStep('content-type-selection', state)).toBe('content-creation');
-    expect(getNextStep('content-creation', state)).toBe('preview-save');
+    expect(getNextStep('content-type-selection', state)).toBe('media-capture');  // REQ-176: media-capture step
+    expect(getNextStep('media-capture', state)).toBe('preview-save');            // REQ-176: media-capture to preview-save
+    expect(getNextStep('content-creation', state)).toBe('preview-save');         // Keep for compatibility
     expect(getNextStep('preview-save', state)).toBe('next-action');
   });
 
@@ -148,14 +149,15 @@ describe('getNextStep', () => {
 // =============================================================================
 
 describe('STEP_TRANSITIONS', () => {
-  it('covers all 9 workflow steps (Plan-094 workflow)', () => {
+  it('covers all 10 workflow steps (Plan-094 workflow + REQ-176 media-capture)', () => {
     const steps = Object.keys(STEP_TRANSITIONS);
-    expect(steps).toHaveLength(9);
+    expect(steps).toHaveLength(10);
     expect(steps).toContain('room-selection');
     expect(steps).toContain('item-type-selection');
     expect(steps).toContain('specific-item-selection');
     expect(steps).toContain('purpose-selection');        // Plan-094: added
     expect(steps).toContain('content-type-selection');
+    expect(steps).toContain('media-capture');            // REQ-176: added
     expect(steps).toContain('content-creation');
     expect(steps).toContain('preview-save');
     expect(steps).toContain('next-action');
