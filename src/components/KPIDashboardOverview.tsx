@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { BarChart3, Users, Building2, Eye, TrendingUp, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -15,9 +16,13 @@ interface KPICardProps {
     isPositive: boolean;
   };
   loading?: boolean;
+  /** Optional navigation URL - renders card as Next.js Link */
+  href?: string;
+  /** Optional click handler - renders card as button */
+  onClick?: () => void;
 }
 
-function KPICard({ title, value, subtitle, icon, trend, loading }: KPICardProps) {
+function KPICard({ title, value, subtitle, icon, trend, loading, href, onClick }: KPICardProps) {
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -33,8 +38,12 @@ function KPICard({ title, value, subtitle, icon, trend, loading }: KPICardProps)
     );
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  // Determine if card is interactive
+  const isClickable = !!href || !!onClick;
+
+  // Extract card content for reuse across wrapper types
+  const cardContent = (
+    <>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-gray-600">{title}</h3>
         <div className="text-gray-400">{icon}</div>
@@ -50,6 +59,48 @@ function KPICard({ title, value, subtitle, icon, trend, loading }: KPICardProps)
       {subtitle && (
         <p className="text-xs text-gray-500">{subtitle}</p>
       )}
+    </>
+  );
+
+  // Base card styles
+  const baseStyles = "bg-white rounded-lg shadow-sm border border-gray-200 p-6";
+
+  // Interactive styles for clickable cards (hover, focus, cursor)
+  const interactiveStyles = isClickable
+    ? "hover:shadow-md hover:border-blue-300 cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    : "";
+
+  // Render as Link if href is provided
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={`${baseStyles} ${interactiveStyles} block`}
+        aria-label={`Navigate to ${title}`}
+      >
+        {cardContent}
+      </Link>
+    );
+  }
+
+  // Render as button if onClick is provided
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${baseStyles} ${interactiveStyles} text-left w-full`}
+        aria-label={`View ${title}`}
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  // Default: non-clickable div
+  return (
+    <div className={baseStyles}>
+      {cardContent}
     </div>
   );
 }
@@ -364,6 +415,7 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
           subtitle="Across all accounts"
           icon={<Building2 className="w-6 h-6" />}
           loading={loading}
+          href="/dashboard2/properties"
         />
         <KPICard
           title="Total Items"
@@ -371,6 +423,7 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
           subtitle={`${analyticsData?.overview?.averageItemsPerProperty || 0} avg per property`}
           icon={<BarChart3 className="w-6 h-6" />}
           loading={loading}
+          href="/dashboard2/items"
         />
         <KPICard
           title="Total Views"
@@ -378,6 +431,7 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
           subtitle={`${analyticsData?.timeBasedVisits?.last24Hours || 0} in last 24h`}
           icon={<Eye className="w-6 h-6" />}
           loading={loading}
+          href="/dashboard2/analytics"
         />
         <KPICard
           title="Active Items"
@@ -385,6 +439,7 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
           subtitle="With visits in last 30 days"
           icon={<TrendingUp className="w-6 h-6" />}
           loading={loading}
+          href="/dashboard2/items?filter=active"
         />
       </div>
 
