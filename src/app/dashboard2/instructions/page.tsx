@@ -18,26 +18,10 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
 import { extractRoomFromTags } from '@/lib/room-utils';
+import { InstructionsTable } from '@/components/InstructionsTable';
+import type { InstructionRow } from '@/components/InstructionsTable';
 import { FileText, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-
-// ============================================================================
-// Type Definitions
-// ============================================================================
-
-/**
- * Instruction row with joined item data for table display
- */
-interface InstructionRow {
-  id: string;
-  articleId: string;
-  articleTitle: string;
-  itemName: string;
-  itemId: string;
-  room: string | null;
-  purpose: string;
-  createdAt: string;
-}
 
 // ============================================================================
 // Main Page Component
@@ -158,6 +142,13 @@ export default function InstructionsPage() {
     fetchArticles();
   }, [fetchArticles]);
 
+  // Handle edit article action
+  const handleEditArticle = useCallback((articleId: string) => {
+    console.log('Edit article:', articleId);
+    // TODO: Navigate to article edit page when route is defined
+    // For now, just log the action
+  }, []);
+
   // Authentication check
   if (!user) {
     return (
@@ -248,12 +239,13 @@ export default function InstructionsPage() {
         </div>
       </div>
 
-      {/* Placeholder for table component */}
-      <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-        InstructionsTable component will be added here
-        <div className="mt-4 text-sm">
-          Found {instructionsData.length} instructions
-        </div>
+      {/* Instructions Table */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <InstructionsTable
+          instructions={instructionsData}
+          loading={loading}
+          onEdit={handleEditArticle}
+        />
       </div>
     </div>
   );
