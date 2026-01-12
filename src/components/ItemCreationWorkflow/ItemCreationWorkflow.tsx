@@ -113,6 +113,9 @@ export function ItemCreationWorkflow({
   initialSession,
   config,
   className,
+  editMode,
+  initialArticleId,
+  initialArticleData,
 }: ItemCreationWorkflowProps) {
   // State management hook
   const {
@@ -233,6 +236,28 @@ export function ItemCreationWorkflow({
       previousStepRef.current = state.currentStep;
     }
   }, [state.currentStep, displayStepIndex, displayTotalSteps, isPostWorkflow, announce]);
+
+  // REQ-213: Initialize edit mode state when editMode is enabled
+  // When in edit mode, skip item context steps and start at content-type-selection
+  useEffect(() => {
+    if (editMode && initialArticleData && state.currentStep === 'room-selection') {
+      // Pre-populate currentItem with edit mode data
+      selectRoom(initialArticleData.room);
+      selectItemType(initialArticleData.itemType);
+      selectSpecificItem(initialArticleData.itemName);
+      setItemName(initialArticleData.itemName);
+      setTags(initialArticleData.tags);
+      selectPurpose(initialArticleData.purpose);
+
+      // Pre-populate content pieces
+      initialArticleData.existingContent.forEach(piece => {
+        addContentPiece(piece);
+      });
+
+      // Skip to content-type-selection step (bypasses item context steps per REQ-213)
+      goToStep('content-type-selection');
+    }
+  }, [editMode, initialArticleData]); // Only run when editMode or initialArticleData changes
 
   // Task 5.3: Handle continue with recovered session
   const handleRecoveryContinue = useCallback(() => {
@@ -664,7 +689,7 @@ export function ItemCreationWorkflow({
         currentStepIndex={displayStepIndex}
         totalSteps={displayTotalSteps}
         progressPercent={progressPercent}
-        canGoBack={showPrintPanel ? true : (isPostWorkflow ? false : canGoBack)}
+        canGoBack={showPrintPanel ? true : (isPostWorkflow ? false : (editMode && state.currentStep === 'content-type-selection' ? false : canGoBack))}
         onBack={showPrintPanel ? handleBackFromPrint : prevStep}
         onExit={handleExitClick}
         showStepCounter={!isPostWorkflow}
