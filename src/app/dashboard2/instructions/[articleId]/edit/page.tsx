@@ -14,14 +14,103 @@
  */
 
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
+import type {
+  EditModeData,
+  RoomType,
+  ItemType,
+  PurposeType,
+  ContentPiece,
+  ContentType,
+  ContentData
+} from '@/components/ItemCreationWorkflow/ItemCreationWorkflow.types';
 
-// Type definitions for edit mode data will be imported after Task 3
-// import { EditModeData } from '@/components/ItemCreationWorkflow/ItemCreationWorkflow.types';
+/**
+ * Helper function to map link_type to ContentType
+ * @param linkType The link type from database (youtube, pdf, image, text, video)
+ * @returns ContentType for workflow
+ */
+function mapLinkTypeToContentType(linkType: string): ContentType {
+  switch (linkType.toLowerCase()) {
+    case 'youtube':
+    case 'video':
+      return 'video';
+    case 'pdf':
+      return 'pdf';
+    case 'image':
+    case 'photo':
+      return 'photo';
+    case 'text':
+      return 'text';
+    default:
+      return 'url';
+  }
+}
+
+/**
+ * Helper function to extract RoomType from item tags
+ * Tags use format: #room.roomname (e.g., #room.kitchen)
+ * @param tags Array of tag strings
+ * @returns RoomType or 'other' if not found
+ */
+function extractRoomType(tags: string[]): RoomType {
+  if (!tags || tags.length === 0) {
+    return 'other';
+  }
+
+  // Find the first tag that starts with #room.
+  const roomTag = tags.find((tag) => tag.startsWith('#room.'));
+
+  if (!roomTag) {
+    return 'other';
+  }
+
+  // Extract the room name after the dot
+  const roomName = roomTag.substring('#room.'.length);
+
+  // Map to RoomType
+  const roomMap: Record<string, RoomType> = {
+    'kitchen': 'kitchen',
+    'laundry': 'laundry',
+    'bedroom': 'bedroom',
+    'bathroom': 'bathroom',
+    'living-room': 'living-room',
+    'garage': 'garage',
+    'outdoor': 'outdoor',
+    'general': 'general',
+  };
+
+  return roomMap[roomName] || 'other';
+}
+
+/**
+ * Helper function to extract ItemType from item tags
+ * @param tags Array of tag strings
+ * @returns ItemType (appliance, room-item, or general-info)
+ */
+function extractItemType(tags: string[]): ItemType {
+  if (!tags || tags.length === 0) {
+    return 'appliance';
+  }
+
+  // Check for item type tags
+  if (tags.some(tag => tag.startsWith('#appliance'))) {
+    return 'appliance';
+  }
+  if (tags.some(tag => tag.startsWith('#room-item'))) {
+    return 'room-item';
+  }
+  if (tags.some(tag => tag.startsWith('#general-info'))) {
+    return 'general-info';
+  }
+
+  // Default to appliance
+  return 'appliance';
+}
 
 export default function EditArticlePage() {
   const router = useRouter();
@@ -34,7 +123,129 @@ export default function EditArticlePage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [editData, setEditData] = useState<any | null>(null);
+  const [editData, setEditData] = useState<EditModeData | null>(null);
+
+  /**
+   * Fetch article data and transform it into EditModeData format
+   * @param articleId The UUID of the article to load
+   */
+  const fetchArticleData = useCallback(async (articleId: string) => {
+    if (!user || !articleId) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Prepare headers with account context
+      const headers: Record<string, string> = {};
+      if (currentAccount) {
+        headers['x-current-account'] = currentAccount.id;
+      }
+
+      // Fetch article data
+      const articleResponse = await adminApi.getArticle(articleId, headers);
+
+      if (!articleResponse.success || !articleResponse.data) {
+        throw new Error(articleResponse.error || 'Failed to fetch article');
+      }
+
+      const article = articleResponse.data;
+
+      // Fetch the associated item to get item name, tags, and other details
+      const itemResponse = await adminApi.getItem(article.itemId, headers);
+
+      if (!itemResponse.success || !itemResponse.data) {
+        throw new Error(itemResponse.error || 'Failed to fetch item data');
+      }
+
+      const item = itemResponse.data;
+
+      // Extract room from item tags
+      const room = extractRoomType(item.tags || []);
+
+      // Extract item type from item tags
+      const itemType = extractItemType(item.tags || []);
+
+      // Transform article links into ContentPiece format
+      const existingContent: ContentPiece[] = (article.links || []).map((link, index) => {
+        const contentType = mapLinkTypeToContentType(link.linkType);
+
+        // Create appropriate ContentData based on type
+        let data: ContentData;
+        if (contentType === 'text') {
+          data = {
+            type: 'text',
+            text: link.url // Assuming text content is stored in url field
+          };
+        } else if (contentType === 'url') {
+          data = {
+            type: 'url',
+            url: link.url,
+            title: link.title,
+            thumbnailUrl: link.thumbnailUrl,
+          };
+        } else if (contentType === 'video') {
+          data = {
+            type: 'video',
+            file: new Blob(), // Will be handled differently in edit mode
+            url: link.url,
+            title: link.title,
+            thumbnailUrl: link.thumbnailUrl,
+          } as any; // Type workaround for existing content
+        } else if (contentType === 'photo') {
+          data = {
+            type: 'photo',
+            file: new Blob(), // Will be handled differently in edit mode
+            url: link.url,
+            thumbnailUrl: link.thumbnailUrl,
+          } as any;
+        } else if (contentType === 'pdf') {
+          data = {
+            type: 'pdf',
+            file: new Blob(), // Will be handled differently in edit mode
+            url: link.url,
+            title: link.title,
+          } as any;
+        } else {
+          data = {
+            type: 'url',
+            url: link.url,
+            title: link.title,
+            thumbnailUrl: link.thumbnailUrl,
+          };
+        }
+
+        return {
+          id: link.id,
+          type: contentType,
+          data,
+          order: link.displayOrder,
+        };
+      });
+
+      // Construct EditModeData object
+      const editModeData: EditModeData = {
+        articleId: article.id,
+        itemId: item.id,
+        itemName: item.name,
+        room,
+        itemType,
+        purpose: article.purpose as PurposeType,
+        tags: item.tags || [],
+        existingContent,
+      };
+
+      setEditData(editModeData);
+      console.log('Loaded edit data:', editModeData);
+    } catch (err) {
+      console.error('Error fetching article data:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load article data'));
+    } finally {
+      setLoading(false);
+    }
+  }, [user, currentAccount]);
 
   // Authentication check - redirect to login if not authenticated
   useEffect(() => {
@@ -46,9 +257,10 @@ export default function EditArticlePage() {
 
   // Fetch article data on mount
   useEffect(() => {
-    // Will implement in Task 4
-    // fetchArticleData(articleId);
-  }, [articleId]);
+    if (user && articleId) {
+      fetchArticleData(articleId);
+    }
+  }, [articleId, user, fetchArticleData]);
 
   // Authentication check rendering
   if (!user) {

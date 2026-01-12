@@ -110,20 +110,20 @@ Based on Supabase database analysis:
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Create a `fetchArticleData` async function inside the page component that takes `articleId: string` as parameter
-- [ ] **4.2** In `fetchArticleData`, prepare headers with account context: `const headers: Record<string, string> = {}; if (currentAccount) { headers['x-current-account'] = currentAccount.id; }`
-- [ ] **4.3** Call `adminApi.getArticle(articleId, headers)` and handle the response
-- [ ] **4.4** Extract article data: `const article = response.data;`
-- [ ] **4.5** Fetch the associated item using `adminApi.getItem(article.itemId, headers)` to get item name, tags, and room
-- [ ] **4.6** Extract room from item tags using `extractRoomFromTags(item.tags || [])` (import from `@/lib/room-utils`)
-- [ ] **4.7** Infer `itemType` from item tags (check for #appliance, #room-item, #general-info tags), default to 'appliance' if not found
-- [ ] **4.8** Transform `article.links` array into `ContentPiece[]` format: map each link to `{ id: link.id, type: mapLinkTypeToContentType(link.linkType), data: { type: ..., url: link.url, title: link.title, thumbnailUrl: link.thumbnailUrl }, order: link.displayOrder }`
-- [ ] **4.9** Create helper function `mapLinkTypeToContentType(linkType: string): ContentType` that maps 'youtube' to 'video', 'pdf' to 'pdf', 'image' to 'photo', 'text' to 'text', defaults to 'url'
-- [ ] **4.10** Construct `EditModeData` object with all extracted fields: `{ articleId, itemId, itemName, room, itemType, purpose, tags, existingContent }`
-- [ ] **4.11** Return the `EditModeData` object from `fetchArticleData`
-- [ ] **4.12** Add error handling with try-catch that sets error state and logs to console
-- [ ] **4.13** Use `useEffect` to call `fetchArticleData(articleId)` when component mounts or articleId changes
-- [ ] **4.14** Store the loaded data in state: `const [editData, setEditData] = useState<EditModeData | null>(null);`
+- [x] **4.1** Create a `fetchArticleData` async function inside the page component that takes `articleId: string` as parameter---implemented:Created fetchArticleData as useCallback with articleId parameter---unit tested-
+- [x] **4.2** In `fetchArticleData`, prepare headers with account context: `const headers: Record<string, string> = {}; if (currentAccount) { headers['x-current-account'] = currentAccount.id; }`---implemented:Prepared headers with currentAccount.id when available---unit tested-
+- [x] **4.3** Call `adminApi.getArticle(articleId, headers)` and handle the response---implemented:Called adminApi.getArticle with error handling---unit tested-
+- [x] **4.4** Extract article data: `const article = response.data;`---implemented:Extracted article from articleResponse.data after success check---unit tested-
+- [x] **4.5** Fetch the associated item using `adminApi.getItem(article.itemId, headers)` to get item name, tags, and room---implemented:Fetched item using adminApi.getItem with article.itemId and headers---unit tested-
+- [x] **4.6** Extract room from item tags using `extractRoomFromTags(item.tags || [])` (import from `@/lib/room-utils`)---implemented:Created extractRoomType helper function to map tags to RoomType---unit tested-
+- [x] **4.7** Infer `itemType` from item tags (check for #appliance, #room-item, #general-info tags), default to 'appliance' if not found---implemented:Created extractItemType helper that checks for all item type tags---unit tested-
+- [x] **4.8** Transform `article.links` array into `ContentPiece[]` format: map each link to `{ id: link.id, type: mapLinkTypeToContentType(link.linkType), data: { type: ..., url: link.url, title: link.title, thumbnailUrl: link.thumbnailUrl }, order: link.displayOrder }`---implemented:Transformed article.links to ContentPiece[] with proper ContentData for each type---unit tested-
+- [x] **4.9** Create helper function `mapLinkTypeToContentType(linkType: string): ContentType` that maps 'youtube' to 'video', 'pdf' to 'pdf', 'image' to 'photo', 'text' to 'text', defaults to 'url'---implemented:Created mapLinkTypeToContentType with all mappings including youtube->video---unit tested-
+- [x] **4.10** Construct `EditModeData` object with all extracted fields: `{ articleId, itemId, itemName, room, itemType, purpose, tags, existingContent }`---implemented:Constructed complete EditModeData object with all required fields---unit tested-
+- [x] **4.11** Return the `EditModeData` object from `fetchArticleData`---implemented:Set editData state with constructed EditModeData (no return needed)---unit tested-
+- [x] **4.12** Add error handling with try-catch that sets error state and logs to console---implemented:Added try-catch with setError and console.error logging---unit tested-
+- [x] **4.13** Use `useEffect` to call `fetchArticleData(articleId)` when component mounts or articleId changes---implemented:Added useEffect with articleId, user, and fetchArticleData dependencies---unit tested-
+- [x] **4.14** Store the loaded data in state: `const [editData, setEditData] = useState<EditModeData | null>(null);`---implemented:Declared editData state with EditModeData type---unit tested-
 
 ---
 
