@@ -303,6 +303,36 @@ export const adminApi = {
   },
 
   /**
+   * Get a single article by ID with its associated item data and content links.
+   * Used for editing existing instruction articles.
+   *
+   * @param articleId The UUID of the article to fetch
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
+   * @returns Promise resolving to article response with item data and links
+   * @throws ApiError if articleId is invalid or not a valid UUID format
+   * @see REQ-213 - Edit Instruction Flow
+   * @since 2026-01-12
+   */
+  async getArticle(articleId: string, headers?: Record<string, string>): Promise<ArticleResponse> {
+    // Validate articleId is a non-empty string
+    if (!articleId || typeof articleId !== 'string') {
+      throw new ApiError('Invalid articleId: must be a non-empty string');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(articleId)) {
+      throw new ApiError('Invalid articleId: must be a valid UUID format');
+    }
+
+    return apiRequest<ArticleResponse>(
+      `/admin/articles/${encodeURIComponent(articleId)}`,
+      { headers },
+      true
+    );
+  },
+
+  /**
    * List all properties for the authenticated user
    * @param headers Optional headers to pass with the request (e.g., x-current-account)
    * @returns Promise resolving to properties list response
