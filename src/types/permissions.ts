@@ -107,3 +107,17 @@ export interface PermissionCheck {
   requiredRole?: UserRole | AccountRole;
   context?: PermissionContext;
 }
+
+// Dashboard section types for navigation tracking (REQ-023)
+// Used by RoleBasedNavigation, DashboardLayout, and AuthGuard components
+// Last Modified: 2026-01-12
+export const DashboardSection = {
+  dashboard: 'dashboard',
+  items: 'items',
+  properties: 'properties',
+  analytics: 'analytics',
+  systemAdmin: 'system-admin',
+  instructions: 'instructions', // REQ-195: Instructions page
+} as const;
+
+export type DashboardSection = typeof DashboardSection[keyof typeof DashboardSection];

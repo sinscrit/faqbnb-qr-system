@@ -756,7 +756,8 @@ const clearPersistedState = () => {
 // Debug console.log removed for SSR compatibility
 
 // REQ-023: Dashboard section and navigation types
-export type DashboardSection = 'dashboard' | 'items' | 'properties' | 'analytics' | 'system-admin';
+// REQ-195: Added 'instructions' section
+export type DashboardSection = 'dashboard' | 'items' | 'instructions' | 'properties' | 'analytics' | 'system-admin';
 
 interface NavigationHistory {
   section: DashboardSection;

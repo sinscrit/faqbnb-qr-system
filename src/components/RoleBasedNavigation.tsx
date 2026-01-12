@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Package, Home, BarChart3, Crown } from 'lucide-react';
+import { LayoutDashboard, Package, Home, BarChart3, Crown, FileText } from 'lucide-react';
 import { User, AccountRole } from '../types';
 // REQ-023: Unified Route Architecture - Navigation Integration
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,8 @@ import { DashboardSection, PERMISSIONS, type PermissionKey } from '@/types/permi
 
 export interface NavigationItem {
   name: string;
+  /** Shorter label for mobile viewports. Falls back to name if not specified. */
+  mobileName?: string;
   href: string;
   icon: React.ReactNode;
   description?: string;
@@ -63,6 +65,7 @@ export function RoleBasedNavigation({
     if (dashboardPermissions.canAccessDashboard) {
       items.push({
         name: compactMode ? 'Home' : 'Dashboard',
+        mobileName: 'D/B',
         href: '/dashboard',
         icon: <LayoutDashboard className="h-5 w-5" />,
         description: 'Overview and key metrics',
@@ -75,10 +78,22 @@ export function RoleBasedNavigation({
     if (dashboardPermissions.canAccessItems) {
       items.push({
         name: 'Items',
+        mobileName: 'Items',
         href: '/dashboard/items',
         icon: <Package className="h-5 w-5" />,
         description: 'Manage QR code items',
         dashboardSection: DashboardSection.items,
+        requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
+      });
+
+      // Instructions - uses same permissions as items (REQ-195)
+      items.push({
+        name: 'Instructions',
+        mobileName: 'Instr.',
+        href: '/dashboard/instructions',
+        icon: <FileText className="h-5 w-5" />,
+        description: 'View and manage instructions',
+        dashboardSection: DashboardSection.instructions,
         requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
       });
     }
@@ -87,6 +102,7 @@ export function RoleBasedNavigation({
     if (dashboardPermissions.canAccessProperties) {
       items.push({
         name: 'Properties',
+        mobileName: 'Prop.',
         href: '/dashboard/properties',
         icon: <Home className="h-5 w-5" />,
         description: 'Property management',
@@ -99,6 +115,7 @@ export function RoleBasedNavigation({
     if (isAdmin && dashboardPermissions.canAccessAnalytics) {
       items.push({
         name: 'Analytics',
+        mobileName: 'Analytics',
         href: '/dashboard/analytics',
         icon: <BarChart3 className="h-5 w-5" />,
         description: 'View analytics and insights',
@@ -111,6 +128,7 @@ export function RoleBasedNavigation({
     if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
       items.push({
         name: compactMode ? 'Admin' : 'System Admin',
+        mobileName: 'Admin',
         href: '/admin/system',
         icon: <Crown className="h-5 w-5" />,
         description: 'System administration',
@@ -147,6 +165,8 @@ export function RoleBasedNavigation({
 
     if (pathname.startsWith('/dashboard/items')) {
       currentSection = DashboardSection.items;
+    } else if (pathname.startsWith('/dashboard/instructions')) {
+      currentSection = DashboardSection.instructions; // REQ-195
     } else if (pathname.startsWith('/dashboard/properties')) {
       currentSection = DashboardSection.properties;
     } else if (pathname.startsWith('/dashboard/analytics')) {
@@ -262,7 +282,7 @@ export function RoleBasedNavigation({
                     <span className="mr-3">{item.icon}</span>
                     <div className="flex-1">
                       <div className="flex items-center">
-                        <span>{item.name}</span>
+                        <span>{item.mobileName || item.name}</span>
                         {item.systemAdminOnly && (
                           <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
                             Admin
@@ -308,6 +328,7 @@ export function getNavigationItemsForUser(
   if (dashboardPermissions.canAccessDashboard) {
     items.push({
       name: compactMode ? 'Home' : 'Dashboard',
+      mobileName: 'D/B',
       href: '/dashboard',
       icon: <LayoutDashboard className="h-5 w-5" />,
       description: 'Overview and key metrics',
@@ -320,9 +341,21 @@ export function getNavigationItemsForUser(
   if (dashboardPermissions.canAccessItems) {
     items.push({
       name: 'Items',
+      mobileName: 'Items',
       href: '/dashboard/items',
       icon: <Package className="h-5 w-5" />,
       description: 'Manage QR code items',
+      dashboardSection: DashboardSection.items,
+      requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
+    });
+
+    // Instructions - uses same permissions as items
+    items.push({
+      name: 'Instructions',
+      mobileName: 'Instr.',
+      href: '/dashboard/instructions',
+      icon: <FileText className="h-5 w-5" />,
+      description: 'View and manage instructions',
       dashboardSection: DashboardSection.items,
       requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
     });
@@ -332,6 +365,7 @@ export function getNavigationItemsForUser(
   if (dashboardPermissions.canAccessProperties) {
     items.push({
       name: 'Properties',
+      mobileName: 'Prop.',
       href: '/dashboard/properties',
       icon: <Home className="h-5 w-5" />,
       description: 'Property management',
@@ -344,6 +378,7 @@ export function getNavigationItemsForUser(
   if (isAdmin && dashboardPermissions.canAccessAnalytics) {
     items.push({
       name: 'Analytics',
+      mobileName: 'Analytics',
       href: '/dashboard/analytics',
       icon: <BarChart3 className="h-5 w-5" />,
       description: 'View analytics and insights',
@@ -356,6 +391,7 @@ export function getNavigationItemsForUser(
   if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
     items.push({
       name: compactMode ? 'Admin' : 'System Admin',
+      mobileName: 'Admin',
       href: '/admin/system',
       icon: <Crown className="h-5 w-5" />,
       description: 'System administration',
