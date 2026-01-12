@@ -1,4 +1,4 @@
-import { ItemResponse, ItemsListResponse, CreateItemRequest, UpdateItemRequest, ArticlesListResponse } from '@/types';
+import { ItemResponse, ItemsListResponse, CreateItemRequest, UpdateItemRequest, ArticlesListResponse, UpdateArticleRequest, ArticleResponse } from '@/types';
 import { AnalyticsResponse, SystemAnalyticsResponse } from '@/types/analytics';
 import { ReactionResponse, ReactionSubmissionRequest, ReactionType } from '@/types/reactions';
 import { getSession, refreshSession } from '@/lib/auth';
@@ -328,6 +328,41 @@ export const adminApi = {
     return apiRequest<ArticleResponse>(
       `/admin/articles/${encodeURIComponent(articleId)}`,
       { headers },
+      true
+    );
+  },
+
+  /**
+   * Update an existing article and optionally its associated links.
+   * Used for saving changes in the edit instruction flow.
+   *
+   * @param articleId The UUID of the article to update
+   * @param data The updated article data including optional links array
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
+   * @returns Promise resolving to updated article response with current links
+   * @throws ApiError if articleId is invalid or not a valid UUID format
+   * @see REQ-213 - Edit Instruction Flow
+   * @since 2026-01-12
+   */
+  async updateArticle(articleId: string, data: UpdateArticleRequest, headers?: Record<string, string>): Promise<ArticleResponse> {
+    // Validate articleId is a non-empty string
+    if (!articleId || typeof articleId !== 'string') {
+      throw new ApiError('Invalid articleId: must be a non-empty string');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+    if (!uuidRegex.test(articleId)) {
+      throw new ApiError('Invalid articleId: must be a valid UUID format');
+    }
+
+    return apiRequest<ArticleResponse>(
+      `/admin/articles/${encodeURIComponent(articleId)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers,
+      },
       true
     );
   },

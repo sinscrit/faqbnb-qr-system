@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
-import { UpdateArticleRequest, ArticleResponse } from '@/types';
+import { UpdateArticleRequest, ArticleResponse, PurposeType, LinkType } from '@/types';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -163,7 +163,7 @@ export async function GET(
     // Get associated links
     const { data: articleLinks } = await supabase
       .from('item_links')
-      .select('id, title, link_type, url, thumbnail_url, display_order')
+      .select('id, title, link_type, url, thumbnail_url, display_order, created_at')
       .eq('article_id', article.id)
       .order('display_order', { ascending: true });
 
@@ -172,19 +172,22 @@ export async function GET(
       data: {
         id: article.id,
         itemId: article.item_id,
-        purpose: article.purpose,
-        title: article.title,
-        description: article.description,
+        purpose: article.purpose as PurposeType,
+        title: article.title || '',
+        description: article.description || null,
         displayOrder: article.display_order || 0,
-        createdAt: article.created_at,
-        updatedAt: article.updated_at,
+        createdAt: article.created_at || '',
+        updatedAt: article.updated_at || '',
         links: (articleLinks || []).map(link => ({
           id: link.id,
+          item_id: article.item_id,
+          article_id: article.id,
           title: link.title,
-          linkType: link.link_type,
+          link_type: link.link_type as LinkType,
           url: link.url,
-          thumbnailUrl: link.thumbnail_url,
-          displayOrder: link.display_order || 0
+          thumbnail_url: link.thumbnail_url,
+          display_order: link.display_order || 0,
+          created_at: link.created_at || new Date().toISOString()
         }))
       },
       accountContext: { accountId, accountRole }
@@ -293,10 +296,61 @@ export async function PUT(
       );
     }
 
+    // Handle links updates if provided
+    if (body.links !== undefined) {
+      // Get existing links
+      const { data: existingLinks } = await supabase
+        .from('item_links')
+        .select('id')
+        .eq('article_id', articleId);
+
+      const existingLinkIds = new Set((existingLinks || []).map(l => l.id));
+      const updatedLinkIds = new Set(body.links.filter(l => l.id).map(l => l.id!));
+
+      // Delete removed links
+      const linksToDelete = Array.from(existingLinkIds).filter(id => !updatedLinkIds.has(id));
+      if (linksToDelete.length > 0) {
+        await supabase
+          .from('item_links')
+          .delete()
+          .in('id', linksToDelete);
+      }
+
+      // Process each link in the request
+      for (const link of body.links) {
+        if (link.id && existingLinkIds.has(link.id)) {
+          // Update existing link
+          await supabase
+            .from('item_links')
+            .update({
+              title: link.title,
+              link_type: link.linkType,
+              url: link.url,
+              thumbnail_url: link.thumbnailUrl,
+              display_order: link.displayOrder,
+            })
+            .eq('id', link.id);
+        } else {
+          // Insert new link
+          await supabase
+            .from('item_links')
+            .insert({
+              item_id: article.item_id,
+              article_id: articleId,
+              title: link.title,
+              link_type: link.linkType,
+              url: link.url,
+              thumbnail_url: link.thumbnailUrl,
+              display_order: link.displayOrder,
+            });
+        }
+      }
+    }
+
     // Get associated links for response
     const { data: articleLinks } = await supabase
       .from('item_links')
-      .select('id, title, link_type, url, thumbnail_url, display_order')
+      .select('id, title, link_type, url, thumbnail_url, display_order, created_at')
       .eq('article_id', updatedArticle.id)
       .order('display_order', { ascending: true });
 
@@ -307,19 +361,22 @@ export async function PUT(
       data: {
         id: updatedArticle.id,
         itemId: updatedArticle.item_id,
-        purpose: updatedArticle.purpose,
-        title: updatedArticle.title,
-        description: updatedArticle.description,
+        purpose: updatedArticle.purpose as PurposeType,
+        title: updatedArticle.title || '',
+        description: updatedArticle.description || null,
         displayOrder: updatedArticle.display_order || 0,
-        createdAt: updatedArticle.created_at,
-        updatedAt: updatedArticle.updated_at,
+        createdAt: updatedArticle.created_at || '',
+        updatedAt: updatedArticle.updated_at || '',
         links: (articleLinks || []).map(link => ({
           id: link.id,
+          item_id: updatedArticle.item_id,
+          article_id: updatedArticle.id,
           title: link.title,
-          linkType: link.link_type,
+          link_type: link.link_type as LinkType,
           url: link.url,
-          thumbnailUrl: link.thumbnail_url,
-          displayOrder: link.display_order || 0
+          thumbnail_url: link.thumbnail_url,
+          display_order: link.display_order || 0,
+          created_at: link.created_at || new Date().toISOString()
         }))
       },
       accountContext: { accountId, accountRole }
