@@ -9287,3 +9287,85 @@ Improves user experience by matching the editing interface to the actual editing
 - [ ] No back arrow navigation appears on edit page
 - [ ] No multi-step workflow navigation appears on edit page
 
+
+---
+
+## REQ-215: Simplified Item Edit Page with Instructions List
+
+**Date**: 2026-01-13 (Time captured at document modification)
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The Item Edit page should focus exclusively on item metadata (name, room, type, description, tags) and display a navigable list of associated instructions, removing redundant Media & Links and Property sections.
+
+### Current Behavior
+The Item Edit page displays multiple sections including:
+- Item metadata fields (name, room, type, description, tags)
+- Media & Links section showing content that belongs to instructions
+- Property information that is already implied by the item's association
+All content appears on a single page with no clear separation between item attributes and instruction content.
+
+### Expected Behavior
+When users access the Item Edit page, they see:
+- A clean form with only item metadata fields (name, room selection, type selection, description, tags)
+- An Instructions section at the bottom listing all instructions associated with this item
+- Each instruction entry displays its title, purpose, and an edit action
+- Clicking an instruction navigates to the dedicated Instruction Edit page
+- An empty state with option to create new instruction when no instructions exist
+- No Media & Links section
+- No Property display section
+
+### User Impact
+Property hosts editing items will experience a cleaner, less cluttered interface focused on the item's core attributes. They can easily see all instructions for an item and navigate directly to edit specific instructions. This reduces cognitive load and makes the relationship between items and their instructions more explicit.
+
+### Business Value
+Simplifies the item editing experience by removing redundant information and clearly separating item attributes from instruction content. This improves usability and aligns with the dedicated instruction editing flow established in REQ-214.
+
+### Acceptance Criteria
+- [ ] Item Edit page displays only item metadata fields: name, room selection, type selection, description, and tags
+- [ ] Media & Links section is removed from Item Edit page
+- [ ] Property section is removed from Item Edit page
+- [ ] Instructions section appears at bottom of Item Edit page
+- [ ] Each instruction in the list displays title, purpose, and edit action
+- [ ] Clicking an instruction navigates to the Instruction Edit page at the correct route
+- [ ] Empty state appears when item has no instructions, with option to create new instruction
+- [ ] Navigation flow works correctly: Item Edit → Instruction Edit → back to Item Edit
+- [ ] All existing item metadata can still be edited and saved successfully
+
+---
+
+## REQ-216: Items List Table Display and Interaction Enhancements
+
+**Date**: 2026-01-13 00:22
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Property managers need an improved Items List table that shows instruction counts, supports column sorting, and provides filtering capabilities to efficiently manage and locate items.
+
+### Current Behavior
+The Items List table displays a "Type" column whose purpose is unclear and not useful to users. The table lacks sorting functionality, making it difficult to organize items. There is no filtering mechanism to narrow down the list based on specific criteria. Users cannot quickly identify which items have instructions or how many instructions exist per item.
+
+### Expected Behavior
+The Items List table displays an "Instructions" column (abbreviated as "Instr." on mobile devices) showing the count of instruction articles associated with each item. Users can click any column header to sort the list in ascending or descending order, with a visual indicator showing the current sort column and direction. Filter controls allow users to narrow the list by room, search by name, or apply other relevant criteria through intuitive interfaces such as dropdowns and search inputs.
+
+### User Impact
+Property managers can quickly assess which items require attention based on instruction availability. They can efficiently locate specific items through search and filtering rather than scrolling through long lists. Sorting capabilities enable organizing items by any attribute, improving workflow efficiency when managing multiple properties with numerous items.
+
+### Business Value
+Reducing the time required to locate and manage items increases operational efficiency for property managers. Better visibility into instruction coverage helps identify gaps in documentation and prioritize content creation efforts.
+
+### Acceptance Criteria
+- [ ] The "Type" column is removed from the Items List table
+- [ ] An "Instructions" column appears showing the numeric count of instruction articles for each item
+- [ ] The "Instructions" column label displays as "Instructions" on desktop and "Instr." on mobile devices
+- [ ] Clicking any column header sorts the list by that column in ascending order
+- [ ] Clicking the same column header again toggles between ascending and descending sort
+- [ ] A visual indicator (arrow or icon) shows which column is currently sorted and in which direction
+- [ ] Filter controls are available and accessible above or within the table
+- [ ] Users can filter items by room selection through a dropdown or similar control
+- [ ] Users can filter items by name through a search input field
+- [ ] Applied filters visibly affect the displayed list of items
+- [ ] The instruction count data is returned by the system for each item displayed
+

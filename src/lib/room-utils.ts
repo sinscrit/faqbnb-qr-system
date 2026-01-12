@@ -48,3 +48,27 @@ export function extractRoomFromTags(tags: string[]): string | null {
 
   return capitalizedRoom;
 }
+
+/**
+ * Sets or updates room tag in tags array
+ * @param tags Array of tag strings
+ * @param roomType Room type value (e.g., 'kitchen', 'living-room') or null to remove
+ * @returns New array with room tag updated (does not mutate original)
+ *
+ * @example
+ * setRoomInTags(['#room.kitchen', 'appliance'], 'bathroom') // Returns: ['appliance', '#room.bathroom']
+ * setRoomInTags(['#room.kitchen', 'appliance'], null) // Returns: ['appliance']
+ * setRoomInTags(['appliance'], 'kitchen') // Returns: ['appliance', '#room.kitchen']
+ */
+export function setRoomInTags(tags: string[], roomType: string | null): string[] {
+  // Remove any existing room tags
+  const tagsWithoutRoom = tags.filter((tag) => !tag.startsWith('#room.'));
+
+  // If roomType is provided, add the new room tag
+  if (roomType && roomType.trim() !== '') {
+    return [...tagsWithoutRoom, `#room.${roomType}`];
+  }
+
+  // Otherwise, return tags without room tag
+  return tagsWithoutRoom;
+}
