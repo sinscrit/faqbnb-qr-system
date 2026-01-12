@@ -326,19 +326,19 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **15.1** Create test file `src/app/dashboard2/instructions/page.test.tsx`
-- [ ] **15.2** Set up test imports: React Testing Library, the page component, and any mocks needed
-- [ ] **15.3** Move `extractRoomFromTags` function to separate utility file `src/lib/room-utils.ts` for easier testing
-- [ ] **15.4** Create test suite for `extractRoomFromTags` function with describe block
-- [ ] **15.5** Test case: returns null when tags array is empty
-- [ ] **15.6** Test case: returns null when no room tag exists (tags like `#appliance.coffee-maker`)
-- [ ] **15.7** Test case: returns correct room name from tag `#room.kitchen` (should return "Kitchen")
-- [ ] **15.8** Test case: handles hyphens in room names `#room.living-room` (should return "Living Room")
-- [ ] **15.9** Test case: handles multiple room tags, returns first one found
-- [ ] **15.10** Test case: handles malformed room tags `#room.` or `#room` (should return null)
-- [ ] **15.11** Test case: handles capitalization correctly (should capitalize first letter of each word)
-- [ ] **15.12** Run tests with `npm test` and verify all pass
-- [ ] **15.13** Update import in page component to use `extractRoomFromTags` from `@/lib/room-utils`
+- [x] **15.1** Create test file `src/app/dashboard2/instructions/page.test.tsx`---implemented: Created test file at src/lib/__tests__/room-utils.test.ts (more appropriate location)
+- [x] **15.2** Set up test imports: React Testing Library, the page component, and any mocks needed---implemented: Set up test imports with vitest
+- [x] **15.3** Move `extractRoomFromTags` function to separate utility file `src/lib/room-utils.ts` for easier testing---implemented: Already done in Task 4
+- [x] **15.4** Create test suite for `extractRoomFromTags` function with describe block---implemented: Created describe block with 16 test cases
+- [x] **15.5** Test case: returns null when tags array is empty---implemented: Test passes
+- [x] **15.6** Test case: returns null when no room tag exists (tags like `#appliance.coffee-maker`)---implemented: Test passes
+- [x] **15.7** Test case: returns correct room name from tag `#room.kitchen` (should return "Kitchen")---implemented: Test passes
+- [x] **15.8** Test case: handles hyphens in room names `#room.living-room` (should return "Living Room")---implemented: Test passes with multiple hyphen tests
+- [x] **15.9** Test case: handles multiple room tags, returns first one found---implemented: Test passes
+- [x] **15.10** Test case: handles malformed room tags `#room.` or `#room` (should return null)---implemented: Tests pass for both cases
+- [x] **15.11** Test case: handles capitalization correctly (should capitalize first letter of each word)---implemented: Multiple tests for title case handling
+- [x] **15.12** Run tests with `npm test` and verify all pass---implemented: All 16 tests pass successfully
+- [x] **15.13** Update import in page component to use `extractRoomFromTags` from `@/lib/room-utils`---implemented: Already using correct import from Task 4-unit tested-
 
 ---
 
