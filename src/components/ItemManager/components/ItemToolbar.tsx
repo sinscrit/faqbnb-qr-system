@@ -97,39 +97,8 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
 
 // =============================================================================
 // ResultCount Sub-component (Task 2.2.4)
+// REMOVED: REQ-218 Task 1 - Removed to reduce toolbar clutter
 // =============================================================================
-
-interface ResultCountProps {
-  count: number;
-  total: number;
-  isFiltered: boolean;
-  className?: string;
-}
-
-/**
- * Displays the current item count with different formats based on filter state.
- */
-function ResultCount({ count, total, isFiltered, className }: ResultCountProps) {
-  const itemWord = total === 1 ? 'item' : 'items';
-
-  let displayText: string;
-  if (!isFiltered) {
-    displayText = `${total} ${itemWord}`;
-  } else if (count === 0) {
-    displayText = `0 of ${total} ${itemWord} (no matches)`;
-  } else {
-    displayText = `${count} of ${total} ${itemWord}`;
-  }
-
-  return (
-    <span
-      aria-live="polite"
-      className={cn('text-sm text-gray-600', className)}
-    >
-      {displayText}
-    </span>
-  );
-}
 
 // =============================================================================
 // ClearFiltersButton Sub-component (Task 2.2.5)
@@ -369,31 +338,8 @@ function RoomFilterDropdown({
 
 // =============================================================================
 // FiltersPlaceholder Sub-component (Task 2.2.8)
+// REMOVED: REQ-218 Task 1 - Removed to reduce toolbar clutter
 // =============================================================================
-
-interface FiltersPlaceholderProps {
-  filters: FilterState;
-  onFiltersChange: (filters: Partial<FilterState>) => void;
-  filterOptions?: { contentTypes: string[]; tags: string[]; locations: string[]; rooms: string[] };
-}
-
-/**
- * Temporary filter status placeholder.
- * Will be replaced by full FilterPanel component in Task 2.4.
- */
-function FiltersPlaceholder({ filters }: FiltersPlaceholderProps) {
-  // Check if any filters are active
-  const hasFilters =
-    (filters.contentTypes && filters.contentTypes.length > 0) ||
-    (filters.tags && filters.tags.length > 0) ||
-    (filters.locations && filters.locations.length > 0);
-
-  return (
-    <div className="text-sm text-gray-500">
-      {hasFilters ? 'Filters active (full UI in Task 2.4)' : 'No filters applied'}
-    </div>
-  );
-}
 
 // =============================================================================
 // Main ItemToolbar Component
@@ -518,36 +464,22 @@ export function ItemToolbar({
                   onRoomsChange={(rooms) => onFiltersChange({ rooms })}
                 />
               )}
-              <FiltersPlaceholder
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-                filterOptions={filterOptions}
-              />
             </>
           )}
         </div>
       )}
 
-      {/* Row 3: Selection Indicator + Result Count + Clear Filters */}
+      {/* Row 3: Selection Indicator + Clear Filters (REQ-218) */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          {/* Selection Indicator (REQ-069) */}
-          {selectedCount !== undefined && onClearSelection && (
-            <SelectionIndicator
-              selectedCount={selectedCount}
-              onClearSelection={onClearSelection}
-              onSelectAll={onSelectAll}
-              totalCount={resultCount}
-            />
-          )}
-
-          <ResultCount
-            count={resultCount}
-            total={totalCount}
-            isFiltered={isFiltered}
-            className={classNames.resultCount}
+        {/* Selection Indicator (REQ-069) */}
+        {selectedCount !== undefined && selectedCount > 0 && onClearSelection && (
+          <SelectionIndicator
+            selectedCount={selectedCount}
+            onClearSelection={onClearSelection}
+            onSelectAll={onSelectAll}
+            totalCount={resultCount}
           />
-        </div>
+        )}
 
         {isFiltered && (
           <ClearFiltersButton

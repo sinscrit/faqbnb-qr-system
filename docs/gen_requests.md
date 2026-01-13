@@ -9406,3 +9406,50 @@ Improved visual hierarchy and space utilization in the UI leads to better user e
 - [ ] Mobile viewports display the updated terminology without overflow or truncation issues
 - [ ] All user-facing text reflects the change while internal code variables may remain unchanged
 
+
+---
+
+## REQ-218: Items List UI Improvements - Remove Clutter, Fix Search Clear, Add Column Toggle
+
+**Date**: 2026-01-13 10:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Improve the Items List interface by removing redundant status displays, fixing the search clear button, and adding user-controlled table column customization.
+
+### Current Behavior
+- The interface displays "No filters applied" and "X of Y items" text below the toolbar, cluttering the view
+- When users type in the search field and click the X button to clear, the search text reappears instead of staying cleared
+- The Property column is always visible with no option to hide it
+- Users cannot customize which columns they see in the table
+
+### Expected Behavior
+- The filter status text and item count display are removed from below the toolbar
+- Clicking the X button in the search field immediately clears the text and resets the search results without the text reappearing
+- A gear icon appears on the right side of the table header row (after the CREATED column)
+- Clicking the gear icon reveals a small popup or dropdown menu
+- The menu includes a toggle option to show or hide the Property column
+- The Property column is hidden by default when users first visit the page
+- The user's column visibility preference persists throughout their browser session
+
+### User Impact
+Affects all users viewing the Items List in the alternative dashboard interface. Users will experience a cleaner interface, more reliable search clearing, and control over which columns they see.
+
+### Business Value
+Reduces visual clutter and improves usability by giving users control over their view. Fixing the search clear bug eliminates user frustration and improves the perceived quality of the interface.
+
+### Acceptance Criteria
+- [ ] The "No filters applied" text no longer appears below the search and filter controls
+- [ ] The "X of Y items" count display no longer appears below the search and filter controls
+- [ ] Clicking the X button in the search input completely clears the search text
+- [ ] After clicking the X button, the search text does not reappear
+- [ ] Clearing the search resets the displayed items to show all results matching any other active filters
+- [ ] A gear or settings icon appears in the table header row to the right of the CREATED column
+- [ ] Clicking the gear icon opens a popup or dropdown menu for table customization
+- [ ] The customization menu includes a toggle option labeled "Show Property Column" or similar
+- [ ] The Property column is hidden by default when users first load the page
+- [ ] Toggling the Property column visibility immediately shows or hides that column in the table
+- [ ] The user's Property column visibility preference persists across page refreshes within the same browser session
+- [ ] These changes apply only to the Items List in the alternative dashboard interface, not the original dashboard
+
