@@ -537,31 +537,31 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** In `ItemManager.tsx`, import and use the `useColumnVisibility` hook (after line 17):
+- [x] **6.1** In `ItemManager.tsx`, import and use the `useColumnVisibility` hook (after line 17):
   ```typescript
   import { useColumnVisibility } from './hooks/useColumnVisibility';
-  ```
-- [ ] **6.2** In `ItemManager.tsx`, call the hook in the component (after line 142, near other hooks):
+  ```---implemented:Added import at line 19
+- [x] **6.2** In `ItemManager.tsx`, call the hook in the component (after line 142, near other hooks):
   ```typescript
   const {
     columnVisibility,
     toggleColumn,
     isColumnVisible,
   } = useColumnVisibility();
-  ```
-- [ ] **6.3** Update `ItemListProps` in `ItemManager.types.ts` to include column visibility props (around line 632):
+  ```---implemented:Added hook call at line 149
+- [x] **6.3** Update `ItemListProps` in `ItemManager.types.ts` to include column visibility props (around line 632):
   ```typescript
   /** Column visibility state */
   columnVisibility?: ColumnVisibilityState;
   /** Callback to toggle column visibility */
   onToggleColumn?: (column: keyof ColumnVisibilityState) => void;
-  ```
-- [ ] **6.4** Update `ItemRowProps` in `ItemManager.types.ts` to include visibility flag (around line 547):
+  ```---implemented:Added props at line 684
+- [x] **6.4** Update `ItemRowProps` in `ItemManager.types.ts` to include visibility flag (around line 547):
   ```typescript
   /** Whether the Property column is visible */
   showPropertyColumn?: boolean;
-  ```
-- [ ] **6.5** In `ItemManager.tsx`, pass column visibility to `ItemList` (around line 616):
+  ```---implemented:Added prop at line 611
+- [x] **6.5** In `ItemManager.tsx`, pass column visibility to `ItemList` (around line 616):
   ```typescript
   <ItemList
     // ... existing props
@@ -569,13 +569,13 @@
     columnVisibility={columnVisibility}
     onToggleColumn={toggleColumn}
   />
-  ```
-- [ ] **6.6** In `ItemList.tsx`, import the `ColumnSettingsPopup` and add column visibility to props:
+  ```---implemented:Added props at line 650-651
+- [x] **6.6** In `ItemList.tsx`, import the `ColumnSettingsPopup` and add column visibility to props:
   ```typescript
   import { ColumnSettingsPopup } from './dialogs';
   import type { ItemListProps, ItemRecordExtended, SortOption, ColumnVisibilityState } from '../ItemManager.types';
-  ```
-- [ ] **6.7** In `ItemList.tsx`, destructure the new props (line 75):
+  ```---implemented:Added imports at line 15-17
+- [x] **6.7** In `ItemList.tsx`, destructure the new props (line 75):
   ```typescript
   export function ItemList({
     // ... existing props
@@ -583,14 +583,14 @@
     columnVisibility,
     onToggleColumn,
   }: ItemListProps) {
-  ```
-- [ ] **6.8** In `ItemList.tsx`, wrap the Property column header with conditional rendering (around line 156):
+  ```---implemented:Added props at line 94-95
+- [x] **6.8** In `ItemList.tsx`, wrap the Property column header with conditional rendering (around line 156):
   ```typescript
   {columnVisibility?.property && (
     <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
   )}
-  ```
-- [ ] **6.9** In `ItemList.tsx`, add the gear icon to the header row, before the Actions column (around line 169):
+  ```---implemented:Added conditional at line 167-169
+- [x] **6.9** In `ItemList.tsx`, add the gear icon to the header row, before the Actions column (around line 169):
   ```typescript
   {/* Column Settings - positioned after Created column */}
   {onToggleColumn && columnVisibility && (
@@ -601,8 +601,8 @@
       />
     </div>
   )}
-  ```
-- [ ] **6.10** In `ItemList.tsx`, pass `showPropertyColumn` to each `ItemRow` (around line 176):
+  ```---implemented:Added gear icon at line 183-190
+- [x] **6.10** In `ItemList.tsx`, pass `showPropertyColumn` to each `ItemRow` (around line 176):
   ```typescript
   <ItemRow
     key={item.id}
@@ -610,16 +610,16 @@
     propertyName={getPropertyName((item as ItemRecordExtended).propertyId)}
     showPropertyColumn={columnVisibility?.property}
   />
-  ```
-- [ ] **6.11** In `ItemRow.tsx`, add `showPropertyColumn` to destructured props (line 84):
+  ```---implemented:Added prop at line 215
+- [x] **6.11** In `ItemRow.tsx`, add `showPropertyColumn` to destructured props (line 84):
   ```typescript
   export function ItemRow({
     // ... existing props
     propertyName,
     showPropertyColumn,
   }: ItemRowProps) {
-  ```
-- [ ] **6.12** In `ItemRow.tsx`, wrap the Property column data cell with conditional rendering:
+  ```---implemented:Added prop at line 103
+- [x] **6.12** In `ItemRow.tsx`, wrap the Property column data cell with conditional rendering:
   ```typescript
   {/* Property Column (REQ-218) - visible on lg+ screens when enabled */}
   {showPropertyColumn && (
@@ -627,7 +627,7 @@
       {propertyName || '-'}
     </div>
   )}
-  ```
+  ```---implemented:Added conditional at line 506-510
 - [ ] **6.13** Update the aria-label in `ItemRow.tsx` to conditionally include property:
   ```typescript
   const ariaLabel = `${item.title}. ${showPropertyColumn && propertyName ? `Property: ${propertyName}.` : ''} ...`;

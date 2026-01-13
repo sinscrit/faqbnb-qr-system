@@ -12,8 +12,9 @@
 
 import { cn } from '@/lib/utils';
 import { ItemRow } from './ItemRow';
-import type { ItemListProps, ItemRecordExtended, SortOption } from '../ItemManager.types';
+import type { ItemListProps, ItemRecordExtended, SortOption, ColumnVisibilityState } from '../ItemManager.types';
 import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { ColumnSettingsPopup } from './dialogs';
 
 interface SortableColumnHeaderProps {
   label: string;
@@ -90,6 +91,8 @@ export function ItemList({
   currentSort,
   onSortChange,
   properties,
+  columnVisibility,
+  onToggleColumn,
 }: ItemListProps) {
   // Helper function to look up property name from ID (REQ-218)
   const getPropertyName = (propertyId?: string): string | undefined => {
@@ -161,7 +164,9 @@ export function ItemList({
             </div>
           )}
           <div role="columnheader" className="hidden lg:block w-40 flex-shrink-0">Tags</div>
-          <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
+          {columnVisibility?.property && (
+            <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
+          )}
           {onSortChange ? (
             <SortableColumnHeader
               label="Created"
@@ -173,6 +178,15 @@ export function ItemList({
             />
           ) : (
             <div role="columnheader" className="w-28 flex-shrink-0">Created</div>
+          )}
+          {/* Column Settings - positioned after Created column (REQ-218) */}
+          {onToggleColumn && columnVisibility && (
+            <div role="columnheader" className="w-8 flex-shrink-0 hidden md:flex items-center justify-center">
+              <ColumnSettingsPopup
+                columnVisibility={columnVisibility}
+                onToggleColumn={onToggleColumn}
+              />
+            </div>
           )}
           <div role="columnheader" className="w-10 flex-shrink-0 sticky right-0 bg-gray-50" aria-label="Actions" />
         </div>
@@ -198,6 +212,7 @@ export function ItemList({
             existingTags={existingTags}
             articlesCount={(item as ItemRecordExtended).articlesCount}
             propertyName={getPropertyName((item as ItemRecordExtended).propertyId)}
+            showPropertyColumn={columnVisibility?.property}
           />
         ))}
       </div>

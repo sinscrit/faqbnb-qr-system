@@ -604,6 +604,11 @@ export interface ItemRowProps {
    * @lastModified 2026-01-13 (REQ-218)
    */
   propertyName?: string;
+  /**
+   * Whether the Property column is visible.
+   * @lastModified 2026-01-13 (REQ-218)
+   */
+  showPropertyColumn?: boolean;
 }
 
 // =============================================================================
@@ -680,6 +685,10 @@ export interface ItemListProps {
   onSortChange?: (sort: SortOption) => void;
   /** Properties array for property name lookup (REQ-218) */
   properties?: Property[];
+  /** Column visibility state (REQ-218) */
+  columnVisibility?: ColumnVisibilityState;
+  /** Callback to toggle column visibility (REQ-218) */
+  onToggleColumn?: (column: keyof ColumnVisibilityState) => void;
 }
 
 /**

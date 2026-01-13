@@ -16,6 +16,7 @@ import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
 import { useItemSearch } from './hooks/useItemSearch';
+import { useColumnVisibility } from './hooks/useColumnVisibility';
 import { useAnnounce } from './utils/a11yUtils';
 import { ItemGrid } from './components/ItemGrid';
 import { ItemList } from './components/ItemList';
@@ -140,6 +141,16 @@ export function ItemManager({
     hasFilters,
     isItemSelected,
   } = useItemManagerState(effectiveConfig);
+
+  // -------------------------------------------------------------------------
+  // Column Visibility (REQ-218)
+  // -------------------------------------------------------------------------
+
+  const {
+    columnVisibility,
+    toggleColumn,
+    isColumnVisible,
+  } = useColumnVisibility();
 
   // -------------------------------------------------------------------------
   // Search, Filter, Sort (REQ-062/REQ-063)
@@ -636,6 +647,8 @@ export function ItemManager({
           currentSort={state.sortBy}
           onSortChange={setSort}
           properties={properties}
+          columnVisibility={columnVisibility}
+          onToggleColumn={toggleColumn}
         />
       </div>
     );
