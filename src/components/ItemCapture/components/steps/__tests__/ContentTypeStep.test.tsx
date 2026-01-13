@@ -177,9 +177,9 @@ describe('ContentTypeStep', () => {
     it('has descriptive aria-label on each option', () => {
       render(<ContentTypeStep {...defaultProps} />);
 
-      expect(screen.getByRole('radio', { name: 'Record Video: Capture video instructions' })).toBeInTheDocument();
+      expect(screen.getByRole('radio', { name: 'Record Video: Capture video guide' })).toBeInTheDocument();
       expect(screen.getByRole('radio', { name: 'Take Photo: Capture photos' })).toBeInTheDocument();
-      expect(screen.getByRole('radio', { name: 'Write Text: Create written instructions' })).toBeInTheDocument();
+      expect(screen.getByRole('radio', { name: 'Write Text: Create written guide' })).toBeInTheDocument();
       expect(screen.getByRole('radio', { name: 'Upload File: Upload existing media' })).toBeInTheDocument();
     });
 

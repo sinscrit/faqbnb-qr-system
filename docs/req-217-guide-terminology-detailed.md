@@ -253,19 +253,19 @@
 **Files to modify:** `src/components/ItemCapture/components/steps/__tests__/WhatsNextStep.test.tsx`, `src/components/ItemCapture/components/steps/__tests__/ContentTypeStep.test.tsx`, `src/components/ItemCreationWorkflow/components/steps/__tests__/NextActionStep.test.tsx`, `src/components/ItemCreationWorkflow/components/steps/__tests__/PreviewSaveStep.test.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **13.1** Open `src/components/ItemCapture/components/steps/__tests__/WhatsNextStep.test.tsx`
-- [ ] **13.2** Update all assertions on `/Edit Instructions/i` to `/Edit Guide/i`
-- [ ] **13.3** Update all assertions on `/Add New Instructions/i` to `/Add New Guide/i`
-- [ ] **13.4** Line 61: Change assertion on description text from "instructions" to "guide"
-- [ ] **13.5** Line 67: Change assertion `'Review and modify the instructions you just created'` to `'Review and modify the guide you just created'`
-- [ ] **13.6** Open `src/components/ItemCapture/components/steps/__tests__/ContentTypeStep.test.tsx`
-- [ ] **13.7** Line 180: Update radio button name assertion from "instructions" to "guide"
-- [ ] **13.8** Line 182: Update radio button name assertion from "instructions" to "guide"
-- [ ] **13.9** Open `src/components/ItemCreationWorkflow/components/steps/__tests__/NextActionStep.test.tsx`
-- [ ] **13.10** Update any assertions containing "Instructions" to use "Guide/Guides"
-- [ ] **13.11** Open `src/components/ItemCreationWorkflow/components/steps/__tests__/PreviewSaveStep.test.tsx`
-- [ ] **13.12** Update any assertions containing "Instructions" to use "Guide/Guides"
-- [ ] **13.13** Save all test files
+- [x] **13.1** Open `src/components/ItemCapture/components/steps/__tests__/WhatsNextStep.test.tsx`---implemented: Updated all test assertions
+- [x] **13.2** Update all assertions on `/Edit Instructions/i` to `/Edit Guide/i`---implemented: Replaced all occurrences
+- [x] **13.3** Update all assertions on `/Add New Instructions/i` to `/Add New Guide/i`---implemented: Replaced all occurrences
+- [x] **13.4** Line 61: Change assertion on description text from "instructions" to "guide"---implemented: Changed to "guide for"
+- [x] **13.5** Line 67: Change assertion `'Review and modify the instructions you just created'` to `'Review and modify the guide you just created'`---implemented: Changed to "guide you just created"
+- [x] **13.6** Open `src/components/ItemCapture/components/steps/__tests__/ContentTypeStep.test.tsx`---implemented: Updated radio labels
+- [x] **13.7** Line 180: Update radio button name assertion from "instructions" to "guide"---implemented: Changed to "video guide"
+- [x] **13.8** Line 182: Update radio button name assertion from "instructions" to "guide"---implemented: Changed to "written guide"
+- [x] **13.9** Open `src/components/ItemCreationWorkflow/components/steps/__tests__/NextActionStep.test.tsx`---implemented: Updated all assertions
+- [x] **13.10** Update any assertions containing "Instructions" to use "Guide/Guides"---implemented: Replaced all occurrences
+- [x] **13.11** Open `src/components/ItemCreationWorkflow/components/steps/__tests__/PreviewSaveStep.test.tsx`---implemented: Updated test data
+- [x] **13.12** Update any assertions containing "Instructions" to use "Guide/Guides"---implemented: Changed title and assertions
+- [x] **13.13** Save all test files---implemented: All files saved
 
 ---
 

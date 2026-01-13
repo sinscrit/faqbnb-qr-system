@@ -70,22 +70,22 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
     it('renders four action options', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      expect(screen.getByText('Edit Instructions')).toBeInTheDocument();
-      expect(screen.getByText('Add New Instructions')).toBeInTheDocument();
+      expect(screen.getByText('Edit Guide')).toBeInTheDocument();
+      expect(screen.getByText('Add New Guide')).toBeInTheDocument();
       expect(screen.getByText('Create New Item')).toBeInTheDocument();
       expect(screen.getByText(/Done - Return to Dashboard/)).toBeInTheDocument();
     });
 
-    it('renders Edit Instructions with correct description', () => {
+    it('renders Edit Guide with correct description', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      expect(screen.getByText('Review and modify the instructions you just created')).toBeInTheDocument();
+      expect(screen.getByText('Review and modify the guide you just created')).toBeInTheDocument();
     });
 
-    it('renders Add New Instructions with dynamic item name', () => {
+    it('renders Add New Guide with dynamic item name', () => {
       render(<WhatsNextStep {...defaultProps} savedItemName="Fridge" />);
 
-      expect(screen.getByText(/Create different instructions for "Fridge"/)).toBeInTheDocument();
+      expect(screen.getByText(/Create different guide for "Fridge"/)).toBeInTheDocument();
     });
 
     it('renders Create New Item with correct description', () => {
@@ -94,10 +94,10 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
       expect(screen.getByText('Start fresh with a different item')).toBeInTheDocument();
     });
 
-    it('Add New Instructions has primary styling (emphasized)', () => {
+    it('Add New Guide has primary styling (emphasized)', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      const addNewButton = screen.getByText('Add New Instructions').closest('button');
+      const addNewButton = screen.getByText('Add New Guide').closest('button');
       expect(addNewButton).toHaveClass('border-blue-500');
       expect(addNewButton).toHaveClass('bg-blue-50');
     });
@@ -116,20 +116,20 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
   // ===========================================================================
 
   describe('Callback Interactions', () => {
-    it('calls onEditInstructions when Edit Instructions is clicked', async () => {
+    it('calls onEditInstructions when Edit Guide is clicked', async () => {
       const user = userEvent.setup();
       render(<WhatsNextStep {...defaultProps} />);
 
-      await user.click(screen.getByText('Edit Instructions'));
+      await user.click(screen.getByText('Edit Guide'));
 
       expect(defaultProps.onEditInstructions).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onAddNewInstructions when Add New Instructions is clicked', async () => {
+    it('calls onAddNewInstructions when Add New Guide is clicked', async () => {
       const user = userEvent.setup();
       render(<WhatsNextStep {...defaultProps} />);
 
-      await user.click(screen.getByText('Add New Instructions'));
+      await user.click(screen.getByText('Add New Guide'));
 
       expect(defaultProps.onAddNewInstructions).toHaveBeenCalledTimes(1);
     });
@@ -179,22 +179,22 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
       });
     });
 
-    it('supports Enter key on Edit Instructions', async () => {
+    it('supports Enter key on Edit Guide', async () => {
       const user = userEvent.setup();
       render(<WhatsNextStep {...defaultProps} />);
 
-      const editButton = screen.getByText('Edit Instructions').closest('button');
+      const editButton = screen.getByText('Edit Guide').closest('button');
       editButton?.focus();
       await user.keyboard('{Enter}');
 
       expect(defaultProps.onEditInstructions).toHaveBeenCalledTimes(1);
     });
 
-    it('supports Space key on Add New Instructions', async () => {
+    it('supports Space key on Add New Guide', async () => {
       const user = userEvent.setup();
       render(<WhatsNextStep {...defaultProps} />);
 
-      const addNewButton = screen.getByText('Add New Instructions').closest('button');
+      const addNewButton = screen.getByText('Add New Guide').closest('button');
       addNewButton?.focus();
       await user.keyboard(' ');
 
@@ -243,7 +243,7 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
   // ===========================================================================
 
   describe('Edge Cases', () => {
-    it('handles long item names in Add New Instructions description', () => {
+    it('handles long item names in Add New Guide description', () => {
       render(
         <WhatsNextStep
           {...defaultProps}
@@ -252,7 +252,7 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
       );
 
       expect(
-        screen.getByText(/Create different instructions for "Very Long Kitchen Cabinet Name/)
+        screen.getByText(/Create different guide for "Very Long Kitchen Cabinet Name/)
       ).toBeInTheDocument();
     });
 
@@ -277,10 +277,10 @@ describe('WhatsNextStep (Post-Workflow Menu)', () => {
   // ===========================================================================
 
   describe('Visual Styling', () => {
-    it('Edit Instructions has default styling', () => {
+    it('Edit Guide has default styling', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      const editButton = screen.getByText('Edit Instructions').closest('button');
+      const editButton = screen.getByText('Edit Guide').closest('button');
       expect(editButton).toHaveClass('border-gray-200');
     });
 

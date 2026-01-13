@@ -52,7 +52,7 @@ const mockCurrentItem: CurrentItemState = {
   specificItem: 'Dishwasher',
   itemName: 'Kitchen - Dishwasher',
   currentArticle: {
-    title: 'Instructions',
+    title: 'Guides',
     purpose: null,
     content: [mockVideoContent],
   },
@@ -793,7 +793,7 @@ describe('PreviewSaveStep', () => {
       render(<PreviewSaveStep {...defaultProps} currentItem={mockItemWithArticle} />);
 
       expect(screen.getByText(/physical item/i)).toBeInTheDocument();
-      expect(screen.getByText(/article.*instructions/i)).toBeInTheDocument();
+      expect(screen.getByText(/article.*guide/i)).toBeInTheDocument();
     });
 
     it('calls onUpdateItemName when Item Name field changes', async () => {
@@ -843,8 +843,8 @@ describe('PreviewSaveStep', () => {
 
       render(<PreviewSaveStep {...defaultProps} currentItem={itemNoPurpose} />);
 
-      // Should show "Instructions" as fallback
-      const articleTitleInput = screen.getByDisplayValue('Instructions');
+      // Should show "Guides" as fallback
+      const articleTitleInput = screen.getByDisplayValue('Guides');
       expect(articleTitleInput).toBeInTheDocument();
     });
 

@@ -49,22 +49,22 @@ describe('WhatsNextStep', () => {
     it('renders all four action options', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Edit Instructions/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add New Instructions/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Edit Guide/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Add New Guide/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Create New Item/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Done - Return to Dashboard/i })).toBeInTheDocument();
     });
 
-    it('displays item name in Add New Instructions description', () => {
+    it('displays item name in Add New Guide description', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      expect(screen.getByText(/Create different instructions for "Test Steamer"/)).toBeInTheDocument();
+      expect(screen.getByText(/Create different guide for "Test Steamer"/)).toBeInTheDocument();
     });
 
     it('renders action descriptions correctly', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      expect(screen.getByText('Review and modify the instructions you just created')).toBeInTheDocument();
+      expect(screen.getByText('Review and modify the guide you just created')).toBeInTheDocument();
       expect(screen.getByText('Start fresh with a different item')).toBeInTheDocument();
     });
   });
@@ -74,18 +74,18 @@ describe('WhatsNextStep', () => {
   // ===========================================================================
 
   describe('Callbacks', () => {
-    it('calls onEditInstructions when Edit Instructions is clicked', () => {
+    it('calls onEditInstructions when Edit Guide is clicked', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Edit Instructions/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Edit Guide/i }));
 
       expect(defaultProps.onEditInstructions).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onAddNewInstructions when Add New Instructions is clicked', () => {
+    it('calls onAddNewInstructions when Add New Guide is clicked', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Add New Instructions/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Add New Guide/i }));
 
       expect(defaultProps.onAddNewInstructions).toHaveBeenCalledTimes(1);
     });
@@ -120,18 +120,18 @@ describe('WhatsNextStep', () => {
       expect(container.firstChild).toHaveClass('custom-class');
     });
 
-    it('Add New Instructions has primary variant styling', () => {
+    it('Add New Guide has primary variant styling', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      const addNewButton = screen.getByRole('button', { name: /Add New Instructions/i });
+      const addNewButton = screen.getByRole('button', { name: /Add New Guide/i });
       expect(addNewButton).toHaveClass('border-blue-500');
       expect(addNewButton).toHaveClass('bg-blue-50');
     });
 
-    it('Edit Instructions has default variant styling', () => {
+    it('Edit Guide has default variant styling', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      const editButton = screen.getByRole('button', { name: /Edit Instructions/i });
+      const editButton = screen.getByRole('button', { name: /Edit Guide/i });
       expect(editButton).toHaveClass('border-gray-200');
     });
 
@@ -207,7 +207,7 @@ describe('WhatsNextStep', () => {
     it('action buttons have visible focus ring classes', () => {
       render(<WhatsNextStep {...defaultProps} />);
 
-      const editButton = screen.getByRole('button', { name: /Edit Instructions/i });
+      const editButton = screen.getByRole('button', { name: /Edit Guide/i });
       expect(editButton).toHaveClass('focus:ring-2');
       expect(editButton).toHaveClass('focus:ring-blue-500');
     });
@@ -249,8 +249,8 @@ describe('WhatsNextStep', () => {
       expect(buttons).toHaveLength(4);
 
       // Verify each specific button exists
-      expect(screen.getByRole('button', { name: /Edit Instructions/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add New Instructions/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Edit Guide/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Add New Guide/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Create New Item/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Done/i })).toBeInTheDocument();
     });
