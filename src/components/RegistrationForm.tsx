@@ -265,13 +265,13 @@ export default function RegistrationForm({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     const fieldValue = type === 'checkbox' ? checked : value;
-    
+
     console.log(`${DEBUG_PREFIX} FIELD_CHANGE`, {
       timestamp: new Date().toISOString(),
       field: name,
       value: type === 'password' ? '[HIDDEN]' : fieldValue
     });
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: fieldValue,
@@ -290,6 +290,32 @@ export default function RegistrationForm({
       setErrors(prev => ({
         ...prev,
         general: undefined,
+      }));
+    }
+  };
+
+  // REQ-222: Handle registration method radio button changes
+  const handleRegistrationMethodChange = (method: RegistrationMethod) => {
+    console.log(`${DEBUG_PREFIX} REGISTRATION_METHOD_CHANGE`, {
+      timestamp: new Date().toISOString(),
+      previousMethod: registrationMethod,
+      newMethod: method
+    });
+
+    setRegistrationMethod(method);
+
+    // Security: Clear password data when switching away from email-password
+    if (registrationMethod === 'email-password' && method === 'google') {
+      setFormData(prev => ({
+        ...prev,
+        password: '',
+        confirmPassword: ''
+      }));
+      // Clear any password-related errors
+      setErrors(prev => ({
+        ...prev,
+        password: undefined,
+        confirmPassword: undefined
       }));
     }
   };
@@ -446,6 +472,82 @@ export default function RegistrationForm({
       onError?.(errorMessage);
     }
   };
+
+  // REQ-222: Registration method options for Gmail users
+  const REGISTRATION_METHOD_OPTIONS = [
+    {
+      id: 'google' as const,
+      label: 'Continue with Google',
+      description: 'Quick sign-up using your Google account'
+    },
+    {
+      id: 'email-password' as const,
+      label: 'Sign up with email',
+      description: 'Create a password for your account'
+    }
+  ];
+
+  // REQ-222: Registration method radio buttons (only for Gmail users)
+  const registrationMethodSelector = isGmailEmail ? (
+    <div className="space-y-3">
+      <label className="block text-sm font-medium text-gray-700">
+        Choose how to create your account
+      </label>
+      <div
+        role="radiogroup"
+        aria-label="Select registration method"
+        className="space-y-2"
+      >
+        {REGISTRATION_METHOD_OPTIONS.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            role="radio"
+            aria-checked={registrationMethod === option.id}
+            onClick={() => handleRegistrationMethodChange(option.id)}
+            className={`
+              w-full flex items-center p-4 border-2 rounded-lg transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              ${registrationMethod === option.id
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+              }
+            `}
+          >
+            {/* Radio circle indicator */}
+            <div className={`
+              w-5 h-5 rounded-full border-2 mr-4 flex items-center justify-center
+              ${registrationMethod === option.id
+                ? 'border-blue-500'
+                : 'border-gray-300'
+              }
+            `}>
+              {registrationMethod === option.id && (
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+              )}
+            </div>
+            {/* Label and description */}
+            <div className="flex-1 text-left">
+              <span className={`block font-medium ${
+                registrationMethod === option.id ? 'text-blue-700' : 'text-gray-900'
+              }`}>
+                {option.label}
+              </span>
+              <span className={`block text-sm ${
+                registrationMethod === option.id ? 'text-blue-500' : 'text-gray-500'
+              }`}>
+                {option.description}
+              </span>
+            </div>
+            {/* Check indicator for selected */}
+            {registrationMethod === option.id && (
+              <Check className="w-5 h-5 text-blue-600 ml-2" />
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  ) : null;
 
   // REQ-221: OAuth section JSX for conditional rendering
   const oauthSection = (
