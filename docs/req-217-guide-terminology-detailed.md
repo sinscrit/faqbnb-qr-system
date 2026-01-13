@@ -183,16 +183,16 @@
 **Files to modify:** `src/components/ItemCreationWorkflow/components/steps/PreviewSaveStep.tsx`, `src/components/ItemCreationWorkflow/components/shared/ItemContextDisplay.tsx`, `src/components/InstructionEditor/components/ReadOnlyContextSection.tsx`, `src/components/InstructionEditor/components/ContentEditSection.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **9.1** Open `src/components/ItemCreationWorkflow/components/steps/PreviewSaveStep.tsx`
-- [ ] **9.2** Line 200: Change fallback title `'Instructions'` to `'Guides'`
-- [ ] **9.3** Line 245: Change `"Article / Instructions"` to `"Article / Guide"`
-- [ ] **9.4** Open `src/components/ItemCreationWorkflow/components/shared/ItemContextDisplay.tsx`
-- [ ] **9.5** Line 92: Change `"Editing Instruction For:"` to `"Editing Guide For:"`
-- [ ] **9.6** Open `src/components/InstructionEditor/components/ReadOnlyContextSection.tsx`
-- [ ] **9.7** Line 33: Change `"Editing Instruction For:"` to `"Editing Guide For:"`
-- [ ] **9.8** Open `src/components/InstructionEditor/components/ContentEditSection.tsx`
-- [ ] **9.9** Line 289: Change `"leave this instruction empty"` to `"leave this guide empty"`
-- [ ] **9.10** Save all files and verify no TypeScript errors
+- [x] **9.1** Open `src/components/ItemCreationWorkflow/components/steps/PreviewSaveStep.tsx`---implemented: Updated fallback title
+- [x] **9.2** Line 200: Change fallback title `'Instructions'` to `'Guides'`---implemented: Changed to 'Guides'
+- [x] **9.3** Line 245: Change `"Article / Instructions"` to `"Article / Guide"`---implemented: Changed to "Article / Guide"
+- [x] **9.4** Open `src/components/ItemCreationWorkflow/components/shared/ItemContextDisplay.tsx`---implemented: Updated heading
+- [x] **9.5** Line 92: Change `"Editing Instruction For:"` to `"Editing Guide For:"`---implemented: Changed to "Editing Guide For:"
+- [x] **9.6** Open `src/components/InstructionEditor/components/ReadOnlyContextSection.tsx`---implemented: Updated heading
+- [x] **9.7** Line 33: Change `"Editing Instruction For:"` to `"Editing Guide For:"`---implemented: Changed to "Editing Guide For:"
+- [x] **9.8** Open `src/components/InstructionEditor/components/ContentEditSection.tsx`---implemented: Updated confirmation text
+- [x] **9.9** Line 289: Change `"leave this instruction empty"` to `"leave this guide empty"`---implemented: Changed to "leave this guide empty"
+- [x] **9.10** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

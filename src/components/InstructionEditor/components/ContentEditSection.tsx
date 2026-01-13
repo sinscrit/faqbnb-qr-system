@@ -286,7 +286,7 @@ export function ContentEditSection({
               Remove Last Content?
             </h3>
             <p className="text-[#717171] mb-6">
-              This is the only piece of content. Removing it will leave this instruction empty.
+              This is the only piece of content. Removing it will leave this guide empty.
               Are you sure you want to remove it?
             </p>
             <div className="flex gap-3 justify-end">

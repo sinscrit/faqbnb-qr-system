@@ -197,7 +197,7 @@ function ItemDetailsSection({
   const articleTitle = currentItem.currentArticle?.title ||
     (currentItem.purpose
       ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
-      : 'Instructions');
+      : 'Guides');
 
   return (
     <section
@@ -242,7 +242,7 @@ function ItemDetailsSection({
       {/* Article Properties Group */}
       <div className="space-y-4 pt-4 pb-4 border-b border-gray-100">
         <h4 className="text-sm font-semibold text-[#484848] uppercase tracking-wide">
-          Article / Instructions
+          Article / Guide
         </h4>
 
         {/* Article Title field */}

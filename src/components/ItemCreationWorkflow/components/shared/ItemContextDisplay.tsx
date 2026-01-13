@@ -89,7 +89,7 @@ export function ItemContextDisplay({
       {/* Header with lock icon */}
       <div className="flex items-center gap-2 mb-4">
         <Lock className="w-4 h-4 text-gray-500" aria-hidden="true" />
-        <span className="text-sm font-medium text-gray-600">Editing Instruction For:</span>
+        <span className="text-sm font-medium text-gray-600">Editing Guide For:</span>
         <span className="ml-auto px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-md">
           Read-only
         </span>

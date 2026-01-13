@@ -30,7 +30,7 @@ export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionPr
     <div className="space-y-4">
       {/* Page Header */}
       <h1 className="text-2xl font-semibold text-[#222222]">
-        Editing Instruction For: {articleData.title}
+        Editing Guide For: {articleData.title}
       </h1>
 
       {/* Read-only metadata container */}
