@@ -45,6 +45,9 @@ interface PasswordStrength {
   label: string;
 }
 
+// REQ-222: Registration method type for Gmail users
+type RegistrationMethod = 'google' | 'email-password';
+
 export default function RegistrationForm({ 
   email, 
   accessCode, 
@@ -68,6 +71,9 @@ export default function RegistrationForm({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
+
+  // REQ-222: Registration method state for Gmail users
+  const [registrationMethod, setRegistrationMethod] = useState<RegistrationMethod>('google');
   
   // REQ-020 Task 6.2: Combined OAuth loading state
   const isOAuthActive = oauthLoading || isOAuthCompleting;
@@ -103,6 +109,13 @@ export default function RegistrationForm({
       });
     }
   }, [email]);
+
+  // REQ-222: Reset registration method when email domain changes
+  useEffect(() => {
+    if (isGmailEmail) {
+      setRegistrationMethod('google');
+    }
+  }, [isGmailEmail]);
 
   // Validate access code on component mount
   useEffect(() => {

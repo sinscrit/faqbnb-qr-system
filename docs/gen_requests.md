@@ -9561,3 +9561,45 @@ Reduces registration friction for Gmail users while preventing error states for 
 - [ ] Non-Gmail users see only the standard email/password registration fields
 - [ ] The form maintains proper spacing and visual hierarchy in both visible and hidden states
 
+
+---
+
+## REQ-222: Radio Button Registration Method Selection for Gmail Users
+
+**Date**: 2026-01-13 
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Gmail users should choose between Google OAuth or email/password registration via radio buttons, with the form dynamically showing only relevant fields based on their selection.
+
+### Current Behavior
+When a Gmail address is detected during registration, users see a "Continue with Google" button displayed above the full registration form. All form fields (Full Name, Password, Confirm Password, Terms checkbox, and Create Account button) remain visible regardless of whether the user intends to use Google OAuth or email/password registration. Non-Gmail users see only the standard registration form without any Google-related elements.
+
+### Expected Behavior
+When a user enters a Gmail address, a radio button group appears with two mutually exclusive options: "Continue with Google" (pre-selected) and "Sign up with email and password." 
+
+When "Continue with Google" is selected, the form displays only the email address (read-only), the terms acceptance checkbox, and an enabled "Continue with Google" button. The Full Name, Password, Confirm Password fields and Create Account button are hidden.
+
+When "Sign up with email and password" is selected, the "Continue with Google" button becomes disabled and greyed out. The form displays all standard registration fields: email (read-only), Full Name (optional), Password, Confirm Password, terms checkbox, and the Create Account button.
+
+For non-Gmail addresses, no radio buttons or Google-related UI elements appear. Users see only the standard email/password registration form.
+
+### User Impact
+Gmail users registering new accounts will experience a cleaner, more focused interface that adapts to their chosen registration method. Users who prefer Google OAuth will see fewer irrelevant form fields, reducing cognitive load and form completion time. Users who prefer email/password registration will have a clear understanding that Google OAuth is unavailable once they make that choice. Non-Gmail users are unaffected and continue to see the familiar registration form.
+
+### Business Value
+Enhances user experience by eliminating visual clutter and decision paralysis during registration. Increases likelihood of successful Gmail user registration by presenting clear, mutually exclusive paths forward. Aligns UI state with user intent, reducing confusion about which button to click.
+
+### Acceptance Criteria
+- [ ] When a Gmail address is entered, two radio buttons appear labeled "Continue with Google" and "Sign up with email and password"
+- [ ] "Continue with Google" radio button is pre-selected by default when Gmail address is detected
+- [ ] When "Continue with Google" is selected, Full Name, Password, and Confirm Password fields are not visible
+- [ ] When "Continue with Google" is selected, the "Continue with Google" button is enabled only after terms are accepted
+- [ ] When "Continue with Google" is selected, the Create Account button is not visible
+- [ ] When "Sign up with email and password" is selected, all standard form fields become visible
+- [ ] When "Sign up with email and password" is selected, the "Continue with Google" button is disabled and visually greyed out
+- [ ] When the email is changed from Gmail to non-Gmail, the radio buttons and all Google-related UI disappear
+- [ ] When the email is changed from non-Gmail to Gmail, the radio buttons appear with "Continue with Google" pre-selected
+- [ ] Non-Gmail addresses never trigger the display of radio buttons or Google OAuth UI
+
