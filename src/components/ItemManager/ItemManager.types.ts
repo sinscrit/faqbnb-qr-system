@@ -344,6 +344,17 @@ export interface FilterState {
 }
 
 /**
+ * Column visibility state for ItemList view.
+ * Controls which optional columns are displayed.
+ *
+ * @lastModified 2026-01-13 (REQ-218)
+ */
+export interface ColumnVisibilityState {
+  /** Whether the Property column is visible */
+  property: boolean;
+}
+
+/**
  * Sort options for ordering the item list.
  * Format: field-direction (e.g., 'title-asc' = sort by title ascending).
  */

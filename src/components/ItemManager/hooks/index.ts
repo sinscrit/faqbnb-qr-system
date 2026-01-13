@@ -83,3 +83,14 @@ export type {
   UseItemAnalyticsOptions,
   UseItemAnalyticsReturn,
 } from './useItemAnalytics';
+
+// =============================================================================
+// useColumnVisibility Hook (REQ-218)
+// =============================================================================
+
+export { useColumnVisibility } from './useColumnVisibility';
+export { default as useColumnVisibilityDefault } from './useColumnVisibility';
+export type {
+  ColumnVisibilityState,
+  UseColumnVisibilityReturn,
+} from './useColumnVisibility';
