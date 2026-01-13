@@ -72,8 +72,15 @@ export function SearchInput({
   // Track if we need to emit changes (to avoid loops)
   const isInitialMount = useRef(true);
 
+  // Track if we're in the middle of a clear operation (REQ-218 Task 2)
+  const isClearingRef = useRef(false);
+
   // Sync external value to local state when prop changes
+  // Skip sync during clear operations to prevent race condition (REQ-218 Task 2)
   useEffect(() => {
+    if (isClearingRef.current) {
+      return;
+    }
     if (value !== localValue) {
       setLocalValue(value);
     }
@@ -99,11 +106,16 @@ export function SearchInput({
     setLocalValue(e.target.value);
   }, []);
 
-  // Clear the search input (Task 2.3.4)
+  // Clear the search input (Task 2.3.4, enhanced REQ-218 Task 2)
   const handleClear = useCallback(() => {
+    isClearingRef.current = true;
     setLocalValue('');
     onChange(''); // Immediate clear (bypass debounce)
     inputRef.current?.focus();
+    // Reset the flag after a short delay to allow state to settle
+    setTimeout(() => {
+      isClearingRef.current = false;
+    }, 50);
   }, [onChange]);
 
   // Handle keyboard shortcuts (Task 2.3.5)
