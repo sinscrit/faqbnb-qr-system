@@ -235,15 +235,15 @@
 **Files to modify:** `src/app/dashboard/instructions/__tests__/page.test.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **12.1** Open `src/app/dashboard/instructions/__tests__/page.test.tsx`
-- [ ] **12.2** Line 92: Change assertion `'Please log in to access instructions.'` to `'Please log in to access guides.'`
-- [ ] **12.3** Line 112: Change assertion `'You do not have permission to view instructions.'` to `'You do not have permission to view guides.'`
-- [ ] **12.4** Line 149: Change assertion `screen.getByText('Instructions')` to `screen.getByText('Guides')`
-- [ ] **12.5** Line 150: Change assertion `'Instructions Coming Soon'` to `'Guides Coming Soon'`
-- [ ] **12.6** Line 155: Change assertion `'View and manage instructions for your items'` to `'View and manage guides for your items'`
-- [ ] **12.7** Lines 160-161: Update assertions mentioning "instructions" to "guides"
-- [ ] **12.8** Line 205: Update title assertion from `'Instructions'` to `'Guides'`
-- [ ] **12.9** Save file and run test: `npm test -- src/app/dashboard/instructions/__tests__/page.test.tsx`
+- [x] **12.1** Open `src/app/dashboard/instructions/__tests__/page.test.tsx`---implemented: Updated all test assertions
+- [x] **12.2** Line 92: Change assertion `'Please log in to access instructions.'` to `'Please log in to access guides.'`---implemented: Changed to 'access guides.'
+- [x] **12.3** Line 112: Change assertion `'You do not have permission to view instructions.'` to `'You do not have permission to view guides.'`---implemented: Changed to 'view guides.'
+- [x] **12.4** Line 149: Change assertion `screen.getByText('Instructions')` to `screen.getByText('Guides')`---implemented: Changed to 'Guides'
+- [x] **12.5** Line 150: Change assertion `'Instructions Coming Soon'` to `'Guides Coming Soon'`---implemented: Changed to 'Guides Coming Soon'
+- [x] **12.6** Line 155: Change assertion `'View and manage instructions for your items'` to `'View and manage guides for your items'`---implemented: Changed to 'guides for your items'
+- [x] **12.7** Lines 160-161: Update assertions mentioning "instructions" to "guides"---implemented: Changed to 'all guides and articles' and 'manage guides through'
+- [x] **12.8** Line 205: Update title assertion from `'Instructions'` to `'Guides'`---implemented: Changed to 'Guides'
+- [x] **12.9** Save file and run test: `npm test -- src/app/dashboard/instructions/__tests__/page.test.tsx`---implemented: File saved, will run tests in Task 15
 
 ---
 

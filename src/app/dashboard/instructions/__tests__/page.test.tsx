@@ -89,7 +89,7 @@ describe('InstructionsPage', () => {
 
       render(<InstructionsPage />);
       expect(screen.getByText('Authentication Required')).toBeInTheDocument();
-      expect(screen.getByText('Please log in to access instructions.')).toBeInTheDocument();
+      expect(screen.getByText('Please log in to access guides.')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Go to Login' })).toBeInTheDocument();
     });
   });
@@ -109,7 +109,7 @@ describe('InstructionsPage', () => {
 
       render(<InstructionsPage />);
       expect(screen.getByText('Access Denied')).toBeInTheDocument();
-      expect(screen.getByText('You do not have permission to view instructions.')).toBeInTheDocument();
+      expect(screen.getByText('You do not have permission to view guides.')).toBeInTheDocument();
     });
 
     it('shows access denied link to dashboard', () => {
@@ -146,19 +146,19 @@ describe('InstructionsPage', () => {
 
     it('shows placeholder content when authorized', () => {
       render(<InstructionsPage />);
-      expect(screen.getByText('Instructions')).toBeInTheDocument();
-      expect(screen.getByText('Instructions Coming Soon')).toBeInTheDocument();
+      expect(screen.getByText('Guides')).toBeInTheDocument();
+      expect(screen.getByText('Guides Coming Soon')).toBeInTheDocument();
     });
 
     it('shows page description', () => {
       render(<InstructionsPage />);
-      expect(screen.getByText('View and manage instructions for your items')).toBeInTheDocument();
+      expect(screen.getByText('View and manage guides for your items')).toBeInTheDocument();
     });
 
     it('shows placeholder message with guidance', () => {
       render(<InstructionsPage />);
-      expect(screen.getByText(/This page will display all instructions and articles/)).toBeInTheDocument();
-      expect(screen.getByText(/For now, you can manage instructions through the Items page/)).toBeInTheDocument();
+      expect(screen.getByText(/This page will display all guides and articles/)).toBeInTheDocument();
+      expect(screen.getByText(/For now, you can manage guides through the Items page/)).toBeInTheDocument();
     });
 
     it('has correct navigation links', () => {
@@ -202,7 +202,7 @@ describe('InstructionsPage', () => {
     it('has title with correct id for aria-labelledby', () => {
       render(<InstructionsPage />);
 
-      const title = screen.getByText('Instructions');
+      const title = screen.getByText('Guides');
       expect(title).toHaveAttribute('id', 'instructions-title');
     });
 
