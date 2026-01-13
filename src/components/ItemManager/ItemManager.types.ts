@@ -588,6 +588,11 @@ export interface ItemRowProps {
    * @lastModified 2026-01-13 (REQ-216)
    */
   articlesCount?: number;
+  /**
+   * Property name to display (resolved from propertyId).
+   * @lastModified 2026-01-13 (REQ-218)
+   */
+  propertyName?: string;
 }
 
 // =============================================================================
@@ -662,6 +667,8 @@ export interface ItemListProps {
   currentSort?: SortOption;
   /** Callback when column header is clicked to change sort */
   onSortChange?: (sort: SortOption) => void;
+  /** Properties array for property name lookup (REQ-218) */
+  properties?: Property[];
 }
 
 /**

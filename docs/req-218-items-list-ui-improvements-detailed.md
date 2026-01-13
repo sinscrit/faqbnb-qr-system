@@ -135,29 +135,29 @@
 
 **Estimated effort:** 1 story point
 
-- [ ] **3.1** Extend `ItemListProps` interface in `ItemManager.types.ts` (around line 632):
+- [x] **3.1** Extend `ItemListProps` interface in `ItemManager.types.ts` (around line 632):
   ```typescript
   /** Properties array for property name lookup */
   properties?: Property[];
-  ```
-- [ ] **3.2** Extend `ItemRowProps` interface in `ItemManager.types.ts` (around line 547):
+  ```---implemented:Added properties prop to ItemListProps at line 671
+- [x] **3.2** Extend `ItemRowProps` interface in `ItemManager.types.ts` (around line 547):
   ```typescript
   /** Property name to display (resolved from propertyId) */
   propertyName?: string;
-  ```
-- [ ] **3.3** In `ItemList.tsx`, add `properties` to the destructured props (line 75):
+  ```---implemented:Added propertyName prop to ItemRowProps at line 595
+- [x] **3.3** In `ItemList.tsx`, add `properties` to the destructured props (line 75):
   ```typescript
   export function ItemList({
     items,
     // ... existing props
     properties,  // Add this
   }: ItemListProps) {
-  ```
-- [ ] **3.4** In `ItemList.tsx`, add the Property column header after the Tags column (around line 156, after the Tags columnheader):
+  ```---implemented:Added properties to destructured props at line 92
+- [x] **3.4** In `ItemList.tsx`, add the Property column header after the Tags column (around line 156, after the Tags columnheader):
   ```typescript
   <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
-  ```
-- [ ] **3.5** In `ItemList.tsx`, pass `propertyName` to each `ItemRow` component. Create a helper function to look up property name:
+  ```---implemented:Added Property column header at line 164
+- [x] **3.5** In `ItemList.tsx`, pass `propertyName` to each `ItemRow` component. Create a helper function to look up property name:
   ```typescript
   // Add before the return statement
   const getPropertyName = (propertyId?: string): string | undefined => {
@@ -165,36 +165,36 @@
     const property = properties.find(p => p.id === propertyId);
     return property?.nickname || property?.name || undefined;
   };
-  ```
-- [ ] **3.6** Update the `ItemRow` usage in `ItemList.tsx` (around line 176) to pass `propertyName`:
+  ```---implemented:Added getPropertyName helper function at line 95
+- [x] **3.6** Update the `ItemRow` usage in `ItemList.tsx` (around line 176) to pass `propertyName`:
   ```typescript
   <ItemRow
     key={item.id}
     // ... existing props
     propertyName={getPropertyName((item as ItemRecordExtended).propertyId)}
   />
-  ```
-- [ ] **3.7** In `ItemRow.tsx`, add `propertyName` to the destructured props (line 84):
+  ```---implemented:Added propertyName prop to ItemRow at line 200
+- [x] **3.7** In `ItemRow.tsx`, add `propertyName` to the destructured props (line 84):
   ```typescript
   export function ItemRow({
     // ... existing props
     propertyName,
   }: ItemRowProps) {
-  ```
-- [ ] **3.8** In `ItemRow.tsx`, add the Property column data cell after the Tags column (around line 501, after the Tags column div):
+  ```---implemented:Added propertyName to destructured props at line 102
+- [x] **3.8** In `ItemRow.tsx`, add the Property column data cell after the Tags column (around line 501, after the Tags column div):
   ```typescript
   {/* Property Column (REQ-218) - visible on lg+ screens */}
   <div className="hidden lg:flex w-32 items-center flex-shrink-0 text-sm text-gray-500 truncate">
     {propertyName || '-'}
   </div>
-  ```
-- [ ] **3.9** In `ItemManager.tsx`, pass `properties` to `ItemList` component (around line 616):
+  ```---implemented:Added Property column data cell at line 504
+- [x] **3.9** In `ItemManager.tsx`, pass `properties` to `ItemList` component (around line 616):
   ```typescript
   <ItemList
     // ... existing props
     properties={properties}
   />
-  ```
+  ```---implemented:Added properties prop to ItemList at line 638
 - [ ] **3.10** Update the aria-label in `ItemRow.tsx` (line 345) to include property name:
   ```typescript
   const ariaLabel = `${item.title}. ${propertyName ? `Property: ${propertyName}.` : ''} ${item.location ? `Location: ${item.location}.` : ''} ...`;

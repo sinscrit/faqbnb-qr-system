@@ -99,6 +99,7 @@ export function ItemRow({
   visitStats,
   reactions,
   articlesCount,
+  propertyName,
 }: ItemRowProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -498,6 +499,11 @@ export function ItemRow({
         ) : (
           renderTags()
         )}
+      </div>
+
+      {/* Property Column (REQ-218) - visible on lg+ screens */}
+      <div className="hidden lg:flex w-32 items-center flex-shrink-0 text-sm text-gray-500 truncate">
+        {propertyName || '-'}
       </div>
 
       {/* Date Column (Task 8) - visible on md+ screens */}

@@ -89,7 +89,14 @@ export function ItemList({
   existingTags,
   currentSort,
   onSortChange,
+  properties,
 }: ItemListProps) {
+  // Helper function to look up property name from ID (REQ-218)
+  const getPropertyName = (propertyId?: string): string | undefined => {
+    if (!propertyId || !properties) return undefined;
+    const property = properties.find(p => p.id === propertyId);
+    return property?.nickname || property?.name || undefined;
+  };
   return (
     <div
       className={cn(
@@ -154,6 +161,7 @@ export function ItemList({
             </div>
           )}
           <div role="columnheader" className="hidden lg:block w-40 flex-shrink-0">Tags</div>
+          <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
           {onSortChange ? (
             <SortableColumnHeader
               label="Created"
@@ -189,6 +197,7 @@ export function ItemList({
             onUpdateItem={onUpdateItem}
             existingTags={existingTags}
             articlesCount={(item as ItemRecordExtended).articlesCount}
+            propertyName={getPropertyName((item as ItemRecordExtended).propertyId)}
           />
         ))}
       </div>

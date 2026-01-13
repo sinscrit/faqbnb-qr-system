@@ -635,6 +635,7 @@ export function ItemManager({
           existingTags={allExistingTags}
           currentSort={state.sortBy}
           onSortChange={setSort}
+          properties={properties}
         />
       </div>
     );
