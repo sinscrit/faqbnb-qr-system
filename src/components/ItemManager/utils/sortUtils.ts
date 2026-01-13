@@ -58,8 +58,8 @@ export const SORT_OPTIONS: SortOptionConfig[] = [
   { value: 'updated-desc', label: 'Recently Updated' },
   { value: 'updated-asc', label: 'Least Recently Updated' },
   { value: 'location-asc', label: 'Location (A-Z)' },
-  { value: 'instructions-desc', label: 'Most Instructions' },
-  { value: 'instructions-asc', label: 'Fewest Instructions' },
+  { value: 'instructions-desc', label: 'Most Guides' },
+  { value: 'instructions-asc', label: 'Fewest Guides' },
 ];
 
 /**

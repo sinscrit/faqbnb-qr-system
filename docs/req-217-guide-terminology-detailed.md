@@ -122,13 +122,13 @@
 **Files to modify:** `src/components/ItemManager/utils/sortUtils.ts`, `src/components/ItemManager/utils/constants.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **6.1** Open `src/components/ItemManager/utils/sortUtils.ts`
-- [ ] **6.2** Line 61: Change `'Most Instructions'` to `'Most Guides'`
-- [ ] **6.3** Line 62: Change `'Fewest Instructions'` to `'Fewest Guides'`
-- [ ] **6.4** Open `src/components/ItemManager/utils/constants.ts`
-- [ ] **6.5** Line 39: Change `'Most Instructions'` to `'Most Guides'`
-- [ ] **6.6** Line 40: Change `'Fewest Instructions'` to `'Fewest Guides'`
-- [ ] **6.7** Save both files and verify no TypeScript errors
+- [x] **6.1** Open `src/components/ItemManager/utils/sortUtils.ts`---implemented: Updated sort options
+- [x] **6.2** Line 61: Change `'Most Instructions'` to `'Most Guides'`---implemented: Changed to 'Most Guides'
+- [x] **6.3** Line 62: Change `'Fewest Instructions'` to `'Fewest Guides'`---implemented: Changed to 'Fewest Guides'
+- [x] **6.4** Open `src/components/ItemManager/utils/constants.ts`---implemented: Updated sort constants
+- [x] **6.5** Line 39: Change `'Most Instructions'` to `'Most Guides'`---implemented: Changed to 'Most Guides'
+- [x] **6.6** Line 40: Change `'Fewest Instructions'` to `'Fewest Guides'`---implemented: Changed to 'Fewest Guides'
+- [x] **6.7** Save both files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

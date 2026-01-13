@@ -36,8 +36,8 @@ export const SORT_OPTIONS: SortOptionItem[] = [
   { value: 'updated-desc', label: 'Recently Modified', icon: 'desc' },
   { value: 'updated-asc', label: 'Least Recently Modified', icon: 'asc' },
   { value: 'location-asc', label: 'Location (A-Z)', icon: 'asc' },
-  { value: 'instructions-desc', label: 'Most Instructions', icon: 'desc' },
-  { value: 'instructions-asc', label: 'Fewest Instructions', icon: 'asc' },
+  { value: 'instructions-desc', label: 'Most Guides', icon: 'desc' },
+  { value: 'instructions-asc', label: 'Fewest Guides', icon: 'asc' },
 ];
 
 /**
