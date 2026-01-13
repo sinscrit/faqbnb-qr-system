@@ -152,7 +152,7 @@ export default function InstructionsPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication Required</h2>
-        <p className="text-gray-600 mb-6">Please log in to access instructions.</p>
+        <p className="text-gray-600 mb-6">Please log in to access guides.</p>
         <button
           onClick={() => router.push('/login')}
           className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
@@ -169,7 +169,7 @@ export default function InstructionsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">Loading instructions...</p>
+          <p className="text-gray-600">Loading guides...</p>
         </div>
       </div>
     );
@@ -180,7 +180,7 @@ export default function InstructionsPage() {
     return (
       <div className="max-w-2xl mx-auto py-12">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Instructions</h2>
+          <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Guides</h2>
           <p className="text-red-700 mb-4">{error.message}</p>
           <button
             onClick={fetchArticles}
@@ -199,9 +199,9 @@ export default function InstructionsPage() {
       <div className="max-w-2xl mx-auto text-center py-16">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
           <FileQuestion className="w-16 h-16 text-gray-400 mx-auto mb-6" aria-hidden="true" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">No instructions yet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">No guides yet</h2>
           <p className="text-gray-600 mb-8 max-w-md mx-auto">
-            Create items and add instruction articles to get started. Instructions help guests
+            Create items and add guide articles to get started. Guides help guests
             understand how to use items in your property.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -243,7 +243,7 @@ export default function InstructionsPage() {
               />
             </svg>
             <p className="text-sm font-medium text-green-800">
-              Instruction updated successfully
+              Guide updated successfully
             </p>
           </div>
           <button
@@ -265,11 +265,11 @@ export default function InstructionsPage() {
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-[#FF385C]" aria-hidden="true" />
               <h1 id="instructions-title" className="text-2xl font-bold text-gray-900">
-                Instructions
+                Guides
               </h1>
             </div>
             <p className="text-gray-600 mt-1">
-              Manage instruction articles for your items
+              Manage guide articles for your items
             </p>
             <div className="mt-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FFEEEF] text-[#FF385C]">

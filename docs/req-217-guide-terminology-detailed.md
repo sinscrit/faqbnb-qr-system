@@ -85,17 +85,17 @@
 **Files to modify:** `src/app/dashboard2/instructions/page.tsx`, `src/app/dashboard2/instructions/[articleId]/edit/page.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Open `src/app/dashboard2/instructions/page.tsx`
-- [ ] **4.2** Line 155: Change `"Please log in to access instructions"` to `"Please log in to access guides"`
-- [ ] **4.3** Line 172: Change `"Loading instructions..."` to `"Loading guides..."`
-- [ ] **4.4** Line 183: Change `"Error Loading Instructions"` to `"Error Loading Guides"`
-- [ ] **4.5** Lines 202-204: Change `"No instructions yet"` to `"No guides yet"` and update description text
-- [ ] **4.6** Line 246: Change `"Instruction updated successfully"` to `"Guide updated successfully"`
-- [ ] **4.7** Lines 267-268: Change page title `"Instructions"` to `"Guides"`
-- [ ] **4.8** Line 272: Change subtitle `"Manage instruction articles for your items"` to `"Manage guide articles for your items"`
-- [ ] **4.9** Open `src/app/dashboard2/instructions/[articleId]/edit/page.tsx`
-- [ ] **4.10** Line 233: Change `"Back to Instructions"` to `"Back to Guides"`
-- [ ] **4.11** Save all files and verify no TypeScript errors
+- [x] **4.1** Open `src/app/dashboard2/instructions/page.tsx`---implemented: Updated all user-facing strings
+- [x] **4.2** Line 155: Change `"Please log in to access instructions"` to `"Please log in to access guides"`---implemented: Changed to 'access guides'
+- [x] **4.3** Line 172: Change `"Loading instructions..."` to `"Loading guides..."`---implemented: Changed to 'Loading guides...'
+- [x] **4.4** Line 183: Change `"Error Loading Instructions"` to `"Error Loading Guides"`---implemented: Changed to 'Error Loading Guides'
+- [x] **4.5** Lines 202-204: Change `"No instructions yet"` to `"No guides yet"` and update description text---implemented: Changed to 'No guides yet' and updated description
+- [x] **4.6** Line 246: Change `"Instruction updated successfully"` to `"Guide updated successfully"`---implemented: Changed to 'Guide updated successfully'
+- [x] **4.7** Lines 267-268: Change page title `"Instructions"` to `"Guides"`---implemented: Changed page title to 'Guides'
+- [x] **4.8** Line 272: Change subtitle `"Manage instruction articles for your items"` to `"Manage guide articles for your items"`---implemented: Changed subtitle to 'guide articles'
+- [x] **4.9** Open `src/app/dashboard2/instructions/[articleId]/edit/page.tsx`---implemented: Updated back button
+- [x] **4.10** Line 233: Change `"Back to Instructions"` to `"Back to Guides"`---implemented: Changed to 'Back to Guides'
+- [x] **4.11** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

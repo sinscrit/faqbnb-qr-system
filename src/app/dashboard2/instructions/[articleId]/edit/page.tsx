@@ -230,7 +230,7 @@ export default function EditArticlePage() {
               onClick={() => router.push('/dashboard2/instructions')}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Back to Instructions
+              Back to Guides
             </button>
           </div>
         </div>
