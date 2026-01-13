@@ -245,7 +245,7 @@ export function DashboardLayout({
                     }`}>
                       {currentDashboardSection === DashboardSection.dashboard && '📊 Dashboard'}
                       {currentDashboardSection === DashboardSection.items && '📦 Items'}
-                      {currentDashboardSection === DashboardSection.instructions && '📄 Instructions'}
+                      {currentDashboardSection === DashboardSection.instructions && '📄 Guides'}
                       {currentDashboardSection === DashboardSection.properties && '🏠 Properties'}
                       {currentDashboardSection === DashboardSection.analytics && '📈 Analytics'}
                       {currentDashboardSection === DashboardSection.systemAdmin && '👑 System Admin'}

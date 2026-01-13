@@ -50,8 +50,8 @@ const navigationItems: NavItem[] = [
     icon: Package,
   },
   {
-    name: 'Instructions',
-    mobileLabel: 'Instr.',
+    name: 'Guides',
+    mobileLabel: 'Guide',
     href: '/dashboard2/instructions',
     icon: FileText,
   },

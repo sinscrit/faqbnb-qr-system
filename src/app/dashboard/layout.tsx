@@ -94,7 +94,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const baseItems = [
       { name: 'Dashboard', mobileName: 'D/B', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
       { name: 'Items', mobileName: 'Items', href: '/dashboard/items', icon: <Package className="h-5 w-5" /> },
-      { name: 'Instructions', mobileName: 'Instr.', href: '/dashboard/instructions', icon: <FileText className="h-5 w-5" /> },
+      { name: 'Guides', mobileName: 'Guide', href: '/dashboard/instructions', icon: <FileText className="h-5 w-5" /> },
     ];
 
     if (isAdmin) {

@@ -50,15 +50,15 @@
 **Files to modify:** `src/components/DashboardLayout.tsx`, `src/app/dashboard/layout.tsx`, `src/app/dashboard2/layout.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **2.1** Open `src/components/DashboardLayout.tsx` and locate line 248 with `'Instructions'` badge text
-- [ ] **2.2** Change the badge text from `'Instructions'` to `'Guides'`
-- [ ] **2.3** Open `src/app/dashboard/layout.tsx` and locate line 97
-- [ ] **2.4** Change `name: 'Instructions'` to `name: 'Guides'`
-- [ ] **2.5** Change `mobileName: 'Instr.'` to `mobileName: 'Guide'` on the same line or adjacent
-- [ ] **2.6** Open `src/app/dashboard2/layout.tsx` and locate lines 53-54
-- [ ] **2.7** Change `name: 'Instructions'` to `name: 'Guides'` (line 53)
-- [ ] **2.8** Change `mobileLabel: 'Instr.'` to `mobileLabel: 'Guide'` (line 54)
-- [ ] **2.9** Save all files and verify no TypeScript errors
+- [x] **2.1** Open `src/components/DashboardLayout.tsx` and locate line 248 with `'Instructions'` badge text---implemented: Changed badge text to 'Guides'
+- [x] **2.2** Change the badge text from `'Instructions'` to `'Guides'`---implemented: Updated badge from '📄 Instructions' to '📄 Guides'
+- [x] **2.3** Open `src/app/dashboard/layout.tsx` and locate line 97---implemented: Updated navigation item
+- [x] **2.4** Change `name: 'Instructions'` to `name: 'Guides'`---implemented: Changed name to 'Guides'
+- [x] **2.5** Change `mobileName: 'Instr.'` to `mobileName: 'Guide'` on the same line or adjacent---implemented: Changed mobileName to 'Guide'
+- [x] **2.6** Open `src/app/dashboard2/layout.tsx` and locate lines 53-54---implemented: Updated navigation item
+- [x] **2.7** Change `name: 'Instructions'` to `name: 'Guides'` (line 53)---implemented: Changed name to 'Guides'
+- [x] **2.8** Change `mobileLabel: 'Instr.'` to `mobileLabel: 'Guide'` (line 54)---implemented: Changed mobileLabel to 'Guide'
+- [x] **2.9** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 
