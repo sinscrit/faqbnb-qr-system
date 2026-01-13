@@ -72,15 +72,20 @@ export function SearchInput({
   // Track if we need to emit changes (to avoid loops)
   const isInitialMount = useRef(true);
 
-  // Track if we're in the middle of a clear operation (REQ-218 Task 2)
-  const isClearingRef = useRef(false);
+  // Track the value we last explicitly set to prevent sync race condition (REQ-218 Task 2)
+  const lastExplicitValueRef = useRef<string | null>(null);
 
   // Sync external value to local state when prop changes
-  // Skip sync during clear operations to prevent race condition (REQ-218 Task 2)
+  // Skip sync if we're in an explicit operation (e.g., clear)
   useEffect(() => {
-    if (isClearingRef.current) {
+    // If we recently set an explicit value, ignore any sync that would revert it
+    if (lastExplicitValueRef.current !== null && value !== lastExplicitValueRef.current) {
+      // The incoming value is stale (from before our explicit change), ignore it
       return;
     }
+    // Don't clear lastExplicitValueRef here - let the debounce effect handle it
+    // once debouncedValue has caught up
+
     if (value !== localValue) {
       setLocalValue(value);
     }
@@ -92,6 +97,16 @@ export function SearchInput({
     // Skip on initial mount
     if (isInitialMount.current) {
       isInitialMount.current = false;
+      return;
+    }
+
+    // Skip if we're in an explicit operation (e.g., clear) - REQ-218 Task 2
+    // This prevents the stale debounced value from overriding the explicit value
+    if (lastExplicitValueRef.current !== null) {
+      // Only clear the flag once debouncedValue has caught up to our explicit value
+      if (debouncedValue === lastExplicitValueRef.current) {
+        lastExplicitValueRef.current = null;
+      }
       return;
     }
 
@@ -108,14 +123,11 @@ export function SearchInput({
 
   // Clear the search input (Task 2.3.4, enhanced REQ-218 Task 2)
   const handleClear = useCallback(() => {
-    isClearingRef.current = true;
+    // Track that we're explicitly setting to '' - ignore stale syncs from parent
+    lastExplicitValueRef.current = '';
     setLocalValue('');
     onChange(''); // Immediate clear (bypass debounce)
     inputRef.current?.focus();
-    // Reset the flag after a short delay to allow state to settle
-    setTimeout(() => {
-      isClearingRef.current = false;
-    }, 50);
   }, [onChange]);
 
   // Handle keyboard shortcuts (Task 2.3.5)

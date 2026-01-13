@@ -179,16 +179,19 @@ export function ItemList({
           ) : (
             <div role="columnheader" className="w-28 flex-shrink-0">Created</div>
           )}
-          {/* Column Settings - positioned after Created column (REQ-218) */}
-          {onToggleColumn && columnVisibility && (
-            <div role="columnheader" className="w-8 flex-shrink-0 hidden md:flex items-center justify-center">
+          {/* Views Column Header (REQ-091) - matches ItemRow w-20 */}
+          <div role="columnheader" className="hidden lg:block w-20 flex-shrink-0">Views</div>
+          {/* Reactions Column Header (REQ-091) - matches ItemRow w-24 */}
+          <div role="columnheader" className="hidden xl:block w-24 flex-shrink-0">Reactions</div>
+          {/* Actions + Column Settings combined (REQ-218) */}
+          <div role="columnheader" className="w-10 flex-shrink-0 flex items-center justify-end sticky right-0 bg-gray-50" aria-label="Actions">
+            {onToggleColumn && columnVisibility && (
               <ColumnSettingsPopup
                 columnVisibility={columnVisibility}
                 onToggleColumn={onToggleColumn}
               />
-            </div>
-          )}
-          <div role="columnheader" className="w-10 flex-shrink-0 sticky right-0 bg-gray-50" aria-label="Actions" />
+            )}
+          </div>
         </div>
       </div>
 
