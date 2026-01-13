@@ -14,26 +14,30 @@ export async function GET(request: NextRequest) {
   const stateParam = searchParams.get('state');
   const error = searchParams.get('error');
 
+  // Base URL for redirects - use NEXT_PUBLIC_APP_URL to avoid localhost issues on Railway
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+
   console.log('🔐 GOOGLE_OAUTH_CALLBACK: Received callback', {
     timestamp: new Date().toISOString(),
     hasCode: !!code,
     hasState: !!stateParam,
     hasError: !!error,
-    error
+    error,
+    baseUrl
   });
 
   // Handle OAuth errors
   if (error) {
     console.error('🔐 GOOGLE_OAUTH_CALLBACK: OAuth error from Google', { error });
     return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(error)}`, request.url)
+      new URL(`/login?error=${encodeURIComponent(error)}`, baseUrl)
     );
   }
 
   if (!code || !stateParam) {
     console.error('🔐 GOOGLE_OAUTH_CALLBACK: Missing code or state');
     return NextResponse.redirect(
-      new URL('/login?error=Missing authorization code', request.url)
+      new URL('/login?error=Missing authorization code', baseUrl)
     );
   }
 
@@ -55,7 +59,7 @@ export async function GET(request: NextRequest) {
   } catch (stateError) {
     console.error('🔐 GOOGLE_OAUTH_CALLBACK: State verification failed', { stateError });
     return NextResponse.redirect(
-      new URL('/login?error=Invalid state parameter', request.url)
+      new URL('/login?error=Invalid state parameter', baseUrl)
     );
   }
 
@@ -90,7 +94,7 @@ export async function GET(request: NextRequest) {
       description: tokens.error_description
     });
     return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(tokens.error_description || tokens.error)}`, request.url)
+      new URL(`/login?error=${encodeURIComponent(tokens.error_description || tokens.error)}`, baseUrl)
     );
   }
 
@@ -131,7 +135,7 @@ export async function GET(request: NextRequest) {
       code: authError.code
     });
     return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(authError.message)}`, request.url)
+      new URL(`/login?error=${encodeURIComponent(authError.message)}`, baseUrl)
     );
   }
 
@@ -148,10 +152,10 @@ export async function GET(request: NextRequest) {
     params.set('accessCode', state.accessCode);
     params.set('email', state.email);
     params.set('oauth_success', 'true');
-    return NextResponse.redirect(new URL(`/register?${params.toString()}`, request.url));
+    return NextResponse.redirect(new URL(`/register?${params.toString()}`, baseUrl));
   }
 
   // Login flow - redirect to dashboard
   console.log('🔐 GOOGLE_OAUTH_CALLBACK: Login flow, redirecting to dashboard');
-  return NextResponse.redirect(new URL('/dashboard2', request.url));
+  return NextResponse.redirect(new URL('/dashboard2', baseUrl));
 }
