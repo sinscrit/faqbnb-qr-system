@@ -81,6 +81,9 @@ export default function RegistrationForm({
   // REQ-221: Gmail domain detection for contextual OAuth display
   const isGmailEmail = formData.email.toLowerCase().endsWith('@gmail.com');
 
+  // REQ-222: Determine if email/password fields should be shown
+  const showEmailPasswordFields = !isGmailEmail || registrationMethod === 'email-password';
+
   // Use the registration hook
   const {
     isLoading,
@@ -637,156 +640,168 @@ export default function RegistrationForm({
       {/* REQ-221: Contextual Google OAuth for Gmail users */}
       {oauthSection}
 
-      {/* Full Name Field */}
-      <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-          Full Name <span className="text-gray-400">(optional)</span>
-        </label>
-        <input
-          type="text"
-          id="fullName"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleInputChange}
-          disabled={isLoading}
-          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-            errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'
-          } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          placeholder="John Doe"
-          autoComplete="name"
-        />
-        {errors.fullName && (
-          <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>
-        )}
-      </div>
-
-      {/* Password Field */}
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-          Password
-        </label>
-        <div className="relative">
+      {/* Full Name Field - REQ-222: Conditionally visible */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        showEmailPasswordFields ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div>
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+            Full Name <span className="text-gray-400">(optional)</span>
+          </label>
           <input
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            name="password"
-            value={formData.password}
+            type="text"
+            id="fullName"
+            name="fullName"
+            value={formData.fullName}
             onChange={handleInputChange}
             disabled={isLoading}
-            className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-              errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'
             } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            placeholder="Create a strong password"
-            autoComplete="new-password"
-            required
+            placeholder="John Doe"
+            autoComplete="name"
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            disabled={isLoading}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            tabIndex={-1}
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-          </button>
+          {errors.fullName && (
+            <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>
+          )}
         </div>
-        
-        {/* Password Strength Indicator */}
-        {formData.password && (
-          <div className="mt-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-600">Password strength:</span>
-              <span className={`font-medium text-${passwordStrength.color.replace('-300', '-600').replace('-400', '-600')}`}>
-                {passwordStrength.label}
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-              <div 
-                className={`bg-${passwordStrength.color} h-1.5 rounded-full transition-all duration-300`}
-                style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
-              ></div>
-            </div>
-            {passwordStrength.feedback.length > 0 && (
-              <div className="mt-1">
-                <p className="text-xs text-gray-600">Requirements:</p>
-                <ul className="text-xs text-gray-500 space-y-0.5">
-                  {passwordStrength.feedback.map((item, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+      </div>
+
+      {/* Password Field - REQ-222: Conditionally visible */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        showEmailPasswordFields ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              placeholder="Create a strong password"
+              autoComplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+
+          {/* Password Strength Indicator */}
+          {formData.password && (
+            <div className="mt-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-600">Password strength:</span>
+                <span className={`font-medium text-${passwordStrength.color.replace('-300', '-600').replace('-400', '-600')}`}>
+                  {passwordStrength.label}
+                </span>
               </div>
-            )}
-          </div>
-        )}
-        
-        {errors.password && (
-          <p className="text-red-600 text-sm mt-1">{errors.password}</p>
-        )}
+              <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div
+                  className={`bg-${passwordStrength.color} h-1.5 rounded-full transition-all duration-300`}
+                  style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                ></div>
+              </div>
+              {passwordStrength.feedback.length > 0 && (
+                <div className="mt-1">
+                  <p className="text-xs text-gray-600">Requirements:</p>
+                  <ul className="text-xs text-gray-500 space-y-0.5">
+                    {passwordStrength.feedback.map((item, index) => (
+                      <li key={index} className="flex items-center">
+                        <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {errors.password && (
+            <p className="text-red-600 text-sm mt-1">{errors.password}</p>
+          )}
+        </div>
       </div>
 
-      {/* Confirm Password Field */}
-      <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-          Confirm Password
-        </label>
-        <div className="relative">
-          <input
-            type={showConfirmPassword ? 'text' : 'password'}
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            disabled={isLoading}
-            className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-              errors.confirmPassword ? 'border-red-300 bg-red-50' : 
-              formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-green-300 bg-green-50' : 'border-gray-300'
-            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            placeholder="Confirm your password"
-            autoComplete="new-password"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            disabled={isLoading}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            tabIndex={-1}
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-          </button>
-        </div>
-        
-        {/* Password Match Indicator */}
-        {formData.confirmPassword && (
-          <div className="mt-1 flex items-center">
-            {formData.password === formData.confirmPassword ? (
-              <>
-                <Check className="h-3 w-3 text-green-600 mr-1" />
-                <span className="text-xs text-green-600">Passwords match</span>
-              </>
-            ) : (
-              <>
-                <AlertCircle className="h-3 w-3 text-red-600 mr-1" />
-                <span className="text-xs text-red-600">Passwords do not match</span>
-              </>
-            )}
+      {/* Confirm Password Field - REQ-222: Conditionally visible */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        showEmailPasswordFields ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              disabled={isLoading}
+              className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                errors.confirmPassword ? 'border-red-300 bg-red-50' :
+                formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-green-300 bg-green-50' : 'border-gray-300'
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              placeholder="Confirm your password"
+              autoComplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              disabled={isLoading}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
           </div>
-        )}
-        
-        {errors.confirmPassword && (
-          <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>
-        )}
+
+          {/* Password Match Indicator */}
+          {formData.confirmPassword && (
+            <div className="mt-1 flex items-center">
+              {formData.password === formData.confirmPassword ? (
+                <>
+                  <Check className="h-3 w-3 text-green-600 mr-1" />
+                  <span className="text-xs text-green-600">Passwords match</span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-3 w-3 text-red-600 mr-1" />
+                  <span className="text-xs text-red-600">Passwords do not match</span>
+                </>
+              )}
+            </div>
+          )}
+
+          {errors.confirmPassword && (
+            <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>
+          )}
+        </div>
       </div>
 
       {/* Terms and Conditions */}

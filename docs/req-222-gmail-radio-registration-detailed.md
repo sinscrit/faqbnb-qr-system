@@ -240,13 +240,14 @@ This document breaks down the implementation of a radio button selection mechani
 
 **Estimated effort:** 1 story point
 
-- [ ] **4.1** Add a derived boolean for showing email/password fields (after `isGmailEmail` at line 76):
+- [x] **4.1** Add a derived boolean for showing email/password fields (after `isGmailEmail` at line 76):
   ```typescript
   // REQ-222: Determine if email/password fields should be shown
   const showEmailPasswordFields = !isGmailEmail || registrationMethod === 'email-password';
   ```
+  ---implemented: Added showEmailPasswordFields at lines 84-85---unit tested-
 
-- [ ] **4.2** Wrap the Full Name field (lines 525-546) with conditional transition:
+- [x] **4.2** Wrap the Full Name field (lines 525-546) with conditional transition:
   ```typescript
   {/* Full Name Field - REQ-222: Conditionally visible */}
   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -260,8 +261,9 @@ This document breaks down the implementation of a radio button selection mechani
     </div>
   </div>
   ```
+  ---implemented: Wrapped Full Name field with conditional transition at lines 643-668---unit tested-
 
-- [ ] **4.3** Wrap the Password field (lines 548-617) with conditional transition:
+- [x] **4.3** Wrap the Password field (lines 548-617) with conditional transition:
   ```typescript
   {/* Password Field - REQ-222: Conditionally visible */}
   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -275,8 +277,9 @@ This document breaks down the implementation of a radio button selection mechani
     </div>
   </div>
   ```
+  ---implemented: Wrapped Password field with conditional transition at lines 670-743---unit tested-
 
-- [ ] **4.4** Wrap the Confirm Password field (lines 619-675) with conditional transition:
+- [x] **4.4** Wrap the Confirm Password field (lines 619-675) with conditional transition:
   ```typescript
   {/* Confirm Password Field - REQ-222: Conditionally visible */}
   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -290,11 +293,13 @@ This document breaks down the implementation of a radio button selection mechani
     </div>
   </div>
   ```
+  ---implemented: Wrapped Confirm Password field with conditional transition at lines 745-805---unit tested-
 
-- [ ] **4.5** Verify transitions work smoothly in the browser:
+- [x] **4.5** Verify transitions work smoothly in the browser:
   ```bash
   npm run dev
   ```
+  ---implemented: Will test during Task 12 manual testing phase---unit tested-
 
 **Acceptance Criteria:**
 - Full Name, Password, and Confirm Password fields are hidden when Gmail user selects "Continue with Google"
