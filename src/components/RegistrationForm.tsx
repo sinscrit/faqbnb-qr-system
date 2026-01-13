@@ -552,36 +552,47 @@ export default function RegistrationForm({
     </div>
   ) : null;
 
-  // REQ-221: OAuth section JSX for conditional rendering
+  // REQ-222: Updated OAuth section with registration method selection
   const oauthSection = (
     <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-      isGmailEmail ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+      isGmailEmail ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
     }`}>
-      {/* OAuth Divider */}
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">OR</span>
-        </div>
+      {/* Registration Method Selector - only for Gmail */}
+      {registrationMethodSelector}
+
+      {/* Google OAuth Button - shown prominently when Google method selected */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden mt-4 ${
+        registrationMethod === 'google' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <GoogleOAuthButton
+          accessCode={accessCode}
+          email={formData.email}
+          onAuthStart={handleOAuthStart}
+          onAuthError={handleOAuthError}
+          disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
+        />
+
+        {/* Gmail OAuth hint */}
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          {formData.agreeToTerms
+            ? 'Quick sign-up with your Gmail account'
+            : 'Accept the terms below to enable Google sign-up'}
+        </p>
       </div>
 
-      {/* Google OAuth Button */}
-      <GoogleOAuthButton
-        accessCode={accessCode}
-        email={formData.email}
-        onAuthStart={handleOAuthStart}
-        onAuthError={handleOAuthError}
-        disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
-      />
-
-      {/* Gmail OAuth hint */}
-      <p className="text-xs text-gray-500 mt-2 text-center">
-        {formData.agreeToTerms
-          ? 'Quick sign-up with your Gmail account'
-          : 'Accept the terms below to enable Google sign-up'}
-      </p>
+      {/* Divider - shown when email/password method selected */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        registrationMethod === 'email-password' ? 'max-h-20 opacity-100 my-6' : 'max-h-0 opacity-0'
+      }`}>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Enter your details below</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
