@@ -58,8 +58,7 @@ function SortableColumnHeader({
       aria-label={`Sort by ${label}`}
     >
       <span className="hidden md:inline">{label}</span>
-      {shortLabel && <span className="md:hidden">{shortLabel}</span>}
-      {!shortLabel && <span>{label}</span>}
+      <span className="md:hidden">{shortLabel || label}</span>
       {isActive ? (
         isAscending ? (
           <ArrowUp className="h-3 w-3" aria-label="Ascending" />
