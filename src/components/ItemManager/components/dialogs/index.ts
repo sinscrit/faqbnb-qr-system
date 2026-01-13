@@ -36,3 +36,7 @@ export {
   getDeleteMessage,
   getConfirmButtonText,
 } from './ConfirmDeleteDialog';
+
+// Column Settings Popup (REQ-218)
+export { ColumnSettingsPopup } from './ColumnSettingsPopup';
+export type { ColumnSettingsPopupProps } from './ColumnSettingsPopup';
