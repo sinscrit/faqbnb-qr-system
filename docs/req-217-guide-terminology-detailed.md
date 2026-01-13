@@ -161,19 +161,19 @@
 **Files to modify:** `src/components/ItemCapture/components/steps/WhatsNextStep.tsx`, `src/components/ItemCapture/components/steps/ContentTypeStep.tsx`, `src/components/ItemCapture/components/steps/TextEditorStep.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Open `src/components/ItemCapture/components/steps/WhatsNextStep.tsx`
-- [ ] **8.2** Line 196: Change `title="Edit Instructions"` to `title="Edit Guide"`
-- [ ] **8.3** Line 197: Change `description="Review and modify the instructions you just created"` to `description="Review and modify the guide you just created"`
-- [ ] **8.4** Line 204: Change `title="Add New Instructions"` to `title="Add New Guide"`
-- [ ] **8.5** Line 205: Change description text that mentions "instructions" to use "guide"
-- [ ] **8.6** Open `src/components/ItemCapture/components/steps/ContentTypeStep.tsx`
-- [ ] **8.7** Line 62: Change `'Capture video instructions'` to `'Capture video guide'`
-- [ ] **8.8** Line 74: Change `'Create written instructions'` to `'Create written guide'`
-- [ ] **8.9** Open `src/components/ItemCapture/components/steps/TextEditorStep.tsx`
-- [ ] **8.10** Line 441: Change `"Write Instructions"` heading to `"Write Guide"`
-- [ ] **8.11** Line 443: Change `"Add text-based instructions..."` to `"Add text-based guide..."`
-- [ ] **8.12** Line 471: Update placeholder text that mentions "instructions" to use "guide"
-- [ ] **8.13** Save all files and verify no TypeScript errors
+- [x] **8.1** Open `src/components/ItemCapture/components/steps/WhatsNextStep.tsx`---implemented: Updated action cards
+- [x] **8.2** Line 196: Change `title="Edit Instructions"` to `title="Edit Guide"`---implemented: Changed to "Edit Guide"
+- [x] **8.3** Line 197: Change `description="Review and modify the instructions you just created"` to `description="Review and modify the guide you just created"`---implemented: Changed to "guide you just created"
+- [x] **8.4** Line 204: Change `title="Add New Instructions"` to `title="Add New Guide"`---implemented: Changed to "Add New Guide"
+- [x] **8.5** Line 205: Change description text that mentions "instructions" to use "guide"---implemented: Changed to "Create different guide"
+- [x] **8.6** Open `src/components/ItemCapture/components/steps/ContentTypeStep.tsx`---implemented: Updated content type labels
+- [x] **8.7** Line 62: Change `'Capture video instructions'` to `'Capture video guide'`---implemented: Changed to 'Capture video guide'
+- [x] **8.8** Line 74: Change `'Create written instructions'` to `'Create written guide'`---implemented: Changed to 'Create written guide'
+- [x] **8.9** Open `src/components/ItemCapture/components/steps/TextEditorStep.tsx`---implemented: Updated editor headings
+- [x] **8.10** Line 441: Change `"Write Instructions"` heading to `"Write Guide"`---implemented: Changed to "Write Guide"
+- [x] **8.11** Line 443: Change `"Add text-based instructions..."` to `"Add text-based guide..."`---implemented: Changed to "Add text-based guide"
+- [x] **8.12** Line 471: Update placeholder text that mentions "instructions" to use "guide"---implemented: Changed to "Write your item guide here"
+- [x] **8.13** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

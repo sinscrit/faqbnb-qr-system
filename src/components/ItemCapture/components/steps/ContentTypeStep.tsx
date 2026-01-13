@@ -59,7 +59,7 @@ const CONTENT_OPTIONS: ContentTypeOption[] = [
     type: 'video',
     icon: Video,
     label: 'Record Video',
-    description: 'Capture video instructions',
+    description: 'Capture video guide',
   },
   {
     type: 'photo',
@@ -71,7 +71,7 @@ const CONTENT_OPTIONS: ContentTypeOption[] = [
     type: 'text',
     icon: FileText,
     label: 'Write Text',
-    description: 'Create written instructions',
+    description: 'Create written guide',
   },
   {
     type: 'upload',

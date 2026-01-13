@@ -193,16 +193,16 @@ export function WhatsNextStep({
         {/* Edit Instructions - Default variant */}
         <ActionCard
           icon={<Edit className="w-5 h-5" aria-hidden="true" />}
-          title="Edit Instructions"
-          description="Review and modify the instructions you just created"
+          title="Edit Guide"
+          description="Review and modify the guide you just created"
           onClick={onEditInstructions}
         />
 
         {/* Add New Instructions - Primary variant (recommended action) */}
         <ActionCard
           icon={<PlusCircle className="w-5 h-5" aria-hidden="true" />}
-          title="Add New Instructions"
-          description={`Create different instructions for "${savedItemName}"`}
+          title="Add New Guide"
+          description={`Create different guide for "${savedItemName}"`}
           onClick={onAddNewInstructions}
           variant="primary"
         />

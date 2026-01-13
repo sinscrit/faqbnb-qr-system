@@ -438,9 +438,9 @@ export function TextEditorStep({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Header */}
       <div className="text-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Write Instructions</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Write Guide</h2>
         <p className="text-sm text-gray-600">
-          Add text-based instructions using markdown formatting
+          Add text-based guide using markdown formatting
         </p>
       </div>
 
@@ -468,7 +468,7 @@ export function TextEditorStep({
             value={localContent}
             onChange={handleContentChange}
             onKeyDown={handleKeyDown}
-            placeholder="Write your item instructions here using markdown formatting..."
+            placeholder="Write your item guide here using markdown formatting..."
             className={cn(
               'flex-1 w-full p-4 resize-none',
               'border border-t-0 border-gray-200 rounded-b-lg',
