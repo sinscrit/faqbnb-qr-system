@@ -112,7 +112,7 @@ export function ItemList({
           className="flex items-center gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider"
         >
           {isSelectionMode && <div role="columnheader" className="w-8 flex-shrink-0" aria-label="Selection" />}
-          <div role="columnheader" className="w-12 flex-shrink-0">Preview</div>
+          <div role="columnheader" className="w-12 flex-shrink-0" aria-label="Item preview" />
           {onSortChange ? (
             <SortableColumnHeader
               label="Title"
