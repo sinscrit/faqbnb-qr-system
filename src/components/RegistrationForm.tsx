@@ -247,19 +247,25 @@ export default function RegistrationForm({
   // Validate entire form
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     const emailError = validateField('email', formData.email);
-    const passwordError = validateField('password', formData.password);
-    const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
-    const fullNameError = validateField('fullName', formData.fullName);
-    const agreeToTermsError = validateField('agreeToTerms', formData.agreeToTerms);
-    
     if (emailError) newErrors.email = emailError;
-    if (passwordError) newErrors.password = passwordError;
-    if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError;
-    if (fullNameError) newErrors.fullName = fullNameError;
+
+    // REQ-222: Only validate password fields when email-password registration is selected
+    // or when user is not using Gmail (non-Gmail users always use email/password)
+    if (showEmailPasswordFields) {
+      const passwordError = validateField('password', formData.password);
+      const confirmPasswordError = validateField('confirmPassword', formData.confirmPassword);
+      const fullNameError = validateField('fullName', formData.fullName);
+
+      if (passwordError) newErrors.password = passwordError;
+      if (confirmPasswordError) newErrors.confirmPassword = confirmPasswordError;
+      if (fullNameError) newErrors.fullName = fullNameError;
+    }
+
+    const agreeToTermsError = validateField('agreeToTerms', formData.agreeToTerms);
     if (agreeToTermsError) newErrors.agreeToTerms = agreeToTermsError;
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
