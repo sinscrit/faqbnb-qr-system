@@ -105,14 +105,14 @@
 **Files to modify:** `src/components/ItemManager/components/ItemList.tsx`, `src/components/InstructionsTable/InstructionsTable.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Open `src/components/ItemManager/components/ItemList.tsx`
-- [ ] **5.2** Line 142: Change `label="Instructions"` to `label="Guides"` in the SortableColumnHeader
-- [ ] **5.3** Line 143: Change `shortLabel="Instr."` to `shortLabel="Guide"` in the SortableColumnHeader
-- [ ] **5.4** Line 152: Change `<span>Instructions</span>` to `<span>Guides</span>` (non-sortable fallback)
-- [ ] **5.5** Line 153: Change `<span>Instr.</span>` to `<span>Guide</span>` (mobile non-sortable fallback)
-- [ ] **5.6** Open `src/components/InstructionsTable/InstructionsTable.tsx`
-- [ ] **5.7** Line 128: Change `"No instructions available"` to `"No guides available"`
-- [ ] **5.8** Save all files and verify no TypeScript errors
+- [x] **5.1** Open `src/components/ItemManager/components/ItemList.tsx`---implemented: Updated table headers
+- [x] **5.2** Line 142: Change `label="Instructions"` to `label="Guides"` in the SortableColumnHeader---implemented: Changed label to "Guides"
+- [x] **5.3** Line 143: Change `shortLabel="Instr."` to `shortLabel="Guide"` in the SortableColumnHeader---implemented: Changed shortLabel to "Guide"
+- [x] **5.4** Line 152: Change `<span>Instructions</span>` to `<span>Guides</span>` (non-sortable fallback)---implemented: Changed to "Guides"
+- [x] **5.5** Line 153: Change `<span>Instr.</span>` to `<span>Guide</span>` (mobile non-sortable fallback)---implemented: Changed to "Guide"
+- [x] **5.6** Open `src/components/InstructionsTable/InstructionsTable.tsx`---implemented: Updated empty state
+- [x] **5.7** Line 128: Change `"No instructions available"` to `"No guides available"`---implemented: Changed to "No guides available"
+- [x] **5.8** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

@@ -125,7 +125,7 @@ export function InstructionsTable({ instructions, onEdit, loading }: Instruction
           <tbody className="bg-white">
             <tr>
               <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                No instructions available
+                No guides available
               </td>
             </tr>
           </tbody>

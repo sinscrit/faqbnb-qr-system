@@ -139,8 +139,8 @@ export function ItemList({
           )}
           {onSortChange ? (
             <SortableColumnHeader
-              label="Instructions"
-              shortLabel="Instr."
+              label="Guides"
+              shortLabel="Guide"
               sortKeyAsc="instructions-asc"
               sortKeyDesc="instructions-desc"
               currentSort={currentSort || 'created-desc'}
@@ -149,8 +149,8 @@ export function ItemList({
             />
           ) : (
             <div role="columnheader" className="w-20 flex-shrink-0">
-              <span className="hidden md:inline">Instructions</span>
-              <span className="md:hidden">Instr.</span>
+              <span className="hidden md:inline">Guides</span>
+              <span className="md:hidden">Guide</span>
             </div>
           )}
           <div role="columnheader" className="hidden lg:block w-40 flex-shrink-0">Tags</div>
