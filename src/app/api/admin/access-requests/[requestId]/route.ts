@@ -18,6 +18,19 @@ export async function GET(
     return authResult.error;
   }
 
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log('❌ ACCESS_REQUEST_DETAIL_DEBUG: User is not a sysadmin:', authResult.user?.email);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
+  }
+
   const { supabase } = authResult;
   const { requestId } = params;
 
@@ -173,6 +186,19 @@ export async function PUT(
     return authResult.error;
   }
 
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log('❌ ACCESS_REQUEST_UPDATE_DEBUG: User is not a sysadmin:', authResult.user?.email);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
+  }
+
   const { supabase, user } = authResult;
   const { requestId } = params;
 
@@ -317,6 +343,19 @@ export async function DELETE(
 
   if (authResult.error) {
     return authResult.error;
+  }
+
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log('❌ ACCESS_REQUEST_DELETE_DEBUG: User is not a sysadmin:', authResult.user?.email);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
   }
 
   const { supabase } = authResult;

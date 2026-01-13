@@ -19,9 +19,35 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading, signOut, isAdmin, userProperties, selectedProperty, setSelectedProperty } = useAuth();
   const { currentAccount, userAccounts } = useAccountContext();
-  
+
   const [availableProperties, setAvailableProperties] = useState<Property[]>([]);
   const [loadingProperties, setLoadingProperties] = useState(false);
+  const [isSysAdmin, setIsSysAdmin] = useState(false);
+
+  // Check sysadmin status for navigation visibility
+  useEffect(() => {
+    if (!user || loading) return;
+
+    async function checkSysAdminStatus() {
+      try {
+        const response = await fetch('/api/admin/check-sysadmin', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setIsSysAdmin(result.data?.isSysAdmin || false);
+        } else {
+          setIsSysAdmin(false);
+        }
+      } catch {
+        setIsSysAdmin(false);
+      }
+    }
+
+    checkSysAdminStatus();
+  }, [user, loading]);
 
   // Load properties for the current account context
   useEffect(() => {
@@ -96,13 +122,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     ];
 
     if (isAdmin) {
-      return [
+      const adminItems = [
         ...baseItems,
         { name: 'Properties', href: '/admin/properties', icon: '🏠' },
         { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
-        { name: 'Access Requests', href: '/admin/access-requests', icon: '🔐' },
-        { name: 'Back Office', href: '/admin/back-office', icon: '👑' },
       ];
+
+      // Only sysadmins can see Access Requests (controlled by SYSADMIN_EMAILS env var)
+      if (isSysAdmin) {
+        adminItems.push(
+          { name: 'Access Requests', href: '/admin/access-requests', icon: '🔐' },
+          { name: 'Back Office', href: '/admin/back-office', icon: '👑' }
+        );
+      }
+
+      return adminItems;
     } else {
       return [
         ...baseItems,

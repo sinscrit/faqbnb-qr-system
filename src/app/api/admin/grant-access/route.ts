@@ -15,6 +15,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return authResult.error;
     }
 
+    // Check if user is a sysadmin - only sysadmins can access this endpoint
+    if (!authResult.isSysAdmin) {
+      console.log('🔥[GRANT_SIMPLE_DEBUG] User is not a sysadmin:', authResult.user?.email);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Access denied. This feature is restricted to system administrators.',
+          code: 'SYSADMIN_REQUIRED'
+        },
+        { status: 403 }
+      );
+    }
+
     const { supabase, user } = authResult;
     const body = await request.json();
     const { requestId, send_email = false } = body;

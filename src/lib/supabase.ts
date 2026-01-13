@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 export type Json =
   | string
@@ -466,38 +467,14 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 // Client for browser/public operations with auth
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+// Using createBrowserClient from @supabase/ssr to properly handle chunked cookies
+// set by server-side code exchange (OAuth callback)
+export const supabase = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    storage: {
-      getItem: (key: string) => {
-        if (typeof window !== 'undefined') {
-          return window.localStorage.getItem(key);
-        }
-        return null;
-      },
-      setItem: (key: string, value: string) => {
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(key, value);
-          // FIXED: Always set cookies for server-side authentication
-          // Set as HTTP cookie for server-side access
-          const maxAge = 60 * 60 * 24 * 30; // 30 days
-          const isSecure = window.location.protocol === 'https:';
-          document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=lax${isSecure ? '; secure' : ''}`;
-          console.log('AUTH_COOKIE_DEBUG: Set cookie for server access:', key);
-        }
-      },
-      removeItem: (key: string) => {
-        if (typeof window !== 'undefined') {
-          window.localStorage.removeItem(key);
-          // Also remove cookie
-          document.cookie = `${key}=; path=/; max-age=0; SameSite=lax`;
-        }
-      }
-    }
   }
 });
 

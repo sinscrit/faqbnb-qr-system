@@ -1,14 +1,82 @@
+'use client';
+
 /**
  * InstructionsTable Component
  * Created: 2026-01-12
  * REQ-212: Instructions List Page
+ * @lastModified 2026-01-13 (REQ-220 - Added Property column)
  *
  * Displays a table of instruction articles with item information.
- * Shows title, item name, room, purpose, and actions.
+ * Shows title, item name, room, property, purpose, and actions.
+ * Supports sortable column headers and column visibility settings.
  */
 
-import { Pencil } from 'lucide-react';
-import { InstructionsTableProps } from './InstructionsTable.types';
+import { Pencil, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { GuideColumnSettingsPopup } from './GuideColumnSettingsPopup';
+import type { InstructionsTableProps, GuideSortOption } from './InstructionsTable.types';
+
+// =============================================================================
+// SortableColumnHeader Component (REQ-219)
+// =============================================================================
+
+interface SortableColumnHeaderProps {
+  label: string;
+  sortKeyAsc: GuideSortOption;
+  sortKeyDesc: GuideSortOption;
+  currentSort: GuideSortOption;
+  onSortChange: (sort: GuideSortOption) => void;
+  className?: string;
+}
+
+function SortableColumnHeader({
+  label,
+  sortKeyAsc,
+  sortKeyDesc,
+  currentSort,
+  onSortChange,
+  className,
+}: SortableColumnHeaderProps) {
+  const isActive = currentSort === sortKeyAsc || currentSort === sortKeyDesc;
+  const isAscending = currentSort === sortKeyAsc;
+
+  const handleClick = () => {
+    if (currentSort === sortKeyDesc) {
+      onSortChange(sortKeyAsc);
+    } else {
+      onSortChange(sortKeyDesc);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(
+        'flex items-center gap-1 text-xs font-medium uppercase tracking-wider',
+        'hover:text-gray-700 transition-colors cursor-pointer',
+        isActive ? 'text-gray-900' : 'text-gray-500',
+        className
+      )}
+      aria-label={`Sort by ${label}`}
+    >
+      <span>{label}</span>
+      {isActive ? (
+        isAscending ? (
+          <ArrowUp className="h-3 w-3" aria-label="Ascending" />
+        ) : (
+          <ArrowDown className="h-3 w-3" aria-label="Descending" />
+        )
+      ) : (
+        <ArrowUpDown className="h-3 w-3 text-gray-400" aria-hidden="true" />
+      )}
+    </button>
+  );
+}
+
+// =============================================================================
+// Helper Functions
+// =============================================================================
 
 /**
  * Get badge color for purpose type
@@ -47,31 +115,172 @@ function formatPurposeLabel(purpose: string): string {
     .join(' ');
 }
 
-export function InstructionsTable({ instructions, onEdit, loading }: InstructionsTableProps) {
+// =============================================================================
+// Default Column Visibility
+// =============================================================================
+
+const DEFAULT_COLUMN_VISIBILITY = {
+  room: true,
+  purpose: true,
+  property: false, // REQ-220 - Hidden by default
+};
+
+// =============================================================================
+// Main Component
+// =============================================================================
+
+export function InstructionsTable({
+  instructions,
+  onEdit,
+  loading,
+  currentSort = 'created-desc',
+  onSortChange,
+  columnVisibility = DEFAULT_COLUMN_VISIBILITY,
+  onToggleColumn,
+}: InstructionsTableProps) {
+  // Determine if sorting is enabled
+  const isSortable = Boolean(onSortChange);
+
+  // Render table header row
+  const renderTableHeader = () => (
+    <thead className="bg-gray-50">
+      <tr>
+        {/* Title Column */}
+        <th className="px-6 py-3 text-left">
+          {isSortable ? (
+            <SortableColumnHeader
+              label="Title"
+              sortKeyAsc="title-asc"
+              sortKeyDesc="title-desc"
+              currentSort={currentSort}
+              onSortChange={onSortChange!}
+            />
+          ) : (
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Title
+            </span>
+          )}
+        </th>
+
+        {/* Item Column */}
+        <th className="px-6 py-3 text-left">
+          {isSortable ? (
+            <SortableColumnHeader
+              label="Item"
+              sortKeyAsc="item-asc"
+              sortKeyDesc="item-desc"
+              currentSort={currentSort}
+              onSortChange={onSortChange!}
+            />
+          ) : (
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Item
+            </span>
+          )}
+        </th>
+
+        {/* Room Column (conditionally visible) */}
+        {columnVisibility.room && (
+          <th className="px-6 py-3 text-left hidden md:table-cell">
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Room
+            </span>
+          </th>
+        )}
+
+        {/* Property Column (conditionally visible) - REQ-220 */}
+        {columnVisibility.property && (
+          <th className="px-6 py-3 text-left hidden md:table-cell">
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Property
+            </span>
+          </th>
+        )}
+
+        {/* Purpose Column (conditionally visible) */}
+        {columnVisibility.purpose && (
+          <th className="px-6 py-3 text-left hidden sm:table-cell">
+            {isSortable ? (
+              <SortableColumnHeader
+                label="Purpose"
+                sortKeyAsc="purpose-asc"
+                sortKeyDesc="purpose-desc"
+                currentSort={currentSort}
+                onSortChange={onSortChange!}
+              />
+            ) : (
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Purpose
+              </span>
+            )}
+          </th>
+        )}
+
+        {/* Created Column */}
+        <th className="px-6 py-3 text-left hidden lg:table-cell">
+          {isSortable ? (
+            <SortableColumnHeader
+              label="Created"
+              sortKeyAsc="created-asc"
+              sortKeyDesc="created-desc"
+              currentSort={currentSort}
+              onSortChange={onSortChange!}
+            />
+          ) : (
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Created
+            </span>
+          )}
+        </th>
+
+        {/* Actions + Column Settings */}
+        <th className="px-6 py-3 text-right">
+          <div className="flex items-center justify-end gap-2">
+            <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </span>
+            {onToggleColumn && (
+              <GuideColumnSettingsPopup
+                columnVisibility={columnVisibility}
+                onToggleColumn={onToggleColumn}
+              />
+            )}
+          </div>
+        </th>
+      </tr>
+    </thead>
+  );
+
+  // Calculate colspan based on visible columns
+  const getColspan = () => {
+    let count = 3; // Title, Item, Actions are always visible
+    if (columnVisibility.room) count++;
+    if (columnVisibility.property) count++; // REQ-220
+    if (columnVisibility.purpose) count++;
+    count++; // Created column
+    return count;
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return '-';
+    }
+  };
+
   // Loading skeleton
   if (loading) {
     return (
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Item
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                Room
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                Purpose
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
+          {renderTableHeader()}
           <tbody className="bg-white divide-y divide-gray-200">
             {[1, 2, 3].map((i) => (
               <tr key={i} className="animate-pulse">
@@ -81,11 +290,23 @@ export function InstructionsTable({ instructions, onEdit, loading }: Instruction
                 <td className="px-6 py-4">
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                 </td>
-                <td className="px-6 py-4 hidden md:table-cell">
-                  <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                </td>
-                <td className="px-6 py-4 hidden sm:table-cell">
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                {columnVisibility.room && (
+                  <td className="px-6 py-4 hidden md:table-cell">
+                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                  </td>
+                )}
+                {columnVisibility.property && (
+                  <td className="px-6 py-4 hidden md:table-cell">
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </td>
+                )}
+                {columnVisibility.purpose && (
+                  <td className="px-6 py-4 hidden sm:table-cell">
+                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  </td>
+                )}
+                <td className="px-6 py-4 hidden lg:table-cell">
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="h-8 bg-gray-200 rounded w-16 ml-auto"></div>
@@ -103,28 +324,10 @@ export function InstructionsTable({ instructions, onEdit, loading }: Instruction
     return (
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Item
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                Room
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                Purpose
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
+          {renderTableHeader()}
           <tbody className="bg-white">
             <tr>
-              <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+              <td colSpan={getColspan()} className="px-6 py-12 text-center text-gray-500">
                 No guides available
               </td>
             </tr>
@@ -138,25 +341,7 @@ export function InstructionsTable({ instructions, onEdit, loading }: Instruction
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Title
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Item
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-              Room
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-              Purpose
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
+        {renderTableHeader()}
         <tbody className="bg-white divide-y divide-gray-200">
           {instructions.map((instruction) => (
             <tr key={instruction.id} className="hover:bg-gray-50 transition-colors">
@@ -172,26 +357,50 @@ export function InstructionsTable({ instructions, onEdit, loading }: Instruction
                 <div className="text-sm text-gray-500">{instruction.itemName}</div>
               </td>
 
-              {/* Room Column (hidden on mobile) */}
-              <td className="px-6 py-4 hidden md:table-cell">
-                {instruction.room ? (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                    {instruction.room}
-                  </span>
-                ) : (
-                  <span className="text-sm text-gray-400">-</span>
-                )}
-              </td>
+              {/* Room Column (conditionally visible) */}
+              {columnVisibility.room && (
+                <td className="px-6 py-4 hidden md:table-cell">
+                  {instruction.room ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                      {instruction.room}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-400">-</span>
+                  )}
+                </td>
+              )}
 
-              {/* Purpose Column (hidden on small mobile) */}
-              <td className="px-6 py-4 hidden sm:table-cell">
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPurposeBadgeColor(
-                    instruction.purpose
-                  )}`}
-                >
-                  {formatPurposeLabel(instruction.purpose)}
-                </span>
+              {/* Property Column (conditionally visible) - REQ-220 */}
+              {columnVisibility.property && (
+                <td className="px-6 py-4 hidden md:table-cell">
+                  {instruction.propertyName ? (
+                    <span className="text-sm text-gray-700">
+                      {instruction.propertyName}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-400">-</span>
+                  )}
+                </td>
+              )}
+
+              {/* Purpose Column (conditionally visible) */}
+              {columnVisibility.purpose && (
+                <td className="px-6 py-4 hidden sm:table-cell">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPurposeBadgeColor(
+                      instruction.purpose
+                    )}`}
+                  >
+                    {formatPurposeLabel(instruction.purpose)}
+                  </span>
+                </td>
+              )}
+
+              {/* Created Column */}
+              <td className="px-6 py-4 hidden lg:table-cell">
+                <div className="text-sm text-gray-500">
+                  {formatDate(instruction.createdAt)}
+                </div>
               </td>
 
               {/* Actions Column */}

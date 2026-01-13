@@ -37,12 +37,14 @@ interface RequestsData {
 /**
  * Access Request Management Page
  * Part of REQ-016: System Admin Back Office
+ * SYSADMIN ONLY - requires SYSADMIN_EMAILS environment variable
  */
 export default function AccessRequestsPage() {
   const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<RequestsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSysAdmin, setIsSysAdmin] = useState<boolean | null>(null);
   const [filters, setFilters] = useState<RequestFilters>({});
   const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
   const [emailPopupOpen, setEmailPopupOpen] = useState(false);
@@ -62,9 +64,34 @@ export default function AccessRequestsPage() {
     loading: false
   });
 
-  // Load access requests data
+  // Check sysadmin status first
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || !user) return;
+
+    async function checkSysAdminStatus() {
+      try {
+        const response = await fetch('/api/admin/check-sysadmin', {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setIsSysAdmin(result.data?.isSysAdmin || false);
+        } else {
+          setIsSysAdmin(false);
+        }
+      } catch {
+        setIsSysAdmin(false);
+      }
+    }
+
+    checkSysAdminStatus();
+  }, [authLoading, user]);
+
+  // Load access requests data (only if sysadmin)
+  useEffect(() => {
+    if (authLoading || isSysAdmin === null || !isSysAdmin) return;
 
     async function loadAccessRequests() {
       try {
@@ -118,7 +145,7 @@ export default function AccessRequestsPage() {
     }
 
     loadAccessRequests();
-  }, [authLoading, filters, refreshTrigger]);
+  }, [authLoading, isSysAdmin, filters, refreshTrigger]);
 
   // Handle approve request
   const handleApprove = async (requestId: string) => {
@@ -257,7 +284,7 @@ export default function AccessRequestsPage() {
     // You could implement a detail modal or navigation here
   };
 
-  if (authLoading || loading) {
+  if (authLoading || isSysAdmin === null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -272,6 +299,46 @@ export default function AccessRequestsPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
           <p className="text-gray-600">You must be logged in to access this page.</p>
         </div>
+      </div>
+    );
+  }
+
+  // Check if user is a sysadmin
+  if (!isSysAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <svg
+              className="w-8 h-8 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h1>
+          <p className="text-gray-600 mb-4">
+            This page is only accessible to system administrators.
+          </p>
+          <p className="text-sm text-gray-500">
+            If you believe you should have access, please contact the system administrator.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }

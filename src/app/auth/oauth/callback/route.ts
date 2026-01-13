@@ -1,4 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+// Create a Supabase client for Route Handlers with cookie support
+async function createSupabaseRouteHandler() {
+  const cookieStore = await cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -175,26 +199,54 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
-    // For login flow (no accessCode), redirect to client for code exchange
+    // For login flow (no accessCode), exchange code server-side for proper cookie setting
     console.log('🔗 OAUTH_CALLBACK: LOGIN_FLOW_DETECTED', {
       timestamp: new Date().toISOString(),
       hasCode: !!code,
       codePreview: code ? code.slice(0, 8) + '...' : null,
-      nextStep: 'REDIRECT_TO_LOGIN_FOR_CODE_EXCHANGE'
+      nextStep: 'SERVER_SIDE_CODE_EXCHANGE'
     });
-    
-    const redirectParams = new URLSearchParams();
-    if (code) redirectParams.set('code', code);
-    const redirectUrl = `/login?${redirectParams.toString()}`;
 
-    console.log('🔗 OAUTH_CALLBACK: LOGIN_REDIRECT_EXECUTING', {
+    // Create server-side Supabase client and exchange the code
+    const supabase = await createSupabaseRouteHandler();
+
+    console.log('🔗 OAUTH_CALLBACK: EXCHANGING_CODE_SERVER_SIDE', {
       timestamp: new Date().toISOString(),
-      redirectUrl: redirectUrl,
-      fullUrl: `${request.url.split('/auth/oauth/callback')[0]}${redirectUrl}`,
-      expectedBehavior: 'User should land on /login and complete OAuth code exchange'
+      codePreview: code.slice(0, 8) + '...'
     });
 
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
+    const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (exchangeError) {
+      console.error('🔗 OAUTH_CALLBACK: CODE_EXCHANGE_FAILED', {
+        timestamp: new Date().toISOString(),
+        error: exchangeError.message,
+        errorCode: exchangeError.code
+      });
+
+      return NextResponse.redirect(
+        new URL(`/login?error=${encodeURIComponent(exchangeError.message)}&error_code=EXCHANGE_FAILED`, request.url)
+      );
+    }
+
+    console.log('🔗 OAUTH_CALLBACK: CODE_EXCHANGE_SUCCESS', {
+      timestamp: new Date().toISOString(),
+      userId: data.user?.id,
+      userEmail: data.user?.email,
+      sessionExpiry: data.session?.expires_at
+    });
+
+    // Determine redirect path based on user role
+    // For now, redirect to dashboard2 - the auth context will handle role-based routing
+    const redirectPath = '/dashboard2';
+
+    console.log('🔗 OAUTH_CALLBACK: REDIRECTING_TO_DASHBOARD', {
+      timestamp: new Date().toISOString(),
+      redirectPath,
+      userId: data.user?.id
+    });
+
+    return NextResponse.redirect(new URL(redirectPath, request.url));
 
   } catch (error) {
     console.error('🔗 OAUTH_CALLBACK: Unexpected error during redirect', {

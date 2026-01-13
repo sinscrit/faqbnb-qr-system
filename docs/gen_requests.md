@@ -9453,3 +9453,111 @@ Reduces visual clutter and improves usability by giving users control over their
 - [ ] The user's Property column visibility preference persists across page refreshes within the same browser session
 - [ ] These changes apply only to the Items List in the alternative dashboard interface, not the original dashboard
 
+---
+
+## REQ-219: Sortable Table Headers and Column Settings for Guides List
+
+**Date**: 2026-01-13 16:47
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Add sortable column headers, column visibility controls, and proper header row infrastructure to the Guides list page to match the functionality available on the Items list page.
+
+### Current Behavior
+The Guides list page displays article data in rows but lacks proper table headers. Users cannot sort the list by different criteria or customize which columns are visible. There are no visual indicators showing what each column represents, making it harder to scan and understand the data at a glance.
+
+### Expected Behavior
+The Guides list displays a proper header row above the data with clickable column labels. Users can click any column header to sort the list ascending or descending, with visual arrows indicating the current sort direction and order. A gear icon in the header row opens a dropdown menu allowing users to show or hide specific columns. The header styling matches the Items list appearance with uppercase labels and appropriate background colors.
+
+### User Impact
+Affects all users viewing the Guides list in the alternative dashboard interface. Users gain the ability to organize guide articles by title, parent item, purpose type, or creation date. Users can customize their table view by hiding columns they don't need, reducing visual clutter.
+
+### Business Value
+Improves usability and consistency across the dashboard by providing the same powerful table features users already have on the Items list. Makes it easier for users to find specific guides and manage larger collections of articles.
+
+### Acceptance Criteria
+- [ ] A table header row appears above the guide data rows with labels for each column
+- [ ] Column headers include Title, Item, Purpose, and Created labels
+- [ ] Clicking any column header sorts the list by that column in ascending order
+- [ ] Clicking the same header again reverses the sort to descending order
+- [ ] Sort direction indicators (up and down arrows) appear next to the active sort column
+- [ ] A gear icon appears on the right side of the header row
+- [ ] Clicking the gear icon opens a dropdown menu with column visibility toggles
+- [ ] Users can show or hide individual columns through the gear menu
+- [ ] Column visibility preferences persist throughout the browser session
+- [ ] The header row styling matches the Items list visual design
+- [ ] These changes apply only to the Guides list in the alternative dashboard interface
+
+
+---
+
+## REQ-220: Full Toolbar Infrastructure for Guides List Page
+
+**Date**: 2026-01-13 21:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Add a complete toolbar component to the Guides list page matching the Items list functionality, including debounced search input, view toggle between grid and list layouts, property column visibility, and purpose-based filtering.
+
+### Current Behavior
+The Guides list page displays articles in a basic list format without search capabilities, view options, or filtering controls. Users must scroll through all guides to find what they need and cannot customize the display format or filter by specific criteria.
+
+### Expected Behavior
+The Guides list page displays a toolbar above the table containing a search input field that filters guides as users type, a toggle button switching between grid tile view and list view, and filter options for purpose type and property. The search input includes a clear button to reset the filter. The toolbar matches the visual design and interaction patterns established on the Items list page.
+
+### User Impact
+Affects all users viewing guides in the alternative dashboard interface. Users gain the ability to quickly search guides by title, item name, or purpose category without scrolling. Users can switch between compact list view and visual grid view based on their preference or task context. Multi-property users can filter guides to see only those belonging to specific properties.
+
+### Business Value
+Creates consistent user experience across the dashboard by providing the same powerful navigation and display tools on both Items and Guides pages. Reduces time spent finding specific guides and improves usability when managing large guide collections.
+
+### Acceptance Criteria
+- [ ] A toolbar component appears above the Guides list matching the visual layout of the Items list toolbar
+- [ ] A search input field filters visible guides as the user types with appropriate debounce delay
+- [ ] The search filters by guide title, associated item name, and purpose category
+- [ ] An X button inside the search input clears the search text and resets the filter
+- [ ] A view toggle control switches between grid tile view and list table view
+- [ ] The view toggle buttons match the design used on the Items list page
+- [ ] A property column appears in the list view showing which property each guide belongs to
+- [ ] The property column is hidden by default and can be shown via the column settings gear icon
+- [ ] Filter dropdowns allow users to filter by purpose type when viewing guides
+- [ ] Filter dropdowns allow users to filter by property when viewing guides across multiple properties
+- [ ] The toolbar layout and component styling matches the Items list implementation
+- [ ] These changes apply only to the Guides list at the alternative dashboard interface path
+
+---
+
+## REQ-221: Contextual Google OAuth Display in Registration Form
+
+**Date**: 2026-01-13 21:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The registration form should display Google OAuth login only when relevant to the user's email address and position it prominently when available.
+
+### Current Behavior
+The "Continue with Google" button appears at the bottom of the registration form after the password fields and OR divider. It displays for all users regardless of their email domain, which can lead to authentication failures when non-Gmail users attempt OAuth registration with a different Google account.
+
+### Expected Behavior
+The "Continue with Google" button appears near the top of the form, immediately following the access code and email fields, and before the personal information section. The button and its surrounding OR divider are only visible when the access code email address ends with `@gmail.com`. For all other email domains, neither the OAuth button nor the divider appear, presenting a clean single-path registration experience.
+
+### User Impact
+Users with Gmail access codes see a more prominent OAuth option that matches their email provider, encouraging a streamlined authentication flow. Users with non-Gmail addresses see a focused form without irrelevant authentication options, preventing confusion and failed registration attempts caused by email domain mismatches.
+
+### Business Value
+Reduces registration friction for Gmail users while preventing error states for non-Gmail users, leading to higher successful registration completion rates and fewer support inquiries about email mismatch errors.
+
+### Acceptance Criteria
+- [ ] The "Continue with Google" button appears immediately after the email field and before the Full Name field
+- [ ] The OAuth button is visible only when the entered email address ends with `@gmail.com`
+- [ ] The OAuth button is hidden when the email address uses any other domain
+- [ ] The OR divider appears only when the Google OAuth button is visible
+- [ ] The OR divider is hidden when the Google OAuth button is hidden
+- [ ] The visibility state updates dynamically as the user types or modifies the email field
+- [ ] The layout transitions smoothly when showing or hiding the OAuth section
+- [ ] Non-Gmail users see only the standard email/password registration fields
+- [ ] The form maintains proper spacing and visual hierarchy in both visible and hidden states
+

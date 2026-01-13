@@ -29,22 +29,22 @@ export default function RegistrationSuccess() {
     if (!authLoading && user && session) {
       console.log(`${DEBUG_PREFIX} OAUTH_USER_DETECTED`, {
         timestamp: new Date().toISOString(),
-        message: 'User is authenticated, proceeding with automatic login to admin',
+        message: 'User is authenticated, proceeding with automatic login to dashboard',
         userId: user.id,
         email: user.email
       });
-      
+
       setIsAutoLoggingIn(true);
-      
-      // Auto-redirect to admin for authenticated users (OAuth scenario)
+
+      // Auto-redirect to dashboard for authenticated users (OAuth scenario)
       const timer = setTimeout(() => {
         console.log(`${DEBUG_PREFIX} AUTO_LOGIN_REDIRECT`, {
           timestamp: new Date().toISOString(),
-          redirectTarget: '/admin'
+          redirectTarget: '/dashboard2'
         });
-        
+
         try {
-          router.push('/admin');
+          router.push('/dashboard2');
         } catch (error) {
           console.error(`${DEBUG_PREFIX} AUTO_LOGIN_ERROR:`, error);
           setAutoLoginError('Automatic login failed. Please use the manual login button.');
@@ -110,8 +110,8 @@ export default function RegistrationSuccess() {
             </p>
           ) : user && session ? (
             <p className="text-green-600 mb-6">
-              Your account has been created successfully with Google OAuth. 
-              You will be redirected to the admin dashboard shortly.
+              Your account has been created successfully with Google OAuth.
+              You will be redirected to the dashboard shortly.
             </p>
           ) : (
             <p className="text-gray-600 mb-6">
@@ -136,11 +136,11 @@ export default function RegistrationSuccess() {
             {user && session ? (
               <>
                 <Link
-                  href="/admin"
+                  href="/dashboard2"
                   className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 font-medium"
                 >
                   <LogIn className="w-5 h-5" />
-                  <span>Go to Admin Dashboard</span>
+                  <span>Go to Dashboard</span>
                 </Link>
                 
                 <Link
@@ -183,7 +183,7 @@ export default function RegistrationSuccess() {
             </p>
           ) : user && session ? (
             <p className="text-xs text-green-500 mt-4">
-              You will be automatically redirected to the admin dashboard in 2 seconds.
+              You will be automatically redirected to the dashboard in 2 seconds.
             </p>
           ) : (
             <p className="text-xs text-gray-500 mt-4">

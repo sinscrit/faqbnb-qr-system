@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createSupabaseServer } from '@/lib/supabase-server';
 
+/**
+ * Check if an email is in the SYSADMIN_EMAILS environment variable
+ * @param email - The email to check
+ * @returns true if the email is a sysadmin
+ */
+export function isSysAdmin(email: string | undefined | null): boolean {
+  if (!email) return false;
+
+  const sysadminEmails = process.env.SYSADMIN_EMAILS || '';
+  const emailList = sysadminEmails
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(e => e.length > 0);
+
+  return emailList.includes(email.toLowerCase());
+}
+
 export async function validateAdminAuth(request: NextRequest) {
   const DEBUG_PREFIX = '🔍[ACCESS_REQ_DEBUG]';
   try {
@@ -118,7 +135,7 @@ export async function validateAdminAuth(request: NextRequest) {
       };
 
       console.log('ADMIN_API_DEBUG: Authentication successful for user:', validatedUser.email);
-      return { user: validatedUser, isAdmin: false, supabase };
+      return { user: validatedUser, isAdmin: false, isSysAdmin: isSysAdmin(validatedUser.email), supabase };
     }
 
     // Return admin user data (prioritize admin_users table if available)
@@ -131,7 +148,7 @@ export async function validateAdminAuth(request: NextRequest) {
     };
 
     console.log('ADMIN_API_DEBUG: Authentication successful for admin:', validatedUser.email);
-    return { user: validatedUser, isAdmin: true, supabase };
+    return { user: validatedUser, isAdmin: true, isSysAdmin: isSysAdmin(validatedUser.email), supabase };
 
   } catch (error) {
     console.error('ADMIN_API_DEBUG: Auth validation error:', error);

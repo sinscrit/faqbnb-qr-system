@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
 import { useRegistration } from '@/hooks/useRegistration';
 import GoogleOAuthButton from './GoogleOAuthButton';
+import { supabase } from '@/lib/supabase';
 
 interface RegistrationFormProps {
   email: string; // Pre-filled from URL parameter or manual entry
@@ -71,6 +72,9 @@ export default function RegistrationForm({
   // REQ-020 Task 6.2: Combined OAuth loading state
   const isOAuthActive = oauthLoading || isOAuthCompleting;
 
+  // REQ-221: Gmail domain detection for contextual OAuth display
+  const isGmailEmail = formData.email.toLowerCase().endsWith('@gmail.com');
+
   // Use the registration hook
   const {
     isLoading,
@@ -92,6 +96,11 @@ export default function RegistrationForm({
   useEffect(() => {
     if (email) {
       setFormData(prev => ({ ...prev, email }));
+      console.log(`${DEBUG_PREFIX} GMAIL_CHECK`, {
+        timestamp: new Date().toISOString(),
+        email: email,
+        isGmailEmail: email.toLowerCase().endsWith('@gmail.com')
+      });
     }
   }, [email]);
 
@@ -380,8 +389,33 @@ export default function RegistrationForm({
           timestamp: new Date().toISOString(),
           userId: result.user?.id
         });
-        
-        onSuccess?.(result);
+
+        // Sign in the user after successful registration to create a session
+        console.log(`${DEBUG_PREFIX} SIGNING_IN_AFTER_REGISTRATION`, {
+          timestamp: new Date().toISOString(),
+          email: formData.email
+        });
+
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (signInError) {
+          console.error(`${DEBUG_PREFIX} SIGN_IN_AFTER_REGISTRATION_FAILED`, {
+            timestamp: new Date().toISOString(),
+            error: signInError.message
+          });
+          // Registration succeeded but sign-in failed - still call onSuccess
+          // User can log in manually
+          onSuccess?.({ ...result, signInFailed: true });
+        } else {
+          console.log(`${DEBUG_PREFIX} SIGN_IN_AFTER_REGISTRATION_SUCCESS`, {
+            timestamp: new Date().toISOString(),
+            hasSession: !!signInData.session
+          });
+          onSuccess?.({ ...result, session: signInData.session });
+        }
       } else {
         console.log(`${DEBUG_PREFIX} REGISTRATION_FAILED`, {
           timestamp: new Date().toISOString(),
@@ -399,6 +433,39 @@ export default function RegistrationForm({
       onError?.(errorMessage);
     }
   };
+
+  // REQ-221: OAuth section JSX for conditional rendering
+  const oauthSection = (
+    <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+      isGmailEmail ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+    }`}>
+      {/* OAuth Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">OR</span>
+        </div>
+      </div>
+
+      {/* Google OAuth Button */}
+      <GoogleOAuthButton
+        accessCode={accessCode}
+        email={formData.email}
+        onAuthStart={handleOAuthStart}
+        onAuthError={handleOAuthError}
+        disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
+      />
+
+      {/* Gmail OAuth hint */}
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        {formData.agreeToTerms
+          ? 'Quick sign-up with your Gmail account'
+          : 'Accept the terms below to enable Google sign-up'}
+      </p>
+    </div>
+  );
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-6 ${className}`}>
@@ -451,6 +518,9 @@ export default function RegistrationForm({
           <p className="text-red-600 text-sm mt-1">{errors.email}</p>
         )}
       </div>
+
+      {/* REQ-221: Contextual Google OAuth for Gmail users */}
+      {oauthSection}
 
       {/* Full Name Field */}
       <div>
@@ -667,25 +737,6 @@ export default function RegistrationForm({
           </>
         )}
       </button>
-
-      {/* OAuth Divider - Will be used in future tasks */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">OR</span>
-        </div>
-      </div>
-
-      {/* Google OAuth Button */}
-      <GoogleOAuthButton
-        accessCode={accessCode}
-        email={formData.email}
-        onAuthStart={handleOAuthStart}
-        onAuthError={handleOAuthError}
-        disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
-      />
 
       {/* Helper Text */}
       <div className="text-center">

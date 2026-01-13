@@ -3,13 +3,15 @@
 /**
  * REQ-212: Instructions List Page
  * Created: 2026-01-12
- * Last Modified: 2026-01-12
+ * @lastModified 2026-01-13 (REQ-220 - Added toolbar, search, view toggle, and filters)
  *
  * Displays a list of instruction articles with joined item data.
  * Shows article title, item name, room (extracted from tags), purpose, and actions.
+ * Supports sortable column headers, column visibility settings, search, and view toggle.
  *
  * @route /dashboard2/instructions
  * @see docs/req-212-instructions-list-page-detailed.md
+ * @see docs/req-220-toolbar-infrastructure-guides-list-overview.md
  */
 
 import { useRouter } from 'next/navigation';
@@ -18,10 +20,27 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
 import { extractRoomFromTags } from '@/lib/room-utils';
-import { InstructionsTable } from '@/components/InstructionsTable';
-import type { InstructionRow } from '@/components/InstructionsTable';
+import { useDebounce } from '@/components/ItemManager/hooks/useDebounce';
+import {
+  InstructionsTable,
+  GuideToolbar,
+  GuideGrid,
+  useGuideColumnVisibility,
+  useGuideSearch,
+} from '@/components/InstructionsTable';
+import type {
+  InstructionRow,
+  GuideSortOption,
+  GuideFilterState,
+} from '@/components/InstructionsTable';
 import { FileText, Loader2, FileQuestion } from 'lucide-react';
 import Link from 'next/link';
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const VIEW_MODE_STORAGE_KEY = 'instructionsPage.viewMode';
 
 // ============================================================================
 // Main Page Component
@@ -33,6 +52,7 @@ export default function InstructionsPage() {
   const { currentAccount } = useAccountContext();
   const { selectedPropertyId } = usePropertyContext();
 
+  // Data state
   const [articles, setArticles] = useState<any[]>([]);
   const [instructionsData, setInstructionsData] = useState<InstructionRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +60,53 @@ export default function InstructionsPage() {
 
   // REQ-213: Success message state for edit operations
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // REQ-219: Sorting state - default to newest first
+  const [currentSort, setCurrentSort] = useState<GuideSortOption>('created-desc');
+
+  // REQ-219: Column visibility hook
+  const { columnVisibility, toggleColumn } = useGuideColumnVisibility();
+
+  // REQ-220: View mode state with session storage persistence
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+
+  // REQ-220: Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // REQ-220: Filter state
+  const [filters, setFilters] = useState<GuideFilterState>({});
+
+  // REQ-220: Use the guide search hook for filtering and sorting
+  const {
+    filteredGuides,
+    resultCount,
+    isFiltered,
+    filterOptions,
+  } = useGuideSearch({
+    guides: instructionsData,
+    searchQuery: debouncedSearch,
+    filters,
+    sortBy: currentSort,
+  });
+
+  // Restore view mode from session storage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedViewMode = sessionStorage.getItem(VIEW_MODE_STORAGE_KEY);
+      if (storedViewMode === 'grid' || storedViewMode === 'list') {
+        setViewMode(storedViewMode);
+      }
+    }
+  }, []);
+
+  // Persist view mode to session storage
+  const handleViewModeChange = useCallback((mode: 'grid' | 'list') => {
+    setViewMode(mode);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
+    }
+  }, []);
 
   // Fetch articles and items from backend
   const fetchArticles = useCallback(async () => {
@@ -84,7 +151,9 @@ export default function InstructionsPage() {
       // Process articles into InstructionRow format with room extraction
       // Filter out articles without item data (defensive coding)
       const processedInstructions: InstructionRow[] = allArticles
-        .filter((article) => article.item)
+        .filter((article): article is typeof article & { item: NonNullable<typeof article.item> } =>
+          Boolean(article.item)
+        )
         .map((article) => {
           const item = article.item;
           const room = extractRoomFromTags(item.tags || []);
@@ -98,6 +167,8 @@ export default function InstructionsPage() {
             room: room,
             purpose: article.purpose || 'other',
             createdAt: article.createdAt || new Date().toISOString(),
+            propertyId: item.property_id || undefined, // REQ-220
+            propertyName: item.property?.name || item.property?.nickname || undefined, // REQ-220
           };
         });
 
@@ -147,6 +218,22 @@ export default function InstructionsPage() {
     }
   }, [router]);
 
+  // REQ-219: Handle sort change
+  const handleSortChange = useCallback((sort: GuideSortOption) => {
+    setCurrentSort(sort);
+  }, []);
+
+  // REQ-220: Handle filter changes
+  const handleFiltersChange = useCallback((partialFilters: Partial<GuideFilterState>) => {
+    setFilters((prev) => ({ ...prev, ...partialFilters }));
+  }, []);
+
+  // REQ-220: Handle clear filters
+  const handleClearFilters = useCallback(() => {
+    setSearchQuery('');
+    setFilters({});
+  }, []);
+
   // Authentication check
   if (!user) {
     return (
@@ -193,7 +280,7 @@ export default function InstructionsPage() {
     );
   }
 
-  // Empty state
+  // Empty state (no guides at all)
   if (articles.length === 0) {
     return (
       <div className="max-w-2xl mx-auto text-center py-16">
@@ -259,7 +346,7 @@ export default function InstructionsPage() {
       )}
 
       {/* Page Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
@@ -271,23 +358,45 @@ export default function InstructionsPage() {
             <p className="text-gray-600 mt-1">
               Manage guide articles for your items
             </p>
-            <div className="mt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FFEEEF] text-[#FF385C]">
-                {articles.length} {articles.length === 1 ? 'article' : 'articles'}
-              </span>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Instructions Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <InstructionsTable
-          instructions={instructionsData}
-          loading={loading}
+      {/* REQ-220: Toolbar with search, view toggle, and filters */}
+      <GuideToolbar
+        viewMode={viewMode}
+        onViewModeChange={handleViewModeChange}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={handleClearFilters}
+        filterOptions={filterOptions}
+        resultCount={resultCount}
+        totalCount={instructionsData.length}
+        isFiltered={isFiltered}
+      />
+
+      {/* REQ-220: Content area - Grid or List view */}
+      {viewMode === 'grid' ? (
+        <GuideGrid
+          guides={filteredGuides}
           onEdit={handleEditArticle}
+          loading={loading}
         />
-      </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <InstructionsTable
+            instructions={filteredGuides}
+            loading={loading}
+            onEdit={handleEditArticle}
+            currentSort={currentSort}
+            onSortChange={handleSortChange}
+            columnVisibility={columnVisibility}
+            onToggleColumn={toggleColumn}
+          />
+        </div>
+      )}
     </div>
   );
 }

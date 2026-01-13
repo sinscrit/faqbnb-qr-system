@@ -197,7 +197,7 @@ export default function RegistrationPageContent() {
         userId: user.id,
         redirecting: true
       });
-      router.push('/admin');
+      router.push('/dashboard2');
     } else if (!authLoading && user && isOAuthRegistration) {
       console.log(`${DEBUG_PREFIX} USER_AUTHENTICATED_DURING_OAUTH`, {
         timestamp: new Date().toISOString(),
@@ -415,26 +415,26 @@ export default function RegistrationPageContent() {
               registrationMethod: result.registrationMethod
             });
             
-            // REQ-021 Task 3.2: OAuth users get automatic login - redirect to admin instead of success page
+            // REQ-021 Task 3.2: OAuth users get automatic login - redirect to dashboard instead of success page
             // This ensures backward compatibility: non-OAuth registrations still use the success page
             console.log(`${DEBUG_PREFIX_OAUTH} OAUTH_AUTO_LOGIN_REDIRECT`, {
               timestamp: new Date().toISOString(),
-              redirectTarget: '/admin',
+              redirectTarget: '/dashboard2',
               reason: 'OAuth registration completed - bypassing manual login',
               hasUser: !!user,
               hasSession: !!session,
               userId: user?.id
             });
             
-            // Verify authentication state before redirecting to admin
+            // Verify authentication state before redirecting to dashboard
             if (user && session) {
               console.log(`${DEBUG_PREFIX_OAUTH} AUTH_STATE_VERIFIED`, {
                 timestamp: new Date().toISOString(),
-                message: 'User authenticated, proceeding to admin dashboard'
+                message: 'User authenticated, proceeding to dashboard'
               });
-              
-              // Success - redirect directly to admin dashboard for OAuth users
-              router.push('/admin');
+
+              // Success - redirect directly to dashboard for OAuth users
+              router.push('/dashboard2');
             } else {
               console.warn(`${DEBUG_PREFIX_OAUTH} AUTH_STATE_INCOMPLETE`, {
                 timestamp: new Date().toISOString(),
@@ -767,6 +767,17 @@ export default function RegistrationPageContent() {
                         type: 'success',
                         message: 'Account created successfully! Redirecting to dashboard...'
                       });
+
+                      // Redirect to dashboard after successful registration and sign-in
+                      // Small delay to show success message
+                      setTimeout(() => {
+                        if (result.session || !result.signInFailed) {
+                          router.push('/dashboard2');
+                        } else {
+                          // If sign-in failed, redirect to login page
+                          router.push('/login?registered=true');
+                        }
+                      }, 1500);
                     }}
                     onError={(error, userFriendlyError) => {
                       console.error('Manual registration failed:', error);
@@ -794,6 +805,17 @@ export default function RegistrationPageContent() {
                   type: 'success',
                   message: 'Account created successfully! Redirecting to dashboard...'
                 });
+
+                // Redirect to dashboard after successful registration and sign-in
+                // Small delay to show success message
+                setTimeout(() => {
+                  if (result.session || !result.signInFailed) {
+                    router.push('/dashboard2');
+                  } else {
+                    // If sign-in failed, redirect to login page
+                    router.push('/login?registered=true');
+                  }
+                }, 1500);
               }}
               onError={(error, userFriendlyError) => {
                 console.error('URL registration failed:', error);

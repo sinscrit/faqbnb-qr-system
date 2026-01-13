@@ -71,11 +71,24 @@ export async function POST(
     method: request.method,
     timestamp: new Date().toISOString()
   });
-  
+
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {
     return authResult.error;
+  }
+
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log('❌ ACCESS_GRANT_DEBUG: User is not a sysadmin:', authResult.user?.email);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
   }
 
   const { supabase, user } = authResult;
@@ -316,6 +329,19 @@ export async function PUT(
 
   if (authResult.error) {
     return authResult.error;
+  }
+
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log('❌ ACCESS_GRANT_RESEND_DEBUG: User is not a sysadmin:', authResult.user?.email);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
   }
 
   const { supabase } = authResult;

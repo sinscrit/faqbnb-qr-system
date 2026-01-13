@@ -1243,21 +1243,47 @@ export async function registerUser(
   email: string,
   password: string,
   fullName?: string
-): Promise<AuthResponse<{ user: User; session: Session; account?: Account }>> {
+): Promise<AuthResponse<{ user: User; session?: Session; account?: Account }>> {
   try {
-    // Sign up with Supabase Auth
-    const { data, error } = await supabase.auth.signUp({
+    console.log('🔧 REGISTER_USER: STARTING', {
+      timestamp: new Date().toISOString(),
+      email,
+      hasPassword: !!password,
+      fullName
+    });
+
+    // Use admin client to create user (works in server-side API routes)
+    // Browser client (supabase.auth.signUp) doesn't work properly server-side
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
+      email_confirm: true, // Auto-confirm so user can log in immediately
+      user_metadata: {
+        full_name: fullName
+      }
     });
 
     if (error) {
+      console.error('🔧 REGISTER_USER: AUTH_CREATE_FAILED', {
+        timestamp: new Date().toISOString(),
+        error: error.message,
+        code: error.code
+      });
       return { error: error.message };
     }
 
-    if (!data.user || !data.session) {
-      return { error: 'Registration failed - no user or session returned' };
+    if (!data.user) {
+      console.error('🔧 REGISTER_USER: NO_USER_RETURNED', {
+        timestamp: new Date().toISOString()
+      });
+      return { error: 'Registration failed - no user returned' };
     }
+
+    console.log('🔧 REGISTER_USER: AUTH_USER_CREATED', {
+      timestamp: new Date().toISOString(),
+      userId: data.user.id,
+      email: data.user.email
+    });
 
     // Create user record in the users table
     const userResult = await createUser({
@@ -1289,10 +1315,10 @@ export async function registerUser(
         userId: userResult.data!.id
       });
       // Return user without account - account creation is not critical for registration
+      // Note: No session returned since we use admin API; client will sign in after registration
       return {
         data: {
           user: userResult.data!,
-          session: data.session,
         },
       };
     }
@@ -1326,14 +1352,13 @@ export async function registerUser(
     console.log('🔧 REGISTER_USER: COMPLETE_SUCCESS', {
       timestamp: new Date().toISOString(),
       userId: userResult.data!.id,
-      accountId: accountResult.data!.id,
-      hasSession: !!data.session
+      accountId: accountResult.data!.id
     });
 
+    // Note: No session returned since we use admin API; client will sign in after registration
     return {
       data: {
         user: userResult.data!,
-        session: data.session,
         account: accountResult.data!,
       },
     };

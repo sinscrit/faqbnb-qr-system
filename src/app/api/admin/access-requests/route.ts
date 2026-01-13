@@ -31,6 +31,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return authResult.error;
   }
 
+  // Check if user is a sysadmin - only sysadmins can access this endpoint
+  if (!authResult.isSysAdmin) {
+    console.log(`${DEBUG_PREFIX} SYSADMIN_CHECK_FAILED: User ${authResult.user?.email} is not a sysadmin`);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Access denied. This feature is restricted to system administrators.',
+        code: 'SYSADMIN_REQUIRED'
+      },
+      { status: 403 }
+    );
+  }
+  console.log(`${DEBUG_PREFIX} SYSADMIN_CHECK_PASSED: User ${authResult.user?.email} is a sysadmin`);
+
   // Use session-based client (same pattern as working /api/admin/users/analytics)
   const { supabase } = authResult;
   console.log(`${DEBUG_PREFIX} CLIENT_PATTERN: Using session-based client like other working admin routes`);
