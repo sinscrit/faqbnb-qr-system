@@ -9369,3 +9369,40 @@ Reducing the time required to locate and manage items increases operational effi
 - [ ] Applied filters visibly affect the displayed list of items
 - [ ] The instruction count data is returned by the system for each item displayed
 
+
+
+---
+
+## REQ-217: Replace "Instructions" Terminology with "Guide" Throughout Application
+
+**Date**: 2026-01-13 09:02
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Replace all user-facing occurrences of "Instructions" with the shorter, more space-efficient term "Guide" (or "Guides" in plural form) throughout the application interface.
+
+### Current Behavior
+The application currently uses "Instructions" as the terminology for user guidance content. This term appears in navigation items, page titles, table column headers, button labels, empty states, and messaging. The longer word creates space constraints, particularly in table columns and on mobile viewports.
+
+### Expected Behavior
+Users see "Guide" or "Guides" instead of "Instructions" throughout the application. The shorter terminology fits better in constrained spaces while maintaining clarity. All navigation elements, page headings, table displays, buttons, and user-facing messages reflect this updated terminology consistently.
+
+### User Impact
+All users interacting with guidance content will see the updated terminology. The change primarily benefits users on mobile devices or viewing tables where column width is limited. The shorter term improves readability and visual balance without changing functionality.
+
+### Business Value
+Improved visual hierarchy and space utilization in the UI leads to better user experience, especially on mobile devices. The terminology better aligns with common industry patterns for user assistance content.
+
+### Acceptance Criteria
+- [ ] Navigation items that previously displayed "Instructions" now show "Guides"
+- [ ] Page titles referencing instructions now reference guides instead
+- [ ] Table column headers display "Guide" or appropriately abbreviated text
+- [ ] Column values that displayed counts show "X guides" instead of "X instructions"
+- [ ] Empty state messages for guidance content use "guide" terminology
+- [ ] Button labels referring to instructions now refer to guides
+- [ ] Success and error messages display "guide" terminology where previously using "instructions"
+- [ ] The terminology change is applied consistently across all dashboard pages
+- [ ] Mobile viewports display the updated terminology without overflow or truncation issues
+- [ ] All user-facing text reflects the change while internal code variables may remain unchanged
+

@@ -88,11 +88,11 @@ export function RoleBasedNavigation({
 
       // Instructions - uses same permissions as items (REQ-195)
       items.push({
-        name: 'Instructions',
-        mobileName: 'Instr.',
+        name: 'Guides',
+        mobileName: 'Guide',
         href: '/dashboard/instructions',
         icon: <FileText className="h-5 w-5" />,
-        description: 'View and manage instructions',
+        description: 'View and manage guides',
         dashboardSection: DashboardSection.instructions,
         requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
       });
@@ -351,11 +351,11 @@ export function getNavigationItemsForUser(
 
     // Instructions - uses same permissions as items
     items.push({
-      name: 'Instructions',
-      mobileName: 'Instr.',
+      name: 'Guides',
+      mobileName: 'Guide',
       href: '/dashboard/instructions',
       icon: <FileText className="h-5 w-5" />,
-      description: 'View and manage instructions',
+      description: 'View and manage guides',
       dashboardSection: DashboardSection.items,
       requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
     });
