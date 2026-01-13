@@ -329,6 +329,47 @@ export default function RegistrationForm({
     }
   };
 
+  // REQ-222: Keyboard navigation for registration method radio buttons
+  const handleRadioKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    currentMethod: RegistrationMethod
+  ) => {
+    const methods: RegistrationMethod[] = ['google', 'email-password'];
+    const currentIndex = methods.indexOf(currentMethod);
+
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        event.preventDefault();
+        const nextIndex = (currentIndex + 1) % methods.length;
+        handleRegistrationMethodChange(methods[nextIndex]);
+        // Focus the next radio button
+        const nextButton = event.currentTarget.parentElement?.querySelector(
+          `[data-method="${methods[nextIndex]}"]`
+        ) as HTMLButtonElement | null;
+        nextButton?.focus();
+        break;
+
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        event.preventDefault();
+        const prevIndex = (currentIndex - 1 + methods.length) % methods.length;
+        handleRegistrationMethodChange(methods[prevIndex]);
+        // Focus the previous radio button
+        const prevButton = event.currentTarget.parentElement?.querySelector(
+          `[data-method="${methods[prevIndex]}"]`
+        ) as HTMLButtonElement | null;
+        prevButton?.focus();
+        break;
+
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        handleRegistrationMethodChange(currentMethod);
+        break;
+    }
+  };
+
   // Handle OAuth authentication start
   const handleOAuthStart = () => {
     console.log(`${DEBUG_PREFIX} OAUTH_START`, {
@@ -513,7 +554,10 @@ export default function RegistrationForm({
             type="button"
             role="radio"
             aria-checked={registrationMethod === option.id}
+            data-method={option.id}
             onClick={() => handleRegistrationMethodChange(option.id)}
+            onKeyDown={(e) => handleRadioKeyDown(e, option.id)}
+            tabIndex={registrationMethod === option.id ? 0 : -1}
             className={`
               w-full flex items-center p-4 border-2 rounded-lg transition-all duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
