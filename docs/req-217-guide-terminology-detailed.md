@@ -219,13 +219,13 @@
 **Files to modify:** `src/app/layout.tsx`, `src/app/page.tsx`, `src/components/ItemDisplay.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **11.1** Open `src/app/layout.tsx`
-- [ ] **11.2** Line 21: Update metadata description - change "instructions" to "guides"
-- [ ] **11.3** Open `src/app/page.tsx`
-- [ ] **11.4** Line 123: Change hero heading `"Any Item's Instructions"` to `"Any Item's Guides"`
-- [ ] **11.5** Open `src/components/ItemDisplay.tsx`
-- [ ] **11.6** Line 191: Change `"Instructions & Resources"` heading to `"Guides & Resources"`
-- [ ] **11.7** Save all files and verify no TypeScript errors
+- [x] **11.1** Open `src/app/layout.tsx`---implemented: Updated metadata
+- [x] **11.2** Line 21: Update metadata description - change "instructions" to "guides"---implemented: Changed to "detailed guides"
+- [x] **11.3** Open `src/app/page.tsx`---implemented: Updated hero heading
+- [x] **11.4** Line 123: Change hero heading `"Any Item's Instructions"` to `"Any Item's Guides"`---implemented: Changed to "Any Item's Guides"
+- [x] **11.5** Open `src/components/ItemDisplay.tsx`---implemented: Updated section heading
+- [x] **11.6** Line 191: Change `"Instructions & Resources"` heading to `"Guides & Resources"`---implemented: Changed to "Guides & Resources"
+- [x] **11.7** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

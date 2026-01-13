@@ -188,7 +188,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-gray-900">
-              Instructions & Resources
+              Guides & Resources
             </h2>
             <span className="text-sm text-gray-500">
               {/* REQ-151: Show articles count if available, otherwise links count */}
