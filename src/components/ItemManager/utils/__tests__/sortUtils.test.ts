@@ -281,6 +281,43 @@ describe('sortComparators', () => {
       expect(sorted).toHaveLength(3);
     });
   });
+
+  describe('instructions-asc', () => {
+    it('sorts items by articlesCount ascending', () => {
+      const items = [
+        createMockItem({ id: '1', articlesCount: 5 }),
+        createMockItem({ id: '2', articlesCount: 2 }),
+        createMockItem({ id: '3', articlesCount: 8 }),
+      ];
+
+      const sorted = [...items].sort(sortComparators['instructions-asc']);
+      expect(sorted.map(i => i.id)).toEqual(['2', '1', '3']);
+    });
+
+    it('treats undefined articlesCount as 0', () => {
+      const items = [
+        createMockItem({ id: '1', articlesCount: 3 }),
+        createMockItem({ id: '2' }), // no articlesCount
+        createMockItem({ id: '3', articlesCount: 1 }),
+      ];
+
+      const sorted = [...items].sort(sortComparators['instructions-asc']);
+      expect(sorted.map(i => i.id)).toEqual(['2', '3', '1']);
+    });
+  });
+
+  describe('instructions-desc', () => {
+    it('sorts items by articlesCount descending', () => {
+      const items = [
+        createMockItem({ id: '1', articlesCount: 5 }),
+        createMockItem({ id: '2', articlesCount: 2 }),
+        createMockItem({ id: '3', articlesCount: 8 }),
+      ];
+
+      const sorted = [...items].sort(sortComparators['instructions-desc']);
+      expect(sorted.map(i => i.id)).toEqual(['3', '1', '2']);
+    });
+  });
 });
 
 // =============================================================================
@@ -345,8 +382,8 @@ describe('sort stability', () => {
 // =============================================================================
 
 describe('SORT_OPTIONS', () => {
-  it('has exactly 7 options', () => {
-    expect(SORT_OPTIONS).toHaveLength(7);
+  it('has exactly 9 options', () => {
+    expect(SORT_OPTIONS).toHaveLength(9);
   });
 
   it('contains all expected sort options', () => {

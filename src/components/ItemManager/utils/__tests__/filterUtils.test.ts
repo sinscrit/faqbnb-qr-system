@@ -11,6 +11,7 @@ import {
   matchesFilters,
   hasActiveFilters,
   extractFilterOptions,
+  extractRoomOptions,
   normalizeSearchQuery,
   getSearchableText,
   matchesContentTypes,
@@ -260,6 +261,29 @@ describe('matchesFilters', () => {
     });
   });
 
+  describe('rooms filter (OR logic) - REQ-216', () => {
+    it('matches items with matching room tag', () => {
+      const item = createMockItem({ tags: ['#room.kitchen', 'appliance'] });
+      const filters: FilterState = { rooms: ['Kitchen'] };
+
+      expect(matchesFilters(item, filters)).toBe(true);
+    });
+
+    it('does not match items without matching room tag', () => {
+      const item = createMockItem({ tags: ['#room.bathroom'] });
+      const filters: FilterState = { rooms: ['Kitchen'] };
+
+      expect(matchesFilters(item, filters)).toBe(false);
+    });
+
+    it('matches with multiple rooms (OR logic)', () => {
+      const item = createMockItem({ tags: ['#room.kitchen'] });
+      const filters: FilterState = { rooms: ['Bathroom', 'Kitchen'] };
+
+      expect(matchesFilters(item, filters)).toBe(true);
+    });
+  });
+
   describe('multiple filters (AND between categories)', () => {
     it('matches only when ALL filter categories are satisfied', () => {
       const item = createMockItem({
@@ -399,6 +423,42 @@ describe('extractFilterOptions', () => {
     const options = extractFilterOptions(items);
     expect(options.tags).toEqual(['bathroom', 'kitchen']);
     expect(options.tags).not.toContain('');
+  });
+});
+
+// =============================================================================
+// extractRoomOptions Tests (REQ-216)
+// =============================================================================
+
+describe('extractRoomOptions', () => {
+  it('extracts room names from #room.X tags', () => {
+    const items = [
+      createMockItem({ tags: ['#room.kitchen', 'appliance'] }),
+      createMockItem({ tags: ['#room.bathroom', '#room.kitchen'] }),
+      createMockItem({ tags: ['other'] }),
+    ];
+
+    const rooms = extractRoomOptions(items);
+    expect(rooms).toEqual(['Bathroom', 'Kitchen']);
+  });
+
+  it('handles hyphenated room names', () => {
+    const items = [
+      createMockItem({ tags: ['#room.living-room'] }),
+      createMockItem({ tags: ['#room.master-bathroom'] }),
+    ];
+
+    const rooms = extractRoomOptions(items);
+    expect(rooms).toEqual(['Living Room', 'Master Bathroom']);
+  });
+
+  it('returns empty array when no room tags exist', () => {
+    const items = [
+      createMockItem({ tags: ['appliance', 'cleaning'] }),
+    ];
+
+    const rooms = extractRoomOptions(items);
+    expect(rooms).toEqual([]);
   });
 });
 
@@ -611,6 +671,7 @@ describe('createEmptyFilterState', () => {
       contentTypes: [],
       tags: [],
       locations: [],
+      rooms: [],
       propertyIds: [],
     });
   });

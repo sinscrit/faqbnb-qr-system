@@ -712,8 +712,8 @@ This implementation transforms the Items List table to:
 **Files to modify:** `src/components/ItemManager/utils/__tests__/sortUtils.test.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **18.1** Open `src/components/ItemManager/utils/__tests__/sortUtils.test.ts`
-- [ ] **18.2** Add test cases for `instructions-asc` comparator:
+- [x] **18.1** Open `src/components/ItemManager/utils/__tests__/sortUtils.test.ts` ---implemented: Opened sortUtils.test.ts-
+- [x] **18.2** Add test cases for `instructions-asc` comparator:
   ```typescript
   describe('instructions-asc', () => {
     it('should sort items by articlesCount ascending', () => {
@@ -738,8 +738,8 @@ This implementation transforms the Items List table to:
       expect(sorted.map(i => i.id)).toEqual(['2', '3', '1']);
     });
   });
-  ```
-- [ ] **18.3** Add test cases for `instructions-desc` comparator:
+  ``` ---implemented: Added instructions-asc tests-
+- [x] **18.3** Add test cases for `instructions-desc` comparator:
   ```typescript
   describe('instructions-desc', () => {
     it('should sort items by articlesCount descending', () => {
@@ -753,8 +753,8 @@ This implementation transforms the Items List table to:
       expect(sorted.map(i => i.id)).toEqual(['3', '1', '2']);
     });
   });
-  ```
-- [ ] **18.4** Run tests: `npm test -- sortUtils`
+  ``` ---implemented: Added instructions-desc tests-
+- [x] **18.4** Run tests: `npm test -- sortUtils` ---implemented: All 48 tests passed-unit tested-
 
 ---
 
@@ -764,8 +764,8 @@ This implementation transforms the Items List table to:
 **Files to modify:** `src/components/ItemManager/utils/__tests__/filterUtils.test.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **19.1** Open `src/components/ItemManager/utils/__tests__/filterUtils.test.ts`
-- [ ] **19.2** Add test cases for `extractRoomOptions`:
+- [x] **19.1** Open `src/components/ItemManager/utils/__tests__/filterUtils.test.ts` ---implemented: Opened filterUtils.test.ts-
+- [x] **19.2** Add test cases for `extractRoomOptions`:
   ```typescript
   describe('extractRoomOptions', () => {
     it('should extract room names from #room.X tags', () => {
@@ -798,8 +798,8 @@ This implementation transforms the Items List table to:
       expect(rooms).toEqual([]);
     });
   });
-  ```
-- [ ] **19.3** Add test cases for `matchesFilters` with rooms:
+  ``` ---implemented: Added extractRoomOptions tests-
+- [x] **19.3** Add test cases for `matchesFilters` with rooms:
   ```typescript
   describe('matchesFilters with rooms', () => {
     it('should match items with matching room tag', () => {
@@ -823,8 +823,8 @@ This implementation transforms the Items List table to:
       expect(matchesFilters(item, filters)).toBe(true);
     });
   });
-  ```
-- [ ] **19.4** Run tests: `npm test -- filterUtils`
+  ``` ---implemented: Added matchesFilters room tests-
+- [x] **19.4** Run tests: `npm test -- filterUtils` ---implemented: All 80 tests passed-unit tested-
 
 ---
 
