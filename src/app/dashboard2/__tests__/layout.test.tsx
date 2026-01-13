@@ -73,7 +73,7 @@ describe('Dashboard2 Layout Navigation', () => {
 
       expect(labels).toContain('Dashboard');
       expect(labels).toContain('Items');
-      expect(labels).toContain('Instructions');
+      expect(labels).toContain('Guides');
       expect(labels).toContain('Properties');
     });
 
@@ -89,7 +89,7 @@ describe('Dashboard2 Layout Navigation', () => {
 
       expect(labels).toContain('D/B');
       expect(labels).toContain('Items');
-      expect(labels).toContain('Instr.');
+      expect(labels).toContain('Guide');
       expect(labels).toContain('Prop.');
     });
 

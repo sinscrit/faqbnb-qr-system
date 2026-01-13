@@ -275,10 +275,10 @@
 **Files to modify:** `src/app/dashboard2/__tests__/layout.test.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **14.1** Open `src/app/dashboard2/__tests__/layout.test.tsx`
-- [ ] **14.2** Line 76: Change assertion expecting `"Instructions"` to expect `"Guides"`
-- [ ] **14.3** Search file for any other occurrences of "Instructions" in assertions and update to "Guides"
-- [ ] **14.4** Save file
+- [x] **14.1** Open `src/app/dashboard2/__tests__/layout.test.tsx`---implemented: Updated navigation label assertions
+- [x] **14.2** Line 76: Change assertion expecting `"Instructions"` to expect `"Guides"`---implemented: Changed to "Guides"
+- [x] **14.3** Search file for any other occurrences of "Instructions" in assertions and update to "Guides"---implemented: Changed "Instr." to "Guide"
+- [x] **14.4** Save file---implemented: File saved
 
 ---
 
