@@ -849,24 +849,28 @@ export default function RegistrationForm({
         )}
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isLoading || !formData.agreeToTerms}
-        className="w-full flex justify-center items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            Creating Account...
-          </>
-        ) : (
-          <>
-            <UserPlus className="w-4 h-4 mr-2" />
-            Create Account
-          </>
-        )}
-      </button>
+      {/* Submit Button - REQ-222: Only shown for email/password registration */}
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+        showEmailPasswordFields ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <button
+          type="submit"
+          disabled={isLoading || !formData.agreeToTerms}
+          className="w-full flex justify-center items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              Creating Account...
+            </>
+          ) : (
+            <>
+              <UserPlus className="w-4 h-4 mr-2" />
+              Create Account
+            </>
+          )}
+        </button>
+      </div>
 
       {/* Helper Text */}
       <div className="text-center">

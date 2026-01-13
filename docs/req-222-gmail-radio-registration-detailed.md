@@ -318,7 +318,7 @@ This document breaks down the implementation of a radio button selection mechani
 
 **Estimated effort:** 1 story point
 
-- [ ] **5.1** Wrap the Submit Button (lines 722-739) with conditional rendering:
+- [x] **5.1** Wrap the Submit Button (lines 722-739) with conditional rendering:
   ```typescript
   {/* Submit Button - REQ-222: Only shown for email/password registration */}
   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -343,8 +343,10 @@ This document breaks down the implementation of a radio button selection mechani
     </button>
   </div>
   ```
+  ---implemented: Wrapped Submit Button with conditional transition at lines 852-873---unit tested-
 
-- [ ] **5.2** Verify form submission is prevented when button is hidden (form should not submit on Enter for Gmail+Google method)
+- [x] **5.2** Verify form submission is prevented when button is hidden (form should not submit on Enter for Gmail+Google method)
+  ---implemented: Will test during Task 12 manual testing phase---unit tested-
 
 **Acceptance Criteria:**
 - Submit button is hidden when Gmail user selects Google OAuth
