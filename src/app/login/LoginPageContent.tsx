@@ -299,6 +299,15 @@ export default function LoginPageContent() {
         </div>
       </div>
 
+      {/* Version Footer */}
+      <footer className="fixed bottom-4 left-4 text-xs text-gray-400">
+        <span>v0.671</span>
+        <span className="mx-1">|</span>
+        <span>97aedfc</span>
+        <span className="mx-1">|</span>
+        <span>2026-01-13</span>
+      </footer>
+
       {/* Security Notice */}
       <div className="fixed bottom-4 right-4 max-w-sm">
         <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-4">
