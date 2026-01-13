@@ -98,6 +98,7 @@ export function ItemRow({
   existingTags,
   visitStats,
   reactions,
+  articlesCount,
 }: ItemRowProps) {
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
@@ -341,7 +342,7 @@ export function ItemRow({
   };
 
   // Build comprehensive aria-label
-  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
+  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${articlesCount !== undefined && articlesCount > 0 ? `${articlesCount} instructions.` : 'No instructions.'} Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
 
   return (
     <div
@@ -471,16 +472,15 @@ export function ItemRow({
         )}
       </div>
 
-      {/* Content Type Badge (Task 6) - visible on md+ screens */}
-      <div className="hidden md:flex w-20 items-center flex-shrink-0">
-        <span
-          className={cn(
-            'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
-            badge.classes
-          )}
-        >
-          {badge.label}
-        </span>
+      {/* Instructions Count Column (REQ-216) - visible on md+ screens */}
+      <div className="hidden md:flex w-20 items-center flex-shrink-0 text-sm text-gray-600">
+        {articlesCount !== undefined && articlesCount > 0 ? (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+            {articlesCount}
+          </span>
+        ) : (
+          <span className="text-gray-400">-</span>
+        )}
       </div>
 
       {/* Tags Column (Task 7, REQ-088) */}

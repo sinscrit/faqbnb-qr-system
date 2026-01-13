@@ -58,6 +58,8 @@ export const SORT_OPTIONS: SortOptionConfig[] = [
   { value: 'updated-desc', label: 'Recently Updated' },
   { value: 'updated-asc', label: 'Least Recently Updated' },
   { value: 'location-asc', label: 'Location (A-Z)' },
+  { value: 'instructions-desc', label: 'Most Instructions' },
+  { value: 'instructions-asc', label: 'Fewest Instructions' },
 ];
 
 /**
@@ -182,6 +184,24 @@ export const sortComparators: Record<SortOption, ItemComparator> = {
     if (!locationB) return -1;
 
     return locationA.localeCompare(locationB);
+  },
+
+  /**
+   * Sort by instructions count ascending (fewest first)
+   */
+  'instructions-asc': (a, b) => {
+    const countA = (a as ItemRecordExtended).articlesCount ?? 0;
+    const countB = (b as ItemRecordExtended).articlesCount ?? 0;
+    return countA - countB;
+  },
+
+  /**
+   * Sort by instructions count descending (most first)
+   */
+  'instructions-desc': (a, b) => {
+    const countA = (a as ItemRecordExtended).articlesCount ?? 0;
+    const countB = (b as ItemRecordExtended).articlesCount ?? 0;
+    return countB - countA;
   },
 };
 

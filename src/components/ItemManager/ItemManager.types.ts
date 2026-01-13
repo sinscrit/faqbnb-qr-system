@@ -282,6 +282,13 @@ export interface ItemRecordExtended extends ItemRecord {
    * @lastModified 2026-01-05 (REQ-091)
    */
   reactions?: ItemReactionSummary;
+
+  /**
+   * Count of instruction articles for this item.
+   * Populated from API response (REQ-151).
+   * @lastModified 2026-01-13 (REQ-216)
+   */
+  articlesCount?: number;
 }
 
 /**
@@ -344,7 +351,9 @@ export type SortOption =
   | 'created-asc'
   | 'updated-desc'
   | 'updated-asc'
-  | 'location-asc';
+  | 'location-asc'
+  | 'instructions-asc'
+  | 'instructions-desc';
 
 // =============================================================================
 // Action Types
@@ -571,6 +580,11 @@ export interface ItemRowProps {
    * @lastModified 2026-01-05 (REQ-091)
    */
   reactions?: ItemReactionSummary;
+  /**
+   * Count of instruction articles for this item.
+   * @lastModified 2026-01-13 (REQ-216)
+   */
+  articlesCount?: number;
 }
 
 // =============================================================================
@@ -641,6 +655,10 @@ export interface ItemListProps {
   onUpdateItem?: (item: ItemRecord) => Promise<void>;
   /** Existing tags from all items for autocomplete suggestions */
   existingTags?: string[];
+  /** Current sort option for highlighting active column */
+  currentSort?: SortOption;
+  /** Callback when column header is clicked to change sort */
+  onSortChange?: (sort: SortOption) => void;
 }
 
 /**

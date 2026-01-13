@@ -633,6 +633,8 @@ export function ItemManager({
           enableInlineEdit={effectiveConfig.enableInlineEdit}
           onUpdateItem={handleInlineUpdate}
           existingTags={allExistingTags}
+          currentSort={state.sortBy}
+          onSortChange={setSort}
         />
       </div>
     );

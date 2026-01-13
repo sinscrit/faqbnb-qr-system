@@ -71,6 +71,7 @@ export default function ItemsPage() {
           updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
           links: item.links || [],
           name: item.name, // Keep name for backward compatibility
+          articlesCount: item.articlesCount ?? 0,
         } as ItemRecord));
 
         setItems(itemRecords);
