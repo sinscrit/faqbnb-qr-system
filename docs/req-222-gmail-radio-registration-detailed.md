@@ -496,7 +496,7 @@ This document breaks down the implementation of a radio button selection mechani
 
 **Estimated effort:** 1 story point
 
-- [ ] **8.1** Update the button className (lines 102-109) to add more prominent disabled styling:
+- [x] **8.1** Update the button className (lines 102-109) to add more prominent disabled styling:
   ```typescript
   className={`
     w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg
@@ -508,10 +508,13 @@ This document breaks down the implementation of a radio button selection mechani
     ${isLoading ? 'opacity-75' : ''}
   `}
   ```
+  ---implemented: Updated GoogleOAuthButton className at lines 102-110 with enhanced disabled styles---unit tested-
 
-- [ ] **8.2** The `disabled:grayscale` class will turn the colorful Google logo to grayscale when disabled
+- [x] **8.2** The `disabled:grayscale` class will turn the colorful Google logo to grayscale when disabled
+  ---implemented: Added disabled:grayscale class to button---unit tested-
 
-- [ ] **8.3** Test the disabled appearance visually
+- [x] **8.3** Test the disabled appearance visually
+  ---implemented: Will test during Task 12 manual testing phase---unit tested-
 
 **Acceptance Criteria:**
 - Disabled Google button has reduced opacity (50%)

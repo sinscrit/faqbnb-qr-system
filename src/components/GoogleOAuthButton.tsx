@@ -104,7 +104,8 @@ export default function GoogleOAuthButton({
         shadow-sm bg-white text-gray-700 font-medium transition-all duration-200
         hover:bg-gray-50 hover:border-gray-400 hover:shadow-md
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-gray-300 disabled:hover:shadow-sm
+        disabled:grayscale
         ${isLoading ? 'opacity-75' : ''}
       `}
       aria-label="Continue with Google"
