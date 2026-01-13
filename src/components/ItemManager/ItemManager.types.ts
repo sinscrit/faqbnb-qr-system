@@ -336,6 +336,9 @@ export interface FilterState {
   /** Filter by location(s) - items must match at least one location */
   locations?: string[];
 
+  /** Filter by room(s) extracted from #room.roomname tags */
+  rooms?: string[];
+
   /** Filter by property ID(s) - for multi-property mode */
   propertyIds?: string[];
 }

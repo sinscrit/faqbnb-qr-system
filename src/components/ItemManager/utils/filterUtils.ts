@@ -323,6 +323,36 @@ export function matchesFilters(item: ItemRecord, filters: FilterState): boolean 
     }
   }
 
+  // Check rooms filter (OR logic within category - item must have matching #room.X tag)
+  if (filters.rooms && filters.rooms.length > 0) {
+    const itemTags = item.tags ?? [];
+    const roomTagRegex = /^#room\.(.+)$/i;
+
+    // Extract room name from item tags
+    const itemRooms: string[] = [];
+    for (const tag of itemTags) {
+      const match = tag.match(roomTagRegex);
+      if (match && match[1]) {
+        const roomName = match[1]
+          .split(/[-_]/)
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+        itemRooms.push(roomName);
+      }
+    }
+
+    // Check if any of the item's rooms match any of the filter rooms
+    const hasMatchingRoom = filters.rooms.some(filterRoom =>
+      itemRooms.some(itemRoom =>
+        itemRoom.toLowerCase() === filterRoom.toLowerCase()
+      )
+    );
+
+    if (!hasMatchingRoom) {
+      return false;
+    }
+  }
+
   // Check propertyIds filter (OR logic within category) - for extended items
   if (filters.propertyIds && filters.propertyIds.length > 0) {
     const extendedItem = item as ItemRecordExtended;
@@ -355,6 +385,9 @@ export function hasActiveFilters(filters: FilterState): boolean {
     return true;
   }
   if (filters.locations && filters.locations.length > 0) {
+    return true;
+  }
+  if (filters.rooms && filters.rooms.length > 0) {
     return true;
   }
   if (filters.propertyIds && filters.propertyIds.length > 0) {
@@ -410,6 +443,41 @@ export function extractFilterOptions(items: ItemRecord[]): {
 }
 
 /**
+ * Extract unique room names from item tags.
+ * Rooms are identified by tags with format: #room.roomname
+ *
+ * @param items - Array of items to extract rooms from
+ * @returns Sorted array of unique room names (without the #room. prefix)
+ *
+ * @example
+ * extractRoomOptions(items); // ['Bathroom', 'Kitchen', 'Living Room']
+ *
+ * @lastModified 2026-01-13 (REQ-216)
+ */
+export function extractRoomOptions(items: ItemRecord[]): string[] {
+  const roomSet = new Set<string>();
+  const roomTagRegex = /^#room\.(.+)$/i;
+
+  for (const item of items) {
+    if (item.tags && Array.isArray(item.tags)) {
+      for (const tag of item.tags) {
+        const match = tag.match(roomTagRegex);
+        if (match && match[1]) {
+          // Capitalize first letter of each word for display
+          const roomName = match[1]
+            .split(/[-_]/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+          roomSet.add(roomName);
+        }
+      }
+    }
+  }
+
+  return Array.from(roomSet).sort((a, b) => a.localeCompare(b));
+}
+
+/**
  * Derive the content type from an item.
  * Simply returns the item's contentType cast to ContentType.
  *
@@ -450,6 +518,9 @@ export function countActiveFilters(filters: FilterState): number {
   if (filters.locations && filters.locations.length > 0) {
     count++;
   }
+  if (filters.rooms && filters.rooms.length > 0) {
+    count++;
+  }
   if (filters.propertyIds && filters.propertyIds.length > 0) {
     count++;
   }
@@ -472,6 +543,7 @@ export function createEmptyFilterState(): FilterState {
     contentTypes: [],
     tags: [],
     locations: [],
+    rooms: [],
     propertyIds: [],
   };
 }
