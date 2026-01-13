@@ -388,10 +388,38 @@ export default function RegistrationForm({
       timestamp: new Date().toISOString(),
       error
     });
-    
+
     setOauthLoading(false);
     setErrors({ general: error });
     onError?.(error);
+  };
+
+  // REQ-222: Handle Google OAuth button click (for unified Create Account button)
+  const handleGoogleOAuth = () => {
+    if (isOAuthActive || isLoading || !formData.agreeToTerms) return;
+
+    console.log(`${DEBUG_PREFIX} GOOGLE_OAUTH_BUTTON_CLICK`, {
+      timestamp: new Date().toISOString(),
+      accessCode: accessCode ? accessCode.substring(0, 4) + '...' : null,
+      email: formData.email
+    });
+
+    handleOAuthStart();
+
+    // Build redirect URL to Google OAuth API route
+    const params = new URLSearchParams();
+    if (accessCode) params.set('accessCode', accessCode);
+    if (formData.email) params.set('email', formData.email);
+
+    const redirectUrl = `/api/auth/google${params.toString() ? `?${params.toString()}` : ''}`;
+
+    console.log(`${DEBUG_PREFIX} REDIRECTING_TO_GOOGLE_OAUTH`, {
+      timestamp: new Date().toISOString(),
+      redirectUrl
+    });
+
+    // Redirect to Google OAuth
+    window.location.href = redirectUrl;
   };
 
   // REQ-020 Task 6.2: Handle OAuth completion through form
@@ -609,26 +637,6 @@ export default function RegistrationForm({
     }`}>
       {/* Registration Method Selector - only for Gmail */}
       {registrationMethodSelector}
-
-      {/* Google OAuth Button - shown prominently when Google method selected */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden mt-4 ${
-        registrationMethod === 'google' ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
-      }`}>
-        <GoogleOAuthButton
-          accessCode={accessCode}
-          email={formData.email}
-          onAuthStart={handleOAuthStart}
-          onAuthError={handleOAuthError}
-          disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
-        />
-
-        {/* Gmail OAuth hint */}
-        <p className="text-xs text-gray-500 mt-2 text-center">
-          {formData.agreeToTerms
-            ? 'Quick sign-up with your Gmail account'
-            : 'Accept the terms below to enable Google sign-up'}
-        </p>
-      </div>
 
       {/* Divider - shown when email/password method selected */}
       <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -910,10 +918,33 @@ export default function RegistrationForm({
         )}
       </div>
 
-      {/* Submit Button - REQ-222: Only shown for email/password registration */}
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-        showEmailPasswordFields ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
-      }`}>
+      {/* Submit Button - REQ-222: Shows for both methods with different icons */}
+      {/* For Google method: Google logo, triggers OAuth */}
+      {/* For Email method: UserPlus icon, submits form */}
+      {isGmailEmail && registrationMethod === 'google' ? (
+        <button
+          type="button"
+          onClick={handleGoogleOAuth}
+          disabled={isOAuthActive || isLoading || !formData.agreeToTerms}
+          className="w-full flex justify-center items-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+        >
+          {isOAuthActive ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              Connecting to Google...
+            </>
+          ) : (
+            <>
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="w-5 h-5 mr-2"
+              />
+              Create Account
+            </>
+          )}
+        </button>
+      ) : (
         <button
           type="submit"
           disabled={isLoading || !formData.agreeToTerms}
@@ -931,7 +962,7 @@ export default function RegistrationForm({
             </>
           )}
         </button>
-      </div>
+      )}
 
       {/* Helper Text */}
       <div className="text-center">
