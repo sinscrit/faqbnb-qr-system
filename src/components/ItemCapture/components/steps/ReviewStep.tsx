@@ -613,13 +613,13 @@ export function ReviewStep({
         {/* Section header */}
         <div className="flex items-center justify-between mb-4">
           <h3 id="instructions-heading" className="text-lg font-medium text-gray-900">
-            Instructions
+            Guides
           </h3>
           <button
             type="button"
             onClick={() => onEditSection('text')}
             className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-            aria-label="Edit instructions"
+            aria-label="Edit guides"
           >
             <Edit className="w-4 h-4" aria-hidden="true" />
             <span>Edit</span>
@@ -633,13 +633,13 @@ export function ReviewStep({
           </div>
         ) : (
           <div className="text-gray-500 italic">
-            No instructions added.{' '}
+            No guides added.{' '}
             <button
               type="button"
               onClick={() => onEditSection('text')}
               className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
             >
-              Add instructions
+              Add guides
             </button>
           </div>
         )}

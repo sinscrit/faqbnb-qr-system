@@ -59,7 +59,7 @@ export function ItemInstructionsList({
   if (loading) {
     return (
       <div className="pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Instructions</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
         <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
         <ul className="space-y-2">
           {[1, 2].map((i) => (
@@ -80,12 +80,12 @@ export function ItemInstructionsList({
   if (articles.length === 0) {
     return (
       <div className="pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Instructions</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
         <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
         <div className="text-center py-8">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">No instructions yet</p>
-          <p className="text-sm text-gray-400 mt-1">Instructions for this item will appear here</p>
+          <p className="text-gray-500 font-medium">No guides yet</p>
+          <p className="text-sm text-gray-400 mt-1">Guides for this item will appear here</p>
         </div>
       </div>
     );
@@ -94,7 +94,7 @@ export function ItemInstructionsList({
   // Instructions list
   return (
     <div className="pt-6 border-t border-gray-200">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Instructions</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
       <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
       <ul className="space-y-2">
         {articles.map((article) => (

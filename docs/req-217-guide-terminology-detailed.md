@@ -138,20 +138,20 @@
 **Files to modify:** `src/components/ItemEditForm/ItemInstructionsList.tsx`, `src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx`, `src/components/ItemCapture/components/steps/ReviewStep.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **7.1** Open `src/components/ItemEditForm/ItemInstructionsList.tsx`
-- [ ] **7.2** Line 62: Change section heading `"Instructions"` to `"Guides"`
-- [ ] **7.3** Line 83: Change section heading `"Instructions"` to `"Guides"`
-- [ ] **7.4** Line 87: Change `"No instructions yet"` to `"No guides yet"`
-- [ ] **7.5** Line 88: Change `"Instructions for this item will appear here"` to `"Guides for this item will appear here"`
-- [ ] **7.6** Line 97: Change section heading `"Instructions"` to `"Guides"`
-- [ ] **7.7** Open `src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx`
-- [ ] **7.8** Line 78: Change default prop `headerText = 'Instructions'` to `headerText = 'Guides'`
-- [ ] **7.9** Line 114: Change `"No instructions provided."` to `"No guides provided."`
-- [ ] **7.10** Open `src/components/ItemCapture/components/steps/ReviewStep.tsx`
-- [ ] **7.11** Line 616: Change `"Instructions"` heading to `"Guides"`
-- [ ] **7.12** Line 636: Change `"No instructions added."` to `"No guides added."`
-- [ ] **7.13** Line 642: Change `"Add instructions"` link text to `"Add guides"`
-- [ ] **7.14** Save all files and verify no TypeScript errors
+- [x] **7.1** Open `src/components/ItemEditForm/ItemInstructionsList.tsx`---implemented: Updated all section headings
+- [x] **7.2** Line 62: Change section heading `"Instructions"` to `"Guides"`---implemented: Changed to "Guides" in loading state
+- [x] **7.3** Line 83: Change section heading `"Instructions"` to `"Guides"`---implemented: Changed to "Guides" in empty state
+- [x] **7.4** Line 87: Change `"No instructions yet"` to `"No guides yet"`---implemented: Changed to "No guides yet"
+- [x] **7.5** Line 88: Change `"Instructions for this item will appear here"` to `"Guides for this item will appear here"`---implemented: Changed to "Guides for this item will appear here"
+- [x] **7.6** Line 97: Change section heading `"Instructions"` to `"Guides"`---implemented: Changed to "Guides" in list view
+- [x] **7.7** Open `src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx`---implemented: Updated default props
+- [x] **7.8** Line 78: Change default prop `headerText = 'Instructions'` to `headerText = 'Guides'`---implemented: Changed to 'Guides'
+- [x] **7.9** Line 114: Change `"No instructions provided."` to `"No guides provided."`---implemented: Changed to "No guides provided."
+- [x] **7.10** Open `src/components/ItemCapture/components/steps/ReviewStep.tsx`---implemented: Updated section
+- [x] **7.11** Line 616: Change `"Instructions"` heading to `"Guides"`---implemented: Changed to "Guides"
+- [x] **7.12** Line 636: Change `"No instructions added."` to `"No guides added."`---implemented: Changed to "No guides added."
+- [x] **7.13** Line 642: Change `"Add instructions"` link text to `"Add guides"`---implemented: Changed to "Add guides"
+- [x] **7.14** Save all files and verify no TypeScript errors---implemented: All files saved
 
 ---
 

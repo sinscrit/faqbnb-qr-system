@@ -73,9 +73,9 @@ export function InstructionsViewer({
   maxHeight = '400px',
   minHeight = '100px',
   className,
-  ariaLabel = 'Item instructions',
+  ariaLabel = 'Item guides',
   showHeader = false,
-  headerText = 'Instructions',
+  headerText = 'Guides',
 }: InstructionsViewerProps) {
   // Check if there is content to display
   const hasContent = instructions?.trim().length > 0;
@@ -111,7 +111,7 @@ export function InstructionsViewer({
         {hasContent ? (
           <ReactMarkdown>{instructions}</ReactMarkdown>
         ) : (
-          <p className="text-gray-400 italic">No instructions provided.</p>
+          <p className="text-gray-400 italic">No guides provided.</p>
         )}
       </div>
     </section>
