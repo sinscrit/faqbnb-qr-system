@@ -11,8 +11,9 @@
  * @lastModified 2026-01-04 (REQ-069 Task 3.2.4 - Added SelectionIndicator component)
  */
 
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { LayoutGrid, List, X, CheckSquare } from 'lucide-react';
+import { LayoutGrid, List, X, CheckSquare, ChevronDown } from 'lucide-react';
 import type {
   ItemToolbarProps,
   FilterState,
@@ -266,13 +267,114 @@ function SelectionIndicator({
 // See: src/components/ItemManager/components/dialogs/SortMenu.tsx
 
 // =============================================================================
+// RoomFilterDropdown Sub-component (REQ-216)
+// =============================================================================
+
+interface RoomFilterDropdownProps {
+  rooms: string[];
+  selectedRooms: string[];
+  onRoomsChange: (rooms: string[]) => void;
+  className?: string;
+}
+
+function RoomFilterDropdown({
+  rooms,
+  selectedRooms,
+  onRoomsChange,
+  className,
+}: RoomFilterDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  const handleRoomToggle = (room: string) => {
+    if (selectedRooms.includes(room)) {
+      onRoomsChange(selectedRooms.filter(r => r !== room));
+    } else {
+      onRoomsChange([...selectedRooms, room]);
+    }
+  };
+
+  if (rooms.length === 0) return null;
+
+  return (
+    <div ref={dropdownRef} className={cn('relative', className)}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'inline-flex items-center gap-2 px-3 py-2 rounded-lg border',
+          'text-sm font-medium transition-colors',
+          'min-h-[48px]',
+          'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
+          selectedRooms.length > 0
+            ? 'bg-[#FFF0F3] border-[#FF385C] text-[#E31C5F]'
+            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+        )}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+      >
+        <span>
+          {selectedRooms.length > 0
+            ? `Room (${selectedRooms.length})`
+            : 'Room'}
+        </span>
+        <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
+      </button>
+
+      {isOpen && (
+        <div
+          role="listbox"
+          aria-label="Select rooms"
+          className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 max-h-60 overflow-y-auto"
+        >
+          {rooms.map((room) => (
+            <button
+              key={room}
+              role="option"
+              aria-selected={selectedRooms.includes(room)}
+              onClick={() => handleRoomToggle(room)}
+              className={cn(
+                'w-full flex items-center gap-2 px-4 py-2 text-sm text-left',
+                'hover:bg-gray-50 transition-colors',
+                selectedRooms.includes(room) && 'bg-[#FFF0F3]'
+              )}
+            >
+              <input
+                type="checkbox"
+                checked={selectedRooms.includes(room)}
+                onChange={() => {}}
+                className="w-4 h-4 rounded border-gray-300 text-[#FF385C] focus:ring-[#FF385C]"
+              />
+              <span>{room}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
 // FiltersPlaceholder Sub-component (Task 2.2.8)
 // =============================================================================
 
 interface FiltersPlaceholderProps {
   filters: FilterState;
   onFiltersChange: (filters: Partial<FilterState>) => void;
-  filterOptions?: { contentTypes: string[]; tags: string[]; locations: string[] };
+  filterOptions?: { contentTypes: string[]; tags: string[]; locations: string[]; rooms: string[] };
 }
 
 /**
@@ -404,14 +506,24 @@ export function ItemToolbar({
             renderFilters({
               filters,
               onChange: onFiltersChange,
-              options: filterOptions || { contentTypes: [], tags: [], locations: [] },
+              options: filterOptions || { contentTypes: [], tags: [], locations: [], rooms: [] },
             })
           ) : (
-            <FiltersPlaceholder
-              filters={filters}
-              onFiltersChange={onFiltersChange}
-              filterOptions={filterOptions}
-            />
+            <>
+              {/* Room Filter Dropdown */}
+              {filterOptions?.rooms && filterOptions.rooms.length > 0 && (
+                <RoomFilterDropdown
+                  rooms={filterOptions.rooms}
+                  selectedRooms={filters.rooms || []}
+                  onRoomsChange={(rooms) => onFiltersChange({ rooms })}
+                />
+              )}
+              <FiltersPlaceholder
+                filters={filters}
+                onFiltersChange={onFiltersChange}
+                filterOptions={filterOptions}
+              />
+            </>
           )}
         </div>
       )}

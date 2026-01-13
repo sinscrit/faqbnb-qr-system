@@ -24,6 +24,7 @@ import {
   matchesFilters,
   hasActiveFilters as checkHasActiveFilters,
   extractFilterOptions,
+  extractRoomOptions,
 } from '../utils/filterUtils';
 import { getSortComparator } from '../utils/sortUtils';
 
@@ -106,7 +107,11 @@ export function useItemSearch(options: UseItemSearchOptions): UseItemSearchRetur
   // This ensures the filter dropdowns always show all available options
   const filterOptions = useMemo(() => {
     log('Extracting filter options...');
-    return extractFilterOptions(items);
+    const baseOptions = extractFilterOptions(items);
+    return {
+      ...baseOptions,
+      rooms: extractRoomOptions(items),
+    };
   }, [items, log]);
 
   // Computed values

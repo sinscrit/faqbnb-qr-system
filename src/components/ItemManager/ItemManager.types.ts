@@ -1122,6 +1122,7 @@ export interface ItemToolbarProps {
     contentTypes: string[];
     tags: string[];
     locations: string[];
+    rooms: string[];
   };
 
   // ---------------------------------------------------------------------------
@@ -1728,6 +1729,8 @@ export interface UseItemSearchReturn {
     tags: string[];
     /** Unique locations from all items */
     locations: string[];
+    /** Unique rooms from all items */
+    rooms: string[];
   };
 
   // ---------------------------------------------------------------------------

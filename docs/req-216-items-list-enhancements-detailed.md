@@ -539,12 +539,12 @@ This implementation transforms the Items List table to:
 **Files to modify:** `src/components/ItemManager/components/ItemToolbar.tsx`
 **Estimated effort:** 1 story point
 
-- [ ] **16.1** Open `src/components/ItemManager/components/ItemToolbar.tsx`
-- [ ] **16.2** Add import for the room extraction utility and ChevronDown icon:
+- [x] **16.1** Open `src/components/ItemManager/components/ItemToolbar.tsx` ---implemented: Opened ItemToolbar.tsx-
+- [x] **16.2** Add import for the room extraction utility and ChevronDown icon:
   ```typescript
   import { ChevronDown } from 'lucide-react';
-  ```
-- [ ] **16.3** Create a new `RoomFilterDropdown` component before the main `ItemToolbar` function (around line 270):
+  ``` ---implemented: Added ChevronDown import and useState, useRef, useEffect-
+- [x] **16.3** Create a new `RoomFilterDropdown` component before the main `ItemToolbar` function (around line 270): ---implemented: Created RoomFilterDropdown component at line 280-
   ```typescript
   interface RoomFilterDropdownProps {
     rooms: string[];
@@ -643,16 +643,16 @@ This implementation transforms the Items List table to:
     );
   }
   ```
-- [ ] **16.4** Add useState and useRef imports at the top if not already present:
+- [x] **16.4** Add useState and useRef imports at the top if not already present:
   ```typescript
   import { useState, useRef, useEffect } from 'react';
-  ```
-- [ ] **16.5** Add `roomOptions` to the `ItemToolbarProps` in `ItemManager.types.ts`:
+  ``` ---implemented: Added React hooks imports-
+- [x] **16.5** Add `roomOptions` to the `ItemToolbarProps` in `ItemManager.types.ts`:
   ```typescript
   /** Available room options for room filter dropdown */
   roomOptions?: string[];
-  ```
-- [ ] **16.6** Update the ItemToolbar function to use the new component. Add in the "Row 2: Filters" section (around line 401):
+  ``` ---implemented: Added rooms to filterOptions in ItemToolbarProps-
+- [x] **16.6** Update the ItemToolbar function to use the new component. Add in the "Row 2: Filters" section (around line 401):
   ```typescript
   {/* Room Filter Dropdown */}
   {filterOptions?.rooms && filterOptions.rooms.length > 0 && (
@@ -662,7 +662,7 @@ This implementation transforms the Items List table to:
       onRoomsChange={(rooms) => onFiltersChange({ rooms })}
     />
   )}
-  ```
+  ``` ---implemented: Added RoomFilterDropdown to Row 2 Filters section-unit tested-
 
 ---
 
@@ -672,8 +672,8 @@ This implementation transforms the Items List table to:
 **Files to modify:** `src/components/ItemManager/hooks/useItemSearch.ts`
 **Estimated effort:** 1 story point
 
-- [ ] **17.1** Open `src/components/ItemManager/hooks/useItemSearch.ts`
-- [ ] **17.2** Add import for `extractRoomOptions`:
+- [x] **17.1** Open `src/components/ItemManager/hooks/useItemSearch.ts` ---implemented: Opened useItemSearch.ts-
+- [x] **17.2** Add import for `extractRoomOptions`:
   ```typescript
   import {
     matchesSearch,
@@ -682,8 +682,8 @@ This implementation transforms the Items List table to:
     extractFilterOptions,
     extractRoomOptions,
   } from '../utils/filterUtils';
-  ```
-- [ ] **17.3** Update the `filterOptions` useMemo (around line 107) to include rooms:
+  ``` ---implemented: Added extractRoomOptions import-
+- [x] **17.3** Update the `filterOptions` useMemo (around line 107) to include rooms:
   ```typescript
   const filterOptions = useMemo(() => {
     log('Extracting filter options...');
@@ -693,8 +693,8 @@ This implementation transforms the Items List table to:
       rooms: extractRoomOptions(items),
     };
   }, [items, log]);
-  ```
-- [ ] **17.4** Update the `UseItemSearchReturn` interface in `ItemManager.types.ts` to include rooms in filterOptions:
+  ``` ---implemented: Updated filterOptions useMemo to include rooms-
+- [x] **17.4** Update the `UseItemSearchReturn` interface in `ItemManager.types.ts` to include rooms in filterOptions:
   ```typescript
   filterOptions: {
     contentTypes: string[];
@@ -702,7 +702,7 @@ This implementation transforms the Items List table to:
     locations: string[];
     rooms: string[];
   };
-  ```
+  ``` ---implemented: Added rooms to UseItemSearchReturn filterOptions-unit tested-
 
 ---
 
