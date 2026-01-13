@@ -1,0 +1,8 @@
+# Railway ignore file
+.playwright-mcp/
+node_modules/
+.next/
+*.png
+*.jpg
+*.jpeg
+test-*.mjs
