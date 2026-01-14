@@ -9,10 +9,12 @@
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-12 - REQ-206: Added responsive mobile label display logic
+ * @modified 2026-01-15 - Added logo to header
  */
 
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Building2, FileText, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
@@ -125,10 +127,17 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <header className="border-b border-gray-200 bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Left side - Title */}
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
-            </div>
+            {/* Left side - Logo and Title */}
+            <Link href="/dashboard2" className="flex items-center space-x-2">
+              <Image
+                src="/faqbnb_logoshort.png"
+                alt="FAQBNB Logo"
+                width={32}
+                height={32}
+                className="rounded-md"
+              />
+              <h1 className="text-xl font-bold text-gray-900 hidden sm:block">FAQBNB</h1>
+            </Link>
 
             {/* Center - Property Dropdown (REQ-142) */}
             <div className="flex-1 flex justify-center px-4">

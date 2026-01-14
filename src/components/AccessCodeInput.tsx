@@ -265,7 +265,7 @@ export default function AccessCodeInput({
               Need an access code? Request beta access to get started
             </p>
             <a
-              href="http://localhost:3000/#beta"
+              href="/#beta"
               className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-sm font-medium"
               target="_self"
             >

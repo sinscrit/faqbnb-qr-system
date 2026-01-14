@@ -1,8 +1,13 @@
 # Railway ignore file
+# Last Modified: 2026-01-15 - Fixed to allow public folder images
 .playwright-mcp/
 node_modules/
 .next/
-*.png
-*.jpg
-*.jpeg
+
+# Exclude test images and large files, but NOT public folder assets
+# Note: public/ folder images (logos, icons) must be deployed
+public/test/
+public/90927905-d87c-4748-ba8a-35b4063d5e61.png
+
+# Exclude test files
 test-*.mjs

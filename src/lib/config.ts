@@ -1,5 +1,49 @@
 // Domain Configuration Utilities for QR Code Generation
 // Part of REQ-016: Domain Configuration for QR Links and System Admin Back Office
+// Last Modified: 2026-01-15 - Added getServerBaseUrl for access request links
+
+import { NextRequest } from 'next/server';
+
+/**
+ * Get the server base URL for generating links in API routes.
+ * Priority order:
+ * 1. NEXT_PUBLIC_APP_URL environment variable (recommended for production)
+ * 2. Request origin from headers (when request is provided)
+ * 3. Fallback to localhost (development only)
+ *
+ * @param request - Optional NextRequest to derive origin from headers
+ * @returns Base URL string (e.g., "https://faqbnb.com")
+ *
+ * @example
+ * // In an API route:
+ * const baseUrl = getServerBaseUrl(request);
+ * const registrationUrl = `${baseUrl}/register`;
+ */
+export function getServerBaseUrl(request?: NextRequest | null): string {
+  // Priority 1: Explicit environment variable
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+
+  // Priority 2: Derive from request headers
+  if (request) {
+    // Try x-forwarded-host first (for proxied requests like Railway)
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const forwardedProto = request.headers.get('x-forwarded-proto') || 'https';
+
+    if (forwardedHost) {
+      return `${forwardedProto}://${forwardedHost}`;
+    }
+
+    // Fall back to request.nextUrl.origin
+    if (request.nextUrl?.origin && !request.nextUrl.origin.includes('localhost')) {
+      return request.nextUrl.origin;
+    }
+  }
+
+  // Priority 3: Development fallback
+  return 'http://localhost:3000';
+}
 
 /**
  * Get the domain override from environment variables
@@ -25,9 +69,14 @@ export function getQRDomain(): string {
   if (typeof window !== 'undefined') {
     return window.location.origin;
   }
-  
-  // Server-side fallback (should not happen in production)
-  return 'https://localhost:3000';
+
+  // Server-side fallback - use NEXT_PUBLIC_APP_URL if available
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+
+  // Development fallback (should not happen in production)
+  return 'http://localhost:3000';
 }
 
 /**

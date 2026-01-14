@@ -1,27 +1,36 @@
 import { AccessRequest, EmailTemplate, AccessRequestSource } from '@/types/admin';
+import { getServerBaseUrl } from './config';
 
 /**
  * Email Template Utilities for REQ-016: System Admin Back Office
+ * Last Modified: 2026-01-15 - Updated to use getServerBaseUrl for proper domain handling
  */
 
 /**
  * Generate access approval email template
+ * @param request - Access request data
+ * @param accessCode - Generated access code
+ * @param accountName - Optional account name
+ * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
  */
 export function generateAccessApprovalEmail(
-  request: AccessRequest, 
+  request: AccessRequest,
   accessCode: string,
-  accountName?: string
+  accountName?: string,
+  baseUrl?: string
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const isBetaRequest = request.source === AccessRequestSource.BETA_WAITLIST;
-  
+
   // Handle beta requests differently
   if (isBetaRequest) {
-    return generateBetaAccessApprovalEmail(request, accessCode, accountName);
+    return generateBetaAccessApprovalEmail(request, accessCode, accountName, baseUrl);
   }
-  
+
   const accountDisplayName = accountName || 'Account';
-  
+  const registrationLink = createRegistrationLink(baseUrl);
+  const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
+
   return {
     subject: `Access Granted: ${accountDisplayName} - Your Access Code`,
     body: `Hello ${requesterName},
@@ -34,13 +43,13 @@ Your Access Details:
 • Requested on: ${new Date(request.request_date).toLocaleDateString()}
 
 To complete your access setup:
-1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+1. Click this direct registration link: ${directRegistrationLink}
    (This link pre-fills your access code and email for convenience)
 2. Complete your account registration
 3. Start exploring the items and resources
 
 Your access code: ${accessCode}
-Direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+Direct registration link: ${directRegistrationLink}
 
 Important Notes:
 - Keep your access code secure and don't share it with others
@@ -58,8 +67,8 @@ If you need assistance, please contact support through the FAQBNB platform.`,
       accountName: accountDisplayName,
       accessCode,
       requestDate: new Date(request.request_date).toLocaleDateString(),
-      registrationLink: createRegistrationLink(),
-      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email)
+      registrationLink,
+      directRegistrationLink
     }
   };
 }
@@ -67,15 +76,22 @@ If you need assistance, please contact support through the FAQBNB platform.`,
 /**
  * Generate beta access approval email template
  * For users who signed up through the beta waitlist
+ * @param request - Access request data
+ * @param accessCode - Generated access code
+ * @param accountName - Optional account name
+ * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
  */
 export function generateBetaAccessApprovalEmail(
-  request: AccessRequest, 
+  request: AccessRequest,
   accessCode: string,
-  accountName?: string
+  accountName?: string,
+  baseUrl?: string
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const accountDisplayName = accountName || 'the FAQBNB platform';
-  
+  const registrationLink = createRegistrationLink(baseUrl);
+  const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
+
   return {
     subject: `🚀 Welcome to FAQBNB Beta - Access Granted!`,
     body: `Hello ${requesterName},
@@ -89,13 +105,13 @@ Your Beta Access Details:
 • Original Request: ${new Date(request.request_date).toLocaleDateString()}
 
 Getting Started with Your Beta Access:
-1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+1. Click this direct registration link: ${directRegistrationLink}
    (This link pre-fills your access code and email for convenience)
 2. Complete your account registration
 3. Start exploring the platform features and capabilities
 
 Your beta access code: ${accessCode}
-Direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+Direct registration link: ${directRegistrationLink}
 
 What to Expect:
 ✨ Early access to all FAQBNB features
@@ -125,8 +141,8 @@ For beta support or feedback, please contact us through the platform or reply to
       accessCode,
       requestDate: new Date(request.request_date).toLocaleDateString(),
       approvalDate: new Date().toLocaleDateString(),
-      registrationLink: createRegistrationLink(),
-      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email),
+      registrationLink,
+      directRegistrationLink,
       userEmail: request.requester_email
     }
   };
@@ -134,30 +150,37 @@ For beta support or feedback, please contact us through the platform or reply to
 
 /**
  * Create access link with embedded code
+ * @param accountId - Account ID to include in the link
+ * @param accessCode - Access code to include in the link
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
-export function createAccessLink(accountId: string, accessCode: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  return `${baseUrl}/account-access?code=${encodeURIComponent(accessCode)}&account=${encodeURIComponent(accountId)}`;
+export function createAccessLink(accountId: string, accessCode: string, baseUrl?: string): string {
+  const url = baseUrl || getServerBaseUrl();
+  return `${url}/account-access?code=${encodeURIComponent(accessCode)}&account=${encodeURIComponent(accountId)}`;
 }
 
 /**
  * Create registration link
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
-export function createRegistrationLink(): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  return `${baseUrl}/register`;
+export function createRegistrationLink(baseUrl?: string): string {
+  const url = baseUrl || getServerBaseUrl();
+  return `${url}/register`;
 }
 
 /**
  * Create registration link with access code and email
+ * @param accessCode - Access code to pre-fill
+ * @param email - Email to pre-fill
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
-export function createRegistrationLinkWithCode(accessCode: string, email: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+export function createRegistrationLinkWithCode(accessCode: string, email: string, baseUrl?: string): string {
+  const url = baseUrl || getServerBaseUrl();
   const params = new URLSearchParams({
     code: accessCode,
     email: email
   });
-  return `${baseUrl}/register?${params.toString()}`;
+  return `${url}/register?${params.toString()}`;
 }
 
 /**
@@ -319,16 +342,24 @@ This is an automated message. Please do not reply to this email.`,
 
 /**
  * Generate reminder email for pending registration
+ * @param request - Access request data
+ * @param accessCode - Generated access code
+ * @param daysSinceApproval - Number of days since approval
+ * @param accountName - Optional account name
+ * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
  */
 export function generateRegistrationReminderEmail(
   request: AccessRequest,
   accessCode: string,
   daysSinceApproval: number,
-  accountName?: string
+  accountName?: string,
+  baseUrl?: string
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const accountDisplayName = accountName || 'Account';
-  
+  const registrationLink = createRegistrationLink(baseUrl);
+  const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
+
   return {
     subject: `Reminder: Complete Your ${accountDisplayName} Access Setup`,
     body: `Hello ${requesterName},
@@ -338,11 +369,11 @@ This is a friendly reminder that your access to "${accountDisplayName}" was appr
 Your Access Code: ${accessCode}
 
 To complete your access setup:
-1. Click this direct registration link: ${createRegistrationLinkWithCode(accessCode, request.requester_email)}
+1. Click this direct registration link: ${directRegistrationLink}
    (This link pre-fills your access code and email for convenience)
 2. Complete your account registration
 
-Alternative: Visit ${createRegistrationLink()} and enter your access code: ${accessCode}
+Alternative: Visit ${registrationLink} and enter your access code: ${accessCode}
 
 Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.
 
@@ -358,8 +389,8 @@ This is an automated message. Please do not reply to this email.`,
       accountName: accountDisplayName,
       accessCode,
       daysSinceApproval: daysSinceApproval.toString(),
-      registrationLink: createRegistrationLink(),
-      directRegistrationLink: createRegistrationLinkWithCode(accessCode, request.requester_email)
+      registrationLink,
+      directRegistrationLink
     }
   };
 }
@@ -386,23 +417,28 @@ export function extractAccessCodeFromEmail(emailBody: string): string | null {
 
 /**
  * Generate secure access link with expiration
+ * @param accountId - Account ID to include in the link
+ * @param accessCode - Access code to include in the link
+ * @param expirationHours - Link expiration in hours (default 168 / 7 days)
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
 export function generateSecureAccessLink(
-  accountId: string, 
-  accessCode: string, 
-  expirationHours: number = 168 // 7 days default
+  accountId: string,
+  accessCode: string,
+  expirationHours: number = 168, // 7 days default
+  baseUrl?: string
 ): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const url = baseUrl || getServerBaseUrl();
   const expirationTime = new Date(Date.now() + expirationHours * 60 * 60 * 1000);
-  
+
   // Create access link with embedded parameters
   const params = new URLSearchParams({
     code: accessCode,
     account: accountId,
     expires: expirationTime.toISOString()
   });
-  
-  return `${baseUrl}/access/redeem?${params.toString()}`;
+
+  return `${url}/access/redeem?${params.toString()}`;
 }
 
 /**
@@ -482,21 +518,26 @@ export function validateAccessLink(link: string): LinkValidation {
 
 /**
  * Generate secure registration link
+ * @param accessCode - Access code to include in the link
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
-export function generateSecureRegistrationLink(accessCode: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  return `${baseUrl}/register?access_code=${encodeURIComponent(accessCode)}`;
+export function generateSecureRegistrationLink(accessCode: string, baseUrl?: string): string {
+  const url = baseUrl || getServerBaseUrl();
+  return `${url}/register?access_code=${encodeURIComponent(accessCode)}`;
 }
 
 /**
  * Generate account access redemption link
+ * @param accountId - Account ID to include in the link
+ * @param accessCode - Access code to include in the link
+ * @param baseUrl - Optional base URL (defaults to getServerBaseUrl())
  */
-export function generateAccountAccessLink(accountId: string, accessCode: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+export function generateAccountAccessLink(accountId: string, accessCode: string, baseUrl?: string): string {
+  const url = baseUrl || getServerBaseUrl();
   const params = new URLSearchParams({
     account_id: accountId,
     access_code: accessCode
   });
-  
-  return `${baseUrl}/account/join?${params.toString()}`;
+
+  return `${url}/account/join?${params.toString()}`;
 }

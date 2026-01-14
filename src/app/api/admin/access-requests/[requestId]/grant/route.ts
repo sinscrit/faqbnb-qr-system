@@ -4,6 +4,7 @@ import { AccessRequestStatus } from '@/types/admin';
 import { randomBytes } from 'crypto';
 import { sendAccessApprovalEmail } from '@/lib/email-service';
 import { generateAccessApprovalEmail } from '@/lib/email-templates';
+import { getServerBaseUrl } from '@/lib/config';
 
 interface RouteParams {
   params: {
@@ -241,13 +242,17 @@ export async function POST(
     }
 
     // Send email if requested
+    // Get base URL from request for proper domain in email links
+    const baseUrl = getServerBaseUrl(request);
+
     let emailData = null;
     let emailResult = null;
     if (send_email && accessRequest.account) {
       emailData = email_template || generateAccessApprovalEmail(
         accessRequest,
         accessCode,
-        accessRequest.account.name
+        accessRequest.account.name,
+        baseUrl
       );
 
       try {
@@ -302,7 +307,7 @@ export async function POST(
           'Monitor for successful registration completion'
         ],
         accessCode,
-        registrationUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/register`
+        registrationUrl: `${baseUrl}/register`
       };
     }
 
