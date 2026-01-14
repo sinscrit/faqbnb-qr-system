@@ -22,7 +22,7 @@
  * @see docs/REQ-106-preview-save-step-overview.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
  * @see docs/REQ-210-update-previewsavestep-display-detailed.md
- * @lastModified 2026-01-12 (REQ-210: Separate Item Name from Article Title display)
+ * @lastModified 2026-01-15 (Restructured UI: Item Name first, removed Purpose field, added Item Description)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -47,7 +47,7 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { cn } from '@/lib/utils';
-import type { CurrentItemState, ContentPiece } from '../../ItemCreationWorkflow.types';
+import type { CurrentItemState, ContentPiece, RoomType, ItemType } from '../../ItemCreationWorkflow.types';
 import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';
 import {
   MAX_CONTENT_PIECES,
@@ -68,8 +68,14 @@ export interface PreviewSaveStepProps {
   currentItem: CurrentItemState;
   /** Callback when physical item name changes (for QR code label) */
   onUpdateItemName: (name: string) => void;
+  /** Callback when item description changes */
+  onUpdateItemDescription?: (description: string) => void;
   /** Callback when article title changes (optional) (REQ-210) */
   onUpdateArticleTitle?: (title: string) => void;
+  /** Callback when room changes */
+  onUpdateRoom?: (room: RoomType) => void;
+  /** Callback when item type changes */
+  onUpdateItemType?: (itemType: ItemType) => void;
   /** Callback when tags change (REQ-177) */
   onUpdateTags: (tags: string[]) => void;
   /** Callback to remove a content piece */
@@ -121,53 +127,78 @@ function EmptyContentState({ onAddContent }: EmptyContentStateProps) {
 /**
  * ItemDetailsDisplay - Read-only metadata display
  *
- * Displays pre-populated item metadata (room, type, purpose) as a
+ * Displays pre-populated item metadata (room, type) as a
  * semantic definition list. All fields are read-only and use label constants
  * for consistent display. Uses <dl>/<dt>/<dd> for accessibility.
  *
  * @param room - Room type for the item
  * @param itemType - Item type category
- * @param purpose - Purpose/intent (nullable)
  * @returns Definition list with item metadata
  */
 interface ItemDetailsDisplayProps {
   room: string;
   itemType: string;
-  purpose: string | null;
+  onUpdateRoom?: (room: RoomType) => void;
+  onUpdateItemType?: (itemType: ItemType) => void;
+  disabled?: boolean;
 }
 
-function ItemDetailsDisplay({ room, itemType, purpose }: ItemDetailsDisplayProps) {
-  // Get human-readable labels from constants
-  const roomLabel = ROOM_LABELS[room as RoomTypeConst] || room;
-  const itemTypeLabel = ITEM_TYPE_LABELS[itemType as ItemTypeConst] || itemType;
-  const purposeLabel = purpose
-    ? PURPOSE_LABELS[purpose as PurposeTypeConst]
-    : 'Not specified';
-
+function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, disabled }: ItemDetailsDisplayProps) {
   return (
-    <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {/* Room Field */}
-      <div className="space-y-1">
-        <dt className="text-sm font-medium text-[#717171]">Room</dt>
-        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
-          {roomLabel}
-        </dd>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Room Dropdown */}
+      <div className="space-y-2">
+        <label htmlFor="room-select" className="block text-sm font-medium text-[#222222]">
+          Room
+        </label>
+        <select
+          id="room-select"
+          value={room}
+          onChange={(e) => onUpdateRoom?.(e.target.value as RoomType)}
+          disabled={disabled}
+          className={cn(
+            'w-full px-4 py-3 border-2 rounded-lg',
+            'min-h-[48px]',
+            'text-base text-[#222222]',
+            'transition-colors duration-150',
+            'focus:outline-none focus:border-[#222222]',
+            disabled
+              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+              : 'bg-white border-gray-200 hover:border-gray-300'
+          )}
+        >
+          {Object.entries(ROOM_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
       </div>
-      {/* Item Type Field */}
-      <div className="space-y-1">
-        <dt className="text-sm font-medium text-[#717171]">Item Type</dt>
-        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
-          {itemTypeLabel}
-        </dd>
+      {/* Item Type Dropdown */}
+      <div className="space-y-2">
+        <label htmlFor="item-type-select" className="block text-sm font-medium text-[#222222]">
+          Item Type
+        </label>
+        <select
+          id="item-type-select"
+          value={itemType}
+          onChange={(e) => onUpdateItemType?.(e.target.value as ItemType)}
+          disabled={disabled}
+          className={cn(
+            'w-full px-4 py-3 border-2 rounded-lg',
+            'min-h-[48px]',
+            'text-base text-[#222222]',
+            'transition-colors duration-150',
+            'focus:outline-none focus:border-[#222222]',
+            disabled
+              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+              : 'bg-white border-gray-200 hover:border-gray-300'
+          )}
+        >
+          {Object.entries(ITEM_TYPE_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
       </div>
-      {/* Purpose Field */}
-      <div className="space-y-1">
-        <dt className="text-sm font-medium text-[#717171]">Purpose</dt>
-        <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
-          {purposeLabel}
-        </dd>
-      </div>
-    </dl>
+    </div>
   );
 }
 
@@ -179,8 +210,14 @@ interface ItemDetailsSectionProps {
   currentItem: CurrentItemState;
   /** Callback when physical item name changes (QR code label) */
   onUpdateItemName: (name: string) => void;
+  /** Callback when item description changes */
+  onUpdateItemDescription?: (description: string) => void;
   /** Callback when article title changes (optional, defaults to derived from purpose) */
   onUpdateArticleTitle?: (title: string) => void;
+  /** Callback when room changes */
+  onUpdateRoom?: (room: RoomType) => void;
+  /** Callback when item type changes */
+  onUpdateItemType?: (itemType: ItemType) => void;
   /** Callback when tags change */
   onUpdateTags: (tags: string[]) => void;
   disabled?: boolean;
@@ -189,94 +226,110 @@ interface ItemDetailsSectionProps {
 function ItemDetailsSection({
   currentItem,
   onUpdateItemName,
+  onUpdateItemDescription,
   onUpdateArticleTitle,
+  onUpdateRoom,
+  onUpdateItemType,
   onUpdateTags,
   disabled,
 }: ItemDetailsSectionProps) {
   // Derive article title from purpose (REQ-210)
-  const articleTitle = currentItem.currentArticle?.title ||
-    (currentItem.purpose
-      ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
-      : 'Guides');
+  // Default to purpose label + item name format
+  const purposeLabel = currentItem.purpose
+    ? PURPOSE_LABELS[currentItem.purpose as PurposeTypeConst]
+    : '';
+  const defaultArticleTitle = purposeLabel && currentItem.specificItem
+    ? `${purposeLabel} - ${currentItem.specificItem}`
+    : purposeLabel || 'Guides';
+  const articleTitle = currentItem.currentArticle?.title || defaultArticleTitle;
 
   return (
     <section
       className="bg-white rounded-lg border border-gray-200 p-6"
-      aria-labelledby="item-details-heading"
+      aria-label="Item details form"
     >
-      <h3
-        id="item-details-heading"
-        className="text-lg font-medium text-[#222222] mb-4"
-      >
-        Item Details
-      </h3>
+      {/* Item Name field - first field */}
+      <div className="mb-4">
+        <ItemNameEditor
+          value={currentItem.specificItem}
+          onChange={onUpdateItemName}
+          disabled={disabled}
+          maxLength={50}
+          placeholder="Enter item name"
+        />
+      </div>
 
-      {/* Item Properties Group */}
-      <div className="space-y-4 pb-4 border-b border-gray-100">
-        <h4 className="text-sm font-semibold text-[#484848] uppercase tracking-wide">
-          Physical Item
-        </h4>
+      {/* Item Description field */}
+      <div className="mb-4">
+        <label
+          htmlFor="item-description-editor"
+          className="block text-sm font-medium text-[#222222] mb-2"
+        >
+          Item Description
+        </label>
+        <textarea
+          id="item-description-editor"
+          value={currentItem.itemDescription || ''}
+          onChange={(e) => onUpdateItemDescription?.(e.target.value)}
+          disabled={disabled}
+          maxLength={500}
+          rows={3}
+          placeholder="Enter a brief description of this item (optional)"
+          className={cn(
+            'w-full px-4 py-3 border-2 rounded-lg',
+            'text-base text-[#222222] placeholder:text-[#717171]',
+            'transition-colors duration-150',
+            'focus:outline-none focus:border-[#222222]',
+            'resize-none',
+            disabled
+              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+              : 'bg-white border-gray-200 hover:border-gray-300'
+          )}
+        />
+      </div>
 
-        {/* Read-only metadata fields */}
+      {/* Room and Item Type dropdowns */}
+      <div className="mb-4">
         <ItemDetailsDisplay
           room={currentItem.room}
           itemType={currentItem.itemType}
-          purpose={currentItem.purpose}
+          onUpdateRoom={onUpdateRoom}
+          onUpdateItemType={onUpdateItemType}
+          disabled={disabled}
         />
-
-        {/* Item Name field - physical item name for QR code label */}
-        <div>
-          <span className="text-xs text-gray-500 block mb-2">
-            (appears on QR code label)
-          </span>
-          <ItemNameEditor
-            value={currentItem.specificItem}
-            onChange={onUpdateItemName}
-            disabled={disabled}
-            maxLength={50}
-            placeholder="Enter item name"
-          />
-        </div>
       </div>
 
-      {/* Article Properties Group */}
-      <div className="space-y-4 pt-4 pb-4 border-b border-gray-100">
-        <h4 className="text-sm font-semibold text-[#484848] uppercase tracking-wide">
-          Article / Guide
-        </h4>
-
-        {/* Article Title field */}
-        <div>
-          <label
-            htmlFor="article-title-editor"
-            className="block text-sm font-medium text-[#717171] mb-2"
-          >
-            Article Title
-          </label>
-          <input
-            id="article-title-editor"
-            type="text"
-            value={articleTitle}
-            onChange={(e) => (onUpdateArticleTitle || (() => {}))(e.target.value)}
-            disabled={disabled || !onUpdateArticleTitle}
-            maxLength={100}
-            placeholder="Enter article title"
-            className={cn(
-              'w-full px-4 py-3 border-2 rounded-lg',
-              'min-h-[48px]',
-              'text-base text-[#222222] placeholder:text-[#717171]',
-              'transition-colors duration-150',
-              'focus:outline-none focus:border-[#222222]',
-              disabled || !onUpdateArticleTitle
-                ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
-                : 'bg-white border-gray-200 hover:border-gray-300'
-            )}
-          />
-        </div>
+      {/* Guide/Article Title field - editable */}
+      <div className="mb-4">
+        <label
+          htmlFor="article-title-editor"
+          className="block text-sm font-medium text-[#222222] mb-2"
+        >
+          Guide/Article Title
+        </label>
+        <input
+          id="article-title-editor"
+          type="text"
+          value={articleTitle}
+          onChange={(e) => onUpdateArticleTitle?.(e.target.value)}
+          disabled={disabled}
+          maxLength={100}
+          placeholder="Enter guide/article title"
+          className={cn(
+            'w-full px-4 py-3 border-2 rounded-lg',
+            'min-h-[48px]',
+            'text-base text-[#222222] placeholder:text-[#717171]',
+            'transition-colors duration-150',
+            'focus:outline-none focus:border-[#222222]',
+            disabled
+              ? 'bg-gray-100 border-gray-200 cursor-not-allowed'
+              : 'bg-white border-gray-200 hover:border-gray-300'
+          )}
+        />
       </div>
 
-      {/* Tags (applies to both item and article) */}
-      <div className="pt-4">
+      {/* Tags */}
+      <div>
         <label className="block text-sm font-medium text-[#717171] mb-2">
           Tags
         </label>
@@ -510,7 +563,10 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
 export function PreviewSaveStep({
   currentItem,
   onUpdateItemName,
+  onUpdateItemDescription,  // New: callback for item description changes
   onUpdateArticleTitle,  // REQ-210: Optional callback for article title changes
+  onUpdateRoom,  // Callback for room changes
+  onUpdateItemType,  // Callback for item type changes
   onUpdateTags,
   onRemoveContent,
   onReorderContent,
@@ -725,7 +781,10 @@ export function PreviewSaveStep({
       <ItemDetailsSection
         currentItem={currentItem}
         onUpdateItemName={onUpdateItemName}
+        onUpdateItemDescription={onUpdateItemDescription}
         onUpdateArticleTitle={onUpdateArticleTitle}
+        onUpdateRoom={onUpdateRoom}
+        onUpdateItemType={onUpdateItemType}
         onUpdateTags={onUpdateTags}
         disabled={isSaving}
       />

@@ -135,6 +135,8 @@ export function ItemCreationWorkflow({
     selectSpecificItem,
     setItemName,
     setTags,
+    setItemDescription,
+    setArticleTitle,
     selectPurpose,
     selectContentSource,
     selectContentType,
@@ -324,6 +326,11 @@ export function ItemCreationWorkflow({
         ? lastItem.name.split(' - ')[1]
         : lastItem.name,
       itemName: lastItem.name,
+      currentArticle: {
+        title: '',
+        purpose: null,
+        content: [],
+      },
       purpose: null,  // Reset purpose when adding more content
       contentSource: 'existing',
       contentType: null,
@@ -359,7 +366,7 @@ export function ItemCreationWorkflow({
         name: state.currentItem.itemName,
         room: state.currentItem.room,
         itemType: state.currentItem.itemType,
-        content: state.currentItem.content,
+        content: state.currentItem.content || state.currentItem.currentArticle?.content || [],
         tags: state.currentItem.tags || [],
         createdAt: new Date(),
       };
@@ -641,15 +648,19 @@ export function ItemCreationWorkflow({
             <PreviewSaveStep
               currentItem={state.currentItem!}
               onUpdateItemName={setItemName}
+              onUpdateItemDescription={setItemDescription}
+              onUpdateArticleTitle={setArticleTitle}
+              onUpdateRoom={selectRoom}
+              onUpdateItemType={selectItemType}
               onUpdateTags={setTags}
               onRemoveContent={removeContentPiece}
               onReorderContent={reorderContent}
               onRetake={() => goToStep('content-creation')}
               onSave={handleSaveItem}
-            onCancel={prevStep}
-            onComplete={() => goToStep('next-action')}
-            isSaving={isSaving}
-          />
+              onCancel={prevStep}
+              onComplete={() => goToStep('next-action')}
+              isSaving={isSaving}
+            />
           </>
         );
       case 'next-action': {

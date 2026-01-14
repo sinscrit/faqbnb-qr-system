@@ -104,7 +104,7 @@ export function ItemNameEditor({
         </span>
       </div>
 
-      <p id="item-name-hint" className="text-xs text-[#717171]">
+      <p id="item-name-hint" className="text-[10px] text-[#999999]">
         This name will appear on the QR code label
       </p>
     </div>

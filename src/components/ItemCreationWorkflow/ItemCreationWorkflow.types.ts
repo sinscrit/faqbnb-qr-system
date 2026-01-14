@@ -302,6 +302,9 @@ export interface CurrentItemState {
   /** Physical item name - equals specificItem, shown on QR code label */
   itemName: string;
 
+  /** Optional description for the item */
+  itemDescription?: string;
+
   /**
    * Current article being created for this item.
    * Contains article-specific properties separated from item identity.
@@ -535,11 +538,15 @@ export type WorkflowAction =
   | { type: 'SELECT_ITEM_TYPE'; payload: ItemType }
   | { type: 'SELECT_SPECIFIC_ITEM'; payload: string }
   | { type: 'SET_ITEM_NAME'; payload: string }
+  // Item description action
+  | { type: 'SET_ITEM_DESCRIPTION'; payload: string }
   // Tags action (REQ-177)
   | { type: 'SET_TAGS'; payload: string[] }
 
   // Purpose selection action (Plan-094)
   | { type: 'SELECT_PURPOSE'; payload: PurposeType }
+  // Article title action
+  | { type: 'SET_ARTICLE_TITLE'; payload: string }
 
   // Content actions
   | { type: 'SELECT_CONTENT_SOURCE'; payload: 'existing' | 'create-new' }

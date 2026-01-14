@@ -367,6 +367,43 @@ export function workflowReducer(
       };
     }
 
+    case 'SET_ITEM_DESCRIPTION': {
+      if (!state.currentItem) return state;
+      const updatedItem: CurrentItemState = {
+        ...state.currentItem,
+        itemDescription: action.payload,
+      };
+      return {
+        ...state,
+        currentItem: updatedItem,
+        isDirty: true,
+        session: {
+          ...state.session,
+          currentItem: updatedItem,
+        },
+      };
+    }
+
+    case 'SET_ARTICLE_TITLE': {
+      if (!state.currentItem) return state;
+      const updatedItem: CurrentItemState = {
+        ...state.currentItem,
+        currentArticle: {
+          ...state.currentItem.currentArticle,
+          title: action.payload,
+        },
+      };
+      return {
+        ...state,
+        currentItem: updatedItem,
+        isDirty: true,
+        session: {
+          ...state.session,
+          currentItem: updatedItem,
+        },
+      };
+    }
+
     case 'SELECT_PURPOSE': {
       if (!state.currentItem) return state;
 
@@ -731,6 +768,10 @@ export interface UseWorkflowStateReturn {
   setItemName: (name: string) => void;
   /** Set tags for the current item (REQ-177) */
   setTags: (tags: string[]) => void;
+  /** Set item description */
+  setItemDescription: (description: string) => void;
+  /** Set article title (overrides auto-generated) */
+  setArticleTitle: (title: string) => void;
   /** Select a purpose for the current item (Plan-094) */
   selectPurpose: (purpose: PurposeType) => void;
 
@@ -852,6 +893,14 @@ export function useWorkflowState(): UseWorkflowStateReturn {
 
   const setTags = useCallback((tags: string[]) => {
     dispatch({ type: 'SET_TAGS', payload: tags });
+  }, []);
+
+  const setItemDescription = useCallback((description: string) => {
+    dispatch({ type: 'SET_ITEM_DESCRIPTION', payload: description });
+  }, []);
+
+  const setArticleTitle = useCallback((title: string) => {
+    dispatch({ type: 'SET_ARTICLE_TITLE', payload: title });
   }, []);
 
   const selectPurpose = useCallback((purpose: PurposeType) => {
@@ -1028,6 +1077,8 @@ export function useWorkflowState(): UseWorkflowStateReturn {
     selectSpecificItem,
     setItemName,
     setTags,
+    setItemDescription,
+    setArticleTitle,
     selectPurpose,
     selectContentSource,
     selectContentType,
