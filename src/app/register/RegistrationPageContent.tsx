@@ -571,13 +571,13 @@ export default function RegistrationPageContent() {
                 href="/login"
                 className="block w-full px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors text-center"
               >
-                Go to Login
+                Login
               </Link>
               <Link
-                href="/dashboard2"
+                href="/"
                 className="block w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
               >
-                Go to Dashboard
+                Go to Home Page
               </Link>
             </div>
           </div>
