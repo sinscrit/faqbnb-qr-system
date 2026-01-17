@@ -780,6 +780,7 @@ interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
+  authState: AuthState; // REQ-025: Sequential authentication state machine
   isAdmin: boolean;
 
   // Property management (legacy)
@@ -1268,23 +1269,65 @@ export function AuthProvider({ children }: AuthProviderProps) {
           updateGlobalAuthState({
             authState: AuthState.AUTHENTICATED
           });
-        } else if (completedSteps === 0 || (!user && !session)) {
-          // REQ-025: If no real user/session data is loaded, transition to UNAUTHORIZED
-          // This happens when there's no authentication at all, or only emergency fake data
-          console.log('🔄 STATE_TRANSITION: LOADING → UNAUTHORIZED (No real authentication found)', {
-            completedSteps,
-            hasRealUser: !!user,
-            hasRealSession: !!session,
-            hasEmergencyAccounts: !!(userAccounts?.length && !user),
-            hasEmergencyCurrentAccount: !!(currentAccount && !user)
+        } else if (!authenticationAttempted && (!user && !session)) {
+          // First load with no user/session: start authentication directly
+          // IMPORTANT: Stay in LOADING state - don't transition to UNAUTHORIZED
+          // This prevents the dashboard from seeing UNAUTHORIZED and redirecting prematurely
+          console.log('🔄 LOADING_START_AUTH: Starting authentication directly from LOADING state', {
+            authenticationAttempted,
+            hasUser: !!user,
+            hasSession: !!session
           });
-          updateGlobalAuthState({
-            user: null,
-            session: null,
-            accounts: [],
-            currentAccount: null,
-            authState: AuthState.UNAUTHORIZED
+
+          // Set authenticationAttempted to prevent re-triggering
+          setAuthenticationAttempted(true);
+
+          // Start authentication async - state will be updated when complete
+          authenticateUser().then(result => {
+            console.log('🔄 LOADING_AUTH_COMPLETE:', {
+              state: result.state,
+              hasUser: !!result.user,
+              hasSession: !!result.session
+            });
+
+            if (result.state === 'AUTHENTICATED') {
+              updateGlobalAuthState({
+                user: result.user,
+                session: result.session,
+                accounts: result.accounts,
+                currentAccount: result.currentAccount,
+                authState: AuthState.AUTHENTICATED
+              });
+            } else if (result.state === 'UNAUTHORIZED') {
+              updateGlobalAuthState({
+                user: null,
+                session: null,
+                accounts: [],
+                currentAccount: null,
+                authState: AuthState.UNAUTHORIZED
+              });
+            } else if (result.state === 'ERROR') {
+              updateGlobalAuthState({
+                authState: AuthState.ERROR,
+                error: result.error || 'Authentication failed'
+              });
+            }
+          }).catch(error => {
+            console.error('🔄 LOADING_AUTH_ERROR:', error);
+            updateGlobalAuthState({
+              authState: AuthState.ERROR,
+              error: error.message || 'Authentication failed'
+            });
           });
+        } else if (authenticationAttempted && (!user && !session)) {
+          // Auth was attempted but still loading - stay in LOADING state
+          // The async auth will call updateGlobalAuthState when complete
+          console.log('🔄 LOADING_STATE_WAITING: Auth attempted, waiting for async result', {
+            authenticationAttempted,
+            hasUser: !!user,
+            hasSession: !!session
+          });
+          // Don't transition - wait for async auth to complete and update state
         }
 
         break;
@@ -1351,7 +1394,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         break;
       }
     }
-  }, [authState, user, session, updateGlobalAuthState, userProperties, getUserProperties]);
+  }, [authState, user, session, updateGlobalAuthState, userProperties, getUserProperties, authenticationAttempted]);
 
   // Remove old individual useEffect hooks - now handled by state machine above
 

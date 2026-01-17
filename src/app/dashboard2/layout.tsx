@@ -12,6 +12,7 @@
  * @modified 2026-01-15 - Added logo to header
  */
 
+import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -68,9 +69,11 @@ const navigationItems: NavItem[] = [
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, authState, signOut } = useAuth();
+  const [hasRedirected, setHasRedirected] = useState(false);
 
-  if (loading) {
+  // Show loading spinner while auth is initializing or in LOADING state
+  if (loading || authState === 'LOADING') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -81,11 +84,11 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If no user after loading completes, redirect to login immediately
-  // Middleware already protects this route, so just show loading while redirecting
-  if (!user) {
-    // Use window.location for immediate redirect without flash
+  // Only redirect if authState is definitively UNAUTHORIZED (not just !user)
+  // and we haven't already started redirecting
+  if (authState === 'UNAUTHORIZED' && !hasRedirected) {
     if (typeof window !== 'undefined') {
+      setHasRedirected(true);
       window.location.href = '/login';
     }
     return (
@@ -93,6 +96,18 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If auth errored or user is null but not unauthorized, show loading
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Loading...</p>
         </div>
       </div>
     );
