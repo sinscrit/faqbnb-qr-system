@@ -142,7 +142,42 @@ export async function middleware(req: NextRequest) {
       });
       return NextResponse.redirect(new URL('/login', req.url))
     }
-    
+
+    // FIXED: Check if authenticated user has a user record in the database
+    // This handles "orphaned" auth users who completed OAuth but didn't complete registration
+    // Skip this check for /register/complete since that's where we send orphaned users
+    const isCompleteRegistrationPage = req.nextUrl.pathname === '/register/complete';
+    if (session?.user && (isProtectedRoute || req.nextUrl.pathname === '/login') && !isCompleteRegistrationPage) {
+      try {
+        const { data: userRecord, error: userError } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', session.user.id)
+          .single();
+
+        if (userError || !userRecord) {
+          console.log('🔄 MIDDLEWARE_REDIRECT_DEBUG: ORPHANED_AUTH_USER_DETECTED', {
+            timestamp: new Date().toISOString(),
+            userId: session.user.id,
+            userEmail: session.user.email,
+            path: req.nextUrl.pathname,
+            redirectingTo: '/register/complete',
+            reason: 'Authenticated user has no user record - needs to complete registration',
+            dbError: userError?.message
+          });
+
+          // Redirect orphaned users to complete registration
+          // Pass email as query param so they can complete registration
+          const completeUrl = new URL('/register/complete', req.url);
+          completeUrl.searchParams.set('email', session.user.email || '');
+          return NextResponse.redirect(completeUrl);
+        }
+      } catch (dbCheckError) {
+        console.error('🔄 MIDDLEWARE: Error checking user record, continuing:', dbCheckError);
+        // Don't block the user if the check fails - let the page handle it
+      }
+    }
+
     // FIXED: Add specific check for authenticated users trying to access login page
     // Redirect all users to dashboard2 (current dashboard)
     if (session?.user && req.nextUrl.pathname === '/login') {
@@ -178,6 +213,7 @@ export const config = {
     '/dashboard2',
     '/login',
     '/auth/oauth/callback',
-    '/register'
+    '/register',
+    '/register/:path*'
   ],
 } 

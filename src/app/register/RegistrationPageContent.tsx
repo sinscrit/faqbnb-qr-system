@@ -546,8 +546,23 @@ export default function RegistrationPageContent() {
   }
 
   // Don't render if user is authenticated (will redirect)
-  if (user) {
+  // EXCEPTION: Allow rendering during OAuth registration flow so the API can be called
+  const isOAuthRegistrationFlow = searchParams.get('oauth_success') === 'true';
+  if (user && !isOAuthRegistrationFlow) {
     return null;
+  }
+
+  // Show loading state during OAuth registration completion
+  if (user && isOAuthRegistrationFlow) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Completing your registration...</p>
+          <p className="text-xs text-gray-400 mt-2">Please wait while we set up your account.</p>
+        </div>
+      </div>
+    );
   }
 
   const MessageAlert = ({ message }: { message: RegistrationMessage }) => {

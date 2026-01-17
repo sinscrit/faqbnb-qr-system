@@ -1,6 +1,6 @@
 // Domain Configuration Utilities for QR Code Generation
 // Part of REQ-016: Domain Configuration for QR Links and System Admin Back Office
-// Last Modified: 2026-01-15 - Added getServerBaseUrl for access request links
+// Last Modified: 2026-01-15 - Fixed getServerBaseUrl to use window.location.origin on client-side
 
 import { NextRequest } from 'next/server';
 
@@ -25,7 +25,7 @@ export function getServerBaseUrl(request?: NextRequest | null): string {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
 
-  // Priority 2: Derive from request headers
+  // Priority 2: Derive from request headers (server-side)
   if (request) {
     // Try x-forwarded-host first (for proxied requests like Railway)
     const forwardedHost = request.headers.get('x-forwarded-host');
@@ -41,7 +41,12 @@ export function getServerBaseUrl(request?: NextRequest | null): string {
     }
   }
 
-  // Priority 3: Development fallback
+  // Priority 3: Client-side - use window.location.origin
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+
+  // Priority 4: Development fallback (server-side only)
   return 'http://localhost:3000';
 }
 

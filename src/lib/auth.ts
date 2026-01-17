@@ -1025,6 +1025,8 @@ export async function getUserProperties(userId: string, accountId?: string): Pro
 
 /**
  * Create a new regular user in the multi-tenant system
+ * If user already exists, returns the existing user instead of failing
+ * Last Modified: 2026-01-16 - Added existing user check to handle OAuth re-registration
  */
 export async function createUser(
   authUser: Pick<User, 'id' | 'email'> & {
@@ -1035,6 +1037,38 @@ export async function createUser(
   }
 ): Promise<AuthResponse<User>> {
   try {
+    // First, check if user already exists
+    const { data: existingUser, error: fetchError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', authUser.id)
+      .single();
+
+    // If user exists, return them (handles re-registration attempts)
+    if (existingUser && !fetchError) {
+      console.log('createUser: User already exists, returning existing user', {
+        userId: existingUser.id,
+        email: existingUser.email
+      });
+
+      const user: User = {
+        id: existingUser.id,
+        email: existingUser.email,
+        fullName: existingUser.full_name || undefined,
+        full_name: existingUser.full_name,
+        role: existingUser.role || 'user',
+        profilePicture: existingUser.profile_picture || undefined,
+        authProvider: existingUser.auth_provider || undefined,
+        createdAt: existingUser.created_at || new Date().toISOString(),
+        updatedAt: existingUser.updated_at || new Date().toISOString(),
+        created_at: existingUser.created_at,
+        updated_at: existingUser.updated_at,
+      };
+
+      return { data: user };
+    }
+
+    // User doesn't exist, create new one
     const { data, error } = await supabaseAdmin
       .from('users')
       .insert({
@@ -1102,9 +1136,11 @@ export async function isPropertyOwner(userId: string, propertyId: string, accoun
 
 /**
  * Create a default account for a new user
+ * If user already has an account as owner, returns the existing account
+ * Last Modified: 2026-01-16 - Added existing account check to handle OAuth re-registration
  */
 export async function createDefaultAccount(
-  userId: string, 
+  userId: string,
   userEmail: string
 ): Promise<AuthResponse<Account>> {
   try {
@@ -1113,6 +1149,36 @@ export async function createDefaultAccount(
       userId: userId,
       userEmail: userEmail
     });
+
+    // First, check if user already has an account as owner
+    const { data: existingAccount, error: fetchError } = await supabaseAdmin
+      .from('accounts')
+      .select('*')
+      .eq('owner_id', userId)
+      .single();
+
+    // If user already has an account, return it
+    if (existingAccount && !fetchError) {
+      console.log('🏢 CREATE_DEFAULT_ACCOUNT_EXISTS', {
+        timestamp: new Date().toISOString(),
+        accountId: existingAccount.id,
+        accountName: existingAccount.name,
+        ownerId: existingAccount.owner_id,
+        message: 'User already has an account, returning existing'
+      });
+
+      const account: Account = {
+        id: existingAccount.id,
+        name: existingAccount.name,
+        description: existingAccount.description,
+        owner_id: existingAccount.owner_id,
+        settings: (existingAccount.settings && typeof existingAccount.settings === 'object') ? existingAccount.settings as Record<string, any> : {},
+        created_at: existingAccount.created_at || new Date().toISOString(),
+        updated_at: existingAccount.updated_at || new Date().toISOString(),
+      };
+
+      return { data: account };
+    }
 
     // Create account record
     const { data, error } = await supabaseAdmin
