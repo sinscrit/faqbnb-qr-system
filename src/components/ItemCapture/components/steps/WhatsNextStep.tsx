@@ -207,10 +207,10 @@ export function WhatsNextStep({
           variant="primary"
         />
 
-        {/* Create New Item - Default variant */}
+        {/* Tag New Item - Default variant */}
         <ActionCard
           icon={<Package className="w-5 h-5" aria-hidden="true" />}
-          title="Create New Item"
+          title="Tag New Item"
           description="Start fresh with a different item"
           onClick={onCreateNewItem}
         />

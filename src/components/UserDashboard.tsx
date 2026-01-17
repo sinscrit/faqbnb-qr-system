@@ -129,7 +129,7 @@ export function UserDashboard({ className = '' }: UserDashboardProps) {
   // Quick action buttons - conditionally include Analytics for admin users only
   const quickActions = [
     {
-      title: 'Create New Item',
+      title: 'Tag New Item',
       description: 'Add a new QR code item',
       href: '/dashboard/items/new',
       icon: <Plus className="w-5 h-5" />,

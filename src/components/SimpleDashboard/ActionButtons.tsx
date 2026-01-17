@@ -156,7 +156,7 @@ export function ActionButtons({
   const buttonConfigs: ActionButtonConfig[] = [
     {
       key: 'create',
-      label: 'Create New Item',
+      label: 'Tag New Item',
       icon: PlusCircle,
       variant: 'primary',
       onClick: onCreateClick || (() => router.push('/dashboard2/create')),
