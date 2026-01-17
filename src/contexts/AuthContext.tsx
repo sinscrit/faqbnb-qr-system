@@ -844,7 +844,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Core authentication state
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(false); // Start with false to test
+  const [loading, setLoading] = useState(true); // Start with true to show loading spinner until auth is determined
 
   // Initialize auth state based on current loading status
   const initialAuthState = loading ? AuthState.LOADING : AuthState.UNAUTHORIZED;
