@@ -563,9 +563,9 @@ export default function RegistrationPageContent() {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center max-w-md mx-auto p-6">
-            <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Registration Issue</h2>
-            <p className="text-gray-600 mb-6">{message.message}</p>
+            <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Already Registered!</h2>
+            <p className="text-gray-600 mb-6">Try logging in instead</p>
             <div className="space-y-3">
               <Link
                 href="/login"
