@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { createUser, createDefaultAccount, linkUserToAccount } from '@/lib/auth';
+import { validateAccessCodeForRegistration, consumeAccessCode } from '@/lib/access-validation';
 
 /**
  * Direct Google OAuth callback route
  * Exchanges the Google auth code for tokens and signs in with Supabase using signInWithIdToken
+ * Now also completes registration server-side to avoid client-side race conditions
  *
- * Updated: 2026-01-13
+ * Updated: 2026-01-17
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -145,14 +148,84 @@ export async function GET(request: NextRequest) {
     userEmail: data.user?.email
   });
 
-  // Handle registration flow (if accessCode present)
-  if (state.accessCode && state.email) {
-    console.log('🔐 GOOGLE_OAUTH_CALLBACK: Registration flow detected, redirecting to register');
-    const params = new URLSearchParams();
-    params.set('accessCode', state.accessCode);
-    params.set('email', state.email);
-    params.set('oauth_success', 'true');
-    return NextResponse.redirect(new URL(`/register?${params.toString()}`, baseUrl));
+  // Handle registration flow (if accessCode present) - complete server-side
+  if (state.accessCode && state.email && data.user) {
+    console.log('🔐 GOOGLE_OAUTH_CALLBACK: Registration flow detected, completing server-side', {
+      timestamp: new Date().toISOString(),
+      userId: data.user.id,
+      email: state.email,
+      accessCode: state.accessCode.substring(0, 4) + '...'
+    });
+
+    try {
+      // Validate access code
+      const validationResult = await validateAccessCodeForRegistration(state.accessCode, state.email);
+      if (!validationResult.isValid) {
+        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Access code validation failed', {
+          error: validationResult.error,
+          errorCode: validationResult.errorCode
+        });
+        return NextResponse.redirect(
+          new URL(`/register?error=${encodeURIComponent(validationResult.error || 'Invalid access code')}`, baseUrl)
+        );
+      }
+
+      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Access code valid, creating user record');
+
+      // Create user in application database
+      const userResult = await createUser({
+        id: data.user.id,
+        email: state.email,
+        fullName: data.user.user_metadata?.full_name || data.user.user_metadata?.name || '',
+        role: 'user',
+        authProvider: 'google'
+      });
+
+      if (userResult.error) {
+        console.error('🔐 GOOGLE_OAUTH_CALLBACK: User creation failed', { error: userResult.error });
+        return NextResponse.redirect(
+          new URL(`/register?error=${encodeURIComponent('Failed to create user account')}`, baseUrl)
+        );
+      }
+
+      console.log('🔐 GOOGLE_OAUTH_CALLBACK: User created, creating account');
+
+      // Create default account
+      const accountResult = await createDefaultAccount(data.user.id, state.email);
+      if (accountResult.error) {
+        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Account creation failed', { error: accountResult.error });
+        return NextResponse.redirect(
+          new URL(`/register?error=${encodeURIComponent('Failed to create account')}`, baseUrl)
+        );
+      }
+
+      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Account created, linking user');
+
+      // Link user to account
+      const linkResult = await linkUserToAccount(data.user.id, accountResult.data!.id, 'owner');
+      if (linkResult.error) {
+        console.error('🔐 GOOGLE_OAUTH_CALLBACK: Account linking failed', { error: linkResult.error });
+        // Continue anyway - user and account exist
+      }
+
+      // Consume access code
+      await consumeAccessCode(state.accessCode, data.user.id);
+
+      console.log('🔐 GOOGLE_OAUTH_CALLBACK: Registration completed successfully', {
+        timestamp: new Date().toISOString(),
+        userId: data.user.id,
+        accountId: accountResult.data?.id
+      });
+
+      // Redirect to dashboard
+      return NextResponse.redirect(new URL('/dashboard2', baseUrl));
+
+    } catch (registrationError) {
+      console.error('🔐 GOOGLE_OAUTH_CALLBACK: Registration error', { error: registrationError });
+      return NextResponse.redirect(
+        new URL(`/register?error=${encodeURIComponent('Registration failed. Please try again.')}`, baseUrl)
+      );
+    }
   }
 
   // Login flow - redirect to dashboard
