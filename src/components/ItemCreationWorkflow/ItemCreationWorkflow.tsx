@@ -35,11 +35,22 @@
  */
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
 import { WorkflowHeader, ConfirmExitDialog, PrintOptionsPanel, SessionRecoveryBanner, ItemContextDisplay } from './components/shared';
-import { RoomSelectionStep, ItemTypeStep, SpecificItemStep, PurposeStep, ContentTypeStep, MediaCaptureStep, ContentCreationStep, PreviewSaveStep, NextActionStep, SessionSummaryStep, WhatsNextStep } from './components/steps';
+// Step components loaded dynamically for better initial page load performance
+const RoomSelectionStep = dynamic(() => import('./components/steps/RoomSelectionStep').then(mod => ({ default: mod.RoomSelectionStep })), { ssr: false });
+const ItemTypeStep = dynamic(() => import('./components/steps/ItemTypeStep').then(mod => ({ default: mod.ItemTypeStep })), { ssr: false });
+const SpecificItemStep = dynamic(() => import('./components/steps/SpecificItemStep').then(mod => ({ default: mod.SpecificItemStep })), { ssr: false });
+const PurposeStep = dynamic(() => import('./components/steps/PurposeStep').then(mod => ({ default: mod.PurposeStep })), { ssr: false });
+const ContentTypeStep = dynamic(() => import('./components/steps/ContentTypeStep').then(mod => ({ default: mod.ContentTypeStep })), { ssr: false });
+const MediaCaptureStep = dynamic(() => import('./components/steps/MediaCaptureStep'), { ssr: false });
+const ContentCreationStep = dynamic(() => import('./components/steps/ContentCreationStep').then(mod => ({ default: mod.ContentCreationStep })), { ssr: false });
+const PreviewSaveStep = dynamic(() => import('./components/steps/PreviewSaveStep').then(mod => ({ default: mod.PreviewSaveStep })), { ssr: false });
+const SessionSummaryStep = dynamic(() => import('./components/steps/SessionSummaryStep').then(mod => ({ default: mod.SessionSummaryStep })), { ssr: false });
+const WhatsNextStep = dynamic(() => import('@/components/ItemCapture/components/steps/WhatsNextStep').then(mod => ({ default: mod.WhatsNextStep })), { ssr: false });
 import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
 import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
