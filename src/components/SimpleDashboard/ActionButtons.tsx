@@ -156,7 +156,7 @@ export function ActionButtons({
   const buttonConfigs: ActionButtonConfig[] = [
     {
       key: 'create',
-      label: 'Tag New Item',
+      label: 'New QR Code Item',
       icon: PlusCircle,
       variant: 'primary',
       onClick: onCreateClick || (() => router.push('/dashboard2/create')),
@@ -164,7 +164,7 @@ export function ActionButtons({
     },
     {
       key: 'view',
-      label: 'View Items',
+      label: 'View QR Code Items',
       icon: Package,
       variant: 'secondary',
       onClick: onViewClick || (() => router.push('/dashboard2/items')),

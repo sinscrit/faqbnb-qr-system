@@ -233,7 +233,7 @@ export default function ItemsPage() {
           className="inline-flex items-center px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
         >
           <PlusCircle className="w-4 h-4 mr-2" />
-          Tag New Item
+          New QR Code Item
         </button>
       </div>
 

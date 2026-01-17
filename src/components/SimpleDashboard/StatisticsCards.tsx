@@ -217,7 +217,7 @@ export function StatisticsCards({
           icon={Package}
           title="Start tagging your items and create guides/instructions"
           description=""
-          actionLabel="Tag Item"
+          actionLabel="New QR Code Item"
           onAction={onCreateItem}
           variant="default"
         />

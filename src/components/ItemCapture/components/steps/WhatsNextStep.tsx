@@ -207,10 +207,10 @@ export function WhatsNextStep({
           variant="primary"
         />
 
-        {/* Tag New Item - Default variant */}
+        {/* New QR Code Item - Default variant */}
         <ActionCard
           icon={<Package className="w-5 h-5" aria-hidden="true" />}
-          title="Tag New Item"
+          title="New QR Code Item"
           description="Start fresh with a different item"
           onClick={onCreateNewItem}
         />
