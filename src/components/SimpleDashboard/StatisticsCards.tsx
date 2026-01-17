@@ -215,7 +215,7 @@ export function StatisticsCards({
       <div className={`bg-white rounded-xl shadow-sm ${className}`}>
         <EmptyStateCard
           icon={Package}
-          title="Start tagging your items and create guides/instructions"
+          title="Start adding new QR Code items and create guides/instructions"
           description=""
           actionLabel="New QR Code Item"
           onAction={onCreateItem}
