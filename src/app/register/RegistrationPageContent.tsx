@@ -147,6 +147,7 @@ export default function RegistrationPageContent() {
     errors: []
   });
   const [isValidatingParams, setIsValidatingParams] = useState(true);
+  const [oauthProcessingComplete, setOauthProcessingComplete] = useState(false);
 
   
   // Manual entry state (REQ-019 Task 5.3)
@@ -471,8 +472,9 @@ export default function RegistrationPageContent() {
               type: 'error',
               message: userFriendlyMessage
             });
+            setOauthProcessingComplete(true);
           }
-          
+
         } catch (error) {
           console.error(`${DEBUG_PREFIX_OAUTH} API_CALL_ERROR:`, error);
           
@@ -496,6 +498,7 @@ export default function RegistrationPageContent() {
             type: 'error',
             message: `OAuth registration failed: ${errorMessage}. Please try logging in manually at the login page.`
           });
+          setOauthProcessingComplete(true);
         }
       }
     };
@@ -553,7 +556,36 @@ export default function RegistrationPageContent() {
   }
 
   // Show loading state during OAuth registration completion
+  // BUT if processing is complete with an error, show error message with login link
   if (user && isOAuthRegistrationFlow) {
+    if (oauthProcessingComplete && message?.type === 'error') {
+      // OAuth processing failed - show error with login redirect option
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center max-w-md mx-auto p-6">
+            <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Registration Issue</h2>
+            <p className="text-gray-600 mb-6">{message.message}</p>
+            <div className="space-y-3">
+              <Link
+                href="/login"
+                className="block w-full px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors text-center"
+              >
+                Go to Login
+              </Link>
+              <Link
+                href="/dashboard2"
+                className="block w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Still processing - show loading
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
