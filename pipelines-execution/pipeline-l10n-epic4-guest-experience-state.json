@@ -1,0 +1,507 @@
+{
+  "pipeline": "l10n-epic4-guest-experience-implementation",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-18T04:23:21.507471",
+  "updated_at": "2026-01-18T06:00:45.296832",
+  "status": "running",
+  "current_stage": "request",
+  "current_task_index": 20,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
+  "source_hash": "8b789d30e0e9b35c848ab3362a26de99",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Types and Utilities",
+      "title": "Create localization types file",
+      "description": "File: `/src/types/l10n.ts`\nDefine `SupportedLanguage`, `LanguageInfo`, `TranslatedContent`, etc.\nExport `SUPPORTED_LANGUAGES` constant\nExport language utility functions",
+      "raw_match": "\n- [ ] **Task 1.1:** Create localization types file",
+      "status": "completed",
+      "request_id": "REQ-304",
+      "error": null,
+      "processed_at": "2026-01-18T04:27:36.599304",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-304",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-304-create-localization-types-file-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Types and Utilities",
+      "title": "Create guest language utility module",
+      "description": "File: `/src/lib/i18n/guest-language.ts`\n`detectGuestLanguage(request, urlParam?)` - Detect language from cookie/header/URL\n`setGuestLanguageCookie(language)` - Persist language preference\n`parseAcceptLanguage(header)` - Parse Accept-Language header\n`mapToSupportedLanguage(code)` - Map browser codes to supported languages",
+      "raw_match": "\n- [ ] **Task 1.2:** Create guest language utility module",
+      "status": "completed",
+      "request_id": "REQ-305",
+      "error": null,
+      "processed_at": "2026-01-18T04:31:16.156514",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-305",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-305-create-guest-language-utility-module-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Types and Utilities",
+      "title": "Update types/index.ts with L10N exports",
+      "description": "File: `/src/types/index.ts`\nExport all types from `l10n.ts`",
+      "raw_match": "\n- [ ] **Task 1.3:** Update types/index.ts with L10N exports",
+      "status": "completed",
+      "request_id": "REQ-306",
+      "error": null,
+      "processed_at": "2026-01-18T04:33:24.091264",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-306",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-306-update-typesindexts-with-l10n-exports-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Translation Data Layer",
+      "title": "Create translation fetch utilities",
+      "description": "File: `/src/lib/translations/fetch-translations.ts`\n`fetchTranslatedItem(publicId, language)` - Fetch item with translation\n`fetchItemTranslations(itemId, language)` - Fetch item translations only\n`fetchArticleTranslations(articleIds, language)` - Fetch article translations\n`fetchLinkTranslations(linkIds, language)` - Fetch link translations\n`fetchTagTranslations(tagKeys, language)` - Fetch tag translations",
+      "raw_match": "\n- [ ] **Task 2.1:** Create translation fetch utilities",
+      "status": "completed",
+      "request_id": "REQ-307",
+      "error": null,
+      "processed_at": "2026-01-18T04:37:24.629804",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-307",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-307-create-translation-fetch-utilities-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Translation Data Layer",
+      "title": "Create public item API endpoint with translation support",
+      "description": "File: `/src/app/api/public/items/[publicId]/route.ts`\nGET endpoint accepting `?lang=` query parameter\nMerge original content with translations\nReturn `GuestContentResponse` format\nInclude translation metadata",
+      "raw_match": "\n- [ ] **Task 2.2:** Create public item API endpoint with translation support",
+      "status": "completed",
+      "request_id": "REQ-308",
+      "error": null,
+      "processed_at": "2026-01-18T04:41:15.835282",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-308",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-308-create-public-item-api-endpoint-with-translation-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "Translation Data Layer",
+      "title": "Create language availability API endpoint",
+      "description": "File: `/src/app/api/public/items/[publicId]/languages/route.ts`\nGET endpoint returning available translations\nReturn `LanguageAvailabilityResponse` format",
+      "raw_match": "\n- [ ] **Task 2.3:** Create language availability API endpoint",
+      "status": "completed",
+      "request_id": "REQ-309",
+      "error": null,
+      "processed_at": "2026-01-18T04:44:44.433388",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-309",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-309-create-language-availability-api-endpoint-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "Translation Data Layer",
+      "title": "Create translation utility helpers",
+      "description": "File: `/src/lib/translations/translation-utils.ts`\n`mergeTranslation(original, translation)` - Merge content with translation\n`getDisplayLanguage(requested, available, source)` - Determine best language\n`formatLanguageName(code, native?)` - Format language for display",
+      "raw_match": "\n- [ ] **Task 2.4:** Create translation utility helpers",
+      "status": "completed",
+      "request_id": "REQ-310",
+      "error": null,
+      "processed_at": "2026-01-18T04:48:24.814306",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-310",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-310-create-translation-utility-helpers-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create GuestLanguageSwitcher component",
+      "description": "File: `/src/components/guest/GuestLanguageSwitcher/GuestLanguageSwitcher.tsx`\nDropdown with all 6 languages\nShow flags and native names\nIndicate which languages have translations (checkmark)\nGray out unavailable translations (but still selectable)\nUse Radix UI dropdown for accessibility",
+      "raw_match": "\n- [ ] **Task 3.1:** Create GuestLanguageSwitcher component",
+      "status": "completed",
+      "request_id": "REQ-311",
+      "error": null,
+      "processed_at": "2026-01-18T04:53:05.496599",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-311",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-311-create-guestlanguageswitcher-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create TranslationBanner component",
+      "description": "File: `/src/components/guest/TranslationBanner/TranslationBanner.tsx`\nLight blue banner (#E3F2FD)\n\"Translated from [Language] - View original\" text\nGlobe icon\nDismissible: No (always show context)",
+      "raw_match": "\n- [ ] **Task 3.2:** Create TranslationBanner component",
+      "status": "completed",
+      "request_id": "REQ-312",
+      "error": null,
+      "processed_at": "2026-01-18T04:56:28.977239",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-312",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-312-create-translationbanner-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create MissingTranslationBanner component",
+      "description": "File: `/src/components/guest/MissingTranslationBanner/MissingTranslationBanner.tsx`\nInfo banner when translation not available\n\"French translation not available. Showing content in English.\"\nMuted styling to not alarm users",
+      "raw_match": "\n- [ ] **Task 3.3:** Create MissingTranslationBanner component",
+      "status": "completed",
+      "request_id": "REQ-313",
+      "error": null,
+      "processed_at": "2026-01-18T05:01:27.541816",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-313",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-313-create-missingtranslationbanner-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create ViewOriginalToggle component",
+      "description": "File: `/src/components/guest/ViewOriginalToggle/ViewOriginalToggle.tsx`\nSecondary button style\n\"View in original (English)\" / \"View translation\"\nSwap icon",
+      "raw_match": "\n- [ ] **Task 3.4:** Create ViewOriginalToggle component",
+      "status": "completed",
+      "request_id": "REQ-314",
+      "error": null,
+      "processed_at": "2026-01-18T05:06:06.529210",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-314",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-314-create-vieworiginaltoggle-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create LanguageIndicator component",
+      "description": "File: `/src/components/guest/LanguageIndicator/LanguageIndicator.tsx`\nShows current display language with flag\nOptional: \"translated from X\" subtitle\nCompact for header use",
+      "raw_match": "\n- [ ] **Task 3.5:** Create LanguageIndicator component",
+      "status": "completed",
+      "request_id": "REQ-315",
+      "error": null,
+      "processed_at": "2026-01-18T05:26:33.898023",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-315",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-315-create-languageindicator-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.6",
+      "phase": "3",
+      "phase_name": "Guest UI Components",
+      "title": "Create barrel exports for guest components",
+      "description": "File: `/src/components/guest/index.ts`\nExport all guest components",
+      "raw_match": "\n- [ ] **Task 3.6:** Create barrel exports for guest components",
+      "status": "completed",
+      "request_id": "REQ-316",
+      "error": null,
+      "processed_at": "2026-01-18T05:29:16.281451",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-316",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-316-create-barrel-exports-for-guest-components-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Guest Language Hook",
+      "title": "Create useGuestLanguage hook",
+      "description": "File: `/src/hooks/useGuestLanguage.ts`\nManage language state (currentLanguage, showOriginal)\nPersist language preference to cookie\nHandle language change (update cookie, potentially refetch)\nToggle between translation and original (client-side only)\nSync with URL parameter for shareable links",
+      "raw_match": "\n- [ ] **Task 4.1:** Create useGuestLanguage hook",
+      "status": "completed",
+      "request_id": "REQ-317",
+      "error": null,
+      "processed_at": "2026-01-18T05:34:34.500465",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-317",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-317-create-useguestlanguage-hook-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Guest Language Hook",
+      "title": "Create cookie utility for language persistence",
+      "description": "Utility in `/src/lib/i18n/guest-language.ts`\nSet `FAQBNB_GUEST_LANG` cookie\n1-year expiry\nSecure, SameSite=Lax",
+      "raw_match": "\n- [ ] **Task 4.2:** Create cookie utility for language persistence",
+      "status": "completed",
+      "request_id": "REQ-318",
+      "error": null,
+      "processed_at": "2026-01-18T05:39:07.985825",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-318",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-318-create-cookie-utility-for-language-persistence-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Update Guest Pages",
+      "title": "Update guest item page (server component)",
+      "description": "File: `/src/app/item/[publicId]/page.tsx`\nDetect language from URL param, cookie, headers\nFetch item data with translations\nPass translation metadata to client component\nUpdate metadata generation for SEO (use translated title/description)",
+      "raw_match": "\n- [ ] **Task 5.1:** Update guest item page (server component)",
+      "status": "completed",
+      "request_id": "REQ-319",
+      "error": null,
+      "processed_at": "2026-01-18T05:43:38.654163",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-319",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-319-update-guest-item-page-server-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Update Guest Pages",
+      "title": "Update ItemDisplay component (client component)",
+      "description": "File: `/src/components/ItemDisplay.tsx`\nAccept translation props (translationMeta, original content)\nIntegrate useGuestLanguage hook\nAdd GuestLanguageSwitcher to header\nAdd TranslationBanner when showing translation\nAdd MissingTranslationBanner when no translation\nHandle \"View Original\" toggle (client-side state swap)",
+      "raw_match": "\n- [ ] **Task 5.2:** Update ItemDisplay component (client component)",
+      "status": "completed",
+      "request_id": "REQ-320",
+      "error": null,
+      "processed_at": "2026-01-18T05:48:14.180081",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-320",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-320-update-itemdisplay-component-client-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Update Guest Pages",
+      "title": "Update LinkCard component",
+      "description": "File: `/src/components/LinkCard.tsx`\nAccept translated title prop\nDisplay original title if toggle is on",
+      "raw_match": "\n- [ ] **Task 5.3:** Update LinkCard component",
+      "status": "completed",
+      "request_id": "REQ-321",
+      "error": null,
+      "processed_at": "2026-01-18T05:50:51.044694",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-321",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-321-update-linkcard-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Update Guest Pages",
+      "title": "Handle URL parameter for shareable links",
+      "description": "Update page to read `?lang=` parameter\nInclude language in shareable link\nCanonical URL should NOT include language parameter",
+      "raw_match": "\n- [ ] **Task 5.4:** Handle URL parameter for shareable links",
+      "status": "completed",
+      "request_id": "REQ-322",
+      "error": null,
+      "processed_at": "2026-01-18T05:55:39.195382",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-322",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-322-handle-url-parameter-for-shareable-links-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Middleware & Language Detection",
+      "title": "Add guest language detection to middleware",
+      "description": "File: `/src/middleware.ts`\nAdd `/item/*` routes to middleware matcher\nDetect language and set header/cookie for downstream use\nDo NOT redirect (language in query param, not path)",
+      "raw_match": "\n- [ ] **Task 6.1:** Add guest language detection to middleware",
+      "status": "completed",
+      "request_id": "REQ-323",
+      "error": null,
+      "processed_at": "2026-01-18T05:59:20.790027",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-323",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-323-add-guest-language-detection-to-middleware-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Middleware & Language Detection",
+      "title": "Create server-side language detection utility",
+      "description": "File: `/src/lib/i18n/guest-language.ts` (server-side version)\nRead from NextRequest cookies and headers\nPriority: URL param > Cookie > Accept-Language > default",
+      "raw_match": "\n- [ ] **Task 6.2:** Create server-side language detection utility",
+      "status": "processing",
+      "request_id": "REQ-324",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-324"
+      },
+      "request_completed": true
+    },
+    {
+      "id": "7.1",
+      "phase": "7",
+      "phase_name": "Testing & Polish",
+      "title": "Test language detection scenarios",
+      "description": "Test: Browser language detection works\nTest: Cookie preference overrides browser\nTest: URL parameter overrides cookie\nTest: Fallback to original works",
+      "raw_match": "\n- [ ] **Task 7.1:** Test language detection scenarios",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.2",
+      "phase": "7",
+      "phase_name": "Testing & Polish",
+      "title": "Test content display scenarios",
+      "description": "Test: Translated content shows correctly\nTest: Original content shows when no translation\nTest: \"View Original\" toggle works instantly\nTest: Language switcher updates content",
+      "raw_match": "\n- [ ] **Task 7.2:** Test content display scenarios",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.3",
+      "phase": "7",
+      "phase_name": "Testing & Polish",
+      "title": "Test edge cases",
+      "description": "Test: Missing translation for some fields\nTest: Cookie blocked scenario\nTest: Malformed Accept-Language header\nTest: Unsupported language code",
+      "raw_match": "\n- [ ] **Task 7.3:** Test edge cases",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.4",
+      "phase": "7",
+      "phase_name": "Testing & Polish",
+      "title": "Mobile responsiveness testing",
+      "description": "Test: Language switcher on small screens\nTest: Banner doesn't obscure content\nTest: Touch-friendly buttons",
+      "raw_match": "\n- [ ] **Task 7.4:** Mobile responsiveness testing",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.5",
+      "phase": "7",
+      "phase_name": "Testing & Polish",
+      "title": "Performance validation",
+      "description": "Verify: Language detection < 10ms\nVerify: Content with translation < 200ms\nVerify: Language switch < 100ms (client-side)",
+      "raw_match": "\n- [ ] **Task 7.5:** Performance validation",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 26,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 26,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "details": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 26,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "implementation": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 26,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [
+    {
+      "stage": "request",
+      "task_id": "3.5",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T05:07:45.764558"
+    }
+  ],
+  "metadata": {
+    "total_requests_generated": 9,
+    "last_request_id": "REQ-324",
+    "first_request_id": "REQ-304",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
+  }
+}

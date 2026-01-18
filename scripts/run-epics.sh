@@ -18,9 +18,13 @@
 #   --epics       Comma-separated list of epic numbers (1-5)
 #   --stages      Comma-separated list of stages (request,overview,details,implementation)
 #   --dry-run     Show commands without executing
+#   --resume      Resume from previous run (for background mode)
+#   --keep        Keep existing requests, process remaining
+#   --delete      Delete previous requests and regenerate
 #   --help        Show this help message
 #
 # Created: 2026-01-18
+# Modified: 2026-01-18 - Added --resume/--keep/--delete for background mode
 # =============================================================================
 
 set -e
@@ -35,6 +39,7 @@ PARALLEL_MODE=""
 EPICS="1,2,3,4,5"
 STAGES=""
 DRY_RUN=false
+RERUN_ACTION=""
 
 # Colors for output
 RED='\033[0;31m'
@@ -79,6 +84,18 @@ while [[ $# -gt 0 ]]; do
             DRY_RUN=true
             shift
             ;;
+        --resume|-r)
+            RERUN_ACTION="--resume"
+            shift
+            ;;
+        --keep|-k)
+            RERUN_ACTION="--keep"
+            shift
+            ;;
+        --delete|-d)
+            RERUN_ACTION="--delete"
+            shift
+            ;;
         --help|-h)
             head -30 "$0" | tail -25
             exit 0
@@ -100,6 +117,7 @@ echo ""
 echo -e "Mode: ${YELLOW}${PARALLEL_MODE:-sequential}${NC}"
 echo -e "Epics: ${YELLOW}${EPICS}${NC}"
 echo -e "Stages: ${YELLOW}${STAGES:-all}${NC}"
+echo -e "Rerun action: ${YELLOW}${RERUN_ACTION:-interactive}${NC}"
 echo -e "Dry run: ${YELLOW}${DRY_RUN}${NC}"
 echo ""
 
@@ -119,6 +137,10 @@ run_pipeline() {
 
     if [[ -n "$stages" ]]; then
         cmd="$cmd --stages \"$stages\""
+    fi
+
+    if [[ -n "$RERUN_ACTION" ]]; then
+        cmd="$cmd $RERUN_ACTION"
     fi
 
     echo -e "${GREEN}[Epic $epic]${NC} $cmd"
@@ -191,6 +213,9 @@ EOF
             if [[ -n "$STAGES" ]]; then
                 cmd="$cmd --stages \"$STAGES\""
             fi
+            if [[ -n "$RERUN_ACTION" ]]; then
+                cmd="$cmd $RERUN_ACTION"
+            fi
 
             echo -e "${GREEN}[Epic $epic]${NC} Starting in background (log: $logfile)"
 
@@ -252,6 +277,9 @@ EOF
                 logfile="${PIPELINES_DIR}/epic${epic}-staged.log"
 
                 cmd="python3 $ORCHESTRATOR --config $config --stages \"$REMAINING_STAGES\""
+                if [[ -n "$RERUN_ACTION" ]]; then
+                    cmd="$cmd $RERUN_ACTION"
+                fi
 
                 echo -e "${GREEN}[Epic $epic]${NC} Starting in background (log: $logfile)"
 

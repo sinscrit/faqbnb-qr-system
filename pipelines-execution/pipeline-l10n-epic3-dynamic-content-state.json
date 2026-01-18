@@ -1,0 +1,604 @@
+{
+  "pipeline": "l10n-epic3-dynamic-content-translation",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-18T04:23:21.506273",
+  "updated_at": "2026-01-18T05:56:34.644967",
+  "status": "running",
+  "current_stage": "request",
+  "current_task_index": 16,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
+  "source_hash": "499d11917485abcf1bc7b1175f09eebc",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Create content-translation module structure",
+      "description": "File: `/src/lib/content-translation/index.ts`\nFile: `/src/lib/content-translation/content-translation.types.ts`\nDefine all TypeScript interfaces for content translation",
+      "raw_match": "\n- [ ] **Task 1.1:** Create content-translation module structure",
+      "status": "completed",
+      "request_id": "REQ-259",
+      "error": null,
+      "processed_at": "2026-01-18T04:28:12.005141",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-259",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-259-create-content-translation-module-structure-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement content translation orchestrator",
+      "description": "File: `/src/lib/content-translation/content-translation.ts`\nMain function: `queueContentTranslations(options: QueueTranslationOptions): Promise<QueueTranslationResult>`\nCoordinates translation job creation for all target languages\nUses translation service types from Epic 1",
+      "raw_match": "\n- [ ] **Task 1.2:** Implement content translation orchestrator",
+      "status": "completed",
+      "request_id": "REQ-260",
+      "error": null,
+      "processed_at": "2026-01-18T04:32:54.653722",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-260",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-260-implement-content-translation-orchestrator-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement entity-specific translation triggers",
+      "description": "File: `/src/lib/content-translation/triggers/item-trigger.ts`\n`triggerItemTranslation(itemId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `name`, `description` fields\nFile: `/src/lib/content-translation/triggers/article-trigger.ts`\n`triggerArticleTranslation(articleId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title`, `description` fields\nFile: `/src/lib/content-translation/triggers/link-trigger.ts`\n`triggerLinkTranslation(linkId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title` field only (URLs not translated)",
+      "raw_match": "\n- [ ] **Task 1.3:** Implement entity-specific translation triggers",
+      "status": "completed",
+      "request_id": "REQ-261",
+      "error": null,
+      "processed_at": "2026-01-18T04:38:20.357280",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-261",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-261-implement-entity-specific-translation-triggers-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement tag translation trigger",
+      "description": "File: `/src/lib/content-translation/triggers/tag-trigger.ts`\n`triggerTagTranslation(tagKey: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nCheck if translation already exists before queuing\nHandle both system tags (skip - already seeded) and user tags",
+      "raw_match": "\n- [ ] **Task 1.4:** Implement tag translation trigger",
+      "status": "completed",
+      "request_id": "REQ-262",
+      "error": null,
+      "processed_at": "2026-01-18T04:43:49.332895",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-262",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-262-implement-tag-translation-trigger-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement translation storage utilities",
+      "description": "File: `/src/lib/content-translation/storage/translation-storage.ts`\n`storeItemTranslation(itemId: string, language: string, data: {...})`\n`storeArticleTranslation(articleId: string, language: string, data: {...})`\n`storeLinkTranslation(linkId: string, language: string, data: {...})`\n`storeTagTranslation(tagKey: string, language: string, value: string)`\nAll use UPSERT pattern to handle updates",
+      "raw_match": "\n- [ ] **Task 1.5:** Implement translation storage utilities",
+      "status": "completed",
+      "request_id": "REQ-263",
+      "error": null,
+      "processed_at": "2026-01-18T04:49:59.752182",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-263",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-263-implement-translation-storage-utilities-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "1.6",
+      "phase": "1",
+      "phase_name": "Content Translation Infrastructure",
+      "title": "Implement translation status utilities",
+      "description": "File: `/src/lib/content-translation/storage/translation-status.ts`\n`getEntityTranslationStatus(entityType: EntityType, entityId: string): Promise<TranslationStatusResult>`\n`getBatchTranslationStatus(entities: {type: EntityType, id: string}[]): Promise<TranslationStatusResult[]>`\nAggregates job status with stored translations",
+      "raw_match": "\n- [ ] **Task 1.6:** Implement translation status utilities",
+      "status": "completed",
+      "request_id": "REQ-264",
+      "error": null,
+      "processed_at": "2026-01-18T04:53:24.282460",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-264",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-264-implement-translation-status-utilities-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Add source language detection utility",
+      "description": "File: `/src/lib/content-translation/source-language.ts`\n`detectSourceLanguage(user: User, account: Account, override?: string): SupportedLanguage`\nPriority: override > user.preferred_language > account.preferred_language > 'en'",
+      "raw_match": "\n- [ ] **Task 2.1:** Add source language detection utility",
+      "status": "completed",
+      "request_id": "REQ-265",
+      "error": null,
+      "processed_at": "2026-01-18T04:57:43.075093",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-265",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-265-add-source-language-detection-utility-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Modify Items API to trigger translations",
+      "description": "File: `/src/app/api/admin/items/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful item creation, call `queueContentTranslations`\nInclude `translationJobIds` in response\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing translations for this item before update\nQueue new translations after update\nInclude `translationJobIds` in response",
+      "raw_match": "\n- [ ] **Task 2.2:** Modify Items API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-266",
+      "error": null,
+      "processed_at": "2026-01-18T05:01:32.228558",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-266",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-266-modify-items-api-to-trigger-translations-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Modify Articles API to trigger translations",
+      "description": "File: `/src/app/api/admin/articles/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful article creation, call `queueContentTranslations`\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing article translations\nQueue new translations",
+      "raw_match": "\n- [ ] **Task 2.3:** Modify Articles API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-267",
+      "error": null,
+      "processed_at": "2026-01-18T05:04:46.983567",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-267",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-267-modify-articles-api-to-trigger-translations-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Create/Modify Links API to trigger translations",
+      "description": "File: `/src/app/api/admin/items/[id]/links/route.ts`\n**POST handler:**\nQueue link title translation after creation\n**PUT handler:**\nDelete existing link translations\nQueue new translations",
+      "raw_match": "\n- [ ] **Task 2.4:** Create/Modify Links API to trigger translations",
+      "status": "completed",
+      "request_id": "REQ-268",
+      "error": null,
+      "processed_at": "2026-01-18T05:26:32.104045",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-268",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-268-createmodify-links-api-to-trigger-translations-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.5",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Add tag translation on item save",
+      "description": "Modify items POST/PUT handlers\nFor each user tag in `tags[]`:\nCheck if translation exists\nIf not, queue tag translation job\nSkip system tags (starting with `#`)",
+      "raw_match": "\n- [ ] **Task 2.5:** Add tag translation on item save",
+      "status": "completed",
+      "request_id": "REQ-269",
+      "error": null,
+      "processed_at": "2026-01-18T05:30:10.775063",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-269",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-269-add-tag-translation-on-item-save-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "2.6",
+      "phase": "2",
+      "phase_name": "Modify Existing Content APIs",
+      "title": "Update TypeScript types for API responses",
+      "description": "File: `/src/types/index.ts`\nAdd `translationJobIds?: string[]` to ItemResponse, ArticleResponse\nAdd `sourceLanguage?: string` to CreateItemRequest, CreateArticleRequest\nExport translation-related types",
+      "raw_match": "\n- [ ] **Task 2.6:** Update TypeScript types for API responses",
+      "status": "completed",
+      "request_id": "REQ-270",
+      "error": null,
+      "processed_at": "2026-01-18T05:34:06.960849",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-270",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-270-update-typescript-types-for-api-responses-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Enhance job processor for content-specific handling",
+      "description": "File: `/src/lib/job-queue/translation-jobs.ts` (extend from Epic 1)\nAdd content-aware job processing: ```typescript async function processTranslationJob(job: TranslationJob): Promise<void> { switch (job.entityType) { case 'item': await processItemTranslation(job); break; case 'article': await processArticleTranslation(job); break; case 'link': await processLinkTranslation(job); break; case 'tag': await processTagTranslation(job); break; } } ```",
+      "raw_match": "\n- [ ] **Task 3.1:** Enhance job processor for content-specific handling",
+      "status": "completed",
+      "request_id": "REQ-271",
+      "error": null,
+      "processed_at": "2026-01-18T05:39:31.531766",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-271",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-271-enhance-job-processor-for-content-specific-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement item translation processor",
+      "description": "Fetch item by ID\nTranslate `name` and `description` fields\nStore in `item_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.2:** Implement item translation processor",
+      "status": "completed",
+      "request_id": "REQ-272",
+      "error": null,
+      "processed_at": "2026-01-18T05:45:24.176580",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-272",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-272-implement-item-translation-processor-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement article translation processor",
+      "description": "Fetch article by ID\nTranslate `title` and `description` fields\nStore in `article_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.3:** Implement article translation processor",
+      "status": "completed",
+      "request_id": "REQ-273",
+      "error": null,
+      "processed_at": "2026-01-18T05:50:49.963627",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-273",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-273-implement-article-translation-processor-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement link translation processor",
+      "description": "Fetch link by ID\nTranslate `title` field only\nStore in `link_translations` table\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.4:** Implement link translation processor",
+      "status": "completed",
+      "request_id": "REQ-274",
+      "error": null,
+      "processed_at": "2026-01-18T05:55:15.509714",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-274",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-274-implement-link-translation-processor-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement tag translation processor",
+      "description": "Translate tag value\nStore in `tag_translations` table\nMark as user tag (is_system_tag = false)\nUpdate job status",
+      "raw_match": "\n- [ ] **Task 3.5:** Implement tag translation processor",
+      "status": "processing",
+      "request_id": "REQ-275",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-275"
+      },
+      "request_completed": true
+    },
+    {
+      "id": "3.6",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement job prioritization",
+      "description": "File: `/src/lib/job-queue/priority.ts`\nPriority levels: 1. **Priority 100:** Recently created content (last 5 minutes) 2. **Priority 50:** Updated content 3. **Priority 25:** Batch imports 4. **Priority 10:** Retry failed translations\nJob picker query orders by priority DESC, created_at ASC",
+      "raw_match": "\n- [ ] **Task 3.6:** Implement job prioritization",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "3.7",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement concurrency control",
+      "description": "File: `/src/lib/job-queue/concurrency.ts`\nMaximum 10 concurrent translation API calls\nSemaphore or queue-based throttling\nRespect provider rate limits",
+      "raw_match": "\n- [ ] **Task 3.7:** Implement concurrency control",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "3.8",
+      "phase": "3",
+      "phase_name": "Translation Job Processing Enhancement",
+      "title": "Implement stale job cleanup",
+      "description": "Jobs stuck in 'processing' for > 5 minutes\nReset to 'queued' with incremented attempts\nRun cleanup before picking new jobs",
+      "raw_match": "\n- [ ] **Task 3.8:** Implement stale job cleanup",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create translation status API endpoint",
+      "description": "File: `/src/app/api/translations/status/[entityType]/[entityId]/route.ts`\nGET handler returns full translation status\nInclude job status + stored translations\nCache-friendly response headers",
+      "raw_match": "\n- [ ] **Task 4.1:** Create translation status API endpoint",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create retry failed translations endpoint",
+      "description": "File: `/src/app/api/translations/retry/route.ts`\nPOST handler accepts entityType, entityId, optional languages[]\nFind failed jobs for entity\nReset status to 'queued', reset attempts\nReturn count of jobs re-queued",
+      "raw_match": "\n- [ ] **Task 4.2:** Create retry failed translations endpoint",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create manual translation override endpoint",
+      "description": "File: `/src/app/api/translations/[entityType]/[entityId]/[language]/route.ts`\nPUT handler accepts translated field values\nValidate user has edit access to entity\nUPSERT translation with status 'manual'\nSet reviewed_by to current user ID",
+      "raw_match": "\n- [ ] **Task 4.3:** Create manual translation override endpoint",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Translation Status & Management APIs",
+      "title": "Create batch status endpoint for list views",
+      "description": "File: `/src/app/api/translations/status/batch/route.ts`\nPOST handler accepts array of {entityType, entityId}\nReturn summary status for each entity\nOptimized for dashboard list views",
+      "raw_match": "\n- [ ] **Task 4.4:** Create batch status endpoint for list views",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Create job processing API route",
+      "description": "File: `/src/app/api/admin/process-translations/route.ts`\nPOST handler triggers job processing\nAccept `batchSize` parameter (default 10)\nReturn processing statistics\nSecure with service role or admin auth",
+      "raw_match": "\n- [ ] **Task 5.1:** Create job processing API route",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Set up Railway cron job (or alternative)",
+      "description": "Configure cron to call process-translations endpoint\nRecommended: every 30 seconds for low latency\nAlternative: every 5 minutes for cost savings\nDocument cron configuration",
+      "raw_match": "\n- [ ] **Task 5.2:** Set up Railway cron job (or alternative)",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Job Processing Trigger Setup",
+      "title": "Implement job monitoring endpoint",
+      "description": "File: `/src/app/api/admin/translation-jobs/route.ts`\nGET handler returns job queue statistics:\nQueued count\nProcessing count\nCompleted (last hour)\nFailed (last hour)\nFilter by entityType, status",
+      "raw_match": "\n- [ ] **Task 5.3:** Implement job monitoring endpoint",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Create translation job indexes",
+      "description": "Apply indexes from Architecture section\nUse Supabase migration or MCP",
+      "raw_match": "\n- [ ] **Task 6.1:** Create translation job indexes",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Create translation lookup indexes",
+      "description": "Fast lookup for displaying translated content: ```sql CREATE INDEX IF NOT EXISTS idx_item_translations_lookup ON item_translations(item_id, language); CREATE INDEX IF NOT EXISTS idx_article_translations_lookup ON article_translations(article_id, language); CREATE INDEX IF NOT EXISTS idx_link_translations_lookup ON link_translations(link_id, language); CREATE INDEX IF NOT EXISTS idx_tag_translations_tag_lang ON tag_translations(tag_key, language); ```",
+      "raw_match": "\n- [ ] **Task 6.2:** Create translation lookup indexes",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "6.3",
+      "phase": "6",
+      "phase_name": "Database Indexes & Optimization",
+      "title": "Add updated_at trigger for translations",
+      "description": "",
+      "raw_match": "\n- [ ] **Task 6.3:** Add updated_at trigger for translations",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.1",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write unit tests for content translation module",
+      "description": "Test queueContentTranslations function\nTest entity-specific triggers\nTest source language detection",
+      "raw_match": "\n- [ ] **Task 7.1:** Write unit tests for content translation module",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.2",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write unit tests for job processing",
+      "description": "Test job pickup and locking\nTest entity-specific processors\nTest retry logic\nTest concurrency control",
+      "raw_match": "\n- [ ] **Task 7.2:** Write unit tests for job processing",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.3",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write integration tests for API endpoints",
+      "description": "Test item creation triggers translations\nTest article creation triggers translations\nTest translation status endpoint\nTest retry endpoint\nTest manual override endpoint",
+      "raw_match": "\n- [ ] **Task 7.3:** Write integration tests for API endpoints",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.4",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Write E2E tests",
+      "description": "Create item -> verify translations queued\nWait for processing -> verify translations stored\nCheck translation status -> verify complete\nRetry failed -> verify re-queued",
+      "raw_match": "\n- [ ] **Task 7.4:** Write E2E tests",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    },
+    {
+      "id": "7.5",
+      "phase": "7",
+      "phase_name": "Testing & Validation",
+      "title": "Performance testing",
+      "description": "Test with 100+ concurrent translation jobs\nMeasure job completion time (target < 60s)\nVerify rate limiting works correctly",
+      "raw_match": "\n- [ ] **Task 7.5:** Performance testing",
+      "status": "pending",
+      "request_id": null,
+      "error": null,
+      "processed_at": null,
+      "files": {}
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "details": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "implementation": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 35,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [
+    {
+      "stage": "overview",
+      "task_id": "2.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T05:07:15.205930"
+    }
+  ],
+  "metadata": {
+    "total_requests_generated": 7,
+    "last_request_id": "REQ-275",
+    "first_request_id": "REQ-259",
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
+  }
+}

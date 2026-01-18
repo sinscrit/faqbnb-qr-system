@@ -1,0 +1,764 @@
+{
+  "pipeline": "l10n-epic1-foundation-implementation",
+  "version": "1.0",
+  "mode": "per_request",
+  "created_at": "2026-01-18T05:37:42.563714",
+  "updated_at": "2026-01-18T05:54:29.836148",
+  "status": "running",
+  "current_stage": "request",
+  "current_task_index": 0,
+  "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-110-L10N-Epic1-Foundation.md",
+  "source_hash": "359212f14ecb97885cf8a2c6c5b0799a",
+  "tasks": [
+    {
+      "id": "1.1",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Create migration file with all translation tables",
+      "description": "File: `/database/migrations/20260117_l10n_foundation.sql`\nInclude all 5 tables: article_translations, item_translations, link_translations, tag_translations, translation_jobs\nAdd all indexes for performance",
+      "raw_match": "\n- [ ] **Task 1.1:** Create migration file with all translation tables",
+      "status": "completed",
+      "request_id": "223",
+      "error": null,
+      "processed_at": "2026-01-18T05:54:29.836101",
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-223-create-migration-file-with-all-translation-tables-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-223-create-migration-file-with-all-translation-tables-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
+    },
+    {
+      "id": "1.2",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Add source_language columns to existing tables",
+      "description": "ALTER items, item_articles, item_links tables\nDefault to 'en' for existing records",
+      "raw_match": "\n- [ ] **Task 1.2:** Add source_language columns to existing tables",
+      "status": "pending",
+      "request_id": "224",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-224-add-sourcelanguage-columns-to-existing-tables-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-224-add-sourcelanguage-columns-to-existing-tables-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.3",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Add preferred_language columns",
+      "description": "ALTER users and accounts tables\nDefault to 'en'",
+      "raw_match": "\n- [ ] **Task 1.3:** Add preferred_language columns",
+      "status": "pending",
+      "request_id": "225",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-225-add-preferredlanguage-columns-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-225-add-preferredlanguage-columns-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.4",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Implement RLS policies for translation tables",
+      "description": "Read access: Match content access permissions\nWrite access: Content owner or service role\nService role: Full access for background jobs",
+      "raw_match": "\n- [ ] **Task 1.4:** Implement RLS policies for translation tables",
+      "status": "pending",
+      "request_id": "226",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-226-implement-rls-policies-for-translation-tables-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-226-implement-rls-policies-for-translation-tables-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.5",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Update TypeScript database types",
+      "description": "File: `/src/lib/supabase.ts`\nAdd all new table type definitions",
+      "raw_match": "\n- [ ] **Task 1.5:** Update TypeScript database types",
+      "status": "pending",
+      "request_id": "227",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-227-update-typescript-database-types-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-227-update-typescript-database-types-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "1.6",
+      "phase": "1",
+      "phase_name": "Database Foundation",
+      "title": "Seed system tag translations",
+      "description": "Pre-populate tag_translations with standard room/appliance tags",
+      "raw_match": "\n- [ ] **Task 1.6:** Seed system tag translations",
+      "status": "pending",
+      "request_id": "228",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-228-seed-system-tag-translations-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-228-seed-system-tag-translations-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.1",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Install and configure next-intl",
+      "description": "`npm install next-intl`\nCreate `/messages/` directory with all 6 locale files",
+      "raw_match": "\n- [ ] **Task 2.1:** Install and configure next-intl",
+      "status": "pending",
+      "request_id": "229",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-229-install-and-configure-next-intl-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-229-install-and-configure-next-intl-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.2",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Create i18n configuration module",
+      "description": "File: `/src/lib/i18n/config.ts`\nDefine supported locales, default locale\nFile: `/src/lib/i18n/request.ts`\nServer-side locale detection",
+      "raw_match": "\n- [ ] **Task 2.2:** Create i18n configuration module",
+      "status": "pending",
+      "request_id": "230",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-230-create-i18n-configuration-module-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-230-create-i18n-configuration-module-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.3",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Update next.config.ts for i18n",
+      "description": "Add next-intl plugin configuration\nConfigure locale detection settings",
+      "raw_match": "\n- [ ] **Task 2.3:** Update next.config.ts for i18n",
+      "status": "pending",
+      "request_id": "231",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-231-update-nextconfigts-for-i18n-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-231-update-nextconfigts-for-i18n-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.4",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Create IntlProvider wrapper",
+      "description": "File: `/src/app/layout.tsx` (modify)\nWrap application with NextIntlClientProvider",
+      "raw_match": "\n- [ ] **Task 2.4:** Create IntlProvider wrapper",
+      "status": "pending",
+      "request_id": "232",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-232-create-intlprovider-wrapper-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-232-create-intlprovider-wrapper-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.5",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Create initial translation file structure",
+      "description": "File: `/messages/en.json`\nOrganize by namespace: common, auth, dashboard, items, errors\nCreate stub files for other locales",
+      "raw_match": "\n- [ ] **Task 2.5:** Create initial translation file structure",
+      "status": "pending",
+      "request_id": "233",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-233-create-initial-translation-file-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-233-create-initial-translation-file-structure-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "2.6",
+      "phase": "2",
+      "phase_name": "i18n Framework Integration",
+      "title": "Verify sample component with t() function",
+      "description": "Update one existing component to use translations\nVerify hot reload works correctly",
+      "raw_match": "\n- [ ] **Task 2.6:** Verify sample component with t() function",
+      "status": "pending",
+      "request_id": "234",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-234-verify-sample-component-with-t-function-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-234-verify-sample-component-with-t-function-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.1",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Create translation service module structure",
+      "description": "Create `/src/lib/translation-service/` directory\nCreate all type definition files",
+      "raw_match": "\n- [ ] **Task 3.1:** Create translation service module structure",
+      "status": "pending",
+      "request_id": "235",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-235-create-translation-service-module-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-235-create-translation-service-module-structure-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.2",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Implement Claude translation provider",
+      "description": "File: `/src/lib/translation-service/providers/claude-provider.ts`\nHandle API authentication, rate limiting\nInclude domain context in prompts",
+      "raw_match": "\n- [ ] **Task 3.2:** Implement Claude translation provider",
+      "status": "pending",
+      "request_id": "236",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-236-implement-claude-translation-provider-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-236-implement-claude-translation-provider-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.3",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Implement OpenAI translation provider (fallback)",
+      "description": "File: `/src/lib/translation-service/providers/openai-provider.ts`\nMirror Claude provider interface",
+      "raw_match": "\n- [ ] **Task 3.3:** Implement OpenAI translation provider (fallback)",
+      "status": "pending",
+      "request_id": "237",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-237-implement-openai-translation-provider-fallback-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-237-implement-openai-translation-provider-fallback-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.4",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Create rate limiter utility",
+      "description": "File: `/src/lib/translation-service/utils/rate-limiter.ts`\nToken bucket or sliding window implementation\nConfigurable per-provider limits",
+      "raw_match": "\n- [ ] **Task 3.4:** Create rate limiter utility",
+      "status": "pending",
+      "request_id": "238",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-238-create-rate-limiter-utility-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-238-create-rate-limiter-utility-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.5",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Create retry logic with exponential backoff",
+      "description": "File: `/src/lib/translation-service/utils/retry.ts`\nMax 3 retries, exponential delay\nJitter to prevent thundering herd",
+      "raw_match": "\n- [ ] **Task 3.5:** Create retry logic with exponential backoff",
+      "status": "pending",
+      "request_id": "239",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-239-create-retry-logic-with-exponential-backoff-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-239-create-retry-logic-with-exponential-backoff-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.6",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Create main translation service wrapper",
+      "description": "File: `/src/lib/translation-service/translation-service.ts`\n`translateText()` function\n`translateToAllLanguages()` batch function\nProvider selection based on env config",
+      "raw_match": "\n- [ ] **Task 3.6:** Create main translation service wrapper",
+      "status": "pending",
+      "request_id": "240",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-240-create-main-translation-service-wrapper-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-240-create-main-translation-service-wrapper-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.7",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Add environment variables",
+      "description": "Update `.env.example` with new vars\n`TRANSLATION_PROVIDER`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`",
+      "raw_match": "\n- [ ] **Task 3.7:** Add environment variables",
+      "status": "pending",
+      "request_id": "241",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-241-add-environment-variables-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-241-add-environment-variables-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "3.8",
+      "phase": "3",
+      "phase_name": "Translation Service",
+      "title": "Create API endpoint for manual translation testing",
+      "description": "File: `/src/app/api/admin/translate/route.ts`\nAdmin-only endpoint for testing translations",
+      "raw_match": "\n- [ ] **Task 3.8:** Create API endpoint for manual translation testing",
+      "status": "pending",
+      "request_id": "242",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-242-create-api-endpoint-for-manual-translation-testing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-242-create-api-endpoint-for-manual-translation-testing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.1",
+      "phase": "4",
+      "phase_name": "Background Job Processing",
+      "title": "Create translation job queue module",
+      "description": "File: `/src/lib/job-queue/translation-jobs.ts`\nJob insertion, status updates\nJob fetching with locking",
+      "raw_match": "\n- [ ] **Task 4.1:** Create translation job queue module",
+      "status": "pending",
+      "request_id": "243",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-243-create-translation-job-queue-module-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-243-create-translation-job-queue-module-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.2",
+      "phase": "4",
+      "phase_name": "Background Job Processing",
+      "title": "Implement job processor",
+      "description": "Poll for queued jobs (configurable interval)\nProcess one job at a time\nUpdate translation tables on completion",
+      "raw_match": "\n- [ ] **Task 4.2:** Implement job processor",
+      "status": "pending",
+      "request_id": "244",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-244-implement-job-processor-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-244-implement-job-processor-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.3",
+      "phase": "4",
+      "phase_name": "Background Job Processing",
+      "title": "Create API route for job processing",
+      "description": "File: `/src/app/api/admin/process-translations/route.ts`\nTrigger job processing (can be called by cron)\nReturn processing stats",
+      "raw_match": "\n- [ ] **Task 4.3:** Create API route for job processing",
+      "status": "pending",
+      "request_id": "245",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-245-implement-concurrency-control-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-245-create-api-route-for-job-processing-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.4",
+      "phase": "4",
+      "phase_name": "Background Job Processing",
+      "title": "Implement concurrency control",
+      "description": "Prevent duplicate job processing\nHandle stale \"processing\" jobs (timeout after 5 min)",
+      "raw_match": "\n- [ ] **Task 4.4:** Implement concurrency control",
+      "status": "pending",
+      "request_id": "245",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-245-implement-concurrency-control-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-245-create-api-route-for-job-processing-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "4.5",
+      "phase": "4",
+      "phase_name": "Background Job Processing",
+      "title": "Create job status API endpoint",
+      "description": "File: `/src/app/api/admin/translation-jobs/route.ts`\nList jobs by status, entity type\nFor monitoring and debugging",
+      "raw_match": "\n- [ ] **Task 4.5:** Create job status API endpoint",
+      "status": "pending",
+      "request_id": "246",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-246-create-language-detection-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-246-create-language-detection-utility-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.1",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Create language detection utility",
+      "description": "File: `/src/lib/i18n/language-detection.ts`\n`detectUserLanguage(request, user?): string`\nPriority: user preference > cookie > Accept-Language > default",
+      "raw_match": "\n- [ ] **Task 5.1:** Create language detection utility",
+      "status": "pending",
+      "request_id": "246",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-246-create-language-detection-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-246-create-language-detection-utility-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.2",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Update middleware for language handling",
+      "description": "File: `/src/middleware.ts` (modify)\nSet language context on requests\nHandle locale cookie read/write",
+      "raw_match": "\n- [ ] **Task 5.2:** Update middleware for language handling",
+      "status": "pending",
+      "request_id": "247",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-247-update-middleware-for-language-handling-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-247-update-middleware-for-language-handling-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.3",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Create LanguageSwitcher component",
+      "description": "File: `/src/components/LanguageSwitcher/LanguageSwitcher.tsx`\nDropdown with all 6 languages\nNative language names (Deutsch, Francais, etc.)\nPersist preference (DB for users, cookie for guests)",
+      "raw_match": "\n- [ ] **Task 5.3:** Create LanguageSwitcher component",
+      "status": "pending",
+      "request_id": "248",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-248-create-languageswitcher-component-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-248-create-languageswitcher-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.4",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Create useLanguagePreference hook",
+      "description": "File: `/src/hooks/useLanguagePreference.ts`\nGet/set language preference\nHandle persistence logic",
+      "raw_match": "\n- [ ] **Task 5.4:** Create useLanguagePreference hook",
+      "status": "pending",
+      "request_id": "249",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-249-create-uselanguagepreference-hook-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-249-create-uselanguagepreference-hook-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.5",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Create LocaleContext (optional enhancement)",
+      "description": "File: `/src/contexts/LocaleContext.tsx`\nWrap next-intl with additional app-specific logic",
+      "raw_match": "\n- [ ] **Task 5.5:** Create LocaleContext (optional enhancement)",
+      "status": "pending",
+      "request_id": "250",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-250-create-localecontext-optional-enhancement-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-250-create-localecontext-optional-enhancement-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.6",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Add language preference API endpoint",
+      "description": "File: `/src/app/api/user/language/route.ts`\nPUT endpoint to update user's preferred_language",
+      "raw_match": "\n- [ ] **Task 5.6:** Add language preference API endpoint",
+      "status": "pending",
+      "request_id": "251",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-251-add-language-preference-api-endpoint-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-251-add-language-preference-api-endpoint-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "5.7",
+      "phase": "5",
+      "phase_name": "Language Switching Infrastructure",
+      "title": "Integrate LanguageSwitcher into navigation",
+      "description": "Add to DashboardLayout header\nAdd to public-facing pages (optional in this epic)",
+      "raw_match": "\n- [ ] **Task 5.7:** Integrate LanguageSwitcher into navigation",
+      "status": "pending",
+      "request_id": "252",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-252-integrate-languageswitcher-into-navigation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-252-integrate-languageswitcher-into-navigation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.1",
+      "phase": "6",
+      "phase_name": "Testing & Validation",
+      "title": "Write unit tests for translation service",
+      "description": "Test translateText function\nTest retry logic\nTest rate limiter",
+      "raw_match": "\n- [ ] **Task 6.1:** Write unit tests for translation service",
+      "status": "pending",
+      "request_id": "253",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-253-write-unit-tests-for-translation-service-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-253-write-unit-tests-for-translation-service-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.2",
+      "phase": "6",
+      "phase_name": "Testing & Validation",
+      "title": "Write integration tests for job processing",
+      "description": "Test job lifecycle\nTest concurrent processing",
+      "raw_match": "\n- [ ] **Task 6.2:** Write integration tests for job processing",
+      "status": "pending",
+      "request_id": "254",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-254-write-integration-tests-for-job-processing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-254-write-integration-tests-for-job-processing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.3",
+      "phase": "6",
+      "phase_name": "Testing & Validation",
+      "title": "Write component tests for LanguageSwitcher",
+      "description": "Test dropdown behavior\nTest persistence",
+      "raw_match": "\n- [ ] **Task 6.3:** Write component tests for LanguageSwitcher",
+      "status": "pending",
+      "request_id": "255",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-255-write-component-tests-for-languageswitcher-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-255-write-component-tests-for-languageswitcher-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    },
+    {
+      "id": "6.4",
+      "phase": "6",
+      "phase_name": "Testing & Validation",
+      "title": "Manual E2E validation",
+      "description": "Verify language switching works\nVerify translations render correctly\nVerify job processing completes",
+      "raw_match": "\n- [ ] **Task 6.4:** Manual E2E validation",
+      "status": "pending",
+      "request_id": "256",
+      "error": null,
+      "processed_at": null,
+      "files": {
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-256-manual-e2e-validation-detailed.md",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/docs/REQ-256-manual-e2e-validation-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
+    }
+  ],
+  "stages": {
+    "request": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 36,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "overview": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 36,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "details": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 36,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    },
+    "implementation": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "tasks_total": 36,
+      "tasks_completed": 0,
+      "tasks_failed": 0,
+      "current_task_index": 0
+    }
+  },
+  "errors": [],
+  "metadata": {
+    "total_requests_generated": 1,
+    "last_request_id": null,
+    "first_request_id": null,
+    "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/pipeline-l10n-epic1-foundation.yaml"
+  },
+  "precheck": {
+    "status": "passed",
+    "completed_at": "2026-01-18T05:38:28.671800",
+    "elapsed": "46.1s",
+    "tools": {
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Browser snapshot successful - connected to browser at about:blank"
+      }
+    },
+    "next_cache_cleared": false
+  }
+}

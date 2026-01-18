@@ -84,13 +84,14 @@ request_stages:
     enabled: true
     agent:
       name: "01-request-fa"
-      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}. Write the request to file: {requests_file_path}"
       command:
         - "claude"
         - "-p"
         - "{prompt}"
         - "--allowedTools"
         - "Read,Write,Bash"
+        - "--dangerously-skip-permissions"
       timeout: 300
     output:
       type: append
@@ -132,6 +133,7 @@ request_stages:
         - "{prompt}"
         - "--allowedTools"
         - "Read,Write,Bash"
+        - "--dangerously-skip-permissions"
       timeout: 720
     output:
       type: file
@@ -171,6 +173,7 @@ request_stages:
         - "{prompt}"
         - "--allowedTools"
         - "Read,Write,Bash"
+        - "--dangerously-skip-permissions"
       timeout: 600
     output:
       type: file
@@ -223,6 +226,7 @@ request_stages:
         - "{prompt}"
         - "--allowedTools"
         - "Read,Write,Edit,Bash,Glob,Grep"
+        - "--dangerously-skip-permissions"
       timeout: 2400
     output:
       type: implementation

@@ -221,6 +221,7 @@ export type Database = {
           thumbnail_url: string | null
           title: string
           url: string
+          source_language: string | null  // REQ-224: Track original language for translation
         }
         Insert: {
           created_at?: string | null
@@ -232,6 +233,7 @@ export type Database = {
           thumbnail_url?: string | null
           title: string
           url: string
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Update: {
           created_at?: string | null
@@ -243,6 +245,7 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           url?: string
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Relationships: [
           {
@@ -272,6 +275,7 @@ export type Database = {
           display_order: number | null
           created_at: string | null
           updated_at: string | null
+          source_language: string | null  // REQ-224: Track original language for translation
         }
         Insert: {
           id?: string
@@ -282,6 +286,7 @@ export type Database = {
           display_order?: number | null
           created_at?: string | null
           updated_at?: string | null
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Update: {
           id?: string
@@ -292,6 +297,7 @@ export type Database = {
           display_order?: number | null
           created_at?: string | null
           updated_at?: string | null
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Relationships: [
           {
@@ -314,6 +320,7 @@ export type Database = {
           qr_code_uploaded_at: string | null
           qr_code_url: string | null
           updated_at: string | null
+          source_language: string | null  // REQ-224: Track original language for translation
         }
         Insert: {
           created_at?: string | null
@@ -325,6 +332,7 @@ export type Database = {
           qr_code_uploaded_at?: string | null
           qr_code_url?: string | null
           updated_at?: string | null
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Update: {
           created_at?: string | null
@@ -336,6 +344,7 @@ export type Database = {
           qr_code_uploaded_at?: string | null
           qr_code_url?: string | null
           updated_at?: string | null
+          source_language?: string | null  // REQ-224: Track original language for translation
         }
         Relationships: [
           {

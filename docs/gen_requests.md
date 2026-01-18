@@ -9603,3 +9603,3503 @@ Enhances user experience by eliminating visual clutter and decision paralysis du
 - [ ] When the email is changed from non-Gmail to Gmail, the radio buttons appear with "Continue with Google" pre-selected
 - [ ] Non-Gmail addresses never trigger the display of radio buttons or Google OAuth UI
 
+
+---
+
+## REQ-223: Localization Database Foundation Schema
+
+**Date**: 2026-01-17 10:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should support multi-language translation capabilities by establishing a database schema that stores translations for articles, items, links, tags, and tracks translation job metadata.
+
+### Current Behavior
+The application stores content in a single language without any translation or localization infrastructure. Content is displayed in the language it was originally created in, with no mechanism to present alternative language versions to users based on their preferences or location.
+
+### Expected Behavior
+A comprehensive database schema exists to support multi-language content across the platform. When content is created, it can be associated with translations in multiple target languages. Translation metadata tracks which content has been translated, into which languages, and by what method (manual, automated, or hybrid). The schema supports efficient lookups of translated content by language code and maintains referential integrity between original content and its translations.
+
+### User Impact
+Property owners creating content will eventually be able to provide translated versions of their guides, item descriptions, links, and tags to serve international guests. Guests viewing content will ultimately receive information in their preferred language. This foundational schema enables all future localization features without requiring costly database restructuring later.
+
+### Business Value
+Establishes the technical foundation for international expansion and multi-language guest support. Prevents future migration costs by implementing proper translation architecture from the start. Enables phased rollout of localization features by providing stable, well-indexed data structures.
+
+### Acceptance Criteria
+- [ ] A migration file creates five translation-related tables: article_translations, item_translations, link_translations, tag_translations, and translation_jobs
+- [ ] Each translation table references its source entity and includes language_code, translated content fields, and timestamps
+- [ ] The translation_jobs table tracks metadata about translation requests including status, source/target languages, and translation method
+- [ ] Database indexes are created on language_code columns for efficient query performance
+- [ ] Database indexes are created on foreign key columns to optimize lookup of translations for specific content
+- [ ] The migration can be applied successfully to both local development and staging environments
+- [ ] The migration is reversible with a proper rollback script that removes all created tables and indexes
+
+---
+
+## REQ-224: Track Original Language for Content Items
+
+**Date**: 2026-01-17 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system must track the original language in which content was created for items, item articles, and item links.
+
+### Current Behavior
+Content tables store multilingual data without indicating which language version is the original source. When content exists in multiple languages, there is no way to identify which language the content was originally authored in.
+
+### Expected Behavior
+Each content record maintains a reference to its source language. When viewing or processing content in the system, users can identify which language version is the authoritative original. New content defaults to English as the source language, while the system preserves this information for all existing records.
+
+### User Impact
+Content managers and administrators gain visibility into which language version is the original, enabling better translation workflows and content governance. This affects anyone who manages multilingual content or needs to understand the provenance of translated materials.
+
+### Business Value
+Proper source language tracking enables efficient translation workflows and ensures content quality by clearly identifying authoritative source versions versus translations.
+
+### Acceptance Criteria
+- [ ] Items table records indicate their source language
+- [ ] Item articles table records indicate their source language
+- [ ] Item links table records indicate their source language
+- [ ] All existing records show English as their source language
+- [ ] New records can specify any valid language code as their source language
+
+
+---
+
+## REQ-225: User and Account Language Preference Storage
+
+**Date**: 2026-01-17 12:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system should store each user's and account's preferred display language so that the application can present content in the language they are most comfortable with.
+
+### Current Behavior
+The database does not capture or persist language preferences for users or accounts. When users interact with the application, there is no mechanism to remember their preferred language for subsequent visits or sessions.
+
+### Expected Behavior
+Each user and account has a stored language preference that defaults to English when no selection has been made. When a user or account selects their preferred language through the application interface, that preference is persisted and applied consistently across all future interactions until changed.
+
+### User Impact
+Users with language preferences other than English will be able to set their preferred language once and have it remembered. Account-level language settings will allow property management teams to establish a default language for their organization that applies to all team members unless individually overridden.
+
+### Business Value
+Supporting stored language preferences is foundational to delivering a truly localized user experience, expanding the application's accessibility to international markets and non-English-speaking users. This infrastructure enables future localization features and demonstrates commitment to global usability.
+
+### Acceptance Criteria
+- [ ] Each user record includes a language preference field with a default value of English
+- [ ] Each account record includes a language preference field with a default value of English
+- [ ] Language preference values follow standard language codes for consistency and interoperability
+- [ ] Existing user and account records automatically receive the default language value during migration
+- [ ] The database schema change is reversible without data loss
+
+
+---
+
+## REQ-226: Translation Table Access Control Policies
+
+**Date**: 2026-01-17 11:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should only be able to view and modify translations for content they are authorized to access, while automated background processes can perform translation operations without restriction.
+
+### Current Behavior
+Translation tables exist without access control policies, allowing unrestricted read and write access to all authenticated users regardless of their relationship to the underlying content.
+
+### Expected Behavior
+- Users can view translations only for content they have permission to view
+- Users can create or modify translations only for content they own
+- Automated translation services can read and write all translation records to perform background translation jobs
+- Unauthorized users attempting to access translation data receive appropriate access denial responses
+
+### User Impact
+Content owners are protected from unauthorized users viewing or modifying their translated content. Users searching or browsing listings see only translations for content they are permitted to access. Background translation processes continue to operate normally for all content.
+
+### Business Value
+Ensures translation data respects the same privacy and authorization boundaries as the source content, maintaining data security and user trust in the platform.
+
+### Acceptance Criteria
+- [ ] Users can read translation records when they have read access to the corresponding source content
+- [ ] Users can create and update translation records when they own the corresponding source content
+- [ ] Service role accounts can read and write all translation records without restriction
+- [ ] Users without content access permissions cannot read or write associated translation records
+- [ ] Policy enforcement applies consistently across all translation tables in the system
+
+
+---
+
+## REQ-227: TypeScript Type Definitions for Translation Tables
+
+**Date**: 2026-01-17 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application's TypeScript type definitions must include all newly created translation-related database tables to provide type safety and autocomplete support.
+
+### Current Behavior
+The TypeScript database type definitions do not include the translation table structures that were recently added to the database schema.
+
+### Expected Behavior
+Developers working with translation tables receive full TypeScript IntelliSense, type checking, and autocomplete when querying or manipulating translation data. The type system prevents runtime errors from incorrect column names or data structures.
+
+### User Impact
+Developers building localization features will have improved productivity through better IDE support and catch type-related errors at compile time rather than runtime.
+
+### Business Value
+Reduces development time and prevents bugs by ensuring type safety across the translation system, enabling faster and more reliable delivery of multilingual features.
+
+### Acceptance Criteria
+- [ ] TypeScript type definitions exist for all translation-related database tables
+- [ ] Type definitions accurately reflect the database schema including column names, data types, and relationships
+- [ ] Developers can query translation tables with full type inference and autocomplete support
+- [ ] TypeScript compiler catches mismatched types when interacting with translation tables
+
+
+---
+
+## REQ-228: System Tag Translation Data Seeding
+
+**Date**: 2026-01-17 23:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system must be pre-populated with standard room and appliance tag translations across all supported languages to provide immediate multilingual support for common property features.
+
+### Current Behavior
+The translation tables exist but contain no data, requiring property owners to manually create translations for standard tags that are used across most properties.
+
+### Expected Behavior
+When the system initializes, standard tags for room types and appliance types are already available in all supported languages. Property owners selecting common rooms or appliances see properly translated labels immediately based on their language preference.
+
+### User Impact
+Property owners and guests experience a fully localized interface from the first interaction with standard property features. Owners save time by not having to translate common terms that apply universally across properties.
+
+### Business Value
+Accelerates platform adoption by eliminating setup friction for international users and demonstrates professional multilingual support from day one, enhancing credibility in global markets.
+
+### Acceptance Criteria
+- [ ] Standard room type tags are available in all supported languages
+- [ ] Standard appliance type tags are available in all supported languages
+- [ ] Translations are semantically accurate and culturally appropriate for each language
+- [ ] System can identify which tags are system-defined versus user-created
+- [ ] Seed data operation is idempotent and can be safely run multiple times
+
+---
+
+## REQ-229: Install and Configure Internationalization Framework
+
+**Date**: 2026-01-17 09:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The application should support multiple languages by integrating an internationalization framework that manages translations for all static user interface text.
+
+### Current Behavior
+The application displays all user interface text in a single language without support for translations or locale switching.
+
+### Expected Behavior
+The application is configured with an internationalization framework that:
+- Supports six different language locales
+- Provides a centralized location for all translated strings
+- Enables runtime language switching for users
+- Maintains consistent translation structure across the application
+
+### User Impact
+This foundation enables users to view the application interface in their preferred language, improving accessibility for non-English speakers and setting the stage for full multilingual support.
+
+### Business Value
+Expands market reach by making the application accessible to international users and demonstrates commitment to global audience support.
+
+### Acceptance Criteria
+- [ ] Internationalization library is installed as a project dependency
+- [ ] Translation message files exist for all six supported locales
+- [ ] Framework is configured to recognize and load translations for each locale
+- [ ] Application can be initialized with any of the six supported languages
+- [ ] Translation file structure is consistent and follows framework conventions
+
+---
+
+## REQ-230: Centralized Locale Configuration and Server-Side Locale Detection
+
+**Date**: 2026-01-17 17:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The application should provide a centralized configuration module that defines all supported locales and implements server-side logic to automatically detect the appropriate language for each user request.
+
+### Current Behavior
+The application lacks a unified definition of supported languages and has no mechanism to determine which language should be displayed when users access the system.
+
+### Expected Behavior
+The system maintains a single source of truth for supported locales and default language settings. When any server request is processed, the system automatically determines the appropriate locale by examining user preferences, browser settings, or falling back to the configured default language. This detected locale is then available throughout the request lifecycle for rendering appropriately localized content.
+
+### User Impact
+Users see content in their preferred language immediately upon accessing the application without manual configuration. The experience feels native and personalized based on their browser settings or stored preferences.
+
+### Business Value
+Reduces implementation complexity by centralizing locale logic and ensures consistent language detection behavior across all server-rendered pages and API responses.
+
+### Acceptance Criteria
+- [ ] A configuration module exists that lists all supported locale codes
+- [ ] A default locale is explicitly defined in the configuration
+- [ ] Server-side request handling includes locale detection logic
+- [ ] Locale detection considers user account preferences if authenticated
+- [ ] Locale detection falls back to browser Accept-Language headers for unauthenticated requests
+- [ ] The detected locale is accessible throughout the server request processing pipeline
+- [ ] Configuration can be imported and reused across different parts of the application
+
+
+---
+
+## REQ-231: Configure Next.js Application for Internationalization Support
+
+**Date**: 2026-01-18 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application must be configured to enable internationalization capabilities through framework-level settings that support locale detection and language routing.
+
+### Current Behavior
+The application runs with a default single-language configuration without any locale detection, language routing, or internationalization middleware enabled at the framework level.
+
+### Expected Behavior
+When users access the application, the system automatically detects their preferred language and routes them to the appropriate localized version of the site. The application configuration enables language-aware routing patterns and locale-based content delivery.
+
+### User Impact
+All application users will benefit from automatic language detection based on their browser preferences or explicit language selections. This creates the foundation for users to interact with the application in their preferred language without manual configuration steps.
+
+### Business Value
+Establishing framework-level internationalization support is a prerequisite for delivering a multilingual user experience, enabling market expansion to non-English speaking regions and improving user satisfaction through localized interfaces.
+
+### Acceptance Criteria
+- [ ] Application configuration includes internationalization plugin integration
+- [ ] Locale detection activates automatically when users access the application
+- [ ] Language preferences from browser settings are recognized and respected
+- [ ] Framework routing supports locale-prefixed URL patterns
+- [ ] Configuration changes do not break existing single-language functionality during transition
+
+---
+
+## REQ-232: Application-Wide Translation Context Provider Integration
+
+**Date**: 2026-01-18 14:35
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application root must provide translation context to all client-side components, enabling them to access localized strings and formatting utilities throughout the component tree.
+
+### Current Behavior
+Client components in the application have no access to translation functionality. Each component would need to independently manage language preferences and translation lookups, leading to inconsistent localization implementation and redundant code.
+
+### Expected Behavior
+When the application initializes, a translation provider automatically wraps all client components, making translation utilities and localized strings immediately available to any component that needs them. Components can access translations through simple function calls without needing to manage language state or configuration.
+
+### User Impact
+End users will experience consistent language presentation across all interactive elements of the application. Components that display dynamic text, format dates, numbers, or currencies will automatically respect the user's language preference.
+
+### Business Value
+This establishes the runtime infrastructure required for client-side internationalization, enabling interactive components to display localized content and ensuring a cohesive multilingual user experience across the entire application.
+
+### Acceptance Criteria
+- [ ] All client-side components have access to translation functionality without explicit setup
+- [ ] Language preference changes propagate automatically to all components
+- [ ] Translation context includes both message strings and formatting utilities
+- [ ] Server-rendered and client-rendered content use consistent locale settings
+- [ ] Application continues to function normally for users with single-language preference
+
+
+---
+
+## REQ-233: Initial Translation File Structure with Namespace Organization
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system shall provide a structured set of translation files organized by functional namespaces to support multiple language locales.
+
+### Current Behavior
+No translation files exist in the application. All user-facing text is hardcoded in the source code, making internationalization impossible.
+
+### Expected Behavior
+Translation files are created with a clear namespace structure that separates concerns (common UI elements, authentication flows, dashboard content, item management, and error messages). An English baseline translation file is fully structured, and placeholder files for additional locales are present to facilitate future translation work.
+
+### User Impact
+This foundational structure enables translators and content managers to provide localized experiences for users in different languages. Developers can reference translations by namespace and key rather than embedding text directly in components.
+
+### Business Value
+Establishes the foundation for serving international users by creating a scalable translation architecture that supports rapid addition of new languages without code changes.
+
+### Acceptance Criteria
+- [ ] An English translation file exists with all five namespaces defined (common, auth, dashboard, items, errors)
+- [ ] Each namespace contains at least one sample translation key to demonstrate structure
+- [ ] Stub translation files for at least two additional locales are present and follow the same namespace structure
+- [ ] The translation file structure is documented so developers and translators understand the organization pattern
+- [ ] Translation files are located in a standard directory that the i18n framework can discover automatically
+
+
+
+---
+
+## REQ-234: Translation Function Integration Verification
+
+**Date**: 2026-01-18 11:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system shall demonstrate successful translation integration by updating an existing component to use the translation function and verifying development workflow functions correctly.
+
+### Current Behavior
+Components in the application use hardcoded text strings. No components currently demonstrate the integration of the translation framework, and developers have no working example to reference when implementing translations in other components.
+
+### Expected Behavior
+At least one existing component retrieves its displayed text through the translation function rather than hardcoded strings. When developers modify translation files during development, changes appear immediately in the running application without requiring a manual restart, confirming that the development workflow supports efficient translation work.
+
+### User Impact
+Developers implementing translations in other components can reference a working example. The improved development workflow allows translators and developers to see translation changes instantly, speeding up the localization process.
+
+### Business Value
+Validates that the translation framework integration is functional and developer-friendly. Provides a confidence checkpoint before proceeding with broader translation implementation across the application.
+
+### Acceptance Criteria
+- [ ] One component that previously displayed hardcoded text now retrieves text through translation functions
+- [ ] The component displays correctly with translated content from the default locale
+- [ ] Modifying the translation file for the component's text results in the change appearing in the browser without manual server restart
+- [ ] The selected component serves as a clear, documented reference example for other developers
+- [ ] No functionality or user experience regressions occur in the updated component
+
+
+
+---
+
+## REQ-235: Translation Service Module Infrastructure
+
+**Date**: 2026-01-18 20:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application shall provide a dedicated translation service module with comprehensive type definitions to support dynamic content translation across the system.
+
+### Current Behavior
+The application lacks infrastructure for translating dynamic content stored in the database. While static UI elements can be translated through the internationalization framework, user-generated content such as property descriptions, item names, room labels, and guide instructions cannot be presented in different languages.
+
+### Expected Behavior
+A translation service module exists as a centralized location for all translation-related utilities, hooks, and type definitions. The module provides well-defined TypeScript interfaces that describe translation data structures, service contracts, and API interactions. Developers can import translation utilities from a single, predictable location rather than scattering translation logic throughout the codebase.
+
+### User Impact
+Users will eventually be able to view dynamic content (property descriptions, item names, instructions) in their preferred language. Property owners will gain the ability to provide multilingual versions of their content, making properties accessible to international guests.
+
+### Business Value
+Establishes the architectural foundation for dynamic content translation, enabling the platform to serve international markets and allowing property owners to reach guests who speak different languages. This infrastructure supports future translation features without requiring major refactoring.
+
+### Acceptance Criteria
+- [ ] A translation service directory exists with a clear, organized structure
+- [ ] Type definition files describe all translation-related data structures
+- [ ] TypeScript interfaces define contracts for translation service operations
+- [ ] The module structure supports future expansion without breaking existing integrations
+- [ ] Type definitions align with the translation database schema and API requirements
+
+
+---
+
+## REQ-236: AI-Powered Translation Provider with Domain Context
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide automated translation of content using an AI translation service that understands the vacation rental domain and can maintain consistent terminology across all translated content.
+
+### Current Behavior
+No automated translation capability exists. Content must be manually translated by users or remain in the original language only.
+
+### Expected Behavior
+When translation is requested, the system automatically translates content using an AI service that:
+- Understands vacation rental terminology (e.g., "check-in", "amenities", "house rules")
+- Maintains consistent translation of domain-specific terms across all content
+- Respects usage limits to prevent service interruptions
+- Handles authentication securely without exposing credentials to end users
+- Provides appropriate error messages when translation is unavailable
+
+### User Impact
+Property owners and managers can offer their listings, FAQs, and guest communications in multiple languages without manual translation work. Guests receive accurate, contextually appropriate translations that use proper vacation rental terminology.
+
+### Business Value
+Enables multi-language support at scale without requiring multilingual staff or expensive human translation services. Improves guest experience for international travelers and expands market reach for property owners.
+
+### Acceptance Criteria
+- [ ] System successfully authenticates with the translation service using secure credentials
+- [ ] Translations incorporate vacation rental domain context to ensure appropriate terminology
+- [ ] System respects rate limits and prevents service overuse
+- [ ] When rate limits are approached or exceeded, users receive clear feedback
+- [ ] Translation requests that fail return meaningful error messages to the user
+- [ ] Credentials and API keys are never exposed in client-side code or responses
+
+
+---
+
+## REQ-237: Alternative AI Translation Provider for Service Resilience
+
+**Date**: 2026-01-18 21:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system shall provide an alternative AI-powered translation service that maintains translation availability when the primary translation service is unavailable or experiences issues.
+
+### Current Behavior
+Translation capability depends entirely on a single AI service provider. When that service experiences downtime, rate limiting, or API changes, all translation functionality becomes unavailable to users with no fallback mechanism.
+
+### Expected Behavior
+When the primary translation service fails or is unavailable, the system automatically attempts translation using an alternative AI service. The fallback service:
+- Implements the same interface as the primary provider for seamless integration
+- Understands vacation rental terminology and context
+- Activates transparently without user intervention when the primary service fails
+- Maintains translation quality standards comparable to the primary service
+- Handles its own authentication, rate limiting, and error conditions independently
+
+### User Impact
+Users experience uninterrupted translation services even when individual AI providers face technical issues. Property owners can reliably offer multilingual content without worrying about service outages affecting guest experiences.
+
+### Business Value
+Increases platform reliability and reduces risk of translation service disruptions that could impact guest satisfaction or property owner productivity. Provides negotiating leverage with AI service providers and allows the platform to automatically route to the most cost-effective provider based on usage patterns.
+
+### Acceptance Criteria
+- [ ] Alternative translation service integrates seamlessly with existing translation architecture
+- [ ] Both translation providers implement identical interface contracts for consistent behavior
+- [ ] System automatically switches to fallback provider when primary service fails
+- [ ] Translation quality from fallback provider meets minimum accuracy standards
+- [ ] Fallback provider handles vacation rental terminology appropriately
+- [ ] Each provider manages its own authentication and rate limiting independently
+- [ ] System logs which provider was used for each translation request for monitoring purposes
+
+
+---
+
+## REQ-238: Translation Service Rate Limiting
+
+**Date**: 2026-01-18 10:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should enforce configurable rate limits when calling external translation providers to prevent service disruptions and quota exhaustion.
+
+### Current Behavior
+No rate limiting mechanism exists for translation API calls, which could result in:
+- Exceeding provider rate limits and receiving error responses
+- Exhausted API quotas before critical translations complete
+- Service degradation when translation demand spikes
+
+### Expected Behavior
+The system automatically controls the frequency of translation requests to external providers based on configurable thresholds. When limits are approached, requests are queued or delayed rather than rejected. Different providers can have different rate limits configured independently.
+
+### User Impact
+Property owners experience more reliable translation service availability, especially during high-demand periods such as listing updates or bulk content changes. Translation requests complete successfully without interruption from rate limit errors.
+
+### Business Value
+Prevents service outages and ensures efficient use of paid API quotas by smoothing request patterns and avoiding provider throttling.
+
+### Acceptance Criteria
+- [ ] Translation requests are automatically throttled when configured rate limits are approached
+- [ ] Each translation provider can have independently configured rate limits
+- [ ] Rate limit configuration can be adjusted without code changes
+- [ ] Requests exceeding rate limits are queued rather than immediately rejected
+- [ ] System continues to function normally when rate limits are not being approached
+
+
+---
+
+## REQ-239: Translation Service Retry Logic with Exponential Backoff
+
+**Date**: 2026-01-18 11:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The translation service should automatically retry failed translation requests using exponential backoff with jitter to handle transient failures gracefully.
+
+### Current Behavior
+Translation requests fail immediately when external translation providers experience temporary issues such as network timeouts, rate limit rejections, or service unavailability.
+
+### Expected Behavior
+When a translation request fails due to a transient error, the system should automatically retry up to three times with increasing delays between attempts. Each retry delay should include a random jitter component to prevent multiple clients from retrying simultaneously.
+
+### User Impact
+Property owners and guests experience more reliable translations even during periods of provider instability or network issues. Translation failures are reduced significantly without requiring manual intervention or page refreshes.
+
+### Business Value
+Improves service reliability and user experience by masking transient failures from external dependencies. Reduces support burden from translation-related issues.
+
+### Acceptance Criteria
+- [ ] Failed translation requests are automatically retried up to three times
+- [ ] Delay between retries increases exponentially with each attempt
+- [ ] Random jitter is added to retry delays to prevent synchronized retry storms
+- [ ] Retry logic distinguishes between retryable errors (timeouts, 5xx) and permanent failures (4xx client errors)
+- [ ] After all retries are exhausted, the original error is surfaced to the caller
+- [ ] Retry attempts and outcomes are logged for observability
+
+---
+
+## REQ-240: Unified Translation Service Interface
+
+**Date**: 2026-01-18 11:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application should provide a unified translation service interface that handles individual text translations and batch translations to all supported languages while managing provider selection and fallback behavior.
+
+### Current Behavior
+Translation providers exist independently without a coordinated service layer. Callers must directly interact with specific translation providers and manually implement provider selection, fallback logic, and batch translation operations.
+
+### Expected Behavior
+Users and systems can request text translations through a single service interface that transparently selects the appropriate provider based on configuration, handles provider failures gracefully by falling back to alternative providers, and supports both single-language and multi-language batch translation operations.
+
+### User Impact
+Developers implementing multilingual features experience a simplified integration pattern with automatic provider management. Property owners and guests benefit from more reliable translations due to automatic provider fallback when the primary service encounters issues.
+
+### Business Value
+Accelerates feature development by providing a consistent translation interface. Improves system reliability through automatic provider failover. Enables centralized monitoring and control of all translation operations.
+
+### Acceptance Criteria
+- [ ] A single function translates text from one language to another language
+- [ ] A batch function translates text to all supported application languages in one operation
+- [ ] The service selects the translation provider based on environment configuration settings
+- [ ] When the primary provider fails, the service automatically attempts translation using the fallback provider
+- [ ] Translation requests include appropriate rate limiting and retry logic from underlying utilities
+- [ ] The service maintains consistent error handling and logging across all translation operations
+- [ ] Batch translations return results in a structured format mapping each target language to its translated text
+
+
+---
+
+## REQ-241: Translation Service Environment Configuration
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The system must provide documented environment variables for configuring translation service providers and API credentials.
+
+### Current Behavior
+No environment configuration exists for translation service integration. Developers have no reference for required API keys or provider selection.
+
+### Expected Behavior
+The system provides a template configuration file showing all required environment variables for translation services, including provider selection and API credentials for supported translation providers.
+
+### User Impact
+Developers and DevOps teams can properly configure translation services across different environments (development, staging, production) with clear documentation of required credentials and configuration options.
+
+### Business Value
+Enables secure configuration management for translation services, supporting the L10N initiative's Phase 3 infrastructure by establishing clear deployment requirements.
+
+### Acceptance Criteria
+- [ ] Configuration template includes translation provider selection variable
+- [ ] Configuration template includes Anthropic API credential variable
+- [ ] Configuration template includes OpenAI API credential variable
+- [ ] All new variables include descriptive comments explaining their purpose and valid values
+
+
+---
+
+## REQ-242: Admin Translation Testing Interface
+
+**Date**: 2026-01-18 09:15
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Administrators need a way to manually test translation functionality by submitting text and receiving translations without deploying to production.
+
+### Current Behavior
+There is no way for administrators to test the translation service in isolation. Testing translations requires running them through the full application workflow, making it difficult to debug translation issues or verify service configuration.
+
+### Expected Behavior
+Administrators can access a dedicated endpoint where they can submit text in a source language and receive translations in target languages. The response includes the translated text along with metadata about which translation provider was used and any relevant diagnostics.
+
+### User Impact
+Platform administrators and developers gain the ability to quickly verify translation service health, test new language pairs, debug translation quality issues, and validate configuration changes before they affect end users.
+
+### Business Value
+Reduces time spent debugging translation problems and increases confidence in the translation system, allowing faster rollout of new languages and quicker resolution of translation-related issues.
+
+### Acceptance Criteria
+- [ ] Only authenticated administrators can access the translation testing endpoint
+- [ ] Administrators can specify source text, source language, and target language(s)
+- [ ] The response includes the translated text for each requested target language
+- [ ] The response indicates which translation provider handled the request
+- [ ] Unauthorized users receive an appropriate error when attempting to access the endpoint
+- [ ] The endpoint handles errors gracefully and returns informative messages when translation fails
+
+
+---
+
+## REQ-243: Translation Job Queue Module for Background Processing
+
+**Date**: 2026-01-18 12:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must support asynchronous translation processing through a job queue that manages translation tasks, tracks their lifecycle status, and prevents concurrent processing of the same job.
+
+### Current Behavior
+Translation operations are processed synchronously during user requests, causing delays in response times and potential timeout issues when translating large content volumes. There is no mechanism to defer translation work to background processes or retry failed translations without user intervention.
+
+### Current Behavior
+Users experience delays when creating or updating content that requires translation, particularly when multiple languages are involved. Large translation batches may fail due to request timeouts, and there is no visibility into translation progress or ability to resume interrupted translation work.
+
+### Expected Behavior
+When content requires translation, the system creates job entries in a persistent queue with a pending status. Background workers fetch jobs from the queue with proper locking to ensure only one worker processes each job at a time. As jobs are processed, their status progresses through defined states (pending, processing, completed, failed). Users receive immediate confirmation that translation has been queued rather than waiting for completion.
+
+### User Impact
+Property owners experience faster response times when creating or updating content, as they no longer wait for translations to complete. Content editors can monitor translation progress through status indicators. Failed translations can be automatically retried without requiring user action, improving overall reliability.
+
+### Business Value
+Improves application responsiveness and scalability by decoupling translation work from user requests. Enables reliable processing of high-volume translation workloads. Provides foundation for future enhancements like batch translation scheduling and translation progress monitoring.
+
+### Acceptance Criteria
+- [ ] New translation jobs can be inserted into the queue with metadata identifying the content to translate
+- [ ] Each job tracks its current status using well-defined states (pending, processing, completed, failed)
+- [ ] Jobs can be updated to reflect status changes as they progress through the queue
+- [ ] Workers can fetch the next available pending job using a locking mechanism
+- [ ] The locking mechanism prevents two workers from processing the same job simultaneously
+- [ ] Jobs that fail during processing can be marked as failed with error details preserved
+- [ ] The queue supports filtering jobs by status to enable monitoring and reporting
+- [ ] Job records include timestamps tracking when they were created, started, and completed
+
+
+---
+
+## REQ-244: Background Job Processor for Translation Queue
+
+**Date**: 2026-01-18 22:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should automatically process queued translation jobs in the background at regular intervals and update content with completed translations.
+
+### Current Behavior
+Translation jobs are queued but there is no automated mechanism to process them. Jobs remain in 'queued' status indefinitely without manual intervention.
+
+### Expected Behavior
+The system should:
+- Continuously monitor for new translation jobs that need processing
+- Automatically pick up queued jobs and translate the content using the configured translation service
+- Process jobs one at a time to avoid overwhelming external services
+- Update the translated content in the appropriate location once translation completes
+- Record whether each job succeeded or failed, along with relevant diagnostic information
+- Allow administrators to configure how frequently the system checks for new jobs
+
+### User Impact
+**Property Owners** will see their content automatically translated after submission without needing to manually trigger or monitor the process. Translation happens reliably in the background.
+
+**System Administrators** can tune the processing frequency based on translation volume and API rate limits.
+
+### Business Value
+Enables hands-free, reliable translation workflow that scales with content volume while respecting external API constraints. Reduces operational overhead and improves user experience by automating the translation pipeline.
+
+### Acceptance Criteria
+- [ ] System checks for queued translation jobs at a configurable time interval
+- [ ] Only one translation job is processed at a time
+- [ ] When a job completes successfully, the translated content appears in the correct location for that content type (property details, listing information, FAQ entries, or system labels)
+- [ ] Job status updates to 'completed' when translation succeeds
+- [ ] Job status updates to 'failed' when translation fails, with diagnostic information recorded
+- [ ] Processing interval can be configured without code changes
+- [ ] System continues processing subsequent jobs even if one job fails
+
+
+---
+
+## REQ-245: Admin API Endpoint for Translation Job Processing
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Administrators need an API endpoint to trigger on-demand translation job processing and receive processing statistics.
+
+### Current Behavior
+No mechanism exists to manually trigger translation job processing or retrieve processing metrics via API.
+
+### Expected Behavior
+The system provides an authenticated admin endpoint that:
+- Triggers the translation job processor to run
+- Returns statistics about the processing session including total jobs processed, successful completions, and failures
+- Can be invoked by external schedulers or monitoring systems
+
+### User Impact
+System administrators and DevOps personnel can monitor translation processing health, manually trigger processing when needed, and integrate with external scheduling systems without direct database access.
+
+### Business Value
+Enables operational visibility into translation processing and provides flexibility for both automated scheduling and manual intervention during critical periods.
+
+### Acceptance Criteria
+- [ ] Endpoint requires admin-level authentication before processing
+- [ ] Single invocation triggers one processing cycle of pending translation jobs
+- [ ] Response includes count of jobs processed in this cycle
+- [ ] Response includes count of successful translations
+- [ ] Response includes count of failed translations
+- [ ] Response includes total processing time
+- [ ] Endpoint can be called repeatedly without adverse effects
+- [ ] Failed job processing does not prevent statistics from being returned
+- [ ] Endpoint is suitable for periodic invocation by cron or similar schedulers
+
+
+---
+
+## REQ-246: Admin Job Status Query API Endpoint
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Administrators should be able to query translation jobs by status and entity type to monitor system health and debug issues.
+
+### Current Behavior
+There is no API endpoint for administrators to view and filter translation job details.
+
+### Expected Behavior
+Administrators can retrieve a list of translation jobs filtered by their current status (pending, processing, completed, failed) and by entity type (property, FAQ, etc.), with sufficient detail for monitoring and troubleshooting purposes.
+
+### User Impact
+System administrators and support teams gain visibility into the translation job queue, allowing them to identify bottlenecks, track progress, investigate failures, and verify successful completions.
+
+### Business Value
+Provides operational visibility into the translation system, enabling proactive issue detection and faster resolution of translation-related problems.
+
+### Acceptance Criteria
+- [ ] Administrators can retrieve a list of all translation jobs
+- [ ] Results can be filtered by job status (pending, processing, completed, failed)
+- [ ] Results can be filtered by entity type (property, FAQ, etc.)
+- [ ] Each job record includes sufficient detail for debugging (job ID, status, timestamps, entity reference, error messages if applicable)
+- [ ] The endpoint is restricted to authenticated administrators only
+- [ ] Query results are paginated to handle large job volumes
+
+
+---
+
+## REQ-247: Middleware Language Context and Cookie Management
+
+**Date**: 2026-01-18 17:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The application middleware should automatically detect, apply, and persist user language preferences across all requests.
+
+### Current Behavior
+The middleware does not read or set language preferences from request cookies, meaning user language selections are not maintained across page navigations or sessions.
+
+### Expected Behavior
+When a user navigates through the application:
+- Their previously selected language preference is automatically detected and applied to each request
+- Language changes made by the user are immediately persisted and available on subsequent requests
+- The language context is consistently available throughout the request lifecycle
+
+### User Impact
+All users (guests and property owners) will benefit from persistent language preferences. Once a user selects their preferred language, it will remain active across all pages and future visits without requiring re-selection.
+
+### Business Value
+Improves user experience by eliminating the need to repeatedly select language preferences and ensures consistent localization throughout the user journey.
+
+### Acceptance Criteria
+- [ ] User's language preference is detected from cookies on each incoming request
+- [ ] Language context is available to all downstream request handlers and page components
+- [ ] When a user changes their language preference, the new selection is written to cookies
+- [ ] Language preference persists across browser sessions
+- [ ] Default language is applied when no preference cookie exists
+
+
+
+---
+
+## REQ-248: Language Selection Dropdown
+
+**Date**: 2026-01-18 18:12
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to select their preferred display language from a dropdown menu showing all supported languages in their native names.
+
+### Current Behavior
+No interface element exists for users to change the application's display language.
+
+### Expected Behavior
+A language selection control is accessible from the application interface, displaying all six supported languages using their native language names (e.g., "Deutsch" for German, "Français" for French). When a user selects a language:
+- The application interface immediately reflects the new language choice
+- For authenticated users, the preference is stored with their user profile
+- For guest users, the preference is stored locally to persist across sessions
+
+### User Impact
+All users, whether authenticated or browsing as guests, can view and interact with the application in their preferred language. The selection persists between visits, eliminating the need to repeatedly set language preferences.
+
+### Business Value
+Enables a truly multilingual user experience, increasing accessibility for international property owners and guests. Demonstrates commitment to serving a global audience and removes language barriers to platform adoption.
+
+### Acceptance Criteria
+- [ ] A dropdown control displays all six supported languages
+- [ ] Each language is shown using its native name (not English translations)
+- [ ] Selecting a language immediately updates the application's display language
+- [ ] For authenticated users, language preference is saved to their user account
+- [ ] For guest users, language preference is saved to browser storage
+- [ ] The user's last selected language is automatically applied when they return to the application
+- [ ] The language selector is accessible from all major pages in the application
+
+---
+
+## REQ-249: Language Preference Management Hook
+
+**Date**: 2026-01-18 18:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Components should be able to access and update the user's language preference through a centralized hook that manages persistence across both authenticated and guest user sessions.
+
+### Current Behavior
+No standardized mechanism exists for components to read or update language preferences, leading to potential inconsistency in how language settings are managed throughout the application.
+
+### Expected Behavior
+Components can import and use a hook that provides:
+- The current active language preference
+- A function to update the language preference
+- Loading states while the preference is being retrieved or saved
+- Error states if preference operations fail
+
+The hook automatically handles different persistence strategies based on user authentication status (database for authenticated users, browser storage for guests) and synchronizes the preference with the application's internationalization system.
+
+### User Impact
+Both authenticated users and guests experience consistent language preference handling throughout the application. Language selections persist appropriately for their session type, and all UI components reflect preference changes immediately.
+
+### Business Value
+Provides a maintainable, centralized approach to language preference management that reduces code duplication and ensures consistent behavior across all features requiring language selection.
+
+### Acceptance Criteria
+- [ ] Hook exposes the current language preference value
+- [ ] Hook exposes a function to update the language preference
+- [ ] For authenticated users, preference changes are saved to the user profile database
+- [ ] For guest users, preference changes are saved to browser local storage
+- [ ] Hook provides a loading state indicator during async operations
+- [ ] Hook provides error state and error message information for failed operations
+- [ ] Preference updates trigger re-renders in consuming components
+- [ ] The hook initializes preference from the appropriate source based on authentication status
+- [ ] The hook falls back to browser locale detection when no stored preference exists
+
+---
+
+## REQ-250: Application-Specific Locale Context Wrapper
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The application should provide a React context layer that wraps the internationalization framework with application-specific locale management logic.
+
+### Current Behavior
+Components interact directly with the internationalization framework for locale operations, requiring each to implement persistence, authentication integration, and state management independently.
+
+### Expected Behavior
+Components access locale functionality through a unified context that automatically handles language preference persistence, synchronizes with user profiles for authenticated users, manages browser storage for anonymous users, and provides a clean API for all locale-related operations.
+
+### User Impact
+Both authenticated and anonymous users benefit from seamless language preference persistence. Authenticated users have their language selection saved to their profile and synchronized across devices. Anonymous users have their selection preserved in browser storage for future visits.
+
+### Business Value
+Creates a maintainable abstraction layer that encapsulates all locale-related business logic in one location, reducing coupling to specific internationalization libraries and ensuring consistent behavior across the entire application.
+
+### Acceptance Criteria
+- [ ] Context exposes the current active locale
+- [ ] Context exposes the list of available locales for the application
+- [ ] Context provides a function to switch between available locales
+- [ ] For authenticated users, locale changes are persisted to the user profile in the database
+- [ ] For anonymous users, locale changes are persisted to browser local storage
+- [ ] Context integrates with the existing authentication system to determine user status
+- [ ] Context provides helper methods for common locale operations
+- [ ] Context prevents direct component dependency on the underlying internationalization framework
+- [ ] Locale switching triggers appropriate re-renders throughout the component tree
+- [ ] Context handles loading and error states for persistence operations
+
+---
+
+## REQ-251: User Language Preference Update Endpoint
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Authenticated users should be able to update their preferred language setting through an API endpoint.
+
+### Current Behavior
+There is no mechanism for users to persist their language preference to their profile.
+
+### Expected Behavior
+When a user selects a different language, their preference is saved and persists across sessions and devices. The next time they log in from any device, the application displays in their preferred language.
+
+### User Impact
+All authenticated users who wish to use the application in a language other than the default will benefit. This particularly impacts multilingual users and users whose native language differs from the application default.
+
+### Business Value
+Enabling persistent language preferences improves user experience by respecting user choice and reducing friction in international markets. Users no longer need to manually switch languages on every visit.
+
+### Acceptance Criteria
+- [ ] An authenticated user can submit a request to change their language preference
+- [ ] The submitted language preference is validated against supported languages
+- [ ] Successfully updated preferences are reflected immediately in subsequent requests
+- [ ] Unauthenticated requests are rejected with appropriate status code
+- [ ] Invalid language codes are rejected with clear error messaging
+- [ ] The preference persists across user sessions and devices
+
+
+---
+
+## REQ-252: Integrate Language Switcher into Application Navigation
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Users should be able to access the language switching control from the main navigation areas of the application, including the authenticated dashboard and public-facing pages.
+
+### Current Behavior
+The language switching component exists but is not integrated into any navigation areas, making it inaccessible to users who need to change their language preference.
+
+### Expected Behavior
+- Authenticated users see a language switcher control in the dashboard header navigation
+- Visitors on public-facing pages can optionally access language switching from the public navigation
+- The language switcher appears consistently in its designated location across all relevant pages
+- Switching languages updates the entire interface immediately without requiring page navigation
+
+### User Impact
+All users (both authenticated and unauthenticated) gain the ability to change their language preference through a visible, accessible control in the navigation, improving the multilingual experience and reducing the barrier to accessing content in their preferred language.
+
+### Business Value
+Increases accessibility for international users by making language selection discoverable and readily available, supporting the platform's global reach and user satisfaction.
+
+### Acceptance Criteria
+- [ ] Language switcher appears in the dashboard layout header for authenticated users
+- [ ] Language switcher maintains its position and styling consistently across dashboard pages
+- [ ] Language selection persists when navigating between different sections of the dashboard
+- [ ] Public-facing pages optionally display the language switcher in their navigation
+- [ ] The switcher remains functional and visible on both desktop and mobile viewports
+
+
+---
+
+## REQ-253: Create Comprehensive Unit Tests for Translation Service
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The translation service must have comprehensive unit tests covering translation execution, error handling, retry logic, and rate limiting to ensure reliability.
+
+### Current Behavior
+No unit tests exist for the translation service functionality, making it difficult to verify correctness and prevent regressions during future development.
+
+### Expected Behavior
+Developers can run a complete test suite that validates the translation service works correctly under normal conditions, handles failures gracefully, respects rate limits, and retries appropriately when encountering transient errors.
+
+### User Impact
+End users experience more reliable translations with fewer failures and unexpected behaviors. Developers can confidently modify and enhance the translation service knowing tests will catch breaking changes.
+
+### Business Value
+Reduces production incidents related to translation failures and accelerates development velocity by providing fast feedback on code changes.
+
+### Acceptance Criteria
+- [ ] Text translation produces correct results for valid inputs across multiple language pairs
+- [ ] Translation requests that fail transiently are automatically retried with exponential backoff
+- [ ] Translation requests that exceed rate limits are queued and processed when capacity becomes available
+- [ ] Invalid inputs (empty text, unsupported languages, malformed requests) are rejected with appropriate error messages
+- [ ] All test cases pass consistently and complete execution in under 30 seconds
+- [ ] Test coverage for translation service modules exceeds 80%
+
+
+---
+
+## REQ-254: Create Integration Tests for Translation Job Processing
+
+**Date**: 2026-01-18 [System Time]
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must include comprehensive integration tests that verify translation jobs are processed correctly from creation to completion, including scenarios with multiple concurrent jobs.
+
+### Current Behavior
+Integration tests for the translation job processing system do not exist. The job lifecycle and concurrent processing behavior are untested at the integration level.
+
+### Expected Behavior
+Automated integration tests execute during the development and deployment pipeline, validating:
+- Jobs move through all expected states (queued, processing, completed, failed)
+- Job results are stored and retrievable
+- Multiple jobs can run simultaneously without data corruption or race conditions
+- System handles job failures gracefully
+- Job status updates are accurate and timely
+
+### User Impact
+Developers and QA engineers gain confidence that the translation job system works reliably under realistic conditions. Production users experience fewer bugs and more predictable behavior when requesting translations.
+
+### Business Value
+Integration tests reduce the risk of critical bugs reaching production, particularly around edge cases like concurrent job processing. This prevents translation failures that could impact user experience and trust in the platform.
+
+### Acceptance Criteria
+- [ ] Tests verify a job progresses through all lifecycle states (created → queued → processing → completed)
+- [ ] Tests verify failed jobs transition to the failed state and include error details
+- [ ] Tests verify job results are correctly stored and retrievable via status endpoints
+- [ ] Tests simulate multiple concurrent jobs and verify all complete successfully
+- [ ] Tests verify concurrent jobs do not interfere with each other's data or state
+- [ ] Tests verify system maintains data integrity under concurrent load
+- [ ] All integration tests pass consistently in CI/CD pipeline
+
+---
+
+## REQ-255: Component Tests for Language Switcher
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system must include comprehensive component tests for the language switcher interface to verify dropdown behavior and language preference persistence.
+
+### Current Behavior
+Component tests for the language selection interface do not exist. The dropdown interaction patterns and preference persistence mechanisms are not validated through automated testing.
+
+### Expected Behavior
+Automated component tests execute during development and deployment, validating:
+- Dropdown opens when the user interacts with the trigger element
+- Dropdown displays all available language options
+- Dropdown closes after a language is selected
+- Selected language is visually indicated in the interface
+- Language preference persists across sessions
+- Previously selected language is automatically restored when the user returns
+
+### User Impact
+Developers gain confidence that the language switcher behaves consistently across browsers and devices. Users experience reliable language selection without unexpected behavior or lost preferences.
+
+### Business Value
+Component tests prevent regressions in a critical user-facing feature that directly impacts the multilingual experience. Automated validation reduces manual testing effort and catches issues before they reach production.
+
+### Acceptance Criteria
+- [ ] Tests verify dropdown opens on user interaction (click, keyboard, touch)
+- [ ] Tests verify dropdown displays all configured language options
+- [ ] Tests verify dropdown closes after language selection
+- [ ] Tests verify selected language is visually highlighted in the dropdown
+- [ ] Tests verify language preference is stored when a selection is made
+- [ ] Tests verify stored preference is restored when the component remounts
+- [ ] Tests verify component handles missing or invalid stored preferences gracefully
+- [ ] All component tests pass consistently in CI/CD pipeline
+
+
+---
+
+## REQ-256: Manual End-to-End Validation for Localization Features
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The application must undergo comprehensive manual end-to-end testing to validate that all localization features function correctly in real-world usage scenarios.
+
+### Current Behavior
+No formal manual validation process exists for the localization feature set, creating risk that integration issues or edge cases may go undetected until production.
+
+### Expected Behavior
+A tester or stakeholder can systematically validate that:
+- Language switching changes the interface language immediately and persists across sessions
+- All translated content displays correctly in each supported language without layout breaks or missing text
+- Translation jobs process successfully from submission through completion with appropriate status updates
+
+### User Impact
+Affects all users of the localized application. Successful validation ensures a seamless multilingual experience, while validation failures caught here prevent user-facing defects in production.
+
+### Business Value
+Manual validation catches integration issues, UX problems, and edge cases that automated tests may miss, reducing the risk of poor user experience when the localization feature launches.
+
+### Acceptance Criteria
+- [ ] Tester can switch between all supported languages and confirm the interface updates immediately
+- [ ] Tester verifies that language preference persists after closing and reopening the browser
+- [ ] Tester confirms all static UI elements display translated text with no layout overflow or truncation
+- [ ] Tester confirms dynamic content (if applicable) displays in the correct language based on user preference
+- [ ] Tester submits translation jobs and verifies they complete successfully with appropriate status indicators
+- [ ] Tester confirms job processing handles errors gracefully and provides clear feedback
+- [ ] Test results are documented with any defects reported back to the development team
+
+
+---
+
+## REQ-257: Create Common Namespace for Shared Translation Keys
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application should provide a centralized namespace for translation keys that are used across multiple features and pages.
+
+### Current Behavior
+Translation keys are scattered across feature-specific namespaces, leading to duplication when the same UI text appears in multiple contexts.
+
+### Expected Behavior
+A common namespace contains all reusable translation keys for shared UI elements such as buttons, labels, form fields, error messages, and navigation items. When developers need common text like "Save", "Cancel", or "Submit", they reference the common namespace instead of creating duplicate keys.
+
+### User Impact
+Affects developers and translators. Developers benefit from a single source of truth for common UI text, reducing implementation time and ensuring consistency. Translators see reduced workload as common phrases are translated once and reused everywhere.
+
+### Business Value
+Improves translation consistency across the application and reduces the cost and time required for localization by eliminating duplicate translation work.
+
+### Acceptance Criteria
+- [ ] A common namespace exists within the translation file structure
+- [ ] Common buttons (save, cancel, submit, delete, edit, etc.) are available as translation keys
+- [ ] Common form labels and validation messages are available as translation keys
+- [ ] Common navigation and action terms are available as translation keys
+- [ ] Developers can reference common namespace keys from any page or component
+- [ ] The common namespace is organized into logical subcategories for easy discovery
+
+---
+
+## REQ-257: Content Translation Module Infrastructure
+
+**Date**: 2026-01-18 18:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application must provide a dedicated module for translating dynamic user-generated content such as property descriptions, guide articles, and FAQ answers.
+
+### Current Behavior
+No structured system exists for managing the translation of user-generated content. Content created in one language cannot be automatically or systematically translated into other languages for multilingual users.
+
+### Expected Behavior
+The system provides a centralized content translation module that:
+- Defines clear contracts for what content can be translated and how translation requests are structured
+- Provides type-safe interfaces for translation operations across different content types
+- Supports translation of property-related content including descriptions, guides, and instructional articles
+- Enables integration with AI-powered translation services while abstracting implementation details
+
+### User Impact
+Affects property owners who create content and guests who consume content in different languages. Property owners gain the ability to reach international guests without manual translation effort, while guests can access property information in their preferred language.
+
+### Business Value
+This infrastructure enables the platform to support multilingual content at scale, removing language barriers and expanding market reach to international users. It provides the technical foundation for all future content translation features.
+
+### Acceptance Criteria
+- [ ] Module exports well-defined TypeScript interfaces for content translation requests and responses
+- [ ] Type definitions cover all user-generated content types requiring translation
+- [ ] Interfaces support batch translation operations for efficiency
+- [ ] Type system distinguishes between source content, translation requests, and translated output
+- [ ] Module structure supports future extension for additional content types without breaking changes
+- [ ] All exported types include clear documentation describing their purpose and usage
+
+
+---
+
+## REQ-257: Localization Type Definitions and Language Constants
+
+**Date**: 2026-01-18 15:42
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system must provide centralized type definitions and constants to ensure consistent language handling across all localization features.
+
+### Current Behavior
+No type definitions or constants exist for localization functionality.
+
+### Expected Behavior
+Developers can import and use standardized types for supported languages, language metadata, and translated content structures. Utility functions are available to retrieve language information and validate language codes without duplication.
+
+### User Impact
+This enables consistent language support across the application, ensuring all features recognize the same set of languages and handle multilingual content uniformly.
+
+### Business Value
+Establishes the type-safe foundation required for all subsequent localization features, preventing inconsistencies and reducing bugs related to language handling.
+
+### Acceptance Criteria
+- [ ] A single source of truth defines all supported language codes
+- [ ] Type definitions exist for language metadata including display names and regional information
+- [ ] Type definitions exist for multilingual content structures
+- [ ] Helper functions are available to query language information by code
+- [ ] All language-related types are exported from a central location for reuse throughout the application
+
+---
+
+## REQ-257: Translation Status API Endpoint
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a way to check the translation status of their content items, including summary counts and item-level details, filtered by entity type, specific entities, and status.
+
+### Current Behavior
+There is no API endpoint to query translation status for content across the system. Users and administrators have no visibility into which items have been translated, which are pending, or which have failed.
+
+### Expected Behavior
+Users can query translation status through a GET endpoint that accepts multiple filter parameters (entity type, entity ID, status, property ID) and returns both high-level summary counts and detailed item-level status information. The endpoint enforces account-based access control to ensure users only see status for content they own or have permission to access.
+
+### User Impact
+Affects property owners and account administrators who manage multilingual content. Provides visibility into translation coverage, helps identify untranslated content, and enables monitoring of translation processing progress.
+
+### Business Value
+Enables users to track translation coverage across their properties and content, identify gaps in multilingual support, and monitor ongoing translation jobs. This transparency builds trust in the translation system and helps users ensure complete language coverage for their guest-facing content.
+
+### Acceptance Criteria
+- [ ] GET endpoint accepts entityType filter to query by content category (e.g., items, guides, properties)
+- [ ] GET endpoint accepts entityId filter to query status for a specific content item
+- [ ] GET endpoint accepts status filter to find items in a specific translation state (pending, completed, failed)
+- [ ] GET endpoint accepts propertyId filter to scope results to a single property
+- [ ] Response includes summary counts showing total items, translated items, pending items, and failed items
+- [ ] Response includes item-level status details for each matching entity
+- [ ] Endpoint validates that the requesting user has access to the requested account and property data
+- [ ] Endpoint returns appropriate error responses for unauthorized access attempts
+- [ ] Response format supports pagination for large result sets
+
+---
+
+## REQ-258: Extract Button Labels to Translation Files
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All button text labels throughout the application should be externalized to translation files to support multi-language display.
+
+### Current Behavior
+Button labels are hardcoded directly in component code with English text strings. Users see buttons only in English regardless of their language preference.
+
+### Expected Behavior
+All button text is retrieved from translation files based on the user's selected language. When a user switches languages, all button labels update to display in the chosen language.
+
+### User Impact
+All users who prefer languages other than English will see button labels in their chosen language, making actions clearer and the application more accessible to international audiences.
+
+### Business Value
+Removing hardcoded button text is a foundational step for complete application internationalization, directly supporting market expansion to non-English speaking regions.
+
+### Acceptance Criteria
+- [ ] All primary action buttons display translated text (Submit, Save, Cancel, etc.)
+- [ ] All navigation buttons display translated text (Back, Next, Continue, etc.)
+- [ ] All form manipulation buttons display translated text (Add, Remove, Edit, Delete, etc.)
+- [ ] All modal and dialog buttons display translated text (Confirm, Close, OK, etc.)
+- [ ] Button labels update immediately when user changes language preference
+- [ ] Translation keys follow consistent naming convention across all button components
+- [ ] No hardcoded English button text remains in any component files
+
+
+---
+
+## REQ-258: Content Translation Orchestration System
+
+**Date**: 2026-01-18 21:05
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide a central coordination mechanism that queues translation jobs for content across all configured target languages.
+
+### Current Behavior
+No orchestration layer exists for managing bulk translation operations. Translation jobs must be created manually for each language and content item combination.
+
+### Expected Behavior
+When content needs translation, users can invoke a single operation that automatically:
+- Identifies all target languages configured for the property or account
+- Creates translation jobs for each language that doesn't already have a completed translation
+- Returns a consolidated result indicating which jobs were queued, which already exist, and any failures
+- Handles deduplication to avoid creating redundant translation jobs
+
+### User Impact
+Property owners and content managers who need to translate content into multiple languages will experience a streamlined workflow. Instead of initiating separate translation requests for each language, a single action triggers all necessary translations.
+
+### Business Value
+Reduces friction in the localization workflow and ensures consistent translation coverage across all supported languages. This accelerates time-to-market for multilingual content and reduces the likelihood of missing translations.
+
+### Acceptance Criteria
+- [ ] Orchestrator accepts configuration specifying content identifiers, content type, and optional target language list
+- [ ] System queries existing translations to avoid duplicate job creation
+- [ ] Translation jobs are created for each target language not already translated or in-progress
+- [ ] Result includes summary of jobs created, existing jobs skipped, and any errors encountered
+- [ ] Orchestrator integrates with translation service types established in the foundation phase
+- [ ] Failed individual language job creations do not prevent other languages from being queued
+- [ ] Return value provides sufficient detail for consumers to display progress or error states to users
+
+
+---
+
+## REQ-259: Property Owners Can Manually Update Translations for Their Content
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners should be able to manually edit and update translations for their property content in any supported language.
+
+### Current Behavior
+Translation content cannot be manually updated or corrected by property owners after initial automatic translation.
+
+### Expected Behavior
+- Property owners can access their content translations and make manual edits
+- When a translation is manually updated, the system marks it as manually reviewed
+- Only authorized property owners can update translations for content they own
+- Updates to translation content are saved and immediately reflected in the guest-facing application
+- The system records who made the manual update for audit purposes
+
+### User Impact
+Property owners who notice translation errors, cultural nuances, or prefer specific wording in different languages can now directly correct and refine their translated content instead of relying solely on automatic translation quality.
+
+### Business Value
+Improves translation accuracy and owner satisfaction by giving property owners direct control over their multilingual content quality, leading to better guest experiences and reduced support requests related to translation issues.
+
+### Acceptance Criteria
+- [ ] Property owners can submit updated translation content for their properties
+- [ ] System validates that the requesting user owns the content being translated
+- [ ] Updated translations are marked with a manual review status
+- [ ] System records the identity of the user who performed the manual update
+- [ ] Unauthorized users cannot update translations for content they do not own
+- [ ] Updated translations are immediately available when guests view the content
+- [ ] System accepts translation updates for all supported languages
+
+
+---
+
+## REQ-260: System Automatically Detects and Persists Guest Language Preferences
+
+**Date**: 2026-01-18 12:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should automatically detect a guest's preferred language from multiple sources and remember their choice across sessions.
+
+### Current Behavior
+The system does not detect or store guest language preferences, resulting in a single-language experience regardless of the guest's browser settings or geographic location.
+
+### Expected Behavior
+When a guest accesses the platform, the system should:
+- Automatically determine their preferred language by checking (in priority order): explicit URL parameter, saved language cookie, browser language settings
+- Apply the detected language to the guest's browsing session
+- Remember the guest's language choice when they explicitly select a different language
+- Map non-standard browser language codes to the nearest supported language
+
+### User Impact
+International guests will immediately see content in their preferred language without manual configuration. Their language choice will persist across visits, creating a more personalized and accessible experience.
+
+### Business Value
+Reduces friction for international guests and improves conversion rates by presenting localized content automatically, supporting the platform's global expansion strategy.
+
+### Acceptance Criteria
+- [ ] Guest language is detected from URL parameter when explicitly provided
+- [ ] Guest language is detected from cookie when no URL parameter exists
+- [ ] Guest language falls back to browser Accept-Language header when no cookie exists
+- [ ] Non-standard language codes are mapped to supported languages
+- [ ] Language preference is saved to a cookie when guest makes an explicit selection
+- [ ] Cookie persists across browser sessions
+- [ ] Unsupported languages gracefully default to platform's primary language
+
+
+---
+
+## REQ-261: Extract Modal and Dialog Strings for Internationalization
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All user-facing text within modal and dialog components must be extracted into translation files to support multiple languages.
+
+### Current Behavior
+Modal and dialog components contain hardcoded text strings (titles, messages, button labels, confirmation prompts) directly embedded in the component code, making it impossible to display these elements in languages other than English.
+
+### Expected Behavior
+All text displayed in modals and dialogs appears in the user's selected language, with strings stored in translation files and referenced through translation function calls within the components.
+
+### User Impact
+Users who prefer languages other than English will see confirmation dialogs, error messages, informational modals, and action prompts in their chosen language, improving comprehension and reducing errors during critical operations like deletions or bulk actions.
+
+### Business Value
+Enables the application to serve a global user base by ensuring all interactive prompts and system messages respect user language preferences, reducing support burden and improving user confidence when performing important actions.
+
+### Acceptance Criteria
+- [ ] All modal and dialog components are identified and catalogued
+- [ ] Hardcoded strings (titles, body text, button labels, error messages) are extracted from modal/dialog components
+- [ ] Translation keys follow the project's established naming conventions and namespace structure
+- [ ] Extracted strings are added to the appropriate translation namespace files (e.g., common.json or modals.json)
+- [ ] Components are updated to use translation function calls instead of hardcoded strings
+- [ ] All modals and dialogs display correctly when the user's language preference is changed
+- [ ] Confirmation dialogs, error modals, and informational popups maintain consistent visual appearance after translation integration
+- [ ] Edge cases (very long translated text, languages with different text direction) are handled gracefully
+
+
+---
+
+## REQ-262: Implement Entity-Specific Translation Triggers
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should automatically queue translation jobs when content entities (items, articles, links) are created or updated, extracting the appropriate translatable fields for each entity type.
+
+### Current Behavior
+There is no mechanism to automatically trigger translations when content is created or updated.
+
+### Expected Behavior
+When an item, article, or link is created or updated:
+- The system detects which translatable fields exist for that entity type
+- The system extracts the content from those fields along with the source language
+- The system queues translation jobs for all supported target languages
+- The system returns confirmation that translation jobs were queued successfully
+
+### User Impact
+Content owners who create or update items, articles, and links will have their content automatically queued for translation without manual intervention. This ensures consistent multilingual availability across all content types.
+
+### Business Value
+Automates the content translation workflow, reducing manual effort and ensuring all user-generated content becomes available in multiple languages immediately after creation or update.
+
+### Acceptance Criteria
+- [ ] When an item is created or updated, the name and description fields are extracted and queued for translation
+- [ ] When an article is created or updated, the title and description fields are extracted and queued for translation
+- [ ] When a link is created or updated, only the title field is extracted and queued for translation (URLs remain unchanged)
+- [ ] All triggers accept an entity ID and source language as input
+- [ ] All triggers return confirmation indicating whether translation jobs were successfully queued
+- [ ] If translation queuing fails, the system provides a clear indication of the failure without blocking the content creation/update operation
+
+
+---
+
+## REQ-262: Enable Re-Translation of Existing Content
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Owners and administrators should be able to trigger re-translation of previously translated content, with control over whether to preserve or overwrite manual edits.
+
+### Current Behavior
+Once content is translated, there is no mechanism to request fresh translations of the same content. Users cannot update translations to reflect improvements in translation quality, changes in source content, or corrections to earlier automated translations.
+
+### Expected Behavior
+Users can submit requests to re-translate existing content entities. The system queues these requests and processes them asynchronously. Users can specify whether manually edited translations should be preserved or replaced. After submission, users receive confirmation showing how many translation jobs were created and how many entities were skipped.
+
+### User Impact
+Owners and administrators managing multilingual property listings will be able to refresh translations when source content changes, when translation quality improves, or when corrections are needed. This ensures translated content remains accurate and up-to-date without requiring manual re-entry.
+
+### Business Value
+Maintains translation quality over time and allows the platform to benefit from ongoing improvements in translation services without requiring users to delete and re-create content.
+
+### Acceptance Criteria
+- [ ] Users can request re-translation of multiple content entities in a single operation
+- [ ] Users can choose whether manually edited translations should be preserved or overwritten
+- [ ] The system confirms how many translation jobs were queued
+- [ ] The system reports how many entities were skipped due to user preferences
+- [ ] Re-translation requests are processed asynchronously without blocking the user interface
+- [ ] Only authorized users (owners and administrators) can trigger re-translation
+
+
+---
+
+## REQ-263: Centralize Localization Type Exports
+
+**Date**: 2026-01-18 12:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The main types index should re-export all localization types so they can be imported from a single, consistent location throughout the application.
+
+### Current Behavior
+Localization types exist in a separate file but are not accessible through the central types export, requiring developers to import directly from the localization types file.
+
+### Expected Behavior
+Developers can import any localization type from the main types index without needing to know the internal file structure. All localization-related type definitions are available alongside other application types through a single import statement.
+
+### User Impact
+Developers working on localization features experience a more consistent and predictable import pattern, reducing cognitive overhead and making the codebase easier to navigate.
+
+### Business Value
+Improves developer productivity and code maintainability by establishing a single source of truth for type imports, reducing the likelihood of import errors and making refactoring easier.
+
+### Acceptance Criteria
+- [ ] The main types index file exports all types defined in the localization types file
+- [ ] Existing imports from the localization types file continue to work without breaking changes
+- [ ] New code can successfully import localization types from the main types index
+- [ ] No duplicate type definitions are introduced during the export process
+
+
+---
+
+## REQ-264: Extract Form Element Strings in Common and Shared Components
+
+**Date**: 2026-01-18 14:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All hardcoded form element text (labels, placeholders, hints) in common and shared components should be replaced with translation function calls to support multilingual form experiences.
+
+### Current Behavior
+Form elements in common and shared components display hardcoded English text for labels, placeholders, and helper messages. Users viewing the application in other languages still see English form text, creating an inconsistent and potentially confusing experience.
+
+### Expected Behavior
+When users view forms in their selected language, all form element text (labels like "Email", placeholders like "Enter your email", hints like "Password must be at least 8 characters") appears in the appropriate language. The text is retrieved from translation files using the t() function, maintaining the same visual structure and behavior while supporting multiple languages.
+
+### User Impact
+Users accessing the application in non-English languages will see form fields, placeholders, and helper text in their chosen language, making forms more accessible and reducing confusion about what information is required.
+
+### Business Value
+Completes a critical component of the internationalization strategy by ensuring form interfaces are fully localized, improving user experience for non-English speakers and expanding the platform's addressable market.
+
+### Acceptance Criteria
+- [ ] All form field labels in common and shared components use the t() function to retrieve translated text
+- [ ] All placeholder text in input fields uses translation keys instead of hardcoded strings
+- [ ] All helper text, hints, and validation messages use translation keys
+- [ ] Translation keys follow a consistent naming pattern (e.g., "forms.common.email.label", "forms.common.email.placeholder")
+- [ ] All extracted strings are added to the appropriate translation namespace files with English base text
+- [ ] Forms display correctly with translated text, maintaining proper layout and visual hierarchy
+- [ ] No English hardcoded strings remain in form elements within common and shared components
+
+
+
+---
+
+## REQ-265: Tag Translation Trigger System
+
+**Date**: 2026-01-18 17:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should automatically queue translation jobs for user-created tags while intelligently skipping already-translated system tags to ensure tag labels appear in all supported languages.
+
+### Current Behavior
+Tags exist in the system but are not automatically translated when created or modified. Users viewing the application in different languages see tag labels in the original language only, creating an inconsistent multilingual experience.
+
+### Expected Behavior
+When a tag is created or modified, the system checks whether translations already exist for that tag. If the tag is a system tag that was pre-seeded with translations, no action is taken. If the tag is user-created and lacks translations in target languages, a translation job is automatically queued. The translation occurs in the background without blocking the user's workflow.
+
+### User Impact
+Users viewing the application in their preferred language will see tag labels translated appropriately. Property owners creating tags in one language will have those tags automatically available to guests viewing content in other languages, improving cross-language discoverability and navigation.
+
+### Business Value
+Enhances the completeness of the localization system by ensuring metadata and navigation elements are fully translated, improving guest experience for international audiences and reducing manual translation burden on property owners.
+
+### Acceptance Criteria
+- [ ] System correctly identifies whether a tag is a system tag or user-created tag
+- [ ] Translation triggers do not queue jobs for system tags that were pre-seeded during initial setup
+- [ ] Translation jobs are queued for user-created tags when they are created or modified
+- [ ] The system checks for existing translations before queuing a job to avoid duplicate work
+- [ ] Translation queue operations return a result indicating whether a job was queued or skipped
+- [ ] The trigger function accepts tag identifier and source language as parameters
+- [ ] Background translation jobs process queued tag translations without user intervention
+
+
+
+---
+
+## REQ-265: Track Source Content Version Timestamps for Translation Synchronization
+
+**Date**: 2026-01-18 17:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The system should track when source content was last modified so it can determine when translations need to be regenerated.
+
+### Current Behavior
+The database stores translated content but does not maintain timestamps indicating when the original source content was last updated. As a result, the system cannot automatically detect when translations have become outdated due to changes in the source material.
+
+### Expected Behavior
+When source content is created or updated, the system records the modification timestamp in dedicated version tracking columns. This timestamp serves as a reference point for the translation system to identify content that has been modified since its last translation. The system can query these timestamps to efficiently locate content requiring re-translation.
+
+### User Impact
+Users will benefit from improved translation accuracy as the system can automatically identify when source content has changed and translations need updating. Property owners managing multilingual content will see more reliable synchronization between source and translated versions.
+
+### Business Value
+Enables the translation system to intelligently detect when content has become stale and requires re-translation, ensuring translation quality without manual tracking overhead. This automation reduces the risk of displaying outdated translations to guests.
+
+### Acceptance Criteria
+- [ ] Source version tracking columns are added to all translatable content tables
+- [ ] Columns are properly indexed to enable efficient queries for modified content
+- [ ] Column names follow a consistent naming pattern across all affected tables
+- [ ] The migration can be applied successfully via the database management interface
+- [ ] Existing content receives appropriate initial timestamp values after migration
+- [ ] Database queries can efficiently filter content by version timestamp to identify translation candidates
+
+
+
+---
+
+## REQ-266: Translation Fetch Utilities for Multilingual Content Retrieval
+
+**Date**: 2026-01-18 17:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide utility functions that retrieve content along with its translations in the user's selected language, enabling seamless multilingual content display throughout the application.
+
+### Current Behavior
+Content is stored in the database with translations in separate tables, but there are no dedicated utilities to fetch content and its translations together. Developers must manually write queries that join base content with translation tables, leading to inconsistent approaches and potential query inefficiencies.
+
+### Expected Behavior
+Developers can call utility functions that accept a content identifier and language code, then receive back the content item with translation fields populated in the requested language. If a translation exists in the requested language, those translated fields are returned. If no translation exists, the system falls back to the source language content. These utilities handle all database query complexity internally, providing a clean and consistent interface.
+
+### User Impact
+Users viewing content in their preferred language will see translated titles, descriptions, instructions, and other text fields. When content has not yet been translated into their language, they see the original language version, ensuring content is always accessible while translations are in progress.
+
+### Business Value
+Accelerates localization feature development by providing reusable data access patterns, reduces query inconsistencies across the codebase, and establishes a foundation for consistent multilingual content delivery throughout the platform.
+
+### Acceptance Criteria
+- [ ] A utility function retrieves a single item with its translation using the item's public identifier and target language
+- [ ] A utility function retrieves only the translation fields for a specific item without fetching the entire item record
+- [ ] A utility function batch-fetches translations for multiple guide articles using their identifiers and a target language
+- [ ] A utility function batch-fetches translations for multiple links using their identifiers and a target language
+- [ ] A utility function batch-fetches translations for system and user tags using their tag keys and a target language
+- [ ] All utility functions return null or empty results gracefully when content or translations do not exist
+- [ ] Query performance is optimized to minimize database round trips through appropriate use of batch operations
+- [ ] Functions accept language codes in a consistent format and validate input parameters
+
+---
+
+## REQ-267: Extract Toast Notification Messages for Internationalization
+
+**Date**: 2026-01-18 12:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All toast notification messages displayed throughout the application should use translation keys instead of hardcoded strings to support multiple languages.
+
+### Current Behavior
+Toast notifications for success, error, warning, and informational messages contain hardcoded English text strings. Users see messages like "Saved successfully" or "An error occurred" only in English, regardless of their language preference.
+
+### Expected Behavior
+Toast notifications display messages in the user's selected language. The text shown in toasts automatically adjusts when users switch languages, maintaining consistent messaging across all notification types.
+
+### User Impact
+All users who prefer languages other than English will see toast notifications in their chosen language. This improves comprehension of system feedback, reduces confusion during error states, and creates a more inclusive experience for international users.
+
+### Business Value
+Completes another component of the static UI translation layer, moving the application closer to full multilingual support. Ensures critical user feedback messages are accessible to all users regardless of language preference.
+
+### Acceptance Criteria
+- [ ] All toast notification calls throughout the codebase are identified and catalogued
+- [ ] Translation keys are created following the established naming convention under a notifications or toast namespace
+- [ ] Toast notification calls are updated to use the translation function instead of hardcoded strings
+- [ ] English base translations are added to the appropriate translation files
+- [ ] Toast notifications display correctly in English after the changes
+- [ ] When the user switches language preference, toast messages appear in the selected language
+- [ ] Success, error, warning, and info message types all support translated content
+
+
+---
+
+## REQ-268: Update Database Type Definitions for Localization Support
+
+**Date**: 2026-01-18 16:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application's database type definitions must include all new translation-related tables and columns to ensure type safety across the codebase.
+
+### Current Behavior
+The database type definitions do not reflect the new translation tables or the additional language-related columns added to existing tables as part of the localization foundation.
+
+### Expected Behavior
+All translation tables and new columns are represented in the application's type system, enabling developers to work with translation data in a type-safe manner throughout the application.
+
+### User Impact
+Developers working on localization features will have accurate type information, reducing runtime errors and improving development speed through better IDE support and compile-time validation.
+
+### Business Value
+Type safety prevents data integrity issues and accelerates feature development by catching errors before runtime.
+
+### Acceptance Criteria
+- [ ] All translation table structures are defined in the type system
+- [ ] New language-related columns on existing tables are included in type definitions
+- [ ] No TypeScript compilation errors occur when accessing translation data
+- [ ] IDE autocomplete correctly suggests translation table fields and new columns
+- [ ] Type definitions match the actual database schema
+
+
+---
+
+## REQ-268: Public Item API Endpoint with Translation Support
+
+**Date**: 2026-01-18 23:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Guests accessing item details via the public API should receive content automatically translated into their preferred language when available.
+
+### Current Behavior
+The public item API endpoint returns content only in the original language it was authored in. Guests viewing items through the public-facing interface cannot see translated versions of titles, descriptions, instructions, or other text content, regardless of their language preference.
+
+### Expected Behavior
+When a guest requests an item using its public identifier, the API accepts an optional language parameter and returns content merged with translations for that language. If translations exist in the requested language, those translated fields replace the original language fields in the response. When translations are not available for the requested language, the system returns the content in its original language. The response includes metadata indicating the language of the returned content and the translation status.
+
+### User Impact
+Guests browsing items in their preferred language will see titles, descriptions, room names, tag labels, and other text content translated appropriately. This improves comprehension and creates a more welcoming experience for international guests. When translations are unavailable, guests still access the original content without encountering errors or missing information.
+
+### Business Value
+Enables the guest-facing experience to deliver multilingual content, directly supporting international property rentals and improving guest satisfaction. This endpoint serves as the data layer foundation for the localized guest interface, allowing property owners to reach a broader international audience.
+
+### Acceptance Criteria
+- [ ] The API endpoint accepts a query parameter specifying the desired language code
+- [ ] The endpoint retrieves the base item content using the provided public identifier
+- [ ] The endpoint queries for translations matching the requested language and merges those translations into the response
+- [ ] The response format includes all item details with translated fields when available
+- [ ] The response includes metadata indicating which language is being returned and whether it is translated or original
+- [ ] When no language parameter is provided, the endpoint returns content in the original source language
+- [ ] When the requested language does not have translations available, the endpoint returns the original language content without errors
+- [ ] The endpoint handles invalid public identifiers gracefully and returns appropriate error responses
+- [ ] The endpoint handles invalid language codes gracefully and returns appropriate error responses
+
+
+---
+
+## REQ-269: Extract Empty State Messages for Translation
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+All empty state messages displayed to users should be translatable through the internationalization system rather than hardcoded in the application.
+
+### Current Behavior
+Empty state messages are embedded directly in component code as static text strings. When users view the application in different languages, these messages remain in the original language, creating an inconsistent multilingual experience.
+
+### Expected Behavior
+Empty state messages appear in the user's selected language. When a user switches between languages, all empty state messages update to reflect the new language choice. The system maintains consistent messaging across all supported languages.
+
+### User Impact
+Affects all users who prefer to use the application in a language other than the default. Users will see empty state messages (such as "No items found", "Nothing to display yet", "No results") in their chosen language, improving comprehension and overall user experience.
+
+### Business Value
+Improves application accessibility for international users and ensures consistent localization coverage across all user-facing text. Removes language barriers that may prevent users from understanding system states.
+
+### Acceptance Criteria
+- [ ] Users see empty state messages in their selected language
+- [ ] Empty state messages update when the user changes their language preference
+- [ ] All empty state scenarios throughout the application display translated text
+- [ ] The application maintains consistent empty state messaging across all supported languages
+
+
+
+---
+
+## REQ-270: Define Type Definitions for Translation Management Component
+
+**Date**: 2026-01-18 01:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The translation management interface requires a centralized type definition file to ensure type safety and consistency across all translation management components.
+
+### Current Behavior
+No type definitions exist for the translation management component. Developers building translation management features lack a shared type system to represent translation workflows, content status, language pairs, and translation operations.
+
+### Expected Behavior
+A comprehensive type definition file exists that defines all interfaces and types used throughout the translation management component. This includes types for translation records, content that can be translated, translation status values, language selection, batch operations, and component props. All translation management components reference this central type file, ensuring consistent data structures throughout the feature.
+
+### User Impact
+Property owners using the translation management interface will interact with a more reliable and consistent tool. The type system prevents data inconsistencies and ensures that translation workflows behave predictably across different content types and languages.
+
+### Business Value
+Establishes a foundation for rapid, error-free development of translation management features. Type safety reduces bugs, improves developer productivity, and ensures consistent behavior across the translation management interface. This accelerates delivery of the owner translation management capabilities that enable international property listings.
+
+### Acceptance Criteria
+- [ ] A types file exists in the translation management component directory structure
+- [ ] The file defines interfaces for all translation-related data structures
+- [ ] The file includes types for translation status, content types, and language pairs
+- [ ] Component prop interfaces are defined for translation management UI elements
+- [ ] All type definitions follow the application's existing TypeScript conventions
+- [ ] The types file exports all interfaces and types for use across the feature
+- [ ] TypeScript compilation succeeds without errors when importing from the types file
+
+---
+
+## REQ-270: Language Availability Query for Items
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users and systems should be able to query which language translations are available for a specific item.
+
+### Current Behavior
+There is no way to programmatically determine which languages have translations available for a given item. Clients cannot discover translation availability before attempting to fetch content in a specific language.
+
+### Expected Behavior
+When a request is made for a specific item, the system returns a list of all languages for which translations exist, including metadata about translation completeness and availability status.
+
+### User Impact
+Guest users browsing items will see language options only for translations that actually exist. Third-party integrations and mobile applications can dynamically adjust their language selection interfaces based on real availability rather than assuming all languages are supported for every item.
+
+### Business Value
+Improves user experience by preventing failed translation requests and reduces unnecessary API calls. Enables dynamic, data-driven language selection interfaces that adapt to actual content availability.
+
+### Acceptance Criteria
+- [ ] A public API endpoint accepts an item identifier and returns available languages
+- [ ] Response includes all languages with existing translations for the requested item
+- [ ] Response format is consistent and includes language codes and availability metadata
+- [ ] Endpoint is accessible without authentication for public items
+- [ ] Performance is optimized for frequent queries (appropriate caching or indexing)
+
+
+---
+
+## REQ-271: Extract Loading State Messages from Common and Shared Components
+
+**Date**: 2026-01-18 
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+All loading state messages displayed in common and shared components must be extracted to translation files to support multiple languages.
+
+### Current Behavior
+Loading state messages such as "Loading...", "Please wait...", "Fetching data...", and similar status indicators are hardcoded as English text strings directly within common and shared component code. Users see these messages only in English regardless of their language preference.
+
+### Expected Behavior
+Loading state messages appear in the user's selected language. When a component displays a loading indicator, the accompanying text reflects the current locale setting. The system retrieves these messages from translation files rather than using hardcoded English strings.
+
+### User Impact
+All users whose preferred language is not English will see loading states in their chosen language, creating a more consistent and localized experience throughout the application. This particularly affects users during data fetching, form submissions, and page transitions where loading states are most visible.
+
+### Business Value
+Improves perceived quality and professionalism of the localized experience by ensuring even transient UI states respect user language preferences, contributing to a fully internationalized application.
+
+### Acceptance Criteria
+- [ ] All loading state text in common components uses translation keys instead of hardcoded strings
+- [ ] All loading state text in shared components uses translation keys instead of hardcoded strings
+- [ ] Translation files include entries for all extracted loading state messages
+- [ ] Loading states display correctly in at least two different languages when locale is switched
+- [ ] No hardcoded English loading messages remain in common or shared component code
+
+
+---
+
+## REQ-273: Translation Preview Panel for Multi-Language Content Review
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users need a dedicated panel to preview source content alongside all target language translations with their current status and available actions.
+
+### Current Behavior
+No mechanism exists for viewing source content and its translations side-by-side in a unified interface.
+
+### Expected Behavior
+When a user selects content to review, a panel slides in from the right side of the screen (400px wide) displaying:
+- The original source content at the top
+- A list of all six supported languages below, each showing its translation status
+- Action buttons for each translation: Edit, Re-translate, and Retry
+
+### User Impact
+Owners managing multilingual property listings and content will be able to quickly review translation quality, identify missing or failed translations, and take corrective actions without navigating between multiple screens.
+
+### Business Value
+Streamlines the translation review workflow, reducing time spent managing multilingual content and improving translation quality oversight.
+
+### Acceptance Criteria
+- [ ] Panel appears from the right edge with smooth animation when triggered
+- [ ] Panel has a fixed width of 400 pixels
+- [ ] Source content is clearly displayed at the top of the panel
+- [ ] All six supported languages are listed with visible status indicators
+- [ ] Each language entry shows Edit, Re-translate, and Retry action buttons
+- [ ] Panel can be dismissed and reopens with correct content when re-triggered
+- [ ] Panel is responsive and does not break layout on smaller screens
+
+
+---
+
+## REQ-272: Implement Translation Storage Utilities
+
+**Date**: 2026-01-18 (Created by Claude Agent)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide utilities to persist translated content for items, articles, links, and tags to their respective storage tables, supporting both initial creation and subsequent updates.
+
+### Current Behavior
+No centralized storage utilities exist for persisting translated content. Translation data cannot be saved or updated in the database.
+
+### Expected Behavior
+Users (system processes) can store translations for any content type using dedicated storage functions. When a translation already exists for a given content and language combination, the system updates it. When no translation exists, the system creates a new entry. All storage operations complete successfully or provide clear error information.
+
+### User Impact
+This enables the translation workflow to persist AI-generated or manually-entered translations. Content creators benefit from having their translations automatically saved. End users will eventually see translated content as a result of this storage capability.
+
+### Business Value
+Foundation for the content translation feature. Without reliable storage utilities, translations cannot be persisted, making the entire translation infrastructure non-functional.
+
+### Acceptance Criteria
+- [ ] Storing an item translation with valid data succeeds and returns confirmation
+- [ ] Storing an article translation with valid data succeeds and returns confirmation
+- [ ] Storing a link translation with valid data succeeds and returns confirmation
+- [ ] Storing a tag translation with valid data succeeds and returns confirmation
+- [ ] Attempting to store a translation for content that already has a translation in that language updates the existing record rather than creating a duplicate
+- [ ] Storage operations fail gracefully with clear error messages when provided invalid data
+- [ ] All storage functions handle concurrent requests without data corruption
+
+
+---
+
+## REQ-273: Create Translation Utility Helpers
+
+**Date**: 2026-01-18 10:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system requires utility helper functions to support translation operations including merging original content with translations, determining the best display language based on availability, and formatting language codes for user-friendly display.
+
+### Current Behavior
+No centralized utility functions exist for common translation operations. Each component or service that needs to merge translations, determine display languages, or format language names must implement its own logic, leading to code duplication and inconsistent behavior across the application.
+
+### Expected Behavior
+A dedicated utility module provides reusable helper functions for translation operations:
+
+1. **mergeTranslation(original, translation)**: Combines original content with its translation, returning a unified object where translated fields take precedence over original fields when available. Returns the original content unchanged if no translation is provided.
+
+2. **getDisplayLanguage(requested, available, source)**: Determines the best language to display based on the user's requested language, the languages for which translations are available, and the source language of the content. Falls back through the priority chain: requested language (if translation exists) -> source language -> first available language.
+
+3. **formatLanguageName(code, native?)**: Converts a language code (e.g., 'fr', 'de') into a human-readable display name. When the optional native parameter is true, returns the native name (e.g., "Francais", "Deutsch"). When false or omitted, returns the English name (e.g., "French", "German").
+
+### User Impact
+Developers building translation features will have consistent, tested utilities to work with. End users will experience consistent behavior when viewing content in different languages, with predictable fallback behavior when their preferred language is unavailable.
+
+### Business Value
+Reduces development time and maintenance burden by centralizing common translation logic. Ensures consistent user experience across all parts of the application that handle multilingual content. Prevents bugs that arise from inconsistent fallback implementations.
+
+### Acceptance Criteria
+- [ ] mergeTranslation function correctly combines original item data with translation data, prioritizing translated fields
+- [ ] mergeTranslation returns original content unchanged when translation is null or undefined
+- [ ] mergeTranslation handles partial translations where only some fields are translated
+- [ ] getDisplayLanguage returns the requested language when a translation exists for it
+- [ ] getDisplayLanguage falls back to source language when requested language has no translation
+- [ ] getDisplayLanguage returns source language when requested language matches source language
+- [ ] getDisplayLanguage handles edge cases including empty available translations array
+- [ ] formatLanguageName returns correct English names for all six supported languages (en, fr, es, de, nl, it)
+- [ ] formatLanguageName returns correct native names when native parameter is true
+- [ ] formatLanguageName handles unknown language codes gracefully by returning the code itself
+- [ ] All utility functions are properly typed with TypeScript and exported from the translations module
+- [ ] File location is `/src/lib/translations/translation-utils.ts`
+
+### Technical Notes
+- File: `/src/lib/translations/translation-utils.ts`
+- Supported languages: English (en), French (fr), Spanish (es), German (de), Dutch (nl), Italian (it)
+- Part of Epic 4 - Guest Experience, Phase 2: Translation Data Layer
+- Depends on types defined in `/src/types/l10n.ts` or equivalent
+- Should be exported from `/src/lib/translations/index.ts` barrel file
+
+
+---
+
+## REQ-274: Create TranslationStatusItem Component
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Display individual translation status rows showing language, completion state, preview text, and available actions for each target language in the owner's translation management interface.
+
+### Current Behavior
+No component exists to display per-language translation status information.
+
+### Expected Behavior
+Each target language displays as a single row containing:
+- Language flag icon and name
+- Visual status indicator (complete, pending, failed, or manual review needed)
+- Preview of translated text
+- Action buttons specific to that language's current state
+
+Status is color-coded for quick scanning:
+- Green indicates translation is complete
+- Orange indicates translation is pending
+- Red indicates translation has failed
+- Purple indicates manual review is required
+
+### User Impact
+Property owners managing multilingual content can quickly assess translation status across all target languages at a glance, understand which translations need attention, and take immediate action on individual languages without navigating away from the preview panel.
+
+### Business Value
+Streamlines the translation review workflow by surfacing status and actions at the language level, reducing time spent managing multilingual content and improving translation quality through clear visual feedback.
+
+### Acceptance Criteria
+- [ ] Row displays language flag icon alongside language name
+- [ ] Status indicator uses specified color scheme (green/orange/red/purple) based on translation state
+- [ ] Preview text from the translation is visible in the row
+- [ ] Action buttons appropriate to the current status are available per row
+- [ ] Component integrates within the translation preview panel layout
+- [ ] Visual design matches owner translation management specifications
+
+
+---
+
+## REQ-275: Create TranslationProgressBar Component
+
+**Date**: 2026-01-18 16:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Display an animated visual progress indicator showing how many translations have been completed out of the total number of target languages being processed.
+
+### Current Behavior
+No progress indicator exists to show translation completion status across multiple languages.
+
+### Expected Behavior
+A progress bar displays at the top of the translation management interface showing completion in two ways:
+- Visual bar fill representing percentage complete (e.g., 60% fill for 3 out of 5 languages)
+- Numeric counter displaying completion ratio (e.g., "3/5 translations complete")
+
+The bar animates smoothly when translation status changes, providing immediate visual feedback as translations are generated or updated. When all translations are complete, the bar displays a distinct completion state.
+
+### User Impact
+Property owners can immediately assess overall translation progress without needing to scan through individual language status items. The animated feedback provides reassurance that translation processing is actively occurring, reducing uncertainty during batch translation operations.
+
+### Business Value
+Improves perceived performance and user confidence during translation operations by providing clear, immediate visual feedback. Reduces support inquiries related to "is the system working?" by making progress transparent and visible.
+
+### Acceptance Criteria
+- [ ] Progress bar displays completion ratio as numeric text (e.g., "3/5 translations complete")
+- [ ] Visual bar fill accurately represents percentage of completed translations
+- [ ] Progress updates are animated smoothly rather than jumping instantly
+- [ ] Completion state is visually distinct when all translations are done
+- [ ] Component integrates seamlessly into the translation preview panel header
+- [ ] Progress accurately reflects the number of completed versus total target languages
+
+### Technical Notes
+- File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`
+- Part of Epic 5 - Owner Translation Management, Phase 2: Core UI Components, Task 2.4
+- Animation should use CSS transitions or Framer Motion for smooth updates
+- Consider using Radix UI Progress primitive for accessibility
+- Progress calculation: (completed translations / total target languages) * 100
+
+
+---
+
+## REQ-276: Create Guest Language Selection Interface
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Guests should be able to view and select from all available platform languages, with clear visual indicators showing which languages have complete translations for the current content.
+
+### Current Behavior
+No guest-specific language selection interface exists.
+
+### Expected Behavior
+A language dropdown displays all six supported platform languages with native names and flag icons. Each language entry shows a checkmark when translations are available for the current content. Languages without translations appear visually subdued but remain selectable, allowing guests to express their preference even when content is not yet translated.
+
+### User Impact
+Guests visiting property pages can immediately see which languages are fully supported for the content they're viewing and switch to their preferred language. This improves accessibility for international users and sets clear expectations about translation availability.
+
+### Business Value
+Enhances international user experience by providing transparent language availability information, reducing confusion when translations are incomplete while still capturing language preferences for future content prioritization.
+
+### Acceptance Criteria
+- [ ] Dropdown displays all six supported languages with native language names
+- [ ] Each language option displays a recognizable flag icon
+- [ ] Available translations are marked with a visual indicator (checkmark)
+- [ ] Unavailable translations appear visually distinct (grayed out) but remain selectable
+- [ ] Dropdown follows accessibility best practices for keyboard navigation and screen readers
+- [ ] Language selection persists across page navigation
+- [ ] Selected language is visually highlighted in the dropdown
+
+---
+
+## REQ-277: Enable Inline Editing of Translation Content
+
+**Date**: 2026-01-18 (Current Date)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should be able to edit translation content through a dedicated modal interface that displays both the original text and the translation side-by-side for context.
+
+### Current Behavior
+The system does not yet provide a user interface for editing translations. Users cannot view or modify translation content through the application.
+
+### Expected Behavior
+When a user chooses to edit a translation, a modal dialog appears showing:
+- The original text in one panel (read-only)
+- The translation text in an editable text area in an adjacent panel
+- A character count indicator that updates as the user types
+- Visual feedback when unsaved changes exist
+- Clear actions to either save the changes or cancel and discard them
+
+If the translation exceeds recommended length guidelines, the character count displays a warning indicator.
+
+### User Impact
+Translation managers and content editors will be able to review and refine translations directly within the application. The side-by-side layout helps ensure translation accuracy by keeping the source text visible while editing.
+
+### Business Value
+Streamlines the translation workflow by eliminating the need for external tools or database access. Reduces translation errors by providing immediate context of the original text.
+
+### Acceptance Criteria
+- [ ] Modal opens when user initiates translation editing action
+- [ ] Original text displays in a read-only panel
+- [ ] Translation text displays in an editable text area in a separate panel
+- [ ] Character count updates in real-time as user types
+- [ ] Visual indicator appears when character count exceeds threshold
+- [ ] Save button is enabled only when changes have been made
+- [ ] Cancel button closes modal and discards unsaved changes
+- [ ] Save button closes modal and persists changes
+- [ ] User receives confirmation prompt if attempting to close modal with unsaved changes
+- [ ] Modal is keyboard accessible and follows accessibility best practices
+
+
+---
+
+## REQ-278: Source Language Detection for Content Creation
+
+**Date**: 2026-01-18 14:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should automatically determine the appropriate source language when users create new content based on their preferences and account settings.
+
+### Current Behavior
+The system does not currently infer or apply a default source language during content creation. Language detection logic for new content does not exist.
+
+### Expected Behavior
+When a user creates new content, the system determines the source language by evaluating preferences in priority order:
+1. Any explicit language override provided at the time of content creation
+2. The user's personal preferred language setting
+3. The account's default preferred language setting
+4. The system default language (English) if no preferences are configured
+
+The detected source language is then used throughout the content creation workflow to ensure proper translation tracking and multilingual content management.
+
+### User Impact
+Content creators experience seamless language handling without needing to manually specify the source language for every piece of content. International users working in non-English contexts benefit from having their preferred language automatically recognized and applied.
+
+### Business Value
+Reduces friction in the content creation process by intelligently detecting user intent through existing preference data. Ensures accurate source language tracking for downstream translation workflows, improving overall localization quality and reducing manual configuration overhead.
+
+### Acceptance Criteria
+- [ ] System checks for explicit language override parameter first
+- [ ] System falls back to user's preferred language if override is not provided
+- [ ] System falls back to account's preferred language if user preference is not set
+- [ ] System defaults to English if no preferences are configured
+- [ ] Detected language is validated against the list of supported platform languages
+- [ ] Invalid or unsupported language codes result in English default being applied
+- [ ] Source language detection executes consistently across all content creation APIs
+- [ ] Detected source language is persisted with the created content record
+
+
+
+---
+
+## REQ-279: Translation Banner for Guest Content Context
+
+**Date**: 2026-01-18 15:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Guests viewing auto-translated content should see a persistent banner indicating the translation status and providing an option to view the original content.
+
+### Current Behavior
+The system does not currently display any visual indicator when guests are viewing translated content. Users have no way to know if content has been auto-translated or to access the original language version.
+
+### Expected Behavior
+When a guest views content that has been auto-translated to their preferred language, a light blue banner appears at the top of the content area displaying:
+- A globe icon indicating internationalization context
+- Text reading "Translated from [Language] - View original" where [Language] is the name of the source language
+- A clickable "View original" action that switches the display to show the untranslated source content
+- The banner remains visible and is not dismissible, ensuring guests always understand the translation context
+
+The banner uses a soft blue background color (#E3F2FD) to distinguish it from standard content while remaining visually unobtrusive.
+
+### User Impact
+International guests gain immediate transparency about translation status, building trust through clear communication. Guests who are bilingual or prefer to validate translation accuracy can easily access the original content. This reduces confusion and improves confidence in the accuracy of information.
+
+### Business Value
+Increases transparency and trust with international users by clearly communicating when content has been machine-translated. Provides a pathway for guests to verify translations, which reduces support inquiries about content discrepancies and improves overall guest satisfaction in multilingual experiences.
+
+### Acceptance Criteria
+- [ ] Banner displays when content has been auto-translated to guest's preferred language
+- [ ] Banner does not appear when content is shown in its original language
+- [ ] Banner background uses color #E3F2FD
+- [ ] Globe icon appears at the start of the banner text
+- [ ] Banner text displays "Translated from [Language] - View original" with correct source language name
+- [ ] "View original" is visually identifiable as a clickable action
+- [ ] Clicking "View original" switches content display to source language
+- [ ] Banner is not dismissible and remains visible while viewing translated content
+- [ ] Banner is responsive and displays correctly on mobile devices
+- [ ] Banner follows accessibility standards for color contrast and screen reader compatibility
+
+---
+
+## REQ-280: Translation Status Query Hook
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need a reusable way to check whether content has been translated and monitor the status of translation operations for individual items or entire properties.
+
+### Current Behavior
+No standardized mechanism exists to query translation status from the frontend. Components cannot easily determine if content is available in the user's preferred language or if translations are pending.
+
+### Expected Behavior
+A hook provides translation status information with proper loading and error states. The hook supports two query modes: checking status for a single entity (such as a property description or amenity) or retrieving status for all translatable content within a property. The hook automatically handles API communication and state management.
+
+### User Impact
+Property owners and guests will see accurate indicators showing when content is translated, being translated, or unavailable in their language. This enables the application to display appropriate loading states and fallback messaging.
+
+### Business Value
+Transparent translation status improves user trust and sets proper expectations about content availability across languages.
+
+### Acceptance Criteria
+- [ ] Hook accepts parameters to query either a single entity or property-wide status
+- [ ] Hook returns loading state while fetching data from the API
+- [ ] Hook returns error state when API requests fail
+- [ ] Hook returns translation status data when successfully retrieved
+- [ ] Hook can be imported and used by any component needing translation status
+- [ ] Hook automatically manages cleanup when component unmounts
+
+
+
+---
+
+
+### Summary
+When items are created or updated through the admin API, the system should automatically queue translations for all supported languages.
+
+### Current Behavior
+Creating or updating items through the admin API does not trigger any translation process. Items remain in their original language only, requiring manual intervention to make them available in other languages.
+
+### Expected Behavior
+When an admin creates a new item, the system automatically initiates translation jobs for all supported languages and returns job identifiers in the response. When an admin updates an existing item, the system removes outdated translations, queues fresh translations, and returns the new job identifiers. The API accepts an optional source language parameter to properly tag the original content.
+
+### User Impact
+Content creators no longer need to manually trigger translations after creating or editing items. International guests will see items available in their preferred language sooner, as translations begin processing immediately upon content publication or update.
+
+### Business Value
+Reduces administrative overhead and ensures consistent multilingual coverage of all content. Accelerates time-to-market for new items across all supported locales, improving international guest experience without additional manual steps.
+
+### Acceptance Criteria
+- [ ] POST handler accepts optional sourceLanguage field in request body
+- [ ] After successful item creation, translation jobs are queued automatically
+- [ ] POST response includes translationJobIds array with all queued job identifiers
+- [ ] PUT or PATCH handler removes existing translations before applying updates
+- [ ] After successful item update, new translation jobs are queued automatically
+- [ ] PUT or PATCH response includes translationJobIds array with all queued job identifiers
+- [ ] Translation queueing does not block the main creation or update operation
+- [ ] If translation queueing fails, the item creation or update still succeeds
+- [ ] API documentation reflects the new sourceLanguage parameter and translationJobIds response field
+
+
+---
+
+## REQ-282: Missing Translation Notification Banner
+
+**Date**: 2026-01-18 14:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Guests should see a subtle informational banner when viewing content that doesn't have a translation available in their preferred language.
+
+### Current Behavior
+When a translation is unavailable, guests see content in the fallback language without any indication that they're viewing untranslated content.
+
+### Expected Behavior
+When a guest's preferred language is French but the content is only available in English, they see a muted informational banner stating "French translation not available. Showing content in English." The banner should be understated and reassuring rather than alarming.
+
+### User Impact
+Guests using the platform in languages where translations are incomplete or pending will better understand why they're seeing content in a different language. This reduces confusion and sets appropriate expectations about content availability.
+
+### Business Value
+Improves transparency and user trust by explicitly communicating translation availability rather than silently displaying fallback content.
+
+### Acceptance Criteria
+- [ ] Banner appears only when viewing content in a fallback language (not the user's preferred language)
+- [ ] Message clearly indicates which language is preferred and which language is being displayed
+- [ ] Visual styling is muted and non-alarming (info-level severity, not warning or error)
+- [ ] Banner is dismissible or non-intrusive enough to not interfere with content consumption
+- [ ] Banner adapts its message based on the user's preferred language and the displayed language
+
+
+---
+
+## REQ-283: Real-time Translation Updates Hook
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Users should see translated content appear automatically in the interface as soon as background translation jobs complete, without needing to refresh the page.
+
+### Current Behavior
+When translations are processed asynchronously by the translation service, users must manually refresh the page or navigate away and back to see the newly translated content appear in their selected language.
+
+### Expected Behavior
+The interface automatically updates to display newly completed translations in real-time. When a user is viewing content in their preferred language and a translation finishes processing in the background, the translated text appears immediately without any user action required.
+
+### User Impact
+All users browsing the application in non-source languages will benefit from immediate visibility of translations as they become available, creating a more responsive and polished experience. This particularly improves the experience during initial data seeding or when owners add new content.
+
+### Business Value
+Eliminates the perception of incomplete or missing translations by making translation availability feel instantaneous. Reduces user confusion and support requests related to "missing" translations that are actually still processing.
+
+### Acceptance Criteria
+- [ ] When viewing content in a selected language, newly completed translations appear in the UI without page refresh
+- [ ] The subscription automatically activates when the hook is mounted in a component
+- [ ] The subscription properly disconnects and cleans up resources when the component unmounts
+- [ ] Multiple instances of the hook on the same page do not create duplicate subscriptions
+- [ ] Translation updates only trigger UI updates for content currently displayed or relevant to the active user session
+
+
+
+---
+
+
+
+---
+
+## REQ-284: Extract Confirmation Dialog Messages for Internationalization
+
+**Date**: 2026-01-18 14:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Confirmation dialog messages throughout the application should be extracted from hardcoded strings and replaced with translation keys to support multi-language user experiences.
+
+### Current Behavior
+Confirmation dialogs display hardcoded English messages directly embedded in component code. When users interact with the application in different languages, these critical confirmation prompts remain in English, creating an inconsistent and potentially confusing experience.
+
+### Expected Behavior
+All confirmation dialog messages appear in the user's selected language. When a user chooses to delete an item, change a setting, or perform any action requiring confirmation, the dialog title, body text, and button labels display in their preferred language. The messages maintain the same tone and clarity as the original English versions while adapting appropriately to each target language.
+
+### User Impact
+International users will experience a fully localized interface during critical decision points. Property owners and guests operating in non-English languages will better understand the consequences of destructive or irreversible actions before confirming them, reducing accidental data loss and improving overall trust in the system.
+
+### Business Value
+Completes the localization infrastructure for interactive UI components, ensuring compliance with internationalization requirements for global markets. Reduces support burden by preventing user errors caused by language barriers during critical workflows.
+
+### Acceptance Criteria
+- [ ] All confirmation dialog titles are moved to translation files
+- [ ] All confirmation dialog body messages are moved to translation files
+- [ ] All confirmation button labels (confirm, cancel, continue, etc.) are moved to translation files
+- [ ] Dialogs display translated content when user's language preference is set to a non-English language
+- [ ] Translation keys follow the established naming convention for the common namespace
+- [ ] Placeholder values (item names, counts, etc.) are properly interpolated into translated strings
+- [ ] All confirmation dialogs maintain their original functionality and validation logic
+- [ ] Component test coverage validates translation key usage
+
+### Technical Notes
+- Part of Epic 2 - Static UI Translation, Phase 2H: Common & Shared Components, Task 2H.8
+- Translation keys should be organized under `common.dialogs.confirm.*` namespace
+- Consider extracting generic confirmation patterns (delete, discard changes, overwrite) as reusable templates
+- Update component tests to verify translation function calls with correct keys
+
+
+---
+
+## REQ-284: View Original Language Toggle
+
+**Date**: 2026-01-18 09:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Guests should be able to toggle between viewing translated content and the original language version with a single click.
+
+### Current Behavior
+Guests viewing translated content have no way to quickly compare the translation with the original text or verify accuracy by viewing the source language.
+
+### Expected Behavior
+A toggle control appears when guests are viewing translated content, allowing them to:
+- Switch from translated content to the original language version with one click
+- Switch back to the translation with one click
+- See clear visual indication of which version they are currently viewing
+- Understand through button text whether they will see the original or the translation when clicked
+
+The control displays contextual text that changes based on the current view state, indicating the language of the original content and the action that will occur when activated.
+
+### User Impact
+International guests viewing listings in their preferred language gain confidence in translation accuracy by being able to reference the original content. This is particularly valuable for important details like house rules, check-in instructions, or amenity descriptions where precise understanding matters.
+
+### Business Value
+Increases guest trust in the platform's translation quality and reduces booking friction for international users who want to verify critical details before committing.
+
+### Acceptance Criteria
+- [ ] When viewing translated content, a toggle control is visible to the user
+- [ ] The control displays text indicating the original language (e.g., "View in original (English)")
+- [ ] Clicking the control swaps the displayed content to show the original language version
+- [ ] After toggling to original content, the control text updates to indicate the translation option (e.g., "View translation")
+- [ ] Clicking again returns the user to the translated content
+- [ ] The control uses a secondary button style that is visually distinct from primary actions
+- [ ] An icon appears on the control that reinforces the swap/toggle action
+- [ ] The toggle state persists while the user remains on the same content view
+- [ ] The control is keyboard accessible and follows standard accessibility patterns
+- [ ] The component gracefully handles cases where original content is not available
+
+
+---
+
+## REQ-285: Translation Status Dashboard Widget
+
+**Date**: 2026-01-18 12:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Display a summary card on the dashboard showing overall translation status with visual progress indicators and quick access to detailed management.
+
+### Current Behavior
+The dashboard does not provide any visibility into translation completion status or progress across languages.
+
+### Expected Behavior
+The dashboard displays a dedicated widget showing:
+- A summary card styled consistently with other dashboard elements
+- A visual progress bar indicating overall translation completion percentage
+- Count breakdowns categorized by status: complete, partial, pending, and failed translations
+- A "View Details" link that navigates users to the full translation management interface
+
+### User Impact
+Property owners and administrators gain immediate visibility into translation status without navigating through multiple screens. They can quickly assess translation health and identify items requiring attention.
+
+### Business Value
+Improves transparency and encourages completion of translations by making status visible at the primary entry point. Reduces friction in managing multilingual content.
+
+### Acceptance Criteria
+- [ ] Widget renders within the dashboard layout alongside other summary cards
+- [ ] Progress bar accurately reflects percentage of completed translations across all content
+- [ ] Status counts display correct numbers for complete, partial, pending, and failed translations
+- [ ] "View Details" link navigates to the translation management view when clicked
+- [ ] Widget design is visually consistent with existing dashboard components
+- [ ] Widget is responsive and displays correctly on mobile devices
+- [ ] Widget handles zero translations state gracefully with appropriate messaging
+
+
+---
+
+## REQ-286: Automatic Translation Queueing for Link Content
+
+**Date**: 2026-01-18 14:30
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+When administrators create or modify link titles, the system should automatically queue translation jobs to keep multilingual content synchronized.
+
+### Current Behavior
+Creating or updating link titles does not trigger translation jobs, requiring manual intervention to ensure links are available in all supported languages.
+
+### Expected Behavior
+When an administrator creates a new link, the system queues a translation job for the link title. When an administrator updates an existing link, the system removes outdated translations and queues new translation jobs for the updated title.
+
+### User Impact
+Property owners and administrators no longer need to manually trigger translation processes for link content. Guests viewing content in non-source languages receive translated link titles automatically after a processing delay.
+
+### Business Value
+Reduces administrative overhead and ensures multilingual content stays synchronized automatically, improving the experience for international guests.
+
+### Acceptance Criteria
+- [ ] After successfully creating a link, a translation job is queued for the link title
+- [ ] After successfully updating a link title, existing translations for that link are removed from the database
+- [ ] After successfully updating a link title, a new translation job is queued
+- [ ] Translation queueing does not block the API response or degrade performance
+- [ ] If translation queueing fails, the link creation/update operation still succeeds
+- [ ] Translation jobs respect the configured languages for the property or system
+- [ ] The behavior is consistent for both POST and PUT operations
+
+---
+
+## REQ-287: Display Current Language with Flag Indicator for Guests
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Guests should see a compact visual indicator showing which language they are currently viewing the application in, with optional information about translation source.
+
+### Current Behavior
+There is no visual indicator showing guests what language they are currently viewing the application in.
+
+### Expected Behavior
+A compact language indicator appears in the header or navigation area displaying:
+- A flag icon representing the current display language
+- The language name or code
+- Optionally, a subtitle indicating "translated from [original language]" when content has been translated
+
+The component should be visually unobtrusive and fit naturally within header constraints.
+
+### User Impact
+All guests viewing the application in any language will benefit from immediate visual confirmation of their current language selection. This is particularly valuable for multilingual users who may switch between languages or want to verify they're viewing content in their preferred language.
+
+### Business Value
+Increases user confidence and reduces confusion about which language is being displayed, especially important when users have switched languages or are viewing translated content.
+
+### Acceptance Criteria
+- [ ] Language indicator is visible to all guests in the header or navigation area
+- [ ] Indicator displays a flag icon that corresponds to the current display language
+- [ ] Language name or code is clearly shown alongside the flag
+- [ ] When viewing translated content, an optional subtitle indicates the source language
+- [ ] Component has a compact design that fits within header space constraints
+- [ ] Visual design is consistent with the application's design system
+- [ ] Indicator updates immediately when language preference changes
+
+
+---
+
+## REQ-287: Date and Time Formatting Translation Entries
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The application must provide culturally appropriate date, time, and duration formatting in all supported languages through the i18n translation system.
+
+### Current Behavior
+Date and time formatting either uses hard-coded English patterns or defaults to browser/system locale without proper translation support. Relative time expressions, calendar terms, and duration formats are not consistently localized across the interface.
+
+### Expected Behavior
+All date and time representations display in culturally appropriate formats for the user's selected language. Relative time expressions like "2 days ago" appear in the user's language. Date and time formats follow regional conventions (e.g., DD/MM/YYYY vs MM/DD/YYYY). Calendar terms such as month names and day names are properly translated. Duration expressions are localized for natural reading.
+
+### User Impact
+International users experience date and time information in familiar, culturally appropriate formats that match their regional conventions. Users can interpret scheduling information, timestamps, and time-based notifications without confusion caused by unfamiliar formatting patterns.
+
+### Business Value
+Reduces cognitive friction for international users by presenting temporal information in familiar formats. Enhances trust and professionalism through culturally aware presentation of dates and times.
+
+### Acceptance Criteria
+- [ ] Translation entries exist for relative time expressions covering past and future timeframes
+- [ ] Translation entries support multiple date format patterns for different UI contexts
+- [ ] Translation entries support multiple time format patterns including 12-hour and 24-hour conventions
+- [ ] Translation entries include duration formats for various time spans
+- [ ] Translation entries include all calendar-related terms needed by the application
+- [ ] Date and time translations integrate with the existing next-intl infrastructure
+- [ ] All target languages supported by the application include complete date and time translation coverage
+
+
+---
+
+## REQ-288: Translation Status API Endpoint
+
+**Date**: 2026-01-18 09:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+System provides an API endpoint that allows authorized users to query translation status for content items with flexible filtering capabilities.
+
+### Current Behavior
+There is no programmatic way to retrieve translation status information for content entities across the system.
+
+### Expected Behavior
+Users with appropriate access can send GET requests with optional filters (entity type, entity ID, translation status, property ID) and receive back both summary-level counts and item-level translation status details. The endpoint enforces account-level access validation to ensure users only see translation status for content they are authorized to view.
+
+### User Impact
+Property owners, administrators, and integration systems can programmatically monitor translation progress, identify untranslated content, and track translation completion across their properties without manual inspection.
+
+### Business Value
+Enables data-driven translation management and provides visibility into localization coverage, which is essential for maintaining consistent multilingual guest experiences.
+
+### Acceptance Criteria
+- [ ] Endpoint responds to GET requests with translation status data
+- [ ] Filtering works correctly for entity type, entity ID, status, and property ID parameters
+- [ ] Response includes summary counts (e.g., total items, translated, pending, failed)
+- [ ] Response includes item-level status details for each matching entity
+- [ ] Only content belonging to the requester's authorized accounts is returned
+- [ ] Unauthorized access attempts are rejected with appropriate error responses
+- [ ] Invalid filter parameters return clear validation error messages
+
+
+---
+
+## REQ-288: Content Translation Module Structure and Type Definitions
+
+**Date**: 2026-01-18 14:32
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system must provide a dedicated module with complete type definitions for translating dynamic user-generated content across all supported languages.
+
+### Current Behavior
+No infrastructure exists for programmatically translating user-generated content such as property descriptions, amenity lists, house rules, or other dynamic content.
+
+### Expected Behavior
+Developers can import well-defined TypeScript interfaces and types that describe content translation operations, including translation requests, responses, supported content types, language pairs, and translation status tracking.
+
+### User Impact
+Enables development teams to build content translation features with type safety and clear contracts. This foundational work allows property owners to eventually offer their listings in multiple languages and guests to view content in their preferred language.
+
+### Business Value
+Establishes the technical foundation for multilingual content support, which directly enables international market expansion and improves guest experience for non-native language speakers.
+
+### Acceptance Criteria
+- [ ] A content translation module exists with a clear entry point for importing translation utilities
+- [ ] All TypeScript interfaces are defined for content translation operations including request/response shapes, content type enumerations, and status tracking
+- [ ] Type definitions cover at minimum: translation request structure, translation response structure, supported content types, language pair specifications, and translation job status
+- [ ] The module structure follows the existing codebase patterns and conventions
+- [ ] All exports are properly typed with no implicit 'any' types
+
+
+---
+
+## REQ-288: Common Namespace Structure for Shared UI Components
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system shall provide a dedicated namespace for shared text and UI labels that are used across multiple features and pages.
+
+### Current Behavior
+Translation entries are organized by feature-specific namespaces, with no designated location for text that appears in multiple contexts throughout the application.
+
+### Expected Behavior
+Users and developers accessing translation resources shall find a common namespace containing:
+- Universal action labels (save, cancel, delete, edit, etc.)
+- Standard button text used across different features
+- Common form labels and validation messages
+- Shared status indicators and notifications
+- Frequently reused UI elements and microcopy
+
+This common namespace shall serve as the single source of truth for text that appears in multiple locations, preventing duplication and ensuring consistency.
+
+### User Impact
+End users will experience more consistent terminology and messaging across all parts of the application. Translators will have a clear, organized structure that reduces duplicate translation work and maintains linguistic consistency.
+
+### Business Value
+Reduces translation costs and maintenance effort by centralizing shared content. Improves user experience through consistent terminology and messaging patterns across the application.
+
+### Acceptance Criteria
+- [ ] A common namespace exists in the translation file structure
+- [ ] The namespace includes categories for actions, buttons, forms, and status messages
+- [ ] Common UI elements can be referenced from this namespace by any feature
+- [ ] The structure supports adding new common elements without affecting existing translations
+- [ ] Documentation clarifies when to use the common namespace versus feature-specific namespaces
+
+
+---
+
+## REQ-289: Localization Type Definitions and Language Utilities
+
+**Date**: 2026-01-18 14:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The application needs a centralized type definition module that establishes the foundational type contracts for all localization features, including supported languages, language metadata, and translated content structures.
+
+### Current Behavior
+No centralized type definitions exist for localization features. Language handling, translation content structures, and language metadata lack type safety and standardized contracts.
+
+### Expected Behavior
+A dedicated type definition module provides:
+- Enumerated type defining all supported languages in the system
+- Structured type describing language metadata including names, codes, and display properties
+- Generic type structure for representing translated content across different content types
+- Exported constant containing the complete list of supported languages with their metadata
+- Utility functions for common language operations such as validation, lookup, and formatting
+
+The type definitions serve as the foundation for all localization features throughout the application.
+
+### User Impact
+End users do not directly interact with type definitions, but benefit indirectly through more reliable language switching, consistent translation handling, and fewer runtime errors related to language operations.
+
+### Business Value
+Establishes type safety foundation that reduces bugs, improves developer productivity, and ensures consistent handling of localization features across the entire application. Provides a single source of truth for supported languages and their properties.
+
+### Acceptance Criteria
+- [ ] Type definition file exports a strongly-typed enumeration or union type for all supported languages
+- [ ] Type definition file exports a structured type describing language metadata properties
+- [ ] Type definition file exports a generic type for representing translated content
+- [ ] Constant array or object containing complete supported languages list is exported
+- [ ] Utility functions for common language operations are exported and typed
+- [ ] All type definitions include appropriate TypeScript documentation comments
+- [ ] Type definitions compile without errors and integrate with the project's TypeScript configuration
+
+
+---
+
+## REQ-290: Content Translation Module Structure and Type Definitions
+
+**Date**: 2026-01-18 14:35
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system must provide a dedicated module with complete type definitions for translating dynamic user-generated content across all supported languages.
+
+### Current Behavior
+No infrastructure exists for programmatically translating user-generated content such as property descriptions, amenity lists, house rules, or other dynamic content.
+
+### Expected Behavior
+Developers can import well-defined TypeScript interfaces and types that describe content translation operations, including translation requests, responses, supported content types, language pairs, and translation status tracking.
+
+### User Impact
+Enables development teams to build content translation features with type safety and clear contracts. This foundational work allows property owners to eventually offer their listings in multiple languages and guests to view content in their preferred language.
+
+### Business Value
+Establishes the technical foundation for multilingual content support, which directly enables international market expansion and improves guest experience for non-native language speakers.
+
+### Acceptance Criteria
+- [ ] A content translation module exists with a clear entry point for importing translation utilities
+- [ ] All TypeScript interfaces are defined for content translation operations including request/response shapes, content type enumerations, and status tracking
+- [ ] Type definitions cover at minimum: translation request structure, translation response structure, supported content types, language pair specifications, and translation job status
+- [ ] The module structure follows the existing codebase patterns and conventions
+- [ ] All exports are properly typed with no implicit 'any' types
+
+
+---
+
+## REQ-291: Manual Translation Update Endpoint
+
+**Date**: 2026-01-18 15:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners should be able to manually update and edit translations of their content in different languages through a dedicated API endpoint.
+
+### Current Behavior
+No mechanism exists for property owners to update or modify translations that have been generated for their content. Once a translation is created, it cannot be edited or corrected.
+
+### Expected Behavior
+Property owners can submit updated translation content for any entity they own (properties, FAQs, etc.) in any supported language. When an owner updates a translation:
+- The translation content is replaced with the new version
+- The system marks the translation as manually reviewed
+- The system records who performed the update
+- The update is only allowed if the user has ownership rights to the underlying entity
+
+### User Impact
+Property owners who notice errors in auto-generated translations or want to refine the language to better match their brand voice can make corrections themselves. This reduces dependency on support staff and improves translation quality over time.
+
+### Business Value
+Enables property owners to maintain control over their content quality across all languages, improving guest experience and reducing support burden for translation corrections.
+
+### Acceptance Criteria
+- [ ] Owner can submit updated translation content for entities they own
+- [ ] System verifies ownership before allowing the update
+- [ ] Updated translations are marked with a manual review status
+- [ ] System records the identity of the user who performed the update
+- [ ] Attempting to update a translation for an entity the user doesn't own is rejected
+- [ ] The updated translation is immediately available to guests viewing content in that language
+
+
+---
+
+## REQ-291: Extract Button Labels Across All Components for Translation
+
+**Date**: 2026-01-18 10:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All hardcoded button labels throughout the application should display translated text based on the user's selected language.
+
+### Current Behavior
+Button labels are hardcoded in English directly within component code (e.g., "Submit", "Cancel", "Save", "Delete", "Edit", "Next", "Back", "Continue"). Users see button text only in English regardless of their language preference.
+
+### Expected Behavior
+Button labels display in the user's preferred language. When a user switches languages, all button text updates automatically to the selected language. The English version remains the default fallback.
+
+### User Impact
+All application users benefit from seeing button labels in their preferred language, making actions and workflows clearer and reducing confusion about what each button does. This particularly improves usability for non-English speaking users who may struggle to understand action buttons.
+
+### Business Value
+Increases application accessibility for international users and supports market expansion into non-English speaking regions. Reduces support requests related to unclear button actions from international users.
+
+### Acceptance Criteria
+- [ ] No hardcoded English button labels remain in any component file
+- [ ] All button text renders through translation function calls with appropriate keys
+- [ ] Translation keys follow the established naming convention for buttons
+- [ ] English translation files contain entries for all extracted button labels
+- [ ] Buttons of all variants (primary, secondary, destructive, etc.) display translated text correctly
+- [ ] When language is switched, all visible button labels update to the new language immediately
+- [ ] Default English text displays when a translation key is missing for a given language
+
+
+
+---
+
+## REQ-291: Create TranslationStatusColumn Component
+
+**Date**: 2026-01-18 15:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Create a compact translation status indicator component designed for table column display that shows translation completion status for all six supported languages at a glance and opens a detailed preview panel when clicked.
+
+### Current Behavior
+No visual indicator exists to display translation status within table/list views. Property owners and administrators cannot quickly assess translation coverage for content items without navigating to individual item details.
+
+### Expected Behavior
+The TranslationStatusColumn component renders within table cells and displays:
+- Six dots or icons representing each target language (en, fr, es, de, nl, it)
+- Visual differentiation between translation states: completed, pending, processing, failed, manual, not_started
+- Color coding: green for complete, yellow/amber for pending/processing, red for failed, blue for manual review, gray for not started
+- Tooltip on hover showing language names and their translation status
+- Clickable interaction that triggers opening of a translation preview panel
+
+The component consumes data from the translation status utilities (REQ-257) and renders a compact, scannable representation suitable for table column contexts.
+
+### User Impact
+Property owners and administrators can quickly scan table views to identify:
+- Which content items are fully translated
+- Which items have pending or in-progress translations
+- Which items have failed translations requiring attention
+- Overall translation coverage at a glance
+
+This enables efficient translation management and prioritization without drilling into individual records.
+
+### Business Value
+Reduces time spent on translation management by providing immediate visual feedback on translation status. Enables proactive identification of translation issues and incomplete coverage, ensuring consistent multilingual guest experiences.
+
+### Technical Context
+
+**File Location**: `/src/components/TranslationManagement/TranslationStatusColumn/TranslationStatusColumn.tsx`
+
+**Dependencies**:
+- REQ-257: Implement Translation Status Utilities (provides `TranslationStatusResult` type and status data)
+- Existing UI component patterns in `/src/components/`
+- shadcn/ui components for tooltips and visual elements
+
+**Integration Points**:
+- Will be used in admin tables displaying content items (items, articles, links, tags)
+- Receives `TranslationStatusResult` or summary data as props
+- Emits click event to parent for opening preview panel
+
+### Acceptance Criteria
+- [ ] Component renders 6 visual indicators representing each supported language
+- [ ] Each indicator displays appropriate visual state (color/icon) based on translation status
+- [ ] Hover tooltip shows language name and current status for each language
+- [ ] Component is compact enough to fit in standard table column widths (approximately 80-120px)
+- [ ] Click handler is exposed via props for parent components to handle preview panel opening
+- [ ] Component handles all possible translation states: completed, pending, processing, failed, manual, not_started
+- [ ] Component receives either full `TranslationStatusResult` object or summary props
+- [ ] Loading and error states are handled gracefully
+- [ ] Component follows existing codebase TypeScript patterns with proper typing
+- [ ] Component is accessible with appropriate ARIA labels for screen readers
+- [ ] Component exports are available from the TranslationManagement barrel export
+
+
+---
+
+## REQ-292: Guest Language Detection and Persistence
+
+**Date**: 2026-01-18 (Current Time)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should automatically detect and remember the language preference of guests who are not logged in.
+
+### Current Behavior
+The application does not provide language detection or persistence for unauthenticated guests. There is no mechanism to infer preferred language from browser settings or URL parameters, nor to remember guest language choices across sessions.
+
+### Expected Behavior
+When a guest visits the application:
+- Their preferred language is automatically detected from browser settings, URL parameters, or previously stored preferences
+- The detected language is mapped to one of the supported application languages
+- When a guest explicitly selects a language, this choice is remembered across browser sessions
+- The system correctly interprets standard browser language preferences and prioritizes them appropriately
+
+### User Impact
+Affects all unauthenticated visitors to the platform. Guests will experience the application in their preferred language without needing to create an account or manually select language on each visit. This improves accessibility for international users and reduces friction in the guest experience.
+
+### Business Value
+Improves conversion rates by providing a localized experience before authentication. Reduces barriers to entry for international guests and demonstrates commitment to global accessibility.
+
+### Acceptance Criteria
+- [ ] Guest language is automatically detected on first visit based on browser language settings
+- [ ] URL language parameters override browser defaults when present
+- [ ] Guest language selection is persisted across browser sessions
+- [ ] Previously stored language preferences take precedence over browser defaults
+- [ ] Browser language codes are correctly mapped to supported application languages
+- [ ] Unsupported language codes gracefully fall back to a default language
+- [ ] Language preference persists when guest navigates between pages
+
+---
+
+## REQ-293: Content Translation Orchestration System
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide a centralized mechanism to coordinate the translation of user-generated content into multiple target languages by creating and queuing translation jobs.
+
+### Current Behavior
+There is no automated system to orchestrate translations across multiple languages. Content owners must manage translations manually or through ad-hoc processes.
+
+### Expected Behavior
+When content needs to be translated, the system accepts the content details, automatically determines which languages require translation, creates individual translation jobs for each target language, and returns confirmation of which jobs were successfully queued. The orchestrator handles the coordination logic so calling code does not need to understand the complexity of multi-language job management.
+
+### User Impact
+- Property owners can request translations for their content without managing individual language tasks
+- System administrators can track translation requests through a unified interface
+- Developers can trigger multi-language translations through a single function call
+- End users (guests) will eventually see content available in their preferred languages as these jobs complete
+
+### Business Value
+Simplifies the developer experience for triggering translations and provides a foundation for automated, scalable content translation workflows. This reduces manual effort and ensures consistent translation processing across all content types.
+
+### Acceptance Criteria
+- [ ] System accepts content identification and optional language targeting parameters
+- [ ] System determines appropriate target languages when not explicitly specified
+- [ ] System creates separate translation jobs for each target language
+- [ ] System queues all jobs and returns results indicating success or failure per job
+- [ ] System integrates with translation service infrastructure from Epic 1
+- [ ] System handles errors gracefully and reports which jobs could not be queued
+- [ ] System provides clear feedback about queued job identifiers for status tracking
+
+
+---
+
+## REQ-293: Extract Button Labels Across All Components for Translation
+
+**Date**: 2026-01-18 10:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All hardcoded button labels throughout the application should display translated text based on the user's selected language.
+
+### Current Behavior
+Button labels are hardcoded in English directly within component code (e.g., "Submit", "Cancel", "Save", "Delete", "Edit", "Next", "Back", "Continue"). Users see button text only in English regardless of their language preference.
+
+### Expected Behavior
+Button labels display in the user's preferred language. When a user switches languages, all button text updates automatically to the selected language. The English version remains the default fallback.
+
+### User Impact
+All application users benefit from seeing button labels in their preferred language, making actions and workflows clearer and reducing confusion about what each button does. This particularly improves usability for non-English speaking users who may struggle to understand action buttons.
+
+### Business Value
+Increases application accessibility for international users and supports market expansion into non-English speaking regions. Reduces support requests related to unclear button actions from international users.
+
+### Acceptance Criteria
+- [ ] No hardcoded English button labels remain in any component file
+- [ ] All button text renders through translation function calls with appropriate keys
+- [ ] Translation keys follow the established naming convention for buttons
+- [ ] English translation files contain entries for all extracted button labels
+- [ ] Buttons of all variants (primary, secondary, destructive, etc.) display translated text correctly
+- [ ] When language is switched, all visible button labels update to the new language immediately
+- [ ] Default English text displays when a translation key is missing for a given language
+
+---
+
+## REQ-294: Create Content Translation Module Structure
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system shall provide a dedicated content translation module with well-defined TypeScript interfaces to support translating user-generated content across multiple languages.
+
+### Current Behavior
+No structured module exists for handling content translation operations. Translation logic, if any, is scattered or nonexistent.
+
+### Expected Behavior
+A foundational module structure exists that developers can import to perform content translation operations. The module exposes clear TypeScript types defining how content translation requests and responses are structured.
+
+### User Impact
+End users will not directly observe this change, as it is foundational infrastructure. However, this enables future features where property descriptions, amenities, and other user-generated content appear in the user's preferred language.
+
+### Business Value
+Establishes a maintainable, type-safe foundation for content translation features that improve the international user experience and expand market reach.
+
+### Acceptance Criteria
+- [ ] A content-translation module exists with an entry point that can be imported by other modules
+- [ ] TypeScript interfaces are defined for all content translation data structures (requests, responses, errors, metadata)
+- [ ] The module structure follows established project patterns and is discoverable by developers
+- [ ] Type definitions provide IntelliSense support for translation operations
+- [ ] Module can be imported without runtime errors
+
+
+---
+
+## REQ-294: Create Common Namespace Structure for Shared Translations
+
+**Date**: 2026-01-18 
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The application should have a dedicated common namespace in the translation file structure containing shared, reusable translation keys that can be used consistently across all components.
+
+### Current Behavior
+Translation keys are defined individually within component-specific namespaces, leading to potential duplication of common terms like "Save", "Cancel", "Loading", and other frequently used UI labels across multiple translation files.
+
+### Expected Behavior
+A common namespace exists in the translation file structure containing organized categories of shared translations including:
+- Common action buttons and labels
+- Standard form field labels
+- Validation messages
+- Error and success messages
+- Navigation elements
+- Date and time related labels
+- Status indicators
+
+Developers can reference these common translations from any component, ensuring consistent terminology throughout the application in all supported languages.
+
+### User Impact
+End users will experience consistent terminology across the entire application interface. For example, "Save" buttons will always display the same translated text regardless of which feature they appear in, improving comprehension and user confidence.
+
+### Business Value
+Reduces translation costs and maintenance burden by eliminating duplicate translation keys. Ensures brand consistency and quality of user experience across all features and languages.
+
+### Acceptance Criteria
+- [ ] Common namespace is created in the primary translation file with clear organizational structure
+- [ ] Common action verbs and UI controls have translation entries
+- [ ] Standard form field labels are included
+- [ ] Common validation, error, and success messages are defined
+- [ ] Navigation and status terminology is present
+- [ ] The structure is documented for developer reference
+- [ ] Existing components can successfully reference common namespace translations
+
+
+---
+
+## REQ-295: Create Content Translation Module Structure
+
+**Date**: 2026-01-18 10:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system shall provide a dedicated content translation module with well-defined TypeScript interfaces to support translating user-generated content across multiple languages.
+
+### Current Behavior
+No structured module exists for handling content translation operations. Translation logic, if any, is scattered or nonexistent.
+
+### Expected Behavior
+A foundational module structure exists that developers can import to perform content translation operations. The module exposes clear TypeScript types defining how content translation requests and responses are structured.
+
+### User Impact
+End users will not directly observe this change, as it is foundational infrastructure. However, this enables future features where property descriptions, amenities, and other user-generated content appear in the user's preferred language.
+
+### Business Value
+Establishes a maintainable, type-safe foundation for content translation features that improve the international user experience and expand market reach.
+
+### Acceptance Criteria
+- [ ] A content-translation module exists with an entry point that can be imported by other modules
+- [ ] TypeScript interfaces are defined for all content translation data structures (requests, responses, errors, metadata)
+- [ ] The module structure follows established project patterns and is discoverable by developers
+- [ ] Type definitions provide IntelliSense support for translation operations
+- [ ] Module can be imported without runtime errors
+
+
+---
+
+## REQ-296: Create Common Namespace Structure in Translation Files
+
+**Date**: 2026-01-18 00:00
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application should provide a centralized common namespace containing reusable translation strings for shared UI elements accessible throughout the application.
+
+### Current Behavior
+Translation strings for common UI elements are either duplicated across multiple component-specific namespaces or do not yet exist in a structured format, leading to inconsistency and maintenance overhead.
+
+### Expected Behavior
+Users experience consistent terminology and messaging across all parts of the application because shared UI elements draw from a single common translation source. When a common term needs updating, the change propagates automatically to all locations where that term appears.
+
+### User Impact
+All users benefit from consistent language and terminology throughout the interface. Translators can translate common terms once rather than repeatedly, reducing translation costs and improving consistency across languages. Users switching between different sections of the application see familiar, predictable language patterns.
+
+### Business Value
+Reduces translation costs by eliminating duplicate strings. Ensures consistent user experience through standardized terminology. Simplifies future maintenance and localization updates.
+
+### Acceptance Criteria
+- [ ] A common namespace exists in the translation file structure
+- [ ] Common button labels are available and can be referenced by any component
+- [ ] Common form labels and placeholders are centralized and reusable
+- [ ] Common error messages are standardized and accessible application-wide
+- [ ] Common status messages follow a consistent pattern and tone
+- [ ] Common navigation elements use shared translation strings
+- [ ] Common date and time format strings are defined and available
+- [ ] Common validation messages provide uniform feedback across all forms
+- [ ] Any component can reference common namespace strings without duplication
+
+
+---
+
+## REQ-297: Implement Content Translation Orchestrator
+
+**Date**: 2026-01-18 14:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system shall provide an orchestration function that coordinates the creation of translation jobs across all target languages for user-generated content.
+
+### Current Behavior
+No mechanism exists to systematically queue translation work for user-generated content across multiple target languages. Translation jobs must be managed manually or not at all.
+
+### Expected Behavior
+When new user-generated content is created or updated, the system can queue translation jobs for all configured target languages in a single operation. The orchestrator determines which languages need translations, creates the appropriate jobs, and returns a summary of the queued work including job identifiers and status information.
+
+### User Impact
+Users who create content in one language will eventually see that content become available to viewers who speak other languages. Content creators do not need to manually initiate translations; the system handles this automatically based on configured language preferences.
+
+### Business Value
+Enables automated multilingual content delivery, expanding the platform's international reach without manual intervention. Reduces operational overhead and ensures consistent translation coverage across all user-generated content.
+
+### Acceptance Criteria
+- [ ] A main orchestration function accepts content identification and translation options as input
+- [ ] The function determines all target languages that require translations for the given content
+- [ ] Translation jobs are created for each target language using the translation service infrastructure
+- [ ] The function returns a result indicating which jobs were created successfully
+- [ ] The result includes identifiable information for each queued job to enable status tracking
+- [ ] Failed job creation for one language does not prevent jobs from being created for other languages
+- [ ] The orchestrator integrates with translation service types established in the foundation phase
+- [ ] The function handles edge cases such as source language matching target language
+- [ ] Rate limiting and concurrency constraints are respected when creating multiple jobs
+
+
+---
+
+## REQ-297: Extract Button Labels for Internationalization
+
+**Date**: 2026-01-18 (Created via Functional Analyst Agent)
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All button labels throughout the application should be extracted from hardcoded strings and made available for translation across supported languages.
+
+### Current Behavior
+Button labels are hardcoded directly into component markup as string literals, making them unchangeable based on the user's language preference. Users see all button text in the language it was originally coded in, regardless of their selected language setting.
+
+### Expected Behavior
+Button labels appear in the user's selected language. When a user changes their language preference, all button text updates to reflect the new language choice. The system supports translation of button labels into all configured languages.
+
+### User Impact
+This affects all users who prefer to interact with the application in a language other than English. Property owners, guests, and administrators will see button labels (such as "Save", "Cancel", "Submit", "Delete", "Edit", etc.) displayed in their chosen language, improving accessibility and user experience for international users.
+
+### Business Value
+Supporting multiple languages for button labels removes language barriers and expands the potential user base to non-English speaking markets. This is a foundational step in making the entire application internationally accessible.
+
+### Acceptance Criteria
+- [ ] All button components across the codebase are identified and catalogued
+- [ ] Button label strings are extracted to translation message files following established naming conventions
+- [ ] Components reference button labels using the translation function rather than hardcoded strings
+- [ ] Button labels display correctly in all supported languages when the user switches language preference
+- [ ] Translation key names follow a consistent, predictable pattern for maintainability
+- [ ] No visual regressions occur - buttons appear and function exactly as before the changes
+- [ ] Documentation exists showing the translation key naming convention used for button labels
+
+
+---
+
+## REQ-298: Implement Entity-Specific Translation Triggers
+
+**Date**: 2026-01-18 00:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide dedicated translation trigger functions for items, articles, and links that extract translatable fields and queue them for automated translation.
+
+### Current Behavior
+No automated mechanism exists to trigger translations when content entities are created or updated. Content creators must manually coordinate translation workflows.
+
+### Expected Behavior
+When an item, article, or link is created or updated, the system can invoke an entity-specific trigger function that:
+- Identifies which fields require translation
+- Extracts the source content and language
+- Queues a translation job for all configured target languages
+- Returns confirmation that the translation process has been initiated
+
+Each entity type has different translatable fields:
+- Items: name and description
+- Articles: title and description  
+- Links: title only (URLs remain unchanged)
+
+### User Impact
+Content creators and property owners who add or update items, articles, and links will have their content automatically prepared for translation without manual intervention. This reduces the time between content creation and multilingual availability.
+
+### Business Value
+Streamlines the content translation workflow by automating the queue submission process, reducing manual effort and ensuring consistent translation coverage across all content types.
+
+### Acceptance Criteria
+- [ ] Item trigger function accepts item ID and source language, extracts name and description fields, and returns queue confirmation
+- [ ] Article trigger function accepts article ID and source language, extracts title and description fields, and returns queue confirmation
+- [ ] Link trigger function accepts link ID and source language, extracts only the title field, and returns queue confirmation
+- [ ] All trigger functions return a consistent result structure indicating success or failure
+- [ ] Trigger functions validate that the source entity exists before queuing
+- [ ] Trigger functions handle missing or null field values gracefully
+
+
+---
+
+## REQ-299: Extract Modal and Dialog Strings for Internationalization
+
+**Date**: 2026-01-18 16:43
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All text displayed in modal and dialog components should be retrieved from translation files instead of being hardcoded, enabling the application to display modal content in the user's preferred language.
+
+### Current Behavior
+Modal and dialog components contain hardcoded text strings directly within their component code, making it impossible for users to view modal titles, messages, button labels, and other dialog content in languages other than English.
+
+### Expected Behavior
+When a user interacts with any modal or dialog in the application, all visible text (titles, body content, button labels, error messages, confirmation prompts) should appear in the user's selected language. The system should retrieve these strings from translation files using the translation function, with English as the fallback language if a translation is not available.
+
+### User Impact
+This change affects all users who prefer to use the application in languages other than English. Property owners, guests, and administrators will be able to view confirmation dialogs, error messages, and informational modals in their preferred language, improving comprehension and reducing confusion during critical user interactions like deletions, confirmations, and form submissions.
+
+### Business Value
+Localizing modal and dialog content removes language barriers for non-English speaking users during important decision points and system interactions. This reduces the risk of user errors caused by misunderstanding system messages and improves the overall user experience for the international user base.
+
+### Acceptance Criteria
+- [ ] All user-visible text in modal components is retrieved from translation files
+- [ ] All user-visible text in dialog components is retrieved from translation files
+- [ ] Modal titles, body text, button labels, and error messages all support multiple languages
+- [ ] English translations exist for all extracted strings as the default fallback
+- [ ] No hardcoded user-facing strings remain in modal or dialog component code
+- [ ] Existing modal and dialog functionality remains unchanged when viewed in English
+- [ ] The translation file structure follows the project's established i18n patterns
+
+
+---
+
+## REQ-299: Implement Tag Translation Trigger
+
+**Date**: 2026-01-18 15:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide a mechanism to trigger translation jobs for tag content, distinguishing between system-managed tags that are pre-seeded and user-created tags that require on-demand translation.
+
+### Current Behavior
+There is no automated way to initiate translation for tag content. When tags are created or modified, their multilingual versions are not automatically generated or updated.
+
+### Expected Behavior
+When a tag needs translation, the system evaluates whether it is a system tag or user tag, checks if translations already exist, and queues translation jobs only when necessary. System tags that have been pre-seeded with translations are bypassed, while user-created tags automatically trigger translation to all supported languages.
+
+### User Impact
+Property owners creating custom tags will have those tags automatically translated without manual intervention. Guests viewing properties in their preferred language will see tag labels in their own language, improving comprehension and engagement.
+
+### Business Value
+Reduces manual translation overhead for user-generated taxonomy while ensuring consistent multilingual experience across the platform.
+
+### Acceptance Criteria
+- [ ] Tags can be submitted for translation by providing a tag key and source language
+- [ ] The system verifies whether a tag is system-managed before queuing translation
+- [ ] System tags that already have seeded translations are not re-translated
+- [ ] User tags without existing translations in target languages are queued for translation
+- [ ] Translation requests return confirmation of queued jobs or skip status
+- [ ] Duplicate translation requests for the same tag and language combination are prevented
+
+
+---
+
+## REQ-300: Implement Translation Storage Utilities
+
+**Date**: 2026-01-18 15:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide reusable utilities to persist translated content for items, articles, links, and tags to the database, automatically handling both new translations and updates to existing translations.
+
+### Current Behavior
+There is no standardized mechanism to store translated content in the database. Each content type would require custom database insertion logic, leading to code duplication and inconsistent handling of translation updates.
+
+### Expected Behavior
+The system provides a unified storage module with dedicated functions for each content type:
+- When translation data for an item is provided, it is stored in the database using an upsert pattern
+- When translation data for an article is provided, it is stored in the database using an upsert pattern
+- When translation data for a link is provided, it is stored in the database using an upsert pattern
+- When translation data for a tag is provided, it is stored in the database using an upsert pattern
+- When a translation already exists for a given content ID and language combination, it is updated rather than creating a duplicate
+- When a translation does not exist, it is inserted as a new record
+
+### User Impact
+Developers implementing translation features will have consistent, reusable utilities for storing translated content across all content types. This ensures data integrity and reduces implementation effort for translation features.
+
+### Business Value
+Provides the foundational infrastructure needed for the content translation system, enabling the application to support multiple languages for all user-generated and system content. This is essential for international growth and improving user experience for non-English speakers.
+
+### Acceptance Criteria
+- [ ] A function exists to store item translations with item ID, target language, and translation data
+- [ ] A function exists to store article translations with article ID, target language, and translation data
+- [ ] A function exists to store link translations with link ID, target language, and translation data
+- [ ] A function exists to store tag translations with tag key, target language, and translated value
+- [ ] When the same content ID and language combination is provided twice, the second call updates the existing record rather than creating a duplicate
+- [ ] When a new content ID and language combination is provided, a new translation record is created
+- [ ] All storage functions handle database errors gracefully and return appropriate status indicators
+
+
+
+---
+
+## REQ-301: Extract Form Element Strings for Common and Shared Components
+
+**Date**: 2026-01-18 17:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All hardcoded text within common and shared form components (labels, placeholders, hints, validation messages) should be replaced with translation keys, enabling form elements to display in the user's preferred language.
+
+### Current Behavior
+Form components used across multiple features contain hardcoded English text strings for labels, input placeholders, help text, and validation error messages. Users who prefer non-English languages see all form instructions and feedback in English only, regardless of their language preference.
+
+### Expected Behavior
+When a user views any form in the application, all form element text appears in their selected language. This includes field labels, placeholder text showing example input, hint text explaining requirements, and validation messages that appear when input is invalid. The system retrieves these strings from translation files using the translation function, with organized namespacing that groups related form elements together.
+
+### User Impact
+All users who complete forms in the application are affected, including property owners entering listing details, guests submitting booking requests, and administrators managing system settings. Non-English speaking users will better understand what information is required, see clearer examples of expected input formats, and receive validation feedback they can immediately comprehend.
+
+### Business Value
+Removing language barriers from form interactions reduces user errors, decreases form abandonment rates, and improves data quality by ensuring users understand what information is being requested. This directly impacts conversion rates for key actions like property registration and booking submissions.
+
+### Acceptance Criteria
+- [ ] All field labels in common form components use translation keys instead of hardcoded strings
+- [ ] All placeholder text in input fields is retrieved from translation files
+- [ ] All hint text and help tooltips are externalized to translation files
+- [ ] All validation error messages use translation keys with parameter support for dynamic values
+- [ ] English translations exist for all extracted strings as the default language
+- [ ] Translation keys follow a consistent naming convention organized by component and purpose
+- [ ] Existing form functionality and validation behavior remains unchanged
+- [ ] No user-facing text remains hardcoded in common and shared form component files
+
+
+---
+
+## REQ-302: Implement Translation Status Utilities
+
+**Date**: 2026-01-18 (Current)
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide utilities to check the translation status of entities by aggregating data from translation jobs and stored translations.
+
+### Current Behavior
+There is no centralized way to determine whether an entity has been translated, is currently being translated, or has pending translation jobs.
+
+### Expected Behavior
+Authorized users and system processes should be able to query the translation status of individual entities or batches of entities. The system should report:
+- Whether translations exist for an entity
+- Which languages have completed translations
+- Whether translation jobs are in progress
+- Any failed or pending translation jobs
+
+The query should work for all translatable entity types including properties, amenities, and house rules.
+
+### User Impact
+Property owners and administrators need visibility into translation status to understand which content is available in which languages. System processes need this information to avoid duplicate translation jobs and to display appropriate UI states (loading, translated, needs translation).
+
+### Business Value
+Provides essential infrastructure for the localization system by enabling translation status visibility and preventing redundant translation work. This is a foundational capability that other L10N features depend on.
+
+### Acceptance Criteria
+- [ ] Users can query translation status for a single entity by providing entity type and ID
+- [ ] Users can query translation status for multiple entities in a single batch request
+- [ ] Status results include both completed translations and in-progress job information
+- [ ] The system correctly aggregates data from both the translation jobs queue and stored translations
+- [ ] Status queries work for all supported entity types (properties, amenities, house rules, etc.)
+- [ ] The response clearly distinguishes between completed, in-progress, pending, and failed translation states
+
+
+
+---
+
+## REQ-303: Extract Toast Notification Messages for Translation
+
+**Date**: 2026-01-18 14:32
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should display all toast notification messages in the user's selected language by extracting hardcoded message strings and replacing them with translation keys.
+
+### Current Behavior
+Toast notifications throughout the application contain hardcoded English messages for success confirmations, error alerts, warnings, and informational notices. Users who prefer non-English languages receive feedback messages in English only, making it difficult to understand system responses to their actions.
+
+### Expected Behavior
+When the system displays a toast notification for any user action or system event, the message appears in the user's selected language. Success messages confirm actions were completed, error messages explain what went wrong, warning messages alert users to important conditions, and informational messages provide helpful guidance—all in the language the user understands. The system retrieves these messages from translation files using the translation function, with organized namespacing that groups notifications by type and context.
+
+### User Impact
+All users who interact with the application are affected, as toast notifications appear throughout the user journey for actions like saving changes, copying links, submitting forms, handling errors, and receiving confirmations. Non-English speaking users will immediately understand whether their actions succeeded or failed, and what steps they might need to take in response to system messages.
+
+### Business Value
+Providing feedback messages in the user's language reduces confusion about action outcomes, decreases support requests asking "did that work?", and builds trust by demonstrating the system speaks the user's language at every touchpoint. Clear, localized error messages particularly help users self-recover from problems without requiring support assistance.
+
+### Acceptance Criteria
+- [ ] All toast notification calls throughout the codebase are identified and cataloged
+- [ ] All success, error, warning, and info toast messages use translation keys instead of hardcoded strings
+- [ ] English translations exist for all extracted toast messages as the default language
+- [ ] Translation keys follow a consistent naming convention organized by notification type and context
+- [ ] Toast notifications that include dynamic data support parameter substitution in translations
+- [ ] Existing toast notification functionality and display behavior remains unchanged
+- [ ] No hardcoded English strings remain in toast notification calls
+- [ ] Toast messages appear correctly in the user's selected language across all application features
+
