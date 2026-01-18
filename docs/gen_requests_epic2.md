@@ -594,3 +594,170 @@ Translating validation messages removes a critical gap in the localization exper
 - [ ] TypeScript types ensure type safety for translation key references in schema definitions where applicable
 
 ---
+
+## REQ-320: Update Error Boundaries with Translations
+
+**Date**: 2026-01-18 21:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+All error boundary components should display error messages, fallback UI text, and recovery actions in the user's preferred language by integrating with the translation system.
+
+### Current Behavior
+Error boundary components that catch and handle React component errors display hardcoded English text to users when rendering errors occur. Error messages, fallback UI descriptions, recovery action prompts, and error reporting instructions are all embedded as English strings directly in error boundary component code. When users encounter an unexpected component error and the error boundary activates, they see only English text regardless of their language preference setting. There is no integration between error boundaries and the translation system, making it impossible to localize the critical error recovery experience. Different error boundaries throughout the application may display inconsistent messaging for similar error scenarios.
+
+### Expected Behavior
+When users encounter component errors caught by error boundaries anywhere in the application, all error-related text appears in their preferred language. Error boundary fallback UI displays translated headings, error descriptions, and recovery instructions that help users understand what happened and how to proceed. Action buttons within error boundaries such as retry, reload, or go back display labels in the user's language. Error reporting prompts or contact support messages appear in translated form. All error boundaries reference translation keys from the errors namespace, specifically from error boundary or system error categories. Developers creating new error boundaries or updating existing ones follow established patterns for integrating the translation system with error boundary rendering. The error boundary translation integration gracefully handles edge cases such as translation system failures that could prevent error boundaries from rendering correctly.
+
+### User Impact
+International users receive clear, understandable error messages and recovery guidance in their native language when unexpected component errors occur, reducing confusion and anxiety during error scenarios. Users with limited English proficiency can understand what went wrong and what actions they can take to recover without language barriers. All users benefit from consistent error boundary messaging across the application because error boundaries reference shared translation keys. The localized error experience feels professional and complete, maintaining user confidence even when technical issues occur. Users are more likely to successfully recover from errors when instructions and actions are presented in familiar language.
+
+### Business Value
+Localizing error boundaries completes the comprehensive internationalization of user-facing error communication, ensuring no critical user interaction remains English-only. Professional error handling in the user's language maintains trust and reduces frustration during already stressful error scenarios. Clear, translated recovery instructions reduce support requests related to component errors by helping users self-recover. This work demonstrates attention to detail in localization that extends to edge cases and error scenarios, signaling commitment to international users. Error boundary translation integration establishes patterns for handling translation in critical system components that must remain functional even when other parts of the application fail.
+
+### Acceptance Criteria
+- [ ] All error boundary components across the application have been identified and catalogued
+- [ ] Error boundary fallback UI headings and titles use translation keys instead of hardcoded English strings
+- [ ] Error descriptions and explanatory text in error boundaries are internationalized
+- [ ] Recovery action button labels such as retry, reload, or go back reference translation keys from the common namespace
+- [ ] Error reporting prompts and contact support messages use translated text where present
+- [ ] All error boundaries reference translation keys from appropriate error categories in the errors namespace
+- [ ] The translation integration pattern handles cases where the translation system itself may be unavailable or failed
+- [ ] Fallback English text is available when translation retrieval fails to ensure error boundaries always render
+- [ ] Error boundary functionality including error catching, logging, and recovery actions remains unchanged
+- [ ] Translated error messages maintain appropriate clarity and tone for unexpected error scenarios
+- [ ] Error boundaries display correctly in all supported languages without text overflow or layout issues
+- [ ] The implementation does not introduce new failure modes that could prevent error boundaries from functioning
+- [ ] Documentation or code comments explain the pattern for integrating translations with error boundaries
+- [ ] Common error boundary types share consistent translation keys across different instances throughout the application
+
+---
+
+## REQ-321: Generate Translations for Error and Validation Messages in Non-English Languages
+
+**Date**: 2026-01-18 21:57
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+All error messages and validation feedback strings defined in the English errors namespace should be translated into the five supported non-English languages, enabling users to receive error feedback and validation guidance in their preferred language.
+
+### Current Behavior
+The English translation file contains a comprehensive errors namespace with validation messages, API error feedback, authentication errors, permission messages, and system error text organized by category. Non-English translation files either lack the errors namespace entirely or contain incomplete error message translations covering only a subset of error scenarios. Users selecting non-English languages encounter a mix of translated interface elements and English error messages when validation fails or errors occur. This creates a jarring, unprofessional experience during critical moments when clear communication is most important. There is no systematic process for generating, reviewing, or maintaining error message translations across all supported languages.
+
+### Expected Behavior
+When users encounter validation errors, API failures, authentication issues, permission denials, or system errors in any part of the application, all error messages and feedback appear in their chosen language. Every error message key present in the English errors namespace has an equivalent translation in each of the five target languages with culturally appropriate phrasing and tone. Validation feedback uses natural, idiomatic language that clearly explains requirements and how to correct input errors. API error messages are translated to maintain clarity about what went wrong while preserving appropriate technical detail levels. Authentication and permission error messages communicate access issues professionally and clearly across all languages. System error messages maintain appropriate gravity and helpfulness when unexpected issues occur. The translations preserve dynamic parameter placeholders for field names, values, limits, and contextual information that must be substituted at runtime.
+
+### User Impact
+International users receive critical error feedback and validation guidance in their native language, enabling them to understand what went wrong and how to correct issues without language barriers. Users with limited English proficiency can successfully navigate error scenarios and complete forms confidently because all feedback appears in familiar language. All users benefit from error messages that maintain consistent tone, clarity, and helpfulness across supported languages. The fully localized error experience demonstrates professional attention to international users and maintains confidence during frustrating error situations. Users are more likely to successfully resolve errors and complete tasks when guidance is presented in their preferred language.
+
+### Business Value
+Translating error and validation messages removes the final critical gap in form and error localization, completing the internationalization of user feedback systems essential for market expansion. Error scenarios directly impact conversion rates, form completion, and user retention, making error message translation vital for international success. Professional error communication in the user's language reduces support costs by enabling users to understand and resolve issues independently. Clear, translated validation messages improve form completion rates at key conversion points such as registration, checkout, and data submission. This work completes the comprehensive localization foundation established in previous tasks, delivering full value from the internationalization investment. Quality error message translations differentiate the product in international markets and enable confident enterprise adoption in regions requiring native-language support.
+
+### Acceptance Criteria
+- [ ] Translation files for the five supported non-English languages include complete errors namespace sections mirroring the English structure
+- [ ] Every error message translation key present in the English errors namespace has a corresponding translation in each target language
+- [ ] Validation error messages are translated for all common scenarios including required fields, format errors, length constraints, and value constraints
+- [ ] API error messages are translated for network errors, timeouts, server errors, not found errors, and other common API failure scenarios
+- [ ] Authentication error messages are translated for login failures, session expiration, invalid credentials, and account status issues
+- [ ] Permission error messages are translated for access denied scenarios across different resource types and actions
+- [ ] System error messages are translated for unexpected errors, error boundary messages, and fallback error text
+- [ ] Translations use natural, idiomatic phrasing appropriate for native speakers rather than literal word-for-word conversions
+- [ ] Error message tone remains professional, helpful, and appropriately serious across all languages
+- [ ] Dynamic parameter placeholders for field names, values, limits, and contextual information are preserved correctly in all translations
+- [ ] Cultural adaptations are made where direct translation would be unclear, overly technical, or contextually inappropriate
+- [ ] Validation error translations provide clear guidance on requirements and how to correct input in culturally appropriate terms
+- [ ] Translation files maintain valid JSON structure with proper character encoding for each language
+- [ ] All error message translations have been reviewed for accuracy, clarity, tone consistency, and cultural appropriateness
+- [ ] The application displays error messages correctly in each language without text overflow, truncation, or layout issues
+- [ ] Users can switch between supported languages and receive all error feedback in the selected language
+- [ ] Error messages with dynamic content display parameter substitutions correctly in each language's grammatical structure
+
+---
+
+## REQ-322: Create Auth Namespace Structure in Translation File
+
+**Date**: 2026-01-18 22:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application should provide a dedicated auth namespace within the translation file to centralize and organize all authentication and registration-related text strings in a structured, accessible manner.
+
+### Current Behavior
+Authentication and registration flows contain text elements scattered throughout components without a centralized organizational structure. Login forms, signup flows, password reset interfaces, account verification screens, and authentication error messages lack a dedicated namespace in the translation system. There is no consistent location for managing authentication-related strings such as form labels, button text, instruction prompts, success messages, or authentication-specific errors. Developers building authentication features must create translation keys ad-hoc or reference generic common namespace keys that may not capture authentication-specific context. Similar authentication scenarios across different flows may use inconsistent wording or duplicate translation keys.
+
+### Expected Behavior
+When developers build or maintain authentication and registration features, they reference translation keys from a well-organized auth namespace dedicated to authentication flows. The namespace provides logical grouping of authentication-related strings by feature area such as login, signup, password reset, account verification, session management, and multi-factor authentication. Each category contains specific strings including form field labels, placeholder text, button labels, instructional messages, success confirmations, and authentication-specific error messages. Developers can quickly locate the appropriate translation key for any authentication UI element without needing to search through common namespaces or create duplicate keys. The structure supports all authentication scenarios from initial registration through account recovery, ensuring comprehensive coverage of the authentication journey.
+
+### User Impact
+Users experience consistent terminology and messaging throughout all authentication and registration interactions because developers reference shared translation keys from the dedicated auth namespace. Authentication flows use predictable, familiar language that makes account creation, login, and recovery processes easier to understand and complete. International users benefit from authentication experiences that will be properly translated once translations are added, as all authentication text is organized in a dedicated namespace ready for localization. Clear, consistent authentication messaging reduces confusion during critical security-related interactions such as password resets or account verification.
+
+### Business Value
+Establishing an auth namespace structure early in the localization implementation creates a solid foundation for internationalizing authentication flows, which are critical conversion and retention touchpoints. Centralized authentication strings ensure consistent messaging across login, signup, and recovery experiences, improving completion rates and reducing user frustration. This organization accelerates development of new authentication features by providing clear patterns for where authentication-related strings belong. Professional, consistent authentication messaging builds user trust during security-sensitive interactions. The namespace structure prepares authentication flows for international market expansion by organizing all text elements in a translation-ready format.
+
+### Acceptance Criteria
+- [ ] An auth namespace section exists in the `/messages/en.json` file with clear logical structure
+- [ ] The namespace includes categories for login, signup, password reset, account verification, session management, and authentication errors
+- [ ] Login category contains strings for form labels, placeholders, button text, remember me options, and forgot password links
+- [ ] Signup category contains strings for registration form fields, password requirements, terms acceptance, and account creation confirmation
+- [ ] Password reset category contains strings for reset request flows, email sent confirmations, new password forms, and reset success messages
+- [ ] Account verification category contains strings for verification prompts, resend verification options, and verification success messages
+- [ ] Session management category contains strings for session expiration notifications, logout confirmations, and concurrent session warnings
+- [ ] Authentication errors subcategory contains specific error messages for invalid credentials, account locked, email not verified, and other auth-specific failures
+- [ ] The structure supports dynamic parameter substitution for usernames, email addresses, time values, or other contextual authentication information
+- [ ] The namespace structure is extensible to accommodate additional authentication features such as social login, multi-factor authentication, or single sign-on
+- [ ] Documentation or comments within the file clarify the purpose and organization of the auth namespace categories
+- [ ] The structure follows the same organizational conventions as other namespaces in the translation file
+- [ ] The file remains valid JSON after the auth namespace addition
+
+---
+
+## REQ-323: Internationalize LoginPageContent Component
+
+**Date**: 2026-01-18 22:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The LoginPageContent component should be updated to use the next-intl translation system, replacing all hardcoded English strings with translation function calls that reference keys from the auth namespace.
+
+### Current Behavior
+The `/src/app/login/LoginPageContent.tsx` component contains approximately 40 hardcoded English strings including page titles, subtitles, button labels, loading messages, security notices, version footer text, and various user-facing messages. These strings are embedded directly in the JSX markup, making it impossible to display the login page in any language other than English. Users with non-English language preferences see only English text throughout the entire login experience.
+
+### Expected Behavior
+When users access the login page, all visible text appears in their preferred language as determined by the application's locale settings. The component imports the useTranslations hook from next-intl and retrieves all user-facing strings from the auth.login namespace in the translation files. Text elements including the page title "Sign in to your account", the subtitle "Access the FAQBNB administration panel", the "FAQBNB" brand header text, the "Admin Access" label, the "Back to Home" link text, the "Clear Session" button label, the "Secure Access" heading, the security notice description, loading state messages like "Completing authentication..." and "Loading authentication...", success messages like "Login successful! Redirecting...", and OAuth flow messages like "Completing Google sign-in..." are all retrieved from translation keys using the t() function. The component maintains all existing functionality including authentication state handling, redirect logic, URL parameter processing, and session management while displaying all text in the user's selected language.
+
+### User Impact
+International users experience the login page fully in their native language, creating a welcoming first impression and reducing confusion during the critical authentication step. Users with limited English proficiency can confidently understand the login process, security information, and any messages that appear during authentication. All users benefit from consistent terminology between the login page and other translated areas of the application. The professional, localized login experience builds trust before users even enter the application.
+
+### Business Value
+The login page is the entry point for all authenticated users, making its localization essential for international market expansion. A translated login page demonstrates commitment to international users from their very first interaction with the application. This work enables user acquisition in non-English speaking markets where English-only login experiences create immediate friction. Professional localization of authentication flows is often a requirement for enterprise customers in international markets. Completing the login page translation is a prerequisite for the full authentication flow localization in Sub-Epic 2A.
+
+### Acceptance Criteria
+- [ ] The component imports useTranslations from next-intl
+- [ ] A translations instance is created with the 'auth.login' namespace
+- [ ] The page title "Sign in to your account" uses translation key auth.login.title
+- [ ] The subtitle "Access the FAQBNB administration panel" uses translation key auth.login.subtitle
+- [ ] The header text "FAQBNB" uses translation key auth.login.brand or common.brand
+- [ ] The "Admin Access" label uses translation key auth.login.adminAccess
+- [ ] The "Back to Home" link text uses translation key auth.login.backToHome
+- [ ] The "Clear Session" button label uses translation key auth.login.clearSession
+- [ ] The "Secure Access" heading uses translation key auth.login.secureAccess
+- [ ] The security notice description text uses translation key auth.login.secureAccessDescription
+- [ ] The loading message "Completing authentication..." uses translation key auth.login.loading.authenticating
+- [ ] The loading message "Loading authentication..." uses translation key auth.login.loading.loading
+- [ ] The success message "Login successful! Redirecting..." uses translation key auth.login.messages.success
+- [ ] The OAuth message "Completing Google sign-in..." uses translation key auth.login.messages.completingGoogle
+- [ ] The debug message placeholder text uses translation keys or remains as debug-only content
+- [ ] The copyright footer text uses translation key common.footer.copyright or auth.login.copyright
+- [ ] All corresponding translation keys exist in /messages/en.json under the auth.login namespace
+- [ ] All hardcoded English strings visible to users have been replaced with t() function calls
+- [ ] The component renders correctly with translations in place
+- [ ] TypeScript compilation succeeds with no type errors related to translation keys
+- [ ] The build process completes successfully after the changes
+- [ ] Existing functionality including authentication flow, redirects, and message handling remains unchanged
+- [ ] The MessageAlert component properly displays translated message content
+
+---

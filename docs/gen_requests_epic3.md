@@ -667,3 +667,200 @@ Optimizes translation resource allocation by prioritizing time-sensitive content
 
 ---
 
+## REQ-277: Implement Concurrency Control for Translation API Calls
+
+**Date**: 2026-01-18 18:22
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must enforce a maximum limit on concurrent translation API calls to prevent overwhelming translation service providers with excessive simultaneous requests.
+
+### Current Behavior
+Translation job processors execute API calls to translation service providers without limits on concurrent execution. When multiple translation jobs are processed simultaneously, the system can generate dozens or hundreds of concurrent API requests, potentially exceeding provider rate limits, triggering service throttling, or degrading translation service performance due to resource exhaustion.
+
+### Expected Behavior
+When translation jobs are being processed, the system enforces a maximum of 10 concurrent translation API calls at any given time. Additional translation jobs wait in a queue until one of the active API calls completes, at which point the next waiting job is allowed to proceed. The concurrency control mechanism uses either a semaphore pattern or queue-based throttling to regulate access to the translation API. The system respects translation provider rate limits proactively, preventing rate limit errors before they occur and ensuring stable, predictable translation throughput without service interruptions.
+
+### User Impact
+Translation jobs are processed reliably without service interruptions caused by rate limiting or provider throttling. Property owners experience consistent translation processing times and receive translated content without unexpected delays or failures caused by overwhelming the translation service. The system maintains steady progress through translation backlogs without triggering provider-imposed restrictions that could halt all translation activity.
+
+### Business Value
+Protects the translation service integration from rate limiting penalties and service degradation by proactively managing concurrency, ensuring sustainable long-term operation of the translation pipeline and avoiding potential service suspension or additional costs associated with exceeding provider quotas.
+
+### Acceptance Criteria
+- [ ] A concurrency control module is implemented at /src/lib/job-queue/concurrency.ts
+- [ ] The module exports a mechanism to enforce a maximum of 10 concurrent translation API calls
+- [ ] The concurrency control uses either semaphore-based throttling or queue-based throttling to manage access
+- [ ] Translation job processors acquire concurrency permission before making API calls to the translation service
+- [ ] When the concurrency limit is reached, additional jobs wait until an active API call completes
+- [ ] When an API call completes, the concurrency control releases one waiting job to proceed
+- [ ] The concurrency limit value is configurable through environment variables or configuration constants
+- [ ] The implementation respects translation provider rate limits by preventing excessive concurrent requests
+- [ ] The concurrency control handles edge cases such as job failures releasing concurrency slots correctly
+- [ ] The module is properly exported and importable by translation job processor modules
+- [ ] The concurrency control integrates with the translation job processing infrastructure from Epic 1
+- [ ] The implementation does not block the job picker or job queue management operations
+
+---
+
+## REQ-278: Implement Stale Job Cleanup for Translation Queue
+
+**Date**: 2026-01-18 11:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system must automatically detect and recover translation jobs that remain stuck in processing status beyond an acceptable time threshold, resetting them to queued status for retry processing.
+
+### Current Behavior
+Translation jobs that encounter unexpected interruptions during processing (such as process crashes, network timeouts, or server restarts) remain indefinitely in the processing status. These stale jobs are never completed and never retried, effectively creating orphaned work items that block progress and prevent content from being translated. The system has no mechanism to detect when a job has been processing for an abnormally long time or to recover these jobs for retry.
+
+### Expected Behavior
+Before the job picker selects new translation jobs for processing, the system runs a cleanup operation that identifies all jobs currently in processing status for more than 5 minutes. For each stale job identified, the system increments an attempt counter to track retry history and resets the job status from processing back to queued, making the job eligible for processing again. The cleanup operation logs each recovery action for monitoring and debugging purposes. Jobs that have exceeded a maximum retry threshold are marked as failed rather than re-queued to prevent infinite retry loops on jobs that are fundamentally broken.
+
+### User Impact
+Translation jobs that encounter temporary failures or infrastructure interruptions are automatically recovered and retried without manual intervention. Property owners whose content was affected by stale jobs eventually receive their translations once the cleanup operation rescues the jobs, preventing permanent loss of translation requests. The system maintains forward progress on the translation queue even when individual processing attempts fail unexpectedly.
+
+### Business Value
+Improves translation system reliability and resilience by automatically recovering from processing interruptions, reducing manual operations overhead for investigating and restarting failed jobs, and ensuring translation work is eventually completed even when infrastructure issues occur.
+
+### Acceptance Criteria
+- [ ] A cleanup utility function identifies all translation jobs in processing status for more than 5 minutes
+- [ ] The cleanup function increments the attempt counter for each identified stale job
+- [ ] The cleanup function resets stale job status from processing to queued
+- [ ] The cleanup function logs each recovered job including job identifier, entity type, and time spent processing
+- [ ] Jobs with attempt count exceeding a maximum retry threshold (e.g., 3 attempts) are marked as failed instead of re-queued
+- [ ] The job picker routine calls the cleanup utility before selecting new jobs to process
+- [ ] The cleanup operation executes within a database transaction to ensure consistency
+- [ ] The 5-minute threshold is configurable through environment variables or configuration constants
+- [ ] The maximum retry threshold is configurable through environment variables or configuration constants
+- [ ] The cleanup utility is implemented at /src/lib/job-queue/cleanup.ts
+- [ ] The cleanup utility is properly exported and importable by job picker modules
+- [ ] The implementation uses database timestamps to accurately calculate processing duration
+- [ ] The cleanup operation completes efficiently without blocking job picker performance
+- [ ] Failed jobs include error metadata indicating they exceeded maximum retry attempts
+
+---
+
+## REQ-328: Create Translation Status API Endpoint
+
+**Date**: 2026-01-18 14:35
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide a RESTful API endpoint that returns comprehensive translation status information for any content entity, combining active job queue status with stored translation records to give a complete picture of translation availability.
+
+### Current Behavior
+No API endpoint exists to query translation status for content entities. Property owners and application components cannot programmatically determine which languages have completed translations, which translations are currently being processed, or which languages are missing translations entirely. This lack of visibility prevents building translation management interfaces and makes it impossible to display accurate translation availability indicators to users.
+
+### Expected Behavior
+When a GET request is made to `/api/translations/status/[entityType]/[entityId]`, the API validates the entity type parameter against supported content types (item, article, link, tag), retrieves the entity to confirm it exists, queries the translation job queue to identify any pending or in-progress translation jobs for the entity, queries the appropriate translation storage table to retrieve all completed translations, and returns a comprehensive status response that includes the entity identifier, entity type, source language, an array of completed translations with language code and last updated timestamp, an array of pending translations with language code and job status, an array of missing language codes that have neither completed translations nor pending jobs, and overall translation coverage percentage. The response includes cache-friendly headers with appropriate Cache-Control and ETag values to enable efficient polling and reduce unnecessary database queries for unchanged status.
+
+### User Impact
+Property owners can view real-time translation status for their content through management interfaces, understanding exactly which languages are available, which are being processed, and which need attention. Application components can display accurate translation availability indicators to guests and owners, improving transparency about multilingual content coverage. Developers can build monitoring dashboards and automated alerts based on translation status data.
+
+### Business Value
+Provides the foundational API for translation management features by exposing comprehensive status information, enabling property owners to make informed decisions about translation priorities and enabling the platform to surface translation gaps that could impact international guest reach.
+
+### Technical Details
+- **File Location**: `/src/app/api/translations/status/[entityType]/[entityId]/route.ts`
+- **HTTP Method**: GET
+- **Route Parameters**:
+  - `entityType`: The type of content entity (item, article, link, tag)
+  - `entityId`: The unique identifier of the entity
+- **Response Format**: JSON with translation status details
+- **Cache Headers**: Include Cache-Control with max-age and ETag for conditional requests
+- **Authentication**: Requires authenticated user with access to the entity
+
+### Dependencies
+- REQ-264: Translation Status Utilities - provides the underlying status aggregation functions
+- Epic 1: Translation Job Queue infrastructure - provides job status query capabilities
+- Epic 3 Foundation: Translation storage tables - provides completed translation records
+
+### Acceptance Criteria
+- [ ] A route handler file is created at /src/app/api/translations/status/[entityType]/[entityId]/route.ts
+- [ ] The GET handler extracts entityType and entityId from route parameters
+- [ ] The handler validates entityType is one of: 'item', 'article', 'link', 'tag'
+- [ ] Invalid entityType values return 400 Bad Request with descriptive error message
+- [ ] The handler queries the database to verify the entity exists before proceeding
+- [ ] Non-existent entities return 404 Not Found with descriptive error message
+- [ ] The handler calls getEntityTranslationStatus utility to retrieve aggregated status
+- [ ] The response includes entityId and entityType fields for context
+- [ ] The response includes sourceLanguage field indicating the original content language
+- [ ] The response includes completedTranslations array with objects containing languageCode and updatedAt timestamp
+- [ ] The response includes pendingTranslations array with objects containing languageCode and jobStatus (queued/processing)
+- [ ] The response includes missingLanguages array with language codes that have no translation or pending job
+- [ ] The response includes coveragePercentage field calculated as (completed / total supported languages) * 100
+- [ ] The response includes Cache-Control header with max-age of 30 seconds for polling efficiency
+- [ ] The response includes ETag header based on content hash for conditional request support
+- [ ] The handler returns 304 Not Modified when If-None-Match header matches current ETag
+- [ ] Database query errors return 500 Internal Server Error with generic error message
+- [ ] The implementation integrates with authentication middleware to verify user access to the entity
+- [ ] The response includes totalLanguages field indicating the count of all supported target languages
+- [ ] The handler logs status requests for monitoring and debugging purposes
+
+---
+
+## REQ-329: Create Retry Failed Translations Endpoint
+
+**Date**: 2026-01-18 14:50
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must provide a RESTful API endpoint that allows property owners and administrators to retry translation jobs that previously failed, enabling recovery from temporary service disruptions without recreating content.
+
+### Current Behavior
+When translation jobs fail due to temporary issues such as service outages, network timeouts, or rate limiting, there is no user-accessible mechanism to retry those failed translations. Property owners must delete and recreate their content or manually contact support to trigger new translation jobs, resulting in poor user experience and increased support burden. Failed jobs remain in failed status indefinitely with no path to recovery.
+
+### Expected Behavior
+When a POST request is made to `/api/translations/retry`, the API accepts a request body containing the entity type, entity identifier, and optionally a specific array of target language codes to retry. The system queries the translation job queue to identify all failed jobs matching the entity type and identifier. If specific languages were requested, only failed jobs for those languages are selected; otherwise, all failed jobs for the entity are selected. For each failed job identified, the system resets the job status from failed to queued, resets the attempt counter to zero to give the job a fresh start, and clears any previous error metadata. The API returns a response indicating the total count of jobs that were successfully re-queued, providing confirmation that retry processing has been initiated. The re-queued jobs become eligible for processing by the normal job picker workflow according to priority and queue order.
+
+### User Impact
+Property owners can recover from translation failures by clicking a retry button in the management interface, avoiding the frustration of recreating content or waiting for support intervention. Failed translations caused by temporary service issues are easily retried once the underlying issue is resolved, ensuring content eventually reaches international guests without data loss or duplication. The system provides clear feedback about how many translation jobs were retried, giving owners confidence that the retry action succeeded.
+
+### Business Value
+Reduces support burden by enabling self-service recovery from failed translations, improves user satisfaction by providing transparent control over translation retry operations, and ensures translation investment is not lost due to temporary infrastructure issues that can be resolved through simple retry mechanisms.
+
+### Technical Details
+- **File Location**: `/src/app/api/translations/retry/route.ts`
+- **HTTP Method**: POST
+- **Request Body**:
+  - `entityType`: The type of content entity (item, article, link, tag) - required
+  - `entityId`: The unique identifier of the entity - required
+  - `languages`: Array of language codes to retry (optional, defaults to all failed jobs for the entity)
+- **Response Format**: JSON with retry operation results
+- **Authentication**: Requires authenticated user with access to the entity
+
+### Dependencies
+- Epic 1: Translation Job Queue infrastructure - provides job status update capabilities
+- REQ-260: Content Translation Orchestrator - provides job creation patterns
+- REQ-264: Translation Status Utilities - provides failed job identification patterns
+
+### Acceptance Criteria
+- [ ] A route handler file is created at /src/app/api/translations/retry/route.ts
+- [ ] The POST handler accepts entityType, entityId, and optional languages array in request body
+- [ ] The handler validates entityType is one of: 'item', 'article', 'link', 'tag'
+- [ ] Invalid entityType values return 400 Bad Request with descriptive error message
+- [ ] Missing entityId returns 400 Bad Request with descriptive error message
+- [ ] The handler queries the database to verify the entity exists before proceeding
+- [ ] Non-existent entities return 404 Not Found with descriptive error message
+- [ ] The handler queries the translation job queue to find all jobs matching entityType and entityId with status 'failed'
+- [ ] When languages array is provided, only failed jobs matching the specified language codes are selected
+- [ ] When languages array is omitted or empty, all failed jobs for the entity are selected
+- [ ] For each selected failed job, the handler updates status to 'queued'
+- [ ] For each selected failed job, the handler resets the attempt counter to 0
+- [ ] For each selected failed job, the handler clears previous error metadata from the job record
+- [ ] The response includes a retriedCount field indicating the total number of jobs re-queued
+- [ ] The response includes a jobs array with objects containing jobId, languageCode, and previousAttempts for each re-queued job
+- [ ] The handler returns 200 OK with retriedCount of 0 when no failed jobs are found matching the criteria
+- [ ] Database update errors return 500 Internal Server Error with generic error message
+- [ ] The implementation integrates with authentication middleware to verify user access to the entity
+- [ ] The handler logs retry operations including entity details and count of re-queued jobs for monitoring
+- [ ] Re-queued jobs are processed according to normal priority and queue ordering rules
+- [ ] The endpoint validates that the languages array contains only valid supported language codes when provided
+
+---
+

@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506375",
-  "updated_at": "2026-01-18T06:06:58.079679",
+  "updated_at": "2026-01-18T06:36:18.420349",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 14,
+  "current_task_index": 19,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -287,11 +287,16 @@
       "title": "Update Zod schemas to use translated messages",
       "description": "",
       "raw_match": "- [ ] **Task 2J.5:** Update Zod schemas to use translated messages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-319",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:11:55.955350",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-319",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-319-update-zod-schemas-to-use-translated-messages-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2J.6",
@@ -300,11 +305,16 @@
       "title": "Update error boundaries with translations",
       "description": "",
       "raw_match": "- [ ] **Task 2J.6:** Update error boundaries with translations",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-320",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:18:00.306836",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-320",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-320-update-error-boundaries-with-translations-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2J.7",
@@ -313,11 +323,16 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2J.7:** Generate translations for 5 non-English languages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-321",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:25:44.053426",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-321",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-321-generate-translations-for-5-non-english-languages-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2A.1",
@@ -326,11 +341,16 @@
       "title": "Create `auth` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2A.1:** Create `auth` namespace structure",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-322",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:33:29.418487",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-322",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-322-create-auth-namespace-structure-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2A.2",
@@ -339,11 +359,14 @@
       "title": "Update `/src/app/login/LoginPageContent.tsx`",
       "description": "",
       "raw_match": "- [ ] **Task 2A.2:** Update `/src/app/login/LoginPageContent.tsx`",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-323",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-323"
+      },
+      "request_completed": true
     },
     {
       "id": "2A.3",
@@ -1218,8 +1241,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 8,
-    "last_request_id": "REQ-318",
+    "total_requests_generated": 12,
+    "last_request_id": "REQ-323",
     "first_request_id": "REQ-304",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
   }

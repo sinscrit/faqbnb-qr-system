@@ -730,3 +730,159 @@ Provides scalable translation management tooling that supports growing content i
 
 ---
 
+## REQ-324: Add Translations Navigation Link
+
+**Date**: 2026-01-18 20:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Property owners navigating the dashboard should see a Translations link in the main navigation menu providing direct access to the translation management page.
+
+### Current Behavior
+The dashboard navigation menu does not include a link to the translation management interface. Property owners who want to access translation features must either manually type the URL or navigate through the dashboard widget's "View Details" link. There is no persistent navigation entry making translation management discoverable as a primary application feature.
+
+### Expected Behavior
+The dashboard navigation menu includes a "Translations" menu item appearing in a logical position within the navigation hierarchy. The link displays a Languages or Globe icon alongside the text label for visual recognition. When clicked, the navigation item directs users to the Translation Management page where they can view and manage translations across all their content. The navigation item remains visible and accessible from all dashboard pages, providing consistent access to translation features throughout the application.
+
+### User Impact
+Property owners managing multilingual content need quick, predictable access to translation tools without memorizing URLs or relying on widget links. A dedicated navigation entry signals that translation management is a first-class feature deserving regular attention. Consistent placement in navigation reduces friction in accessing translation features and encourages owners to maintain translation coverage as part of their regular content management workflow.
+
+### Business Value
+Increases translation feature adoption and usage by making translation management easily discoverable through primary navigation. Higher feature visibility leads to improved translation completion rates, ensuring international guests receive complete information in all supported languages and expanding booking potential across language markets.
+
+### Acceptance Criteria
+- [ ] Navigation menu includes "Translations" menu item with recognizable label
+- [ ] Menu item displays Languages or Globe icon for visual identification
+- [ ] Menu item appears in appropriate position within navigation hierarchy
+- [ ] Clicking menu item navigates to Translation Management page
+- [ ] Menu item is visible from all pages within the dashboard
+- [ ] Menu item visual styling is consistent with other navigation elements
+- [ ] Active state highlights menu item when user is on Translation Management page
+- [ ] Menu item is keyboard accessible and integrates with navigation keyboard controls
+- [ ] Menu item includes appropriate ARIA labels for screen readers
+- [ ] Menu item only displays for authenticated users with translation management permissions
+
+---
+
+## REQ-325: Create ManualEditWarningDialog Component
+
+**Date**: 2026-01-18 21:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners should be warned when source content has been updated and manual translations exist, allowing them to choose between preserving their manual edits or re-translating all affected languages.
+
+### Current Behavior
+No warning mechanism exists when source content is updated after manual translation edits have been made. Property owners who have invested time in manually curating translations for specific languages are not informed when the underlying source content changes. When source content is updated, the system may automatically queue re-translations that would overwrite valuable manual edits without the owner's knowledge or consent. There is no opportunity for owners to review which languages have manual edits before deciding how to handle source content updates.
+
+### Expected Behavior
+When a property owner updates source content and manual translations exist for that content, a modal dialog appears before processing the update. The dialog clearly explains that the source content has changed and that manual translation edits exist which may become outdated or be overwritten. The dialog displays a list of all affected languages, showing which languages have manual edits that would be impacted by the source content change. The owner is presented with two options: "Keep Manual Edits" which preserves all manually curated translations as-is without re-translating them, or "Re-translate All" which queues re-translation jobs for all languages, including those with manual edits. The "Re-translate All" option displays a prominent warning that manual edits will be lost. The dialog uses Radix Dialog for accessibility and keyboard navigation. Cancel dismisses the dialog without taking any action on the source content update.
+
+### User Impact
+Property owners who have manually refined translations expect their work to be protected from accidental overwriting. When source content evolves, owners need visibility into which translations may be affected and control over how to handle the situation. Some owners may prefer to keep their manual edits and manually update the translations themselves to maintain quality. Others may prefer to re-translate everything and re-apply manual refinements afterward. Providing clear information about affected languages and explicit choice over the outcome respects owner investment in translation quality and prevents frustrating loss of manual work.
+
+### Business Value
+Protects owner investment in translation quality by preventing accidental overwriting of manually curated content. Builds trust in the translation management system by giving owners explicit control over their translations. Reduces support requests from owners who have lost manual edits due to unexpected re-translation. Ensures translation quality is maintained even as source content evolves, benefiting international guests who rely on accurate translations.
+
+### Acceptance Criteria
+- [ ] Dialog appears when source content is updated and manual translations exist for that content
+- [ ] Dialog uses Radix Dialog component for accessibility and keyboard navigation
+- [ ] Dialog header clearly indicates that source content has been updated
+- [ ] Dialog body explains that manual translation edits exist which may be affected
+- [ ] Dialog displays a list of all languages with manual edits that would be impacted
+- [ ] Each affected language entry shows language flag icon and language name
+- [ ] Dialog offers "Keep Manual Edits" option that preserves existing manual translations
+- [ ] Dialog offers "Re-translate All" option that queues re-translation for all languages
+- [ ] "Re-translate All" option displays prominent warning that manual edits will be lost
+- [ ] Warning uses visual emphasis such as warning icon and contrasting color
+- [ ] Cancel button dismisses dialog without processing source content update
+- [ ] Selecting "Keep Manual Edits" proceeds with source update without re-translating manual edits
+- [ ] Selecting "Re-translate All" proceeds with source update and queues re-translation for all languages
+- [ ] Dialog is keyboard accessible with proper focus management and tab order
+- [ ] Dialog provides appropriate ARIA labels for screen readers
+- [ ] Dialog is responsive and usable on tablet and desktop viewports
+- [ ] Component is located at `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx`
+
+---
+
+## REQ-326: Integrate Warning into Content Save Flow
+
+**Date**: 2026-01-18 21:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Content save operations should check for existing manual translations and display the ManualEditWarningDialog when source content is being updated, ensuring property owners make informed decisions about preserving or overwriting their manual translation work.
+
+### Current Behavior
+Content save handlers process source content updates immediately without checking whether manual translations exist for that content. When property owners update descriptions, FAQ answers, or other translatable content that has been manually curated in one or more languages, the system does not interrupt the save flow to warn about potential translation impacts. Owners are unaware that their source content changes may trigger automatic re-translation that could overwrite valuable manual edits.
+
+### Expected Behavior
+When a property owner saves changes to translatable content, the save handler checks whether manual translations exist for that entity before processing the update. If manual translations are detected, the save operation pauses and displays the ManualEditWarningDialog, informing the owner which languages contain manual edits and offering choices about how to proceed. If the owner chooses "Keep Manual Edits," the source content update proceeds while preserving all manually curated translations unchanged. If the owner chooses "Re-translate All," the source content update proceeds and translation jobs are queued for all languages, including those with manual edits. The dialog only appears when manual translations actually exist; routine saves for content without manual edits proceed immediately without interruption.
+
+### User Impact
+Property owners who invest time in manually refining translations expect their work to be protected when updating source content. Without warning, owners may unknowingly trigger re-translations that erase hours of manual translation curation. Being interrupted during the save flow to review translation impacts ensures owners make conscious decisions rather than accidentally overwriting their own work. Seeing exactly which languages have manual edits provides clarity about what is at stake and helps owners decide whether to preserve edits and manually update translations later, or to re-translate everything fresh from the improved source content.
+
+### Business Value
+Protects owner investment in translation quality by ensuring manual edits are never overwritten without explicit owner consent. Reduces frustration and support requests from owners who have lost manual translation work. Builds trust in the translation management system by respecting owner effort and providing transparent control over translation workflows. Maintains high translation quality as content evolves by giving owners tools to manage the relationship between source updates and existing manual edits.
+
+### Acceptance Criteria
+- [ ] Article save handler checks for manual translations before processing source content updates
+- [ ] Item save handler checks for manual translations before processing source content updates
+- [ ] Save operation pauses when manual translations are detected for the entity being saved
+- [ ] ManualEditWarningDialog displays showing affected languages with manual edits
+- [ ] Choosing "Keep Manual Edits" in dialog completes save without re-translating manually edited languages
+- [ ] Choosing "Re-translate All" in dialog completes save and queues re-translation jobs for all languages
+- [ ] Canceling dialog aborts the entire save operation without updating source content
+- [ ] Save operations for content without manual translations proceed immediately without warning dialog
+- [ ] Translation check query only examines translations for the specific entity being saved
+- [ ] Integration handles loading states during translation check query gracefully
+- [ ] Integration handles errors during translation check query without breaking save flow
+- [ ] Warning dialog integration works for all translatable entity types including properties, FAQs, articles, and amenities
+- [ ] User experience remains responsive with minimal delay introduced by translation check
+
+---
+
+## REQ-327: Create Language Preference Setting Component
+
+**Date**: 2026-01-18 06:35
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners should be able to select and save their preferred interface language through a settings interface displaying all supported languages with visual feedback for selection state and save operations.
+
+### Current Behavior
+No interface exists for users to set their preferred language for the application. Property owners navigating the platform cannot specify which language they want to see for menus, labels, messages, and other interface elements. Language preference is not captured during user registration or available in settings afterward. The system has no way to determine which language each user prefers for their experience, resulting in all users receiving interface content in the same default language regardless of their linguistic preferences.
+
+### Expected Behavior
+A language preference settings section displays a dropdown selector populated with all six supported languages, each shown with their flag icon, native language name, and localized label. The dropdown shows the user's currently saved preference when the section loads. When the user selects a different language from the dropdown, a save button becomes enabled to commit the change. Clicking save updates the user's preferred language setting in the database and displays a loading state on the button during the save operation. Upon successful save, a confirmation message appears and the save button returns to a disabled state until the next change is made. Help text below the dropdown explains that this preference controls which language the user sees throughout the application interface. If the save operation fails, an error message displays indicating the issue without losing the user's selection, allowing them to retry.
+
+### User Impact
+Property owners operating in different language markets need the interface presented in their preferred language to use the platform effectively. Users who are not fluent in the default language face barriers to understanding navigation, settings, and feature descriptions. Providing explicit language preference control empowers every user to configure their optimal experience regardless of their primary language. Once set, the preference persists across sessions so users don't need to reconfigure their language choice every time they log in.
+
+### Business Value
+Expands platform accessibility to international property owners by supporting their preferred language for all interface elements, not just guest-facing content. Improves user satisfaction and feature adoption rates by removing language barriers to platform navigation and comprehension. Demonstrates commitment to serving a global user base and differentiates the platform from competitors offering only English interfaces.
+
+### Acceptance Criteria
+- [ ] Settings section displays language selector dropdown showing all six supported languages
+- [ ] Each language option displays flag icon, native language name, and localized label
+- [ ] Dropdown shows user's currently saved preferred language when section loads
+- [ ] Changing dropdown selection enables the save button
+- [ ] Save button displays loading state during save operation
+- [ ] Successful save updates user's preferred_language value in the database
+- [ ] Successful save displays confirmation message to user
+- [ ] Failed save displays error message without losing user's selection
+- [ ] Save button returns to disabled state after successful save completes
+- [ ] Help text explains that preference controls application interface language
+- [ ] Component loads current preference from authenticated user's profile data
+- [ ] Component handles missing or invalid preference data gracefully with fallback to default language
+- [ ] Component is keyboard accessible with proper focus management for dropdown and button
+- [ ] Component provides appropriate ARIA labels for screen readers
+- [ ] Component is responsive and usable on tablet and desktop viewports
+- [ ] Component styling is consistent with overall settings design system
+
+---
+

@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506273",
-  "updated_at": "2026-01-18T06:03:23.819392",
+  "updated_at": "2026-01-18T06:35:45.097400",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 17,
+  "current_task_index": 21,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
   "source_hash": "499d11917485abcf1bc7b1175f09eebc",
   "tasks": [
@@ -323,14 +323,16 @@
       "title": "Implement job prioritization",
       "description": "File: `/src/lib/job-queue/priority.ts`\nPriority levels: 1. **Priority 100:** Recently created content (last 5 minutes) 2. **Priority 50:** Updated content 3. **Priority 25:** Batch imports 4. **Priority 10:** Retry failed translations\nJob picker query orders by priority DESC, created_at ASC",
       "raw_match": "\n- [ ] **Task 3.6:** Implement job prioritization",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-276",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-18T06:09:30.539584",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-276"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-276",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-276-implement-job-prioritization-overview.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.7",
@@ -339,11 +341,16 @@
       "title": "Implement concurrency control",
       "description": "File: `/src/lib/job-queue/concurrency.ts`\nMaximum 10 concurrent translation API calls\nSemaphore or queue-based throttling\nRespect provider rate limits",
       "raw_match": "\n- [ ] **Task 3.7:** Implement concurrency control",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-277",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:18:47.391461",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-277",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-277-implement-concurrency-control-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.8",
@@ -352,11 +359,16 @@
       "title": "Implement stale job cleanup",
       "description": "Jobs stuck in 'processing' for > 5 minutes\nReset to 'queued' with incremented attempts\nRun cleanup before picking new jobs",
       "raw_match": "\n- [ ] **Task 3.8:** Implement stale job cleanup",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-278",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:26:32.627023",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-278",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-278-implement-stale-job-cleanup-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "4.1",
@@ -365,11 +377,16 @@
       "title": "Create translation status API endpoint",
       "description": "File: `/src/app/api/translations/status/[entityType]/[entityId]/route.ts`\nGET handler returns full translation status\nInclude job status + stored translations\nCache-friendly response headers",
       "raw_match": "\n- [ ] **Task 4.1:** Create translation status API endpoint",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-328",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:33:44.991596",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-328",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-328-create-translation-status-api-endpoint-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "4.2",
@@ -378,11 +395,14 @@
       "title": "Create retry failed translations endpoint",
       "description": "File: `/src/app/api/translations/retry/route.ts`\nPOST handler accepts entityType, entityId, optional languages[]\nFind failed jobs for entity\nReset status to 'queued', reset attempts\nReturn count of jobs re-queued",
       "raw_match": "\n- [ ] **Task 4.2:** Create retry failed translations endpoint",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-329",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-329"
+      },
+      "request_completed": true
     },
     {
       "id": "4.3",
@@ -601,8 +621,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 8,
-    "last_request_id": "REQ-276",
+    "total_requests_generated": 12,
+    "last_request_id": "REQ-329",
     "first_request_id": "REQ-259",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
   }

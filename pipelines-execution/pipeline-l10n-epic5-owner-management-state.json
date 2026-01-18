@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.513082",
-  "updated_at": "2026-01-18T06:04:24.389940",
+  "updated_at": "2026-01-18T06:36:48.621447",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 19,
+  "current_task_index": 24,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -359,14 +359,16 @@
       "title": "Create Translation Management page",
       "description": "File: `/src/app/dashboard2/translations/page.tsx`\nFull-width table showing all content\nColumns: Item/Article name, language status columns, Actions\nFilter bar: Type, Language, Status\nBulk selection support",
       "raw_match": "\n- [ ] **Task 4.3:** Create Translation Management page",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-323",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-18T06:08:52.683649",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-323"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-323",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-323-create-translation-management-page-overview.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "4.4",
@@ -375,11 +377,16 @@
       "title": "Add translations link to navigation",
       "description": "File: `/src/app/dashboard2/layout.tsx` (modify)\nAdd \"Translations\" nav item (or sub-nav under settings)\nIcon: Languages or Globe",
       "raw_match": "\n- [ ] **Task 4.4:** Add translations link to navigation",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-324",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:12:07.305891",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-324",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-324-add-translations-link-to-navigation-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "5.1",
@@ -388,11 +395,16 @@
       "title": "Create ManualEditWarningDialog component",
       "description": "File: `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx`\nShown when source content updated and manual translations exist\nOptions: Keep manual edits, Re-translate all (with warning)\nList affected languages",
       "raw_match": "\n- [ ] **Task 5.1:** Create ManualEditWarningDialog component",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-325",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:19:20.688040",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-325",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-325-create-manualeditwarningdialog-component-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "5.2",
@@ -401,11 +413,16 @@
       "title": "Implement stale translation indicator",
       "description": "Update TranslationStatusItem to show stale warning icon\nYellow border/indicator for stale manual edits\n\"Update Translation\" action button",
       "raw_match": "\n- [ ] **Task 5.2:** Implement stale translation indicator",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-325",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:26:22.533087",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-325",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-325-implement-stale-translation-indicator-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "5.3",
@@ -414,11 +431,16 @@
       "title": "Integrate warning into content save flow",
       "description": "Hook into article/item save handlers\nCheck for manual translations before save\nShow warning dialog if detected",
       "raw_match": "\n- [ ] **Task 5.3:** Integrate warning into content save flow",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-326",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-18T06:34:33.666742",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-326",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-326-integrate-warning-into-content-save-flow-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "6.1",
@@ -427,11 +449,14 @@
       "title": "Create LanguagePreferenceSection component",
       "description": "File: `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx`\nLanguage dropdown selector\nSave button with loading state\nHelp text explaining the setting",
       "raw_match": "\n- [ ] **Task 6.1:** Create LanguagePreferenceSection component",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-327",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-327"
+      },
+      "request_completed": true
     },
     {
       "id": "6.2",
@@ -591,8 +616,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 9,
-    "last_request_id": "REQ-323",
+    "total_requests_generated": 14,
+    "last_request_id": "REQ-327",
     "first_request_id": "REQ-304",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   }

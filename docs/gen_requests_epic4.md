@@ -837,3 +837,183 @@ Ensures the language detection system functions correctly under all conditions, 
 - [ ] Tests cover all six supported languages to ensure each can be properly detected and displayed
 - [ ] Test assertions verify both the detected language code and any side effects like cookie setting
 
+---
+
+## REQ-326: Test Content Display Scenarios for Translations
+
+**Date**: 2026-01-18 20:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should have comprehensive test coverage verifying that translated content displays correctly, original content appears when translations are unavailable, and toggle controls switch between versions instantly without data refetching.
+
+### Current Behavior
+Translation display components and utilities exist but lack systematic test coverage to verify that content rendering behaves correctly across all translation availability scenarios. Without testing, there is no guarantee that translated content overrides original content properly, fallback to original content works when translations are missing, toggle controls operate instantly client-side, and language switcher updates trigger appropriate content changes.
+
+### Expected Behavior
+A comprehensive test suite validates all content display scenarios for the guest translation experience. Tests verify that when a complete translation exists, all translated fields display instead of original content. Tests confirm that when translations are partial or missing, original content appears seamlessly for untranslated fields without gaps or errors. Tests ensure the "View Original" toggle switches displayed content instantly without triggering API calls or component re-renders beyond state updates. Tests validate that language switcher selections update the displayed content to show the newly selected language's translation when available. Each test covers realistic user journeys including switching languages multiple times, toggling between original and translated views, and viewing items with varying levels of translation completeness.
+
+### User Impact
+Guests viewing translated content see reliable, consistent behavior across all items and translation scenarios. Content never appears broken or incomplete when translations are partial. Toggle controls respond instantly without loading delays, creating a smooth comparison experience between original and translated versions. Language switching works predictably, always showing the best available content for the selected language.
+
+### Business Value
+Ensures the guest-facing translation experience functions flawlessly across all real-world scenarios, preventing user frustration from broken or inconsistent content display. Validates that translation investments deliver actual value through proper content rendering. Creates confidence that partial translations enhance rather than degrade the user experience. Reduces support burden by catching content display edge cases before they reach production users.
+
+### Acceptance Criteria
+- [ ] Test verifies that when a complete translation exists, all translated content fields display in place of original content
+- [ ] Test verifies that translated item name, description, and all text fields appear in the target language
+- [ ] Test verifies that when a translation is partial, untranslated fields display original content seamlessly
+- [ ] Test verifies mixed content displays without visual gaps, errors, or inconsistent formatting
+- [ ] Test verifies that when no translation exists for requested language, all content displays in original language
+- [ ] Test verifies "View Original" toggle switches from translated content to original content instantly
+- [ ] Test verifies toggle operation does not trigger network requests or data refetching
+- [ ] Test verifies toggle operation updates only the displayed content state without full component re-render
+- [ ] Test verifies toggling back to translated view restores the translated content without refetching
+- [ ] Test verifies language switcher selection updates displayed content to show new language translation
+- [ ] Test verifies switching to a language without translation shows original content with appropriate banner
+- [ ] Test verifies switching between multiple languages with available translations shows correct content for each
+- [ ] Test verifies link titles within items update to translated versions when translations exist for links
+- [ ] Test verifies link titles fall back to original when link translations are unavailable
+- [ ] Test verifies translation banners appear correctly when viewing translated content
+- [ ] Test verifies missing translation banners appear when requested language is unavailable
+- [ ] Test verifies banner messages show correct source and target language names
+- [ ] Test suite includes visual regression tests to ensure translated content maintains proper layout and styling
+- [ ] Tests cover all content types including items, articles, links, and tags where applicable
+- [ ] Tests validate behavior across all six supported languages to ensure consistent display logic
+
+---
+
+## REQ-327: Test Edge Cases in Translation and Localization System
+
+**Date**: 2026-01-18 06:20
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should have comprehensive test coverage for edge cases and failure scenarios in the translation and localization system to ensure graceful degradation and reliable behavior under unexpected conditions.
+
+### Current Behavior
+Core translation functionality has been implemented and tested for standard happy-path scenarios, but edge cases and error conditions lack systematic test coverage. Without testing unusual situations such as partial translations, blocked cookies, malformed headers, and unsupported language codes, the system's resilience under real-world adverse conditions remains unverified.
+
+### Expected Behavior
+A comprehensive test suite validates all edge cases and failure scenarios throughout the translation system. Tests verify that when some fields have translations but others are missing, the display seamlessly blends translated and original content without errors or visual gaps. Tests confirm that when browser cookies are blocked or disabled, the system falls back gracefully to URL parameters and browser headers for language detection without breaking functionality. Tests ensure that malformed or invalid Accept-Language headers do not cause crashes, instead triggering appropriate fallback behavior. Tests validate that when unsupported or invalid language codes appear in any input source, the system handles them gracefully by falling back to the next priority detection method or ultimately to the default language.
+
+### User Impact
+Guests experience reliable localization behavior even when their browser configuration is unusual or when privacy settings block cookies. Users with non-standard Accept-Language headers or browsers sending unexpected data still see appropriate content in a reasonable language. When translation data is incomplete or inconsistent, content displays professionally without broken layouts or missing information. The system feels robust and trustworthy across all edge cases rather than fragile or error-prone.
+
+### Business Value
+Ensures the localization system functions reliably across the full diversity of real-world browser configurations, privacy settings, and user environments. Prevents user frustration and abandonment caused by broken localization in edge cases. Reduces support burden by handling unusual scenarios gracefully without requiring user intervention or support tickets. Creates confidence that the translation system is production-ready and resilient under all conditions.
+
+### Acceptance Criteria
+- [ ] Test verifies display behavior when item translation has some fields translated but others remain null or empty
+- [ ] Test verifies that missing translated fields fall back to displaying original content for those specific fields
+- [ ] Test verifies mixed content scenarios maintain consistent styling and layout without visual breaks
+- [ ] Test verifies language detection functions correctly when document.cookie is blocked or inaccessible
+- [ ] Test verifies cookie detection gracefully returns null when cookie access throws exceptions
+- [ ] Test verifies language preferences persist through URL parameters when cookies are blocked
+- [ ] Test verifies the system continues functioning without cookie persistence in privacy-focused browsers
+- [ ] Test verifies malformed Accept-Language headers do not cause exceptions or application crashes
+- [ ] Test verifies Accept-Language parser handles missing quality weights correctly
+- [ ] Test verifies Accept-Language parser handles duplicate language codes without errors
+- [ ] Test verifies Accept-Language parser handles extremely long header values without performance issues
+- [ ] Test verifies unsupported language codes in URL parameters trigger fallback to cookie detection
+- [ ] Test verifies unsupported language codes in cookies trigger fallback to Accept-Language header detection
+- [ ] Test verifies completely invalid language codes in all sources fall back to default language
+- [ ] Test verifies language codes with incorrect casing are normalized and matched correctly
+- [ ] Test verifies regional language variants that are not supported map to base language codes appropriately
+- [ ] Test verifies empty string language preferences are treated as missing and trigger fallback
+- [ ] Test verifies whitespace-only language values are treated as invalid and trigger fallback
+- [ ] Test verifies null and undefined language values at any detection stage trigger appropriate fallback
+- [ ] Test verifies translation fetch continues to function when database returns unexpected null values
+- [ ] Test suite covers error scenarios without relying on mock implementations that hide real error conditions
+- [ ] Tests validate error handling across both client-side and server-side language detection utilities
+- [ ] Tests confirm that no edge case scenario results in blank pages, white screens, or application crashes
+
+---
+
+## REQ-328: Mobile Responsiveness Testing for Guest Localization Components
+
+**Date**: 2026-01-18 20:45
+**Type**: TESTING
+**Size**: M
+
+### Summary
+The system should have comprehensive mobile responsiveness testing to ensure all guest-facing localization components function correctly and remain accessible on small screen devices.
+
+### Current Behavior
+Guest localization components including the language switcher, translation banners, and toggle controls have been implemented for desktop viewports but lack systematic testing on mobile devices and small screens. Without mobile-specific testing, there is no guarantee that these components remain usable, accessible, and visually correct on smartphones and tablets.
+
+### Expected Behavior
+A comprehensive mobile responsiveness test suite validates all guest localization components across various screen sizes and touch devices. Tests verify that the language switcher dropdown renders correctly on small screens without overflow, truncation, or layout issues. Tests confirm that translation banners do not obscure main content or navigation elements on mobile viewports. Tests ensure all interactive elements including buttons, toggles, and dropdown triggers have appropriate touch target sizes for finger-based interaction. The test suite covers both portrait and landscape orientations across common mobile breakpoints.
+
+### User Impact
+International guests accessing the application on mobile devices can easily discover and use language switching features. Touch targets are appropriately sized to prevent accidental taps and frustration. Banners provide translation status information without covering important content or blocking user interactions. The localization experience on mobile is as smooth and professional as on desktop, supporting the growing majority of users who access web content primarily through mobile devices.
+
+### Business Value
+Ensures the localization investment delivers value to mobile users, who represent a significant and growing portion of web traffic. Prevents user frustration and abandonment caused by broken or unusable mobile interfaces. Supports international markets where mobile-first usage patterns are particularly prevalent. Creates a professional, globally-aware mobile experience that meets user expectations and supports business growth in international markets.
+
+### Acceptance Criteria
+- [ ] Test verifies language switcher dropdown renders fully visible on screens 320px wide without horizontal overflow
+- [ ] Test verifies language switcher dropdown does not extend beyond viewport boundaries on small screens
+- [ ] Test verifies language switcher dropdown items remain readable and selectable on mobile viewports
+- [ ] Test verifies language switcher touch target is at least 44x44 pixels for comfortable finger tapping
+- [ ] Test verifies translation banner displays correctly on mobile without obscuring page header or navigation
+- [ ] Test verifies translation banner text wraps appropriately on narrow screens without truncation of important information
+- [ ] Test verifies translation banner "View original" action is easily tappable with appropriate touch target size
+- [ ] Test verifies missing translation banner does not push main content below the fold on small screens
+- [ ] Test verifies banners stack correctly when multiple informational elements are present on mobile
+- [ ] Test verifies ViewOriginalToggle button has minimum 44x44 pixel touch target for accessibility compliance
+- [ ] Test verifies toggle button label text remains readable on small screens, wrapping or abbreviating as needed
+- [ ] Test verifies language indicator component scales appropriately for mobile header contexts
+- [ ] Test verifies flag icons in language components render at appropriate sizes for mobile displays
+- [ ] Test verifies dropdown menus close properly when tapping outside on touch devices
+- [ ] Test verifies all localization components function correctly in both portrait and landscape orientations
+- [ ] Test verifies responsive breakpoints at 320px, 375px, 414px, and 768px cover common mobile device sizes
+- [ ] Test verifies no horizontal scrolling is introduced by localization components on any tested viewport size
+- [ ] Test verifies touch interactions do not conflict with native mobile browser gestures such as swipe navigation
+- [ ] Test verifies all interactive elements have visible focus states for keyboard navigation on tablets
+- [ ] Test verifies localization components maintain proper z-index stacking on mobile to prevent content overlap issues
+
+---
+
+## REQ-329: Performance Validation for Guest Localization System
+
+**Date**: 2026-01-18 20:50
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should meet defined performance benchmarks for all guest-facing localization operations to ensure language features do not degrade user experience or page load times.
+
+### Current Behavior
+Guest localization features including language detection, content translation display, and language switching have been implemented but lack systematic performance measurement and validation. Without defined performance benchmarks and testing, there is no guarantee that translation features execute efficiently or that they maintain acceptable response times under production load conditions.
+
+### Expected Behavior
+A comprehensive performance test suite validates that all localization operations meet defined performance thresholds. Language detection completes in under 10 milliseconds, ensuring minimal impact on server response times and page load performance. Content retrieval with translation data completes in under 200 milliseconds, providing fast page rendering even when fetching and merging translated content from the database. Client-side language switching executes in under 100 milliseconds, creating an instant, responsive feel when guests toggle between languages or view original content. Performance tests run against realistic data volumes including items with multiple translations, complex Accept-Language headers, and concurrent request scenarios.
+
+### User Impact
+Guests experience fast, responsive language features that feel instant rather than laggy or slow. Page loads are not noticeably slower when displaying translated content compared to original language content. Language switching happens immediately without perceptible delay, creating confidence in the localization system. International users on slower networks or devices still experience acceptable performance, ensuring localization features work well across global audiences with varying connection quality.
+
+### Business Value
+Ensures localization features enhance rather than degrade application performance, preventing translation capabilities from becoming a competitive disadvantage. Validates that the system can scale to handle production traffic volumes without performance bottlenecks in language detection or translation fetching. Creates confidence that the localization system is production-ready and will perform well under real-world load conditions. Prevents user abandonment caused by slow page loads or unresponsive language controls.
+
+### Acceptance Criteria
+- [ ] Performance test measures language detection execution time from request to language code result
+- [ ] Language detection consistently completes in under 10 milliseconds across all detection scenarios
+- [ ] Detection performance test covers URL parameter detection, cookie detection, and Accept-Language header parsing
+- [ ] Performance benchmark accounts for worst-case Accept-Language header complexity with multiple language codes and quality weights
+- [ ] Performance test measures end-to-end content retrieval time including database queries and translation merging
+- [ ] Content with translation retrieval consistently completes in under 200 milliseconds for typical items
+- [ ] Content retrieval benchmark includes joining item content with translation data across all relevant translation tables
+- [ ] Performance test validates query efficiency for items with articles, links, and tags that all require translation lookups
+- [ ] Performance test measures client-side language switch time from user action to content display update
+- [ ] Language switching consistently completes in under 100 milliseconds for client-side toggle operations
+- [ ] Switch performance benchmark includes state updates, content swapping, and banner visibility changes
+- [ ] Performance tests execute against realistic production-scale data volumes with hundreds of items and translations
+- [ ] Tests measure performance impact of partial translations versus complete translations
+- [ ] Tests validate that language detection does not create measurable overhead on non-localized routes
+- [ ] Performance regression tests run automatically to detect degradation when new localization features are added
+- [ ] Benchmark results are documented and tracked over time to identify performance trends
+- [ ] Tests identify and report specific bottlenecks when performance thresholds are not met
+- [ ] Performance test suite covers both server-side operations and client-side rendering and state management

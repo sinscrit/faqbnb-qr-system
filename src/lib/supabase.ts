@@ -270,6 +270,48 @@ export type Database = {
           },
         ]
       }
+      // REQ-227: Link translations table for L10N
+      link_translations: {
+        Row: {
+          id: string
+          link_id: string
+          language: string
+          title: string
+          translation_status: string
+          translated_at: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          link_id: string
+          language: string
+          title: string
+          translation_status?: string
+          translated_at?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          link_id?: string
+          language?: string
+          title?: string
+          translation_status?: string
+          translated_at?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_translations_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "item_links"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       // REQ-151: Item articles table for grouped content
       item_articles: {
         Row: {
@@ -311,6 +353,61 @@ export type Database = {
             columns: ["item_id"]
             isOneToOne: false
             referencedRelation: "items"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      // REQ-227: Article translations table for L10N
+      article_translations: {
+        Row: {
+          id: string
+          article_id: string
+          language: string
+          title: string
+          description: string | null
+          translation_status: string
+          translated_at: string | null
+          reviewed_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          article_id: string
+          language: string
+          title: string
+          description?: string | null
+          translation_status?: string
+          translated_at?: string | null
+          reviewed_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          article_id?: string
+          language?: string
+          title?: string
+          description?: string | null
+          translation_status?: string
+          translated_at?: string | null
+          reviewed_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_translations_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "item_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_translations_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -360,6 +457,51 @@ export type Database = {
             referencedRelation: "properties"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      // REQ-227: Item translations table for L10N
+      item_translations: {
+        Row: {
+          id: string
+          item_id: string
+          language: string
+          name: string
+          description: string | null
+          translation_status: string
+          translated_at: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          language: string
+          name: string
+          description?: string | null
+          translation_status?: string
+          translated_at?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          language?: string
+          name?: string
+          description?: string | null
+          translation_status?: string
+          translated_at?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_translations_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          }
         ]
       }
       item_visits: {
@@ -459,6 +601,77 @@ export type Database = {
           status?: string | null
           subscribed_at?: string | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      // REQ-227: Tag translations table for L10N
+      tag_translations: {
+        Row: {
+          id: string
+          tag_key: string
+          language: string
+          translated_value: string
+          is_system_tag: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          tag_key: string
+          language: string
+          translated_value: string
+          is_system_tag?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          tag_key?: string
+          language?: string
+          translated_value?: string
+          is_system_tag?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      // REQ-227: Translation jobs queue table for L10N
+      translation_jobs: {
+        Row: {
+          id: string
+          entity_type: string
+          entity_id: string
+          source_language: string
+          target_language: string
+          status: string
+          attempts: number | null
+          error_message: string | null
+          created_at: string | null
+          started_at: string | null
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          entity_type: string
+          entity_id: string
+          source_language?: string
+          target_language: string
+          status?: string
+          attempts?: number | null
+          error_message?: string | null
+          created_at?: string | null
+          started_at?: string | null
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          entity_type?: string
+          entity_id?: string
+          source_language?: string
+          target_language?: string
+          status?: string
+          attempts?: number | null
+          error_message?: string | null
+          created_at?: string | null
+          started_at?: string | null
+          completed_at?: string | null
         }
         Relationships: []
       }
