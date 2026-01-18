@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "close": "Cerrar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "actions": "Acciones",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "signUp": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "continueWithGoogle": "Continuar con Google",
+    "rememberMe": "Recordarme",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "welcome": "Bienvenido de nuevo",
+    "properties": "Propiedades",
+    "items": "Artículos",
+    "analytics": "Analíticas",
+    "settings": "Configuración",
+    "recentActivity": "Actividad reciente",
+    "quickActions": "Acciones rápidas"
+  },
+  "items": {
+    "createNew": "Nuevo artículo con código QR",
+    "noItems": "No hay artículos aún",
+    "name": "Nombre del artículo",
+    "description": "Descripción",
+    "property": "Propiedad",
+    "qrCode": "Código QR",
+    "articles": "Artículos",
+    "addArticle": "Agregar artículo",
+    "editItem": "Editar artículo",
+    "deleteItem": "Eliminar artículo",
+    "viewItem": "Ver artículo"
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Correo electrónico inválido",
+    "networkError": "Error de red. Por favor, intenta de nuevo.",
+    "unauthorized": "No estás autorizado para realizar esta acción",
+    "notFound": "El recurso solicitado no fue encontrado",
+    "serverError": "Error del servidor. Por favor, intenta más tarde.",
+    "validationFailed": "Validación fallida. Por favor, verifica tu entrada."
+  },
+  "language": {
+    "select": "Seleccionar idioma",
+    "current": "Idioma actual",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}

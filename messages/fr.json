@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "actions": "Actions",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signUp": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "continueWithGoogle": "Continuer avec Google",
+    "rememberMe": "Se souvenir de moi",
+    "noAccount": "Pas de compte?",
+    "hasAccount": "Déjà un compte?"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour",
+    "properties": "Propriétés",
+    "items": "Articles",
+    "analytics": "Analytique",
+    "settings": "Paramètres",
+    "recentActivity": "Activité récente",
+    "quickActions": "Actions rapides"
+  },
+  "items": {
+    "createNew": "Nouvel article QR Code",
+    "noItems": "Aucun article",
+    "name": "Nom de l'article",
+    "description": "Description",
+    "property": "Propriété",
+    "qrCode": "Code QR",
+    "articles": "Articles",
+    "addArticle": "Ajouter un article",
+    "editItem": "Modifier l'article",
+    "deleteItem": "Supprimer l'article",
+    "viewItem": "Voir l'article"
+  },
+  "errors": {
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Adresse e-mail invalide",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+    "notFound": "La ressource demandée n'a pas été trouvée",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "validationFailed": "Validation échouée. Veuillez vérifier votre saisie."
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "current": "Langue actuelle",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}

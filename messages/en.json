@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "continueWithGoogle": "Continue with Google",
+    "rememberMe": "Remember me",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "properties": "Properties",
+    "items": "Items",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions"
+  },
+  "items": {
+    "createNew": "New QR Code Item",
+    "noItems": "No items yet",
+    "name": "Item Name",
+    "description": "Description",
+    "property": "Property",
+    "qrCode": "QR Code",
+    "articles": "Articles",
+    "addArticle": "Add Article",
+    "editItem": "Edit Item",
+    "deleteItem": "Delete Item",
+    "viewItem": "View Item"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "networkError": "Network error. Please try again.",
+    "unauthorized": "You are not authorized to perform this action",
+    "notFound": "The requested resource was not found",
+    "serverError": "Server error. Please try again later.",
+    "validationFailed": "Validation failed. Please check your input."
+  },
+  "language": {
+    "select": "Select Language",
+    "current": "Current Language",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}

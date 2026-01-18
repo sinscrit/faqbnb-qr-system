@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "create": "Crea",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "confirm": "Conferma",
+    "back": "Indietro",
+    "next": "Avanti",
+    "close": "Chiudi",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina",
+    "actions": "Azioni",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "auth": {
+    "signIn": "Accedi",
+    "signOut": "Esci",
+    "signUp": "Registrati",
+    "email": "E-mail",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "continueWithGoogle": "Continua con Google",
+    "rememberMe": "Ricordami",
+    "noAccount": "Non hai un account?",
+    "hasAccount": "Hai già un account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bentornato",
+    "properties": "Proprietà",
+    "items": "Elementi",
+    "analytics": "Analisi",
+    "settings": "Impostazioni",
+    "recentActivity": "Attività recente",
+    "quickActions": "Azioni rapide"
+  },
+  "items": {
+    "createNew": "Nuovo elemento codice QR",
+    "noItems": "Nessun elemento ancora",
+    "name": "Nome elemento",
+    "description": "Descrizione",
+    "property": "Proprietà",
+    "qrCode": "Codice QR",
+    "articles": "Articoli",
+    "addArticle": "Aggiungi articolo",
+    "editItem": "Modifica elemento",
+    "deleteItem": "Elimina elemento",
+    "viewItem": "Visualizza elemento"
+  },
+  "errors": {
+    "required": "Questo campo è obbligatorio",
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "networkError": "Errore di rete. Riprova.",
+    "unauthorized": "Non sei autorizzato a eseguire questa azione",
+    "notFound": "La risorsa richiesta non è stata trovata",
+    "serverError": "Errore del server. Riprova più tardi.",
+    "validationFailed": "Validazione fallita. Controlla i tuoi dati."
+  },
+  "language": {
+    "select": "Seleziona lingua",
+    "current": "Lingua corrente",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "create": "Aanmaken",
+    "loading": "Laden...",
+    "error": "Fout",
+    "success": "Succes",
+    "confirm": "Bevestigen",
+    "back": "Terug",
+    "next": "Volgende",
+    "close": "Sluiten",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "sort": "Sorteren",
+    "actions": "Acties",
+    "yes": "Ja",
+    "no": "Nee"
+  },
+  "auth": {
+    "signIn": "Inloggen",
+    "signOut": "Uitloggen",
+    "signUp": "Registreren",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "continueWithGoogle": "Doorgaan met Google",
+    "rememberMe": "Onthoud mij",
+    "noAccount": "Geen account?",
+    "hasAccount": "Al een account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welkom terug",
+    "properties": "Eigenschappen",
+    "items": "Items",
+    "analytics": "Analyses",
+    "settings": "Instellingen",
+    "recentActivity": "Recente activiteit",
+    "quickActions": "Snelle acties"
+  },
+  "items": {
+    "createNew": "Nieuw QR-code item",
+    "noItems": "Nog geen items",
+    "name": "Itemnaam",
+    "description": "Beschrijving",
+    "property": "Eigenschap",
+    "qrCode": "QR-code",
+    "articles": "Artikelen",
+    "addArticle": "Artikel toevoegen",
+    "editItem": "Item bewerken",
+    "deleteItem": "Item verwijderen",
+    "viewItem": "Item bekijken"
+  },
+  "errors": {
+    "required": "Dit veld is verplicht",
+    "invalidEmail": "Ongeldig e-mailadres",
+    "networkError": "Netwerkfout. Probeer het opnieuw.",
+    "unauthorized": "U bent niet gemachtigd om deze actie uit te voeren",
+    "notFound": "De gevraagde bron is niet gevonden",
+    "serverError": "Serverfout. Probeer het later opnieuw.",
+    "validationFailed": "Validatie mislukt. Controleer uw invoer."
+  },
+  "language": {
+    "select": "Taal selecteren",
+    "current": "Huidige taal",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}

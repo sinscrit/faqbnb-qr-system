@@ -1,0 +1,76 @@
+{
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "confirm": "Bestätigen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "actions": "Aktionen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "rememberMe": "Angemeldet bleiben",
+    "noAccount": "Kein Konto?",
+    "hasAccount": "Bereits ein Konto?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen zurück",
+    "properties": "Eigenschaften",
+    "items": "Artikel",
+    "analytics": "Analysen",
+    "settings": "Einstellungen",
+    "recentActivity": "Letzte Aktivität",
+    "quickActions": "Schnellaktionen"
+  },
+  "items": {
+    "createNew": "Neuer QR-Code-Artikel",
+    "noItems": "Noch keine Artikel",
+    "name": "Artikelname",
+    "description": "Beschreibung",
+    "property": "Eigenschaft",
+    "qrCode": "QR-Code",
+    "articles": "Artikel",
+    "addArticle": "Artikel hinzufügen",
+    "editItem": "Artikel bearbeiten",
+    "deleteItem": "Artikel löschen",
+    "viewItem": "Artikel anzeigen"
+  },
+  "errors": {
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen",
+    "notFound": "Die angeforderte Ressource wurde nicht gefunden",
+    "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "validationFailed": "Validierung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
+  },
+  "language": {
+    "select": "Sprache auswählen",
+    "current": "Aktuelle Sprache",
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "de": "Deutsch",
+    "nl": "Nederlands",
+    "it": "Italiano"
+  }
+}
