@@ -1,0 +1,233 @@
+# =============================================================================
+# Pipeline Configuration: Localization Epic 4 - Guest Experience Implementation
+# =============================================================================
+#
+# Generated: 2026-01-17 16:45:00 UTC
+# Last Modified: 2026-01-17 16:45:00 UTC
+# Source: ./docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md
+#
+# This pipeline processes the Localization Epic 4 - Guest Experience implementation
+# plan through the automated agent workflow (request → overview → details → implementation).
+#
+# Epic Focus: Guest-facing localization experience with browser language detection,
+# translated content display, "View Original" toggle, and language switcher.
+#
+# Usage:
+#   python claude-pipelines/pipeline_orchestrator.py --config ./pipeline-l10n-epic4-guest-experience.yaml
+#   python claude-pipelines/pipeline_orchestrator.py --config ./pipeline-l10n-epic4-guest-experience.yaml --dry-run
+#   python claude-pipelines/pipeline_orchestrator.py --config ./pipeline-l10n-epic4-guest-experience.yaml --list-tasks
+#   python claude-pipelines/pipeline_orchestrator.py --config ./pipeline-l10n-epic4-guest-experience.yaml --tasks "1,2,3"
+#   python claude-pipelines/pipeline_orchestrator.py --config ./pipeline-l10n-epic4-guest-experience.yaml --stages "request,overview"
+#
+# =============================================================================
+
+pipeline:
+  name: l10n-epic4-guest-experience-implementation
+  version: "1.0"
+  description: "Process Localization Epic 4 - Guest Experience implementation plan through agent pipeline"
+  mode: per_request
+  default_timeout: 900
+
+# =============================================================================
+# Source Document
+# =============================================================================
+
+source:
+  path: ../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md
+
+  extraction:
+    # Pattern to match tasks like: - [ ] **Task 1.1:** Create localization types file
+    task_pattern: '^\s*-\s*\[\s*\]\s*\*\*Task\s+(\d+\.\d+):\*\*\s+(.+?)$'
+    task_groups:
+      id: 1
+      title: 2
+
+    # Pattern to match phases like: ### Phase 1: Types and Utilities (1 day)
+    phase_pattern: '^###\s+Phase\s+(\d+):\s+(.+?)\s*\('
+    phase_groups:
+      number: 1
+      name: 2
+
+    description:
+      mode: following_bullets
+      end_patterns:
+        - '^\s*-\s*\[\s*\]\s*\*\*Task'
+        - '^###\s+'
+        - '^##\s+'
+        - '^---'
+        - '^\|\s*'
+
+# =============================================================================
+# Output Locations
+# =============================================================================
+
+outputs:
+  requests: ../docs/gen_requests.md
+  overviews: ../docs/
+  details: ../docs/
+  state: ./pipeline-l10n-epic4-guest-experience-state.json
+  logs: ./pipeline-l10n-epic4-guest-experience.log
+
+# =============================================================================
+# Request Stages (Per-Request Mode)
+# =============================================================================
+
+request_stages:
+  # Stage 1: Create Request
+  - id: request
+    name: "Create Request"
+    description: "Convert implementation task into formal requirement"
+    enabled: true
+    agent:
+      name: "01-request-fa"
+      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 240
+    output:
+      type: append
+      file: ../docs/gen_requests.md
+
+  # Stage 2: Create Overview
+  - id: overview
+    name: "Create Overview"
+    description: "Pull relevant context from codebase for the request"
+    enabled: true
+    agent:
+      name: "02-techlead-overview"
+      invocation_template: |
+        Acting as a Technical Lead, create an implementation breakdown document for:
+        {requests_file_path} - Request #{request_id_num}
+
+        **Implementation Plan Reference**: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+        - Details:
+            {task_description_formatted}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-overview.md
+
+        **Instructions**:
+        1. Read the request from {requests_file_path} (find Request #{request_id_num})
+        2. Read the implementation plan from {implementation_plan_path}
+        3. Investigate the codebase for existing patterns to follow
+        4. Create the overview document following the standard structure
+        5. Include an "Authorized Files and Functions for Modification" section
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 660
+    output:
+      type: file
+      directory: ../docs/
+      filename: "{request_id}-{task_title_slug}-overview.md"
+
+  # Stage 3: Create Detailed Task Breakdown
+  - id: details
+    name: "Create Detailed Tasks"
+    description: "Break request into 1-point implementation tasks"
+    enabled: true
+    agent:
+      name: "03-senior-dev-task-breakdown"
+      invocation_template: |
+        Create a detailed task breakdown document for Request #{request_id_num}
+
+        **Input Documents**:
+        - Overview document: {overview_file}
+        - Requirements: {requests_file_path} (find Request #{request_id_num})
+        - Implementation Plan: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-detailed.md
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash"
+      timeout: 480
+    output:
+      type: file
+      directory: ../docs/
+      filename: "{request_id}-{task_title_slug}-detailed.md"
+
+  # Stage 4: Implementation
+  - id: implementation
+    name: "Implementation"
+    description: "Autonomously implement all tasks from the detailed specification"
+    enabled: true
+    agent:
+      name: "05-spec-implementation"
+      invocation_template: |
+        Implement all tasks from the detailed specification for Request #{request_id_num}
+
+        **Detailed Specification**: {details_file}
+
+        **Task Context**:
+        - Request ID: {request_id}
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        {project_context}
+
+        **Instructions**:
+        1. Read the detailed specification at {details_file}
+        2. Execute all tasks following the per-task workflow:
+           - Implement -> Verify -> Update Doc -> Build -> Commit
+        3. Mark completed tasks with [x] and add implementation notes
+        4. Continue autonomously until all required tasks are complete
+        5. Run verification: `npm run type-check` and `npm run build`
+        6. Report final status with summary of completed/failed/blocked tasks
+        7. **IMPORTANT**: End your response with a test summary in this format:
+           ```
+           TEST SUMMARY:
+           - Type Check: PASSED/FAILED
+           - Build: PASSED/FAILED
+           - Tests: PASSED/FAILED (if tests were run)
+           ```
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__playwright__*"
+      timeout: 2400
+    output:
+      type: implementation
+
+# =============================================================================
+# Implementation Configuration
+# =============================================================================
+
+implementation:
+  technology:
+    database: supabase
+    browser_testing: true
+  required_tools:
+    - playwright_mcp
+    - supabase_mcp
+  precheck:
+    timeout: 120
+
+# =============================================================================
+# Retry Configuration
+# =============================================================================
+
+retry:
+  max_attempts: 2
+  on_failure: skip_and_log

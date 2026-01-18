@@ -297,6 +297,22 @@ class PipelineState:
         completed = sum(1 for t in tasks if t.get("implementation_completed", False))
         return completed, len(tasks)
 
+    def get_stage_completion_stats(self) -> dict:
+        """Return completion counts for each stage.
+
+        Returns dict with keys: request, overview, details, implementation
+        Each value is a tuple of (completed, total).
+        """
+        tasks = self.tasks
+        total = len(tasks)
+
+        return {
+            "request": (sum(1 for t in tasks if t.get("request_completed")), total),
+            "overview": (sum(1 for t in tasks if t.get("overview_completed")), total),
+            "details": (sum(1 for t in tasks if t.get("details_completed")), total),
+            "implementation": (sum(1 for t in tasks if t.get("implementation_completed")), total),
+        }
+
     def get_current_task(self) -> Optional[dict]:
         """Get the currently processing task based on stage completion flags."""
         stage_order = ["request", "overview", "details", "implementation"]
@@ -948,6 +964,31 @@ def create_header(pipelines: list) -> Panel:
 
         lines.append(f"[bold]{p.name}[/bold]")
         lines.append(f"  Status: [{status_color}]{status}[/{status_color}] | Progress: [{status_color}]{bar}[/{status_color}] {pct:.0f}% ({tasks_done}/{tasks_total} tasks done)")
+
+        # Add stage-by-stage completion stats with percentages
+        stage_stats = p.get_stage_completion_stats()
+        r_done, r_total = stage_stats["request"]
+        o_done, o_total = stage_stats["overview"]
+        d_done, d_total = stage_stats["details"]
+        i_done, i_total = stage_stats["implementation"]
+
+        # Color code: green if complete, yellow if in progress, dim if not started
+        def stage_color(done, total):
+            if done == total and total > 0:
+                return "green"
+            elif done > 0:
+                return "yellow"
+            return "dim"
+
+        def pct(done, total):
+            return int(done / total * 100) if total > 0 else 0
+
+        r_col = stage_color(r_done, r_total)
+        o_col = stage_color(o_done, o_total)
+        d_col = stage_color(d_done, d_total)
+        i_col = stage_color(i_done, i_total)
+
+        lines.append(f"  Stages: [{r_col}]R:{r_done}/{r_total} ({pct(r_done, r_total)}%)[/{r_col}] → [{o_col}]O:{o_done}/{o_total} ({pct(o_done, o_total)}%)[/{o_col}] → [{d_col}]D:{d_done}/{d_total} ({pct(d_done, d_total)}%)[/{d_col}] → [{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}]")
 
         current = p.get_current_task()
         if current:

@@ -1,0 +1,209 @@
+# =============================================================================
+# GitHub Actions Workflow: L10N Pipeline Runner
+# =============================================================================
+# Runs the L10N epic pipelines in the cloud with configurable options.
+#
+# Usage: Go to Actions tab > "Run L10N Pipeline" > "Run workflow"
+#
+# Created: 2026-01-18
+# =============================================================================
+
+name: Run L10N Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      epics:
+        description: 'Epic numbers (comma-separated, e.g., "2,3,4,5")'
+        required: true
+        default: '2,3,4,5'
+      stages:
+        description: 'Stages to run (comma-separated)'
+        required: true
+        default: 'request,overview'
+        type: choice
+        options:
+          - 'request'
+          - 'request,overview'
+          - 'request,overview,details'
+          - 'request,overview,details,implementation'
+          - 'overview'
+          - 'overview,details'
+          - 'details'
+          - 'details,implementation'
+          - 'implementation'
+      mode:
+        description: 'Execution mode'
+        required: true
+        default: 'parallel'
+        type: choice
+        options:
+          - parallel
+          - staged
+          - sequential
+      commit_results:
+        description: 'Commit results back to repo'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 hour maximum
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Full history for proper commits
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python dependencies
+        run: |
+          pip install pyyaml rich
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          echo "Claude CLI version:"
+          claude --version || echo "Version check not available"
+
+      - name: Verify API Key
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not set!"
+            exit 1
+          fi
+          echo "API key is configured (length: ${#ANTHROPIC_API_KEY})"
+
+      - name: Create epic-specific request files
+        run: |
+          for epic in $(echo "${{ inputs.epics }}" | tr ',' ' '); do
+            file="docs/gen_requests_epic${epic}.md"
+            if [ ! -f "$file" ]; then
+              echo "Creating $file..."
+              cat > "$file" << EOF
+          # Generated Requests - Epic ${epic}
+
+          This file contains auto-generated feature requests for L10N Epic ${epic}.
+
+          ---
+
+          EOF
+            fi
+          done
+
+      - name: Display configuration
+        run: |
+          echo "========================================"
+          echo "Pipeline Configuration"
+          echo "========================================"
+          echo "Epics: ${{ inputs.epics }}"
+          echo "Stages: ${{ inputs.stages }}"
+          echo "Mode: ${{ inputs.mode }}"
+          echo "Commit results: ${{ inputs.commit_results }}"
+          echo "========================================"
+          echo ""
+          echo "Pipeline files:"
+          ls -la pipelines-execution/*.yaml
+
+      - name: Run Pipeline
+        id: pipeline
+        run: |
+          chmod +x ./scripts/run-epics.sh
+
+          echo "Starting pipeline at $(date)"
+
+          ./scripts/run-epics.sh \
+            --${{ inputs.mode }} \
+            --epics "${{ inputs.epics }}" \
+            --stages "${{ inputs.stages }}" \
+            2>&1 | tee pipeline-output.log
+
+          echo "Pipeline completed at $(date)"
+
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## Pipeline Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Epics | ${{ inputs.epics }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Stages | ${{ inputs.stages }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Mode | ${{ inputs.mode }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### State Files" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -la pipelines-execution/*-state.json 2>/dev/null || echo "No state files found"
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Generated Documents" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -la docs/*-overview.md docs/*-detailed.md 2>/dev/null | head -20 || echo "No generated docs yet"
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit and push results
+        if: inputs.commit_results && always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add all pipeline outputs
+          git add -A docs/
+          git add -A pipelines-execution/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Pipeline run: epics=${{ inputs.epics }} stages=${{ inputs.stages }} mode=${{ inputs.mode }}
+
+          Run ID: ${{ github.run_id }}
+          Triggered by: ${{ github.actor }}
+          Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+            git push
+            echo "Results committed and pushed successfully"
+          fi
+
+      - name: Upload pipeline artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-outputs-${{ github.run_id }}
+          path: |
+            docs/gen_requests*.md
+            docs/*-overview.md
+            docs/*-detailed.md
+            pipelines-execution/*-state.json
+            pipelines-execution/*.log
+            pipeline-output.log
+          retention-days: 30
+
+      - name: Upload logs separately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-logs-${{ github.run_id }}
+          path: |
+            pipelines-execution/*.log
+            pipeline-output.log
+          retention-days: 7
