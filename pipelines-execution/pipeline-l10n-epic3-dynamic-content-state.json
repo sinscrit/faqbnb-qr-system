@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506273",
-  "updated_at": "2026-01-18T05:56:34.644967",
+  "updated_at": "2026-01-18T06:03:23.819392",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 16,
+  "current_task_index": 17,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
   "source_hash": "499d11917485abcf1bc7b1175f09eebc",
   "tasks": [
@@ -305,14 +305,16 @@
       "title": "Implement tag translation processor",
       "description": "Translate tag value\nStore in `tag_translations` table\nMark as user tag (is_system_tag = false)\nUpdate job status",
       "raw_match": "\n- [ ] **Task 3.5:** Implement tag translation processor",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-275",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-18T06:01:53.957381",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-275"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-275",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-275-implement-tag-translation-processor-overview.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.6",
@@ -321,11 +323,14 @@
       "title": "Implement job prioritization",
       "description": "File: `/src/lib/job-queue/priority.ts`\nPriority levels: 1. **Priority 100:** Recently created content (last 5 minutes) 2. **Priority 50:** Updated content 3. **Priority 25:** Batch imports 4. **Priority 10:** Retry failed translations\nJob picker query orders by priority DESC, created_at ASC",
       "raw_match": "\n- [ ] **Task 3.6:** Implement job prioritization",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-276",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-276"
+      },
+      "request_completed": true
     },
     {
       "id": "3.7",
@@ -596,8 +601,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 7,
-    "last_request_id": "REQ-275",
+    "total_requests_generated": 8,
+    "last_request_id": "REQ-276",
     "first_request_id": "REQ-259",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
   }

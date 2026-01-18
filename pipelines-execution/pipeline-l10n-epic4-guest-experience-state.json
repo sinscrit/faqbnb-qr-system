@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.507471",
-  "updated_at": "2026-01-18T06:00:45.296832",
+  "updated_at": "2026-01-18T06:05:58.006099",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 20,
+  "current_task_index": 21,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
   "source_hash": "8b789d30e0e9b35c848ab3362a26de99",
   "tasks": [
@@ -377,14 +377,16 @@
       "title": "Create server-side language detection utility",
       "description": "File: `/src/lib/i18n/guest-language.ts` (server-side version)\nRead from NextRequest cookies and headers\nPriority: URL param > Cookie > Accept-Language > default",
       "raw_match": "\n- [ ] **Task 6.2:** Create server-side language detection utility",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-324",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-18T06:04:07.262865",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-324"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-324",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-324-create-server-side-language-detection-utility-overview.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "7.1",
@@ -393,11 +395,14 @@
       "title": "Test language detection scenarios",
       "description": "Test: Browser language detection works\nTest: Cookie preference overrides browser\nTest: URL parameter overrides cookie\nTest: Fallback to original works",
       "raw_match": "\n- [ ] **Task 7.1:** Test language detection scenarios",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-325",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-325"
+      },
+      "request_completed": true
     },
     {
       "id": "7.2",
@@ -499,8 +504,8 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 9,
-    "last_request_id": "REQ-324",
+    "total_requests_generated": 10,
+    "last_request_id": "REQ-325",
     "first_request_id": "REQ-304",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
   }

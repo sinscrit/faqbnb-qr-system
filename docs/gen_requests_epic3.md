@@ -630,3 +630,40 @@ Enables automated multilingual tag delivery by implementing the core processing 
 
 ---
 
+## REQ-276: Implement Job Prioritization for Translation Queue
+
+**Date**: 2026-01-18 10:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system must assign priority levels to translation jobs based on content recency and operation type, ensuring time-sensitive translations are processed before lower-priority batch operations.
+
+### Current Behavior
+Translation jobs are processed in the order they are created without regard to urgency or importance. Recently created content requiring immediate translation receives the same priority as bulk imports or retry operations, potentially causing delays in publishing new property content for international guests.
+
+### Expected Behavior
+When translation jobs are created, the system automatically assigns priority values based on specific criteria. Content created within the last 5 minutes receives the highest priority of 100 to enable rapid publication. Updated content receives priority 50 to ensure modifications are translated promptly. Batch import operations receive priority 25 as they are less time-sensitive. Failed translation retry attempts receive the lowest priority of 10 to avoid blocking new content. The job picker query retrieves jobs ordered by priority descending, then by creation timestamp ascending, ensuring highest-priority jobs are processed first while maintaining chronological order within each priority level.
+
+### User Impact
+Property owners see their newly created content translated and available to international guests more quickly, improving the time-to-market for new listings. Updates to existing content are prioritized appropriately over bulk operations, ensuring guests see current information without excessive delays. Batch imports and retries are processed during lower-demand periods without interfering with time-sensitive translation requests.
+
+### Business Value
+Optimizes translation resource allocation by prioritizing time-sensitive content over bulk operations, improving guest experience through faster multilingual content availability while maintaining efficient processing of background tasks during periods of lower demand.
+
+### Acceptance Criteria
+- [ ] A priority assignment utility function determines the appropriate priority value based on job metadata
+- [ ] Jobs for content created within the last 5 minutes are assigned priority 100
+- [ ] Jobs for updated content are assigned priority 50
+- [ ] Jobs for batch import operations are assigned priority 25
+- [ ] Jobs for retry attempts of failed translations are assigned priority 10
+- [ ] The translation job creation logic calls the priority assignment utility to set the priority field
+- [ ] The job picker query orders results by priority descending as the primary sort criterion
+- [ ] The job picker query orders results by created_at ascending as the secondary sort criterion within each priority level
+- [ ] The priority assignment logic is located at /src/lib/job-queue/priority.ts
+- [ ] The priority utility function is properly exported and importable by job creation modules
+- [ ] The job queue table schema includes a priority field to store integer priority values
+- [ ] Priority values are stored as integers to enable efficient database sorting and indexing
+
+---
+

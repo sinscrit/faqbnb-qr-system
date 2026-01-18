@@ -56,6 +56,7 @@ export type Database = {
           owner_id: string
           settings: Json | null
           updated_at: string | null
+          preferred_language: string | null  // REQ-225: Account default language preference
         }
         Insert: {
           created_at?: string | null
@@ -65,6 +66,7 @@ export type Database = {
           owner_id: string
           settings?: Json | null
           updated_at?: string | null
+          preferred_language?: string | null  // REQ-225: Account default language preference
         }
         Update: {
           created_at?: string | null
@@ -74,6 +76,7 @@ export type Database = {
           owner_id?: string
           settings?: Json | null
           updated_at?: string | null
+          preferred_language?: string | null  // REQ-225: Account default language preference
         }
         Relationships: []
       }
@@ -191,6 +194,7 @@ export type Database = {
           id: string
           role: string | null
           updated_at: string | null
+          preferred_language: string | null  // REQ-225: User language preference
         }
         Insert: {
           created_at?: string | null
@@ -199,6 +203,7 @@ export type Database = {
           id: string
           role?: string | null
           updated_at?: string | null
+          preferred_language?: string | null  // REQ-225: User language preference
         }
         Update: {
           created_at?: string | null
@@ -207,6 +212,7 @@ export type Database = {
           id?: string
           role?: string | null
           updated_at?: string | null
+          preferred_language?: string | null  // REQ-225: User language preference
         }
         Relationships: []
       }

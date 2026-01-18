@@ -795,3 +795,45 @@ Eliminates code duplication between client and server language detection impleme
 - [ ] Function processes quickly without blocking request handling in middleware contexts
 - [ ] Edge cases such as empty strings, whitespace-only values, and case sensitivity are handled correctly
 
+---
+
+## REQ-325: Test Language Detection Priority and Fallback Scenarios
+
+**Date**: 2026-01-18 06:04
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The system should have comprehensive test coverage verifying that language detection examines sources in the correct priority order and properly falls back to default language when preferences are unavailable or invalid.
+
+### Current Behavior
+Language detection utilities and components exist but lack systematic test coverage to verify the priority hierarchy and fallback behavior. Without testing, there is no guarantee that URL parameters override cookies, cookies override browser headers, and the system gracefully handles missing or malformed language preferences across different contexts.
+
+### Expected Behavior
+A comprehensive test suite validates all language detection scenarios across both client and server contexts. Tests verify that URL parameters take highest priority and always override cookie and browser settings when present. Tests confirm that cookie preferences are used when URL parameters are absent, overriding browser Accept-Language headers. Tests ensure browser language detection activates only when neither URL nor cookie preferences exist. Tests validate that the system falls back to the original source language when all detection methods fail or return unsupported language codes. Each test covers edge cases including malformed inputs, empty strings, unsupported codes, and missing request properties.
+
+### User Impact
+Guests experience reliable and predictable language detection behavior across all entry points and contexts. Language preferences set explicitly through URL parameters always take precedence, ensuring shareable links work as expected. Stored preferences in cookies persist correctly without being overridden by browser settings. When all else fails, content appears in a sensible default language rather than breaking or showing errors.
+
+### Business Value
+Ensures the language detection system functions correctly under all conditions, preventing user frustration from unpredictable language switching. Validates that the preference priority hierarchy supports both explicit user choices and implicit detection without conflicts. Creates confidence that language detection works reliably across different browsers, devices, and network conditions. Reduces support burden by catching edge cases and error conditions before they reach production users.
+
+### Acceptance Criteria
+- [ ] Test verifies URL language parameter overrides cookie preference when both are present
+- [ ] Test verifies URL language parameter overrides browser Accept-Language header when both are present
+- [ ] Test verifies cookie preference overrides browser Accept-Language header when no URL parameter exists
+- [ ] Test verifies browser Accept-Language header is used when neither URL parameter nor cookie is present
+- [ ] Test verifies system falls back to original source language when all detection sources are missing
+- [ ] Test verifies system falls back to original source language when all sources provide invalid language codes
+- [ ] Test verifies malformed Accept-Language headers do not cause errors and fallback works correctly
+- [ ] Test verifies empty string language preferences are treated as invalid and trigger fallback
+- [ ] Test verifies unsupported language codes in URL parameters trigger fallback to next priority source
+- [ ] Test verifies unsupported language codes in cookies trigger fallback to browser header detection
+- [ ] Test verifies the same priority hierarchy works in both middleware and client component contexts
+- [ ] Test verifies language detection handles missing request objects gracefully without throwing errors
+- [ ] Test verifies cookie setting occurs when language is detected from browser headers but no cookie exists
+- [ ] Test verifies existing cookies are not overwritten when they match the detected language
+- [ ] Test suite includes both unit tests for detection utilities and integration tests for complete page flows
+- [ ] Tests cover all six supported languages to ensure each can be properly detected and displayed
+- [ ] Test assertions verify both the detected language code and any side effects like cookie setting
+

@@ -683,3 +683,50 @@ Optimizes translation resource utilization by allowing surgical bulk updates tar
 
 ---
 
+## REQ-323: Create Translation Management Page
+
+**Date**: 2026-01-18 10:15
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Property owners and account administrators should have a dedicated page displaying all translatable content in a full-width table with filtering, sorting, and bulk selection capabilities to efficiently manage translations across their entire content inventory.
+
+### Current Behavior
+No centralized translation management interface exists. Property owners managing multilingual content must navigate to individual items, properties, or FAQ sections to check translation status and perform translation operations. There is no unified view showing all translatable content across different entity types in one place. Owners cannot filter content by translation status, entity type, or language coverage. Bulk operations on translations require opening items individually, making large-scale translation management impractical.
+
+### Expected Behavior
+The Translation Management page displays a full-width data table showing all translatable content belonging to the authenticated user's account. Each table row represents one translatable entity and displays the entity name, entity type, translation status indicators for all six supported languages, and action controls. Above the table, a filter bar offers dropdowns to narrow the view by content type, specific language, and translation status. Users can select multiple rows using checkboxes, activating the BulkTranslationBar for multi-item operations. Clicking a row's translation status column opens the TranslationPreviewPanel for detailed information and single-item actions. The table supports sorting by entity name, type, and overall translation completion percentage. Pagination controls appear when content volume exceeds one page, with configurable items per page. The page displays loading states during data fetching and appropriate empty states when no content matches applied filters.
+
+### User Impact
+Property owners managing dozens or hundreds of content items across multiple properties need efficient tools to maintain translation coverage at scale. A centralized management page eliminates the fragmented workflow of checking translations across disconnected sections of the application. Filtering and sorting capabilities allow owners to quickly identify specific translation gaps requiring attention, such as all items missing Spanish translations or all FAQ entries with failed translation jobs. Bulk selection and operations dramatically reduce time spent requesting re-translations or reviewing translation status after making widespread source content improvements. Account administrators overseeing translation coverage for multiple property owners benefit from aggregate visibility and management capabilities across their entire portfolio.
+
+### Business Value
+Provides scalable translation management tooling that supports growing content inventories without proportional increases in owner effort. Efficient management interfaces increase translation completion rates by reducing friction in translation workflows, ensuring international guests receive complete information in all supported languages. Higher translation coverage expands booking potential across all language markets and improves platform competitiveness in international markets.
+
+### Acceptance Criteria
+- [ ] Page renders at dashboard route for translations showing full-width table layout
+- [ ] Table displays all translatable entities owned by authenticated user's account
+- [ ] Table columns include entity name, entity type, translation status for each of six languages, and action controls
+- [ ] Translation status column uses TranslationStatusColumn component showing visual indicators per language
+- [ ] Filter bar appears above table offering type, language, and status filter dropdowns
+- [ ] Type filter allows selection of specific entity types or all types
+- [ ] Language filter allows selection of specific language or all languages
+- [ ] Status filter allows selection by translation completion state
+- [ ] Applying filters immediately updates table to show only matching content
+- [ ] Table supports row selection via checkboxes for bulk operations
+- [ ] Selecting one or more rows activates BulkTranslationBar with bulk action controls
+- [ ] Clicking translation status column in any row opens TranslationPreviewPanel for that entity
+- [ ] Table supports sorting by entity name, type, and overall translation completion
+- [ ] Pagination controls appear when content exceeds page size threshold
+- [ ] Page size selector allows choosing items per page
+- [ ] Loading state displays during initial data fetch and filter changes
+- [ ] Empty state displays when no translatable content exists
+- [ ] Empty state displays when active filters match no content
+- [ ] Page is responsive and usable on tablet and desktop viewports
+- [ ] Page is keyboard accessible with proper focus management for all interactive controls
+- [ ] Page only displays content belonging to authenticated user's account
+- [ ] Unauthorized users are redirected to appropriate error or login page
+
+---
+

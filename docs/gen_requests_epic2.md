@@ -514,3 +514,83 @@ Standardized API error handling improves application security by preventing info
 - [ ] Rate limiting or quota exceeded scenarios return appropriate error responses with clear guidance
 - [ ] The error handling implementation maintains separation between user-facing messages and detailed debug information
 ---
+
+## REQ-318: Create Centralized Error Message Utility
+
+**Date**: 2026-01-18 17:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The application should provide a centralized error message utility that standardizes error handling, formats error messages consistently, and simplifies error communication across both frontend and backend components.
+
+### Current Behavior
+Error messages are generated and handled inconsistently throughout the application. Components and services create error messages using ad-hoc patterns, with some areas using inline strings, others constructing messages programmatically, and still others relying on raw error objects passed through multiple layers. There is no centralized mechanism for formatting errors, categorizing error types, or ensuring consistent error structure across different parts of the codebase. Developers must repeatedly implement similar error handling logic in each component or service that needs to communicate errors to users. Error message formatting varies between toast notifications, form validation feedback, modal dialogs, and API responses, creating fragmented user experiences when errors occur.
+
+### Expected Behavior
+When any part of the application needs to handle, format, or display an error, developers use a centralized error message utility that provides consistent error handling patterns. The utility accepts various error inputs such as error objects, error codes, validation failures, or API error responses and transforms them into standardized error message formats appropriate for the consumption context. The utility integrates with the translation system to retrieve localized error messages from the errors namespace based on error types or codes. Developers can specify the error severity level such as error, warning, or info, and the utility ensures appropriate formatting and presentation hints. The utility provides helper functions for common error scenarios such as validation errors, API errors, authentication errors, and permission errors, reducing boilerplate code. Error categorization is automatic when possible, mapping known error patterns to appropriate error namespace keys. The utility maintains consistent error object structure across the application, making error handling predictable in both client and server contexts.
+
+### User Impact
+Users receive consistent, well-formatted error messages throughout the application regardless of which feature triggered the error or how it is displayed. Error messages maintain uniform clarity, tone, and structure whether appearing in toast notifications, form fields, modal dialogs, or other UI contexts. International users benefit from error messages that are properly localized through the centralized translation integration. Users encounter fewer confusing or technical error messages because the utility enforces standards for user-facing error communication. When errors provide actionable guidance, the formatting ensures that guidance is prominent and easy to follow.
+
+### Business Value
+A centralized error message utility significantly reduces development time and code duplication by providing reusable error handling patterns that work consistently across the entire application. Error-related bugs decrease because error handling logic is centralized, tested once, and applied uniformly rather than reimplemented with variations in each component. Support costs are reduced through consistent, clear error messaging that helps users understand and potentially resolve issues without assistance. The utility creates a foundation for systematic improvement of error communication quality, as enhancements to the central utility automatically benefit all error scenarios. Integration with the translation system ensures error messages are localization-ready from the start, avoiding costly retrofitting when expanding to international markets. This infrastructure establishes professional error handling standards that scale with application growth and complexity.
+
+### Acceptance Criteria
+- [ ] A centralized error message utility module exists with documented public API
+- [ ] The utility accepts various error input types including Error objects, error codes, validation errors, and API error responses
+- [ ] The utility transforms error inputs into standardized error message objects with consistent structure
+- [ ] Error message objects include properties for user-facing message text, error code or type, severity level, and optional action guidance
+- [ ] The utility integrates with the translation system to retrieve localized error messages from the errors namespace
+- [ ] Helper functions exist for common error scenarios such as validation errors, API errors, authentication errors, and permission errors
+- [ ] The utility supports dynamic parameter substitution in error messages for field names, values, limits, or contextual information
+- [ ] Error severity levels such as error, warning, and info are supported with appropriate categorization
+- [ ] The utility handles edge cases such as null errors, unknown error types, and malformed error objects gracefully with sensible fallbacks
+- [ ] TypeScript types provide type safety for error utility functions and standardized error object structures
+- [ ] The utility can be used in both frontend React components and backend API route handlers
+- [ ] Documentation explains the utility's purpose, usage patterns, available helper functions, and integration with the errors namespace
+- [ ] The utility maintains separation between user-facing error messages and detailed error information for logging or debugging
+- [ ] Error objects produced by the utility include sufficient context for server-side logging without exposing sensitive details to clients
+- [ ] The utility is performant and does not introduce significant overhead when handling errors
+- [ ] Unit tests validate error transformation logic, translation integration, and edge case handling
+
+---
+
+## REQ-319: Update Zod Validation Schemas to Use Translated Messages
+
+**Date**: 2026-01-18 21:30
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+All Zod validation schemas throughout the application should be updated to use translated error messages instead of hardcoded English strings, enabling validation feedback to appear in the user's preferred language.
+
+### Current Behavior
+Zod validation schemas across the application contain hardcoded English error messages defined inline within schema definitions. When validation fails, users see error messages like "Required", "Invalid email format", "Must be at least 8 characters", or custom validation messages written directly in English within the schema code. These error messages cannot be translated because they are static strings embedded in schema definitions rather than dynamic values retrieved from the translation system. Users with non-English language preferences receive validation errors in English regardless of their interface language setting, creating an inconsistent localization experience. Each schema defines its own validation messages independently, leading to inconsistent wording across similar validation scenarios in different forms throughout the application.
+
+### Expected Behavior
+When users encounter validation errors from any form in the application, the error messages appear in their preferred language using the translation system. Zod schemas reference translation keys from the errors namespace instead of containing hardcoded English strings. Validation message retrieval integrates with the active translation context, automatically using the current user's language preference. Similar validation rules across different schemas display consistent error messages because they reference shared translation keys from the validation errors category. Developers creating new Zod schemas follow established patterns for integrating translation functions with schema error message definitions. The validation error messages support dynamic parameter substitution for field names, limits, formats, or other contextual information specific to each validation rule.
+
+### User Impact
+International users receive all form validation feedback in their native language, creating a fully localized form experience from field labels through error messaging. Users with limited English proficiency can understand validation requirements and correct input errors without language barriers. All users benefit from consistent validation error wording across similar scenarios throughout the application because schemas reference shared translation keys. The validation experience feels professional and complete rather than partially translated, increasing user confidence and trust in the application.
+
+### Business Value
+Translating validation messages removes a critical gap in the localization experience that directly impacts form completion rates in international markets. Forms are primary conversion points for user onboarding, account creation, and data collection, making validation message localization essential for international user acquisition. Consistent validation messaging through shared translation keys reduces development time for new forms and ensures quality standards are maintained across all validation scenarios. This work completes the form localization effort started in previous tasks, delivering the full value of internationalized forms. Supporting translated validation messages demonstrates commitment to international users and enables confident expansion into non-English speaking markets.
+
+### Acceptance Criteria
+- [ ] All Zod schema definitions across the application have been identified and catalogued
+- [ ] Hardcoded English error messages in Zod schemas have been replaced with translation function calls
+- [ ] Schemas access translation functions through an appropriate pattern that integrates with the translation context
+- [ ] Validation error messages reference translation keys from the errors validation category in the errors namespace
+- [ ] Common validation rules such as required, email format, string length, and number ranges use shared translation keys consistently
+- [ ] Field-specific validation messages can accept dynamic parameters for field names, limits, formats, or other contextual values
+- [ ] The translation integration pattern works correctly with Zod's error message customization mechanisms
+- [ ] Validation errors display in the user's current language preference when forms are submitted or fields are validated
+- [ ] All existing validation behavior and rules remain unchanged after translation integration
+- [ ] Form validation functionality is not degraded by the translation changes
+- [ ] Edge cases such as missing translation keys or translation system initialization failures are handled gracefully with sensible fallbacks
+- [ ] Documentation or code comments explain the pattern for integrating translations with Zod schemas for future reference
+- [ ] The implementation does not create performance overhead during form validation
+- [ ] TypeScript types ensure type safety for translation key references in schema definitions where applicable
+
+---
