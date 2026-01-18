@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+// Create the next-intl plugin wrapper
+// By default, it expects i18n.ts in the project root
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -47,5 +52,8 @@ const sentryConfig = {
   automaticVercelMonitors: true,
 };
 
-// Make sure adding Sentry options is the last code to run before exporting
-export default withSentryConfig(nextConfig, sentryConfig);
+// Apply plugins in composition order:
+// 1. nextConfig (base configuration)
+// 2. withNextIntl (i18n plugin - wraps config)
+// 3. withSentryConfig (monitoring - must be outermost per Sentry docs)
+export default withSentryConfig(withNextIntl(nextConfig), sentryConfig);
