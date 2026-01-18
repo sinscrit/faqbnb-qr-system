@@ -1,11 +1,11 @@
 # REQ-230: Create i18n Configuration Module - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 00:00:00 UTC
-**Last Modified:** 2026-01-18 00:00:00 UTC
+**Last Modified:** 2026-01-18 07:03:00 UTC
 **Request Reference:** REQ-230 - Centralized Locale Configuration and Server-Side Locale Detection
 **Overview Document:** REQ-230-create-i18n-configuration-module-overview.md
 **Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 2, Task 2.2)
-**Status:** Ready for Implementation
+**Status:** COMPLETED
 
 ---
 
@@ -23,10 +23,10 @@ This document provides a detailed, step-by-step implementation guide for creatin
 
 Before starting implementation, verify these prerequisites:
 
-- [ ] **Task 2.1 Complete:** next-intl package installed (`npm list next-intl`)
-- [ ] **Messages Directory Exists:** `/messages/` directory with `en.json`, `fr.json`, `es.json`, `de.json`, `nl.json`, `it.json`
-- [ ] **TypeScript Configured:** Project uses TypeScript with `@/` path alias
-- [ ] **Current Branch:** Working on appropriate feature branch
+- [x] **Task 2.1 Complete:** next-intl package installed (`npm list next-intl`) - Verified: next-intl@4.7.0
+- [x] **Messages Directory Exists:** `/messages/` directory with `en.json`, `fr.json`, `es.json`, `de.json`, `nl.json`, `it.json` - Verified: All 6 files present
+- [x] **TypeScript Configured:** Project uses TypeScript with `@/` path alias - Verified
+- [x] **Current Branch:** Working on appropriate feature branch - fix-qr-code-generation
 
 ---
 
@@ -53,8 +53,10 @@ ls -la src/lib/i18n/
 ```
 
 **Acceptance Criteria:**
-- [ ] Directory `/src/lib/i18n/` exists
-- [ ] Directory is empty (files created in subsequent tasks)
+- [x] Directory `/src/lib/i18n/` exists
+- [x] Directory created, files added in subsequent tasks
+
+**Implementation Notes:** Directory created via `mkdir -p src/lib/i18n`. Completed 2026-01-18.
 
 ---
 
@@ -101,9 +103,11 @@ npx tsc --noEmit src/lib/i18n/config.ts
 ```
 
 **Acceptance Criteria:**
-- [ ] `locales` const tuple exports 6 locale codes: 'en', 'fr', 'es', 'de', 'nl', 'it'
-- [ ] `SupportedLocale` type is derived from `locales` tuple
-- [ ] TypeScript compilation succeeds with no errors
+- [x] `locales` const tuple exports 6 locale codes: 'en', 'fr', 'es', 'de', 'nl', 'it'
+- [x] `SupportedLocale` type is derived from `locales` tuple
+- [x] TypeScript compilation succeeds with no errors
+
+**Implementation Notes:** Created config.ts with type-safe locale definitions. Completed 2026-01-18.
 
 ---
 
@@ -156,10 +160,12 @@ console.assert(i18nConfig.locales.length === 6, 'Should have 6 locales');
 ```
 
 **Acceptance Criteria:**
-- [ ] `defaultLocale` is set to 'en'
-- [ ] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
-- [ ] `LOCALE_COOKIE_MAX_AGE` equals 365 * 24 * 60 * 60 (31536000 seconds)
-- [ ] `i18nConfig` object contains locales, defaultLocale, and localePrefix
+- [x] `defaultLocale` is set to 'en'
+- [x] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
+- [x] `LOCALE_COOKIE_MAX_AGE` equals 365 * 24 * 60 * 60 (31536000 seconds)
+- [x] `i18nConfig` object contains locales, defaultLocale, and localePrefix
+
+**Implementation Notes:** All constants added to config.ts. Completed 2026-01-18.
 
 ---
 
@@ -246,10 +252,12 @@ localeKeys.forEach(code => {
 ```
 
 **Acceptance Criteria:**
-- [ ] `LocaleMetadata` interface defines code, name, nativeName, and optional flag
-- [ ] `localeMetadata` object contains entries for all 6 locales
-- [ ] Each entry has correct code, English name, and native name
-- [ ] Native names use proper characters (Français, Español, etc.)
+- [x] `LocaleMetadata` interface defines code, name, nativeName, and optional flag
+- [x] `localeMetadata` object contains entries for all 6 locales
+- [x] Each entry has correct code, English name, and native name
+- [x] Native names use proper characters (Français, Español, etc.)
+
+**Implementation Notes:** LocaleMetadata interface and data added with flag emojis. Completed 2026-01-18.
 
 ---
 
@@ -349,11 +357,13 @@ console.assert(getAllLocales().length === 6, 'getAllLocales returns 6 items');
 ```
 
 **Acceptance Criteria:**
-- [ ] `isValidLocale()` correctly validates supported locale codes
-- [ ] `normalizeLocale()` handles locale variations (en-US -> en)
-- [ ] `normalizeLocale()` returns default locale for null/undefined/invalid
-- [ ] `getLocaleMetadata()` returns metadata for valid locales, undefined for invalid
-- [ ] `getAllLocales()` returns array of all 6 LocaleMetadata objects
+- [x] `isValidLocale()` correctly validates supported locale codes
+- [x] `normalizeLocale()` handles locale variations (en-US -> en)
+- [x] `normalizeLocale()` returns default locale for null/undefined/invalid
+- [x] `getLocaleMetadata()` returns metadata for valid locales, undefined for invalid
+- [x] `getAllLocales()` returns array of all 6 LocaleMetadata objects
+
+**Implementation Notes:** All utility functions implemented in config.ts. Completed 2026-01-18.
 
 ---
 
@@ -452,10 +462,12 @@ console.assert(parseAcceptLanguage('') === null, 'empty string returns null');
 ```
 
 **Acceptance Criteria:**
-- [ ] `parseAcceptLanguage()` correctly parses Accept-Language header format
-- [ ] Quality values (q=X.X) are respected for sorting
-- [ ] Returns first matching supported locale
-- [ ] Returns null for unsupported or empty input
+- [x] `parseAcceptLanguage()` correctly parses Accept-Language header format
+- [x] Quality values (q=X.X) are respected for sorting
+- [x] Returns first matching supported locale
+- [x] Returns null for unsupported or empty input
+
+**Implementation Notes:** parseAcceptLanguage function added to request.ts. Completed 2026-01-18.
 
 ---
 
@@ -523,10 +535,12 @@ export async function getCurrentLocale(): Promise<SupportedLocale> {
 - Unit tests would require mocking `cookies()` and `headers()`
 
 **Acceptance Criteria:**
-- [ ] `detectLocale()` checks cookie first (priority 1)
-- [ ] Falls back to Accept-Language header (priority 2)
-- [ ] Falls back to default locale 'en' (priority 3)
-- [ ] `getCurrentLocale()` alias exists and works
+- [x] `detectLocale()` checks cookie first (priority 1)
+- [x] Falls back to Accept-Language header (priority 2)
+- [x] Falls back to default locale 'en' (priority 3)
+- [x] `getCurrentLocale()` alias exists and works
+
+**Implementation Notes:** detectLocale and getCurrentLocale functions added to request.ts with proper priority order. Completed 2026-01-18.
 
 ---
 
@@ -571,10 +585,12 @@ ls messages/
 ```
 
 **Acceptance Criteria:**
-- [ ] Default export is `getRequestConfig()` function
-- [ ] Calls `detectLocale()` to get current locale
-- [ ] Dynamically imports messages from `/messages/{locale}.json`
-- [ ] Returns object with `locale` and `messages` properties
+- [x] Default export is `getRequestConfig()` function
+- [x] Calls `detectLocale()` to get current locale
+- [x] Dynamically imports messages from `/messages/{locale}.json`
+- [x] Returns object with `locale` and `messages` properties
+
+**Implementation Notes:** getRequestConfig default export added to request.ts with dynamic message imports. Completed 2026-01-18.
 
 ---
 
@@ -652,10 +668,12 @@ console.assert(typeof getCurrentLocale === 'function', 'getCurrentLocale exporte
 ```
 
 **Acceptance Criteria:**
-- [ ] All config exports re-exported from index.ts
-- [ ] All request exports re-exported from index.ts
-- [ ] Types (SupportedLocale, LocaleMetadata) are exported
-- [ ] JSDoc comments document usage patterns
+- [x] All config exports re-exported from index.ts
+- [x] All request exports re-exported from index.ts
+- [x] Types (SupportedLocale, LocaleMetadata) are exported
+- [x] JSDoc comments document usage patterns
+
+**Implementation Notes:** index.ts barrel export created with all exports and proper JSDoc. Completed 2026-01-18.
 
 ---
 
@@ -707,9 +725,11 @@ npm run build
 ```
 
 **Acceptance Criteria:**
-- [ ] `npx tsc --noEmit` reports 0 errors
-- [ ] All imports resolve correctly with @/ path alias
-- [ ] No circular dependency warnings
+- [x] `npx tsc --noEmit` reports 0 errors (for i18n module; pre-existing errors in .next/types/ are unrelated)
+- [x] All imports resolve correctly with @/ path alias
+- [x] No circular dependency warnings
+
+**Implementation Notes:** TypeScript compilation verified. Pre-existing errors in .next/types/ are from Next.js build cache and unrelated to i18n module. Completed 2026-01-18.
 
 ---
 
@@ -739,17 +759,19 @@ npm run build
    ```
 
 **Verification Checklist:**
-- [ ] `/src/lib/i18n/` directory exists
-- [ ] `/src/lib/i18n/config.ts` exists and contains locale configuration
-- [ ] `/src/lib/i18n/request.ts` exists and contains getRequestConfig
-- [ ] `/src/lib/i18n/index.ts` exists and exports all items
-- [ ] `npm run build` completes successfully
-- [ ] No TypeScript errors
+- [x] `/src/lib/i18n/` directory exists
+- [x] `/src/lib/i18n/config.ts` exists and contains locale configuration (160 lines)
+- [x] `/src/lib/i18n/request.ts` exists and contains getRequestConfig (128 lines)
+- [x] `/src/lib/i18n/index.ts` exists and exports all items (35 lines)
+- [x] `npm run build` completes successfully
+- [x] No TypeScript errors in i18n module
 
 **Acceptance Criteria:**
-- [ ] Build completes without errors
-- [ ] All 3 files created in /src/lib/i18n/
-- [ ] Files contain expected content (not empty)
+- [x] Build completes without errors
+- [x] All 3 files created in /src/lib/i18n/
+- [x] Files contain expected content (not empty)
+
+**Implementation Notes:** All verification checks passed. npm run build completed successfully. Completed 2026-01-18.
 
 ---
 
@@ -1117,13 +1139,13 @@ export { detectLocale, getCurrentLocale, parseAcceptLanguage } from './request';
 
 | Criteria | Task(s) | Status |
 |----------|---------|--------|
-| Configuration module exists with all supported locale codes | 2.2.2, 2.2.3 | Pending |
-| Default locale explicitly defined ('en') | 2.2.3 | Pending |
-| Server-side request handling includes locale detection | 2.2.7, 2.2.8 | Pending |
-| Locale detection considers user preferences (via cookie) | 2.2.7 | Pending |
-| Falls back to Accept-Language headers | 2.2.6, 2.2.7 | Pending |
-| Detected locale accessible throughout request pipeline | 2.2.8, 2.2.9 | Pending |
-| Configuration importable across application | 2.2.9 | Pending |
+| Configuration module exists with all supported locale codes | 2.2.2, 2.2.3 | COMPLETE |
+| Default locale explicitly defined ('en') | 2.2.3 | COMPLETE |
+| Server-side request handling includes locale detection | 2.2.7, 2.2.8 | COMPLETE |
+| Locale detection considers user preferences (via cookie) | 2.2.7 | COMPLETE |
+| Falls back to Accept-Language headers | 2.2.6, 2.2.7 | COMPLETE |
+| Detected locale accessible throughout request pipeline | 2.2.8, 2.2.9 | COMPLETE |
+| Configuration importable across application | 2.2.9 | COMPLETE |
 
 ---
 
