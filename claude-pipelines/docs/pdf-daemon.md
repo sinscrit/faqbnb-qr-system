@@ -454,18 +454,19 @@ implementation:
     timeout: 120
 
 # REQUIRED: All 6 stages
+# NOTE: Pipeline uses 01p and 02p agents (require explicit file path)
 request_stages:
   # Stage 1-4: Per-task stages
   - id: request
     name: "Create Request"
     agent:
-      name: "01-request-fa"
+      name: "01p-request-fa-pipeline"  # Pipeline version - requires file path
       ...
 
   - id: overview
     name: "Create Overview"
     agent:
-      name: "02-techlead-overview"
+      name: "02p-techlead-overview-pipeline"  # Pipeline version - requires file path
       # CRITICAL: Must generate Dependencies section for parallel execution
       # See: templates/overview-stage-template.yaml
       ...
@@ -550,7 +551,7 @@ invocation_template: |
 
 ### Overview Stage: Dependencies Section
 
-The overview stage (02-techlead-overview) is **critical** for parallel execution planning.
+The overview stage (02p-techlead-overview-pipeline) is **critical** for parallel execution planning.
 
 The overview document MUST include a `## Dependencies` section:
 

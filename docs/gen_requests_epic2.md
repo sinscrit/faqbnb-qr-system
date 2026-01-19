@@ -4721,3 +4721,114 @@ Establishing a properties namespace enables systematic internationalization of p
 - [ ] Namespace includes placeholder keys that demonstrate the organizational structure
 - [ ] Structure accommodates future property features without requiring reorganization
 
+
+---
+
+## REQ-399: Update PropertyForm Component for Internationalization
+
+**Date**: 2026-01-19 23:58
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Update the PropertyForm component to replace all hardcoded English UI strings with translation keys from the properties namespace, enabling multilingual property management.
+
+### Current Behavior
+The PropertyForm component displays all UI text in English with hardcoded strings throughout the component. Users creating or editing properties encounter form labels, placeholders, validation messages, button text, help text, and error messages only in English regardless of their selected language preference. The form title, field labels, character counters, submit button states, and informational messages are all static English text embedded directly in the component code.
+
+### Expected Behavior
+The PropertyForm component retrieves all user-facing text from the properties namespace translation keys, displaying content in the user's selected language. Form titles dynamically switch between "Edit Property" and "Create New Property" translations. Field labels including "Property Nickname," "Property Type," "Address," and "Property Owner" appear in the active language. Placeholder text, validation error messages, character count displays, help text, button labels, and loading states all render using appropriate translation keys. The component gracefully handles both create and edit modes with context-appropriate translated text throughout the form lifecycle.
+
+### User Impact
+Property managers and hosts creating or editing property listings interact with forms presented entirely in their preferred language. Users see consistent, professionally translated labels, instructions, and feedback messages throughout the property management workflow. Property creation becomes more accessible to non-English speaking users who can confidently complete forms with native language guidance. Validation messages and error feedback provide clear, actionable information in the user's language, reducing confusion and improving form completion rates.
+
+### Business Value
+Internationalizing the PropertyForm component expands platform accessibility to global markets by removing language barriers from property management workflows. Consistent translation of property forms demonstrates platform maturity and commitment to international user experience. Removing hardcoded English strings from this core component establishes a maintainable pattern for ongoing localization efforts and future property management features.
+
+### Acceptance Criteria
+- [ ] Component imports and uses next-intl translation hooks (useTranslations)
+- [ ] Form title dynamically renders translated text based on create vs edit mode
+- [ ] All field labels retrieve text from properties namespace translation keys
+- [ ] Placeholder text for nickname and address fields uses translation keys
+- [ ] Required field indicators and optional field labels use translated text
+- [ ] All validation error messages retrieve text from properties namespace with proper variable interpolation
+- [ ] Character counter displays use translated text with dynamic count values
+- [ ] Help text beneath fields renders from translation keys with character limit interpolation
+- [ ] Submit button labels display translated text based on form state (create, update, submitting)
+- [ ] Cancel button label uses translation key
+- [ ] Loading state text renders from translation keys
+- [ ] Property owner dropdown label and helper text use translation keys
+- [ ] General error message displays translated text
+- [ ] Component maintains existing functionality without behavioral regressions
+- [ ] All dynamic text properly interpolates variables using next-intl formatting conventions
+
+### Translation Keys Required
+
+**Form Structure:**
+- `properties.form.title.create` - "Create New Property"
+- `properties.form.title.edit` - "Edit Property"
+
+**Field Labels:**
+- `properties.form.fields.owner.label` - "Property Owner"
+- `properties.form.fields.owner.placeholder` - "Select property owner..."
+- `properties.form.fields.owner.locked` - "Property owner cannot be changed after creation"
+- `properties.form.fields.nickname.label` - "Property Nickname"
+- `properties.form.fields.nickname.placeholder` - "e.g., Main Office, Home, Vacation House"
+- `properties.form.fields.nickname.help` - "A friendly name to identify this property ({count}/100)"
+- `properties.form.fields.type.label` - "Property Type"
+- `properties.form.fields.type.placeholder` - "Select property type..."
+- `properties.form.fields.address.label` - "Address"
+- `properties.form.fields.address.placeholder` - "e.g., 123 Main St, Anytown, State 12345"
+- `properties.form.fields.address.help` - "Physical address or location description ({count}/500)"
+
+**Validation Messages:**
+- `properties.form.validation.nickname.required` - "Property nickname is required"
+- `properties.form.validation.nickname.maxLength` - "Property nickname must be 100 characters or less"
+- `properties.form.validation.type.required` - "Property type is required"
+- `properties.form.validation.address.maxLength` - "Address must be 500 characters or less"
+- `properties.form.validation.general` - "Failed to save property. Please try again."
+
+**Actions:**
+- `properties.form.actions.cancel` - "Cancel"
+- `properties.form.actions.create` - "Create Property"
+- `properties.form.actions.update` - "Update Property"
+- `properties.form.actions.creating` - "Creating..."
+- `properties.form.actions.updating` - "Updating..."
+
+**Labels:**
+- `properties.form.labels.required` - "*"
+- `properties.form.labels.optional` - "(Optional)"
+
+### Dependencies
+- REQ-398: Create properties namespace structure in translation files (must be completed first)
+- next-intl package already installed and configured in project
+- Properties namespace must contain all required translation keys before component update
+
+### Estimated Effort
+**Medium (M)**
+
+**Breakdown:**
+- Import and configure useTranslations hook: 15 minutes
+- Replace form title and heading strings: 15 minutes
+- Update all field labels with translation keys: 30 minutes
+- Replace placeholder text with translation keys: 15 minutes
+- Update validation messages with proper variable interpolation: 45 minutes
+- Replace help text with translation keys and variable interpolation: 30 minutes
+- Update button labels and loading states: 30 minutes
+- Update property owner dropdown strings: 20 minutes
+- Testing form in create and edit modes: 30 minutes
+- Verify all validation scenarios display translated messages: 30 minutes
+- Total: 4-5 hours
+
+**Rationale:**
+The PropertyForm component contains approximately 40 user-facing strings across multiple categories including labels, placeholders, validation messages, help text, and button states. While the translation key replacement is straightforward, careful attention is required for dynamic content interpolation (character counters, validation messages) and conditional rendering (create vs edit mode, loading states). The component's validation logic and error handling must be thoroughly tested to ensure translated messages display correctly in all scenarios. The moderate scope and testing requirements justify a Medium size estimate.
+
+### Related Tasks
+- Part of Epic 2: Static UI Localization
+- Phase 2F: Property Management localization
+- Task 2F.2: Update PropertyForm (this requirement)
+- Follows REQ-398: Create properties namespace structure
+- Precedes Task 2F.3: Update property modals
+- Establishes pattern for remaining property management component updates
+- Component contains ~40 strings as estimated in localization plan
+

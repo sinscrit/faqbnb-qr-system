@@ -9,6 +9,9 @@
 #
 # The dependency section is parsed by pipeline_dependencies.py to build
 # a dependency graph for parallel execution via pipeline_distributor.py.
+#
+# Uses 02p-techlead-overview-pipeline which REQUIRES explicit file path
+# This ensures parallel pipelines use correct gen_requests files
 
 # =============================================================================
 # STAGE 2: OVERVIEW - Technical Implementation Breakdown
@@ -20,7 +23,7 @@ overview_stage_template:
     description: "Pull relevant context from codebase and create implementation breakdown with dependencies"
     enabled: true
     agent:
-      name: "02-techlead-overview"
+      name: "02p-techlead-overview-pipeline"
       invocation_template: |
         Acting as a Technical Lead, create an implementation breakdown document for:
         {requests_file_path} - Request #{request_id_num}

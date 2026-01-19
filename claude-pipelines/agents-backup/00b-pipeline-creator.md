@@ -244,14 +244,17 @@ spike_stage:
 # =============================================================================
 
 request_stages:
-  # Stage 1: Create Request
+  # Stage 1: Create Request (uses 01p for pipeline - requires explicit file path)
   - id: request
     name: "Create Request"
     description: "Convert implementation task into formal requirement"
     enabled: true
     agent:
-      name: "01-request-fa"
-      invocation_template: "use agent 01-request-fa to create the request for: {full_task}"
+      name: "01p-request-fa-pipeline"
+      invocation_template: |
+        use agent 01p-request-fa-pipeline to create the request for: {full_task}
+
+        CRITICAL: Target requests file is: {requests_file_path}
       command:
         - "claude"
         - "-p"
@@ -261,15 +264,15 @@ request_stages:
       timeout: 240
     output:
       type: append
-      file: ./docs/gen_requests.md
+      file: "{requests_file_path}"
 
-  # Stage 2: Create Overview
+  # Stage 2: Create Overview (uses 02p for pipeline - requires explicit file path)
   - id: overview
     name: "Create Overview"
     description: "Pull relevant context from codebase for the request"
     enabled: true
     agent:
-      name: "02-techlead-overview"
+      name: "02p-techlead-overview-pipeline"
       invocation_template: |
         Acting as a Technical Lead, create an implementation breakdown document for:
         {requests_file_path} - Request #{request_id_num}

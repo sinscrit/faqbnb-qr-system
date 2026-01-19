@@ -1086,20 +1086,23 @@ context:
 
 ## Request Stage Template
 
-For the request stage (01-request-fa), use this invocation_template:
+For the request stage, use 01p-request-fa-pipeline (requires explicit file path):
 
   invocation_template: |
-    use agent 01-request-fa to create the request for: {{full_task}}
+    use agent 01p-request-fa-pipeline to create the request for: {{full_task}}
+
+    CRITICAL: Target requests file is: {{requests_file_path}}
 
     IMPORTANT: Before creating the request:
-    1. Read docs/gen_requests.md to find the HIGHEST existing REQ-XXX number
+    1. Read {{requests_file_path}} to find the HIGHEST existing REQ-XXX number
     2. Use the NEXT sequential number (e.g., if REQ-180 exists, use REQ-181)
     3. Format MUST be REQ-XXX (three digits minimum, e.g., REQ-181, not REQ-2)
-    4. Append the new request to docs/gen_requests.md
+    4. Append the new request to {{requests_file_path}}
 
 ## Overview Stage Template (CRITICAL: Dependencies Section)
 
-For the overview stage (02-techlead-overview), the invocation_template MUST include
+For the overview stage, use 02p-techlead-overview-pipeline (requires explicit file path).
+The invocation_template MUST include
 instructions to write a Dependencies section for parallel execution planning.
 
 See: claude-pipelines/templates/overview-stage-template.yaml

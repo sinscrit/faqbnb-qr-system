@@ -665,12 +665,16 @@ The pipeline uses specialized AI agents for each stage. Each agent is designed f
 
 | Agent ID | Name | Stage | Purpose |
 |----------|------|-------|---------|
-| `01-request-fa` | Request Functional Analyst | request | Creates formal requirement from task description |
-| `02-techlead-overview` | Tech Lead Overview | overview | Investigates codebase, creates implementation breakdown |
+| `01-request-fa` | Request Functional Analyst | request | Creates formal requirement (default: docs/gen_requests.md) |
+| `01p-request-fa-pipeline` | Request FA (Pipeline) | request | Creates formal requirement (REQUIRES explicit file path) |
+| `02-techlead-overview` | Tech Lead Overview | overview | Creates implementation breakdown (default: docs/gen_requests.md) |
+| `02p-techlead-overview-pipeline` | Tech Lead (Pipeline) | overview | Creates implementation breakdown (REQUIRES explicit file path) |
 | `03-senior-dev-task-breakdown` | Senior Dev Task Breakdown | details | Creates granular 1-point implementation tasks |
 | `05-spec-implementation` | Spec Implementation | implementation | Autonomously implements all tasks from spec |
 | `06a-pipeline-testcheck` | Pipeline Test Check | testcheck | Verifies implementation, generates test harness |
 | `06b-usecase-generator` | Use Case Generator | usecases | Creates E2E test scenarios from PRD intent |
+
+> **Note**: Pipelines use `01p` and `02p` agents which require explicit file paths. This prevents accidental writes to wrong gen_requests files in parallel pipelines. For manual usage, use `01` and `02` which default to `docs/gen_requests.md`.
 
 ### Daemon Agents (Pre-Orchestrator)
 
