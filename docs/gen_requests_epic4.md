@@ -1017,3 +1017,1009 @@ Ensures localization features enhance rather than degrade application performanc
 - [ ] Benchmark results are documented and tracked over time to identify performance trends
 - [ ] Tests identify and report specific bottlenecks when performance thresholds are not met
 - [ ] Performance test suite covers both server-side operations and client-side rendering and state management
+
+---
+
+## REQ-338: Create Localization Types File
+
+**Date**: 2026-01-19 13:25
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should provide a centralized TypeScript types file that defines all localization-related types, interfaces, and constants used throughout the guest-facing internationalization features.
+
+### Current Behavior
+No dedicated type definitions exist for localization concerns. Developers must define language types, translation structures, and locale-related interfaces inline or inconsistently across components, leading to potential type mismatches and duplicated type definitions throughout the codebase.
+
+### Expected Behavior
+A dedicated types file exports comprehensive TypeScript definitions for all localization needs. The file defines a union type for supported language codes, an interface describing language metadata including display names and locale information, types for translated content structures, and a constant array listing all supported languages with their complete metadata. Developers import these types when implementing any localization feature, ensuring consistent type contracts across the entire application.
+
+### User Impact
+Developers building localization features work with strongly-typed, consistent definitions that catch errors at compile time. The application maintains type safety when handling language preferences, translated content, and locale-specific formatting. Users benefit indirectly from fewer runtime errors and more reliable language switching functionality.
+
+### Business Value
+Establishes a type-safe foundation for the entire localization system, reducing bugs and improving developer productivity. Centralizing type definitions in a single location simplifies maintenance and ensures consistent handling of localization concerns across all features. This foundation supports rapid, reliable development of additional internationalization capabilities.
+
+### Acceptance Criteria
+- [ ] A types file exists at `/src/types/l10n.ts`
+- [ ] A SupportedLanguage type is defined as a union of all supported language codes (e.g., 'en' | 'es' | 'fr' | 'de' | 'it' | 'nl')
+- [ ] A LanguageInfo interface is defined including fields for language code, display name, native name, and locale information
+- [ ] A TranslatedContent type or interface is defined to represent content with translations across multiple fields
+- [ ] A SUPPORTED_LANGUAGES constant is exported containing an array of LanguageInfo objects for all six supported languages
+- [ ] Language utility types are defined for translation keys, language detection results, and preference storage
+- [ ] All exported types include JSDoc comments explaining their purpose and usage
+- [ ] The file follows the project's established TypeScript conventions and code style
+- [ ] All types are properly exported and can be imported by other modules
+- [ ] TypeScript compilation succeeds without errors after adding the types file
+---
+
+## REQ-339: Create Guest Language Utility Module
+
+**Date**: 2026-01-19 14:32
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide a comprehensive utility module that detects guest language preferences from multiple sources and persists those preferences across browser sessions.
+
+### Current Behavior
+No standardized utilities exist for guest language detection and preference management. Each component or page that needs to determine a guest's language preference must implement its own detection logic, leading to inconsistent behavior and duplicated code across the application.
+
+### Expected Behavior
+A dedicated utility module provides four core functions that work together to manage guest language preferences. The first function detects the guest's preferred language by examining URL query parameters, reading stored browser cookies, and parsing the Accept-Language header in priority order. The second function persists language selections by setting a browser cookie with appropriate security attributes and long-term expiration. The third function parses Accept-Language headers to extract language codes with their quality weights and returns them in priority order. The fourth function maps browser-reported language codes to the application's supported languages, handling regional variants and finding the closest match when exact codes are unavailable.
+
+### User Impact
+Guests visiting the application automatically see content in their preferred language based on browser settings or previously stored preferences. When guests manually select a language, that choice is remembered across all future visits without requiring repeated selection. The system intelligently handles various browser language configurations, mapping regional language variants to supported languages and ensuring a sensible language choice even when browser preferences don't exactly match available translations.
+
+### Business Value
+Provides the foundational infrastructure for all guest language detection throughout the application. Enables automatic language personalization that improves user experience for international visitors and increases engagement with localized content. Creates a reusable, tested foundation that eliminates the need for duplicate language detection logic across multiple features, reducing maintenance burden and preventing inconsistent behavior.
+
+### Acceptance Criteria
+- [ ] Module exists at `/src/lib/i18n/guest-language.ts`
+- [ ] `detectGuestLanguage` function accepts request object and optional URL parameter as arguments
+- [ ] Detection function examines URL language parameter first before other sources
+- [ ] Detection function reads the guest language preference cookie when no URL parameter is present
+- [ ] Detection function parses the Accept-Language request header as the final fallback
+- [ ] Detection function returns the default language when all sources fail or provide unsupported codes
+- [ ] `setGuestLanguageCookie` function accepts a language code and sets a browser cookie
+- [ ] Cookie is set with one-year expiration to enable long-term preference persistence
+- [ ] Cookie includes appropriate security attributes including Secure and SameSite flags
+- [ ] Cookie path is set to "/" to make the preference available across all application routes
+- [ ] `parseAcceptLanguage` function accepts an Accept-Language header string
+- [ ] Parsing function extracts language codes with quality weights from the header
+- [ ] Parsing function returns language codes sorted by quality weight in descending order
+- [ ] Parsing function handles malformed headers gracefully without throwing errors
+- [ ] `mapToSupportedLanguage` function accepts a language code that may not be directly supported
+- [ ] Mapping function returns an exact match when the code corresponds to a supported language
+- [ ] Mapping function maps regional variants to base language codes when appropriate (e.g., "en-US" to "en")
+- [ ] Mapping function returns the default language when no reasonable match can be determined
+- [ ] All functions include proper TypeScript type definitions for parameters and return values
+- [ ] All functions include JSDoc comments explaining their purpose, parameters, and return values
+- [ ] Module exports a constant for the cookie name to ensure consistency across all usage points
+- [ ] Functions handle edge cases including null values, empty strings, and undefined parameters
+
+---
+
+## REQ-340: Export Localization Types from Main Types Index
+
+**Date**: 2026-01-19 14:45
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The main types index should re-export all localization types to enable clean, consistent imports across the application.
+
+### Current Behavior
+Localization types are defined in a dedicated file but are not accessible through the central types entry point. Developers must import localization types using direct file paths, creating inconsistent import patterns compared to other application types that are imported through the main types index.
+
+### Expected Behavior
+The main types index file includes an export statement that re-exports all types from the localization types module. Developers can import any localization type from the types index alongside other application types, maintaining consistent import patterns throughout the codebase. The export statement follows the same pattern used for other type re-exports in the index file.
+
+### User Impact
+Developers experience consistent, predictable import patterns when working with localization types. Code reviews become simpler because all type imports follow the same structure. Future refactoring is easier because type imports are centralized through a single entry point.
+
+### Business Value
+Maintains architectural consistency by ensuring all types flow through the established central export pattern. Improves long-term code maintainability by preventing scattered direct imports that complicate refactoring. Reduces cognitive load for developers by providing a single, predictable location for all type imports.
+
+### Acceptance Criteria
+- [ ] The types index file at `/src/types/index.ts` includes an export statement for localization types
+- [ ] The export statement uses the pattern `export * from './l10n'` to re-export all types from the l10n module
+- [ ] Localization types can be successfully imported from `@/types` path alias
+- [ ] No existing imports or type references are broken by adding the export
+- [ ] TypeScript compilation succeeds without errors after adding the re-export
+- [ ] The export statement is positioned logically within the index file alongside other type exports
+
+---
+
+## REQ-341: Create Translation Fetch Utilities Module
+
+**Date**: 2026-01-19 02:34
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide dedicated utility functions that retrieve translated content from the database for items, articles, links, and tags based on guest language preferences.
+
+### Current Behavior
+No standardized utilities exist for fetching translated content from translation tables. Each feature that needs to display localized content must write custom database queries, leading to inconsistent query patterns, duplicated logic, and varying approaches to handling missing translations across different parts of the application.
+
+### Expected Behavior
+A dedicated module provides five specialized functions for fetching translated content. The first function retrieves a complete item with its translation given a public identifier and language code, joining item data with translation tables and returning a merged result. The second function fetches only translation data for an item given its internal identifier and target language. The third function retrieves translations for multiple articles in a single query given a list of article identifiers and language code. The fourth function fetches translations for multiple links given link identifiers and language. The fifth function retrieves translations for multiple tags given tag keys and language. All functions properly handle cases where translations do not exist, gracefully falling back or returning appropriate null values without errors.
+
+### User Impact
+Guests see content in their preferred language throughout the application when translations are available. When translations are incomplete or missing, they see the original language content seamlessly without broken displays, missing information, or error messages. The translation experience feels reliable and professional across all content types.
+
+### Business Value
+Provides the essential data layer that enables all guest-facing localization features to function. Standardizes translation retrieval patterns across the application, reducing bugs and improving developer productivity. Ensures consistent fallback behavior when translations are unavailable, maintaining content quality and preventing broken user experiences. Creates a maintainable foundation for expanding translation coverage to additional content types.
+
+### Acceptance Criteria
+- [ ] Module exists at `/src/lib/translations/fetch-translations.ts`
+- [ ] `fetchTranslatedItem` function accepts a public item ID and language code as parameters
+- [ ] `fetchTranslatedItem` joins item content tables with item translation tables using appropriate foreign keys
+- [ ] `fetchTranslatedItem` returns both original item data and translation data in a structured response object
+- [ ] `fetchTranslatedItem` handles missing translations by returning original content with metadata indicating no translation exists
+- [ ] `fetchItemTranslations` function accepts an internal item ID and language code as parameters
+- [ ] `fetchItemTranslations` retrieves only translation data without joining full item content
+- [ ] `fetchItemTranslations` returns null or empty object when no translation exists for the specified language
+- [ ] `fetchArticleTranslations` function accepts an array of article IDs and a language code
+- [ ] `fetchArticleTranslations` retrieves translations for all specified articles in a single database query
+- [ ] `fetchArticleTranslations` returns a collection mapping article IDs to their translation data
+- [ ] `fetchArticleTranslations` handles partial results where some articles have translations and others do not
+- [ ] `fetchLinkTranslations` function accepts an array of link IDs and a language code
+- [ ] `fetchLinkTranslations` retrieves translations for all specified links in a single database query
+- [ ] `fetchLinkTranslations` returns a collection mapping link IDs to their translation data
+- [ ] `fetchTagTranslations` function accepts an array of tag keys and a language code
+- [ ] `fetchTagTranslations` retrieves translations for all specified tags in a single database query
+- [ ] `fetchTagTranslations` returns a collection mapping tag keys to their translation data
+- [ ] All functions use proper TypeScript type definitions for parameters and return values
+- [ ] All functions include proper error handling that prevents database errors from crashing the application
+- [ ] Database queries are optimized with appropriate joins, filters, and index usage
+- [ ] Functions minimize database round trips by fetching related data in single queries where possible
+- [ ] All functions include JSDoc comments explaining parameters, return values, and usage examples
+- [ ] Functions work correctly with Supabase client and follow established database access patterns in the project
+
+---
+
+## REQ-342: Create Public Item API Endpoint with Translation Support
+
+**Date**: 2026-01-19 02:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should expose a public API endpoint that returns individual item details with translated content merged based on the guest's language preference.
+
+### Current Behavior
+No dedicated public API endpoint exists for retrieving item details with translation support. Guest-facing pages cannot dynamically fetch items with their translated content through a REST API, limiting the ability to build client-side language switching and preventing progressive enhancement patterns for localized content delivery.
+
+### Expected Behavior
+A GET endpoint is available at the public items route that accepts a public item identifier in the URL path and an optional language code as a query parameter. When invoked, the endpoint validates the item identifier, retrieves the original item content, fetches available translations for the requested language, and merges the translated content with the original data. The response includes a unified content object where translated fields override original fields, along with metadata indicating the translation status, source language, target language, and which specific fields have translations available. When no translation exists for the requested language, the endpoint returns the original content with metadata clearly indicating the fallback scenario.
+
+### User Impact
+Guests can dynamically switch between languages without full page reloads, creating a modern, responsive localization experience. Client-side applications can fetch item data in different languages on demand, enabling instant language switching with smooth transitions. When translations are unavailable, guests still receive complete content in the original language with clear status information explaining the situation.
+
+### Business Value
+Enables sophisticated client-side internationalization features including instant language switching, progressive enhancement, and single-page application patterns for localized content. Provides the API foundation needed for mobile applications, progressive web apps, and headless CMS integrations to deliver multilingual content. Supports analytics and A/B testing around translation effectiveness by exposing translation metadata that can inform content strategy decisions.
+
+### Acceptance Criteria
+- [ ] GET endpoint exists at `/api/public/items/[publicId]/route.ts`
+- [ ] Endpoint accepts a public item identifier as a URL path parameter
+- [ ] Endpoint accepts an optional `lang` query parameter specifying the desired language code
+- [ ] When no language parameter is provided, endpoint defaults to source language
+- [ ] Item lookup validates that the public identifier exists before attempting translation fetch
+- [ ] Endpoint returns 404 status code with appropriate error message when item is not found
+- [ ] Translation fetch occurs only when a valid, supported language code is provided
+- [ ] Translation utilities are called to retrieve item translation data for the requested language
+- [ ] Original item content is merged with translation data, with translations taking precedence for available fields
+- [ ] Response follows a GuestContentResponse format with consistent structure across all content endpoints
+- [ ] Response includes a `content` object containing the merged item data
+- [ ] Response includes a `meta` object containing translation metadata
+- [ ] Metadata indicates source language code, target language code, and translation status
+- [ ] Metadata includes flags or indicators showing which specific fields have translations
+- [ ] When translation is unavailable, response includes original content with metadata indicating fallback occurred
+- [ ] Endpoint returns 400 status code when language parameter contains invalid or unsupported language code
+- [ ] Endpoint returns appropriate HTTP status codes for server errors with helpful error messages
+- [ ] Response includes proper CORS headers to allow access from guest-facing client applications
+- [ ] Error messages in responses avoid exposing internal system details or database structure
+- [ ] Database queries are optimized to minimize round trips and execution time
+- [ ] Endpoint performance meets defined benchmarks for content retrieval with translation merging
+- [ ] Response TypeScript types are properly defined and exported for client-side consumption
+- [ ] All error scenarios are handled gracefully without exposing stack traces or internal errors
+
+---
+
+## REQ-343: Create Language Availability API Endpoint for Public Items
+
+**Date**: 2026-01-19 15:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should expose a public API endpoint that returns all available language translations for a specific item, allowing clients to discover translation coverage before requesting specific language versions.
+
+### Current Behavior
+Client applications have no programmatic way to determine which language translations exist for an item without attempting to fetch each translation individually. Language switcher interfaces cannot display only the languages that have actual translations available, potentially showing options that lead to untranslated content and creating a suboptimal user experience.
+
+### Expected Behavior
+A GET endpoint is available at the item languages route that accepts a public item identifier and returns a structured response listing all languages for which translations exist. The response includes the item's source language as well as all target languages that have complete or partial translation records in the database. Each language entry in the response provides the language code, human-readable language name, translation completeness status, and the timestamp when the translation was last updated. The endpoint executes efficiently by querying only translation metadata tables without fetching full content data.
+
+### User Impact
+Guests see language selection interfaces that accurately reflect which translations are actually available for the content they are viewing. Language switcher dropdowns display only viable language options or clearly indicate which languages lack translations, preventing the frustration of selecting a language only to find the content remains untranslated. The interface builds trust by providing accurate, up-to-date information about translation availability.
+
+### Business Value
+Enables intelligent, data-driven language selection interfaces that enhance user experience and demonstrate transparency about translation coverage. Provides visibility into translation completeness that can inform content strategy and help prioritize which items need translation work. Reduces user confusion and support burden by preventing guests from selecting languages that have no available translations. Creates the foundation for advanced features like translation quality indicators and missing translation notifications.
+
+### Acceptance Criteria
+- [ ] GET endpoint exists at `/api/public/items/[publicId]/languages/route.ts`
+- [ ] Endpoint accepts a public item identifier as a URL path parameter
+- [ ] Item lookup validates that the public identifier exists before querying translations
+- [ ] Endpoint returns 404 status code with appropriate error message when item is not found
+- [ ] Query retrieves all translation records associated with the item from the item_translations table
+- [ ] Response includes the item's source language as part of the available languages list
+- [ ] Response follows the LanguageAvailabilityResponse format with consistent structure
+- [ ] Each language entry includes the language code as a string value
+- [ ] Each language entry includes a human-readable language name for display purposes
+- [ ] Translation status metadata indicates whether translations are complete, partial, or outdated
+- [ ] Response includes timestamps showing when each translation was last updated
+- [ ] Database query checks only translation table metadata without fetching full content columns
+- [ ] Query is optimized with appropriate indexes and filters to minimize execution time
+- [ ] Endpoint handles items with no translations gracefully, returning only the source language
+- [ ] Endpoint returns 400 status code when the public identifier format is invalid
+- [ ] Endpoint returns appropriate HTTP status codes for server errors
+- [ ] Response includes proper CORS headers to allow client-side access from guest-facing domains
+- [ ] Error responses include helpful messages without exposing internal database structure
+- [ ] Response TypeScript types are properly defined matching the LanguageAvailabilityResponse interface
+- [ ] Endpoint performance meets defined benchmarks for metadata retrieval operations
+- [ ] All error scenarios are handled gracefully without exposing stack traces or internal errors
+
+---
+
+## REQ-344: Create Translation Utility Helpers for Content Merging and Language Selection
+
+**Date**: 2026-01-19 16:12
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should provide utility functions that merge original content with translation data, determine the best available language for display, and format language names for user interfaces.
+
+### Current Behavior
+No standardized utilities exist for common translation operations such as merging source content with translation overlays, determining which language to display when the requested language is unavailable, or formatting language codes into human-readable names. Each feature that displays translated content must implement these operations independently, leading to inconsistent behavior, duplicated logic, and varying approaches to handling partial translations across different parts of the application.
+
+### Expected Behavior
+A dedicated utility module provides three core helper functions that are used consistently throughout all guest-facing localization features. The first function accepts an original content object and a translation object, then returns a merged result where translated fields override corresponding original fields while preserving untranslated content seamlessly. The second function implements intelligent fallback logic by accepting a requested language, an array of available languages, and the source language, then returning the best language to display based on availability. The third function accepts a language code and an optional native flag, then returns a properly formatted display name suitable for user interfaces, with support for both English and native language names.
+
+### User Impact
+Guests viewing translated content experience consistent behavior across all content types and features. When translations are partial, they see a seamless blend of translated and original content without gaps, errors, or jarring inconsistencies. Language displays throughout the interface are formatted professionally and consistently. When requested translations are unavailable, the system makes intelligent fallback decisions that prioritize showing content over showing errors.
+
+### Business Value
+Centralizes critical translation logic to ensure consistent user experience across all localized features, eliminating the risk of different components handling translations differently. Reduces development time and bug potential by providing well-tested, reusable functions that eliminate the need for duplicate implementations. Creates a maintainable foundation for expanding localization features, as any improvements to merging or fallback logic benefit all features simultaneously through the shared utilities.
+
+### Acceptance Criteria
+- [ ] Utility module exists at location provided in the translation utilities path
+- [ ] mergeTranslation function accepts two parameters: an original content object and a translation object
+- [ ] mergeTranslation creates a new merged object without mutating the original input objects
+- [ ] mergeTranslation preserves all fields from the original object when corresponding translation fields are null or undefined
+- [ ] mergeTranslation overrides original field values with translation values when translation fields contain actual content
+- [ ] mergeTranslation handles nested object properties correctly when merging complex content structures
+- [ ] mergeTranslation handles edge cases such as empty objects, null inputs, and mismatched object structures gracefully
+- [ ] getDisplayLanguage function accepts three parameters: requested language, available languages array, and source language
+- [ ] getDisplayLanguage returns the requested language when it exists in the available languages array
+- [ ] getDisplayLanguage returns the source language when the requested language is not in the available languages
+- [ ] getDisplayLanguage handles edge cases including empty available languages arrays, null values, and undefined parameters
+- [ ] getDisplayLanguage returns a predictable default when all inputs are invalid or missing
+- [ ] formatLanguageName function accepts a language code as the first parameter
+- [ ] formatLanguageName accepts an optional boolean flag indicating whether to return the native language name
+- [ ] formatLanguageName returns the English display name for the language code when the native flag is false or omitted
+- [ ] formatLanguageName returns the native language name when the native flag is true
+- [ ] formatLanguageName handles all six supported language codes correctly
+- [ ] formatLanguageName returns the language code itself as a fallback when the code is unrecognized or unsupported
+- [ ] All three utility functions include proper TypeScript type definitions for parameters and return values
+- [ ] All functions include comprehensive JSDoc comments explaining parameters, return values, usage examples, and edge case behavior
+- [ ] Functions are exported as named exports that can be imported individually or together
+- [ ] Module follows the project's established coding conventions and file structure patterns
+
+
+## REQ-345: Create GuestLanguageSwitcher Component
+
+**Date**: 2026-01-19 03:01
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+The system should provide a dropdown component for guest-facing pages that displays all supported languages with visual indicators showing which translations are available for the current content.
+
+### Current Behavior
+No language selection component exists specifically for guest users viewing public content. Guests have no interface element to discover available language translations or switch between languages when viewing items or other localized content.
+
+### Expected Behavior
+A dropdown component appears in guest-facing interfaces showing all six supported languages with their native names and flag icons. When opened, the dropdown clearly indicates which languages have translations available for the current content using checkmark indicators. Languages without available translations appear visually distinct through reduced opacity or gray styling but remain selectable to allow guests to set their language preference even when translations are incomplete. The component implements the Radix UI dropdown primitive to ensure full keyboard navigation, screen reader support, and adherence to accessibility best practices.
+
+### User Impact
+Guests can easily discover which languages are supported and immediately see which translations are available for the content they are viewing. The visual design with flag icons and native language names creates an intuitive selection experience for international users regardless of their English proficiency. Full keyboard navigation and screen reader support ensure the language switcher is accessible to users with disabilities, complying with international accessibility standards.
+
+### Business Value
+Provides the primary interface through which guests access translated content, making translation investments visible and valuable to end users. Creates a professional, internationally-aware user experience that signals to global audiences that the platform is built for them. Accessible implementation ensures compliance with accessibility regulations and broadens potential market reach to users who rely on assistive technologies.
+
+### Acceptance Criteria
+- [ ] Component file exists at `/src/components/guest/GuestLanguageSwitcher/GuestLanguageSwitcher.tsx`
+- [ ] Component displays a dropdown showing all six supported languages (English, Spanish, French, German, Italian, Dutch)
+- [ ] Each language entry displays a flag icon corresponding to the language
+- [ ] Each language entry displays the language's native name for recognition by native speakers
+- [ ] Visual checkmark indicator appears next to languages that have translations available for the current content
+- [ ] Languages without available translations are visually distinguished through styling such as reduced opacity or gray text
+- [ ] All languages remain clickable and selectable regardless of translation availability
+- [ ] Component is built using Radix UI dropdown primitives for proper accessibility support
+- [ ] Dropdown can be fully operated using keyboard controls including arrow keys for navigation, Enter to select, and Escape to close
+- [ ] Screen readers announce the current language selection and available language options appropriately
+- [ ] Selecting a language triggers a callback function provided through component props
+- [ ] Component accepts a property specifying which languages have translations available for the current content
+- [ ] Component accepts a property indicating the currently selected language to highlight in the dropdown
+- [ ] Component displays the currently selected language with its flag in the closed state
+- [ ] Dropdown positioning and layout work correctly across various page contexts without overflow or clipping issues
+- [ ] Component follows the project's established design system for colors, typography, and spacing
+- [ ] Component remains responsive and functional on mobile viewports with appropriate touch target sizing
+- [ ] Flag icons are sourced from the project's established icon or image asset library
+- [ ] TypeScript prop types are properly defined with clear interfaces for component properties
+- [ ] Component includes proper error handling for missing or invalid prop values
+
+---
+
+## REQ-346: Create TranslationBanner Component
+
+**Date**: 2026-01-19 15:47
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should display a persistent informational banner when guests view translated content, indicating the source language and providing access to view the original version.
+
+### Current Behavior
+When guests view content that has been translated from another language, there is no visual indication that they are seeing a translation rather than the original content. Guests cannot easily determine the source language or access the original untranslated version, potentially causing uncertainty about content authenticity and accuracy.
+
+### Expected Behavior
+A light blue banner appears at the top of translated content displaying a globe icon and the text "Translated from [Language] - View original" where [Language] is replaced with the source language name. The banner uses a professional, informational design with background color #E3F2FD that clearly communicates translation status without being intrusive. The "View original" text is clickable, triggering a switch to display the source language content. The banner is not dismissible and remains visible as long as translated content is being displayed, ensuring translation status is always transparent.
+
+### User Impact
+Guests viewing translated content always know they are seeing a translation rather than original content. This transparency builds trust by making the translation status immediately obvious. Users who want to verify translation accuracy or prefer to read the original language can easily switch to the source content with a single click. The persistent visibility ensures there is never ambiguity about whether content is original or translated.
+
+### Business Value
+Maintains transparency and trust with international audiences by clearly identifying all translated content. Provides legal and ethical protection by ensuring users are always aware when viewing automated or human-assisted translations rather than original authored content. Reduces potential support inquiries about content accuracy by making translation status immediately visible and providing instant access to original content for verification.
+
+### Acceptance Criteria
+- [ ] Component file exists at `/src/components/guest/TranslationBanner/TranslationBanner.tsx`
+- [ ] Component renders a banner with light blue background color (#E3F2FD)
+- [ ] Banner displays a globe icon positioned on the left side of the text content
+- [ ] Banner shows the text "Translated from [Language] - View original" with dynamic language name insertion
+- [ ] Component accepts a property for the source language code to generate the correct language name
+- [ ] Component accepts an onClick handler property for the "View original" action
+- [ ] "View original" text is styled as clickable with appropriate hover and focus states
+- [ ] Banner spans the full width of its container with appropriate internal padding
+- [ ] Component is non-dismissible with no close button or dismiss functionality
+- [ ] Typography and spacing follow the project's design system guidelines
+- [ ] Banner is visually distinct from content while maintaining a calm, informational appearance
+- [ ] Component works correctly on mobile viewports without horizontal scrolling or layout breaks
+- [ ] Banner text wraps appropriately on narrow screens without truncating important information
+- [ ] Screen readers announce the banner content and "View original" action with appropriate semantics
+- [ ] Component follows established patterns for informational banners used elsewhere in the application
+- [ ] Globe icon is sourced from the project's established icon library
+- [ ] TypeScript prop types are properly defined with clear interfaces for component properties
+- [ ] Component includes proper handling for missing or invalid prop values
+- [ ] Component remains accessible with proper ARIA attributes and keyboard navigation support
+
+---
+
+## REQ-347: Create MissingTranslationBanner Component
+
+**Date**: 2026-01-19 16:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should display a subtle informational banner when a guest requests content in a language that lacks an available translation, explaining that the content is being shown in the original language instead.
+
+### Current Behavior
+When guests select a language preference for which no translation exists, the application silently displays the original language content without explanation. Guests have no indication that their language preference was recognized but cannot be fulfilled, potentially causing confusion about why content appears in a different language than they selected.
+
+### Expected Behavior
+A muted informational banner appears at the top of content when a guest has selected a language preference but the requested translation is unavailable. The banner displays a message following the pattern "[Requested Language] translation not available. Showing content in [Source Language]." with gentle, non-alarming styling that informs without creating concern. The banner uses subdued colors such as light gray background with neutral text colors and includes a calm information icon. The styling intentionally avoids warning or error visual patterns to maintain a professional, reassuring tone while still providing transparency about translation availability.
+
+### User Impact
+Guests understand why content appears in a language different from their selection, eliminating confusion and setting appropriate expectations about translation coverage. The gentle presentation avoids creating alarm or suggesting a system error has occurred, while still maintaining transparency. Users know their preference was recognized and will be honored when translations become available, building trust in the localization system.
+
+### Business Value
+Manages user expectations around translation coverage without creating negative emotional responses or suggesting the platform is broken. Maintains transparency and builds trust by acknowledging the language preference while explaining why it cannot currently be fulfilled. Reduces support inquiries from users confused about why language switching appears not to work for certain content. Demonstrates respect for user preferences even when they cannot immediately be met.
+
+### Acceptance Criteria
+- [ ] Component file exists at `/src/components/guest/MissingTranslationBanner/MissingTranslationBanner.tsx`
+- [ ] Component renders a banner with muted, neutral background color such as light gray (#F5F5F5)
+- [ ] Banner displays a calm information icon that avoids warning or error styling
+- [ ] Banner shows text indicating which translation was requested and which language is being displayed instead
+- [ ] Message format follows the pattern "[Requested Language] translation not available. Showing content in [Source Language]."
+- [ ] Component accepts a property for the requested language code to generate the correct language name
+- [ ] Component accepts a property for the source language code to indicate what is actually being displayed
+- [ ] Banner uses subdued text colors that draw less attention than primary content
+- [ ] Typography uses smaller or less prominent font sizing compared to primary content headings
+- [ ] Banner spans the full width of its container with appropriate internal padding
+- [ ] Component is non-dismissible and remains visible while the language mismatch condition exists
+- [ ] Component works correctly on mobile viewports without horizontal scrolling or layout breaks
+- [ ] Banner text wraps appropriately on narrow screens without truncating the language names
+- [ ] Screen readers announce the banner content with appropriate informational tone using proper ARIA attributes
+- [ ] Component follows established patterns for non-critical informational banners in the application
+- [ ] Information icon is sourced from the project's established icon library
+- [ ] Styling intentionally avoids colors, icons, or patterns associated with errors or warnings
+- [ ] TypeScript prop types are properly defined with clear interfaces for component properties
+- [ ] Component includes proper handling for missing or invalid prop values
+- [ ] Component maintains professional appearance without creating visual alarm or distraction from content
+
+---
+
+## REQ-348: Create ViewOriginalToggle Component
+
+**Date**: 2026-01-19 19:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should provide a toggle button that allows guests viewing translated content to switch between the translated version and the original source language version.
+
+### Current Behavior
+No dedicated toggle control exists for switching between translated and original content views within the guest interface. Guests viewing translations must rely on banner links or dropdown selections to access original content, creating inconsistent interaction patterns and requiring multiple interface elements to accomplish a simple toggle action.
+
+### Expected Behavior
+A secondary-styled button component displays with dynamic label text that changes based on whether the guest is currently viewing translated or original content. When viewing a translation, the button shows "View in original (English)" alongside a swap icon. When viewing the original, it shows "View translation" with the same swap icon. The button follows the secondary button style from the design system to visually distinguish it from primary actions while remaining clearly interactive. Clicking the toggle instantly switches between the two content versions without requiring navigation or dropdown interaction.
+
+### User Impact
+Guests can quickly toggle between translated and original content using a single, clearly labeled button. The dynamic labeling makes the current state and available action immediately obvious without requiring guests to remember what they are currently viewing. The swap icon provides universal visual reinforcement of the toggle behavior that transcends language barriers, making the interaction intuitive even for users with limited English proficiency.
+
+### Business Value
+Provides a streamlined, reusable interaction pattern for accessing original content that can be embedded in various contexts throughout the guest experience. Improves usability for bilingual users who frequently want to compare translations with originals or verify translation accuracy. Creates a consistent toggle pattern that supports professional multilingual content presentation and meets user expectations in international markets.
+
+### Acceptance Criteria
+- [ ] Component file exists at `/src/components/guest/ViewOriginalToggle/ViewOriginalToggle.tsx`
+- [ ] Component renders as a button using the secondary button style from the design system
+- [ ] Label dynamically displays "View in original (English)" when currently viewing a translation
+- [ ] Label dynamically displays "View translation" when currently viewing the original content
+- [ ] Source language name is dynamically inserted into the label rather than hardcoded as "English"
+- [ ] Component accepts a property for the source language code to generate correct labels
+- [ ] Swap icon appears within the button, positioned consistently with the label text
+- [ ] Icon is sourced from the project's established icon library
+- [ ] Component accepts a property indicating the current view state (whether viewing translation or original)
+- [ ] Component accepts an onClick handler property that is called when the button is clicked
+- [ ] Button follows accessibility patterns with proper ARIA attributes for toggle controls
+- [ ] Button includes proper keyboard support including Enter and Space key activation
+- [ ] Typography and spacing follow the project's design system guidelines
+- [ ] Component works correctly on mobile viewports with appropriate touch target sizing (minimum 44x44 pixels)
+- [ ] Button visual states clearly indicate interactivity through hover, focus, and active states
+- [ ] Screen readers announce the button's current label and its toggle nature appropriately
+- [ ] TypeScript prop types are properly defined with clear interfaces for component properties
+- [ ] Component includes proper handling for missing or invalid prop values
+- [ ] Button styling provides sufficient contrast with surrounding content for visibility
+- [ ] Component maintains visual consistency with other secondary actions in the application
+
+
+---
+
+## REQ-349: Create LanguageIndicator Component
+
+**Date**: 2026-01-19 20:15
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should display a compact visual indicator showing guests which language they are currently viewing, with optional context about the original source language when content has been translated.
+
+### Current Behavior
+No persistent language indicator exists in the guest interface to show which language is currently being displayed. Guests must rely on recognizing the language of the content itself or remembering their language selection to understand what language they are viewing, creating potential confusion especially during language switching or when visiting shared links that may default to unexpected languages.
+
+### Expected Behavior
+A compact component displays in the application header or navigation area showing the current display language with its corresponding flag icon and language name. When viewing translated content, an optional subtitle appears in a smaller, muted font showing "Translated from [Original Language]" to provide transparency about the content's origin. The component maintains a minimal footprint suitable for persistent header display without consuming excessive space or overwhelming the interface. The flag icon provides immediate visual recognition of the current language, while the text label ensures clarity for guests who may not recognize flag symbols.
+
+### User Impact
+Guests always have clear awareness of which language they are currently viewing without needing to inspect content or recall previous selections. When viewing translations, guests understand the content originated in a different language, building trust through transparency. The compact design ensures this information remains visible without interfering with primary content or navigation. The combination of flag icon and text label accommodates different user preferences and accessibility needs, making language status universally clear.
+
+### Business Value
+Reduces confusion and support inquiries related to unexpected language display, especially for users accessing shared links or returning to the application after language preference changes. Builds trust by maintaining transparency about content origin and translation status. Provides consistent language status awareness that supports professional multilingual content presentation and meets user expectations in international markets. Creates a reusable component that can be positioned in various interface locations as design needs evolve.
+
+### Acceptance Criteria
+- [ ] Component file exists at `/src/components/guest/LanguageIndicator/LanguageIndicator.tsx`
+- [ ] Component displays a flag icon representing the current display language
+- [ ] Component displays the language name in text form adjacent to or near the flag icon
+- [ ] Flag icons are sourced from a consistent flag icon library or asset set
+- [ ] Component accepts a property for the current language code to determine which flag and name to display
+- [ ] Component accepts an optional property to specify the source language when content is translated
+- [ ] When source language property is provided, component displays a subtitle in smaller, muted text
+- [ ] Subtitle follows the format "Translated from [Source Language]" when present
+- [ ] Subtitle uses reduced font size and lighter text color to visually de-emphasize it relative to the main language display
+- [ ] Component maintains a compact layout suitable for header or navigation bar placement
+- [ ] Component does not exceed reasonable width constraints that would disrupt header layouts (approximately 150-200 pixels)
+- [ ] Component works correctly on mobile viewports with appropriate responsive sizing
+- [ ] On mobile, component may stack elements vertically or abbreviate text to fit space constraints
+- [ ] Component includes proper accessibility attributes for screen readers to announce current language
+- [ ] Screen readers convey both the current display language and the translation source if present
+- [ ] Component maintains readable contrast ratios for both the main language name and optional subtitle
+- [ ] Component follows the project's design system typography and spacing guidelines
+- [ ] TypeScript prop types are properly defined with clear interfaces for component properties
+- [ ] Component handles missing flag assets gracefully, falling back to text-only display if flag cannot be loaded
+- [ ] Component remains visually consistent with surrounding header or navigation elements
+- [ ] Flag icon sizing is proportional and does not appear overly large or small relative to text
+
+---
+
+## REQ-350: Create Barrel Export for Guest Components
+
+**Date**: 2026-01-19 20:30
+**Type**: ENHANCEMENT
+**Size**: XS
+
+### Summary
+The system should provide a centralized barrel export file that exports all guest-facing localization components through a single import point.
+
+### Current Behavior
+Guest-facing components for language switching and translation status display exist as individual files within the guest components directory. Consuming code must import each component directly from its specific file path, leading to verbose import statements, inconsistent import patterns across the codebase, and increased maintenance burden when component file locations change. No centralized export point exists to simplify component imports.
+
+### Expected Behavior
+A barrel export file at the guest components directory root exports all guest-facing localization components including GuestLanguageSwitcher, TranslationBanner, MissingTranslationBanner, ViewOriginalToggle, and LanguageIndicator. Consuming code can import multiple guest components from a single module path using destructured imports. The barrel export automatically includes all components in the directory, making component imports concise and maintainable. When new guest components are added, they are added to this barrel export to maintain consistent import patterns.
+
+### User Impact
+Developers benefit from cleaner, more maintainable import statements when using guest localization components. Code reviews become easier as import patterns remain consistent throughout the application. Refactoring component file structures becomes safer as internal paths are abstracted behind the barrel export.
+
+### Business Value
+Reduces technical debt and improves code maintainability by establishing consistent import patterns. Decreases development time for features that consume guest components by eliminating the need to locate individual component file paths. Creates a scalable pattern that simplifies codebase navigation and reduces friction as the guest component library grows.
+
+### Acceptance Criteria
+- [ ] Barrel export file exists at `/src/components/guest/index.ts`
+- [ ] File exports GuestLanguageSwitcher component
+- [ ] File exports TranslationBanner component
+- [ ] File exports MissingTranslationBanner component
+- [ ] File exports ViewOriginalToggle component
+- [ ] File exports LanguageIndicator component
+- [ ] All exports use named export syntax for consistency
+- [ ] File includes a comment header documenting its purpose as a barrel export for guest localization components
+- [ ] File follows the project's established barrel export patterns if they exist elsewhere in the codebase
+- [ ] Consuming code can successfully import components using destructured syntax from the barrel file
+- [ ] TypeScript type definitions are properly exported alongside component exports
+- [ ] No circular dependency warnings or errors occur when importing from the barrel file
+- [ ] File is formatted according to project linting and formatting standards
+- [ ] Updates to component file locations only require changes to the barrel export, not to consuming code
+
+
+---
+
+## REQ-351: Create Cookie Utility for Guest Language Persistence
+
+**Date**: 2026-01-19 20:35
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+The system should provide a utility module for managing guest language preference cookies with proper security settings and long-term persistence.
+
+### Current Behavior
+No cookie management utility exists for storing guest language preferences. Guest users cannot persist their language selection across sessions, forcing them to reselect their preferred language each time they visit the application. No mechanism exists to remember the language choice for unauthenticated visitors between browser sessions.
+
+### Expected Behavior
+A cookie utility module provides functions to read, write, and clear a guest language preference cookie named `FAQBNB_GUEST_LANG`. When a guest selects a language, the utility stores the language code in the cookie with a one-year expiration period. The cookie includes security flags to protect user data and ensure proper cross-site behavior. On subsequent visits, the utility retrieves the stored language preference from the cookie, allowing the application to display content in the guest's previously selected language without requiring re-selection. The utility handles edge cases including missing cookies, expired cookies, and invalid language codes gracefully.
+
+### User Impact
+Guest users experience seamless language persistence across sessions, maintaining their preferred language choice without repeated configuration. Users visiting the application from the same browser consistently see content in their chosen language, improving the user experience for multilingual audiences. Users no longer lose their language preference when closing and reopening their browser.
+
+### Business Value
+Improves user retention by providing a personalized experience that remembers guest preferences across sessions. Reduces friction in the guest journey by eliminating repetitive language selection tasks. Demonstrates respect for user preferences, building trust with international visitors who rely on non-English language support.
+
+### Acceptance Criteria
+- [ ] Cookie utility module exists at `/src/lib/i18n/guest-language.ts`
+- [ ] Module exports a function to write the guest language preference cookie
+- [ ] Cookie is named exactly `FAQBNB_GUEST_LANG`
+- [ ] Cookie expiration is set to one year from the write date
+- [ ] Cookie includes the `Secure` flag to ensure HTTPS-only transmission
+- [ ] Cookie includes `SameSite=Lax` to balance security with cross-site functionality
+- [ ] Module exports a function to read the guest language preference from the cookie
+- [ ] Read function returns the language code string when cookie exists and is valid
+- [ ] Read function returns null or undefined when cookie does not exist or is expired
+- [ ] Module exports a function to clear the guest language preference cookie
+- [ ] Clear function properly removes the cookie by setting expiration to a past date
+- [ ] Module handles cases where cookies are disabled or blocked by the browser
+- [ ] Module validates that language codes stored in cookies match supported language codes
+- [ ] Module includes TypeScript type definitions for all exported functions
+- [ ] Module includes inline documentation describing function parameters and return values
+- [ ] Cookie path is set to root `/` to ensure availability across the entire application
+- [ ] Module is compatible with both client-side and server-side rendering contexts where applicable
+
+---
+
+## REQ-352: Update Guest Item Page with Localization Support
+
+**Date**: 2026-01-19 00:00
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+The guest-facing item detail page must detect the guest's preferred language and display item content with appropriate translations, including metadata for search engine optimization.
+
+### Current Behavior
+The guest item page displays content exclusively in the source language (typically English). No language detection occurs from URL parameters, cookies, or headers. Item titles, descriptions, and other textual content appear only in the language provided by the item owner. Search engines index only the source language version of the page, limiting discoverability for non-English search queries. Guest users viewing items cannot see translated versions of item content regardless of their language preference.
+
+### Expected Behavior
+When a guest navigates to an item detail page, the server component detects the guest's language preference by checking URL parameters first, then cookies, then browser headers. The server fetches the item data along with translation records for the detected language. The server passes both the primary content and translation metadata to client components for rendering. The server generates page metadata including title, description, and Open Graph tags using the translated versions when available, falling back to source language when translations are missing. Search engines receive properly localized metadata, improving discoverability in non-English search results. Guests see item content in their preferred language when translations exist, with clear indication when viewing source language or partial translations.
+
+### User Impact
+Guest users view item content in their preferred language, improving comprehension and engagement with listed items. International guests browsing items receive a localized experience without manual language switching per page. Search engine users discover items through searches in their native language, expanding the audience reach for item owners. Guests with limited English proficiency access item information that was previously inaccessible to them.
+
+### Business Value
+Expands market reach by making item listings accessible to non-English speaking audiences. Improves SEO performance in international markets through proper localized metadata. Increases conversion rates by presenting item information in languages guests understand best. Demonstrates platform commitment to internationalization, building credibility with global users.
+
+### Acceptance Criteria
+- [ ] Server component detects language from URL parameter (highest priority)
+- [ ] Server component checks cookie for language preference when URL parameter is absent
+- [ ] Server component examines Accept-Language headers when URL and cookie are absent
+- [ ] Server component defaults to English when no language preference is detected
+- [ ] Server component fetches item record from database by public ID
+- [ ] Server component fetches translation records for detected language and item ID
+- [ ] Server component passes translation status metadata to client components
+- [ ] Server component passes both source content and translated content to client components
+- [ ] Page metadata function generates title tag using translated item title when available
+- [ ] Page metadata function generates description meta tag using translated description when available
+- [ ] Page metadata function generates Open Graph title using translated content when available
+- [ ] Page metadata function generates Open Graph description using translated content when available
+- [ ] Metadata falls back to source language content when translations are missing
+- [ ] Metadata includes language code in HTML lang attribute matching detected language
+- [ ] Server component handles cases where item does not exist with appropriate 404 response
+- [ ] Server component handles database errors gracefully without exposing internal details
+- [ ] Translation fetch queries use proper joins to retrieve related translation records
+- [ ] Server component validates language codes against supported language list
+- [ ] Page renders successfully when translations are partial or missing
+- [ ] TypeScript types properly define the shape of data passed from server to client components
+
+
+---
+
+## REQ-353: Update ItemDisplay Component with Translation Support
+
+**Date**: 2026-01-19 15:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The ItemDisplay component should show content in the guest's preferred language when translations are available, with controls to switch languages and view the original version.
+
+### Current Behavior
+The ItemDisplay component renders item content in the original language only, without any language selection or translation awareness.
+
+### Expected Behavior
+When a guest views an item, the component should:
+- Display content in their preferred language when a translation exists
+- Show a language switcher in the header allowing them to change languages
+- Display a banner indicating when translated content is being shown
+- Display a banner when no translation is available for the selected language
+- Allow guests to toggle between the translation and original version
+- Remember the guest's viewing preference (original vs. translation) during their session
+
+### User Impact
+Guests will be able to consume item content in their preferred language, understand when they are viewing translated content, and easily switch between languages or view the original version at any time.
+
+### Business Value
+Enhances the multilingual guest experience by providing transparent, controllable access to translated content with clear visual indicators of translation status.
+
+### Acceptance Criteria
+- [ ] Component accepts translation metadata and original content as props
+- [ ] Guest language preference is obtained via the useGuestLanguage hook
+- [ ] GuestLanguageSwitcher component appears in the item header
+- [ ] TranslationBanner displays when showing translated content
+- [ ] MissingTranslationBanner displays when selected language has no translation
+- [ ] Toggle control allows switching between original and translated versions
+- [ ] View preference (original/translation) is maintained via client-side state
+- [ ] All language switches and toggles update the display without page reload
+
+
+---
+
+## REQ-354: Update LinkCard Component with Translation Support
+
+**Date**: 2026-01-19 15:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The LinkCard component must accept translated link titles and display them in the guest's preferred language, with the ability to show the original title when a view-original toggle is activated.
+
+### Current Behavior
+The LinkCard component displays link titles exclusively in the source language as stored in the database. No translation props are accepted, and the component has no awareness of language preferences or translation availability. Guest users see all link titles in the original language regardless of their language settings or available translations.
+
+### Expected Behavior
+When rendering a link card, the component receives both the original title and the translated title as props. By default, the component displays the translated title when available and the translation is not toggled off. When a guest activates a view-original toggle elsewhere in the interface, the component switches to display the original title instead. The component handles cases where translations are missing by displaying the original title without visual disruption. The transition between original and translated titles occurs smoothly without page reload or layout shift.
+
+### User Impact
+Guest users viewing link collections see link titles in their preferred language, making link content more accessible and understandable. Guests who prefer to see original language content can easily toggle to view source titles. International guests browsing curated links benefit from localized titles that match their language settings.
+
+### Business Value
+Improves the multilingual guest experience by extending translation support to link metadata. Increases engagement with curated link collections by presenting them in languages guests understand. Maintains consistency across the platform by ensuring all user-facing content respects language preferences.
+
+### Acceptance Criteria
+- [ ] Component accepts a translated title prop alongside the original title prop
+- [ ] Component displays translated title by default when translation is provided
+- [ ] Component responds to view-original toggle state to switch between translated and original titles
+- [ ] Component displays original title when no translation is available
+- [ ] Component handles undefined or null translated title props gracefully
+- [ ] Title display updates without causing layout shift or reflow
+- [ ] Component maintains existing styling and visual appearance for both original and translated titles
+- [ ] TypeScript types include optional translated title property in component props interface
+- [ ] Component preserves all existing functionality for link navigation and interaction
+- [ ] Component works correctly when nested within translated item or article contexts
+
+
+
+---
+
+## REQ-355: Support Language Parameter in Shareable URLs
+
+**Date**: 2026-01-19 16:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Guest-facing pages should accept a language parameter in the URL to enable shareable links that open directly in a specific language, while maintaining proper SEO through canonical URL management.
+
+### Current Behavior
+Guest-facing pages determine language through browser settings, cookies, or default values only. URLs do not accept language parameters. When guests share links to items or articles, recipients always see content in their own browser's language preference rather than the language the sharer intended. No mechanism exists to create language-specific shareable links.
+
+### Expected Behavior
+When a guest views an item or article, the page reads a `lang` query parameter from the URL (e.g., `?lang=es`). If present and valid, this parameter overrides all other language detection methods including cookies and browser headers. When a guest shares the current page using the share functionality, the generated shareable link includes the current language as a query parameter, ensuring recipients see the same language version. The canonical URL tag in page metadata excludes the language parameter to avoid SEO penalties for duplicate content. Language parameter values are validated against the list of supported languages, falling back to default detection when invalid.
+
+### User Impact
+Guests can share specific language versions of items and articles with others through simple URL sharing. Recipients who click shared links immediately see content in the intended language without needing to adjust settings. Users who prefer a specific language can bookmark URLs with language parameters for consistent experience across sessions.
+
+### Business Value
+Enables viral growth through language-specific sharing where users can recommend content to international contacts in their native language. Reduces friction in cross-border recommendations by eliminating manual language switching. Maintains SEO best practices through proper canonical URL implementation, avoiding duplicate content penalties while supporting multilingual URLs.
+
+### Acceptance Criteria
+- [ ] Page router reads `lang` query parameter from URL search params
+- [ ] Valid language parameter takes highest priority in language detection hierarchy
+- [ ] Language parameter validates against supported language codes list
+- [ ] Invalid or unsupported language codes are ignored and fallback detection proceeds
+- [ ] Share functionality generates URLs including current language as query parameter
+- [ ] Generated shareable URLs use format: `{base_url}?lang={code}`
+- [ ] Canonical URL meta tag in page head excludes language query parameter
+- [ ] Canonical URL points to base page path without query parameters
+- [ ] Language parameter works correctly on all guest-facing pages (items, articles, etc.)
+- [ ] URL parameter persists across client-side navigation when present
+- [ ] Browser history correctly maintains language parameter when navigating
+- [ ] Language switcher component updates URL parameter when guest changes language
+- [ ] Removing language parameter via manual URL edit reverts to default detection
+- [ ] Page metadata (title, description, Open Graph) reflects language from URL parameter
+
+
+
+---
+
+## REQ-356: Add Guest Language Detection to Middleware for Item Routes
+
+**Date**: 2026-01-19 16:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The middleware should detect guest language preferences for item routes and make that language available to downstream page components without performing redirects.
+
+### Current Behavior
+The middleware does not process `/item/*` routes for language detection. Guest-facing item pages have no access to language preferences determined at the middleware level. Language detection happens independently in each page component, creating inconsistency and performance overhead. The middleware matcher pattern excludes item routes from processing.
+
+### Expected Behavior
+The middleware matcher includes `/item/*` routes in its pattern list. When a request arrives for an item page, the middleware detects the guest's preferred language using a consistent priority order: URL query parameter, language cookie, Accept-Language header, then default fallback. The detected language is stored in a custom response header and optionally refreshed in a cookie for future requests. The middleware does not perform any redirects or path modifications, as language selection uses query parameters rather than path-based routing. Page components access the detected language from the request headers provided by the middleware, ensuring consistent language handling across all guest-facing pages.
+
+### User Impact
+Guest users viewing items experience consistent language detection across their session. Language preferences are automatically detected from their browser settings on first visit. Subsequent visits remember their language choice through cookies. The page loads directly in the detected language without redirects or delays.
+
+### Business Value
+Provides foundation for multilingual guest experience by centralizing language detection logic in middleware. Improves performance by determining language once per request rather than redundantly in multiple components. Enables consistent language behavior across all guest-facing pages through a single implementation point.
+
+### Acceptance Criteria
+- [ ] Middleware matcher pattern includes `/item/*` in the routes list
+- [ ] Middleware reads language from URL query parameter with highest priority
+- [ ] Middleware reads language preference from cookie when query parameter is absent
+- [ ] Middleware parses Accept-Language header as fallback when cookie is not present
+- [ ] Middleware uses default language when no other preference indicators exist
+- [ ] Detected language is validated against supported language codes list
+- [ ] Invalid language codes trigger fallback to default language
+- [ ] Middleware sets custom response header containing detected language code
+- [ ] Middleware updates language cookie with detected language when appropriate
+- [ ] Middleware does not redirect requests or modify URL paths
+- [ ] Language detection completes before request reaches page component
+- [ ] Page components can access detected language from request headers
+- [ ] Middleware preserves all existing functionality for authenticated routes
+- [ ] Cookie has appropriate expiration, domain, and security settings
+- [ ] Solution works correctly for both initial page loads and client-side navigation
+
+---
+
+## REQ-357: Test Language Detection Priority Scenarios
+
+**Date**: 2026-01-19 00:00
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Validate that the language detection system correctly applies priority rules across browser preferences, cookie storage, URL parameters, and fallback mechanisms.
+
+### Current Behavior
+Language detection logic exists in the middleware and utility modules, but comprehensive testing scenarios have not been systematically validated to ensure the priority chain works as designed.
+
+### Expected Behavior
+The system should correctly detect and apply language preferences according to this priority order:
+1. URL parameter (highest priority)
+2. Cookie preference
+3. Browser Accept-Language header
+4. Fallback to original content language (lowest priority)
+
+Each priority level should override lower-priority sources.
+
+### User Impact
+Guests viewing items, articles, or links experience consistent language selection regardless of how they arrive at the content. Validation ensures that explicit choices (URL parameters) always win over implicit preferences (browser settings), preventing confusion or unexpected language switching.
+
+### Business Value
+Comprehensive testing prevents language detection bugs that could frustrate international users and ensures the localization system behaves predictably across all entry points.
+
+### Acceptance Criteria
+- [ ] Browser language detection correctly identifies preferred language from Accept-Language header when no other preferences exist
+- [ ] Cookie-stored language preference overrides browser settings when present
+- [ ] URL parameter (e.g., ?lang=de) overrides both cookie and browser preferences
+- [ ] System falls back to original content language when no preference is available or detected language has no translation
+- [ ] All test scenarios documented with expected inputs and outputs
+- [ ] Edge cases validated (invalid language codes, missing translations, conflicting preferences)
+
+
+
+---
+
+## REQ-358: Test Content Display Scenarios for Translated Guest Experience
+
+**Date**: 2026-01-19 18:45
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Validate that guest-facing content displays correctly across all translation scenarios, including proper translation display, fallback to original content, instant toggle functionality, and dynamic language switching.
+
+### Current Behavior
+Translation components and language detection logic have been implemented, but comprehensive end-to-end testing scenarios for content display have not been systematically validated to ensure seamless guest experience across all translation states.
+
+### Expected Behavior
+The system should correctly display content according to these scenarios:
+
+1. **Translated Content Display**: When a translation exists for the guest's selected language, all translatable content (item descriptions, article text, link descriptions, tag names) displays in that language while maintaining proper formatting and structure.
+
+2. **Original Content Fallback**: When no translation exists for the selected language, the system displays the original content without error states, with optional indicators showing that content is displayed in its original language.
+
+3. **View Original Toggle**: Guests can instantly switch between translated and original content using a toggle control, with the change applying immediately without page reload or visible delay.
+
+4. **Language Switcher Updates**: When guests use the language switcher component to change their language preference, all displayed content updates to reflect the new language selection, showing translations when available or original content as fallback.
+
+### User Impact
+Guests viewing multilingual content experience predictable, reliable content display regardless of translation availability. Users can verify translations against original content instantly. Language changes apply immediately across the entire interface without confusion or broken states. The experience feels polished and professional across all language combinations.
+
+### Business Value
+Validates the complete guest-facing translation experience to ensure international users can consume content naturally in their preferred language. Prevents frustration from incomplete translations or broken language switching. Builds trust in the platform's multilingual capabilities through consistent, reliable behavior.
+
+### Acceptance Criteria
+- [ ] Translated content displays correctly when translation exists for selected language
+- [ ] All translatable fields (descriptions, titles, tags) show translated versions consistently
+- [ ] Original content displays properly when no translation exists for selected language
+- [ ] Missing translations do not cause errors, blank content, or loading states
+- [ ] "View Original" toggle switches between translated and original content instantly
+- [ ] Toggle state persists while navigating within the same item or article
+- [ ] Toggle works correctly when translation is missing (shows original in both states)
+- [ ] Language switcher component updates all visible content when language changes
+- [ ] Content update happens without full page reload
+- [ ] Language change applies to all translated elements on the page simultaneously
+- [ ] Switching to a language without translations shows original content gracefully
+- [ ] All test scenarios cover items, articles, and links content types
+- [ ] Edge cases validated (partial translations, mixed language content, rapid language switching)
+- [ ] Performance remains smooth when toggling or switching languages repeatedly
+- [ ] Test scenarios documented with expected visual outcomes and behavior
+
+---
+
+## REQ-359: Test Edge Cases in Translation and Localization System
+
+**Date**: 2026-01-19 18:50
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Validate that the localization system handles edge cases gracefully, including partial translations, blocked cookies, malformed language headers, and unsupported language codes.
+
+### Current Behavior
+The translation and language detection system has been implemented with standard use cases in mind, but comprehensive testing of edge cases and error scenarios has not been systematically performed to ensure robust behavior when conditions are not ideal.
+
+### Expected Behavior
+The system should handle edge cases gracefully:
+
+1. **Missing Translation for Some Fields**: When an item, article, or link has translations for only some fields (e.g., title translated but description missing), the system displays translated content where available and falls back to original content for untranslated fields without errors or blank spaces.
+
+2. **Cookie Blocked Scenario**: When browser privacy settings or extensions block cookies entirely, the language detection system falls back to Accept-Language header parsing without errors, and language switching still functions using URL parameters or session storage alternatives.
+
+3. **Malformed Accept-Language Header**: When the browser sends an invalid, corrupted, or non-standard Accept-Language header (e.g., missing region codes, invalid syntax, garbage characters), the system parses gracefully and falls back to default language without crashing or displaying errors.
+
+4. **Unsupported Language Code**: When a user requests a language not in the supported list (via URL parameter, cookie, or header), the system detects the unsupported code, logs the attempt, and gracefully falls back to the default language or original content language without breaking the user experience.
+
+### User Impact
+Guests encounter a stable, professional experience even when technical conditions are not ideal. Users with strict privacy settings can still consume content. International users with unusual browser configurations or language preferences receive appropriate fallback content rather than errors. The system feels reliable regardless of edge case scenarios.
+
+### Business Value
+Ensures the localization system is production-ready and resilient to real-world variability in user configurations, browser behaviors, and data completeness. Prevents user-facing errors that could damage trust in the platform's multilingual capabilities. Reduces support burden from edge case failures.
+
+### Acceptance Criteria
+- [ ] Partial translations display correctly with mixed original and translated content
+- [ ] Each field independently shows translated version if available, original if not
+- [ ] No blank spaces, error messages, or broken layouts appear when some fields lack translations
+- [ ] Translation status indicators accurately reflect partial translation state
+- [ ] System functions normally when cookies are completely blocked by browser settings
+- [ ] Language preference defaults to Accept-Language header when cookie cannot be set
+- [ ] Language switcher still updates display using URL parameters as fallback
+- [ ] No JavaScript errors occur when cookie access fails
+- [ ] Malformed Accept-Language headers parse without throwing errors
+- [ ] Common malformations handled (missing regions, invalid syntax, unexpected characters)
+- [ ] System defaults to fallback language when header cannot be parsed
+- [ ] Error logged for monitoring purposes without exposing errors to user
+- [ ] Unsupported language codes (via URL parameter or cookie) detected and rejected
+- [ ] System falls back to default language when unsupported code encountered
+- [ ] Language switcher only displays supported language options
+- [ ] Shareable URLs with invalid language parameters redirect or default gracefully
+- [ ] All edge cases tested across items, articles, and links
+- [ ] Edge case scenarios documented with expected behavior and actual results
+- [ ] Console logs clean with no unhandled errors for any edge case
+- [ ] User experience remains professional and functional for all edge cases
+
+
+---
+
+## REQ-360: Test Mobile Responsiveness for Localization Components
+
+**Date**: 2026-01-19 19:15
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Validate that all localization interface components function correctly and display properly on mobile devices, ensuring touch-friendly interactions and responsive layouts across small screen sizes.
+
+### Current Behavior
+Localization components including the language switcher, translation banners, and view original toggles have been implemented and tested on desktop viewports, but comprehensive mobile responsiveness testing has not been systematically performed to ensure optimal experience on smartphones and tablets.
+
+### Expected Behavior
+All localization components should adapt gracefully to mobile viewports:
+
+1. **Language Switcher on Small Screens**: The language switcher component displays properly on mobile devices with appropriately sized touch targets, readable text, and a layout that fits within narrow viewports without horizontal scrolling or overlapping other navigation elements. The dropdown or modal interface for language selection works smoothly with touch gestures.
+
+2. **Banner Visibility Without Content Obstruction**: Translation status banners, missing translation warnings, and stale translation indicators render at appropriate sizes on mobile screens without obscuring primary content. Banners can be dismissed easily via touch, and dismissed state persists during the session. Banner positioning adapts to mobile layouts without causing content reflow issues.
+
+3. **Touch-Friendly Interactive Elements**: All translation-related interactive components including the "View Original" toggle, language selector buttons, manual retranslate actions, and translation management controls feature touch targets meeting minimum accessibility standards (at least 44x44 pixels). Buttons provide visual feedback on touch, and gestures like tap, swipe, and scroll work naturally without accidental activations or requiring precise finger placement.
+
+### User Impact
+Mobile users experience seamless language switching and translation features with the same reliability as desktop users. Touch interactions feel natural and responsive without frustration from small buttons or awkward layouts. Content remains readable and accessible regardless of translation status banners or language controls. The mobile experience feels polished and professional, encouraging international mobile users to engage with multilingual content.
+
+### Business Value
+Ensures the localization system provides excellent user experience across all devices, particularly mobile which often represents majority traffic for modern web applications. Prevents mobile users from abandoning the platform due to unusable language controls or obstructed content. Validates accessibility standards for touch interfaces, reducing legal and usability risks.
+
+### Acceptance Criteria
+- [ ] Language switcher component renders correctly on screens 320px to 768px wide
+- [ ] Language switcher touch targets are minimum 44x44 pixels for accessibility
+- [ ] Language selection dropdown or modal opens smoothly via touch without scrolling issues
+- [ ] Selected language displays clearly in mobile navigation without truncation
+- [ ] Language switcher does not overlap or obscure other navigation elements on small screens
+- [ ] Translation status banners display at appropriate height on mobile viewports
+- [ ] Banners do not cover primary content (titles, descriptions, images) on any mobile screen size
+- [ ] Banner dismiss button is easily tappable with minimum 44x44 pixel touch target
+- [ ] Dismissed banner state persists within session without reappearing on scroll
+- [ ] Banner positioning adapts correctly in both portrait and landscape mobile orientations
+- [ ] "View Original" toggle button meets minimum touch target size on mobile
+- [ ] Toggle provides visual feedback on touch (press state, ripple effect, or similar)
+- [ ] Toggle switches content instantly without lag or unintended double-taps
+- [ ] Manual retranslate and edit controls in management interfaces are touch-friendly
+- [ ] All interactive elements avoid accidental activation from scrolling or swiping gestures
+- [ ] Touch interactions tested on both iOS Safari and Android Chrome browsers
+- [ ] Responsive behavior validated across viewport sizes: 320px, 375px, 414px, 768px widths
+- [ ] No horizontal scrolling introduced by localization components on any screen size
+- [ ] Content remains readable and properly formatted with banners and controls present
+- [ ] Mobile testing documented with device models, browsers, and visual evidence of proper behavior
+

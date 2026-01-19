@@ -186,13 +186,16 @@ request_stages:
 
         **Instructions**:
         1. Read the detailed specification at {details_file}
-        2. Execute all tasks following the per-task workflow:
-           - Implement -> Verify -> Update Doc -> Build -> Commit
-        3. Mark completed tasks with [x] and add implementation notes
-        4. Continue autonomously until all required tasks are complete
-        5. Run verification: `npm run type-check` and `npm run build`
-        6. Report final status with summary of completed/failed/blocked tasks
-        7. **IMPORTANT**: End your response with a test summary in this format:
+        2. For EACH subtask in the specification:
+           a. Implement the subtask
+           b. Verify it works
+           c. **IMMEDIATELY update {details_file}**: Change `- [ ]` to `- [x]` for that subtask
+           d. **SAVE the file** so progress is visible externally
+           e. Continue to the next subtask
+        3. This checkpoint-after-each-subtask approach is CRITICAL for progress visibility
+        4. Run final verification: `npm run type-check` and `npm run build`
+        5. Report final status with summary of completed/failed/blocked tasks
+        6. **IMPORTANT**: End your response with a test summary in this format:
            ```
            TEST SUMMARY:
            - Type Check: PASSED/FAILED
@@ -209,6 +212,78 @@ request_stages:
       timeout: 1800
     output:
       type: implementation
+
+  # Stage 5: Test Check (Pipeline-level)
+  - id: testcheck
+    name: "Test Check & Verification"
+    description: "Validate implementation against specifications and generate test harness"
+    mode: pipeline
+    enabled: true
+    agent:
+      name: "06a-pipeline-testcheck"
+      invocation_template: |
+        Run pipeline-level test verification for the L10N Epic 1 - Foundation implementation.
+
+        **Pipeline Configuration**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+        **Request Range**: {first_request_id} through {last_request_id}
+
+        **Instructions**:
+        1. Read the state file to understand which tasks have been implemented
+        2. For each implemented task, verify the implementation is correct
+        3. Run build verification: `npm run type-check` and `npm run build`
+        4. Generate a test harness page for manual QA testing
+        5. Update the state file with verification results
+        6. Report overall verification status
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*,mcp__playwright__*"
+        - "--dangerously-skip-permissions"
+      timeout: 1200
+    output:
+      type: verification
+
+  # Stage 6: Use Case Generation (Pipeline-level)
+  - id: usecases
+    name: "Use Case Test Generation"
+    description: "Generate aggregate end-to-end test scenarios based on PRD intent"
+    mode: pipeline
+    enabled: true
+    agent:
+      name: "06b-usecase-generator"
+      invocation_template: |
+        Generate end-to-end use case test scenarios for the L10N Epic 1 - Foundation implementation.
+
+        **Pipeline Configuration**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+        **Request Range**: {first_request_id} through {last_request_id}
+
+        **Instructions**:
+        1. Read the implementation plan to understand the PRD intent and user stories
+        2. Read the state file to see what has been implemented
+        3. Generate comprehensive use case test scenarios that cover:
+           - Happy path flows
+           - Edge cases and error handling
+           - Multi-language scenarios for L10N
+        4. Add the use cases to the state file under 'usecases' key
+        5. Each use case should have: id, title, description, steps, expected_results
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep"
+        - "--dangerously-skip-permissions"
+      timeout: 900
+    output:
+      type: usecases
 
 # =============================================================================
 # Implementation Configuration

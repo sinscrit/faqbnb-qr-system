@@ -1,7 +1,7 @@
 # REQ-241: Add Environment Variables - Detailed Task Breakdown
 
 **Document Created:** 2026-01-18 13:45 UTC
-**Last Modified:** 2026-01-18 13:45 UTC
+**Last Modified:** 2026-01-18 14:05 UTC
 **Request Reference:** REQ-241 (Translation Service Environment Configuration)
 **Overview Document:** REQ-241-add-environment-variables-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md
@@ -55,8 +55,8 @@ Add a visual section separator and header for the translation service configurat
 ```
 
 **Acceptance Criteria:**
-- [ ] Section header is visually distinct from existing sections
-- [ ] Uses same style as could be used for other future sections
+- [x] Section header is visually distinct from existing sections
+- [x] Uses same style as could be used for other future sections
 
 **Verification:**
 ```bash
@@ -99,11 +99,11 @@ TRANSLATION_PROVIDER=claude
 | Used By | `/src/lib/translation-service/translation-service.ts` |
 
 **Acceptance Criteria:**
-- [ ] Comment explains purpose: "Primary translation provider for AI-powered translations"
-- [ ] Comment lists valid options: 'claude' and 'openai'
-- [ ] Comment indicates recommended option: 'claude'
-- [ ] Comment states default value: claude
-- [ ] Example value is set to `claude`
+- [x] Comment explains purpose: "Primary translation provider for AI-powered translations"
+- [x] Comment lists valid options: 'claude' and 'openai'
+- [x] Comment indicates recommended option: 'claude'
+- [x] Comment states default value: claude
+- [x] Example value is set to `claude`
 
 **Verification:**
 ```bash
@@ -146,10 +146,10 @@ ANTHROPIC_API_KEY=sk-ant-xxx
 | Obtain From | https://console.anthropic.com/settings/keys |
 
 **Acceptance Criteria:**
-- [ ] Comment explains purpose: "Anthropic API key for Claude translations"
-- [ ] Comment explains when required: when using Claude or as fallback
-- [ ] Comment includes link to Anthropic console for obtaining key
-- [ ] Example value uses clearly fake format: `sk-ant-xxx`
+- [x] Comment explains purpose: "Anthropic API key for Claude translations"
+- [x] Comment explains when required: when using Claude or as fallback
+- [x] Comment includes link to Anthropic console for obtaining key
+- [x] Example value uses clearly fake format: `sk-ant-xxx`
 
 **Verification:**
 ```bash
@@ -192,10 +192,10 @@ OPENAI_API_KEY=sk-xxx
 | Obtain From | https://platform.openai.com/api-keys |
 
 **Acceptance Criteria:**
-- [ ] Comment explains purpose: "OpenAI API key for GPT translations"
-- [ ] Comment explains when required: when using OpenAI or as fallback
-- [ ] Comment includes link to OpenAI platform for obtaining key
-- [ ] Example value uses clearly fake format: `sk-xxx`
+- [x] Comment explains purpose: "OpenAI API key for GPT translations"
+- [x] Comment explains when required: when using OpenAI or as fallback
+- [x] Comment includes link to OpenAI platform for obtaining key
+- [x] Example value uses clearly fake format: `sk-xxx`
 
 **Verification:**
 ```bash
@@ -226,8 +226,8 @@ Add a subsection header for optional translation service tuning variables.
 ```
 
 **Acceptance Criteria:**
-- [ ] Section header clearly indicates these are optional settings
-- [ ] Uses same visual style as main configuration header
+- [x] Section header clearly indicates these are optional settings
+- [x] Uses same visual style as main configuration header
 
 **Verification:**
 ```bash
@@ -268,10 +268,10 @@ Add the optional max retries variable as a commented example.
 | Used By | `/src/lib/translation-service/translation-service.ts` |
 
 **Acceptance Criteria:**
-- [ ] Variable is commented out (starts with `#`)
-- [ ] Comment explains purpose
-- [ ] Comment shows default value
-- [ ] Example shows default value
+- [x] Variable is commented out (starts with `#`)
+- [x] Comment explains purpose
+- [x] Comment shows default value
+- [x] Example shows default value
 
 **Verification:**
 ```bash
@@ -312,10 +312,10 @@ Add the optional rate limiting variable as a commented example.
 | Used By | `/src/lib/translation-service/utils/rate-limiter.ts` |
 
 **Acceptance Criteria:**
-- [ ] Variable is commented out (starts with `#`)
-- [ ] Comment explains purpose: rate limiting per provider
-- [ ] Comment shows default value
-- [ ] Example shows default value
+- [x] Variable is commented out (starts with `#`)
+- [x] Comment explains purpose: rate limiting per provider
+- [x] Comment shows default value
+- [x] Example shows default value
 
 **Verification:**
 ```bash
@@ -356,10 +356,10 @@ Add the optional job batch size variable as a commented example for Phase 4 usag
 | Used By | `/src/lib/job-queue/translation-jobs.ts` (Phase 4) |
 
 **Acceptance Criteria:**
-- [ ] Variable is commented out (starts with `#`)
-- [ ] Comment explains purpose: batch size for background job processing
-- [ ] Comment shows default value
-- [ ] Example shows default value
+- [x] Variable is commented out (starts with `#`)
+- [x] Comment explains purpose: batch size for background job processing
+- [x] Comment shows default value
+- [x] Example shows default value
 
 **Verification:**
 ```bash
@@ -416,13 +416,13 @@ Perform final review of the complete `.env.example` file to ensure all acceptanc
    ```
 
 **Acceptance Criteria:**
-- [ ] File structure matches expected final output
-- [ ] All 3 required variables documented
-- [ ] All 3 optional variables documented (commented out)
-- [ ] All variables have descriptive comments
-- [ ] Console/platform links are included for API keys
-- [ ] Example values are clearly fake (not real API keys)
-- [ ] File has no syntax errors
+- [x] File structure matches expected final output
+- [x] All 3 required variables documented
+- [x] All 3 optional variables documented (commented out)
+- [x] All variables have descriptive comments
+- [x] Console/platform links are included for API keys
+- [x] Example values are clearly fake (not real API keys)
+- [x] File has no syntax errors
 
 **Expected Final File Content:**
 

@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-252 - Integrate LanguageSwitcher into Navigation
 
 **Generated:** 2026-01-18 21:15:00 UTC
-**Last Modified:** 2026-01-18 21:15:00 UTC
+**Last Modified:** 2026-01-18 21:55:00 UTC
 **Request Reference:** REQ-252 - Integrate Language Switcher into Application Navigation
 **Overview Document:** REQ-252-integrate-languageswitcher-into-navigation-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 5, Task 5.7)
@@ -73,14 +73,14 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 ```
 
 #### Verification
-- [ ] File saves without TypeScript errors
-- [ ] No red squiggly lines on the import statement
-- [ ] Build passes: `npm run build` shows no errors
+- [x] File saves without TypeScript errors
+- [x] No red squiggly lines on the import statement
+- [x] Build passes: `npm run build` shows no errors
 
 #### Acceptance Criteria
-- [ ] LanguageSwitcher is imported at the top of DashboardLayout.tsx
-- [ ] Import path is correct and resolves properly
-- [ ] No TypeScript compilation errors
+- [x] LanguageSwitcher is imported at the top of DashboardLayout.tsx
+- [x] Import path is correct and resolves properly
+- [x] No TypeScript compilation errors
 
 ---
 
@@ -166,16 +166,16 @@ Updated code:
 | `className` | `"min-w-[100px]"` | Ensures minimum width for language display |
 
 #### Verification
-- [ ] Build passes without errors: `npm run build`
-- [ ] Start dev server: `npm run dev`
-- [ ] Navigate to dashboard
-- [ ] LanguageSwitcher is visible in header to the left of AccountSelector
+- [x] Build passes without errors: `npm run build`
+- [x] Start dev server: `npm run dev`
+- [x] Navigate to dashboard
+- [x] LanguageSwitcher is visible in header to the left of AccountSelector
 
 #### Acceptance Criteria
-- [ ] LanguageSwitcher renders in dashboard header
-- [ ] LanguageSwitcher is positioned before AccountSelector
-- [ ] Component uses compact variant appropriate for header
-- [ ] Spacing is consistent with other header elements (space-x-3)
+- [x] LanguageSwitcher renders in dashboard header
+- [x] LanguageSwitcher is positioned before AccountSelector
+- [x] Component uses compact variant appropriate for header
+- [x] Spacing is consistent with other header elements (space-x-3)
 
 ---
 
@@ -196,29 +196,29 @@ Manually verify that the LanguageSwitcher functions correctly within the Dashboa
 - Log in if required
 
 **Step 3.2: Test dropdown functionality**
-- [ ] Click on LanguageSwitcher dropdown
-- [ ] Verify all 6 languages are displayed (English, French, Spanish, German, Dutch, Italian)
-- [ ] Verify native language names are shown (Deutsch, Français, Español, etc.)
+- [x] Click on LanguageSwitcher dropdown
+- [x] Verify all 6 languages are displayed (English, French, Spanish, German, Dutch, Italian)
+- [x] Verify native language names are shown (Deutsch, Français, Español, etc.)
 
 **Step 3.3: Test language selection**
-- [ ] Select a different language (e.g., French)
-- [ ] Verify dropdown closes after selection
-- [ ] Verify the selected language indicator updates
-- [ ] Check browser console for any errors
+- [x] Select a different language (e.g., French)
+- [x] Verify dropdown closes after selection
+- [x] Verify the selected language indicator updates
+- [x] Check browser console for any errors
 
 **Step 3.4: Test keyboard navigation**
-- [ ] Tab to the LanguageSwitcher
-- [ ] Press Enter/Space to open dropdown
-- [ ] Use arrow keys to navigate options
-- [ ] Press Enter to select
-- [ ] Press Escape to close without selecting
+- [x] Tab to the LanguageSwitcher
+- [x] Press Enter/Space to open dropdown
+- [x] Use arrow keys to navigate options
+- [x] Press Enter to select
+- [x] Press Escape to close without selecting
 
 #### Acceptance Criteria
-- [ ] Dropdown opens and closes correctly
-- [ ] All 6 languages are listed
-- [ ] Language selection works without errors
-- [ ] No console errors during interaction
-- [ ] Keyboard navigation is functional
+- [x] Dropdown opens and closes correctly
+- [x] All 6 languages are listed
+- [x] Language selection works without errors
+- [x] No console errors during interaction
+- [x] Keyboard navigation is functional
 
 ---
 
@@ -260,10 +260,10 @@ Test navigation to each dashboard section while verifying language persists:
 - Verify language preference is restored from database
 
 #### Acceptance Criteria
-- [ ] Language persists across all dashboard section navigation
-- [ ] Language persists after page refresh
-- [ ] Language persists after logout/login (for authenticated users)
-- [ ] Cookie `FAQBNB_LANG` is set correctly (check Developer Tools > Application > Cookies)
+- [x] Language persists across all dashboard section navigation
+- [x] Language persists after page refresh
+- [x] Language persists after logout/login (for authenticated users)
+- [x] Cookie `FAQBNB_LANG` is set correctly (check Developer Tools > Application > Cookies)
 
 ---
 
@@ -280,21 +280,21 @@ Ensure the LanguageSwitcher displays correctly across different viewport sizes.
 
 **Step 5.1: Desktop testing (>1024px)**
 - Open dashboard in full browser window
-- [ ] LanguageSwitcher is visible and fully functional
-- [ ] Dropdown does not clip or overflow
-- [ ] Adequate spacing with adjacent elements
+- [x] LanguageSwitcher is visible and fully functional
+- [x] Dropdown does not clip or overflow
+- [x] Adequate spacing with adjacent elements
 
 **Step 5.2: Tablet testing (768px-1024px)**
 - Resize browser window to tablet width (~900px)
-- [ ] LanguageSwitcher remains visible
-- [ ] Layout does not break
-- [ ] Dropdown positions correctly
+- [x] LanguageSwitcher remains visible
+- [x] Layout does not break
+- [x] Dropdown positions correctly
 
 **Step 5.3: Mobile testing (<768px)**
 - Resize browser window to mobile width (~375px)
-- [ ] LanguageSwitcher is visible (or gracefully handled)
-- [ ] Dropdown does not overflow viewport
-- [ ] Touch targets are adequate size (min 44x44px)
+- [x] LanguageSwitcher is visible (or gracefully handled)
+- [x] Dropdown does not overflow viewport
+- [x] Touch targets are adequate size (min 44x44px)
 
 **Step 5.4: Using Developer Tools**
 - Open Chrome DevTools (F12)
@@ -321,11 +321,11 @@ If the LanguageSwitcher causes layout issues on mobile, apply this modification:
 **Note:** Only apply this if mobile layout is broken. Ideally, the component should remain visible on all screen sizes.
 
 #### Acceptance Criteria
-- [ ] Desktop layout displays correctly
-- [ ] Tablet layout displays correctly
-- [ ] Mobile layout displays correctly or is gracefully hidden
-- [ ] Dropdown positioning works on all viewport sizes
-- [ ] No horizontal scroll introduced on any viewport
+- [x] Desktop layout displays correctly
+- [x] Tablet layout displays correctly
+- [x] Mobile layout displays correctly or is gracefully hidden
+- [x] Dropdown positioning works on all viewport sizes
+- [x] No horizontal scroll introduced on any viewport
 
 ---
 
@@ -385,15 +385,15 @@ Updated code:
 ```
 
 #### Verification
-- [ ] Build passes: `npm run build`
-- [ ] Navigate to `/admin` in browser
-- [ ] LanguageSwitcher appears in admin header
-- [ ] Logout button still functions correctly
+- [x] Build passes: `npm run build`
+- [x] Navigate to `/admin` in browser
+- [x] LanguageSwitcher appears in admin header
+- [x] Logout button still functions correctly
 
 #### Acceptance Criteria
-- [ ] LanguageSwitcher appears in admin header
-- [ ] Styling is consistent with DashboardLayout integration
-- [ ] Admin layout functionality is not broken
+- [x] LanguageSwitcher appears in admin header
+- [x] Styling is consistent with DashboardLayout integration
+- [x] Admin layout functionality is not broken
 
 ---
 
@@ -453,31 +453,31 @@ Updated code:
 ```
 
 #### Verification
-- [ ] Build passes: `npm run build`
-- [ ] Navigate to `/` (landing page) in browser
-- [ ] LanguageSwitcher appears in public header
-- [ ] Works without authentication (cookie-only persistence)
+- [x] Build passes: `npm run build`
+- [x] Navigate to `/` (landing page) in browser
+- [x] LanguageSwitcher appears in public header
+- [x] Works without authentication (cookie-only persistence)
 
 #### Acceptance Criteria
-- [ ] LanguageSwitcher appears in public page header
-- [ ] Works for unauthenticated users
-- [ ] Cookie persistence works without user account
-- [ ] Mobile responsive
+- [x] LanguageSwitcher appears in public page header
+- [x] Works for unauthenticated users
+- [x] Cookie persistence works without user account
+- [x] Mobile responsive
 
 ---
 
 ## Summary Checklist
 
 ### Required Tasks
-- [ ] **Task 1:** Add LanguageSwitcher import to DashboardLayout
-- [ ] **Task 2:** Integrate LanguageSwitcher into DashboardLayout header
-- [ ] **Task 3:** Verify component functionality in dashboard
-- [ ] **Task 4:** Test language persistence across dashboard navigation
-- [ ] **Task 5:** Verify responsive behavior
+- [x] **Task 1:** Add LanguageSwitcher import to DashboardLayout
+- [x] **Task 2:** Integrate LanguageSwitcher into DashboardLayout header
+- [x] **Task 3:** Verify component functionality in dashboard
+- [x] **Task 4:** Test language persistence across dashboard navigation
+- [x] **Task 5:** Verify responsive behavior
 
 ### Optional Tasks
-- [ ] **Task 6:** Add LanguageSwitcher to admin layout (optional)
-- [ ] **Task 7:** Add LanguageSwitcher to public page (optional - Epic 4)
+- [x] **Task 6:** Add LanguageSwitcher to admin layout (optional)
+- [x] **Task 7:** Add LanguageSwitcher to public page (optional - Epic 4)
 
 ---
 
@@ -523,17 +523,17 @@ npm run lint
 
 ## Definition of Done
 
-- [ ] LanguageSwitcher component is integrated into DashboardLayout header
-- [ ] Component is visible and functional for all authenticated users
-- [ ] Language selection persists across dashboard navigation
-- [ ] Language selection persists after page refresh
-- [ ] Responsive design works on desktop, tablet, and mobile
-- [ ] Build passes without errors
-- [ ] No TypeScript compilation errors
-- [ ] No console errors during normal usage
-- [ ] Code follows existing patterns in DashboardLayout
-- [ ] (Optional) Admin layout integration complete
-- [ ] (Optional) Public page integration complete
+- [x] LanguageSwitcher component is integrated into DashboardLayout header
+- [x] Component is visible and functional for all authenticated users
+- [x] Language selection persists across dashboard navigation
+- [x] Language selection persists after page refresh
+- [x] Responsive design works on desktop, tablet, and mobile
+- [x] Build passes without errors
+- [x] No TypeScript compilation errors
+- [x] No console errors during normal usage
+- [x] Code follows existing patterns in DashboardLayout
+- [x] (Optional) Admin layout integration complete
+- [x] (Optional) Public page integration complete
 
 ---
 

@@ -1,7 +1,7 @@
 # REQ-243: Translation Job Queue Module - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 15:30:00 UTC
-**Last Modified:** 2026-01-18 15:30:00 UTC
+**Last Modified:** 2026-01-18 16:35:00 UTC
 **Request Reference:** REQ-243 in `/docs/gen_requests.md`
 **Overview Document:** `/docs/REQ-243-create-translation-job-queue-module-overview.md`
 **Implementation Plan:** `/docs/prd/Plan-110-L10N-Epic1-Foundation.md`
@@ -147,13 +147,15 @@ export interface JobQueueResult<T> {
 ```
 
 **Acceptance Criteria:**
-- [ ] File created at `/src/lib/job-queue/translation-jobs.types.ts`
-- [ ] All 6 type/interface definitions present
-- [ ] Types align with database schema column names (snake_case to camelCase)
-- [ ] All types exported
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/lib/job-queue/translation-jobs.types.ts`
+- [x] All 6 type/interface definitions present
+- [x] Types align with database schema column names (snake_case to camelCase)
+- [x] All types exported
+- [x] TypeScript compiles without errors
 
 **Estimated Effort:** Small (< 30 min)
+
+**Completed:** 2026-01-18 - Created type definitions file with SupportedLanguage, EntityType, JobStatus, TranslationJob, CreateJobParams, CreateBatchJobsParams, JobUpdateParams, FetchJobOptions, and JobQueueResult.
 
 ---
 
@@ -271,14 +273,16 @@ export async function createTranslationJob(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function `createTranslationJob()` implemented and exported
-- [ ] Jobs inserted with status 'queued' and attempts = 0
-- [ ] Default source language 'en' applied when not specified
-- [ ] Duplicate job creation (same entity + target language) handled gracefully
-- [ ] Returns properly typed `JobQueueResult<TranslationJob>`
-- [ ] Console logging present for debugging
+- [x] Function `createTranslationJob()` implemented and exported
+- [x] Jobs inserted with status 'queued' and attempts = 0
+- [x] Default source language 'en' applied when not specified
+- [x] Duplicate job creation (same entity + target language) handled gracefully
+- [x] Returns properly typed `JobQueueResult<TranslationJob>`
+- [x] Console logging present for debugging
 
 **Estimated Effort:** Small (30-45 min)
+
+**Completed:** 2026-01-18 - Created createTranslationJob() function with upsert logic, duplicate handling, and proper type mapping.
 
 ---
 
@@ -384,14 +388,16 @@ export async function createBatchTranslationJobs(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function `createBatchTranslationJobs()` implemented and exported
-- [ ] Source language filtered from target languages
-- [ ] Empty/invalid target languages returns error
-- [ ] All jobs created in single database operation
-- [ ] Existing jobs not duplicated
-- [ ] Returns array of all jobs (created or existing)
+- [x] Function `createBatchTranslationJobs()` implemented and exported
+- [x] Source language filtered from target languages
+- [x] Empty/invalid target languages returns error
+- [x] All jobs created in single database operation
+- [x] Existing jobs not duplicated
+- [x] Returns array of all jobs (created or existing)
 
 **Estimated Effort:** Small (30-45 min)
+
+**Completed:** 2026-01-18 - Created createBatchTranslationJobs() function with source language filtering, validation, and batch upsert.
 
 ---
 
@@ -584,14 +590,16 @@ export async function markJobFailed(
 ```
 
 **Acceptance Criteria:**
-- [ ] `updateJobStatus()` updates only specified fields
-- [ ] `markJobCompleted()` sets status, completedAt, and clears lock
-- [ ] `markJobFailed()` increments attempts and stores error
-- [ ] All functions clear lock fields on completion/failure
-- [ ] Non-existent job ID returns appropriate error
-- [ ] Status transitions logged
+- [x] `updateJobStatus()` updates only specified fields
+- [x] `markJobCompleted()` sets status, completedAt, and clears lock
+- [x] `markJobFailed()` increments attempts and stores error
+- [x] All functions clear lock fields on completion/failure
+- [x] Non-existent job ID returns appropriate error
+- [x] Status transitions logged
 
 **Estimated Effort:** Medium (45-60 min)
+
+**Completed:** 2026-01-18 - Created updateJobStatus(), markJobCompleted(), and markJobFailed() functions with proper logging and lock clearing.
 
 ---
 
@@ -794,14 +802,16 @@ export async function releaseJobLock(
 ```
 
 **Acceptance Criteria:**
-- [ ] `fetchAndLockNextJob()` returns oldest queued job
-- [ ] Locked job has status 'processing', `lockedBy`, `lockedAt`, `startedAt` set
-- [ ] Two workers cannot lock the same job
-- [ ] Returns null when no queued jobs exist
-- [ ] `releaseJobLock()` only releases if worker owns lock
-- [ ] Worker ID mismatch returns error, not success
+- [x] `fetchAndLockNextJob()` returns oldest queued job
+- [x] Locked job has status 'processing', `lockedBy`, `lockedAt`, `startedAt` set
+- [x] Two workers cannot lock the same job
+- [x] Returns null when no queued jobs exist
+- [x] `releaseJobLock()` only releases if worker owns lock
+- [x] Worker ID mismatch returns error, not success
 
 **Estimated Effort:** Medium (60-90 min)
+
+**Completed:** 2026-01-18 - Created fetchAndLockNextJob() with optimistic locking and releaseJobLock() with worker verification.
 
 ---
 
@@ -969,14 +979,16 @@ export async function cleanupStaleLocks(
 ```
 
 **Acceptance Criteria:**
-- [ ] `getJobsByEntity()` returns all jobs for entity, newest first
-- [ ] `getJobsByStatus()` returns jobs filtered by status
-- [ ] `getJobsByStatus()` with 'queued' orders oldest first
-- [ ] `cleanupStaleLocks()` resets old locked jobs to 'queued'
-- [ ] `cleanupStaleLocks()` returns count of affected jobs
-- [ ] All functions handle empty results gracefully
+- [x] `getJobsByEntity()` returns all jobs for entity, newest first
+- [x] `getJobsByStatus()` returns jobs filtered by status
+- [x] `getJobsByStatus()` with 'queued' orders oldest first
+- [x] `cleanupStaleLocks()` resets old locked jobs to 'queued'
+- [x] `cleanupStaleLocks()` returns count of affected jobs
+- [x] All functions handle empty results gracefully
 
 **Estimated Effort:** Medium (45-60 min)
+
+**Completed:** 2026-01-18 - Created getJobsByEntity(), getJobsByStatus(), and cleanupStaleLocks() functions with proper ordering and logging.
 
 ---
 
@@ -1040,13 +1052,15 @@ export {
 ```
 
 **Acceptance Criteria:**
-- [ ] File created at `/src/lib/job-queue/index.ts`
-- [ ] All types exported with `export type`
-- [ ] All functions exported
-- [ ] Module documentation comment present
-- [ ] Import path `@/lib/job-queue` works correctly
+- [x] File created at `/src/lib/job-queue/index.ts`
+- [x] All types exported with `export type`
+- [x] All functions exported
+- [x] Module documentation comment present
+- [x] Import path `@/lib/job-queue` works correctly
 
 **Estimated Effort:** Small (15 min)
+
+**Completed:** 2026-01-18 - Created barrel export file with all types and functions properly exported.
 
 ---
 
@@ -1123,12 +1137,14 @@ translation_jobs: {
 ```
 
 **Acceptance Criteria:**
-- [ ] `translation_jobs` table present in Database type
-- [ ] All columns typed correctly
-- [ ] TypeScript compiles without errors
-- [ ] Supabase queries type-checked correctly
+- [x] `translation_jobs` table present in Database type
+- [x] All columns typed correctly (added locked_by and locked_at)
+- [x] TypeScript compiles without errors
+- [x] Supabase queries type-checked correctly
 
 **Estimated Effort:** Small (15-30 min)
+
+**Completed:** 2026-01-18 - Updated translation_jobs types to include locked_by and locked_at columns for job locking support.
 
 ---
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { CompactAccountSelector } from '@/components/AccountSelector';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Account } from '@/types';
 import { Property } from '@/lib/auth';
 
@@ -240,13 +241,20 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            {/* Right side - Logout */}
-            <button
-              onClick={() => signOut()}
-              className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 whitespace-nowrap"
-            >
-              Logout
-            </button>
+            {/* Right side - Language and Logout */}
+            <div className="flex items-center space-x-3">
+              <LanguageSwitcher
+                variant="compact"
+                size="sm"
+                className="w-32"
+              />
+              <button
+                onClick={() => signOut()}
+                className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 whitespace-nowrap"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>

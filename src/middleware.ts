@@ -3,6 +3,45 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 import type { Database } from '@/lib/supabase'
+import {
+  detectUserLanguage,
+  setLocaleCookie,
+  LOCALE_COOKIE_NAME,
+} from '@/lib/i18n'
+
+/**
+ * Fetch user's language preference from the database.
+ * Returns null if user not found, no preference set, or on error.
+ *
+ * @param supabase - Supabase client instance
+ * @param userId - User's unique identifier
+ * @returns User's preferred_language value or null
+ */
+async function getUserLanguagePreference(
+  supabase: ReturnType<typeof createServerClient<Database>>,
+  userId: string
+): Promise<string | null> {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('preferred_language')
+      .eq('id', userId)
+      .single();
+
+    if (error || !user) {
+      // Log only if it's not a "not found" error
+      if (error && error.code !== 'PGRST116') {
+        console.log('[i18n] Error fetching user language preference:', error.message);
+      }
+      return null;
+    }
+
+    return user.preferred_language ?? null;
+  } catch (e) {
+    console.log('[i18n] Exception fetching user language preference:', e);
+    return null;
+  }
+}
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
@@ -80,6 +119,48 @@ export async function middleware(req: NextRequest) {
       errorMessage: error?.message,
       timestamp: Date.now()
     });
+
+    // ============ LANGUAGE DETECTION ============
+    // Detect user's preferred language using priority cascade:
+    // 1. User DB preference (if authenticated)
+    // 2. FAQBNB_LANG cookie
+    // 3. Accept-Language header
+    // 4. Default ('en')
+
+    let userLocalePreference: { id: string; preferred_language?: string | null } | null = null;
+
+    if (session?.user) {
+      // Fetch user's language preference from database
+      const dbPreference = await getUserLanguagePreference(supabase, session.user.id);
+      userLocalePreference = {
+        id: session.user.id,
+        preferred_language: dbPreference,
+      };
+    }
+
+    const detectedLocale = detectUserLanguage(req, userLocalePreference);
+
+    // Set locale in response header for server components
+    res.headers.set('x-locale', detectedLocale);
+
+    // Only update cookie if locale changed (optimization)
+    const currentCookieLocale = req.cookies.get(LOCALE_COOKIE_NAME)?.value;
+    if (currentCookieLocale !== detectedLocale) {
+      setLocaleCookie(res, detectedLocale);
+      console.log('[MIDDLEWARE-I18N] Updated locale cookie:', {
+        previous: currentCookieLocale || 'none',
+        new: detectedLocale,
+      });
+    }
+
+    console.log('[MIDDLEWARE-I18N] Language detected:', {
+      locale: detectedLocale,
+      source: userLocalePreference?.preferred_language ? 'user_db' :
+              req.cookies.get(LOCALE_COOKIE_NAME)?.value ? 'cookie' : 'detection',
+      userId: session?.user?.id || 'anonymous',
+      path: req.nextUrl.pathname,
+    });
+    // ============ END LANGUAGE DETECTION ============
 
     // If there's an error getting session, let the page handle it
     if (error) {

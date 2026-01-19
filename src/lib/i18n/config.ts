@@ -5,7 +5,8 @@
  * Provides type-safe locale definitions and configuration constants.
  *
  * REQ-230: Centralized Locale Configuration and Server-Side Locale Detection
- * Plan-110: L10N Epic 1 - Foundation, Phase 2, Task 2.2
+ * REQ-246: Create Language Detection Utility
+ * Plan-110: L10N Epic 1 - Foundation, Phase 2, Task 2.2 & Phase 5, Task 5.1
  *
  * @created 2026-01-18
  * @lastModified 2026-01-18
@@ -18,6 +19,13 @@
 export const locales = ['en', 'fr', 'es', 'de', 'nl', 'it'] as const;
 
 /**
+ * Array of all supported locale codes in the application.
+ * Order determines display order in UI components.
+ * Alias for `locales` to match REQ-246 specification.
+ */
+export const SUPPORTED_LOCALES = locales;
+
+/**
  * Type representing a valid supported locale
  */
 export type SupportedLocale = (typeof locales)[number];
@@ -26,6 +34,12 @@ export type SupportedLocale = (typeof locales)[number];
  * Default locale used when no preference is detected
  */
 export const defaultLocale: SupportedLocale = 'en';
+
+/**
+ * The default locale used when no preference is detected.
+ * Alias for `defaultLocale` to match REQ-246 specification.
+ */
+export const DEFAULT_LOCALE: SupportedLocale = defaultLocale;
 
 /**
  * Cookie name for storing language preference
@@ -105,12 +119,44 @@ export const localeMetadata: Record<SupportedLocale, LocaleMetadata> = {
 };
 
 /**
+ * Display names for each locale in both English and native language.
+ * Used by LanguageSwitcher component for UI display.
+ * Format matches REQ-246 specification.
+ */
+export const LOCALE_DISPLAY_NAMES: Record<SupportedLocale, { english: string; native: string }> = {
+  en: { english: 'English', native: 'English' },
+  fr: { english: 'French', native: 'Français' },
+  es: { english: 'Spanish', native: 'Español' },
+  de: { english: 'German', native: 'Deutsch' },
+  nl: { english: 'Dutch', native: 'Nederlands' },
+  it: { english: 'Italian', native: 'Italiano' },
+};
+
+/**
  * Type guard to check if a string is a valid supported locale
  * @param locale - The string to check
  * @returns True if the locale is supported
  */
 export function isValidLocale(locale: string): locale is SupportedLocale {
   return locales.includes(locale as SupportedLocale);
+}
+
+/**
+ * Type guard to check if a string is a supported locale.
+ * Use this to validate user input or external data.
+ * Alias for `isValidLocale` to match REQ-246 specification.
+ *
+ * @param locale - The string to check
+ * @returns True if the locale is supported, false otherwise
+ *
+ * @example
+ * const userLocale = 'fr';
+ * if (isSupportedLocale(userLocale)) {
+ *   // TypeScript knows userLocale is SupportedLocale here
+ * }
+ */
+export function isSupportedLocale(locale: string): locale is SupportedLocale {
+  return isValidLocale(locale);
 }
 
 /**

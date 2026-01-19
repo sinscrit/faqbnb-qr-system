@@ -1,7 +1,7 @@
 # REQ-238: Create Rate Limiter Utility - Detailed Task Breakdown
 
 **Document Created:** 2026-01-18 23:50 UTC
-**Last Modified:** 2026-01-18 23:50 UTC
+**Last Modified:** 2026-01-19 00:00 UTC
 **Request Reference:** REQ-238 (Translation Service Rate Limiting)
 **Overview Document:** REQ-238-create-rate-limiter-utility-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md
@@ -20,10 +20,10 @@ This document provides a granular, step-by-step implementation guide for creatin
 
 Before starting implementation, verify the following:
 
-- [ ] **REQ-235 completed:** Translation service module structure exists at `/src/lib/translation-service/`
-- [ ] **Type definitions exist:** `RateLimitStatus` interface defined in `/src/lib/translation-service/translation-service.types.ts`
-- [ ] **Stub file exists:** `/src/lib/translation-service/utils/rate-limiter.ts` contains placeholder from REQ-235
-- [ ] **Development environment:** Local development server running, TypeScript compilation working
+- [x] **REQ-235 completed:** Translation service module structure exists at `/src/lib/translation-service/`
+- [x] **Type definitions exist:** `RateLimitStatus` interface defined in `/src/lib/translation-service/translation-service.types.ts`
+- [x] **Stub file exists:** `/src/lib/translation-service/utils/rate-limiter.ts` contains placeholder from REQ-235
+- [x] **Development environment:** Local development server running, TypeScript compilation working
 
 ---
 
@@ -34,9 +34,9 @@ Before starting implementation, verify the following:
 **File:** `/src/lib/translation-service/utils/rate-limiter.ts`
 
 #### 3.4.1.1: Add file header and imports
-- [ ] Open `/src/lib/translation-service/utils/rate-limiter.ts`
-- [ ] Replace stub content with proper file header comment
-- [ ] Add import for `RateLimitStatus` and `TranslationProvider` from `../translation-service.types`
+- [x] Open `/src/lib/translation-service/utils/rate-limiter.ts`
+- [x] Replace stub content with proper file header comment
+- [x] Add import for `RateLimitStatus` and `TranslationProvider` from `../translation-service.types`
 
 ```typescript
 /**
@@ -53,7 +53,7 @@ import type { RateLimitStatus, TranslationProvider } from '../translation-servic
 ```
 
 #### 3.4.1.2: Define RateLimiterConfig interface
-- [ ] Add `RateLimiterConfig` interface with the following properties:
+- [x] Add `RateLimiterConfig` interface with the following properties:
   - `maxRequests: number` - Maximum requests allowed per time window
   - `windowMs: number` - Time window in milliseconds (default: 60000 = 1 minute)
   - `strategy: 'queue' | 'reject'` - Strategy when limit is reached
@@ -83,8 +83,8 @@ export interface RateLimiterConfig {
 ```
 
 #### 3.4.1.3: Define default configuration constants
-- [ ] Add `DEFAULT_CONFIG` constant with sensible defaults
-- [ ] Add `QueuedRequest` internal interface for queue management
+- [x] Add `DEFAULT_CONFIG` constant with sensible defaults
+- [x] Add `QueuedRequest` internal interface for queue management
 
 ```typescript
 /**
@@ -109,8 +109,8 @@ interface QueuedRequest {
 ```
 
 **Verification:**
-- [ ] TypeScript compiles without errors
-- [ ] All types are properly documented with JSDoc comments
+- [x] TypeScript compiles without errors
+- [x] All types are properly documented with JSDoc comments
 
 ---
 
@@ -119,7 +119,7 @@ interface QueuedRequest {
 **File:** `/src/lib/translation-service/utils/rate-limiter.ts`
 
 #### 3.4.2.1: Create RateLimiter class structure
-- [ ] Define `RateLimiter` class with private properties:
+- [x] Define `RateLimiter` class with private properties:
   - `config: Required<RateLimiterConfig>` - Fully resolved configuration
   - `requestTimestamps: number[]` - Array of request timestamps for sliding window
   - `queue: QueuedRequest[]` - Array of queued requests
@@ -164,7 +164,7 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.2: Implement acquire() method
-- [ ] Add `acquire(): Promise<void>` method that:
+- [x] Add `acquire(): Promise<void>` method that:
   - Cleans up expired timestamps
   - Checks if capacity is available
   - If capacity available, records request and resolves immediately
@@ -200,7 +200,7 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.3: Implement canAcquire() method
-- [ ] Add `canAcquire(): boolean` method that checks if request can be made without waiting
+- [x] Add `canAcquire(): boolean` method that checks if request can be made without waiting
 
 ```typescript
   /**
@@ -213,8 +213,8 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.4: Implement getStatus() method
-- [ ] Add `getStatus(): RateLimitStatus` method that returns current rate limit status
-- [ ] Calculate remaining capacity, limit, reset time, and limited flag
+- [x] Add `getStatus(): RateLimitStatus` method that returns current rate limit status
+- [x] Calculate remaining capacity, limit, reset time, and limited flag
 
 ```typescript
   /**
@@ -239,7 +239,7 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.5: Implement getQueueLength() method
-- [ ] Add `getQueueLength(): number` method that returns current queue size
+- [x] Add `getQueueLength(): number` method that returns current queue size
 
 ```typescript
   /**
@@ -251,8 +251,8 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.6: Implement updateConfig() method
-- [ ] Add `updateConfig(config: Partial<RateLimiterConfig>): void` method
-- [ ] Handle strategy changes by restarting queue processor if needed
+- [x] Add `updateConfig(config: Partial<RateLimiterConfig>): void` method
+- [x] Handle strategy changes by restarting queue processor if needed
 
 ```typescript
   /**
@@ -275,8 +275,8 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.7: Implement reset() and destroy() methods
-- [ ] Add `reset(): void` method that clears all tracked requests and rejects queued requests
-- [ ] Add `destroy(): void` method that stops queue processor and resets state
+- [x] Add `reset(): void` method that clears all tracked requests and rejects queued requests
+- [x] Add `destroy(): void` method that stops queue processor and resets state
 
 ```typescript
   /**
@@ -302,12 +302,12 @@ export class RateLimiter {
 ```
 
 #### 3.4.2.8: Implement private helper methods
-- [ ] Add `recordRequest(): void` - Records a request timestamp
-- [ ] Add `cleanup(): void` - Removes expired timestamps from sliding window
-- [ ] Add `enqueue(): Promise<void>` - Enqueues a request and returns promise
-- [ ] Add `startQueueProcessor(): void` - Starts the queue processing interval
-- [ ] Add `stopQueueProcessor(): void` - Stops the queue processing interval
-- [ ] Add `processQueue(): void` - Processes queued requests
+- [x] Add `recordRequest(): void` - Records a request timestamp
+- [x] Add `cleanup(): void` - Removes expired timestamps from sliding window
+- [x] Add `enqueue(): Promise<void>` - Enqueues a request and returns promise
+- [x] Add `startQueueProcessor(): void` - Starts the queue processing interval
+- [x] Add `stopQueueProcessor(): void` - Stops the queue processing interval
+- [x] Add `processQueue(): void` - Processes queued requests
 
 ```typescript
   // ============================================================================
@@ -418,9 +418,9 @@ export class RateLimiter {
 ```
 
 **Verification:**
-- [ ] TypeScript compiles without errors
-- [ ] All public methods are documented with JSDoc
-- [ ] Class follows existing patterns in codebase (e.g., `/src/lib/performance-monitor.ts`)
+- [x] TypeScript compiles without errors
+- [x] All public methods are documented with JSDoc
+- [x] Class follows existing patterns in codebase (e.g., `/src/lib/performance-monitor.ts`)
 
 ---
 
@@ -429,8 +429,8 @@ export class RateLimiter {
 **File:** `/src/lib/translation-service/utils/rate-limiter.ts`
 
 #### 3.4.3.1: Create RateLimitError class
-- [ ] Add `RateLimitError` class extending `Error`
-- [ ] Include `status: RateLimitStatus` property
+- [x] Add `RateLimitError` class extending `Error`
+- [x] Include `status: RateLimitStatus` property
 
 ```typescript
 // ============================================================================
@@ -452,8 +452,8 @@ export class RateLimitError extends Error {
 ```
 
 **Verification:**
-- [ ] Error class properly extends Error
-- [ ] Status property is accessible on caught errors
+- [x] Error class properly extends Error
+- [x] Status property is accessible on caught errors
 
 ---
 
@@ -462,8 +462,8 @@ export class RateLimitError extends Error {
 **File:** `/src/lib/translation-service/utils/rate-limiter.ts`
 
 #### 3.4.4.1: Create ProviderRateLimitManager class
-- [ ] Define class with `limiters: Map<TranslationProvider, RateLimiter>` property
-- [ ] Initialize provider limiters in constructor
+- [x] Define class with `limiters: Map<TranslationProvider, RateLimiter>` property
+- [x] Initialize provider limiters in constructor
 
 ```typescript
 // ============================================================================
@@ -492,7 +492,7 @@ export class ProviderRateLimitManager {
 ```
 
 #### 3.4.4.2: Implement getProviderLimiter() method
-- [ ] Add method that returns or creates rate limiter for specific provider
+- [x] Add method that returns or creates rate limiter for specific provider
 
 ```typescript
   /**
@@ -511,7 +511,7 @@ export class ProviderRateLimitManager {
 ```
 
 #### 3.4.4.3: Implement getAllProviderStatus() method
-- [ ] Add method that returns rate limit status for all providers
+- [x] Add method that returns rate limit status for all providers
 
 ```typescript
   /**
@@ -529,8 +529,8 @@ export class ProviderRateLimitManager {
 ```
 
 #### 3.4.4.4: Implement updateProviderConfig() and resetProvider() methods
-- [ ] Add method to update configuration for specific provider
-- [ ] Add method to reset specific provider's rate limiter
+- [x] Add method to update configuration for specific provider
+- [x] Add method to reset specific provider's rate limiter
 
 ```typescript
   /**
@@ -555,7 +555,7 @@ export class ProviderRateLimitManager {
 ```
 
 #### 3.4.4.5: Implement destroy() method
-- [ ] Add method that destroys all rate limiters
+- [x] Add method that destroys all rate limiters
 
 ```typescript
   /**
@@ -570,9 +570,9 @@ export class ProviderRateLimitManager {
 ```
 
 #### 3.4.4.6: Implement private helper methods
-- [ ] Add `initializeProviderLimiters(): void` - Initializes limiters for all providers
-- [ ] Add `createLimiterForProvider(provider): RateLimiter` - Creates provider-specific limiter
-- [ ] Add `getConfigForProvider(provider): Partial<RateLimiterConfig>` - Gets config from environment
+- [x] Add `initializeProviderLimiters(): void` - Initializes limiters for all providers
+- [x] Add `createLimiterForProvider(provider): RateLimiter` - Creates provider-specific limiter
+- [x] Add `getConfigForProvider(provider): Partial<RateLimiterConfig>` - Gets config from environment
 
 ```typescript
   // ============================================================================
@@ -630,9 +630,9 @@ export class ProviderRateLimitManager {
 ```
 
 **Verification:**
-- [ ] Manager correctly initializes separate limiters for Claude and OpenAI
-- [ ] Environment variable reading works correctly
-- [ ] Each provider has independent rate tracking
+- [x] Manager correctly initializes separate limiters for Claude and OpenAI
+- [x] Environment variable reading works correctly
+- [x] Each provider has independent rate tracking
 
 ---
 
@@ -641,8 +641,8 @@ export class ProviderRateLimitManager {
 **File:** `/src/lib/translation-service/utils/rate-limiter.ts`
 
 #### 3.4.5.1: Add factory functions
-- [ ] Add `createRateLimiter(config?): RateLimiter` function
-- [ ] Add `createProviderRateLimitManager(): ProviderRateLimitManager` function
+- [x] Add `createRateLimiter(config?): RateLimiter` function
+- [x] Add `createProviderRateLimitManager(): ProviderRateLimitManager` function
 
 ```typescript
 // ============================================================================
@@ -665,9 +665,9 @@ export function createProviderRateLimitManager(): ProviderRateLimitManager {
 ```
 
 #### 3.4.5.2: Add singleton instance management
-- [ ] Add global manager variable
-- [ ] Add `getGlobalRateLimitManager(): ProviderRateLimitManager` function
-- [ ] Add `resetGlobalRateLimitManager(): void` function for testing
+- [x] Add global manager variable
+- [x] Add `getGlobalRateLimitManager(): ProviderRateLimitManager` function
+- [x] Add `resetGlobalRateLimitManager(): void` function for testing
 
 ```typescript
 // ============================================================================
@@ -698,9 +698,9 @@ export function resetGlobalRateLimitManager(): void {
 ```
 
 **Verification:**
-- [ ] Factory functions create new instances correctly
-- [ ] Singleton returns same instance on repeated calls
-- [ ] Reset function creates new instance after reset
+- [x] Factory functions create new instances correctly
+- [x] Singleton returns same instance on repeated calls
+- [x] Reset function creates new instance after reset
 
 ---
 
@@ -709,8 +709,8 @@ export function resetGlobalRateLimitManager(): void {
 **File:** `/src/lib/translation-service/index.ts`
 
 #### 3.4.6.1: Add rate limiter exports to barrel file
-- [ ] Open `/src/lib/translation-service/index.ts`
-- [ ] Add exports for all public rate limiter components
+- [x] Open `/src/lib/translation-service/index.ts`
+- [x] Add exports for all public rate limiter components
 
 ```typescript
 // Export rate limiter utilities
@@ -727,8 +727,8 @@ export type { RateLimiterConfig } from './utils/rate-limiter';
 ```
 
 **Verification:**
-- [ ] Imports from `@/lib/translation-service` include rate limiter exports
-- [ ] TypeScript resolves all exported types correctly
+- [x] Imports from `@/lib/translation-service` include rate limiter exports
+- [x] TypeScript resolves all exported types correctly
 
 ---
 
@@ -737,8 +737,8 @@ export type { RateLimiterConfig } from './utils/rate-limiter';
 **File:** `/.env.example`
 
 #### 3.4.7.1: Add rate limiter environment variables
-- [ ] Open `/.env.example`
-- [ ] Add translation rate limiting configuration section
+- [x] Open `/.env.example`
+- [x] Add translation rate limiting configuration section
 
 ```bash
 # Translation Rate Limiting Configuration
@@ -750,8 +750,8 @@ TRANSLATION_RATE_LIMIT_OPENAI_STRATEGY=queue  # Strategy: 'queue' or 'reject'
 ```
 
 **Verification:**
-- [ ] Environment variables are documented with descriptions
-- [ ] Default values are provided
+- [x] Environment variables are documented with descriptions
+- [x] Default values are provided
 
 ---
 
@@ -760,9 +760,9 @@ TRANSLATION_RATE_LIMIT_OPENAI_STRATEGY=queue  # Strategy: 'queue' or 'reject'
 **File:** `/src/lib/translation-service/utils/__tests__/rate-limiter.test.ts`
 
 #### 3.4.8.1: Create test file and imports
-- [ ] Create `/src/lib/translation-service/utils/__tests__/` directory if not exists
-- [ ] Create `rate-limiter.test.ts` file
-- [ ] Add imports for vitest and rate limiter exports
+- [x] Create `/src/lib/translation-service/utils/__tests__/` directory if not exists
+- [x] Create `rate-limiter.test.ts` file
+- [x] Add imports for vitest and rate limiter exports
 
 ```typescript
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -777,8 +777,8 @@ import {
 ```
 
 #### 3.4.8.2: Add RateLimiter initialization tests
-- [ ] Test creation with default configuration
-- [ ] Test creation with custom configuration
+- [x] Test creation with default configuration
+- [x] Test creation with custom configuration
 
 ```typescript
 describe('RateLimiter', () => {
@@ -815,9 +815,9 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.3: Add acquire() method tests
-- [ ] Test successful acquisition under limit
-- [ ] Test rejection when limit exceeded (reject strategy)
-- [ ] Test queuing when limit exceeded (queue strategy)
+- [x] Test successful acquisition under limit
+- [x] Test rejection when limit exceeded (reject strategy)
+- [x] Test queuing when limit exceeded (queue strategy)
 
 ```typescript
   describe('acquire', () => {
@@ -871,8 +871,8 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.4: Add canAcquire() tests
-- [ ] Test returns true when under limit
-- [ ] Test returns false when at limit
+- [x] Test returns true when under limit
+- [x] Test returns false when at limit
 
 ```typescript
   describe('canAcquire', () => {
@@ -896,8 +896,8 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.5: Add getStatus() tests
-- [ ] Test correct status reporting
-- [ ] Test limited flag when at capacity
+- [x] Test correct status reporting
+- [x] Test limited flag when at capacity
 
 ```typescript
   describe('getStatus', () => {
@@ -931,7 +931,7 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.6: Add sliding window cleanup tests
-- [ ] Test that expired requests are cleaned up
+- [x] Test that expired requests are cleaned up
 
 ```typescript
   describe('sliding window cleanup', () => {
@@ -960,7 +960,7 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.7: Add reset() tests
-- [ ] Test that reset clears all tracked requests
+- [x] Test that reset clears all tracked requests
 
 ```typescript
   describe('reset', () => {
@@ -981,9 +981,9 @@ describe('RateLimiter', () => {
 ```
 
 #### 3.4.8.8: Add ProviderRateLimitManager tests
-- [ ] Test separate limiters for each provider
-- [ ] Test same instance returned for same provider
-- [ ] Test status for all providers
+- [x] Test separate limiters for each provider
+- [x] Test same instance returned for same provider
+- [x] Test status for all providers
 
 ```typescript
 describe('ProviderRateLimitManager', () => {
@@ -1029,8 +1029,8 @@ describe('ProviderRateLimitManager', () => {
 ```
 
 #### 3.4.8.9: Add global manager tests
-- [ ] Test singleton pattern
-- [ ] Test new instance after reset
+- [x] Test singleton pattern
+- [x] Test new instance after reset
 
 ```typescript
 describe('getGlobalRateLimitManager', () => {
@@ -1056,9 +1056,9 @@ describe('getGlobalRateLimitManager', () => {
 ```
 
 **Verification:**
-- [ ] All tests pass when running `npm test` or `vitest`
-- [ ] Test coverage includes all public methods
-- [ ] Edge cases are tested (empty queue, timeout, limits)
+- [x] All tests pass when running `npm test` or `vitest`
+- [x] Test coverage includes all public methods
+- [x] Edge cases are tested (empty queue, timeout, limits)
 
 ---
 
@@ -1066,16 +1066,16 @@ describe('getGlobalRateLimitManager', () => {
 **Estimated Effort:** 15 minutes
 
 #### 3.4.9.1: Run TypeScript compilation
-- [ ] Run `npm run build` or `tsc --noEmit`
-- [ ] Verify no compilation errors
+- [x] Run `npm run build` or `tsc --noEmit`
+- [x] Verify no compilation errors
 
 #### 3.4.9.2: Run tests
-- [ ] Run `npm test` or `vitest run`
-- [ ] Verify all tests pass
+- [x] Run `npm test` or `vitest run`
+- [x] Verify all tests pass
 
 #### 3.4.9.3: Verify imports work correctly
-- [ ] Create temporary test file that imports from `@/lib/translation-service`
-- [ ] Verify all exports are accessible
+- [x] Create temporary test file that imports from `@/lib/translation-service`
+- [x] Verify all exports are accessible
 
 ```typescript
 // Temporary verification (can be in a scratch file or REPL)
@@ -1129,12 +1129,12 @@ import {
 
 ## Testing Checklist
 
-- [ ] Unit tests pass for RateLimiter class
-- [ ] Unit tests pass for ProviderRateLimitManager class
-- [ ] Unit tests pass for factory functions and singleton
-- [ ] TypeScript compilation succeeds with no errors
-- [ ] Imports work from `@/lib/translation-service`
-- [ ] Environment variable configuration works correctly
+- [x] Unit tests pass for RateLimiter class
+- [x] Unit tests pass for ProviderRateLimitManager class
+- [x] Unit tests pass for factory functions and singleton
+- [x] TypeScript compilation succeeds with no errors
+- [x] Imports work from `@/lib/translation-service`
+- [x] Environment variable configuration works correctly
 
 ---
 

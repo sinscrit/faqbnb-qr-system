@@ -1,7 +1,7 @@
 # REQ-245: Implement Concurrency Control - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 13:30:00 UTC
-**Last Modified:** 2026-01-18 13:30:00 UTC
+**Last Modified:** 2026-01-18 14:10:00 UTC (All tasks verified complete)
 **Overview Reference:** `/docs/REQ-245-implement-concurrency-control-overview.md`
 **Implementation Plan Reference:** `/docs/prd/Plan-110-L10N-Epic1-Foundation.md`
 **Phase:** 4 - Background Job Processing
@@ -147,10 +147,10 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] File compiles without TypeScript errors
-- [ ] All interfaces have JSDoc comments
-- [ ] Default constants are exported
-- [ ] Imports resolve correctly (may need to create stub types if dependencies don't exist yet)
+- [x] File compiles without TypeScript errors
+- [x] All interfaces have JSDoc comments
+- [x] Default constants are exported
+- [x] Imports resolve correctly (may need to create stub types if dependencies don't exist yet)
 
 **Estimated Effort:** Small (1 story point)
 
@@ -313,12 +313,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] Function compiles without errors
-- [ ] Stale jobs with attempts < 3 are reset to 'queued'
-- [ ] Stale jobs with attempts >= 3 are marked as 'failed'
-- [ ] Lock metadata (locked_by, locked_at) is cleared on both reset and fail
-- [ ] Returns accurate counts in CleanupResult
-- [ ] Console logging provides visibility into cleanup actions
+- [x] Function compiles without errors
+- [x] Stale jobs with attempts < 3 are reset to 'queued'
+- [x] Stale jobs with attempts >= 3 are marked as 'failed'
+- [x] Lock metadata (locked_by, locked_at) is cleared on both reset and fail
+- [x] Returns accurate counts in CleanupResult
+- [x] Console logging provides visibility into cleanup actions
 
 **Estimated Effort:** Small (1 story point)
 
@@ -430,12 +430,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] `refreshJobLock` only updates if job exists with matching worker ID and is in 'processing' status
-- [ ] `refreshJobLock` returns failure result if lock is lost
-- [ ] `createLockHeartbeat` runs first heartbeat immediately
-- [ ] `createLockHeartbeat` continues at specified interval
-- [ ] Cleanup function stops the interval
-- [ ] Heartbeat auto-stops if lock refresh fails
+- [x] `refreshJobLock` only updates if job exists with matching worker ID and is in 'processing' status
+- [x] `refreshJobLock` returns failure result if lock is lost
+- [x] `createLockHeartbeat` runs first heartbeat immediately
+- [x] `createLockHeartbeat` continues at specified interval
+- [x] Cleanup function stops the interval
+- [x] Heartbeat auto-stops if lock refresh fails
 
 **Estimated Effort:** Small (1 story point)
 
@@ -546,12 +546,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] `checkForDuplicateJob` returns `isDuplicate: true` when job exists
-- [ ] `checkForDuplicateJob` returns existing job ID and status
-- [ ] `checkForDuplicateJob` returns `isDuplicate: false` when no job exists
-- [ ] `createJobIfNotExists` creates job when none exists
-- [ ] `createJobIfNotExists` returns `null` data (not error) when duplicate exists
-- [ ] Handles PostgreSQL unique constraint violation gracefully
+- [x] `checkForDuplicateJob` returns `isDuplicate: true` when job exists
+- [x] `checkForDuplicateJob` returns existing job ID and status
+- [x] `checkForDuplicateJob` returns `isDuplicate: false` when no job exists
+- [x] `createJobIfNotExists` creates job when none exists
+- [x] `createJobIfNotExists` returns `null` data (not error) when duplicate exists
+- [x] Handles PostgreSQL unique constraint violation gracefully
 
 **Estimated Effort:** Small (1 story point)
 
@@ -669,13 +669,13 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] `getLockStatistics` returns accurate count of active locks
-- [ ] `getLockStatistics` correctly identifies stale locks (> 5 minutes old)
-- [ ] `getLockStatistics` groups locks by worker ID correctly
-- [ ] `getLockStatistics` calculates average lock duration
-- [ ] `getLockStatistics` tracks oldest lock timestamp
-- [ ] `getStaleLocksCount` uses efficient count query (head: true)
-- [ ] Both functions handle database errors gracefully
+- [x] `getLockStatistics` returns accurate count of active locks
+- [x] `getLockStatistics` correctly identifies stale locks (> 5 minutes old)
+- [x] `getLockStatistics` groups locks by worker ID correctly
+- [x] `getLockStatistics` calculates average lock duration
+- [x] `getLockStatistics` tracks oldest lock timestamp
+- [x] `getStaleLocksCount` uses efficient count query (head: true)
+- [x] Both functions handle database errors gracefully
 
 **Estimated Effort:** Small (1 story point)
 
@@ -861,17 +861,17 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] `start()` begins automatic cleanup if autoCleanupEnabled is true
-- [ ] `start()` runs initial cleanup immediately
-- [ ] `start()` logs warning if called when already running
-- [ ] `stop()` clears the interval and sets running to false
-- [ ] `isRunning()` returns correct state
-- [ ] `runCleanup()` delegates to `cleanupStaleProcessingJobs` with config values
-- [ ] `getStatistics()` delegates to `getLockStatistics`
-- [ ] `updateConfig()` restarts interval if cleanupIntervalMs changes
-- [ ] `getConfig()` returns a copy of the config
-- [ ] Singleton pattern works correctly
-- [ ] `resetConcurrencyManager()` stops and clears singleton
+- [x] `start()` begins automatic cleanup if autoCleanupEnabled is true
+- [x] `start()` runs initial cleanup immediately
+- [x] `start()` logs warning if called when already running
+- [x] `stop()` clears the interval and sets running to false
+- [x] `isRunning()` returns correct state
+- [x] `runCleanup()` delegates to `cleanupStaleProcessingJobs` with config values
+- [x] `getStatistics()` delegates to `getLockStatistics`
+- [x] `updateConfig()` restarts interval if cleanupIntervalMs changes
+- [x] `getConfig()` returns a copy of the config
+- [x] Singleton pattern works correctly
+- [x] `resetConcurrencyManager()` stops and clears singleton
 
 **Estimated Effort:** Medium (2 story points)
 
@@ -950,12 +950,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] Import statement added correctly
-- [ ] Heartbeat starts at the beginning of job processing
-- [ ] Heartbeat is stopped in finally block (handles both success and error)
-- [ ] Heartbeat interval is configurable via config
-- [ ] No resource leaks (interval always cleared)
-- [ ] TypeScript compiles without errors
+- [x] Import statement added correctly
+- [x] Heartbeat starts at the beginning of job processing
+- [x] Heartbeat is stopped in finally block (handles both success and error)
+- [x] Heartbeat interval is configurable via config
+- [x] No resource leaks (interval always cleared)
+- [x] TypeScript compiles without errors
 
 **Estimated Effort:** Small (1 story point)
 
@@ -1028,12 +1028,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] Migration applies without errors
-- [ ] Function `fetch_and_lock_translation_job` exists in database
-- [ ] Function returns a job when queued jobs exist
-- [ ] Function returns empty result when no queued jobs
-- [ ] Index `idx_translation_jobs_processing_locked` created
-- [ ] Multiple concurrent calls don't return the same job (test with multiple connections)
+- [x] Migration applies without errors
+- [x] Function `fetch_and_lock_translation_job` exists in database
+- [x] Function returns a job when queued jobs exist
+- [x] Function returns empty result when no queued jobs
+- [x] Index `idx_translation_jobs_processing_locked` created
+- [x] Multiple concurrent calls don't return the same job (test with multiple connections)
 
 **Estimated Effort:** Small (1 story point)
 
@@ -1114,12 +1114,12 @@ Before starting this task, ensure the following are complete:
    ```
 
 **Verification:**
-- [ ] Function uses `supabase.rpc()` to call the PostgreSQL function
-- [ ] Worker ID is validated as required
-- [ ] Empty result from RPC correctly returns `{ success: true, data: null }`
-- [ ] Non-empty result is correctly mapped via `mapDbJobToTranslationJob`
-- [ ] Error handling covers both Supabase errors and unexpected exceptions
-- [ ] TypeScript compiles without errors
+- [x] Function uses `supabase.rpc()` to call the PostgreSQL function
+- [x] Worker ID is validated as required
+- [x] Empty result from RPC correctly returns `{ success: true, data: null }`
+- [x] Non-empty result is correctly mapped via `mapDbJobToTranslationJob`
+- [x] Error handling covers both Supabase errors and unexpected exceptions
+- [x] TypeScript compiles without errors
 
 **Estimated Effort:** Small (1 story point)
 
@@ -1175,12 +1175,12 @@ Before starting this task, ensure the following are complete:
 2. Verify existing exports are not duplicated or conflicting
 
 **Verification:**
-- [ ] All public functions are exported
-- [ ] All public types are exported with `export type`
-- [ ] All public constants are exported
-- [ ] No duplicate exports
-- [ ] File compiles without errors
-- [ ] Imports work from consuming modules: `import { getConcurrencyManager } from '@/lib/job-queue'`
+- [x] All public functions are exported
+- [x] All public types are exported with `export type`
+- [x] All public constants are exported
+- [x] No duplicate exports
+- [x] File compiles without errors
+- [x] Imports work from consuming modules: `import { getConcurrencyManager } from '@/lib/job-queue'`
 
 **Estimated Effort:** Trivial (< 1 story point)
 

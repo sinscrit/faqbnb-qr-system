@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface LogoutButtonProps {
   variant?: 'button' | 'text' | 'icon';
@@ -22,20 +23,23 @@ interface ConfirmationModalProps {
 }
 
 function ConfirmationModal({ isOpen, onConfirm, onCancel, loading }: ConfirmationModalProps) {
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Logout</h3>
-        <p className="text-gray-600 mb-6">Are you sure you want to sign out?</p>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('confirmLogout')}</h3>
+        <p className="text-gray-600 mb-6">{t('confirmSignOutMessage')}</p>
         <div className="flex space-x-3">
           <button
             onClick={onCancel}
             disabled={loading}
             className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
           >
-            Cancel
+            {tCommon('cancel')}
           </button>
           <button
             onClick={onConfirm}
@@ -45,7 +49,7 @@ function ConfirmationModal({ isOpen, onConfirm, onCancel, loading }: Confirmatio
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              'Sign Out'
+              t('signOut')
             )}
           </button>
         </div>
@@ -62,6 +66,7 @@ export default function LogoutButton({
   onLogoutComplete,
   className = '',
 }: LogoutButtonProps) {
+  const t = useTranslations('auth');
   const { signOut, user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -127,7 +132,7 @@ export default function LogoutButton({
           onClick={handleClick}
           disabled={loading}
           className={`p-2 text-gray-600 hover:text-red-600 transition-colors disabled:opacity-50 ${className}`}
-          title="Sign Out"
+          title={t('signOut')}
         >
           {loading ? (
             <Loader2 className={`${iconSizes[size]} animate-spin`} />
@@ -158,7 +163,7 @@ export default function LogoutButton({
           ) : (
             <LogOut className={`${iconSizes[size]} mr-1`} />
           )}
-          Sign Out
+          {t('signOut')}
         </button>
         <ConfirmationModal
           isOpen={showModal}
@@ -183,7 +188,7 @@ export default function LogoutButton({
         ) : (
           <LogOut className={`${iconSizes[size]} mr-2`} />
         )}
-        Sign Out
+        {t('signOut')}
       </button>
       <ConfirmationModal
         isOpen={showModal}

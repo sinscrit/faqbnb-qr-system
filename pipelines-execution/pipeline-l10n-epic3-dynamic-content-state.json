@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506273",
-  "updated_at": "2026-01-18T06:35:45.097400",
-  "status": "running",
+  "updated_at": "2026-01-19T15:35:30.620730",
+  "status": "completed",
   "current_stage": "request",
-  "current_task_index": 21,
+  "current_task_index": 34,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
   "source_hash": "499d11917485abcf1bc7b1175f09eebc",
   "tasks": [
@@ -18,15 +18,17 @@
       "description": "File: `/src/lib/content-translation/index.ts`\nFile: `/src/lib/content-translation/content-translation.types.ts`\nDefine all TypeScript interfaces for content translation",
       "raw_match": "\n- [ ] **Task 1.1:** Create content-translation module structure",
       "status": "completed",
-      "request_id": "REQ-259",
+      "request_id": "REQ-338",
       "error": null,
-      "processed_at": "2026-01-18T04:28:12.005141",
+      "processed_at": "2026-01-19T02:24:41.876414",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-259",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-259-create-content-translation-module-structure-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-338",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-content-translation-module-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-content-translation-module-structure-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.2",
@@ -36,15 +38,17 @@
       "description": "File: `/src/lib/content-translation/content-translation.ts`\nMain function: `queueContentTranslations(options: QueueTranslationOptions): Promise<QueueTranslationResult>`\nCoordinates translation job creation for all target languages\nUses translation service types from Epic 1",
       "raw_match": "\n- [ ] **Task 1.2:** Implement content translation orchestrator",
       "status": "completed",
-      "request_id": "REQ-260",
+      "request_id": "REQ-339",
       "error": null,
-      "processed_at": "2026-01-18T04:32:54.653722",
+      "processed_at": "2026-01-19T02:30:40.046529",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-260",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-260-implement-content-translation-orchestrator-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-339",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-implement-content-translation-orchestrator-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-implement-content-translation-orchestrator-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.3",
@@ -54,15 +58,17 @@
       "description": "File: `/src/lib/content-translation/triggers/item-trigger.ts`\n`triggerItemTranslation(itemId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `name`, `description` fields\nFile: `/src/lib/content-translation/triggers/article-trigger.ts`\n`triggerArticleTranslation(articleId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title`, `description` fields\nFile: `/src/lib/content-translation/triggers/link-trigger.ts`\n`triggerLinkTranslation(linkId: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nExtracts `title` field only (URLs not translated)",
       "raw_match": "\n- [ ] **Task 1.3:** Implement entity-specific translation triggers",
       "status": "completed",
-      "request_id": "REQ-261",
+      "request_id": "REQ-340",
       "error": null,
-      "processed_at": "2026-01-18T04:38:20.357280",
+      "processed_at": "2026-01-19T02:36:38.399478",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-261",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-261-implement-entity-specific-translation-triggers-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-340",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-implement-entity-specific-translation-triggers-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-implement-entity-specific-translation-triggers-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.4",
@@ -72,15 +78,17 @@
       "description": "File: `/src/lib/content-translation/triggers/tag-trigger.ts`\n`triggerTagTranslation(tagKey: string, sourceLanguage: string): Promise<QueueTranslationResult>`\nCheck if translation already exists before queuing\nHandle both system tags (skip - already seeded) and user tags",
       "raw_match": "\n- [ ] **Task 1.4:** Implement tag translation trigger",
       "status": "completed",
-      "request_id": "REQ-262",
+      "request_id": "REQ-340",
       "error": null,
-      "processed_at": "2026-01-18T04:43:49.332895",
+      "processed_at": "2026-01-19T02:43:52.882113",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-262",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-262-implement-tag-translation-trigger-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-340",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-implement-tag-translation-trigger-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-implement-tag-translation-trigger-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.5",
@@ -90,15 +98,17 @@
       "description": "File: `/src/lib/content-translation/storage/translation-storage.ts`\n`storeItemTranslation(itemId: string, language: string, data: {...})`\n`storeArticleTranslation(articleId: string, language: string, data: {...})`\n`storeLinkTranslation(linkId: string, language: string, data: {...})`\n`storeTagTranslation(tagKey: string, language: string, value: string)`\nAll use UPSERT pattern to handle updates",
       "raw_match": "\n- [ ] **Task 1.5:** Implement translation storage utilities",
       "status": "completed",
-      "request_id": "REQ-263",
+      "request_id": "REQ-341",
       "error": null,
-      "processed_at": "2026-01-18T04:49:59.752182",
+      "processed_at": "2026-01-19T02:50:31.879910",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-263",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-263-implement-translation-storage-utilities-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-341",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-implement-translation-storage-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-implement-translation-storage-utilities-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.6",
@@ -108,15 +118,17 @@
       "description": "File: `/src/lib/content-translation/storage/translation-status.ts`\n`getEntityTranslationStatus(entityType: EntityType, entityId: string): Promise<TranslationStatusResult>`\n`getBatchTranslationStatus(entities: {type: EntityType, id: string}[]): Promise<TranslationStatusResult[]>`\nAggregates job status with stored translations",
       "raw_match": "\n- [ ] **Task 1.6:** Implement translation status utilities",
       "status": "completed",
-      "request_id": "REQ-264",
+      "request_id": "REQ-341",
       "error": null,
-      "processed_at": "2026-01-18T04:53:24.282460",
+      "processed_at": "2026-01-19T02:59:14.028429",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-264",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-264-implement-translation-status-utilities-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-341",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-implement-translation-status-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-implement-translation-status-utilities-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.1",
@@ -126,15 +138,17 @@
       "description": "File: `/src/lib/content-translation/source-language.ts`\n`detectSourceLanguage(user: User, account: Account, override?: string): SupportedLanguage`\nPriority: override > user.preferred_language > account.preferred_language > 'en'",
       "raw_match": "\n- [ ] **Task 2.1:** Add source language detection utility",
       "status": "completed",
-      "request_id": "REQ-265",
+      "request_id": "REQ-342",
       "error": null,
-      "processed_at": "2026-01-18T04:57:43.075093",
+      "processed_at": "2026-01-19T03:05:04.154573",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-265",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-265-add-source-language-detection-utility-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-342",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-add-source-language-detection-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-add-source-language-detection-utility-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.2",
@@ -144,15 +158,17 @@
       "description": "File: `/src/app/api/admin/items/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful item creation, call `queueContentTranslations`\nInclude `translationJobIds` in response\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing translations for this item before update\nQueue new translations after update\nInclude `translationJobIds` in response",
       "raw_match": "\n- [ ] **Task 2.2:** Modify Items API to trigger translations",
       "status": "completed",
-      "request_id": "REQ-266",
+      "request_id": "REQ-342",
       "error": null,
-      "processed_at": "2026-01-18T05:01:32.228558",
+      "processed_at": "2026-01-19T03:10:50.298748",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-266",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-266-modify-items-api-to-trigger-translations-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-342",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-modify-items-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-modify-items-api-to-trigger-translations-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.3",
@@ -162,15 +178,17 @@
       "description": "File: `/src/app/api/admin/articles/route.ts`\n**POST handler:**\nAccept optional `sourceLanguage` in request body\nAfter successful article creation, call `queueContentTranslations`\n**PUT/PATCH handler (in [id]/route.ts):**\nDelete existing article translations\nQueue new translations",
       "raw_match": "\n- [ ] **Task 2.3:** Modify Articles API to trigger translations",
       "status": "completed",
-      "request_id": "REQ-267",
+      "request_id": "REQ-343",
       "error": null,
-      "processed_at": "2026-01-18T05:04:46.983567",
+      "processed_at": "2026-01-19T03:16:39.871042",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-267",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-267-modify-articles-api-to-trigger-translations-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-343",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-modify-articles-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-modify-articles-api-to-trigger-translations-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.4",
@@ -180,15 +198,17 @@
       "description": "File: `/src/app/api/admin/items/[id]/links/route.ts`\n**POST handler:**\nQueue link title translation after creation\n**PUT handler:**\nDelete existing link translations\nQueue new translations",
       "raw_match": "\n- [ ] **Task 2.4:** Create/Modify Links API to trigger translations",
       "status": "completed",
-      "request_id": "REQ-268",
+      "request_id": "REQ-344",
       "error": null,
-      "processed_at": "2026-01-18T05:26:32.104045",
+      "processed_at": "2026-01-19T03:23:06.419791",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-268",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-268-createmodify-links-api-to-trigger-translations-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-344",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-createmodify-links-api-to-trigger-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-createmodify-links-api-to-trigger-translations-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.5",
@@ -198,15 +218,17 @@
       "description": "Modify items POST/PUT handlers\nFor each user tag in `tags[]`:\nCheck if translation exists\nIf not, queue tag translation job\nSkip system tags (starting with `#`)",
       "raw_match": "\n- [ ] **Task 2.5:** Add tag translation on item save",
       "status": "completed",
-      "request_id": "REQ-269",
+      "request_id": "REQ-345",
       "error": null,
-      "processed_at": "2026-01-18T05:30:10.775063",
+      "processed_at": "2026-01-19T03:29:36.389714",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-269",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-269-add-tag-translation-on-item-save-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-345",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-345-add-tag-translation-on-item-save-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-345-add-tag-translation-on-item-save-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2.6",
@@ -216,15 +238,17 @@
       "description": "File: `/src/types/index.ts`\nAdd `translationJobIds?: string[]` to ItemResponse, ArticleResponse\nAdd `sourceLanguage?: string` to CreateItemRequest, CreateArticleRequest\nExport translation-related types",
       "raw_match": "\n- [ ] **Task 2.6:** Update TypeScript types for API responses",
       "status": "completed",
-      "request_id": "REQ-270",
+      "request_id": "REQ-346",
       "error": null,
-      "processed_at": "2026-01-18T05:34:06.960849",
+      "processed_at": "2026-01-19T03:56:57.556518",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-270",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-270-update-typescript-types-for-api-responses-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-346",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-346-update-typescript-types-for-api-responses-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-346-update-typescript-types-for-api-responses-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.1",
@@ -234,15 +258,17 @@
       "description": "File: `/src/lib/job-queue/translation-jobs.ts` (extend from Epic 1)\nAdd content-aware job processing: ```typescript async function processTranslationJob(job: TranslationJob): Promise<void> { switch (job.entityType) { case 'item': await processItemTranslation(job); break; case 'article': await processArticleTranslation(job); break; case 'link': await processLinkTranslation(job); break; case 'tag': await processTagTranslation(job); break; } } ```",
       "raw_match": "\n- [ ] **Task 3.1:** Enhance job processor for content-specific handling",
       "status": "completed",
-      "request_id": "REQ-271",
+      "request_id": "REQ-347",
       "error": null,
-      "processed_at": "2026-01-18T05:39:31.531766",
+      "processed_at": "2026-01-19T04:04:25.353367",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-271",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-271-enhance-job-processor-for-content-specific-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-347",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-347-enhance-job-processor-for-content-specific-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-347-enhance-job-processor-for-content-specific-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.2",
@@ -252,15 +278,17 @@
       "description": "Fetch item by ID\nTranslate `name` and `description` fields\nStore in `item_translations` table\nUpdate job status",
       "raw_match": "\n- [ ] **Task 3.2:** Implement item translation processor",
       "status": "completed",
-      "request_id": "REQ-272",
+      "request_id": "REQ-348",
       "error": null,
-      "processed_at": "2026-01-18T05:45:24.176580",
+      "processed_at": "2026-01-19T04:09:51.920840",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-272",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-272-implement-item-translation-processor-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-348",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-implement-item-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-implement-item-translation-processor-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.3",
@@ -270,15 +298,17 @@
       "description": "Fetch article by ID\nTranslate `title` and `description` fields\nStore in `article_translations` table\nUpdate job status",
       "raw_match": "\n- [ ] **Task 3.3:** Implement article translation processor",
       "status": "completed",
-      "request_id": "REQ-273",
+      "request_id": "REQ-348",
       "error": null,
-      "processed_at": "2026-01-18T05:50:49.963627",
+      "processed_at": "2026-01-19T04:15:43.147287",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-273",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-273-implement-article-translation-processor-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-348",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-implement-article-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-implement-article-translation-processor-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.4",
@@ -288,15 +318,17 @@
       "description": "Fetch link by ID\nTranslate `title` field only\nStore in `link_translations` table\nUpdate job status",
       "raw_match": "\n- [ ] **Task 3.4:** Implement link translation processor",
       "status": "completed",
-      "request_id": "REQ-274",
+      "request_id": "REQ-349",
       "error": null,
-      "processed_at": "2026-01-18T05:55:15.509714",
+      "processed_at": "2026-01-19T04:21:40.634353",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-274",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-274-implement-link-translation-processor-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-349",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-349-implement-link-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-349-implement-link-translation-processor-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.5",
@@ -306,15 +338,17 @@
       "description": "Translate tag value\nStore in `tag_translations` table\nMark as user tag (is_system_tag = false)\nUpdate job status",
       "raw_match": "\n- [ ] **Task 3.5:** Implement tag translation processor",
       "status": "completed",
-      "request_id": "REQ-275",
+      "request_id": "REQ-350",
       "error": null,
-      "processed_at": "2026-01-18T06:01:53.957381",
+      "processed_at": "2026-01-19T04:27:44.461066",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-275",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-275-implement-tag-translation-processor-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-350",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-implement-tag-translation-processor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-implement-tag-translation-processor-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.6",
@@ -324,15 +358,17 @@
       "description": "File: `/src/lib/job-queue/priority.ts`\nPriority levels: 1. **Priority 100:** Recently created content (last 5 minutes) 2. **Priority 50:** Updated content 3. **Priority 25:** Batch imports 4. **Priority 10:** Retry failed translations\nJob picker query orders by priority DESC, created_at ASC",
       "raw_match": "\n- [ ] **Task 3.6:** Implement job prioritization",
       "status": "completed",
-      "request_id": "REQ-276",
+      "request_id": "REQ-351",
       "error": null,
-      "processed_at": "2026-01-18T06:09:30.539584",
+      "processed_at": "2026-01-19T04:35:13.742337",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-276",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-276-implement-job-prioritization-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-351",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-implement-job-prioritization-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-implement-job-prioritization-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.7",
@@ -342,15 +378,17 @@
       "description": "File: `/src/lib/job-queue/concurrency.ts`\nMaximum 10 concurrent translation API calls\nSemaphore or queue-based throttling\nRespect provider rate limits",
       "raw_match": "\n- [ ] **Task 3.7:** Implement concurrency control",
       "status": "completed",
-      "request_id": "REQ-277",
+      "request_id": "REQ-351",
       "error": null,
-      "processed_at": "2026-01-18T06:18:47.391461",
+      "processed_at": "2026-01-19T04:43:16.627292",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-277",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-277-implement-concurrency-control-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-351",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-implement-concurrency-control-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-implement-concurrency-control-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "3.8",
@@ -360,15 +398,17 @@
       "description": "Jobs stuck in 'processing' for > 5 minutes\nReset to 'queued' with incremented attempts\nRun cleanup before picking new jobs",
       "raw_match": "\n- [ ] **Task 3.8:** Implement stale job cleanup",
       "status": "completed",
-      "request_id": "REQ-278",
+      "request_id": "REQ-352",
       "error": null,
-      "processed_at": "2026-01-18T06:26:32.627023",
+      "processed_at": "2026-01-19T04:50:56.044936",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-278",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-278-implement-stale-job-cleanup-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-352",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-implement-stale-job-cleanup-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-implement-stale-job-cleanup-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "4.1",
@@ -378,15 +418,17 @@
       "description": "File: `/src/app/api/translations/status/[entityType]/[entityId]/route.ts`\nGET handler returns full translation status\nInclude job status + stored translations\nCache-friendly response headers",
       "raw_match": "\n- [ ] **Task 4.1:** Create translation status API endpoint",
       "status": "completed",
-      "request_id": "REQ-328",
+      "request_id": "REQ-353",
       "error": null,
-      "processed_at": "2026-01-18T06:33:44.991596",
+      "processed_at": "2026-01-19T04:58:50.974882",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-328",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-328-create-translation-status-api-endpoint-overview.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-353",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-translation-status-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-translation-status-api-endpoint-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "4.2",
@@ -395,14 +437,18 @@
       "title": "Create retry failed translations endpoint",
       "description": "File: `/src/app/api/translations/retry/route.ts`\nPOST handler accepts entityType, entityId, optional languages[]\nFind failed jobs for entity\nReset status to 'queued', reset attempts\nReturn count of jobs re-queued",
       "raw_match": "\n- [ ] **Task 4.2:** Create retry failed translations endpoint",
-      "status": "processing",
-      "request_id": "REQ-329",
+      "status": "completed",
+      "request_id": "REQ-354",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-19T05:05:15.348471",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-329"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-354",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-retry-failed-translations-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-retry-failed-translations-endpoint-detailed.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "4.3",
@@ -411,11 +457,18 @@
       "title": "Create manual translation override endpoint",
       "description": "File: `/src/app/api/translations/[entityType]/[entityId]/[language]/route.ts`\nPUT handler accepts translated field values\nValidate user has edit access to entity\nUPSERT translation with status 'manual'\nSet reviewed_by to current user ID",
       "raw_match": "\n- [ ] **Task 4.3:** Create manual translation override endpoint",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-354",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T05:11:39.194468",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-354",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-manual-translation-override-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-manual-translation-override-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "4.4",
@@ -424,11 +477,18 @@
       "title": "Create batch status endpoint for list views",
       "description": "File: `/src/app/api/translations/status/batch/route.ts`\nPOST handler accepts array of {entityType, entityId}\nReturn summary status for each entity\nOptimized for dashboard list views",
       "raw_match": "\n- [ ] **Task 4.4:** Create batch status endpoint for list views",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-355",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T05:18:01.587190",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-355",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-batch-status-endpoint-for-list-views-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-batch-status-endpoint-for-list-views-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "5.1",
@@ -437,11 +497,18 @@
       "title": "Create job processing API route",
       "description": "File: `/src/app/api/admin/process-translations/route.ts`\nPOST handler triggers job processing\nAccept `batchSize` parameter (default 10)\nReturn processing statistics\nSecure with service role or admin auth",
       "raw_match": "\n- [ ] **Task 5.1:** Create job processing API route",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-356",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T11:33:29.696561",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-356",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-create-job-processing-api-route-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-create-job-processing-api-route-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "5.2",
@@ -450,11 +517,18 @@
       "title": "Set up Railway cron job (or alternative)",
       "description": "Configure cron to call process-translations endpoint\nRecommended: every 30 seconds for low latency\nAlternative: every 5 minutes for cost savings\nDocument cron configuration",
       "raw_match": "\n- [ ] **Task 5.2:** Set up Railway cron job (or alternative)",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-357",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T11:40:34.287899",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-357",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-set-up-railway-cron-job-or-alternative-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-set-up-railway-cron-job-or-alternative-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "5.3",
@@ -463,11 +537,18 @@
       "title": "Implement job monitoring endpoint",
       "description": "File: `/src/app/api/admin/translation-jobs/route.ts`\nGET handler returns job queue statistics:\nQueued count\nProcessing count\nCompleted (last hour)\nFailed (last hour)\nFilter by entityType, status",
       "raw_match": "\n- [ ] **Task 5.3:** Implement job monitoring endpoint",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-358",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T11:46:45.549649",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-358",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-implement-job-monitoring-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-implement-job-monitoring-endpoint-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.1",
@@ -476,11 +557,18 @@
       "title": "Create translation job indexes",
       "description": "Apply indexes from Architecture section\nUse Supabase migration or MCP",
       "raw_match": "\n- [ ] **Task 6.1:** Create translation job indexes",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-359",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T11:51:53.479333",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-359",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-create-translation-job-indexes-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-create-translation-job-indexes-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.2",
@@ -489,11 +577,18 @@
       "title": "Create translation lookup indexes",
       "description": "Fast lookup for displaying translated content: ```sql CREATE INDEX IF NOT EXISTS idx_item_translations_lookup ON item_translations(item_id, language); CREATE INDEX IF NOT EXISTS idx_article_translations_lookup ON article_translations(article_id, language); CREATE INDEX IF NOT EXISTS idx_link_translations_lookup ON link_translations(link_id, language); CREATE INDEX IF NOT EXISTS idx_tag_translations_tag_lang ON tag_translations(tag_key, language); ```",
       "raw_match": "\n- [ ] **Task 6.2:** Create translation lookup indexes",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-360",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T11:57:13.417646",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-360",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-create-translation-lookup-indexes-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-create-translation-lookup-indexes-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.3",
@@ -502,11 +597,18 @@
       "title": "Add updated_at trigger for translations",
       "description": "",
       "raw_match": "\n- [ ] **Task 6.3:** Add updated_at trigger for translations",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-361",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:02:45.792523",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-361",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-add-updatedat-trigger-for-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-add-updatedat-trigger-for-translations-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.1",
@@ -515,11 +617,18 @@
       "title": "Write unit tests for content translation module",
       "description": "Test queueContentTranslations function\nTest entity-specific triggers\nTest source language detection",
       "raw_match": "\n- [ ] **Task 7.1:** Write unit tests for content translation module",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-362",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:12:03.053558",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-362",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-write-unit-tests-for-content-translation-module-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-write-unit-tests-for-content-translation-module-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.2",
@@ -528,11 +637,18 @@
       "title": "Write unit tests for job processing",
       "description": "Test job pickup and locking\nTest entity-specific processors\nTest retry logic\nTest concurrency control",
       "raw_match": "\n- [ ] **Task 7.2:** Write unit tests for job processing",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-363",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:19:54.405616",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-363",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-write-unit-tests-for-job-processing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-write-unit-tests-for-job-processing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.3",
@@ -541,11 +657,18 @@
       "title": "Write integration tests for API endpoints",
       "description": "Test item creation triggers translations\nTest article creation triggers translations\nTest translation status endpoint\nTest retry endpoint\nTest manual override endpoint",
       "raw_match": "\n- [ ] **Task 7.3:** Write integration tests for API endpoints",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-364",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:30:38.390076",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-364",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-write-integration-tests-for-api-endpoints-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-write-integration-tests-for-api-endpoints-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.4",
@@ -554,11 +677,18 @@
       "title": "Write E2E tests",
       "description": "Create item -> verify translations queued\nWait for processing -> verify translations stored\nCheck translation status -> verify complete\nRetry failed -> verify re-queued",
       "raw_match": "\n- [ ] **Task 7.4:** Write E2E tests",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-365",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:38:29.957297",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-365",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-write-e2e-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-write-e2e-tests-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.5",
@@ -567,11 +697,18 @@
       "title": "Performance testing",
       "description": "Test with 100+ concurrent translation jobs\nMeasure job completion time (target < 60s)\nVerify rate limiting works correctly",
       "raw_match": "\n- [ ] **Task 7.5:** Performance testing",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-366",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-19T12:46:45.072695",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-366",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-performance-testing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-performance-testing-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     }
   ],
   "stages": {
@@ -618,11 +755,173 @@
       "task_id": "2.4",
       "error": "Exit code 1: ",
       "timestamp": "2026-01-18T05:07:15.205930"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T07:24:27.234421"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T07:25:39.336587"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T07:26:43.600392"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T07:27:52.350956"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.5",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-18T07:29:01.651256"
+    },
+    {
+      "stage": "overview",
+      "task_id": "2.6",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:32:16.042038"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:33:14.660729"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:34:34.930403"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:36:11.564150"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:37:53.912989"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.5",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:39:35.736920"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.6",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:41:23.460450"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.7",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:43:18.853403"
+    },
+    {
+      "stage": "request",
+      "task_id": "3.8",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:45:11.677022"
+    },
+    {
+      "stage": "request",
+      "task_id": "4.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:46:56.198419"
+    },
+    {
+      "stage": "request",
+      "task_id": "4.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T03:48:46.675351"
+    },
+    {
+      "stage": "overview",
+      "task_id": "5.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:21:45.188073"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:22:36.308523"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:23:28.024678"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:24:18.216071"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:25:08.110566"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:25:58.017113"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.1",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:26:48.388874"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.2",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:27:41.443700"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.3",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:28:18.209203"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.4",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:28:55.970413"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.5",
+      "error": "Exit code 1: ",
+      "timestamp": "2026-01-19T05:29:32.962582"
     }
   ],
   "metadata": {
-    "total_requests_generated": 12,
-    "last_request_id": "REQ-329",
+    "total_requests_generated": 11,
+    "last_request_id": "REQ-366",
     "first_request_id": "REQ-259",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
   }

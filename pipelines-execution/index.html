@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --text-primary: #eee;
+            --text-secondary: #aaa;
+            --accent-blue: #4a9eff;
+            --accent-green: #4ade80;
+            --accent-yellow: #fbbf24;
+            --accent-red: #f87171;
+            --accent-purple: #a78bfa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--bg-card);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pipeline-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-tab {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-card);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .pipeline-tab:hover {
+            background: var(--bg-card);
+        }
+
+        .pipeline-tab.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .pipeline-tab .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+            text-transform: uppercase;
+        }
+
+        .pipeline-tab .status-badge.completed { background: var(--accent-green); color: #000; }
+        .pipeline-tab .status-badge.processing { background: var(--accent-yellow); color: #000; }
+        .pipeline-tab .status-badge.failed { background: var(--accent-red); color: #000; }
+        .pipeline-tab .status-badge.pending { background: var(--text-secondary); color: #000; }
+
+        .pipeline-info {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .kanban-board { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .kanban-board { grid-template-columns: 1fr; }
+        }
+
+        .kanban-column {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 300px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg-card);
+        }
+
+        .column-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .column-count {
+            background: var(--bg-card);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .column-pending .column-header { border-color: var(--text-secondary); }
+        .column-processing .column-header { border-color: var(--accent-yellow); }
+        .column-completed .column-header { border-color: var(--accent-green); }
+        .column-failed .column-header { border-color: var(--accent-red); }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .task-card {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .task-card.pending { border-left-color: var(--text-secondary); }
+        .task-card.processing { border-left-color: var(--accent-yellow); }
+        .task-card.completed { border-left-color: var(--accent-green); }
+        .task-card.failed { border-left-color: var(--accent-red); }
+
+        .task-id {
+            font-size: 0.7rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-title {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .task-phase {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .task-test {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-test.passed { color: var(--accent-green); }
+        .task-test.failed { color: var(--accent-red); }
+
+        .progress-bar {
+            background: var(--bg-card);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            transition: width 0.5s ease;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-value.pending { color: var(--text-secondary); }
+        .stat-value.processing { color: var(--accent-yellow); }
+        .stat-value.completed { color: var(--accent-green); }
+        .stat-value.failed { color: var(--accent-red); }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+        }
+
+        /* Modal for task details */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .detail-value pre {
+            background: var(--bg-card);
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Pipeline Dashboard</h1>
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Live</span>
+            </div>
+            <div id="last-update">Last update: --</div>
+            <div id="refresh-interval">Refresh: 3s</div>
+        </div>
+    </header>
+
+    <div id="app">
+        <div class="loading">Loading pipelines...</div>
+    </div>
+
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="task-id" id="modal-task-id"></div>
+                    <h3 id="modal-task-title"></h3>
+                </div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer>
+        Pipeline Dashboard &bull; Auto-refreshes every 3 seconds &bull; <span id="connection-status">Connected</span>
+    </footer>
+
+    <script>
+        // Configuration
+        const REFRESH_INTERVAL = 3000;
+        const BASE_URL = window.location.origin;
+
+        // State
+        let pipelines = [];
+        let selectedPipeline = null;
+        let lastError = null;
+
+        // Fetch pipeline list
+        async function fetchPipelineList() {
+            try {
+                const response = await fetch(BASE_URL + '/');
+                const html = await response.text();
+
+                // Parse HTML to find JSON files
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const links = doc.querySelectorAll('a[href$=".json"]');
+
+                const jsonFiles = [];
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.includes('state') && href.includes('pipeline')) {
+                        jsonFiles.push(href.startsWith('/') ? href.substring(1) : href);
+                    }
+                });
+
+                return jsonFiles;
+            } catch (e) {
+                console.error('Failed to fetch pipeline list:', e);
+                throw e;
+            }
+        }
+
+        // Fetch single pipeline data
+        async function fetchPipeline(filename) {
+            const response = await fetch(BASE_URL + '/' + filename);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        }
+
+        // Fetch all pipelines
+        async function fetchAllPipelines() {
+            try {
+                const files = await fetchPipelineList();
+                const results = await Promise.all(
+                    files.map(async (file) => {
+                        try {
+                            const data = await fetchPipeline(file);
+                            return { file, data, error: null };
+                        } catch (e) {
+                            return { file, data: null, error: e.message };
+                        }
+                    })
+                );
+
+                pipelines = results.filter(r => r.data !== null);
+                lastError = null;
+
+                // Sort by updated_at descending
+                pipelines.sort((a, b) => {
+                    const dateA = new Date(a.data.updated_at || 0);
+                    const dateB = new Date(b.data.updated_at || 0);
+                    return dateB - dateA;
+                });
+
+                // Select first pipeline if none selected
+                if (!selectedPipeline && pipelines.length > 0) {
+                    selectedPipeline = pipelines[0].file;
+                }
+
+                document.getElementById('connection-status').textContent = 'Connected';
+                document.getElementById('last-update').textContent = 'Last update: ' + new Date().toLocaleTimeString();
+
+            } catch (e) {
+                lastError = e.message;
+                document.getElementById('connection-status').textContent = 'Disconnected';
+            }
+
+            render();
+        }
+
+        // Get tasks by status
+        function getTasksByStatus(tasks, status) {
+            return tasks.filter(t => t.status === status);
+        }
+
+        // Calculate progress
+        function calculateProgress(tasks) {
+            if (!tasks || tasks.length === 0) return 0;
+            const completed = tasks.filter(t => t.status === 'completed').length;
+            return Math.round((completed / tasks.length) * 100);
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            if (!dateStr) return '--';
+            const date = new Date(dateStr);
+            return date.toLocaleString();
+        }
+
+        // Time ago
+        function timeAgo(dateStr) {
+            if (!dateStr) return '--';
+            const date = new Date(dateStr);
+            const seconds = Math.floor((new Date() - date) / 1000);
+
+            if (seconds < 60) return seconds + 's ago';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        // Render task card
+        function renderTaskCard(task) {
+            const testIcon = task.tests_ran
+                ? (task.tests_passed ? '✓' : '✗')
+                : '';
+            const testClass = task.tests_ran
+                ? (task.tests_passed ? 'passed' : 'failed')
+                : '';
+
+            return `
+                <div class="task-card ${task.status}" onclick="showTaskDetails('${task.id}')">
+                    <div class="task-id">Task ${task.id}</div>
+                    <div class="task-title">${escapeHtml(task.title)}</div>
+                    <div class="task-meta">
+                        <span class="task-phase">${escapeHtml(task.phase_name || 'Phase ' + task.phase)}</span>
+                        ${testIcon ? `<span class="task-test ${testClass}">${testIcon} Tests</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Kanban column
+        function renderColumn(title, tasks, statusClass) {
+            return `
+                <div class="kanban-column column-${statusClass}">
+                    <div class="column-header">
+                        <span class="column-title">${title}</span>
+                        <span class="column-count">${tasks.length}</span>
+                    </div>
+                    <div class="task-list">
+                        ${tasks.map(renderTaskCard).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Main render function
+        function render() {
+            const app = document.getElementById('app');
+
+            if (lastError) {
+                app.innerHTML = `
+                    <div class="error-message">
+                        <strong>Connection Error:</strong> ${escapeHtml(lastError)}<br>
+                        <small>Make sure the WebDAV server is running. Retrying...</small>
+                    </div>
+                `;
+                return;
+            }
+
+            if (pipelines.length === 0) {
+                app.innerHTML = `
+                    <div class="loading">No pipeline state files found.<br>
+                    <small>Looking for pipeline-*-state.json files...</small></div>
+                `;
+                return;
+            }
+
+            // Pipeline tabs
+            const tabs = pipelines.map(p => {
+                const isActive = p.file === selectedPipeline;
+                const status = p.data.status || 'pending';
+                const name = p.data.pipeline || p.file.replace('.json', '');
+                return `
+                    <div class="pipeline-tab ${isActive ? 'active' : ''}" onclick="selectPipeline('${p.file}')">
+                        ${escapeHtml(name.split('-').slice(-3).join('-'))}
+                        <span class="status-badge ${status}">${status}</span>
+                    </div>
+                `;
+            }).join('');
+
+            // Get selected pipeline
+            const current = pipelines.find(p => p.file === selectedPipeline);
+            if (!current) {
+                selectedPipeline = pipelines[0].file;
+                render();
+                return;
+            }
+
+            const data = current.data;
+            const tasks = data.tasks || [];
+            const progress = calculateProgress(tasks);
+
+            const pending = getTasksByStatus(tasks, 'pending');
+            const processing = getTasksByStatus(tasks, 'processing');
+            const completed = getTasksByStatus(tasks, 'completed');
+            const failed = getTasksByStatus(tasks, 'failed');
+
+            app.innerHTML = `
+                <div class="pipeline-selector">${tabs}</div>
+
+                <div class="pipeline-info">
+                    <div class="info-item">
+                        <span class="info-label">Pipeline</span>
+                        <span class="info-value">${escapeHtml(data.pipeline)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">${escapeHtml(data.status)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Updated</span>
+                        <span class="info-value">${timeAgo(data.updated_at)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Progress</span>
+                        <span class="info-value">${progress}% (${completed.length}/${tasks.length})</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <div class="stat-value pending">${pending.length}</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value processing">${processing.length}</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value completed">${completed.length}</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value failed">${failed.length}</div>
+                        <div class="stat-label">Failed</div>
+                    </div>
+                </div>
+
+                <div class="kanban-board">
+                    ${renderColumn('📋 Backlog', pending, 'pending')}
+                    ${renderColumn('🔄 In Progress', processing, 'processing')}
+                    ${renderColumn('✅ Completed', completed, 'completed')}
+                    ${renderColumn('❌ Failed', failed, 'failed')}
+                </div>
+            `;
+
+            // Store current tasks for modal
+            window.currentTasks = tasks;
+        }
+
+        // Select pipeline
+        function selectPipeline(file) {
+            selectedPipeline = file;
+            render();
+        }
+
+        // Show task details modal
+        function showTaskDetails(taskId) {
+            const task = window.currentTasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            document.getElementById('modal-task-id').textContent = 'Task ' + task.id;
+            document.getElementById('modal-task-title').textContent = task.title;
+
+            let body = `
+                <div class="detail-row">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">${escapeHtml(task.status)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Phase</div>
+                    <div class="detail-value">${escapeHtml(task.phase_name || 'Phase ' + task.phase)}</div>
+                </div>
+            `;
+
+            if (task.description) {
+                body += `
+                    <div class="detail-row">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value"><pre>${escapeHtml(task.description)}</pre></div>
+                    </div>
+                `;
+            }
+
+            if (task.request_id) {
+                body += `
+                    <div class="detail-row">
+                        <div class="detail-label">Request ID</div>
+                        <div class="detail-value">${escapeHtml(task.request_id)}</div>
+                    </div>
+                `;
+            }
+
+            if (task.processed_at) {
+                body += `
+                    <div class="detail-row">
+                        <div class="detail-label">Processed At</div>
+                        <div class="detail-value">${formatDate(task.processed_at)}</div>
+                    </div>
+                `;
+            }
+
+            if (task.tests_ran) {
+                body += `
+                    <div class="detail-row">
+                        <div class="detail-label">Test Results</div>
+                        <div class="detail-value" style="color: ${task.tests_passed ? 'var(--accent-green)' : 'var(--accent-red)'}">
+                            ${task.tests_passed ? '✓ Passed' : '✗ Failed'}
+                            ${task.test_summary ? ' - ' + escapeHtml(task.test_summary) : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (task.error) {
+                body += `
+                    <div class="detail-row">
+                        <div class="detail-label">Error</div>
+                        <div class="detail-value" style="color: var(--accent-red)"><pre>${escapeHtml(task.error)}</pre></div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('modal-body').innerHTML = body;
+            document.getElementById('task-modal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('task-modal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('task-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'task-modal') closeModal();
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Start
+        fetchAllPipelines();
+        setInterval(fetchAllPipelines, REFRESH_INTERVAL);
+    </script>
+</body>
+</html>

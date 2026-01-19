@@ -1,7 +1,7 @@
 # REQ-239: Create Retry Logic with Exponential Backoff - Detailed Task Breakdown
 
 **Document Created:** 2026-01-18 23:58 UTC
-**Last Modified:** 2026-01-18 23:58 UTC
+**Last Modified:** 2026-01-19 14:08 UTC
 **Request Reference:** REQ-239 (Translation Service Retry Logic with Exponential Backoff)
 **Overview Document:** REQ-239-create-retry-logic-with-exponential-backoff-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md
@@ -20,9 +20,9 @@ Create a retry utility for the translation service that automatically retries fa
 
 Before starting implementation, verify:
 
-- [ ] **REQ-235 Completed**: Translation service module structure exists at `/src/lib/translation-service/`
-- [ ] **Directory Exists**: `/src/lib/translation-service/utils/` directory exists (create if not)
-- [ ] **Types File Exists**: Core types defined in translation-service.types.ts (or will be created)
+- [x] **REQ-235 Completed**: Translation service module structure exists at `/src/lib/translation-service/`
+- [x] **Directory Exists**: `/src/lib/translation-service/utils/` directory exists (create if not)
+- [x] **Types File Exists**: Core types defined in translation-service.types.ts (or will be created)
 
 ---
 
@@ -126,10 +126,10 @@ export interface HttpError extends Error {
 ```
 
 #### Acceptance Criteria
-- [ ] File `/src/lib/translation-service/utils/retry.ts` exists
-- [ ] All four interfaces are defined: `RetryConfig`, `RetryResult`, `AttemptDetail`, `HttpError`
-- [ ] JSDoc comments provide clear documentation for each interface and property
-- [ ] TypeScript compiles without errors
+- [x] File `/src/lib/translation-service/utils/retry.ts` exists
+- [x] All four interfaces are defined: `RetryConfig`, `RetryResult`, `AttemptDetail`, `HttpError`
+- [x] JSDoc comments provide clear documentation for each interface and property
+- [x] TypeScript compiles without errors
 
 #### Verification Command
 ```bash
@@ -239,13 +239,13 @@ export function sleep(ms: number): Promise<void> {
 ```
 
 #### Acceptance Criteria
-- [ ] `DEFAULT_CONFIG` constant defined with standard values (maxRetries: 3, baseDelayMs: 1000, etc.)
-- [ ] `calculateExponentialDelay()` correctly implements exponential formula
-- [ ] `calculateExponentialDelay()` caps delay at maxDelayMs
-- [ ] `applyJitter()` returns values within expected range (±jitterFactor)
-- [ ] `applyJitter()` never returns negative values
-- [ ] `calculateRetryDelay()` combines exponential delay with jitter
-- [ ] `sleep()` utility function works correctly
+- [x] `DEFAULT_CONFIG` constant defined with standard values (maxRetries: 3, baseDelayMs: 1000, etc.)
+- [x] `calculateExponentialDelay()` correctly implements exponential formula
+- [x] `calculateExponentialDelay()` caps delay at maxDelayMs
+- [x] `applyJitter()` returns values within expected range (±jitterFactor)
+- [x] `applyJitter()` never returns negative values
+- [x] `calculateRetryDelay()` combines exponential delay with jitter
+- [x] `sleep()` utility function works correctly
 
 #### Test Cases to Verify
 ```typescript
@@ -369,14 +369,14 @@ export function isRetryableError(error: unknown): boolean {
 ```
 
 #### Acceptance Criteria
-- [ ] Returns `true` for HTTP 429 (rate limit)
-- [ ] Returns `true` for HTTP 5xx (500, 502, 503, 504)
-- [ ] Returns `false` for HTTP 4xx (400, 401, 403, 404) except 429
-- [ ] Returns `true` for network error messages (timeout, connection refused, etc.)
-- [ ] Returns `true` for retryable error codes (ECONNRESET, ETIMEDOUT, etc.)
-- [ ] Returns `false` for non-retryable error codes (UNAUTHORIZED, BAD_REQUEST, etc.)
-- [ ] Defaults to `true` for unknown errors (fail-safe)
-- [ ] Aligns with existing `isRetryable()` pattern in `/src/lib/api.ts:650-652`
+- [x] Returns `true` for HTTP 429 (rate limit)
+- [x] Returns `true` for HTTP 5xx (500, 502, 503, 504)
+- [x] Returns `false` for HTTP 4xx (400, 401, 403, 404) except 429
+- [x] Returns `true` for network error messages (timeout, connection refused, etc.)
+- [x] Returns `true` for retryable error codes (ECONNRESET, ETIMEDOUT, etc.)
+- [x] Returns `false` for non-retryable error codes (UNAUTHORIZED, BAD_REQUEST, etc.)
+- [x] Defaults to `true` for unknown errors (fail-safe)
+- [x] Aligns with existing `isRetryable()` pattern in `/src/lib/api.ts:650-652`
 
 #### Test Cases to Verify
 ```typescript
@@ -545,15 +545,15 @@ export async function withRetry<T>(
 ```
 
 #### Acceptance Criteria
-- [ ] Returns immediately on first success without retry delay
-- [ ] Retries up to maxRetries times on retryable errors
-- [ ] Does not retry on non-retryable errors
-- [ ] Applies exponential delay between retries
-- [ ] Calls `onRetry` callback before each retry
-- [ ] Logs retry attempts with `console.warn()` for observability
-- [ ] Tracks all attempt details including timing
-- [ ] Returns comprehensive `RetryResult` with error, attempts, and timing
-- [ ] Preserves original error in result on final failure
+- [x] Returns immediately on first success without retry delay
+- [x] Retries up to maxRetries times on retryable errors
+- [x] Does not retry on non-retryable errors
+- [x] Applies exponential delay between retries
+- [x] Calls `onRetry` callback before each retry
+- [x] Logs retry attempts with `console.warn()` for observability
+- [x] Tracks all attempt details including timing
+- [x] Returns comprehensive `RetryResult` with error, attempts, and timing
+- [x] Preserves original error in result on final failure
 
 #### Test Cases to Verify
 ```typescript
@@ -726,15 +726,15 @@ export const RetryPresets = {
 ```
 
 #### Acceptance Criteria
-- [ ] `retryOperation()` returns data on success
-- [ ] `retryOperation()` throws error with `retryAttempts` metadata on failure
-- [ ] `withRetryWrapper()` creates a wrapped function with retry behavior
-- [ ] `withRetryWrapper()` preserves function arguments
-- [ ] `RetryPresets.standard` has expected default values
-- [ ] `RetryPresets.aggressive` has higher maxRetries (5)
-- [ ] `RetryPresets.conservative` has longer baseDelayMs (2s)
-- [ ] `RetryPresets.quick` has shorter delays for fast-fail scenarios
-- [ ] All presets are typed as `RetryConfig`
+- [x] `retryOperation()` returns data on success
+- [x] `retryOperation()` throws error with `retryAttempts` metadata on failure
+- [x] `withRetryWrapper()` creates a wrapped function with retry behavior
+- [x] `withRetryWrapper()` preserves function arguments
+- [x] `RetryPresets.standard` has expected default values
+- [x] `RetryPresets.aggressive` has higher maxRetries (5)
+- [x] `RetryPresets.conservative` has longer baseDelayMs (2s)
+- [x] `RetryPresets.quick` has shorter delays for fast-fail scenarios
+- [x] All presets are typed as `RetryConfig`
 
 #### Test Cases to Verify
 ```typescript
@@ -1171,15 +1171,15 @@ describe('retry utility (REQ-239)', () => {
 ```
 
 #### Acceptance Criteria
-- [ ] Test file created at `/src/lib/translation-service/utils/__tests__/retry.test.ts`
-- [ ] All delay calculation tests pass
-- [ ] All jitter tests pass
-- [ ] All error classification tests pass
-- [ ] All withRetry behavior tests pass
-- [ ] All convenience function tests pass
-- [ ] All preset validation tests pass
-- [ ] Tests use `vi.useFakeTimers()` to avoid actual delays
-- [ ] Test coverage > 90% for retry.ts
+- [x] Test file created at `/src/lib/translation-service/utils/__tests__/retry.test.ts`
+- [x] All delay calculation tests pass
+- [x] All jitter tests pass
+- [x] All error classification tests pass
+- [x] All withRetry behavior tests pass
+- [x] All convenience function tests pass
+- [x] All preset validation tests pass
+- [x] Tests use `vi.useFakeTimers()` to avoid actual delays
+- [x] Test coverage > 90% for retry.ts
 
 #### Verification Command
 ```bash
@@ -1228,10 +1228,10 @@ export type {
 ```
 
 #### Acceptance Criteria
-- [ ] `/src/lib/translation-service/index.ts` exists
-- [ ] All retry functions are exported
-- [ ] All retry types are exported
-- [ ] Imports work from `@/lib/translation-service`
+- [x] `/src/lib/translation-service/index.ts` exists
+- [x] All retry functions are exported
+- [x] All retry types are exported
+- [x] Imports work from `@/lib/translation-service`
 
 #### Verification
 ```typescript

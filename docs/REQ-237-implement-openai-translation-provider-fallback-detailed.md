@@ -1,7 +1,7 @@
 # REQ-237: Implement OpenAI Translation Provider (Fallback) - Detailed Task Breakdown
 
 **Document Created:** 2026-01-18 23:15 UTC
-**Last Modified:** 2026-01-18 23:15 UTC
+**Last Modified:** 2026-01-18 23:45 UTC
 **Request Reference:** REQ-237 (Alternative AI Translation Provider for Service Resilience)
 **Overview Document:** REQ-237-implement-openai-translation-provider-fallback-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md
@@ -64,10 +64,10 @@ Add the official OpenAI TypeScript SDK to the project dependencies.
 | `/package-lock.json` | Modified | Auto-updated by npm |
 
 #### Acceptance Criteria
-- [ ] `openai` appears in package.json dependencies
-- [ ] `npm install` completes without errors
-- [ ] TypeScript can resolve imports from `openai`
-- [ ] `OpenAI` and `OpenAI.APIError` types are accessible
+- [x] `openai` appears in package.json dependencies
+- [x] `npm install` completes without errors
+- [x] TypeScript can resolve imports from `openai`
+- [x] `OpenAI` and `OpenAI.APIError` types are accessible
 
 ---
 
@@ -114,10 +114,10 @@ Add OpenAI API configuration variables to the environment example file.
 | `/.env.example` | Modified | Add `OPENAI_API_KEY` and `OPENAI_TRANSLATION_MODEL` variables |
 
 #### Acceptance Criteria
-- [ ] `OPENAI_API_KEY` variable documented in .env.example
-- [ ] `OPENAI_TRANSLATION_MODEL` variable documented with default value comment
-- [ ] Comments explain the purpose of each variable
-- [ ] Variables are placed in a logical section separate from other configs
+- [x] `OPENAI_API_KEY` variable documented in .env.example
+- [x] `OPENAI_TRANSLATION_MODEL` variable documented with default value comment
+- [x] Comments explain the purpose of each variable
+- [x] Variables are placed in a logical section separate from other configs
 
 ---
 
@@ -542,18 +542,18 @@ export function createOpenAIProvider(): OpenAITranslationProvider {
 | `/src/lib/translation-service/providers/openai-provider.ts` | Modified | Replace stub with full implementation |
 
 #### Acceptance Criteria
-- [ ] Class implements `ITranslationProvider` interface correctly
-- [ ] `name` property returns `'openai'`
-- [ ] `isAvailable()` returns `false` when API key is missing
-- [ ] `isAvailable()` returns `true` when API key is configured
-- [ ] `translate()` includes domain context in system prompt
-- [ ] `translate()` uses split system/user message format (OpenAI best practice)
-- [ ] `translate()` respects rate limits
-- [ ] `translateBatch()` translates to multiple languages
-- [ ] Error handling provides user-friendly messages
-- [ ] Factory function creates valid provider instance
-- [ ] Uses `gpt-4o-mini` model by default (configurable via env)
-- [ ] Uses temperature 0.3 for consistent translations
+- [x] Class implements `ITranslationProvider` interface correctly
+- [x] `name` property returns `'openai'`
+- [x] `isAvailable()` returns `false` when API key is missing
+- [x] `isAvailable()` returns `true` when API key is configured
+- [x] `translate()` includes domain context in system prompt
+- [x] `translate()` uses split system/user message format (OpenAI best practice)
+- [x] `translate()` respects rate limits
+- [x] `translateBatch()` translates to multiple languages
+- [x] Error handling provides user-friendly messages
+- [x] Factory function creates valid provider instance
+- [x] Uses `gpt-4o-mini` model by default (configurable via env)
+- [x] Uses temperature 0.3 for consistent translations
 
 ---
 
@@ -596,10 +596,10 @@ Update the translation service barrel file to export the OpenAI provider class a
 | `/src/lib/translation-service/index.ts` | Modified | Add OpenAI provider exports |
 
 #### Acceptance Criteria
-- [ ] `OpenAITranslationProvider` can be imported from `@/lib/translation-service`
-- [ ] `createOpenAIProvider` can be imported from `@/lib/translation-service`
-- [ ] Both Claude and OpenAI providers can be imported in the same statement
-- [ ] No TypeScript errors in barrel file
+- [x] `OpenAITranslationProvider` can be imported from `@/lib/translation-service`
+- [x] `createOpenAIProvider` can be imported from `@/lib/translation-service`
+- [x] Both Claude and OpenAI providers can be imported in the same statement
+- [x] No TypeScript errors in barrel file
 
 ---
 
@@ -1134,15 +1134,15 @@ describe('OpenAITranslationProvider', () => {
 | `/src/lib/translation-service/providers/__tests__/openai-provider.test.ts` | Created | Unit tests for OpenAI provider |
 
 #### Acceptance Criteria
-- [ ] Tests cover provider initialization scenarios (with/without API key)
-- [ ] Tests verify rate limit tracking
-- [ ] Tests verify successful translation flow
-- [ ] Tests verify batch translation behavior
-- [ ] Tests verify OpenAI-specific patterns (system/user split, temperature)
-- [ ] Tests verify error handling for all API error types (401, 429, 5xx)
-- [ ] Tests verify interface parity with Claude provider
-- [ ] Tests verify domain context inclusion
-- [ ] All tests pass with `npm test`
+- [x] Tests cover provider initialization scenarios (with/without API key)
+- [x] Tests verify rate limit tracking
+- [x] Tests verify successful translation flow
+- [x] Tests verify batch translation behavior
+- [x] Tests verify OpenAI-specific patterns (system/user split, temperature)
+- [x] Tests verify error handling for all API error types (401, 429, 5xx)
+- [x] Tests verify interface parity with Claude provider
+- [x] Tests verify domain context inclusion
+- [x] All tests pass with `npm test`
 
 ---
 
@@ -1180,36 +1180,36 @@ describe('OpenAITranslationProvider', () => {
 After completing all tasks, verify the following:
 
 ### Code Quality
-- [ ] TypeScript compiles without errors (`npm run build`)
-- [ ] ESLint passes (`npm run lint`)
-- [ ] All unit tests pass (`npm test`)
+- [x] TypeScript compiles without errors (`npm run build`)
+- [x] ESLint passes (`npm run lint`)
+- [x] All unit tests pass (`npm test`)
 
 ### Functionality
-- [ ] Provider initializes correctly with valid API key
-- [ ] Provider reports unavailable when API key missing
-- [ ] Rate limiting tracks requests correctly
-- [ ] Translation returns correct format with `provider: 'openai'`
-- [ ] Batch translation handles multiple languages
-- [ ] Domain context included in all system prompts
-- [ ] Error messages are user-friendly and consistent with Claude provider
+- [x] Provider initializes correctly with valid API key
+- [x] Provider reports unavailable when API key missing
+- [x] Rate limiting tracks requests correctly
+- [x] Translation returns correct format with `provider: 'openai'`
+- [x] Batch translation handles multiple languages
+- [x] Domain context included in all system prompts
+- [x] Error messages are user-friendly and consistent with Claude provider
 
 ### Interface Parity
-- [ ] `name` property returns `'openai'`
-- [ ] `isAvailable()` has identical behavior pattern to Claude
-- [ ] `getRateLimitStatus()` returns identical structure
-- [ ] `translate()` accepts identical parameters
-- [ ] `translateBatch()` accepts identical parameters
-- [ ] Response types match interface exactly
+- [x] `name` property returns `'openai'`
+- [x] `isAvailable()` has identical behavior pattern to Claude
+- [x] `getRateLimitStatus()` returns identical structure
+- [x] `translate()` accepts identical parameters
+- [x] `translateBatch()` accepts identical parameters
+- [x] Response types match interface exactly
 
 ### Security
-- [ ] API key never logged or exposed
-- [ ] API key only read from environment variables
-- [ ] No sensitive data in error messages
+- [x] API key never logged or exposed
+- [x] API key only read from environment variables
+- [x] No sensitive data in error messages
 
 ### Documentation
-- [ ] Environment variables documented in .env.example
-- [ ] Code comments explain non-obvious logic
-- [ ] Key differences from Claude noted in comments
+- [x] Environment variables documented in .env.example
+- [x] Code comments explain non-obvious logic
+- [x] Key differences from Claude noted in comments
 
 ---
 

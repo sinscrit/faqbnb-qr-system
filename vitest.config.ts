@@ -3,7 +3,7 @@
  *
  * Configures test environment and coverage for React/Next.js application.
  *
- * @lastModified 2026-01-05 (REQ-116)
+ * @lastModified 2026-01-18 (REQ-254)
  */
 
 import { defineConfig } from 'vitest/config';
@@ -21,9 +21,16 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/components/ItemCreationWorkflow/**/*.ts', 'src/components/ItemCreationWorkflow/**/*.tsx'],
+      include: [
+        'src/components/ItemCreationWorkflow/**/*.ts',
+        'src/components/ItemCreationWorkflow/**/*.tsx',
+        'src/lib/job-queue/**/*.ts',  // Added for REQ-254
+        'src/lib/translation-service/**/*.ts',
+      ],
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
     },
+    // Timeout for integration tests that may take longer
+    testTimeout: 10000,
   },
   resolve: {
     alias: {

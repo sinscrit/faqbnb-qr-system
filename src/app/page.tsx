@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { QrCode, Smartphone, Zap, Shield, Clock, Settings, Users, ArrowRight, Star, CheckCircle } from 'lucide-react';
 import MailingListSignup from '@/components/MailingListSignup';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -103,12 +104,19 @@ export default function HomePage() {
                   Beta Access
                 </Link>
               </nav>
-            <Link
+            <div className="flex items-center space-x-4">
+              <LanguageSwitcher
+                variant="compact"
+                size="sm"
+                className="w-32"
+              />
+              <Link
                 href="/login"
                 className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-            >
+              >
                 Log In
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
       </header>

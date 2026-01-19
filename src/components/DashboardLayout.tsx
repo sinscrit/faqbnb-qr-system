@@ -7,6 +7,7 @@ import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { DashboardSection, PERMISSIONS } from '@/types/permissions';
 import { CompactAccountSelector } from './AccountSelector';
 import { RoleBasedNavigation } from './RoleBasedNavigation';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { Account, AccountRole } from '../types';
 import { Property } from '../lib/auth';
 
@@ -271,8 +272,15 @@ export function DashboardLayout({
               </div>
             </div>
 
-            {/* Right side - Account selector and logout */}
+            {/* Right side - Language switcher, Account selector and logout */}
             <div className="flex items-center space-x-3">
+              {/* Language Switcher */}
+              <LanguageSwitcher
+                variant="compact"
+                size="sm"
+                className="w-32"
+              />
+
               {/* Account Selector */}
               {showAccountSelector && (
                 <CompactAccountSelector

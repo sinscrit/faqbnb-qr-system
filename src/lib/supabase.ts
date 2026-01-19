@@ -633,6 +633,7 @@ export type Database = {
         Relationships: []
       }
       // REQ-227: Translation jobs queue table for L10N
+      // REQ-243: Added locked_by and locked_at for job locking support
       translation_jobs: {
         Row: {
           id: string
@@ -646,6 +647,8 @@ export type Database = {
           created_at: string | null
           started_at: string | null
           completed_at: string | null
+          locked_by: string | null
+          locked_at: string | null
         }
         Insert: {
           id?: string
@@ -659,6 +662,8 @@ export type Database = {
           created_at?: string | null
           started_at?: string | null
           completed_at?: string | null
+          locked_by?: string | null
+          locked_at?: string | null
         }
         Update: {
           id?: string
@@ -672,6 +677,8 @@ export type Database = {
           created_at?: string | null
           started_at?: string | null
           completed_at?: string | null
+          locked_by?: string | null
+          locked_at?: string | null
         }
         Relationships: []
       }

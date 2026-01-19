@@ -1,11 +1,11 @@
 # REQ-255: Write Component Tests for LanguageSwitcher - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 19:30 UTC
-**Last Modified:** 2026-01-18 19:30 UTC
+**Last Modified:** 2026-01-18 21:25 UTC
 **Request Reference:** docs/gen_requests.md - REQ-255
 **Overview Reference:** docs/REQ-255-write-component-tests-for-languageswitcher-overview.md
 **Implementation Plan Reference:** docs/prd/Plan-110-L10N-Epic1-Foundation.md (Phase 6, Task 6.3)
-**Status:** Detailed Breakdown Document
+**Status:** COMPLETED
 **Estimated Story Points:** 3 (S size)
 
 ---
@@ -22,11 +22,11 @@ This document provides granular, step-by-step implementation tasks for REQ-255 (
 
 Before starting implementation, verify:
 
-- [ ] LanguageSwitcher component exists at `/src/components/LanguageSwitcher/LanguageSwitcher.tsx`
-- [ ] LanguageSwitcher types exist at `/src/components/LanguageSwitcher/LanguageSwitcher.types.ts`
-- [ ] Component exports from `/src/components/LanguageSwitcher/index.ts`
-- [ ] Test infrastructure configured (`vitest.config.ts` exists)
-- [ ] Required test dependencies installed (`@testing-library/react`, `@testing-library/user-event`)
+- [x] LanguageSwitcher component exists at `/src/components/LanguageSwitcher/LanguageSwitcher.tsx`
+- [x] LanguageSwitcher types exist at `/src/components/LanguageSwitcher/LanguageSwitcher.types.ts`
+- [x] Component exports from `/src/components/LanguageSwitcher/index.ts`
+- [x] Test infrastructure configured (`vitest.config.ts` exists)
+- [x] Required test dependencies installed (`@testing-library/react`, `@testing-library/user-event`)
 
 ---
 

@@ -339,9 +339,15 @@ export const PURPOSE_ICONS: Record<PurposeTypeConst, string> = {
  * - Item type tags: appliance, room-item
  * - Purpose tags: instructions, cleaning, troubleshooting, safety, maintenance, features, info
  *
+ * NOTE: System tag translations are pre-seeded in the database
+ * via /database/seeds/20260117_system_tag_translations.sql
+ * for all 6 supported languages (en, fr, es, de, nl, it).
+ *
  * @see tagMapper.ts for auto-generation logic
  * @see TagsEditor component for UI implementation
+ * @see REQ-228 for seed data specification
  * @created 2026-01-10 (REQ-177 Intelligent Pre-filling)
+ * @modified 2026-01-18 (REQ-228 L10N seed documentation)
  */
 export const AVAILABLE_TAGS = [
   'kitchen',

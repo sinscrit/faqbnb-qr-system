@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-248 - Create LanguageSwitcher Component
 
 **Generated:** 2026-01-18 19:00:00 UTC
-**Last Modified:** 2026-01-18 19:00:00 UTC
+**Last Modified:** 2026-01-18 22:30:00 UTC
 **Overview Reference:** REQ-248-create-languageswitcher-component-overview.md
 **Implementation Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 5, Task 5.3)
 **Epic:** L10N Epic 1 - Foundation
@@ -119,13 +119,13 @@ export interface KeyboardNavigationState {
 
 #### Acceptance Criteria
 
-- [ ] File created at `/src/components/LanguageSwitcher/LanguageSwitcher.types.ts`
-- [ ] `SupportedLanguage` type includes all 6 language codes: en, fr, es, de, nl, it
-- [ ] `LocaleOption` interface includes code, name, nativeName, and optional flag
-- [ ] `LanguageSwitcherProps` includes all configuration options matching overview doc
-- [ ] `LocalePersistenceResult` interface defined for persistence feedback
-- [ ] All types are exported and can be imported by other modules
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/components/LanguageSwitcher/LanguageSwitcher.types.ts`
+- [x] `SupportedLanguage` type includes all 6 language codes: en, fr, es, de, nl, it
+- [x] `LocaleOption` interface includes code, name, nativeName, and optional flag
+- [x] `LanguageSwitcherProps` includes all configuration options matching overview doc
+- [x] `LocalePersistenceResult` interface defined for persistence feedback
+- [x] All types are exported and can be imported by other modules
+- [x] TypeScript compiles without errors
 
 #### Verification Command
 
@@ -203,14 +203,14 @@ export function isSupportedLanguage(code: string): code is SupportedLanguage {
 
 #### Acceptance Criteria
 
-- [ ] File created at `/src/components/LanguageSwitcher/constants.ts`
-- [ ] All 6 languages defined with correct native names (Francais, Deutsch, Espanol, etc.)
-- [ ] All 6 languages have flag emojis assigned
-- [ ] `DEFAULT_LOCALE` is 'en'
-- [ ] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
-- [ ] `LOCALE_COOKIE_MAX_AGE` is set to 1 year in seconds
-- [ ] Helper functions `getLocaleByCode` and `isSupportedLanguage` are exported
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/components/LanguageSwitcher/constants.ts`
+- [x] All 6 languages defined with correct native names (Francais, Deutsch, Espanol, etc.)
+- [x] All 6 languages have flag emojis assigned
+- [x] `DEFAULT_LOCALE` is 'en'
+- [x] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
+- [x] `LOCALE_COOKIE_MAX_AGE` is set to 1 year in seconds
+- [x] Helper functions `getLocaleByCode` and `isSupportedLanguage` are exported
+- [x] TypeScript compiles without errors
 
 ---
 
@@ -650,18 +650,18 @@ export default LanguageSwitcher;
 
 #### Acceptance Criteria
 
-- [ ] File created at `/src/components/LanguageSwitcher/LanguageSwitcher.tsx`
-- [ ] Component renders a dropdown button with current language
-- [ ] Dropdown shows all 6 languages with native names and flags
-- [ ] Click on option changes language and closes dropdown
-- [ ] Current language is highlighted with checkmark
-- [ ] Click outside closes dropdown
-- [ ] Keyboard navigation works (ArrowUp, ArrowDown, Enter, Escape, Home, End)
-- [ ] Loading state shows spinner during language switch
-- [ ] Accessible with proper ARIA attributes (aria-expanded, aria-haspopup, role="listbox")
-- [ ] Follows Airbnb DLS colors: `#FF385C` for accent, `#222222` for text
-- [ ] Component uses `'use client'` directive
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/components/LanguageSwitcher/LanguageSwitcher.tsx`
+- [x] Component renders a dropdown button with current language
+- [x] Dropdown shows all 6 languages with native names and flags
+- [x] Click on option changes language and closes dropdown
+- [x] Current language is highlighted with checkmark
+- [x] Click outside closes dropdown
+- [x] Keyboard navigation works (ArrowUp, ArrowDown, Enter, Escape, Home, End)
+- [x] Loading state shows spinner during language switch
+- [x] Accessible with proper ARIA attributes (aria-expanded, aria-haspopup, role="listbox")
+- [x] Follows Airbnb DLS colors: `#FF385C` for accent, `#222222` for text
+- [x] Component uses `'use client'` directive
+- [x] TypeScript compiles without errors
 
 #### Verification
 
@@ -685,12 +685,12 @@ This task is embedded within Task 3. The verification ensures persistence logic 
 
 #### Acceptance Criteria
 
-- [ ] Cookie is set with name `FAQBNB_LANG` on language change
-- [ ] Cookie has path `/`, max-age of 1 year, SameSite=Lax
-- [ ] For authenticated users, PUT request sent to `/api/user/language`
-- [ ] Database save failure does not block UI update (graceful degradation)
-- [ ] Cookie is read on component mount to restore preference
-- [ ] Page reloads after language change (temporary until next-intl router is configured)
+- [x] Cookie is set with name `FAQBNB_LANG` on language change
+- [x] Cookie has path `/`, max-age of 1 year, SameSite=Lax
+- [x] For authenticated users, PUT request sent to `/api/user/language`
+- [x] Database save failure does not block UI update (graceful degradation)
+- [x] Cookie is read on component mount to restore preference
+- [x] Page reloads after language change (temporary until next-intl router is configured)
 
 #### Verification
 
@@ -746,11 +746,11 @@ export type {
 
 #### Acceptance Criteria
 
-- [ ] File created at `/src/components/LanguageSwitcher/index.ts`
-- [ ] Component can be imported as `import { LanguageSwitcher } from '@/components/LanguageSwitcher'`
-- [ ] Types can be imported: `import type { SupportedLanguage } from '@/components/LanguageSwitcher'`
-- [ ] Constants exported: `import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/components/LanguageSwitcher'`
-- [ ] Default export works: `import LanguageSwitcher from '@/components/LanguageSwitcher'`
+- [x] File created at `/src/components/LanguageSwitcher/index.ts`
+- [x] Component can be imported as `import { LanguageSwitcher } from '@/components/LanguageSwitcher'`
+- [x] Types can be imported: `import type { SupportedLanguage } from '@/components/LanguageSwitcher'`
+- [x] Constants exported: `import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/components/LanguageSwitcher'`
+- [x] Default export works: `import LanguageSwitcher from '@/components/LanguageSwitcher'`
 
 #### Verification
 
@@ -806,14 +806,14 @@ Modify to:
 
 #### Acceptance Criteria
 
-- [ ] Import added for LanguageSwitcher component
-- [ ] LanguageSwitcher added to header between title area and Account Selector
-- [ ] Component uses `variant="compact"` and `size="sm"`
-- [ ] Width is constrained with `className="w-32"`
-- [ ] Does not break existing header layout
-- [ ] Visible on all dashboard pages
-- [ ] TypeScript compiles without errors
-- [ ] Build succeeds
+- [x] Import added for LanguageSwitcher component
+- [x] LanguageSwitcher added to header between title area and Account Selector
+- [x] Component uses `variant="compact"` and `size="sm"`
+- [x] Width is constrained with `className="w-32"`
+- [x] Does not break existing header layout
+- [x] Visible on all dashboard pages
+- [x] TypeScript compiles without errors
+- [x] Build succeeds
 
 #### Verification
 
@@ -949,14 +949,14 @@ export async function GET(request: NextRequest) {
 
 #### Acceptance Criteria
 
-- [ ] File created at `/src/app/api/user/language/route.ts`
-- [ ] PUT endpoint accepts `{ language: string }` body
-- [ ] PUT endpoint validates language is one of: en, fr, es, de, nl, it
-- [ ] PUT endpoint requires authentication (returns 401 if not authenticated)
-- [ ] PUT endpoint updates `preferred_language` column in users table
-- [ ] GET endpoint returns current user's language preference
-- [ ] Both endpoints return JSON responses with appropriate status codes
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/app/api/user/language/route.ts`
+- [x] PUT endpoint accepts `{ language: string }` body
+- [x] PUT endpoint validates language is one of: en, fr, es, de, nl, it
+- [x] PUT endpoint requires authentication (returns 401 if not authenticated)
+- [x] PUT endpoint updates `preferred_language` column in users table
+- [x] GET endpoint returns current user's language preference
+- [x] Both endpoints return JSON responses with appropriate status codes
+- [x] TypeScript compiles without errors
 
 #### Verification
 

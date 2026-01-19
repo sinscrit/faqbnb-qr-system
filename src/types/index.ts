@@ -670,3 +670,13 @@ export const HTTP_ERROR_MAPPING: Record<number, Omit<UserFriendlyError, 'code'>>
 // Admin types
 export * from './admin';
 
+// Locale/i18n types (REQ-250)
+export type {
+  SupportedLanguage,
+  LocaleOption,
+  LocaleChangeResult,
+  LocaleContextValue,
+} from '@/contexts/LocaleContext';
+
+export { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/contexts/LocaleContext';
+

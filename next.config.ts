@@ -2,12 +2,29 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from 'next-intl/plugin';
 
-// Create the next-intl plugin wrapper
-// By default, it expects i18n.ts in the project root
-const withNextIntl = createNextIntlPlugin();
+/**
+ * Next.js Configuration with next-intl Integration
+ *
+ * The createNextIntlPlugin wraps the Next.js config to enable:
+ * - Server-side locale detection via src/i18n/request.ts
+ * - Message loading from /messages/{locale}.json
+ * - Integration with NextIntlClientProvider in layout.tsx
+ *
+ * REQ-232: IntlProvider wrapper integration
+ * Last Modified: 2026-01-18
+ */
+
+// Create the next-intl plugin - explicitly specify the config path
+// Using relative path from project root (where next.config.ts is located)
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // IMPORTANT: Empty turbopack object required for next-intl to inject its aliases
+  // See: https://github.com/amannn/next-intl/issues/639
+  turbopack: {},
+  // Fix workspace root detection for Webpack/build - ensure Next.js uses project root
+  outputFileTracingRoot: process.cwd(),
 };
 
 // Sentry configuration options
@@ -52,8 +69,8 @@ const sentryConfig = {
   automaticVercelMonitors: true,
 };
 
-// Apply plugins in composition order:
-// 1. nextConfig (base configuration)
-// 2. withNextIntl (i18n plugin - wraps config)
-// 3. withSentryConfig (monitoring - must be outermost per Sentry docs)
-export default withSentryConfig(withNextIntl(nextConfig), sentryConfig);
+// Apply both next-intl and Sentry config wrappers
+// Order matters: nextConfig -> withNextIntl -> withSentryConfig
+// withNextIntl must be applied first to properly set up i18n aliases
+const configWithIntl = withNextIntl(nextConfig);
+export default withSentryConfig(configWithIntl, sentryConfig);

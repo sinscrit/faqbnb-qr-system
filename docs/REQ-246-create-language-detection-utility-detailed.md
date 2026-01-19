@@ -1,10 +1,10 @@
 # REQ-246: Create Language Detection Utility - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 12:30:00 UTC
-**Last Modified:** 2026-01-18 12:30:00 UTC
+**Last Modified:** 2026-01-18 14:20:00 UTC
 **Overview Document:** REQ-246-create-language-detection-utility-overview.md
 **Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 5, Task 5.1)
-**Status:** Ready for Implementation
+**Status:** Completed
 
 ---
 
@@ -17,10 +17,10 @@ This document breaks down the implementation overview into granular, actionable 
 ## Prerequisites
 
 Before starting these tasks, verify:
-- [ ] Node.js and npm are available in the development environment
-- [ ] The project builds successfully with `npm run build`
-- [ ] Access to the existing codebase patterns (middleware.ts, lib/session.ts)
-- [ ] TypeScript strict mode is enabled in tsconfig.json
+- [x] Node.js and npm are available in the development environment
+- [x] The project builds successfully with `npm run build`
+- [x] Access to the existing codebase patterns (middleware.ts, lib/session.ts)
+- [x] TypeScript strict mode is enabled in tsconfig.json
 
 **Soft Dependencies (gracefully handled if incomplete):**
 - Phase 1, Task 1.3 (preferred_language column on users table) - utility handles missing property gracefully
@@ -137,12 +137,12 @@ export function isSupportedLocale(locale: string): locale is SupportedLocale {
    ```
 
 **Acceptance Criteria:**
-- [ ] File exists at `/src/lib/i18n/config.ts`
-- [ ] `SUPPORTED_LOCALES` array contains exactly 6 locales: 'en', 'fr', 'es', 'de', 'nl', 'it'
-- [ ] `DEFAULT_LOCALE` is set to 'en'
-- [ ] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
-- [ ] `isSupportedLocale` type guard returns correct boolean values
-- [ ] All exports have JSDoc documentation
+- [x] File exists at `/src/lib/i18n/config.ts`
+- [x] `SUPPORTED_LOCALES` array contains exactly 6 locales: 'en', 'fr', 'es', 'de', 'nl', 'it'
+- [x] `DEFAULT_LOCALE` is set to 'en'
+- [x] `LOCALE_COOKIE_NAME` is 'FAQBNB_LANG'
+- [x] `isSupportedLocale` type guard returns correct boolean values
+- [x] All exports have JSDoc documentation
 
 **Estimated Time:** 15 minutes
 
@@ -217,10 +217,10 @@ interface LanguageQuality {
 2. Types are properly exported and can be imported elsewhere
 
 **Acceptance Criteria:**
-- [ ] `UserLocalePreference` interface defined with id and optional preferred_language
-- [ ] `DetectLanguageOptions` interface defined with optional fields
-- [ ] `LanguageQuality` interface defined (internal use)
-- [ ] All interfaces have JSDoc documentation
+- [x] `UserLocalePreference` interface defined with id and optional preferred_language
+- [x] `DetectLanguageOptions` interface defined with optional fields
+- [x] `LanguageQuality` interface defined (internal use)
+- [x] All interfaces have JSDoc documentation
 
 **Estimated Time:** 10 minutes
 
@@ -317,14 +317,14 @@ parseAcceptLanguageHeader('fr-FR, fr;q=0.9, fr-CA;q=0.8')
 ```
 
 **Acceptance Criteria:**
-- [ ] Function parses comma-separated language tags
-- [ ] Quality values (q=X.X) are extracted and used for sorting
-- [ ] Regional variants (en-US) are reduced to primary language (en)
-- [ ] Results are sorted by quality in descending order
-- [ ] Duplicate languages are deduplicated
-- [ ] Wildcard (*) entries are filtered out
-- [ ] Null/empty input returns empty array
-- [ ] Invalid quality values are handled gracefully
+- [x] Function parses comma-separated language tags
+- [x] Quality values (q=X.X) are extracted and used for sorting
+- [x] Regional variants (en-US) are reduced to primary language (en)
+- [x] Results are sorted by quality in descending order
+- [x] Duplicate languages are deduplicated
+- [x] Wildcard (*) entries are filtered out
+- [x] Null/empty input returns empty array
+- [x] Invalid quality values are handled gracefully
 
 **Estimated Time:** 20 minutes
 
@@ -379,11 +379,11 @@ function getLocaleFromCookie(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function reads cookie value from NextRequest
-- [ ] Returns the locale if it's a supported locale
-- [ ] Returns null for unsupported locale values
-- [ ] Returns null if cookie doesn't exist
-- [ ] Supports custom cookie name override
+- [x] Function reads cookie value from NextRequest
+- [x] Returns the locale if it's a supported locale
+- [x] Returns null for unsupported locale values
+- [x] Returns null if cookie doesn't exist
+- [x] Supports custom cookie name override
 
 **Estimated Time:** 10 minutes
 
@@ -486,16 +486,16 @@ Test scenarios:
 ```
 
 **Acceptance Criteria:**
-- [ ] Function accepts NextRequest and optional user object
-- [ ] Priority 1: User database preference is checked first (when user is provided)
-- [ ] Priority 2: Cookie (FAQBNB_LANG) is checked second
-- [ ] Priority 3: Accept-Language header is parsed and first supported match is used
-- [ ] Priority 4: Default locale ('en') is returned if no other source matches
-- [ ] Only supported locales are returned (never an invalid locale)
-- [ ] Invalid/unsupported locales from any source are ignored
-- [ ] Console logging indicates detection source for debugging
-- [ ] Function is exported from the module
-- [ ] skipDbLookup option works correctly
+- [x] Function accepts NextRequest and optional user object
+- [x] Priority 1: User database preference is checked first (when user is provided)
+- [x] Priority 2: Cookie (FAQBNB_LANG) is checked second
+- [x] Priority 3: Accept-Language header is parsed and first supported match is used
+- [x] Priority 4: Default locale ('en') is returned if no other source matches
+- [x] Only supported locales are returned (never an invalid locale)
+- [x] Invalid/unsupported locales from any source are ignored
+- [x] Console logging indicates detection source for debugging
+- [x] Function is exported from the module
+- [x] skipDbLookup option works correctly
 
 **Estimated Time:** 20 minutes
 
@@ -558,14 +558,14 @@ setLocaleCookie(res, 'fr');
 ```
 
 **Acceptance Criteria:**
-- [ ] Function sets cookie on NextResponse object
-- [ ] Cookie uses correct name (FAQBNB_LANG by default)
-- [ ] Cookie max age is 1 year
-- [ ] Cookie path is root (/)
-- [ ] Cookie is NOT httpOnly (allows client-side access)
-- [ ] Cookie is secure in production
-- [ ] Cookie sameSite is 'lax'
-- [ ] Function is exported from the module
+- [x] Function sets cookie on NextResponse object
+- [x] Cookie uses correct name (FAQBNB_LANG by default)
+- [x] Cookie max age is 1 year
+- [x] Cookie path is root (/)
+- [x] Cookie is NOT httpOnly (allows client-side access)
+- [x] Cookie is secure in production
+- [x] Cookie sameSite is 'lax'
+- [x] Function is exported from the module
 
 **Estimated Time:** 10 minutes
 
@@ -642,11 +642,11 @@ console.log(typeof setLocaleCookie); // 'function'
 ```
 
 **Acceptance Criteria:**
-- [ ] File exists at `/src/lib/i18n/index.ts`
-- [ ] All config exports are re-exported
-- [ ] All language-detection exports are re-exported
-- [ ] Types are re-exported using `type` keyword
-- [ ] File has module-level JSDoc documentation
+- [x] File exists at `/src/lib/i18n/index.ts`
+- [x] All config exports are re-exported
+- [x] All language-detection exports are re-exported
+- [x] Types are re-exported using `type` keyword
+- [x] File has module-level JSDoc documentation
 
 **Estimated Time:** 5 minutes
 
@@ -665,9 +665,9 @@ console.log(typeof setLocaleCookie); // 'function'
 3. Verify no import path issues
 
 **Acceptance Criteria:**
-- [ ] `npx tsc --noEmit` completes without errors
-- [ ] All imports resolve correctly
-- [ ] No unused variable warnings (if strict mode enabled)
+- [x] `npx tsc --noEmit` completes without errors
+- [x] All imports resolve correctly
+- [x] No unused variable warnings (if strict mode enabled)
 
 **Estimated Time:** 10 minutes
 
@@ -686,9 +686,9 @@ console.log(typeof setLocaleCookie); // 'function'
 3. Verify no warnings related to the new i18n module
 
 **Acceptance Criteria:**
-- [ ] `npm run build` completes successfully
-- [ ] No build errors related to new files
-- [ ] No significant warnings introduced
+- [x] `npm run build` completes successfully
+- [x] No build errors related to new files
+- [x] No significant warnings introduced
 
 **Estimated Time:** 5 minutes
 
@@ -755,23 +755,23 @@ import {
 
 ### Manual Testing
 
-- [ ] Import `detectUserLanguage` works from `@/lib/i18n`
-- [ ] Import `setLocaleCookie` works from `@/lib/i18n`
-- [ ] All type exports work correctly
-- [ ] `isSupportedLocale` returns true for valid locales
-- [ ] `isSupportedLocale` returns false for invalid locales
-- [ ] Accept-Language parsing handles edge cases
+- [x] Import `detectUserLanguage` works from `@/lib/i18n`
+- [x] Import `setLocaleCookie` works from `@/lib/i18n`
+- [x] All type exports work correctly
+- [x] `isSupportedLocale` returns true for valid locales
+- [x] `isSupportedLocale` returns false for invalid locales
+- [x] Accept-Language parsing handles edge cases
 
 ### Edge Cases to Verify
 
-- [ ] User with `preferred_language: null` → falls through to cookie
-- [ ] User with `preferred_language: undefined` → falls through to cookie
-- [ ] User with unsupported locale → falls through to cookie
-- [ ] Cookie with unsupported locale → falls through to header
-- [ ] Empty Accept-Language header → falls through to default
-- [ ] Accept-Language with only unsupported languages → returns default
-- [ ] Accept-Language with wildcard (*) → wildcard is ignored
-- [ ] Malformed Accept-Language header → handled gracefully
+- [x] User with `preferred_language: null` → falls through to cookie
+- [x] User with `preferred_language: undefined` → falls through to cookie
+- [x] User with unsupported locale → falls through to cookie
+- [x] Cookie with unsupported locale → falls through to header
+- [x] Empty Accept-Language header → falls through to default
+- [x] Accept-Language with only unsupported languages → returns default
+- [x] Accept-Language with wildcard (*) → wildcard is ignored
+- [x] Malformed Accept-Language header → handled gracefully
 
 ---
 

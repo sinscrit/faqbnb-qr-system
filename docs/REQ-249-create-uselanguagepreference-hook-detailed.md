@@ -1,12 +1,12 @@
 # REQ-249: Create useLanguagePreference Hook - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 19:30:00 UTC
-**Last Modified:** 2026-01-18 19:30:00 UTC
+**Last Modified:** 2026-01-18 21:45:00 UTC
 **Overview Document:** REQ-249-create-uselanguagepreference-hook-overview.md
 **Implementation Plan:** Plan-110-L10N-Epic1-Foundation.md
 **Phase:** 5 - Language Switching Infrastructure
 **Task ID:** 5.4
-**Status:** Ready for Implementation
+**Status:** Implementation Complete
 
 ---
 
@@ -24,10 +24,10 @@ This document provides a granular, step-by-step breakdown of implementing the `u
 
 Before starting implementation, verify:
 
-- [ ] AuthContext is available and working (`src/contexts/AuthContext.tsx`)
-- [ ] Existing hook patterns are understood (`useDashboardPreferences.ts`, `useActiveProperty.ts`)
-- [ ] API endpoint for language preferences (`/api/user/language`) will be created in REQ-251 (may not exist yet)
-- [ ] Supported languages are confirmed: `en`, `fr`, `es`, `de`, `nl`, `it`
+- [x] AuthContext is available and working (`src/contexts/AuthContext.tsx`)
+- [x] Existing hook patterns are understood (`useDashboardPreferences.ts`, `useActiveProperty.ts`)
+- [x] API endpoint for language preferences (`/api/user/language`) will be created in REQ-251 (may not exist yet)
+- [x] Supported languages are confirmed: `en`, `fr`, `es`, `de`, `nl`, `it`
 
 ---
 
@@ -59,9 +59,9 @@ import { useAuth } from '@/contexts/AuthContext';
 ```
 
 **Verification:**
-- [ ] File exists at `/src/hooks/useLanguagePreference.ts`
-- [ ] File starts with `'use client';` directive
-- [ ] All imports are valid (no TypeScript errors)
+- [x] File exists at `/src/hooks/useLanguagePreference.ts`
+- [x] File starts with `'use client';` directive
+- [x] All imports are valid (no TypeScript errors)
 
 **Story Points:** 1
 
@@ -93,9 +93,9 @@ export const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
 ```
 
 **Verification:**
-- [ ] `SupportedLanguage` type is correctly derived from array
-- [ ] All 6 languages are included: en, fr, es, de, nl, it
-- [ ] Constants follow existing naming patterns (prefixed with `faqbnb_` or `FAQBNB_`)
+- [x] `SupportedLanguage` type is correctly derived from array
+- [x] All 6 languages are included: en, fr, es, de, nl, it
+- [x] Constants follow existing naming patterns (prefixed with `faqbnb_` or `FAQBNB_`)
 
 **Story Points:** 1
 
@@ -134,9 +134,9 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 ```
 
 **Verification:**
-- [ ] Each language has correct native name with proper accents
-- [ ] Flag emojis display correctly
-- [ ] Interface exports properly
+- [x] Each language has correct native name with proper accents
+- [x] Flag emojis display correctly
+- [x] Interface exports properly
 
 **Story Points:** 1
 
@@ -167,10 +167,10 @@ export function isSupportedLanguage(value: unknown): value is SupportedLanguage 
 ```
 
 **Verification:**
-- [ ] `isSupportedLanguage('en')` returns `true`
-- [ ] `isSupportedLanguage('invalid')` returns `false`
-- [ ] `isSupportedLanguage(123)` returns `false`
-- [ ] TypeScript narrows type after check
+- [x] `isSupportedLanguage('en')` returns `true`
+- [x] `isSupportedLanguage('invalid')` returns `false`
+- [x] `isSupportedLanguage(123)` returns `false`
+- [x] TypeScript narrows type after check
 
 **Story Points:** 1
 
@@ -221,10 +221,10 @@ function getLanguageFromCookie(): SupportedLanguage | null {
 ```
 
 **Verification:**
-- [ ] Cookie is set with correct name `FAQBNB_LANG`
-- [ ] Cookie has 1-year expiration
-- [ ] Cookie is readable after being set
-- [ ] SSR guard prevents errors during server-side rendering
+- [x] Cookie is set with correct name `FAQBNB_LANG`
+- [x] Cookie has 1-year expiration
+- [x] Cookie is readable after being set
+- [x] SSR guard prevents errors during server-side rendering
 
 **Story Points:** 1
 
@@ -278,10 +278,10 @@ function setStoredLanguage(language: SupportedLanguage): void {
 ```
 
 **Verification:**
-- [ ] Language is stored with correct key `faqbnb_language_preference`
-- [ ] Invalid stored values return `null`
-- [ ] Errors are caught and logged (private browsing mode handling)
-- [ ] SSR guard prevents errors during server-side rendering
+- [x] Language is stored with correct key `faqbnb_language_preference`
+- [x] Invalid stored values return `null`
+- [x] Errors are caught and logged (private browsing mode handling)
+- [x] SSR guard prevents errors during server-side rendering
 
 **Story Points:** 1
 
@@ -326,9 +326,9 @@ function detectBrowserLanguage(): SupportedLanguage {
 ```
 
 **Verification:**
-- [ ] Returns correct language for `navigator.language = 'fr-FR'`
-- [ ] Returns default for unsupported languages like `'zh-CN'`
-- [ ] Handles undefined navigator (SSR)
+- [x] Returns correct language for `navigator.language = 'fr-FR'`
+- [x] Returns default for unsupported languages like `'zh-CN'`
+- [x] Handles undefined navigator (SSR)
 
 **Story Points:** 1
 
@@ -377,9 +377,9 @@ export interface UseLanguagePreferenceReturn {
 ```
 
 **Verification:**
-- [ ] Interface matches acceptance criteria from REQ-249
-- [ ] All properties have JSDoc documentation
-- [ ] Types are correctly defined
+- [x] Interface matches acceptance criteria from REQ-249
+- [x] All properties have JSDoc documentation
+- [x] Types are correctly defined
 
 **Story Points:** 1
 
@@ -494,11 +494,11 @@ export function useLanguagePreference(): UseLanguagePreferenceReturn {
 ```
 
 **Verification:**
-- [ ] Hook reads from AuthContext successfully
-- [ ] Initial loading state is `true`
-- [ ] Priority order: cookie -> localStorage -> browser -> default
-- [ ] API call is attempted only for authenticated users
-- [ ] API errors don't break initialization
+- [x] Hook reads from AuthContext successfully
+- [x] Initial loading state is `true`
+- [x] Priority order: cookie -> localStorage -> browser -> default
+- [x] API call is attempted only for authenticated users
+- [x] API errors don't break initialization
 
 **Story Points:** 2
 
@@ -583,13 +583,13 @@ export function useLanguagePreference(): UseLanguagePreferenceReturn {
 ```
 
 **Verification:**
-- [ ] Invalid languages are rejected with error
-- [ ] Optimistic update occurs immediately
-- [ ] Authenticated users save to API
-- [ ] Guest users save to localStorage
-- [ ] Cookie is always updated
-- [ ] Rollback works on API error
-- [ ] Custom event is dispatched
+- [x] Invalid languages are rejected with error
+- [x] Optimistic update occurs immediately
+- [x] Authenticated users save to API
+- [x] Guest users save to localStorage
+- [x] Cookie is always updated
+- [x] Rollback works on API error
+- [x] Custom event is dispatched
 
 **Story Points:** 2
 
@@ -632,10 +632,10 @@ export default useLanguagePreference;
 ```
 
 **Verification:**
-- [ ] `clearError` sets error to null
-- [ ] Return object matches `UseLanguagePreferenceReturn` interface
-- [ ] `supportedLanguages` references `LANGUAGE_OPTIONS` constant
-- [ ] Default export is provided
+- [x] `clearError` sets error to null
+- [x] Return object matches `UseLanguagePreferenceReturn` interface
+- [x] `supportedLanguages` references `LANGUAGE_OPTIONS` constant
+- [x] Default export is provided
 
 **Story Points:** 1
 
@@ -709,15 +709,15 @@ export default useLanguagePreference;
 ```
 
 **Verification Checklist:**
-- [ ] Guest user: browser detection works
-- [ ] Guest user: localStorage persistence works
-- [ ] Authenticated user: API call made on change
-- [ ] Cookie updated in all cases
-- [ ] Error rollback works correctly
-- [ ] clearError function works
-- [ ] No SSR/hydration issues
-- [ ] TypeScript compilation successful
-- [ ] No console errors
+- [x] Guest user: browser detection works
+- [x] Guest user: localStorage persistence works
+- [x] Authenticated user: API call made on change
+- [x] Cookie updated in all cases
+- [x] Error rollback works correctly
+- [x] clearError function works
+- [x] No SSR/hydration issues
+- [x] TypeScript compilation successful
+- [x] No console errors
 
 **Story Points:** 2
 

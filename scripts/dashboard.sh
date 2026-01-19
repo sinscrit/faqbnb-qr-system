@@ -11,6 +11,7 @@
 #   ./scripts/dashboard.sh --worktrees  # Include worktree state files
 #   ./scripts/dashboard.sh --deps       # Show dependency graph
 #   ./scripts/dashboard.sh --latest     # Show only the most recent pipeline
+#   ./scripts/dashboard.sh --remote URL # Fetch state files from WebDAV server
 #
 # PDF Daemon commands:
 #   ./scripts/dashboard.sh daemon       # Start PDF daemon in foreground
@@ -19,7 +20,7 @@
 #   ./scripts/dashboard.sh stop         # Stop running daemon
 #
 # Created: 2026-01-05
-# Last Modified: 2026-01-17
+# Last Modified: 2026-01-18
 # =============================================================================
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

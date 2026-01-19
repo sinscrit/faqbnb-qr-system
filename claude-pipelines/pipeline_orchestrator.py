@@ -369,6 +369,47 @@ def migrate_stage_completion_flags(state: dict):
             task_dict['testcheck_completed'] = True
 
 
+def backup_and_reset_failed_tasks(state: dict, state_path: Path) -> int:
+    """
+    Automatically backup failed tasks to a log file and reset them to pending.
+
+    This ensures that failed tasks are automatically retried on the next run,
+    without requiring manual intervention. Failed task info is preserved in
+    a separate log file for audit/review.
+
+    Returns the number of tasks reset.
+
+    Modified: 2026-01-18
+    """
+    failed_tasks = [t for t in state.get('tasks', []) if t.get('status') == 'failed']
+
+    if not failed_tasks:
+        return 0
+
+    # Backup failed tasks to log file
+    log_path = state_path.with_suffix('.failed.log')
+    timestamp = datetime.now().isoformat()
+
+    with open(log_path, 'a', encoding='utf-8') as f:
+        f.write(f"\n{'='*60}\n")
+        f.write(f"Failed Tasks Backup - {timestamp}\n")
+        f.write(f"{'='*60}\n")
+        for task in failed_tasks:
+            f.write(f"  Task {task.get('id')}: {task.get('title', 'N/A')[:50]}\n")
+            f.write(f"    REQ: {task.get('request_id', 'N/A')}\n")
+            f.write(f"    Error: {task.get('error', 'N/A')}\n")
+        f.write(f"Total: {len(failed_tasks)} failed tasks reset to pending\n")
+
+    # Reset failed tasks to pending
+    for task in failed_tasks:
+        task['status'] = 'pending'
+        task['error'] = None  # Clear the error so it can be retried
+
+    print(f"  → Auto-reset {len(failed_tasks)} failed task(s) to pending (backup: {log_path.name})")
+
+    return len(failed_tasks)
+
+
 def save_state(state: dict, state_path: Path):
     """Save pipeline state to JSON file."""
     state['updated_at'] = datetime.now().isoformat()
@@ -4117,6 +4158,8 @@ Examples:
     if state_path.exists():
         print(f"Found existing state: {state_path}")
         state = load_state(state_path)
+        # Auto-reset failed tasks to pending (with backup for audit)
+        backup_and_reset_failed_tasks(state, state_path)
     else:
         print("Initializing new pipeline state")
         state = initialize_state(config, tasks)

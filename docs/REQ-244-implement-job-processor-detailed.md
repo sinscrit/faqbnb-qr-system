@@ -1,7 +1,7 @@
 # REQ-244: Implement Job Processor - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 23:15:00 UTC
-**Last Modified:** 2026-01-18 23:15:00 UTC
+**Last Modified:** 2026-01-18 13:45:00 UTC
 **Request Reference:** REQ-244 in `/docs/gen_requests.md`
 **Overview Document:** `/docs/REQ-244-implement-job-processor-overview.md`
 **Implementation Plan:** `/docs/prd/Plan-110-L10N-Epic1-Foundation.md`
@@ -215,11 +215,11 @@ export interface TagContent {
 ```
 
 **Acceptance Criteria:**
-- [ ] File created at `/src/lib/job-queue/job-processor.ts`
-- [ ] All 8 interface definitions present with complete fields
-- [ ] Types align with job queue and translation service types
-- [ ] JSDoc comments on all public interfaces
-- [ ] TypeScript compiles without errors
+- [x] File created at `/src/lib/job-queue/job-processor.ts`
+- [x] All 8 interface definitions present with complete fields
+- [x] Types align with job queue and translation service types
+- [x] JSDoc comments on all public interfaces
+- [x] TypeScript compiles without errors
 
 **Estimated Effort:** Small (< 30 min)
 
@@ -367,13 +367,13 @@ export async function fetchEntityContent(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function correctly fetches content for `article` entity type
-- [ ] Function correctly fetches content for `item` entity type
-- [ ] Function correctly fetches content for `link` entity type
-- [ ] Function correctly fetches content for `tag` entity type
-- [ ] Returns null for non-existent entities
-- [ ] Defaults source_language to 'en' when null
-- [ ] Error logging present for database failures
+- [x] Function correctly fetches content for `article` entity type
+- [x] Function correctly fetches content for `item` entity type
+- [x] Function correctly fetches content for `link` entity type
+- [x] Function correctly fetches content for `tag` entity type
+- [x] Returns null for non-existent entities
+- [x] Defaults source_language to 'en' when null
+- [x] Error logging present for database failures
 
 **Estimated Effort:** Small (30-45 min)
 
@@ -526,15 +526,15 @@ export async function saveTranslation(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function correctly upserts to `article_translations` table
-- [ ] Function correctly upserts to `item_translations` table
-- [ ] Function correctly upserts to `link_translations` table
-- [ ] Function correctly upserts to `tag_translations` table
-- [ ] Uses `onConflict` for idempotent updates
-- [ ] Sets `translation_status` to 'completed'
-- [ ] Sets `translated_at` timestamp
-- [ ] Returns boolean success indicator
-- [ ] Error logging present for database failures
+- [x] Function correctly upserts to `article_translations` table
+- [x] Function correctly upserts to `item_translations` table
+- [x] Function correctly upserts to `link_translations` table
+- [x] Function correctly upserts to `tag_translations` table
+- [x] Uses `onConflict` for idempotent updates
+- [x] Sets `translation_status` to 'completed'
+- [x] Sets `translated_at` timestamp
+- [x] Returns boolean success indicator
+- [x] Error logging present for database failures
 
 **Estimated Effort:** Small (30-45 min)
 
@@ -597,10 +597,10 @@ function getContentType(
 ```
 
 **Acceptance Criteria:**
-- [ ] `getTranslationContext()` returns appropriate context for all 4 entity types
-- [ ] `getContentType()` correctly maps all entity type + field combinations
-- [ ] Contexts are vacation rental property specific
-- [ ] Default fallback provided for unknown combinations
+- [x] `getTranslationContext()` returns appropriate context for all 4 entity types
+- [x] `getContentType()` correctly maps all entity type + field combinations
+- [x] Contexts are vacation rental property specific
+- [x] Default fallback provided for unknown combinations
 
 **Estimated Effort:** Small (15-20 min)
 
@@ -730,14 +730,14 @@ async function processJob(
 ```
 
 **Acceptance Criteria:**
-- [ ] Function fetches entity content before translating
-- [ ] Function skips null/empty fields
-- [ ] Function translates each field with appropriate context
-- [ ] Function saves translations to correct table
-- [ ] Function marks job completed on success
-- [ ] Function marks job failed on any error
-- [ ] Function tracks and returns processing time
-- [ ] Logging controlled by config.enableLogging
+- [x] Function fetches entity content before translating
+- [x] Function skips null/empty fields
+- [x] Function translates each field with appropriate context
+- [x] Function saves translations to correct table
+- [x] Function marks job completed on success
+- [x] Function marks job failed on any error
+- [x] Function tracks and returns processing time
+- [x] Logging controlled by config.enableLogging
 
 **Estimated Effort:** Medium (45-60 min)
 
@@ -843,12 +843,12 @@ export class TranslationJobProcessor {
 ```
 
 **Acceptance Criteria:**
-- [ ] `DEFAULT_CONFIG` reads from environment variables with fallbacks
-- [ ] Constructor merges config with defaults
-- [ ] Worker ID is unique per process instance
-- [ ] Internal state variables initialized correctly
-- [ ] `log()` method respects `enableLogging` config
-- [ ] Debug logs suppressed when logging disabled
+- [x] `DEFAULT_CONFIG` reads from environment variables with fallbacks
+- [x] Constructor merges config with defaults
+- [x] Worker ID is unique per process instance
+- [x] Internal state variables initialized correctly
+- [x] `log()` method respects `enableLogging` config
+- [x] Debug logs suppressed when logging disabled
 
 **Estimated Effort:** Small (20-30 min)
 
@@ -938,14 +938,14 @@ isRunning(): boolean {
 ```
 
 **Acceptance Criteria:**
-- [ ] `start()` prevents double-start with warning
-- [ ] `start()` logs configuration on startup
-- [ ] `start()` runs first cycle immediately
-- [ ] `start()` sets up interval for subsequent cycles
-- [ ] `stop()` clears interval
-- [ ] `stop()` waits for current processing to complete
-- [ ] `stop()` is idempotent (can be called multiple times)
-- [ ] `isRunning()` returns correct state
+- [x] `start()` prevents double-start with warning
+- [x] `start()` logs configuration on startup
+- [x] `start()` runs first cycle immediately
+- [x] `start()` sets up interval for subsequent cycles
+- [x] `stop()` clears interval
+- [x] `stop()` waits for current processing to complete
+- [x] `stop()` is idempotent (can be called multiple times)
+- [x] `isRunning()` returns correct state
 
 **Estimated Effort:** Small (20-30 min)
 
@@ -1101,14 +1101,14 @@ private async pauseProcessing(): Promise<void> {
 ```
 
 **Acceptance Criteria:**
-- [ ] `processNextJob()` returns null when no jobs available
-- [ ] `processNextJob()` returns result when job processed
-- [ ] `runProcessingCycle()` skips if already processing
-- [ ] `runProcessingCycle()` updates stats correctly
-- [ ] `runProcessingCycle()` resets consecutive errors on success
-- [ ] `runProcessingCycle()` triggers pause on max errors
-- [ ] `pauseProcessing()` waits configured duration
-- [ ] `pauseProcessing()` resumes polling after pause
+- [x] `processNextJob()` returns null when no jobs available
+- [x] `processNextJob()` returns result when job processed
+- [x] `runProcessingCycle()` skips if already processing
+- [x] `runProcessingCycle()` updates stats correctly
+- [x] `runProcessingCycle()` resets consecutive errors on success
+- [x] `runProcessingCycle()` triggers pause on max errors
+- [x] `pauseProcessing()` waits configured duration
+- [x] `pauseProcessing()` resumes polling after pause
 
 **Estimated Effort:** Medium (45-60 min)
 
@@ -1181,11 +1181,11 @@ updateConfig(config: Partial<JobProcessorConfig>): void {
 ```
 
 **Acceptance Criteria:**
-- [ ] `getStats()` returns copy of stats (not reference)
-- [ ] `resetStats()` resets all counters to 0
-- [ ] `resetStats()` preserves `isRunning` state
-- [ ] `updateConfig()` merges with existing config
-- [ ] `updateConfig()` restarts interval if polling interval changed
+- [x] `getStats()` returns copy of stats (not reference)
+- [x] `resetStats()` resets all counters to 0
+- [x] `resetStats()` preserves `isRunning` state
+- [x] `updateConfig()` merges with existing config
+- [x] `updateConfig()` restarts interval if polling interval changed
 
 **Estimated Effort:** Small (15-20 min)
 
@@ -1274,12 +1274,12 @@ export async function stopJobProcessor(): Promise<void> {
 ```
 
 **Acceptance Criteria:**
-- [ ] `createJobProcessor()` returns new instance each call
-- [ ] `getJobProcessor()` returns same instance (singleton)
-- [ ] `resetJobProcessor()` stops and clears singleton
-- [ ] `startJobProcessor()` starts global processor
-- [ ] `stopJobProcessor()` stops global processor
-- [ ] All functions exported
+- [x] `createJobProcessor()` returns new instance each call
+- [x] `getJobProcessor()` returns same instance (singleton)
+- [x] `resetJobProcessor()` stops and clears singleton
+- [x] `startJobProcessor()` starts global processor
+- [x] `stopJobProcessor()` stops global processor
+- [x] All functions exported
 
 **Estimated Effort:** Small (15-20 min)
 
@@ -1337,10 +1337,10 @@ export type {
 ```
 
 **Acceptance Criteria:**
-- [ ] All job processor functions exported
-- [ ] All job processor types exported with `export type`
-- [ ] Import from `@/lib/job-queue` includes new exports
-- [ ] No TypeScript errors
+- [x] All job processor functions exported
+- [x] All job processor types exported with `export type`
+- [x] Import from `@/lib/job-queue` includes new exports
+- [x] No TypeScript errors
 
 **Estimated Effort:** Small (10-15 min)
 
@@ -1381,11 +1381,11 @@ TRANSLATION_JOB_ERROR_PAUSE_MS=300000
 ```
 
 **Acceptance Criteria:**
-- [ ] Section header clearly identifies purpose
-- [ ] All three environment variables documented
-- [ ] Default values specified in comments
-- [ ] Variable naming consistent with codebase
-- [ ] Comments explain behavior
+- [x] Section header clearly identifies purpose
+- [x] All three environment variables documented
+- [x] Default values specified in comments
+- [x] Variable naming consistent with codebase
+- [x] Comments explain behavior
 
 **Estimated Effort:** Small (10 min)
 

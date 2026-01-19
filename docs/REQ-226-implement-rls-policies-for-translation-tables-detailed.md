@@ -1,9 +1,9 @@
 # REQ-226: Implement RLS Policies for Translation Tables - Detailed Task Breakdown
 
 **Document Generated:** 2026-01-18 10:00 UTC
-**Last Modified:** 2026-01-18 05:25 UTC
+**Last Modified:** 2026-01-18 09:58 UTC
 **Implementation Status:** COMPLETED
-**Verification Status:** Build PASSED (2026-01-18 05:25 UTC)
+**Verification Status:** Database policies verified PASSED (2026-01-18 09:58 UTC)
 **Request Reference:** REQ-226 (Translation Table Access Control Policies)
 **Overview Document:** [REQ-226-implement-rls-policies-for-translation-tables-overview.md](/docs/REQ-226-implement-rls-policies-for-translation-tables-overview.md)
 **Implementation Plan:** [Plan-110-L10N-Epic1-Foundation.md](/docs/prd/Plan-110-L10N-Epic1-Foundation.md)
@@ -1533,6 +1533,14 @@ ALTER TABLE translation_jobs DISABLE ROW LEVEL SECURITY;
 - All 5 tables have `relrowsecurity = true` and `relforcerowsecurity = true`
 - Total policies created: 24
 - Security advisor: No warnings for translation tables (existing warnings on other tables unrelated to this task)
+
+**Re-verification (2026-01-18 09:58 UTC):**
+- All 5 translation tables confirmed with RLS enabled
+- Policy counts confirmed: article_translations (6), item_translations (6), link_translations (6), tag_translations (3), translation_jobs (3)
+- Total: 24 policies confirmed present and correctly configured
+- Security advisor: No warnings for translation tables
+- Type-check: Pre-existing errors unrelated to RLS policies
+- Build: Blocked by unrelated next-intl configuration issue (missing message files - REQ-229 scope)
 
 ---
 

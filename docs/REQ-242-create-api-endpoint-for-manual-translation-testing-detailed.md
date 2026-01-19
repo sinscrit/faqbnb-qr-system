@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-242 - Create API Endpoint for Manual Translation Testing
 
 **Document Created:** 2026-01-18
-**Last Modified:** 2026-01-18
+**Last Modified:** 2026-01-18 14:30
 **Request ID:** REQ-242
 **Size:** S (Small)
 **Phase:** 3 - Translation Service
@@ -71,9 +71,9 @@ export async function POST(request: NextRequest) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Directory `/src/app/api/admin/translate/` exists
-- [ ] File `route.ts` exists with basic imports
-- [ ] No TypeScript errors in the file
+- [x] Directory `/src/app/api/admin/translate/` exists
+- [x] File `route.ts` exists with basic imports
+- [x] No TypeScript errors in the file
 
 ---
 
@@ -125,10 +125,10 @@ const MAX_TEXT_LENGTH = 5000;
 ```
 
 **Acceptance Criteria:**
-- [ ] `TranslateTestRequest` interface defined
-- [ ] `SupportedLanguage` type defined with all 6 languages
-- [ ] `ContentType` type defined with all valid categories
-- [ ] Constants for validation defined
+- [x] `TranslateTestRequest` interface defined
+- [x] `SupportedLanguage` type defined with all 6 languages
+- [x] `ContentType` type defined with all valid categories
+- [x] Constants for validation defined
 
 #### Task 2.2: Implement Validation Function
 
@@ -219,11 +219,11 @@ function validateTranslationRequest(body: unknown): string | null {
 ```
 
 **Acceptance Criteria:**
-- [ ] Function validates all required fields
-- [ ] Function checks language codes against supported list
-- [ ] Function enforces text length limit
-- [ ] Function validates optional fields when present
-- [ ] Function returns null for valid requests, error string for invalid
+- [x] Function validates all required fields
+- [x] Function checks language codes against supported list
+- [x] Function enforces text length limit
+- [x] Function validates optional fields when present
+- [x] Function returns null for valid requests, error string for invalid
 
 ---
 
@@ -281,10 +281,10 @@ export async function POST(request: NextRequest) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Uses `validateAdminAuth()` from `/src/lib/auth-server.ts`
-- [ ] Returns 401 for unauthenticated users
-- [ ] Returns 403 for authenticated non-admin users
-- [ ] Allows admin and sysadmin users to proceed
+- [x] Uses `validateAdminAuth()` from `/src/lib/auth-server.ts`
+- [x] Returns 401 for unauthenticated users
+- [x] Returns 403 for authenticated non-admin users
+- [x] Allows admin and sysadmin users to proceed
 
 ---
 
@@ -320,8 +320,8 @@ try {
 ```
 
 **Acceptance Criteria:**
-- [ ] Import statement added for translation service
-- [ ] Graceful handling if translation service module not available
+- [x] Import statement added for translation service
+- [x] Graceful handling if translation service module not available
 
 #### Task 4.2: Define Response Interface
 
@@ -364,9 +364,9 @@ interface TranslateTestResponse {
 ```
 
 **Acceptance Criteria:**
-- [ ] `TranslationResult` interface defined
-- [ ] `TranslateTestResponse` interface defined
-- [ ] Response structure matches API contract in overview document
+- [x] `TranslationResult` interface defined
+- [x] `TranslateTestResponse` interface defined
+- [x] Response structure matches API contract in overview document
 
 #### Task 4.3: Implement Core Translation Logic
 
@@ -518,11 +518,11 @@ export async function POST(request: NextRequest) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Request body is parsed and validated
-- [ ] Translation service is called for each target language
-- [ ] Response includes all required fields
-- [ ] Partial results returned if some translations fail
-- [ ] Appropriate error codes for different failure modes
+- [x] Request body is parsed and validated
+- [x] Translation service is called for each target language
+- [x] Response includes all required fields
+- [x] Partial results returned if some translations fail
+- [x] Appropriate error codes for different failure modes
 
 ---
 
@@ -550,9 +550,9 @@ export type {
 ```
 
 **Acceptance Criteria:**
-- [ ] `translateText` function is exported
-- [ ] Type definitions are exported
-- [ ] Import in route file resolves correctly
+- [x] `translateText` function is exported
+- [x] Type definitions are exported
+- [x] Import in route file resolves correctly
 
 ---
 
@@ -585,9 +585,9 @@ curl -X POST http://localhost:3000/api/admin/translate \
 ```
 
 **Acceptance Criteria:**
-- [ ] Unauthenticated requests return 401
-- [ ] Non-admin authenticated requests return 403
-- [ ] Admin authenticated requests proceed to translation
+- [x] Unauthenticated requests return 401
+- [x] Non-admin authenticated requests return 403
+- [x] Admin authenticated requests proceed to translation
 
 #### Task 6.2: Manual Testing - Validation
 
@@ -616,9 +616,9 @@ curl -X POST http://localhost:3000/api/admin/translate \
 ```
 
 **Acceptance Criteria:**
-- [ ] Missing required fields return 400 with descriptive error
-- [ ] Invalid language codes return 400 with descriptive error
-- [ ] Text exceeding max length returns 400
+- [x] Missing required fields return 400 with descriptive error
+- [x] Invalid language codes return 400 with descriptive error
+- [x] Text exceeding max length returns 400
 
 #### Task 6.3: Manual Testing - Successful Translation
 
@@ -682,10 +682,10 @@ curl -X POST http://localhost:3000/api/admin/translate \
 ```
 
 **Acceptance Criteria:**
-- [ ] Single language translation returns expected structure
-- [ ] Multiple language translation returns all results
-- [ ] Provider field is respected when specified
-- [ ] Timing metrics are included in response
+- [x] Single language translation returns expected structure
+- [x] Multiple language translation returns all results
+- [x] Provider field is respected when specified
+- [x] Timing metrics are included in response
 
 #### Task 6.4: Error Handling Verification
 
@@ -697,9 +697,9 @@ Test error scenarios.
 3. Translation provider API error (500 or 503)
 
 **Acceptance Criteria:**
-- [ ] Service unavailable returns 503 with clear error message
-- [ ] Malformed JSON returns 400
-- [ ] Provider errors are caught and logged
+- [x] Service unavailable returns 503 with clear error message
+- [x] Malformed JSON returns 400
+- [x] Provider errors are caught and logged
 
 ---
 
@@ -1047,12 +1047,12 @@ export async function POST(request: NextRequest) {
 
 From PRD/Requirements (REQ-242):
 
-- [ ] Only authenticated administrators can access the translation testing endpoint
-- [ ] Administrators can specify source text, source language, and target language(s)
-- [ ] The response includes the translated text for each requested target language
-- [ ] The response indicates which translation provider handled the request
-- [ ] Unauthorized users receive an appropriate error when attempting to access the endpoint
-- [ ] The endpoint handles errors gracefully and returns informative messages when translation fails
+- [x] Only authenticated administrators can access the translation testing endpoint
+- [x] Administrators can specify source text, source language, and target language(s)
+- [x] The response includes the translated text for each requested target language
+- [x] The response indicates which translation provider handled the request
+- [x] Unauthorized users receive an appropriate error when attempting to access the endpoint
+- [x] The endpoint handles errors gracefully and returns informative messages when translation fails
 
 ---
 

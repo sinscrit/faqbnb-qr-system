@@ -1,21 +1,24 @@
 /**
- * i18n Module Barrel Export
- *
- * Provides clean import paths for i18n utilities and configuration.
+ * i18n Module Exports
+ * Centralized exports for internationalization utilities.
  *
  * Usage:
  *   import { locales, defaultLocale, isValidLocale } from '@/lib/i18n';
- *   import { detectLocale, getCurrentLocale } from '@/lib/i18n';
+ *   import { detectUserLanguage, setLocaleCookie } from '@/lib/i18n';
+ *   import { SUPPORTED_LOCALES, DEFAULT_LOCALE, isSupportedLocale } from '@/lib/i18n';
  *
  * REQ-230: Centralized Locale Configuration and Server-Side Locale Detection
- * Plan-110: L10N Epic 1 - Foundation, Phase 2, Task 2.2
+ * REQ-246: Create Language Detection Utility
+ * Plan-110: L10N Epic 1 - Foundation
  *
+ * @module lib/i18n
  * @created 2026-01-18
  * @lastModified 2026-01-18
  */
 
 // Configuration exports (safe for client and server components)
 export {
+  // Original exports
   locales,
   defaultLocale,
   LOCALE_COOKIE_NAME,
@@ -26,10 +29,20 @@ export {
   isValidLocale,
   normalizeLocale,
   getAllLocales,
+  // REQ-246 aliases for language detection
+  SUPPORTED_LOCALES,
+  DEFAULT_LOCALE,
+  LOCALE_DISPLAY_NAMES,
+  isSupportedLocale,
+  // Types
   type SupportedLocale,
   type LocaleMetadata,
 } from './config';
 
-// Server-side detection exports
-// Note: These are async functions and should only be used in Server Components
-export { detectLocale, getCurrentLocale, parseAcceptLanguage } from './request';
+// Language Detection exports (REQ-246)
+export {
+  detectUserLanguage,
+  setLocaleCookie,
+  type UserLocalePreference,
+  type DetectLanguageOptions,
+} from './language-detection';

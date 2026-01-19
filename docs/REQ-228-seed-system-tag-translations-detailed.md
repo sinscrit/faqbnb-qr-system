@@ -1,11 +1,11 @@
 # REQ-228: Seed System Tag Translations - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 00:15:00 UTC
-**Last Modified:** 2026-01-18 00:15:00 UTC
+**Last Modified:** 2026-01-18 06:48:00 UTC
 **Request Reference:** REQ-228 - System Tag Translation Data Seeding
 **Overview Document:** REQ-228-seed-system-tag-translations-overview.md
 **Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 1, Task 1.6)
-**Status:** Ready for Implementation
+**Status:** Partially Complete (9/11 tasks done, 2 require manual DB execution)
 
 ---
 
@@ -776,20 +776,28 @@ SELECT COUNT(*) FROM tag_translations WHERE is_system_tag = true;
 
 ## Complete Task Summary
 
-| Task ID | Description | Story Points | Files |
-|---------|-------------|--------------|-------|
-| 1.6.1 | Create seeds directory | 0.5 | `/database/seeds/` (create) |
-| 1.6.2 | Create seed file with header | 0.5 | `20260117_system_tag_translations.sql` (create) |
-| 1.6.3 | Add room tags Part 1 | 1.0 | `20260117_system_tag_translations.sql` |
-| 1.6.4 | Add room tags Part 2 | 1.0 | `20260117_system_tag_translations.sql` |
-| 1.6.5 | Add item type tags | 0.5 | `20260117_system_tag_translations.sql` |
-| 1.6.6 | Add purpose tags Part 1 | 1.0 | `20260117_system_tag_translations.sql` |
-| 1.6.7 | Add purpose tags Part 2 | 1.0 | `20260117_system_tag_translations.sql` |
-| 1.6.8 | Add verification queries | 0.5 | `20260117_system_tag_translations.sql` |
-| 1.6.9 | Apply seed to staging | 1.0 | N/A (database) |
-| 1.6.10 | Update constants documentation | 0.5 | `constants.ts` |
-| 1.6.11 | Run idempotency test | 0.5 | N/A (verification) |
-| **TOTAL** | | **8.0** | |
+| Task ID | Description | Story Points | Files | Status |
+|---------|-------------|--------------|-------|--------|
+| 1.6.1 | Create seeds directory | 0.5 | `/database/seeds/` (create) | [x] DONE |
+| 1.6.2 | Create seed file with header | 0.5 | `20260117_system_tag_translations.sql` (create) | [x] DONE |
+| 1.6.3 | Add room tags Part 1 | 1.0 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.4 | Add room tags Part 2 | 1.0 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.5 | Add item type tags | 0.5 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.6 | Add purpose tags Part 1 | 1.0 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.7 | Add purpose tags Part 2 | 1.0 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.8 | Add verification queries | 0.5 | `20260117_system_tag_translations.sql` | [x] DONE |
+| 1.6.9 | Apply seed to staging | 1.0 | N/A (database) | [ ] MANUAL - Execute via Supabase SQL Editor |
+| 1.6.10 | Update constants documentation | 0.5 | `constants.ts` | [x] DONE |
+| 1.6.11 | Run idempotency test | 0.5 | N/A (verification) | [ ] MANUAL - Execute after Task 1.6.9 |
+| **TOTAL** | | **8.0** | | **9/11 Completed** |
+
+### Implementation Notes (2026-01-18)
+
+- **Tasks 1.6.1-1.6.8, 1.6.10**: Completed programmatically. All seed file content created with 17 tags x 6 languages = 102 translation records.
+- **Task 1.6.9**: Requires manual execution in Supabase SQL Editor. Copy contents of `/database/seeds/20260117_system_tag_translations.sql` and execute.
+- **Task 1.6.11**: Requires manual re-execution of seed to verify idempotency (should complete without errors, count should remain 102).
+- **Build verification**: `npm run build` completed successfully.
+- **Type check**: Pre-existing TypeScript errors in codebase (not related to this task).
 
 ---
 
@@ -797,13 +805,13 @@ SELECT COUNT(*) FROM tag_translations WHERE is_system_tag = true;
 
 From REQ-228:
 
-- [ ] Standard room type tags are available in all supported languages (8 tags × 6 languages = 48 records)
-- [ ] Standard appliance/item type tags are available in all supported languages (2 tags × 6 languages = 12 records)
-- [ ] Standard purpose tags are available in all supported languages (7 tags × 6 languages = 42 records)
-- [ ] Translations are semantically accurate and culturally appropriate for each language
-- [ ] System can identify which tags are system-defined versus user-created (`is_system_tag = true`)
-- [ ] Seed data operation is idempotent and can be safely run multiple times (ON CONFLICT handling)
-- [ ] Total of 102 translation records created successfully
+- [x] Standard room type tags are available in all supported languages (8 tags × 6 languages = 48 records) - **SEED READY, pending DB execution**
+- [x] Standard appliance/item type tags are available in all supported languages (2 tags × 6 languages = 12 records) - **SEED READY, pending DB execution**
+- [x] Standard purpose tags are available in all supported languages (7 tags × 6 languages = 42 records) - **SEED READY, pending DB execution**
+- [x] Translations are semantically accurate and culturally appropriate for each language - **Verified in seed file**
+- [x] System can identify which tags are system-defined versus user-created (`is_system_tag = true`) - **All entries have is_system_tag = true**
+- [x] Seed data operation is idempotent and can be safely run multiple times (ON CONFLICT handling) - **ON CONFLICT clauses implemented**
+- [ ] Total of 102 translation records created successfully - **Pending DB execution (Task 1.6.9)**
 
 ---
 

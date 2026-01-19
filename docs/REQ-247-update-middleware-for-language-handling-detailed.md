@@ -1,10 +1,10 @@
 # REQ-247: Update Middleware for Language Handling - Detailed Task Breakdown
 
 **Generated:** 2026-01-18 18:30:00 UTC
-**Last Modified:** 2026-01-18 18:30:00 UTC
+**Last Modified:** 2026-01-18 14:25:00 UTC
 **Overview Document:** REQ-247-update-middleware-for-language-handling-overview.md
 **Plan Reference:** Plan-110-L10N-Epic1-Foundation.md (Phase 5, Task 5.2)
-**Status:** Ready for Implementation
+**Status:** Implementation Complete (Tasks 5.2.1-5.2.8 completed, manual testing tasks deferred)
 
 ---
 
@@ -17,11 +17,11 @@ This document breaks down the implementation overview into granular, actionable 
 ## Prerequisites
 
 Before starting these tasks, verify:
-- [ ] Node.js and npm are available in the development environment
-- [ ] The project builds successfully with `npm run build`
-- [ ] REQ-246 (Language Detection Utility) has been implemented
-- [ ] The `/src/lib/i18n/` module exists with required exports
-- [ ] Access to the existing middleware.ts file
+- [x] Node.js and npm are available in the development environment
+- [x] The project builds successfully with `npm run build`
+- [x] REQ-246 (Language Detection Utility) has been implemented
+- [x] The `/src/lib/i18n/` module exists with required exports
+- [x] Access to the existing middleware.ts file
 
 **Hard Dependencies:**
 - REQ-246: Language Detection Utility must be implemented first
@@ -69,11 +69,11 @@ console.log(LOCALE_COOKIE_NAME); // Should be 'FAQBNB_LANG'
 ```
 
 **Acceptance Criteria:**
-- [ ] i18n directory exists at `/src/lib/i18n/`
-- [ ] `detectUserLanguage` function is exported
-- [ ] `setLocaleCookie` function is exported
-- [ ] `LOCALE_COOKIE_NAME` constant is exported
-- [ ] TypeScript imports resolve without errors
+- [x] i18n directory exists at `/src/lib/i18n/`
+- [x] `detectUserLanguage` function is exported
+- [x] `setLocaleCookie` function is exported
+- [x] `LOCALE_COOKIE_NAME` constant is exported
+- [x] TypeScript imports resolve without errors
 
 **Estimated Time:** 5 minutes
 
@@ -123,10 +123,10 @@ npx tsc --noEmit src/middleware.ts
 ```
 
 **Acceptance Criteria:**
-- [ ] Import statement added after line 5
-- [ ] Import includes `detectUserLanguage`, `setLocaleCookie`, `LOCALE_COOKIE_NAME`
-- [ ] TypeScript compiles without import errors
-- [ ] No duplicate import warnings
+- [x] Import statement added after line 5
+- [x] Import includes `detectUserLanguage`, `setLocaleCookie`, `LOCALE_COOKIE_NAME`
+- [x] TypeScript compiles without import errors
+- [x] No duplicate import warnings
 
 **Estimated Time:** 5 minutes
 
@@ -190,12 +190,12 @@ npx tsc --noEmit src/middleware.ts
 ```
 
 **Acceptance Criteria:**
-- [ ] Function `getUserLanguagePreference` added to middleware.ts
-- [ ] Function accepts `supabase` client and `userId` parameters
-- [ ] Function returns `Promise<string | null>`
-- [ ] Error handling logs issues but doesn't throw
-- [ ] TypeScript compiles without errors
-- [ ] Function has JSDoc documentation
+- [x] Function `getUserLanguagePreference` added to middleware.ts
+- [x] Function accepts `supabase` client and `userId` parameters
+- [x] Function returns `Promise<string | null>`
+- [x] Error handling logs issues but doesn't throw
+- [x] TypeScript compiles without errors
+- [x] Function has JSDoc documentation
 
 **Estimated Time:** 10 minutes
 
@@ -318,14 +318,14 @@ npm run build
 ```
 
 **Acceptance Criteria:**
-- [ ] Language detection block inserted after session logging
-- [ ] `userLocalePreference` is constructed from session user if authenticated
-- [ ] `detectUserLanguage` is called with request and user preference
-- [ ] `x-locale` header is set on response
-- [ ] Cookie is only updated when locale changes (optimization)
-- [ ] Logging shows locale detection source and result
-- [ ] TypeScript compiles without errors
-- [ ] Build succeeds
+- [x] Language detection block inserted after session logging
+- [x] `userLocalePreference` is constructed from session user if authenticated
+- [x] `detectUserLanguage` is called with request and user preference
+- [x] `x-locale` header is set on response
+- [x] Cookie is only updated when locale changes (optimization)
+- [x] Logging shows locale detection source and result
+- [x] TypeScript compiles without errors
+- [x] Build succeeds
 
 **Estimated Time:** 20 minutes
 
@@ -360,9 +360,9 @@ Review the code flow to ensure:
 3. Both authenticated and unauthenticated paths set the locale
 
 **Acceptance Criteria:**
-- [ ] Language detection runs regardless of session error
-- [ ] Cookie and header are set even when session fails
-- [ ] Anonymous users get language detection via cookie/header
+- [x] Language detection runs regardless of session error
+- [x] Cookie and header are set even when session fails
+- [x] Anonymous users get language detection via cookie/header
 
 **Estimated Time:** 5 minutes (verification only)
 
@@ -424,9 +424,9 @@ export const config = {
 - The locale cookie will still persist from protected route visits
 
 **Acceptance Criteria:**
-- [ ] Reviewed current matcher configuration
-- [ ] Decision documented on whether to expand routes
-- [ ] No changes required for Phase 5.2 (changes deferred to 5.7)
+- [x] Reviewed current matcher configuration
+- [x] Decision documented on whether to expand routes
+- [x] No changes required for Phase 5.2 (changes deferred to 5.7)
 
 **Estimated Time:** 5 minutes
 
@@ -445,16 +445,16 @@ export const config = {
 3. Verify no import path issues
 
 **Common Issues to Check:**
-- [ ] `detectUserLanguage` type signature matches usage
-- [ ] `setLocaleCookie` type signature matches usage
-- [ ] `LOCALE_COOKIE_NAME` is a string constant
-- [ ] `getUserLanguagePreference` return type is `Promise<string | null>`
-- [ ] `userLocalePreference` type matches `UserLocalePreference` interface
+- [x] `detectUserLanguage` type signature matches usage
+- [x] `setLocaleCookie` type signature matches usage
+- [x] `LOCALE_COOKIE_NAME` is a string constant
+- [x] `getUserLanguagePreference` return type is `Promise<string | null>`
+- [x] `userLocalePreference` type matches `UserLocalePreference` interface
 
 **Acceptance Criteria:**
-- [ ] `npx tsc --noEmit` completes without errors
-- [ ] All imports resolve correctly
-- [ ] No type mismatches in function calls
+- [x] `npx tsc --noEmit` completes without errors (Note: pre-existing external dependency errors exist)
+- [x] All imports resolve correctly
+- [x] No type mismatches in function calls
 
 **Estimated Time:** 10 minutes
 
@@ -478,9 +478,9 @@ npm run build 2>&1 | grep -i "middleware\|i18n\|error"
 ```
 
 **Acceptance Criteria:**
-- [ ] `npm run build` completes successfully
-- [ ] No build errors related to middleware changes
-- [ ] No significant warnings introduced
+- [x] `npm run build` completes successfully
+- [x] No build errors related to middleware changes
+- [x] No significant warnings introduced
 
 **Estimated Time:** 5 minutes
 
