@@ -4684,3 +4684,40 @@ The articles namespace is extensive and complex, containing numerous technical t
 - Follows namespace pattern established in Phase 2A (common), 2B (dashboard), 2C (workflow), and 2D (items)
 - Enables comprehensive testing of article management features in all supported languages
 - Completes foundation for multilingual content creation and management capabilities
+
+---
+
+## REQ-398: Create Properties Namespace Structure in Translation Files
+
+**Date**: 2026-01-19 23:53
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Create a properties namespace structure in all translation files to organize UI strings related to property management functionality.
+
+### Current Behavior
+Translation files lack a dedicated properties namespace for organizing strings related to property management features. Property-related UI text is either scattered across other namespaces, hardcoded in components, or not yet implemented, making it difficult to maintain consistent terminology and organize property management translations systematically.
+
+### Expected Behavior
+All supported language translation files contain a properties namespace with a clear, logical structure for organizing property management UI strings. The namespace follows established patterns from existing namespaces (common, dashboard, workflow, items, articles) and provides organized sections for property listing, property details, property editing, property settings, and property status displays. The structure accommodates future property management features while maintaining consistency with existing translation architecture.
+
+### User Impact
+Property managers and hosts benefit from consistent, well-organized terminology throughout property management interfaces. Users creating and managing property listings encounter standardized labels, descriptions, and messages presented in their preferred language. The organized namespace structure ensures property management features maintain translation quality and consistency as new functionality is added over time.
+
+### Business Value
+Establishing a properties namespace enables systematic internationalization of property management features, supporting platform expansion into global markets. Clear organization of property-related translations reduces maintenance complexity and ensures consistent terminology across all property management interfaces. The structured approach facilitates future development by providing a clear framework for adding new property management features with proper localization support from the start.
+
+### Acceptance Criteria
+- [ ] English (en) translation file contains new properties namespace with initial structure
+- [ ] German (de) translation file contains properties namespace matching English structure
+- [ ] Spanish (es) translation file contains properties namespace matching English structure
+- [ ] French (fr) translation file contains properties namespace matching English structure
+- [ ] Italian (it) translation file contains properties namespace matching English structure
+- [ ] Dutch (nl) translation file contains properties namespace matching English structure
+- [ ] Namespace structure includes logical sections for organizing property management strings
+- [ ] Structure follows established patterns from existing namespaces for consistency
+- [ ] All translation files maintain valid JSON structure without syntax errors
+- [ ] Namespace includes placeholder keys that demonstrate the organizational structure
+- [ ] Structure accommodates future property features without requiring reorganization
+
