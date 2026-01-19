@@ -1051,9 +1051,42 @@ IMPORTANT: Include a "Route-to-Component Verification" section in your plan docu
 
         prompt = f"""Use agent 00b-pipeline-creator for plan at {plan_path}
 
-Create a pipeline YAML configuration for this implementation plan.
+Create a COMPLETE pipeline YAML configuration for this implementation plan.
 
-IMPORTANT: For the request stage (01-request-fa), use this invocation_template:
+## REQUIRED: All 6 Stages
+
+The pipeline MUST include ALL 6 stages:
+1. request (per-task) - Creates REQ-XXX entries
+2. overview (per-task) - Creates overview documents
+3. details (per-task) - Creates detailed task breakdowns
+4. implementation (per-task) - Implements the code
+5. testcheck (pipeline-level) - Verifies implementation, generates test harness
+6. usecases (pipeline-level) - Generates E2E test scenarios
+
+## REQUIRED: Context Section
+
+Extract from the implementation plan and include a 'context' section:
+
+```yaml
+context:
+  prd_vision: |
+    <Extract the overall goal/vision from the implementation plan header>
+
+  user_stories:
+    - <User story 1>
+    - <User story 2>
+
+  key_features:
+    - <Feature 1 being implemented>
+    - <Feature 2 being implemented>
+
+  epic_specific_scenarios:
+    - <Testing scenarios specific to this epic>
+```
+
+## Request Stage Template
+
+For the request stage (01-request-fa), use this invocation_template:
 
   invocation_template: |
     use agent 01-request-fa to create the request for: {{full_task}}
@@ -1064,7 +1097,54 @@ IMPORTANT: For the request stage (01-request-fa), use this invocation_template:
     3. Format MUST be REQ-XXX (three digits minimum, e.g., REQ-181, not REQ-2)
     4. Append the new request to docs/gen_requests.md
 
-Reference template: claude-pipelines/templates/request-stage-template.yaml"""
+## Overview Stage Template (CRITICAL: Dependencies Section)
+
+For the overview stage (02-techlead-overview), the invocation_template MUST include
+instructions to write a Dependencies section for parallel execution planning.
+
+See: claude-pipelines/templates/overview-stage-template.yaml
+
+The overview document MUST include:
+
+```markdown
+## Dependencies
+
+### Depends On (Completed First)
+- **REQ-XXX** (Task X.Y): <Description>
+  - <What this task provides that we need>
+
+### Blocks (Requires This First)
+- **REQ-XXX** (Task X.Y): <Description>
+  - <What we provide that they need>
+
+### Parallel Safety
+- **Files touched**: <List of files modified>
+- **Conflicts with**: <Tasks with file overlap>
+- **Safe to parallelize with**: <Tasks with no conflicts>
+```
+
+This information is parsed by pipeline_dependencies.py to:
+- Build dependency graph for parallel execution
+- Compute topological execution order
+- Identify parallel clusters (tasks that can run simultaneously)
+- Detect dependency cycles
+
+## Pipeline-Level Stages (testcheck, usecases)
+
+For stages 5 and 6, set `mode: pipeline` and use the templates in:
+- claude-pipelines/templates/pipeline-level-stages-template.yaml
+
+These stages:
+- Run ONCE for the entire pipeline (not per-task)
+- Include {{prd_vision}}, {{user_stories}}, {{epic_specific_scenarios}} variables
+- testcheck generates test harness at src/app/testing/{{pipeline_slug}}/page.tsx
+- usecases adds scenarios to state file
+
+## Reference Templates
+
+- Request stage: claude-pipelines/templates/request-stage-template.yaml
+- Overview stage: claude-pipelines/templates/overview-stage-template.yaml
+- Pipeline-level stages: claude-pipelines/templates/pipeline-level-stages-template.yaml"""
 
         try:
             result = subprocess.run(

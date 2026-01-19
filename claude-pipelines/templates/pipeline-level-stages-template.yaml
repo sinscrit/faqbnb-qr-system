@@ -1,0 +1,266 @@
+# Template for Pipeline-Level Stages (testcheck, usecases)
+# Agent 00b MUST use these templates when generating pipeline configurations
+# Last Modified: 2026-01-19
+#
+# These stages run ONCE for the entire pipeline after all per-task stages complete.
+# They are NOT run for each task - they operate on the pipeline as a whole.
+
+# =============================================================================
+# CONTEXT SECTION (Agent 00b must extract from implementation plan)
+# =============================================================================
+#
+# Agent 00b should extract the following from the implementation plan and embed
+# in a 'context' section of the YAML. This provides testcheck/usecases with the
+# PRD vision and testing context.
+#
+# context:
+#   prd_vision: |
+#     <Extracted from implementation plan header - the overall goal/vision>
+#
+#   user_stories:
+#     - <User story 1 from PRD>
+#     - <User story 2 from PRD>
+#
+#   key_features:
+#     - <Feature 1 being implemented>
+#     - <Feature 2 being implemented>
+#
+#   epic_specific_scenarios:
+#     - <Testing scenarios specific to this epic>
+#     # Examples:
+#     # For L10N epic: "Multi-language content display", "Translation fallback"
+#     # For Auth epic: "Login flows", "Session management"
+#     # For UI epic: "Responsive layout", "Accessibility"
+
+# =============================================================================
+# STAGE 5: TESTCHECK - Pipeline-Level Verification
+# =============================================================================
+
+testcheck_stage_template:
+  - id: testcheck
+    name: "Test Check & Verification"
+    description: "Validate implementation against specifications and generate test harness"
+    mode: pipeline           # Runs ONCE for entire pipeline, NOT per-task
+    enabled: true
+
+    # No prerequisites - testcheck runs whenever called
+    # The automated pipeline calls it once after all implementations complete
+    # Users can call it anytime to test what's been built so far
+
+    agent:
+      name: "06a-pipeline-testcheck"
+      invocation_template: |
+        Run pipeline-level test verification for: {pipeline_name}
+
+        ## PRD Context
+        {prd_vision}
+
+        ## Pipeline Information
+        - **Pipeline Configuration**: {pipeline_yaml_path}
+        - **State File**: {state_file_path}
+        - **Implementation Plan**: {implementation_plan_path}
+        - **Total Tasks**: {total_tasks}
+        - **Request Range**: {first_request_id} through {last_request_id}
+
+        ## Instructions
+
+        1. **Read State File**: Understand which tasks have implementation_completed=true
+
+        2. **Verify Implementations**: For each completed task:
+           - Read its detailed spec ({request_id}-*-detailed.md)
+           - Verify the implementation matches the spec
+           - Note any discrepancies
+
+        3. **Build Verification**: Run these commands and capture results:
+           ```bash
+           npm run type-check
+           npm run build
+           ```
+
+        4. **Generate Test Harness Page**:
+           - Create: src/app/testing/{pipeline_slug}/page.tsx
+           - Include:
+             - LLM Instructions section (from PRD context)
+             - Component Tests list (one per implemented task)
+             - Use Case Tests section (placeholder for usecases stage)
+             - Pipeline Reference (all tasks with status)
+
+        5. **Update State File**: Add verification results:
+           ```json
+           {{
+             "testcheck_completed": true,
+             "testcheck_completed_at": "<timestamp>",
+             "verification": {{
+               "status": "passed|failed",
+               "build_status": "passed|failed",
+               "type_check_status": "passed|failed",
+               "tasks_verified": <count>,
+               "issues_found": []
+             }},
+             "test_harness_url": "src/app/testing/{pipeline_slug}/page.tsx"
+           }}
+           ```
+
+        6. **Report Status**: Provide summary of verification results
+
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*,mcp__playwright__*"
+        - "--dangerously-skip-permissions"
+      timeout: 1200  # 20 minutes
+
+    output:
+      type: verification
+      # Test harness page created at: src/app/testing/{pipeline_slug}/page.tsx
+
+# =============================================================================
+# STAGE 6: USECASES - End-to-End Test Scenario Generation
+# =============================================================================
+
+usecases_stage_template:
+  - id: usecases
+    name: "Use Case Test Generation"
+    description: "Generate aggregate end-to-end test scenarios based on PRD intent"
+    mode: pipeline           # Runs ONCE for entire pipeline
+    enabled: true
+
+    # No hard prerequisites - usecases runs whenever called
+    # Typically runs after testcheck so test harness exists
+    # The automated pipeline calls it once after testcheck
+
+    agent:
+      name: "06b-usecase-generator"
+      invocation_template: |
+        Generate end-to-end use case test scenarios for: {pipeline_name}
+
+        ## PRD Vision
+        {prd_vision}
+
+        ## User Stories
+        {user_stories}
+
+        ## Key Features Implemented
+        {key_features}
+
+        ## Pipeline Information
+        - **State File**: {state_file_path}
+        - **Implementation Plan**: {implementation_plan_path}
+        - **Total Tasks**: {total_tasks}
+        - **Request Range**: {first_request_id} through {last_request_id}
+
+        ## Epic-Specific Testing Scenarios
+        {epic_specific_scenarios}
+
+        ## Instructions
+
+        1. **Understand What Was Built**: Read state file to see completed tasks
+
+        2. **Generate Use Cases** covering:
+
+           **Happy Path Flows** (category: "happy-path")
+           - Primary user journeys that should always work
+           - End-to-end flows testing main features
+
+           **Edge Cases** (category: "edge-case")
+           - Boundary conditions
+           - Error handling scenarios
+           - Empty/null states
+
+           **Epic-Specific Scenarios** (category: "feature-specific")
+           - {epic_specific_scenarios}
+
+        3. **Use Case Format**: Each use case should have:
+           ```json
+           {{
+             "id": "UC-001",
+             "title": "Short descriptive title",
+             "category": "happy-path|edge-case|feature-specific",
+             "description": "What this use case tests",
+             "preconditions": ["Required state before test"],
+             "steps": [
+               {{"step": 1, "action": "What to do", "expected": "What should happen"}}
+             ],
+             "expected_results": ["Final expected outcomes"],
+             "related_tasks": ["1.1", "1.2"]  // Task IDs this tests
+           }}
+           ```
+
+        4. **Update State File**: Add use cases to state:
+           ```json
+           {{
+             "usecases": {{
+               "generated_at": "<timestamp>",
+               "generator": "06b-usecase-generator",
+               "items": [
+                 // Array of use case objects
+               ]
+             }}
+           }}
+           ```
+
+        5. **Update Test Harness**: The orchestrator will regenerate the test harness
+           to include your use cases in the "Use Case Tests" tab
+
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep"
+        - "--dangerously-skip-permissions"
+      timeout: 900  # 15 minutes
+
+    output:
+      type: usecases
+      # Use cases stored in state file under 'usecases' key
+
+# =============================================================================
+# IMPLEMENTATION CONFIGURATION (For testcheck to know what tools to verify)
+# =============================================================================
+#
+# Agent 00b should also add an 'implementation' section based on the tech stack:
+#
+# implementation:
+#   technology:
+#     database: supabase|postgres|mongodb|none
+#     browser_testing: true|false
+#     framework: nextjs|react|vue|etc
+#
+#   required_tools:
+#     - supabase_mcp     # If database: supabase
+#     - playwright_mcp   # If browser_testing: true
+#
+#   precheck:
+#     timeout: 120
+#     clear_next_cache: true  # For Next.js projects
+
+# =============================================================================
+# COMPLETE EXAMPLE
+# =============================================================================
+#
+# Here's how all 6 stages should look in a complete pipeline YAML:
+#
+# request_stages:
+#   # Stage 1-4: Per-task stages
+#   - id: request
+#     ...
+#   - id: overview
+#     ...
+#   - id: details
+#     ...
+#   - id: implementation
+#     ...
+#
+#   # Stage 5-6: Pipeline-level stages (from this template)
+#   - id: testcheck
+#     name: "Test Check & Verification"
+#     mode: pipeline
+#     ...
+#
+#   - id: usecases
+#     name: "Use Case Test Generation"
+#     mode: pipeline
+#     ...

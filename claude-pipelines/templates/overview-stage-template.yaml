@@ -1,0 +1,212 @@
+# Template for Overview Stage (Stage 2)
+# Agent 00b MUST use this template when generating pipeline configurations
+# Last Modified: 2026-01-19
+#
+# The overview stage creates implementation breakdown documents that include:
+# - Technical context and existing patterns
+# - Implementation tasks
+# - CRITICAL: Task-to-task dependency information for parallel execution
+#
+# The dependency section is parsed by pipeline_dependencies.py to build
+# a dependency graph for parallel execution via pipeline_distributor.py.
+
+# =============================================================================
+# STAGE 2: OVERVIEW - Technical Implementation Breakdown
+# =============================================================================
+
+overview_stage_template:
+  - id: overview
+    name: "Create Overview"
+    description: "Pull relevant context from codebase and create implementation breakdown with dependencies"
+    enabled: true
+    agent:
+      name: "02-techlead-overview"
+      invocation_template: |
+        Acting as a Technical Lead, create an implementation breakdown document for:
+        {requests_file_path} - Request #{request_id_num}
+
+        **Implementation Plan Reference**: {implementation_plan_path}
+
+        **Task Context**:
+        - Phase: {phase} - {phase_name}
+        - Task ID: {task_id}
+        - Title: {task_title}
+        - Details:
+            {task_description_formatted}
+
+        **Output file**: docs/{request_id}-{task_title_slug}-overview.md
+
+        **Instructions**:
+        1. Read the request from {requests_file_path} (find Request #{request_id_num})
+        2. Read the implementation plan from {implementation_plan_path}
+        3. Investigate the codebase for existing patterns to follow
+        4. Create the overview document following the standard structure below
+        5. **CRITICAL**: Include the Dependencies section with task-to-task relationships
+
+        ## REQUIRED Document Structure
+
+        The overview document MUST include these sections:
+
+        ```markdown
+        # {request_id}: {task_title} - Implementation Overview
+
+        **Last Modified:** {timestamp}
+        **Request ID:** {request_id}
+        **Phase:** {phase} - {phase_name}
+        **Task ID:** {task_id}
+
+        ---
+
+        ## Summary
+        <Brief description of what this task accomplishes>
+
+        ---
+
+        ## Technical Context
+
+        ### Existing Patterns in Codebase
+        <Table of relevant patterns found in the codebase>
+
+        ---
+
+        ## Implementation Tasks
+        <Breakdown of subtasks>
+
+        ---
+
+        ## Dependencies
+
+        ### Depends On (Completed First)
+        <List tasks that MUST be completed before this one can start>
+
+        Format:
+        - **REQ-XXX** (Task X.Y): <Description>
+          - <What this task provides that we need>
+
+        If no dependencies: "None - this task can start immediately"
+
+        ### Blocks (Requires This First)
+        <List tasks that CANNOT start until this one completes>
+
+        Format:
+        - **REQ-XXX** (Task X.Y): <Description>
+          - <What we provide that they need>
+
+        If nothing blocked: "None - no downstream dependencies"
+
+        ### Parallel Safety
+        <Information for parallel execution planning>
+
+        - **Files touched**: <List of files this task modifies>
+        - **Conflicts with**: <Tasks that modify the same files - cannot parallelize>
+        - **Safe to parallelize with**: <Tasks with no file overlap>
+
+        ---
+
+        ## Authorized Files and Functions for Modification
+        <Table of files authorized for modification>
+
+        ---
+
+        ## Testing Strategy
+        <How to verify the implementation>
+        ```
+
+        ## Dependency Identification Guidelines
+
+        When identifying dependencies, consider:
+
+        1. **Type Dependencies**: Does this task need types/interfaces from another task?
+        2. **Infrastructure Dependencies**: Does this task need database tables, API routes, etc.?
+        3. **Component Dependencies**: Does this task use components created by another task?
+        4. **Configuration Dependencies**: Does this task need env vars, config from another task?
+
+        For **Blocks**, consider:
+        1. What does this task create that other tasks will use?
+        2. Are there downstream tasks that import from files we create?
+        3. Does the implementation plan show tasks that build on this one?
+
+        For **Parallel Safety**, analyze:
+        1. Which files will be created or modified?
+        2. Do any other tasks in the same phase touch these files?
+        3. Could two tasks both try to modify the same function?
+
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Bash,Glob,Grep"
+        - "--dangerously-skip-permissions"
+      timeout: 660
+    output:
+      type: file
+      directory: ../docs/
+      filename: "{request_id}-{task_title_slug}-overview.md"
+
+# =============================================================================
+# DEPENDENCY SECTION PARSING
+# =============================================================================
+#
+# The pipeline_dependencies.py module parses the Dependencies section:
+#
+# - `### Depends On` → TaskDependencies.depends_on (List[str])
+# - `### Blocks` → TaskDependencies.blocks (List[str])
+# - `### Parallel Safety`:
+#   - "Files touched:" → TaskDependencies.files_touched (List[str])
+#   - "Conflicts with:" → TaskDependencies.conflicts_with (List[str])
+#   - "Safe to parallelize with:" → TaskDependencies.safe_to_parallelize (List[str])
+#
+# This information is used by pipeline_distributor.py to:
+# 1. Build a dependency graph
+# 2. Compute topological execution order
+# 3. Identify parallel clusters (tasks that can run simultaneously)
+# 4. Detect dependency cycles
+
+# =============================================================================
+# EXAMPLE: Well-Formed Dependencies Section
+# =============================================================================
+#
+# ## Dependencies
+#
+# ### Depends On (Completed First)
+# - **REQ-235** (Task 3.1): Translation service module structure
+#   - Provides `ITranslationProvider` interface in `/src/lib/translation-service/translation-service.types.ts`
+#   - Creates directory structure we build upon
+#
+# - **REQ-238** (Task 3.4): Rate limiter utility
+#   - Provides `RateLimiter` class for API throttling
+#
+# ### Blocks (Requires This First)
+# - **REQ-240** (Task 3.6): Main translation service wrapper
+#   - Uses our `ClaudeTranslationProvider` class
+#   - Imports from `/src/lib/translation-service/providers/claude-provider.ts`
+#
+# - **REQ-242** (Task 3.8): API endpoint for manual translation testing
+#   - Tests the provider we implement
+#
+# ### Parallel Safety
+# - **Files touched**:
+#   - `/src/lib/translation-service/providers/claude-provider.ts` (create)
+#   - `/src/lib/translation-service/providers/index.ts` (modify - add export)
+#   - `package.json` (modify - add @anthropic-ai/sdk)
+#
+# - **Conflicts with**: REQ-237 (both modify providers/index.ts)
+#
+# - **Safe to parallelize with**: REQ-239 (retry logic - different files)
+
+# =============================================================================
+# INTEGRATION WITH PIPELINE_DEPENDENCIES.PY
+# =============================================================================
+#
+# After each Stage 2 completion, the orchestrator can call:
+#
+#   from pipeline_dependencies import (
+#       extract_dependencies_from_overview,
+#       update_state_dependencies
+#   )
+#
+#   task_deps = extract_dependencies_from_overview(overview_path, config)
+#   state = update_state_dependencies(state, task_deps, config)
+#
+# This incrementally builds the dependency graph in the state file.
