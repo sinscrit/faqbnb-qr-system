@@ -4832,3 +4832,139 @@ The PropertyForm component contains approximately 40 user-facing strings across 
 - Establishes pattern for remaining property management component updates
 - Component contains ~40 strings as estimated in localization plan
 
+---
+
+## REQ-400: Update Property Modals for Internationalization
+
+**Date**: 2026-01-19 15:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+Property management modal dialogs display all user interface text in the user's selected language by retrieving content from the properties namespace translation keys.
+
+### Current Behavior
+The AddPropertyModal and PropertyEditModal components display all UI text in English with hardcoded strings embedded throughout the components. Users creating or editing properties through these modals encounter form titles, field labels, placeholders, validation messages, button text, character counters, error messages, loading states, and accessibility labels only in English regardless of their selected language preference. Modal titles, country dropdown options, address field labels, action button text, and screen reader announcements are all static English strings.
+
+### Expected Behavior
+Both property modal components retrieve all user-facing text from the properties namespace translation keys, displaying content dynamically in the user's selected language. The AddPropertyModal displays a translated "Add New Property" title while PropertyEditModal displays "Edit Property" in the active language. All form field labels including "Property Name," "Address Line 1," "Address Line 2," "City," "State/Province," "Postal Code," and "Country" appear translated. Placeholder text, required field indicators, character count displays, validation error messages, and button labels all render using appropriate translation keys. Country dropdown options display country names in the user's language. Loading states show translated text such as "Creating..." or "Saving..." based on context. Screen reader announcements provide accessibility feedback in the active language. Both modals maintain identical translation patterns for shared elements while using context-specific keys where appropriate.
+
+### User Impact
+Property managers creating or editing properties through modal dialogs interact with interfaces presented entirely in their preferred language. Users see consistent, professionally translated labels, instructions, and feedback messages throughout property creation and editing workflows. The modal experience becomes more accessible to non-English speaking users who can confidently complete property forms with native language guidance. Validation messages and error feedback provide clear, actionable information in the user's language, reducing confusion during property management tasks. Character counters and loading indicators communicate progress in familiar language, improving user confidence during form submission.
+
+### Business Value
+Internationalizing property modals expands platform accessibility to global markets by removing language barriers from critical property management interactions. Consistent translation of modal interfaces demonstrates platform maturity and attention to user experience details. Completing modal internationalization alongside form components establishes comprehensive coverage of the property management workflow, ensuring users never encounter English-only screens during property operations.
+
+### Acceptance Criteria
+- [ ] Both AddPropertyModal and PropertyEditModal import and use next-intl translation hooks
+- [ ] Modal titles render translated text ("Add New Property" vs "Edit Property")
+- [ ] Modal descriptions for screen readers use translation keys
+- [ ] All form field labels retrieve text from properties.modals namespace keys
+- [ ] Placeholder text for all input fields uses translation keys
+- [ ] Required field indicators render translated text or symbols
+- [ ] Character counter displays use translated text with dynamic count interpolation
+- [ ] All validation error messages retrieve text from translation keys with proper variable interpolation
+- [ ] Country dropdown label uses translation key
+- [ ] Country dropdown placeholder uses translation key
+- [ ] Action button labels display translated text (Cancel, Create Property, Save Changes)
+- [ ] Loading state button text renders from translation keys (Creating..., Saving...)
+- [ ] General error messages display translated text
+- [ ] Screen reader announcements use translation keys for loading and error states
+- [ ] Close button aria-label uses translation key
+- [ ] Both modals maintain existing functionality without behavioral regressions
+- [ ] Dynamic text properly interpolates variables using next-intl formatting conventions
+- [ ] Country names remain in English or use localized country name utility if available
+
+### Translation Keys Required
+
+**Modal Titles and Descriptions:**
+- `properties.modals.add.title` - "Add New Property"
+- `properties.modals.add.description` - "Create a new property by entering the name and address information."
+- `properties.modals.edit.title` - "Edit Property"
+- `properties.modals.edit.description` - "Edit the details of your property including name and address information."
+
+**Field Labels (shared between modals):**
+- `properties.modals.fields.name.label` - "Property Name"
+- `properties.modals.fields.name.placeholder` - "e.g., Beach House"
+- `properties.modals.fields.addressLine1.label` - "Address Line 1"
+- `properties.modals.fields.addressLine1.placeholder` - "Street address"
+- `properties.modals.fields.addressLine2.label` - "Address Line 2"
+- `properties.modals.fields.addressLine2.placeholder` - "Apt, suite, unit, etc. (optional)"
+- `properties.modals.fields.city.label` - "City"
+- `properties.modals.fields.city.placeholder` - "City"
+- `properties.modals.fields.state.label` - "State/Province"
+- `properties.modals.fields.state.placeholder` - "State or Province"
+- `properties.modals.fields.postalCode.label` - "Postal Code"
+- `properties.modals.fields.postalCode.placeholder` - "ZIP / Postal code"
+- `properties.modals.fields.country.label` - "Country"
+- `properties.modals.fields.country.placeholder` - "Select country..."
+
+**Validation Messages:**
+- `properties.modals.validation.name.required` - "Property name is required"
+- `properties.modals.validation.name.maxLength` - "Property name must be 100 characters or less"
+- `properties.modals.validation.addressLine1.maxLength` - "Address must be 200 characters or less"
+- `properties.modals.validation.addressLine2.maxLength` - "Address must be 200 characters or less"
+- `properties.modals.validation.city.maxLength` - "City must be 100 characters or less"
+- `properties.modals.validation.state.maxLength` - "State/Province must be 100 characters or less"
+- `properties.modals.validation.postalCode.maxLength` - "Postal code must be 20 characters or less"
+- `properties.modals.validation.country.invalid` - "Please select a valid country"
+- `properties.modals.validation.createFailed` - "Failed to create property"
+- `properties.modals.validation.updateFailed` - "Failed to update property"
+
+**Actions and Buttons:**
+- `properties.modals.actions.cancel` - "Cancel"
+- `properties.modals.actions.create` - "Create Property"
+- `properties.modals.actions.save` - "Save Changes"
+- `properties.modals.actions.creating` - "Creating..."
+- `properties.modals.actions.saving` - "Saving..."
+- `properties.modals.actions.close` - "Close modal"
+
+**Screen Reader Announcements:**
+- `properties.modals.sr.creating` - "Creating property..."
+- `properties.modals.sr.saving` - "Saving property changes..."
+- `properties.modals.sr.error` - "Error: {message}"
+
+**Labels:**
+- `properties.modals.labels.required` - "*"
+- `properties.modals.labels.characterCount` - "{current}/{max}"
+
+### Country Localization Note
+The country dropdown currently displays English country names. This requirement maintains country names in English initially. Future enhancement may implement localized country names using a dedicated country name utility or library (e.g., i18n-iso-countries package) if business requirements dictate localized country names.
+
+### Dependencies
+- REQ-398: Create properties namespace structure in translation files (must be completed first)
+- REQ-399: Update PropertyForm component (provides localization pattern reference)
+- next-intl package already installed and configured in project
+- Properties namespace must contain all required translation keys before component updates
+
+### Components Affected
+- `/src/components/SimpleDashboard/AddPropertyModal.tsx` - ~40 strings
+- `/src/components/SimpleDashboard/PropertyEditModal.tsx` - ~40 strings
+
+### Estimated Effort
+**Medium (M)**
+
+**Breakdown:**
+- Import and configure useTranslations hook in both modals: 20 minutes
+- Replace modal titles and descriptions: 20 minutes
+- Update all field labels with translation keys: 40 minutes
+- Replace placeholder text with translation keys: 30 minutes
+- Update validation messages with proper variable interpolation: 60 minutes
+- Replace button labels and loading states: 30 minutes
+- Update screen reader announcements: 20 minutes
+- Update aria-labels for accessibility: 20 minutes
+- Testing both modals in create and edit flows: 40 minutes
+- Verify all validation scenarios display translated messages: 40 minutes
+- Total: 5-6 hours
+
+**Rationale:**
+Both modal components contain approximately 40 user-facing strings each, with significant overlap in shared form fields and validation logic. While translation key replacement is straightforward, careful attention is required for dynamic content interpolation (character counters, validation messages with variables, error states) and accessibility features (screen reader announcements, aria-labels). The modals share similar structure allowing parallel updates with consistent patterns. Testing requires verification of both create and edit workflows with all validation scenarios to ensure translated messages display correctly. The moderate scope across two components with shared patterns justifies a Medium size estimate.
+
+### Related Tasks
+- Part of Epic 2: Static UI Localization
+- Phase 2F: Property Management localization
+- Task 2F.3: Update property modals (this requirement)
+- Follows REQ-399: Update PropertyForm component
+- Implements translation patterns established in PropertyForm internationalization
+- Completes core property management interface localization
+- Combined with REQ-399, covers primary property creation and editing interfaces

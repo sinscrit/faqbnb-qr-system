@@ -3,6 +3,7 @@
 # =============================================================================
 #
 # Generated: 2026-01-17 15:30:00 UTC
+# Updated: 2026-01-19 (added context for testcheck/usecases stages)
 # Source: ./docs/prd/Plan-110-L10N-Epic1-Foundation.md
 #
 # This pipeline processes the Localization Epic 1 implementation plan through
@@ -14,15 +15,59 @@
 #   python pipeline_orchestrator.py --config ./pipeline-l10n-epic1-foundation.yaml --list-tasks
 #   python pipeline_orchestrator.py --config ./pipeline-l10n-epic1-foundation.yaml --tasks "1,2,3"
 #   python pipeline_orchestrator.py --config ./pipeline-l10n-epic1-foundation.yaml --stages "request,overview"
+#   python pipeline_orchestrator.py --config ./pipeline-l10n-epic1-foundation.yaml --stages "testcheck,usecases"
 #
 # =============================================================================
 
 pipeline:
   name: l10n-epic1-foundation-implementation
-  version: "1.0"
+  version: "1.1"
   description: "Process Localization Epic 1 - Foundation implementation plan through agent pipeline"
   mode: per_request
   default_timeout: 900
+
+# =============================================================================
+# Context for Pipeline-Level Stages (testcheck, usecases)
+# =============================================================================
+# This section provides PRD-level context needed by stages 5 and 6
+
+context:
+  prd_vision: |
+    Establish foundational infrastructure for multi-language support across FAQBNB.
+    Enable property owners to serve international guests with localized content.
+    Support 6 languages: English, French, Spanish, German, Dutch, Italian.
+    Create AI-powered translation service with Claude/OpenAI providers.
+    Build background job processing for asynchronous translations.
+    Implement language detection and switching infrastructure.
+
+  user_stories:
+    - "As a property owner, I want my content translated automatically so international guests can understand instructions"
+    - "As a guest, I want to view the app in my preferred language so I can easily navigate the interface"
+    - "As a system admin, I want translations processed in the background so the UI remains responsive"
+    - "As a developer, I want a unified i18n framework so I can easily add translations to new components"
+    - "As a guest, I want my language preference persisted so I don't have to switch languages on every visit"
+
+  key_features:
+    - "Translation tables (articles, items, links, tags) with status tracking"
+    - "next-intl framework integration for static UI strings"
+    - "Claude and OpenAI translation providers with fallback"
+    - "Rate limiting and retry logic for API calls"
+    - "Background job queue for async translation processing"
+    - "LanguageSwitcher component with persistence (DB for users, cookie for guests)"
+    - "Language detection utility (user preference > cookie > Accept-Language > default)"
+    - "Middleware integration for language context"
+
+  epic_specific_scenarios:
+    - "Verify LanguageSwitcher displays all 6 languages with native names"
+    - "Test language preference persistence for authenticated users"
+    - "Test language preference persistence for guests (cookie-based)"
+    - "Verify translation job queue processes jobs correctly"
+    - "Test rate limiting prevents API abuse"
+    - "Verify retry logic with exponential backoff works on failures"
+    - "Test translation tables have correct RLS policies"
+    - "Verify next-intl t() function works in sample component"
+    - "Test middleware correctly sets language context from detection"
+    - "Verify admin translation testing endpoint works"
 
 # =============================================================================
 # Source Document
@@ -224,19 +269,47 @@ request_stages:
       invocation_template: |
         Run pipeline-level test verification for the L10N Epic 1 - Foundation implementation.
 
+        ## Pipeline Context
         **Pipeline Configuration**: {pipeline_yaml_path}
         **State File**: {state_file_path}
         **Implementation Plan**: {implementation_plan_path}
         **Total Tasks**: {total_tasks}
-        **Request Range**: {first_request_id} through {last_request_id}
+        **Request Range**: REQ-223 through REQ-256
 
-        **Instructions**:
+        ## PRD Vision
+        {prd_vision}
+
+        ## Key Features to Verify
+        {key_features}
+
+        ## Epic-Specific Test Scenarios
+        {epic_specific_scenarios}
+
+        ## Instructions
         1. Read the state file to understand which tasks have been implemented
-        2. For each implemented task, verify the implementation is correct
+        2. Verify each key feature from the list above:
+           - Translation tables exist with correct schema
+           - next-intl integration works (check sample component)
+           - Translation providers are configured
+           - Job queue module exists and has correct types
+           - LanguageSwitcher component renders correctly
+           - Language detection utility works as expected
+           - Middleware handles language context
         3. Run build verification: `npm run type-check` and `npm run build`
-        4. Generate a test harness page for manual QA testing
-        5. Update the state file with verification results
-        6. Report overall verification status
+        4. Create a test harness page at `/testing/l10n-epic1-testharness.md` that documents:
+           - Manual test steps for each epic-specific scenario
+           - Expected results
+           - Pass/Fail status placeholders
+        5. Update the state file with verification results under 'testcheck' key
+        6. Report overall verification status with summary
+
+        ## Output Format
+        Create the test harness document with this structure:
+        - Test Harness Header with epic name and date
+        - Build Verification Results
+        - Feature Verification Checklist
+        - Manual Test Scenarios (from epic_specific_scenarios)
+        - Overall Status Summary
       command:
         - "claude"
         - "-p"
@@ -259,21 +332,65 @@ request_stages:
       invocation_template: |
         Generate end-to-end use case test scenarios for the L10N Epic 1 - Foundation implementation.
 
+        ## Pipeline Context
         **Pipeline Configuration**: {pipeline_yaml_path}
         **State File**: {state_file_path}
         **Implementation Plan**: {implementation_plan_path}
         **Total Tasks**: {total_tasks}
-        **Request Range**: {first_request_id} through {last_request_id}
+        **Request Range**: REQ-223 through REQ-256
 
-        **Instructions**:
-        1. Read the implementation plan to understand the PRD intent and user stories
-        2. Read the state file to see what has been implemented
-        3. Generate comprehensive use case test scenarios that cover:
-           - Happy path flows
-           - Edge cases and error handling
-           - Multi-language scenarios for L10N
-        4. Add the use cases to the state file under 'usecases' key
-        5. Each use case should have: id, title, description, steps, expected_results
+        ## PRD Vision
+        {prd_vision}
+
+        ## User Stories
+        {user_stories}
+
+        ## Key Features Implemented
+        {key_features}
+
+        ## Epic-Specific Scenarios to Cover
+        {epic_specific_scenarios}
+
+        ## Instructions
+        1. Read the implementation plan to understand the full PRD context
+        2. Read the state file to see implementation status for all tasks
+        3. Generate comprehensive use case test scenarios organized by:
+
+           **Category 1: Language Switching & Persistence**
+           - Guest language switching (cookie-based)
+           - Authenticated user language switching (DB-based)
+           - Language preference on return visits
+           - Language detection priority (preference > cookie > Accept-Language > default)
+
+           **Category 2: Translation Service**
+           - Claude provider translation flow
+           - OpenAI fallback when Claude fails
+           - Rate limiting behavior
+           - Retry with exponential backoff
+
+           **Category 3: Background Job Processing**
+           - Job queue insertion
+           - Job processing lifecycle
+           - Concurrent job handling
+           - Failed job retry
+
+           **Category 4: UI Integration**
+           - LanguageSwitcher component behavior
+           - next-intl t() function in components
+           - Locale-specific date/number formatting
+
+        4. Write use cases to `/testing/l10n-epic1-usecases.md`
+        5. Update state file with use cases under 'usecases' key
+
+        ## Use Case Format
+        Each use case should include:
+        - UC-E1-XXX: Unique ID
+        - Title: Brief description
+        - Category: From categories above
+        - Preconditions: Required state before test
+        - Steps: Numbered test steps
+        - Expected Results: What should happen
+        - Verification: How to confirm success
       command:
         - "claude"
         - "-p"

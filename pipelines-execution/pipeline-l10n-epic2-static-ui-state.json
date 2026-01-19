@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506375",
-  "updated_at": "2026-01-19T17:40:38.578659",
+  "updated_at": "2026-01-19T17:43:32.813416",
   "status": "running",
   "current_stage": "request",
   "current_task_index": 63,
@@ -1277,16 +1277,18 @@
       "title": "Update PropertyForm",
       "description": "",
       "raw_match": "- [ ] **Task 2F.2:** Update PropertyForm",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-399",
       "error": null,
-      "processed_at": null,
+      "processed_at": "2026-01-19T17:43:32.813387",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-399",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-detailed.md"
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2F.3",
@@ -2561,7 +2563,7 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 16,
+    "total_requests_generated": 17,
     "last_request_id": "REQ-399",
     "first_request_id": "REQ-304",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
