@@ -3293,6 +3293,31 @@ def format_pipeline_stage_prompt(template: str, config: dict, state: dict) -> st
     first_request_id = state.get('metadata', {}).get('first_request_id', '')
     last_request_id = state.get('metadata', {}).get('last_request_id', '')
 
+    # Get context section for PRD-level information
+    context = config.get('context', {})
+    prd_vision = context.get('prd_vision', 'No PRD vision provided')
+
+    # Format user stories as bullet list
+    user_stories = context.get('user_stories', [])
+    if isinstance(user_stories, list):
+        user_stories_formatted = '\n'.join(f'- {story}' for story in user_stories)
+    else:
+        user_stories_formatted = str(user_stories)
+
+    # Format key features as bullet list
+    key_features = context.get('key_features', [])
+    if isinstance(key_features, list):
+        key_features_formatted = '\n'.join(f'- {feature}' for feature in key_features)
+    else:
+        key_features_formatted = str(key_features)
+
+    # Format epic-specific scenarios as bullet list
+    epic_specific_scenarios = context.get('epic_specific_scenarios', [])
+    if isinstance(epic_specific_scenarios, list):
+        epic_specific_scenarios_formatted = '\n'.join(f'- {scenario}' for scenario in epic_specific_scenarios)
+    else:
+        epic_specific_scenarios_formatted = str(epic_specific_scenarios)
+
     return template.format(
         pipeline_yaml_path=pipeline_yaml_path,
         state_file_path=state_file_path,
@@ -3300,6 +3325,10 @@ def format_pipeline_stage_prompt(template: str, config: dict, state: dict) -> st
         total_tasks=total_tasks,
         first_request_id=first_request_id,
         last_request_id=last_request_id,
+        prd_vision=prd_vision,
+        user_stories=user_stories_formatted,
+        key_features=key_features_formatted,
+        epic_specific_scenarios=epic_specific_scenarios_formatted,
     )
 
 
