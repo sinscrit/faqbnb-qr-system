@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-18T04:23:21.506375",
-  "updated_at": "2026-01-19T17:37:37.950844",
+  "updated_at": "2026-01-19T17:40:38.578659",
   "status": "running",
   "current_stage": "request",
   "current_task_index": 63,
@@ -1282,9 +1282,11 @@
       "error": null,
       "processed_at": null,
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-399"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-399",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-overview.md"
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2F.3",

@@ -711,6 +711,38 @@ request_stages:
 
 See [PDF Daemon Documentation](./pdf-daemon.md#agent-00b-pipeline-creator) for complete requirements.
 
+### Slash Commands
+
+Slash commands provide quick access to pipeline functionality for manual invocation.
+
+| Command | Description | Location |
+|---------|-------------|----------|
+| `/pipeline` | Execute full development pipeline for a request | `~/.claude/commands/pipeline.md` |
+
+#### `/pipeline` Command
+
+The `/pipeline` slash command orchestrates the full development workflow for individual requests.
+
+**Usage:**
+```bash
+/pipeline Add a dark mode toggle to settings     # Full pipeline from Stage 1
+/pipeline REQ-143                                 # Continue from appropriate stage
+/pipeline REQ-143 implement only                  # Skip to Stage 4
+/pipeline plan only: Add export functionality     # Stages 1-3 only
+```
+
+**Stages Executed:**
+1. **Stage 1** (`01-request-fa`): Formalizes request into `docs/gen_requests.md`
+2. **Stage 2** (`02-techlead-overview`): Creates implementation breakdown
+3. **Stage 3** (`03-senior-dev-task-breakdown`): Creates granular tasks
+4. **Stage 4** (`05-spec-implementation`): Implements all tasks
+
+**Smart Resume:** When given a `REQ-XXX` number, automatically detects existing documents and resumes from the appropriate stage.
+
+> **Note**: The `/pipeline` command uses manual agents (`01`, `02`) which always use `docs/gen_requests.md`. For parallel pipelines with separate gen_requests files, use the pipeline orchestrator with YAML configs.
+
+**Backup Location:** `claude-pipelines/commands-backup/pipeline.md`
+
 ### Agent Invocation
 
 Agents are invoked via the Claude CLI with stage-specific prompts:
