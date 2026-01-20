@@ -23,6 +23,7 @@ pipeline:
   name: l10n-epic5-owner-management-implementation
   version: "1.0"
   description: "Process Localization Epic 5 - Owner Translation Management implementation plan through agent pipeline"
+  epic_id: E05  # Epic identifier for REQ numbering (REQ-E05-XXX format)
   mode: per_request
   default_timeout: 900
 

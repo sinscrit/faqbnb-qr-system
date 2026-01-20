@@ -28,6 +28,7 @@ pipeline:
   name: l10n-epic2-static-ui-implementation
   version: "1.0"
   description: "Process Localization Epic 2 - Static UI Translation through agent pipeline"
+  epic_id: E02  # Epic identifier for REQ numbering (REQ-E02-XXX format)
   mode: per_request
   default_timeout: 900
 

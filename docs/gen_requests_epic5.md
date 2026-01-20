@@ -1,2263 +1,1787 @@
-# Generated Requests - Epic 5
+# Generated Requests - Epic 5 (Owner Translation Management)
 
 This file contains auto-generated feature requests for L10N Epic 5.
+Request IDs use format: REQ-E05-XXX
+
+Last Reset: 2026-01-19
+Last Modified: 2026-01-20 23:59 (REQ-E05-033 added)
 
 ---
 
-## REQ-304: Translation Status Query Endpoint
+## REQ-E05-001: Translation Status Query API Endpoint
 
-**Date**: 2026-01-18 00:00
+**Date**: 2026-01-19
 **Type**: NEW FEATURE
 **Size**: M
 
 ### Summary
-Property owners and account administrators should be able to query the translation status of their content across different entity types and languages.
+Property owners need to query the translation status of their content through an API that provides both summary statistics and detailed item-level information.
 
 ### Current Behavior
-No endpoint exists to query translation status. Users cannot see which of their properties, FAQ items, or other content have been translated, are pending translation, or have failed translation.
+No API endpoint exists for property owners to programmatically retrieve translation status information for their content.
 
 ### Expected Behavior
-Users can retrieve translation status information filtered by entity type, specific entity ID, translation status, or property. The response shows both summary counts by status and detailed item-level information. Access is restricted to content belonging to the user's account.
+A GET endpoint returns translation status data filtered by entity type, entity ID, translation status, and property ownership, with appropriate access validation ensuring owners only see their own content.
 
 ### User Impact
-Property owners managing multilingual content need visibility into which items require translation, are in progress, or have completed successfully. Account administrators overseeing multiple properties need aggregate status across their portfolio.
+Property owners can integrate translation status monitoring into their workflows, dashboards display accurate translation progress, and automated systems can trigger actions based on translation completion states.
 
 ### Business Value
-Enables owners to monitor translation coverage and identify content gaps, ensuring guests receive complete information in their preferred language.
+Enables owners to track multilingual content coverage and identify gaps in translated content, supporting better guest experiences across language preferences.
 
 ### Acceptance Criteria
-- [ ] Endpoint accepts optional filters for entity type, entity ID, translation status, and property ID
-- [ ] Response includes summary counts grouped by translation status
-- [ ] Response includes item-level details showing entity, language, status, and timestamps
-- [ ] Only returns translation records for entities owned by the authenticated user's account
-- [ ] Unauthorized users receive appropriate error responses
-- [ ] Performance remains acceptable when querying large result sets
+- [ ] GET request accepts query parameters: entityType, entityId, status, propertyId
+- [ ] Response includes summary counts showing total, pending, completed, and failed translations
+- [ ] Response includes item-level status details with entity information and translation state
+- [ ] System validates that requesting account has access to the specified property
+- [ ] Unauthorized access attempts return appropriate error responses
+- [ ] Empty result sets return successfully with zero counts
+- [ ] Query performance remains acceptable with large datasets (response time under 2 seconds)
 
 ---
 
-## REQ-305: Manual Translation Update Endpoint
-
-**Date**: 2026-01-18 14:30
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to manually update translation content for their properties, FAQ items, and other translatable entities.
-
-### Current Behavior
-No endpoint exists for owners to manually provide or edit translations. Translations can only be created through automated translation services, leaving owners unable to correct machine translations or provide their own preferred translations.
-
-### Expected Behavior
-Authenticated users can submit updated translation content for entities they own. When a manual update is received, the system records the translation as manually reviewed, captures who performed the review, sets the status to indicate manual curation, and validates the user has appropriate access before persisting changes.
-
-### User Impact
-Property owners who are multilingual or who work with professional translators need the ability to override automated translations with manually curated content. This ensures translation quality matches their brand voice and cultural preferences.
-
-### Business Value
-Empowers owners to maintain translation quality and accuracy, reducing guest confusion from poor automated translations and improving booking confidence for international travelers.
-
-### Acceptance Criteria
-- [ ] Endpoint accepts entity type, entity ID, language code, and translation content
-- [ ] Only processes requests from users who own the specified entity
-- [ ] Updates the translation status to reflect manual curation
-- [ ] Records the authenticated user as the reviewer
-- [ ] Returns the updated translation record upon success
-- [ ] Returns authorization error when user lacks access to the entity
-- [ ] Returns validation error when required fields are missing or malformed
-- [ ] Handles non-existent entities gracefully with appropriate error response
-
----
-
-## REQ-306: Content Re-Translation Queue Endpoint
-
-**Date**: 2026-01-18 04:32
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to trigger re-translation of their content, with options to preserve or overwrite manually curated translations.
-
-### Current Behavior
-No endpoint exists to queue re-translation jobs for existing content. Once content is translated, owners cannot request fresh translations when the source content changes significantly or when translation quality needs improvement.
-
-### Expected Behavior
-Authenticated users can submit requests to re-translate one or more entities they own. The request specifies which entities to re-translate and whether to preserve manually edited translations or overwrite them. The system queues translation jobs for each entity-language combination and returns a summary showing how many jobs were queued and how many were skipped due to manual edit protection.
-
-### User Impact
-Property owners who update their content descriptions, amenity details, or FAQ answers need those changes reflected in all translated languages. Owners who find machine translation quality inadequate need the ability to request re-translation after improving source content quality. Owners who have manually curated certain translations need assurance those edits won't be accidentally overwritten.
-
-### Business Value
-Ensures translated content stays synchronized with source content updates, maintaining translation accuracy and relevance for international guests. Respects owner investment in manual translation curation while enabling bulk refresh operations.
-
-### Acceptance Criteria
-- [ ] Endpoint accepts multiple entity identifiers in a single request
-- [ ] Endpoint accepts a parameter specifying whether to skip or overwrite manually edited translations
-- [ ] Only queues re-translation jobs for entities owned by the authenticated user
-- [ ] Response indicates the total number of jobs queued successfully
-- [ ] Response indicates the number of entities skipped due to manual edit protection
-- [ ] Returns authorization error when user lacks access to any specified entity
-- [ ] Returns validation error when entity identifiers are malformed or missing
-- [ ] Handles requests for non-existent entities gracefully without queuing jobs
-
----
-
-## REQ-307: Add Source Version Tracking Columns to Translation Tables
-
-**Date**: 2026-01-18 14:45
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-Translation tables should track when the source content was last modified to identify stale translations that need updating.
-
-### Current Behavior
-Translation tables lack timestamp columns to indicate when the source content was last changed. When property owners update descriptions, amenities, or FAQ answers, the system cannot automatically identify which translations have become outdated and need re-translation.
-
-### Expected Behavior
-Each translation table includes a source_version_at timestamp column that records when the source content was last modified. Indexes exist to efficiently query translations by status, enabling fast identification of outdated translations that require attention. The migration applies cleanly through database tooling without manual intervention.
-
-### User Impact
-Property owners who update their content expect all language versions to reflect those changes. Without version tracking, outdated translations remain invisible, potentially misleading international guests with obsolete information.
-
-### Business Value
-Enables automated detection of stale translations, ensuring international guests always see current information and reducing manual effort required to track which translations need updating after content changes.
-
-### Acceptance Criteria
-- [ ] Migration adds source_version_at column to property_translations table
-- [ ] Migration adds source_version_at column to listing_translations table
-- [ ] Migration adds source_version_at column to faq_translations table
-- [ ] Migration adds source_version_at column to amenity_translations table
-- [ ] Indexes are created to support efficient queries filtering by translation status
-- [ ] Indexes are created to support efficient queries ordering by source version timestamp
-- [ ] Migration executes successfully without errors
-- [ ] Database type definitions reflect the new columns after migration
-
----
-
-## REQ-308: Update TypeScript Database Types for Translation Infrastructure
-
-**Date**: 2026-01-18 15:00
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-TypeScript type definitions should accurately reflect all translation tables and newly added columns to provide type safety and autocomplete support when working with localization data.
-
-### Current Behavior
-Database type definitions may not include translation tables introduced in earlier localization epics or recently added columns such as source language tracking, preferred language settings, and source version timestamps. Developers working with translation data lack accurate type checking and autocomplete assistance.
-
-### Expected Behavior
-Type definitions comprehensively cover all translation tables including property translations, listing translations, FAQ translations, amenity translations, and system tag translations. Type definitions include all newly added columns for source language tracking, user language preferences, translation status tracking, and source version timestamps. Developers receive immediate feedback when accessing database fields, preventing runtime errors from typos or incorrect field references.
-
-### User Impact
-Developers building owner translation management features need reliable type information to avoid bugs. Property owners benefit indirectly through more reliable features with fewer runtime errors caused by type mismatches.
-
-### Business Value
-Reduces development time through accurate autocomplete and catches errors at compile time rather than runtime, improving code quality and reducing bug fix cycles.
-
-### Acceptance Criteria
-- [ ] Type definitions include all translation table structures
-- [ ] Type definitions include source_language columns added to core entity tables
-- [ ] Type definitions include preferred_language columns added to user-related tables
-- [ ] Type definitions include source_version_at columns added to translation tables
-- [ ] Type definitions include all translation status and metadata fields
-- [ ] TypeScript compiler successfully validates code using the updated types
-- [ ] Autocomplete suggestions appear correctly when accessing translation fields in development environment
-
----
-
-## REQ-309: Create TranslationManagement Component Type Definitions
-
-**Date**: 2026-01-18 15:15
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-The TranslationManagement component system should have a centralized types file defining all shared interfaces and type definitions used across translation management UI components.
-
-### Current Behavior
-No type definitions exist for the TranslationManagement component system. Developers building owner-facing translation management interfaces lack shared type contracts for translation records, status information, filter criteria, and component props.
-
-### Expected Behavior
-A dedicated types file exports TypeScript interfaces and types covering translation records with their metadata, translation status enumerations, filter and sort criteria for translation queries, component props for translation management widgets, and callback function signatures for translation operations. Components import these types to ensure consistent data structures and type-safe prop passing throughout the translation management interface.
-
-### User Impact
-Property owners interacting with translation management features benefit from a more reliable and consistent user interface. Developers building these features have clear type contracts that prevent prop mismatches and data structure inconsistencies.
-
-### Business Value
-Establishes a strong type foundation for the translation management UI system, reducing bugs from type mismatches and improving developer productivity through autocomplete and compile-time error detection.
-
-### Acceptance Criteria
-- [ ] Types file is created in the TranslationManagement component directory
-- [ ] Interfaces are defined for translation record data structures
-- [ ] Enumerations or union types are defined for translation status values
-- [ ] Interfaces are defined for filter and query parameters
-- [ ] Component prop types are defined for reusable translation management widgets
-- [ ] Callback function types are defined for translation operations
-- [ ] All exported types include JSDoc comments explaining their purpose
-- [ ] TypeScript compiler validates the types file without errors
-- [ ] Types are successfully imported and used in at least one component
-
----
-
-## REQ-310: Create TranslationPreviewPanel Component
-
-**Date**: 2026-01-18 15:30
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to view a detailed preview of all translations for a selected content item in a slide-in panel showing source content, translation status across all languages, and available actions.
-
-### Current Behavior
-No preview panel exists to display comprehensive translation information for individual content items. Property owners cannot see at a glance which languages have completed translations, which are pending, or which have failed. There is no unified interface to review source content alongside its translations and take actions like editing or requesting re-translation.
-
-### Expected Behavior
-When a property owner selects a content item from the translation management interface, a panel slides in from the right side of the screen. The panel displays the source content at the top for reference, followed by a list of all six supported languages showing their current translation status. Each language entry indicates whether translation is complete, pending, failed, or manually edited. Action buttons allow the owner to edit translations, request re-translation for specific languages, or retry failed translations. The panel width is fixed at 400 pixels and overlays the main content without disrupting the layout.
-
-### User Impact
-Property owners managing translations across multiple languages need a quick way to assess translation coverage for each piece of content. Viewing all language statuses in one place eliminates the need to navigate between separate pages or toggle multiple dropdowns. Having action buttons directly in the preview panel streamlines the workflow for fixing translation issues or updating content.
-
-### Business Value
-Reduces time spent managing translations by consolidating information and actions into a single, accessible interface. Improves translation coverage by making gaps immediately visible, ensuring international guests receive complete information in their preferred language.
-
-### Acceptance Criteria
-- [ ] Panel slides in from the right side of the viewport when triggered
-- [ ] Panel width is exactly 400 pixels
-- [ ] Source content is displayed prominently at the top of the panel
-- [ ] All six supported languages are listed with their current translation status
-- [ ] Status indicators clearly differentiate between complete, pending, failed, and manually edited states
-- [ ] Edit button allows modification of translation content for selected language
-- [ ] Re-translate button triggers re-translation for selected language
-- [ ] Retry button appears for failed translations and triggers retry operation
-- [ ] Panel closes when user clicks outside the panel or activates a close control
-- [ ] Panel does not disrupt the main content layout when open
-- [ ] Panel is keyboard accessible for navigation and actions
-
----
-
-## REQ-311: Create TranslationStatusItem Component
-
-**Date**: 2026-01-18 15:45
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-Property owners viewing translation details in the preview panel should see each language represented as a single row displaying language identity, translation status, a preview of the translated content, and available actions.
-
-### Current Behavior
-No component exists to display individual language translation status within the preview panel. Property owners cannot see language-specific translation information or take actions on individual language translations.
-
-### Expected Behavior
-Each language is displayed as a distinct row within the TranslationPreviewPanel. The row shows the language flag icon on the left, followed by the language name, a colored status indicator showing whether translation is complete, pending, failed, or manually edited, and a preview of the translated text truncated to fit the row. Action buttons on the right allow owners to edit the translation, request re-translation, or retry failed translations. Status indicators use color coding: green for complete translations, orange for pending, red for failed, and purple for manually curated translations.
-
-### User Impact
-Property owners reviewing translation coverage for their content need to quickly scan which languages are complete and which need attention. Color-coded status indicators and preview text enable rapid assessment without expanding each item. Action buttons positioned on each row streamline the workflow for addressing translation issues or making edits.
-
-### Business Value
-Accelerates translation management workflows by presenting language status in a scannable format with immediate access to relevant actions, reducing the time owners spend maintaining multilingual content.
-
-### Acceptance Criteria
-- [ ] Row displays language flag icon aligned to the left
-- [ ] Row displays language name adjacent to the flag
-- [ ] Row displays status indicator using specified color coding: green for complete, orange for pending, red for failed, purple for manually edited
-- [ ] Row displays preview text of the translation, truncated appropriately to fit within row width
-- [ ] Row includes action buttons for edit, re-translate, and retry operations
-- [ ] Retry button appears only when status indicates translation failure
-- [ ] Row maintains consistent height across different languages and content lengths
-- [ ] Row is keyboard accessible for navigation and action triggering
-- [ ] Row styling provides clear visual separation from adjacent rows
-- [ ] Clicking action buttons triggers appropriate translation operations
-
----
-
-## REQ-312: Create TranslationProgressBar Component
-
-**Date**: 2026-01-18 04:53
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-Property owners viewing translation status in the preview panel should see a visual progress indicator showing how many languages have completed translation out of the total number of supported languages.
-
-### Current Behavior
-No progress indicator exists to show translation completion status at a glance. Property owners cannot quickly assess overall translation coverage for a content item without scanning through all individual language status rows. There is no visual feedback during active translation processing to indicate that work is in progress.
-
-### Expected Behavior
-A progress bar appears at the top of the TranslationPreviewPanel displaying text in the format "X/Y translations complete" where X represents the count of successfully completed translations and Y represents the total number of supported languages. The bar visually fills from left to right proportional to the completion percentage. When translations are actively processing, the progress bar displays an animated state such as a moving gradient or pulsing effect to provide visual feedback that work is underway. The component updates in real-time as translation statuses change.
-
-### User Impact
-Property owners managing content across multiple languages need to quickly understand translation coverage without reading through each language entry. A visual progress indicator allows instant recognition of whether content is fully translated, partially translated, or missing most translations. Animation during processing reassures owners that their translation requests are being handled and prevents uncertainty about whether the system is working.
-
-### Business Value
-Improves user experience by providing immediate visual feedback about translation status, reducing cognitive load and time spent assessing translation coverage. Animated processing states increase user confidence in the system and reduce support requests about whether translations are working.
-
-### Acceptance Criteria
-- [ ] Component displays in a prominent position within the TranslationPreviewPanel
-- [ ] Text shows completion count in the format "X/Y translations complete"
-- [ ] Visual bar fills proportionally from 0% to 100% based on completion ratio
-- [ ] Component distinguishes between complete, pending, failed, and manually edited statuses when calculating completion count
-- [ ] Component displays animated state when one or more translations are actively processing
-- [ ] Animation is smooth and does not cause performance issues
-- [ ] Progress bar updates automatically when translation statuses change
-- [ ] Component is accessible with appropriate ARIA labels describing progress state
-- [ ] Component styling is consistent with the overall design system
-- [ ] Component handles edge cases such as zero translations or all failed translations gracefully
-
----
-
-## REQ-313: Create TranslationEditor Component
-
-**Date**: 2026-01-18 04:57
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to edit translation content through a modal dialog that displays the original source text alongside the translation text, allowing direct comparison while making edits.
-
-### Current Behavior
-No translation editing interface exists. Property owners cannot manually review or modify automated translations to ensure quality, correct errors, or adjust tone to match their brand voice. There is no way to see source content and translation side by side during editing, making it difficult to ensure translation accuracy.
-
-### Expected Behavior
-When a property owner chooses to edit a translation, a modal dialog opens using Radix Dialog. The modal displays a side-by-side view with the original source content on the left and an editable textarea for the translation on the right. A character count displays below the textarea, showing the current length and warning if the translation significantly exceeds or falls short of the source length. Save and Cancel buttons allow the owner to commit changes or dismiss edits. The dialog tracks dirty state, prompting for confirmation if the owner attempts to close with unsaved changes. When saved, the translation is marked as manually reviewed and the modal closes automatically.
-
-### User Impact
-Property owners who are multilingual or work with professional translators need the ability to refine automated translations. Seeing source and translation together ensures translations maintain the intended meaning and tone. Character count feedback helps owners ensure translations are appropriately detailed without being verbose. Dirty state tracking prevents accidental loss of editing work when navigating away from the modal.
-
-### Business Value
-Empowers property owners to maintain high translation quality that matches their brand standards, improving guest trust and booking confidence for international travelers. Reduces guest confusion from poor automated translations by enabling owner curation.
-
-### Acceptance Criteria
-- [ ] Modal opens when edit action is triggered for a translation
-- [ ] Modal uses Radix Dialog component for accessibility and keyboard navigation
-- [ ] Left pane displays original source content in read-only format
-- [ ] Right pane displays editable textarea populated with current translation text
-- [ ] Character count displays below textarea showing current character length
-- [ ] Character count includes warning indicator if translation length differs significantly from source
-- [ ] Save button commits translation changes and closes modal
-- [ ] Cancel button dismisses modal without saving changes
-- [ ] Modal tracks dirty state and prompts for confirmation if user attempts to close with unsaved edits
-- [ ] Saved translations are marked with manually reviewed status
-- [ ] Modal is responsive and usable on tablet and desktop viewports
-- [ ] Modal is keyboard accessible with proper focus management
-- [ ] Textarea supports standard editing operations including undo/redo
-
----
-
-## REQ-314: Create useTranslationStatus Hook
-
-**Date**: 2026-01-18 16:00
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners viewing translation management interfaces should be able to query translation status for individual entities or entire properties through a reusable React hook that handles data fetching, loading states, and error conditions.
-
-### Current Behavior
-No reusable hook exists to fetch translation status data from the backend API. Components attempting to display translation information must implement their own data fetching logic, leading to code duplication and inconsistent error handling patterns. There is no standard way to query translation status at different scopes such as a single entity versus property-wide aggregates.
-
-### Expected Behavior
-The useTranslationStatus hook accepts parameters specifying whether to fetch status for a single entity or for all entities within a property. When called with an entity ID, the hook fetches translation status records for that specific entity across all supported languages. When called with a property ID, the hook fetches aggregated translation status covering all translatable entities within that property. The hook returns an object containing loading, error, and data states following standard React Query patterns. The hook handles authentication errors, network failures, and missing data gracefully, providing clear error messages to consuming components.
-
-### User Impact
-Property owners navigating translation management screens expect immediate feedback about loading status and clear error messages when data cannot be retrieved. Developers building these screens benefit from a consistent data fetching pattern that eliminates boilerplate code and ensures uniform error handling across all translation interfaces.
-
-### Business Value
-Reduces development time by providing a tested, reusable data fetching abstraction. Improves user experience through consistent loading and error states across all translation features. Simplifies maintenance by centralizing API integration logic in a single location.
-
-### Acceptance Criteria
-- [ ] Hook accepts optional entity ID parameter for single-entity queries
-- [ ] Hook accepts optional property ID parameter for property-wide queries
-- [ ] Hook returns loading boolean indicating whether data is being fetched
-- [ ] Hook returns error object containing error details when requests fail
-- [ ] Hook returns data object containing translation status records when successful
-- [ ] Hook automatically refetches data when parameters change
-- [ ] Hook handles authentication errors by returning appropriate error state
-- [ ] Hook handles network failures gracefully without crashing consuming components
-- [ ] Hook provides TypeScript types for all return values
-- [ ] Hook can be used by multiple components simultaneously without conflicts
-
----
-
-## REQ-315: Create useTranslationRealtime Hook
-
-**Date**: 2026-01-18 05:26
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners viewing translation management interfaces should receive automatic updates when translations complete, fail, or change status without needing to manually refresh the page.
-
-### Current Behavior
-No realtime subscription mechanism exists to push translation status updates to the client. Property owners must manually refresh the page or re-query the API to see updated translation statuses after requesting translations or re-translations. This creates a poor user experience where owners are uncertain whether their translation requests are being processed and must repeatedly check for updates.
-
-### Expected Behavior
-The useTranslationRealtime hook establishes a Supabase realtime subscription to translation table changes filtered by the authenticated user's account. When translation records are inserted, updated, or deleted, the hook receives push notifications from the database and automatically updates the local state, triggering UI re-renders to reflect the new status. The hook accepts entity ID or property ID parameters to scope subscriptions appropriately, reducing unnecessary updates for unrelated content. When the component unmounts or parameters change, the hook cleanly unsubscribes from realtime channels to prevent memory leaks and orphaned subscriptions.
-
-### User Impact
-Property owners who request translations or re-translations want immediate visual feedback when processing completes. Automatic updates eliminate the frustration of repeatedly refreshing the page to check status. Real-time notifications reassure owners that their requests are being handled and provide immediate visibility when translations complete successfully or encounter errors requiring attention.
-
-### Business Value
-Improves user experience by providing instant feedback on translation operations, reducing perceived latency and increasing confidence in the platform. Eliminates support requests about whether translations are processing by making status changes immediately visible.
-
-### Acceptance Criteria
-- [ ] Hook establishes Supabase realtime subscription when mounted
-- [ ] Hook filters subscription to only receive updates for the authenticated user's account
-- [ ] Hook accepts optional entity ID parameter to scope subscription to specific entity
-- [ ] Hook accepts optional property ID parameter to scope subscription to specific property
-- [ ] Hook automatically updates local state when translation insert events are received
-- [ ] Hook automatically updates local state when translation update events are received
-- [ ] Hook automatically updates local state when translation delete events are received
-- [ ] Hook cleanly unsubscribes from realtime channel when component unmounts
-- [ ] Hook resubscribes with new filters when parameters change
-- [ ] Hook handles realtime connection errors gracefully without crashing
-- [ ] Hook provides TypeScript types for subscription data payloads
-- [ ] Hook can be used by multiple components simultaneously without conflicts
-- [ ] UI components using the hook re-render automatically when translation status changes
-
----
-
-## REQ-316: Create TranslationStatusWidget Component
-
-**Date**: 2026-01-18 17:00
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners and account administrators viewing the dashboard should see a translation status summary widget displaying overall translation progress, counts by status, and a link to view detailed translation management.
-
-### Current Behavior
-No dashboard widget exists to display translation status information. Property owners navigating to the dashboard cannot see at a glance how many of their content items have been translated, are pending translation, or have failed. There is no quick access point from the dashboard to the detailed translation management interface.
-
-### Expected Behavior
-A compact summary card appears on the dashboard showing translation coverage across all content owned by the authenticated user's account. The widget displays a progress bar with percentage completion representing the ratio of fully translated content items to total translatable items. Below the progress bar, status counts show the breakdown of items by translation status: complete, partial (some languages translated but not all), pending (translation queued but not started), and failed (translation encountered errors). A "View Details" link at the bottom of the widget navigates to the full translation management interface where owners can take action on specific items.
-
-### User Impact
-Property owners managing multilingual content need visibility into translation coverage from the dashboard without navigating to specialized screens. Seeing translation progress and status counts at a glance helps owners prioritize translation work and identify issues requiring attention. Direct access from the dashboard to detailed translation management streamlines the workflow for addressing translation gaps. Account administrators overseeing multiple properties benefit from aggregate translation metrics showing portfolio-wide coverage. Identifying properties with low translation completion enables targeted intervention to ensure all listings present complete information to international guests.
-
-### Business Value
-Increases translation completion rates by making translation status visible and easily accessible from the primary dashboard interface. Higher translation coverage improves discoverability for international guests and increases booking potential across all supported language markets.
-
-### Acceptance Criteria
-- [ ] Widget displays as a summary card component on the dashboard
-- [ ] Widget shows progress bar indicating overall translation completion percentage
-- [ ] Widget displays count of content items with status "complete" (all languages translated)
-- [ ] Widget displays count of content items with status "partial" (some languages translated)
-- [ ] Widget displays count of content items with status "pending" (translation queued)
-- [ ] Widget displays count of content items with status "failed" (translation errors)
-- [ ] Widget includes "View Details" link that navigates to translation management page
-- [ ] Widget only displays data for content belonging to the authenticated user's account
-- [ ] Widget shows loading state while translation status data is being fetched
-- [ ] Widget displays appropriate empty state when no translatable content exists
-- [ ] Widget displays error state if translation status data cannot be retrieved
-- [ ] Widget is responsive and adapts layout for tablet and desktop viewports
-- [ ] Widget is keyboard accessible with proper focus management for the "View Details" link
-
----
-
-## REQ-317: Create TranslationStatusColumn Component
-
-**Date**: 2026-01-18 17:30
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners viewing lists of content items should see a compact column displaying translation status across all supported languages using visual indicators that can be clicked to open the detailed preview panel.
-
-### Current Behavior
-No compact status indicator exists for displaying translation coverage in table columns. When property owners view lists of their content items, FAQs, or properties, they cannot quickly assess which items have complete translation coverage and which need attention. There is no visual way to scan translation status across multiple content items simultaneously.
-
-### Expected Behavior
-A compact status column appears in content tables showing six small indicators representing the six supported languages. Each indicator uses a dot or small icon with color coding to show translation status for that language: green for complete translations, orange for pending, red for failed, gray for not started, and purple for manually edited. Owners can hover over an indicator to see a tooltip identifying the language. Clicking anywhere within the status column for a row opens the TranslationPreviewPanel for that content item, providing quick access to detailed translation information and actions without leaving the table view.
-
-### User Impact
-Property owners managing multiple content items need to quickly identify which items have incomplete translation coverage requiring attention. Scanning a table with visual status indicators is significantly faster than opening each item individually to check translation status. Color coding allows instant recognition of problem states such as failed translations that need intervention. One-click access to the detailed preview panel streamlines the workflow for addressing translation issues across many items.
-
-### User Impact
-Property owners managing multiple content items across different languages need to quickly identify which items have complete translation coverage and which require attention. Scanning visual indicators in a table column is much faster than checking each item individually. Color-coded status allows instant recognition of issues requiring intervention.
-
-### Business Value
-Improves translation management efficiency by enabling rapid identification of incomplete or failed translations across many content items. Higher visibility of translation gaps leads to improved translation coverage, ensuring international guests receive complete information in their preferred language.
-
-### Acceptance Criteria
-- [ ] Component displays exactly six indicators representing each supported language
-- [ ] Each indicator uses color coding: green for complete, orange for pending, red for failed, gray for not started, purple for manually edited
-- [ ] Indicators are compact enough to fit comfortably within a table column without wrapping
-- [ ] Hovering over an indicator displays a tooltip showing the language name and status
-- [ ] Clicking the status column opens the TranslationPreviewPanel for that content item
-- [ ] Component accepts translation status data as a prop including status for each language
-- [ ] Component handles missing or incomplete translation data gracefully without breaking layout
-- [ ] Component maintains consistent alignment and spacing when used in table rows with varying content heights
-- [ ] Component is keyboard accessible allowing users to activate the preview panel via keyboard
-- [ ] Component provides appropriate ARIA labels for screen readers
-- [ ] Visual indicators remain legible at typical table cell sizes
-
----
-
-## REQ-318: Create TranslationStatusFilter Component
-
-**Date**: 2026-01-18 18:15
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-Property owners viewing lists of content items should be able to filter the list by translation status to quickly focus on items requiring translation work or review.
-
-### Current Behavior
-No filter control exists to narrow content lists based on translation status. Property owners viewing all their content items cannot selectively display only items that are fully translated, partially translated, pending translation, have failed translations, or have been manually edited. Owners must scan the entire list to identify items requiring attention, which becomes inefficient as content volume grows.
-
-### Expected Behavior
-A dropdown filter control appears above content item lists offering translation status options. The dropdown displays "Translation Status: All" as the default selected value. When clicked, the dropdown expands to show all available filter options: All, Fully Translated, Partially Translated, Pending, Failed, and Manually Edited. When an owner selects a specific status, the list immediately updates to display only items matching that translation status. The selected filter value persists in the dropdown label, showing owners which filter is currently active. Selecting "All" returns the view to showing all items regardless of translation status.
-
-### User Impact
-Property owners managing translation coverage across many content items need efficient ways to identify specific translation states requiring action. Filtering to show only pending items helps owners monitor active translation work. Filtering to failed items enables quick identification of errors requiring intervention. Filtering to partially translated items highlights content with incomplete language coverage. Reducing visual clutter by hiding irrelevant items speeds up translation management workflows.
-
-### Business Value
-Improves translation management efficiency by allowing owners to focus attention on specific categories of translation work. Faster identification of translation issues leads to quicker resolution and higher overall translation coverage, ensuring international guests receive complete information.
-
-### Acceptance Criteria
-- [ ] Component renders as a dropdown control positioned above content item lists
-- [ ] Dropdown displays "Translation Status: All" as the default label when no filter is active
-- [ ] Dropdown offers six filter options: All, Fully Translated, Partially Translated, Pending, Failed, Manually Edited
-- [ ] Selecting a filter option immediately updates the content list to show only matching items
-- [ ] Dropdown label updates to reflect the currently selected filter option
-- [ ] Selecting "All" removes any active filter and displays all content items
-- [ ] Component emits filter change events that parent components can handle to update list data
-- [ ] Component accepts current filter value as a prop to support controlled component pattern
-- [ ] Dropdown is keyboard accessible with arrow key navigation through options
-- [ ] Dropdown provides appropriate ARIA labels for screen readers
-- [ ] Component styling is consistent with the overall design system
-- [ ] Component is responsive and usable on tablet and desktop viewports
-
----
-
-## REQ-319: Integrate Translation Status Widget into Dashboard
-
-**Date**: 2026-01-18 18:30
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-The dashboard should display the TranslationStatusWidget component to provide property owners with immediate visibility into translation coverage when they log in.
-
-### Current Behavior
-The dashboard layout does not include the TranslationStatusWidget component. Property owners viewing the dashboard cannot see translation status information without navigating to a separate translation management page. Translation coverage metrics are not surfaced at the primary entry point where owners first engage with the application.
-
-### Expected Behavior
-The dashboard page displays the TranslationStatusWidget in a prominent position within the layout, typically in the first row of summary cards alongside other key metrics. When the dashboard loads, translation status data is automatically fetched and displayed in the widget. The widget shows overall translation progress, counts by status, and provides a direct link to detailed translation management. The dashboard fetches the status summary on initial page load and displays appropriate loading states while data is being retrieved.
-
-### User Impact
-Property owners logging into the platform see translation status immediately without requiring navigation to specialized screens. Prominent placement on the dashboard increases awareness of translation coverage and makes identifying translation gaps part of the daily workflow. Quick access to translation metrics encourages owners to maintain high translation coverage across all supported languages.
-
-### Business Value
-Increases translation completion rates by surfacing translation status at the primary dashboard touchpoint. Higher visibility of translation metrics encourages proactive management of multilingual content, improving discoverability for international guests and expanding booking potential across language markets.
-
-### Acceptance Criteria
-- [ ] TranslationStatusWidget component is imported into the dashboard page file
-- [ ] Widget is positioned in a prominent location within the dashboard layout
-- [ ] Dashboard fetches translation status summary data when the page loads
-- [ ] Widget receives translation status data through props or context
-- [ ] Widget displays loading state during initial data fetch
-- [ ] Widget updates automatically if translation status changes while dashboard is visible
-- [ ] Widget maintains responsive layout on tablet and desktop viewports
-- [ ] Widget does not break dashboard layout when added to the page
-- [ ] Widget is keyboard accessible and integrates with dashboard navigation flow
-- [ ] Widget only displays for authenticated users with appropriate permissions
-
----
-
-## REQ-320: Add Translation Status Column to Items Grid
-
-**Date**: 2026-01-18 20:30
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners viewing their content items in grid or table layouts should see translation status directly in the list view to quickly identify which items require translation attention.
-
-### Current Behavior
-The ItemGrid component displays item information without translation status visibility. Property owners cannot see which items have complete translation coverage, partial translations, or failed translations without opening each item individually. Translation management requires navigating away from the item list to a separate interface, breaking the workflow continuity.
-
-### Expected Behavior
-The ItemGrid component includes an optional translation status column displaying compact visual indicators for all six supported languages. Each row shows translation status using the TranslationStatusColumn component, which displays color-coded dots or icons representing completion status per language. Clicking the translation status column for any item opens the TranslationPreviewPanel, allowing owners to view details and take action without leaving the item list. The column appears when translation features are enabled and can be toggled on or off based on user preferences or screen size constraints.
-
-### User Impact
-Property owners managing items across multiple languages need to quickly identify translation gaps while browsing their item inventory. Inline translation status eliminates the need to open items individually to check translation coverage. One-click access to detailed translation controls streamlines the workflow for addressing translation issues across many items. Viewing translation status alongside other item attributes provides holistic visibility into content completeness.
-
-### Business Value
-Reduces time spent managing translations by surfacing status information directly in the primary item management interface. Increases translation completion rates by making gaps immediately visible during routine content management activities, ensuring international guests receive complete information in all supported languages.
-
-### Acceptance Criteria
-- [ ] ItemGrid component accepts an optional prop to enable translation status column
-- [ ] Translation status column displays when enabled via prop or feature flag
-- [ ] Each row includes TranslationStatusColumn component showing status for all six languages
-- [ ] Translation status column uses compact visual indicators that fit within standard table cell dimensions
-- [ ] Clicking translation status column opens TranslationPreviewPanel for that specific item
-- [ ] Column layout adapts responsively, hiding on narrow viewports where space is constrained
-- [ ] Column remains aligned and properly spaced when items have varying content lengths
-- [ ] Component handles missing translation data gracefully without breaking grid layout
-- [ ] Translation status updates automatically when status changes occur
-- [ ] Feature integrates with existing ItemGrid filtering and sorting functionality
-- [ ] Column is keyboard accessible allowing users to open preview panel via keyboard navigation
-
----
-
-## REQ-321: Create BulkTranslationBar Component
-
-**Date**: 2026-01-18 05:54
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners who have selected multiple content items should see an action bar offering bulk translation operations across all selected items simultaneously.
-
-### Current Behavior
-No bulk action interface exists for translation operations. Property owners who need to re-translate multiple items must open each item individually and request re-translation one at a time. When managing translation coverage across many items, this repetitive workflow becomes time-consuming and error-prone. There is no visual indicator showing which items are currently selected or how many bulk operations will affect.
-
-### Expected Behavior
-When a property owner selects one or more content items from the management interface, a floating action bar appears at the bottom of the viewport displaying the count of selected items. The bar offers two bulk translation actions: "Re-translate All Languages" which queues re-translation jobs for all six supported languages across all selected items, and "Re-translate Specific Language" which opens a language selector allowing the owner to choose one language for bulk re-translation. When a bulk operation is triggered, the bar displays a progress indicator showing how many items have been processed out of the total selection. A dismiss control allows owners to clear the selection and hide the action bar. The bar remains visible and fixed at the bottom as owners scroll through the item list, ensuring bulk actions remain accessible regardless of scroll position.
-
-### User Impact
-Property owners managing translation updates across multiple properties or content items after making source content improvements need efficient ways to trigger re-translation at scale. Bulk operations eliminate the tedious process of opening each item individually to request re-translation. Visual feedback during processing reassures owners that operations are progressing and provides clarity about completion status. Being able to target specific languages for bulk re-translation allows surgical updates when only certain language translations need refreshing without queuing unnecessary work.
-
-### Business Value
-Dramatically reduces time required to maintain translation coverage across large content inventories. Enables property owners to keep translated content synchronized with source updates efficiently, ensuring international guests consistently see current information. Improved translation management workflows increase owner satisfaction and translation completion rates.
-
-### Acceptance Criteria
-- [ ] Action bar appears when one or more content items are selected
-- [ ] Bar displays the count of currently selected items in the format "X items selected"
-- [ ] Bar offers "Re-translate All Languages" action button
-- [ ] Bar offers "Re-translate Specific Language" action button that opens language selector
-- [ ] Clicking "Re-translate All Languages" queues translation jobs for all six languages across all selected items
-- [ ] Language selector allows choosing one specific language for targeted bulk re-translation
-- [ ] Bar displays progress indicator during bulk operations showing completion status
-- [ ] Progress indicator shows format "Processing X of Y items"
-- [ ] Bar includes dismiss control that clears selection and hides the bar
-- [ ] Bar remains fixed at bottom of viewport during scrolling
-- [ ] Bar prevents triggering multiple concurrent bulk operations
-- [ ] Bar displays error state if bulk operations encounter failures
-- [ ] Bar provides success confirmation when all bulk operations complete
-- [ ] Component is keyboard accessible for all actions
-- [ ] Component is responsive and usable on tablet and desktop viewports
-
----
-
-## REQ-322: Create LanguageSelectorDialog Component
-
-**Date**: 2026-01-18 05:59
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners performing bulk re-translation operations should be able to select one or more specific languages through a modal dialog offering a checkbox list with select all and deselect all controls.
-
-### Current Behavior
-No language selection dialog exists for targeting specific languages during bulk operations. When property owners want to re-translate selected items in only certain languages rather than all six supported languages, they lack an interface to specify which languages should be included in the bulk operation. Users must either re-translate all languages even when only a subset needs updating, wasting translation resources, or abandon bulk operations entirely and handle items individually.
-
-### Expected Behavior
-When a property owner clicks "Re-translate Specific Language" in the BulkTranslationBar, a modal dialog opens displaying a list of all six supported languages as checkboxes. Each language entry shows the language flag icon, language name, and a checkbox for selection. At the top of the list, two action links appear: "Select All" which checks all language checkboxes simultaneously, and "Deselect All" which unchecks all selections. The dialog footer contains Cancel and Confirm buttons. Clicking Confirm triggers bulk re-translation for only the languages that were checked, then closes the dialog. Clicking Cancel dismisses the dialog without initiating any translation operations. The dialog prevents submission when no languages are selected, displaying an inline validation message prompting the owner to select at least one language.
-
-### User Impact
-Property owners who have updated source content or improved translation quality for specific languages need granular control over which languages receive bulk re-translation. Re-translating only necessary languages conserves translation credits and processing time while still enabling efficient bulk operations. Select All and Deselect All controls streamline selection when owners want to process most languages or start fresh with their selection. Preventing submission without selections avoids confusion and accidental empty operations.
-
-### Business Value
-Optimizes translation resource utilization by allowing surgical bulk updates targeting only languages that require re-translation. Reduces unnecessary translation processing costs while maintaining the efficiency benefits of bulk operations. Improves owner satisfaction by providing flexible control over translation management workflows.
-
-### Acceptance Criteria
-- [ ] Dialog opens when "Re-translate Specific Language" action is triggered from BulkTranslationBar
-- [ ] Dialog uses Radix Dialog component for accessibility and keyboard navigation
-- [ ] Dialog displays all six supported languages in a vertical checkbox list
-- [ ] Each language entry includes flag icon, language name, and checkbox control
-- [ ] "Select All" action link checks all language checkboxes simultaneously
-- [ ] "Deselect All" action link unchecks all language checkboxes simultaneously
-- [ ] Dialog footer contains Cancel button that dismisses dialog without action
-- [ ] Dialog footer contains Confirm button that initiates bulk re-translation for selected languages
-- [ ] Confirm button is disabled when no languages are selected
-- [ ] Inline validation message displays when user attempts to confirm with no selections
-- [ ] Dialog tracks dirty state and prompts for confirmation if user attempts to close after making selections
-- [ ] Successful confirmation closes dialog and triggers bulk re-translation operation
-- [ ] Dialog is responsive and usable on tablet and desktop viewports
-- [ ] Dialog is keyboard accessible with proper focus management and tab order
-- [ ] Checkbox states are clearly visible for accessibility with sufficient color contrast
-- [ ] Dialog provides appropriate ARIA labels for screen readers
-
----
-
-## REQ-323: Create Translation Management Page
-
-**Date**: 2026-01-18 10:15
-**Type**: NEW FEATURE
-**Size**: L
-
-### Summary
-Property owners and account administrators should have a dedicated page displaying all translatable content in a full-width table with filtering, sorting, and bulk selection capabilities to efficiently manage translations across their entire content inventory.
-
-### Current Behavior
-No centralized translation management interface exists. Property owners managing multilingual content must navigate to individual items, properties, or FAQ sections to check translation status and perform translation operations. There is no unified view showing all translatable content across different entity types in one place. Owners cannot filter content by translation status, entity type, or language coverage. Bulk operations on translations require opening items individually, making large-scale translation management impractical.
-
-### Expected Behavior
-The Translation Management page displays a full-width data table showing all translatable content belonging to the authenticated user's account. Each table row represents one translatable entity and displays the entity name, entity type, translation status indicators for all six supported languages, and action controls. Above the table, a filter bar offers dropdowns to narrow the view by content type, specific language, and translation status. Users can select multiple rows using checkboxes, activating the BulkTranslationBar for multi-item operations. Clicking a row's translation status column opens the TranslationPreviewPanel for detailed information and single-item actions. The table supports sorting by entity name, type, and overall translation completion percentage. Pagination controls appear when content volume exceeds one page, with configurable items per page. The page displays loading states during data fetching and appropriate empty states when no content matches applied filters.
-
-### User Impact
-Property owners managing dozens or hundreds of content items across multiple properties need efficient tools to maintain translation coverage at scale. A centralized management page eliminates the fragmented workflow of checking translations across disconnected sections of the application. Filtering and sorting capabilities allow owners to quickly identify specific translation gaps requiring attention, such as all items missing Spanish translations or all FAQ entries with failed translation jobs. Bulk selection and operations dramatically reduce time spent requesting re-translations or reviewing translation status after making widespread source content improvements. Account administrators overseeing translation coverage for multiple property owners benefit from aggregate visibility and management capabilities across their entire portfolio.
-
-### Business Value
-Provides scalable translation management tooling that supports growing content inventories without proportional increases in owner effort. Efficient management interfaces increase translation completion rates by reducing friction in translation workflows, ensuring international guests receive complete information in all supported languages. Higher translation coverage expands booking potential across all language markets and improves platform competitiveness in international markets.
-
-### Acceptance Criteria
-- [ ] Page renders at dashboard route for translations showing full-width table layout
-- [ ] Table displays all translatable entities owned by authenticated user's account
-- [ ] Table columns include entity name, entity type, translation status for each of six languages, and action controls
-- [ ] Translation status column uses TranslationStatusColumn component showing visual indicators per language
-- [ ] Filter bar appears above table offering type, language, and status filter dropdowns
-- [ ] Type filter allows selection of specific entity types or all types
-- [ ] Language filter allows selection of specific language or all languages
-- [ ] Status filter allows selection by translation completion state
-- [ ] Applying filters immediately updates table to show only matching content
-- [ ] Table supports row selection via checkboxes for bulk operations
-- [ ] Selecting one or more rows activates BulkTranslationBar with bulk action controls
-- [ ] Clicking translation status column in any row opens TranslationPreviewPanel for that entity
-- [ ] Table supports sorting by entity name, type, and overall translation completion
-- [ ] Pagination controls appear when content exceeds page size threshold
-- [ ] Page size selector allows choosing items per page
-- [ ] Loading state displays during initial data fetch and filter changes
-- [ ] Empty state displays when no translatable content exists
-- [ ] Empty state displays when active filters match no content
-- [ ] Page is responsive and usable on tablet and desktop viewports
-- [ ] Page is keyboard accessible with proper focus management for all interactive controls
-- [ ] Page only displays content belonging to authenticated user's account
-- [ ] Unauthorized users are redirected to appropriate error or login page
-
----
-
-## REQ-324: Add Translations Navigation Link
-
-**Date**: 2026-01-18 20:45
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-Property owners navigating the dashboard should see a Translations link in the main navigation menu providing direct access to the translation management page.
-
-### Current Behavior
-The dashboard navigation menu does not include a link to the translation management interface. Property owners who want to access translation features must either manually type the URL or navigate through the dashboard widget's "View Details" link. There is no persistent navigation entry making translation management discoverable as a primary application feature.
-
-### Expected Behavior
-The dashboard navigation menu includes a "Translations" menu item appearing in a logical position within the navigation hierarchy. The link displays a Languages or Globe icon alongside the text label for visual recognition. When clicked, the navigation item directs users to the Translation Management page where they can view and manage translations across all their content. The navigation item remains visible and accessible from all dashboard pages, providing consistent access to translation features throughout the application.
-
-### User Impact
-Property owners managing multilingual content need quick, predictable access to translation tools without memorizing URLs or relying on widget links. A dedicated navigation entry signals that translation management is a first-class feature deserving regular attention. Consistent placement in navigation reduces friction in accessing translation features and encourages owners to maintain translation coverage as part of their regular content management workflow.
-
-### Business Value
-Increases translation feature adoption and usage by making translation management easily discoverable through primary navigation. Higher feature visibility leads to improved translation completion rates, ensuring international guests receive complete information in all supported languages and expanding booking potential across language markets.
-
-### Acceptance Criteria
-- [ ] Navigation menu includes "Translations" menu item with recognizable label
-- [ ] Menu item displays Languages or Globe icon for visual identification
-- [ ] Menu item appears in appropriate position within navigation hierarchy
-- [ ] Clicking menu item navigates to Translation Management page
-- [ ] Menu item is visible from all pages within the dashboard
-- [ ] Menu item visual styling is consistent with other navigation elements
-- [ ] Active state highlights menu item when user is on Translation Management page
-- [ ] Menu item is keyboard accessible and integrates with navigation keyboard controls
-- [ ] Menu item includes appropriate ARIA labels for screen readers
-- [ ] Menu item only displays for authenticated users with translation management permissions
-
----
-
-## REQ-325: Create ManualEditWarningDialog Component
-
-**Date**: 2026-01-18 21:30
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be warned when source content has been updated and manual translations exist, allowing them to choose between preserving their manual edits or re-translating all affected languages.
-
-### Current Behavior
-No warning mechanism exists when source content is updated after manual translation edits have been made. Property owners who have invested time in manually curating translations for specific languages are not informed when the underlying source content changes. When source content is updated, the system may automatically queue re-translations that would overwrite valuable manual edits without the owner's knowledge or consent. There is no opportunity for owners to review which languages have manual edits before deciding how to handle source content updates.
-
-### Expected Behavior
-When a property owner updates source content and manual translations exist for that content, a modal dialog appears before processing the update. The dialog clearly explains that the source content has changed and that manual translation edits exist which may become outdated or be overwritten. The dialog displays a list of all affected languages, showing which languages have manual edits that would be impacted by the source content change. The owner is presented with two options: "Keep Manual Edits" which preserves all manually curated translations as-is without re-translating them, or "Re-translate All" which queues re-translation jobs for all languages, including those with manual edits. The "Re-translate All" option displays a prominent warning that manual edits will be lost. The dialog uses Radix Dialog for accessibility and keyboard navigation. Cancel dismisses the dialog without taking any action on the source content update.
-
-### User Impact
-Property owners who have manually refined translations expect their work to be protected from accidental overwriting. When source content evolves, owners need visibility into which translations may be affected and control over how to handle the situation. Some owners may prefer to keep their manual edits and manually update the translations themselves to maintain quality. Others may prefer to re-translate everything and re-apply manual refinements afterward. Providing clear information about affected languages and explicit choice over the outcome respects owner investment in translation quality and prevents frustrating loss of manual work.
-
-### Business Value
-Protects owner investment in translation quality by preventing accidental overwriting of manually curated content. Builds trust in the translation management system by giving owners explicit control over their translations. Reduces support requests from owners who have lost manual edits due to unexpected re-translation. Ensures translation quality is maintained even as source content evolves, benefiting international guests who rely on accurate translations.
-
-### Acceptance Criteria
-- [ ] Dialog appears when source content is updated and manual translations exist for that content
-- [ ] Dialog uses Radix Dialog component for accessibility and keyboard navigation
-- [ ] Dialog header clearly indicates that source content has been updated
-- [ ] Dialog body explains that manual translation edits exist which may be affected
-- [ ] Dialog displays a list of all languages with manual edits that would be impacted
-- [ ] Each affected language entry shows language flag icon and language name
-- [ ] Dialog offers "Keep Manual Edits" option that preserves existing manual translations
-- [ ] Dialog offers "Re-translate All" option that queues re-translation for all languages
-- [ ] "Re-translate All" option displays prominent warning that manual edits will be lost
-- [ ] Warning uses visual emphasis such as warning icon and contrasting color
-- [ ] Cancel button dismisses dialog without processing source content update
-- [ ] Selecting "Keep Manual Edits" proceeds with source update without re-translating manual edits
-- [ ] Selecting "Re-translate All" proceeds with source update and queues re-translation for all languages
-- [ ] Dialog is keyboard accessible with proper focus management and tab order
-- [ ] Dialog provides appropriate ARIA labels for screen readers
-- [ ] Dialog is responsive and usable on tablet and desktop viewports
-- [ ] Component is located at `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx`
-
----
-
-## REQ-326: Integrate Warning into Content Save Flow
-
-**Date**: 2026-01-18 21:45
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Content save operations should check for existing manual translations and display the ManualEditWarningDialog when source content is being updated, ensuring property owners make informed decisions about preserving or overwriting their manual translation work.
-
-### Current Behavior
-Content save handlers process source content updates immediately without checking whether manual translations exist for that content. When property owners update descriptions, FAQ answers, or other translatable content that has been manually curated in one or more languages, the system does not interrupt the save flow to warn about potential translation impacts. Owners are unaware that their source content changes may trigger automatic re-translation that could overwrite valuable manual edits.
-
-### Expected Behavior
-When a property owner saves changes to translatable content, the save handler checks whether manual translations exist for that entity before processing the update. If manual translations are detected, the save operation pauses and displays the ManualEditWarningDialog, informing the owner which languages contain manual edits and offering choices about how to proceed. If the owner chooses "Keep Manual Edits," the source content update proceeds while preserving all manually curated translations unchanged. If the owner chooses "Re-translate All," the source content update proceeds and translation jobs are queued for all languages, including those with manual edits. The dialog only appears when manual translations actually exist; routine saves for content without manual edits proceed immediately without interruption.
-
-### User Impact
-Property owners who invest time in manually refining translations expect their work to be protected when updating source content. Without warning, owners may unknowingly trigger re-translations that erase hours of manual translation curation. Being interrupted during the save flow to review translation impacts ensures owners make conscious decisions rather than accidentally overwriting their own work. Seeing exactly which languages have manual edits provides clarity about what is at stake and helps owners decide whether to preserve edits and manually update translations later, or to re-translate everything fresh from the improved source content.
-
-### Business Value
-Protects owner investment in translation quality by ensuring manual edits are never overwritten without explicit owner consent. Reduces frustration and support requests from owners who have lost manual translation work. Builds trust in the translation management system by respecting owner effort and providing transparent control over translation workflows. Maintains high translation quality as content evolves by giving owners tools to manage the relationship between source updates and existing manual edits.
-
-### Acceptance Criteria
-- [ ] Article save handler checks for manual translations before processing source content updates
-- [ ] Item save handler checks for manual translations before processing source content updates
-- [ ] Save operation pauses when manual translations are detected for the entity being saved
-- [ ] ManualEditWarningDialog displays showing affected languages with manual edits
-- [ ] Choosing "Keep Manual Edits" in dialog completes save without re-translating manually edited languages
-- [ ] Choosing "Re-translate All" in dialog completes save and queues re-translation jobs for all languages
-- [ ] Canceling dialog aborts the entire save operation without updating source content
-- [ ] Save operations for content without manual translations proceed immediately without warning dialog
-- [ ] Translation check query only examines translations for the specific entity being saved
-- [ ] Integration handles loading states during translation check query gracefully
-- [ ] Integration handles errors during translation check query without breaking save flow
-- [ ] Warning dialog integration works for all translatable entity types including properties, FAQs, articles, and amenities
-- [ ] User experience remains responsive with minimal delay introduced by translation check
-
----
-
-## REQ-327: Create Language Preference Setting Component
-
-**Date**: 2026-01-18 06:35
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to select and save their preferred interface language through a settings interface displaying all supported languages with visual feedback for selection state and save operations.
-
-### Current Behavior
-No interface exists for users to set their preferred language for the application. Property owners navigating the platform cannot specify which language they want to see for menus, labels, messages, and other interface elements. Language preference is not captured during user registration or available in settings afterward. The system has no way to determine which language each user prefers for their experience, resulting in all users receiving interface content in the same default language regardless of their linguistic preferences.
-
-### Expected Behavior
-A language preference settings section displays a dropdown selector populated with all six supported languages, each shown with their flag icon, native language name, and localized label. The dropdown shows the user's currently saved preference when the section loads. When the user selects a different language from the dropdown, a save button becomes enabled to commit the change. Clicking save updates the user's preferred language setting in the database and displays a loading state on the button during the save operation. Upon successful save, a confirmation message appears and the save button returns to a disabled state until the next change is made. Help text below the dropdown explains that this preference controls which language the user sees throughout the application interface. If the save operation fails, an error message displays indicating the issue without losing the user's selection, allowing them to retry.
-
-### User Impact
-Property owners operating in different language markets need the interface presented in their preferred language to use the platform effectively. Users who are not fluent in the default language face barriers to understanding navigation, settings, and feature descriptions. Providing explicit language preference control empowers every user to configure their optimal experience regardless of their primary language. Once set, the preference persists across sessions so users don't need to reconfigure their language choice every time they log in.
-
-### Business Value
-Expands platform accessibility to international property owners by supporting their preferred language for all interface elements, not just guest-facing content. Improves user satisfaction and feature adoption rates by removing language barriers to platform navigation and comprehension. Demonstrates commitment to serving a global user base and differentiates the platform from competitors offering only English interfaces.
-
-### Acceptance Criteria
-- [ ] Settings section displays language selector dropdown showing all six supported languages
-- [ ] Each language option displays flag icon, native language name, and localized label
-- [ ] Dropdown shows user's currently saved preferred language when section loads
-- [ ] Changing dropdown selection enables the save button
-- [ ] Save button displays loading state during save operation
-- [ ] Successful save updates user's preferred_language value in the database
-- [ ] Successful save displays confirmation message to user
-- [ ] Failed save displays error message without losing user's selection
-- [ ] Save button returns to disabled state after successful save completes
-- [ ] Help text explains that preference controls application interface language
-- [ ] Component loads current preference from authenticated user's profile data
-- [ ] Component handles missing or invalid preference data gracefully with fallback to default language
-- [ ] Component is keyboard accessible with proper focus management for dropdown and button
-- [ ] Component provides appropriate ARIA labels for screen readers
-- [ ] Component is responsive and usable on tablet and desktop viewports
-- [ ] Component styling is consistent with overall settings design system
-
----
-
-## REQ-328: Create Account Language Preference API Endpoint
-
-**Date**: 2026-01-18 10:45
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Account administrators should be able to update the preferred language for their account through a secure API endpoint that validates account ownership before persisting preference changes.
-
-### Current Behavior
-No API endpoint exists to update account-level language preferences. Account administrators cannot programmatically set or modify which language their account uses for owner-facing interfaces and communications. The system lacks backend infrastructure to persist account language preferences, forcing all accounts to use the default language regardless of the account administrator's linguistic preferences or primary market.
-
-### Expected Behavior
-A PUT endpoint accepts requests to update the preferred language for a specific account. The endpoint validates that the authenticated user has administrative access to the account being modified before processing the request. When a valid language preference is submitted, the system updates the account record with the new preferred language value and returns the updated account object confirming the change. The endpoint rejects requests from users who lack access to the specified account with an authorization error. Invalid language codes are rejected with a validation error listing supported language options. The endpoint handles missing account identifiers gracefully, returning appropriate error messages without exposing system internals.
-
-### User Impact
-Account administrators managing properties across different language markets need the ability to configure their account's language preference to match their primary operational language. Backend API support enables frontend preference controls to function reliably, ensuring preference changes persist correctly and are immediately available across all user sessions. Proper validation prevents invalid language codes from corrupting account data and ensures only authorized users can modify account preferences.
-
-### Business Value
-Provides essential backend infrastructure for account-level language preference functionality, enabling personalized multilingual experiences for account administrators. Secure access validation protects account data from unauthorized modification while allowing legitimate preference updates. Reliable preference persistence ensures consistent language experiences across sessions, improving user satisfaction and platform usability for international account administrators.
-
-### Acceptance Criteria
-- [ ] Endpoint accepts PUT requests with account identifier and preferred language value
-- [ ] Endpoint validates the authenticated user has administrative access to the specified account
-- [ ] Endpoint rejects unauthorized requests with appropriate authorization error response
-- [ ] Endpoint validates submitted language code against list of supported languages
-- [ ] Endpoint rejects invalid language codes with validation error listing supported options
-- [ ] Endpoint updates the account's preferred_language field when validation passes
-- [ ] Endpoint returns updated account object upon successful preference update
-- [ ] Endpoint handles missing account identifiers with appropriate error response
-- [ ] Endpoint handles non-existent account identifiers with not found error response
-- [ ] Endpoint returns appropriate error responses when database update operations fail
-- [ ] Response format is consistent with other API endpoints in the system
-- [ ] Endpoint enforces proper request authentication and session validation
-
----
-
-## REQ-329: Integrate Language Preference Section into Account Settings
-
-**Date**: 2026-01-18 11:30
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners and account administrators should be able to access and configure their preferred interface language from within the account settings or user profile page, with the language preference section pre-populated with their current saved preference.
-
-### Current Behavior
-No language preference configuration exists within the account settings or user profile pages. The LanguagePreferenceSection component has been created (REQ-327) but is not integrated into any settings interface where users can access it. Users have no discoverable path to configure their preferred interface language within the application's existing settings navigation structure. The account settings page and user profile page both lack any language-related configuration options.
-
-### Expected Behavior
-The LanguagePreferenceSection component is integrated into the appropriate settings location based on the application's information architecture. If language preference is account-level (affecting all users on an account), the section appears within account settings. If language preference is user-level (personal preference for each individual user), the section appears within user profile settings. The section displays in a logical position within the settings page layout, grouped with other preferences or personal configuration options. When the settings page loads, the LanguagePreferenceSection queries the current preference from the authenticated user's or account's data and pre-populates the language dropdown with the saved value. If no preference has been set previously, the dropdown defaults to the system default language. The section maintains visual consistency with other settings sections on the page, using the same spacing, typography, and layout patterns.
-
-### User Impact
-Property owners and account administrators expect to find language preference configuration in a predictable location within settings. Without integration into the settings flow, users cannot discover or access the language preference feature even though the component exists. Proper integration ensures users can easily locate and configure their language preference as part of their normal settings management workflow. Pre-populating with the current preference confirms to users what language is currently active and prevents confusion about whether their previous selections were saved correctly.
-
-### Business Value
-Completes the language preference feature by connecting the settings component to the application's navigation structure, making the feature accessible and usable. Proper integration increases feature adoption by ensuring users can discover language settings through natural exploration of account or profile settings. Higher adoption of language preferences improves user satisfaction for international property owners and demonstrates platform commitment to serving a global user base.
-
-### Acceptance Criteria
-- [ ] Determine whether language preference belongs in account settings or user profile based on application architecture
-- [ ] Import LanguagePreferenceSection component into the appropriate settings page file
-- [ ] Position the section in a logical location within the settings page layout
-- [ ] Section groups appropriately with other preference or personalization settings
-- [ ] Settings page fetches current language preference when loading
-- [ ] LanguagePreferenceSection receives current preference value as prop or through context
-- [ ] Dropdown displays the currently saved preference when section renders
-- [ ] If no preference exists, dropdown displays the system default language
-- [ ] Section styling is consistent with other sections on the settings page
-- [ ] Section maintains responsive layout on tablet and desktop viewports
-- [ ] Section is keyboard accessible within the settings page tab order
-- [ ] Settings page handles loading states during preference data fetch
-- [ ] Settings page handles error states if preference data cannot be retrieved
-- [ ] Preference changes made in the section persist correctly to the backend
-- [ ] Navigation to settings page is accessible from main application navigation
-
----
-
-## REQ-330: Integrate Translation Preview Panel into Article Editor
-
-**Date**: 2026-01-18 10:00
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners editing articles should see the translation preview panel automatically appear after saving, with automatic panel opening when translations are pending or incomplete.
-
-### Current Behavior
-The article editor allows property owners to create and modify content without providing visibility into translation status upon save completion. After saving an article, owners cannot immediately see whether translations have been queued, completed, or failed. There is no automatic feedback mechanism informing owners about pending translations that require attention or manual review. Owners must navigate away from the editor to a separate translation management interface to check translation status for the article they just edited.
-
-### Expected Behavior
-When a property owner saves an article in the editor, the system displays the TranslationPreviewPanel after the save operation completes successfully. The panel slides in from the right showing translation status for all six supported languages, providing immediate visibility into whether translations are complete, pending, failed, or manually edited. If any translations are in pending status after save, the panel automatically opens without requiring user action, ensuring owners are aware that translation work is in progress. If all translations are already complete, the panel remains collapsed but available, allowing owners to expand it if they wish to review or modify translations. The panel displays the saved article content as the source reference at the top, followed by the status list for each language with appropriate action buttons for editing, re-translating, or retrying failed translations.
-
-### User Impact
-Property owners creating or updating articles expect feedback about what happens next with their content. Automatically showing translation status after save reduces uncertainty about whether translation processing was triggered and eliminates the need to navigate elsewhere to check progress. When translations are pending, automatic panel opening draws attention to the fact that work is underway, reassuring owners that the system is actively processing their content. Having the preview panel immediately accessible after save streamlines the workflow for reviewing and refining translations without losing context from the editing session.
-
-### Business Value
-Improves editor user experience by providing immediate translation feedback at the moment owners care most about translation status. Reduces friction in translation management workflows by eliminating navigation away from the editor to check translation progress. Increases translation review and refinement rates by surfacing translation controls immediately after content creation, leading to higher translation quality for international guests.
-
-### Acceptance Criteria
-- [ ] TranslationPreviewPanel component is integrated into the article editor page
-- [ ] Panel displays automatically after successful article save operations
-- [ ] Panel loads translation status data for the saved article across all six languages
-- [ ] Panel automatically opens when one or more translations have pending status
-- [ ] Panel remains collapsed when all translations are complete, but remains available for manual opening
-- [ ] Panel displays article source content at the top for reference
-- [ ] Panel shows status indicators for each of the six supported languages
-- [ ] Panel includes action buttons for editing, re-translating, and retrying translations
-- [ ] Panel positioning and animation matches standard TranslationPreviewPanel behavior from other contexts
-- [ ] Panel does not disrupt article editor layout when displayed
-- [ ] Panel handles cases where no translations exist gracefully without errors
-- [ ] Panel updates in real-time if translation statuses change while panel is open
-- [ ] Panel can be manually closed by user after reviewing translation status
-- [ ] Integration maintains responsive layout on tablet and desktop viewports
-- [ ] Panel is keyboard accessible and integrates with editor keyboard navigation
-
----
-
-## REQ-331: Integrate Translation Preview Panel into Item Editor
-
-**Date**: 2026-01-18 11:15
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners editing items should see the translation preview panel automatically appear after saving, with automatic panel opening when translations are pending or incomplete.
-
-### Current Behavior
-The item editor allows property owners to create and modify items without providing visibility into translation status upon save completion. After saving an item, owners cannot immediately see whether translations have been queued, completed, or failed. There is no automatic feedback mechanism informing owners about pending translations that require attention or manual review. Owners must navigate away from the editor to a separate translation management interface to check translation status for the item they just edited.
-
-### Expected Behavior
-When a property owner saves an item in the editor, the system displays the TranslationPreviewPanel after the save operation completes successfully. The panel slides in from the right showing translation status for all six supported languages, providing immediate visibility into whether translations are complete, pending, failed, or manually edited. If any translations are in pending status after save, the panel automatically opens without requiring user action, ensuring owners are aware that translation work is in progress. If all translations are already complete, the panel remains collapsed but available, allowing owners to expand it if they wish to review or modify translations. The panel displays the saved item content as the source reference at the top, followed by the status list for each language with appropriate action buttons for editing, re-translating, or retrying failed translations.
-
-### User Impact
-Property owners creating or updating FAQ items expect feedback about what happens next with their content. Automatically showing translation status after save reduces uncertainty about whether translation processing was triggered and eliminates the need to navigate elsewhere to check progress. When translations are pending, automatic panel opening draws attention to the fact that work is underway, reassuring owners that the system is actively processing their content. Having the preview panel immediately accessible after save streamlines the workflow for reviewing and refining translations without losing context from the editing session.
-
-### Business Value
-Improves editor user experience by providing immediate translation feedback at the moment owners care most about translation status. Reduces friction in translation management workflows by eliminating navigation away from the editor to check translation progress. Increases translation review and refinement rates by surfacing translation controls immediately after content creation, leading to higher translation quality for international guests.
-
-### Acceptance Criteria
-- [ ] TranslationPreviewPanel component is integrated into the item editor page
-- [ ] Panel displays automatically after successful item save operations
-- [ ] Panel loads translation status data for the saved item across all six languages
-- [ ] Panel automatically opens when one or more translations have pending status
-- [ ] Panel remains collapsed when all translations are complete, but remains available for manual opening
-- [ ] Panel displays item source content at the top for reference
-- [ ] Panel shows status indicators for each of the six supported languages
-- [ ] Panel includes action buttons for editing, re-translating, and retrying translations
-- [ ] Panel positioning and animation matches standard TranslationPreviewPanel behavior from other contexts
-- [ ] Panel does not disrupt item editor layout when displayed
-- [ ] Panel handles cases where no translations exist gracefully without errors
-- [ ] Panel updates in real-time if translation statuses change while panel is open
-- [ ] Panel can be manually closed by user after reviewing translation status
-- [ ] Integration maintains responsive layout on tablet and desktop viewports
-- [ ] Panel is keyboard accessible and integrates with editor keyboard navigation
-
----
-
-## REQ-332: Implement Loading States and Error Handling for Translation Components
-
-**Date**: 2026-01-18 07:03
-**Type**: ENHANCEMENT
-**Size**: L
-
-### Summary
-All translation management components should display appropriate loading indicators during asynchronous operations and show clear error messages with retry options when operations fail.
-
-### Current Behavior
-Translation management components lack consistent loading state indicators and error handling mechanisms. When property owners trigger translation operations, request status queries, or save preference changes, they receive no visual feedback during processing. When API requests fail due to network issues, server errors, or validation problems, components either crash, display generic browser errors, or fail silently without informing users what went wrong. There are no retry mechanisms for failed operations, forcing users to reload the entire page or re-navigate to attempt operations again.
-
-### Expected Behavior
-Every translation component displays loading spinners or skeleton states during data fetching and processing operations. The TranslationPreviewPanel shows a loading spinner while querying translation status after being opened. The TranslationStatusWidget on the dashboard displays skeleton placeholders for status counts while loading. The LanguagePreferenceSection shows a loading state on the save button during preference update operations. When any API request fails, components display user-friendly error messages through toast notifications or inline alert components explaining what went wrong in clear language. Error messages distinguish between different failure types such as network errors, authentication failures, validation errors, and server errors, providing context-appropriate guidance. Failed operations display retry buttons allowing users to attempt the operation again without losing their work or navigating away. Retry buttons are positioned directly alongside error messages for immediate access. Components handle partial failures gracefully, such as when bulk re-translation succeeds for some items but fails for others, showing which items succeeded and which require retry.
-
-### User Impact
-Property owners performing translation operations expect immediate visual feedback confirming their actions are being processed. Without loading indicators, delays create uncertainty about whether the system is working or has frozen. When errors occur, generic or missing error messages leave owners confused about what went wrong and how to proceed. Having to reload the page or re-enter information after failures creates frustration and wastes time. Clear error messages help owners understand whether issues are temporary network problems, permission issues requiring admin intervention, or input validation errors they can fix immediately. Retry buttons eliminate the need to repeat entire workflows after transient failures, preserving user progress and reducing friction. Partial failure handling ensures owners can identify and address only the problematic subset of items rather than abandoning entire bulk operations due to a few failures.
-
-### Business Value
-Improves user experience by providing transparent feedback about system state and operation progress, building trust in the translation management features. Reduces support requests by clearly explaining errors and providing self-service retry mechanisms for common failure scenarios. Increases feature adoption by reducing frustration from poor error handling that might otherwise discourage owners from using translation features. Maintains user productivity by enabling graceful recovery from failures without losing work or requiring full page reloads.
-
-### Acceptance Criteria
-- [ ] TranslationPreviewPanel displays loading spinner while fetching translation status data
-- [ ] TranslationStatusWidget displays skeleton placeholders during dashboard load
-- [ ] TranslationEditor modal shows loading state during save operations
-- [ ] LanguagePreferenceSection shows loading state on save button during preference updates
-- [ ] BulkTranslationBar displays progress indicator during bulk re-translation operations
-- [ ] Translation Management page shows loading state during initial data fetch and filter changes
-- [ ] All API failures trigger user-friendly error messages via toast notifications or inline alerts
-- [ ] Error messages distinguish between network errors, authentication failures, validation errors, and server errors
-- [ ] Error messages provide clear explanations in non-technical language
-- [ ] Failed operations display retry buttons positioned adjacent to error messages
-- [ ] Retry buttons re-attempt the failed operation without requiring user to re-enter data
-- [ ] Components handle partial bulk operation failures by showing success and failure counts separately
-- [ ] Partial failures display lists showing which items succeeded and which failed with retry options
-- [ ] Loading states use accessible ARIA labels for screen readers
-- [ ] Error messages are keyboard accessible and can be dismissed via keyboard
-- [ ] Toast notifications auto-dismiss after appropriate timeout for non-critical errors
-- [ ] Critical errors requiring user action remain visible until explicitly dismissed
-- [ ] Components maintain responsive layout during loading and error states
-- [ ] Loading indicators do not block user interface unnecessarily when operations can run in background
-- [ ] Error handling prevents component crashes and application state corruption
-
----
-
-## REQ-333: Add Accessibility Features to Translation Management Interface
-
-**Date**: 2026-01-18 22:00
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Translation management components should provide comprehensive accessibility features including semantic labels, keyboard navigation, screen reader announcements, and focus management to ensure all users can effectively manage translations regardless of ability.
-
-### Current Behavior
-Translation management components do not implement comprehensive accessibility patterns. Status icons lack descriptive text labels explaining their meaning to screen reader users. The preview panel cannot be navigated efficiently using only keyboard controls. When translation status changes occur, screen readers do not announce the updates, leaving users unaware that translations have completed or failed. Modal dialogs do not manage focus properly, allowing keyboard focus to escape the dialog or fail to return to the triggering element when closed. Interactive elements lack sufficient contrast ratios and focus indicators for users with visual impairments.
-
-### Expected Behavior
-All translation status icons include ARIA labels describing their meaning, such as "Translation complete," "Translation pending," "Translation failed," or "Manually edited translation." The TranslationPreviewPanel supports full keyboard navigation with tab key moving between interactive elements in logical order, arrow keys navigating between language entries in the status list, and Escape key closing the panel. When translation status changes from pending to complete or failed, screen reader users receive live region announcements stating "Translation completed for Spanish" or "Translation failed for French." Modal dialogs including TranslationEditor and LanguageSelectorDialog implement proper focus trapping, preventing keyboard focus from leaving the dialog while open. When modals open, focus moves automatically to the first interactive element or a designated initial focus target. When modals close, focus returns to the element that triggered the modal, maintaining navigation context. All interactive elements including buttons, links, and form controls display visible focus indicators with sufficient contrast to meet accessibility standards. Color-coded status indicators are supplemented with icons or text labels so status remains distinguishable for users with color vision deficiencies.
-
-### User Impact
-Property owners using screen readers or keyboard-only navigation need equal access to translation management features to maintain their content across languages. Visual status indicators are meaningless to screen reader users without descriptive labels explaining translation states. Keyboard navigation inefficiencies force users to tab through excessive elements or prevent efficient navigation entirely. Missing live region announcements mean screen reader users must manually query status repeatedly to detect when translations complete, creating inefficient workflows. Poor focus management in modals disorients keyboard users by allowing focus to escape into background content or losing navigation context when dialogs close. Insufficient focus indicators create uncertainty about which element is currently selected, increasing interaction errors and cognitive load.
-
-### Business Value
-Ensures compliance with web accessibility standards including WCAG guidelines, reducing legal risk and demonstrating commitment to inclusive design. Expands the platform's addressable market to include property owners with disabilities who rely on assistive technologies. Improves usability for all users through better keyboard navigation and focus management patterns that benefit power users who prefer keyboard shortcuts. Enhances platform reputation by providing thoughtful, inclusive experiences that respect diverse user needs and abilities.
-
-### Acceptance Criteria
-- [ ] All translation status icons include descriptive ARIA labels indicating status meaning
-- [ ] Status labels distinguish between complete, pending, failed, and manually edited states
-- [ ] TranslationPreviewPanel supports tab key navigation through all interactive elements in logical order
-- [ ] Preview panel supports arrow key navigation between language status entries
-- [ ] Pressing Escape key while preview panel is open closes the panel
-- [ ] Translation status changes trigger screen reader announcements via ARIA live regions
-- [ ] Live region announcements include the affected language and new status state
-- [ ] TranslationEditor modal implements focus trapping preventing focus from escaping dialog
-- [ ] LanguageSelectorDialog modal implements focus trapping preventing focus from escaping dialog
-- [ ] ManualEditWarningDialog modal implements focus trapping preventing focus from escaping dialog
-- [ ] When modals open, focus moves automatically to first interactive element or designated initial focus target
-- [ ] When modals close, focus returns to the triggering element that opened the modal
-- [ ] All buttons, links, and form controls display visible focus indicators when focused
-- [ ] Focus indicators meet minimum contrast ratio requirements for accessibility standards
-- [ ] Color-coded status indicators are supplemented with icons or text ensuring status is distinguishable without color
-- [ ] Form validation errors are announced to screen readers when they occur
-- [ ] Loading states and progress indicators are announced to screen readers via live regions
-- [ ] All interactive elements have descriptive accessible names via ARIA labels or visible text
-- [ ] Component landmarks use appropriate ARIA roles to aid screen reader navigation
-- [ ] Skip links or keyboard shortcuts allow bypassing repetitive navigation elements
-- [ ] Keyboard focus never becomes trapped in non-modal contexts
-- [ ] Interactive element hit targets meet minimum size requirements for touch and pointer accessibility
-
----
-
-## REQ-334: Write Unit Tests for Translation Hooks
-
-**Date**: 2026-01-18 10:30
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Translation hook implementations should be validated through comprehensive unit tests ensuring correct behavior for data fetching, state management, and realtime subscription handling.
-
-### Current Behavior
-No unit tests exist for the useTranslationStatus and useTranslationRealtime hooks. Property owners relying on these hooks for translation management interfaces have no automated validation ensuring the hooks behave correctly under various conditions. Developers modifying hook implementations lack test coverage to catch regressions or verify that changes don't break existing functionality. Edge cases such as network failures, authentication errors, missing data, or subscription disconnections may not be handled correctly because these scenarios have not been tested systematically.
-
-### Expected Behavior
-A test suite validates both useTranslationStatus and useTranslationRealtime hooks using React Testing Library patterns appropriate for testing custom hooks. Tests for useTranslationStatus verify that the hook fetches translation status correctly when provided with entity IDs or property IDs, returns expected loading states during data fetching, returns error states when API requests fail, and handles authentication errors appropriately. Tests mock Supabase client responses using standard mocking patterns, simulating successful data retrieval, network failures, and various error conditions. Tests for useTranslationRealtime verify that the hook establishes realtime subscriptions when mounted, filters subscriptions appropriately based on provided parameters, updates local state when insert events are received, updates local state when update events are received, cleans up subscriptions when the component unmounts, and handles realtime connection errors gracefully. Mock implementations simulate Supabase realtime channel subscription behavior including event emission, connection state changes, and cleanup operations. Test cases cover normal operation paths as well as error scenarios ensuring hooks remain stable under adverse conditions.
-
-### User Impact
-Property owners viewing translation management interfaces depend on hooks functioning reliably across all conditions. Untested hooks may fail silently or crash when encountering edge cases like network timeouts or authentication expiration, creating frustration when translation status appears to load indefinitely or disappears unexpectedly. Developers maintaining translation features benefit from test coverage that documents expected behavior and catches regressions during refactoring or enhancement work. Comprehensive tests increase confidence that hook implementations are robust enough for production use.
-
-### Business Value
-Reduces bugs in translation management features by validating hook behavior before deployment. Improves developer productivity through automated regression detection that catches issues during development rather than after release. Increases code maintainability by documenting expected hook behavior through test specifications. Enhances platform reliability by ensuring translation features remain stable under diverse network conditions and error scenarios.
-
-### Acceptance Criteria
-- [ ] Test suite created for useTranslationStatus hook using React Testing Library
-- [ ] Tests verify hook returns loading state during initial data fetch
-- [ ] Tests verify hook returns data state when fetch succeeds
-- [ ] Tests verify hook returns error state when fetch fails
-- [ ] Tests verify hook handles authentication errors with appropriate error state
-- [ ] Tests verify hook refetches data when parameters change
-- [ ] Tests mock Supabase client select queries returning successful responses
-- [ ] Tests mock Supabase client select queries returning error responses
-- [ ] Test suite created for useTranslationRealtime hook using React Testing Library
-- [ ] Tests verify hook establishes Supabase realtime subscription on mount
-- [ ] Tests verify hook filters subscription by entity ID when provided
-- [ ] Tests verify hook filters subscription by property ID when provided
-- [ ] Tests verify hook updates state when translation insert events are received
-- [ ] Tests verify hook updates state when translation update events are received
-- [ ] Tests verify hook updates state when translation delete events are received
-- [ ] Tests verify hook unsubscribes from realtime channel on unmount
-- [ ] Tests mock Supabase realtime subscription setup and event emission
-- [ ] Tests mock realtime connection errors and verify graceful handling
-- [ ] Tests verify hook resubscribes when filter parameters change
-- [ ] All tests pass successfully in continuous integration environment
-- [ ] Test coverage for both hooks meets project quality standards
-- [ ] Tests execute quickly without introducing unnecessary delays
-- [ ] Mock implementations accurately simulate Supabase client behavior
-
----
-
-## REQ-335: Component Test Suite for Translation Management UI
-
-**Date**: 2026-01-18 07:20
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Translation management components should have automated tests verifying rendering behavior, user interactions, and data flow to ensure reliability and prevent regressions.
-
-### Current Behavior
-No component tests exist for the translation management user interface. Changes to TranslationPreviewPanel, TranslationEditor, TranslationStatusWidget, and related components cannot be validated automatically. Developers modifying these components lack confidence that changes preserve existing functionality. Manual testing is required for every modification, slowing development velocity and increasing the risk of undetected bugs reaching users.
-
-### Expected Behavior
-A comprehensive test suite covers critical translation management components including TranslationPreviewPanel, TranslationEditor, and TranslationStatusWidget. Tests verify that TranslationPreviewPanel renders correctly with different translation status combinations across all six languages and responds appropriately to user interactions like opening the editor or triggering re-translation. Tests confirm that TranslationEditor displays source and translation content side by side, tracks changes to the translation text, prevents saving when text is invalid, marks translations as manually reviewed upon successful save, and prompts for confirmation when closing with unsaved changes. Tests validate that TranslationStatusWidget displays accurate counts for complete, partial, pending, and failed translation statuses, updates automatically when status data changes, and navigates to the detailed translation management page when the user clicks the view details link.
-
-### User Impact
-Property owners relying on translation management features benefit from increased stability and fewer bugs introduced by new development. Developers building and maintaining translation features gain faster feedback loops through automated testing, reducing time spent on manual verification and increasing confidence when refactoring or adding capabilities.
-
-### Business Value
-Reduces regression risk as the translation management system evolves, protecting platform reliability and owner trust. Accelerates development velocity by catching bugs earlier in the development cycle before they reach users. Enables safer refactoring and optimization of translation components, improving long-term code maintainability.
-
-### Acceptance Criteria
-- [ ] Test suite includes tests for TranslationPreviewPanel component
-- [ ] TranslationPreviewPanel tests verify component renders with translation status data
-- [ ] TranslationPreviewPanel tests verify status indicators display correctly for all six languages
-- [ ] TranslationPreviewPanel tests verify action buttons appear for appropriate translation states
-- [ ] TranslationPreviewPanel tests verify clicking edit button opens the TranslationEditor
-- [ ] TranslationPreviewPanel tests verify clicking re-translate button triggers re-translation request
-- [ ] Test suite includes tests for TranslationEditor component
-- [ ] TranslationEditor tests verify source content displays in read-only left pane
-- [ ] TranslationEditor tests verify translation content displays in editable right pane
-- [ ] TranslationEditor tests verify character count updates as user types
-- [ ] TranslationEditor tests verify save button becomes enabled when content changes
-- [ ] TranslationEditor tests verify save operation marks translation as manually reviewed
-- [ ] TranslationEditor tests verify save operation closes the editor upon success
-- [ ] TranslationEditor tests verify dirty state warning appears when closing with unsaved changes
-- [ ] Test suite includes tests for TranslationStatusWidget component
-- [ ] TranslationStatusWidget tests verify component displays count of complete translations
-- [ ] TranslationStatusWidget tests verify component displays count of partial translations
-- [ ] TranslationStatusWidget tests verify component displays count of pending translations
-- [ ] TranslationStatusWidget tests verify component displays count of failed translations
-- [ ] TranslationStatusWidget tests verify progress bar fills proportionally to completion ratio
-- [ ] TranslationStatusWidget tests verify view details link navigates to translation management page
-- [ ] All tests pass consistently in continuous integration environment
-- [ ] Test suite uses appropriate mocking for API calls and data dependencies
-- [ ] Test suite achieves meaningful code coverage for tested components
-- [ ] Tests are maintainable and clearly document expected component behavior
-
----
-
-## REQ-336: Create Translation Status API Endpoint
-
-**Date**: 2026-01-19 00:00
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to query translation status information for their content through an API endpoint that accepts filters and returns both summary counts and item-level status details.
-
-### Current Behavior
-No API endpoint exists to query translation status. Property owners viewing translation management interfaces cannot retrieve data showing which content items have complete translations, pending translations, or failed translation jobs. Frontend components attempting to display translation status lack a backend data source.
-
-### Expected Behavior
-A GET endpoint accepts optional query parameters filtering translation status by entity type, specific entity ID, translation status, and property ID. When filters are provided, the endpoint narrows results to only translation records matching all specified criteria. The response includes a summary object containing counts grouped by translation status such as how many translations are complete, pending, or failed. The response also includes an array of detailed translation records showing the entity identifier, language code, translation status, and relevant timestamps for each record. The endpoint validates that the authenticated user owns all entities included in the results, ensuring users cannot access translation information for content belonging to other accounts. When a user lacks authorization to view requested content, the endpoint returns an appropriate error response. The endpoint handles missing or invalid filter parameters gracefully, treating them as requests for all data within the user's access scope.
-
-### User Impact
-Property owners managing translation coverage across multiple content items need visibility into which translations are complete and which require attention. Querying by entity type allows owners to check translation status for all their FAQ items or all their property descriptions separately. Filtering by specific entity ID provides detailed status for individual content pieces when editing or reviewing them. Filtering by translation status enables workflows focused on addressing pending or failed translations. Summary counts give owners at-a-glance understanding of overall translation coverage without scanning through individual records.
-
-### Business Value
-Provides essential backend infrastructure for all translation management UI features, enabling data-driven interfaces that help property owners maintain high translation coverage. Secure access validation protects content privacy while enabling authorized users to efficiently manage their multilingual content. Flexible filtering capabilities support diverse user workflows from high-level overview to detailed item-specific management.
-
-### Acceptance Criteria
-- [ ] Endpoint accepts GET requests with optional entityType query parameter
-- [ ] Endpoint accepts GET requests with optional entityId query parameter
-- [ ] Endpoint accepts GET requests with optional status query parameter
-- [ ] Endpoint accepts GET requests with optional propertyId query parameter
-- [ ] Endpoint returns translation records matching all provided filter criteria
-- [ ] Endpoint returns all translation records within user's access scope when no filters are provided
-- [ ] Response includes summary object with counts grouped by translation status
-- [ ] Response includes array of detailed translation records showing entity, language, status, and timestamps
-- [ ] Endpoint validates authenticated user has access to all entities included in results
-- [ ] Endpoint rejects unauthorized requests with appropriate error response
-- [ ] Endpoint handles invalid filter parameters gracefully without crashing
-- [ ] Endpoint returns empty results when filters match no translation records
-- [ ] Response format is consistent with other API endpoints in the system
-- [ ] Endpoint performance remains acceptable when querying large result sets
-- [ ] Endpoint enforces proper request authentication and session validation
-
----
-
-## REQ-337: Create Update Translation API Endpoint
-
-**Date**: 2026-01-19 11:30
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to update translation content for entities they own through a secure API endpoint that marks translations as manually reviewed.
-
-### Current Behavior
-No API endpoint exists for updating translation content. Property owners viewing their automated translations cannot manually edit or refine the translated text. When machine translations contain errors, use inappropriate tone, or fail to capture brand voice, owners have no way to provide corrected translations.
-
-### Expected Behavior
-The endpoint accepts requests containing the entity type, entity identifier, language code, and updated translation content. Before processing the update, the system verifies that the authenticated user has ownership rights to the specified entity. When authorization is confirmed, the endpoint persists the updated translation content and automatically sets the translation status to indicate manual curation. The system records the authenticated user's identifier as the reviewer responsible for the manual edit. The endpoint returns the complete updated translation record upon successful save. When users attempt to update translations for entities they do not own, the endpoint rejects the request with an authorization error. Missing or malformed required fields trigger validation errors with clear explanations of what needs correction.
-
-### User Impact
-Property owners who are multilingual or who collaborate with professional translators need the ability to refine automated translations to ensure quality matches their brand standards. When translations contain cultural nuances that machine translation misses, owners need control to provide appropriate alternatives. Recording who performed manual edits provides accountability and helps teams coordinate translation work.
-
-### Business Value
-Empowers property owners to maintain translation quality that meets their standards, improving guest confidence and booking conversion for international travelers. Reduces guest confusion from inaccurate automated translations by enabling owner refinement. Builds trust in the translation system by giving owners explicit control over their multilingual content.
-
-### Acceptance Criteria
-- [ ] Endpoint accepts PUT requests with entity type, entity ID, language code, and translation content
-- [ ] Endpoint validates the authenticated user owns the specified entity before processing
-- [ ] Endpoint rejects unauthorized requests with appropriate authorization error
-- [ ] Endpoint validates all required fields are present and properly formatted
-- [ ] Endpoint returns validation error when required fields are missing or malformed
-- [ ] Endpoint updates the translation content in the database when validation passes
-- [ ] Endpoint sets translation status to indicate manual curation
-- [ ] Endpoint records the authenticated user's identifier as the reviewer
-- [ ] Endpoint returns the complete updated translation record upon success
-- [ ] Endpoint handles requests for non-existent entities with appropriate error response
-- [ ] Endpoint handles requests for non-existent translations by creating new translation records
-- [ ] Response format is consistent with other API endpoints in the system
-- [ ] Endpoint enforces proper request authentication and session validation
-
----
-
-## REQ-338: Create Re-Translate API Endpoint
-
-**Date**: 2026-01-19 00:15
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to trigger re-translation of existing content through an API endpoint that supports bulk operations, provides control over manual edit preservation, and returns detailed processing results.
-
-### Current Behavior
-No dedicated re-translation endpoint exists at `/src/app/api/translations/retranslate/route.ts`. Property owners cannot programmatically request re-translation of content that has already been translated. When source content is updated or translation quality needs improvement, owners lack an API mechanism to queue fresh translation jobs for existing entities. There is no way to specify whether manually curated translations should be preserved or overwritten during re-translation operations.
-
-### Expected Behavior
-A POST endpoint at `/src/app/api/translations/retranslate/route.ts` accepts requests to re-translate one or more entities. The request body includes an array of entity identifiers specifying which content items to re-translate, and a boolean parameter controlling whether manually edited translations should be skipped or overwritten. When the skip manual edits option is enabled, the system queues re-translation jobs only for languages where translations are either automated or missing, preserving any translations marked as manually reviewed. When the overwrite option is enabled, re-translation jobs are queued for all languages regardless of manual edit status. The endpoint processes each entity in the request, queuing translation jobs for appropriate language combinations based on the manual edit policy. The response includes a count of how many translation jobs were successfully queued and a count of how many entity-language combinations were skipped due to manual edit protection. The endpoint validates that the authenticated user owns all specified entities before processing, rejecting unauthorized requests with appropriate error responses.
-
-### User Impact
-Property owners who have updated source content descriptions need an efficient way to refresh all translated versions without manually triggering re-translation for each language individually. When translation service quality improves or translation models are updated, owners want to request fresh translations for existing content to benefit from improved quality. Owners who have invested time in manually curating certain translations need assurance that bulk re-translation operations won't accidentally overwrite their manual work. Receiving clear feedback about how many jobs were queued versus skipped helps owners understand what processing occurred and whether manual translations were successfully protected.
-
-### Business Value
-Enables efficient translation maintenance at scale, allowing property owners to keep translated content synchronized with source updates without excessive manual effort. Respects owner investment in manual translation curation by providing explicit control over whether manual edits are preserved or refreshed. Supports continuous improvement of translation quality by making it easy to re-translate content after translation service enhancements or source content improvements.
-
-### Acceptance Criteria
-- [ ] Endpoint is implemented at `/src/app/api/translations/retranslate/route.ts`
-- [ ] Endpoint accepts POST requests with request body containing entity identifiers
-- [ ] Request body accepts array of entity objects specifying entity type and entity ID for each item
-- [ ] Request body accepts boolean parameter controlling manual edit handling policy
-- [ ] When skip manual edits is true, endpoint only queues jobs for automated or missing translations
-- [ ] When skip manual edits is false, endpoint queues jobs for all languages including manually edited ones
-- [ ] Endpoint validates authenticated user owns all specified entities before processing
-- [ ] Endpoint rejects requests containing entities the user does not own with authorization error
-- [ ] Endpoint queues translation jobs for each entity-language combination based on manual edit policy
-- [ ] Response includes integer count of successfully queued translation jobs
-- [ ] Response includes integer count of entity-language combinations skipped due to manual edit protection
-- [ ] Response format includes both jobCount and skippedCount fields
-- [ ] Endpoint handles requests for non-existent entities gracefully without queuing jobs
-- [ ] Endpoint handles malformed entity identifiers with validation error response
-- [ ] Endpoint handles empty entity arrays with validation error indicating at least one entity required
-- [ ] Endpoint supports bulk operations processing multiple entities in a single request
-- [ ] Endpoint performance remains acceptable when processing large entity batches
-- [ ] Response format is consistent with other API endpoints in the system
-- [ ] Endpoint enforces proper request authentication and session validation
-
----
-
-## REQ-339: Add Source Version Tracking Columns via Migration
-
-**Date**: 2026-01-19 02:38
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-Translation tables should include source version timestamp columns to track when the original content was last modified, enabling automatic detection of stale translations.
-
-### Current Behavior
-Translation tables do not capture when the source content they reference was last updated. When property owners modify descriptions, amenity details, FAQ answers, or other translatable content, the system cannot determine which existing translations have become outdated and require re-translation. Without version tracking, translations may remain active even though they no longer accurately reflect the current source content.
-
-### Expected Behavior
-A database migration adds source_version_at timestamp columns to all translation tables including property translations, listing translations, FAQ translations, amenity translations, and system tag translations. The column stores the timestamp of when the source content was last modified, allowing the system to compare source modification times against translation creation times to identify stale translations. Indexes are created on relevant columns to support efficient queries filtering by translation status and ordering by source version timestamp, enabling fast identification of translations requiring updates. The migration executes successfully through database management tooling without errors.
-
-### User Impact
-Property owners who update their content expect translated versions to stay synchronized with those changes. Without automated detection of outdated translations, international guests may see obsolete information that contradicts current source content, creating confusion and reducing booking confidence.
-
-### Business Value
-Enables automated identification of stale translations that require re-translation after source content updates, ensuring international guests always receive current and accurate information. Reduces manual effort required to track which translations need updating after content changes, improving translation maintenance efficiency.
-
-### Acceptance Criteria
-- [ ] Migration adds source_version_at column to property_translations table
-- [ ] Migration adds source_version_at column to listing_translations table
-- [ ] Migration adds source_version_at column to faq_translations table
-- [ ] Migration adds source_version_at column to amenity_translations table
-- [ ] Migration adds source_version_at column to system_tag_translations table
-- [ ] Column type is timestamp with time zone for accurate temporal tracking
-- [ ] Indexes are created to support efficient filtering by translation status
-- [ ] Indexes are created to support efficient ordering by source_version_at timestamp
-- [ ] Migration executes successfully without errors or conflicts
-- [ ] Database schema reflects new columns after migration completes
-- [ ] Existing translation records handle null values gracefully for the new column
-
----
-
-## REQ-340: Update TypeScript Database Types for Owner Management Translation Features
-
-**Date**: 2026-01-19 02:43
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-TypeScript type definitions should reflect all translation infrastructure columns and newly added fields to ensure type safety when building owner management translation features.
-
-### Current Behavior
-The database type definitions include translation tables and some language preference fields from earlier localization epics. However, as new columns are added through migrations for owner management features, such as source version tracking timestamps, reviewer identification fields, and manual edit flags, the TypeScript definitions may not reflect these changes immediately. Developers building translation preview panels, status widgets, and editor components lack complete type information for newly added database fields.
-
-### Expected Behavior
-Type definitions in the database types file comprehensively cover all translation-related tables and columns needed for owner management features. All translation tables include type definitions for source version tracking columns recently added via migration. Translation tables include type definitions for reviewer identification columns that track which user performed manual edits. Translation status fields are properly typed to support filtering and querying. Job queue tables include complete type information for status tracking, locking mechanisms, and error handling fields. Developers receive accurate autocomplete suggestions and compile-time validation when accessing any translation-related database field in owner management components.
-
-### User Impact
-Property owners benefit indirectly through more reliable translation management features built with accurate type safety. Developers building owner-facing interfaces need complete type information to avoid runtime errors from incorrect field references or type mismatches. Missing or incorrect type definitions cause confusion during development and may result in bugs that affect owner experience.
-
-### Business Value
-Reduces development time and prevents bugs by ensuring TypeScript compiler can validate all database field access at compile time rather than discovering errors at runtime. Improves code maintainability by providing self-documenting type contracts that clarify which fields exist and their expected data types. Accelerates feature development by enabling accurate IDE autocomplete for all translation-related database operations.
-
-### Acceptance Criteria
-- [ ] Type definitions include all translation table structures
-- [ ] Type definitions include source_version_at columns for all translation tables
-- [ ] Type definitions include reviewed_by columns for tracking manual edits
-- [ ] Type definitions include translation_status fields with appropriate type constraints
-- [ ] Type definitions include all translation job queue columns including locking fields
-- [ ] Type definitions include preferred_language columns for users and accounts
-- [ ] Type definitions include source_language columns for content entities
-- [ ] TypeScript compiler validates code using updated types without errors
-- [ ] Autocomplete suggestions appear correctly when accessing translation fields in development
-- [ ] All Row, Insert, and Update type variants are properly defined for affected tables
-- [ ] Relationships are correctly typed for foreign key references in translation tables
-
----
-
-## REQ-341: Create TranslationManagement Component Type Definitions File
-
-**Date**: 2026-01-19 13:42
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-The TranslationManagement component system should have a centralized type definitions file that exports all TypeScript interfaces and types used across translation management UI components.
-
-### Current Behavior
-No shared type definitions file exists for the TranslationManagement component system. Developers building translation management UI components lack a single source of truth for type contracts covering translation records, status values, filter parameters, and component props. Without centralized types, developers may duplicate type definitions across multiple components or use inconsistent data structures, leading to type mismatches and integration issues.
-
-### Current Behavior
-No type definitions file exists for the TranslationManagement component system. Each component that needs translation-related types must define its own interfaces or import from scattered locations, leading to duplication and inconsistency.
-
-### Expected Behavior
-A type definitions file at the TranslationManagement component directory exports all shared TypeScript interfaces and types needed across the translation management UI. The file defines interfaces for translation record data including entity identifiers, language codes, translation content, status values, and metadata timestamps. Translation status is represented through enumerated types or string literal unions covering values like pending, completed, failed, and manually edited. Filter and sort parameter interfaces define the shape of query criteria including entity type filters, language filters, status filters, and sort direction options. Component prop interfaces define the expected props for reusable widgets like status indicators, preview panels, and editor dialogs. Callback function types define signatures for operations like triggering re-translation, saving edits, or handling status changes. All exported types include JSDoc comments explaining their purpose, expected usage, and any constraints or validation requirements.
-
-### User Impact
-Property owners benefit from more reliable translation management interfaces built with consistent, type-safe data structures. Developers building translation components have clear type contracts that prevent prop mismatches, reduce integration bugs, and improve development speed through autocomplete and compile-time validation.
-
-### Business Value
-Establishes a strong type foundation for the translation management UI system, improving code quality and reducing bugs from type inconsistencies. Accelerates development by providing reusable type definitions that eliminate duplication and provide clear contracts for component integration. Improves long-term maintainability by centralizing type definitions in a single authoritative location.
-
-### Acceptance Criteria
-- [ ] Types file is created at `/src/components/TranslationManagement/TranslationManagement.types.ts`
-- [ ] File exports interface for translation record data structures including entity ID, entity type, language code, content, status, and timestamps
-- [ ] File exports enum or string literal union type for translation status values covering pending, completed, failed, and manually edited states
-- [ ] File exports interface for filter parameters including entity type filter, language filter, and status filter
-- [ ] File exports interface for sort parameters including sort field and sort direction
-- [ ] File exports prop type interfaces for translation status indicator components
-- [ ] File exports prop type interfaces for translation preview panel components
-- [ ] File exports prop type interfaces for translation editor components
-- [ ] File exports callback function type signatures for re-translation operations
-- [ ] File exports callback function type signatures for save operations
-- [ ] File exports callback function type signatures for status change handlers
-- [ ] All exported types include JSDoc comments describing their purpose and usage
-- [ ] TypeScript compiler validates the types file without errors or warnings
-- [ ] Types can be successfully imported and used in at least one component file
-- [ ] Types align with database type definitions for translation tables where applicable
-- [ ] File follows project TypeScript conventions and naming patterns
-
----
-
-
----
-
-## REQ-342: Create TranslationPreviewPanel Component for Content Translation Review
-
-**Date**: 2026-01-19 14:15
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should be able to view and review all translations for a piece of content in a slide-in panel that displays source content alongside translation status for all supported languages with available actions.
-
-### Current Behavior
-No translation preview panel component exists to display translation status and content for owner-managed entities. When property owners edit their listings, properties, FAQs, or amenities, they have no visual interface to see which languages have translations, review translation status, or take actions like re-translating or manually editing translations. Without this panel, owners cannot easily assess translation coverage, identify failed or outdated translations, or initiate translation operations directly from the editing interface.
-
-### Expected Behavior
-A reusable TranslationPreviewPanel component slides in from the right side of the screen with a width of 400 pixels when triggered. The panel displays the source content at the top, showing the original text that will be translated into other languages for context. Below the source content, the panel lists all six supported languages (English, Spanish, French, German, Italian, Dutch) with visual status indicators showing translation state for each language. Each language row displays the language name, a status indicator showing whether the translation is pending, completed, failed, or manually edited, and a preview of the translated content if available. Action buttons appear for each language allowing owners to edit the translation manually, trigger re-translation to generate a fresh version, or retry a failed translation job. The panel includes a close button allowing owners to dismiss it and return to their primary editing workflow. The panel adapts to different entity types, displaying appropriate field-specific translations for property names, listing descriptions, FAQ content, or amenity names based on the context from which it was opened.
-
-### User Impact
-Property owners gain visibility into translation status for all their content directly within the editing interface, eliminating the need to navigate away to check translation coverage. Owners can quickly identify which languages lack translations or have failed translations requiring attention. Owners can take immediate action to improve translation quality through re-translation or manual editing without context switching. International marketing becomes more manageable as owners can ensure all content is properly translated before publishing or updating listings.
-
-### Business Value
-Empowers property owners to maintain high-quality multilingual content by providing transparent translation status and convenient action controls in a familiar editing context. Reduces support burden by making translation management self-service rather than requiring administrator intervention. Increases the likelihood that owners will maintain complete and accurate translations across all languages, improving the experience for international guests and potentially increasing bookings from non-English markets.
-
-### Acceptance Criteria
-- [ ] Component file is created at `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationPreviewPanel.tsx`
-- [ ] Panel slides in from the right side of the screen with smooth animation
-- [ ] Panel width is fixed at 400 pixels for consistent layout
-- [ ] Panel displays source content at the top with clear labeling indicating it is the original version
-- [ ] Panel lists all six supported languages below the source content
-- [ ] Each language row displays the language name in a user-friendly format
-- [ ] Each language row displays a visual status indicator showing translation state
-- [ ] Status indicators clearly differentiate between pending, completed, failed, and manually edited states
-- [ ] Each language row shows a preview of translated content when translation is available
-- [ ] Edit button appears for each language allowing owners to manually modify translations
-- [ ] Re-translate button appears for each language to trigger fresh translation generation
-- [ ] Retry button appears for failed translations to reprocess the translation job
-- [ ] Close button allows owners to dismiss the panel and return to editing
-- [ ] Panel handles different entity types appropriately based on context
-- [ ] Component uses types from the TranslationManagement.types.ts file
-- [ ] Component follows project styling conventions and accessibility guidelines
-- [ ] Panel is responsive and maintains usability on different screen sizes
-- [ ] Loading states display appropriately while fetching translation data
-- [ ] Error states display appropriately if translation data cannot be loaded
-
-
----
-
-## REQ-343: Create TranslationProgressBar Component for Visual Translation Status
-
-**Date**: 2026-01-19 15:30
-**Type**: NEW FEATURE
-**Size**: S
-
-### Summary
-Users should see a visual progress indicator showing the completion status of translations across all supported languages with real-time updates during active translation processing.
-
-### Current Behavior
-No visual progress bar component exists to display translation completion status. When property owners or administrators view content with multiple language translations, they cannot quickly assess overall translation coverage at a glance. Without a progress indicator, users must manually count which languages have completed translations versus which are pending or failed, making it difficult to understand translation readiness at a glance. During active translation processing, users have no visual feedback indicating that translation work is in progress or how many translations have completed versus remaining.
-
-### Expected Behavior
-A TranslationProgressBar component displays a horizontal progress bar with fill color indicating the percentage of completed translations. Above or beside the progress bar, a text label shows the completion count in the format "3/5 translations complete" or similar, clearly indicating how many languages have successful translations versus the total number of supported languages. When translations are actively processing, the progress bar displays a subtle animation such as a moving gradient or pulsing effect to indicate work in progress and provide visual feedback that the system is actively translating content. The progress bar uses distinct visual states for different scenarios: a green or blue fill for successful translations, a warning color if some translations have failed but others succeeded, and a muted or gray state if no translations exist yet. The component accepts the total count of supported languages and the count of completed translations as props, calculating the percentage automatically and rendering the appropriate visual representation. The component is reusable across different contexts including the translation preview panel, item grids, and translation management pages.
-
-### User Impact
-Property owners can instantly assess translation coverage for their content without counting individual language rows or reading detailed status indicators. Visual progress feedback during translation processing reassures users that their translation requests are being processed and provides a sense of completion progress. Quick visual scanning of progress bars across multiple content items helps owners prioritize which content needs translation attention first.
-
-### Business Value
-Improves user experience by replacing cognitive overhead of counting translations with instant visual comprehension through progress bars. Reduces perceived wait time during translation processing by providing animated visual feedback indicating active work. Encourages owners to complete translations across all languages by making incomplete coverage visually prominent through partial progress bars.
-
-### Acceptance Criteria
-- [ ] Component file is created at `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`
-- [ ] Component accepts props for completed translation count and total translation count
-- [ ] Component renders a horizontal progress bar with fill indicating completion percentage
-- [ ] Component displays text label showing completion count in format "X/Y translations complete"
-- [ ] Progress bar fill color indicates successful translation state using appropriate theme colors
-- [ ] Component displays animation during active translation processing such as moving gradient or pulse effect
-- [ ] Animation prop allows parent components to trigger or disable animation based on processing state
-- [ ] Component handles edge cases gracefully such as zero translations or all translations complete
-- [ ] Progress bar width is configurable through props or adapts to container width
-- [ ] Component uses semantic HTML and ARIA attributes for accessibility
-- [ ] Component follows project styling conventions and integrates with design system
-- [ ] Component is fully typed using TypeScript interfaces for all props
-- [ ] Component can be successfully imported and rendered in at least one parent component
-- [ ] Visual appearance matches design expectations for progress indicators used elsewhere in the application
-- [ ] Animation performance is smooth without causing layout shifts or reflows
-
-
----
-
-## REQ-344: Create useTranslationRealtime Hook for Live Translation Updates
-
-**Date**: 2026-01-19 00:00
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Implement a React hook that subscribes to real-time database changes for translation status updates, enabling the UI to automatically refresh when translation jobs complete.
-
-### Current Behavior
-When translations are processing in the background, users must manually refresh the page or wait for polling intervals to see updated translation status. There is no immediate feedback when a translation job completes successfully or fails.
-
-### Expected Behavior
-When a user is viewing content that has pending translations, the UI automatically updates in real-time as translation jobs complete. Status indicators, preview panels, and language availability change instantly without requiring page refreshes or manual polling.
-
-### User Impact
-Content managers and property owners working with multilingual content will see immediate feedback when their translation jobs complete. This creates a more responsive and modern experience, reducing uncertainty about whether translations are ready and eliminating the need to constantly refresh pages to check status.
-
-### Business Value
-Real-time updates improve user confidence in the translation system and reduce support inquiries about translation timing. The immediate feedback loop encourages users to create more multilingual content by making the process feel faster and more reliable.
-
-### Acceptance Criteria
-- [ ] Hook subscribes to Supabase realtime channel for translation table updates
-- [ ] UI components automatically re-render when subscribed translation records change
-- [ ] Hook accepts entity type and entity ID parameters to filter relevant updates
-- [ ] Subscription is properly cleaned up when component unmounts to prevent memory leaks
-- [ ] Hook returns current translation status and a loading state
-- [ ] Multiple components can subscribe to the same translation updates without conflicts
-- [ ] Connection errors are handled gracefully with automatic reconnection attempts
-- [ ] Hook works correctly for items, articles, links, and tags translation updates
-
-
-
----
-
-## REQ-350: Create TranslationStatusWidget Component for Dashboard Summary
-
-**Date**: 2026-01-19 22:45
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Property owners should see a summary card on their dashboard that displays overall translation status across all their content with quick access to detailed translation management.
-
-### Current Behavior
-No dashboard widget exists to provide property owners with an at-a-glance view of their translation coverage. Owners must navigate to individual items, articles, or links to check translation status for each piece of content separately. There is no centralized summary showing how many of their content pieces are fully translated, partially translated, or have pending or failed translations across all supported languages. Without this overview, owners cannot easily prioritize translation work or understand the overall multilingual readiness of their property information.
-
-### Expected Behavior
-A TranslationStatusWidget component appears on the property owner dashboard as a summary card displaying aggregated translation statistics across all content owned by that property owner. The widget shows a progress bar indicating the overall percentage of completed translations across all content types and languages. Below the progress bar, the widget displays counts broken down by status: the number of items with complete translations in all languages, the number with partial translations in some languages, the number with pending translations currently processing, and the number with failed translations requiring attention. Each status count uses distinct visual styling and icons to quickly communicate the meaning at a glance. A "View Details" link at the bottom of the widget navigates the owner to a dedicated translation management page where they can see detailed status for each piece of content and take corrective actions. The widget automatically updates when translation jobs complete without requiring page refresh.
-
-### User Impact
-Property owners can instantly understand the multilingual readiness of their entire property portfolio from the dashboard without navigating through individual content items. Visual breakdown by status helps owners prioritize which translation issues need immediate attention versus what is already complete or in progress. Quick access to detailed management through the "View Details" link reduces navigation friction when owners want to take action on translation tasks.
-
-### Business Value
-Increases owner engagement with translation features by surfacing translation status prominently on the dashboard rather than hiding it in individual content editors. Encourages owners to maintain complete translations by making incomplete coverage visible during routine dashboard visits. Reduces support burden by providing self-service visibility into translation progress and issues, preventing owners from contacting support to ask about translation status.
-
-### Acceptance Criteria
-- [ ] Component file is created at `/src/components/TranslationManagement/TranslationStatusWidget/TranslationStatusWidget.tsx`
-- [ ] Widget renders as a dashboard card with consistent styling matching other dashboard widgets
-- [ ] Widget displays a progress bar showing overall translation completion percentage across all owner content
-- [ ] Progress bar calculation includes all content types: items, articles, links, and tags
-- [ ] Widget displays count of content pieces with complete translations in all supported languages
-- [ ] Widget displays count of content pieces with partial translations in some but not all languages
-- [ ] Widget displays count of content pieces with pending translations currently processing
-- [ ] Widget displays count of content pieces with failed translations requiring owner attention
-- [ ] Each status count uses distinct visual styling with appropriate colors and icons
-- [ ] Failed translation count uses warning or error color to draw attention to issues
-- [ ] "View Details" link appears at the bottom of the widget with clear affordance
-- [ ] Clicking "View Details" navigates to the translation management page with appropriate filters or context
-- [ ] Widget handles loading state appropriately while fetching translation statistics
-- [ ] Widget handles error state appropriately if translation statistics cannot be loaded
-- [ ] Widget handles empty state appropriately for owners with no content yet
-- [ ] Widget automatically updates when translation status changes through real-time subscriptions or periodic refresh
-- [ ] Component is fully typed using TypeScript interfaces for all props and data structures
-- [ ] Component follows project styling conventions and accessibility guidelines
-- [ ] Widget is responsive and maintains usability on different screen sizes
-- [ ] Widget integrates successfully into the existing dashboard layout without breaking other widgets
-
-
----
-
-## REQ-351: Create TranslationStatusColumn Component for Table Integration
-
-**Date**: 2026-01-19 (Current system date)
-**Type**: NEW FEATURE
-**Size**: M
-
-### Summary
-Content owners need a compact, at-a-glance view of translation status for each content item directly within table listings, with the ability to quickly access detailed translation information.
-
-### Current Behavior
-Content listings (articles, items, links) display only the original content without any indication of translation availability or status across supported languages.
-
-### Expected Behavior
-Each content item row displays a compact status indicator column showing the translation state for all six supported languages using visual markers (dots or icons). Each language indicator clearly shows whether a translation is complete, pending, missing, or has failed. Clicking the status column opens a detailed translation preview panel for that specific content item.
-
-### User Impact
-Content owners managing multilingual properties can immediately identify which content items have complete translations, which need attention, and which languages are missing. This eliminates the need to open individual items to check translation status and enables quick identification of incomplete localization coverage.
-
-### Business Value
-Improves translation workflow efficiency by providing immediate visibility into localization completeness across the content inventory. Reduces time spent identifying translation gaps and enables proactive management of multilingual content quality.
-
-### Acceptance Criteria
-- [ ] Component displays exactly six language status indicators in a compact, horizontally-aligned layout suitable for table columns
-- [ ] Each language indicator uses clear visual differentiation for states: complete, pending, missing, and failed
-- [ ] Clicking anywhere on the status column opens the translation preview panel for that content item
-- [ ] Component accepts content item data (ID, type, current translations) as props
-- [ ] Visual indicators update in real-time when translation status changes
-- [ ] Component maintains consistent sizing and alignment within table layouts across different screen sizes
-- [ ] Hover states provide language identification (e.g., tooltip showing "German: Complete")
-- [ ] Loading states are handled gracefully when translation data is being fetched
-
-
-
----
-
-## REQ-352: Integrate Translation Status Widget into Dashboard Layout
-
-**Date**: 2026-01-19 23:15
-**Type**: ENHANCEMENT
-**Size**: S
-
-### Summary
-Property owners should see their translation status summary automatically when viewing their main dashboard without requiring additional navigation or configuration.
-
-### Current Behavior
-The dashboard displays property management information but does not include translation status visibility. Property owners have no awareness of their translation coverage or pending translation jobs unless they specifically navigate to content editing interfaces or translation management pages. The TranslationStatusWidget component exists but is not integrated into the main dashboard layout where owners regularly check their property status.
-
-### Expected Behavior
-When a property owner views their main dashboard, the TranslationStatusWidget appears as a prominent card within the dashboard layout alongside other key property metrics and status information. The widget loads translation status data automatically when the dashboard page renders, displaying real-time statistics about translation completion across all the owner's content. The widget fits naturally within the existing dashboard grid or layout structure without disrupting other dashboard components. Loading states appear appropriately while translation statistics are being fetched, and error states are handled gracefully if data cannot be retrieved.
-
-### User Impact
-Property owners gain immediate visibility into their multilingual content coverage during routine dashboard visits without requiring additional clicks or navigation. This passive awareness increases engagement with translation features and helps owners maintain complete translation coverage by surfacing translation status where they naturally look for property management information.
-
-### Business Value
-Increases translation feature adoption by integrating translation visibility into the primary owner workflow rather than treating it as a separate or optional feature. Proactive display of translation status encourages owners to maintain complete multilingual content, directly supporting the platform's international expansion goals.
-
-### Acceptance Criteria
-- [ ] TranslationStatusWidget component is imported and rendered within the dashboard page layout
-- [ ] Widget appears in a visually prominent location within the dashboard that does not obscure other critical dashboard information
-- [ ] Dashboard fetches translation status summary data on page load using the appropriate API endpoint or database query
-- [ ] Fetched data is passed to the TranslationStatusWidget component through props
-- [ ] Loading state displays appropriately while translation statistics are being fetched on initial dashboard load
-- [ ] Error state displays appropriately if translation statistics cannot be loaded, without breaking the entire dashboard
-- [ ] Widget integrates seamlessly with the existing dashboard layout responsive grid or flex structure
-- [ ] Dashboard page maintains acceptable performance with the added translation status query
-- [ ] Translation statistics refresh appropriately when the owner performs actions that affect translation status
-- [ ] Widget positioning and styling match the visual design of other dashboard summary cards
-
-
-
----
-
-## REQ-353: Add Translation Status Column to Items List
-
-**Date**: 2026-01-19 23:18
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners viewing their items list should see translation status for each item directly within the grid, enabling quick assessment of which items have complete translations without opening individual items.
-
-### Current Behavior
-The items grid displays item cards with thumbnail, title, description, and action buttons. Translation status is not visible in the list view. Property owners must open each item individually or navigate to separate translation management interfaces to determine which items have been translated to which languages. This requires extensive navigation and multiple page loads to assess translation coverage across their content inventory.
-
-### Expected Behavior
-Each item card in the grid displays a compact translation status indicator showing the completion state for all supported languages. The status indicator uses visual cues (icons, colors, or badges) to communicate translation completeness at a glance. Clicking the translation status indicator opens the translation preview panel for that specific item, allowing owners to review or edit translations directly from the list view. The status indicator updates in real-time when translations are completed or modified. The visual indicator is appropriately sized to fit within the existing card layout without overwhelming other item information.
-
-### User Impact
-Property owners can immediately identify gaps in their multilingual content coverage while browsing their items list. This reduces the effort required to maintain translation completeness and enables owners to prioritize translation work based on visible status indicators. Owners with large item inventories benefit from being able to scan translation status across dozens or hundreds of items simultaneously.
-
-### Business Value
-Improves translation workflow efficiency by surfacing translation status where owners already spend time managing content. Reduces friction in maintaining complete translations by eliminating the need to check each item individually, supporting the platform's goal of comprehensive multilingual content availability.
-
-### Acceptance Criteria
-- [ ] ItemGrid component accepts an optional prop to enable translation status display
-- [ ] When enabled, each ItemCard displays a translation status indicator showing completion for all supported languages
-- [ ] Translation status indicator is visually compact and does not disrupt the existing card layout or spacing
-- [ ] Clicking the translation status indicator triggers the translation preview panel for that item
-- [ ] Status indicator uses clear visual differentiation for translation states: complete, pending, missing, and failed
-- [ ] Status indicator updates dynamically when translation data changes without requiring page refresh
-- [ ] Component gracefully handles items with no translation data (shows appropriate default state)
-- [ ] Translation status fetch does not significantly degrade grid rendering performance for lists with many items
-- [ ] Status indicator is accessible with appropriate ARIA labels describing translation completion state
-- [ ] Mobile layouts display the status indicator appropriately within reduced card dimensions
-
-
-
-
----
-
-## REQ-354: Create Translation Management Page
-
-**Date**: 2026-01-19 23:25
-**Type**: NEW FEATURE
-**Size**: L
-
-### Summary
-Property owners need a centralized dashboard page where they can view, filter, and manage translations for all their content items and articles across all supported languages in a single interface.
-
-### Current Behavior
-Translation management is scattered across individual item and article editing interfaces. Property owners must navigate to each piece of content separately to check or manage its translations. There is no unified view showing translation status across the entire content inventory. Owners cannot filter content by translation status, language availability, or content type. Bulk operations on translations are not possible. Assessing overall translation coverage requires manually checking each item and article individually.
-
-### Expected Behavior
-A dedicated Translation Management page displays a full-width table listing all content (items, articles, and links) owned by the current user. Each row shows the content name, content type, and separate status columns for each of the six supported languages. The table includes a filter bar allowing owners to narrow results by content type, specific language, and translation status. Row selection enables bulk actions such as initiating translations for multiple pieces of content simultaneously or deleting translations. Each row provides action buttons or menu options for individual translation operations. The table supports sorting by content name, type, or translation completion. Pagination handles large content inventories efficiently. The page provides clear visual indicators for translation states and handles loading states gracefully during data fetches.
-
-### User Impact
-Property owners managing multilingual content gain a comprehensive overview of their translation coverage without repetitive navigation through individual content pages. Filtering capabilities allow owners to quickly identify content missing translations for specific languages or content types requiring attention. Bulk selection dramatically reduces the time required to initiate or manage translations across multiple content items. Owners with large inventories benefit from centralized visibility and batch operations that were previously impossible or extremely time-consuming.
-
-### Business Value
-Significantly improves translation workflow efficiency by consolidating management into a purpose-built interface. Reduces friction in maintaining complete multilingual content coverage across properties. Enables proactive translation management at scale, supporting the platform's international growth strategy by making it easier for owners to maintain high-quality multilingual content availability.
-
-### Acceptance Criteria
-- [ ] Page accessible at /dashboard2/translations route requiring authenticated owner access
-- [ ] Table displays all content items, articles, and links owned by the current authenticated user
-- [ ] Each table row shows content name, content type, and individual status indicators for all six supported languages
-- [ ] Filter bar includes dropdowns or multi-select controls for Type, Language, and Status filtering
-- [ ] Applied filters update the table content dynamically without full page reload
-- [ ] Table rows support individual selection via checkbox with visual indication of selected state
-- [ ] Bulk selection control in table header selects or deselects all visible rows
-- [ ] Bulk action bar appears when one or more rows are selected, offering relevant translation operations
-- [ ] Each row includes an actions menu or buttons providing access to translation preview, editing, or retranslation
-- [ ] Table supports sorting by content name, content type, and overall translation completion
-- [ ] Pagination controls appear when content count exceeds page size limit
-- [ ] Loading states display appropriately during initial data fetch and filter application
-- [ ] Empty states communicate clearly when no content exists or no content matches applied filters
-- [ ] Page layout is responsive and maintains usability on tablet-sized screens
-- [ ] Translation status updates reflect in the table when translations are completed or modified without requiring manual refresh
-
----
-
-## REQ-355: Add Translations Navigation Link to Dashboard
-
-**Date**: 2026-01-19 23:28
-**Type**: ENHANCEMENT
-**Size**: XS
-
-### Summary
-Property owners need a visible, easily accessible navigation link to reach the Translation Management page from anywhere within the dashboard interface.
-
-### Current Behavior
-The Translation Management page exists but has no dedicated navigation entry. Property owners must manually type the route URL or use browser bookmarks to access the translations dashboard. The navigation sidebar does not include any reference to translation management functionality. There is no visual indication that translation management capabilities exist within the application.
-
-### Expected Behavior
-The dashboard navigation sidebar displays a "Translations" menu item with an appropriate icon such as Languages or Globe. Clicking this navigation link routes the user to the Translation Management page. The navigation item highlights or changes appearance when the user is viewing the translations section, providing clear visual feedback about the current location within the dashboard. The link appears consistently across all dashboard pages that use the shared layout component.
-
-### User Impact
-Property owners discover and access translation management features through standard navigation patterns instead of memorizing URLs or relying on external documentation. The visible navigation entry signals the availability of translation management capabilities, encouraging adoption and regular use of multilingual content features.
-
-### Business Value
-Increases discoverability and utilization of translation features by making them visible in the primary navigation structure. Improves user experience through standard navigation patterns that match user expectations for application structure.
-
-### Acceptance Criteria
-- [ ] Navigation link labeled "Translations" appears in the dashboard sidebar navigation
-- [ ] Link displays an icon representing language or translation functionality
-- [ ] Clicking the link navigates to the Translation Management page without page reload
-- [ ] Active state styling applies when viewing the translations section
-- [ ] Navigation link appears for all authenticated property owners with content access
-- [ ] Link position in navigation follows logical information architecture principles
-- [ ] Navigation remains accessible and visible across all viewport sizes supported by the dashboard
-
-
----
-
-## REQ-356: Implement Stale Translation Indicator
-
-**Date**: 2026-01-19 23:45
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Property owners need visual indicators showing when manually edited translations have become stale because the source content has been updated since the translation was last edited.
-
-### Current Behavior
-The TranslationStatusItem component displays translation status with indicators for completion states like complete, pending, missing, and failed. When a property owner manually edits a translation and later updates the source content, there is no visual indication that the manual translation may now be outdated or inconsistent with the current source material. Owners have no way to identify which of their manual translations require review or updating based on source content changes. The version tracking exists in the database but is not surfaced in the user interface.
-
-### Expected Behavior
-The TranslationStatusItem component displays a stale translation warning when source content has been modified after a manual edit was made. A yellow warning icon or badge appears alongside the translation status indicator, clearly distinguishing stale translations from current ones. The entire status item displays a yellow border or background tint to increase visibility of the stale state. An "Update Translation" action button appears within the stale translation item, allowing the owner to trigger re-translation from the updated source content. Hovering over or focusing on the stale indicator reveals a tooltip explaining that the source content has changed since the manual edit. The stale indicator only appears for translations marked as manually edited, not for translations that are automatically managed.
-
-### User Impact
-Property owners maintaining manually edited translations can immediately identify which translations need attention after updating source content. This prevents the common scenario where source content evolves but manually edited translations become progressively more outdated and inconsistent. Owners no longer need to manually track which translations require updates after content changes, reducing the cognitive load of managing multilingual content across multiple properties.
-
-### Business Value
-Improves translation quality by surfacing maintenance requirements proactively rather than relying on owners to notice discrepancies. Reduces the risk of guests viewing outdated or inaccurate translated content that no longer reflects current source information. Supports the platform's commitment to high-quality multilingual content by providing tools that make it easier to maintain translation accuracy over time.
-
-### Acceptance Criteria
-- [ ] TranslationStatusItem component detects stale status based on source_version_at timestamp being later than the manual edit timestamp
-- [ ] Stale translations display a yellow warning icon or badge adjacent to the translation status indicator
-- [ ] Stale translation items show a yellow border or subtle yellow background tint distinct from other status states
-- [ ] "Update Translation" action button appears within stale translation items
-- [ ] Clicking "Update Translation" triggers the re-translation API endpoint for that specific content and language
-- [ ] Tooltip or hover state on the stale indicator explains why the translation is marked as stale
-- [ ] Stale indicator only appears when is_manually_edited flag is true and source content has been updated
-- [ ] Automatically translated content (not manually edited) does not show stale warnings even when source content changes
-- [ ] Stale indicator styling is visually distinct from error, pending, and missing states
-- [ ] After re-translation completes, the stale indicator disappears and status returns to complete
-- [ ] Component handles loading state appropriately while re-translation is processing
-- [ ] Stale state is accessible with appropriate ARIA attributes describing the warning condition
-
----
-
-## REQ-357: Integrate Manual Translation Warning into Content Save Flow
-
-**Date**: 2026-01-19 00:00
-**Type**: ENHANCEMENT
-**Size**: M
-
-### Summary
-Content editors should be warned before saving changes to articles or items that have manually edited translations, preventing accidental loss of manual translation work.
-
-### Current Behavior
-When a content editor saves changes to an article or item, the system automatically triggers re-translation of all language versions, including those that were manually edited or corrected. There is no indication that manual translation work will be overwritten, leading to unintentional loss of carefully crafted translations.
-
-### Expected Behavior
-Before saving content changes that would trigger re-translation, the system detects if any language versions have manual translation overrides and displays a warning dialog. The editor can review which languages have manual edits, decide whether to proceed with the save (which will mark those translations for re-translation), or cancel and preserve the manual work.
-
-### User Impact
-Content editors and translation managers who manually refine translations will be protected from accidentally overwriting their work. This reduces frustration, prevents rework, and maintains translation quality by preserving intentional manual edits.
-
-### Business Value
-Protects investment in manual translation refinement and improves editor confidence when managing multilingual content.
-
-### Acceptance Criteria
-- [ ] Article save handlers check for manual translation overrides before processing the save
-- [ ] Item save handlers check for manual translation overrides before processing the save
-- [ ] Warning dialog appears when manual translations are detected, showing affected languages
-- [ ] Editor can proceed with save (triggering re-translation) or cancel to preserve manual edits
-- [ ] No warning appears when no manual translations exist for the content being saved
-- [ ] Warning state does not block urgent content updates when editor chooses to proceed
-
-
----
-
-## REQ-358: Create LanguagePreferenceSection Component
+## REQ-E05-002: Manual Translation Update API Endpoint
 
 **Date**: 2026-01-19 14:30
 **Type**: NEW FEATURE
 **Size**: M
 
 ### Summary
-Property owners need a dedicated interface component that allows them to select and save their preferred language for the application interface through a dropdown selector with clear visual feedback and help text.
+Property owners need to manually update and override machine-generated translations through an API endpoint that marks content as human-reviewed.
 
 ### Current Behavior
-Property owners access the application interface in a single default language with no ability to customize their language preference. The system lacks a user interface component for selecting and persisting language preferences. While language detection and switching infrastructure exists, there is no settings interface where property owners can explicitly choose and save their preferred language for future sessions. Property owners who prefer languages other than the default have no method to customize their interface experience.
+No API endpoint exists for property owners to submit manual translation updates or override machine-generated translations for their content.
 
 ### Expected Behavior
-Property owners access a LanguagePreferenceSection component within their account settings or profile area. The component displays a language dropdown selector showing all supported languages with their native names and flag icons. The currently saved preference is pre-selected when the component loads. After selecting a new language from the dropdown, a save button becomes active, allowing the property owner to persist their choice. During the save operation, the button displays a loading state with appropriate visual feedback. Help text near the dropdown explains that this setting controls the language used throughout the application interface, not the language of guest-facing content. The saved preference applies immediately and persists across browser sessions.
+A PUT endpoint accepts translation content updates, automatically marks the translation status as 'manual', records the reviewer's identity, validates ownership permissions, and persists the changes successfully.
 
 ### User Impact
-Property owners working in their preferred language experience reduced cognitive load and faster task completion. Non-English-speaking property owners gain equal access to all platform features without language barriers. Property owners managing properties in multiple countries can use the interface in their native language while creating content in various target languages. The explicit preference setting provides a sense of control and customization that improves overall satisfaction with the platform.
+Property owners can provide accurate, culturally-appropriate translations that override automated translations, ensuring higher quality multilingual content that reflects their brand voice and local expertise.
 
 ### Business Value
-Expands addressable market by removing language barriers for international property owners. Increases user satisfaction and retention by providing interface localization that respects user preferences. Reduces support inquiries related to interface comprehension and navigation in non-preferred languages. Demonstrates commitment to serving a global user base and positions the platform as accessible to international property managers.
+Improves translation quality through human oversight while maintaining automated workflows for scale, leading to better guest satisfaction with translated content.
 
 ### Acceptance Criteria
-- [ ] Component file exists at /src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx
-- [ ] Component renders a language dropdown selector displaying all supported languages
-- [ ] Each language option shows a flag icon and native language name
-- [ ] Dropdown pre-selects the currently saved language preference when component mounts
-- [ ] Save button appears below or adjacent to the dropdown selector
-- [ ] Save button is disabled until user selects a different language from current preference
-- [ ] Save button displays loading state (spinner or loading text) during save operation
-- [ ] Help text appears near the dropdown explaining the setting's purpose and scope
-- [ ] Help text clarifies that this setting affects the application interface, not guest-facing content
-- [ ] Component handles successful save by displaying confirmation feedback
-- [ ] Component handles failed save by displaying error message without losing user's selection
-- [ ] Component is keyboard accessible with proper focus management
-- [ ] Component provides appropriate ARIA labels for screen readers
-- [ ] Component styling is consistent with the application's design system
-- [ ] Component is responsive and usable on both tablet and desktop viewports
-
-
+- [ ] PUT request accepts entityType, entityId, and language as path parameters
+- [ ] Request body contains the updated translation content fields
+- [ ] System automatically sets translation status to 'manual' upon update
+- [ ] System records the reviewedBy field with the authenticated user's identifier
+- [ ] System validates that the requesting user has access to the specified entity
+- [ ] Unauthorized access attempts return 403 Forbidden responses
+- [ ] Invalid entity references return 404 Not Found responses
+- [ ] Successful updates return the complete updated translation record
+- [ ] Translation version history is preserved when content is updated
+- [ ] Content validation ensures required fields are present and properly formatted
 
 ---
 
-## REQ-359: Create Account Language Preference API Endpoint
+## REQ-E05-003: Bulk Content Re-Translation Request API Endpoint
+
+**Date**: 2026-01-19 14:35
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Property owners need to request re-translation of their content when translations become stale or need refreshing, supporting both individual and bulk operations with configurable handling of manually edited translations.
+
+### Current Behavior
+No API endpoint exists for property owners to trigger re-translation of existing content, forcing them to manually delete and recreate translations or wait for automatic staleness detection.
+
+### Expected Behavior
+A POST endpoint accepts single or multiple entity references, queues translation jobs for each requested entity and language combination, respects options to skip or overwrite manually edited translations, and returns counts of jobs created versus skipped.
+
+### User Impact
+Property owners can refresh outdated translations across their entire property with a single request, choose whether to preserve human-reviewed translations during bulk updates, and receive immediate feedback on how many translations will be regenerated.
+
+### Business Value
+Enables efficient translation refresh workflows when source content changes significantly, reducing manual effort while preserving valuable human edits where appropriate.
+
+### Acceptance Criteria
+- [ ] POST request accepts array of entity references (entityType and entityId pairs)
+- [ ] Request body supports 'skipManualEdits' option (boolean) to preserve human-reviewed translations
+- [ ] Request body supports 'overwriteManualEdits' option (boolean) to force re-translation of all content
+- [ ] System validates that requesting user has ownership access to all specified entities
+- [ ] System queues translation jobs for all supported languages per entity
+- [ ] Response includes 'jobsQueued' count showing number of translation jobs created
+- [ ] Response includes 'jobsSkipped' count showing number of manual translations preserved
+- [ ] System handles mixed entity types (items, articles, links) in a single request
+- [ ] Partial authorization failures return clear error messages identifying inaccessible entities
+- [ ] Job creation failures are logged but do not prevent other jobs from being queued
+- [ ] System prevents duplicate job creation if translations are already pending
+- [ ] Empty request bodies or arrays return appropriate validation errors
+
+---
+
+## REQ-E05-004: Source Content Version Tracking via Database Schema
+
+**Date**: 2026-01-19 14:40
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The translation system needs to track when source content was last modified to automatically detect when translations have become stale and require re-translation.
+
+### Current Behavior
+Translation tables store translated content and status, but do not maintain timestamps indicating when the source content was last changed, making it impossible to automatically detect outdated translations.
+
+### Expected Behavior
+Translation tables include source_version_at timestamp columns that are automatically updated whenever source content changes, enabling the system to compare translation creation dates against source modification dates to identify stale translations requiring refresh.
+
+### User Impact
+Property owners benefit from automatic detection of outdated translations, ensuring guests always see accurate translated content that reflects the latest source information without manual intervention.
+
+### Business Value
+Reduces manual translation management overhead, improves translation accuracy over time, and ensures multilingual content stays synchronized with source content changes.
+
+### Acceptance Criteria
+- [ ] Database migration adds source_version_at column to items_translation table
+- [ ] Database migration adds source_version_at column to articles_translation table
+- [ ] Database migration adds source_version_at column to links_translation table
+- [ ] All new source_version_at columns allow NULL values for backward compatibility
+- [ ] Indexes are created on source_version_at columns for efficient staleness queries
+- [ ] Composite indexes are created combining status and source_version_at for performance
+- [ ] Migration can be rolled back without data loss
+- [ ] Existing translation records remain valid after migration
+- [ ] Query performance for status filtering shows no degradation after index creation
+
+---
+
+## REQ-E05-005: TypeScript Database Type Definitions for Translation Schema
 
 **Date**: 2026-01-19 14:45
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+The application's TypeScript type definitions need to reflect the current translation table schema including all columns added during previous epic phases.
+
+### Current Behavior
+TypeScript type definitions may be missing or outdated for translation-related database tables, causing type safety issues, IntelliSense problems, and potential runtime errors when accessing translation data.
+
+### Expected Behavior
+Type definitions accurately represent all translation table structures including the translation_jobs table, translation content tables for items/articles/links, and all column types including newly added columns like source_version_at, ensuring developers have complete type safety and autocomplete support.
+
+### User Impact
+Developers building translation features experience fewer runtime errors, benefit from accurate autocomplete suggestions, catch type mismatches during development rather than production, and maintain code quality through compile-time validation.
+
+### Business Value
+Reduces development time through better tooling support, prevents type-related bugs from reaching production, and improves code maintainability by ensuring database schema changes are reflected in application code.
+
+### Acceptance Criteria
+- [ ] Type definitions include complete translation_jobs table structure with all columns
+- [ ] Type definitions include items_translation table with source_version_at column
+- [ ] Type definitions include articles_translation table with source_version_at column
+- [ ] Type definitions include links_translation table with source_version_at column
+- [ ] Enum types are defined for translation status values (pending, completed, failed, manual)
+- [ ] Enum types are defined for entity types (item, article, link, tag)
+- [ ] All timestamp columns are typed as Date or string as appropriate
+- [ ] JSON columns are typed with specific structures rather than generic Record types
+- [ ] Type definitions match actual database schema without discrepancies
+- [ ] Existing code using translation types compiles without new type errors
+- [ ] Generated types include helpful JSDoc comments describing column purposes
+
+---
+
+## REQ-E05-006: Translation Management Shared Type Definitions
+
+**Date**: 2026-01-19 15:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Translation management UI components need a centralized type definition file containing all shared interfaces, types, and enums to ensure type consistency across the owner-facing translation management interface.
+
+### Current Behavior
+No centralized type definition file exists for translation management UI components, leading to potential type inconsistencies, duplicate type definitions across components, and lack of a single source of truth for translation management data structures.
+
+### Expected Behavior
+A dedicated TypeScript types file defines all shared interfaces for translation status displays, translation editor props, translation job metadata, language selection controls, and reusable component properties, providing complete type safety and IntelliSense support throughout the translation management feature.
+
+### User Impact
+Developers building and maintaining translation management features experience fewer type-related bugs, benefit from accurate IDE autocomplete, maintain consistency across components through shared type contracts, and catch integration errors during development rather than runtime.
+
+### Business Value
+Accelerates feature development through better tooling support, reduces maintenance costs by centralizing type definitions, prevents runtime errors through compile-time validation, and improves code quality through enforced type contracts.
+
+### Acceptance Criteria
+- [ ] File created at `/src/components/TranslationManagement/TranslationManagement.types.ts`
+- [ ] Types define translation status display data structures (status, counts, percentages)
+- [ ] Types define translation editor component props and state interfaces
+- [ ] Types define translation job metadata structures (job ID, entity reference, language, priority)
+- [ ] Types define language selector component props and option types
+- [ ] Types define translation preview component props and content structure
+- [ ] Enum types define translation status values matching database schema
+- [ ] Enum types define entity types matching database schema
+- [ ] Types include JSDoc comments explaining purpose and usage of complex structures
+- [ ] All types export properly for use across translation management components
+- [ ] Types integrate seamlessly with existing database types from generated definitions
+- [ ] No circular dependencies exist between type definition files
+
+---
+
+## REQ-E05-007: Translation Preview Panel Component
+
+**Date**: 2026-01-19 15:05
 **Type**: NEW FEATURE
 **Size**: M
 
 ### Summary
-Property owners need a server endpoint that securely validates account access and persists their preferred language selection to the database, enabling language preferences to be saved and retrieved across sessions.
+Property owners need a slide-in panel that displays translation status and content for a selected item, showing the source content alongside all available language translations with their current state and available actions.
 
 ### Current Behavior
-The application lacks a server-side API endpoint for managing account-level language preferences. When property owners attempt to save their language selection through the LanguagePreferenceSection component, there is no backend endpoint to receive and persist this data. The database may have a preferred_language column in the accounts table, but no API route exists to update it. Property owners cannot save language preferences because the client-side component has no endpoint to communicate with. Language selections made in the interface are lost when the browser session ends or the page refreshes.
+No dedicated UI component exists for property owners to preview translation status and content for individual items, forcing them to navigate to separate pages or views to understand translation coverage and quality.
 
 ### Expected Behavior
-A PUT endpoint exists at /api/accounts/[accountId]/preferences/route.ts that accepts language preference updates and validates account access before persisting changes. When a property owner saves their language preference through the LanguagePreferenceSection component, the component sends a PUT request containing the selected language code to this endpoint. The endpoint verifies that the authenticated user has permission to modify the specified account's preferences, preventing unauthorized access to other accounts' settings. After successful validation, the endpoint updates the preferred_language column in the accounts table with the new language code. The endpoint returns a success response with the updated preference data, or an appropriate error response if validation fails or the database update encounters an issue. The endpoint handles common error scenarios including invalid language codes, missing authentication, unauthorized access attempts, and database connection failures.
+A 400-pixel-wide panel slides in from the right side of the screen, displaying the source content at the top section, followed by a list of all six supported languages with their translation status indicators, and provides action buttons for editing translations, triggering re-translation, or retrying failed translations.
 
 ### User Impact
-Property owners can reliably save their language preferences with confidence that their selection will persist across sessions and devices. Property owners managing multiple accounts can set different language preferences for each account. Property owners experience immediate feedback when their preference save succeeds or fails, eliminating uncertainty about whether their selection was recorded. The secure validation ensures that property owners can only modify preferences for accounts they have permission to access, protecting account security.
+Property owners can quickly review translation coverage for any content item without leaving their current view, understand which languages need attention, assess translation quality by comparing source and translated content, and take immediate corrective actions when issues are identified.
 
 ### Business Value
-Provides the critical backend infrastructure required for the language preference feature to function, completing the user preference management capability. Ensures secure handling of user preferences by validating account access before persisting changes. Establishes a pattern for additional account preference endpoints that may be needed in the future. Demonstrates platform reliability by properly persisting user settings rather than losing preferences between sessions.
+Streamlines translation management workflows by consolidating status review and action controls in a single, non-disruptive interface, reducing the time required to maintain multilingual content quality.
 
 ### Acceptance Criteria
-- [ ] PUT endpoint exists at /src/app/api/accounts/[accountId]/preferences/route.ts
-- [ ] Endpoint accepts JSON request body containing preferredLanguage field with language code
-- [ ] Endpoint validates that the authenticated user has permission to access the specified accountId
-- [ ] Endpoint returns 401 Unauthorized if user is not authenticated
-- [ ] Endpoint returns 403 Forbidden if user does not have access to the specified account
-- [ ] Endpoint returns 400 Bad Request if preferredLanguage is missing or invalid
-- [ ] Endpoint validates that preferredLanguage is one of the supported language codes
-- [ ] Endpoint updates the preferred_language column in the accounts table for the specified accountId
-- [ ] Endpoint returns 200 OK with updated preference data on successful save
-- [ ] Endpoint returns 500 Internal Server Error if database update fails
-- [ ] Error responses include clear error messages that can be displayed to the user
-- [ ] Endpoint handles database connection failures gracefully
-- [ ] Endpoint logs significant errors for debugging purposes
-- [ ] Endpoint follows existing API route patterns and conventions used in the codebase
-- [ ] TypeScript types are properly defined for request body and response payload
-
+- [ ] Panel slides in from right side with smooth animation (300ms transition)
+- [ ] Panel width is fixed at 400 pixels on desktop viewports
+- [ ] Panel header displays the entity type and identifier or title
+- [ ] Source content section displays original language content at top of panel
+- [ ] Language list displays all six supported languages (EN, ES, FR, DE, IT, PT)
+- [ ] Each language entry shows translation status with appropriate visual indicator
+- [ ] Each language entry displays translation completion percentage or status label
+- [ ] Edit button opens translation editor for manual content updates
+- [ ] Re-translate button queues new translation job for selected language
+- [ ] Retry button re-attempts failed translation jobs
+- [ ] Action buttons are contextually enabled/disabled based on translation status
+- [ ] Close button or overlay click dismisses panel with animation
+- [ ] Panel content scrolls independently when exceeding viewport height
+- [ ] Panel is responsive and adapts layout for tablet viewports (768px and below)
+- [ ] Panel overlays content without affecting page layout or causing reflow
+- [ ] Loading states display while fetching translation data
+- [ ] Error states display when translation data cannot be loaded
+- [ ] Component accepts entity reference (entityType and entityId) as props
+- [ ] Component integrates with translation status API endpoint
 
 ---
 
-## REQ-360: Integrate Language Preference Section into Account Settings
+## REQ-E05-008: Translation Status Item Row Component
 
-**Date**: 2026-01-19 15:00
+**Date**: 2026-01-20 14:22
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a reusable row component that displays a single language's translation status within the preview panel, showing the flag, language name, status indicator, preview text snippet, and available actions.
+
+### Current Behavior
+No reusable component exists to display individual language translation status rows, requiring duplicate code across different translation management views and inconsistent visual presentation of translation information.
+
+### Expected Behavior
+A single-row component renders with the language's flag icon on the left, followed by the language name, a colored status indicator matching the specification (green for complete, orange for pending, red for failed, purple for manual), a truncated preview of the translated text, and contextual action buttons that appear on row hover or focus.
+
+### User Impact
+Property owners can quickly scan translation status across all languages in a consistent visual format, identify which translations need attention through color-coded status indicators, preview translation quality without opening a full editor, and take immediate action on individual translations through accessible controls.
+
+### Business Value
+Provides a consistent, reusable building block for all translation status views, reducing development time for future features while maintaining a cohesive user experience across the translation management interface.
+
+### Acceptance Criteria
+- [ ] Component renders as a single horizontal row with flex layout
+- [ ] Flag icon displays at left edge using appropriate emoji or icon library
+- [ ] Language name displays immediately after flag in medium font weight
+- [ ] Status indicator displays using specified colors: green (complete), orange (pending), red (failed), purple (manual)
+- [ ] Status indicator includes appropriate icon (checkmark, clock, error, pencil) matching status type
+- [ ] Preview text displays truncated translation content (maximum 80 characters with ellipsis)
+- [ ] Preview text shows fallback message when no translation exists
+- [ ] Action buttons display on row hover or keyboard focus
+- [ ] Edit action button is enabled for completed or manual translations
+- [ ] Re-translate action button is enabled for completed, failed, or manual translations
+- [ ] Retry action button is enabled only for failed translations
+- [ ] All action buttons include accessible labels and ARIA attributes
+- [ ] Component accepts language code (ISO 639-1) as required prop
+- [ ] Component accepts translation status enum as required prop
+- [ ] Component accepts translated content text as optional prop
+- [ ] Component accepts callback functions for each action button
+- [ ] Component is fully keyboard accessible with focus management
+- [ ] Component maintains consistent height regardless of content length
+- [ ] Component visual design matches specified color palette and typography
+- [ ] Component works within both light and dark theme contexts
+
+---
+
+## REQ-E05-009: Translation Progress Bar Visual Indicator Component
+
+**Date**: 2026-01-20 14:30
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a visual progress indicator that displays translation completion status as a ratio and animated progress bar, showing at a glance how many languages have completed translations out of the total number of supported languages.
+
+### Current Behavior
+No visual progress indicator component exists to communicate translation completion status, forcing property owners to manually count completed translations or review individual language statuses to understand overall translation coverage.
+
+### Expected Behavior
+A compact progress bar component displays a fraction indicator (e.g., "3/5 translations complete") above or beside a horizontal progress bar that fills proportionally to represent completion percentage, with smooth animation when progress values change and color-coded states to indicate different completion levels.
+
+### User Impact
+Property owners can immediately assess translation coverage for any content item through a single visual element, understand how close they are to full multilingual coverage, and monitor real-time progress as translation jobs complete through animated transitions.
+
+### Business Value
+Provides instant visual feedback on translation status without requiring detailed analysis, encouraging property owners to complete translations for all supported languages by making progress transparent and actionable.
+
+### Acceptance Criteria
+- [ ] Component displays a text label showing completion ratio in format "X/Y translations complete"
+- [ ] Component displays a horizontal progress bar beneath the text label
+- [ ] Progress bar fills from left to right proportional to completion percentage
+- [ ] Progress bar uses green color (#10b981) for complete state (100% coverage)
+- [ ] Progress bar uses orange color (#f59e0b) for partial state (1-99% coverage)
+- [ ] Progress bar uses gray color (#d1d5db) for empty state (0% coverage)
+- [ ] Progress bar animates smoothly when progress value changes (300ms transition)
+- [ ] Component accepts total count as numeric prop representing number of languages
+- [ ] Component accepts completed count as numeric prop representing finished translations
+- [ ] Component calculates percentage automatically from total and completed values
+- [ ] Component displays "0/6 translations complete" when no translations exist
+- [ ] Component displays "6/6 translations complete" when all languages are translated
+- [ ] Component is responsive and maintains readability at different widths
+- [ ] Component height remains consistent regardless of progress value
+- [ ] Progress animation uses easing function for smooth visual transition (ease-in-out)
+- [ ] Component includes ARIA attributes for accessibility (role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax)
+- [ ] Component renders correctly within the TranslationPreviewPanel component
+- [ ] Component styling is consistent with the application's design system
+- [ ] Component updates instantly when translation jobs complete in real-time
+
+---
+
+## REQ-E05-010: Translation Editor Modal Component
+
+**Date**: 2026-01-20 14:45
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a modal dialog to manually edit translation content with a side-by-side view comparing original and translated text, supporting character count monitoring, dirty state tracking, and save/cancel workflows.
+
+### Current Behavior
+No modal editor component exists for property owners to manually review and edit machine-generated translations, forcing them to work in separate interfaces without seeing the source content alongside the translation.
+
+### Expected Behavior
+A modal dialog opens centered on the screen displaying the original content on the left and an editable translation textarea on the right, with real-time character count feedback, visual dirty state indication when changes are made, and clearly labeled Save and Cancel buttons that respect unsaved changes through confirmation prompts.
+
+### User Impact
+Property owners can refine machine-generated translations while referencing the original content, ensure translations maintain appropriate length through character count warnings, understand when they have unsaved changes through clear visual feedback, and confidently save or discard their edits through an intuitive control interface.
+
+### Business Value
+Enables efficient human review and correction of automated translations, improving translation quality while maintaining the productivity benefits of machine translation through a streamlined editing workflow.
+
+### Acceptance Criteria
+- [ ] Modal dialog uses Radix UI Dialog primitive for accessibility and focus management
+- [ ] Modal opens centered on viewport with overlay backdrop that prevents interaction with underlying content
+- [ ] Left side displays original source content in read-only format with clear visual styling
+- [ ] Right side displays editable textarea for translation content with appropriate font size and spacing
+- [ ] Both sides display content in equal-width columns (50% each) on desktop viewports
+- [ ] Character count displays beneath translation textarea showing current length versus maximum if applicable
+- [ ] Character count shows warning state (orange/red color) when approaching or exceeding recommended limits
+- [ ] Textarea auto-expands vertically to match content height up to a maximum threshold
+- [ ] Dirty state indicator displays when translation content differs from original saved value
+- [ ] Save button is disabled when no changes have been made (clean state)
+- [ ] Save button is enabled when changes exist (dirty state)
+- [ ] Cancel button displays confirmation dialog when unsaved changes exist
+- [ ] Cancel button immediately closes modal when no changes have been made
+- [ ] Save action persists changes via API and marks translation status as 'manual'
+- [ ] Success notification displays after successful save operation
+- [ ] Error notification displays if save operation fails with actionable error message
+- [ ] Modal header displays language name and flag icon for the translation being edited
+- [ ] Escape key triggers cancel workflow (with confirmation if dirty)
+- [ ] Modal is fully keyboard accessible with proper tab order and focus management
+- [ ] Modal adapts to mobile viewports by stacking original and translation vertically
+- [ ] Component accepts entity reference (entityType, entityId) and language code as required props
+- [ ] Component accepts original content text as required prop
+- [ ] Component accepts existing translation text as optional prop
+- [ ] Component accepts onSave callback function that receives updated translation content
+- [ ] Component integrates with manual translation update API endpoint
+- [ ] Loading state displays during save operation with disabled controls
+- [ ] Component maintains focus on first interactive element when opened
+- [ ] Component returns focus to triggering element when closed
+
+---
+
+## REQ-E05-011: Translation Status Monitoring React Hook
+
+**Date**: 2026-01-20 15:00
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a reusable React hook that fetches and monitors translation status for individual content items or entire properties, providing loading states, error handling, and automatic refresh capabilities.
+
+### Current Behavior
+No reusable hook exists for components to fetch translation status data from the API, forcing each component to implement its own data fetching logic with inconsistent error handling, loading state management, and refresh behavior.
+
+### Expected Behavior
+A custom React hook accepts either a single entity reference or a property-wide scope parameter, fetches translation status from the API endpoint, returns data in a standardized format with loading and error states, supports manual refresh actions, and optionally polls for updates when translation jobs are actively processing.
+
+### User Impact
+Developers building translation management features can quickly integrate translation status displays without reimplementing data fetching logic, users see consistent loading and error states across all translation interfaces, translation status updates automatically when jobs complete, and components remain responsive through proper loading state handling.
+
+### Business Value
+Accelerates feature development by providing a reusable abstraction over the translation status API, ensures consistent error handling across all translation management interfaces, reduces code duplication and maintenance burden, and improves user experience through standardized loading patterns.
+
+### Acceptance Criteria
+- [ ] Hook file created at `/src/hooks/useTranslationStatus.ts`
+- [ ] Hook accepts entity reference parameters (entityType and entityId) for single-entity queries
+- [ ] Hook accepts propertyId parameter for property-wide translation status queries
+- [ ] Hook accepts optional filter parameters (status, language) to narrow results
+- [ ] Hook returns data object containing translation status records from API
+- [ ] Hook returns loading boolean indicating when fetch operation is in progress
+- [ ] Hook returns error object containing error details if fetch operation fails
+- [ ] Hook returns refresh function to manually trigger data refetch
+- [ ] Hook implements automatic retry logic for failed requests (3 attempts with exponential backoff)
+- [ ] Hook supports optional polling mode with configurable interval (default: 5 seconds)
+- [ ] Hook automatically disables polling when no pending translation jobs exist
+- [ ] Hook cleans up polling intervals and pending requests when component unmounts
+- [ ] Hook integrates with the translation status GET API endpoint
+- [ ] Hook handles 401/403 responses by surfacing authentication errors to consumers
+- [ ] Hook handles 404 responses gracefully when queried entity does not exist
+- [ ] Hook caches results to prevent redundant API calls when parameters unchanged
+- [ ] Hook supports React Suspense pattern for data fetching (optional enhancement)
+- [ ] Hook includes TypeScript type definitions for all parameters and return values
+- [ ] Hook validates required parameters and throws descriptive errors for invalid input
+- [ ] Hook works correctly with React StrictMode (handles double-mounting in development)
+- [ ] Hook prevents race conditions when parameters change rapidly through proper cleanup
+- [ ] Loading state is true during initial fetch and false when data or error is available
+- [ ] Error state clears when successful refetch occurs after previous error
+- [ ] Component using hook can display loading skeleton while data loads
+- [ ] Component using hook can display error message with retry button when fetch fails
+
+---
+
+## REQ-E05-012: Realtime Translation Updates Subscription Hook
+
+**Date**: 2026-01-20 15:15
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need their translation management interfaces to automatically update when translation jobs complete or status changes occur, without requiring manual page refresh or polling intervals.
+
+### Current Behavior
+Translation status information only updates when components explicitly refetch data through polling intervals or manual refresh actions, causing delays in reflecting completed translations and creating unnecessary server load through frequent polling requests.
+
+### Expected Behavior
+A React hook subscribes to Supabase Realtime channels for translation record changes, automatically triggers UI updates when translations complete or change status, filters subscription events to only relevant entity types and property ownership, and properly cleans up subscriptions when components unmount or parameters change.
+
+### User Impact
+Property owners see translation status update immediately when jobs complete without waiting for polling intervals, translation progress bars animate in real-time as each language finishes processing, the interface feels responsive and live rather than stale, and users can trust that displayed information is always current without manual refresh actions.
+
+### Business Value
+Improves perceived system responsiveness and user confidence through instant updates, reduces unnecessary API polling load on servers while providing better real-time feedback, and creates a more professional experience that matches modern web application expectations.
+
+### Acceptance Criteria
+- [ ] Hook file created at `/src/hooks/useTranslationRealtime.ts`
+- [ ] Hook accepts entity reference parameters (entityType and entityId) for single-entity subscriptions
+- [ ] Hook accepts propertyId parameter for property-wide subscriptions
+- [ ] Hook accepts optional callback function that executes when translation updates are received
+- [ ] Hook creates Supabase Realtime channel subscription on mount
+- [ ] Hook subscribes to INSERT events on relevant translation tables (items_translation, articles_translation, links_translation)
+- [ ] Hook subscribes to UPDATE events on relevant translation tables
+- [ ] Hook filters subscription events to match provided entity reference or property scope
+- [ ] Hook filters subscription events to only include rows accessible to authenticated user
+- [ ] Hook triggers callback function with updated translation record when events match filters
+- [ ] Hook unsubscribes from Realtime channel when component unmounts
+- [ ] Hook re-establishes subscription when entity reference or property parameters change
+- [ ] Hook handles subscription errors gracefully without crashing the component
+- [ ] Hook handles disconnection and automatic reconnection scenarios
+- [ ] Hook debounces rapid successive updates to prevent excessive re-renders (100ms debounce)
+- [ ] Hook integrates seamlessly with useTranslationStatus hook for coordinated updates
+- [ ] Hook includes TypeScript type definitions for all parameters and return values
+- [ ] Hook provides connection status indicator (connected, connecting, disconnected, error)
+- [ ] Hook cleans up pending timers and subscriptions when parameters change
+- [ ] Hook works correctly with React StrictMode (handles double-mounting in development)
+- [ ] Component using hook receives instant updates when translation jobs complete
+- [ ] Component using hook can display connection status indicator if desired
+- [ ] Component using hook can combine realtime updates with initial data fetch from useTranslationStatus
+- [ ] Hook prevents memory leaks through proper cleanup of all subscriptions and event listeners
+- [ ] Hook only subscribes to channels when component is actively mounted and visible
+- [ ] Subscription filter logic validates ownership access before processing update events
+- [ ] Hook supports pausing/resuming subscriptions when tab visibility changes (optional enhancement)
+- [ ] Multiple components using same subscription share a single Realtime channel connection
+
+---
+
+## REQ-E05-013: Dashboard Translation Status Summary Widget
+
+**Date**: 2026-01-20 15:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a dashboard widget that displays an at-a-glance summary of translation coverage across all their content, showing overall progress and status breakdowns with quick access to detailed translation management.
+
+### Current Behavior
+No dashboard widget exists to show property owners their overall translation status, forcing them to navigate to dedicated translation pages to understand the completeness of their multilingual content coverage.
+
+### Expected Behavior
+A compact dashboard card displays translation completion statistics with a visual progress bar showing the percentage of content fully translated, numerical counts categorized by translation status (complete, partial, pending, failed), and a clickable link or button to navigate to the detailed translation management interface.
+
+### User Impact
+Property owners can monitor translation health from their main dashboard without navigating away, quickly identify when content needs translation attention through status counts, assess overall multilingual readiness through the progress percentage, and access detailed translation tools through a single click when issues require investigation.
+
+### Business Value
+Increases visibility of translation coverage encouraging property owners to maintain complete multilingual content, reduces friction in translation management by surfacing status at the primary dashboard touchpoint, and supports better guest experiences by highlighting incomplete translations before guests encounter them.
+
+### Acceptance Criteria
+- [ ] Widget renders as a dashboard card with consistent styling matching other dashboard widgets
+- [ ] Card header displays title "Translation Status" with appropriate icon
+- [ ] Progress bar displays overall translation completion as a percentage (0-100%)
+- [ ] Progress bar uses color coding: green (80-100%), orange (40-79%), red (0-39%)
+- [ ] Status counts section displays four numerical indicators with labels
+- [ ] Complete count shows number of content items with all languages translated
+- [ ] Partial count shows number of content items with some but not all languages translated
+- [ ] Pending count shows number of translation jobs currently queued or in progress
+- [ ] Failed count shows number of translation jobs that encountered errors
+- [ ] Each status count uses appropriate icon and color to match its semantic meaning
+- [ ] "View Details" link navigates to the full translation management page
+- [ ] Widget displays loading skeleton while fetching translation status data
+- [ ] Widget displays error state with retry option when data fetch fails
+- [ ] Widget shows zero states gracefully when no content has been created yet
+- [ ] Widget updates automatically when translation jobs complete without requiring page refresh
+- [ ] Widget integrates with useTranslationStatus hook to fetch property-wide statistics
+- [ ] Widget integrates with useTranslationRealtime hook for live status updates
+- [ ] Widget is responsive and adapts layout for mobile viewports
+- [ ] Widget maintains consistent height to prevent dashboard layout shifts
+- [ ] Component accepts propertyId as a required prop to scope statistics
+- [ ] Component is accessible with proper ARIA labels and semantic HTML structure
+- [ ] Widget hover state provides visual feedback for the "View Details" action area
+- [ ] Widget displays tooltip explaining the progress percentage calculation method
+
+---
+
+## REQ-E05-014: Compact Translation Status Column Indicator for Table Views
+
+**Date**: 2026-01-20 16:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a compact visual indicator within table columns that displays translation status for all languages at a glance, using a six-dot pattern where each dot represents one language's translation state.
+
+### Current Behavior
+No inline status indicator exists for displaying translation coverage within list or table views, requiring property owners to open detail views or panels to assess which languages have been translated for each content item.
+
+### Expected Behavior
+A compact horizontal row of six colored dots displays within table cells, where each dot corresponds to one supported language using the standard color scheme (green for complete, orange for pending, red for failed, purple for manual, gray for not started), and clicking the indicator opens the translation preview panel for detailed review and actions.
+
+### User Impact
+Property owners can rapidly scan their entire content inventory to identify translation gaps without opening individual items, understand translation coverage distribution across their catalog through quick visual patterns, and access detailed translation information for any item through a single click on the status indicator.
+
+### Business Value
+Enables efficient translation coverage audits across large content catalogs, encourages complete multilingual coverage by making gaps visually obvious, and reduces the number of clicks required to manage translations through streamlined access to preview panels.
+
+### Acceptance Criteria
+- [ ] Component renders as a horizontal row of six circular indicators (dots or icons)
+- [ ] Each dot represents one language in consistent order: EN, ES, FR, DE, IT, PT
+- [ ] Dot colors use standard status scheme: green (#10b981) complete, orange (#f59e0b) pending, red (#ef4444) failed, purple (#a855f7) manual, gray (#d1d5db) not started
+- [ ] Each dot includes a tooltip showing the language name and status on hover
+- [ ] Entire indicator component is clickable and opens the TranslationPreviewPanel
+- [ ] Click handler passes entity reference (entityType, entityId) to panel component
+- [ ] Component accepts entity reference as required props (entityType, entityId)
+- [ ] Component accepts translation status data array as required prop containing status for each language
+- [ ] Component displays loading state with shimmer effect while status data is being fetched
+- [ ] Dots have consistent size (8-10 pixels diameter) for compact table presentation
+- [ ] Dots have small spacing between them (2-4 pixels) to remain compact
+- [ ] Component maintains fixed width to prevent table column width fluctuation
+- [ ] Component is fully keyboard accessible with proper focus indication and Enter/Space activation
+- [ ] Component includes ARIA label describing the translation status summary
+- [ ] Component adapts to mobile viewports by maintaining readability at small sizes
+- [ ] Component integrates with TranslationPreviewPanel through click event callback
+- [ ] Component accepts optional onClick callback prop for custom integration
+- [ ] Visual design maintains clarity at standard table row heights (40-48 pixels)
+- [ ] Dots use smooth color transitions when status updates occur (200ms transition)
+- [ ] Component updates immediately when receiving new translation status data
+- [ ] Component works correctly within various table components (ItemManager, ArticleList, etc.)
+- [ ] Component includes focus trap to prevent table navigation interruption during keyboard use
+- [ ] Component displays correctly in both light and dark theme contexts
+
+---
+
+## REQ-E05-015: Translation Status Filter Dropdown for Content Lists
+
+**Date**: 2026-01-20 16:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a dropdown filter control within content list views that allows filtering items by their translation status to quickly identify content requiring translation attention.
+
+### Current Behavior
+No filtering mechanism exists for property owners to narrow content lists based on translation completeness or status, requiring manual scanning of all items to identify those needing translation work or attention.
+
+### Expected Behavior
+A dropdown select control displays above or within content list headers offering six filter options: "All Items", "Fully Translated", "Partially Translated", "Pending", "Failed", and "Manually Edited", with the selection persisting during the session and immediately updating the visible content list to show only matching items.
+
+### User Impact
+Property owners can rapidly isolate untranslated or problematic content requiring immediate attention, focus their translation workflow on specific status categories without distraction from already-completed items, understand the scope of translation work remaining through filtered item counts, and efficiently manage large content catalogs by progressively addressing translation gaps.
+
+### Business Value
+Streamlines translation management workflows by enabling focused attention on content requiring specific actions, reduces time spent searching for incomplete translations in large catalogs, and encourages systematic completion of translation coverage through organized filtering.
+
+### Acceptance Criteria
+- [ ] Dropdown component renders as a select input with clear label "Filter by Translation Status"
+- [ ] Dropdown displays six options: "All Items", "Fully Translated", "Partially Translated", "Pending", "Failed", "Manually Edited"
+- [ ] "All Items" option shows all content regardless of translation status (default selection)
+- [ ] "Fully Translated" option shows only items with translations completed for all six supported languages
+- [ ] "Partially Translated" option shows items with translations in some but not all languages
+- [ ] "Pending" option shows items with one or more translation jobs currently queued or in progress
+- [ ] "Failed" option shows items with one or more translation jobs that encountered errors
+- [ ] "Manually Edited" option shows items where at least one translation has been manually reviewed and edited
+- [ ] Selection triggers immediate re-filtering of the content list without page reload
+- [ ] Filtered item count displays near the dropdown showing number of matching items (e.g., "Showing 12 of 45 items")
+- [ ] Filter selection persists in component state during the user's current session
+- [ ] Filter state resets to "All Items" when navigating away and returning to the list view
+- [ ] Component accepts onChange callback prop that receives selected filter value
+- [ ] Component accepts optional currentFilter prop to support controlled component pattern
+- [ ] Dropdown is keyboard accessible with arrow key navigation and Enter/Space selection
+- [ ] Component includes appropriate ARIA labels and roles for screen reader accessibility
+- [ ] Component styling matches the application's design system and form input patterns
+- [ ] Component displays correctly within ItemManager, ArticleList, and other list container components
+- [ ] Component is responsive and adapts layout for mobile viewports (768px and below)
+- [ ] Component integrates with list data fetching hooks to apply filter criteria to API queries
+- [ ] Component displays loading state in dropdown during filter application
+- [ ] Empty state message displays when filter produces zero results (e.g., "No failed translations found")
+- [ ] Component positioning aligns with other list control elements (search, sort, bulk actions)
+- [ ] Filter selection updates URL query parameters for shareable filtered views (optional enhancement)
+- [ ] Component works correctly when combined with other active filters (search text, date range, etc.)
+
+---
+
+## REQ-E05-016: Dashboard Translation Status Widget Integration
+
+**Date**: 2026-01-20 16:55
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-Property owners need access to the language preference interface through their account settings or profile area, with the selected preference pre-populated from their existing account data.
+Property owners need the translation status widget integrated into their main dashboard view so they can monitor translation coverage immediately upon login without navigating to specialized translation management pages.
 
 ### Current Behavior
-The LanguagePreferenceSection component exists but is not rendered anywhere in the application interface. Property owners cannot access the language preference controls because there is no navigation path or page integration point for the component. The account settings or profile pages do not include a language preference section, leaving the functionality inaccessible to end users. Even though the component and API endpoint exist, property owners have no way to discover or use the language preference feature. The isolation of the component means that existing user language preferences stored in the database are never displayed or made editable through the interface.
+The dashboard displays property information and content summaries but provides no visibility into translation status or multilingual content coverage, requiring property owners to remember to check translation pages separately or rely on manual tracking of translation completeness.
 
 ### Expected Behavior
-The LanguagePreferenceSection component is integrated into either the account settings page or user profile page, appearing as a clearly labeled section within the existing interface layout. When property owners navigate to account settings or their profile, they see a "Language Preference" or "Interface Language" section alongside other account configuration options. The component loads the property owner's current language preference from their account data and pre-populates the language dropdown with this existing selection. The placement decision between account settings and profile is based on where other account-level preferences are managed in the application's existing information architecture. The component appears in a logical position within the page flow, grouped with related settings if applicable. Property owners can discover the feature through normal navigation without requiring documentation or support assistance.
+The dashboard includes the TranslationStatusWidget component displaying overall translation health with progress indicators, status counts, and direct navigation to detailed translation management, automatically loading translation statistics on dashboard load and updating in real-time as translation jobs complete.
 
 ### User Impact
-Property owners gain practical access to the language preference feature through an intuitive location within familiar account management flows. Property owners see their current language selection immediately when accessing the settings, providing confirmation of their existing preference. Property owners managing their account settings can configure all preferences in a single location rather than searching across multiple interface areas. The integration completes the user journey from wanting to change language preferences to successfully saving and applying those changes.
+Property owners see translation coverage status immediately upon accessing their dashboard, can quickly identify translation gaps requiring attention without navigating away from their primary workspace, understand the state of their multilingual content at a glance, and access detailed translation tools through a single click when intervention is needed.
 
 ### Business Value
-Transforms the language preference capability from technically implemented but inaccessible functionality into a usable feature that delivers value to property owners. Ensures development investment in the LanguagePreferenceSection component and API endpoint translates to actual user benefit and feature adoption. Follows user experience best practices by placing settings controls in discoverable, expected locations rather than hidden or obscure areas. Establishes clear patterns for integrating additional account preference features in the future.
+Increases awareness of translation status by placing it at the primary user touchpoint, encourages proactive translation management by making gaps visible on every dashboard visit, and reduces the likelihood of incomplete multilingual content going unnoticed before guests encounter missing translations.
 
 ### Acceptance Criteria
-- [ ] Decision documented regarding placement in account settings versus profile page based on existing application information architecture
-- [ ] LanguagePreferenceSection component is imported and rendered on the chosen page
-- [ ] Component receives the current account data including existing language preference as props or via API fetch
-- [ ] Language dropdown pre-populates with the property owner's current language preference from account data
-- [ ] Section appears with a clear heading like "Language Preference" or "Interface Language"
-- [ ] Component is positioned logically within the page layout, grouped with related settings if applicable
-- [ ] Component styling is consistent with other sections on the same page
-- [ ] Page layout remains responsive and properly accommodates the new section on all viewport sizes
-- [ ] Property owners can navigate to the page containing the language preference section through existing navigation patterns
-- [ ] Changes saved through the component are immediately reflected if the property owner revisits the settings page
-- [ ] Loading state is handled appropriately while account data is being fetched
-- [ ] Error state is handled appropriately if account data cannot be loaded
-
-
+- [ ] TranslationStatusWidget component is imported and rendered within the dashboard layout
+- [ ] Widget displays in a prominent position visible without scrolling on desktop viewports
+- [ ] Widget receives propertyId from current user's active property context
+- [ ] Dashboard fetches translation status data on initial page load
+- [ ] Widget displays loading skeleton during initial data fetch
+- [ ] Widget displays error state with retry option if status fetch fails
+- [ ] Widget shows zero state when no content has been created yet
+- [ ] Widget updates automatically when translation jobs complete through realtime subscriptions
+- [ ] Widget placement maintains consistent positioning across different dashboard layouts
+- [ ] Widget does not cause layout shift when loading or updating with new data
+- [ ] Widget is responsive and adapts layout for tablet viewports (768px and below)
+- [ ] Widget is fully accessible with proper ARIA labels and keyboard navigation
+- [ ] "View Details" link navigates to the translation management page at `/dashboard2/translations`
+- [ ] Widget integrates with existing dashboard grid or card layout system
+- [ ] Widget maintains visual consistency with other dashboard widgets (card style, spacing, typography)
+- [ ] Dashboard page performance remains acceptable with widget added (no significant load time increase)
+- [ ] Widget data fetching uses proper caching to avoid redundant API calls on dashboard revisits
+- [ ] Widget handles missing or invalid property context gracefully without crashing
+- [ ] Widget displays correctly in both light and dark theme contexts if themes are supported
+- [ ] Integration preserves existing dashboard functionality without introducing regressions
 
 ---
 
-## REQ-361: Integrate Translation Preview Panel into Article Editor
+## REQ-E05-017: Items List Translation Status Column Integration
 
-**Date**: 2026-01-19 15:15
+**Date**: 2026-01-20 17:05
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-Content editors managing articles need immediate visibility into translation status and preview capabilities directly within the article editing interface, without navigating away from their current editing context.
+Property owners need a translation status indicator column integrated into their Items list view that displays each item's multilingual coverage and provides quick access to translation management for individual items.
 
 ### Current Behavior
-When content editors save changes to an article through the article editor at `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx`, they receive confirmation that the article was saved successfully, but no information about translation status or progress is displayed. Editors must navigate away from the article editor to a separate translation management interface to check whether translations have been triggered, monitor their progress, or preview translated content. This context switching interrupts the content editing workflow and makes it difficult for editors to verify that translations are being generated correctly. After saving article updates, editors have no way to know if translations are pending, in progress, or have completed without leaving the current page.
+The Items list displays item details including name, room, category, and actions but provides no visibility into translation status, requiring property owners to open each item individually or navigate to separate translation pages to understand which items have complete multilingual coverage.
 
 ### Expected Behavior
-The article editor page integrates a translation preview panel component that appears automatically after the editor saves article changes. The panel displays immediately when translation jobs are pending or in progress, providing real-time status updates without requiring page navigation. If translations for the article are pending when the page loads, the panel automatically opens to alert the editor to ongoing translation activity. The panel shows translation status for each configured language, indicating whether translations are complete, pending, in progress, or have failed. Editors can expand language sections within the panel to preview translated article content alongside the source content. The panel includes action buttons allowing editors to manually trigger re-translation, edit translations directly, or dismiss the panel to continue editing. The panel position within the page layout does not obstruct the main article editing form but remains easily accessible throughout the editing session.
+The Items list includes an optional translation status column displaying the compact six-dot status indicator for each item, showing at a glance which languages have been translated, with click functionality that opens the translation preview panel for immediate review and action on translation issues.
 
 ### User Impact
-Content editors maintaining multilingual articles gain immediate awareness of translation status and quality without disrupting their editing workflow. Editors can verify that article updates have triggered translations correctly and monitor progress in real-time. Editors identifying translation issues or quality concerns can take corrective action immediately rather than discovering problems only after navigating through multiple pages. The integrated workflow reduces the cognitive load of managing multilingual content by consolidating editing and translation management into a unified interface. Editors working under time pressure can efficiently manage both source content and translations in a single focused session.
+Property owners can rapidly audit translation coverage across their entire item inventory without leaving the list view, identify items requiring translation attention through visual scanning of status indicators, prioritize translation work by focusing on items with the most translation gaps, and access detailed translation controls for any item through a single click on the status indicator.
 
 ### Business Value
-Streamlines the content editing workflow by reducing context switching and navigation overhead, increasing editor productivity. Improves translation quality by providing immediate feedback that allows editors to catch and correct issues earlier in the content lifecycle. Reduces the risk of published articles with missing or failed translations by surfacing translation problems during the editing process. Enhances editor satisfaction by providing a cohesive, integrated experience for multilingual content management rather than fragmented, disconnected tools.
+Streamlines translation workflow management by integrating translation status into existing content management interfaces, reduces context switching between content management and translation management, and increases likelihood of complete multilingual coverage through constant visibility of translation gaps.
 
 ### Acceptance Criteria
-- [ ] Translation preview panel component is integrated into the article editor page at /src/app/dashboard2/instructions/[articleId]/edit/page.tsx
-- [ ] Panel appears automatically after the editor saves article changes successfully
-- [ ] Panel auto-opens when page loads if there are pending or in-progress translations for the current article
-- [ ] Panel displays translation status for each configured target language
-- [ ] Panel shows real-time status updates as translations progress through pending, in-progress, and complete states
-- [ ] Panel includes expandable sections for each language allowing editors to preview translated content
-- [ ] Panel provides action buttons for re-triggering translation, editing translations, and dismissing the panel
-- [ ] Panel positioning within the page layout does not obstruct the main article editing form
-- [ ] Panel remains accessible and functional throughout the editing session without requiring page reload
-- [ ] Panel handles failed translations by displaying error messages and retry options
-- [ ] Panel provides appropriate loading states while fetching translation data
-- [ ] Panel is responsive and usable on tablet and desktop viewports supported by the dashboard
-- [ ] Panel updates automatically when translation status changes without requiring manual refresh
-- [ ] Panel can be manually closed or minimized by the editor to focus on editing tasks
-
+- [ ] Translation status column is added to ItemGrid component table structure
+- [ ] Column displays TranslationStatusColumn component for each item row
+- [ ] Column header is labeled "Translations" with appropriate icon
+- [ ] Status column displays six-dot indicator showing translation state for all supported languages
+- [ ] Each dot uses standard color coding: green (complete), orange (pending), red (failed), purple (manual), gray (not started)
+- [ ] Clicking the status indicator opens TranslationPreviewPanel for the corresponding item
+- [ ] Preview panel displays with entity reference (entityType: 'item', entityId: item.id)
+- [ ] Column can be toggled on/off through view preferences or column visibility controls
+- [ ] Column visibility preference persists across user sessions
+- [ ] Column width is fixed to prevent table layout fluctuations (80-100 pixels)
+- [ ] Column displays loading shimmer while translation status data is being fetched
+- [ ] Translation status data is fetched efficiently without separate API calls per row
+- [ ] Bulk status fetch retrieves translation status for all visible items in single request
+- [ ] Status indicators update in real-time when translation jobs complete
+- [ ] Column is responsive and adapts display for tablet viewports (may hide on mobile)
+- [ ] Column maintains consistent alignment with other table columns
+- [ ] Keyboard navigation allows focusing and activating status indicators
+- [ ] Status column includes proper ARIA labels for screen reader accessibility
+- [ ] Column sorting functionality allows ordering items by translation completeness (optional)
+- [ ] Empty state displays gracefully when item has no translation status data
+- [ ] Component integration does not cause performance degradation with large item lists (100+ items)
+- [ ] Column works correctly when combined with existing filters, search, and sorting
+- [ ] Integration preserves existing ItemGrid functionality without introducing regressions
+- [ ] Column displays correctly in both light and dark theme contexts if themes are supported
 
 ---
 
-## REQ-362: Integrate Translation Preview Panel into Item Editor
+## REQ-E05-018: Bulk Translation Action Bar for Multi-Item Operations
 
-**Date**: 2026-01-19 14:30
+**Date**: 2026-01-20 17:30
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a contextual action bar that appears when multiple content items are selected, providing bulk translation operations including re-translate all languages and re-translate specific languages with visual progress feedback.
+
+### Current Behavior
+No bulk translation operation interface exists for property owners to manage translations across multiple content items simultaneously, requiring them to open and process each item individually even when applying the same translation action to many items at once.
+
+### Expected Behavior
+A fixed-position action bar slides up from the bottom of the screen when one or more items are selected in list views, displaying the selection count and offering two primary actions: "Re-translate All" which queues translation jobs for all languages across all selected items, and "Re-translate Specific Language" which opens a language selector dialog for targeted bulk operations, with a progress indicator showing job queuing status during bulk operations and success confirmation when operations complete.
+
+### User Impact
+Property owners can efficiently refresh translations across their entire catalog when source content changes significantly, apply translation updates to multiple items simultaneously instead of processing them individually, select specific languages for bulk re-translation when only certain translations need updates, and monitor progress through clear visual feedback as bulk operations process each selected item.
+
+### Business Value
+Dramatically reduces time required to maintain multilingual content at scale, enables rapid response to content quality issues affecting multiple items, and encourages systematic translation maintenance by removing manual repetition barriers.
+
+### Acceptance Criteria
+- [ ] Action bar component appears at bottom of viewport when one or more items are selected
+- [ ] Action bar slides up from bottom with smooth animation (300ms transition)
+- [ ] Action bar remains fixed at bottom during page scrolling
+- [ ] Selection count displays showing number of selected items (e.g., "3 items selected")
+- [ ] "Re-translate All" button triggers translation jobs for all six supported languages for all selected items
+- [ ] "Re-translate Specific Language" button opens language selection dialog
+- [ ] Language selection dialog displays all six supported languages as selectable options
+- [ ] Language selection dialog supports single or multiple language selection
+- [ ] Confirming language selection queues translation jobs only for selected languages
+- [ ] Progress indicator displays during bulk job creation showing "Queuing translations..."
+- [ ] Progress indicator shows completion count as jobs are queued (e.g., "Processing 5 of 12 items...")
+- [ ] Success notification displays when all jobs are successfully queued with total count
+- [ ] Error notification displays if job creation fails for any items with specific error details
+- [ ] "Cancel" or "Clear Selection" button dismisses action bar and deselects all items
+- [ ] Action bar includes option to "Skip Manual Edits" preserving human-reviewed translations
+- [ ] Checkbox or toggle control for "Skip Manual Edits" option is clearly labeled
+- [ ] Action bar integrates with bulk re-translate API endpoint passing selected item IDs
+- [ ] Component accepts array of selected item IDs as required prop
+- [ ] Component accepts entity type as required prop (item, article, link)
+- [ ] Component accepts onComplete callback that fires when bulk operations finish
+- [ ] Component handles API errors gracefully without disrupting other selected items
+- [ ] Action bar is fully keyboard accessible with proper focus management
+- [ ] Action bar includes appropriate ARIA labels and roles for screen readers
+- [ ] Action bar adapts to mobile viewports maintaining usability at narrow widths
+- [ ] Action bar z-index ensures it overlays other content without being obscured
+- [ ] Component displays loading state with disabled controls during operation
+- [ ] Component provides escape hatch to cancel in-progress bulk operations if possible
+- [ ] Action bar automatically dismisses after successful completion with 2-second delay
+- [ ] Component integrates with ItemManager selection state management
+- [ ] Component works correctly with filtered and sorted list views
+- [ ] Component handles edge cases like zero selections gracefully without displaying
+- [ ] Visual design matches application design system with consistent spacing and typography
+- [ ] Action buttons use appropriate colors: primary action (blue), destructive action (red if applicable)
+
+---
+
+## REQ-E05-019: Language Selection Dialog for Targeted Bulk Operations
+
+**Date**: 2026-01-20 17:45
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a modal dialog that displays all supported languages as selectable checkboxes when performing bulk translation operations, enabling them to choose specific language subsets for re-translation rather than always processing all languages.
+
+### Current Behavior
+No language selection interface exists for bulk translation operations, preventing property owners from applying translation updates to specific language subsets when only certain translations need refreshing or when translation budget constraints require selective processing.
+
+### Expected Behavior
+A modal dialog opens centered on the screen displaying all six supported languages as labeled checkboxes with flag icons, providing "Select All" and "Deselect All" convenience controls, and offering clearly labeled Confirm and Cancel buttons that either queue translation jobs for selected languages or dismiss the dialog without action.
+
+### User Impact
+Property owners can selectively refresh translations for specific languages when only those translations are outdated or problematic, reduce unnecessary translation API costs by avoiding re-translation of languages that don't require updates, and efficiently manage translation priorities by processing high-priority languages first through targeted selection.
+
+### Business Value
+Optimizes translation resource utilization by enabling surgical updates to specific language subsets rather than forcing wasteful full re-translation, supports flexible translation workflows that adapt to budget constraints and priority languages, and reduces overall translation costs while maintaining control over multilingual content quality.
+
+### Acceptance Criteria
+- [ ] Modal dialog uses Radix UI Dialog primitive for accessibility and focus management
+- [ ] Dialog opens centered on viewport with overlay backdrop preventing interaction with underlying content
+- [ ] Dialog header displays title "Select Languages for Re-translation"
+- [ ] Checkbox list displays all six supported languages: English, Spanish, French, German, Italian, Portuguese
+- [ ] Each language checkbox displays flag icon followed by language name label
+- [ ] Each checkbox includes proper label association for accessibility
+- [ ] "Select All" button checks all language checkboxes in single action
+- [ ] "Deselect All" button unchecks all language checkboxes in single action
+- [ ] Select All and Deselect All buttons are clearly positioned above or below checkbox list
+- [ ] Confirm button is labeled "Re-translate Selected Languages" or similar action-oriented text
+- [ ] Confirm button is disabled when no languages are selected
+- [ ] Confirm button is enabled when one or more languages are selected
+- [ ] Cancel button dismisses dialog without triggering any translation actions
+- [ ] Escape key triggers cancel action and closes dialog
+- [ ] Confirming selection closes dialog and returns array of selected language codes to parent component
+- [ ] Component accepts onConfirm callback function that receives array of selected language codes
+- [ ] Component accepts onCancel callback function that executes when dialog is dismissed
+- [ ] Component accepts optional defaultSelection prop to pre-select specific languages
+- [ ] Dialog maintains checkbox state during the dialog session but resets when reopened
+- [ ] Component is fully keyboard accessible with proper tab order through all controls
+- [ ] First interactive element (first checkbox or Select All button) receives focus when dialog opens
+- [ ] Checkbox states can be toggled using Space key when focused
+- [ ] Dialog returns focus to triggering element when closed
+- [ ] Component includes appropriate ARIA labels and roles for screen reader accessibility
+- [ ] Dialog adapts to mobile viewports maintaining full usability on small screens
+- [ ] Checkbox list scrolls independently if language count exceeds viewport height
+- [ ] Visual design matches application design system with consistent spacing and typography
+- [ ] Language order remains consistent across all uses (alphabetical or by priority)
+- [ ] Component renders correctly in both light and dark theme contexts if themes are supported
+- [ ] Dialog prevents body scroll when open on mobile devices
+- [ ] Component integrates seamlessly with BulkTranslationBar component
+
+---
+
+## REQ-E05-020: Translation Management Page with Full-Width Content Table
+
+**Date**: 2026-01-20 08:54
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Property owners need a dedicated translation management page that displays all their content items in a comprehensive table view with translation status indicators, filtering capabilities, and bulk selection support for efficient multilingual content management.
+
+### Current Behavior
+No centralized page exists for property owners to view and manage translations across all their content types (items, articles, links) in a single unified interface with comprehensive filtering and bulk operation capabilities.
+
+### Expected Behavior
+A full-width table page displays all content entities with columns showing entity name, type, individual language status indicators for all six supported languages, and action controls, with a filter bar above the table offering content type selection, language-specific filtering, and translation status filtering, and row selection checkboxes enabling bulk operations through integration with the bulk translation action bar.
+
+### User Impact
+Property owners can audit translation coverage across their entire content catalog from a single centralized view, filter and sort content to prioritize translation work based on status or content type, select multiple items for bulk translation operations without navigating between different content type pages, and monitor translation health through comprehensive status visibility across all languages and all content types simultaneously.
+
+### Business Value
+Provides a centralized command center for translation operations reducing the complexity of managing multilingual content at scale, enables efficient translation workflow management through powerful filtering and bulk actions, and increases translation completion rates by making gaps highly visible and actionable from a single interface.
+
+### Acceptance Criteria
+- [ ] Page route created at `/src/app/dashboard2/translations/page.tsx`
+- [ ] Page layout uses full-width content area without sidebars (max-width: 100% of available space)
+- [ ] Table displays all content entities accessible to the current property owner
+- [ ] Table includes column for entity name displaying the item/article/link title or identifier
+- [ ] Table includes column for entity type showing "Item", "Article", or "Link" with appropriate icon
+- [ ] Table includes six individual columns for language status (EN, ES, FR, DE, IT, PT)
+- [ ] Each language column displays status indicator using standard color scheme (green complete, orange pending, red failed, purple manual, gray not started)
+- [ ] Table includes Actions column with quick access to view details, edit, or re-translate controls
+- [ ] Filter bar renders above table with three filter controls in horizontal layout
+- [ ] Content type filter dropdown offers options: "All Types", "Items", "Articles", "Links"
+- [ ] Language filter dropdown offers options to show only content missing specific language translations
+- [ ] Status filter dropdown offers options: "All", "Fully Translated", "Partially Translated", "Pending", "Failed", "Manually Edited"
+- [ ] Each table row includes a checkbox for bulk selection
+- [ ] Checkbox in table header selects/deselects all currently visible rows
+- [ ] Selected row count displays when one or more items are selected
+- [ ] BulkTranslationBar component appears when items are selected
+- [ ] Table supports pagination or infinite scroll for large content catalogs (100+ items)
+- [ ] Table displays loading skeleton during initial data fetch
+- [ ] Table displays empty state when no content matches current filters
+- [ ] Empty state includes call-to-action to create content or adjust filters
+- [ ] Table is sortable by clicking column headers (name, type, translation completion)
+- [ ] Clicking entity name navigates to that entity's detail/edit page
+- [ ] Clicking language status cell opens TranslationPreviewPanel for that entity and language
+- [ ] Page integrates with translation status API endpoint to fetch comprehensive status data
+- [ ] Page implements efficient data fetching strategy to avoid loading all entities simultaneously
+- [ ] Page updates in real-time when translation jobs complete through realtime subscriptions
+- [ ] Table is responsive and adapts layout for tablet viewports (may stack columns or use horizontal scroll)
+- [ ] Page header includes title "Translation Management" and breadcrumb navigation
+- [ ] Page includes help text or tooltip explaining filtering and bulk operation capabilities
+- [ ] Filter selections persist in URL query parameters for shareable filtered views
+- [ ] Page is fully keyboard accessible with proper focus management and tab order
+- [ ] Page includes appropriate ARIA labels and semantic HTML structure
+- [ ] Table maintains scroll position when returning from entity detail pages
+- [ ] Page performance remains acceptable with large datasets (response time under 3 seconds for 500+ items)
+- [ ] Component handles missing or invalid property context gracefully
+- [ ] Page displays correctly in both light and dark theme contexts if themes are supported
+
+---
+
+## REQ-E05-021: Translation Management Page Implementation
+
+**Date**: 2026-01-20 17:55
+**Type**: NEW FEATURE
+**Size**: L
+
+### Summary
+Property owners need a centralized page where they can view all their content with translation status across all supported languages, filter by content type and translation status, and perform bulk translation operations.
+
+### Current Behavior
+Property owners must navigate to individual content management pages to review translation status for their items, articles, and links, with no unified view showing translation coverage across all content types simultaneously.
+
+### Expected Behavior
+A dedicated translation management page displays a full-width table showing all content entities with their names, types, and individual translation status indicators for each supported language, with filtering controls for content type, language, and translation status, and bulk selection capabilities that activate a contextual action bar for multi-item translation operations.
+
+### User Impact
+Property owners can audit translation coverage across their entire content catalog from a single centralized interface, identify translation gaps through visual scanning of status indicators, filter content to focus on items requiring translation attention, and efficiently manage translations at scale through bulk operations instead of processing items individually.
+
+### Business Value
+Reduces the time and effort required to maintain multilingual content quality across large catalogs, increases translation completion rates by making gaps highly visible and immediately actionable, and provides a scalable solution for managing translations as property content libraries grow over time.
+
+### Acceptance Criteria
+- [ ] Page displays at route `/src/app/dashboard2/translations/page.tsx`
+- [ ] Table layout uses full available width without constraining sidebars
+- [ ] Table shows columns for content name, content type, and individual status for all six languages
+- [ ] Each language column displays a status indicator with appropriate color coding
+- [ ] Filter bar above table offers content type selection with options for all types or specific types
+- [ ] Filter bar offers language-specific filtering to show content missing specific translations
+- [ ] Filter bar offers status filtering with options for fully translated, partially translated, pending, failed, and manually edited
+- [ ] Each table row includes a selection checkbox for bulk operations
+- [ ] Header checkbox selects or deselects all visible rows in current view
+- [ ] Bulk translation action bar appears at bottom of screen when items are selected
+- [ ] Clicking content name navigates to that content's detail or edit page
+- [ ] Clicking a language status indicator opens the translation preview panel for that specific content and language
+- [ ] Table displays loading state while fetching translation status data
+- [ ] Table displays empty state when no content matches applied filters
+- [ ] Table supports sorting by content name, type, or translation completion percentage
+- [ ] Translation status updates automatically when jobs complete without requiring page refresh
+- [ ] Filter selections persist in browser session during navigation
+- [ ] Page performs efficiently with large content catalogs containing hundreds of items
+- [ ] Page is fully keyboard accessible with logical tab order and focus management
+- [ ] Page includes proper ARIA labels for screen reader accessibility
+- [ ] Page layout adapts responsively for tablet and mobile viewports
+
+---
+
+
+## REQ-E05-022: Navigation Link Integration for Translation Management Page
+
+**Date**: 2026-01-20 18:15
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Property owners need direct access to the translation management page through a navigation item in the dashboard layout without having to manually enter URLs or discover the feature through indirect means.
+
+### Current Behavior
+The translation management page exists at the route but is not discoverable through the dashboard navigation menu, requiring property owners to know the direct URL or find links from other pages to access translation management features.
+
+### Expected Behavior
+The dashboard navigation includes a clearly labeled "Translations" navigation item with an appropriate icon (Languages or Globe) that navigates directly to the translation management page, positioned either as a top-level navigation item or as a sub-item under the settings or content management section, ensuring property owners can access translation features through standard navigation patterns.
+
+### User Impact
+Property owners can discover and access translation management features through intuitive navigation without searching or guessing URLs, benefit from consistent navigation patterns matching other dashboard features, and efficiently navigate to translation tools as part of their regular content management workflow.
+
+### Business Value
+Increases feature discoverability and adoption by making translation management accessible through standard navigation, encourages proactive translation maintenance by reducing access friction, and aligns with user expectations for feature organization within the dashboard interface.
+
+### Acceptance Criteria
+- [ ] Navigation item labeled "Translations" is added to dashboard navigation structure
+- [ ] Navigation item uses Languages icon or Globe icon from icon library
+- [ ] Navigation item appears in a logical position within existing navigation hierarchy
+- [ ] Navigation item may be positioned as top-level item or sub-item under Settings depending on navigation structure
+- [ ] Clicking navigation item navigates to `/dashboard2/translations` route
+- [ ] Navigation item highlights as active when user is on translation management page
+- [ ] Navigation item is visible to all authenticated property owners with content access
+- [ ] Navigation item maintains consistent styling with other navigation items
+- [ ] Navigation item includes appropriate ARIA labels for accessibility
+- [ ] Navigation item is keyboard accessible through standard tab navigation
+- [ ] Navigation item works correctly in both collapsed and expanded sidebar states
+- [ ] Navigation item adapts appropriately for mobile viewport navigation patterns
+- [ ] Navigation item positioning does not disrupt existing navigation organization
+- [ ] Navigation change is implemented in `/src/app/dashboard2/layout.tsx` file
+- [ ] Navigation item displays correctly in both light and dark theme contexts if themes are supported
+
+---
+
+## REQ-E05-023: Manual Edit Preservation Warning Dialog
+
+**Date**: 2026-01-20 18:25
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a warning dialog that appears when source content has been updated and manual translations exist, allowing them to choose between preserving human-reviewed edits or re-translating all content.
+
+### Current Behavior
+When source content changes, the system may overwrite manually edited translations without warning property owners, resulting in loss of human-reviewed content refinements and cultural adaptations that required time and expertise to create.
+
+### Expected Behavior
+A modal dialog appears when source content updates are detected for items with existing manual translations, displaying a clear warning message about the pending content change, listing all languages that have manual edits at risk of being overwritten, and offering two distinct action paths with explicit consequences: keep existing manual edits (requiring manual review later) or re-translate all languages (discarding manual work).
+
+### User Impact
+Property owners can make informed decisions about preserving valuable human-reviewed translations when content changes, understand which languages will be affected before taking action, avoid accidental loss of translation work that required significant time or cultural expertise, and choose appropriate workflows based on whether content changes are minor edits or major rewrites requiring full re-translation.
+
+### Business Value
+Protects investment in professional or human-reviewed translations by preventing accidental overwrites, reduces frustration from losing manual translation work, and supports flexible workflows that respect both automation efficiency and human translation quality.
+
+### Acceptance Criteria
+- [ ] Dialog uses Radix UI Dialog primitive for accessibility and focus management
+- [ ] Dialog displays when source content update is detected for entity with manual translations
+- [ ] Dialog opens centered on viewport with overlay backdrop preventing interaction with underlying content
+- [ ] Warning message clearly explains that source content has changed and manual translations may become outdated
+- [ ] Language list displays all languages that currently have manual translation status
+- [ ] Each listed language displays flag icon and language name for easy recognition
+- [ ] "Keep Manual Edits" button preserves all existing manual translations without modification
+- [ ] "Keep Manual Edits" button includes helper text explaining that manual review may be needed later
+- [ ] "Re-translate All" button queues new translation jobs for all listed manual languages
+- [ ] "Re-translate All" button displays additional confirmation message emphasizing that manual work will be discarded
+- [ ] "Re-translate All" action shows secondary confirmation dialog before proceeding with destructive action
+- [ ] Both action buttons are clearly labeled with action-oriented text describing outcome
+- [ ] Dialog includes "Cancel" option that dismisses dialog without saving source content changes
+- [ ] Cancel action returns user to content edit view to reconsider changes
+- [ ] Dialog displays count of affected languages in heading (e.g., "3 manual translations will be affected")
+- [ ] Component accepts entity reference (entityType, entityId) as required props
+- [ ] Component accepts array of affected language codes as required prop
+- [ ] Component accepts onKeepManual callback function executed when user chooses to preserve edits
+- [ ] Component accepts onRetranslate callback function executed when user confirms re-translation
+- [ ] Component accepts onCancel callback function executed when dialog is dismissed
+- [ ] Escape key triggers cancel action and closes dialog
+- [ ] Dialog maintains focus trap preventing interaction with content behind overlay
+- [ ] First interactive element receives focus when dialog opens
+- [ ] Dialog returns focus to triggering element when closed
+- [ ] Component is fully keyboard accessible with logical tab order through all controls
+- [ ] Component includes appropriate ARIA labels and roles for screen reader accessibility
+- [ ] Warning icon displays at top of dialog to emphasize importance of decision
+- [ ] Visual hierarchy makes consequences of each action clear through layout and typography
+- [ ] Dialog adapts to mobile viewports maintaining full usability on small screens
+- [ ] Language list scrolls independently if affected language count exceeds viewport height
+- [ ] Dialog styling matches application design system with consistent spacing and colors
+- [ ] "Keep Manual Edits" button uses secondary or neutral styling (gray or white)
+- [ ] "Re-translate All" button uses warning styling (orange or yellow) to indicate caution
+- [ ] Component renders correctly in both light and dark theme contexts if themes are supported
+- [ ] Dialog prevents body scroll when open on mobile devices
+- [ ] Component integrates with content save workflows in item, article, and link editors
+
+---
+
+## REQ-E05-024: Stale Translation Visual Indicator
+
+**Date**: 2026-01-20 18:45
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-Owners should be able to preview how their item content appears in different languages while editing items, using the same translation preview functionality available in the article editor.
+Property owners need visual indicators showing when translations have become stale due to source content changes, allowing them to identify outdated translations requiring review or regeneration.
 
 ### Current Behavior
-When editing an item, owners can modify the content but have no visibility into how the translated versions will appear to guests. They must publish changes and navigate to the guest view to see translations, creating a disconnect between content creation and multilingual presentation.
+Translation status displays show whether translations are complete, pending, or failed, but provide no indication when completed translations have become outdated because source content was modified after the translation was created.
 
 ### Expected Behavior
-The item editor displays an integrated preview panel that shows real-time or near-real-time translations of the item content in selected languages. Owners can switch between languages to verify translations before publishing. The preview updates as content changes, allowing owners to understand how edits will affect translations.
+Translation status components display a distinct stale warning indicator using a yellow border or icon when the source content modification timestamp is more recent than the translation creation timestamp, marking the translation as potentially outdated and requiring attention.
 
 ### User Impact
-Property owners creating or updating items gain confidence that their content will display correctly across all supported languages. This reduces the need for trial-and-error publication cycles and enables owners to catch translation issues before guests encounter them.
+Property owners can identify which translations need review after source content updates without manually tracking modification dates, understand which completed translations may contain outdated information for guests, prioritize translation refresh work based on content staleness rather than only status, and maintain translation accuracy over time as content evolves through clear visual signals.
 
 ### Business Value
-Improving the owner's editing experience leads to higher quality multilingual content and reduces support requests related to unexpected translation behavior.
+Prevents guests from seeing outdated translated content that no longer matches current source information, maintains translation quality standards as content evolves over time, and reduces the risk of miscommunication through stale translations that have not kept pace with source content changes.
 
 ### Acceptance Criteria
-- [ ] Preview panel is visible within the item editor interface
-- [ ] Owners can select which language to preview from available target languages
-- [ ] Preview reflects current item content including title, description, and any other translatable fields
-- [ ] Preview indicates translation status (completed, pending, failed) for each language
-- [ ] Preview updates when content changes, showing either cached translations or loading states
-- [ ] Implementation follows the same architectural pattern established in the article editor preview
-
-
+- [ ] TranslationStatusItem component displays stale indicator when source_version_at timestamp is newer than translation created_at timestamp
+- [ ] Stale indicator uses yellow or orange color (#f59e0b or #fbbf24) to distinguish from other status colors
+- [ ] Stale indicator displays as yellow border around the entire status row or language cell
+- [ ] Stale warning icon (alert triangle or clock with exclamation) displays alongside translation status
+- [ ] Stale status takes visual precedence over other status indicators (complete, manual, etc.) through combined display
+- [ ] Status label updates to show "Stale" or "Outdated" in addition to current translation status
+- [ ] Stale translations display status as "Complete (Stale)" or "Manual (Stale)" combining both states
+- [ ] "Update Translation" action button appears in addition to standard edit and re-translate actions
+- [ ] "Update Translation" button is prominently displayed when stale state is detected
+- [ ] "Update Translation" action queues new translation job to refresh the outdated content
+- [ ] Clicking "Update Translation" triggers re-translation only for the specific stale language
+- [ ] Confirmation dialog appears for manually edited stale translations before overwriting
+- [ ] Stale indicator includes tooltip explaining why translation is marked as stale on hover
+- [ ] Tooltip displays source content update date and translation creation date for comparison
+- [ ] Translation status column in table views shows yellow dot indicator for stale translations
+- [ ] Translation preview panel displays stale warning banner at top when opened for stale translation
+- [ ] Dashboard translation widget includes count of stale translations in status summary
+- [ ] Filter dropdown includes "Stale Translations" option to show only outdated content
+- [ ] Stale translation count displays separately from other status counts in statistics views
+- [ ] Component calculates staleness by comparing source_version_at with translation created_at from database
+- [ ] Stale indicator only displays when both timestamps are available for comparison
+- [ ] Translations created before source_version_at tracking was implemented do not show stale indicators
+- [ ] Stale status updates immediately when source content is modified through realtime subscriptions
+- [ ] Stale indicator disappears when translation is refreshed and new timestamp is more recent than source
+- [ ] Component accepts source modification timestamp as optional prop
+- [ ] Component accepts translation creation timestamp as required prop
+- [ ] Visual hierarchy ensures stale indicator is immediately noticeable without being disruptive
+- [ ] Color contrast meets WCAG accessibility standards for yellow warning indicators
+- [ ] Stale indicator works correctly in both light and dark theme contexts
+- [ ] Component styling remains consistent with application design system
+- [ ] Keyboard focus states clearly indicate stale translations through focus ring styling
 
 ---
 
-## REQ-363: Add Loading States and Error Handling to All Translation Components
+## REQ-E05-025: Manual Edit Warning Integration into Content Save Flow
 
-**Date**: 2026-01-19 16:45
+**Date**: 2026-01-20 19:15
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-All translation management components should display appropriate loading indicators during asynchronous operations and provide clear error messages with retry capabilities when operations fail.
+Property owners need automatic detection of manual translations when saving content changes, with immediate presentation of the warning dialog to make informed decisions about preserving or replacing human-reviewed translations.
 
 ### Current Behavior
-Translation components may perform API calls to fetch translation status, submit translation jobs, or update translation content without showing clear loading states to indicate that operations are in progress. When API calls fail due to network issues, server errors, or validation problems, users receive inconsistent or missing feedback about what went wrong and have no clear path to retry the failed operation. Some components may hang or appear frozen while waiting for API responses, leaving users uncertain whether the system is working or has encountered a problem. Error states, when they do appear, may lack actionable guidance about how to resolve the issue or attempt the operation again. The absence of standardized loading and error handling patterns across translation features creates an inconsistent user experience where some operations provide clear feedback while others leave users guessing.
+Content save operations proceed without checking for existing manual translations, allowing source content updates to create stale translations without giving property owners an opportunity to decide whether to preserve manual edits or trigger re-translation.
 
 ### Expected Behavior
-Every component that performs asynchronous operations related to translations displays a clear loading indicator while the operation is in progress. Loading spinners appear in appropriate locations within the component, such as within buttons that trigger actions, in content areas awaiting data, or as overlays for full-component loading states. When API calls fail, components display error messages through toast notifications or inline error displays that clearly explain what went wrong in user-friendly language. Error messages avoid technical jargon and provide specific guidance about what the user can do next, such as checking their network connection, waiting a moment, or contacting support. Every error state includes a retry button or mechanism allowing users to attempt the failed operation again without refreshing the page or losing their current context. Loading states prevent duplicate submissions by disabling action buttons or forms while operations are in progress. Components gracefully handle edge cases such as timeout errors, partial failures in batch operations, and authorization issues. Error handling distinguishes between different failure types and provides appropriate messaging and actions for each case.
+When a property owner saves changes to source content, the system checks whether any translations have manual status, and if detected, displays the manual edit preservation warning dialog before completing the save operation, allowing the owner to choose between preserving existing manual translations or queuing re-translation jobs for affected languages.
 
 ### User Impact
-Property owners working with translation features receive clear, immediate feedback about whether their actions are being processed or have completed successfully. Owners no longer experience confusion or uncertainty when operations take several seconds to complete, as loading indicators provide reassurance that the system is working. Owners encountering errors receive actionable information allowing them to resolve issues independently rather than abandoning the task or contacting support. The ability to retry failed operations directly from error messages reduces frustration and enables owners to recover from temporary network issues or server problems without losing their work. Consistent loading and error patterns across all translation features create a predictable, reliable experience that builds user confidence in the system.
+Property owners receive immediate notification when content changes will affect manual translations, can make informed decisions about translation workflows at the moment of content update, avoid accidentally creating stale translations without awareness, and choose appropriate actions based on the scope of their content changes.
 
 ### Business Value
-Reduces user frustration and support burden by providing clear feedback and self-service error recovery, improving owner satisfaction with translation features. Decreases the likelihood of owners abandoning translation-related tasks due to unclear system states or confusing error conditions. Improves perceived system reliability and professionalism through polished loading states and error handling that meet modern web application standards. Enables owners to work more efficiently by minimizing interruptions caused by errors and providing fast recovery mechanisms when issues occur.
+Prevents unintended loss of valuable manual translation work, ensures property owners are aware of translation implications when updating content, and supports flexible workflows that balance automation efficiency with protection of human-reviewed content quality.
 
 ### Acceptance Criteria
-- [ ] All components with asynchronous operations display loading spinners or skeleton screens during data fetching
-- [ ] Loading indicators appear within or adjacent to the specific component area being affected, not as full-page overlays unless appropriate
-- [ ] Action buttons that trigger API calls show loading spinners within the button and become disabled during operation execution
-- [ ] Failed API operations trigger toast notifications with clear, user-friendly error messages
-- [ ] Error messages distinguish between common failure types: network errors, server errors, validation errors, and authorization errors
-- [ ] Every error notification includes a retry button or action allowing users to re-attempt the failed operation
-- [ ] Retry actions preserve the user's input and context rather than requiring them to start over
-- [ ] Components prevent duplicate submissions by disabling forms or buttons while operations are in progress
-- [ ] Batch operations that partially fail provide detailed feedback about which items succeeded and which failed
-- [ ] Loading states do not cause layout shifts or visual jumps that disrupt the user experience
-- [ ] Error handling covers edge cases including timeout errors, rate limiting, and concurrent edit conflicts
-- [ ] Components recover gracefully from errors without requiring page refresh or loss of unsaved work
-- [ ] Error messages provide specific, actionable guidance appropriate to each failure type
-- [ ] Loading and error handling patterns are consistent across all translation-related components including preview panels, status widgets, language switchers, and management interfaces
-
-
-
+- [ ] Article save handler checks for existing manual translations before persisting content changes
+- [ ] Item save handler checks for existing manual translations before persisting content changes
+- [ ] Link save handler checks for existing manual translations before persisting content changes
+- [ ] System queries translation tables filtered by entity reference and manual status
+- [ ] Manual translation check executes only when source content fields have changed
+- [ ] Check ignores metadata-only updates that do not affect translatable content
+- [ ] Warning dialog displays when one or more manual translations are detected
+- [ ] Dialog shows complete list of affected languages with manual status
+- [ ] Dialog passes entity reference and affected language codes to component props
+- [ ] Save operation pauses until dialog action is selected by property owner
+- [ ] Choosing "Keep Manual Edits" completes save without triggering translation jobs
+- [ ] Choosing "Re-translate All" completes save and queues translation jobs for affected languages
+- [ ] Choosing "Cancel" aborts save operation and returns to edit view
+- [ ] Translation jobs receive priority flag when manually triggered via dialog
+- [ ] System updates source_version_at timestamp in translation records after save
+- [ ] Manual translations marked as stale when source_version_at timestamp updates
+- [ ] Integration preserves existing save validation logic and error handling
+- [ ] Warning dialog appears before any database commits occur
+- [ ] Failed translation job creation does not prevent content save completion
+- [ ] Success notification displays after save indicating whether translations were queued
+- [ ] Component handles concurrent save attempts gracefully with proper locking
+- [ ] Integration works correctly with autosave functionality if enabled
+- [ ] Manual check query performance remains acceptable (response time under 500ms)
+- [ ] System logs all dialog interactions and decisions for audit purposes
+- [ ] Feature can be disabled via feature flag for gradual rollout if needed
+- [ ] Integration does not affect save performance for content without manual translations
+- [ ] Dialog state persists correctly if user navigates away during decision process
+- [ ] Component handles edge cases like deleted translations gracefully
+- [ ] Integration maintains accessibility standards for dialog presentation
+- [ ] Feature works consistently across article editor, item editor, and link editor interfaces
 
 ---
 
-## REQ-364: Add Accessibility Features to Translation Components
+## REQ-E05-026: Language Preference Section Component
 
-**Date**: 2026-01-19 17:15
+**Date**: 2026-01-20 21:33
+**Type**: NEW FEATURE
+**Size**: M
+
+### Summary
+Property owners need a dedicated settings section where they can select their preferred language for dashboard interface translations, save their preference with clear feedback, and understand how the language setting affects their experience.
+
+### Current Behavior
+No dedicated language preference component exists within the translation management interface, leaving property owners without a clear, centralized location to manage their own language preferences for the owner-facing dashboard experience.
+
+### Expected Behavior
+A standalone settings section displays a labeled dropdown selector containing all six supported languages (English, Spanish, French, German, Italian, Portuguese), a save button that provides visual loading feedback during preference persistence, and explanatory help text clarifying that this setting controls the owner's dashboard language rather than guest-facing content translations.
+
+### User Impact
+Property owners can easily select their preferred interface language from a clear, discoverable location, receive immediate visual confirmation when saving their preference through loading states and success notifications, and understand through contextual help text exactly what the language preference setting controls versus guest content translation settings.
+
+### Business Value
+Improves owner experience by providing intuitive language customization controls, reduces confusion about the distinction between interface language and content translation settings, and supports international property owners who prefer managing their dashboard in their native language.
+
+### Acceptance Criteria
+- [ ] Component renders as a self-contained settings section with clear visual boundaries
+- [ ] Section header displays "Language Preference" or equivalent descriptive title
+- [ ] Dropdown selector displays all six supported languages: English, Spanish, French, German, Italian, Portuguese
+- [ ] Each dropdown option displays language name with corresponding flag icon for visual recognition
+- [ ] Dropdown selection persists in component state until explicitly saved
+- [ ] Save button displays adjacent to or below the dropdown selector
+- [ ] Save button shows loading spinner or indicator during preference save operation
+- [ ] Save button is disabled while save operation is in progress to prevent duplicate submissions
+- [ ] Save button is disabled when no changes have been made to current selection
+- [ ] Success notification displays after preference is successfully saved
+- [ ] Error notification displays with actionable message if save operation fails
+- [ ] Help text explains that this setting controls the owner dashboard interface language
+- [ ] Help text clarifies that content translation settings are managed separately
+- [ ] Help text displays below the dropdown in muted or secondary text styling
+- [ ] Component fetches current language preference on mount and sets dropdown default
+- [ ] Component displays loading skeleton while fetching initial preference value
+- [ ] Component handles missing or invalid stored preferences gracefully with sensible defaults
+- [ ] Component integrates with account preferences API endpoint for persistence
+- [ ] Language change takes effect immediately after successful save without requiring page refresh
+- [ ] Component is fully keyboard accessible with proper focus management
+- [ ] Dropdown can be navigated using arrow keys and selection confirmed with Enter
+- [ ] Component includes appropriate ARIA labels for screen reader accessibility
+- [ ] Component adapts responsively for mobile viewports with appropriate touch targets
+- [ ] Visual design matches application design system patterns for settings sections
+- [ ] Component displays correctly in both light and dark theme contexts if themes are supported
+- [ ] Component can be integrated into account settings page or profile section
+
+---
+
+## REQ-E05-027: Account Language Preference API Endpoint
+
+**Date**: 2026-01-20 22:15
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Property owners need a server-side API endpoint to persist and retrieve their preferred language setting for the dashboard interface, enabling the language preference to be saved to their account and accessed across devices.
+
+### Current Behavior
+No API endpoint exists for property owners to save or retrieve their preferred dashboard interface language, preventing the language preference setting from being persisted across browser sessions or synchronized across multiple devices where they access the dashboard.
+
+### Expected Behavior
+A PUT endpoint at the account preferences route accepts a language preference payload and validates that the requesting user has permission to modify the specified account, persists the preference to the accounts table, and returns the updated account record confirming the change has been saved successfully.
+
+### User Impact
+Property owners can set their preferred dashboard language once and have that preference automatically applied every time they access the dashboard from any device, experience consistent language preferences across browser sessions without re-selecting their language repeatedly, and trust that their language customization will persist as a stored account setting rather than temporary browser state.
+
+### Business Value
+Provides foundation for personalized language experiences across the owner dashboard, reduces friction for international property owners who would otherwise need to repeatedly change language settings, and enables future expansion of account-level localization preferences beyond just language selection.
+
+### Acceptance Criteria
+- [ ] PUT endpoint created at route: `/src/app/api/accounts/[accountId]/preferences/route.ts`
+- [ ] Endpoint accepts accountId as path parameter extracted from URL
+- [ ] Request body accepts preferredLanguage field containing ISO 639-1 language code
+- [ ] Request body validates that preferredLanguage value is one of six supported languages: en, es, fr, de, it, pt
+- [ ] Endpoint validates that authenticated user has ownership access to the specified account
+- [ ] Unauthorized access attempts return 403 Forbidden with clear error message
+- [ ] Invalid account references return 404 Not Found with appropriate error message
+- [ ] Invalid language codes return 400 Bad Request with validation error details
+- [ ] Endpoint updates the preferredLanguage column in the accounts table
+- [ ] Database update operation is atomic and handles concurrent updates safely
+- [ ] Successful update returns 200 OK with complete updated account record in response body
+- [ ] Response includes updated timestamp showing when preference was modified
+- [ ] Endpoint handles database errors gracefully returning 500 Internal Server Error with logged details
+- [ ] Endpoint supports GET method to retrieve current account preferences including preferredLanguage
+- [ ] GET request validates account access before returning preference data
+- [ ] Endpoint performance remains acceptable with response time under 500ms
+- [ ] Request validation uses Zod schema for type safety and consistent error messages
+- [ ] Endpoint integrates with existing authentication middleware to identify requesting user
+- [ ] Endpoint logs all preference update operations for audit purposes
+- [ ] API endpoint includes rate limiting to prevent abuse (reasonable limit: 10 requests per minute per user)
+- [ ] Endpoint supports CORS headers if frontend and API are on different domains
+- [ ] Database migration adds preferredLanguage column to accounts table if it does not exist
+- [ ] Column definition allows NULL values for backward compatibility with existing accounts
+- [ ] Default value is NULL or 'en' for accounts without explicit preference
+- [ ] Endpoint includes appropriate TypeScript types for request and response payloads
+- [ ] Integration tests verify permission validation prevents unauthorized access
+- [ ] Integration tests verify successful preference updates persist to database
+- [ ] Integration tests verify invalid language codes are rejected with appropriate errors
+- [ ] API documentation clearly specifies request format, validation rules, and response structure
+- [ ] Endpoint follows existing API conventions for error response format and status codes
+
+---
+
+## REQ-E05-028: Language Preference Section Integration into Account Settings
+
+**Date**: 2026-01-20 22:25
+**Type**: ENHANCEMENT
+**Size**: S
+
+### Summary
+Property owners need access to the language preference component through the account settings interface, enabling them to customize their dashboard language as part of their standard profile configuration.
+
+### Current Behavior
+The language preference component exists but is not integrated into any accessible page location, preventing property owners from discovering or utilizing the language customization feature without direct navigation or external links.
+
+### Expected Behavior
+The account settings page includes the language preference section component positioned within the settings layout in a logical grouping with other personalization or regional preferences, displaying the current language selection pre-populated from account data and allowing changes to be saved directly from the settings interface.
+
+### User Impact
+Property owners can discover language preference settings through natural exploration of account settings, adjust their preferred dashboard language alongside other account preferences in a consolidated interface, and access language customization through established navigation patterns without needing to learn specialized routes.
+
+### Business Value
+Increases feature adoption by making language preferences discoverable through standard settings navigation, aligns with user expectations that language settings are found within account configuration pages, and reduces support burden by placing preferences in intuitive locations.
+
+### Acceptance Criteria
+- [ ] LanguagePreferenceSection component is imported into account settings page
+- [ ] Component renders within settings page layout in appropriate section grouping
+- [ ] Component displays under "Preferences" or "Regional Settings" section heading
+- [ ] Component appears before or after related settings like timezone or date format preferences
+- [ ] Component receives authenticated user's account ID as required prop
+- [ ] Component pre-populates dropdown with current language preference from account data
+- [ ] Settings page displays loading state while fetching account preferences
+- [ ] Settings page handles missing preferences gracefully with default language selection
+- [ ] Component save operation integrates with account preferences API endpoint
+- [ ] Success notification displays within settings page context after preference save
+- [ ] Error handling displays appropriate messages within settings page layout
+- [ ] Settings page layout does not shift or reflow when language preference changes
+- [ ] Component maintains consistent styling with other settings section components
+- [ ] Component spacing and padding matches other settings sections
+- [ ] Integration preserves existing settings page functionality without regressions
+- [ ] Settings page remains responsive with language preference section added
+- [ ] Component displays correctly in both light and dark theme contexts if themes are supported
+- [ ] Keyboard navigation flows logically through settings controls including language preference
+- [ ] ARIA labels and semantic structure maintain accessibility standards across entire settings page
+- [ ] Integration can be toggled via feature flag for gradual rollout if needed
+- [ ] Alternative integration location in user profile page is considered if more appropriate than settings
+
+---
+
+## REQ-E05-029: Translation Preview Panel Integration into Article Editor
+
+**Date**: 2026-01-20 22:35
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-Translation management components should be fully accessible to users relying on assistive technologies, with proper ARIA labels, keyboard navigation, screen reader announcements, and focus management.
+Property owners need the translation preview panel to automatically display within the article editor after saving content changes, showing translation status for all languages and providing immediate access to translation management actions.
 
 ### Current Behavior
-Translation components including preview panels, status widgets, language switchers, and translation editors have been implemented with primary focus on visual presentation and mouse-based interaction. These components may lack semantic HTML markup, ARIA attributes, and keyboard navigation patterns necessary for users with disabilities to operate them effectively. Status icons indicating translation progress or completion states display visual information without corresponding text alternatives that screen readers can announce. Interactive elements such as expandable preview sections, translation editor modals, and language selection dropdowns may not be fully operable via keyboard alone, requiring mouse interaction that excludes keyboard-only users. When translation status changes occur dynamically, such as a job transitioning from pending to complete, screen reader users receive no audible notification of the change unless they manually navigate back to check the status. Modal dialogs for translation editing or manual override operations may not properly trap focus within the modal, allowing keyboard focus to escape to background content and creating confusion. Focus management when opening and closing preview panels or dialogs does not return focus to appropriate trigger elements, disrupting keyboard navigation flow.
+The article editor save flow completes without displaying translation status information, requiring property owners to navigate to separate translation management pages or use other interfaces to review translation coverage for articles they just created or updated.
 
 ### Expected Behavior
-All translation status icons include descriptive ARIA labels that convey their meaning to screen reader users, such as "Translation complete for French" or "Translation pending for German". Interactive elements within preview panels, including expand/collapse toggles and action buttons, are fully operable via keyboard using standard navigation keys like Tab, Enter, and Space. Preview panels implement proper focus management by moving focus to the panel when it opens and returning focus to the trigger element when closed. Translation editor modals trap keyboard focus within the modal while open, ensuring Tab key navigation cycles only through modal controls. Screen reader users receive live region announcements when translation status changes occur, such as "French translation completed successfully" or "German translation failed, retry available". Language switcher components provide keyboard-accessible dropdown menus or radio button groups with arrow key navigation between options. All interactive controls have visible focus indicators meeting WCAG contrast requirements so keyboard users can track their navigation position. Components use semantic HTML elements such as button, nav, dialog, and section rather than generic divs with click handlers. Translation management interfaces organize content in a logical heading hierarchy that screen reader users can navigate efficiently.
+After saving an article in the editor, the translation preview panel automatically slides in from the right side of the screen displaying the article's translation status across all six supported languages, with the panel opening immediately when pending translations exist and remaining closed when translations are already complete unless explicitly opened through a dedicated control button.
 
 ### User Impact
-Property owners and content editors with visual disabilities or mobility impairments can fully access and operate all translation management features using assistive technologies. Keyboard-only users can efficiently navigate through translation previews, manage translation jobs, and update content without requiring mouse interaction. Screen reader users receive timely notifications about translation status changes, allowing them to monitor progress without repeatedly checking status indicators. Users with cognitive disabilities benefit from clear focus indicators and predictable navigation patterns that reduce confusion. The accessible implementation ensures compliance with accessibility standards and regulations, making the platform usable by a broader audience.
+Property owners can immediately review translation status after updating article content without leaving the editor context, understand which language translations are processing or require attention right after save completion, take immediate corrective actions on failed translations without navigation overhead, and maintain efficient workflows by staying in the editor while managing translation tasks.
 
 ### Business Value
-Expands the potential user base by ensuring the platform is usable by property owners and editors with disabilities, demonstrating commitment to inclusive design. Reduces legal and regulatory risk by meeting accessibility standards such as WCAG 2.1 Level AA, which may be required by law in certain jurisdictions. Improves the platform's reputation and competitive position by providing accessibility features that competitors may lack. Enhances overall usability for all users through improvements like keyboard navigation and clear focus indicators, not just users with disabilities. Aligns with corporate values around diversity, equity, and inclusion by ensuring equal access to platform features.
+Streamlines the content creation workflow by integrating translation management directly into the editing experience, encourages property owners to verify translation coverage immediately after content updates rather than forgetting to check later, and reduces context switching between editing and translation management interfaces.
 
 ### Acceptance Criteria
-- [ ] All translation status icons include descriptive ARIA labels that convey status information to screen readers
-- [ ] Preview panel expand/collapse toggles are keyboard accessible using Enter or Space keys
-- [ ] Preview panel implements focus trap when opened, cycling Tab navigation within panel content
-- [ ] Preview panel returns focus to the trigger element when closed via keyboard or close button
-- [ ] Translation editor modals trap keyboard focus within the modal while open
-- [ ] Translation editor modals return focus to appropriate trigger element when dismissed
-- [ ] Language switcher component is fully keyboard navigable using Tab, Enter, and arrow keys
-- [ ] Translation status changes trigger ARIA live region announcements audible to screen readers
-- [ ] Live announcements include sufficient context, such as language name and new status state
-- [ ] All interactive controls have visible focus indicators with minimum 3:1 contrast ratio
-- [ ] Focus indicators are consistent across all translation components
-- [ ] Components use semantic HTML elements: button for actions, nav for navigation, dialog for modals
-- [ ] Translation management interfaces use proper heading hierarchy (h1, h2, h3) for screen reader navigation
-- [ ] Form controls within translation editors include properly associated label elements
-- [ ] Error messages and validation feedback are associated with form controls via aria-describedby
-- [ ] Batch action controls like "Select all translations" are keyboard accessible
-- [ ] Translation preview content is marked with appropriate language attributes (lang attribute)
-- [ ] Components meet WCAG 2.1 Level AA success criteria for keyboard access, focus management, and screen reader compatibility
-- [ ] Accessibility features are tested with common screen readers including NVDA, JAWS, and VoiceOver
-- [ ] Keyboard navigation is tested to ensure logical tab order and no keyboard traps
+- [ ] TranslationPreviewPanel component is integrated into article editor page
+- [ ] Panel component receives article entity reference (entityType: 'article', entityId: articleId)
+- [ ] Panel state management controls when panel is visible or hidden
+- [ ] Panel automatically opens after successful article save operation completes
+- [ ] Panel auto-open logic checks if any translation jobs are pending or failed
+- [ ] Panel opens automatically only when pending or failed translations exist
+- [ ] Panel remains closed after save when all translations are complete and up-to-date
+- [ ] Manual toggle button displays in article editor header or toolbar area
+- [ ] Manual toggle button shows "View Translations" or similar descriptive label
+- [ ] Clicking toggle button opens panel regardless of automatic open conditions
+- [ ] Panel slide-in animation triggers smoothly without disrupting editor layout
+- [ ] Panel overlays editor content without causing layout reflow or shifting
+- [ ] Panel remains accessible while editor is in edit mode for parallel workflows
+- [ ] Panel close button dismisses panel and returns focus to editor content
+- [ ] Clicking overlay backdrop outside panel closes panel
+- [ ] Panel updates in real-time as translation jobs complete through subscriptions
+- [ ] Panel integration preserves existing article editor save functionality
+- [ ] Panel open state does not interfere with editor autosave if enabled
+- [ ] Panel displays loading state while fetching translation status after save
+- [ ] Panel handles error states gracefully if status fetch fails
+- [ ] Panel shows empty state appropriately for newly created articles without translations yet
+- [ ] Panel action buttons (edit, re-translate, retry) function correctly within editor context
+- [ ] Edit translation action opens editor modal without conflicting with article editor
+- [ ] Re-translate action triggers translation jobs and updates panel status
+- [ ] Panel width (400px) does not obscure critical editor controls on standard viewports
+- [ ] Panel adapts responsively for tablet viewports maintaining usability
+- [ ] Panel component accepts optional onClose callback for editor state management
+- [ ] Integration includes keyboard shortcuts for opening/closing panel (e.g., Alt+T)
+- [ ] Panel keyboard accessibility works correctly within editor context
+- [ ] Focus management handles transitions between editor and panel appropriately
+- [ ] Panel z-index ensures it overlays editor content without being obscured by other UI elements
+- [ ] Integration maintains editor performance without noticeable lag during panel operations
+- [ ] Component handles edge cases like deleted articles or missing permissions gracefully
+- [ ] Panel displays correctly in both light and dark theme contexts if themes are supported
+- [ ] Integration follows consistent patterns with item editor translation panel integration
 
 ---
 
-## REQ-365: Write Unit Tests for Translation Hooks
+## REQ-E05-030: Translation Preview Panel Integration into Item Editor
 
-**Date**: 2026-01-19 
+**Date**: 2026-01-20 23:30
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-The system must include comprehensive unit tests for custom React hooks that manage translation state and real-time updates to ensure reliability and maintainability.
+Property owners need the translation preview panel to automatically display within the item editor after saving content changes, showing translation status for all languages and providing immediate access to translation management actions.
 
 ### Current Behavior
-Translation hooks (useTranslationStatus and useTranslationRealtime) exist without dedicated unit test coverage, making it difficult to verify their behavior and prevent regressions during future changes.
+The item editor save flow completes without displaying translation status information, requiring property owners to navigate to separate translation management pages or use other interfaces to review translation coverage for items they just created or updated.
 
 ### Expected Behavior
-All translation-related hooks have thorough unit test suites that verify state management, data fetching, subscription handling, and error scenarios using mocked Supabase responses.
+After saving an item in the editor, the translation preview panel automatically slides in from the right side of the screen displaying the item's translation status across all six supported languages, with the panel opening immediately when pending translations exist and remaining closed when translations are already complete unless explicitly opened through a dedicated control button.
 
 ### User Impact
-Developers working on the translation system can confidently make changes knowing that hook behavior is validated by automated tests, reducing the risk of bugs reaching production that could break translation status displays or real-time updates.
+Property owners can immediately review translation status after updating item content without leaving the editor context, understand which language translations are processing or require attention right after save completion, take immediate corrective actions on failed translations without navigation overhead, and maintain efficient workflows by staying in the editor while managing translation tasks.
 
 ### Business Value
-Improves code quality and reduces maintenance costs by catching issues early in the development cycle before they impact end users.
+Streamlines the content creation workflow by integrating translation management directly into the editing experience, encourages property owners to verify translation coverage immediately after content updates rather than forgetting to check later, and reduces context switching between editing and translation management interfaces.
 
 ### Acceptance Criteria
-- [ ] Unit tests exist for useTranslationStatus hook covering all state transitions (loading, success, error)
-- [ ] Unit tests exist for useTranslationRealtime hook covering subscription lifecycle and real-time updates
-- [ ] Supabase client responses are properly mocked to avoid external dependencies during testing
-- [ ] Tests verify correct handling of edge cases (network failures, empty results, invalid data)
-- [ ] All tests pass successfully and are integrated into the project's test suite
-- [ ] Test coverage for hooks meets or exceeds project standards (typically 80%+)
-
+- [ ] TranslationPreviewPanel component is integrated into item editor page at `/src/app/dashboard2/items/[publicId]/edit/page.tsx`
+- [ ] Panel component receives item entity reference (entityType: 'item', entityId: itemId)
+- [ ] Panel state management controls when panel is visible or hidden
+- [ ] Panel automatically opens after successful item save operation completes
+- [ ] Panel auto-open logic checks if any translation jobs are pending or failed
+- [ ] Panel opens automatically only when pending or failed translations exist
+- [ ] Panel remains closed after save when all translations are complete and up-to-date
+- [ ] Manual toggle button displays in item editor header or toolbar area
+- [ ] Manual toggle button shows "View Translations" or similar descriptive label
+- [ ] Clicking toggle button opens panel regardless of automatic open conditions
+- [ ] Panel slide-in animation triggers smoothly without disrupting editor layout
+- [ ] Panel overlays editor content without causing layout reflow or shifting
+- [ ] Panel remains accessible while editor is in edit mode for parallel workflows
+- [ ] Panel close button dismisses panel and returns focus to editor content
+- [ ] Clicking overlay backdrop outside panel closes panel
+- [ ] Panel updates in real-time as translation jobs complete through subscriptions
+- [ ] Panel integration preserves existing item editor save functionality
+- [ ] Panel open state does not interfere with editor autosave if enabled
+- [ ] Panel displays loading state while fetching translation status after save
+- [ ] Panel handles error states gracefully if status fetch fails
+- [ ] Panel shows empty state appropriately for newly created items without translations yet
+- [ ] Panel action buttons (edit, re-translate, retry) function correctly within editor context
+- [ ] Edit translation action opens editor modal without conflicting with item editor
+- [ ] Re-translate action triggers translation jobs and updates panel status
+- [ ] Panel width (400px) does not obscure critical editor controls on standard viewports
+- [ ] Panel adapts responsively for tablet viewports maintaining usability
+- [ ] Panel component accepts optional onClose callback for editor state management
+- [ ] Integration includes keyboard shortcuts for opening/closing panel (e.g., Alt+T)
+- [ ] Panel keyboard accessibility works correctly within editor context
+- [ ] Focus management handles transitions between editor and panel appropriately
+- [ ] Panel z-index ensures it overlays editor content without being obscured by other UI elements
+- [ ] Integration maintains editor performance without noticeable lag during panel operations
+- [ ] Component handles edge cases like deleted items or missing permissions gracefully
+- [ ] Panel displays correctly in both light and dark theme contexts if themes are supported
+- [ ] Integration follows consistent patterns with article editor translation panel integration from REQ-E05-029
 
 ---
 
-## REQ-366: Write Component Tests for Translation Management UI
+## REQ-E05-031: Comprehensive Loading States and Error Handling for Translation Management UI
 
-**Date**: 2026-01-19 23:45
+**Date**: 2026-01-20 23:45
+**Type**: ENHANCEMENT
+**Size**: L
+
+### Summary
+All translation management components need consistent loading states with proper spinners and error handling with actionable retry mechanisms to provide users with clear feedback during asynchronous operations and recovery paths when operations fail.
+
+### Current Behavior
+Translation management components may lack consistent loading indicators during data fetching or API operations, display generic or unhelpful error messages when API calls fail, and provide no mechanism for users to retry failed operations without refreshing the page or re-navigating.
+
+### Expected Behavior
+Every component displaying translation data shows skeleton loaders or spinner indicators during initial data fetch, API mutation operations display inline loading states with disabled controls to prevent duplicate submissions, all API failures present user-friendly error messages explaining what went wrong in non-technical language, and actionable retry buttons allow users to re-attempt failed operations without losing context or requiring page navigation.
+
+### User Impact
+Property owners understand when the system is processing their requests through clear visual feedback, never wonder whether an action is working or stalled due to missing loading indicators, receive helpful guidance when operations fail explaining the issue and how to resolve it, can recover from transient failures immediately through retry mechanisms without losing work or re-navigating, and experience a polished interface that handles edge cases gracefully rather than appearing broken or unresponsive.
+
+### Business Value
+Reduces user frustration and support burden by providing clear feedback and self-service recovery options, builds user confidence in the translation management system through professional error handling, prevents data loss or confusion from unclear system states, and improves overall user satisfaction by handling failures gracefully rather than forcing users to troubleshoot or contact support.
+
+### Acceptance Criteria
+- [ ] TranslationPreviewPanel displays skeleton loader for language status rows during initial data fetch
+- [ ] TranslationStatusWidget shows shimmer effect on progress bar and counts during dashboard load
+- [ ] TranslationStatusColumn in table views displays loading dots or shimmer while fetching status
+- [ ] Language preference dropdown shows spinner icon during preference save operation
+- [ ] Translation editor modal displays loading overlay with spinner during save operation
+- [ ] Bulk translation action bar shows progress indicator during job queue creation
+- [ ] All API mutation operations disable action buttons while request is in flight
+- [ ] Disabled buttons display loading spinner or text change (e.g., "Saving..." instead of "Save")
+- [ ] Loading states use consistent spinner component or animation pattern across all components
+- [ ] Loading indicators maintain minimum display time (300ms) to prevent flashing on fast connections
+- [ ] Error messages display in toast notifications for transient failures (network errors, timeouts)
+- [ ] Error messages display as inline alerts for contextual failures (validation errors, permission issues)
+- [ ] All error messages avoid technical jargon and use plain language explaining the issue
+- [ ] Error messages include specific guidance on resolution when applicable (e.g., "Check your connection and try again")
+- [ ] 403 Forbidden errors display message: "You don't have permission to perform this action"
+- [ ] 404 Not Found errors display message: "The requested content could not be found"
+- [ ] 500 Server errors display message: "Something went wrong on our end. Please try again in a moment."
+- [ ] Network timeout errors display message: "The request took too long. Please check your connection and try again."
+- [ ] Every error state includes a retry button or action to re-attempt the failed operation
+- [ ] Retry buttons preserve the original context and parameters of the failed operation
+- [ ] Retry actions implement exponential backoff to avoid overwhelming failing services
+- [ ] Maximum retry attempts are limited (3 attempts) with clear messaging after final failure
+- [ ] Critical errors that cannot be recovered display contact support option with error reference ID
+- [ ] Translation status fetch failures show error state in place of status indicators with retry option
+- [ ] Translation save failures keep editor modal open with error message and allow user to retry
+- [ ] Bulk operation failures provide detailed breakdown showing which items succeeded vs failed
+- [ ] Partial bulk operation failures allow retry of only the failed items without re-processing successes
+- [ ] Language preference save failures display error toast and revert dropdown to previous value
+- [ ] Failed translation job creation attempts log errors but don't block content save completion
+- [ ] Real-time subscription connection errors display subtle warning indicator without disrupting UI
+- [ ] Subscription reconnection attempts happen automatically in background with status indicator
+- [ ] Empty state messages display when filters produce zero results (distinct from error states)
+- [ ] Loading skeletons match the approximate layout and size of loaded content to prevent layout shift
+- [ ] Error boundaries catch unexpected React errors and display fallback UI with reload option
+- [ ] All asynchronous operations include timeout handling (30 seconds for data fetch, 60 seconds for mutations)
+- [ ] Loading and error states are fully accessible with appropriate ARIA live regions and roles
+- [ ] Screen readers announce loading states and error messages without requiring user navigation
+- [ ] Color is not the only indicator of error states (icons and text labels always accompany color coding)
+- [ ] Error styling meets WCAG contrast requirements for text readability
+- [ ] Component unit tests verify loading states display correctly during async operations
+- [ ] Component unit tests verify error states display with appropriate messaging
+- [ ] Integration tests verify retry mechanisms successfully re-attempt failed operations
+- [ ] Error logging captures sufficient context for debugging (user ID, operation type, error details)
+- [ ] Loading performance remains acceptable with multiple components loading simultaneously
+- [ ] Visual design of loading states and error messages matches application design system
+
+---
+
+## REQ-E05-032: Accessibility Features for Translation Management Components
+
+**Date**: 2026-01-20 23:55
 **Type**: ENHANCEMENT
 **Size**: M
 
 ### Summary
-Critical translation management components should have automated component tests verifying rendering behavior, user interactions, and state management to ensure reliability and prevent regressions.
+Property owners using assistive technology need translation management components that are fully accessible through keyboard navigation, screen reader announcements, proper ARIA labeling, and focus management to ensure equal access to translation features.
 
 ### Current Behavior
-TranslationPreviewPanel, TranslationEditor, and TranslationStatusWidget components exist in production without comprehensive component-level test coverage. While unit tests may exist for underlying hooks and utilities, the integrated behavior of these components including rendering logic, user interaction handling, and state updates remains untested. Developers modifying these components cannot quickly verify that changes preserve existing functionality without extensive manual testing. The TranslationPreviewPanel's rendering of translation status across multiple languages, the TranslationEditor's save flow with validation and API integration, and the TranslationStatusWidget's count calculations and progress display lack automated validation. Changes to these components risk introducing visual regressions, broken interactions, or incorrect state management that only surface during manual testing or in production.
+Translation management components may display visual information about translation status but lack sufficient ARIA labels, keyboard navigation support, screen reader announcements for status changes, or proper focus management in modal interactions, creating barriers for property owners who rely on assistive technology.
 
 ### Expected Behavior
-A comprehensive component test suite validates TranslationPreviewPanel rendering behavior across different translation status scenarios including complete translations, partial coverage, pending jobs, and failed translations. Tests verify the panel displays correct status indicators for all six supported languages and shows appropriate action buttons based on translation state. Tests confirm that user interactions like clicking the edit button properly trigger the TranslationEditor modal and clicking retry buttons initiate re-translation requests. TranslationEditor component tests verify the save flow from initial render through user input to successful save completion, ensuring source content displays correctly, the text editor captures changes, validation prevents invalid saves, and successful saves properly mark translations as manually reviewed. Tests validate that the editor prompts for confirmation when users attempt to close with unsaved changes and that the cancel action preserves the unsaved state while the close action discards changes. TranslationStatusWidget component tests verify accurate count calculations for complete, partial, pending, and failed translation statuses, validate progress bar rendering with correct fill percentages, and confirm that count updates trigger appropriate UI re-renders. Tests ensure clicking the view details link navigates to the translation management page with correct parameters.
+All translation status icons include descriptive ARIA labels identifying the language and status state, the translation preview panel supports complete keyboard navigation with logical tab order and escape key dismissal, translation status changes trigger screen reader announcements through ARIA live regions, and translation management modals implement proper focus trapping that moves focus to the first interactive element on open and returns focus to the triggering element on close.
 
 ### User Impact
-Property owners relying on translation management interfaces benefit from increased component stability and fewer UI bugs introduced during ongoing development. Developers building and extending translation features gain confidence that component refactoring or enhancement work will not break existing functionality, as automated tests catch issues immediately. Testing the full component integration including rendering, interactions, and state management provides stronger reliability guarantees than testing individual functions in isolation. The comprehensive test coverage reduces the time developers spend on manual regression testing, allowing faster iteration and more frequent improvements to translation management features.
+Property owners who use screen readers can understand translation status through descriptive announcements rather than relying on visual indicators alone, users who navigate via keyboard can access all translation management features without requiring mouse interaction, status change notifications are perceivable to users with visual impairments through screen reader announcements, and modal dialogs maintain predictable focus behavior that prevents keyboard users from becoming trapped or disoriented.
 
 ### Business Value
-Reduces regression risk as the translation management system evolves, protecting the reliability of features that property owners depend on for maintaining multilingual content. Accelerates development velocity by providing fast automated feedback during development rather than requiring time-consuming manual testing cycles. Enables safer refactoring and optimization of translation components, improving long-term code maintainability and allowing technical debt reduction without fear of breaking production functionality. Demonstrates engineering quality and professionalism through comprehensive testing practices that build stakeholder confidence in the platform's technical foundation.
+Ensures the translation management system is accessible to all property owners regardless of ability, meets WCAG accessibility standards reducing legal compliance risks, expands the potential user base by supporting assistive technology users, and demonstrates commitment to inclusive design principles that benefit all users through improved usability patterns.
 
 ### Acceptance Criteria
-- [ ] Component test suite exists for TranslationPreviewPanel component
-- [ ] TranslationPreviewPanel tests verify component renders with mocked translation status data
-- [ ] TranslationPreviewPanel tests verify correct status indicators display for all six languages
-- [ ] TranslationPreviewPanel tests verify status indicators change appearance based on translation state
-- [ ] TranslationPreviewPanel tests verify appropriate action buttons appear for each translation status
-- [ ] TranslationPreviewPanel tests verify clicking edit button triggers expected callback or modal
-- [ ] TranslationPreviewPanel tests verify clicking retry button initiates re-translation flow
-- [ ] Component test suite exists for TranslationEditor component
-- [ ] TranslationEditor tests verify component renders with source and translation content
-- [ ] TranslationEditor tests verify source content displays in read-only section
-- [ ] TranslationEditor tests verify translation content displays in editable text area
-- [ ] TranslationEditor tests verify text input updates component state correctly
-- [ ] TranslationEditor tests verify save button becomes enabled when content changes
-- [ ] TranslationEditor tests verify save button remains disabled when content is invalid
-- [ ] TranslationEditor tests verify successful save triggers API call with correct payload
-- [ ] TranslationEditor tests verify successful save marks translation as manually reviewed
-- [ ] TranslationEditor tests verify successful save closes the editor component
-- [ ] TranslationEditor tests verify unsaved changes trigger confirmation prompt when closing
-- [ ] TranslationEditor tests verify confirmation prompt offers save, discard, and cancel options
-- [ ] Component test suite exists for TranslationStatusWidget component
-- [ ] TranslationStatusWidget tests verify component displays count of complete translations
-- [ ] TranslationStatusWidget tests verify component displays count of partial translations
-- [ ] TranslationStatusWidget tests verify component displays count of pending translations
-- [ ] TranslationStatusWidget tests verify component displays count of failed translations
-- [ ] TranslationStatusWidget tests verify progress bar fills proportionally to completion percentage
-- [ ] TranslationStatusWidget tests verify progress bar updates when status counts change
-- [ ] TranslationStatusWidget tests verify view details link includes correct navigation parameters
-- [ ] All component tests use appropriate mocking for Supabase client and API dependencies
-- [ ] Tests isolate component behavior from external dependencies to ensure reliability
-- [ ] Component tests achieve meaningful code coverage for rendering and interaction logic
-- [ ] All tests pass consistently in both local development and continuous integration environments
-- [ ] Test suite is maintainable with clear test descriptions and well-organized test structure
+- [ ] Translation status icons include ARIA labels describing status: "English translation complete", "Spanish translation pending", "French translation failed"
+- [ ] Each status icon uses role="img" or role="status" with descriptive aria-label attribute
+- [ ] Translation status colors are never the only indicator (always accompanied by icon shapes and text labels)
+- [ ] Color contrast ratios meet WCAG AA standards (4.5:1 for normal text, 3:1 for large text and UI components)
+- [ ] TranslationPreviewPanel is fully keyboard navigable with sequential tab order through all interactive elements
+- [ ] Panel can be dismissed using Escape key from any focused element within panel
+- [ ] Panel implements focus trap preventing tab navigation from leaving panel while open
+- [ ] Panel sets focus to first actionable element (close button or first language row) when opened
+- [ ] Panel returns focus to the triggering element (status indicator or button) when closed
+- [ ] Each language row in preview panel is keyboard accessible via Tab key navigation
+- [ ] Language row actions (Edit, Re-translate, Retry) can be activated via Enter or Space key
+- [ ] Status change notifications use ARIA live regions with aria-live="polite" attribute
+- [ ] Screen reader announces when translation job completes: "Spanish translation completed successfully"
+- [ ] Screen reader announces when translation job fails: "German translation failed, retry available"
+- [ ] Screen reader announces when bulk translation operation completes: "5 translation jobs queued successfully"
+- [ ] TranslationEditor modal implements focus trap preventing focus from leaving modal while open
+- [ ] Modal sets initial focus to translation textarea on open for immediate editing
+- [ ] Modal returns focus to triggering edit button when closed via save or cancel
+- [ ] Modal can be dismissed via Escape key triggering cancel workflow with confirmation if dirty
+- [ ] Language selection dialog maintains focus trap within checkbox list and action buttons
+- [ ] Dialog sets focus to first checkbox or "Select All" button when opened
+- [ ] Dialog checkbox states can be toggled using Space key when focused
+- [ ] Dialog confirm button can be activated via Enter key when focused and enabled
+- [ ] Bulk translation action bar is keyboard accessible with tab order through all controls
+- [ ] Action bar buttons include descriptive aria-labels: "Re-translate all selected items in all languages"
+- [ ] TranslationStatusColumn indicators are keyboard focusable with visible focus ring styling
+- [ ] Status column indicators can be activated via Enter or Space key to open preview panel
+- [ ] Translation status filter dropdown is fully keyboard navigable with arrow key option selection
+- [ ] Dropdown options can be selected via Enter or Space key when focused
+- [ ] Dashboard translation widget includes semantic HTML structure with proper heading hierarchy
+- [ ] Widget progress bar uses role="progressbar" with aria-valuenow, aria-valuemin, aria-valuemax attributes
+- [ ] Widget status counts use semantic elements with aria-labels describing metric meaning
+- [ ] All form inputs (language preference dropdown, editor textarea) have associated label elements
+- [ ] Label associations use htmlFor/id matching or wrapped label pattern for proper screen reader identification
+- [ ] Loading states include aria-busy="true" attribute on container elements during async operations
+- [ ] Loading spinners include aria-label="Loading translations" or equivalent descriptive text
+- [ ] Error messages include role="alert" to trigger immediate screen reader announcement
+- [ ] Retry buttons include aria-label describing what will be retried: "Retry failed Spanish translation"
+- [ ] Empty states include descriptive text that screen readers can access (not just visual imagery)
+- [ ] All interactive elements have minimum touch target size of 44x44 pixels for mobile accessibility
+- [ ] Focus indicators have minimum 3:1 contrast ratio against background per WCAG 2.2 requirements
+- [ ] Focus indicators are visible on all interactive elements (never removed via CSS outline: none without replacement)
+- [ ] Skip links allow keyboard users to bypass repetitive navigation elements within translation pages
+- [ ] Landmark regions (navigation, main, complementary) are properly defined with ARIA or semantic HTML
+- [ ] Page titles update dynamically to reflect current view for screen reader context
+- [ ] Language names are announced in current interface language rather than native language for clarity
+- [ ] Status icons include title attributes for tooltip display on hover with descriptive text
+- [ ] Tooltips are also accessible via keyboard focus with visible display when element receives focus
+- [ ] Complex interactions (bulk select, drag operations) include keyboard alternatives following WCAG 2.1.1
+- [ ] Component documentation includes accessibility notes for developers implementing integrations
+- [ ] Automated accessibility testing catches missing ARIA labels and keyboard navigation issues
+- [ ] Manual screen reader testing verifies all announcements are clear and contextually appropriate
+- [ ] Keyboard-only user testing confirms all features are accessible without mouse or trackpad
+- [ ] Accessibility audit confirms WCAG 2.1 Level AA compliance for all translation management features
+
+---
+
+## REQ-E05-033: Unit Tests for Translation Management Hooks
+
+**Date**: 2026-01-20 23:59
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The translation management system needs comprehensive unit tests for the useTranslationStatus and useTranslationRealtime hooks to ensure correct behavior during data fetching, status updates, error handling, and cleanup operations.
+
+### Current Behavior
+Custom React hooks for translation status management lack automated test coverage, creating risk of regressions when modifying hook logic, making it difficult to verify edge case handling, and preventing confident refactoring without manual testing.
+
+### Expected Behavior
+A unit test suite validates that useTranslationStatus correctly fetches translation data with appropriate loading states, handles various error scenarios with proper error objects, executes cleanup on unmount, and responds correctly to parameter changes, while useTranslationRealtime tests verify subscription establishment, event filtering by entity reference, callback execution when matching events occur, debouncing behavior, and proper channel cleanup when components unmount.
+
+### User Impact
+Developers maintaining translation features can confidently modify hook implementations knowing tests will catch breaking changes, new team members understand hook behavior through comprehensive test documentation, bugs in edge cases are caught during development rather than production, and refactoring efforts proceed safely with test coverage validating behavior preservation.
+
+### Business Value
+Reduces bug introduction risk through automated regression testing, accelerates development velocity by enabling confident code changes without extensive manual testing, improves code maintainability through test documentation of expected behavior, and prevents production issues that would damage user trust and require emergency fixes.
+
+### Acceptance Criteria
+- [ ] Test file created at `/src/hooks/__tests__/useTranslationStatus.test.ts`
+- [ ] Test file created at `/src/hooks/__tests__/useTranslationRealtime.test.ts`
+- [ ] Tests use React Testing Library and Jest for consistent testing patterns
+- [ ] Tests use @testing-library/react-hooks for proper hook testing setup
+- [ ] useTranslationStatus test suite includes test for initial loading state (loading: true, data: null)
+- [ ] useTranslationStatus test suite includes test for successful data fetch returning expected data structure
+- [ ] useTranslationStatus test suite includes test for error handling setting error object when fetch fails
+- [ ] useTranslationStatus test suite includes test for loading state transitioning to false after fetch completes
+- [ ] useTranslationStatus test suite includes test for refresh function triggering new data fetch
+- [ ] useTranslationStatus test suite includes test for retry logic attempting 3 times with exponential backoff on failure
+- [ ] useTranslationStatus test suite includes test for polling mode enabling automatic refetch at configured intervals
+- [ ] useTranslationStatus test suite includes test for polling disabling when no pending jobs exist
+- [ ] useTranslationStatus test suite includes test for cleanup canceling pending requests on unmount
+- [ ] useTranslationStatus test suite includes test for parameter changes triggering new fetch with updated values
+- [ ] useTranslationStatus test suite includes test for caching preventing duplicate API calls with identical parameters
+- [ ] Supabase API responses are mocked using jest.mock for predictable test behavior
+- [ ] Mock responses include complete translation status objects matching database schema types
+- [ ] useTranslationRealtime test suite includes test for subscription creation on mount
+- [ ] useTranslationRealtime test suite includes test for INSERT event triggering callback when entity matches
+- [ ] useTranslationRealtime test suite includes test for UPDATE event triggering callback when entity matches
+- [ ] useTranslationRealtime test suite includes test for events not matching entity reference being filtered out
+- [ ] useTranslationRealtime test suite includes test for events not matching property scope being filtered out
+- [ ] useTranslationRealtime test suite includes test for debouncing preventing excessive callback executions
+- [ ] useTranslationRealtime test suite includes test for callback receiving correct translation record data
+- [ ] useTranslationRealtime test suite includes test for subscription cleanup executing unsubscribe on unmount
+- [ ] useTranslationRealtime test suite includes test for parameter changes closing old subscription and opening new one
+- [ ] useTranslationRealtime test suite includes test for connection error handling without component crash
+- [ ] useTranslationRealtime test suite includes test for disconnection and reconnection scenarios
+- [ ] useTranslationRealtime test suite includes test for connection status indicator updating correctly
+- [ ] Supabase Realtime channel is mocked using jest.mock to simulate subscription behavior
+- [ ] Mock channel implementation supports on method for event subscription
+- [ ] Mock channel implementation supports unsubscribe method for cleanup verification
+- [ ] Mock channel can trigger test events to verify callback execution
+- [ ] Tests verify React StrictMode compatibility handling double mounting correctly
+- [ ] Tests verify race condition prevention when parameters change rapidly
+- [ ] Tests verify memory leak prevention through proper cleanup of timers and subscriptions
+- [ ] Tests verify hook type definitions match actual return values
+- [ ] Tests verify error messages provide actionable information for debugging
+- [ ] Tests verify 401/403 authentication errors are surfaced correctly
+- [ ] Tests verify 404 not found responses are handled gracefully
+- [ ] Tests verify invalid parameter validation throws descriptive errors
+- [ ] Tests achieve minimum 80% code coverage for hook logic
+- [ ] Tests run successfully in continuous integration pipeline
+- [ ] Tests execute quickly (complete in under 5 seconds for entire suite)
+- [ ] Test descriptions clearly explain what behavior is being verified
+- [ ] Tests follow arrange-act-assert pattern for clarity and maintainability
+- [ ] Mock data factories create realistic test fixtures matching production data shapes
+- [ ] Tests clean up all mocks and timers in afterEach blocks to prevent test pollution
+- [ ] Tests document any known limitations or edge cases not yet covered
+- [ ] Code comments explain complex mock setups or timing-sensitive test logic
+
+---
+
+
+## REQ-E05-034: Component Tests for Translation Management UI Components
+
+**Date**: 2026-01-20 09:30
+**Type**: ENHANCEMENT
+**Size**: M
+
+### Summary
+The translation management system needs comprehensive component tests for TranslationPreviewPanel, TranslationEditor, and TranslationStatusWidget to verify rendering behavior, user interactions, and integration with data hooks.
+
+### Current Behavior
+Translation management UI components lack automated component-level tests, creating risk that rendering logic, user interaction handling, or prop-based conditional display could break during refactoring without detection until manual testing or production deployment.
+
+### Expected Behavior
+A component test suite validates that TranslationPreviewPanel renders translation status for all languages correctly with proper visual indicators, TranslationEditor displays editable translation content and executes save operations with proper validation and error handling, and TranslationStatusWidget displays accurate counts of pending, completed, and failed translations that update when underlying data changes.
+
+### User Impact
+Developers modifying translation UI components can confidently make changes knowing tests will catch visual regressions and interaction bugs, product managers can verify that component behavior matches specifications through test documentation, users experience fewer UI bugs because component interactions are validated before deployment, and quality assurance teams spend less time on repetitive manual testing of standard component behaviors.
+
+### Business Value
+Reduces bug introduction risk through automated component regression testing, accelerates feature development by enabling confident UI changes without extensive manual verification, improves code quality through test-driven development practices that clarify component contracts, and decreases quality assurance costs by automating repetitive component interaction verification.
+
+### Acceptance Criteria
+- [ ] Test file created at `/src/components/__tests__/TranslationPreviewPanel.test.tsx`
+- [ ] Test file created at `/src/components/__tests__/TranslationEditor.test.tsx`
+- [ ] Test file created at `/src/components/__tests__/TranslationStatusWidget.test.tsx`
+- [ ] Tests use React Testing Library for component rendering and interaction verification
+- [ ] Tests use Jest as the test runner with appropriate matchers for assertions
+- [ ] Tests use @testing-library/user-event for realistic user interaction simulation
+- [ ] TranslationPreviewPanel test suite includes test for rendering with no translations showing empty state message
+- [ ] TranslationPreviewPanel test suite includes test for rendering translation rows for each configured language
+- [ ] TranslationPreviewPanel test suite includes test for displaying "Complete" status with green indicator for finished translations
+- [ ] TranslationPreviewPanel test suite includes test for displaying "Pending" status with yellow indicator for queued translations
+- [ ] TranslationPreviewPanel test suite includes test for displaying "Failed" status with red indicator for error translations
+- [ ] TranslationPreviewPanel test suite includes test for displaying "Stale" status with warning indicator when source content has changed
+- [ ] TranslationPreviewPanel test suite includes test for close button triggering onClose callback when clicked
+- [ ] TranslationPreviewPanel test suite includes test for edit button opening TranslationEditor with correct translation data
+- [ ] TranslationPreviewPanel test suite includes test for retry button triggering retryTranslation API call with correct parameters
+- [ ] TranslationPreviewPanel test suite includes test for re-translate button triggering re-translation job creation
+- [ ] TranslationPreviewPanel test suite includes test for loading state displaying skeleton loaders instead of translation data
+- [ ] TranslationPreviewPanel test suite includes test for error state displaying error message with retry option
+- [ ] TranslationPreviewPanel test suite includes test for translation content preview truncating long text with ellipsis
+- [ ] TranslationPreviewPanel test suite includes test for "View Original" toggle switching between translated and original content
+- [ ] TranslationPreviewPanel test suite includes test for language labels displaying in current interface language
+- [ ] TranslationPreviewPanel test suite includes test for timestamp display showing "Last updated 2 hours ago" format
+- [ ] TranslationPreviewPanel test suite includes test for responsive layout adjusting for mobile viewport widths
+- [ ] API mock functions return realistic translation status data matching production schema
+- [ ] Mock data includes all required fields: language_code, status, translated_content, updated_at
+- [ ] TranslationEditor test suite includes test for rendering with existing translation content pre-filled in textarea
+- [ ] TranslationEditor test suite includes test for rendering with empty textarea when no translation exists
+- [ ] TranslationEditor test suite includes test for displaying original source content in read-only reference section
+- [ ] TranslationEditor test suite includes test for displaying character count updating as user types
+- [ ] TranslationEditor test suite includes test for save button being disabled when textarea is empty
+- [ ] TranslationEditor test suite includes test for save button being enabled when valid content exists
+- [ ] TranslationEditor test suite includes test for cancel button closing editor without saving changes
+- [ ] TranslationEditor test suite includes test for save button triggering updateTranslation API call with textarea content
+- [ ] TranslationEditor test suite includes test for successful save showing success toast notification
+- [ ] TranslationEditor test suite includes test for successful save closing editor and refreshing parent component
+- [ ] TranslationEditor test suite includes test for API error displaying error message below textarea
+- [ ] TranslationEditor test suite includes test for validation error when content exceeds maximum length
+- [ ] TranslationEditor test suite includes test for dirty state preventing close without confirmation dialog
+- [ ] TranslationEditor test suite includes test for confirmation dialog appearing when closing with unsaved changes
+- [ ] TranslationEditor test suite includes test for confirmation dialog discard option closing without saving
+- [ ] TranslationEditor test suite includes test for confirmation dialog keep editing option returning to editor
+- [ ] TranslationEditor test suite includes test for loading spinner appearing during save operation
+- [ ] TranslationEditor test suite includes test for save button being disabled during save operation to prevent double submission
+- [ ] TranslationEditor test suite includes test for keyboard shortcut Cmd+S/Ctrl+S triggering save
+- [ ] TranslationEditor test suite includes test for keyboard shortcut Escape triggering cancel/close
+- [ ] TranslationEditor test suite includes test for language indicator displaying correct language name and flag
+- [ ] TranslationEditor test suite includes test for word count display updating alongside character count
+- [ ] updateTranslation API function is mocked to return success or error responses
+- [ ] Mock API includes realistic delay simulation to test loading states
+- [ ] TranslationStatusWidget test suite includes test for rendering with zero translations showing empty state
+- [ ] TranslationStatusWidget test suite includes test for displaying count of pending translation jobs
+- [ ] TranslationStatusWidget test suite includes test for displaying count of completed translation jobs
+- [ ] TranslationStatusWidget test suite includes test for displaying count of failed translation jobs
+- [ ] TranslationStatusWidget test suite includes test for displaying total translation count across all statuses
+- [ ] TranslationStatusWidget test suite includes test for displaying percentage completion progress bar
+- [ ] TranslationStatusWidget test suite includes test for progress bar visual width matching calculated percentage
+- [ ] TranslationStatusWidget test suite includes test for counts updating when useTranslationStatus hook data changes
+- [ ] TranslationStatusWidget test suite includes test for clicking pending count filtering to show only pending translations
+- [ ] TranslationStatusWidget test suite includes test for clicking failed count opening retry all failed dialog
+- [ ] TranslationStatusWidget test suite includes test for refresh button triggering data refetch
+- [ ] TranslationStatusWidget test suite includes test for loading skeleton appearing during initial data fetch
+- [ ] TranslationStatusWidget test suite includes test for error state displaying error message with retry button
+- [ ] TranslationStatusWidget test suite includes test for auto-refresh when polling is enabled in hook configuration
+- [ ] TranslationStatusWidget test suite includes test for real-time updates when new translation job completes
+- [ ] TranslationStatusWidget test suite includes test for badge indicator showing alert when failed count is non-zero
+- [ ] TranslationStatusWidget test suite includes test for tooltip showing breakdown on hover over progress bar
+- [ ] TranslationStatusWidget test suite includes test for compact mode rendering smaller layout for dashboard cards
+- [ ] useTranslationStatus hook is mocked to return controllable test data
+- [ ] Mock hook data can be updated during tests to simulate real-time changes
+- [ ] All tests clean up timers, subscriptions, and event listeners in cleanup functions
+- [ ] Tests verify correct prop types are passed to child components using type assertions
+- [ ] Tests verify accessibility attributes (ARIA labels, roles) are present on interactive elements
+- [ ] Tests verify correct CSS classes are applied for different status states
+- [ ] Tests verify component behavior matches Figma design specifications for visual states
+- [ ] Tests achieve minimum 80% code coverage for component logic
+- [ ] Tests execute quickly completing in under 10 seconds for entire component suite
+- [ ] Test descriptions use clear naming convention: "should [expected behavior] when [condition]"
+- [ ] Tests follow arrange-act-assert pattern with clear separation of setup, interaction, and verification
+- [ ] Mock data factories provide realistic test fixtures representing production data shapes
+- [ ] Tests document any visual regression testing that should be performed manually
+- [ ] Tests run successfully in continuous integration pipeline without flakiness
+- [ ] All console errors and warnings are addressed or intentionally tested as expected behavior
+
+---

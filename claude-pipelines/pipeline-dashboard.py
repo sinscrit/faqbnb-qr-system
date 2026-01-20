@@ -14,6 +14,7 @@
 #   python scripts/pipeline-dashboard.py --file pipeline-state.json
 #
 # Created: 2026-01-05
+# Last Modified: 2026-01-20 (Added rate limit detection, alert banner, and auto-relaunch)
 # =============================================================================
 
 import json
@@ -85,6 +86,201 @@ WORKTREE_COLORS = {
     "conflict": "red",
     "idle": "dim",
 }
+
+# =============================================================================
+# Rate Limit Monitor
+# =============================================================================
+
+class RateLimitMonitor:
+    """Monitors Claude API rate limit status and triggers pipeline relaunch when cleared."""
+
+    def __init__(self, check_interval: int = 300):
+        """
+        Args:
+            check_interval: Seconds between rate limit checks (default: 60)
+        """
+        self.check_interval = check_interval
+        self.last_check_time: Optional[datetime] = None
+        self.last_check_result: Optional[bool] = None  # True = rate limit cleared
+        self.is_checking: bool = False
+        self.relaunch_in_progress: bool = False
+        self.relaunched_pipelines: list = []
+        self.check_error: Optional[str] = None
+
+    def should_check(self) -> bool:
+        """Determine if it's time to check rate limit status."""
+        if self.is_checking or self.relaunch_in_progress:
+            return False
+
+        if self.last_check_time is None:
+            return True
+
+        elapsed = (datetime.now() - self.last_check_time).total_seconds()
+        return elapsed >= self.check_interval
+
+    def check_rate_limit_cleared(self) -> bool:
+        """
+        Check if Claude API rate limit has cleared by running a minimal CLI command.
+
+        Returns True if rate limit is cleared, False if still limited.
+        """
+        import subprocess
+
+        self.is_checking = True
+        self.check_error = None
+
+        try:
+            # Run a minimal Claude CLI command to test
+            result = subprocess.run(
+                ["claude", "-p", "respond with just: ok", "--max-turns", "1"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=os.getcwd(),
+            )
+
+            self.last_check_time = datetime.now()
+
+            # Check if rate limit error in output
+            combined_output = (result.stdout or "") + (result.stderr or "")
+
+            rate_limit_patterns = [
+                "hit your limit",
+                "rate limit",
+                "Rate limit",
+                "too many requests",
+                "429",
+            ]
+
+            for pattern in rate_limit_patterns:
+                if pattern.lower() in combined_output.lower():
+                    self.last_check_result = False
+                    return False
+
+            # If exit code is 0 and no rate limit message, assume cleared
+            if result.returncode == 0:
+                self.last_check_result = True
+                return True
+
+            # Non-zero exit but not rate limit - might be other error
+            self.check_error = f"Exit {result.returncode}: {combined_output[:100]}"
+            self.last_check_result = False
+            return False
+
+        except subprocess.TimeoutExpired:
+            self.check_error = "Timeout"
+            self.last_check_result = None
+            return False
+        except FileNotFoundError:
+            self.check_error = "Claude CLI not found"
+            self.last_check_result = None
+            return False
+        except Exception as e:
+            self.check_error = str(e)[:100]
+            self.last_check_result = None
+            return False
+        finally:
+            self.is_checking = False
+
+    def relaunch_pipelines(self, yaml_files: list, search_dir: str = ".") -> list:
+        """
+        Relaunch pipelines by spawning orchestrator processes.
+
+        Args:
+            yaml_files: List of pipeline YAML config file paths
+            search_dir: Directory context for running orchestrator
+
+        Returns:
+            List of (yaml_file, success, message) tuples
+        """
+        import subprocess
+
+        self.relaunch_in_progress = True
+        results = []
+
+        # Find the orchestrator script
+        orchestrator_paths = [
+            os.path.join(search_dir, "claude-pipelines", "pipeline_orchestrator.py"),
+            os.path.join(search_dir, "pipeline_orchestrator.py"),
+            "claude-pipelines/pipeline_orchestrator.py",
+            "pipeline_orchestrator.py",
+        ]
+
+        orchestrator_path = None
+        for path in orchestrator_paths:
+            if os.path.exists(path):
+                orchestrator_path = path
+                break
+
+        if not orchestrator_path:
+            self.relaunch_in_progress = False
+            return [(f, False, "Orchestrator not found") for f in yaml_files]
+
+        for yaml_file in yaml_files:
+            try:
+                # Spawn orchestrator in background
+                process = subprocess.Popen(
+                    ["python3", orchestrator_path, yaml_file],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    cwd=os.getcwd(),
+                    start_new_session=True,  # Detach from parent
+                )
+
+                results.append((yaml_file, True, f"Launched (PID: {process.pid})"))
+                self.relaunched_pipelines.append({
+                    "yaml_file": yaml_file,
+                    "pid": process.pid,
+                    "launched_at": datetime.now().isoformat(),
+                })
+
+            except Exception as e:
+                results.append((yaml_file, False, str(e)[:100]))
+
+        self.relaunch_in_progress = False
+        return results
+
+    def get_status_display(self) -> str:
+        """Get a formatted status string for display in dashboard."""
+        if self.is_checking:
+            return "[yellow]🔄 Checking rate limit...[/yellow]"
+
+        if self.relaunch_in_progress:
+            return "[cyan]🚀 Relaunching pipelines...[/cyan]"
+
+        if self.last_check_result is True:
+            return "[green]✓ Rate limit cleared[/green]"
+
+        if self.last_check_result is False:
+            next_check = ""
+            if self.last_check_time:
+                elapsed = (datetime.now() - self.last_check_time).total_seconds()
+                remaining = max(0, self.check_interval - elapsed)
+                # Format remaining time nicely
+                if remaining >= 60:
+                    mins = int(remaining // 60)
+                    secs = int(remaining % 60)
+                    next_check = f" (next check in {mins}m {secs}s)"
+                else:
+                    next_check = f" (next check in {int(remaining)}s)"
+            return f"[red]⏳ Still rate limited{next_check}[/red]"
+
+        if self.check_error:
+            return f"[yellow]⚠ Check error: {self.check_error}[/yellow]"
+
+        return "[dim]Monitoring inactive[/dim]"
+
+
+# Global rate limit monitor instance
+_rate_limit_monitor: Optional[RateLimitMonitor] = None
+
+
+def get_rate_limit_monitor() -> RateLimitMonitor:
+    """Get or create the global rate limit monitor."""
+    global _rate_limit_monitor
+    if _rate_limit_monitor is None:
+        _rate_limit_monitor = RateLimitMonitor(check_interval=60)
+    return _rate_limit_monitor
 
 # =============================================================================
 # Pipeline State Reader
@@ -728,6 +924,109 @@ class PipelineState:
             mins = int((seconds % 3600) // 60)
             return f"{hours}h {mins}m" if mins > 0 else f"{hours}h"
 
+    def get_yaml_config_path(self) -> Optional[str]:
+        """Get the YAML config file path for this pipeline.
+
+        Returns the path to the pipeline YAML file that can be used to relaunch.
+        """
+        # Try to get from metadata
+        config_file = self.data.get("metadata", {}).get("config_file")
+        if config_file:
+            # Handle relative paths
+            if not os.path.isabs(config_file):
+                state_dir = os.path.dirname(self.file_path)
+                config_file = os.path.join(state_dir, config_file)
+            if os.path.exists(config_file):
+                return config_file
+
+        # Try to infer from state file name
+        # e.g., pipeline-l10n-epic2-static-ui-state.json -> pipeline-l10n-epic2-static-ui.yaml
+        state_basename = os.path.basename(self.file_path)
+        if state_basename.endswith("-state.json"):
+            yaml_name = state_basename.replace("-state.json", ".yaml")
+            state_dir = os.path.dirname(self.file_path)
+            yaml_path = os.path.join(state_dir, yaml_name)
+            if os.path.exists(yaml_path):
+                return yaml_path
+
+        # Try source_file from state
+        source_file = self.data.get("source_file")
+        if source_file and os.path.exists(source_file):
+            return source_file
+
+        return None
+
+    def get_rate_limit_info(self) -> Optional[dict]:
+        """Check if pipeline stopped due to Claude API rate limit.
+
+        Returns dict with:
+        - detected: True if rate limit error found
+        - reset_time: Extracted reset time string (e.g., "2pm (Europe/Paris)")
+        - last_error_time: Timestamp of the last rate limit error
+        - error_count: Number of consecutive rate limit errors
+
+        Returns None if no rate limit detected.
+        """
+        errors = self.data.get("errors", [])
+        if not errors:
+            return None
+
+        # Check recent errors for rate limit pattern
+        rate_limit_patterns = [
+            r"You've hit your limit",
+            r"rate limit",
+            r"Rate limit",
+            r"too many requests",
+            r"429",
+        ]
+
+        # Compile patterns
+        rate_limit_regex = re.compile('|'.join(rate_limit_patterns), re.IGNORECASE)
+
+        # Extract reset time pattern: "resets Xpm (Timezone)" or "resets at X:XX"
+        reset_time_regex = re.compile(r'resets?\s+(?:at\s+)?(\d+(?::\d+)?(?:am|pm)?(?:\s*\([^)]+\))?)', re.IGNORECASE)
+
+        rate_limit_errors = []
+        reset_time = None
+
+        # Check last 10 errors (most recent)
+        for error_entry in reversed(errors[-10:]):
+            error_msg = error_entry.get("error", "")
+            timestamp = error_entry.get("timestamp", "")
+
+            if rate_limit_regex.search(error_msg):
+                rate_limit_errors.append({
+                    "timestamp": timestamp,
+                    "error": error_msg
+                })
+
+                # Try to extract reset time
+                reset_match = reset_time_regex.search(error_msg)
+                if reset_match and not reset_time:
+                    reset_time = reset_match.group(1)
+
+        if not rate_limit_errors:
+            return None
+
+        # Check if this is a recent/current issue (within last 30 minutes)
+        last_error_time = rate_limit_errors[0].get("timestamp")
+        is_recent = False
+        if last_error_time:
+            try:
+                error_dt = datetime.fromisoformat(last_error_time)
+                delta = datetime.now() - error_dt
+                is_recent = delta.total_seconds() < 1800  # 30 minutes
+            except:
+                is_recent = True  # Assume recent if we can't parse
+
+        return {
+            "detected": True,
+            "reset_time": reset_time,
+            "last_error_time": last_error_time,
+            "error_count": len(rate_limit_errors),
+            "is_recent": is_recent,
+        }
+
 
 def parse_subtasks_from_detailed(details_file: str) -> dict:
     """Parse subtasks from a detailed markdown file.
@@ -805,6 +1104,142 @@ def get_task_subtasks(task: dict) -> dict:
 # =============================================================================
 # Dashboard UI Components
 # =============================================================================
+
+def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optional[Panel]:
+    """Create a prominent rate limit alert banner if any pipeline hit rate limits.
+
+    Returns a bright red/yellow panel that stands out, or None if no rate limit detected.
+
+    Args:
+        pipelines: List of PipelineState objects to check
+        show_monitor: Whether to show auto-relaunch monitor status
+    """
+    rate_limited_pipelines = []
+
+    for p in pipelines:
+        rate_info = p.get_rate_limit_info()
+        if rate_info and rate_info.get("detected"):
+            rate_limited_pipelines.append({
+                "name": p.name,
+                "info": rate_info,
+                "status": p.status,
+                "yaml_path": p.get_yaml_config_path(),
+                "state_path": p.file_path,
+            })
+
+    # Also check epic pipelines
+    epic_files = find_recent_epic_pipelines(".", max_age_minutes=60)  # Check last hour
+    for filepath, epic_name, mtime in epic_files:
+        try:
+            pipeline = PipelineState(filepath)
+            if pipeline.data:
+                rate_info = pipeline.get_rate_limit_info()
+                if rate_info and rate_info.get("detected"):
+                    # Avoid duplicates
+                    if not any(p["name"] == epic_name for p in rate_limited_pipelines):
+                        rate_limited_pipelines.append({
+                            "name": epic_name,
+                            "info": rate_info,
+                            "status": pipeline.status,
+                            "yaml_path": pipeline.get_yaml_config_path(),
+                            "state_path": filepath,
+                        })
+        except:
+            pass
+
+    if not rate_limited_pipelines:
+        return None
+
+    # Build the alert content
+    lines = [
+        "[bold white on red] ⚠️  RATE LIMIT DETECTED  ⚠️ [/bold white on red]",
+        "",
+    ]
+
+    # Aggregate reset times (they should all be the same)
+    reset_times = set()
+    total_errors = 0
+    recent_count = 0
+
+    for p in rate_limited_pipelines:
+        info = p["info"]
+        total_errors += info.get("error_count", 0)
+        if info.get("is_recent"):
+            recent_count += 1
+        if info.get("reset_time"):
+            reset_times.add(info["reset_time"])
+
+    # Show reset time prominently
+    if reset_times:
+        reset_str = ", ".join(sorted(reset_times))
+        lines.append(f"[bold yellow]Rate limit resets at: {reset_str}[/bold yellow]")
+        lines.append("")
+
+    # List affected pipelines
+    lines.append(f"[white]Affected pipelines ({len(rate_limited_pipelines)}):[/white]")
+    for p in rate_limited_pipelines[:5]:  # Show max 5
+        info = p["info"]
+        status_indicator = "[yellow]●[/yellow]" if info.get("is_recent") else "[dim]○[/dim]"
+        error_count = info.get("error_count", 0)
+        yaml_indicator = "[green]✓[/green]" if p.get("yaml_path") else "[red]✗[/red]"
+        lines.append(f"  {status_indicator} {p['name']} ({error_count} errors) {yaml_indicator}")
+
+    if len(rate_limited_pipelines) > 5:
+        lines.append(f"  [dim]... and {len(rate_limited_pipelines) - 5} more[/dim]")
+
+    # Show monitor status if enabled
+    if show_monitor:
+        monitor = get_rate_limit_monitor()
+        lines.append("")
+        lines.append(f"[bold cyan]Auto-Relaunch Monitor:[/bold cyan] {monitor.get_status_display()}")
+
+        # Show recently relaunched pipelines
+        if monitor.relaunched_pipelines:
+            lines.append(f"[dim]Recently relaunched: {len(monitor.relaunched_pipelines)} pipeline(s)[/dim]")
+    else:
+        lines.append("")
+        lines.append("[dim]Pipeline processing paused. Use --auto-relaunch to enable auto-recovery.[/dim]")
+
+    return Panel(
+        "\n".join(lines),
+        border_style="bold red",
+        box=box.DOUBLE,
+        padding=(1, 2),
+        title="[bold white on red] RATE LIMIT [/bold white on red]",
+        title_align="center",
+    )
+
+
+def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> list:
+    """Get list of YAML config files for rate-limited pipelines that can be relaunched.
+
+    Returns list of YAML file paths.
+    """
+    yaml_files = []
+
+    for p in pipelines:
+        rate_info = p.get_rate_limit_info()
+        if rate_info and rate_info.get("detected"):
+            yaml_path = p.get_yaml_config_path()
+            if yaml_path and yaml_path not in yaml_files:
+                yaml_files.append(yaml_path)
+
+    # Also check epic pipelines
+    epic_files = find_recent_epic_pipelines(search_dir, max_age_minutes=60)
+    for filepath, epic_name, mtime in epic_files:
+        try:
+            pipeline = PipelineState(filepath)
+            if pipeline.data:
+                rate_info = pipeline.get_rate_limit_info()
+                if rate_info and rate_info.get("detected"):
+                    yaml_path = pipeline.get_yaml_config_path()
+                    if yaml_path and yaml_path not in yaml_files:
+                        yaml_files.append(yaml_path)
+        except:
+            pass
+
+    return yaml_files
+
 
 def create_task_card(task: dict, compact: bool = False) -> Panel:
     """Create a panel for a single task."""
@@ -967,6 +1402,9 @@ def create_header(pipelines: list) -> Panel:
 
         status = p.status
 
+        # Check for rate limit
+        rate_info = p.get_rate_limit_info()
+
         # Create progress bar
         bar_width = 20
         filled = int(bar_width * pct / 100)
@@ -974,8 +1412,14 @@ def create_header(pipelines: list) -> Panel:
 
         status_color = "green" if status == "completed" else "yellow" if status == "running" else "white"
 
+        # Add rate limit indicator to status if detected
+        rate_limit_indicator = ""
+        if rate_info and rate_info.get("detected"):
+            reset_time = rate_info.get("reset_time", "unknown")
+            rate_limit_indicator = f" [bold red]⛔ RATE LIMITED[/bold red] [dim](resets {reset_time})[/dim]"
+
         lines.append(f"[bold]{p.name}[/bold]")
-        lines.append(f"  Status: [{status_color}]{status}[/{status_color}] | Progress: [{status_color}]{bar}[/{status_color}] {pct:.0f}% ({tasks_done}/{tasks_total} tasks done)")
+        lines.append(f"  Status: [{status_color}]{status}[/{status_color}]{rate_limit_indicator} | Progress: [{status_color}]{bar}[/{status_color}] {pct:.0f}% ({tasks_done}/{tasks_total} tasks done)")
 
         # Add stage-by-stage completion stats with percentages
         stage_stats = p.get_stage_completion_stats()
@@ -1187,12 +1631,135 @@ def create_kanban(pipeline: PipelineState) -> Table:
     return Columns(columns, equal=True, expand=True)
 
 
-def create_dashboard(pipelines: list, use_layout: bool = True) -> Layout:
+def find_recent_epic_pipelines(search_dir: str = ".", max_age_minutes: int = 10) -> list:
+    """Find parallel epic pipeline state files modified within the last N minutes.
+
+    Returns list of tuples: (file_path, epic_name, mtime)
+    """
+    import re
+
+    epic_files = []
+    now = time.time()
+    max_age_seconds = max_age_minutes * 60
+
+    # Look for parallel-pipeline-l10n-epic*-state.json or pipeline-l10n-epic*-state.json
+    patterns = [
+        os.path.join(search_dir, "pipeline-l10n-epic*-state.json"),
+    ]
+
+    for pattern in patterns:
+        for filepath in glob.glob(pattern):
+            try:
+                mtime = os.path.getmtime(filepath)
+                age = now - mtime
+
+                if age <= max_age_seconds:
+                    # Extract epic name from filename
+                    basename = os.path.basename(filepath)
+                    match = re.search(r'epic(\d+)-([^-]+)', basename)
+                    if match:
+                        epic_num = match.group(1)
+                        epic_type = match.group(2).replace('-state.json', '')
+                        epic_name = f"Epic {epic_num}"
+                    else:
+                        epic_name = basename.replace('-state.json', '')
+
+                    epic_files.append((filepath, epic_name, mtime))
+            except OSError:
+                pass
+
+    # Sort by epic number
+    epic_files.sort(key=lambda x: x[1])
+    return epic_files
+
+
+def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
+    """Create the Epics summary panel showing all recently active epic pipelines."""
+    epic_files = find_recent_epic_pipelines(search_dir, max_age_minutes=10)
+
+    if not epic_files:
+        return None
+
+    lines = []
+
+    for filepath, epic_name, mtime in epic_files:
+        # Load the state file
+        try:
+            pipeline = PipelineState(filepath)
+            if not pipeline.data:
+                continue
+
+            # Get stage completion stats
+            stage_stats = pipeline.get_stage_completion_stats()
+            r_done, r_total = stage_stats["request"]
+            o_done, o_total = stage_stats["overview"]
+            d_done, d_total = stage_stats["details"]
+            i_done, i_total = stage_stats["implementation"]
+
+            # Color code: green if complete, yellow if in progress, dim if not started
+            def stage_color(done, total):
+                if done == total and total > 0:
+                    return "green"
+                elif done > 0:
+                    return "yellow"
+                return "dim"
+
+            def pct(done, total):
+                return int(done / total * 100) if total > 0 else 0
+
+            r_col = stage_color(r_done, r_total)
+            o_col = stage_color(o_done, o_total)
+            d_col = stage_color(d_done, d_total)
+            i_col = stage_color(i_done, i_total)
+
+            # Get pipeline status
+            status = pipeline.status
+            status_color = "green" if status == "completed" else "yellow" if status == "running" else "dim"
+
+            # Get time since update
+            time_ago = pipeline.get_time_since_update() or "unknown"
+
+            # Format the line
+            stages_line = (
+                f"[{r_col}]R:{r_done}/{r_total} ({pct(r_done, r_total)}%)[/{r_col}] → "
+                f"[{o_col}]O:{o_done}/{o_total} ({pct(o_done, o_total)}%)[/{o_col}] → "
+                f"[{d_col}]D:{d_done}/{d_total} ({pct(d_done, d_total)}%)[/{d_col}] → "
+                f"[{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}]"
+            )
+
+            lines.append(f"[bold cyan]{epic_name}[/bold cyan] [{status_color}]({status})[/{status_color}] [dim]{time_ago}[/dim]")
+            lines.append(f"  Stages: {stages_line}")
+
+        except Exception as e:
+            lines.append(f"[dim]{epic_name}: Error loading state[/dim]")
+
+    if not lines:
+        return None
+
+    return Panel(
+        "\n".join(lines),
+        title="[bold magenta]Epics[/bold magenta]",
+        border_style="magenta",
+        box=box.ROUNDED,
+        padding=(0, 1),
+    )
+
+
+def create_dashboard(pipelines: list, use_layout: bool = True, search_dir: str = ".") -> Layout:
     """Create the full dashboard layout."""
+    # Check for rate limit alert first
+    rate_limit_alert = create_rate_limit_alert(pipelines)
+
     if not use_layout:
         # Simple panel list for non-live mode
         from rich.console import Group
-        parts = [create_header(pipelines)]
+        parts = []
+
+        # Rate limit alert at the very top if present
+        if rate_limit_alert:
+            parts.append(rate_limit_alert)
+
+        parts.append(create_header(pipelines))
         for p in pipelines:
             kanban = create_kanban(p)
             panel = Panel(
@@ -1201,15 +1768,53 @@ def create_dashboard(pipelines: list, use_layout: bool = True) -> Layout:
                 border_style="blue",
             )
             parts.append(panel)
+        # Add Epics panel if available
+        epics_panel = create_epics_panel(search_dir)
+        if epics_panel:
+            parts.append(epics_panel)
         return Group(*parts)
 
     layout = Layout()
 
-    # Split into header and body
-    layout.split_column(
-        Layout(name="header", size=12 + len(pipelines) * 5),
-        Layout(name="body"),
-    )
+    # Check if we have epics to show
+    epics_panel = create_epics_panel(search_dir)
+
+    # Calculate alert size (if present)
+    alert_size = 10 if rate_limit_alert else 0
+
+    if epics_panel:
+        if rate_limit_alert:
+            # Split into alert, header, body, and epics footer
+            layout.split_column(
+                Layout(name="alert", size=alert_size),
+                Layout(name="header", size=12 + len(pipelines) * 5),
+                Layout(name="body"),
+                Layout(name="epics", size=6 + 2 * len(find_recent_epic_pipelines(search_dir, 10))),
+            )
+            layout["alert"].update(rate_limit_alert)
+        else:
+            # Split into header, body, and epics footer
+            layout.split_column(
+                Layout(name="header", size=12 + len(pipelines) * 5),
+                Layout(name="body"),
+                Layout(name="epics", size=6 + 2 * len(find_recent_epic_pipelines(search_dir, 10))),
+            )
+        layout["epics"].update(epics_panel)
+    else:
+        if rate_limit_alert:
+            # Split into alert, header and body
+            layout.split_column(
+                Layout(name="alert", size=alert_size),
+                Layout(name="header", size=12 + len(pipelines) * 5),
+                Layout(name="body"),
+            )
+            layout["alert"].update(rate_limit_alert)
+        else:
+            # Split into header and body only
+            layout.split_column(
+                Layout(name="header", size=12 + len(pipelines) * 5),
+                Layout(name="body"),
+            )
 
     # Header
     layout["header"].update(create_header(pipelines))
@@ -1342,7 +1947,8 @@ def find_state_files(directory: str = ".", include_worktrees: bool = False) -> l
 
 def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = False,
                   watch_new: bool = False, search_dir: str = ".", include_worktrees: bool = False,
-                  latest_only: bool = False):
+                  latest_only: bool = False, auto_relaunch: bool = False,
+                  relaunch_check_interval: int = 300):
     """Run the live dashboard.
 
     Args:
@@ -1353,6 +1959,8 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
         search_dir: Directory to scan for new state files (when watch_new=True)
         include_worktrees: Include state files from git worktrees
         latest_only: If True with watch_new, only show the most recent pipeline (not all)
+        auto_relaunch: If True, monitor rate limit and auto-relaunch when cleared
+        relaunch_check_interval: Seconds between rate limit checks (default: 60)
     """
     console = Console()
 
@@ -1371,6 +1979,15 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
         console.print(f"[cyan]--watch-new enabled: scanning for new pipelines in {search_dir}[/cyan]")
         console.print()
 
+    if auto_relaunch:
+        interval_min = relaunch_check_interval // 60
+        interval_display = f"{interval_min} min" if interval_min > 0 else f"{relaunch_check_interval}s"
+        console.print(f"[cyan]--auto-relaunch enabled: will check rate limit every {interval_display} and relaunch when cleared[/cyan]")
+        console.print()
+        # Initialize the monitor with specified interval
+        monitor = get_rate_limit_monitor()
+        monitor.check_interval = relaunch_check_interval
+
     # Load pipelines
     pipelines = [PipelineState(f) for f in state_files]
     pipelines = [p for p in pipelines if p.data]
@@ -1381,19 +1998,24 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
 
     # Single render mode
     if once:
-        dashboard = create_dashboard(pipelines, use_layout=False)
+        dashboard = create_dashboard(pipelines, use_layout=False, search_dir=search_dir)
         console.print(dashboard)
         return
 
     mode_info = f"Refreshing every {refresh_interval} seconds"
     if watch_new:
         mode_info += " + watching for new pipelines"
+    if auto_relaunch:
+        mode_info += " + auto-relaunch on rate limit clear"
     console.print(f"[dim]{mode_info}. Press Ctrl+C to exit.[/dim]")
     console.print()
     time.sleep(1)
 
     # Track known state files for watch_new mode
     known_files = set(state_files)
+
+    # Track if we're currently in rate limit state
+    was_rate_limited = False
 
     try:
         with Live(console=console, refresh_per_second=1, screen=True) as live:
@@ -1428,6 +2050,36 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
                 # Filter out failed loads
                 pipelines = [p for p in pipelines if p.data]
 
+                # Check for rate limit and handle auto-relaunch
+                if auto_relaunch and pipelines:
+                    monitor = get_rate_limit_monitor()
+
+                    # Check if any pipeline is rate limited
+                    yaml_files = get_rate_limited_yaml_files(pipelines, search_dir)
+                    is_rate_limited = len(yaml_files) > 0
+
+                    if is_rate_limited:
+                        was_rate_limited = True
+
+                        # Check if it's time to ping Claude
+                        if monitor.should_check():
+                            # This will run in the main thread - consider making async for better UX
+                            rate_limit_cleared = monitor.check_rate_limit_cleared()
+
+                            if rate_limit_cleared:
+                                # Rate limit cleared! Relaunch pipelines
+                                console.print(f"\n[bold green]✓ Rate limit cleared! Relaunching {len(yaml_files)} pipeline(s)...[/bold green]")
+                                results = monitor.relaunch_pipelines(yaml_files, search_dir)
+                                for yaml_file, success, message in results:
+                                    status = "[green]✓[/green]" if success else "[red]✗[/red]"
+                                    console.print(f"  {status} {os.path.basename(yaml_file)}: {message}")
+                                console.print()
+                                time.sleep(2)  # Brief pause to show relaunch message
+
+                    elif was_rate_limited:
+                        # We were rate limited but now we're not (maybe pipelines completed or errors cleared)
+                        was_rate_limited = False
+
                 if not pipelines:
                     if watch_new:
                         live.update(Panel(
@@ -1438,7 +2090,7 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
                     else:
                         live.update(Panel("[red]No valid pipeline state files found[/red]"))
                 else:
-                    dashboard = create_dashboard(pipelines)
+                    dashboard = create_dashboard(pipelines, search_dir=search_dir)
                     live.update(dashboard)
 
                 time.sleep(refresh_interval)
@@ -1498,6 +2150,17 @@ def main():
         type=str,
         help="WebDAV/HTTP server URL to fetch state files from (e.g., http://192.168.1.4:8080/)"
     )
+    parser.add_argument(
+        "--auto-relaunch", "-a",
+        action="store_true",
+        help="Automatically check if rate limit has cleared and relaunch paused pipelines"
+    )
+    parser.add_argument(
+        "--relaunch-interval",
+        type=int,
+        default=300,
+        help="Seconds between rate limit checks when --auto-relaunch is enabled (default: 300 = 5 min)"
+    )
 
     args = parser.parse_args()
 
@@ -1539,7 +2202,9 @@ def main():
         watch_new=args.watch_new,
         search_dir=args.dir,
         include_worktrees=args.worktrees,
-        latest_only=args.latest
+        latest_only=args.latest,
+        auto_relaunch=args.auto_relaunch,
+        relaunch_check_interval=args.relaunch_interval
     )
 
 

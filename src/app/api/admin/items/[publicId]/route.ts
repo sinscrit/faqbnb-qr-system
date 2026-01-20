@@ -4,6 +4,9 @@ import { UpdateItemRequest, ItemResponse } from '@/types';
 import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
+import { triggerTagTranslation } from '@/lib/content-translation';
+import type { QueueTranslationResult } from '@/lib/content-translation/content-translation.types';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
@@ -191,15 +194,28 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
     console.error('Account context extraction error:', error);
     return {
       error: NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to determine account context',
-          code: 'ACCOUNT_ERROR' 
+          code: 'ACCOUNT_ERROR'
         },
         { status: 500 }
       )
     };
   }
+}
+
+/**
+ * Filters out system tags from a tags array.
+ * System tags start with '#' (e.g., '#room.kitchen', '#type.appliance')
+ * and are pre-seeded with translations, so they don't need dynamic translation.
+ *
+ * @param tags - Array of tag strings from item
+ * @returns Array of user-defined tags only (excluding system tags)
+ */
+function getUserTags(tags: string[] | undefined | null): string[] {
+  if (!tags || tags.length === 0) return [];
+  return tags.filter(tag => !tag.startsWith('#'));
 }
 
 // Helper function to validate item access within account context
@@ -750,6 +766,74 @@ export async function PUT(
         console.log('Links associated with article:', linkIds.length);
       }
     }
+
+    // ============================================================
+    // TAG TRANSLATION (REQ-E03-011)
+    // Queue tag translations after item update
+    // ============================================================
+    const userTags = getUserTags(body.tags);
+    if (userTags.length > 0) {
+      // Determine source language (from REQ-E03-008 or default to 'en')
+      const sourceLanguage: SupportedLanguage = 'en';
+
+      console.log('ITEMS_API: Processing tag translations on update', {
+        itemId: updatedItem.id,
+        publicId: updatedItem.public_id,
+        tagCount: userTags.length,
+        tags: userTags,
+        sourceLanguage: sourceLanguage,
+      });
+
+      // Process tags in parallel, but don't fail item update on tag errors
+      try {
+        const tagResults = await Promise.allSettled(
+          userTags.map(tag => triggerTagTranslation(tag, sourceLanguage))
+        );
+
+        // Count successful jobs queued
+        const tagJobsQueued = tagResults
+          .filter((r): r is PromiseFulfilledResult<QueueTranslationResult> =>
+            r.status === 'fulfilled' && r.value.success)
+          .reduce((sum, r) => sum + r.value.jobIds.length, 0);
+
+        // Collect any errors
+        const tagErrors = tagResults
+          .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+          .map(r => r.reason?.message || String(r.reason));
+
+        // Also collect errors from fulfilled but unsuccessful results
+        const fulfillmentErrors = tagResults
+          .filter((r): r is PromiseFulfilledResult<QueueTranslationResult> =>
+            r.status === 'fulfilled' && !r.value.success)
+          .map(r => r.value.error || 'Unknown error');
+
+        const allTagErrors = [...tagErrors, ...fulfillmentErrors];
+
+        if (allTagErrors.length > 0) {
+          console.error('ITEMS_API: Tag translation errors on update', {
+            itemId: updatedItem.id,
+            publicId: updatedItem.public_id,
+            errors: allTagErrors,
+          });
+        }
+
+        console.log('ITEMS_API: Tag translation complete on update', {
+          itemId: updatedItem.id,
+          publicId: updatedItem.public_id,
+          tagsProcessed: userTags.length,
+          jobsQueued: tagJobsQueued,
+          errors: allTagErrors.length,
+        });
+      } catch (tagTranslationError) {
+        // Log but don't fail item update
+        console.error('ITEMS_API: Tag translation processing error on update', {
+          itemId: updatedItem.id,
+          publicId: updatedItem.public_id,
+          error: tagTranslationError instanceof Error ? tagTranslationError.message : String(tagTranslationError),
+        });
+      }
+    }
+    // ============================================================
 
     // Transform response to match ItemResponse type
     // REQ-151: Include articles in response

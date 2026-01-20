@@ -5,6 +5,9 @@ import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
+import { triggerTagTranslation } from '@/lib/content-translation';
+import type { QueueTranslationResult } from '@/lib/content-translation/content-translation.types';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -71,15 +74,32 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
     console.error('Account context extraction error:', error);
     return {
       error: NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to determine account context',
-          code: 'ACCOUNT_ERROR' 
+          code: 'ACCOUNT_ERROR'
         },
         { status: 500 }
       )
     };
   }
+}
+
+/**
+ * Filters out system tags from a tags array.
+ * System tags start with '#' (e.g., '#room.kitchen', '#type.appliance')
+ * and are pre-seeded with translations, so they don't need dynamic translation.
+ *
+ * @param tags - Array of tag strings from item
+ * @returns Array of user-defined tags only (excluding system tags)
+ *
+ * @example
+ * getUserTags(['#room.kitchen', 'coffee-maker', '#type.appliance', 'my-tag'])
+ * // Returns: ['coffee-maker', 'my-tag']
+ */
+function getUserTags(tags: string[] | undefined | null): string[] {
+  if (!tags || tags.length === 0) return [];
+  return tags.filter(tag => !tag.startsWith('#'));
 }
 
 export async function GET(request: NextRequest) {
@@ -501,7 +521,75 @@ export async function POST(request: NextRequest) {
       createdLinks.push(...(newLinks || []));
       console.log('Links created successfully:', createdLinks.length);
     }
-    
+
+    // ============================================================
+    // TAG TRANSLATION (REQ-E03-011)
+    // Queue tag translations after item creation
+    // ============================================================
+    const userTags = getUserTags(body.tags);
+    if (userTags.length > 0) {
+      // Determine source language (from REQ-E03-008 or default to 'en')
+      const sourceLanguage: SupportedLanguage = 'en';
+
+      console.log('ITEMS_API: Processing tag translations', {
+        itemId: newItem.id,
+        publicId: newItem.public_id,
+        tagCount: userTags.length,
+        tags: userTags,
+        sourceLanguage: sourceLanguage,
+      });
+
+      // Process tags in parallel, but don't fail item creation on tag errors
+      try {
+        const tagResults = await Promise.allSettled(
+          userTags.map(tag => triggerTagTranslation(tag, sourceLanguage))
+        );
+
+        // Count successful jobs queued
+        const tagJobsQueued = tagResults
+          .filter((r): r is PromiseFulfilledResult<QueueTranslationResult> =>
+            r.status === 'fulfilled' && r.value.success)
+          .reduce((sum, r) => sum + r.value.jobIds.length, 0);
+
+        // Collect any errors
+        const tagErrors = tagResults
+          .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+          .map(r => r.reason?.message || String(r.reason));
+
+        // Also collect errors from fulfilled but unsuccessful results
+        const fulfillmentErrors = tagResults
+          .filter((r): r is PromiseFulfilledResult<QueueTranslationResult> =>
+            r.status === 'fulfilled' && !r.value.success)
+          .map(r => r.value.error || 'Unknown error');
+
+        const allTagErrors = [...tagErrors, ...fulfillmentErrors];
+
+        if (allTagErrors.length > 0) {
+          console.error('ITEMS_API: Tag translation errors on create', {
+            itemId: newItem.id,
+            publicId: newItem.public_id,
+            errors: allTagErrors,
+          });
+        }
+
+        console.log('ITEMS_API: Tag translation complete on create', {
+          itemId: newItem.id,
+          publicId: newItem.public_id,
+          tagsProcessed: userTags.length,
+          jobsQueued: tagJobsQueued,
+          errors: allTagErrors.length,
+        });
+      } catch (tagTranslationError) {
+        // Log but don't fail item creation
+        console.error('ITEMS_API: Tag translation processing error on create', {
+          itemId: newItem.id,
+          publicId: newItem.public_id,
+          error: tagTranslationError instanceof Error ? tagTranslationError.message : String(tagTranslationError),
+        });
+      }
+    }
+    // ============================================================
+
     // Transform response to match ItemResponse type
     // REQ-151: Include articles array in response
     const response = {

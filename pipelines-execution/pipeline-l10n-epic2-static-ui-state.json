@@ -2,11 +2,11 @@
   "pipeline": "l10n-epic2-static-ui-implementation",
   "version": "1.0",
   "mode": "per_request",
-  "created_at": "2026-01-18T04:23:21.506375",
-  "updated_at": "2026-01-19T17:43:32.813416",
-  "status": "running",
+  "created_at": "2026-01-19T23:23:05.824842",
+  "updated_at": "2026-01-20T16:25:07.088074",
+  "status": "paused",
   "current_stage": "request",
-  "current_task_index": 63,
+  "current_task_index": 62,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -18,13 +18,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2H.1:** Create `common` namespace structure in `/messages/en.json`",
       "status": "completed",
-      "request_id": "REQ-338",
+      "request_id": "REQ-E02-001",
       "error": null,
-      "processed_at": "2026-01-19T02:26:53.345859",
+      "processed_at": "2026-01-19T23:28:33.953603",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-338",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-common-namespace-structure-in-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-common-namespace-structure-in-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-001",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-001-create-common-namespace-structure-in-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-001-create-common-namespace-structure-in-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -38,13 +38,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.2:** Extract button labels across all components",
       "status": "completed",
-      "request_id": "REQ-339",
+      "request_id": "REQ-E02-002",
       "error": null,
-      "processed_at": "2026-01-19T02:33:42.068615",
+      "processed_at": "2026-01-19T23:38:17.684395",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-339",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-extract-button-labels-across-all-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-extract-button-labels-across-all-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-002",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-002-extract-button-labels-across-all-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-002-extract-button-labels-across-all-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -58,13 +58,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.3:** Extract modal/dialog strings",
       "status": "completed",
-      "request_id": "REQ-340",
+      "request_id": "REQ-E02-003",
       "error": null,
-      "processed_at": "2026-01-19T02:41:14.357893",
+      "processed_at": "2026-01-19T23:46:37.629516",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-340",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-extract-modaldialog-strings-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-extract-modaldialog-strings-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-003",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-003-extract-modaldialog-strings-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-003-extract-modaldialog-strings-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -78,13 +78,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.4:** Extract form element strings (labels, placeholders, hints)",
       "status": "completed",
-      "request_id": "REQ-341",
+      "request_id": "REQ-E02-004",
       "error": null,
-      "processed_at": "2026-01-19T02:50:30.255357",
+      "processed_at": "2026-01-19T23:54:30.900839",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-341",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-extract-form-element-strings-labels-placeholders-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-extract-form-element-strings-labels-placeholders-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-004",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-004-extract-form-element-strings-labels-placeholders-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-004-extract-form-element-strings-labels-placeholders-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -98,13 +98,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.5:** Extract toast notification messages",
       "status": "completed",
-      "request_id": "REQ-341",
+      "request_id": "REQ-E02-005",
       "error": null,
-      "processed_at": "2026-01-19T02:57:05.000658",
+      "processed_at": "2026-01-20T00:01:52.722818",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-341",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-extract-toast-notification-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-extract-toast-notification-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-005",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-005-extract-toast-notification-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-005-extract-toast-notification-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -118,13 +118,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.6:** Extract empty state messages",
       "status": "completed",
-      "request_id": "REQ-342",
+      "request_id": "REQ-E02-006",
       "error": null,
-      "processed_at": "2026-01-19T03:05:03.551287",
+      "processed_at": "2026-01-20T00:09:52.234632",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-342",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-extract-empty-state-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-extract-empty-state-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-006",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-006-extract-empty-state-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-006-extract-empty-state-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -138,13 +138,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.7:** Extract loading state messages",
       "status": "completed",
-      "request_id": "REQ-343",
+      "request_id": "REQ-E02-027",
       "error": null,
-      "processed_at": "2026-01-19T03:11:53.365793",
+      "processed_at": "2026-01-20T07:46:51.286461",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-343",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-extract-loading-state-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-extract-loading-state-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-027-extract-loading-state-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-027-extract-loading-state-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -158,13 +158,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.8:** Extract confirmation dialog messages",
       "status": "completed",
-      "request_id": "REQ-344",
+      "request_id": "REQ-E02-028",
       "error": null,
-      "processed_at": "2026-01-19T03:18:56.773885",
+      "processed_at": "2026-01-20T07:55:52.641196",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-344",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-extract-confirmation-dialog-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-extract-confirmation-dialog-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-028",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-028-extract-confirmation-dialog-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-028-extract-confirmation-dialog-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -178,13 +178,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.9:** Create date/time formatting translations",
       "status": "completed",
-      "request_id": "REQ-345",
+      "request_id": "REQ-E02-029",
       "error": null,
-      "processed_at": "2026-01-19T03:26:54.420662",
+      "processed_at": "2026-01-20T08:04:57.495589",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-345",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-345-create-datetime-formatting-translations-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-345-create-datetime-formatting-translations-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-029",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-029-create-datetime-formatting-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-029-create-datetime-formatting-translations-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -198,13 +198,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.10:** Generate translations for all 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-347",
+      "request_id": "REQ-E02-030",
       "error": null,
-      "processed_at": "2026-01-19T03:59:33.323187",
+      "processed_at": "2026-01-20T08:12:12.276974",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-347",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-347-generate-translations-for-all-5-non-english-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-347-generate-translations-for-all-5-non-english-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-030",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-030-generate-translations-for-all-5-non-english-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-030-generate-translations-for-all-5-non-english-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -218,13 +218,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2H.11:** Create `useCommonTranslations` convenience hook (optional)",
       "status": "completed",
-      "request_id": "REQ-348",
+      "request_id": "REQ-E02-031",
       "error": null,
-      "processed_at": "2026-01-19T04:07:09.387153",
+      "processed_at": "2026-01-20T08:19:45.781308",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-348",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-create-usecommontranslations-convenience-hook-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-create-usecommontranslations-convenience-hook-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-031",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-031-create-usecommontranslations-convenience-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-031-create-usecommontranslations-convenience-hook-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -238,13 +238,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2J.1:** Create `errors` namespace structure",
       "status": "completed",
-      "request_id": "REQ-348",
+      "request_id": "REQ-E02-032",
       "error": null,
-      "processed_at": "2026-01-19T04:13:55.941281",
+      "processed_at": "2026-01-20T08:26:47.298475",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-348",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-create-errors-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-348-create-errors-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-032",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-032-create-errors-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-032-create-errors-namespace-structure-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -258,13 +258,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.2:** Audit all form validation messages across components",
       "status": "completed",
-      "request_id": "REQ-349",
+      "request_id": "REQ-E02-033",
       "error": null,
-      "processed_at": "2026-01-19T04:23:35.883381",
+      "processed_at": "2026-01-20T08:36:42.955031",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-349",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-349-audit-all-form-validation-messages-across-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-349-audit-all-form-validation-messages-across-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-033",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-033-audit-all-form-validation-messages-across-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-033-audit-all-form-validation-messages-across-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -278,13 +278,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.3:** Audit all API error handling and messages",
       "status": "completed",
-      "request_id": "REQ-350",
+      "request_id": "REQ-E02-034",
       "error": null,
-      "processed_at": "2026-01-19T04:31:13.356116",
+      "processed_at": "2026-01-20T08:46:16.397749",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-350",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-audit-all-api-error-handling-and-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-audit-all-api-error-handling-and-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-034",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-034-audit-all-api-error-handling-and-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-034-audit-all-api-error-handling-and-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -298,13 +298,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.4:** Create centralized error message utility",
       "status": "completed",
-      "request_id": "REQ-351",
+      "request_id": "REQ-E02-035",
       "error": null,
-      "processed_at": "2026-01-19T04:39:29.091926",
+      "processed_at": "2026-01-20T08:57:06.123646",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-351",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-centralized-error-message-utility-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-centralized-error-message-utility-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-035",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-035-create-centralized-error-message-utility-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-035-create-centralized-error-message-utility-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -318,13 +318,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.5:** Update Zod schemas to use translated messages",
       "status": "completed",
-      "request_id": "REQ-352",
+      "request_id": "REQ-E02-036",
       "error": null,
-      "processed_at": "2026-01-19T04:48:23.650079",
+      "processed_at": "2026-01-20T09:58:59.406485",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-352",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-update-zod-schemas-to-use-translated-messages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-update-zod-schemas-to-use-translated-messages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-036",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-036-update-zod-schemas-to-use-translated-messages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-036-update-zod-schemas-to-use-translated-messages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -338,13 +338,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.6:** Update error boundaries with translations",
       "status": "completed",
-      "request_id": "REQ-353",
+      "request_id": "REQ-E02-037",
       "error": null,
-      "processed_at": "2026-01-19T04:54:31.483331",
+      "processed_at": "2026-01-20T10:06:58.058577",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-353",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-update-error-boundaries-with-translations-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-update-error-boundaries-with-translations-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-037",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-037-update-error-boundaries-with-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-037-update-error-boundaries-with-translations-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -358,13 +358,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2J.7:** Generate translations for 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-354",
+      "request_id": "REQ-E02-038",
       "error": null,
-      "processed_at": "2026-01-19T05:01:30.970787",
+      "processed_at": "2026-01-20T10:15:03.806564",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-354",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-generate-translations-for-5-non-english-languages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-038",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-038-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-038-generate-translations-for-5-non-english-languages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -378,13 +378,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2A.1:** Create `auth` namespace structure",
       "status": "completed",
-      "request_id": "REQ-355",
+      "request_id": "REQ-E02-039",
       "error": null,
-      "processed_at": "2026-01-19T05:08:03.620815",
+      "processed_at": "2026-01-20T10:23:24.569988",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-355",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-auth-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-auth-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-039",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-039-create-auth-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-039-create-auth-namespace-structure-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -398,13 +398,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.2:** Update `/src/app/login/LoginPageContent.tsx`",
       "status": "completed",
-      "request_id": "REQ-356",
+      "request_id": "REQ-E02-040",
       "error": null,
-      "processed_at": "2026-01-19T05:13:59.813186",
+      "processed_at": "2026-01-20T10:29:48.665623",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-356",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-update-srcapploginloginpagecontenttsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-update-srcapploginloginpagecontenttsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-040",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-040-update-srcapploginloginpagecontenttsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-040-update-srcapploginloginpagecontenttsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -418,13 +418,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.3:** Update `/src/components/LoginForm.tsx`",
       "status": "completed",
-      "request_id": "REQ-356",
+      "request_id": "REQ-E02-041",
       "error": null,
-      "processed_at": "2026-01-19T05:19:51.610401",
+      "processed_at": "2026-01-20T10:36:28.473290",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-356",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-update-srccomponentsloginformtsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-update-srccomponentsloginformtsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-041",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-041-update-srccomponentsloginformtsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-041-update-srccomponentsloginformtsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -438,13 +438,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.4:** Update `/src/components/RegistrationForm.tsx` (largest file)",
       "status": "completed",
-      "request_id": "REQ-357",
+      "request_id": "REQ-E02-042",
       "error": null,
-      "processed_at": "2026-01-19T11:33:23.818562",
+      "processed_at": "2026-01-20T10:43:07.882916",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-357",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-update-srccomponentsregistrationformtsx-largest-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-update-srccomponentsregistrationformtsx-largest-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-042",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-042-update-srccomponentsregistrationformtsx-largest-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-042-update-srccomponentsregistrationformtsx-largest-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -458,13 +458,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.5:** Update `/src/components/GoogleOAuthButton.tsx`",
       "status": "completed",
-      "request_id": "REQ-358",
+      "request_id": "REQ-E02-043",
       "error": null,
-      "processed_at": "2026-01-19T11:39:01.921151",
+      "processed_at": "2026-01-20T10:48:22.716292",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-358",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-update-srccomponentsgoogleoauthbuttontsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-update-srccomponentsgoogleoauthbuttontsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-043",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-043-update-srccomponentsgoogleoauthbuttontsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-043-update-srccomponentsgoogleoauthbuttontsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -478,13 +478,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.6:** Update `/src/app/register/page.tsx`",
       "status": "completed",
-      "request_id": "REQ-359",
+      "request_id": "REQ-E02-044",
       "error": null,
-      "processed_at": "2026-01-19T11:44:10.550367",
+      "processed_at": "2026-01-20T10:54:31.309774",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-359",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-update-srcappregisterpagetsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-update-srcappregisterpagetsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-044",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-044-update-srcappregisterpagetsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-044-update-srcappregisterpagetsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -498,13 +498,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.7:** Update `/src/app/register/success/page.tsx`",
       "status": "completed",
-      "request_id": "REQ-360",
+      "request_id": "REQ-E02-045",
       "error": null,
-      "processed_at": "2026-01-19T11:51:07.311217",
+      "processed_at": "2026-01-20T11:00:14.117468",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-360",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-update-srcappregistersuccesspagetsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-update-srcappregistersuccesspagetsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-045",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-045-update-srcappregistersuccesspagetsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-045-update-srcappregistersuccesspagetsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -518,13 +518,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.8:** Update `/src/app/register/complete/page.tsx`",
       "status": "completed",
-      "request_id": "REQ-361",
+      "request_id": "REQ-E02-046",
       "error": null,
-      "processed_at": "2026-01-19T11:58:13.491536",
+      "processed_at": "2026-01-20T11:06:21.372280",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-361",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-update-srcappregistercompletepagetsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-update-srcappregistercompletepagetsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-046",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-046-update-srcappregistercompletepagetsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-046-update-srcappregistercompletepagetsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -538,13 +538,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.9:** Generate translations for 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-362",
+      "request_id": "REQ-E02-047",
       "error": null,
-      "processed_at": "2026-01-19T12:05:21.237631",
+      "processed_at": "2026-01-20T11:12:24.409792",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-362",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-generate-translations-for-5-non-english-languages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-047",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-047-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-047-generate-translations-for-5-non-english-languages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -558,13 +558,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2A.10:** Test all auth flows in each language",
       "status": "completed",
-      "request_id": "REQ-363",
+      "request_id": "REQ-E02-048",
       "error": null,
-      "processed_at": "2026-01-19T12:12:42.836105",
+      "processed_at": "2026-01-20T11:18:45.739232",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-363",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-test-all-auth-flows-in-each-language-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-test-all-auth-flows-in-each-language-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-048",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-048-test-all-auth-flows-in-each-language-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-048-test-all-auth-flows-in-each-language-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -578,13 +578,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2B.1:** Create `dashboard` namespace structure",
       "status": "completed",
-      "request_id": "REQ-364",
+      "request_id": "REQ-E02-049",
       "error": null,
-      "processed_at": "2026-01-19T12:18:30.510343",
+      "processed_at": "2026-01-20T12:58:46.388698",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-364",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-create-dashboard-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-create-dashboard-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-049",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-049-create-dashboard-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-049-create-dashboard-namespace-structure-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -598,13 +598,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.2:** Update `/src/app/dashboard2/page.tsx`",
       "status": "completed",
-      "request_id": "REQ-365",
+      "request_id": "REQ-E02-050",
       "error": null,
-      "processed_at": "2026-01-19T12:24:07.965528",
+      "processed_at": "2026-01-20T13:04:00.326241",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-365",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-update-srcappdashboard2pagetsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-update-srcappdashboard2pagetsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-050",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-050-update-srcappdashboard2pagetsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-050-update-srcappdashboard2pagetsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -618,13 +618,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.3:** Update `/src/app/dashboard2/layout.tsx`",
       "status": "completed",
-      "request_id": "REQ-366",
+      "request_id": "REQ-E02-051",
       "error": null,
-      "processed_at": "2026-01-19T12:30:24.751091",
+      "processed_at": "2026-01-20T13:10:22.007208",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-366",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-update-srcappdashboard2layouttsx-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-update-srcappdashboard2layouttsx-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-051",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-051-update-srcappdashboard2layouttsx-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-051-update-srcappdashboard2layouttsx-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -638,13 +638,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.4:** Update all SimpleDashboard components",
       "status": "completed",
-      "request_id": "REQ-367",
+      "request_id": "REQ-E02-052",
       "error": null,
-      "processed_at": "2026-01-19T12:38:56.437899",
+      "processed_at": "2026-01-20T13:18:57.713526",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-367",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-367-update-all-simpledashboard-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-367-update-all-simpledashboard-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-052",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-052-update-all-simpledashboard-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-052-update-all-simpledashboard-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -658,13 +658,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.5:** Update navigation/sidebar components",
       "status": "completed",
-      "request_id": "REQ-368",
+      "request_id": "REQ-E02-053",
       "error": null,
-      "processed_at": "2026-01-19T12:47:56.093609",
+      "processed_at": "2026-01-20T13:28:15.524442",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-368",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-368-update-navigationsidebar-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-368-update-navigationsidebar-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-053",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-053-update-navigationsidebar-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-053-update-navigationsidebar-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -678,13 +678,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.6:** Update page metadata with translations",
       "status": "completed",
-      "request_id": "REQ-369",
+      "request_id": "REQ-E02-054",
       "error": null,
-      "processed_at": "2026-01-19T12:55:09.580534",
+      "processed_at": "2026-01-20T13:35:07.426547",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-369",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-369-update-page-metadata-with-translations-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-369-update-page-metadata-with-translations-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-054",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-054-update-page-metadata-with-translations-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-054-update-page-metadata-with-translations-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -698,13 +698,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2B.7:** Generate translations for 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-370",
+      "request_id": "REQ-E02-055",
       "error": null,
-      "processed_at": "2026-01-19T13:00:59.756202",
+      "processed_at": "2026-01-20T13:41:50.417592",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-370",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-370-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-370-generate-translations-for-5-non-english-languages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-055",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-055-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-055-generate-translations-for-5-non-english-languages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -718,13 +718,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2C.1:** Create `workflow` namespace structure",
       "status": "completed",
-      "request_id": "REQ-371",
+      "request_id": "REQ-E02-056",
       "error": null,
-      "processed_at": "2026-01-19T13:08:41.593562",
+      "processed_at": "2026-01-20T13:49:25.467343",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-371",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-371-create-workflow-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-371-create-workflow-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-056",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-056-create-workflow-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-056-create-workflow-namespace-structure-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -738,13 +738,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.2:** Update main ItemCreationWorkflow component",
       "status": "completed",
-      "request_id": "REQ-372",
+      "request_id": "REQ-E02-057",
       "error": null,
-      "processed_at": "2026-01-19T13:14:54.541290",
+      "processed_at": "2026-01-20T13:55:46.351223",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-372",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-372-update-main-itemcreationworkflow-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-372-update-main-itemcreationworkflow-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-057",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-057-update-main-itemcreationworkflow-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-057-update-main-itemcreationworkflow-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -758,13 +758,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.3:** Update RoomSelectionStep",
       "status": "completed",
-      "request_id": "REQ-373",
+      "request_id": "REQ-E02-058",
       "error": null,
-      "processed_at": "2026-01-19T13:21:57.996145",
+      "processed_at": "2026-01-20T14:02:44.033200",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-373",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-373-update-roomselectionstep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-373-update-roomselectionstep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-058",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-058-update-roomselectionstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-058-update-roomselectionstep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -778,13 +778,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.4:** Update ItemTypeStep",
       "status": "completed",
-      "request_id": "REQ-374",
+      "request_id": "REQ-E02-059",
       "error": null,
-      "processed_at": "2026-01-19T13:28:08.978050",
+      "processed_at": "2026-01-20T14:10:11.812464",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-374",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-374-update-itemtypestep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-374-update-itemtypestep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-059",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-059-update-itemtypestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-059-update-itemtypestep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -798,13 +798,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.5:** Update SpecificItemStep",
       "status": "completed",
-      "request_id": "REQ-375",
+      "request_id": "REQ-E02-060",
       "error": null,
-      "processed_at": "2026-01-19T13:35:16.246953",
+      "processed_at": "2026-01-20T14:16:59.479603",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-375",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-375-update-specificitemstep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-375-update-specificitemstep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-060",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-060-update-specificitemstep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-060-update-specificitemstep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -818,13 +818,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.6:** Update PurposeStep",
       "status": "completed",
-      "request_id": "REQ-376",
+      "request_id": "REQ-E02-061",
       "error": null,
-      "processed_at": "2026-01-19T13:42:23.776282",
+      "processed_at": "2026-01-20T14:23:08.559859",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-376",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-376-update-purposestep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-376-update-purposestep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-061",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-061-update-purposestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-061-update-purposestep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -838,13 +838,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.7:** Update ContentTypeStep",
       "status": "completed",
-      "request_id": "REQ-162",
+      "request_id": "REQ-E02-062",
       "error": null,
-      "processed_at": "2026-01-19T13:49:53.632935",
+      "processed_at": "2026-01-20T14:29:39.905833",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-162",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-162-update-contenttypestep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-162-update-contenttypestep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-062",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-062-update-contenttypestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-062-update-contenttypestep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -858,13 +858,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.8:** Update MediaCaptureStep and adapters",
       "status": "completed",
-      "request_id": "REQ-378",
+      "request_id": "REQ-E02-063",
       "error": null,
-      "processed_at": "2026-01-19T13:57:34.384977",
+      "processed_at": "2026-01-20T14:39:28.836795",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-378",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-378-update-mediacapturestep-and-adapters-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-378-update-mediacapturestep-and-adapters-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-063",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-063-update-mediacapturestep-and-adapters-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-063-update-mediacapturestep-and-adapters-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -878,13 +878,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.9:** Update PreviewSaveStep",
       "status": "completed",
-      "request_id": "REQ-379",
+      "request_id": "REQ-E02-064",
       "error": null,
-      "processed_at": "2026-01-19T14:07:36.154264",
+      "processed_at": "2026-01-20T14:47:07.096429",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-379",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-379-update-previewsavestep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-379-update-previewsavestep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-064",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-064-update-previewsavestep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-064-update-previewsavestep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -898,13 +898,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.10:** Update SessionSummaryStep",
       "status": "completed",
-      "request_id": "REQ-380",
+      "request_id": "REQ-E02-065",
       "error": null,
-      "processed_at": "2026-01-19T14:14:22.752152",
+      "processed_at": "2026-01-20T14:52:45.744272",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-380",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-380-update-sessionsummarystep-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-380-update-sessionsummarystep-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-065",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-065-update-sessionsummarystep-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-065-update-sessionsummarystep-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -918,13 +918,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.11:** Update all shared components (25+ files)",
       "status": "completed",
-      "request_id": "REQ-381",
+      "request_id": "REQ-E02-066",
       "error": null,
-      "processed_at": "2026-01-19T14:23:17.960272",
+      "processed_at": "2026-01-20T15:01:00.327687",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-381",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-381-update-all-shared-components-25-files-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-381-update-all-shared-components-25-files-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-066",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-066-update-all-shared-components-25-files-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-066-update-all-shared-components-25-files-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -938,13 +938,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.12:** Update all dialog components",
       "status": "completed",
-      "request_id": "REQ-382",
+      "request_id": "REQ-E02-067",
       "error": null,
-      "processed_at": "2026-01-19T14:30:48.451093",
+      "processed_at": "2026-01-20T15:08:42.729260",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-382",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-382-update-all-dialog-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-382-update-all-dialog-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-067",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-067-update-all-dialog-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-067-update-all-dialog-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -958,13 +958,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2C.13:** Generate translations for 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-383",
+      "request_id": "REQ-E02-068",
       "error": null,
-      "processed_at": "2026-01-19T15:45:14.070090",
+      "processed_at": "2026-01-20T15:17:39.339994",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-383",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-383-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-383-generate-translations-for-5-non-english-languages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-068",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-068-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-068-generate-translations-for-5-non-english-languages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -977,18 +977,16 @@
       "title": "Test complete workflow in each language",
       "description": "",
       "raw_match": "- [ ] **Task 2C.14:** Test complete workflow in each language",
-      "status": "completed",
-      "request_id": "REQ-384",
-      "error": null,
-      "processed_at": "2026-01-19T15:52:38.529370",
+      "status": "failed",
+      "request_id": "REQ-E02-069",
+      "error": "Stage details: Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "processed_at": null,
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-384",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-384-test-complete-workflow-in-each-language-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-384-test-complete-workflow-in-each-language-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-069",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-069-test-complete-workflow-in-each-language-overview.md"
       },
       "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "overview_completed": true
     },
     {
       "id": "2D.1",
@@ -997,18 +995,11 @@
       "title": "Create `items` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2D.1:** Create `items` namespace structure",
-      "status": "completed",
-      "request_id": "REQ-385",
-      "error": null,
-      "processed_at": "2026-01-19T15:58:38.484069",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-385",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-385-create-items-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-385-create-items-namespace-structure-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.2",
@@ -1017,18 +1008,11 @@
       "title": "Update ItemManager component family",
       "description": "",
       "raw_match": "- [ ] **Task 2D.2:** Update ItemManager component family",
-      "status": "completed",
-      "request_id": "REQ-386",
-      "error": null,
-      "processed_at": "2026-01-19T16:08:48.237369",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-386",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-386-update-itemmanager-component-family-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-386-update-itemmanager-component-family-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.3",
@@ -1037,18 +1021,11 @@
       "title": "Update ItemGrid and ItemCard",
       "description": "",
       "raw_match": "- [ ] **Task 2D.3:** Update ItemGrid and ItemCard",
-      "status": "completed",
-      "request_id": "REQ-387",
-      "error": null,
-      "processed_at": "2026-01-19T16:15:55.642221",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-387",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-387-update-itemgrid-and-itemcard-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-387-update-itemgrid-and-itemcard-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.4",
@@ -1057,18 +1034,11 @@
       "title": "Update filter and sort components",
       "description": "",
       "raw_match": "- [ ] **Task 2D.4:** Update filter and sort components",
-      "status": "completed",
-      "request_id": "REQ-388",
-      "error": null,
-      "processed_at": "2026-01-19T16:23:03.950061",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-388",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-388-update-filter-and-sort-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-388-update-filter-and-sort-components-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.5",
@@ -1077,18 +1047,11 @@
       "title": "Update bulk action dialogs",
       "description": "",
       "raw_match": "- [ ] **Task 2D.5:** Update bulk action dialogs",
-      "status": "completed",
-      "request_id": "REQ-389",
-      "error": null,
-      "processed_at": "2026-01-19T16:30:45.268325",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-389",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-389-update-bulk-action-dialogs-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-389-update-bulk-action-dialogs-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.6",
@@ -1097,18 +1060,11 @@
       "title": "Update item detail/edit pages",
       "description": "",
       "raw_match": "- [ ] **Task 2D.6:** Update item detail/edit pages",
-      "status": "completed",
-      "request_id": "REQ-390",
-      "error": null,
-      "processed_at": "2026-01-19T16:36:49.481714",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-390",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-390-update-item-detailedit-pages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-390-update-item-detailedit-pages-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2D.7",
@@ -1117,18 +1073,11 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2D.7:** Generate translations for 5 non-English languages",
-      "status": "completed",
-      "request_id": "REQ-391",
-      "error": null,
-      "processed_at": "2026-01-19T16:43:39.933427",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-391",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-391-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-391-generate-translations-for-5-non-english-languages-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "status": "failed",
+      "request_id": null,
+      "error": "Stage request: Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "processed_at": null,
+      "files": {}
     },
     {
       "id": "2E.1",
@@ -1138,13 +1087,13 @@
       "description": "",
       "raw_match": "\n- [ ] **Task 2E.1:** Create `articles` namespace structure",
       "status": "completed",
-      "request_id": "REQ-392",
+      "request_id": "REQ-E02-070",
       "error": null,
-      "processed_at": "2026-01-19T16:50:22.657061",
+      "processed_at": "2026-01-20T15:40:20.440634",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-392",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-392-create-articles-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-392-create-articles-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-070",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-070-create-articles-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-070-create-articles-namespace-structure-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1158,13 +1107,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2E.2:** Update editor components",
       "status": "completed",
-      "request_id": "REQ-393",
+      "request_id": "REQ-E02-071",
       "error": null,
-      "processed_at": "2026-01-19T16:57:42.698283",
+      "processed_at": "2026-01-20T15:48:51.025955",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-393",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-393-update-editor-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-393-update-editor-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-071",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-071-update-editor-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-071-update-editor-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1178,13 +1127,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2E.3:** Update media handling components",
       "status": "completed",
-      "request_id": "REQ-394",
+      "request_id": "REQ-E02-072",
       "error": null,
-      "processed_at": "2026-01-19T17:05:44.497701",
+      "processed_at": "2026-01-20T15:56:23.338905",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-394",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-394-update-media-handling-components-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-394-update-media-handling-components-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-072",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-072-update-media-handling-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-072-update-media-handling-components-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1198,13 +1147,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2E.4:** Update crop/trim utilities",
       "status": "completed",
-      "request_id": "REQ-395",
+      "request_id": "REQ-E02-073",
       "error": null,
-      "processed_at": "2026-01-19T17:13:07.672422",
+      "processed_at": "2026-01-20T16:03:27.808910",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-395",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-395-update-croptrim-utilities-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-395-update-croptrim-utilities-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-073",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-073-update-croptrim-utilities-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-073-update-croptrim-utilities-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1218,13 +1167,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2E.5:** Update instructions pages",
       "status": "completed",
-      "request_id": "REQ-396",
+      "request_id": "REQ-E02-074",
       "error": null,
-      "processed_at": "2026-01-19T17:21:23.900152",
+      "processed_at": "2026-01-20T16:12:31.358585",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-396",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-396-update-instructions-pages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-396-update-instructions-pages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-074",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-074-update-instructions-pages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-074-update-instructions-pages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1238,13 +1187,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2E.6:** Generate translations for 5 non-English languages",
       "status": "completed",
-      "request_id": "REQ-397",
+      "request_id": "REQ-E02-075",
       "error": null,
-      "processed_at": "2026-01-19T17:29:11.674196",
+      "processed_at": "2026-01-20T16:19:42.230286",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-397",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-397-generate-translations-for-5-non-english-languages-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-397-generate-translations-for-5-non-english-languages-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-075",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-075-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-075-generate-translations-for-5-non-english-languages-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1257,18 +1206,16 @@
       "title": "Create `properties` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2F.1:** Create `properties` namespace structure",
-      "status": "completed",
-      "request_id": "REQ-398",
+      "status": "processing",
+      "request_id": "REQ-E02-076",
       "error": null,
-      "processed_at": "2026-01-19T17:35:44.262986",
+      "processed_at": null,
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-398",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-398-create-properties-namespace-structure-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-398-create-properties-namespace-structure-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-076",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-076-create-properties-namespace-structure-overview.md"
       },
       "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "overview_completed": true
     },
     {
       "id": "2F.2",
@@ -1278,13 +1225,13 @@
       "description": "",
       "raw_match": "- [ ] **Task 2F.2:** Update PropertyForm",
       "status": "completed",
-      "request_id": "REQ-399",
+      "request_id": "REQ-E02-008",
       "error": null,
-      "processed_at": "2026-01-19T17:43:32.813387",
+      "processed_at": "2026-01-20T01:05:26.602404",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-399",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-399-update-propertyform-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-008",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-008-update-propertyform-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-008-update-propertyform-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -1297,11 +1244,18 @@
       "title": "Update property modals",
       "description": "",
       "raw_match": "- [ ] **Task 2F.3:** Update property modals",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-009",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:12:14.378931",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-009",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-009-update-property-modals-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-009-update-property-modals-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2F.4",
@@ -1310,11 +1264,18 @@
       "title": "Update property pages",
       "description": "",
       "raw_match": "- [ ] **Task 2F.4:** Update property pages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-010",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:20:09.070051",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-010",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-010-update-property-pages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-010-update-property-pages-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2F.5",
@@ -1323,11 +1284,18 @@
       "title": "Update PropertySelector",
       "description": "",
       "raw_match": "- [ ] **Task 2F.5:** Update PropertySelector",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-011",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:24:50.378026",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-011",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-011-update-propertyselector-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-011-update-propertyselector-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2F.6",
@@ -1336,11 +1304,18 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2F.6:** Generate translations for 5 non-English languages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-012",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:30:43.775563",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-012",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-012-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-012-generate-translations-for-5-non-english-languages-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.1",
@@ -1349,11 +1324,18 @@
       "title": "Create `settings` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2G.1:** Create `settings` namespace structure",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-013",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:37:41.072528",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-013",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-013-create-settings-namespace-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-013-create-settings-namespace-structure-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.2",
@@ -1362,11 +1344,18 @@
       "title": "Update account settings components",
       "description": "",
       "raw_match": "- [ ] **Task 2G.2:** Update account settings components",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-014",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:46:04.155963",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-014",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-014-update-account-settings-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-014-update-account-settings-components-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.3",
@@ -1375,11 +1364,18 @@
       "title": "Update profile components",
       "description": "",
       "raw_match": "- [ ] **Task 2G.3:** Update profile components",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-015",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T01:53:34.523569",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-015",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-015-update-profile-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-015-update-profile-components-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.4",
@@ -1388,11 +1384,18 @@
       "title": "Update preferences components",
       "description": "",
       "raw_match": "- [ ] **Task 2G.4:** Update preferences components",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-016",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:00:39.632200",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-016",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-016-update-preferences-components-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-016-update-preferences-components-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.5",
@@ -1401,11 +1404,18 @@
       "title": "Update help page",
       "description": "",
       "raw_match": "- [ ] **Task 2G.5:** Update help page",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-017",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:06:57.176522",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-017",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-017-update-help-page-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-017-update-help-page-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2G.6",
@@ -1414,11 +1424,18 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2G.6:** Generate translations for 5 non-English languages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-018",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:14:12.635502",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-018",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-018-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-018-generate-translations-for-5-non-english-languages-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.1",
@@ -1427,11 +1444,18 @@
       "title": "Create `emails` namespace and translation structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2I.1:** Create `emails` namespace and translation structure",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-019",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:21:03.752255",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-019",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-019-create-emails-namespace-and-translation-structure-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-019-create-emails-namespace-and-translation-structure-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.2",
@@ -1440,11 +1464,18 @@
       "title": "Create `getEmailTranslation` utility function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.2:** Create `getEmailTranslation` utility function",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-020",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:28:55.073304",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-020",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-020-create-getemailtranslation-utility-function-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-020-create-getemailtranslation-utility-function-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.3",
@@ -1453,11 +1484,18 @@
       "title": "Update `generateAccessApprovalEmail` function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.3:** Update `generateAccessApprovalEmail` function",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-021",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:34:55.097007",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-021",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-021-update-generateaccessapprovalemail-function-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-021-update-generateaccessapprovalemail-function-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.4",
@@ -1466,11 +1504,18 @@
       "title": "Update `generateAccessDenialEmail` function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.4:** Update `generateAccessDenialEmail` function",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-022",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:41:31.988491",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-022",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-022-update-generateaccessdenialemail-function-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-022-update-generateaccessdenialemail-function-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.5",
@@ -1479,11 +1524,18 @@
       "title": "Update `generateBetaAccessApprovalEmail` function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.5:** Update `generateBetaAccessApprovalEmail` function",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-023",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:48:41.690127",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-023",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-023-update-generatebetaaccessapprovalemail-function-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-023-update-generatebetaaccessapprovalemail-function-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.6",
@@ -1492,11 +1544,18 @@
       "title": "Update `generateRegistrationReminderEmail` function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.6:** Update `generateRegistrationReminderEmail` function",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-024",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T02:55:19.206423",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-024",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-024-update-generateregistrationreminderemail-function-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-024-update-generateregistrationreminderemail-function-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.7",
@@ -1505,11 +1564,18 @@
       "title": "Add language parameter to all email generation functions",
       "description": "",
       "raw_match": "- [ ] **Task 2I.7:** Add language parameter to all email generation functions",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-025",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T03:03:06.034261",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-025",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-025-add-language-parameter-to-all-email-generation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-025-add-language-parameter-to-all-email-generation-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.8",
@@ -1518,11 +1584,18 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2I.8:** Generate translations for 5 non-English languages",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-026",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T03:09:03.909552",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-026",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-026-generate-translations-for-5-non-english-languages-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-026-generate-translations-for-5-non-english-languages-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "2I.9",
@@ -1531,11 +1604,18 @@
       "title": "Test email generation in each language",
       "description": "",
       "raw_match": "- [ ] **Task 2I.9:** Test email generation in each language",
-      "status": "pending",
-      "request_id": null,
+      "status": "completed",
+      "request_id": "REQ-E02-027",
       "error": null,
-      "processed_at": null,
-      "files": {}
+      "processed_at": "2026-01-20T03:15:25.983377",
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-027-test-email-generation-in-each-language-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-027-test-email-generation-in-each-language-detailed.md"
+      },
+      "request_completed": true,
+      "overview_completed": true,
+      "details_completed": true
     }
   ],
   "stages": {
@@ -1578,994 +1658,862 @@
   },
   "errors": [
     {
-      "stage": "overview",
+      "stage": "details",
+      "task_id": "2H.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:18:11.546210"
+    },
+    {
+      "stage": "request",
       "task_id": "2H.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T05:06:50.375310"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:19:17.284672"
     },
     {
       "stage": "request",
       "task_id": "2H.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T05:08:42.934654"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:20:23.104636"
     },
     {
       "stage": "request",
-      "task_id": "2B.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:23:10.304509"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:24:01.607310"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:25:05.524796"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:26:16.824768"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:27:23.465988"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:28:29.635700"
-    },
-    {
-      "stage": "request",
-      "task_id": "2B.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:29:26.348611"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:30:13.230245"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:31:02.263844"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:31:49.569304"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:32:36.295140"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:33:23.965507"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:34:11.962204"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:35:00.376216"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:35:47.517910"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:36:35.887090"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.10",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:37:23.110587"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.11",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:38:09.909029"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.12",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:38:58.043465"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.13",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:39:44.744170"
-    },
-    {
-      "stage": "request",
-      "task_id": "2C.14",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:40:31.273140"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:41:19.731320"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:42:08.870986"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:42:56.710153"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:43:44.639183"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:44:34.142528"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:45:23.363675"
-    },
-    {
-      "stage": "request",
-      "task_id": "2D.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:46:09.591559"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:46:37.782528"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:47:12.157566"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:47:45.892082"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:48:14.578589"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:48:48.220791"
-    },
-    {
-      "stage": "request",
-      "task_id": "2E.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:49:18.602813"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:49:46.943878"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:50:20.625713"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:50:48.459601"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:51:31.490413"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:51:57.186953"
-    },
-    {
-      "stage": "request",
-      "task_id": "2F.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:52:33.617167"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:53:00.767738"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:53:32.036842"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:54:01.993375"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:54:32.448349"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:55:05.667003"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:55:34.332472"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:56:06.154660"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:56:34.043339"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:57:05.735628"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:57:35.686059"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:58:05.470877"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:58:36.083931"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:59:05.461273"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:59:35.789602"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T08:00:10.457311"
-    },
-    {
-      "stage": "details",
       "task_id": "2H.10",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:34:22.075198"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:21:28.106654"
     },
     {
       "stage": "request",
       "task_id": "2H.11",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:35:48.693419"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:22:32.883339"
     },
     {
       "stage": "request",
       "task_id": "2J.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:37:27.667377"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:23:47.439531"
     },
     {
       "stage": "request",
       "task_id": "2J.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:39:13.617889"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:24:59.945850"
     },
     {
       "stage": "request",
       "task_id": "2J.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:40:59.262675"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:26:19.613491"
     },
     {
       "stage": "request",
       "task_id": "2J.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:42:57.653372"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:27:33.706849"
     },
     {
       "stage": "request",
       "task_id": "2J.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:44:58.107335"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:28:51.900974"
     },
     {
       "stage": "request",
       "task_id": "2J.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:46:46.326978"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:30:06.560720"
     },
     {
       "stage": "request",
       "task_id": "2J.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:48:35.901131"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:31:26.957828"
+    },
+    {
+      "stage": "request",
+      "task_id": "2A.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:32:44.883260"
+    },
+    {
+      "stage": "request",
+      "task_id": "2A.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:34:06.293855"
+    },
+    {
+      "stage": "request",
+      "task_id": "2A.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:35:22.840639"
     },
     {
       "stage": "request",
       "task_id": "2A.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:20:51.969082"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:36:40.004369"
     },
     {
       "stage": "request",
       "task_id": "2A.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:21:50.096677"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:37:57.165980"
     },
     {
       "stage": "request",
       "task_id": "2A.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:22:39.354891"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:39:05.155612"
     },
     {
       "stage": "request",
       "task_id": "2A.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:23:31.286766"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:40:05.061782"
     },
     {
       "stage": "request",
       "task_id": "2A.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:24:21.644413"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:41:02.268747"
     },
     {
       "stage": "request",
       "task_id": "2A.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:25:12.593090"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:41:59.068566"
     },
     {
       "stage": "request",
       "task_id": "2A.10",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:26:00.394210"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:42:56.095597"
     },
     {
       "stage": "request",
       "task_id": "2B.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:26:50.881185"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:43:57.894803"
     },
     {
       "stage": "request",
       "task_id": "2B.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:27:44.294153"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:44:45.624596"
     },
     {
       "stage": "request",
       "task_id": "2B.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:28:20.951142"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:45:25.295541"
     },
     {
       "stage": "request",
       "task_id": "2B.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:28:58.389664"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:46:05.833686"
     },
     {
       "stage": "request",
       "task_id": "2B.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:29:35.828935"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:46:40.246219"
     },
     {
       "stage": "request",
       "task_id": "2B.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:30:02.145745"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:47:07.271322"
     },
     {
       "stage": "request",
       "task_id": "2B.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:30:26.396864"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:47:34.924880"
     },
     {
       "stage": "request",
       "task_id": "2C.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:30:52.355200"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:48:02.372460"
     },
     {
       "stage": "request",
       "task_id": "2C.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:31:17.513569"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:48:28.486702"
     },
     {
       "stage": "request",
       "task_id": "2C.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:31:41.475215"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:48:55.478563"
     },
     {
       "stage": "request",
       "task_id": "2C.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:32:07.275008"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:49:22.340579"
     },
     {
       "stage": "request",
       "task_id": "2C.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:32:33.334090"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:49:48.868758"
     },
     {
       "stage": "request",
       "task_id": "2C.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:32:58.276997"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:50:13.750693"
     },
     {
       "stage": "request",
       "task_id": "2C.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:33:23.667785"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:50:40.483769"
     },
     {
       "stage": "request",
       "task_id": "2C.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:33:50.143900"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:51:06.382724"
     },
     {
       "stage": "request",
       "task_id": "2C.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:34:14.263468"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:51:30.488453"
     },
     {
       "stage": "request",
       "task_id": "2C.10",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:34:38.934089"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:51:55.843732"
     },
     {
       "stage": "request",
       "task_id": "2C.11",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:35:03.713439"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:52:21.553397"
     },
     {
       "stage": "request",
       "task_id": "2C.12",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:35:28.503344"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:52:48.279651"
     },
     {
       "stage": "request",
       "task_id": "2C.13",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:35:53.337606"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:53:12.852813"
     },
     {
       "stage": "request",
       "task_id": "2C.14",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:36:18.089801"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:53:38.660761"
     },
     {
       "stage": "request",
       "task_id": "2D.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:36:43.153554"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:54:04.773440"
     },
     {
       "stage": "request",
       "task_id": "2D.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:37:07.626394"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:54:29.962243"
     },
     {
       "stage": "request",
       "task_id": "2D.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:37:33.326274"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:54:56.075211"
     },
     {
       "stage": "request",
       "task_id": "2D.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:37:58.622668"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:55:21.595823"
     },
     {
       "stage": "request",
       "task_id": "2D.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:38:22.993177"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:55:46.556185"
     },
     {
       "stage": "request",
       "task_id": "2D.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:38:49.415758"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:56:12.160805"
     },
     {
       "stage": "request",
       "task_id": "2D.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:39:15.690133"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:56:38.684346"
     },
     {
       "stage": "request",
       "task_id": "2E.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:39:39.891561"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:57:05.002498"
     },
     {
       "stage": "request",
       "task_id": "2E.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:40:05.596925"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:57:29.938223"
     },
     {
       "stage": "request",
       "task_id": "2E.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:40:30.587813"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:57:56.506947"
     },
     {
       "stage": "request",
       "task_id": "2E.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:40:55.182053"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:58:22.320680"
     },
     {
       "stage": "request",
       "task_id": "2E.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:41:19.642730"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:58:47.608267"
     },
     {
       "stage": "request",
       "task_id": "2E.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:41:43.503534"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:59:12.945182"
     },
     {
       "stage": "request",
       "task_id": "2F.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:42:07.831025"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:59:38.304053"
+    },
+    {
+      "stage": "overview",
+      "task_id": "2J.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:00:01.583886"
     },
     {
       "stage": "request",
-      "task_id": "2F.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:42:32.242993"
+      "task_id": "2J.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:00:48.954002"
     },
     {
       "stage": "request",
-      "task_id": "2F.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:42:58.394126"
+      "task_id": "2J.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:01:52.607033"
     },
     {
       "stage": "request",
-      "task_id": "2F.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:43:24.574897"
+      "task_id": "2A.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:03:21.604732"
     },
     {
       "stage": "request",
-      "task_id": "2F.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:43:49.098023"
+      "task_id": "2A.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:04:55.094777"
     },
     {
       "stage": "request",
-      "task_id": "2F.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:44:14.296272"
+      "task_id": "2A.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:06:31.719008"
     },
     {
       "stage": "request",
-      "task_id": "2G.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:44:39.524605"
+      "task_id": "2A.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:07:53.210001"
     },
     {
       "stage": "request",
-      "task_id": "2G.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:45:03.284561"
+      "task_id": "2A.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:09:06.027214"
     },
     {
       "stage": "request",
-      "task_id": "2G.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:45:28.784289"
+      "task_id": "2A.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:10:22.285980"
     },
     {
       "stage": "request",
-      "task_id": "2G.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:45:53.570499"
+      "task_id": "2A.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:11:42.660361"
     },
     {
       "stage": "request",
-      "task_id": "2G.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:46:18.305910"
+      "task_id": "2A.8",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:13:04.469880"
     },
     {
       "stage": "request",
-      "task_id": "2G.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:46:43.441467"
+      "task_id": "2A.9",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:14:21.585201"
     },
     {
       "stage": "request",
-      "task_id": "2I.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:47:08.772644"
+      "task_id": "2A.10",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:15:39.286040"
     },
     {
       "stage": "request",
-      "task_id": "2I.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:47:32.568786"
+      "task_id": "2B.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:17:00.863628"
     },
     {
       "stage": "request",
-      "task_id": "2I.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:47:58.486056"
+      "task_id": "2B.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:18:23.728508"
     },
     {
       "stage": "request",
-      "task_id": "2I.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:48:25.020123"
+      "task_id": "2B.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:19:36.923235"
     },
     {
       "stage": "request",
-      "task_id": "2I.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:48:50.423882"
+      "task_id": "2B.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:20:45.559546"
     },
     {
       "stage": "request",
-      "task_id": "2I.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:49:15.617658"
+      "task_id": "2B.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:21:50.101316"
     },
     {
       "stage": "request",
-      "task_id": "2I.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:49:39.569327"
+      "task_id": "2B.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:22:53.724044"
     },
     {
       "stage": "request",
-      "task_id": "2I.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:50:05.070284"
+      "task_id": "2B.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:24:00.264609"
     },
     {
       "stage": "request",
-      "task_id": "2I.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:50:29.952667"
+      "task_id": "2C.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:24:39.147753"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:25:26.459160"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:25:58.669295"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:26:39.613926"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:27:20.410814"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:28:00.308926"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:28:48.605439"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.8",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:29:21.369815"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.9",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:29:52.923372"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.10",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:30:28.335674"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.11",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:31:04.910088"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.12",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:31:43.488788"
     },
     {
       "stage": "request",
       "task_id": "2C.13",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:31:50.623256"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:32:21.784129"
     },
     {
       "stage": "request",
       "task_id": "2C.14",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:32:55.349546"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:32:59.254530"
     },
     {
       "stage": "request",
       "task_id": "2D.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:34:11.819352"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:33:30.802686"
     },
     {
       "stage": "request",
       "task_id": "2D.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:35:28.687916"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:33:58.149391"
     },
     {
       "stage": "request",
       "task_id": "2D.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:36:48.859910"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:34:27.212383"
     },
     {
       "stage": "request",
       "task_id": "2D.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:38:01.515232"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:35:07.165491"
     },
     {
       "stage": "request",
       "task_id": "2D.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:39:33.882383"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:35:33.999758"
     },
     {
       "stage": "request",
       "task_id": "2D.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:41:12.024204"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:36:15.069576"
+    },
+    {
+      "stage": "request",
+      "task_id": "2J.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:38:13.672941"
+    },
+    {
+      "stage": "request",
+      "task_id": "2J.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:39:52.590012"
+    },
+    {
+      "stage": "details",
+      "task_id": "2B.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:24:01.185137"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:24:51.214502"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:25:29.204228"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:26:09.466408"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:26:50.567146"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:27:29.480188"
+    },
+    {
+      "stage": "request",
+      "task_id": "2B.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:27:58.869493"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:28:26.726597"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:28:55.908439"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:29:25.347284"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:29:54.179364"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:30:22.411847"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:30:49.678423"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:31:19.268896"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.8",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:31:50.715456"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.9",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:32:21.544174"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.10",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:32:53.572954"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.11",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:33:41.988146"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.12",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:34:35.580575"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.13",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:35:26.750008"
+    },
+    {
+      "stage": "request",
+      "task_id": "2C.14",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:36:09.729976"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:36:49.939909"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:37:29.688218"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:38:09.426168"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:39:05.566960"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:40:10.157806"
+    },
+    {
+      "stage": "request",
+      "task_id": "2D.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:41:04.828094"
     },
     {
       "stage": "request",
       "task_id": "2D.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:42:47.893350"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:41:57.319113"
     },
     {
       "stage": "request",
       "task_id": "2E.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:44:24.488766"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:42:54.005563"
     },
     {
       "stage": "request",
       "task_id": "2E.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:45:53.255467"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:43:52.160501"
     },
     {
       "stage": "request",
       "task_id": "2E.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:47:23.902577"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:44:39.154034"
     },
     {
       "stage": "request",
       "task_id": "2E.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:48:48.067715"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:45:19.634648"
     },
     {
       "stage": "request",
       "task_id": "2E.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:50:11.653108"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:46:14.806788"
     },
     {
       "stage": "request",
       "task_id": "2E.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:51:27.718447"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:46:52.181695"
     },
     {
       "stage": "request",
       "task_id": "2F.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:52:52.124721"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:47:47.924678"
+    },
+    {
+      "stage": "details",
+      "task_id": "2C.14",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "timestamp": "2026-01-20T15:24:19.307867"
     },
     {
       "stage": "request",
-      "task_id": "2F.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:54:00.705993"
+      "task_id": "2D.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "timestamp": "2026-01-20T15:26:03.724866"
     },
     {
       "stage": "request",
-      "task_id": "2F.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:55:00.218116"
+      "task_id": "2D.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "timestamp": "2026-01-20T15:27:17.733225"
     },
     {
       "stage": "request",
-      "task_id": "2F.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:55:54.920306"
+      "task_id": "2D.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "timestamp": "2026-01-20T15:28:17.172988"
     },
     {
       "stage": "request",
-      "task_id": "2F.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:56:45.070865"
+      "task_id": "2D.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "timestamp": "2026-01-20T15:29:22.205591"
     },
     {
       "stage": "request",
-      "task_id": "2F.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:57:35.131136"
+      "task_id": "2D.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "timestamp": "2026-01-20T15:30:15.858208"
     },
     {
       "stage": "request",
-      "task_id": "2G.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:58:26.640123"
+      "task_id": "2D.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets Jan 25, 5am (Europe/Paris)",
+      "timestamp": "2026-01-20T15:31:31.307134"
     },
     {
       "stage": "request",
-      "task_id": "2G.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T14:59:26.205465"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:00:34.039706"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:01:29.792963"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:02:08.379605"
-    },
-    {
-      "stage": "request",
-      "task_id": "2G.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:02:40.701764"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:03:10.802772"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:03:41.681317"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:04:21.378386"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:04:49.516558"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:05:16.160916"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:05:46.455313"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:06:14.715705"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.8",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:06:42.674444"
-    },
-    {
-      "stage": "request",
-      "task_id": "2I.9",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T15:07:09.196495"
+      "task_id": "2D.7",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: Invalid API key \u00b7 Please run /login",
+      "timestamp": "2026-01-20T15:32:35.034884"
     }
   ],
   "metadata": {
-    "total_requests_generated": 17,
-    "last_request_id": "REQ-399",
-    "first_request_id": "REQ-304",
+    "total_requests_generated": 26,
+    "last_request_id": "REQ-E02-076",
+    "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
   }
 }

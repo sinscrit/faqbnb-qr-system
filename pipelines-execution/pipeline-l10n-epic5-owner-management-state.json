@@ -2,8 +2,8 @@
   "pipeline": "l10n-epic5-owner-management-implementation",
   "version": "1.0",
   "mode": "per_request",
-  "created_at": "2026-01-18T04:23:21.513082",
-  "updated_at": "2026-01-19T15:35:30.617620",
+  "created_at": "2026-01-19T23:23:05.822337",
+  "updated_at": "2026-01-20T13:08:18.370845",
   "status": "completed",
   "current_stage": "request",
   "current_task_index": 32,
@@ -18,13 +18,13 @@
       "description": "File: `/src/app/api/translations/status/route.ts`\nGET with filters: entityType, entityId, status, propertyId\nReturns summary counts and item-level status\nInclude account access validation",
       "raw_match": "\n- [ ] **Task 1.1:** Create translation status API endpoint",
       "status": "completed",
-      "request_id": "REQ-336",
+      "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-19T02:25:43.746753",
+      "processed_at": "2026-01-19T23:29:20.742995",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-336",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-336-create-translation-status-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-336-create-translation-status-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -38,13 +38,13 @@
       "description": "File: `/src/app/api/translations/[entityType]/[entityId]/[language]/route.ts`\nPUT to update translation content\nSet status to 'manual', record reviewedBy\nValidate user has access to entity",
       "raw_match": "\n- [ ] **Task 1.2:** Create update translation API endpoint",
       "status": "completed",
-      "request_id": "REQ-337",
+      "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-19T02:32:29.844138",
+      "processed_at": "2026-01-19T23:36:54.521373",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-337",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-337-create-update-translation-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-337-create-update-translation-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-update-translation-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-update-translation-api-endpoint-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -58,13 +58,13 @@
       "description": "File: `/src/app/api/translations/retranslate/route.ts`\nPOST to queue re-translation jobs\nSupport bulk entities\nOption to skip/overwrite manual edits\nReturn job count and skipped count",
       "raw_match": "\n- [ ] **Task 1.3:** Create re-translate API endpoint",
       "status": "completed",
-      "request_id": "REQ-338",
+      "request_id": "REQ-E05-002",
       "error": null,
-      "processed_at": "2026-01-19T02:38:12.644510",
+      "processed_at": "2026-01-19T23:42:47.764646",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-338",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-re-translate-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-338-create-re-translate-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-002",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-re-translate-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-re-translate-api-endpoint-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -78,13 +78,13 @@
       "description": "File: Apply via Supabase MCP\nAdd columns to track source content version\nCreate indexes for status queries",
       "raw_match": "\n- [ ] **Task 1.4:** Add source_version_at columns via migration",
       "status": "completed",
-      "request_id": "REQ-339",
+      "request_id": "REQ-E05-003",
       "error": null,
-      "processed_at": "2026-01-19T02:43:17.925677",
+      "processed_at": "2026-01-19T23:47:20.749365",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-339",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-add-sourceversionat-columns-via-migration-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-339-add-sourceversionat-columns-via-migration-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-003",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-add-sourceversionat-columns-via-migration-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-add-sourceversionat-columns-via-migration-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -98,13 +98,13 @@
       "description": "File: `/src/lib/supabase.ts`\nAdd translation table types (if not already from Epic 1)\nAdd new column types",
       "raw_match": "\n- [ ] **Task 1.5:** Update TypeScript database types",
       "status": "completed",
-      "request_id": "REQ-340",
+      "request_id": "REQ-E05-004",
       "error": null,
-      "processed_at": "2026-01-19T02:48:10.811808",
+      "processed_at": "2026-01-19T23:52:35.403926",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-340",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-update-typescript-database-types-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-340-update-typescript-database-types-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-004",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-update-typescript-database-types-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-update-typescript-database-types-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -118,13 +118,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationManagement.types.ts`\nAll shared interfaces and types",
       "raw_match": "\n- [ ] **Task 2.1:** Create TranslationManagement types file",
       "status": "completed",
-      "request_id": "REQ-341",
+      "request_id": "REQ-E05-005",
       "error": null,
-      "processed_at": "2026-01-19T02:54:10.175724",
+      "processed_at": "2026-01-19T23:59:06.068632",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-341",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-create-translationmanagement-types-file-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-341-create-translationmanagement-types-file-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-005",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-create-translationmanagement-types-file-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-create-translationmanagement-types-file-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -138,13 +138,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationPreviewPanel.tsx`\nSlide-in panel from right (400px width)\nShows source content at top\nLists all 6 languages with status\nAction buttons: Edit, Re-translate, Retry",
       "raw_match": "\n- [ ] **Task 2.2:** Create TranslationPreviewPanel component",
       "status": "completed",
-      "request_id": "REQ-342",
+      "request_id": "REQ-E05-006",
       "error": null,
-      "processed_at": "2026-01-19T03:02:06.217347",
+      "processed_at": "2026-01-20T00:06:19.981846",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-342",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-create-translationpreviewpanel-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-create-translationpreviewpanel-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-006",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationpreviewpanel-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationpreviewpanel-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -158,13 +158,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationStatusItem.tsx`\nSingle row showing: flag, language name, status icon, preview text\nAction buttons per row\nStatus colors per spec (green=complete, orange=pending, red=failed, purple=manual)",
       "raw_match": "\n- [ ] **Task 2.3:** Create TranslationStatusItem component",
       "status": "completed",
-      "request_id": "REQ-342",
+      "request_id": "REQ-E05-007",
       "error": null,
-      "processed_at": "2026-01-19T03:08:48.012578",
+      "processed_at": "2026-01-20T00:13:03.272737",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-342",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-create-translationstatusitem-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-342-create-translationstatusitem-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-007",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationstatusitem-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationstatusitem-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -178,13 +178,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`\nVisual progress indicator (e.g., \"3/5 translations complete\")\nAnimated during processing",
       "raw_match": "\n- [ ] **Task 2.4:** Create TranslationProgressBar component",
       "status": "completed",
-      "request_id": "REQ-343",
+      "request_id": "REQ-E05-008",
       "error": null,
-      "processed_at": "2026-01-19T03:15:51.808262",
+      "processed_at": "2026-01-20T07:47:48.380492",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-343",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-translationprogressbar-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-translationprogressbar-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-008",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationprogressbar-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationprogressbar-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -198,13 +198,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationEditor/TranslationEditor.tsx`\nModal dialog (Radix Dialog)\nSide-by-side view: Original | Translation\nTextarea for editing\nCharacter count (with warning if applicable)\nSave/Cancel buttons\nDirty state tracking",
       "raw_match": "\n- [ ] **Task 2.5:** Create TranslationEditor component",
       "status": "completed",
-      "request_id": "REQ-343",
+      "request_id": "REQ-E05-009",
       "error": null,
-      "processed_at": "2026-01-19T03:24:44.378343",
+      "processed_at": "2026-01-20T07:55:00.002461",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-343",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-translationeditor-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-translationeditor-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-009",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationeditor-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationeditor-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -218,13 +218,13 @@
       "description": "File: `/src/hooks/useTranslationStatus.ts`\nFetch translation status from API\nSupport single entity or property-wide\nReturn loading, error, data states",
       "raw_match": "\n- [ ] **Task 2.6:** Create useTranslationStatus hook",
       "status": "completed",
-      "request_id": "REQ-343",
+      "request_id": "REQ-E05-010",
       "error": null,
-      "processed_at": "2026-01-19T03:29:42.513491",
+      "processed_at": "2026-01-20T08:00:46.345353",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-343",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-usetranslationstatus-hook-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-343-create-usetranslationstatus-hook-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-010",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-usetranslationstatus-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-usetranslationstatus-hook-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -238,13 +238,13 @@
       "description": "File: `/src/hooks/useTranslationRealtime.ts`\nSupabase realtime subscription for translation updates\nAuto-update UI when translations complete\nCleanup on unmount",
       "raw_match": "\n- [ ] **Task 2.7:** Create useTranslationRealtime hook",
       "status": "completed",
-      "request_id": "REQ-344",
+      "request_id": "REQ-E05-011",
       "error": null,
-      "processed_at": "2026-01-19T03:58:24.941268",
+      "processed_at": "2026-01-20T08:06:44.552444",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-344",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-create-usetranslationrealtime-hook-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-344-create-usetranslationrealtime-hook-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-011",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationrealtime-hook-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationrealtime-hook-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -258,13 +258,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationStatusWidget/TranslationStatusWidget.tsx`\nSummary card for dashboard\nProgress bar with percentage\nCounts by status (complete, partial, pending, failed)\n\"View Details\" link",
       "raw_match": "\n- [ ] **Task 3.1:** Create TranslationStatusWidget component",
       "status": "completed",
-      "request_id": "REQ-350",
+      "request_id": "REQ-E05-013",
       "error": null,
-      "processed_at": "2026-01-19T04:05:58.090840",
+      "processed_at": "2026-01-20T08:13:16.550297",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-350",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-create-translationstatuswidget-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-350-create-translationstatuswidget-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-013",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -278,13 +278,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationStatusColumn/TranslationStatusColumn.tsx`\nCompact status indicator for table columns\nShows 6 dots/icons for each language\nClickable to open preview panel",
       "raw_match": "\n- [ ] **Task 3.2:** Create TranslationStatusColumn component",
       "status": "completed",
-      "request_id": "REQ-351",
+      "request_id": "REQ-E05-014",
       "error": null,
-      "processed_at": "2026-01-19T04:12:15.432513",
+      "processed_at": "2026-01-20T08:19:57.346414",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-351",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-translationstatuscolumn-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-translationstatuscolumn-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -298,13 +298,13 @@
       "description": "File: `/src/components/TranslationManagement/TranslationStatusFilter/TranslationStatusFilter.tsx`\nDropdown filter for item lists\nOptions: All, Fully Translated, Partially Translated, Pending, Failed, Manually Edited",
       "raw_match": "\n- [ ] **Task 3.3:** Create TranslationStatusFilter component",
       "status": "completed",
-      "request_id": "REQ-351",
+      "request_id": "REQ-E05-014",
       "error": null,
-      "processed_at": "2026-01-19T04:19:39.526469",
+      "processed_at": "2026-01-20T08:26:54.079247",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-351",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-translationstatusfilter-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-351-create-translationstatusfilter-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatusfilter-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatusfilter-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -318,13 +318,13 @@
       "description": "File: `/src/app/dashboard2/page.tsx` (modify)\nAdd TranslationStatusWidget to dashboard layout\nFetch status summary on load",
       "raw_match": "\n- [ ] **Task 3.4:** Integrate status widget into dashboard",
       "status": "completed",
-      "request_id": "REQ-352",
+      "request_id": "REQ-E05-015",
       "error": null,
-      "processed_at": "2026-01-19T04:25:38.302340",
+      "processed_at": "2026-01-20T08:32:04.262749",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-352",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-integrate-status-widget-into-dashboard-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-352-integrate-status-widget-into-dashboard-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-integrate-status-widget-into-dashboard-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-integrate-status-widget-into-dashboard-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -338,13 +338,13 @@
       "description": "File: `/src/components/ItemManager/components/ItemGrid.tsx` (modify)\nAdd optional translation status column\nIntegrate click handler for preview",
       "raw_match": "\n- [ ] **Task 3.5:** Add translation status column to Items list",
       "status": "completed",
-      "request_id": "REQ-353",
+      "request_id": "REQ-E05-016",
       "error": null,
-      "processed_at": "2026-01-19T04:32:12.875796",
+      "processed_at": "2026-01-20T08:38:33.273874",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-353",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-add-translation-status-column-to-items-list-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-add-translation-status-column-to-items-list-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-add-translation-status-column-to-items-list-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-add-translation-status-column-to-items-list-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -358,13 +358,13 @@
       "description": "File: `/src/components/TranslationManagement/BulkTranslationBar/BulkTranslationBar.tsx`\nAppears when items selected\nActions: Re-translate All, Re-translate Specific Language\nProgress indicator during bulk operations",
       "raw_match": "\n- [ ] **Task 4.1:** Create BulkTranslationBar component",
       "status": "completed",
-      "request_id": "REQ-353",
+      "request_id": "REQ-E05-017",
       "error": null,
-      "processed_at": "2026-01-19T04:38:51.262969",
+      "processed_at": "2026-01-20T08:45:49.507697",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-353",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-bulktranslationbar-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-bulktranslationbar-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-017",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-create-bulktranslationbar-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-create-bulktranslationbar-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -378,13 +378,13 @@
       "description": "File: `/src/components/TranslationManagement/BulkTranslationBar/LanguageSelectorDialog.tsx`\nModal for selecting languages for bulk re-translate\nCheckbox list of languages\nSelect All / Deselect All",
       "raw_match": "\n- [ ] **Task 4.2:** Create LanguageSelectorDialog component",
       "status": "completed",
-      "request_id": "REQ-353",
+      "request_id": "REQ-E05-018",
       "error": null,
-      "processed_at": "2026-01-19T04:44:23.752211",
+      "processed_at": "2026-01-20T08:53:39.348704",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-353",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-languageselectordialog-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-353-create-languageselectordialog-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-018",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-018-create-languageselectordialog-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-018-create-languageselectordialog-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -398,13 +398,13 @@
       "description": "File: `/src/app/dashboard2/translations/page.tsx`\nFull-width table showing all content\nColumns: Item/Article name, language status columns, Actions\nFilter bar: Type, Language, Status\nBulk selection support",
       "raw_match": "\n- [ ] **Task 4.3:** Create Translation Management page",
       "status": "completed",
-      "request_id": "REQ-354",
+      "request_id": "REQ-E05-020",
       "error": null,
-      "processed_at": "2026-01-19T04:53:08.680596",
+      "processed_at": "2026-01-20T10:00:41.520390",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-354",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-translation-management-page-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-354-create-translation-management-page-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-020",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-020-create-translation-management-page-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-020-create-translation-management-page-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -418,13 +418,13 @@
       "description": "File: `/src/app/dashboard2/layout.tsx` (modify)\nAdd \"Translations\" nav item (or sub-nav under settings)\nIcon: Languages or Globe",
       "raw_match": "\n- [ ] **Task 4.4:** Add translations link to navigation",
       "status": "completed",
-      "request_id": "REQ-355",
+      "request_id": "REQ-E05-022",
       "error": null,
-      "processed_at": "2026-01-19T04:57:52.326872",
+      "processed_at": "2026-01-20T10:05:13.224125",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-355",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-add-translations-link-to-navigation-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-add-translations-link-to-navigation-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-022",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-add-translations-link-to-navigation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-add-translations-link-to-navigation-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -438,13 +438,13 @@
       "description": "File: `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx`\nShown when source content updated and manual translations exist\nOptions: Keep manual edits, Re-translate all (with warning)\nList affected languages",
       "raw_match": "\n- [ ] **Task 5.1:** Create ManualEditWarningDialog component",
       "status": "completed",
-      "request_id": "REQ-355",
+      "request_id": "REQ-E05-022",
       "error": null,
-      "processed_at": "2026-01-19T05:03:51.509991",
+      "processed_at": "2026-01-20T10:12:43.086240",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-355",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-manualeditwarningdialog-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-355-create-manualeditwarningdialog-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-022",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-create-manualeditwarningdialog-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-create-manualeditwarningdialog-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -458,13 +458,13 @@
       "description": "Update TranslationStatusItem to show stale warning icon\nYellow border/indicator for stale manual edits\n\"Update Translation\" action button",
       "raw_match": "\n- [ ] **Task 5.2:** Implement stale translation indicator",
       "status": "completed",
-      "request_id": "REQ-356",
+      "request_id": "REQ-E05-023",
       "error": null,
-      "processed_at": "2026-01-19T05:10:53.431183",
+      "processed_at": "2026-01-20T10:21:01.327229",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-356",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-implement-stale-translation-indicator-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-356-implement-stale-translation-indicator-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-023",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-023-implement-stale-translation-indicator-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-023-implement-stale-translation-indicator-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -478,13 +478,13 @@
       "description": "Hook into article/item save handlers\nCheck for manual translations before save\nShow warning dialog if detected",
       "raw_match": "\n- [ ] **Task 5.3:** Integrate warning into content save flow",
       "status": "completed",
-      "request_id": "REQ-357",
+      "request_id": "REQ-E05-024",
       "error": null,
-      "processed_at": "2026-01-19T05:18:26.995498",
+      "processed_at": "2026-01-20T10:31:06.539590",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-357",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-integrate-warning-into-content-save-flow-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-357-integrate-warning-into-content-save-flow-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-024",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -498,13 +498,13 @@
       "description": "File: `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx`\nLanguage dropdown selector\nSave button with loading state\nHelp text explaining the setting",
       "raw_match": "\n- [ ] **Task 6.1:** Create LanguagePreferenceSection component",
       "status": "completed",
-      "request_id": "REQ-358",
+      "request_id": "REQ-E05-025",
       "error": null,
-      "processed_at": "2026-01-19T11:32:59.899105",
+      "processed_at": "2026-01-20T10:39:00.943634",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-358",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-create-languagepreferencesection-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-358-create-languagepreferencesection-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-025",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -518,13 +518,13 @@
       "description": "File: `/src/app/api/accounts/[accountId]/preferences/route.ts`\nPUT endpoint to update preferredLanguage\nValidate account access",
       "raw_match": "\n- [ ] **Task 6.2:** Create account preference API endpoint",
       "status": "completed",
-      "request_id": "REQ-359",
+      "request_id": "REQ-E05-026",
       "error": null,
-      "processed_at": "2026-01-19T11:38:16.385885",
+      "processed_at": "2026-01-20T10:45:51.377996",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-359",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-create-account-preference-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-359-create-account-preference-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-026",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -538,13 +538,13 @@
       "description": "Determine location (account settings vs user profile)\nAdd LanguagePreferenceSection component\nPre-populate with current preference",
       "raw_match": "\n- [ ] **Task 6.3:** Integrate into account settings (or profile)",
       "status": "completed",
-      "request_id": "REQ-360",
+      "request_id": "REQ-E05-027",
       "error": null,
-      "processed_at": "2026-01-19T11:44:59.898857",
+      "processed_at": "2026-01-20T10:53:20.774651",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-360",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-integrate-into-account-settings-or-profile-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-360-integrate-into-account-settings-or-profile-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-027",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -558,13 +558,13 @@
       "description": "File: `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` (modify)\nShow panel after save\nAuto-open if translations are pending",
       "raw_match": "\n- [ ] **Task 7.1:** Integrate preview panel into article editor",
       "status": "completed",
-      "request_id": "REQ-361",
+      "request_id": "REQ-E05-028",
       "error": null,
-      "processed_at": "2026-01-19T11:51:07.338474",
+      "processed_at": "2026-01-20T10:59:35.856880",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-361",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-integrate-preview-panel-into-article-editor-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-361-integrate-preview-panel-into-article-editor-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-028",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -578,13 +578,13 @@
       "description": "File: `/src/app/dashboard2/items/[publicId]/edit/page.tsx` (modify)\nSame pattern as article editor",
       "raw_match": "\n- [ ] **Task 7.2:** Integrate preview panel into item editor",
       "status": "completed",
-      "request_id": "REQ-362",
+      "request_id": "REQ-E05-029",
       "error": null,
-      "processed_at": "2026-01-19T11:57:18.249135",
+      "processed_at": "2026-01-20T11:04:56.441069",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-362",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-integrate-preview-panel-into-item-editor-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-362-integrate-preview-panel-into-item-editor-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-029",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -598,13 +598,13 @@
       "description": "All components: proper loading spinners\nError toasts/messages for API failures\nRetry buttons for failed operations",
       "raw_match": "\n- [ ] **Task 7.3:** Add loading states and error handling",
       "status": "completed",
-      "request_id": "REQ-363",
+      "request_id": "REQ-E05-030",
       "error": null,
-      "processed_at": "2026-01-19T12:06:20.439987",
+      "processed_at": "2026-01-20T11:14:09.657073",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-363",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-add-loading-states-and-error-handling-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-363-add-loading-states-and-error-handling-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-030",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -618,13 +618,13 @@
       "description": "ARIA labels for status icons\nKeyboard navigation in preview panel\nScreen reader announcements for status changes\nFocus management in modals",
       "raw_match": "\n- [ ] **Task 7.4:** Add accessibility features",
       "status": "completed",
-      "request_id": "REQ-364",
+      "request_id": "REQ-E05-031",
       "error": null,
-      "processed_at": "2026-01-19T12:14:57.891658",
+      "processed_at": "2026-01-20T11:22:04.037553",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-364",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-add-accessibility-features-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-364-add-accessibility-features-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-031",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-031-add-accessibility-features-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-031-add-accessibility-features-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -638,13 +638,13 @@
       "description": "Test useTranslationStatus\nTest useTranslationRealtime\nMock Supabase responses",
       "raw_match": "\n- [ ] **Task 7.5:** Write unit tests for hooks",
       "status": "completed",
-      "request_id": "REQ-365",
+      "request_id": "REQ-E05-032",
       "error": null,
-      "processed_at": "2026-01-19T12:20:53.609819",
+      "processed_at": "2026-01-20T12:58:15.070841",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-365",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-write-unit-tests-for-hooks-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-365-write-unit-tests-for-hooks-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-032",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-write-unit-tests-for-hooks-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-write-unit-tests-for-hooks-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -658,13 +658,13 @@
       "description": "Test TranslationPreviewPanel rendering\nTest TranslationEditor save flow\nTest TranslationStatusWidget counts",
       "raw_match": "\n- [ ] **Task 7.6:** Write component tests",
       "status": "completed",
-      "request_id": "REQ-366",
+      "request_id": "REQ-E05-034",
       "error": null,
-      "processed_at": "2026-01-19T12:29:03.943127",
+      "processed_at": "2026-01-20T13:08:18.368998",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-366",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-write-component-tests-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-366-write-component-tests-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-034",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-detailed.md"
       },
       "request_completed": true,
       "overview_completed": true,
@@ -712,147 +712,267 @@
   "errors": [
     {
       "stage": "overview",
+      "task_id": "2.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:16:54.727785"
+    },
+    {
+      "stage": "request",
+      "task_id": "2.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:17:33.267835"
+    },
+    {
+      "stage": "request",
       "task_id": "2.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T05:06:47.376577"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:18:39.269702"
     },
     {
       "stage": "request",
       "task_id": "2.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T05:08:36.075729"
-    },
-    {
-      "stage": "overview",
-      "task_id": "7.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-18T07:22:51.537562"
-    },
-    {
-      "stage": "overview",
-      "task_id": "2.7",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:32:18.008657"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:19:44.445321"
     },
     {
       "stage": "request",
       "task_id": "3.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:33:15.318857"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:20:48.814494"
     },
     {
       "stage": "request",
       "task_id": "3.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:34:35.952509"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:21:55.331497"
     },
     {
       "stage": "request",
       "task_id": "3.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:36:09.758037"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:23:05.106366"
     },
     {
       "stage": "request",
       "task_id": "3.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:37:50.282704"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:24:15.114679"
     },
     {
       "stage": "request",
       "task_id": "3.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:39:32.123588"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:25:33.411752"
     },
     {
       "stage": "request",
       "task_id": "4.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:41:20.736340"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:26:47.663770"
     },
     {
       "stage": "request",
       "task_id": "4.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:43:19.965099"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:28:06.402818"
     },
     {
       "stage": "request",
       "task_id": "4.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:45:13.003121"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:29:18.709426"
     },
     {
       "stage": "request",
       "task_id": "4.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:46:57.285881"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:30:38.408598"
     },
     {
       "stage": "request",
       "task_id": "5.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T03:48:47.688529"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:31:56.693360"
     },
     {
-      "stage": "overview",
+      "stage": "request",
+      "task_id": "5.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:33:16.414991"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:34:32.848102"
+    },
+    {
+      "stage": "request",
       "task_id": "6.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:20:54.527965"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:35:51.122384"
     },
     {
       "stage": "request",
       "task_id": "6.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:21:51.051802"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:37:09.043684"
     },
     {
       "stage": "request",
       "task_id": "6.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:22:39.459516"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:38:27.160122"
     },
     {
       "stage": "request",
       "task_id": "7.1",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:23:31.211582"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:39:29.317387"
     },
     {
       "stage": "request",
       "task_id": "7.2",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:24:21.379415"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:40:27.122587"
     },
     {
       "stage": "request",
       "task_id": "7.3",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:25:12.088163"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:41:26.871123"
     },
     {
       "stage": "request",
       "task_id": "7.4",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:26:00.522250"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:42:26.124314"
     },
     {
       "stage": "request",
       "task_id": "7.5",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:26:51.282320"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:43:24.838717"
     },
     {
       "stage": "request",
       "task_id": "7.6",
-      "error": "Exit code 1: ",
-      "timestamp": "2026-01-19T05:27:43.563525"
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
+      "timestamp": "2026-01-20T00:44:20.654545"
+    },
+    {
+      "stage": "details",
+      "task_id": "4.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:02:28.974631"
+    },
+    {
+      "stage": "request",
+      "task_id": "4.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:03:57.554275"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:05:21.947150"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:06:55.011611"
+    },
+    {
+      "stage": "request",
+      "task_id": "5.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:08:13.609548"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:09:17.961776"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:10:43.585248"
+    },
+    {
+      "stage": "request",
+      "task_id": "6.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:11:58.859512"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.1",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:13:18.497433"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.2",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:14:36.153964"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:15:51.342608"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:17:16.309656"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:18:29.806152"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:19:47.632062"
+    },
+    {
+      "stage": "request",
+      "task_id": "4.3",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:38:12.548340"
+    },
+    {
+      "stage": "request",
+      "task_id": "4.4",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
+      "timestamp": "2026-01-20T09:39:52.180079"
+    },
+    {
+      "stage": "overview",
+      "task_id": "7.5",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:24:06.881403"
+    },
+    {
+      "stage": "request",
+      "task_id": "7.6",
+      "error": "Exit code 1 | Stderr: (empty) | Last output: You've hit your limit \u00b7 resets 2pm (Europe/Paris)",
+      "timestamp": "2026-01-20T11:24:56.680332"
     }
   ],
   "metadata": {
-    "total_requests_generated": 9,
-    "last_request_id": "REQ-366",
-    "first_request_id": "REQ-304",
+    "total_requests_generated": 2,
+    "last_request_id": "REQ-E05-034",
+    "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   }
 }

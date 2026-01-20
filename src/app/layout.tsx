@@ -7,8 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import "./globals.css";
 
-// Force dynamic rendering to avoid static generation issues with next-intl
-// This is required because getLocale() and getMessages() need request context
+// Force dynamic rendering for next-intl
 export const dynamic = 'force-dynamic';
 
 /**
@@ -44,12 +43,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get the detected locale from the request
-  // This uses the locale detection chain: cookie > Accept-Language > default
   const locale = await getLocale();
-
-  // Load all messages for the detected locale
-  // Messages are loaded from /messages/{locale}.json
   const messages = await getMessages();
 
   return (

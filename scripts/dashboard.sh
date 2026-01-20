@@ -20,7 +20,7 @@
 #   ./scripts/dashboard.sh stop         # Stop running daemon
 #
 # Created: 2026-01-05
-# Last Modified: 2026-01-18
+# Last Modified: 2026-01-19
 # =============================================================================
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

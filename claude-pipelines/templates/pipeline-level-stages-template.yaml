@@ -66,42 +66,84 @@ testcheck_stage_template:
 
         1. **Read State File**: Understand which tasks have implementation_completed=true
 
-        2. **Verify Implementations**: For each completed task:
+        2. **Verify Implementations WITH EVIDENCE CAPTURE**: For each completed task:
            - Read its detailed spec ({request_id}-*-detailed.md)
-           - Verify the implementation matches the spec
-           - Note any discrepancies
+           - Run verification commands and CAPTURE THE OUTPUT
+           - Store evidence for each check performed
 
-        3. **Build Verification**: Run these commands and capture results:
-           ```bash
-           npm run type-check
-           npm run build
+           **Evidence Capture Format** (CRITICAL - users will see this in test harness):
+           ```json
+           {{
+             "task_id": "1.1",
+             "request_id": "REQ-223",
+             "title": "Task title",
+             "checks": [
+               {{
+                 "description": "Verify component file exists",
+                 "command": "ls -la src/components/LanguageSwitcher/",
+                 "output": "LanguageSwitcher.tsx\\nindex.ts\\n__tests__/",
+                 "passed": true
+               }},
+               {{
+                 "description": "Verify all 6 languages defined",
+                 "command": "grep -c 'code:' src/lib/i18n/config.ts",
+                 "output": "6",
+                 "passed": true
+               }},
+               {{
+                 "description": "Unit tests pass",
+                 "command": "npm test -- --run src/components/LanguageSwitcher",
+                 "output": "PASS src/components/LanguageSwitcher/__tests__/...\\n✓ renders dropdown\\nTests: 8 passed",
+                 "passed": true
+               }}
+             ]
+           }}
            ```
 
-        4. **Generate Test Harness Page**:
-           - Create: src/app/testing/{pipeline_slug}/page.tsx
-           - Include:
-             - LLM Instructions section (from PRD context)
-             - Component Tests list (one per implemented task)
-             - Use Case Tests section (placeholder for usecases stage)
-             - Pipeline Reference (all tasks with status)
+           **Types of checks to perform per task:**
+           - File existence: `ls -la <expected_path>`
+           - Exports: `grep -n "export" <file>`
+           - Content verification: `grep "<expected_pattern>" <file>`
+           - Type check: `npm run type-check 2>&1 | head -20`
+           - Unit tests (if exist): `npm test -- --run <test_file>`
 
-        5. **Update State File**: Add verification results:
+        3. **Build Verification**: Run these commands and capture FULL output:
+           ```bash
+           npm run type-check 2>&1
+           npm run build 2>&1 | tail -30
+           ```
+           Store as evidence with description "Full build verification"
+
+        4. **Update State File**: Add verification results WITH evidence array:
            ```json
            {{
              "testcheck_completed": true,
              "testcheck_completed_at": "<timestamp>",
              "verification": {{
-               "status": "passed|failed",
+               "status": "passed|partial|failed",
                "build_status": "passed|failed",
                "type_check_status": "passed|failed",
                "tasks_verified": <count>,
-               "issues_found": []
+               "issues_found": [],
+               "evidence": [
+                 // REQUIRED: Array of task evidence objects (see format above)
+                 // Each task should have its checks array with command outputs
+                 // This is displayed in the test harness "Verification Evidence" tab
+               ]
              }},
              "test_harness_url": "src/app/testing/{pipeline_slug}/page.tsx"
            }}
            ```
 
-        6. **Report Status**: Provide summary of verification results
+           **WARNING**: The `evidence` array is displayed visually in the test harness.
+           Users can browse each task and see exactly what commands were run and their
+           output. This provides audit trail and confidence in the verification.
+
+        5. **Report Status**: Provide summary of verification results including:
+           - Total tasks verified
+           - Total checks performed
+           - Pass/fail counts
+           - Any issues found
 
       command:
         - "claude"
@@ -172,37 +214,56 @@ usecases_stage_template:
            **Epic-Specific Scenarios** (category: "feature-specific")
            - {epic_specific_scenarios}
 
-        3. **Use Case Format**: Each use case should have:
+        3. **Use Case Format**: Each use case MUST match this EXACT structure:
            ```json
            {{
              "id": "UC-001",
              "title": "Short descriptive title",
-             "category": "happy-path|edge-case|feature-specific",
+             "category": "happy-path",
+             "priority": "P0",
              "description": "What this use case tests",
-             "preconditions": ["Required state before test"],
+             "expectedOutcome": "What the final state should be after all steps",
              "steps": [
-               {{"step": 1, "action": "What to do", "expected": "What should happen"}}
-             ],
-             "expected_results": ["Final expected outcomes"],
-             "related_tasks": ["1.1", "1.2"]  // Task IDs this tests
+               {{
+                 "step": 1,
+                 "action": "What to do",
+                 "component": "ComponentName or API/Database",
+                 "expectedResult": "What should happen after this step"
+               }}
+             ]
            }}
            ```
 
-        4. **Update State File**: Add use cases to state:
+           **Field requirements:**
+           - `id`: Format "UC-XXX" (e.g., UC-001, UC-E1-001)
+           - `category`: One of "happy-path", "error-handling", "edge-case", "integration"
+           - `priority`: One of "P0" (critical), "P1" (important), "P2" (nice-to-have)
+           - `steps`: Array with step number, action, component, and expectedResult
+           - `expectedOutcome`: Single string describing final expected state
+
+        4. **CRITICAL - Update State File**: You MUST add the `items` array to state:
            ```json
            {{
              "usecases": {{
-               "generated_at": "<timestamp>",
-               "generator": "06b-usecase-generator",
+               "generated": true,
+               "generated_at": "<ISO timestamp>",
+               "total_scenarios": <number>,
                "items": [
-                 // Array of use case objects
+                 // REQUIRED: Array of use case objects matching the format above
+                 // The test harness generator reads this array directly
+                 // Without items array, test harness will have NO use cases
                ]
              }}
            }}
            ```
 
-        5. **Update Test Harness**: The orchestrator will regenerate the test harness
-           to include your use cases in the "Use Case Tests" tab
+           **WARNING**: The orchestrator reads `state.usecases.items` to populate the
+           test harness. If you only add metadata without the `items` array, the
+           test harness "Use Case Tests" tab will be empty!
+
+        5. **Test Harness Integration**: After you update the state file, the orchestrator
+           automatically regenerates the test harness to include your use cases in the
+           "Use Case Tests" tab. Users can then step through each use case interactively.
 
       command:
         - "claude"

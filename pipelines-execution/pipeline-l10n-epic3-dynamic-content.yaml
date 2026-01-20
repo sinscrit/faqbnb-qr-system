@@ -21,6 +21,7 @@ pipeline:
   name: l10n-epic3-dynamic-content-translation
   version: "1.0"
   description: "Process Localization Epic 3 - Dynamic Content Translation implementation plan through agent pipeline"
+  epic_id: E03  # Epic identifier for REQ numbering (REQ-E03-XXX format)
   mode: per_request
   default_timeout: 900
 

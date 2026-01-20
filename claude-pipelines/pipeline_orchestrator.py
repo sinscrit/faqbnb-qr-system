@@ -103,20 +103,20 @@ def load_config(config_path: Path) -> dict:
     """Load and validate pipeline configuration."""
     if not config_path.exists():
         raise FileNotFoundError(f"Config file not found: {config_path}")
-    
+
     config = yaml.safe_load(config_path.read_text(encoding='utf-8'))
-    
+
     # Resolve paths relative to config file location
     config_dir = config_path.parent
     config['_config_dir'] = config_dir
-    
+
     # Resolve source path
     source_path = config.get('source', {}).get('path', '')
     if source_path and not Path(source_path).is_absolute():
         config['source']['_resolved_path'] = config_dir / source_path
     else:
         config['source']['_resolved_path'] = Path(source_path)
-    
+
     # Resolve output paths
     for key in ['requests', 'state', 'logs', 'overviews', 'details']:
         if key in config.get('outputs', {}):
@@ -125,7 +125,11 @@ def load_config(config_path: Path) -> dict:
                 config['outputs'][f'_{key}_resolved'] = config_dir / out_path
             else:
                 config['outputs'][f'_{key}_resolved'] = Path(out_path)
-    
+
+    # Store resolved epic_id for easy access (None for legacy pipelines)
+    epic_id = config.get('pipeline', {}).get('epic_id')
+    config['pipeline']['_epic_id'] = epic_id
+
     validate_config(config)
     return config
 
@@ -138,22 +142,31 @@ def validate_config(config: dict):
         ('source.extraction', config.get('source', {}).get('extraction')),
         ('outputs.state', config.get('outputs', {}).get('state')),
     ]
-    
+
     # Check for either stages or request_stages
     has_stages = bool(config.get('stages'))
     has_request_stages = bool(config.get('request_stages'))
-    
+
     if not has_stages and not has_request_stages:
         required.append(('stages or request_stages', None))
-    
+
     missing = [name for name, value in required if not value]
     if missing:
         raise ValueError(f"Missing required config fields: {', '.join(missing)}")
-    
+
     # Validate extraction patterns
     extraction = config['source']['extraction']
     if 'task_pattern' not in extraction:
         raise ValueError("source.extraction.task_pattern is required")
+
+    # Validate epic_id format if provided (must be E01, E02, ... E99)
+    epic_id = config.get('pipeline', {}).get('epic_id')
+    if epic_id:
+        if not re.match(r'^E\d{2}$', epic_id):
+            raise ValueError(
+                f"Invalid epic_id format: '{epic_id}'. "
+                f"Must be E01, E02, ... E99 (e.g., 'E01' for Epic 1)"
+            )
 
 
 # =============================================================================
@@ -501,22 +514,30 @@ def get_precheck_status(state: dict) -> Optional[dict]:
 def is_precheck_required(state: dict, config: dict) -> bool:
     """
     Determine if precheck needs to run.
+
+    Precheck is ONLY needed for implementation stages and includes:
+    1. TypeScript compilation check (always, unless skipped in config)
+    2. Required tool availability checks (if configured)
+
     Returns True if:
-    - No precheck has been run yet
-    - Required tools are specified in config
+    - No precheck has been run yet OR precheck previously failed
+    - Implementation stage will be run
+
+    Returns False if:
+    - Precheck already passed
+    - Only non-implementation stages are being run (handled by caller)
     """
-    impl_config = get_implementation_config(config)
-    required_tools = impl_config.get('required_tools', [])
-
-    # No required tools = no precheck needed
-    if not required_tools:
-        return False
-
-    # Check if precheck already exists in state
+    # Check if precheck already exists and passed
     precheck = get_precheck_status(state)
-    if precheck and precheck.get('status') in ['passed', 'failed']:
+    if precheck and precheck.get('status') == 'passed':
         return False
 
+    # If precheck failed previously, we should re-run it
+    # (user may have fixed the issues)
+
+    # Precheck is always required for implementation to ensure:
+    # - TypeScript has no errors
+    # - Required tools are available
     return True
 
 
@@ -573,9 +594,133 @@ Begin verification now.
     return prompt
 
 
+def run_typescript_check(config: dict) -> Tuple[bool, dict]:
+    """
+    Run TypeScript compilation check to ensure no type errors exist.
+
+    This is critical for implementation stages to ensure the codebase
+    is in a valid state before making changes.
+
+    Args:
+        config: Pipeline configuration
+
+    Returns:
+        Tuple of (success, result_dict)
+    """
+    project_dir = config.get('_config_dir', Path.cwd())
+
+    print("\n  Checking TypeScript compilation...")
+
+    try:
+        # Run tsc --noEmit to check for type errors without emitting files
+        result = subprocess.run(
+            ['npx', 'tsc', '--noEmit'],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            cwd=project_dir
+        )
+
+        if result.returncode == 0:
+            print("    ✓ TypeScript: No type errors found")
+            return True, {
+                'passed': True,
+                'error_count': 0,
+                'notes': 'No type errors found'
+            }
+        else:
+            # Count errors from output, categorizing by source type
+            all_error_lines = [line for line in result.stdout.split('\n') if 'error TS' in line]
+
+            # Categorize errors:
+            # 1. Production source code (blocks implementation)
+            # 2. Test files (__tests__/, .test.ts, .test.tsx) - warnings only
+            # 3. Generated files (.next/) - warnings only
+            prod_errors = []
+            test_errors = []
+            generated_errors = []
+
+            for line in all_error_lines:
+                if '.next/' in line:
+                    generated_errors.append(line)
+                elif '__tests__' in line or '.test.ts' in line or '.test.tsx' in line:
+                    test_errors.append(line)
+                else:
+                    prod_errors.append(line)
+
+            prod_count = len(prod_errors)
+            test_count = len(test_errors)
+            generated_count = len(generated_errors)
+            total_count = len(all_error_lines)
+
+            # Only fail if there are production source code errors
+            # Test errors and generated errors are warnings only
+            has_blocking_errors = prod_count > 0
+
+            if has_blocking_errors:
+                print(f"    ✗ TypeScript: {prod_count} production code error(s) found")
+                sample_errors = prod_errors[:5]
+                for err in sample_errors:
+                    err_short = err[:100] + '...' if len(err) > 100 else err
+                    print(f"      - {err_short}")
+                if prod_count > 5:
+                    print(f"      ... and {prod_count - 5} more production errors")
+                if test_count > 0:
+                    print(f"    ⚠ Also {test_count} error(s) in test files (non-blocking)")
+                if generated_count > 0:
+                    print(f"    ⚠ Also {generated_count} error(s) in .next/types/ (generated files)")
+            else:
+                # No production errors - just warnings
+                print(f"    ✓ TypeScript: No production code errors")
+                if test_count > 0:
+                    print(f"    ⚠ {test_count} error(s) in test files (non-blocking, likely missing @types/jest)")
+                if generated_count > 0:
+                    print(f"    ⚠ {generated_count} error(s) in .next/types/ (generated files)")
+                sample_errors = test_errors[:3] if test_errors else generated_errors[:3]
+
+            return not has_blocking_errors, {
+                'passed': not has_blocking_errors,
+                'error_count': total_count,
+                'production_error_count': prod_count,
+                'test_error_count': test_count,
+                'generated_error_count': generated_count,
+                'sample_errors': prod_errors[:5] if prod_errors else (test_errors[:5] if test_errors else generated_errors[:5]),
+                'notes': f'{prod_count} production errors - fix before implementation' if has_blocking_errors else f'No blocking errors ({test_count} test, {generated_count} generated)'
+            }
+
+    except subprocess.TimeoutExpired:
+        print("    ✗ TypeScript: Check timed out after 120s")
+        return False, {
+            'passed': False,
+            'error_count': -1,
+            'notes': 'TypeScript check timed out'
+        }
+    except FileNotFoundError:
+        # npx or tsc not found - might not be a TypeScript project
+        print("    ○ TypeScript: npx/tsc not available (skipping)")
+        return True, {
+            'passed': True,
+            'error_count': 0,
+            'notes': 'TypeScript check skipped - tsc not available'
+        }
+    except Exception as e:
+        print(f"    ✗ TypeScript: Check failed - {e}")
+        return False, {
+            'passed': False,
+            'error_count': -1,
+            'notes': f'TypeScript check error: {str(e)}'
+        }
+
+
 def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, dict]:
     """
-    Run precheck to verify required tools are available.
+    Run precheck to verify the codebase and required tools are ready for implementation.
+
+    Precheck includes:
+    1. TypeScript compilation check (no type errors)
+    2. Required tool availability checks (e.g., playwright_mcp)
+
+    This should ONLY be run when implementation stage is included in the pipeline.
 
     Args:
         config: Pipeline configuration
@@ -588,6 +733,7 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
     impl_config = get_implementation_config(config)
     required_tools = impl_config.get('required_tools', [])
     precheck_timeout = impl_config.get('precheck', {}).get('timeout', 120)
+    skip_typescript = impl_config.get('precheck', {}).get('skip_typescript', False)
 
     # Check if precheck already done and not forcing
     if not force:
@@ -596,20 +742,8 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
             print(f"  Precheck already passed at {existing.get('completed_at', 'unknown')}")
             return True, existing
 
-    if not required_tools:
-        print("  No required tools configured, skipping precheck")
-        result = {
-            'status': 'passed',
-            'completed_at': datetime.now().isoformat(),
-            'tools': {},
-            'notes': 'No required tools configured'
-        }
-        return True, result
-
     print(f"\n{'='*60}")
-    print("Running Precheck")
-    print(f"  Required tools: {', '.join(required_tools)}")
-    print(f"  Timeout: {precheck_timeout}s")
+    print("Running Precheck for Implementation")
     print(f"{'='*60}")
 
     # Clear .next cache to prevent corrupted cache issues
@@ -628,110 +762,128 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
     else:
         print(f"  ○ No .next cache found (clean state)")
 
-    # Build prompt
-    prompt = build_precheck_prompt(config)
+    # Track overall precheck success
+    all_checks_passed = True
+    typescript_result = None
+    tools_result = {}
 
-    # Invoke lightweight agent
-    command = [
-        "claude",
-        "-p",
-        prompt,
-        "--allowedTools",
-        "mcp__playwright__browser_snapshot,mcp__playwright__browser_navigate"
-    ]
+    # 1. Run TypeScript compilation check (unless skipped)
+    if not skip_typescript:
+        ts_passed, typescript_result = run_typescript_check(config)
+        if not ts_passed:
+            all_checks_passed = False
+            logging.warning(f"TypeScript check failed: {typescript_result.get('notes')}")
+    else:
+        print("\n  ○ TypeScript check skipped (skip_typescript=true in config)")
+        typescript_result = {'passed': True, 'error_count': 0, 'notes': 'Skipped via config'}
 
-    logging.info(f"Running precheck for tools: {required_tools}")
+    # 2. Run tool availability checks (if any required)
+    if not required_tools:
+        print(f"\n  ○ No required tools configured")
+        tools_result = {}
+    else:
+        print(f"\n  Checking required tools: {', '.join(required_tools)}")
+        print(f"  Timeout: {precheck_timeout}s")
 
-    try:
-        start_time = time.time()
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            timeout=precheck_timeout,
-            cwd=config.get('_config_dir', Path.cwd())
-        )
-        elapsed = time.time() - start_time
-        elapsed_str = format_duration(elapsed)
+        # Build prompt and run tool check agent
+        prompt = build_precheck_prompt(config)
+        command = [
+            "claude",
+            "-p",
+            prompt,
+            "--allowedTools",
+            "mcp__playwright__browser_snapshot,mcp__playwright__browser_navigate"
+        ]
 
-        if result.returncode == 0:
-            # Parse the output to find JSON result
-            output = result.stdout
+        logging.info(f"Running precheck for tools: {required_tools}")
 
-            # Try to extract JSON from output
-            json_match = re.search(r'```json\s*(.*?)\s*```', output, re.DOTALL)
-            if json_match:
-                try:
-                    parsed = json.loads(json_match.group(1))
-                    all_passed = parsed.get('all_passed', False)
-                    tools_result = parsed.get('tools', {})
-                except json.JSONDecodeError:
-                    # Fallback: assume passed if agent completed successfully
-                    all_passed = True
-                    tools_result = {tool: {'available': True, 'notes': 'Agent completed'} for tool in required_tools}
+        try:
+            start_time = time.time()
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                timeout=precheck_timeout,
+                cwd=config.get('_config_dir', Path.cwd())
+            )
+            elapsed = time.time() - start_time
+            elapsed_str = format_duration(elapsed)
+
+            if result.returncode == 0:
+                # Parse the output to find JSON result
+                output = result.stdout
+
+                # Try to extract JSON from output
+                json_match = re.search(r'```json\s*(.*?)\s*```', output, re.DOTALL)
+                if json_match:
+                    try:
+                        parsed = json.loads(json_match.group(1))
+                        tools_passed = parsed.get('all_passed', False)
+                        tools_result = parsed.get('tools', {})
+                    except json.JSONDecodeError:
+                        # Fallback: assume passed if agent completed successfully
+                        tools_passed = True
+                        tools_result = {tool: {'available': True, 'notes': 'Agent completed'} for tool in required_tools}
+                else:
+                    # No JSON found, check if output suggests success
+                    tools_passed = 'error' not in output.lower() and 'fail' not in output.lower()
+                    tools_result = {tool: {'available': tools_passed, 'notes': 'Inferred from output'} for tool in required_tools}
+
+                if tools_passed:
+                    print(f"    ✓ Tool checks passed ({elapsed_str})")
+                    for tool, info in tools_result.items():
+                        print(f"      ✓ {tool}: {info.get('notes', 'OK')}")
+                else:
+                    all_checks_passed = False
+                    logging.warning(f"Tool checks failed: some tools unavailable")
+                    print(f"    ✗ Tool checks failed ({elapsed_str})")
+                    for tool, info in tools_result.items():
+                        status = "✓" if info.get('available') else "✗"
+                        print(f"      {status} {tool}: {info.get('notes', 'Unknown')}")
+
             else:
-                # No JSON found, check if output suggests success
-                all_passed = 'error' not in output.lower() and 'fail' not in output.lower()
-                tools_result = {tool: {'available': all_passed, 'notes': 'Inferred from output'} for tool in required_tools}
+                error_msg = result.stderr[:200] if result.stderr else "Unknown error"
+                logging.error(f"Tool check agent failed: {error_msg}")
+                all_checks_passed = False
+                tools_result = {tool: {'available': False, 'notes': 'Agent failed'} for tool in required_tools}
+                print(f"    ✗ Tool check agent failed ({elapsed_str}): {error_msg[:60]}...")
 
-            precheck_result = {
-                'status': 'passed' if all_passed else 'failed',
-                'completed_at': datetime.now().isoformat(),
-                'elapsed': elapsed_str,
-                'tools': tools_result,
-                'next_cache_cleared': cache_cleared,
-            }
+        except subprocess.TimeoutExpired:
+            logging.error(f"Tool checks timed out after {precheck_timeout}s")
+            all_checks_passed = False
+            tools_result = {tool: {'available': False, 'notes': 'Timeout'} for tool in required_tools}
+            print(f"    ✗ Tool checks timed out after {precheck_timeout}s")
 
-            if all_passed:
-                logging.info(f"Precheck passed in {elapsed_str}")
-                print(f"  ✓ Precheck passed ({elapsed_str})")
-                for tool, info in tools_result.items():
-                    status = "✓" if info.get('available') else "✗"
-                    print(f"    {status} {tool}: {info.get('notes', 'OK')}")
-            else:
-                logging.warning(f"Precheck failed: some tools unavailable")
-                print(f"  ✗ Precheck failed ({elapsed_str})")
-                for tool, info in tools_result.items():
-                    status = "✓" if info.get('available') else "✗"
-                    print(f"    {status} {tool}: {info.get('notes', 'Unknown')}")
+        except Exception as e:
+            logging.exception(f"Tool check error: {e}")
+            all_checks_passed = False
+            tools_result = {tool: {'available': False, 'notes': str(e)} for tool in required_tools}
+            print(f"    ✗ Tool check error: {e}")
 
-            return all_passed, precheck_result
-        else:
-            error_msg = result.stderr[:200] if result.stderr else "Unknown error"
-            logging.error(f"Precheck agent failed: {error_msg}")
-            precheck_result = {
-                'status': 'failed',
-                'completed_at': datetime.now().isoformat(),
-                'elapsed': elapsed_str,
-                'tools': {tool: {'available': False, 'notes': 'Agent failed'} for tool in required_tools},
-                'error': error_msg,
-                'next_cache_cleared': cache_cleared,
-            }
-            print(f"  ✗ Precheck agent failed ({elapsed_str}): {error_msg[:60]}...")
-            return False, precheck_result
+    # 3. Build final precheck result
+    precheck_result = {
+        'status': 'passed' if all_checks_passed else 'failed',
+        'completed_at': datetime.now().isoformat(),
+        'typescript': typescript_result,
+        'tools': tools_result,
+        'next_cache_cleared': cache_cleared,
+    }
 
-    except subprocess.TimeoutExpired:
-        logging.error(f"Precheck timed out after {precheck_timeout}s")
-        precheck_result = {
-            'status': 'failed',
-            'completed_at': datetime.now().isoformat(),
-            'tools': {tool: {'available': False, 'notes': 'Timeout'} for tool in required_tools},
-            'error': f'Timeout after {precheck_timeout}s',
-            'next_cache_cleared': cache_cleared,
-        }
-        print(f"  ✗ Precheck timed out after {precheck_timeout}s")
-        return False, precheck_result
-    except Exception as e:
-        logging.exception(f"Precheck error: {e}")
-        precheck_result = {
-            'status': 'failed',
-            'completed_at': datetime.now().isoformat(),
-            'tools': {tool: {'available': False, 'notes': str(e)} for tool in required_tools},
-            'error': str(e),
-            'next_cache_cleared': cache_cleared,
-        }
-        print(f"  ✗ Precheck error: {e}")
-        return False, precheck_result
+    # Print summary
+    print(f"\n{'-'*40}")
+    if all_checks_passed:
+        logging.info(f"Precheck passed - all checks successful")
+        print(f"  ✓ Precheck PASSED - ready for implementation")
+    else:
+        logging.warning(f"Precheck failed")
+        print(f"  ✗ Precheck FAILED - fix issues before implementation")
+        if typescript_result and not typescript_result.get('passed'):
+            print(f"    - TypeScript errors need to be fixed")
+        for tool, info in tools_result.items():
+            if not info.get('available'):
+                print(f"    - Tool '{tool}' is not available")
+
+    return all_checks_passed, precheck_result
 
 
 def build_project_context_prompt(config: dict, state: dict) -> str:
@@ -773,105 +925,196 @@ def build_project_context_prompt(config: dict, state: dict) -> str:
 # Request ID Tracking
 # =============================================================================
 
-def parse_request_ids_from_file(requests_file: Path) -> List[str]:
+def parse_request_ids_from_file(requests_file: Path, epic_id: Optional[str] = None) -> List[str]:
     """
-    Parse all REQ-XXX IDs from the requests file.
+    Parse all REQ IDs from the requests file.
+    Supports both legacy (REQ-XXX) and epic (REQ-E01-XXX) formats.
+
+    Args:
+        requests_file: Path to the requests markdown file
+        epic_id: If provided, only return IDs matching this epic (e.g., "E01", "E02")
+
     Returns a list of IDs in order of appearance.
     """
     if not requests_file.exists():
         return []
-    
+
     content = requests_file.read_text(encoding='utf-8')
-    
-    # Match REQ-XXX pattern (e.g., REQ-001, REQ-042)
-    pattern = re.compile(r'\bREQ-(\d+)\b')
+
+    # Match both formats:
+    # - Legacy: REQ-001, REQ-042 (captured as: epic=None, num=001)
+    # - Epic: REQ-E01-001, REQ-E02-042 (captured as: epic=E01, num=001)
+    pattern = re.compile(r'\bREQ-(?:(E\d{2})-)?(\d+)\b')
     matches = pattern.findall(content)
-    
+
     # Return unique IDs preserving order
     seen = set()
     ids = []
-    for num in matches:
-        req_id = f"REQ-{num}"
+    for epic, num in matches:
+        if epic:
+            req_id = f"REQ-{epic}-{num}"
+        else:
+            req_id = f"REQ-{num}"
+
+        # Filter by epic_id if specified
+        if epic_id:
+            if epic != epic_id:
+                continue
+
         if req_id not in seen:
             seen.add(req_id)
             ids.append(req_id)
-    
+
     return ids
 
 
-def get_last_request_id(requests_file: Path) -> Optional[str]:
-    """Get the last REQ-XXX ID from the requests file."""
-    ids = parse_request_ids_from_file(requests_file)
+def get_last_request_id(requests_file: Path, epic_id: Optional[str] = None) -> Optional[str]:
+    """
+    Get the last REQ ID from the requests file.
+    Supports both legacy (REQ-XXX) and epic (REQ-E01-XXX) formats.
+
+    Args:
+        requests_file: Path to the requests markdown file
+        epic_id: If provided, only consider IDs matching this epic
+    """
+    ids = parse_request_ids_from_file(requests_file, epic_id)
     return ids[-1] if ids else None
 
 
 def get_request_id_number(req_id: str) -> int:
-    """Extract the numeric part from REQ-XXX."""
+    """
+    Extract the numeric part from REQ ID.
+    Supports both legacy (REQ-XXX) and epic (REQ-E01-XXX) formats.
+    """
+    # Try epic format first: REQ-E01-042
+    match = re.search(r'REQ-E\d{2}-(\d+)', req_id)
+    if match:
+        return int(match.group(1))
+    # Fall back to legacy format: REQ-042
     match = re.search(r'REQ-(\d+)', req_id)
     return int(match.group(1)) if match else 0
+
+
+def get_request_epic_id(req_id: str) -> Optional[str]:
+    """
+    Extract the epic ID from a REQ ID if present.
+    Returns None for legacy format (REQ-XXX).
+    Returns 'E01', 'E02', etc. for epic format (REQ-E01-XXX).
+    """
+    match = re.search(r'REQ-(E\d{2})-\d+', req_id)
+    return match.group(1) if match else None
+
+
+def format_request_id(num: int, epic_id: Optional[str] = None) -> str:
+    """
+    Format a request ID number into the appropriate string format.
+
+    Args:
+        num: The numeric part of the request ID
+        epic_id: If provided, use epic format (e.g., "E01" -> "REQ-E01-001")
+                 If None, use legacy format (e.g., "REQ-001")
+    """
+    if epic_id:
+        return f"REQ-{epic_id}-{num:03d}"
+    else:
+        return f"REQ-{num:03d}"
+
+
+def get_next_request_id(requests_file: Path, epic_id: Optional[str] = None) -> str:
+    """
+    Get the next available request ID.
+
+    Args:
+        requests_file: Path to the requests markdown file
+        epic_id: If provided, use epic format and scope to this epic
+
+    Returns:
+        Next available REQ ID (e.g., "REQ-043" or "REQ-E01-043")
+    """
+    last_id = get_last_request_id(requests_file, epic_id)
+    if last_id:
+        last_num = get_request_id_number(last_id)
+        return format_request_id(last_num + 1, epic_id)
+    else:
+        # Start at 001 for new files
+        return format_request_id(1, epic_id)
 
 
 def delete_requests_in_range(requests_file: Path, first_id: str, last_id: str, config: dict = None) -> bool:
     """
     Delete requests from first_id through last_id (inclusive) from the file.
     Also deletes associated overview and details files if config is provided.
+    Supports both legacy (REQ-XXX) and epic (REQ-E01-XXX) formats.
     Returns True if successful.
     """
     if not requests_file.exists():
         return True
-    
+
     first_num = get_request_id_number(first_id)
     last_num = get_request_id_number(last_id)
-    
+    first_epic = get_request_epic_id(first_id)
+    last_epic = get_request_epic_id(last_id)
+
+    # Both IDs must be from the same epic (or both legacy)
+    if first_epic != last_epic:
+        print(f"  Warning: Cannot delete range across different epics ({first_id} to {last_id})")
+        return False
+
     if first_num == 0 or last_num == 0:
         return False
-    
+
+    epic_id = first_epic  # Will be None for legacy format
+
     content = requests_file.read_text(encoding='utf-8')
-    
-    # Split into sections by the --- separator before ## REQ-XXX
-    # Pattern matches: ---\n\n## REQ-XXX: ... until next --- or end
+
+    # Split into sections by the --- separator before ## REQ-
+    # Pattern matches both: ## REQ-XXX: and ## REQ-E01-XXX:
     sections = re.split(r'(?=---\s*\n\s*## REQ-)', content)
-    
+
     # Keep sections that are NOT in the range to delete
     kept_sections = []
     deleted_count = 0
-    
+
     for section in sections:
-        # Check if this section contains a REQ-XXX header
-        match = re.search(r'## REQ-(\d+):', section)
+        # Check if this section contains a REQ header (either format)
+        # Match: ## REQ-E01-042: or ## REQ-042:
+        match = re.search(r'## REQ-(?:(E\d{2})-)?(\d+):', section)
         if match:
-            req_num = int(match.group(1))
-            if first_num <= req_num <= last_num:
+            section_epic = match.group(1)  # None for legacy
+            section_num = int(match.group(2))
+
+            # Only delete if epic matches and number is in range
+            if section_epic == epic_id and first_num <= section_num <= last_num:
                 # Skip this section (delete it)
                 deleted_count += 1
                 continue
-        
+
         kept_sections.append(section)
-    
+
     # Reassemble the file
     new_content = ''.join(kept_sections)
-    
+
     # Clean up any trailing whitespace or extra separators
     new_content = re.sub(r'\n{3,}', '\n\n', new_content)
     new_content = new_content.rstrip() + '\n'
-    
+
     # Write back
     requests_file.write_text(new_content, encoding='utf-8')
-    
+
     print(f"  Deleted {deleted_count} requests ({first_id} through {last_id})")
-    
+
     # Delete associated overview and details files
     if config:
         deleted_files = 0
-        
+
         # Get output directories
         overviews_dir = config['outputs'].get('_overviews_resolved')
         details_dir = config['outputs'].get('_details_resolved')
-        
+
         for req_num in range(first_num, last_num + 1):
-            req_id = f"REQ-{req_num:03d}"
-            
-            # Delete overview files matching pattern REQ-XXX-*-overview.md
+            req_id = format_request_id(req_num, epic_id)
+
+            # Delete overview files matching pattern REQ-XXX-*-overview.md or REQ-E01-XXX-*-overview.md
             if overviews_dir and overviews_dir.exists():
                 for overview_file in overviews_dir.glob(f"{req_id}-*-overview.md"):
                     overview_file.unlink()
@@ -881,8 +1124,8 @@ def delete_requests_in_range(requests_file: Path, first_id: str, last_id: str, c
                 if old_pattern.exists():
                     old_pattern.unlink()
                     deleted_files += 1
-            
-            # Delete details files matching pattern REQ-XXX-*-detailed.md
+
+            # Delete details files matching pattern REQ-XXX-*-detailed.md or REQ-E01-XXX-*-detailed.md
             if details_dir and details_dir.exists():
                 for details_file in details_dir.glob(f"{req_id}-*-detailed.md"):
                     details_file.unlink()
@@ -893,10 +1136,10 @@ def delete_requests_in_range(requests_file: Path, first_id: str, last_id: str, c
                     if old_pattern.exists():
                         old_pattern.unlink()
                         deleted_files += 1
-        
+
         if deleted_files > 0:
             print(f"  Deleted {deleted_files} associated files (overviews/details)")
-    
+
     return True
 
 
@@ -953,7 +1196,10 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
       {request_id}, {request_id_num}, {request_title},
       {overview_file}, {details_file},
       {implementation_plan_path}, {requests_file_path},
-      {project_context}
+      {project_context},
+      {epic_id} - Epic identifier (e.g., 'E01', 'E02') or empty for legacy,
+      {next_request_id} - Next available REQ ID (e.g., 'REQ-E01-042' or 'REQ-042'),
+      {req_format_instruction} - Instruction string for REQ format (e.g., 'Use REQ-E01-XXX format')
     """
     full_task = f"Phase {task.phase} ({task.phase_name}), Task {task.id}: {task.title}"
     if task.description:
@@ -964,8 +1210,12 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     
     # Get request_id from task_dict if available
     request_id = task_dict.get('request_id', '') if task_dict else ''
-    request_id_num = request_id.replace('REQ-', '').replace('req-', '') if request_id else ''
+    # Extract numeric part from both legacy (REQ-XXX) and epic (REQ-E01-XXX) formats
+    request_id_num = str(get_request_id_number(request_id)) if request_id else ''
     request_title = task.title
+
+    # Get epic_id from config for template variable
+    epic_id = config['pipeline'].get('_epic_id', '') if config else ''
     
     # Create slug from title (lowercase, hyphens, no special chars)
     import re
@@ -1012,6 +1262,18 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     if state:
         total_tasks = len(state.get('tasks', []))
 
+    # Calculate next request ID and format for agent prompt
+    next_request_id = ''
+    req_format_instruction = ''
+    if config:
+        requests_file = config.get('outputs', {}).get('_requests_resolved')
+        if requests_file:
+            next_request_id = get_next_request_id(requests_file, epic_id if epic_id else None)
+            if epic_id:
+                req_format_instruction = f"Use REQ-{epic_id}-XXX format (e.g., {next_request_id})"
+            else:
+                req_format_instruction = f"Use REQ-XXX format (e.g., {next_request_id})"
+
     return template.format(
         task_id=task.id,
         task_title=task.title,
@@ -1032,6 +1294,9 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
         pipeline_yaml_path=pipeline_yaml_path,
         state_file_path=state_file_path,
         total_tasks=total_tasks,
+        epic_id=epic_id,
+        next_request_id=next_request_id,
+        req_format_instruction=req_format_instruction,
     )
 
 
@@ -1378,7 +1643,28 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
 
             return True, None
         else:
-            error_msg = f"Exit code {result.returncode}: {result.stderr[:500]}"
+            # Build comprehensive error message
+            error_parts = [f"Exit code {result.returncode}"]
+
+            if result.stderr and result.stderr.strip():
+                error_parts.append(f"Stderr: {result.stderr[:300]}")
+            else:
+                error_parts.append("Stderr: (empty)")
+
+            # Check stdout for error hints when stderr is empty
+            if result.stdout and not (result.stderr and result.stderr.strip()):
+                stdout_lines = [l for l in result.stdout.strip().split('\n') if l.strip()]
+                if stdout_lines:
+                    # Look for error patterns
+                    error_lines = [l for l in stdout_lines
+                                  if any(kw in l.lower() for kw in ['error', 'failed', 'exception'])]
+                    if error_lines:
+                        error_parts.append(f"Stdout errors: {' | '.join(error_lines[-3:])[:200]}")
+                    else:
+                        # Last lines often contain failure reason
+                        error_parts.append(f"Last output: {stdout_lines[-1][:150]}")
+
+            error_msg = ' | '.join(error_parts)
             logging.error(f"Agent {agent_name} failed for task {task.id}{req_info} after {elapsed_str}: {error_msg}")
 
             # Still try to parse test results from failed run
@@ -1526,8 +1812,9 @@ def run_task_stages(
 
         # Track output based on stage type
         if stage_id == 'request' and requests_file and not dry_run:
-            # Track request ID
-            new_last_id = get_last_request_id(requests_file)
+            # Track request ID (use epic_id if configured for epic-based numbering)
+            epic_id = config['pipeline'].get('_epic_id')
+            new_last_id = get_last_request_id(requests_file, epic_id)
             task_dict['request_id'] = new_last_id
             task_dict['files']['request'] = f"{requests_file}#{new_last_id}"
             
@@ -1811,8 +2098,9 @@ def run_stage(state: dict, config: dict, stage_id: str, dry_run: bool = False, t
     requests_file = config['outputs'].get('_requests_resolved')
     
     # Record the last request ID before we start (for tracking range)
+    epic_id = config['pipeline'].get('_epic_id')
     if requests_file and not dry_run and task_indices is None:
-        last_id_before = get_last_request_id(requests_file)
+        last_id_before = get_last_request_id(requests_file, epic_id)
         if start_index == 0:  # Fresh start
             state['metadata']['request_id_before_run'] = last_id_before
     
@@ -1864,7 +2152,7 @@ def run_stage(state: dict, config: dict, stage_id: str, dry_run: bool = False, t
 
             # Track the request ID created for this task
             if requests_file and not dry_run:
-                new_last_id = get_last_request_id(requests_file)
+                new_last_id = get_last_request_id(requests_file, epic_id)
                 task_dict['request_id'] = new_last_id
                 state['metadata']['last_request_id'] = new_last_id
                 state['metadata']['total_requests_generated'] = stage_state['tasks_completed']
@@ -2109,17 +2397,69 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
                         with open(state_path, 'r') as f:
                             updated_state = json.load(f)
                         state['usecases'] = updated_state.get('usecases', {})
+
+                    # Check if items array is populated
+                    usecases_data = state.get('usecases', {})
+                    usecase_items = usecases_data.get('items', [])
+
+                    if not usecase_items and usecases_data.get('file_path'):
+                        # Agent created markdown but didn't populate items array
+                        print(f"    ⚠️  WARNING: usecases.items array is empty!")
+                        print(f"    The agent created a markdown file but didn't populate the items array.")
+                        print(f"    Markdown file: {usecases_data.get('file_path')}")
+                        print(f"    To fix: Re-run usecases stage or manually add items to state file.")
+                        print(f"    Expected format: state.usecases.items = [{{id, title, category, priority, description, expectedOutcome, steps}}]")
+
                     generate_pipeline_test_harness(state, config)
                     usecase_count = len(state.get('usecases', {}).get('items', []))
                     print(f"    Included {usecase_count} use cases in test harness")
             else:
-                logging.error(f"Agent {agent_name} failed for pipeline stage {stage_id}: {result.stderr[:200]}")
+                # Build comprehensive error message
+                error_details = []
+                error_details.append(f"Exit code: {result.returncode}")
+
+                if result.stderr and result.stderr.strip():
+                    error_details.append(f"Stderr: {result.stderr[:300]}")
+                else:
+                    error_details.append("Stderr: (empty)")
+
+                # Check stdout for error indicators when stderr is empty
+                stdout_error_hint = ""
+                if result.stdout:
+                    stdout_lower = result.stdout.lower()
+                    # Look for common error patterns in stdout
+                    if 'error' in stdout_lower or 'failed' in stdout_lower or 'exception' in stdout_lower:
+                        # Find relevant lines containing errors
+                        error_lines = [line for line in result.stdout.split('\n')
+                                      if any(kw in line.lower() for kw in ['error', 'failed', 'exception', 'traceback'])]
+                        if error_lines:
+                            stdout_error_hint = '\n'.join(error_lines[:5])
+                            error_details.append(f"Stdout error hints: {stdout_error_hint[:300]}")
+                    # Also capture last few lines of stdout as they often contain the failure reason
+                    stdout_lines = [l for l in result.stdout.strip().split('\n') if l.strip()]
+                    if stdout_lines:
+                        last_lines = '\n'.join(stdout_lines[-3:])
+                        error_details.append(f"Last stdout lines: {last_lines[:200]}")
+
+                error_message = ' | '.join(error_details)
+
+                logging.error(f"Agent {agent_name} failed for pipeline stage {stage_id}: {error_message}")
                 print(f"\n  ✗ Pipeline stage '{stage_id}' failed ({stage_elapsed_str})")
-                print(f"    Error: {result.stderr[:100]}...")
+                print(f"    Exit code: {result.returncode}")
+                if result.stderr and result.stderr.strip():
+                    print(f"    Stderr: {result.stderr[:150]}...")
+                else:
+                    print(f"    Stderr: (empty - agent exited without error output)")
+                if stdout_error_hint:
+                    print(f"    Stdout hints: {stdout_error_hint[:150]}...")
+
                 state['errors'].append({
                     'stage': stage_id,
                     'type': 'pipeline_stage',
-                    'error': result.stderr[:500],
+                    'error': error_message[:1000],
+                    'return_code': result.returncode,
+                    'stderr': result.stderr[:500] if result.stderr else '',
+                    'stdout_tail': result.stdout[-500:] if result.stdout else '',
                     'timestamp': datetime.now().isoformat()
                 })
 
@@ -2511,6 +2851,39 @@ def generate_pipeline_test_harness(state: dict, config: dict) -> str:
 
     usecases_content = chr(10).join(usecase_entries) if usecase_entries else '  // No use cases generated yet'
 
+    # Build verification evidence from state if available
+    verification_data = state.get('verification', {})
+    evidence_items = verification_data.get('evidence', [])
+
+    evidence_entries = []
+    for task_evidence in evidence_items:
+        task_id = task_evidence.get('task_id', '').replace("'", "\\'")
+        request_id = task_evidence.get('request_id', '').replace("'", "\\'")
+        task_title = task_evidence.get('title', '').replace("'", "\\'")[:60]
+
+        # Build checks array
+        checks_entries = []
+        for check in task_evidence.get('checks', []):
+            check_desc = check.get('description', '').replace("'", "\\'").replace('\\n', ' ')
+            check_cmd = check.get('command', '').replace("'", "\\'").replace('\\n', ' ')
+            # Escape newlines and quotes in output for JS string
+            check_output = check.get('output', '').replace("\\", "\\\\").replace("'", "\\'").replace('\n', '\\n')[:500]
+            check_passed = 'true' if check.get('passed', False) else 'false'
+            checks_entries.append(f"      {{ description: '{check_desc}', command: '{check_cmd}', output: '{check_output}', passed: {check_passed} }},")
+
+        checks_str = '\n'.join(checks_entries) if checks_entries else '      // No checks recorded'
+
+        evidence_entries.append(f'''  {{
+    taskId: '{task_id}',
+    requestId: '{request_id}',
+    title: '{task_title}',
+    checks: [
+{checks_str}
+    ],
+  }},''')
+
+    evidence_content = chr(10).join(evidence_entries) if evidence_entries else '  // No verification evidence captured yet'
+
     # Build LLM instructions from PRD context
     prd_vision = prd_context.get('vision', '').replace("'", "\\'").replace('\n', ' ')
     prd_user_outcome = prd_context.get('user_outcome', '').replace("'", "\\'").replace('\n', ' ')
@@ -2542,7 +2915,7 @@ def generate_pipeline_test_harness(state: dict, config: dict) -> str:
 import Link from 'next/link';
 import {{ useState }} from 'react';
 
-type TabId = 'instructions' | 'components' | 'usecases' | 'reference';
+type TabId = 'instructions' | 'components' | 'usecases' | 'evidence' | 'reference';
 
 // LLM Testing Instructions - PRD Context
 const llmInstructions = {{
@@ -2555,12 +2928,15 @@ const llmInstructions = {{
     'STEP 1: Read the Instructions tab first to understand the product context and testing workflow.',
     'STEP 2: Complete Component Tests - These verify individual UI components work correctly in isolation.',
     'STEP 3: Complete Use Case Tests - These verify end-to-end user workflows function properly.',
-    'STEP 4: SKIP Pipeline Reference - This tab is informational only, not for testing.',
+    'STEP 4: Review Verification Evidence - See actual command outputs proving each task was completed correctly.',
+    'STEP 5: SKIP Pipeline Reference - This tab is informational only, not for testing.',
   ],
   componentTestGuidance: 'For each component test: (1) Click to load the test page in the iframe below, (2) Interact with the component to verify it renders and responds correctly, (3) Use Previous/Next to move sequentially through all component tests.',
   useCaseTestGuidance: 'For each use case: (1) Select the use case from the list, (2) Follow each numbered step in order, (3) Check off steps as you complete them, (4) Verify the expected outcome matches what you observe.',
+  evidenceGuidance: 'For each task: (1) Select the task from the list, (2) Click on each verification check to expand and see the command output, (3) Green checks passed, red checks failed.',
   importantNotes: [
     'Component Tests should be completed BEFORE Use Case Tests',
+    'Verification Evidence shows actual terminal output from verification commands',
     'Pipeline Reference tab contains implementation status only - DO NOT test it',
     'Use Previous/Next buttons to navigate sequentially',
     'All tests are displayed inline - no need to navigate away from this page',
@@ -2590,6 +2966,20 @@ interface UseCase {{
   steps: UseCaseStep[];
 }}
 
+interface EvidenceCheck {{
+  description: string;
+  command: string;
+  output: string;
+  passed: boolean;
+}}
+
+interface TaskEvidence {{
+  taskId: string;
+  requestId: string;
+  title: string;
+  checks: EvidenceCheck[];
+}}
+
 const componentTests: TestLink[] = [
 {chr(10).join(test_links) if test_links else '  // No component tests found'}
 ];
@@ -2600,6 +2990,10 @@ const allTasks = [
 
 const useCases: UseCase[] = [
 {usecases_content}
+];
+
+const verificationEvidence: TaskEvidence[] = [
+{evidence_content}
 ];
 
 const categoryColors: Record<string, string> = {{
@@ -2619,12 +3013,15 @@ export default function {pipeline_name.replace('-', '_').title().replace('_', ''
   const [activeTab, setActiveTab] = useState<TabId>('instructions');
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
   const [selectedUseCaseIndex, setSelectedUseCaseIndex] = useState<number | null>(null);
+  const [selectedEvidenceIndex, setSelectedEvidenceIndex] = useState<number | null>(null);
   const [completedSteps, setCompletedSteps] = useState<Record<string, Set<number>>>({{}}); // Track completed steps per use case
+  const [expandedChecks, setExpandedChecks] = useState<Set<string>>(new Set()); // Track expanded evidence checks
 
   const tabs = [
     {{ id: 'instructions' as TabId, label: '📖 LLM Instructions', count: null }},
     {{ id: 'components' as TabId, label: '🧪 Component Tests', count: componentTests.length }},
     {{ id: 'usecases' as TabId, label: '📝 Use Case Tests', count: useCases.length }},
+    {{ id: 'evidence' as TabId, label: '🔍 Verification Evidence', count: verificationEvidence.length }},
     {{ id: 'reference' as TabId, label: '📋 Pipeline Reference', count: allTasks.length }},
   ];
 
@@ -2672,6 +3069,7 @@ export default function {pipeline_name.replace('-', '_').title().replace('_', ''
                   setActiveTab(tab.id);
                   setSelectedComponentIndex(null);
                   setSelectedUseCaseIndex(null);
+                  setSelectedEvidenceIndex(null);
                 }}}}
                 className={{`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${{
                   activeTab === tab.id
@@ -3033,6 +3431,142 @@ export default function {pipeline_name.replace('-', '_').title().replace('_', ''
                       <p className="text-green-700 font-medium mt-2">✅ All steps completed!</p>
                     )}}
                   </div>
+                </div>
+              </div>
+            )}}
+          </div>
+        )}}
+
+        {{/* Verification Evidence Tab */}}
+        {{activeTab === 'evidence' && (
+          <div>
+            {{/* Task Evidence List */}}
+            <div className="bg-white rounded-lg border border-gray-200 mb-4">
+              <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <h2 className="font-semibold text-gray-800">Verification Evidence</h2>
+                <p className="text-xs text-gray-500 mt-1">Visual proof of what was verified for each task. Click to see command outputs.</p>
+              </div>
+              {{verificationEvidence.length > 0 ? (
+                <div className="divide-y divide-gray-100">
+                  {{verificationEvidence.map((task, idx) => (
+                    <button
+                      key={{task.taskId}}
+                      onClick={{() => setSelectedEvidenceIndex(idx)}}
+                      className={{`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors flex items-center gap-3 ${{
+                        selectedEvidenceIndex === idx ? 'bg-blue-100 border-l-4 border-blue-600' : ''
+                      }}`}}
+                    >
+                      <span className={{`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${{
+                        task.checks.every(c => c.passed) ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'
+                      }}`}}>
+                        {{task.checks.every(c => c.passed) ? '✓' : '!'}}
+                      </span>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-mono text-xs bg-gray-200 px-1.5 py-0.5 rounded">{{task.taskId}}</span>
+                          <span className="font-mono text-xs text-blue-600">{{task.requestId}}</span>
+                        </div>
+                        <p className="font-medium text-gray-800 truncate">{{task.title}}</p>
+                        <p className="text-xs text-gray-500">{{task.checks.length}} checks • {{task.checks.filter(c => c.passed).length}} passed</p>
+                      </div>
+                      {{selectedEvidenceIndex === idx && (
+                        <span className="text-blue-600">▶</span>
+                      )}}
+                    </button>
+                  ))}}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <p className="text-gray-500">No verification evidence captured yet.</p>
+                  <p className="text-xs text-gray-400 mt-2">Run the testcheck stage to generate verification evidence.</p>
+                </div>
+              )}}
+            </div>
+
+            {{/* Evidence Details */}}
+            {{selectedEvidenceIndex !== null && verificationEvidence[selectedEvidenceIndex] && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-mono text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        {{verificationEvidence[selectedEvidenceIndex].taskId}}
+                      </span>
+                      <span className="ml-2 font-medium text-gray-800">
+                        {{verificationEvidence[selectedEvidenceIndex].title}}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={{() => setSelectedEvidenceIndex(Math.max(0, selectedEvidenceIndex - 1))}}
+                        disabled={{selectedEvidenceIndex === 0}}
+                        className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                      >
+                        ← Previous
+                      </button>
+                      <button
+                        onClick={{() => setSelectedEvidenceIndex(Math.min(verificationEvidence.length - 1, selectedEvidenceIndex + 1))}}
+                        disabled={{selectedEvidenceIndex === verificationEvidence.length - 1}}
+                        className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {{/* Checks List */}}
+                <div className="p-4 space-y-3">
+                  {{verificationEvidence[selectedEvidenceIndex].checks.map((check, checkIdx) => {{
+                    const checkKey = `${{selectedEvidenceIndex}}-${{checkIdx}}`;
+                    const isExpanded = expandedChecks.has(checkKey);
+                    return (
+                      <div
+                        key={{checkIdx}}
+                        className={{`border rounded-lg overflow-hidden ${{
+                          check.passed ? 'border-green-200' : 'border-red-200'
+                        }}`}}
+                      >
+                        <button
+                          onClick={{() => {{
+                            setExpandedChecks(prev => {{
+                              const next = new Set(prev);
+                              if (next.has(checkKey)) {{
+                                next.delete(checkKey);
+                              }} else {{
+                                next.add(checkKey);
+                              }}
+                              return next;
+                            }});
+                          }}}}
+                          className={{`w-full px-4 py-3 text-left flex items-center gap-3 ${{
+                            check.passed ? 'bg-green-50 hover:bg-green-100' : 'bg-red-50 hover:bg-red-100'
+                          }}`}}
+                        >
+                          <span className={{`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm ${{
+                            check.passed ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                          }}`}}>
+                            {{check.passed ? '✓' : '✗'}}
+                          </span>
+                          <div className="flex-grow">
+                            <p className={{`font-medium ${{check.passed ? 'text-green-800' : 'text-red-800'}}`}}>
+                              {{check.description}}
+                            </p>
+                            <p className="font-mono text-xs text-gray-500 mt-1">$ {{check.command}}</p>
+                          </div>
+                          <span className="text-gray-400">{{isExpanded ? '▼' : '▶'}}</span>
+                        </button>
+
+                        {{isExpanded && (
+                          <div className="px-4 py-3 bg-gray-900 border-t">
+                            <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap overflow-x-auto">
+                              {{check.output || '(no output)'}}
+                            </pre>
+                          </div>
+                        )}}
+                      </div>
+                    );
+                  }})}}
                 </div>
               </div>
             )}}
@@ -3575,7 +4109,8 @@ def run_pipeline_horizontal(state: dict, config: dict, dry_run: bool = False, ta
                 
                 # Track output based on stage type
                 if stage_id == 'request' and requests_file and not dry_run:
-                    new_last_id = get_last_request_id(requests_file)
+                    epic_id = config['pipeline'].get('_epic_id')
+                    new_last_id = get_last_request_id(requests_file, epic_id)
                     task_dict['request_id'] = new_last_id
                     task_dict['files']['request'] = f"{requests_file}#{new_last_id}"
                     state['metadata']['last_request_id'] = new_last_id
@@ -4203,10 +4738,12 @@ Examples:
             print("\nPrecheck passed. Ready for implementation.")
             sys.exit(0)
         else:
-            print("\n  ✗ Precheck failed. Required tools are not available.")
-            print("\n  For playwright_mcp, ensure Chrome is running with CDP enabled:")
-            print("    /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
-            print("      --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
+            print("\n  ✗ Precheck failed. Fix the issues before running implementation.")
+            print("\n  Common issues:")
+            print("    - TypeScript errors: Run 'npx tsc --noEmit' to see errors, then fix them")
+            print("    - Playwright MCP: Ensure Chrome is running with CDP enabled:")
+            print("      /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
+            print("        --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
             sys.exit(1)
 
     # From here on, we need proper state handling for pipeline execution
@@ -4290,12 +4827,14 @@ Examples:
                     print("\n  ⚠ Precheck failed but --force flag set. Continuing anyway...")
                     logging.warning("Precheck failed but continuing due to --force flag")
                 else:
-                    print("\n  ✗ Precheck failed. Required tools are not available.")
-                    print("\n  For playwright_mcp, ensure Chrome is running with CDP enabled:")
-                    print("    /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
-                    print("      --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
+                    print("\n  ✗ Precheck failed. Fix the issues before running implementation.")
+                    print("\n  Common issues:")
+                    print("    - TypeScript errors: Run 'npx tsc --noEmit' to see errors, then fix them")
+                    print("    - Playwright MCP: Ensure Chrome is running with CDP enabled:")
+                    print("      /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
+                    print("        --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
                     print("\n  Options:")
-                    print("    --force         Continue anyway (browser tests may fail)")
+                    print("    --force         Continue anyway (tests may fail)")
                     print("    --precheck-only Run diagnostics only")
                     sys.exit(1)
 

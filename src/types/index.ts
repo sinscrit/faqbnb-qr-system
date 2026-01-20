@@ -1,6 +1,7 @@
 import { ReactionCounts } from './reactions';
 import { Session } from '@supabase/supabase-js';
 import { AccessRequest } from './admin';
+import type { SupportedLanguage } from '@/contexts/LocaleContext';
 
 // Database types
 export interface Item {
@@ -163,6 +164,26 @@ export interface ItemResponse {
     accountId: string | null;
     accountRole: string;
   };
+  /**
+   * Array of translation job IDs for status tracking.
+   * Populated when translation jobs are queued during item creation or updates.
+   * Empty array if translation queuing was skipped or failed.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  translationJobIds?: string[];
+  /**
+   * Translation error message if queuing failed.
+   * Item creation/update succeeds even if translation fails.
+   * Only present when there was an error during translation queuing.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  translationError?: string;
+  /**
+   * Languages queued for translation.
+   * Contains the target languages (excludes source language).
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  queuedLanguages?: SupportedLanguage[];
 }
 
 export interface ItemsListResponse {
@@ -259,6 +280,13 @@ export interface CreateArticleRequest {
     thumbnailUrl?: string;
     displayOrder: number;
   }[];
+  /**
+   * Optional source language override for translations.
+   * If not provided, source language is detected from user/account preferences.
+   * @see detectSourceLanguage() in @/lib/content-translation
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  sourceLanguage?: SupportedLanguage;
 }
 
 /**
@@ -294,6 +322,23 @@ export interface ArticleResponse {
     accountId: string | null;
     accountRole: string;
   };
+  /**
+   * Array of translation job IDs for status tracking.
+   * Populated when translation jobs are queued during article creation or updates.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  translationJobIds?: string[];
+  /**
+   * Translation error message if queuing failed.
+   * Article creation/update succeeds even if translation fails.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  translationError?: string;
+  /**
+   * Languages queued for translation.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  queuedLanguages?: SupportedLanguage[];
 }
 
 export interface ArticlesListResponse {
@@ -339,6 +384,13 @@ export interface CreateItemRequest {
       displayOrder: number;
     }[];
   }[];
+  /**
+   * Optional source language override for translations.
+   * If not provided, source language is detected from user/account preferences.
+   * @see detectSourceLanguage() in @/lib/content-translation
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  sourceLanguage?: SupportedLanguage;
 }
 
 export interface UpdateItemRequest extends CreateItemRequest {
@@ -680,3 +732,18 @@ export type {
 
 export { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/contexts/LocaleContext';
 
+// Content Translation types (Epic 3 - Dynamic Content Translation)
+export type {
+  EntityType as ContentEntityType,
+  TranslationTrigger,
+  ContentToTranslate,
+  TranslatableField,
+  QueueTranslationOptions,
+  QueueTranslationResult,
+  LanguageTranslationStatus,
+  TranslationStatusResult,
+  EntityTranslationStatus,
+  TranslationContextKey,
+} from '@/lib/content-translation';
+
+export { TRANSLATION_CONTEXTS } from '@/lib/content-translation';

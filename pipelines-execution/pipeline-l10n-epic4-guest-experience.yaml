@@ -25,6 +25,7 @@ pipeline:
   name: l10n-epic4-guest-experience-implementation
   version: "1.0"
   description: "Process Localization Epic 4 - Guest Experience implementation plan through agent pipeline"
+  epic_id: E04  # Epic identifier for REQ numbering (REQ-E04-XXX format)
   mode: per_request
   default_timeout: 900
 
