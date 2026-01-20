@@ -235,8 +235,9 @@ describe('Translation Job Processing Integration', () => {
       const afterCreate = new Date().toISOString();
 
       expect(result.data?.createdAt).toBeDefined();
-      expect(result.data?.createdAt >= beforeCreate).toBe(true);
-      expect(result.data?.createdAt <= afterCreate).toBe(true);
+      const createdAt = result.data!.createdAt!;
+      expect(createdAt >= beforeCreate).toBe(true);
+      expect(createdAt <= afterCreate).toBe(true);
     });
 
     it('generates unique job ID', async () => {

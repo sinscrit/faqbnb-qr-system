@@ -14,7 +14,7 @@
 #   python scripts/pipeline-dashboard.py --file pipeline-state.json
 #
 # Created: 2026-01-05
-# Last Modified: 2026-01-20 (Added rate limit detection, alert banner, and auto-relaunch)
+# Last Modified: 2026-01-20 (Added error clearing when rate limit is lifted)
 # =============================================================================
 
 import json
@@ -182,13 +182,56 @@ class RateLimitMonitor:
         finally:
             self.is_checking = False
 
-    def relaunch_pipelines(self, yaml_files: list, search_dir: str = ".") -> list:
+    def clear_rate_limit_errors_from_state(self, state_file_path: str) -> bool:
+        """
+        Clear rate limit errors from a pipeline state file.
+
+        This should be called when rate limit is confirmed cleared to ensure
+        the dashboard no longer shows the rate limit warning.
+
+        Args:
+            state_file_path: Path to the pipeline state JSON file
+
+        Returns:
+            True if errors were cleared successfully, False otherwise
+        """
+        try:
+            with open(state_file_path, 'r') as f:
+                state_data = json.load(f)
+
+            # Clear the errors array
+            if "errors" in state_data:
+                old_error_count = len(state_data.get("errors", []))
+                state_data["errors"] = []
+
+                # Also clear recent_errors if present
+                if "recent_errors" in state_data:
+                    state_data["recent_errors"] = []
+
+                # Update the timestamp
+                state_data["updated_at"] = datetime.now().isoformat()
+
+                # Write back
+                with open(state_file_path, 'w') as f:
+                    json.dump(state_data, f, indent=2)
+
+                print(f"[dim]Cleared {old_error_count} error(s) from {os.path.basename(state_file_path)}[/dim]")
+                return True
+
+            return True  # No errors to clear
+
+        except Exception as e:
+            print(f"[yellow]Warning: Could not clear errors from {state_file_path}: {e}[/yellow]")
+            return False
+
+    def relaunch_pipelines(self, yaml_files: list, search_dir: str = ".", state_files: list = None) -> list:
         """
         Relaunch pipelines by spawning orchestrator processes.
 
         Args:
             yaml_files: List of pipeline YAML config file paths
             search_dir: Directory context for running orchestrator
+            state_files: List of state file paths to clear errors from (optional)
 
         Returns:
             List of (yaml_file, success, message) tuples
@@ -197,6 +240,11 @@ class RateLimitMonitor:
 
         self.relaunch_in_progress = True
         results = []
+
+        # Clear errors from state files before relaunching
+        if state_files:
+            for state_file in state_files:
+                self.clear_rate_limit_errors_from_state(state_file)
 
         # Find the orchestrator script
         orchestrator_paths = [
@@ -1210,12 +1258,13 @@ def create_rate_limit_alert(pipelines: list, show_monitor: bool = True) -> Optio
     )
 
 
-def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> list:
-    """Get list of YAML config files for rate-limited pipelines that can be relaunched.
+def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> tuple:
+    """Get list of YAML config files and state files for rate-limited pipelines.
 
-    Returns list of YAML file paths.
+    Returns tuple of (yaml_files, state_files) lists.
     """
     yaml_files = []
+    state_files = []
 
     for p in pipelines:
         rate_info = p.get_rate_limit_info()
@@ -1223,6 +1272,9 @@ def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> list:
             yaml_path = p.get_yaml_config_path()
             if yaml_path and yaml_path not in yaml_files:
                 yaml_files.append(yaml_path)
+            # Also track the state file for error clearing
+            if p.file_path and p.file_path not in state_files:
+                state_files.append(p.file_path)
 
     # Also check epic pipelines
     epic_files = find_recent_epic_pipelines(search_dir, max_age_minutes=60)
@@ -1235,10 +1287,13 @@ def get_rate_limited_yaml_files(pipelines: list, search_dir: str = ".") -> list:
                     yaml_path = pipeline.get_yaml_config_path()
                     if yaml_path and yaml_path not in yaml_files:
                         yaml_files.append(yaml_path)
+                    # Track the state file
+                    if filepath not in state_files:
+                        state_files.append(filepath)
         except:
             pass
 
-    return yaml_files
+    return yaml_files, state_files
 
 
 def create_task_card(task: dict, compact: bool = False) -> Panel:
@@ -2055,7 +2110,7 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
                     monitor = get_rate_limit_monitor()
 
                     # Check if any pipeline is rate limited
-                    yaml_files = get_rate_limited_yaml_files(pipelines, search_dir)
+                    yaml_files, state_files = get_rate_limited_yaml_files(pipelines, search_dir)
                     is_rate_limited = len(yaml_files) > 0
 
                     if is_rate_limited:
@@ -2067,9 +2122,15 @@ def run_dashboard(state_files: list, refresh_interval: int = 3, once: bool = Fal
                             rate_limit_cleared = monitor.check_rate_limit_cleared()
 
                             if rate_limit_cleared:
-                                # Rate limit cleared! Relaunch pipelines
-                                console.print(f"\n[bold green]✓ Rate limit cleared! Relaunching {len(yaml_files)} pipeline(s)...[/bold green]")
-                                results = monitor.relaunch_pipelines(yaml_files, search_dir)
+                                # Rate limit cleared! Clear errors and relaunch pipelines
+                                console.print(f"\n[bold green]✓ Rate limit cleared! Clearing errors and relaunching {len(yaml_files)} pipeline(s)...[/bold green]")
+
+                                # Clear errors from state files first
+                                for state_file in state_files:
+                                    monitor.clear_rate_limit_errors_from_state(state_file)
+
+                                # Then relaunch
+                                results = monitor.relaunch_pipelines(yaml_files, search_dir, state_files)
                                 for yaml_file, success, message in results:
                                     status = "[green]✓[/green]" if success else "[red]✗[/red]"
                                     console.print(f"  {status} {os.path.basename(yaml_file)}: {message}")

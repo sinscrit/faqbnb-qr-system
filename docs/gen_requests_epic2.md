@@ -3443,3 +3443,144 @@ Enables international property owners to adopt the platform by providing propert
 - [ ] Property type labels and descriptions are translatable
 - [ ] All strings follow consistent naming conventions matching other namespaces
 - [ ] Structure is replicated across all 6 language files (en, fr, es, de, nl, it)
+
+---
+
+## REQ-E02-077: Test Complete Item Creation Workflow in Each Supported Language
+
+**Date**: 2026-01-20 15:25
+**Type**: ENHANCEMENT
+**Size**: L
+**Phase**: 2C (Item Creation Workflow)
+**Task**: 2C.14
+
+### Summary
+The system must validate that users can successfully complete the entire item creation workflow in each of the six supported languages with all UI elements displaying correctly and all functionality working as expected.
+
+### Current Behavior
+The item creation workflow components have been updated with translation hooks and localized strings, but comprehensive end-to-end testing in each supported language has not been systematically performed to verify complete translation coverage, contextual accuracy, and functional consistency across languages.
+
+### Expected Behavior
+Users can navigate through the complete item creation workflow from start to finish in any supported language (English, Spanish, French, German, Italian, Portuguese) and experience fully translated UI elements, properly formatted locale-specific content, and consistent functionality. All workflow steps from room selection through session summary display translated text without fallback to English or missing translations.
+
+### User Impact
+Property owners working in their native language can create, view, and edit items through the complete workflow without encountering language barriers, untranslated strings, or confusing mixed-language interfaces. This ensures equal access to the item creation feature for all users regardless of language preference.
+
+### Business Value
+Comprehensive workflow testing in all languages ensures the item creation feature meets quality standards for international markets, reduces post-release defect rates related to localization, and validates that the multilingual implementation delivers consistent user experience across all supported languages.
+
+### Acceptance Criteria
+- [ ] Complete item creation workflow successfully tested in English with all UI elements visible
+- [ ] Complete item creation workflow successfully tested in Spanish with all UI elements properly translated
+- [ ] Complete item creation workflow successfully tested in French with all UI elements properly translated
+- [ ] Complete item creation workflow successfully tested in German with all UI elements properly translated
+- [ ] Complete item creation workflow successfully tested in Italian with all UI elements properly translated
+- [ ] Complete item creation workflow successfully tested in Portuguese with all UI elements properly translated
+- [ ] Room selection step displays all room types, labels, and buttons in the correct language
+- [ ] Item type step displays all item categories and type labels in the correct language
+- [ ] Specific item step displays item names and descriptions in the correct language
+- [ ] Purpose step displays all purpose options and explanatory text in the correct language
+- [ ] Content type step displays content type options and guidance in the correct language
+- [ ] Media capture step displays camera controls, instructions, and feedback in the correct language
+- [ ] Preview and save step displays form fields, validation messages, and action buttons in the correct language
+- [ ] Session summary step displays summary labels, counts, and navigation options in the correct language
+- [ ] All toast notifications and success messages appear in the selected language
+- [ ] All error messages and validation feedback appear in the selected language
+- [ ] All modal dialogs and confirmation prompts display translated content
+- [ ] Date and time values follow locale-specific formatting conventions
+- [ ] No hardcoded English strings appear when testing in non-English languages
+- [ ] Language switching during workflow maintains workflow state and updates all visible text
+- [ ] Created items display correctly in item lists after workflow completion in any language
+- [ ] Item editing workflow displays previously saved data with proper language-specific formatting
+- [ ] Test results are documented for each language with screenshots of key workflow steps
+- [ ] Any translation gaps or contextual issues discovered during testing are logged for resolution
+
+
+---
+
+## REQ-E02-078: Create Items Namespace Structure in Messages File
+
+**Date**: 2026-01-20 15:30
+**Type**: NEW FEATURE
+**Size**: S
+**Phase**: 2D (Item Management)
+**Task**: 2D.1
+
+### Summary
+The localization messages file should include a dedicated items namespace containing all UI strings related to item management, including item listing, viewing, editing, deletion, filtering, and search.
+
+### Current Behavior
+Item management components contain hardcoded English strings for labels, headings, button text, validation messages, confirmation dialogs, empty states, and status indicators. These strings appear directly in component code, making the item management interface accessible only to English-speaking users.
+
+### Expected Behavior
+A well-organized items namespace exists within the messages files containing all item-related UI strings. Item management components reference translation keys from this namespace, displaying text in the user's selected language. The namespace includes categorized subcategories for list views, detail views, edit forms, filters and search, confirmation dialogs, validation messages, and empty states.
+
+### User Impact
+Property owners managing items in their native language will see item management interfaces in French, Spanish, German, Italian, or Portuguese. Non-English speakers can browse, search, edit, and organize items without encountering language barriers. Users experience a fully localized item management workflow from item listing through viewing details and making edits.
+
+### Business Value
+Enables international property owners to effectively manage their inventory by providing item management tools in their native language. Reduces cognitive load and user errors by presenting item information in familiar language. Aligns with the broader localization strategy by ensuring all core management features support multiple languages.
+
+### Acceptance Criteria
+- [ ] Items namespace is created within the primary localization messages file
+- [ ] Namespace includes categories for list views, detail views, forms, search/filters, dialogs, and validation
+- [ ] All item list column headers and sort options are included with translation keys
+- [ ] Item detail view labels for metadata fields are properly categorized
+- [ ] Edit form field labels, placeholders, and helper text are included
+- [ ] Search and filter component strings are included in the namespace
+- [ ] Confirmation dialog messages for item deletion and bulk actions are provided
+- [ ] Validation error messages for item forms are comprehensive and specific
+- [ ] Success and error notification messages are included
+- [ ] Empty state messages for zero items and no search results are provided
+- [ ] Item status labels and indicators are translatable
+- [ ] Bulk action labels and descriptions are included
+- [ ] All strings follow consistent naming conventions matching other namespaces
+- [ ] Structure is replicated across all 6 language files (en, fr, es, de, nl, it)
+
+---
+
+## REQ-E02-079: Update ItemManager Component Family for Internationalization
+
+**Date**: 2026-01-20 16:45
+**Type**: ENHANCEMENT
+**Size**: M
+**Phase**: 2D (Item Management)
+**Task**: 2D.2
+
+### Summary
+ItemManager components and related components must be updated to use translation hooks and display all user-facing text in the selected language, replacing hardcoded English strings with localized translations from the items namespace.
+
+### Current Behavior
+ItemManager components and their child components display hardcoded English text for labels, headings, buttons, status messages, filter options, and other UI elements. Users who prefer to work in Spanish, French, German, Italian, or Portuguese encounter English-only interfaces when managing their item inventory, creating an inconsistent and less accessible experience.
+
+### Expected Behavior
+All components within the ItemManager family use translation hooks to retrieve localized strings from the items namespace. Users see item management interfaces displaying text in their chosen language, including list headers, action buttons, filter controls, status indicators, empty states, and confirmation prompts. Language changes update the entire item management interface immediately to reflect the selected locale.
+
+### User Impact
+Property owners managing items in their native language experience a fully localized interface when viewing item lists, filtering and searching items, viewing item details, and performing bulk actions. Non-English speakers can navigate and use the complete item management feature set without language barriers or mixed-language displays.
+
+### Business Value
+Delivers a consistent multilingual experience throughout the item management workflow, ensuring international users can effectively manage their inventory. Supports business expansion in non-English markets by removing language barriers from a core property management feature. Aligns with platform-wide localization standards and user expectations for language consistency.
+
+### Acceptance Criteria
+- [ ] ItemManager root component imports and uses appropriate translation hooks
+- [ ] Item list headers and column labels display translated text from the items namespace
+- [ ] Sort controls and sorting options display in the selected language
+- [ ] Search placeholder text and search-related labels are translated
+- [ ] Filter controls display category names and filter options in the selected language
+- [ ] Action buttons for creating, editing, and deleting items show translated labels
+- [ ] Bulk action controls display translated operation names
+- [ ] Item status indicators and badges show translated status text
+- [ ] Empty state messages display appropriate translated content when no items exist
+- [ ] Loading state indicators show translated loading messages
+- [ ] Confirmation dialogs for item deletion display translated prompts and button labels
+- [ ] Toast notifications for successful and failed operations appear in the selected language
+- [ ] Item count displays use locale-appropriate number formatting
+- [ ] Date and time values in item metadata use locale-specific formatting
+- [ ] Pagination controls show translated labels for navigation
+- [ ] Error messages for failed operations display translated content
+- [ ] All hardcoded English strings are removed from component code
+- [ ] Components properly handle language switching without requiring page reload
+- [ ] Accessibility labels and ARIA attributes reflect the selected language where applicable
+- [ ] Component rendering correctly handles text length variations across different languages
+

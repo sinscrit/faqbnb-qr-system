@@ -644,7 +644,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      fetch_and_lock_translation_job: {
+        Args: {
+          p_worker_id: string
+        }
+        Returns: {
+          id: string
+          entity_type: string
+          entity_id: string
+          source_language: string
+          target_language: string
+          status: string
+          attempts: number | null
+          error_message: string | null
+          created_at: string | null
+          started_at: string | null
+          completed_at: string | null
+          locked_by: string | null
+          locked_at: string | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,6 +1,6 @@
 # REQ-E03-003: Implement Entity-Specific Translation Triggers - Detailed Task Breakdown
 *Generated: 2026-01-19 18:30:00 UTC*
-*Last Modified: 2026-01-19 18:30:00 UTC*
+*Last Modified: 2026-01-20 (verification completed)*
 
 ## Reference
 - **Request**: REQ-E03-003 (Implement Entity-Specific Translation Triggers)
@@ -417,10 +417,10 @@ Run TypeScript compilation to verify all new files compile without errors and im
    - Address any missing type definitions
 
 #### Acceptance Criteria
-- [ ] `npm run build` completes without TypeScript errors
-- [ ] No type conflicts with existing modules
-- [ ] All generics resolve correctly
-- [ ] All imports resolve correctly
+- [x] `npm run build` completes without TypeScript errors (trigger modules compile successfully; pre-existing errors in unrelated files)
+- [x] No type conflicts with existing modules
+- [x] All generics resolve correctly
+- [x] All imports resolve correctly
 
 ---
 
@@ -489,65 +489,65 @@ Run TypeScript compilation to verify all new files compile without errors and im
 ## Verification Checklist
 
 ### File Structure
-- [ ] `/src/lib/content-translation/triggers/` directory exists
-- [ ] `/src/lib/content-translation/triggers/index.ts` exists with barrel exports
-- [ ] `/src/lib/content-translation/triggers/item-trigger.ts` exists
-- [ ] `/src/lib/content-translation/triggers/article-trigger.ts` exists
-- [ ] `/src/lib/content-translation/triggers/link-trigger.ts` exists
-- [ ] All files contain proper module documentation headers
+- [x] `/src/lib/content-translation/triggers/` directory exists
+- [x] `/src/lib/content-translation/triggers/index.ts` exists with barrel exports
+- [x] `/src/lib/content-translation/triggers/item-trigger.ts` exists
+- [x] `/src/lib/content-translation/triggers/article-trigger.ts` exists
+- [x] `/src/lib/content-translation/triggers/link-trigger.ts` exists
+- [x] All files contain proper module documentation headers
 
 ### Function Implementation
-- [ ] `triggerItemTranslation()` function is exported
-- [ ] `triggerArticleTranslation()` function is exported
-- [ ] `triggerLinkTranslation()` function is exported
-- [ ] All functions accept `(entityId: string, sourceLanguage: SupportedLanguage)` parameters
-- [ ] All functions return `Promise<QueueTranslationResult>`
-- [ ] Console logging follows `<ENTITY>_TRIGGER:` prefix pattern
+- [x] `triggerItemTranslation()` function is exported
+- [x] `triggerArticleTranslation()` function is exported
+- [x] `triggerLinkTranslation()` function is exported
+- [x] All functions accept `(entityId: string, sourceLanguage: SupportedLanguage)` parameters
+- [x] All functions return `Promise<QueueTranslationResult>`
+- [x] Console logging follows `<ENTITY>_TRIGGER:` prefix pattern
 
 ### Item Trigger Behavior
-- [ ] Fetches item by ID from `items` table
-- [ ] Returns error result if item not found
-- [ ] Extracts `name` field for translation
-- [ ] Extracts `description` field for translation (if present)
-- [ ] Uses `contentType: 'item_name'` for name field context
-- [ ] Uses `contentType: 'item_description'` for description field context
-- [ ] Calls `queueContentTranslations()` with `entityType: 'item'`
+- [x] Fetches item by ID from `items` table
+- [x] Returns error result if item not found
+- [x] Extracts `name` field for translation
+- [x] Extracts `description` field for translation (if present)
+- [x] Uses `contentType: 'item_name'` for name field context
+- [x] Uses `contentType: 'item_description'` for description field context
+- [x] Calls `queueContentTranslations()` with `entityType: 'item'`
 
 ### Article Trigger Behavior
-- [ ] Fetches article by ID from `item_articles` table
-- [ ] Returns error result if article not found
-- [ ] Extracts `title` field for translation
-- [ ] Extracts `description` field for translation (if present)
-- [ ] Uses `contentType: 'article_title'` for title field context
-- [ ] Uses `contentType: 'article_description'` for description field context
-- [ ] Calls `queueContentTranslations()` with `entityType: 'article'`
+- [x] Fetches article by ID from `item_articles` table
+- [x] Returns error result if article not found
+- [x] Extracts `title` field for translation
+- [x] Extracts `description` field for translation (if present)
+- [x] Uses `contentType: 'article_title'` for title field context
+- [x] Uses `contentType: 'article_description'` for description field context
+- [x] Calls `queueContentTranslations()` with `entityType: 'article'`
 
 ### Link Trigger Behavior
-- [ ] Fetches link by ID from `item_links` table
-- [ ] Returns error result if link not found
-- [ ] Extracts ONLY `title` field for translation
-- [ ] Does NOT extract `url` or `thumbnail_url` (these are never translated)
-- [ ] Uses `contentType: 'link_title'` for title field context
-- [ ] Calls `queueContentTranslations()` with `entityType: 'link'`
+- [x] Fetches link by ID from `item_links` table
+- [x] Returns error result if link not found
+- [x] Extracts ONLY `title` field for translation
+- [x] Does NOT extract `url` or `thumbnail_url` (these are never translated)
+- [x] Uses `contentType: 'link_title'` for title field context
+- [x] Calls `queueContentTranslations()` with `entityType: 'link'`
 
 ### Error Handling
-- [ ] All triggers handle missing entities gracefully
-- [ ] All triggers handle database errors gracefully
-- [ ] All triggers catch and wrap exceptions
-- [ ] Error results include descriptive messages
-- [ ] No exceptions thrown - all errors returned in result object
+- [x] All triggers handle missing entities gracefully
+- [x] All triggers handle database errors gracefully
+- [x] All triggers catch and wrap exceptions
+- [x] Error results include descriptive messages
+- [x] No exceptions thrown - all errors returned in result object
 
 ### Integration
-- [ ] All triggers use `queueContentTranslations` from orchestrator module
-- [ ] Compatible with types from Task 1.1
-- [ ] Exported from `/src/lib/content-translation/triggers/index.ts`
-- [ ] Exported from `/src/lib/content-translation/index.ts`
-- [ ] Import works: `import { triggerItemTranslation } from '@/lib/content-translation'`
+- [x] All triggers use `queueContentTranslations` from orchestrator module
+- [x] Compatible with types from Task 1.1
+- [x] Exported from `/src/lib/content-translation/triggers/index.ts`
+- [x] Exported from `/src/lib/content-translation/index.ts`
+- [x] Import works: `import { triggerItemTranslation } from '@/lib/content-translation'`
 
 ### Compilation
-- [ ] `npm run build` completes without TypeScript errors
-- [ ] No type conflicts with existing modules
-- [ ] All generics resolve correctly
+- [x] `npm run build` completes without TypeScript errors (trigger modules compile; pre-existing errors in other files)
+- [x] No type conflicts with existing modules
+- [x] All generics resolve correctly
 
 ---
 

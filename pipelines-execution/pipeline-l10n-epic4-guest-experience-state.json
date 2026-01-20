@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-20T12:51:10.272641",
+  "updated_at": "2026-01-20T17:30:46.065639",
   "status": "completed",
   "current_stage": "request",
   "current_task_index": 25,
@@ -569,168 +569,12 @@
       "current_task_index": 0
     }
   },
-  "errors": [
-    {
-      "stage": "details",
-      "task_id": "3.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:18:00.400691"
-    },
-    {
-      "stage": "request",
-      "task_id": "3.3",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:19:03.018387"
-    },
-    {
-      "stage": "request",
-      "task_id": "3.4",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:20:06.844360"
-    },
-    {
-      "stage": "request",
-      "task_id": "3.5",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:21:12.999075"
-    },
-    {
-      "stage": "request",
-      "task_id": "3.6",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:22:14.999568"
-    },
-    {
-      "stage": "request",
-      "task_id": "4.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:23:24.389755"
-    },
-    {
-      "stage": "request",
-      "task_id": "4.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:24:41.035805"
-    },
-    {
-      "stage": "request",
-      "task_id": "5.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:25:50.422658"
-    },
-    {
-      "stage": "request",
-      "task_id": "5.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:27:04.395106"
-    },
-    {
-      "stage": "request",
-      "task_id": "5.3",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:28:18.750041"
-    },
-    {
-      "stage": "request",
-      "task_id": "5.4",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:29:35.532491"
-    },
-    {
-      "stage": "request",
-      "task_id": "6.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:30:54.070264"
-    },
-    {
-      "stage": "request",
-      "task_id": "6.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:32:12.851402"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:33:33.665903"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:34:51.669782"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.3",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:36:13.874269"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.4",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:37:28.294977"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.5",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 1am (Europe/Paris)",
-      "timestamp": "2026-01-20T00:38:43.164299"
-    },
-    {
-      "stage": "request",
-      "task_id": "6.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:00:17.441514"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:01:11.332939"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:02:27.325503"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.3",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:03:56.448650"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.4",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:05:20.332810"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.5",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:06:54.671560"
-    },
-    {
-      "stage": "request",
-      "task_id": "6.2",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:38:12.600743"
-    },
-    {
-      "stage": "request",
-      "task_id": "7.1",
-      "error": "Exit code 1 | Stderr: (empty) | Last output: You're out of extra usage \u00b7 resets 12pm (Europe/Paris)",
-      "timestamp": "2026-01-20T09:39:52.092426"
-    }
-  ],
+  "errors": [],
   "metadata": {
     "total_requests_generated": 6,
     "last_request_id": "REQ-E04-027",
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
-  }
+  },
+  "recent_errors": []
 }
