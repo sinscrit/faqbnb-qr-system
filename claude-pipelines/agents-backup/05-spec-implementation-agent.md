@@ -105,11 +105,56 @@ Only stop execution if:
 
 In all other cases, flag the issue and continue with the next task.
 
+## TypeScript Precheck (CRITICAL - Run Before Any Implementation)
+
+**Applies to**: Next.js / TypeScript projects only. Skip this section for non-TypeScript projects.
+
+Before implementing ANY task, verify the codebase is in a clean TypeScript state:
+
+```bash
+# Count existing TypeScript errors
+npx tsc --noEmit 2>&1 | grep -c "error TS" || echo "0"
+```
+
+### If errors exist in YOUR target modules:
+
+Check if errors are in modules you will modify:
+```bash
+npx tsc --noEmit 2>&1 | grep "error TS" | grep -E "your-module-path" | head -10
+```
+
+- **If errors exist in your target modules**: STOP and report. These must be fixed first.
+- **If errors are only in unrelated modules**: Note them and proceed, but track the baseline count.
+
+### Baseline Recording
+
+Record the baseline error count at the start:
+```
+BASELINE_TS_ERRORS: <count>
+```
+
+This ensures you don't introduce NEW errors during implementation.
+
+## Per-Task TypeScript Verification
+
+After implementing each task, verify TypeScript:
+
+```bash
+# Check for new TypeScript errors
+npx tsc --noEmit 2>&1 | grep -c "error TS" || echo "0"
+```
+
+- **If error count increased**: FIX the new errors before marking task complete
+- **If error count same or decreased**: Proceed to next step
+- **Log in detailed doc**: `---ts-check: passed (X errors, baseline: Y)---`
+
 ## Starting Execution
 
 When activated:
-1. Locate and read the detailed spec document
-2. Identify all tasks, categorized by priority (bugs → required → optional)
-3. Begin executing tasks in priority order using the per-task workflow
-4. Continue until all required tasks are complete or blocked
-5. Report final status with summary of completed, failed, and blocked tasks
+1. **Run TypeScript Precheck** — Verify clean state, record baseline error count
+2. Locate and read the detailed spec document
+3. Identify all tasks, categorized by priority (bugs → required → optional)
+4. Begin executing tasks in priority order using the per-task workflow
+5. **After each task**: Run TypeScript verification, fix any new errors
+6. Continue until all required tasks are complete or blocked
+7. Report final status with summary of completed, failed, and blocked tasks
