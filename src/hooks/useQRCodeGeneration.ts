@@ -146,7 +146,7 @@ export function useQRCodeGeneration(options: UseQRCodeGenerationOptions = {}): U
         throw new Error('Generation aborted');
       }
       
-      const qrUrl = `${baseUrl}/item/${item.public_id}`;
+      const qrUrl = `${baseUrl}/item/${item.publicId || (item as any).public_id}`;
       console.log(`Generating QR code for ${item.name} (attempt ${retryCount + 1})`);
       
       // BUG FIX: Add timeout for individual generation

@@ -143,10 +143,8 @@ export function usePDFExportSettings(
     setSettings(current => {
       const newSettings = { ...current, ...updates };
 
-      // Keep qrSizeMm in sync with qrSize if qrSize was updated
-      if (updates.qrSize !== undefined) {
-        newSettings.qrSizeMm = updates.qrSize;
-      }
+      // qrSize is already updated from the spread above
+      // No need to sync qrSizeMm as it's been removed from the interface
 
       // Keep showLabels in sync with includeLabels if includeLabels was updated
       if (updates.includeLabels !== undefined) {

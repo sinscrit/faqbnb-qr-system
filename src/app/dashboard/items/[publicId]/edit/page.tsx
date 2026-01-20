@@ -102,8 +102,8 @@ export default function EditItemPage() {
         setFormData({
           name: item.name || '',
           description: item.description || '',
-          propertyId: item.property_id || '',
-          url: item.qr_code_url || ''
+          propertyId: (item as any).property_id || (item as any).propertyId || '',
+          url: item.qrCodeUrl || ''
         });
       } else {
         setError(response.error || 'Failed to load item data');

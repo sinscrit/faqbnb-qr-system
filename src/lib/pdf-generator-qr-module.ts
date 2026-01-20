@@ -57,22 +57,24 @@ export interface PDFGenerationResult {
   config?: PDFConfig;
 }
 
-// Type-safe function declarations
-export declare function generatePDFsFromJSON(
-  jsonString: string, 
+// Type definitions for the imported module functions
+// Note: The actual exports are from the destructured pdfModule above
+// These type definitions are for documentation and IDE support only
+export type GeneratePDFsFromJSON = (
+  jsonString: string,
   pdfOutput?: PDFOutputConfig
-): Promise<PDFGenerationResult[]>;
+) => Promise<PDFGenerationResult[]>;
 
-export declare function generateSinglePDF(
-  config: PDFConfig, 
+export type GenerateSinglePDF = (
+  config: PDFConfig,
   pdfOutput?: PDFOutputConfig
-): Promise<PDFGenerationResult>;
+) => Promise<PDFGenerationResult>;
 
-export declare function generatePDFBuffer(config: PDFConfig): Promise<Buffer>;
+export type GeneratePDFBuffer = (config: PDFConfig) => Promise<Buffer>;
 
-export declare function generateQRCodeBuffer(data: string, size?: number): Promise<Buffer | null>;
+export type GenerateQRCodeBuffer = (data: string, size?: number) => Promise<Buffer | null>;
 
-export declare function convertToPoints(value: string | number): number;
-export declare function getPaperSize(size: string): [number, number];
-export declare function getMarginSize(marginType: string, paperSize: [number, number]): number;
-export declare function getQRCodeSize(sizeType: string, availableSpace: number): number;
+export type ConvertToPoints = (value: string | number) => number;
+export type GetPaperSize = (size: string) => [number, number];
+export type GetMarginSize = (marginType: string, paperSize: [number, number]) => number;
+export type GetQRCodeSize = (sizeType: string, availableSpace: number) => number;

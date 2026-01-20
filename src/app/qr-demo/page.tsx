@@ -19,58 +19,63 @@ export default function QRDemoPage() {
   const demoItems: Item[] = [
     {
       id: '9659f771-6f3b-40cc-a906-57bbb451788f',
-      public_id: '9659f771-6f3b-40cc-a906-57bbb451788f',
+      publicId: '9659f771-6f3b-40cc-a906-57bbb451788f',
       name: 'Samsung 65" QLED Smart TV',
       description: 'Living room smart TV with 4K resolution and streaming capabilities',
-      qr_code_url: null,
-      qr_code_uploaded_at: null,
-      property_id: propertyId,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      qrCodeUrl: null,
+      qrCodeUploadedAt: null,
+      propertyId: propertyId,
+      tags: ['#room.living-room'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     },
     {
       id: 'f2b82987-a2a4-4de2-94db-f8924dc096d5',
-      public_id: 'f2b82987-a2a4-4de2-94db-f8924dc096d5',
+      publicId: 'f2b82987-a2a4-4de2-94db-f8924dc096d5',
       name: 'Keurig K-Elite Coffee Maker',
       description: 'Single-serve coffee maker in the kitchen. Supports K-Cup pods',
-      qr_code_url: null,
-      qr_code_uploaded_at: null,
-      property_id: propertyId,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      qrCodeUrl: null,
+      qrCodeUploadedAt: null,
+      propertyId: propertyId,
+      tags: ['#room.kitchen'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     },
     {
       id: '0d92cbeb-a61f-4492-9346-6ab03363fdab',
-      public_id: '0d92cbeb-a61f-4492-9346-6ab03363fdab',
+      publicId: '0d92cbeb-a61f-4492-9346-6ab03363fdab',
       name: 'Nest Learning Thermostat',
       description: 'Smart thermostat that learns your schedule and preferences',
-      qr_code_url: null,
-      qr_code_uploaded_at: null,
-      property_id: propertyId,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      qrCodeUrl: null,
+      qrCodeUploadedAt: null,
+      propertyId: propertyId,
+      tags: ['#room.hallway'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     },
     {
       id: '1c8e4723-5186-41f3-b4bd-11b614a77bdb',
-      public_id: '1c8e4723-5186-41f3-b4bd-11b614a77bdb',
+      publicId: '1c8e4723-5186-41f3-b4bd-11b614a77bdb',
       name: 'Bosch 800 Series Dishwasher',
       description: 'Quiet dishwasher with multiple wash cycles',
-      qr_code_url: null,
-      qr_code_uploaded_at: null,
-      property_id: propertyId,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      qrCodeUrl: null,
+      qrCodeUploadedAt: null,
+      propertyId: propertyId,
+      tags: ['#room.kitchen'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     },
     {
       id: '8d678bd0-e4f7-495f-b4cd-43756813e23a',
-      public_id: '8d678bd0-e4f7-495f-b4cd-43756813e23a',
+      publicId: '8d678bd0-e4f7-495f-b4cd-43756813e23a',
       name: 'Samsung WF45T6000AW Washing Machine',
       description: 'Front-loading washing machine with steam cleaning',
-      qr_code_url: null,
-      qr_code_uploaded_at: null,
-      property_id: propertyId,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      qrCodeUrl: null,
+      qrCodeUploadedAt: null,
+      propertyId: propertyId,
+      tags: ['#room.laundry'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     }
   ];
 

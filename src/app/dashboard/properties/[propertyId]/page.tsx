@@ -357,29 +357,35 @@ const UserPropertyDetailPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/dashboard/items/${item.publicId || item.public_id}/edit`}
-                        className="bg-gray-50 rounded-lg p-4 border hover:border-blue-300 hover:shadow-md transition-all cursor-pointer block"
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-medium text-gray-900">{item.name}</h3>
-                          <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
-                            {item.publicId || item.public_id}
-                          </span>
-                        </div>
-                        {item.description && (
-                          <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                        )}
-                        <div className="text-xs text-gray-500">
-                          <p>Added: {item.createdAt ? formatDate(item.createdAt) : formatDate(item.created_at)}</p>
-                          {(item.updated_at || item.updatedAt) && (item.updated_at !== item.created_at || item.updatedAt !== item.createdAt) && (
-                            <p>Updated: {item.updatedAt ? formatDate(item.updatedAt) : formatDate(item.updated_at)}</p>
+                    {items.map((item) => {
+                      const itemAny = item as any;
+                      const publicId = item.publicId || itemAny.public_id;
+                      const createdAt = item.createdAt || itemAny.created_at;
+                      const updatedAt = item.updatedAt || itemAny.updated_at;
+                      return (
+                        <Link
+                          key={item.id}
+                          href={`/dashboard/items/${publicId}/edit`}
+                          className="bg-gray-50 rounded-lg p-4 border hover:border-blue-300 hover:shadow-md transition-all cursor-pointer block"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="font-medium text-gray-900">{item.name}</h3>
+                            <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                              {publicId}
+                            </span>
+                          </div>
+                          {item.description && (
+                            <p className="text-sm text-gray-600 mb-2">{item.description}</p>
                           )}
-                        </div>
-                      </Link>
-                    ))}
+                          <div className="text-xs text-gray-500">
+                            <p>Added: {formatDate(createdAt)}</p>
+                            {updatedAt && updatedAt !== createdAt && (
+                              <p>Updated: {formatDate(updatedAt)}</p>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { JSX } from 'react';
 import { QRPrintSettings } from '@/types';
 import { cn } from '@/lib/utils';
 
