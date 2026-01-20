@@ -1,9 +1,9 @@
-# Template for Pipeline-Level Stages (testcheck, usecases)
+# Template for Pipeline-Level Stages (precheck, testcheck, usecases)
 # Agent 00b MUST use these templates when generating pipeline configurations
-# Last Modified: 2026-01-19
+# Last Modified: 2026-01-20
 #
-# These stages run ONCE for the entire pipeline after all per-task stages complete.
-# They are NOT run for each task - they operate on the pipeline as a whole.
+# Stage 0 (precheck): Runs BEFORE any implementation to verify clean codebase state
+# Stages 5-6 (testcheck, usecases): Run ONCE after all per-task stages complete
 
 # =============================================================================
 # CONTEXT SECTION (Agent 00b must extract from implementation plan)
@@ -31,6 +31,61 @@
 #     # For L10N epic: "Multi-language content display", "Translation fallback"
 #     # For Auth epic: "Login flows", "Session management"
 #     # For UI epic: "Responsive layout", "Accessibility"
+
+# =============================================================================
+# STAGE 0: PRECHECK - Codebase Health Verification (Next.js/TypeScript only)
+# =============================================================================
+#
+# This stage runs BEFORE any implementation begins. It ensures the codebase is
+# in a clean state and establishes a baseline for TypeScript errors.
+#
+# CRITICAL: This prevents cascading failures where Epic N depends on broken
+# code from Epic N-1. If precheck fails, the pipeline should not proceed.
+
+precheck_stage_template:
+  - id: precheck
+    name: "Codebase Health Precheck"
+    description: "Verify TypeScript compilation and establish error baseline before implementation"
+    mode: pipeline           # Runs ONCE before any per-task stages
+    enabled: true
+    run_before_tasks: true   # MUST run before any implementation begins
+    applies_to: nextjs       # Only for Next.js/TypeScript projects
+
+    # This stage has NO prerequisites - it's the first thing that runs
+
+    checks:
+      # TypeScript compilation check
+      - name: typescript
+        description: "Verify TypeScript compiles without errors in target modules"
+        command: "npx tsc --noEmit 2>&1"
+        success_criteria: "No errors in modules that will be modified"
+        blocking: true       # If target modules have errors, block pipeline
+
+      # Build verification (optional, can be slow)
+      - name: build
+        description: "Verify project builds successfully"
+        command: "npm run build 2>&1 | tail -50"
+        success_criteria: "Build completes without errors"
+        blocking: false      # Build failures are noted but don't block
+
+    on_failure:
+      action: "report_and_block"
+      message: |
+        ⛔ PRECHECK FAILED: Codebase has TypeScript errors in target modules.
+
+        These errors MUST be fixed before implementation can proceed.
+        Continuing would cause cascading failures in dependent tasks.
+
+        Run `npx tsc --noEmit` to see the full error list.
+
+    output:
+      type: precheck_report
+      fields:
+        - typescript_error_count
+        - typescript_errors_in_target_modules
+        - build_status
+        - baseline_recorded
+        - proceed_allowed
 
 # =============================================================================
 # STAGE 5: TESTCHECK - Pipeline-Level Verification
@@ -302,9 +357,17 @@ usecases_stage_template:
 # COMPLETE EXAMPLE
 # =============================================================================
 #
-# Here's how all 6 stages should look in a complete pipeline YAML:
+# Here's how all 7 stages should look in a complete pipeline YAML:
 #
 # request_stages:
+#   # Stage 0: Precheck (runs FIRST, before any implementation)
+#   - id: precheck
+#     name: "Codebase Health Precheck"
+#     mode: pipeline
+#     run_before_tasks: true
+#     applies_to: nextjs
+#     ...
+#
 #   # Stage 1-4: Per-task stages
 #   - id: request
 #     ...
@@ -325,3 +388,19 @@ usecases_stage_template:
 #     name: "Use Case Test Generation"
 #     mode: pipeline
 #     ...
+#
+# =============================================================================
+# EXECUTION ORDER
+# =============================================================================
+#
+# 1. PRECHECK (Stage 0) - Verify codebase health, establish baseline
+#    └── If TypeScript errors in target modules → BLOCK pipeline
+#
+# 2. PER-TASK STAGES (Stages 1-4) - For each task in the pipeline:
+#    └── request → overview → details → implementation
+#
+# 3. TESTCHECK (Stage 5) - Verify all implementations
+#    └── Run after all tasks complete
+#
+# 4. USECASES (Stage 6) - Generate E2E test scenarios
+#    └── Run after testcheck

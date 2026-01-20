@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-20T17:47:25.478375",
+  "updated_at": "2026-01-20T17:52:00.470007",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 49,
+  "current_task_index": 50,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -1017,11 +1017,16 @@
       "title": "Update ItemManager component family",
       "description": "",
       "raw_match": "- [ ] **Task 2D.2:** Update ItemManager component family",
-      "status": "pending",
-      "request_id": null,
+      "status": "processing",
+      "request_id": "REQ-E02-079",
       "error": null,
       "processed_at": null,
-      "files": {}
+      "files": {
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-079",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-079-update-itemmanager-component-family-overview.md"
+      },
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "2D.3",
@@ -1668,7 +1673,7 @@
   "errors": [],
   "metadata": {
     "total_requests_generated": 2,
-    "last_request_id": "REQ-E02-078",
+    "last_request_id": "REQ-E02-079",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
   },
