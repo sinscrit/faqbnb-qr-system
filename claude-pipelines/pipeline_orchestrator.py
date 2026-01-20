@@ -519,25 +519,24 @@ def is_precheck_required(state: dict, config: dict) -> bool:
     1. TypeScript compilation check (always, unless skipped in config)
     2. Required tool availability checks (if configured)
 
-    Returns True if:
-    - No precheck has been run yet OR precheck previously failed
-    - Implementation stage will be run
+    IMPORTANT: Precheck ALWAYS runs when implementation stage is requested.
+    This ensures the codebase is verified fresh each time, catching:
+    - Errors introduced by other epics/pipelines
+    - Errors from merged code
+    - Dependency issues that appeared since last run
 
-    Returns False if:
-    - Precheck already passed
-    - Only non-implementation stages are being run (handled by caller)
+    The --force flag can be used to SKIP precheck failure (not to trigger it).
+    Precheck is triggered by default whenever implementation is requested.
+
+    Returns True always (for implementation stages - caller checks stage filter)
     """
-    # Check if precheck already exists and passed
-    precheck = get_precheck_status(state)
-    if precheck and precheck.get('status') == 'passed':
-        return False
+    # ALWAYS run precheck when implementation is requested
+    # The codebase state can change between runs (other epics, merges, etc.)
+    # so we must verify fresh each time
+    #
+    # Previous behavior (removed): Skip if already passed
+    # New behavior: Always run to catch new issues
 
-    # If precheck failed previously, we should re-run it
-    # (user may have fixed the issues)
-
-    # Precheck is always required for implementation to ensure:
-    # - TypeScript has no errors
-    # - Required tools are available
     return True
 
 
@@ -735,12 +734,15 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
     precheck_timeout = impl_config.get('precheck', {}).get('timeout', 120)
     skip_typescript = impl_config.get('precheck', {}).get('skip_typescript', False)
 
-    # Check if precheck already done and not forcing
-    if not force:
-        existing = get_precheck_status(state)
-        if existing and existing.get('status') == 'passed':
-            print(f"  Precheck already passed at {existing.get('completed_at', 'unknown')}")
-            return True, existing
+    # NOTE: Precheck always runs fresh when implementation is requested
+    # The codebase state can change between runs, so we verify each time
+    # Previous precheck results are logged but do not skip the check
+    existing = get_precheck_status(state)
+    if existing:
+        prev_status = existing.get('status', 'unknown')
+        prev_time = existing.get('completed_at', 'unknown')
+        print(f"  Previous precheck: {prev_status} at {prev_time}")
+        print(f"  Running fresh precheck to verify current codebase state...")
 
     print(f"\n{'='*60}")
     print("Running Precheck for Implementation")

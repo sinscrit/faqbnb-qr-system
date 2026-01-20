@@ -3584,3 +3584,51 @@ Delivers a consistent multilingual experience throughout the item management wor
 - [ ] Accessibility labels and ARIA attributes reflect the selected language where applicable
 - [ ] Component rendering correctly handles text length variations across different languages
 
+
+---
+
+## REQ-E02-080: Update ItemGrid and ItemCard Components for Internationalization
+
+**Date**: 2026-01-20 18:42
+**Type**: ENHANCEMENT
+**Size**: M
+**Phase**: 2D (Item Management)
+**Task**: 2D.3
+
+### Summary
+ItemGrid and ItemCard components must be updated to display localized content from the item_translations table and handle the current locale context, showing translated item names and descriptions while providing appropriate fallback content when translations are missing.
+
+### Current Behavior
+ItemGrid and ItemCard components display item information using the default language values stored in the base items table. Users viewing items in their preferred language see item names and descriptions only in the language originally entered by the property owner. The components do not query the item_translations table or respond to locale context changes, resulting in a monolingual item browsing experience.
+
+### Expected Behavior
+ItemGrid and ItemCard components detect the current user locale and query the item_translations table to retrieve localized item names and descriptions. When a translation exists for the current locale, the component displays the translated content. When no translation exists, the component displays a fallback value from the base items table with an optional indicator that the content is not available in the selected language. Language switching updates all visible item cards immediately to reflect the new locale.
+
+### User Impact
+Users browsing items in their preferred language see item names and descriptions translated into French, Spanish, German, Italian, or Portuguese when those translations have been provided. Property owners who maintain multilingual item information can see their content displayed appropriately based on locale selection. Users experience a more cohesive multilingual browsing experience when viewing item collections.
+
+### Business Value
+Enables true multilingual item presentation by connecting the UI layer to the translation database schema. Supports international property owners serving guests who speak different languages by allowing item information to be displayed in multiple languages. Demonstrates the value of the translation infrastructure by making localized content visible in the primary item browsing interfaces.
+
+### Acceptance Criteria
+- [ ] ItemGrid component accepts and uses the current locale context
+- [ ] ItemCard component receives locale information from its parent ItemGrid
+- [ ] Components query the item_translations table for the current locale when loading items
+- [ ] Translated item names display when available for the selected language
+- [ ] Translated item descriptions display when available for the selected language
+- [ ] Fallback logic displays default language content when translation is missing
+- [ ] Optional visual indicator shows when content is displayed in fallback language
+- [ ] Language switching triggers re-query of item translations for the new locale
+- [ ] Component state updates reflect the new translations without requiring page reload
+- [ ] Components handle missing or incomplete translation data gracefully without errors
+- [ ] Loading states indicate when translation data is being fetched
+- [ ] Database queries efficiently join items and item_translations tables
+- [ ] Query performance remains acceptable when loading multiple item cards
+- [ ] All hardcoded UI labels in the components use translation hooks for locale-specific display
+- [ ] Empty states display translated messages when no items exist
+- [ ] Error states display translated messages when translation loading fails
+- [ ] Component TypeScript types correctly represent translated vs non-translated content
+- [ ] Accessibility attributes reflect the language of displayed content
+- [ ] Components handle edge cases such as partial translations or mixed language content
+- [ ] Unit tests verify translation loading and fallback behavior
+
