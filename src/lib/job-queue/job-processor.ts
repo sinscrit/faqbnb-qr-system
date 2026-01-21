@@ -186,6 +186,7 @@ export interface TagContent {
 import { supabaseAdmin } from '@/lib/supabase';
 import { translateText } from '@/lib/translation-service';
 import { fetchAndLockNextJob, markJobCompleted, markJobFailed } from './translation-jobs';
+import { processItemTranslation as processItemTranslationExternal } from '@/lib/content-translation/processors';
 
 // ===========================================================================
 // Entity Content Fetching
@@ -844,9 +845,36 @@ async function processTranslationJob(
 
     // Route to entity-specific processor based on entityType
     switch (job.entityType) {
-      case 'item':
-        result = await processItemTranslation(job, config);
-        break;
+      case 'item': {
+        // Use dedicated item processor (REQ-E03-014)
+        // The external processor handles job status updates internally
+        const itemResult = await processItemTranslationExternal(job);
+
+        // Stop heartbeat before returning
+        stopHeartbeat();
+
+        // Convert TranslatedItemFields to Record<string, string>
+        const translatedFields: Record<string, string> | undefined =
+          itemResult.translatedFields
+            ? {
+                name: itemResult.translatedFields.name,
+                ...(itemResult.translatedFields.description && {
+                  description: itemResult.translatedFields.description,
+                }),
+              }
+            : undefined;
+
+        return {
+          jobId: job.id,
+          success: itemResult.success,
+          entityType,
+          entityId,
+          targetLanguage,
+          translatedFields,
+          errorMessage: itemResult.errorMessage,
+          processingTimeMs: itemResult.processingTimeMs,
+        };
+      }
 
       case 'article':
         result = await processArticleTranslation(job, config);

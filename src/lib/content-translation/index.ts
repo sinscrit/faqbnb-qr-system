@@ -109,3 +109,10 @@ export type {
   AccountForLanguageDetection,
   DetectSourceLanguageOptions,
 } from './source-language';
+
+// ============================================================================
+// Entity-Specific Processors (REQ-E03-014)
+// ============================================================================
+
+export { processItemTranslation } from './processors';
+export type { ItemProcessingResult } from './processors';
