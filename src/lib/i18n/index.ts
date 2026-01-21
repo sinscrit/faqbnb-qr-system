@@ -46,3 +46,12 @@ export {
   type UserLocalePreference,
   type DetectLanguageOptions,
 } from './language-detection';
+
+// Date/Time Formatting exports (REQ-E02-029)
+export {
+  useDateTimeFormatter,
+  getDateTimeFormatter,
+  type DateFormatStyle,
+  type TimeFormatStyle,
+  type DateTimeFormatterReturn,
+} from './datetime-formatting';

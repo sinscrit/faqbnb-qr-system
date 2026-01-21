@@ -106,15 +106,23 @@ export function downloadBlob(blob: Blob, filename: string): void {
  * Format a date for printing purposes
  * @param date - Date string or Date object
  * @returns Formatted date string suitable for printing
+ * @deprecated Use `useDateTimeFormatter().formatDateTime()` from '@/lib/i18n' instead for locale-aware formatting.
+ * This function will be removed in a future version.
  */
 export function formatPrintableDate(date: string | Date): string {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn(
+      'formatPrintableDate is deprecated. Use useDateTimeFormatter() from @/lib/i18n for locale-aware formatting.'
+    );
+  }
+
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     if (isNaN(dateObj.getTime())) {
       return 'Invalid Date';
     }
-    
+
     return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

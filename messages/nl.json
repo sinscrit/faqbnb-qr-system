@@ -569,6 +569,90 @@
     "changeLanguage": "Taal wijzigen",
     "languageChanged": "Taal succesvol gewijzigd"
   },
+  "datetime": {
+    "relative": {
+      "justNow": "Zojuist",
+      "secondsAgo": "{count, plural, one {# seconde geleden} other {# seconden geleden}}",
+      "minutesAgo": "{count, plural, one {# minuut geleden} other {# minuten geleden}}",
+      "hoursAgo": "{count, plural, one {# uur geleden} other {# uur geleden}}",
+      "daysAgo": "{count, plural, one {# dag geleden} other {# dagen geleden}}",
+      "weeksAgo": "{count, plural, one {# week geleden} other {# weken geleden}}",
+      "monthsAgo": "{count, plural, one {# maand geleden} other {# maanden geleden}}",
+      "yearsAgo": "{count, plural, one {# jaar geleden} other {# jaar geleden}}",
+      "inSeconds": "{count, plural, one {over # seconde} other {over # seconden}}",
+      "inMinutes": "{count, plural, one {over # minuut} other {over # minuten}}",
+      "inHours": "{count, plural, one {over # uur} other {over # uur}}",
+      "inDays": "{count, plural, one {over # dag} other {over # dagen}}",
+      "inWeeks": "{count, plural, one {over # week} other {over # weken}}",
+      "inMonths": "{count, plural, one {over # maand} other {over # maanden}}",
+      "inYears": "{count, plural, one {over # jaar} other {over # jaar}}",
+      "today": "Vandaag",
+      "yesterday": "Gisteren",
+      "tomorrow": "Morgen",
+      "thisWeek": "Deze week",
+      "lastWeek": "Vorige week",
+      "nextWeek": "Volgende week"
+    },
+    "units": {
+      "second": "{count, plural, one {seconde} other {seconden}}",
+      "minute": "{count, plural, one {minuut} other {minuten}}",
+      "hour": "{count, plural, one {uur} other {uur}}",
+      "day": "{count, plural, one {dag} other {dagen}}",
+      "week": "{count, plural, one {week} other {weken}}",
+      "month": "{count, plural, one {maand} other {maanden}}",
+      "year": "{count, plural, one {jaar} other {jaar}}"
+    },
+    "days": {
+      "sunday": "Zondag",
+      "monday": "Maandag",
+      "tuesday": "Dinsdag",
+      "wednesday": "Woensdag",
+      "thursday": "Donderdag",
+      "friday": "Vrijdag",
+      "saturday": "Zaterdag"
+    },
+    "daysShort": {
+      "sunday": "Zo",
+      "monday": "Ma",
+      "tuesday": "Di",
+      "wednesday": "Wo",
+      "thursday": "Do",
+      "friday": "Vr",
+      "saturday": "Za"
+    },
+    "months": {
+      "january": "Januari",
+      "february": "Februari",
+      "march": "Maart",
+      "april": "April",
+      "may": "Mei",
+      "june": "Juni",
+      "july": "Juli",
+      "august": "Augustus",
+      "september": "September",
+      "october": "Oktober",
+      "november": "November",
+      "december": "December"
+    },
+    "monthsShort": {
+      "january": "Jan",
+      "february": "Feb",
+      "march": "Mrt",
+      "april": "Apr",
+      "may": "Mei",
+      "june": "Jun",
+      "july": "Jul",
+      "august": "Aug",
+      "september": "Sep",
+      "october": "Okt",
+      "november": "Nov",
+      "december": "Dec"
+    },
+    "periods": {
+      "am": "AM",
+      "pm": "PM"
+    }
+  },
   "workflow": {
     "dialogs": {
       "confirmExit": {

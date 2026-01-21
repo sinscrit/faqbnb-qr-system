@@ -569,6 +569,90 @@
     "changeLanguage": "Sprache andern",
     "languageChanged": "Sprache erfolgreich geandert"
   },
+  "datetime": {
+    "relative": {
+      "justNow": "Gerade eben",
+      "secondsAgo": "{count, plural, one {vor # Sekunde} other {vor # Sekunden}}",
+      "minutesAgo": "{count, plural, one {vor # Minute} other {vor # Minuten}}",
+      "hoursAgo": "{count, plural, one {vor # Stunde} other {vor # Stunden}}",
+      "daysAgo": "{count, plural, one {vor # Tag} other {vor # Tagen}}",
+      "weeksAgo": "{count, plural, one {vor # Woche} other {vor # Wochen}}",
+      "monthsAgo": "{count, plural, one {vor # Monat} other {vor # Monaten}}",
+      "yearsAgo": "{count, plural, one {vor # Jahr} other {vor # Jahren}}",
+      "inSeconds": "{count, plural, one {in # Sekunde} other {in # Sekunden}}",
+      "inMinutes": "{count, plural, one {in # Minute} other {in # Minuten}}",
+      "inHours": "{count, plural, one {in # Stunde} other {in # Stunden}}",
+      "inDays": "{count, plural, one {in # Tag} other {in # Tagen}}",
+      "inWeeks": "{count, plural, one {in # Woche} other {in # Wochen}}",
+      "inMonths": "{count, plural, one {in # Monat} other {in # Monaten}}",
+      "inYears": "{count, plural, one {in # Jahr} other {in # Jahren}}",
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "tomorrow": "Morgen",
+      "thisWeek": "Diese Woche",
+      "lastWeek": "Letzte Woche",
+      "nextWeek": "Nächste Woche"
+    },
+    "units": {
+      "second": "{count, plural, one {Sekunde} other {Sekunden}}",
+      "minute": "{count, plural, one {Minute} other {Minuten}}",
+      "hour": "{count, plural, one {Stunde} other {Stunden}}",
+      "day": "{count, plural, one {Tag} other {Tage}}",
+      "week": "{count, plural, one {Woche} other {Wochen}}",
+      "month": "{count, plural, one {Monat} other {Monate}}",
+      "year": "{count, plural, one {Jahr} other {Jahre}}"
+    },
+    "days": {
+      "sunday": "Sonntag",
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag"
+    },
+    "daysShort": {
+      "sunday": "So",
+      "monday": "Mo",
+      "tuesday": "Di",
+      "wednesday": "Mi",
+      "thursday": "Do",
+      "friday": "Fr",
+      "saturday": "Sa"
+    },
+    "months": {
+      "january": "Januar",
+      "february": "Februar",
+      "march": "März",
+      "april": "April",
+      "may": "Mai",
+      "june": "Juni",
+      "july": "Juli",
+      "august": "August",
+      "september": "September",
+      "october": "Oktober",
+      "november": "November",
+      "december": "Dezember"
+    },
+    "monthsShort": {
+      "january": "Jan",
+      "february": "Feb",
+      "march": "Mär",
+      "april": "Apr",
+      "may": "Mai",
+      "june": "Jun",
+      "july": "Jul",
+      "august": "Aug",
+      "september": "Sep",
+      "october": "Okt",
+      "november": "Nov",
+      "december": "Dez"
+    },
+    "periods": {
+      "am": "AM",
+      "pm": "PM"
+    }
+  },
   "workflow": {
     "dialogs": {
       "confirmExit": {
