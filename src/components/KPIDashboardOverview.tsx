@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { BarChart3, Users, Building2, Eye, TrendingUp, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -306,6 +307,7 @@ interface KPIDashboardOverviewProps {
 }
 
 export default function KPIDashboardOverview({ onRefresh, className = '' }: KPIDashboardOverviewProps) {
+  const tNotifications = useTranslations('common.notifications');
   // Get current account context from useAuth
   const { currentAccount } = useAuth();
   
@@ -354,7 +356,7 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
 
     } catch (err) {
       console.error('Dashboard data fetch error:', err);
-      setError('Failed to load dashboard data');
+      setError(tNotifications('error.loadDashboard'));
     } finally {
       setLoading(false);
     }

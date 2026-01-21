@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Heart, TrendingUp, BarChart, RefreshCw } from 'lucide-react';
 
 interface ReactionData {
@@ -99,14 +100,15 @@ function EmptyState() {
   );
 }
 
-export default function ReactionAnalytics({ 
-  timeRange, 
-  className = '', 
+export default function ReactionAnalytics({
+  timeRange,
+  className = '',
   showTrends = false,
   itemId,
   data: propData,
   loading: propLoading = false
 }: ReactionAnalyticsProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [data, setData] = useState<ReactionData | null>(null);
   const [trends, setTrends] = useState<ReactionTrend[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -145,7 +147,7 @@ export default function ReactionAnalytics({
           }
         } catch (error) {
           console.error('Error fetching reaction data:', error);
-          setError(error instanceof Error ? error.message : 'Failed to load reaction data');
+          setError(error instanceof Error ? error.message : tNotifications('error.loadReactions'));
           
           // Set empty data as fallback
           setData({

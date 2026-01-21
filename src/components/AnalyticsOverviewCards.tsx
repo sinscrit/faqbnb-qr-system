@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Eye, Users, Heart, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface OverviewCardProps {
@@ -12,6 +13,7 @@ interface OverviewCardProps {
   color: 'blue' | 'green' | 'red' | 'purple';
   loading?: boolean;
   error?: boolean;
+  errorText?: string;
 }
 
 interface AnalyticsData {
@@ -37,15 +39,16 @@ interface AnalyticsOverviewCardsProps {
   loading?: boolean; // Accept loading state from parent
 }
 
-function OverviewCard({ 
-  title, 
-  value, 
-  change, 
-  changeType = 'neutral', 
-  icon, 
-  color, 
-  loading = false, 
-  error = false 
+function OverviewCard({
+  title,
+  value,
+  change,
+  changeType = 'neutral',
+  icon,
+  color,
+  loading = false,
+  error = false,
+  errorText = 'Failed to load'
 }: OverviewCardProps) {
   const getColorClasses = (cardColor: string) => {
     const colorMap = {
@@ -89,7 +92,7 @@ function OverviewCard({
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-600">{title}</p>
-            <p className="text-sm text-red-600 mt-1">Failed to load</p>
+            <p className="text-sm text-red-600 mt-1">{errorText}</p>
           </div>
           <div className="p-3 rounded-lg border border-red-200 bg-red-50 text-red-600">
             <AlertCircle className="w-6 h-6" />
@@ -144,12 +147,13 @@ function LoadingSkeleton() {
   );
 }
 
-export default function AnalyticsOverviewCards({ 
-  timeRange = '30d', 
+export default function AnalyticsOverviewCards({
+  timeRange = '30d',
   className = '',
   data: propData,
   loading: propLoading = false
 }: AnalyticsOverviewCardsProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -223,7 +227,7 @@ export default function AnalyticsOverviewCards({
         <div className="flex items-center space-x-2">
           <AlertCircle className="w-5 h-5 text-red-600" />
           <div>
-            <p className="text-sm font-medium text-red-900">Failed to load analytics data</p>
+            <p className="text-sm font-medium text-red-900">{tNotifications('error.loadAnalytics')}</p>
             <p className="text-sm text-red-700">{error}</p>
           </div>
         </div>

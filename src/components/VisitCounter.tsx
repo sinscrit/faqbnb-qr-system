@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Eye, TrendingUp, Calendar, Clock } from 'lucide-react';
 import { AnalyticsResponse } from '@/types/analytics';
 
@@ -80,6 +81,7 @@ function VisitCounterSkeleton({ showDetailed }: { showDetailed?: boolean }) {
 }
 
 export default function VisitCounter({ publicId, showDetailed = false }: VisitCounterProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [visitCounts, setVisitCounts] = useState<VisitCounts | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,7 +129,7 @@ export default function VisitCounter({ publicId, showDetailed = false }: VisitCo
         }
       } catch (error) {
         console.error('Failed to fetch visit counts:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load visit counts');
+        setError(error instanceof Error ? error.message : tNotifications('error.loadVisits'));
         
         // Set zero counts as fallback
         setVisitCounts({
@@ -245,7 +247,7 @@ export default function VisitCounter({ publicId, showDetailed = false }: VisitCo
       {error && !showDetailed && (
         <div className="mt-1">
           <p className="text-xs text-red-500" title={error}>
-            Failed to load views
+            {tNotifications('error.loadViews')}
           </p>
         </div>
       )}

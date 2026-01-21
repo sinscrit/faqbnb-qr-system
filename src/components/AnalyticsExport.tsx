@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Download, FileText, Calendar, TrendingUp, Loader2 } from 'lucide-react';
 
 interface ExportOptions {
@@ -17,11 +18,12 @@ interface AnalyticsExportProps {
   defaultTimeRange?: '24h' | '7d' | '30d' | '1y' | 'all';
 }
 
-export default function AnalyticsExport({ 
-  className = '', 
+export default function AnalyticsExport({
+  className = '',
   variant = 'button',
   defaultTimeRange = '30d'
 }: AnalyticsExportProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [options, setOptions] = useState<ExportOptions>({
@@ -179,7 +181,7 @@ export default function AnalyticsExport({
       const result = await response.json();
       
       if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch analytics data');
+        throw new Error(result.error || tNotifications('error.loadAnalytics'));
       }
 
       const data = result.data;
