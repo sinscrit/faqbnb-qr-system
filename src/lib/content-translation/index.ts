@@ -111,8 +111,8 @@ export type {
 } from './source-language';
 
 // ============================================================================
-// Entity-Specific Processors (REQ-E03-014)
+// Entity-Specific Processors (REQ-E03-014, REQ-E03-015)
 // ============================================================================
 
-export { processItemTranslation } from './processors';
-export type { ItemProcessingResult } from './processors';
+export { processItemTranslation, processArticleTranslation } from './processors';
+export type { ItemProcessingResult, ArticleProcessingResult } from './processors';

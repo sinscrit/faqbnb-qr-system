@@ -186,7 +186,10 @@ export interface TagContent {
 import { supabaseAdmin } from '@/lib/supabase';
 import { translateText } from '@/lib/translation-service';
 import { fetchAndLockNextJob, markJobCompleted, markJobFailed } from './translation-jobs';
-import { processItemTranslation as processItemTranslationExternal } from '@/lib/content-translation/processors';
+import {
+  processItemTranslation as processItemTranslationExternal,
+  processArticleTranslation as processArticleTranslationExternal,
+} from '@/lib/content-translation/processors';
 
 // ===========================================================================
 // Entity Content Fetching
@@ -876,9 +879,36 @@ async function processTranslationJob(
         };
       }
 
-      case 'article':
-        result = await processArticleTranslation(job, config);
-        break;
+      case 'article': {
+        // Use dedicated article processor (REQ-E03-015)
+        // The external processor handles job status updates internally
+        const articleResult = await processArticleTranslationExternal(job);
+
+        // Stop heartbeat before returning
+        stopHeartbeat();
+
+        // Convert TranslatedArticleFields to Record<string, string>
+        const translatedArticleFields: Record<string, string> | undefined =
+          articleResult.translatedFields
+            ? {
+                title: articleResult.translatedFields.title,
+                ...(articleResult.translatedFields.description && {
+                  description: articleResult.translatedFields.description,
+                }),
+              }
+            : undefined;
+
+        return {
+          jobId: job.id,
+          success: articleResult.success,
+          entityType,
+          entityId,
+          targetLanguage,
+          translatedFields: translatedArticleFields,
+          errorMessage: articleResult.errorMessage,
+          processingTimeMs: articleResult.processingTimeMs,
+        };
+      }
 
       case 'link':
         result = await processLinkTranslation(job, config);
