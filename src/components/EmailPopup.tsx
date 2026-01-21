@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { AccessRequest, EmailTemplate } from '@/types/admin';
 import { generateAccessApprovalEmail, validateEmailTemplate, renderEmailHTML } from '@/lib/email-templates';
 
@@ -25,6 +26,7 @@ export default function EmailPopup({
   accessCode,
   accountName
 }: EmailPopupProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [emailTemplate, setEmailTemplate] = useState<EmailTemplate>({
     subject: '',
     body: '',
@@ -104,7 +106,7 @@ export default function EmailPopup({
       });
       onClose();
     } catch (error) {
-      setErrors(['Failed to send email. Please try again.']);
+      setErrors([tNotifications('error.sendEmail')]);
     } finally {
       setIsLoading(false);
     }

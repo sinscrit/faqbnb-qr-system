@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Mail, CheckCircle, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 
 interface MailingListSignupProps {
@@ -30,6 +31,7 @@ export default function MailingListSignup({
   onSuccess,
   onError,
 }: MailingListSignupProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [email, setEmail] = useState('');
   const [subscriptionState, setSubscriptionState] = useState<SubscriptionState>({
     status: 'idle',
@@ -96,7 +98,7 @@ export default function MailingListSignup({
         onSuccess?.(trimmedEmail);
       } else {
         console.error('Subscription failed:', data);
-        const errorMessage = data.error || 'Unable to subscribe. Please try again.';
+        const errorMessage = data.error || tNotifications('error.subscribe');
         setSubscriptionState({
           status: 'error',
           message: errorMessage,
@@ -105,7 +107,7 @@ export default function MailingListSignup({
       }
     } catch (error) {
       console.error('Subscription error:', error);
-      const errorMessage = 'Network error. Please check your connection and try again.';
+      const errorMessage = tNotifications('error.networkError');
       setSubscriptionState({
         status: 'error',
         message: errorMessage,
