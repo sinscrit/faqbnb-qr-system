@@ -11,6 +11,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
 import { UpdateArticleRequest, ArticleResponse, PurposeType, LinkType } from '@/types';
+import {
+  queueContentTranslations,
+  detectSourceLanguage,
+  deleteEntityTranslations
+} from '@/lib/content-translation';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -69,6 +75,40 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
       )
     };
   }
+}
+
+/**
+ * Fetches the preferred language for an account.
+ */
+async function getAccountPreferredLanguage(
+  supabase: any,
+  accountId: string | null
+): Promise<string | null> {
+  if (!accountId) return null;
+
+  const { data } = await supabase
+    .from('accounts')
+    .select('preferred_language')
+    .eq('id', accountId)
+    .single();
+
+  return data?.preferred_language || null;
+}
+
+/**
+ * Fetches the preferred language for a user.
+ */
+async function getUserPreferredLanguage(
+  supabase: any,
+  userId: string
+): Promise<string | null> {
+  const { data } = await supabase
+    .from('users')
+    .select('preferred_language')
+    .eq('id', userId)
+    .single();
+
+  return data?.preferred_language || null;
 }
 
 // Helper function to validate article access
@@ -276,6 +316,30 @@ export async function PUT(
       );
     }
 
+    // Detect if translatable fields will change
+    // Note: If purpose changes and no new title provided, title will be auto-regenerated (handled in update logic)
+    const currentTitle = article.title;
+    const currentDescription = article.description;
+
+    // Calculate what the new title will be
+    let newTitle = currentTitle;
+    if (body.title !== undefined) {
+      newTitle = body.title;
+    } else if (body.purpose && body.purpose !== article.purpose) {
+      // Title will be auto-regenerated due to purpose change
+      newTitle = generateArticleTitle({
+        itemName: itemName,
+        purpose: body.purpose
+      });
+    }
+
+    const newDescription = body.description !== undefined ? body.description : currentDescription;
+
+    const translatableFieldsChanged = (
+      newTitle !== currentTitle ||
+      (newDescription || '') !== (currentDescription || '')
+    );
+
     // Prepare update data
     const updateData: Record<string, any> = {
       updated_at: new Date().toISOString()
@@ -395,6 +459,75 @@ export async function PUT(
 
     console.log('Article updated successfully:', updatedArticle.id);
 
+    // Fetch language preferences for source language detection
+    const [userPreferredLanguage, accountPreferredLanguage] = await Promise.all([
+      getUserPreferredLanguage(supabase, user.id),
+      getAccountPreferredLanguage(supabase, accountId)
+    ]);
+
+    // Determine source language
+    const sourceLanguage = detectSourceLanguage({
+      user: { preferred_language: userPreferredLanguage },
+      account: { preferred_language: accountPreferredLanguage },
+      override: body.sourceLanguage
+    });
+
+    // Update article with source_language
+    await supabase
+      .from('item_articles')
+      .update({ source_language: sourceLanguage })
+      .eq('id', updatedArticle.id);
+
+    let translationJobIds: string[] = [];
+    let translationError: string | undefined;
+    let queuedLanguages: SupportedLanguage[] = [];
+
+    // Only process translations if translatable fields changed
+    if (translatableFieldsChanged) {
+      try {
+        // Delete existing translations (guests see source content while re-translating)
+        await deleteEntityTranslations('article', updatedArticle.id);
+        console.log('Existing translations deleted for article:', updatedArticle.id);
+
+        // Queue new translations
+        const translationResult = await queueContentTranslations({
+          content: {
+            entityType: 'article',
+            entityId: updatedArticle.id,
+            sourceLanguage,
+            fields: [
+              {
+                fieldName: 'title',
+                value: updatedArticle.title || '',
+                context: { contentType: 'article_title', domainContext: 'property_rental_instructions' },
+                maxLength: 255
+              },
+              {
+                fieldName: 'description',
+                value: updatedArticle.description || '',
+                context: { contentType: 'article_description', domainContext: 'property_rental_instructions' }
+              }
+            ]
+          },
+          trigger: 'update'
+        });
+
+        if (translationResult.success) {
+          translationJobIds = translationResult.jobIds;
+          queuedLanguages = translationResult.queuedLanguages;
+          console.log('Translation jobs queued after article update:', translationJobIds.length);
+        } else {
+          translationError = translationResult.error;
+          console.error('Translation queuing returned error:', translationError);
+        }
+      } catch (error) {
+        console.error('Translation update error:', error);
+        translationError = error instanceof Error ? error.message : 'Unknown translation error';
+      }
+    } else {
+      console.log('No translatable field changes - skipping translation queuing for article:', updatedArticle.id);
+    }
+
     const response: ArticleResponse = {
       success: true,
       data: {
@@ -418,7 +551,11 @@ export async function PUT(
           created_at: link.created_at || new Date().toISOString()
         }))
       },
-      accountContext: { accountId, accountRole }
+      accountContext: { accountId, accountRole },
+      // Translation fields
+      translationJobIds,
+      queuedLanguages,
+      ...(translationError && { translationError })
     };
 
     return NextResponse.json(response);

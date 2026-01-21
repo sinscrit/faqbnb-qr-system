@@ -458,11 +458,11 @@ import type { SupportedLanguage } from '@/lib/translation-service/translation-se
 ```
 
 **Acceptance Criteria:**
-- [ ] `queueContentTranslations` import added
-- [ ] `detectSourceLanguage` import added
-- [ ] `deleteEntityTranslations` import added
-- [ ] `SupportedLanguage` type import added
-- [ ] No import errors
+- [x] `queueContentTranslations` import added ---implemented:Added to imports section---
+- [x] `detectSourceLanguage` import added ---implemented:Added to imports section---
+- [x] `deleteEntityTranslations` import added ---implemented:Added to imports section---
+- [x] `SupportedLanguage` type import added ---implemented:Added from translation-service.types---
+- [x] No import errors ---implemented:Verified---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -516,8 +516,8 @@ async function getUserPreferredLanguage(
 **Note:** These functions are duplicated from the POST handler file. This follows the existing pattern in the codebase where `getAccountContext` is also duplicated. A future refactor could extract these to a shared utility.
 
 **Acceptance Criteria:**
-- [ ] Both helper functions exist in the file
-- [ ] Functions work correctly for fetching language preferences
+- [x] Both helper functions exist in the file ---implemented:Added getAccountPreferredLanguage and getUserPreferredLanguage---
+- [x] Functions work correctly for fetching language preferences ---implemented:Same pattern as POST handler---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -576,9 +576,9 @@ async function getUserPreferredLanguage(
 ```
 
 **Acceptance Criteria:**
-- [ ] `translatableFieldsChanged` boolean correctly identifies when title or description will change
-- [ ] Auto-regenerated title (due to purpose change) is accounted for
-- [ ] Handles null/undefined values correctly
+- [x] `translatableFieldsChanged` boolean correctly identifies when title or description will change ---implemented:Compares current vs new values---
+- [x] Auto-regenerated title (due to purpose change) is accounted for ---implemented:Uses generateArticleTitle when purpose changes---
+- [x] Handles null/undefined values correctly ---implemented:Uses || '' for null comparison---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -672,14 +672,14 @@ async function getUserPreferredLanguage(
 ```
 
 **Acceptance Criteria:**
-- [ ] Language preferences fetched in parallel
-- [ ] Source language determined using `detectSourceLanguage`
-- [ ] Article updated with `source_language` column
-- [ ] Existing translations deleted when translatable fields changed
-- [ ] New translations queued only when translatable fields changed
-- [ ] Translation errors caught and logged but don't fail article update
-- [ ] `translationJobIds`, `translationError`, `queuedLanguages` variables set correctly
-- [ ] Skip message logged when no translatable field changes
+- [x] Language preferences fetched in parallel ---implemented:Promise.all with both fetchers---
+- [x] Source language determined using `detectSourceLanguage` ---implemented:Called with correct params---
+- [x] Article updated with `source_language` column ---implemented:supabase update after processing---
+- [x] Existing translations deleted when translatable fields changed ---implemented:deleteEntityTranslations called---
+- [x] New translations queued only when translatable fields changed ---implemented:Conditional on translatableFieldsChanged---
+- [x] Translation errors caught and logged but don't fail article update ---implemented:try/catch with error stored---
+- [x] `translationJobIds`, `translationError`, `queuedLanguages` variables set correctly ---implemented:All variables assigned---
+- [x] Skip message logged when no translatable field changes ---implemented:console.log in else branch---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -756,10 +756,10 @@ async function getUserPreferredLanguage(
 ```
 
 **Acceptance Criteria:**
-- [ ] `translationJobIds` included in response
-- [ ] `queuedLanguages` included in response
-- [ ] `translationError` included only when there's an error
-- [ ] Existing response fields and structure unchanged
+- [x] `translationJobIds` included in response ---implemented:Added to response object---
+- [x] `queuedLanguages` included in response ---implemented:Added to response object---
+- [x] `translationError` included only when there's an error ---implemented:Conditional spread operator---
+- [x] Existing response fields and structure unchanged ---implemented:All original fields preserved---
 - [ ] TypeScript compilation succeeds
 
 ---

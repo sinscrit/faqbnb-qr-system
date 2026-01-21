@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Plus, Trash2, GripVertical, Save, X, Eye } from 'lucide-react';
 import { CreateItemRequest, UpdateItemRequest, LinkType, Property } from '@/types';
 import { getLinkTypeColor, getLinkTypeLabel, isValidUrl } from '@/lib/utils';
@@ -33,6 +34,10 @@ interface LinkFormData {
 }
 
 export default function ItemForm({ item, properties = [], selectedPropertyId, onSave, onCancel, loading = false }: ItemFormProps) {
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
+  const tActions = useTranslations('common.actions');
+
   const [formData, setFormData] = useState({
     publicId: item?.publicId || '',
     name: item?.name || '',
@@ -193,7 +198,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="publicId" className="block text-sm font-medium text-gray-700 mb-2">
-                  Public ID *
+                  {tForm('labels.publicId')} *
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -205,14 +210,14 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                     className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       errors.publicId ? 'border-red-300' : 'border-gray-300'
                     } ${item ? 'bg-gray-50 cursor-not-allowed' : ''}`}
-                    placeholder="UUID will be generated automatically"
+                    placeholder={tForm('placeholders.uuidGenerated')}
                   />
                   {!item && (
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, publicId: generateUUID() })}
                       className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      title="Generate new UUID"
+                      title={tForm('accessibility.generateNewUuid')}
                     >
                       🔄
                     </button>
@@ -222,8 +227,8 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                   <p className="text-red-600 text-sm mt-1">{errors.publicId}</p>
                 )}
                 <p className="text-gray-500 text-sm mt-1">
-                  {item 
-                    ? 'Public ID cannot be changed after creation'
+                  {item
+                    ? tForm('hints.cannotBeChanged')
                     : 'This UUID will be used in the QR code URL (e.g., faqbnb.com/item/8d678bd0-e4f7-495f-b4cd-43756813e23a)'
                   }
                 </p>
@@ -231,7 +236,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Item Name *
+                  {tForm('labels.itemName')} *
                 </label>
                 <input
                   type="text"
@@ -241,7 +246,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.name ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="e.g., Samsung Washing Machine"
+                  placeholder={tForm('placeholders.itemName')}
                 />
                 {errors.name && (
                   <p className="text-red-600 text-sm mt-1">{errors.name}</p>
@@ -252,7 +257,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
             {/* Property Selection */}
             <div>
               <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700 mb-2">
-                Property *
+                {tForm('labels.property')} *
               </label>
               <select
                 id="propertyId"
@@ -263,7 +268,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 }`}
                 disabled={loading}
               >
-                <option value="">Select a property...</option>
+                <option value="">{tForm('placeholders.selectProperty')}</option>
                 {properties.map((property) => (
                   <option key={property.id} value={property.id}>
                     {property.nickname} ({property.property_types?.display_name || 'Unknown Type'})
@@ -286,7 +291,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
             {/* Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                Description
+                {tForm('labels.description')}
               </label>
               <textarea
                 id="description"
@@ -294,14 +299,14 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Describe the item, its location, or any important details..."
+                placeholder={tForm('placeholders.descriptionItem')}
               />
             </div>
 
             {/* QR Code URL */}
             <div>
               <label htmlFor="qrCodeUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                QR Code Image URL (optional)
+                {tForm('labels.qrCodeImageUrl')} {tForm('hints.optional')}
               </label>
               <input
                 type="url"
@@ -311,7 +316,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.qrCodeUrl ? 'border-red-300' : 'border-gray-300'
                 }`}
-                placeholder="https://example.com/qr-code.png"
+                placeholder={tForm('placeholders.urlQrCode')}
               />
               {errors.qrCodeUrl && (
                 <p className="text-red-600 text-sm mt-1">{errors.qrCodeUrl}</p>
@@ -410,7 +415,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Title *
+                            {tForm('labels.title')} *
                           </label>
                           <input
                             type="text"
@@ -419,7 +424,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                               errors[`link-${index}-title`] ? 'border-red-300' : 'border-gray-300'
                             }`}
-                            placeholder="e.g., User Manual"
+                            placeholder={tForm('placeholders.titleExample')}
                           />
                           {errors[`link-${index}-title`] && (
                             <p className="text-red-600 text-sm mt-1">{errors[`link-${index}-title`]}</p>
@@ -428,7 +433,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Type
+                            {tForm('labels.type')}
                           </label>
                           <select
                             value={link.linkType}
@@ -444,7 +449,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            URL *
+                            {tForm('labels.url')} *
                           </label>
                           <input
                             type="url"
@@ -453,7 +458,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                               errors[`link-${index}-url`] ? 'border-red-300' : 'border-gray-300'
                             }`}
-                            placeholder="https://..."
+                            placeholder={tForm('placeholders.url')}
                           />
                           {errors[`link-${index}-url`] && (
                             <p className="text-red-600 text-sm mt-1">{errors[`link-${index}-url`]}</p>
@@ -462,7 +467,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Custom Thumbnail URL
+                            {tForm('labels.thumbnailUrl')}
                           </label>
                           <input
                             type="url"
@@ -471,7 +476,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                               errors[`link-${index}-thumbnail`] ? 'border-red-300' : 'border-gray-300'
                             }`}
-                            placeholder="https://... (optional)"
+                            placeholder={tForm('placeholders.urlOptional')}
                           />
                           {errors[`link-${index}-thumbnail`] && (
                             <p className="text-red-600 text-sm mt-1">{errors[`link-${index}-thumbnail`]}</p>
@@ -496,7 +501,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 disabled={loading}
               >
                 <X className="w-4 h-4 inline mr-2" />
-                Cancel
+                {tActions('cancel')}
               </button>
               <button
                 type="submit"
@@ -504,7 +509,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 className="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 <Save className="w-4 h-4 mr-2" />
-                {loading ? 'Saving...' : (item ? 'Update Item' : 'Create Item')}
+                {loading ? tActions('saving') : (item ? tActions('update') : tActions('create'))}
               </button>
             </div>
           </form>
