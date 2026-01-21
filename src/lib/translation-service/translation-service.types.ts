@@ -446,6 +446,7 @@ export interface TagTranslationRecord {
   translated_value: string;
   is_system_tag: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 /**
