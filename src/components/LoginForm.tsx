@@ -31,6 +31,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
   const router = useRouter();
   const { signIn } = useAuth();
   const t = useTranslations('common.actions');
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
   
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -50,16 +52,16 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
   const validateField = (name: keyof FormData, value: string | boolean): string | undefined => {
     switch (name) {
       case 'email':
-        if (!value) return 'Email is required';
+        if (!value) return tErrors('emailRequired');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value as string)) return 'Please enter a valid email address';
+        if (!emailRegex.test(value as string)) return tErrors('invalidEmail');
         return undefined;
-      
+
       case 'password':
-        if (!value) return 'Password is required';
-        if ((value as string).length < 6) return 'Password must be at least 6 characters';
+        if (!value) return tErrors('passwordRequired');
+        if ((value as string).length < 6) return tErrors('passwordTooShort', { min: 6 });
         return undefined;
-      
+
       default:
         return undefined;
     }
@@ -233,7 +235,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       {/* Email Field */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          Email Address
+          {tForm('labels.email')}
         </label>
         <input
           type="email"
@@ -245,7 +247,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
           className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
             errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
           } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          placeholder="admin@faqbnb.com"
+          placeholder={tForm('placeholders.emailAdmin')}
+          aria-label={tForm('accessibility.emailInput')}
           autoComplete="email"
           required
         />
@@ -257,7 +260,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       {/* Password Field */}
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-          Password
+          {tForm('labels.password')}
         </label>
         <div className="relative">
           <input
@@ -270,7 +273,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
             className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
             } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            placeholder="Enter your password"
+            placeholder={tForm('placeholders.password')}
+            aria-label={tForm('accessibility.passwordInput')}
             autoComplete="current-password"
             required
           />
@@ -280,6 +284,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
             disabled={loading}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             tabIndex={-1}
+            title={showPassword ? tForm('accessibility.hidePassword') : tForm('accessibility.showPassword')}
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />
@@ -305,7 +310,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
         />
         <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
-          Remember me for 30 days
+          {tForm('labels.rememberMe')}
         </label>
       </div>
 
