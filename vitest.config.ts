@@ -3,7 +3,7 @@
  *
  * Configures test environment and coverage for React/Next.js application.
  *
- * @lastModified 2026-01-18 (REQ-254)
+ * @lastModified 2026-01-21 (REQ-E03-030)
  */
 
 import { defineConfig } from 'vitest/config';
@@ -26,6 +26,7 @@ export default defineConfig({
         'src/components/ItemCreationWorkflow/**/*.tsx',
         'src/lib/job-queue/**/*.ts',  // Added for REQ-254
         'src/lib/translation-service/**/*.ts',
+        'src/lib/content-translation/**/*.ts',  // Added for REQ-E03-030
       ],
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
     },
