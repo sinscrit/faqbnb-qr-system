@@ -1,11 +1,12 @@
 // src/components/SimpleDashboard/ProgressivePropertySection.tsx
 // REQ-136: Progressive Property Section Wrapper
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-21 (REQ-E02-004: i18n translation support)
 
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
 import { useDashboardTier } from '@/hooks/useDashboardTier';
@@ -43,6 +44,7 @@ export function ProgressivePropertySection({
   onAddProperty,
   className = '',
 }: ProgressivePropertySectionProps) {
+  const t = useTranslations('propertySearch');
   const { userProperties } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -77,7 +79,6 @@ export function ProgressivePropertySection({
       {tierConfig.showSearchBar && (
         <PropertySearchBar
           onSearch={handleSearch}
-          placeholder="Search properties..."
         />
       )}
 
@@ -85,10 +86,8 @@ export function ProgressivePropertySection({
       {tierConfig.showSearchBar && searchQuery && filteredProperties && (
         <p className="text-sm text-[#717171]">
           {filteredProperties.length === 0
-            ? 'No properties found'
-            : `${filteredProperties.length} ${
-                filteredProperties.length === 1 ? 'property' : 'properties'
-              } found`}
+            ? t('noPropertiesFound')
+            : t('propertyCount', { count: filteredProperties.length })}
         </p>
       )}
 

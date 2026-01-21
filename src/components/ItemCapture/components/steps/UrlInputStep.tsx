@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, Loader2, ExternalLink, AlertCircle, Check, ArrowLeft, Plus, X, WifiOff, RefreshCw, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UrlItem, UrlMetadata, ItemCaptureState, WizardStep } from '../../ItemCapture.types';
@@ -33,6 +34,7 @@ export default function UrlInputStep({
   prevStep,
   config,
 }: UrlInputStepProps) {
+  const t = useTranslations('urlInput');
   const [urlInput, setUrlInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +47,7 @@ export default function UrlInputStep({
     // Validate URL format
     const validation = validateUrlFormat(urlInput.trim());
     if (!validation.isValid) {
-      setError(validation.error || 'Invalid URL');
+      setError(validation.error || t('errors.invalidUrl'));
       setIsNetworkError(false);
       return;
     }
@@ -137,9 +139,9 @@ export default function UrlInputStep({
       const text = await navigator.clipboard.readText();
       setUrlInput(text);
     } catch (err) {
-      setError('Unable to read clipboard. Please paste manually.');
+      setError(t('errors.clipboardError'));
     }
-  }, []);
+  }, [t]);
 
   const handleClear = useCallback(() => {
     setUrlInput('');
@@ -165,17 +167,17 @@ export default function UrlInputStep({
           <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
             <Link className="w-6 h-6 text-cyan-600" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-semibold text-gray-900">Add Link</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">{t('title')}</h2>
         </div>
         <p className="text-gray-600 ml-15">
-          Add a URL to your item. We'll fetch the title and preview automatically.
+          {t('description')}
         </p>
       </div>
 
       {/* URL Input Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <label htmlFor="url-input" className="block text-sm font-medium text-gray-700 mb-2">
-          URL
+          {t('form.urlLabel')}
         </label>
         <div className="flex gap-2">
           <div className="flex-1 relative">
@@ -185,7 +187,7 @@ export default function UrlInputStep({
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="https://www.youtube.com/watch?v=..."
+              placeholder={t('form.placeholder')}
               className={cn(
                 "w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500",
                 error ? "border-red-300" : "border-gray-300"
@@ -198,7 +200,7 @@ export default function UrlInputStep({
                 type="button"
                 onClick={handleClear}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded"
-                aria-label="Clear URL"
+                aria-label={t('form.clearUrl')}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -211,7 +213,7 @@ export default function UrlInputStep({
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
               disabled={isLoading}
             >
-              Paste
+              {t('form.pasteButton')}
             </button>
           )}
         </div>
@@ -229,10 +231,10 @@ export default function UrlInputStep({
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-medium text-amber-800">
-                  Preview unavailable
+                  {t('networkError.title')}
                 </h3>
                 <p className="mt-1 text-sm text-amber-700">
-                  Unable to load preview due to network connectivity issues.
+                  {t('networkError.message')}
                 </p>
               </div>
             </div>
@@ -253,7 +255,7 @@ export default function UrlInputStep({
                 )}
               >
                 <RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} aria-hidden="true" />
-                {isLoading ? 'Retrying...' : 'Try Again'}
+                {isLoading ? t('networkError.retrying') : t('networkError.retryButton')}
               </button>
               <button
                 type="button"
@@ -272,7 +274,7 @@ export default function UrlInputStep({
                 )}
               >
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                Proceed Without Preview
+                {t('networkError.proceedButton')}
               </button>
             </div>
           </div>
@@ -298,12 +300,12 @@ export default function UrlInputStep({
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-                  <span>Fetching preview...</span>
+                  <span>{t('form.fetching')}</span>
                 </>
               ) : (
                 <>
                   <ExternalLink className="w-5 h-5" aria-hidden="true" />
-                  <span>Fetch Preview</span>
+                  <span>{t('form.fetchButton')}</span>
                 </>
               )}
             </button>
@@ -316,7 +318,7 @@ export default function UrlInputStep({
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-start gap-2 mb-4 text-amber-600">
             <WifiOff className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-            <span className="text-sm font-medium">Proceeding without preview</span>
+            <span className="text-sm font-medium">{t('proceedWithoutPreview.title')}</span>
           </div>
 
           <div className="flex gap-4">
@@ -330,7 +332,7 @@ export default function UrlInputStep({
             {/* URL Info */}
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-600 mb-2">
-                The link will be added without a preview. You can edit the title later.
+                {t('proceedWithoutPreview.message')}
               </p>
               <span className="text-xs text-gray-500 truncate block">
                 {lastUrlRef.current}
@@ -346,14 +348,14 @@ export default function UrlInputStep({
               className="flex-1 px-4 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              <span>Add Link Anyway</span>
+              <span>{t('proceedWithoutPreview.addButton')}</span>
             </button>
             <button
               type="button"
               onClick={handleClear}
               className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
             >
-              Cancel
+              {t('proceedWithoutPreview.cancelButton')}
             </button>
           </div>
         </div>
@@ -364,7 +366,7 @@ export default function UrlInputStep({
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-start gap-2 mb-4 text-green-600">
             <Check className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-            <span className="text-sm font-medium">Preview loaded</span>
+            <span className="text-sm font-medium">{t('preview.loadedTitle')}</span>
           </div>
 
           <div className="flex gap-4">
@@ -427,14 +429,14 @@ export default function UrlInputStep({
               className="flex-1 px-4 py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              <span>Add Link</span>
+              <span>{t('preview.addButton')}</span>
             </button>
             <button
               type="button"
               onClick={handleClear}
               className="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
             >
-              Try Another
+              {t('preview.tryAnotherButton')}
             </button>
           </div>
         </div>
@@ -449,7 +451,7 @@ export default function UrlInputStep({
             className="flex items-center gap-2 px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-            <span>Back</span>
+            <span>{t('navigation.back')}</span>
           </button>
         </div>
       </div>

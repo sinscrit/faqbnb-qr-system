@@ -402,6 +402,49 @@
     "changeLanguage": "Change Language",
     "languageChanged": "Language changed successfully"
   },
+  "itemCapture": {
+    "metadataStep": {
+      "title": "Item Details",
+      "description": "Enter basic information about this item",
+      "fields": {
+        "itemName": {
+          "label": "Item Name",
+          "placeholder": "e.g., Steamer, Coffee Maker, Hair Dryer",
+          "helperText": "This is the name of the physical item (e.g., 'Steamer'). Instructions like 'How to Clean' are captured separately as articles."
+        },
+        "contentPurpose": {
+          "label": "Content Purpose",
+          "placeholder": "Select content type...",
+          "helperText": "Optionally classify what type of instructions you're creating"
+        },
+        "room": {
+          "label": "Room",
+          "placeholder": "Select or type a room...",
+          "toggleAriaLabel": "Toggle room options",
+          "useCustom": "Use custom:",
+          "noRoomsAvailable": "No rooms available"
+        },
+        "tags": {
+          "label": "Tags",
+          "placeholder": "Add a tag...",
+          "maxTagsReached": "Max tags reached",
+          "suggestedTags": "Suggested tags:",
+          "removeTagAriaLabel": "Remove tag: {tag}"
+        },
+        "itemType": {
+          "label": "Item Type",
+          "placeholder": "Select item type..."
+        }
+      },
+      "validation": {
+        "itemNameRequired": "Item name is required",
+        "itemNameTooLong": "Item name must be {max} characters or less",
+        "locationTooLong": "Location must be {max} characters or less",
+        "maxTagsExceeded": "Maximum {max} tags allowed",
+        "tagTooLong": "Each tag must be {max} characters or less"
+      }
+    }
+  },
   "workflow": {
     "dialogs": {
       "confirmExit": {
@@ -636,6 +679,91 @@
         "cancel": "Cancel",
         "add": "Add Content"
       }
+    }
+  },
+  "propertySearch": {
+    "placeholder": "Search properties...",
+    "ariaLabel": "Search properties",
+    "clearSearch": "Clear search",
+    "noPropertiesFound": "No properties found",
+    "propertyCount": "{count, plural, one {# property} other {# properties}} found"
+  },
+  "textEditor": {
+    "title": "Write Guide",
+    "description": "Add text-based guide using markdown formatting",
+    "toolbar": {
+      "ariaLabel": "Text formatting",
+      "bold": "Bold (Ctrl+B)",
+      "italic": "Italic (Ctrl+I)",
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "bulletList": "Bullet List",
+      "numberedList": "Numbered List",
+      "link": "Insert Link (Ctrl+K)"
+    },
+    "editor": {
+      "placeholder": "Write your item guide here using markdown formatting...",
+      "ariaLabel": "Markdown content editor"
+    },
+    "preview": {
+      "label": "Preview",
+      "emptyState": "Start typing to see a preview of your formatted content..."
+    },
+    "tabs": {
+      "editor": "Editor",
+      "preview": "Preview"
+    },
+    "characterCount": {
+      "text": "{current} / {max} characters",
+      "ariaLabel": "Character count progress"
+    },
+    "errors": {
+      "overLimit": "Content exceeds the maximum character limit. Please shorten your text."
+    },
+    "autoSave": {
+      "saving": "Saving..."
+    },
+    "navigation": {
+      "back": "Back",
+      "continue": "Continue"
+    }
+  },
+  "urlInput": {
+    "title": "Add Link",
+    "description": "Add a URL to your item. We'll fetch the title and preview automatically.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Paste",
+      "clearUrl": "Clear URL",
+      "fetchButton": "Fetch Preview",
+      "fetching": "Fetching preview..."
+    },
+    "networkError": {
+      "title": "Preview unavailable",
+      "message": "Unable to load preview due to network connectivity issues.",
+      "retryButton": "Try Again",
+      "retrying": "Retrying...",
+      "proceedButton": "Proceed Without Preview"
+    },
+    "proceedWithoutPreview": {
+      "title": "Proceeding without preview",
+      "message": "The link will be added without a preview. You can edit the title later.",
+      "addButton": "Add Link Anyway",
+      "cancelButton": "Cancel"
+    },
+    "preview": {
+      "loadedTitle": "Preview loaded",
+      "addButton": "Add Link",
+      "tryAnotherButton": "Try Another"
+    },
+    "errors": {
+      "invalidUrl": "Invalid URL",
+      "clipboardError": "Unable to read clipboard. Please paste manually."
+    },
+    "navigation": {
+      "back": "Back"
     }
   }
 }

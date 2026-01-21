@@ -7,7 +7,7 @@
 **Type:** ENHANCEMENT
 **Size:** M
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20 19:45:00 UTC
+**Last Modified:** 2026-01-21 12:00:00 UTC
 
 ---
 
@@ -41,7 +41,7 @@ Before starting this task, ensure the following are complete:
 
 ---
 
-#### Task 1: Create CreateLinkRequest Type
+#### Task 1: Create CreateLinkRequest Type - [x] ---implemented:Added CreateLinkRequest interface to src/types/index.ts after ArticlesListResponse with all required fields including sourceLanguage for translation override---
 
 **File:** `/src/types/index.ts`
 **Action:** ADD
@@ -83,7 +83,7 @@ export interface CreateLinkRequest {
 
 ---
 
-#### Task 2: Create UpdateLinkRequest Type
+#### Task 2: Create UpdateLinkRequest Type - [x] ---implemented:Added UpdateLinkRequest interface with all optional fields for partial updates---
 
 **File:** `/src/types/index.ts`
 **Action:** ADD
@@ -122,7 +122,7 @@ export interface UpdateLinkRequest {
 
 ---
 
-#### Task 3: Create LinkApiResponse Type
+#### Task 3: Create LinkApiResponse Type - [x] ---implemented:Added LinkApiResponse interface with translation job tracking fields (translationJobIds, translationError, queuedLanguages)---
 
 **File:** `/src/types/index.ts`
 **Action:** ADD
@@ -177,7 +177,7 @@ export interface LinkApiResponse {
 
 ---
 
-#### Task 4: Create LinksListApiResponse Type
+#### Task 4: Create LinksListApiResponse Type - [x] ---implemented:Added LinksListApiResponse interface for list endpoints with array of link data---
 
 **File:** `/src/types/index.ts`
 **Action:** ADD
@@ -222,7 +222,7 @@ export interface LinksListApiResponse {
 
 ---
 
-#### Task 5: Create Links Route Directory Structure
+#### Task 5: Create Links Route Directory Structure - [x] ---implemented:Created /src/app/api/admin/items/[publicId]/links/ directory and route.ts file---
 
 **Action:** CREATE directory and file
 **Path:** `/src/app/api/admin/items/[publicId]/links/route.ts`
@@ -271,7 +271,7 @@ export async function POST(
 
 ---
 
-#### Task 6: Add Required Imports to Links Route
+#### Task 6: Add Required Imports to Links Route - [x] ---implemented:All required imports added including queueContentTranslations, detectSourceLanguage, and types---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** UPDATE
@@ -305,7 +305,7 @@ import type { CreateLinkRequest, LinkApiResponse, LinksListApiResponse } from '@
 
 ---
 
-#### Task 7: Implement Helper Functions
+#### Task 7: Implement Helper Functions - [x] ---implemented:Added getAccountContext, getUserPreferredLanguage, getAccountPreferredLanguage, resolveAndValidateItemAccess helper functions---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** ADD
@@ -486,7 +486,7 @@ async function resolveAndValidateItemAccess(
 
 ---
 
-#### Task 8: Implement GET Handler (List Links)
+#### Task 8: Implement GET Handler (List Links) - [x] ---implemented:GET handler lists all links for item ordered by display_order with account context---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** UPDATE
@@ -577,7 +577,7 @@ export async function GET(
 
 ---
 
-#### Task 9: Implement POST Handler - Validation Section
+#### Task 9: Implement POST Handler - Validation Section - [x] ---implemented:POST validation for required fields (title, linkType, url), URL format validation, and article ID validation---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** UPDATE
@@ -681,7 +681,7 @@ export async function POST(
 
 ---
 
-#### Task 10: Implement POST Handler - Database Insert Section
+#### Task 10: Implement POST Handler - Database Insert Section - [x] ---implemented:Database insert with source_language detection using detectSourceLanguage utility---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** UPDATE (continue from Task 9)
@@ -735,7 +735,7 @@ export async function POST(
 
 ---
 
-#### Task 11: Implement POST Handler - Translation Queuing Section
+#### Task 11: Implement POST Handler - Translation Queuing Section - [x] ---implemented:queueContentTranslations called with only title field, response includes translationJobIds, queuedLanguages, and translationError if failed---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/route.ts`
 **Action:** UPDATE (continue from Task 10)
@@ -823,7 +823,7 @@ export async function POST(
 
 ---
 
-#### Task 12: Create Individual Link Route File
+#### Task 12: Create Individual Link Route File - [x] ---implemented:Created /src/app/api/admin/items/[publicId]/links/[linkId]/ directory and route.ts file with all handlers---
 
 **Action:** CREATE file
 **Path:** `/src/app/api/admin/items/[publicId]/links/[linkId]/route.ts`
@@ -1033,7 +1033,7 @@ export async function DELETE(
 
 ---
 
-#### Task 13: Implement GET Handler (Single Link)
+#### Task 13: Implement GET Handler (Single Link) - [x] ---implemented:GET handler retrieves single link by linkId with account context validation---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/[linkId]/route.ts`
 **Action:** UPDATE
@@ -1125,7 +1125,7 @@ export async function GET(
 
 ---
 
-#### Task 14: Implement PUT Handler (Update Link with Translation)
+#### Task 14: Implement PUT Handler (Update Link with Translation) - [x] ---implemented:PUT handler detects title changes, deletes old translations, queues new translations only when title changes; URL changes do NOT trigger translations---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/[linkId]/route.ts`
 **Action:** UPDATE
@@ -1338,7 +1338,7 @@ export async function PUT(
 
 ---
 
-#### Task 15: Implement DELETE Handler
+#### Task 15: Implement DELETE Handler - [x] ---implemented:DELETE handler removes link from database; translations cascade-deleted via FK constraint---
 
 **File:** `/src/app/api/admin/items/[publicId]/links/[linkId]/route.ts`
 **Action:** UPDATE

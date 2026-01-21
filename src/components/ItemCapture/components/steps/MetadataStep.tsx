@@ -15,6 +15,7 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect, useId } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ChevronDown, X } from 'lucide-react';
 import type { ItemMetadata, ApplianceType } from '../../ItemCapture.types';
@@ -91,6 +92,10 @@ export function MetadataStep({
   onUpdate,
   onValidate,
 }: MetadataStepProps) {
+  // Translation hooks
+  const t = useTranslations('itemCapture.metadataStep');
+  const tFields = useTranslations('itemCapture.metadataStep.fields');
+
   // Generate unique IDs for accessibility
   const uniqueId = useId();
   const titleId = `title-${uniqueId}`;
@@ -346,9 +351,9 @@ export function MetadataStep({
     <div className="space-y-6">
       {/* Step Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Item Details</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{t('title')}</h2>
         <p className="text-sm text-gray-600 mt-1">
-          Enter basic information about this item
+          {t('description')}
         </p>
       </div>
 
@@ -358,7 +363,7 @@ export function MetadataStep({
           htmlFor={titleId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Item Name <span className="text-red-500">*</span>
+          {tFields('itemName.label')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -367,7 +372,7 @@ export function MetadataStep({
           onChange={handleTitleChange}
           onBlur={handleTitleBlur}
           maxLength={METADATA_CONSTRAINTS.title.maxLength}
-          placeholder="e.g., Steamer, Coffee Maker, Hair Dryer"
+          placeholder={tFields('itemName.placeholder')}
           aria-required="true"
           aria-invalid={!!errors.title}
           aria-describedby={errors.title ? titleErrorId : undefined}
@@ -391,7 +396,7 @@ export function MetadataStep({
         )}
         {/* Helper text explaining Item Name purpose */}
         <p className="text-gray-500 text-xs mt-1">
-          This is the name of the physical item (e.g., &apos;Steamer&apos;). Instructions like &apos;How to Clean&apos; are captured separately as articles.
+          {tFields('itemName.helperText')}
         </p>
         <p className="text-gray-400 text-xs mt-0.5">
           {metadata.title.length}/{METADATA_CONSTRAINTS.title.maxLength} characters
@@ -404,7 +409,7 @@ export function MetadataStep({
           htmlFor={purposeId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Content Purpose
+          {tFields('contentPurpose.label')}
           <span className="text-gray-400 font-normal ml-1">(optional)</span>
         </label>
         <div className="relative">
@@ -420,7 +425,7 @@ export function MetadataStep({
             )}
             aria-describedby={`${purposeId}-help`}
           >
-            <option value="">Select content type...</option>
+            <option value="">{tFields('contentPurpose.placeholder')}</option>
             {CONTENT_PURPOSE_OPTIONS.map(({ value, label }) => (
               <option key={value} value={value}>
                 {label}
@@ -433,7 +438,7 @@ export function MetadataStep({
           />
         </div>
         <p id={`${purposeId}-help`} className="text-gray-500 text-xs mt-1">
-          Optionally classify what type of instructions you&apos;re creating
+          {tFields('contentPurpose.helperText')}
         </p>
       </div>
 
@@ -443,7 +448,7 @@ export function MetadataStep({
           htmlFor={locationId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Room
+          {tFields('room.label')}
         </label>
         <div className="relative">
           <input
@@ -455,7 +460,7 @@ export function MetadataStep({
             onKeyDown={handleLocationKeyDown}
             onFocus={() => setIsLocationOpen(true)}
             maxLength={METADATA_CONSTRAINTS.location.maxLength}
-            placeholder="Select or type a room..."
+            placeholder={tFields('room.placeholder')}
             aria-expanded={isLocationOpen}
             aria-haspopup="listbox"
             aria-invalid={!!errors.location}
@@ -478,7 +483,7 @@ export function MetadataStep({
               locationInputRef.current?.focus();
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
-            aria-label="Toggle room options"
+            aria-label={tFields('room.toggleAriaLabel')}
           >
             <ChevronDown
               className={cn(
@@ -527,14 +532,14 @@ export function MetadataStep({
                 )}
                 onClick={() => handleLocationConfirm()}
               >
-                <span className="text-gray-500">Use custom:</span>
+                <span className="text-gray-500">{tFields('room.useCustom')}</span>
                 <span className="ml-2 font-medium">&quot;{locationSearchTerm}&quot;</span>
               </div>
             )}
 
             {filteredLocations.length === 0 && !locationSearchTerm && (
               <div className="px-4 py-3 text-gray-500 text-center">
-                No rooms available
+                {tFields('room.noRoomsAvailable')}
               </div>
             )}
           </div>
@@ -557,7 +562,7 @@ export function MetadataStep({
           htmlFor={tagsId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Tags
+          {tFields('tags.label')}
           <span className="text-gray-400 font-normal ml-2">
             ({tagsCount}/{METADATA_CONSTRAINTS.maxTags})
           </span>
@@ -583,7 +588,7 @@ export function MetadataStep({
                 type="button"
                 onClick={() => handleRemoveTag(tag)}
                 className="p-1 hover:bg-blue-200 rounded-full transition-colors min-w-[24px] min-h-[24px] flex items-center justify-center"
-                aria-label={`Remove tag: ${tag}`}
+                aria-label={tFields('tags.removeTagAriaLabel', { tag })}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -600,7 +605,7 @@ export function MetadataStep({
             onKeyDown={handleTagInputKeyDown}
             disabled={isAtMaxTags}
             maxLength={METADATA_CONSTRAINTS.tag.maxLength}
-            placeholder={isAtMaxTags ? 'Max tags reached' : 'Add a tag...'}
+            placeholder={isAtMaxTags ? tFields('tags.maxTagsReached') : tFields('tags.placeholder')}
             aria-invalid={!!errors.tags}
             aria-describedby={errors.tags ? tagsErrorId : undefined}
             className={cn(
@@ -624,7 +629,7 @@ export function MetadataStep({
         {/* Suggested Tags */}
         {availableSuggestions.length > 0 && !isAtMaxTags && (
           <div className="mt-3">
-            <p className="text-xs text-gray-500 mb-2">Suggested tags:</p>
+            <p className="text-xs text-gray-500 mb-2">{tFields('tags.suggestedTags')}</p>
             <div className="flex flex-wrap gap-2">
               {availableSuggestions.map(tag => (
                 <button
@@ -651,7 +656,7 @@ export function MetadataStep({
           htmlFor={applianceId}
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Item Type
+          {tFields('itemType.label')}
         </label>
         <div className="relative">
           <select
@@ -666,7 +671,7 @@ export function MetadataStep({
               'pr-10'
             )}
           >
-            <option value="">Select item type...</option>
+            <option value="">{tFields('itemType.placeholder')}</option>
             {APPLIANCE_TYPES.map(({ value, label }) => (
               <option key={value} value={value}>
                 {label}

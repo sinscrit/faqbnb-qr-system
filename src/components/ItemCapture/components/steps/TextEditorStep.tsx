@@ -22,6 +22,7 @@
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
 // Lazy-load ReactMarkdown to reduce initial bundle size (REQ-054)
@@ -81,21 +82,21 @@ export interface TextEditorStepProps {
 interface ToolbarButtonConfig {
   icon: React.ComponentType<{ className?: string }>;
   format: MarkdownFormatKey;
-  ariaLabel: string;
+  ariaLabelKey: string;
 }
 
 /**
  * Toolbar button definitions.
  */
 const TOOLBAR_BUTTONS: ToolbarButtonConfig[] = [
-  { icon: Bold, format: 'bold', ariaLabel: 'Bold (Ctrl+B)' },
-  { icon: Italic, format: 'italic', ariaLabel: 'Italic (Ctrl+I)' },
-  { icon: Heading1, format: 'heading1', ariaLabel: 'Heading 1' },
-  { icon: Heading2, format: 'heading2', ariaLabel: 'Heading 2' },
-  { icon: Heading3, format: 'heading3', ariaLabel: 'Heading 3' },
-  { icon: List, format: 'bulletList', ariaLabel: 'Bullet List' },
-  { icon: ListOrdered, format: 'numberedList', ariaLabel: 'Numbered List' },
-  { icon: Link, format: 'link', ariaLabel: 'Insert Link (Ctrl+K)' },
+  { icon: Bold, format: 'bold', ariaLabelKey: 'toolbar.bold' },
+  { icon: Italic, format: 'italic', ariaLabelKey: 'toolbar.italic' },
+  { icon: Heading1, format: 'heading1', ariaLabelKey: 'toolbar.heading1' },
+  { icon: Heading2, format: 'heading2', ariaLabelKey: 'toolbar.heading2' },
+  { icon: Heading3, format: 'heading3', ariaLabelKey: 'toolbar.heading3' },
+  { icon: List, format: 'bulletList', ariaLabelKey: 'toolbar.bulletList' },
+  { icon: ListOrdered, format: 'numberedList', ariaLabelKey: 'toolbar.numberedList' },
+  { icon: Link, format: 'link', ariaLabelKey: 'toolbar.link' },
 ];
 
 // =============================================================================
@@ -111,29 +112,33 @@ interface MarkdownToolbarProps {
 }
 
 function MarkdownToolbar({ onFormat, disabled }: MarkdownToolbarProps) {
+  const t = useTranslations('textEditor');
   return (
     <div
       className="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg flex-wrap"
       role="toolbar"
-      aria-label="Text formatting"
+      aria-label={t('toolbar.ariaLabel')}
     >
-      {TOOLBAR_BUTTONS.map(({ icon: Icon, format, ariaLabel }) => (
-        <button
-          key={format}
-          type="button"
-          onClick={() => onFormat(format)}
-          disabled={disabled}
-          className={cn(
-            'p-2 rounded hover:bg-gray-200 transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-            'disabled:opacity-50 disabled:cursor-not-allowed'
-          )}
-          aria-label={ariaLabel}
-          title={ariaLabel}
-        >
-          <Icon className="w-4 h-4 text-gray-700" />
-        </button>
-      ))}
+      {TOOLBAR_BUTTONS.map(({ icon: Icon, format, ariaLabelKey }) => {
+        const ariaLabel = t(ariaLabelKey);
+        return (
+          <button
+            key={format}
+            type="button"
+            onClick={() => onFormat(format)}
+            disabled={disabled}
+            className={cn(
+              'p-2 rounded hover:bg-gray-200 transition-colors',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+              'disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+            aria-label={ariaLabel}
+            title={ariaLabel}
+          >
+            <Icon className="w-4 h-4 text-gray-700" />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -148,6 +153,7 @@ interface CharacterCounterProps {
 }
 
 function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
+  const t = useTranslations('textEditor');
   const percentage = (current / max) * 100;
   const isWarning = current >= warning;
   const isError = current > max;
@@ -164,7 +170,7 @@ function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
         aria-live="polite"
         aria-atomic="true"
       >
-        {current.toLocaleString()} / {max.toLocaleString()} characters
+        {t('characterCount.text', { current: current.toLocaleString(), max: max.toLocaleString() })}
       </span>
 
       {/* Progress bar */}
@@ -181,7 +187,7 @@ function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
           aria-valuenow={current}
           aria-valuemin={0}
           aria-valuemax={max}
-          aria-label="Character count progress"
+          aria-label={t('characterCount.ariaLabel')}
         />
       </div>
     </div>
@@ -197,6 +203,7 @@ interface TabSwitcherProps {
 }
 
 function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
+  const t = useTranslations('textEditor');
   return (
     <div className="flex border-b border-gray-200 md:hidden" role="tablist">
       <button
@@ -214,7 +221,7 @@ function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
         )}
       >
         <Edit3 className="w-4 h-4 inline-block mr-2" aria-hidden="true" />
-        Editor
+        {t('tabs.editor')}
       </button>
       <button
         role="tab"
@@ -231,7 +238,7 @@ function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
         )}
       >
         <Eye className="w-4 h-4 inline-block mr-2" aria-hidden="true" />
-        Preview
+        {t('tabs.preview')}
       </button>
     </div>
   );
@@ -269,6 +276,12 @@ export function TextEditorStep({
   prevStep,
   className,
 }: TextEditorStepProps) {
+  // ===========================================================================
+  // Translations
+  // ===========================================================================
+
+  const t = useTranslations('textEditor');
+
   // ===========================================================================
   // Local State
   // ===========================================================================
@@ -438,9 +451,9 @@ export function TextEditorStep({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Header */}
       <div className="text-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Write Guide</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{t('title')}</h2>
         <p className="text-sm text-gray-600">
-          Add text-based guide using markdown formatting
+          {t('description')}
         </p>
       </div>
 
@@ -468,7 +481,7 @@ export function TextEditorStep({
             value={localContent}
             onChange={handleContentChange}
             onKeyDown={handleKeyDown}
-            placeholder="Write your item guide here using markdown formatting..."
+            placeholder={t('editor.placeholder')}
             className={cn(
               'flex-1 w-full p-4 resize-none',
               'border border-t-0 border-gray-200 rounded-b-lg',
@@ -478,7 +491,7 @@ export function TextEditorStep({
               isOverLimit && 'border-red-300 focus:ring-red-500'
             )}
             style={{ minHeight: TEXT_EDITOR_CONSTRAINTS.minHeight }}
-            aria-label="Markdown content editor"
+            aria-label={t('editor.ariaLabel')}
             aria-describedby="char-count"
             aria-invalid={isOverLimit}
           />
@@ -495,7 +508,7 @@ export function TextEditorStep({
           {/* Error Message */}
           {isOverLimit && (
             <p className="text-red-600 text-sm mt-2" role="alert">
-              Content exceeds the maximum character limit. Please shorten your text.
+              {t('errors.overLimit')}
             </p>
           )}
         </div>
@@ -514,7 +527,7 @@ export function TextEditorStep({
           {/* Preview Header (desktop only) */}
           <div className="hidden md:flex items-center gap-2 mb-2 text-sm text-gray-500">
             <Eye className="w-4 h-4" aria-hidden="true" />
-            <span>Preview</span>
+            <span>{t('preview.label')}</span>
           </div>
 
           {/* Markdown Preview */}
@@ -535,7 +548,7 @@ export function TextEditorStep({
               <ReactMarkdown>{localContent}</ReactMarkdown>
             ) : (
               <p className="text-gray-400 italic">
-                Start typing to see a preview of your formatted content...
+                {t('preview.emptyState')}
               </p>
             )}
           </div>
@@ -549,7 +562,7 @@ export function TextEditorStep({
             className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"
             aria-hidden="true"
           />
-          <span>Saving...</span>
+          <span>{t('autoSave.saving')}</span>
         </div>
       )}
 
@@ -561,7 +574,7 @@ export function TextEditorStep({
             onClick={handleBack}
             className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
-            Back
+            {t('navigation.back')}
           </button>
 
           {localContent.trim() && (
@@ -577,7 +590,7 @@ export function TextEditorStep({
                   : 'bg-blue-600 text-white hover:bg-blue-700'
               )}
             >
-              Continue
+              {t('navigation.continue')}
             </button>
           )}
         </div>

@@ -361,6 +361,121 @@ export interface ArticlesListResponse {
   };
 }
 
+/**
+ * Request payload for creating a link via dedicated Links API.
+ * Used with POST /api/admin/items/[publicId]/links
+ * @see REQ-E03-010 Links API with translation integration
+ */
+export interface CreateLinkRequest {
+  /** Optional article ID for article-specific links */
+  articleId?: string;
+  /** Link title - this field gets translated */
+  title: string;
+  /** Type of link resource */
+  linkType: LinkType;
+  /** URL - NEVER translated (URLs are language-agnostic) */
+  url: string;
+  /** Optional thumbnail URL */
+  thumbnailUrl?: string;
+  /** Display order in list */
+  displayOrder?: number;
+  /**
+   * Optional source language override for translations.
+   * If not provided, detected from user/account preferences.
+   * @see detectSourceLanguage in content-translation module
+   */
+  sourceLanguage?: SupportedLanguage;
+}
+
+/**
+ * Request payload for updating a link via dedicated Links API.
+ * Used with PUT /api/admin/items/[publicId]/links/[linkId]
+ * All fields are optional - only provided fields are updated.
+ * @see REQ-E03-010 Links API with translation integration
+ */
+export interface UpdateLinkRequest {
+  /** Link title - this field gets translated */
+  title?: string;
+  /** Type of link resource */
+  linkType?: LinkType;
+  /** URL - NEVER translated (URLs are language-agnostic) */
+  url?: string;
+  /** Optional thumbnail URL */
+  thumbnailUrl?: string;
+  /** Display order in list */
+  displayOrder?: number;
+  /**
+   * Optional source language override for translations.
+   * If not provided, detected from user/account preferences.
+   */
+  sourceLanguage?: SupportedLanguage;
+}
+
+/**
+ * Response from Link API operations (POST, PUT, GET single).
+ * Includes translation job information for status tracking.
+ * @see REQ-E03-010 Links API with translation integration
+ */
+export interface LinkApiResponse {
+  success: boolean;
+  data?: {
+    id: string;
+    itemId: string;
+    articleId?: string;
+    title: string;
+    linkType: LinkType;
+    url: string;
+    thumbnailUrl?: string;
+    displayOrder: number;
+    sourceLanguage?: string;
+    createdAt: string;
+  };
+  error?: string;
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
+  /**
+   * Array of translation job IDs for status tracking.
+   * Empty array if translation queuing was skipped or failed.
+   */
+  translationJobIds?: string[];
+  /**
+   * Translation error message if queuing failed.
+   * Link creation/update still succeeds even if translation fails.
+   */
+  translationError?: string;
+  /**
+   * Languages queued for translation (excludes source language).
+   */
+  queuedLanguages?: SupportedLanguage[];
+}
+
+/**
+ * Response from Link API list operation (GET all links for item).
+ * @see REQ-E03-010 Links API with translation integration
+ */
+export interface LinksListApiResponse {
+  success: boolean;
+  data?: {
+    id: string;
+    itemId: string;
+    articleId?: string;
+    title: string;
+    linkType: LinkType;
+    url: string;
+    thumbnailUrl?: string;
+    displayOrder: number;
+    sourceLanguage?: string;
+    createdAt: string;
+  }[];
+  error?: string;
+  accountContext?: {
+    accountId: string | null;
+    accountRole: string;
+  };
+}
+
 // Form types
 export interface CreateItemRequest {
   publicId: string;
