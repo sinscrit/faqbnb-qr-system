@@ -489,3 +489,91 @@ export async function storeTagTranslation(
     };
   }
 }
+
+// ============================================================================
+// Deletion Utilities
+// ============================================================================
+
+/**
+ * Deletes all translations for a given entity.
+ * Used when content is updated and translations need to be re-queued.
+ *
+ * @param entityType - The type of entity ('item', 'article', or 'link')
+ * @param entityId - The ID of the entity whose translations should be deleted
+ * @returns Result indicating success/failure of the deletion
+ *
+ * @example
+ * ```typescript
+ * // Delete all translations for an article before re-translating
+ * await deleteEntityTranslations('article', 'abc-123');
+ * ```
+ */
+export async function deleteEntityTranslations(
+  entityType: 'item' | 'article' | 'link',
+  entityId: string
+): Promise<TranslationStorageResult> {
+  // Validate required parameters
+  if (!entityType) {
+    return {
+      success: false,
+      error: 'Missing required parameter: entityType is required',
+    };
+  }
+
+  if (!entityId || entityId.trim() === '') {
+    return {
+      success: false,
+      error: 'Missing required parameter: entityId is required',
+    };
+  }
+
+  try {
+    let error: any = null;
+
+    // Use typed table access based on entity type
+    switch (entityType) {
+      case 'item':
+        ({ error } = await supabaseAdmin
+          .from('item_translations')
+          .delete()
+          .eq('item_id', entityId));
+        break;
+      case 'article':
+        ({ error } = await supabaseAdmin
+          .from('article_translations')
+          .delete()
+          .eq('article_id', entityId));
+        break;
+      case 'link':
+        ({ error } = await supabaseAdmin
+          .from('link_translations')
+          .delete()
+          .eq('link_id', entityId));
+        break;
+      default:
+        return {
+          success: false,
+          error: `Invalid entity type: ${entityType}. Must be one of: item, article, link`,
+        };
+    }
+
+    if (error) {
+      console.error(`[TranslationStorage] Failed to delete ${entityType} translations:`, error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    console.log(`[TranslationStorage] Successfully deleted translations for ${entityType}:`, entityId);
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error(`[TranslationStorage] Exception deleting ${entityType} translations:`, error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+}

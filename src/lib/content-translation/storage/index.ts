@@ -22,6 +22,7 @@ export {
   storeArticleTranslation,
   storeLinkTranslation,
   storeTagTranslation,
+  deleteEntityTranslations,
 } from './translation-storage';
 
 // Export types from status utilities (REQ-E03-006)

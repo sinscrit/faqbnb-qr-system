@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { AlertCircle, CheckCircle, ExternalLink, Eye, EyeOff } from 'lucide-react';
 
 // Simple debounce implementation to avoid lodash dependency
@@ -43,12 +44,15 @@ interface ValidationState {
   };
 }
 
-export default function AccessCodeInput({ 
-  onCodeChange, 
-  onValidation, 
+export default function AccessCodeInput({
+  onCodeChange,
+  onValidation,
   className = "",
-  disabled = false 
+  disabled = false
 }: AccessCodeInputProps) {
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
+
   const [accessCode, setAccessCode] = useState('');
   const [email, setEmail] = useState('');
   const [showCode, setShowCode] = useState(false);
@@ -66,19 +70,19 @@ export default function AccessCodeInput({
    */
   const validateAccessCode = useCallback((code: string): { isValid: boolean; message: string } => {
     if (!code) {
-      return { isValid: false, message: 'Access code is required' };
+      return { isValid: false, message: tErrors('accessCodeRequired') };
     }
-    
+
     if (code.length < 8) {
-      return { isValid: false, message: 'Access code should be 8+ characters' };
+      return { isValid: false, message: tForm('hints.accessCodeFormat') };
     }
-    
+
     if (!/^[A-Za-z0-9]{8,}$/.test(code)) {
-      return { isValid: false, message: 'Access code should contain only letters and numbers' };
+      return { isValid: false, message: tForm('hints.accessCodeAlphanumeric') };
     }
-    
-    return { isValid: true, message: 'Valid access code format' };
-  }, []);
+
+    return { isValid: true, message: tForm('hints.validAccessCodeFormat') };
+  }, [tErrors, tForm]);
 
   /**
    * Client-side validation for email format
@@ -86,15 +90,15 @@ export default function AccessCodeInput({
    */
   const validateEmail = useCallback((email: string): { isValid: boolean; message: string } => {
     if (!email) {
-      return { isValid: false, message: 'Email is required' };
+      return { isValid: false, message: tErrors('emailRequired') };
     }
-    
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return { isValid: false, message: 'Please enter a valid email address' };
+      return { isValid: false, message: tErrors('invalidEmail') };
     }
-    
-    return { isValid: true, message: 'Valid email format' };
-  }, []);
+
+    return { isValid: true, message: tForm('hints.validEmailFormat') };
+  }, [tErrors, tForm]);
 
   /**
    * Debounced validation to avoid excessive processing
@@ -179,7 +183,7 @@ export default function AccessCodeInput({
       {/* Access Code Input */}
       <div className="space-y-2">
         <label htmlFor="access-code" className="block text-sm font-medium text-gray-700">
-          Access Code <span className="text-red-500">*</span>
+          {tForm('labels.accessCode')} <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <input
@@ -188,26 +192,26 @@ export default function AccessCodeInput({
             value={accessCode}
             onChange={(e) => handleCodeChange(e.target.value)}
             disabled={disabled}
-            placeholder="Enter your 8+ character access code"
+            placeholder={tForm('placeholders.accessCode')}
             className={`
               block w-full px-3 py-2 pr-20 border rounded-md shadow-sm
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
               ${disabled ? 'bg-gray-50 text-gray-500' : 'bg-white'}
-              ${validation.code.isValid && accessCode ? 'border-green-300' : 
+              ${validation.code.isValid && accessCode ? 'border-green-300' :
                 accessCode && !validation.code.isValid ? 'border-red-300' : 'border-gray-300'}
             `}
           />
           <div className="absolute inset-y-0 right-0 flex items-center space-x-2 pr-3">
-            <ValidationIcon 
-              isValid={validation.code.isValid && !!accessCode} 
-              isValidating={validation.code.isValidating} 
+            <ValidationIcon
+              isValid={validation.code.isValid && !!accessCode}
+              isValidating={validation.code.isValidating}
             />
             <button
               type="button"
               onClick={() => setShowCode(!showCode)}
               disabled={disabled}
               className="text-gray-400 hover:text-gray-600 focus:outline-none"
-              title={showCode ? "Hide access code" : "Show access code"}
+              title={showCode ? tForm('accessibility.hidePassword') : tForm('accessibility.showPassword')}
             >
               {showCode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -219,14 +223,14 @@ export default function AccessCodeInput({
           </p>
         )}
         <p className="text-xs text-gray-500">
-          Access code should be 8+ characters long and contain only letters and numbers
+          {tForm('hints.accessCodeAlphanumeric')}
         </p>
       </div>
 
       {/* Email Input */}
       <div className="space-y-2">
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email Address <span className="text-red-500">*</span>
+          {tForm('labels.email')} <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <input
@@ -235,12 +239,12 @@ export default function AccessCodeInput({
             value={email}
             onChange={(e) => handleEmailChange(e.target.value)}
             disabled={disabled}
-            placeholder="Enter your email address"
+            placeholder={tForm('placeholders.email')}
             className={`
               block w-full px-3 py-2 pr-10 border rounded-md shadow-sm
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
               ${disabled ? 'bg-gray-50 text-gray-500' : 'bg-white'}
-              ${validation.email.isValid && email ? 'border-green-300' : 
+              ${validation.email.isValid && email ? 'border-green-300' :
                 email && !validation.email.isValid ? 'border-red-300' : 'border-gray-300'}
             `}
           />

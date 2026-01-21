@@ -69,6 +69,7 @@ export {
   storeArticleTranslation,
   storeLinkTranslation,
   storeTagTranslation,
+  deleteEntityTranslations,
 } from './storage';
 
 // Task 1.5: Storage types

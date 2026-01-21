@@ -552,11 +552,11 @@ Replace all hardcoded form strings in AccessCodeInput component.
 | Show/hide code button titles | `form.accessibility.showPassword`, `form.accessibility.hidePassword` |
 
 #### Acceptance Criteria
-- [ ] Import `useTranslations` hook
-- [ ] Replace all label text with translation references
-- [ ] Replace placeholder text with translation reference
-- [ ] Replace validation hint messages with translation references
-- [ ] Replace show/hide button accessibility text
+- [x] Import `useTranslations` hook ---implemented: Added tForm and tErrors hooks---
+- [x] Replace all label text with translation references ---implemented: accessCode, email labels---
+- [x] Replace placeholder text with translation reference ---implemented: accessCode, email placeholders---
+- [x] Replace validation hint messages with translation references ---implemented: accessCodeFormat, accessCodeAlphanumeric, validAccessCodeFormat, validEmailFormat---
+- [x] Replace show/hide button accessibility text ---implemented: Using showPassword/hidePassword---
 
 #### Verification Steps
 1. Test manual access code entry
