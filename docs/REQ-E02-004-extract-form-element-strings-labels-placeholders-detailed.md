@@ -1,7 +1,7 @@
 # REQ-E02-004: Extract Form Element Strings (Labels, Placeholders, Hints) - Detailed Task Breakdown
 
 *Generated: 2026-01-19 12:30:00 UTC*
-*Last Modified: 2026-01-21 14:30:00 UTC*
+*Last Modified: 2026-01-21 15:00:00 UTC*
 
 ## Reference
 
@@ -643,10 +643,20 @@ The country dropdown contains 45+ hardcoded country names. Options:
 **Recommendation**: Mark country localization as out of scope for this task. Create follow-up task for country name localization.
 
 #### Acceptance Criteria
-- [ ] Import `useTranslations` hook
-- [ ] Replace form labels and placeholders
-- [ ] Replace form section titles
-- [ ] Country names deferred to separate task (document as known limitation)
+- [x] Import `useTranslations` hook
+- [x] Replace form labels and placeholders
+- [x] Replace form section titles
+- [x] Country names deferred to separate task (document as known limitation)
+
+#### Implementation Notes (2026-01-21)
+- Added translation hooks: `tActions`, `tModal`, `tForm`, `tValidation`
+- Leveraged existing `properties.modal` namespace translations
+- Updated dialog title, description, and close button aria-label
+- Updated all form field labels and placeholders via `tForm` hook
+- Updated validation error messages via `tValidation` hook (using validation keys pattern)
+- Updated footer buttons using `tActions` and `tModal` hooks
+- Country dropdown placeholder now uses translation; country names kept in English (per recommendation)
+- TypeScript check passed (17 pre-existing route type errors, no new errors)
 
 ---
 

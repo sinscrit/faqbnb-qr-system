@@ -16,9 +16,10 @@ import { LoadingIndicator } from './LoadingIndicator';
 /**
  * Task 2.2: Country dropdown data with ISO 3166-1 alpha-2 codes
  * Common countries prioritized at the top of the list
+ * Note: Country names are kept in English for now; consider using i18n-iso-countries for full localization
  */
 const COUNTRIES = [
-  { code: '', label: 'Select country...' },
+  { code: '', labelKey: 'placeholder' as const },  // Will be translated using tForm('country.placeholder')
   { code: 'US', label: 'United States' },
   { code: 'CA', label: 'Canada' },
   { code: 'GB', label: 'United Kingdom' },
@@ -499,7 +500,7 @@ export function AddPropertyModal({
                   >
                     {COUNTRIES.map((country) => (
                       <option key={country.code} value={country.code}>
-                        {country.label}
+                        {'labelKey' in country ? tForm(`country.${country.labelKey}`) : country.label}
                       </option>
                     ))}
                   </select>
@@ -529,7 +530,7 @@ export function AddPropertyModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              {t('cancel')}
+              {tActions('cancel')}
             </button>
 
             {/* Create Property Button */}
@@ -549,11 +550,11 @@ export function AddPropertyModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label="Creating property" />
-                  <span>{t('saving')}</span>
+                  <LoadingIndicator size="sm" color="white" label={tModal('creating')} />
+                  <span>{tModal('creating')}</span>
                 </>
               ) : (
-                <span>{t('createProperty')}</span>
+                <span>{tActions('createProperty')}</span>
               )}
             </button>
           </div>
