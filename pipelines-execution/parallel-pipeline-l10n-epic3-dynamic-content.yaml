@@ -208,6 +208,8 @@ request_stages:
         - "claude"
         - "-p"
         - "{prompt}"
+        - "--debug"
+        - "--verbose"
         - "--allowedTools"
         - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*"
         - "--dangerously-skip-permissions"

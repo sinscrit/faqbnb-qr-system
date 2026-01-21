@@ -881,3 +881,74 @@ export type {
 } from '@/lib/content-translation';
 
 export { TRANSLATION_CONTEXTS } from '@/lib/content-translation';
+
+// ============================================================================
+// Translation Status API Types (REQ-E03-021)
+// ============================================================================
+
+/**
+ * Entity types that support translation status queries
+ */
+export type TranslationEntityType = 'item' | 'article' | 'link' | 'tag';
+
+/**
+ * Language-level translation status for API responses
+ */
+export type TranslationLanguageStatus =
+  | 'not_started'
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed';
+
+/**
+ * Overall translation status for API responses
+ */
+export type TranslationOverallStatus =
+  | 'fully_translated'
+  | 'partially_translated'
+  | 'pending'
+  | 'not_started'
+  | 'has_failures';
+
+/**
+ * Per-language status details for API responses
+ */
+export interface ApiLanguageTranslationStatus {
+  status: TranslationLanguageStatus;
+  translatedAt?: string;
+  error?: string;
+}
+
+/**
+ * Complete translation status data returned by the API
+ * @see GET /api/translations/status/[entityType]/[entityId]
+ */
+export interface TranslationStatusData {
+  entityId: string;
+  entityType: TranslationEntityType;
+  sourceLanguage: string;
+  overallStatus: TranslationOverallStatus;
+  completionPercentage: number;
+  lastUpdated: string | null;
+  languages: Record<string, ApiLanguageTranslationStatus>;
+  completedLanguages: string[];
+  pendingLanguages: string[];
+  failedLanguages: string[];
+}
+
+/**
+ * Successful response from translation status API
+ */
+export interface TranslationStatusResponse {
+  success: true;
+  data: TranslationStatusData;
+}
+
+/**
+ * Error response from translation status API
+ */
+export interface TranslationStatusErrorResponse {
+  success: false;
+  error: string;
+}

@@ -1996,7 +1996,41 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
         
         elapsed = time.time() - start_time
         elapsed_str = format_duration(elapsed)
-        
+
+        # Save full agent output to file for debugging
+        try:
+            output_dir = stage_config.get('working_directory') or Path.cwd()
+            if isinstance(output_dir, str):
+                output_dir = Path(output_dir)
+            # Use pipelines-execution directory if we can find it
+            if (output_dir / 'pipelines-execution').exists():
+                output_dir = output_dir / 'pipelines-execution'
+            elif output_dir.name != 'pipelines-execution' and (output_dir.parent / 'pipelines-execution').exists():
+                output_dir = output_dir.parent / 'pipelines-execution'
+
+            timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+            task_id_safe = str(task.id).replace('/', '-').replace('\\', '-')
+            output_file = output_dir / f"agent-output-{task_id_safe}-{timestamp}.log"
+
+            with open(output_file, 'w') as f:
+                f.write(f"=== Agent Output for Task {task.id} ===\n")
+                f.write(f"Agent: {agent_name}\n")
+                f.write(f"Request ID: {request_id}\n")
+                f.write(f"Timestamp: {datetime.now().isoformat()}\n")
+                f.write(f"Elapsed: {elapsed_str}\n")
+                f.write(f"Return Code: {result.returncode}\n")
+                f.write(f"\n{'='*60}\n")
+                f.write(f"=== STDOUT ===\n")
+                f.write(result.stdout or '(empty)')
+                f.write(f"\n\n{'='*60}\n")
+                f.write(f"=== STDERR ===\n")
+                f.write(result.stderr or '(empty)')
+                f.write(f"\n{'='*60}\n")
+
+            logging.debug(f"Saved full agent output to: {output_file}")
+        except Exception as e:
+            logging.warning(f"Failed to save agent output file: {e}")
+
         if result.returncode == 0:
             logging.info(f"Agent {agent_name} completed successfully for task {task.id}{req_info} in {elapsed_str}")
             logging.debug(f"Stdout (first 500 chars): {result.stdout[:500] if result.stdout else 'empty'}")
