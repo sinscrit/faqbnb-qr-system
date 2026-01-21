@@ -9,6 +9,8 @@
     "lint": "next lint",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:perf": "vitest run --testNamePattern='.perf.test' --reporter=verbose",
+    "test:perf:watch": "vitest --testNamePattern='.perf.test'",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "db:types": "echo 'Run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.generated.ts'",

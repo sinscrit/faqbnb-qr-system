@@ -3,7 +3,7 @@
  *
  * Configures test environment and coverage for React/Next.js application.
  *
- * @lastModified 2026-01-21 (REQ-E03-033)
+ * @lastModified 2026-01-21 (REQ-E03-034 - Added performance test configuration)
  */
 
 import { defineConfig } from 'vitest/config';
@@ -16,7 +16,12 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/*.e2e.test.ts'],
+    include: [
+      'src/**/*.test.ts',
+      'src/**/*.test.tsx',
+      'src/**/*.e2e.test.ts',
+      'src/**/*.perf.test.ts',  // Added for REQ-E03-034 - Performance tests
+    ],
     exclude: ['node_modules', '.next'],
     coverage: {
       provider: 'v8',
@@ -31,10 +36,24 @@ export default defineConfig({
         'src/app/api/admin/items/**/*.ts',       // Added for REQ-E03-032
         'src/app/api/admin/articles/**/*.ts',    // Added for REQ-E03-032
       ],
-      exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
+      exclude: [
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        '**/__tests__/**',
+        'src/**/*.perf.test.ts',  // Exclude performance tests from coverage
+        'src/**/performance/**',   // Exclude performance test helpers
+      ],
     },
-    // Timeout for integration and E2E tests that may take longer
-    testTimeout: 15000,
+    // Timeout for integration, E2E, and performance tests that may take longer
+    testTimeout: 30000,  // Increased to 30 seconds for performance tests (REQ-E03-034)
+    hookTimeout: 10000,  // Added for performance test setup/teardown
+    // Pool options for better performance test isolation
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: false,
+      },
+    },
   },
   resolve: {
     alias: {

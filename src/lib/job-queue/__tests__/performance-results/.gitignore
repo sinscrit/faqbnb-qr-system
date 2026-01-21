@@ -1,0 +1,9 @@
+# Ignore all JSON result files (generated during tests)
+*.json
+
+# Keep the gitkeep and gitignore files
+!.gitkeep
+!.gitignore
+
+# Keep schema documentation
+!SCHEMA.md
