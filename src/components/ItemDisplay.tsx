@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { ExternalLink, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { ItemDisplayProps } from '@/types';
@@ -12,6 +13,7 @@ import { getSessionId } from '@/lib/session';
 import { analyticsApi } from '@/lib/api';
 
 export default function ItemDisplay({ item }: ItemDisplayProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [visitRecorded, setVisitRecorded] = useState<boolean>(false);
   const [reactionCounts, setReactionCounts] = useState<ReactionCounts | undefined>(undefined);
@@ -70,14 +72,14 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
       console.info('Reaction counts updated:', newCounts);
     } catch (error) {
       console.error('Failed to handle reaction change:', error);
-      setReactionError('Failed to update reaction counts');
+      setReactionError(tNotifications('error.updateReaction'));
     }
   };
 
   // Error boundary for reaction system
   const handleReactionError = (error: Error) => {
     console.error('Reaction system error:', error);
-    setReactionError('Reaction system temporarily unavailable');
+    setReactionError(tNotifications('error.serverError'));
   };
 
   if (!item) {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronDownIcon, CheckIcon, BuildingOfficeIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/contexts/AuthContext';
 import { Account } from '@/types';
@@ -67,12 +68,13 @@ function AccountDisplay({ account, userRole, isOwner, isSelected, onClick, showI
 }
 
 // Main Account Selector Component
-export function AccountSelector({ 
-  onAccountChange, 
-  disabled = false, 
-  showAccountInfo = true, 
-  className = '' 
+export function AccountSelector({
+  onAccountChange,
+  disabled = false,
+  showAccountInfo = true,
+  className = ''
 }: AccountSelectorProps) {
+  const tNotifications = useTranslations('common.notifications');
   const { user, currentAccount, userAccounts, switchingAccount, switchToAccount } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
@@ -91,7 +93,7 @@ export function AccountSelector({
       const result = await switchToAccount(account.id);
       
       if (!result.success) {
-        setSwitchError(result.error || 'Failed to switch account');
+        setSwitchError(result.error || tNotifications('error.switchAccount'));
         console.error('Account switch failed:', result.error);
         return;
       }
@@ -104,7 +106,7 @@ export function AccountSelector({
       console.log('Successfully switched to account:', account.name);
     } catch (error) {
       console.error('Account switch error:', error);
-      setSwitchError('An unexpected error occurred');
+      setSwitchError(tNotifications('error.generic'));
     }
   };
 

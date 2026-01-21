@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { ReactionCounts, ReactionType } from '@/types/reactions';
 import { getSessionId } from '@/lib/session';
 import { reactionsApi } from '@/lib/api';
@@ -51,6 +52,7 @@ const REACTION_BUTTONS: ReactionButton[] = [
 ];
 
 export default function ReactionButtons({ itemId, initialCounts, onReactionChange }: ReactionButtonsProps) {
+  const tNotifications = useTranslations('common.notifications');
   const [counts, setCounts] = useState<ReactionCounts>(initialCounts || {
     like: 0,
     dislike: 0,
@@ -78,7 +80,7 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
       setSessionId(id);
     } catch (error) {
       console.error('Failed to get session ID:', error);
-      setError('Failed to initialize session');
+      setError(tNotifications('error.initSession'));
     }
   }, []);
 
@@ -141,7 +143,7 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
 
   const handleReactionClick = async (reactionType: ReactionType) => {
     if (!sessionId) {
-      setError('Session not initialized');
+      setError(tNotifications('error.initSession'));
       return;
     }
 
@@ -210,7 +212,7 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
         
         console.info('Reaction update confirmed by server:', response.data);
       } else {
-        throw new Error(response.error || 'Failed to update reaction');
+        throw new Error(response.error || tNotifications('error.updateReaction'));
       }
     } catch (error) {
       console.error('Reaction update failed:', error);
@@ -227,7 +229,7 @@ export default function ReactionButtons({ itemId, initialCounts, onReactionChang
       if (error instanceof Error) {
         setNetworkError(error.message);
       } else {
-        setNetworkError('Network error - please try again');
+        setNetworkError(tNotifications('error.networkError'));
       }
       
       // Auto-clear network error after 5 seconds
