@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { UserAnalytics, AdminDashboardStats, AccessRequest, AccessRequestStatus } from '@/types/admin';
 import { useAuth } from '@/contexts/AuthContext';
 import UserAnalyticsTable from '@/components/UserAnalyticsTable';
@@ -28,6 +29,7 @@ interface BackOfficeData {
  * - Enhanced error handling and loading states
  */
 export default function SystemBackOfficePage() {
+  const tNotifications = useTranslations('common.notifications');
   const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<BackOfficeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -141,10 +143,10 @@ export default function SystemBackOfficePage() {
       });
 
       // Show success message (could be replaced with a toast notification)
-      alert('Access request approved successfully');
+      alert(tNotifications('success.accessApproved'));
     } catch (err) {
       console.error('Error approving request:', err);
-      alert('Failed to approve access request');
+      alert(tNotifications('error.approveRequest'));
     }
   };
 
@@ -171,10 +173,10 @@ export default function SystemBackOfficePage() {
       });
 
       // Show success message
-      alert('Access request denied');
+      alert(tNotifications('success.changesSaved'));
     } catch (err) {
       console.error('Error denying request:', err);
-      alert('Failed to deny access request');
+      alert(tNotifications('error.denyRequest'));
     }
   };
 
@@ -182,10 +184,10 @@ export default function SystemBackOfficePage() {
     try {
       // In a real implementation, this would send an email notification
       console.log('Sending email for approved request:', requestId);
-      alert('Email notification sent successfully');
+      alert(tNotifications('success.emailSent'));
     } catch (err) {
       console.error('Error sending email:', err);
-      alert('Failed to send email notification');
+      alert(tNotifications('error.sendNotification'));
     }
   };
 
