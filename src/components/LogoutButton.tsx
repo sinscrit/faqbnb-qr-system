@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useCommonTranslations } from '@/hooks/useCommonTranslations';
 
 interface LogoutButtonProps {
   variant?: 'button' | 'text' | 'icon';
@@ -24,7 +25,8 @@ interface ConfirmationModalProps {
 
 function ConfirmationModal({ isOpen, onConfirm, onCancel, loading }: ConfirmationModalProps) {
   const t = useTranslations('auth');
-  const tCommon = useTranslations('common');
+  // REQ-E02-031: Use convenience hook for common translations
+  const { action } = useCommonTranslations();
 
   if (!isOpen) return null;
 
@@ -39,7 +41,7 @@ function ConfirmationModal({ isOpen, onConfirm, onCancel, loading }: Confirmatio
             disabled={loading}
             className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50"
           >
-            {tCommon('cancel')}
+            {action('cancel')}
           </button>
           <button
             onClick={onConfirm}
