@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 /**
  * Google OAuth Button - Uses direct Google OAuth flow
@@ -27,6 +28,7 @@ export default function GoogleOAuthButton({
   const [isLoading, setIsLoading] = useState(false);
   const [lastAttempt, setLastAttempt] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState<number>(0);
+  const t = useTranslations('common.actions');
 
   // Rate limiting: max 3 attempts per 5 minutes
   const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
@@ -108,12 +110,12 @@ export default function GoogleOAuthButton({
         disabled:grayscale
         ${isLoading ? 'opacity-75' : ''}
       `}
-      aria-label="Continue with Google"
+      aria-label={t('continueWithGoogle')}
     >
       {isLoading ? (
         <>
           <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-blue-600 mr-3"></div>
-          <span>Connecting to Google...</span>
+          <span>{t('connectingToGoogle')}</span>
         </>
       ) : (
         <>
@@ -141,7 +143,7 @@ export default function GoogleOAuthButton({
               fill="#EA4335"
             />
           </svg>
-          <span>Continue with Google</span>
+          <span>{t('continueWithGoogle')}</span>
         </>
       )}
     </button>

@@ -14,6 +14,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { AlertCircle, Plus, LogOut, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '../../utils/accessibility';
 
@@ -49,6 +50,8 @@ export function EmptySessionDialog({
   onExitSession,
   className,
 }: EmptySessionDialogProps) {
+  const tEmpty = useTranslations('workflow.dialogs.emptySession');
+  const tCommon = useTranslations('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -128,7 +131,7 @@ export function EmptySessionDialog({
             'motion-reduce:transition-none',
             'focus:outline-none focus:ring-2 focus:ring-gray-500'
           )}
-          aria-label="Close dialog"
+          aria-label={tCommon('dialog.closeDialog')}
         >
           <X className="w-5 h-5" aria-hidden="true" />
         </button>
@@ -147,7 +150,7 @@ export function EmptySessionDialog({
             id="empty-session-title"
             className="text-lg font-semibold text-gray-900 text-center mb-2"
           >
-            No Items Added
+            {tEmpty('title')}
           </h2>
 
           {/* Description */}
@@ -155,7 +158,7 @@ export function EmptySessionDialog({
             id="empty-session-description"
             className="text-sm text-gray-600 text-center mb-6"
           >
-            No items added yet. Add items or exit session?
+            {tEmpty('message')}
           </p>
 
           {/* Action Buttons */}
@@ -176,7 +179,7 @@ export function EmptySessionDialog({
               )}
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              Add Items
+              {tEmpty('addItems')}
             </button>
 
             {/* Exit Session - Secondary */}
@@ -195,7 +198,7 @@ export function EmptySessionDialog({
               )}
             >
               <LogOut className="w-5 h-5" aria-hidden="true" />
-              Exit Session
+              {tEmpty('exitSession')}
             </button>
           </div>
         </div>

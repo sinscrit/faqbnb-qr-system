@@ -14,6 +14,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '../../utils/accessibility';
 
@@ -45,6 +46,8 @@ export function RemoveItemDialog({
   onConfirmRemove,
   className,
 }: RemoveItemDialogProps) {
+  const tRemove = useTranslations('workflow.dialogs.removeItem');
+  const tCommon = useTranslations('common.actions');
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -120,13 +123,13 @@ export function RemoveItemDialog({
               id="remove-dialog-title"
               className="text-lg font-semibold text-[#222222]"
             >
-              Remove Item?
+              {tRemove('title')}
             </h3>
             <p
               id="remove-dialog-description"
               className="mt-2 text-sm text-[#717171]"
             >
-              Are you sure you want to remove &ldquo;{displayName}&rdquo;? This action cannot be undone.
+              {tRemove('message', { itemName: displayName })}
             </p>
           </div>
         </div>
@@ -147,7 +150,7 @@ export function RemoveItemDialog({
               "min-h-[44px]"
             )}
           >
-            Cancel
+            {tRemove('cancel')}
           </button>
           <button
             ref={confirmButtonRef}
@@ -164,7 +167,7 @@ export function RemoveItemDialog({
             )}
             style={{ backgroundColor: '#FF5A5F' }}
           >
-            Remove
+            {tRemove('remove')}
           </button>
         </div>
       </div>

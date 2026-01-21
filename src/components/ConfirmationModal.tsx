@@ -1,4 +1,7 @@
+'use client';
+
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -16,13 +19,18 @@ export default function ConfirmationModal({
   isOpen,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel,
   loading = false,
   confirmButtonColor = 'red'
 }: ConfirmationModalProps) {
+  const tCommon = useTranslations('common');
+
+  // Use translations as fallback for default values
+  const resolvedConfirmText = confirmText ?? tCommon('actions.confirm');
+  const resolvedCancelText = cancelText ?? tCommon('actions.cancel');
   if (!isOpen) return null;
 
   const confirmButtonStyles = {
@@ -42,7 +50,7 @@ export default function ConfirmationModal({
             disabled={loading}
             className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 transition-colors"
           >
-            {cancelText}
+            {resolvedCancelText}
           </button>
           <button
             onClick={onConfirm}
@@ -52,7 +60,7 @@ export default function ConfirmationModal({
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              confirmText
+              resolvedConfirmText
             )}
           </button>
         </div>

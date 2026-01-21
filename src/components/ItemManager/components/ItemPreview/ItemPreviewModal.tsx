@@ -23,6 +23,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X, MapPin, Edit, Images, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ItemPreviewModalProps } from '../../ItemManager.types';
 
@@ -44,6 +45,12 @@ export function ItemPreviewModal({
   config,
 }: ItemPreviewModalProps) {
   // ---------------------------------------------------------------------------
+  // Translations
+  // ---------------------------------------------------------------------------
+  const tPreview = useTranslations('items.dialogs.preview');
+  const tCommon = useTranslations('common.actions');
+
+  // ---------------------------------------------------------------------------
   // State
   // ---------------------------------------------------------------------------
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -58,7 +65,7 @@ export function ItemPreviewModal({
   // ---------------------------------------------------------------------------
   // Derived values
   // ---------------------------------------------------------------------------
-  const displayTitle = title ?? item?.title ?? 'Item Preview';
+  const displayTitle = title ?? item?.title ?? tPreview('defaultTitle');
   const enableAssetManagement = config?.enableAssetManagement !== false;
 
   // ---------------------------------------------------------------------------
@@ -242,7 +249,7 @@ export function ItemPreviewModal({
                   'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                   'transition-colors'
                 )}
-                aria-label="Close preview"
+                aria-label={tPreview('closePreview')}
               >
                 <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
@@ -309,7 +316,7 @@ export function ItemPreviewModal({
                 )}
               >
                 <Edit className="w-4 h-4" aria-hidden="true" />
-                <span>Edit</span>
+                <span>{tCommon('edit')}</span>
               </button>
 
               {/* Manage Assets Button - Secondary */}
@@ -328,7 +335,7 @@ export function ItemPreviewModal({
                   )}
                 >
                   <Images className="w-4 h-4" aria-hidden="true" />
-                  <span>Manage Assets</span>
+                  <span>{tPreview('manageAssets')}</span>
                 </button>
               )}
 
@@ -348,7 +355,7 @@ export function ItemPreviewModal({
                 )}
               >
                 <Trash2 className="w-4 h-4" aria-hidden="true" />
-                <span>Delete</span>
+                <span>{tCommon('delete')}</span>
               </button>
             </div>
           )}
@@ -374,14 +381,13 @@ export function ItemPreviewModal({
               id="delete-confirm-title"
               className="text-lg font-medium text-gray-900 mb-4"
             >
-              Delete Item
+              {tPreview('deleteTitle')}
             </h3>
             <p
               id="delete-confirm-description"
               className="text-gray-600 mb-6"
             >
-              Are you sure you want to delete &quot;{item?.title}&quot;?
-              This action cannot be undone.
+              {tPreview('deleteConfirmation', { itemName: item?.title || '' })}
             </p>
             <div className="flex space-x-3">
               <button
@@ -395,7 +401,7 @@ export function ItemPreviewModal({
                   'min-h-[44px]'
                 )}
               >
-                Cancel
+                {tCommon('cancel')}
               </button>
               <button
                 ref={confirmButtonRef}
@@ -408,7 +414,7 @@ export function ItemPreviewModal({
                   'min-h-[44px]'
                 )}
               >
-                Delete
+                {tCommon('delete')}
               </button>
             </div>
           </div>
@@ -417,7 +423,7 @@ export function ItemPreviewModal({
 
       {/* Screen reader announcement for dialog state */}
       <div aria-live="polite" className="sr-only">
-        {showDeleteConfirm && `Delete confirmation dialog opened for ${item?.title}`}
+        {showDeleteConfirm && tPreview('deleteDialogAnnouncement', { itemName: item?.title || '' })}
       </div>
     </Dialog.Root>
   );

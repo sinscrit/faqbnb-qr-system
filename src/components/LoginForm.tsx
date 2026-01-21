@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, LogIn, Loader2, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import GoogleOAuthButton from './GoogleOAuthButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -29,6 +30,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
   const searchParams = useSearchParams();
   const router = useRouter();
   const { signIn } = useAuth();
+  const t = useTranslations('common.actions');
   
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -316,12 +318,12 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
         {loading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            Signing In...
+            {t('signingIn')}
           </>
         ) : (
           <>
             <LogIn className="w-4 h-4 mr-2" />
-            Sign In with Email
+            {t('signInWithEmail')}
           </>
         )}
       </button>

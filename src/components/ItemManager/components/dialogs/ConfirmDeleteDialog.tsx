@@ -13,6 +13,7 @@
  */
 
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ItemRecord } from '@/components/ItemCapture';
 
@@ -53,39 +54,55 @@ export function formatItemList(
 /**
  * Generate appropriate title based on item count.
  *
+ * @param t - Translation function for items.dialogs.delete namespace
  * @param count - Number of items being deleted
  * @param customTitle - Optional custom title to use instead
  * @returns Dialog title string
  */
-export function getDeleteTitle(count: number, customTitle?: string): string {
+export function getDeleteTitle(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any,
+  count: number,
+  customTitle?: string
+): string {
   if (customTitle) return customTitle;
-  return count === 1 ? 'Delete Item' : 'Delete Items';
+  return count === 1 ? t('titleSingle') : t('titleMultiple');
 }
 
 /**
  * Generate confirmation message based on item count.
  *
+ * @param t - Translation function for items.dialogs.delete namespace
  * @param count - Number of items being deleted
  * @returns Confirmation message string
  */
-export function getDeleteMessage(count: number): string {
+export function getDeleteMessage(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any,
+  count: number
+): string {
   if (count === 1) {
-    return 'Are you sure you want to delete this item? This action cannot be undone.';
+    return t('messageSingle');
   }
-  return `Are you sure you want to delete these ${count} items? This action cannot be undone.`;
+  return t('messageMultiple', { count });
 }
 
 /**
  * Generate confirm button text based on item count.
  *
+ * @param t - Translation function for items.dialogs.delete namespace
  * @param count - Number of items being deleted
  * @returns Button text string
  */
-export function getConfirmButtonText(count: number): string {
+export function getConfirmButtonText(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any,
+  count: number
+): string {
   if (count === 1) {
-    return 'Delete';
+    return t('confirmSingle');
   }
-  return `Delete ${count} Items`;
+  return t('confirmMultiple', { count });
 }
 
 // =============================================================================
@@ -147,6 +164,9 @@ export function ConfirmDeleteDialog({
   title,
   className,
 }: ConfirmDeleteDialogProps) {
+  const tDelete = useTranslations('itemDialogs.delete');
+  const tCommon = useTranslations('common.actions');
+
   // Don't render if not open or no items
   if (!isOpen || items.length === 0) {
     return null;
@@ -198,13 +218,13 @@ export function ConfirmDeleteDialog({
               id="delete-dialog-title"
               className="text-lg font-semibold text-gray-900"
             >
-              {getDeleteTitle(itemCount, title)}
+              {getDeleteTitle(tDelete, itemCount, title)}
             </h3>
             <p
               id="delete-dialog-description"
               className="mt-2 text-sm text-gray-600"
             >
-              {getDeleteMessage(itemCount)}
+              {getDeleteMessage(tDelete, itemCount)}
             </p>
           </div>
         </div>
@@ -212,7 +232,7 @@ export function ConfirmDeleteDialog({
         {/* Item list */}
         <div className="px-6 pb-4">
           <div className="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto">
-            <ul className="space-y-2" aria-label="Items to be deleted">
+            <ul className="space-y-2" aria-label={tDelete('itemsList')}>
               {visibleItems.map((item) => (
                 <li
                   key={item.id}
@@ -227,7 +247,7 @@ export function ConfirmDeleteDialog({
               {overflowCount > 0 && (
                 <li className="flex items-start gap-2 text-sm text-gray-500 italic">
                   <span className="text-gray-400 mt-0.5" aria-hidden="true">•</span>
-                  <span>and {overflowCount} more</span>
+                  <span>{tDelete('andMore', { count: overflowCount })}</span>
                 </li>
               )}
             </ul>
@@ -249,7 +269,7 @@ export function ConfirmDeleteDialog({
               'disabled:opacity-50 disabled:cursor-not-allowed'
             )}
           >
-            Cancel
+            {tCommon('cancel')}
           </button>
           <button
             type="button"
@@ -268,10 +288,10 @@ export function ConfirmDeleteDialog({
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                <span>Deleting...</span>
+                <span>{tDelete('deleting')}</span>
               </>
             ) : (
-              getConfirmButtonText(itemCount)
+              getConfirmButtonText(tDelete, itemCount)
             )}
           </button>
         </div>

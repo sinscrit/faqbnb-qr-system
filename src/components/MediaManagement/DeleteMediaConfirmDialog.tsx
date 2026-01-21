@@ -7,6 +7,7 @@
  * Follows the pattern from AssetRemoveConfirmDialog.
  *
  * @module MediaManagement/DeleteMediaConfirmDialog
+ * @lastModified 2026-01-21 (REQ-E02-003 - L10N)
  */
 
 import { useEffect, useCallback } from 'react';
@@ -18,6 +19,7 @@ import {
   Image as ImageIcon,
   Link as LinkIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { DeleteMediaConfirmDialogProps } from './MediaManagement.types';
 
@@ -39,19 +41,19 @@ function getLinkTypeIcon(linkType: string): React.ReactNode {
 }
 
 /**
- * Gets human-readable type label
+ * Gets the translation key for the type-specific title
  */
-function getTypeLabel(linkType: string): string {
+function getTitleKey(linkType: string): string {
   switch (linkType) {
     case 'youtube':
-      return 'YouTube Video';
+      return 'titleYoutube';
     case 'pdf':
-      return 'PDF Document';
+      return 'titlePdf';
     case 'image':
-      return 'Image';
+      return 'titleImage';
     case 'text':
     default:
-      return 'Web Link';
+      return 'titleLink';
   }
 }
 
@@ -62,6 +64,9 @@ export function DeleteMediaConfirmDialog({
   onCancel,
   isDeleting = false,
 }: DeleteMediaConfirmDialogProps) {
+  const tMedia = useTranslations('media.dialogs.deleteConfirm');
+  const tCommon = useTranslations('common.actions');
+
   // Handle Escape key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -101,7 +106,7 @@ export function DeleteMediaConfirmDialog({
             id="delete-media-dialog-title"
             className="text-lg font-medium text-gray-900 mb-4 text-center"
           >
-            Delete {getTypeLabel(link.linkType)}?
+            {tMedia(getTitleKey(link.linkType))}
           </h3>
 
           {/* Icon and Info */}
@@ -119,7 +124,7 @@ export function DeleteMediaConfirmDialog({
 
           {/* Warning */}
           <p className="text-gray-600 text-center mb-6">
-            This action cannot be undone.
+            {tMedia('warning')}
           </p>
 
           {/* Actions */}
@@ -133,7 +138,7 @@ export function DeleteMediaConfirmDialog({
                 'focus:outline-none focus:ring-2 focus:ring-gray-500'
               )}
             >
-              Cancel
+              {tCommon('cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -150,7 +155,7 @@ export function DeleteMediaConfirmDialog({
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  Delete
+                  {tCommon('delete')}
                 </>
               )}
             </button>

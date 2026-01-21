@@ -14,6 +14,7 @@
  */
 
 import { Check, Trash2, Tag, Minus, FolderInput, X, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { BulkActionsBarProps } from '../../ItemManager.types';
 
@@ -144,6 +145,8 @@ export function BulkActionsBar({
   loading = false,
   className,
 }: BulkActionsBarProps) {
+  const t = useTranslations('common.actions');
+
   // Don't render if no items selected
   if (selectedCount === 0) {
     return null;
@@ -193,14 +196,14 @@ export function BulkActionsBar({
             {loading ? (
               <div className="flex items-center gap-2 text-gray-500">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                <span className="text-sm">Processing...</span>
+                <span className="text-sm">{t('processing')}</span>
               </div>
             ) : (
               <>
                 {/* Delete button */}
                 <ActionButton
                   icon={Trash2}
-                  label="Delete"
+                  label={t('delete')}
                   onClick={onDelete}
                   variant="destructive"
                   disabled={loading}
@@ -209,7 +212,7 @@ export function BulkActionsBar({
                 {/* Add Tag button */}
                 <ActionButton
                   icon={Tag}
-                  label="Add Tag"
+                  label={t('addTag')}
                   onClick={onAddTag}
                   variant="primary"
                   disabled={loading}
@@ -218,7 +221,7 @@ export function BulkActionsBar({
                 {/* Remove Tag button */}
                 <ActionButton
                   icon={Minus}
-                  label="Remove Tag"
+                  label={t('removeTag')}
                   onClick={onRemoveTag}
                   variant="secondary"
                   disabled={loading}
@@ -228,7 +231,7 @@ export function BulkActionsBar({
                 {multiPropertyMode && onMoveToProperty && (
                   <ActionButton
                     icon={FolderInput}
-                    label="Move to Property"
+                    label={t('moveToProperty')}
                     onClick={onMoveToProperty}
                     variant="primary"
                     disabled={loading}
@@ -250,8 +253,8 @@ export function BulkActionsBar({
             <button
               type="button"
               onClick={onExitSelection}
-              aria-label="Cancel selection"
-              title="Cancel selection"
+              aria-label={t('cancel')}
+              title={t('cancel')}
               className={cn(
                 'flex items-center justify-center',
                 'min-h-[44px] min-w-[44px]',
@@ -264,7 +267,7 @@ export function BulkActionsBar({
             >
               <X className="h-5 w-5" aria-hidden="true" />
               <span className="hidden sm:inline ml-1.5 text-sm font-medium">
-                Cancel
+                {t('cancel')}
               </span>
             </button>
           </div>

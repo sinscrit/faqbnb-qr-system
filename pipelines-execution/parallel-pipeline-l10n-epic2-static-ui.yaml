@@ -203,14 +203,18 @@ request_stages:
 
         **Instructions**:
         1. Read the detailed specification at {details_file}
-        2. Execute all tasks following the per-task workflow:
-           - Implement -> Verify -> Update Doc -> Build -> Commit
-        3. For component updates:
+        2. For EACH subtask in the specification:
+           a. Implement the subtask
+           b. Verify it works
+           c. **IMMEDIATELY update {details_file}**: Change `- [ ]` to `- [x]` for that subtask
+           d. **SAVE the file** so progress is visible externally
+           e. Continue to the next subtask
+        3. This checkpoint-after-each-subtask approach is CRITICAL for progress visibility
+        4. For component updates:
            - Add useTranslations/getTranslations imports
            - Extract hardcoded strings to translation keys
            - Update /messages/en.json with new keys
            - Replace hardcoded strings with t() calls
-        4. Mark completed tasks with [x] and add implementation notes
         5. Continue autonomously until all required tasks are complete
         6. Run verification: `npm run type-check` and `npm run build`
         7. Report final status with summary of completed/failed/blocked tasks

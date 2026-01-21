@@ -32,6 +32,7 @@
 import { useState, useCallback } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { ChevronDown, ChevronUp, Plus, Printer, SkipForward, Package } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 import { SessionProgressBar } from '../shared/SessionProgressBar';
@@ -72,6 +73,8 @@ interface EmptySessionStateProps {
 }
 
 function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
+  const t = useTranslations('common.actions');
+
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
@@ -96,7 +99,7 @@ function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
         )}
       >
         <Plus className="w-5 h-5" aria-hidden="true" />
-        Add First Item
+        {t('addFirstItem')}
       </button>
     </div>
   );
@@ -137,6 +140,8 @@ export function SessionSummaryStep({
   onFinishWithoutPrint,
   className,
 }: SessionSummaryStepProps) {
+  const t = useTranslations('common.actions');
+
   // State for collapsible existing items section
   const [isExistingExpanded, setIsExistingExpanded] = useState(false);
 
@@ -226,7 +231,7 @@ export function SessionSummaryStep({
               )}
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              Add More Items
+              {t('addMoreItems')}
             </button>
           )}
         </section>
@@ -307,7 +312,7 @@ export function SessionSummaryStep({
           )}
         >
           <Printer className="w-5 h-5" aria-hidden="true" />
-          Print QR Codes
+          {t('printQrCode')}
         </button>
 
         {/* Skip & Finish Button */}
@@ -327,7 +332,7 @@ export function SessionSummaryStep({
           )}
         >
           <SkipForward className="w-5 h-5" aria-hidden="true" />
-          Skip & Finish
+          {t('skipForNow')}
         </button>
       </div>
 

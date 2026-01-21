@@ -1,7 +1,17 @@
 'use client';
 
+/**
+ * AddContentModal Component
+ *
+ * Modal for adding new content pieces (text, URL, file uploads).
+ *
+ * @module InstructionEditor/components/AddContentModal
+ * @lastModified 2026-01-21 (REQ-E02-003 - L10N)
+ */
+
 import { useState, useCallback } from 'react';
 import { X, Video, Camera, FileText, Upload, Link } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ContentPieceState } from '../InstructionEditor.types';
 
@@ -25,6 +35,8 @@ export function AddContentModal({
   onAddContent,
   currentContentCount,
 }: AddContentModalProps) {
+  const tContent = useTranslations('content.addModal');
+  const tCommon = useTranslations('common');
   const [selectedType, setSelectedType] = useState<ContentTypeSelection>(null);
   const [step, setStep] = useState<StepType>('select');
 
@@ -145,13 +157,13 @@ export function AddContentModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 id="add-content-modal-title" className="text-xl font-semibold text-[#222222]">
-            {step === 'select' ? 'Add Content' : 'Create Content'}
+            {step === 'select' ? tContent('selectTitle') : tContent('createTitle')}
           </h2>
           <button
             type="button"
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Close modal"
+            aria-label={tCommon('dialog.closeModal')}
           >
             <X className="w-5 h-5 text-[#717171]" />
           </button>
@@ -168,7 +180,7 @@ export function AddContentModal({
                 className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#222222] hover:bg-gray-50 transition-colors"
               >
                 <FileText className="w-8 h-8 text-[#222222]" />
-                <span className="font-medium text-[#222222]">Write Text</span>
+                <span className="font-medium text-[#222222]">{tContent('types.text')}</span>
               </button>
 
               {/* Add Link */}
@@ -178,7 +190,7 @@ export function AddContentModal({
                 className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#222222] hover:bg-gray-50 transition-colors"
               >
                 <Link className="w-8 h-8 text-[#222222]" />
-                <span className="font-medium text-[#222222]">Add Link</span>
+                <span className="font-medium text-[#222222]">{tContent('types.link')}</span>
               </button>
 
               {/* Upload File */}
@@ -188,8 +200,8 @@ export function AddContentModal({
                 className="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-lg hover:border-[#222222] hover:bg-gray-50 transition-colors col-span-2"
               >
                 <Upload className="w-8 h-8 text-[#222222]" />
-                <span className="font-medium text-[#222222]">Upload File</span>
-                <span className="text-sm text-[#717171]">Video, Image, PDF</span>
+                <span className="font-medium text-[#222222]">{tContent('types.file')}</span>
+                <span className="text-sm text-[#717171]">{tContent('types.fileHint')}</span>
               </button>
             </div>
           )}
@@ -198,32 +210,32 @@ export function AddContentModal({
             <div className="space-y-4">
               <div>
                 <label htmlFor="text-title" className="block text-sm font-medium text-[#717171] mb-2">
-                  Title (Optional)
+                  {tContent('form.titleLabel')}
                 </label>
                 <input
                   id="text-title"
                   type="text"
                   value={textTitle}
                   onChange={(e) => setTextTitle(e.target.value)}
-                  placeholder="Enter a title for this content"
+                  placeholder={tContent('form.titlePlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222]"
                   maxLength={100}
                 />
               </div>
               <div>
                 <label htmlFor="text-content" className="block text-sm font-medium text-[#717171] mb-2">
-                  Text Content *
+                  {tContent('form.textLabel')}
                 </label>
                 <textarea
                   id="text-content"
                   value={textContent}
                   onChange={(e) => setTextContent(e.target.value)}
-                  placeholder="Enter your text content here..."
+                  placeholder={tContent('form.textPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222] min-h-[200px] resize-y"
                   maxLength={5000}
                 />
                 <p className="text-sm text-[#717171] mt-1">
-                  {textContent.length} / 5000 characters
+                  {tContent('form.charCount', { count: textContent.length, max: 5000 })}
                 </p>
               </div>
             </div>
@@ -233,27 +245,27 @@ export function AddContentModal({
             <div className="space-y-4">
               <div>
                 <label htmlFor="url-value" className="block text-sm font-medium text-[#717171] mb-2">
-                  URL *
+                  {tContent('form.urlLabel')}
                 </label>
                 <input
                   id="url-value"
                   type="url"
                   value={urlValue}
                   onChange={(e) => setUrlValue(e.target.value)}
-                  placeholder="https://example.com"
+                  placeholder={tContent('form.urlPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222]"
                 />
               </div>
               <div>
                 <label htmlFor="url-title" className="block text-sm font-medium text-[#717171] mb-2">
-                  Link Title (Optional)
+                  {tContent('form.linkTitleLabel')}
                 </label>
                 <input
                   id="url-title"
                   type="text"
                   value={urlTitle}
                   onChange={(e) => setUrlTitle(e.target.value)}
-                  placeholder="Enter a title for this link"
+                  placeholder={tContent('form.linkTitlePlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#222222]"
                   maxLength={100}
                 />
@@ -265,7 +277,7 @@ export function AddContentModal({
             <div className="space-y-4">
               <div>
                 <label htmlFor="file-upload" className="block text-sm font-medium text-[#717171] mb-2">
-                  Select File *
+                  {tContent('form.fileLabel')}
                 </label>
                 <input
                   id="file-upload"
@@ -292,7 +304,7 @@ export function AddContentModal({
               onClick={handleBack}
               className="px-4 py-2 border border-gray-300 rounded-lg text-[#222222] hover:bg-gray-50 transition-colors"
             >
-              Back
+              {tContent('actions.back')}
             </button>
           )}
           <button
@@ -300,7 +312,7 @@ export function AddContentModal({
             onClick={handleClose}
             className="px-4 py-2 border border-gray-300 rounded-lg text-[#222222] hover:bg-gray-50 transition-colors"
           >
-            Cancel
+            {tContent('actions.cancel')}
           </button>
           {step === 'create' && (
             <button
@@ -314,7 +326,7 @@ export function AddContentModal({
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               )}
             >
-              Add Content
+              {tContent('actions.add')}
             </button>
           )}
         </div>

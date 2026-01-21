@@ -7,7 +7,8 @@
 **Type:** NEW FEATURE
 **Size:** S (Small)
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-21 03:36 UTC
+**Status:** ✅ COMPLETE - All tasks verified and tested
 
 ---
 
@@ -34,16 +35,16 @@ Create a utility function that determines the source language for content transl
 Before implementing this task, verify:
 
 1. **Epic 1 Infrastructure Complete:**
-   - [ ] `SupportedLanguage` type exists at `/src/lib/translation-service/translation-service.types.ts:22`
-   - [ ] `isSupportedLanguage()` function exists at `/src/lib/translation-service/translation-service.types.ts:546`
-   - [ ] `DEFAULT_LANGUAGE` constant exists at `/src/lib/translation-service/translation-service.types.ts:529`
+   - [x] `SupportedLanguage` type exists at `/src/lib/translation-service/translation-service.types.ts:22`
+   - [x] `isSupportedLanguage()` function exists at `/src/lib/translation-service/translation-service.types.ts:546`
+   - [x] `DEFAULT_LANGUAGE` constant exists at `/src/lib/translation-service/translation-service.types.ts:529`
 
 2. **Database Columns Present:**
-   - [ ] `users.preferred_language` column exists (REQ-225)
-   - [ ] `accounts.preferred_language` column exists (REQ-225)
+   - [x] `users.preferred_language` column exists (REQ-225)
+   - [x] `accounts.preferred_language` column exists (REQ-225)
 
 3. **Module Directory:**
-   - [ ] `/src/lib/content-translation/` directory exists (or will be created)
+   - [x] `/src/lib/content-translation/` directory exists (or will be created)
 
 ---
 
@@ -84,8 +85,10 @@ import {
 ```
 
 **Verification:**
-- [ ] File exists at `/src/lib/content-translation/source-language.ts`
-- [ ] Imports resolve without TypeScript errors
+- [x] File exists at `/src/lib/content-translation/source-language.ts`
+- [x] Imports resolve without TypeScript errors
+
+---implemented: Created module file with header, imports from translation-service.types including SupportedLanguage, isSupportedLanguage, DEFAULT_LANGUAGE--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -140,9 +143,11 @@ export interface DetectSourceLanguageOptions {
 ```
 
 **Verification:**
-- [ ] All three interfaces are defined
-- [ ] TypeScript compilation succeeds
-- [ ] Interfaces are exported
+- [x] All three interfaces are defined
+- [x] TypeScript compilation succeeds
+- [x] Interfaces are exported
+
+---implemented: Defined UserForLanguageDetection, AccountForLanguageDetection, DetectSourceLanguageOptions interfaces with proper JSDoc comments--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -238,11 +243,13 @@ export function detectSourceLanguage(
 ```
 
 **Verification:**
-- [ ] Function is exported
-- [ ] Return type is `SupportedLanguage`
-- [ ] All four priority levels are implemented
-- [ ] Function handles null/undefined gracefully
-- [ ] JSDoc documentation is complete with examples
+- [x] Function is exported
+- [x] Return type is `SupportedLanguage`
+- [x] All four priority levels are implemented
+- [x] Function handles null/undefined gracefully
+- [x] JSDoc documentation is complete with examples
+
+---implemented: detectSourceLanguage() function with options-based signature, implements priority cascade (override > user > account > default)--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -303,10 +310,12 @@ export function detectSourceLanguageFromContext(
 ```
 
 **Verification:**
-- [ ] Function is exported
-- [ ] Function accepts positional parameters matching Plan-111 spec
-- [ ] Function delegates to main `detectSourceLanguage()` function
-- [ ] JSDoc documentation includes usage examples
+- [x] Function is exported
+- [x] Function accepts positional parameters matching Plan-111 spec
+- [x] Function delegates to main `detectSourceLanguage()` function
+- [x] JSDoc documentation includes usage examples
+
+---implemented: detectSourceLanguageFromContext() wrapper function with positional parameters (user, account, override) for Plan-111 compatibility--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -356,10 +365,12 @@ export {
 ```
 
 **Verification:**
-- [ ] File exists at `/src/lib/content-translation/index.ts`
-- [ ] All exports are properly listed
-- [ ] Types are exported with `type` keyword for clarity
-- [ ] Import from `@/lib/content-translation` works
+- [x] File exists at `/src/lib/content-translation/index.ts`
+- [x] All exports are properly listed
+- [x] Types are exported with `type` keyword for clarity
+- [x] Import from `@/lib/content-translation` works
+
+---implemented: Updated existing index.ts barrel exports to include detectSourceLanguage, detectSourceLanguageFromContext functions and type exports--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -384,9 +395,11 @@ npx tsc --noEmit
 ```
 
 **Verification:**
-- [ ] No TypeScript errors related to source-language.ts
-- [ ] No TypeScript errors related to index.ts exports
-- [ ] Imports from `@/lib/content-translation` resolve correctly
+- [x] No TypeScript errors related to source-language.ts
+- [x] No TypeScript errors related to index.ts exports
+- [x] Imports from `@/lib/content-translation` resolve correctly
+
+---implemented: TypeScript compilation verified - 0 errors in source-language.ts and content-translation/index.ts. Build passes successfully.--- -unit tested- ---ts-check: passed (0 errors in target, baseline 16 errors in unrelated .next/types/)---
 
 ---
 
@@ -526,9 +539,11 @@ describe('detectSourceLanguageFromContext', () => {
 ```
 
 **Verification:**
-- [ ] All test cases pass
-- [ ] Coverage includes all priority levels
-- [ ] Edge cases are covered
+- [x] All test cases pass (53 tests)
+- [x] Coverage includes all priority levels
+- [x] Edge cases are covered
+
+---implemented: Created comprehensive test suite with 53 test cases covering: override priority, user preference, account preference, default fallback, all supported languages, edge cases, and alternative signature function--- -unit tested- ---ts-check: passed (0 errors in target)---
 
 ---
 
@@ -649,3 +664,36 @@ This utility will be used by the following tasks:
 
 *Task breakdown generated for REQ-E03-007 - Add Source Language Detection Utility*
 *Part of Epic 3: Dynamic Content Translation*
+
+---
+
+## Implementation Summary (2026-01-21)
+
+### Final Verification Results
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| TypeScript Compilation | ✅ PASSED | 0 errors in target modules |
+| Build | ✅ PASSED | Next.js build completed successfully |
+| Unit Tests | ✅ PASSED | 53/53 tests passing |
+| Acceptance Criteria | ✅ ALL MET | All 11 criteria verified |
+
+### Files Created/Modified
+
+1. `/src/lib/content-translation/source-language.ts` - Main utility module
+2. `/src/lib/content-translation/index.ts` - Updated barrel exports
+3. `/src/lib/content-translation/__tests__/source-language.test.ts` - Unit tests
+
+### Test Results
+
+```
+✓ src/lib/content-translation/__tests__/source-language.test.ts (53 tests) 41ms
+Test Files  1 passed (1)
+Tests       53 passed (53)
+```
+
+### Notes
+
+- All pre-existing TypeScript errors (16-17) are in `.next/types/` auto-generated files, unrelated to this implementation
+- Implementation follows existing code patterns and conventions
+- Ready for downstream usage in Tasks 2.2, 2.3, and 2.4

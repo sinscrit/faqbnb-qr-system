@@ -30,6 +30,7 @@
 
 import { useRef, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '../../utils/accessibility';
 
@@ -59,21 +60,26 @@ export interface ConfirmExitDialogProps {
 /**
  * Generate appropriate exit message based on session state.
  *
+ * @param t - Translation function for workflow.dialogs.confirmExit namespace
  * @param itemCount - Number of items created in session
  * @param hasUnsavedChanges - Whether there are unsaved changes
  * @returns Exit confirmation message
  */
-function getExitMessage(itemCount: number, hasUnsavedChanges: boolean): string {
+function getExitMessage(
+  t: (key: string, params?: Record<string, unknown> | undefined) => string,
+  itemCount: number,
+  hasUnsavedChanges: boolean
+): string {
   if (hasUnsavedChanges && itemCount > 0) {
-    return `You have unsaved changes and ${itemCount} item${itemCount !== 1 ? 's' : ''} in this session. Are you sure you want to exit?`;
+    return t('messageUnsavedAndItems', { count: itemCount });
   }
   if (hasUnsavedChanges) {
-    return 'You have unsaved changes. Are you sure you want to exit?';
+    return t('messageUnsaved');
   }
   if (itemCount > 0) {
-    return `You have created ${itemCount} item${itemCount !== 1 ? 's' : ''} in this session. Are you sure you want to exit?`;
+    return t('messageItems', { count: itemCount });
   }
-  return 'Are you sure you want to exit the workflow?';
+  return t('messageDefault');
 }
 
 // =============================================================================
@@ -88,6 +94,9 @@ export function ConfirmExitDialog({
   hasUnsavedChanges = false,
   className,
 }: ConfirmExitDialogProps) {
+  const tExit = useTranslations('workflow.dialogs.confirmExit');
+  const tCommon = useTranslations('common.actions');
+
   // REQ-114: Focus trapping refs
   const dialogRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -152,13 +161,13 @@ export function ConfirmExitDialog({
               id="exit-dialog-title"
               className="text-lg font-semibold text-[#222222]"
             >
-              Exit Workflow?
+              {tExit('title')}
             </h3>
             <p
               id="exit-dialog-description"
               className="mt-2 text-sm text-[#717171]"
             >
-              {getExitMessage(itemCount, hasUnsavedChanges)}
+              {getExitMessage(tExit as unknown as (key: string, params?: Record<string, unknown> | undefined) => string, itemCount, hasUnsavedChanges)}
             </p>
           </div>
         </div>
@@ -178,7 +187,7 @@ export function ConfirmExitDialog({
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
             )}
           >
-            Cancel
+            {tExit('cancel')}
           </button>
           <button
             type="button"
@@ -193,7 +202,7 @@ export function ConfirmExitDialog({
             )}
             style={{ backgroundColor: '#FF5A5F' }} // Airbnb destructive color
           >
-            Exit Workflow
+            {tExit('exit')}
           </button>
         </div>
       </div>

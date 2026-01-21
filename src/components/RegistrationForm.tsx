@@ -4,6 +4,7 @@ import { RegistrationResult, UserFriendlyError, OAuthRegistrationRequest } from 
 
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, UserPlus, Loader2, AlertCircle, Check, Shield } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useRegistration } from '@/hooks/useRegistration';
 import GoogleOAuthButton from './GoogleOAuthButton';
 import { supabase } from '@/lib/supabase';
@@ -59,6 +60,8 @@ export default function RegistrationForm({
   onOAuthCompletion,
   isOAuthCompleting = false
 }: RegistrationFormProps) {
+  const t = useTranslations('common.actions');
+
   const [formData, setFormData] = useState<FormData>({
     email: email || '',
     password: '',
@@ -66,7 +69,7 @@ export default function RegistrationForm({
     fullName: '',
     agreeToTerms: false,
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -555,12 +558,12 @@ export default function RegistrationForm({
   const REGISTRATION_METHOD_OPTIONS = [
     {
       id: 'google' as const,
-      label: 'Continue with Google',
+      label: t('continueWithGoogle'),
       description: 'Quick sign-up using your Google account'
     },
     {
       id: 'email-password' as const,
-      label: 'Sign up with email',
+      label: t('signUp'),
       description: 'Create a password for your account'
     }
   ];
@@ -931,7 +934,7 @@ export default function RegistrationForm({
           {isOAuthActive ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Connecting to Google...
+              {t('connectingToGoogle')}
             </>
           ) : (
             <>
@@ -940,7 +943,7 @@ export default function RegistrationForm({
                 alt="Google"
                 className="w-5 h-5 mr-2"
               />
-              Create Account
+              {t('createAccount')}
             </>
           )}
         </button>
@@ -953,12 +956,12 @@ export default function RegistrationForm({
           {isLoading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              Creating Account...
+              {t('creatingAccount')}
             </>
           ) : (
             <>
               <UserPlus className="w-4 h-4 mr-2" />
-              Create Account
+              {t('createAccount')}
             </>
           )}
         </button>

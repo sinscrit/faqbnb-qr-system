@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-21T01:43:15.301989",
-  "status": "completed",
+  "updated_at": "2026-01-21T03:25:31.907056",
+  "status": "running",
   "current_stage": "request",
-  "current_task_index": 62,
+  "current_task_index": 2,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -20,7 +20,7 @@
       "status": "completed",
       "request_id": "REQ-E02-001",
       "error": null,
-      "processed_at": "2026-01-19T23:28:33.953603",
+      "processed_at": "2026-01-21T02:20:26.079094",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-001",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-001-create-common-namespace-structure-in-overview.md",
@@ -28,7 +28,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification - common namespace exists)"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification - common namespace exists)",
+      "implementation_completed": true
     },
     {
       "id": "2H.2",
@@ -40,7 +49,7 @@
       "status": "completed",
       "request_id": "REQ-E02-002",
       "error": null,
-      "processed_at": "2026-01-19T23:38:17.684395",
+      "processed_at": "2026-01-21T02:43:03.244825",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-002",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-002-extract-button-labels-across-all-components-overview.md",
@@ -48,7 +57,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2H.3",
@@ -57,7 +75,7 @@
       "title": "Extract modal/dialog strings",
       "description": "",
       "raw_match": "- [ ] **Task 2H.3:** Extract modal/dialog strings",
-      "status": "completed",
+      "status": "processing",
       "request_id": "REQ-E02-003",
       "error": null,
       "processed_at": "2026-01-19T23:46:37.629516",
@@ -1711,7 +1729,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 9,
+    "total_requests_generated": 2,
     "last_request_id": "REQ-E02-085",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
@@ -1719,13 +1737,13 @@
   "recent_errors": [],
   "precheck": {
     "status": "passed",
-    "completed_at": "2026-01-21T01:43:15.300472",
+    "completed_at": "2026-01-21T03:25:31.899558",
     "typescript": {
       "passed": true,
-      "error_count": 17,
+      "error_count": 12,
       "production_error_count": 0,
       "test_error_count": 0,
-      "generated_error_count": 17,
+      "generated_error_count": 12,
       "sample_errors": [
         "../.next/types/app/admin/items/[publicId]/analytics/page.ts(34,29): error TS2344: Type 'ItemAnalyticsPageProps' does not satisfy the constraint 'PageProps'.",
         "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(166,7): error TS2344: Type '{ __tag__: \"POST\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
@@ -1733,7 +1751,7 @@
         "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(49,7): error TS2344: Type '{ __tag__: \"GET\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
         "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'."
       ],
-      "notes": "No blocking errors (0 test, 17 generated)"
+      "notes": "No blocking errors (0 test, 12 generated)"
     },
     "tools": {},
     "next_cache_cleared": false

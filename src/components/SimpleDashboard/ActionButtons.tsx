@@ -7,6 +7,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlusCircle, Package, QrCode, LucideIcon } from 'lucide-react';
 
@@ -120,6 +121,7 @@ export function ActionButtons({
 }: ActionButtonsProps) {
   const router = useRouter();
   const { userProperties } = useAuth();
+  const t = useTranslations('common.actions');
 
   /**
    * Handle Print QR Code button click
@@ -156,27 +158,27 @@ export function ActionButtons({
   const buttonConfigs: ActionButtonConfig[] = [
     {
       key: 'create',
-      label: 'New QR Code Item',
+      label: t('newQrCodeItem'),
       icon: PlusCircle,
       variant: 'primary',
       onClick: onCreateClick || (() => router.push('/dashboard2/create')),
-      ariaLabel: 'Create a new QR code item',
+      ariaLabel: t('newQrCodeItem'),
     },
     {
       key: 'view',
-      label: 'View QR Code Items',
+      label: t('viewQrCodeItems'),
       icon: Package,
       variant: 'secondary',
       onClick: onViewClick || (() => router.push('/dashboard2/items')),
-      ariaLabel: 'View all your items',
+      ariaLabel: t('viewQrCodeItems'),
     },
     {
       key: 'print',
-      label: 'Print QR Code',
+      label: t('printQrCode'),
       icon: QrCode,
       variant: 'secondary',
       onClick: handlePrintQRCode,
-      ariaLabel: 'Print QR codes for your items',
+      ariaLabel: t('printQrCode'),
     },
   ];
 

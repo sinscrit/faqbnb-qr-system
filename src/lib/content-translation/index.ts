@@ -93,3 +93,18 @@ export type {
   TranslationStatusResult as StatusTranslationStatusResult,
   StatusQueryResult,
 } from './storage/translation-status';
+
+// ============================================================================
+// Source Language Detection (REQ-E03-007)
+// ============================================================================
+
+export {
+  detectSourceLanguage,
+  detectSourceLanguageFromContext,
+} from './source-language';
+
+export type {
+  UserForLanguageDetection,
+  AccountForLanguageDetection,
+  DetectSourceLanguageOptions,
+} from './source-language';

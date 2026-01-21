@@ -41,6 +41,7 @@ import {
   Video,
   Image as ImageIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/components/ItemCapture';
 import type { PendingAsset } from '../../ItemManager.types';
@@ -108,23 +109,34 @@ function getAssetDisplayName(asset: MediaItem | PendingAsset): string {
 }
 
 /**
- * Gets the type label for display.
- *
- * @param type - The media type
- * @returns Human-readable type label
+ * Gets the translation key for the type-specific title
  */
-function getTypeLabel(type: 'video' | 'image' | 'pdf' | 'url'): string {
+function getTitleKey(type: 'video' | 'image' | 'pdf' | 'url'): string {
   switch (type) {
     case 'video':
-      return 'Video';
+      return 'titleVideo';
     case 'image':
-      return 'Photo';
+      return 'titlePhoto';
     case 'pdf':
-      return 'PDF';
-    case 'url':
-      return 'Link';
+      return 'titlePdf';
     default:
-      return 'Asset';
+      return 'titleGeneric';
+  }
+}
+
+/**
+ * Gets the translation key for the type label
+ */
+function getTypeLabelKey(type: 'video' | 'image' | 'pdf' | 'url'): string {
+  switch (type) {
+    case 'video':
+      return 'typeVideo';
+    case 'image':
+      return 'typePhoto';
+    case 'pdf':
+      return 'typePdf';
+    default:
+      return 'typeGeneric';
   }
 }
 
@@ -145,6 +157,12 @@ export function AssetRemoveConfirmDialog({
   onCancel,
   isRemoving = false,
 }: AssetRemoveConfirmDialogProps) {
+  // ===========================================================================
+  // Translations
+  // ===========================================================================
+  const tAsset = useTranslations('media.dialogs.assetRemove');
+  const tCommon = useTranslations('common.actions');
+
   // ===========================================================================
   // State
   // ===========================================================================
@@ -231,7 +249,7 @@ export function AssetRemoveConfirmDialog({
   // ===========================================================================
 
   const assetName = getAssetDisplayName(asset);
-  const typeLabel = getTypeLabel(asset.type);
+  const typeLabel = tAsset(getTypeLabelKey(asset.type));
   const duration = 'metadata' in asset ? asset.metadata?.duration : undefined;
   const pageCount = 'metadata' in asset ? asset.metadata?.pageCount : undefined;
 
@@ -260,7 +278,7 @@ export function AssetRemoveConfirmDialog({
             id="asset-remove-dialog-title"
             className="text-lg font-medium text-gray-900 mb-4 text-center"
           >
-            Remove {typeLabel}?
+            {tAsset(getTitleKey(asset.type))}
           </h3>
 
           {/* Thumbnail Preview Section */}
@@ -326,13 +344,13 @@ export function AssetRemoveConfirmDialog({
             {/* Metadata Display */}
             {asset.type === 'video' && duration !== undefined && (
               <p className="text-sm text-gray-600 mt-1">
-                Duration: {formatDuration(duration)}
+                {tAsset('duration', { duration: formatDuration(duration) })}
               </p>
             )}
 
             {asset.type === 'pdf' && pageCount !== undefined && (
               <p className="text-sm text-gray-600 mt-1">
-                {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+                {tAsset('pages', { count: pageCount })}
               </p>
             )}
 
@@ -347,7 +365,7 @@ export function AssetRemoveConfirmDialog({
 
           {/* Warning Message */}
           <p className="text-gray-600 text-center mb-6">
-            This action cannot be undone.
+            {tAsset('warning')}
           </p>
 
           {/* Action Buttons */}
@@ -361,9 +379,9 @@ export function AssetRemoveConfirmDialog({
                 'hover:bg-gray-200 disabled:opacity-50 transition-colors',
                 'focus:outline-none focus:ring-2 focus:ring-gray-500'
               )}
-              aria-label="Cancel removal"
+              aria-label={tAsset('cancelRemoval')}
             >
-              Cancel
+              {tCommon('cancel')}
             </button>
 
             {/* Remove Button */}
@@ -376,14 +394,14 @@ export function AssetRemoveConfirmDialog({
                 'flex items-center justify-center gap-2',
                 'focus:outline-none focus:ring-2 focus:ring-red-500'
               )}
-              aria-label="Remove asset"
+              aria-label={tAsset('removeAsset')}
             >
               {isRemoving ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  Remove
+                  {tCommon('remove')}
                 </>
               )}
             </button>

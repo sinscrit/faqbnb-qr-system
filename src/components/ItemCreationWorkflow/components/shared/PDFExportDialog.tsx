@@ -31,6 +31,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { X, FileDown, AlertCircle, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { PDFExportOptions } from '@/components/PDFExportOptions';
 import type { PDFExportSettings } from '@/types/pdf';
@@ -79,6 +80,8 @@ export function PDFExportDialog({
   onClearError,
   className,
 }: PDFExportDialogProps) {
+  const tPdf = useTranslations('workflow.dialogs.pdfExport');
+  const tCommon = useTranslations('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -170,14 +173,14 @@ export function PDFExportDialog({
                 id="pdf-export-dialog-title"
                 className="text-lg font-semibold text-[#222222]"
               >
-                Export QR Codes as PDF
+                {tPdf('title')}
               </h2>
               <p className="text-sm text-[#717171]">
                 <span
                   className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                   style={{ backgroundColor: '#F7F7F7', color: '#222222' }}
                 >
-                  {itemCount} item{itemCount !== 1 ? 's' : ''}
+                  {tPdf('itemCount', { count: itemCount })}
                 </span>
               </p>
             </div>
@@ -196,7 +199,7 @@ export function PDFExportDialog({
                 ? 'text-gray-300 cursor-not-allowed'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
             )}
-            aria-label="Close dialog"
+            aria-label={tCommon('dialog.closeDialog')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -204,8 +207,7 @@ export function PDFExportDialog({
 
         {/* Hidden description for accessibility */}
         <p id="pdf-export-dialog-description" className="sr-only">
-          Configure PDF export settings for your QR codes and download them as a
-          printable PDF document.
+          {tPdf('description')}
         </p>
 
         {/* Body - Scrollable content */}
@@ -224,7 +226,7 @@ export function PDFExportDialog({
               />
               <div className="flex-1">
                 <p className="text-sm font-medium" style={{ color: '#DC2626' }}>
-                  PDF generation failed
+                  {tPdf('errorTitle')}
                 </p>
                 <p className="text-sm mt-1" style={{ color: '#7F1D1D' }}>
                   {error}
@@ -235,7 +237,7 @@ export function PDFExportDialog({
                   type="button"
                   onClick={onClearError}
                   className="p-1 rounded-full hover:bg-red-200 transition-colors"
-                  aria-label="Dismiss error"
+                  aria-label={tPdf('dismissError')}
                 >
                   <X className="w-4 h-4" style={{ color: '#DC2626' }} />
                 </button>
@@ -267,7 +269,7 @@ export function PDFExportDialog({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
             )}
           >
-            Cancel
+            {tPdf('cancel')}
           </button>
           <button
             type="button"
@@ -291,12 +293,12 @@ export function PDFExportDialog({
                   className={cn('w-4 h-4', !prefersReducedMotion && 'animate-spin')}
                   aria-hidden="true"
                 />
-                <span>Generating...</span>
+                <span>{tPdf('generating')}</span>
               </>
             ) : (
               <>
                 <FileDown className="w-4 h-4" aria-hidden="true" />
-                <span>Export PDF</span>
+                <span>{tPdf('export')}</span>
               </>
             )}
           </button>

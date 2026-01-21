@@ -195,9 +195,12 @@ request_stages:
            d. **SAVE the file** so progress is visible externally
            e. Continue to the next subtask
         3. This checkpoint-after-each-subtask approach is CRITICAL for progress visibility
-        4. Run final verification: `npm run type-check` and `npm run build`
-        5. Report final status with summary of completed/failed/blocked tasks
-        6. **IMPORTANT**: End your response with a test summary in this format:
+        4. **TypeScript Guidelines**:
+           - If creating functions that accept a translator (`t`), use: `import type {{ TranslationFn }} from '@/types';`
+           - Do NOT define custom types like `(key: string, params?: Record<string, unknown>) => string`
+        5. Run final verification: `npm run type-check` and `npm run build`
+        6. Report final status with summary of completed/failed/blocked tasks
+        7. **IMPORTANT**: End your response with a test summary in this format:
            ```
            TEST SUMMARY:
            - Type Check: PASSED/FAILED

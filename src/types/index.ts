@@ -736,6 +736,15 @@ export type {
 
 export { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/contexts/LocaleContext';
 
+// Translation function types (Epic 2 - Static UI Translation)
+export type {
+  TranslationFn,
+  StringTranslationFn,
+  NamespacedTranslationFn,
+  WithTranslation,
+  WithOptionalTranslation,
+} from './i18n';
+
 // Content Translation types (Epic 3 - Dynamic Content Translation)
 export type {
   EntityType as ContentEntityType,

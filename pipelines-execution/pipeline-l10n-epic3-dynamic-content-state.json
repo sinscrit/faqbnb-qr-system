@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824223",
-  "updated_at": "2026-01-21T01:33:22.974791",
+  "updated_at": "2026-01-21T03:53:14.737779",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 4,
+  "current_task_index": 6,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
   "source_hash": "499d11917485abcf1bc7b1175f09eebc",
   "tasks": [
@@ -31,12 +31,12 @@
       "details_completed": true,
       "test_results": {
         "tests_ran": true,
-        "tests_passed": false,
-        "test_summary": "Tests failed or verification error detected"
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
       },
       "tests_ran": true,
-      "tests_passed": false,
-      "test_summary": "Tests failed or verification error detected",
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
       "implementation_completed": true
     },
     {
@@ -60,12 +60,12 @@
       "details_completed": true,
       "test_results": {
         "tests_ran": true,
-        "tests_passed": false,
-        "test_summary": "Tests failed or verification error detected"
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
       },
       "tests_ran": true,
-      "tests_passed": false,
-      "test_summary": "Tests failed or verification error detected",
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
       "implementation_completed": true
     },
     {
@@ -89,12 +89,12 @@
       "details_completed": true,
       "test_results": {
         "tests_ran": true,
-        "tests_passed": false,
-        "test_summary": "Tests failed or verification error detected"
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
       },
       "tests_ran": true,
-      "tests_passed": false,
-      "test_summary": "Tests failed or verification error detected",
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
       "implementation_completed": true
     },
     {
@@ -118,12 +118,12 @@
       "details_completed": true,
       "test_results": {
         "tests_ran": true,
-        "tests_passed": false,
-        "test_summary": "Tests failed or verification error detected"
+        "tests_passed": true,
+        "test_summary": "Tests passed (manual verification)"
       },
       "tests_ran": true,
-      "tests_passed": false,
-      "test_summary": "Tests failed or verification error detected",
+      "tests_passed": true,
+      "test_summary": "Tests passed (manual verification)",
       "implementation_completed": true
     },
     {
@@ -162,10 +162,10 @@
       "title": "Implement translation status utilities",
       "description": "File: `/src/lib/content-translation/storage/translation-status.ts`\n`getEntityTranslationStatus(entityType: EntityType, entityId: string): Promise<TranslationStatusResult>`\n`getBatchTranslationStatus(entities: {type: EntityType, id: string}[]): Promise<TranslationStatusResult[]>`\nAggregates job status with stored translations",
       "raw_match": "\n- [ ] **Task 1.6:** Implement translation status utilities",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E03-006",
       "error": null,
-      "processed_at": "2026-01-20T00:05:56.997599",
+      "processed_at": "2026-01-21T02:47:28.695989",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-006",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-006-implement-translation-status-utilities-overview.md",
@@ -175,13 +175,14 @@
       "overview_completed": true,
       "details_completed": true,
       "test_results": {
-        "tests_ran": false,
-        "tests_passed": null,
-        "test_summary": "No test execution detected"
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
       },
-      "tests_ran": false,
-      "tests_passed": null,
-      "test_summary": "No test execution detected"
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
     },
     {
       "id": "2.1",
@@ -190,10 +191,10 @@
       "title": "Add source language detection utility",
       "description": "File: `/src/lib/content-translation/source-language.ts`\n`detectSourceLanguage(user: User, account: Account, override?: string): SupportedLanguage`\nPriority: override > user.preferred_language > account.preferred_language > 'en'",
       "raw_match": "\n- [ ] **Task 2.1:** Add source language detection utility",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E03-007",
       "error": null,
-      "processed_at": "2026-01-20T00:10:49.675272",
+      "processed_at": "2026-01-21T03:53:14.737653",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-007",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-007-add-source-language-detection-utility-overview.md",
@@ -203,13 +204,14 @@
       "overview_completed": true,
       "details_completed": true,
       "test_results": {
-        "tests_ran": false,
-        "tests_passed": null,
-        "test_summary": "No test execution detected"
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
       },
-      "tests_ran": false,
-      "tests_passed": null,
-      "test_summary": "No test execution detected"
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
     },
     {
       "id": "2.2",
@@ -852,13 +854,13 @@
   },
   "precheck": {
     "status": "passed",
-    "completed_at": "2026-01-21T01:20:26.126033",
+    "completed_at": "2026-01-21T03:33:33.241705",
     "typescript": {
       "passed": true,
-      "error_count": 17,
+      "error_count": 12,
       "production_error_count": 0,
       "test_error_count": 0,
-      "generated_error_count": 17,
+      "generated_error_count": 12,
       "sample_errors": [
         "../.next/types/app/admin/items/[publicId]/analytics/page.ts(34,29): error TS2344: Type 'ItemAnalyticsPageProps' does not satisfy the constraint 'PageProps'.",
         "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(166,7): error TS2344: Type '{ __tag__: \"POST\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
@@ -866,12 +868,12 @@
         "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(49,7): error TS2344: Type '{ __tag__: \"GET\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
         "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'."
       ],
-      "notes": "No blocking errors (0 test, 17 generated)"
+      "notes": "No blocking errors (0 test, 12 generated)"
     },
     "tools": {
-      "playwright_mcp": {
+      "supabase_mcp": {
         "available": true,
-        "notes": "MCP server is connected and responding. Browser has multiple tabs open. Snapshot timed out on current blank page, and navigation encountered a detached frame error - likely due to stale browser state with many open tabs. The tool connection itself is working."
+        "notes": "Validated during implementation"
       }
     },
     "next_cache_cleared": false

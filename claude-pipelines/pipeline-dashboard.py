@@ -569,6 +569,39 @@ class PipelineState:
             "implementation": (sum(1 for t in tasks if t.get("implementation_completed")), total),
         }
 
+    def get_last_error(self) -> Optional[dict]:
+        """Get the last error from the pipeline.
+
+        Returns dict with keys: task_id, task_title, error, request_id
+        Returns None if no errors found.
+        """
+        # First check pipeline-level errors array
+        errors = self.data.get("errors", [])
+        if errors:
+            last_error = errors[-1]
+            return {
+                "task_id": last_error.get("task_id", "unknown"),
+                "task_title": last_error.get("task_title", ""),
+                "error": last_error.get("error", "Unknown error"),
+                "request_id": last_error.get("request_id", ""),
+            }
+
+        # Then check for failed tasks
+        for task in reversed(self.tasks):
+            if task.get("status") == "failed" or task.get("error"):
+                error_msg = task.get("error", "Task failed")
+                # Truncate long error messages
+                if len(error_msg) > 60:
+                    error_msg = error_msg[:57] + "..."
+                return {
+                    "task_id": task.get("id", "unknown"),
+                    "task_title": task.get("title", ""),
+                    "error": error_msg,
+                    "request_id": task.get("request_id", ""),
+                }
+
+        return None
+
     def get_current_task(self) -> Optional[dict]:
         """Get the currently processing task based on stage completion flags."""
         stage_order = ["request", "overview", "details", "implementation"]
@@ -1769,7 +1802,7 @@ def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
 
             # Get pipeline status
             status = pipeline.status
-            status_color = "green" if status == "completed" else "yellow" if status == "running" else "dim"
+            status_color = "green" if status == "completed" else "yellow" if status == "running" else "red" if status == "failed" else "dim"
 
             # Get time since update
             time_ago = pipeline.get_time_since_update() or "unknown"
@@ -1784,6 +1817,19 @@ def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
 
             lines.append(f"[bold cyan]{epic_name}[/bold cyan] [{status_color}]({status})[/{status_color}] [dim]{time_ago}[/dim]")
             lines.append(f"  Stages: {stages_line}")
+
+            # Show error info for paused/failed pipelines
+            if status in ("paused", "failed"):
+                last_error = pipeline.get_last_error()
+                if last_error:
+                    task_id = last_error.get("task_id", "")
+                    request_id = last_error.get("request_id", "")
+                    error_msg = last_error.get("error", "Unknown error")
+                    # Truncate error message for display
+                    if len(error_msg) > 50:
+                        error_msg = error_msg[:47] + "..."
+                    task_ref = f"[{request_id}]" if request_id else f"Task {task_id}"
+                    lines.append(f"  [red]⚠ {task_ref} failed: {error_msg}[/red]")
 
         except Exception as e:
             lines.append(f"[dim]{epic_name}: Error loading state[/dim]")

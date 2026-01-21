@@ -11,6 +11,7 @@
  */
 
 import { AlertTriangle, Loader2, FileText, Image, Link as LinkIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { DeleteItemDialogProps } from '@/types';
 
@@ -21,6 +22,8 @@ export function DeleteItemDialog({
   onCancel,
   isDeleting = false,
 }: DeleteItemDialogProps) {
+  const tDelete = useTranslations('items.dialogs.deleteItem');
+  const tCommon = useTranslations('common.actions');
   if (!isOpen || !item) return null;
 
   const linksCount = item.links?.length || 0;
@@ -69,14 +72,16 @@ export function DeleteItemDialog({
               id="delete-dialog-title"
               className="text-lg font-semibold text-gray-900"
             >
-              Delete Item
+              {tDelete('title')}
             </h3>
             <p
               id="delete-dialog-description"
               className="mt-2 text-sm text-gray-600"
             >
-              Are you sure you want to delete <strong>&quot;{item.name}&quot;</strong>?
-              This action cannot be undone.
+              {tDelete.rich('message', {
+                itemName: item.name,
+                strong: (chunks) => <strong>{chunks}</strong>
+              })}
             </p>
           </div>
         </div>
@@ -89,19 +94,19 @@ export function DeleteItemDialog({
                 <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-800">
-                    This will also delete:
+                    {tDelete('warningTitle')}
                   </p>
                   <ul className="mt-2 space-y-1 text-sm text-amber-700">
                     {linksCount > 0 && (
                       <li className="flex items-center gap-2">
                         <LinkIcon className="w-4 h-4" />
-                        <span>{linksCount} resource link{linksCount !== 1 ? 's' : ''}</span>
+                        <span>{tDelete('resourceLinks', { count: linksCount })}</span>
                       </li>
                     )}
                     {mediaCount > 0 && (
                       <li className="flex items-center gap-2">
                         <Image className="w-4 h-4" />
-                        <span>{mediaCount} media file{mediaCount !== 1 ? 's' : ''} from storage</span>
+                        <span>{tDelete('mediaFiles', { count: mediaCount })}</span>
                       </li>
                     )}
                   </ul>
@@ -126,7 +131,7 @@ export function DeleteItemDialog({
               'disabled:opacity-50 disabled:cursor-not-allowed'
             )}
           >
-            Cancel
+            {tCommon('cancel')}
           </button>
           <button
             type="button"
@@ -145,10 +150,10 @@ export function DeleteItemDialog({
             {isDeleting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                <span>Deleting...</span>
+                <span>{tDelete('deleting')}</span>
               </>
             ) : (
-              'Delete Item'
+              tDelete('deleteButton')
             )}
           </button>
         </div>

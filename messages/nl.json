@@ -31,7 +31,69 @@
       "download": "Download",
       "upload": "Upload",
       "copy": "Copy",
-      "share": "Share"
+      "share": "Share",
+      "signIn": "Sign In",
+      "signInWithEmail": "Sign In with Email",
+      "signingIn": "Signing In...",
+      "signOut": "Sign Out",
+      "signingOut": "Signing Out...",
+      "signUp": "Sign Up",
+      "continueWithGoogle": "Continue with Google",
+      "connectingToGoogle": "Connecting to Google...",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "newQrCodeItem": "New QR Code Item",
+      "viewQrCodeItems": "View QR Code Items",
+      "printQrCode": "Print QR Code",
+      "downloadQrCode": "Download QR Code",
+      "viewQrCode": "View QR Code",
+      "generateQrCodes": "Generate QR Codes",
+      "generatingQrCodes": "Generating QR Codes...",
+      "addProperty": "Add Property",
+      "editProperty": "Edit Property",
+      "deleteProperty": "Delete Property",
+      "createProperty": "Create Property",
+      "moveToProperty": "Move to Property",
+      "addContent": "Add Content",
+      "addArticle": "Add Article",
+      "addFirstItem": "Add First Item",
+      "addMoreItems": "Add More Items",
+      "takePhoto": "Take Photo",
+      "recordVideo": "Record Video",
+      "uploadFile": "Upload File",
+      "retake": "Retake",
+      "useThis": "Use This",
+      "goBack": "Go Back",
+      "exitWorkflow": "Exit Workflow",
+      "exit": "Exit",
+      "stay": "Stay",
+      "skipForNow": "Skip For Now",
+      "doneForNow": "Done for Now",
+      "saveChanges": "Save Changes",
+      "savingChanges": "Saving Changes...",
+      "discardChanges": "Discard Changes",
+      "saveDraft": "Save Draft",
+      "saveItem": "Save Item",
+      "saving": "Saving...",
+      "deleteSelected": "Delete Selected",
+      "moveSelected": "Move Selected",
+      "printSelected": "Print Selected",
+      "addTag": "Add Tag",
+      "removeTag": "Remove Tag",
+      "generatePdf": "Generate PDF",
+      "generatingPdf": "Generating PDF...",
+      "exportPdf": "Export PDF",
+      "printDirectly": "Print Directly",
+      "processing": "Processing...",
+      "getNotified": "Get Notified",
+      "subscribing": "Subscribing...",
+      "subscribe": "Subscribe",
+      "deleteItem": "Delete Item",
+      "deleteItems": "Delete {count} Items",
+      "deleting": "Deleting...",
+      "selectedCount": "{count, plural, one {# selected} other {# selected}}",
+      "remove": "Remove",
+      "removing": "Removing..."
     },
     "status": {
       "loading": "Loading...",
@@ -51,9 +113,22 @@
       "title": "Confirm Action",
       "deleteTitle": "Confirm Delete",
       "deleteMessage": "Are you sure you want to delete this? This action cannot be undone.",
+      "deleteItemTitle": "Delete Item",
+      "deleteItemsTitle": "Delete Items",
+      "deleteItemMessage": "Are you sure you want to delete this item? This action cannot be undone.",
+      "deleteItemsMessage": "Are you sure you want to delete these {count} items? This action cannot be undone.",
+      "deleteNamedMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
       "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "cannotUndo": "This action cannot be undone.",
+      "itemsToDelete": "Items to be deleted",
+      "andMore": "and {count} more",
       "yes": "Yes",
       "no": "No"
+    },
+    "dialog": {
+      "close": "Close",
+      "closeModal": "Close modal",
+      "closeDialog": "Close dialog"
     },
     "empty": {
       "noData": "No data available",
@@ -176,5 +251,223 @@
     "it": "Italiaans",
     "changeLanguage": "Taal wijzigen",
     "languageChanged": "Taal succesvol gewijzigd"
+  },
+  "workflow": {
+    "dialogs": {
+      "confirmExit": {
+        "title": "Exit Workflow?",
+        "messageDefault": "Are you sure you want to exit the workflow?",
+        "messageUnsaved": "You have unsaved changes. Are you sure you want to exit?",
+        "messageItems": "You have created {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
+        "messageUnsavedAndItems": "You have unsaved changes and {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
+        "cancel": "Cancel",
+        "exit": "Exit Workflow"
+      },
+      "emptySession": {
+        "title": "No Items Added",
+        "message": "No items added yet. Add items or exit session?",
+        "addItems": "Add Items",
+        "exitSession": "Exit Session"
+      },
+      "removeItem": {
+        "title": "Remove Item?",
+        "message": "Are you sure you want to remove \"{itemName}\"? This action cannot be undone.",
+        "cancel": "Cancel",
+        "remove": "Remove"
+      },
+      "pdfExport": {
+        "title": "Export QR Codes as PDF",
+        "itemCount": "{count, plural, one {# item} other {# items}}",
+        "description": "Configure PDF export settings for your QR codes and download them as a printable PDF document.",
+        "errorTitle": "PDF generation failed",
+        "dismissError": "Dismiss error",
+        "cancel": "Cancel",
+        "generating": "Generating...",
+        "export": "Export PDF"
+      }
+    }
+  },
+  "itemDialogs": {
+    "preview": {
+      "title": "Item Preview",
+      "close": "Close preview",
+      "edit": "Edit",
+      "manageAssets": "Manage Assets",
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete Item",
+      "titleSingle": "Delete Item",
+      "titleMultiple": "Delete Items",
+      "message": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone.",
+      "messageSingle": "Are you sure you want to delete this item? This action cannot be undone.",
+      "messageMultiple": "Are you sure you want to delete these {count} items? This action cannot be undone.",
+      "warningHeader": "This will also delete:",
+      "resourceLinks": "{count, plural, one {# resource link} other {# resource links}}",
+      "mediaFiles": "{count, plural, one {# media file} other {# media files}} from storage",
+      "itemsList": "Items to be deleted",
+      "andMore": "and {count} more",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "confirmSingle": "Delete",
+      "confirmMultiple": "Delete {count} Items",
+      "deleting": "Deleting..."
+    },
+    "view": {
+      "description": "Description",
+      "created": "Created:",
+      "updated": "Updated:",
+      "resources": "Resources ({count})",
+      "noResources": "No resources attached to this item",
+      "edit": "Edit Item",
+      "delete": "Delete"
+    },
+    "bulkActions": {
+      "tags": {
+        "addTitle": "Add Tags to {count, plural, one {# Item} other {# Items}}",
+        "removeTitle": "Remove Tags from {count, plural, one {# Item} other {# Items}}",
+        "addLabel": "Enter tags to add:",
+        "addPlaceholder": "Type a tag and press Enter...",
+        "maxTags": "Max {max} tags",
+        "suggestions": "Suggested tags:",
+        "removeLabel": "Select tags to remove:",
+        "noTags": "No tags found on selected items.",
+        "itemsPreview": "Items to be updated:",
+        "andMore": "(and {count} more...)",
+        "cancel": "Cancel",
+        "addConfirm": "Add {count, plural, one {# Tag} other {# Tags}}",
+        "removeConfirm": "Remove {count, plural, one {# Tag} other {# Tags}}",
+        "removeTag": "Remove {tag} tag"
+      },
+      "move": {
+        "title": "Move {count, plural, one {# Item} other {# Items}} to Another Property",
+        "propertyLabel": "Destination property",
+        "selectProperty": "Select destination property...",
+        "selectPropertyAlt": "Select a property...",
+        "noProperties": "No properties available",
+        "noOtherProperties": "No other properties available",
+        "itemsPreview": "Items to move:",
+        "andMore": "(and {count} more...)",
+        "cancel": "Cancel",
+        "confirm": "Move {count, plural, one {# Item} other {# Items}}"
+      }
+    }
+  },
+  "properties": {
+    "modal": {
+      "addTitle": "Add New Property",
+      "addDescription": "Create a new property by entering the name and address information.",
+      "editTitle": "Edit Property",
+      "editDescription": "Edit the details of your property including name and address information.",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "creating": "Creating...",
+      "closeModal": "Close modal",
+      "form": {
+        "name": {
+          "label": "Property Name",
+          "placeholder": "e.g., Beach House",
+          "required": "Property name is required"
+        },
+        "address1": {
+          "label": "Address Line 1",
+          "placeholder": "Street address"
+        },
+        "address2": {
+          "label": "Address Line 2",
+          "placeholder": "Apt, suite, unit, etc. (optional)"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "City"
+        },
+        "state": {
+          "label": "State/Province",
+          "placeholder": "State or Province"
+        },
+        "postalCode": {
+          "label": "Postal Code",
+          "placeholder": "ZIP / Postal code"
+        },
+        "country": {
+          "label": "Country",
+          "placeholder": "Select country..."
+        }
+      },
+      "validation": {
+        "nameRequired": "Property name is required",
+        "nameMaxLength": "Property name must be 100 characters or less",
+        "addressMaxLength": "Address must be 200 characters or less",
+        "cityMaxLength": "City must be 100 characters or less",
+        "stateMaxLength": "State/Province must be 100 characters or less",
+        "postalCodeMaxLength": "Postal code must be 20 characters or less",
+        "countryInvalid": "Please select a valid country"
+      },
+      "toast": {
+        "saving": "Saving property changes...",
+        "saveFailed": "Failed to update property",
+        "createFailed": "Failed to create property"
+      }
+    }
+  },
+  "media": {
+    "dialogs": {
+      "deleteConfirm": {
+        "titleYoutube": "Delete YouTube Video?",
+        "titlePdf": "Delete PDF Document?",
+        "titleImage": "Delete Image?",
+        "titleLink": "Delete Web Link?",
+        "titleGeneric": "Delete Media?",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "assetRemove": {
+        "titleVideo": "Remove Video?",
+        "titlePhoto": "Remove Photo?",
+        "titlePdf": "Remove PDF?",
+        "titleGeneric": "Remove Asset?",
+        "typeVideo": "Video",
+        "typePhoto": "Photo",
+        "typePdf": "PDF",
+        "typeGeneric": "Asset",
+        "duration": "Duration: {duration}",
+        "pages": "{count, plural, one {# page} other {# pages}}",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "cancelRemoval": "Cancel removal",
+        "remove": "Remove",
+        "removeAsset": "Remove asset"
+      }
+    }
+  },
+  "content": {
+    "addModal": {
+      "selectTitle": "Add Content",
+      "createTitle": "Create Content",
+      "types": {
+        "text": "Write Text",
+        "link": "Add Link",
+        "file": "Upload File",
+        "fileHint": "Video, Image, PDF"
+      },
+      "form": {
+        "titleLabel": "Title (Optional)",
+        "titlePlaceholder": "Enter a title for this content",
+        "textLabel": "Text Content *",
+        "textPlaceholder": "Enter your text content here...",
+        "charCount": "{count} / {max} characters",
+        "urlLabel": "URL *",
+        "urlPlaceholder": "https://example.com",
+        "linkTitleLabel": "Link Title (Optional)",
+        "linkTitlePlaceholder": "Enter a title for this link",
+        "fileLabel": "Select File *"
+      },
+      "actions": {
+        "back": "Back",
+        "cancel": "Cancel",
+        "add": "Add Content"
+      }
+    }
   }
 }

@@ -20,6 +20,7 @@ import React, {
   useId,
 } from 'react';
 import { X, Tag, Minus, Loader2, Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '../../utils/a11yUtils';
 import type { ItemRecord } from '@/components/ItemCapture/ItemCapture.types';
@@ -70,15 +71,23 @@ interface ItemPreviewListProps {
 // =============================================================================
 
 /**
+ * Props for the internal ItemPreviewList component.
+ */
+interface ItemPreviewListInternalProps extends ItemPreviewListProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any;
+}
+
+/**
  * ItemPreviewList - Shows affected items preview
  */
-function ItemPreviewList({ items, maxDisplay = MAX_PREVIEW_ITEMS }: ItemPreviewListProps) {
+function ItemPreviewList({ items, maxDisplay = MAX_PREVIEW_ITEMS, t }: ItemPreviewListInternalProps) {
   const displayItems = items.slice(0, maxDisplay);
   const remainingCount = items.length - maxDisplay;
 
   return (
     <div className="mt-4">
-      <p className="text-sm font-medium text-gray-700 mb-2">Items to be updated:</p>
+      <p className="text-sm font-medium text-gray-700 mb-2">{t('itemsPreview')}</p>
       <ul className="max-h-32 overflow-y-auto space-y-1">
         {displayItems.map((item) => (
           <li key={item.id} className="flex items-center text-sm text-gray-600">
@@ -89,7 +98,7 @@ function ItemPreviewList({ items, maxDisplay = MAX_PREVIEW_ITEMS }: ItemPreviewL
       </ul>
       {remainingCount > 0 && (
         <p className="text-sm text-gray-500 italic mt-1">
-          (and {remainingCount} more...)
+          {t('andMore', { count: remainingCount })}
         </p>
       )}
     </div>
@@ -115,6 +124,12 @@ export function BulkTagDialog({
   loading = false,
   className,
 }: BulkTagDialogProps) {
+  // ---------------------------------------------------------------------------
+  // Translations
+  // ---------------------------------------------------------------------------
+  const tTags = useTranslations('itemDialogs.bulkActions.tags');
+  const tCommon = useTranslations('common');
+
   // ---------------------------------------------------------------------------
   // IDs for accessibility
   // ---------------------------------------------------------------------------
@@ -318,8 +333,9 @@ export function BulkTagDialog({
               </div>
             )}
             <h2 id={titleId} className="text-lg font-semibold text-gray-900">
-              {mode === 'add' ? 'Add Tags' : 'Remove Tags'} from {itemCount} Item
-              {itemCount !== 1 ? 's' : ''}
+              {mode === 'add'
+                ? tTags('addTitle', { count: itemCount })
+                : tTags('removeTitle', { count: itemCount })}
             </h2>
           </div>
           <button
@@ -331,7 +347,7 @@ export function BulkTagDialog({
               'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Close dialog"
+            aria-label={tCommon('dialog.closeDialog')}
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -344,7 +360,7 @@ export function BulkTagDialog({
               {/* Add Mode: Tag Input with Pills */}
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-gray-700">
-                  Enter tags to add:
+                  {tTags('addLabel')}
                 </label>
                 <div
                   className={cn(
@@ -362,7 +378,7 @@ export function BulkTagDialog({
                       <button
                         onClick={() => handleRemoveTagFromList(tag)}
                         className="p-0.5 hover:bg-blue-200 rounded-full"
-                        aria-label={`Remove ${tag} tag`}
+                        aria-label={tTags('removeTag', { tag })}
                         disabled={loading}
                       >
                         <X className="h-3 w-3" />
@@ -379,9 +395,9 @@ export function BulkTagDialog({
                     onKeyDown={handleTagInputKeyDown}
                     placeholder={
                       tagsToAdd.length === 0
-                        ? 'Type a tag and press Enter...'
+                        ? tTags('addPlaceholder')
                         : tagsToAdd.length >= MAX_TAGS_TO_ADD
-                        ? `Max ${MAX_TAGS_TO_ADD} tags`
+                        ? tTags('maxTags', { max: MAX_TAGS_TO_ADD })
                         : ''
                     }
                     disabled={loading || tagsToAdd.length >= MAX_TAGS_TO_ADD}
@@ -397,7 +413,7 @@ export function BulkTagDialog({
                 {/* Tag Suggestions - 48px touch targets */}
                 {filteredSuggestions.length > 0 && tagsToAdd.length < MAX_TAGS_TO_ADD && (
                   <div className="space-y-2">
-                    <p className="text-xs text-gray-500">Suggested tags:</p>
+                    <p className="text-xs text-gray-500">{tTags('suggestions')}</p>
                     <div className="flex flex-wrap gap-2">
                       {filteredSuggestions.map((tag) => (
                         <button
@@ -425,12 +441,12 @@ export function BulkTagDialog({
               {/* Remove Mode: Checkbox List */}
               {allTagsOnSelectedItems.length === 0 ? (
                 <p className="text-sm text-gray-500 italic">
-                  No tags found on selected items.
+                  {tTags('noTags')}
                 </p>
               ) : (
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700">
-                    Select tags to remove:
+                    {tTags('removeLabel')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {allTagsOnSelectedItems.map(({ tag, count }) => {
@@ -473,7 +489,7 @@ export function BulkTagDialog({
           )}
 
           {/* Items Preview */}
-          <ItemPreviewList items={selectedItems} />
+          <ItemPreviewList items={selectedItems} t={tTags} />
         </div>
 
         {/* Footer */}
@@ -490,7 +506,7 @@ export function BulkTagDialog({
               loading && 'opacity-50 cursor-not-allowed'
             )}
           >
-            Cancel
+            {tTags('cancel')}
           </button>
           <button
             onClick={handleConfirmClick}
@@ -507,7 +523,9 @@ export function BulkTagDialog({
             )}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {mode === 'add' ? 'Add' : 'Remove'} {tagCount} Tag{tagCount !== 1 ? 's' : ''}
+            {mode === 'add'
+              ? tTags('addConfirm', { count: tagCount })
+              : tTags('removeConfirm', { count: tagCount })}
           </button>
         </div>
       </div>

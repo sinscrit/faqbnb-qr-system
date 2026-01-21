@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Property } from '@/types';
 import { LoadingIndicator } from './LoadingIndicator';
@@ -110,47 +111,51 @@ const parsePropertyAddress = (property: Property | null): Partial<PropertyEditFo
 };
 
 /**
- * Task 5: Form validation function
+ * Task 5: Form validation function factory
+ * Returns a validation function that uses the provided translation function
  */
-const validateForm = (data: PropertyEditFormData): PropertyEditValidationErrors => {
+const createValidateForm = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any
+) => (data: PropertyEditFormData): PropertyEditValidationErrors => {
   const errors: PropertyEditValidationErrors = {};
 
   // Property Name - required, max 100
   const trimmedName = data.name.trim();
   if (!trimmedName) {
-    errors.name = 'Property name is required';
+    errors.name = t('validation.nameRequired');
   } else if (trimmedName.length > 100) {
-    errors.name = 'Property name must be 100 characters or less';
+    errors.name = t('validation.nameMaxLength');
   }
 
   // Address Line 1 - max 200
   if (data.addressLine1.length > 200) {
-    errors.addressLine1 = 'Address must be 200 characters or less';
+    errors.addressLine1 = t('validation.addressMaxLength');
   }
 
   // Address Line 2 - max 200
   if (data.addressLine2.length > 200) {
-    errors.addressLine2 = 'Address must be 200 characters or less';
+    errors.addressLine2 = t('validation.addressMaxLength');
   }
 
   // City - max 100
   if (data.city.length > 100) {
-    errors.city = 'City must be 100 characters or less';
+    errors.city = t('validation.cityMaxLength');
   }
 
   // State - max 100
   if (data.state.length > 100) {
-    errors.state = 'State/Province must be 100 characters or less';
+    errors.state = t('validation.stateMaxLength');
   }
 
   // Postal Code - max 20
   if (data.postalCode.length > 20) {
-    errors.postalCode = 'Postal code must be 20 characters or less';
+    errors.postalCode = t('validation.postalCodeMaxLength');
   }
 
   // Country - validate is valid code or empty
   if (data.country && !COUNTRIES.find(c => c.code === data.country)) {
-    errors.country = 'Please select a valid country';
+    errors.country = t('validation.countryInvalid');
   }
 
   return errors;
@@ -180,6 +185,9 @@ export function PropertyEditModal({
   onSave,
   className,
 }: PropertyEditModalProps) {
+  const tModal = useTranslations('properties.modal');
+  const tCommon = useTranslations('common.actions');
+
   // Task 3: Form state management
   const [formData, setFormData] = useState<PropertyEditFormData>({
     name: '',
@@ -226,6 +234,9 @@ export function PropertyEditModal({
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   }, [errors]);
+
+  // Create validate function with translation
+  const validateForm = createValidateForm(tModal);
 
   // Task 6: Handle save with validation and API call
   const handleSave = async () => {
@@ -393,10 +404,10 @@ export function PropertyEditModal({
                 id="property-edit-modal-title"
                 className="text-xl font-semibold text-[#222222]"
               >
-                Edit Property
+                {tModal('editTitle')}
               </Dialog.Title>
               <Dialog.Description id="property-edit-modal-description" className="sr-only">
-                Edit the details of your property including name and address information.
+                {tModal('editDescription')}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -410,7 +421,7 @@ export function PropertyEditModal({
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
-                aria-label="Close modal"
+                aria-label={tModal('closeModal')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -421,7 +432,7 @@ export function PropertyEditModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {/* Task 13: Screen reader announcement for form state */}
             <div aria-live="polite" className="sr-only">
-              {isSubmitting && 'Saving property changes...'}
+              {isSubmitting && tModal('toast.saving')}
               {errors.general && `Error: ${errors.general}`}
             </div>
 
@@ -438,47 +449,47 @@ export function PropertyEditModal({
             {/* Form fields */}
             <div className="space-y-4">
               {/* Property Name - required */}
-              {renderTextField('name', 'Property Name', formData.name, {
+              {renderTextField('name', tModal('form.name.label'), formData.name, {
                 required: true,
                 maxLength: 100,
-                placeholder: 'e.g., Beach House',
+                placeholder: tModal('form.name.placeholder'),
               })}
 
               {/* Address Line 1 */}
-              {renderTextField('addressLine1', 'Address Line 1', formData.addressLine1, {
+              {renderTextField('addressLine1', tModal('form.address1.label'), formData.addressLine1, {
                 maxLength: 200,
-                placeholder: 'Street address',
+                placeholder: tModal('form.address1.placeholder'),
               })}
 
               {/* Address Line 2 */}
-              {renderTextField('addressLine2', 'Address Line 2', formData.addressLine2, {
+              {renderTextField('addressLine2', tModal('form.address2.label'), formData.addressLine2, {
                 maxLength: 200,
-                placeholder: 'Apt, suite, unit, etc. (optional)',
+                placeholder: tModal('form.address2.placeholder'),
               })}
 
               {/* Task 12: City and State - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('city', 'City', formData.city, {
+                {renderTextField('city', tModal('form.city.label'), formData.city, {
                   maxLength: 100,
-                  placeholder: 'City',
+                  placeholder: tModal('form.city.placeholder'),
                 })}
-                {renderTextField('state', 'State/Province', formData.state, {
+                {renderTextField('state', tModal('form.state.label'), formData.state, {
                   maxLength: 100,
-                  placeholder: 'State or Province',
+                  placeholder: tModal('form.state.placeholder'),
                 })}
               </div>
 
               {/* Task 12: Postal Code and Country - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('postalCode', 'Postal Code', formData.postalCode, {
+                {renderTextField('postalCode', tModal('form.postalCode.label'), formData.postalCode, {
                   maxLength: 20,
-                  placeholder: 'ZIP / Postal code',
+                  placeholder: tModal('form.postalCode.placeholder'),
                 })}
 
                 {/* Task 2 & 4: Country dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="country" className="block text-sm font-medium text-[#222222]">
-                    Country
+                    {tModal('form.country.label')}
                   </label>
                   <select
                     id="country"
@@ -526,7 +537,7 @@ export function PropertyEditModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              Cancel
+              {tCommon('cancel')}
             </button>
 
             {/* Save Button */}
@@ -546,11 +557,11 @@ export function PropertyEditModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label="Saving property" />
-                  <span>Saving...</span>
+                  <LoadingIndicator size="sm" color="white" label={tModal('saving')} />
+                  <span>{tModal('saving')}</span>
                 </>
               ) : (
-                <span>Save Changes</span>
+                <span>{tModal('saveChanges')}</span>
               )}
             </button>
           </div>

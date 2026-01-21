@@ -1,6 +1,6 @@
 # FAQBNB Project Notes
 
-Last Modified: 2026-01-20
+Last Modified: 2026-01-21
 
 ## URLs
 
@@ -57,6 +57,39 @@ await supabase.from('items').insert(dbData);
 1. **Never mix conventions** - Pick one and stick to it in each layer
 2. **Transform at boundaries** - Convert at API/database edges, not in components
 3. **Types are source of truth** - If types say `publicId`, use `publicId`
+
+## Internationalization (i18n)
+
+This project uses **next-intl** for translations.
+
+### Translation Function Types
+
+**IMPORTANT:** When creating helper functions that accept a translation function (`t`), use the shared types from `@/types`:
+
+```typescript
+import type { TranslationFn } from '@/types';
+
+// CORRECT: Use shared type
+function getDeleteMessage(t: TranslationFn, count: number): string {
+  return count === 1 ? t('single') : t('multiple', { count });
+}
+
+// WRONG: Don't define your own type - it won't match next-intl's Translator
+function getDeleteMessage(t: (key: string, params?: Record<string, unknown>) => string, count: number) { ... }
+```
+
+### Available Types
+
+| Type | Use Case |
+|------|----------|
+| `TranslationFn` | Generic translator function parameter |
+| `StringTranslationFn` | When return must be `string` |
+| `WithTranslation` | Props interface mixin with `t` prop |
+
+### Translation Files
+
+- Location: `/messages/{locale}.json` (e.g., `en.json`, `fr.json`)
+- Namespaces: Nested keys like `common.buttons.save`, `auth.login.title`
 
 ## TypeScript
 

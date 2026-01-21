@@ -20,6 +20,7 @@ import React, {
   useId,
 } from 'react';
 import { X, FolderInput, Building, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from '../../utils/a11yUtils';
 import type { ItemRecord } from '@/components/ItemCapture/ItemCapture.types';
@@ -87,6 +88,8 @@ interface PropertyDropdownProps {
   onSelect: (propertyId: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any;
 }
 
 /**
@@ -97,8 +100,10 @@ function PropertyDropdown({
   selectedPropertyId,
   onSelect,
   disabled = false,
-  placeholder = 'Select a property...',
+  placeholder,
+  t,
 }: PropertyDropdownProps) {
+  const resolvedPlaceholder = placeholder || t('selectPropertyAlt');
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -112,7 +117,7 @@ function PropertyDropdown({
 
   const displayName = selectedProperty
     ? selectedProperty.nickname || selectedProperty.name || 'Unknown Property'
-    : placeholder;
+    : resolvedPlaceholder;
 
   // Click outside handler
   useEffect(() => {
@@ -194,7 +199,7 @@ function PropertyDropdown({
   if (properties.length === 0) {
     return (
       <div className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
-        No properties available
+        {t('noProperties')}
       </div>
     );
   }
@@ -302,6 +307,8 @@ interface ItemPreviewListProps {
   items: ItemRecord[];
   properties: Property[];
   maxDisplay?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: string, params?: any) => any;
 }
 
 /**
@@ -311,6 +318,7 @@ function ItemPreviewList({
   items,
   properties,
   maxDisplay = MAX_PREVIEW_ITEMS,
+  t,
 }: ItemPreviewListProps) {
   const displayItems = items.slice(0, maxDisplay);
   const remainingCount = items.length - displayItems.length;
@@ -331,7 +339,7 @@ function ItemPreviewList({
 
   return (
     <div className="mt-4">
-      <p className="text-sm font-medium text-gray-700 mb-2">Items to move:</p>
+      <p className="text-sm font-medium text-gray-700 mb-2">{t('itemsPreview')}</p>
       <ul className="max-h-40 overflow-y-auto space-y-1.5">
         {displayItems.map((item) => {
           const propertyName = getPropertyName(item);
@@ -350,7 +358,7 @@ function ItemPreviewList({
       </ul>
       {remainingCount > 0 && (
         <p className="text-sm text-gray-500 italic mt-2 ml-4">
-          (and {remainingCount} more...)
+          {t('andMore', { count: remainingCount })}
         </p>
       )}
     </div>
@@ -376,6 +384,12 @@ export function BulkMoveDialog({
   loading = false,
   className,
 }: BulkMoveDialogProps) {
+  // ---------------------------------------------------------------------------
+  // Translations
+  // ---------------------------------------------------------------------------
+  const tMove = useTranslations('itemDialogs.bulkActions.move');
+  const tCommon = useTranslations('common');
+
   // ---------------------------------------------------------------------------
   // IDs for accessibility
   // ---------------------------------------------------------------------------
@@ -407,9 +421,8 @@ export function BulkMoveDialog({
   // Confirm button disabled state
   const confirmDisabled = loading || !destinationPropertyId;
 
-  // Item count with proper pluralization
+  // Item count
   const itemCount = selectedItems.length;
-  const itemLabel = itemCount === 1 ? 'Item' : 'Items';
 
   // ---------------------------------------------------------------------------
   // Effects
@@ -484,7 +497,7 @@ export function BulkMoveDialog({
               <FolderInput className="h-5 w-5 text-blue-600" />
             </div>
             <h2 id={titleId} className="text-lg font-semibold text-gray-900">
-              Move {itemCount} {itemLabel} to Another Property
+              {tMove('title', { count: itemCount })}
             </h2>
           </div>
           <button
@@ -497,7 +510,7 @@ export function BulkMoveDialog({
               'touch-manipulation [-webkit-tap-highlight-color:transparent]',
               loading && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Close dialog"
+            aria-label={tCommon('dialog.closeDialog')}
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -511,11 +524,11 @@ export function BulkMoveDialog({
               id={selectLabelId}
               className="block text-sm font-medium text-gray-700"
             >
-              Destination property
+              {tMove('propertyLabel')}
             </label>
             {availableProperties.length === 0 ? (
               <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
-                <p className="text-sm text-gray-500">No other properties available</p>
+                <p className="text-sm text-gray-500">{tMove('noOtherProperties')}</p>
               </div>
             ) : (
               <PropertyDropdown
@@ -523,7 +536,8 @@ export function BulkMoveDialog({
                 selectedPropertyId={destinationPropertyId}
                 onSelect={setDestinationPropertyId}
                 disabled={loading}
-                placeholder="Select destination property..."
+                placeholder={tMove('selectProperty')}
+                t={tMove}
               />
             )}
           </div>
@@ -532,6 +546,7 @@ export function BulkMoveDialog({
           <ItemPreviewList
             items={selectedItems}
             properties={properties}
+            t={tMove}
           />
         </div>
 
@@ -549,7 +564,7 @@ export function BulkMoveDialog({
               loading && 'opacity-50 cursor-not-allowed'
             )}
           >
-            Cancel
+            {tMove('cancel')}
           </button>
           <button
             onClick={handleConfirmClick}
@@ -564,7 +579,7 @@ export function BulkMoveDialog({
             )}
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            Move {itemCount} {itemLabel}
+            {tMove('confirm', { count: itemCount })}
           </button>
         </div>
       </div>

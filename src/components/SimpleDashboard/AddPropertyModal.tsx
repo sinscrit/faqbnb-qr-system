@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Property } from '@/types';
 import { LoadingIndicator } from './LoadingIndicator';
@@ -154,6 +155,8 @@ export function AddPropertyModal({
   onSave,
   className,
 }: AddPropertyModalProps) {
+  const t = useTranslations('common.actions');
+
   // Task 2.3: Form state management with empty initial values
   const [formData, setFormData] = useState<AddPropertyFormData>({
     name: '',
@@ -502,7 +505,7 @@ export function AddPropertyModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              Cancel
+              {t('cancel')}
             </button>
 
             {/* Create Property Button */}
@@ -523,10 +526,10 @@ export function AddPropertyModal({
               {isSubmitting ? (
                 <>
                   <LoadingIndicator size="sm" color="white" label="Creating property" />
-                  <span>Creating...</span>
+                  <span>{t('saving')}</span>
                 </>
               ) : (
-                <span>Create Property</span>
+                <span>{t('createProperty')}</span>
               )}
             </button>
           </div>

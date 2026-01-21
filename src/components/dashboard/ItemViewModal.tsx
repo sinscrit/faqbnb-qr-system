@@ -25,6 +25,7 @@ import {
   Image as ImageIcon,
   ExternalLink
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ItemViewModalProps, ItemWithDetails, ItemLink } from '@/types';
 
@@ -36,17 +37,6 @@ const linkTypeIcons: Record<string, React.ComponentType<{ className?: string }>>
   text: FileText,
 };
 
-// Format date for display
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 export function ItemViewModal({
   isOpen,
   onClose,
@@ -54,6 +44,8 @@ export function ItemViewModal({
   onEdit,
   onDelete,
 }: ItemViewModalProps) {
+  const tView = useTranslations('items.dialogs.view');
+  const tCommon = useTranslations('common.actions');
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -132,7 +124,7 @@ export function ItemViewModal({
                   'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2',
                   'transition-colors'
                 )}
-                aria-label="Close"
+                aria-label={tView('close')}
               >
                 <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
@@ -144,7 +136,7 @@ export function ItemViewModal({
             {/* Description */}
             {item.description && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Description</h3>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">{tView('descriptionLabel')}</h3>
                 <p className="text-gray-700">{item.description}</p>
               </div>
             )}
@@ -161,12 +153,12 @@ export function ItemViewModal({
             <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-6">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" aria-hidden="true" />
-                <span>Created: {formatDate(item.createdAt)}</span>
+                <span>{tView('created', { date: new Date(item.createdAt) })}</span>
               </div>
               {item.updatedAt && item.updatedAt !== item.createdAt && (
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" aria-hidden="true" />
-                  <span>Updated: {formatDate(item.updatedAt)}</span>
+                  <span>{tView('updated', { date: new Date(item.updatedAt) })}</span>
                 </div>
               )}
             </div>
@@ -176,7 +168,7 @@ export function ItemViewModal({
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
                   <LinkIcon className="w-4 h-4" />
-                  Resources ({item.links.length})
+                  {tView('resourcesLabel', { count: item.links.length })}
                 </h3>
                 <div className="space-y-2">
                   {item.links.map((link: ItemLink, index: number) => {
@@ -210,7 +202,7 @@ export function ItemViewModal({
             {(!item.links || item.links.length === 0) && (
               <div className="text-center py-8 text-gray-500">
                 <LinkIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No resources attached to this item</p>
+                <p>{tView('noResources')}</p>
               </div>
             )}
           </div>
@@ -232,7 +224,7 @@ export function ItemViewModal({
               )}
             >
               <Edit className="w-4 h-4" aria-hidden="true" />
-              <span>Edit Item</span>
+              <span>{tView('editItem')}</span>
             </button>
 
             {/* Delete Button */}
@@ -250,7 +242,7 @@ export function ItemViewModal({
               )}
             >
               <Trash2 className="w-4 h-4" aria-hidden="true" />
-              <span>Delete</span>
+              <span>{tCommon('delete')}</span>
             </button>
           </div>
         </Dialog.Content>
