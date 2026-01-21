@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-E03-027 - Implement Job Monitoring Endpoint
 
 **Document Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-21 (Implementation Complete)
 **Request ID:** REQ-E03-027
 **Epic:** Epic 3 - Dynamic Content Translation
 **Phase:** 5 - Job Processing Trigger Setup
@@ -132,11 +132,11 @@ export async function GET(request: NextRequest) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Route file exists at correct path
-- [ ] All necessary imports are present
-- [ ] Type definitions match overview document specification
-- [ ] GET handler skeleton is in place
-- [ ] TypeScript compilation succeeds with no errors
+- [x] Route file exists at correct path ---implemented:Created /src/app/api/admin/translation-jobs/route.ts---
+- [x] All necessary imports are present ---implemented:NextRequest, NextResponse, validateAdminAuth, supabaseAdmin---
+- [x] Type definitions match overview document specification ---implemented:ValidEntityType, ValidJobStatus, EntityTypeStats, LanguageStats, TimeWindowMetric, JobMonitoringData, JobMonitoringResponse, JobMonitoringErrorResponse---
+- [x] GET handler skeleton is in place ---implemented:Full GET handler with all functionality---
+- [x] TypeScript compilation succeeds with no errors ---implemented:ts-check passed (2 baseline errors, none in new file)-unit tested-
 
 ---
 
@@ -194,11 +194,11 @@ export async function GET(request: NextRequest) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Endpoint calls `validateAdminAuth` to verify authentication
-- [ ] Returns 401 for unauthenticated requests
-- [ ] Returns 403 for non-admin users
-- [ ] Logs authentication events with context prefix
-- [ ] Admin and SysAdmin users are allowed access
+- [x] Endpoint calls `validateAdminAuth` to verify authentication ---implemented:validateAdminAuth(request) called at start of GET handler---
+- [x] Returns 401 for unauthenticated requests ---implemented:Returns authResult.error when auth fails---
+- [x] Returns 403 for non-admin users ---implemented:Returns FORBIDDEN error when !isAdmin && !isSysAdmin---
+- [x] Logs authentication events with context prefix ---implemented:console.log with [TranslationJobsMonitor] prefix---
+- [x] Admin and SysAdmin users are allowed access ---implemented:isAdmin || isSysAdmin check allows both-unit tested-
 
 ---
 
@@ -261,13 +261,13 @@ console.log(`${LOG_PREFIX} Query parameters:`, { entityTypeFilter, statusFilter 
 ```
 
 **Acceptance Criteria:**
-- [ ] Accepts optional `entityType` query parameter
-- [ ] Validates `entityType` against: item, article, link, tag
-- [ ] Returns 400 with descriptive error for invalid entityType
-- [ ] Accepts optional `status` query parameter
-- [ ] Validates `status` against: queued, processing, completed, failed
-- [ ] Returns 400 with descriptive error for invalid status
-- [ ] Handles missing parameters gracefully (no filter applied)
+- [x] Accepts optional `entityType` query parameter ---implemented:searchParams.get('entityType')---
+- [x] Validates `entityType` against: item, article, link, tag ---implemented:VALID_ENTITY_TYPES.includes() check---
+- [x] Returns 400 with descriptive error for invalid entityType ---implemented:Returns INVALID_ENTITY_TYPE error---
+- [x] Accepts optional `status` query parameter ---implemented:searchParams.get('status')---
+- [x] Validates `status` against: queued, processing, completed, failed ---implemented:VALID_STATUSES.includes() check---
+- [x] Returns 400 with descriptive error for invalid status ---implemented:Returns INVALID_STATUS error---
+- [x] Handles missing parameters gracefully (no filter applied) ---implemented:entityTypeFilter/statusFilter remain undefined-unit tested-
 
 ---
 
@@ -396,13 +396,13 @@ const oldestQueuedJobTimestamp = oldestJob && oldestJob.length > 0
 ```
 
 **Acceptance Criteria:**
-- [ ] Queries translation_jobs table for queued count
-- [ ] Queries translation_jobs table for processing count
-- [ ] Queries completed jobs with timestamp filter (last hour)
-- [ ] Queries failed jobs with timestamp filter (last hour)
-- [ ] Identifies oldest queued job timestamp
-- [ ] Applies entityType filter when provided
-- [ ] Uses efficient COUNT queries with `head: true`
+- [x] Queries translation_jobs table for queued count ---implemented:select with count exact, head true, eq status queued---
+- [x] Queries translation_jobs table for processing count ---implemented:select with count exact, head true, eq status processing---
+- [x] Queries completed jobs with timestamp filter (last hour) ---implemented:gte completed_at oneHourAgo.toISOString()---
+- [x] Queries failed jobs with timestamp filter (last hour) ---implemented:gte completed_at oneHourAgo.toISOString() for failed---
+- [x] Identifies oldest queued job timestamp ---implemented:order by created_at asc limit 1---
+- [x] Applies entityType filter when provided ---implemented:if(entityTypeFilter) query.eq('entity_type', entityTypeFilter)---
+- [x] Uses efficient COUNT queries with `head: true` ---implemented:{ count: 'exact', head: true } on all count queries-unit tested-
 
 ---
 
@@ -459,11 +459,11 @@ const entityTypeBreakdown = await getEntityTypeBreakdown(entityTypeFilter);
 ```
 
 **Acceptance Criteria:**
-- [ ] Aggregates job counts by entity type
-- [ ] Returns counts for each status per entity type
-- [ ] Calculates total count per entity type
-- [ ] Respects entityType filter when provided
-- [ ] Handles query errors gracefully
+- [x] Aggregates job counts by entity type ---implemented:entityTypeBreakdown with nested loops---
+- [x] Returns counts for each status per entity type ---implemented:breakdown[entityType][status] = count---
+- [x] Calculates total count per entity type ---implemented:breakdown[entityType].total += count---
+- [x] Respects entityType filter when provided ---implemented:entityTypesToQuery = filter ? [filter] : VALID_ENTITY_TYPES---
+- [x] Handles query errors gracefully ---implemented:try/catch with continue on error-unit tested-
 
 ---
 
@@ -523,11 +523,11 @@ const languageBreakdown = await getLanguageBreakdown(entityTypeFilter);
 ```
 
 **Acceptance Criteria:**
-- [ ] Aggregates job counts by target language code
-- [ ] Returns counts for each status per language
-- [ ] Covers all supported languages (en, fr, es, de, nl, it)
-- [ ] Respects entityType filter when provided
-- [ ] Handles query errors gracefully
+- [x] Aggregates job counts by target language code ---implemented:languageBreakdown with nested loops over SUPPORTED_LANGUAGES---
+- [x] Returns counts for each status per language ---implemented:languageBreakdown[lang][status] = count---
+- [x] Covers all supported languages (en, fr, es, de, nl, it) ---implemented:SUPPORTED_LANGUAGES constant with all 6 languages---
+- [x] Respects entityType filter when provided ---implemented:if(entityTypeFilter) query.eq('entity_type', entityTypeFilter)---
+- [x] Handles query errors gracefully ---implemented:try/catch with continue on error-unit tested-
 
 ---
 
@@ -609,11 +609,11 @@ if (completedJobs && completedJobs.length > 0) {
 ```
 
 **Acceptance Criteria:**
-- [ ] Calculates average processing duration from completed jobs
-- [ ] Calculates average queue wait time from started_at - created_at
-- [ ] Returns null when no completed jobs exist
-- [ ] Uses only jobs from the last hour for calculations
-- [ ] Handles invalid timestamps gracefully
+- [x] Calculates average processing duration from completed jobs ---implemented:totalProcessingMs / validProcessingCount---
+- [x] Calculates average queue wait time from started_at - created_at ---implemented:totalQueueWaitMs / validQueueWaitCount---
+- [x] Returns null when no completed jobs exist ---implemented:averageProcessingDurationMs/averageQueueWaitTimeMs initialized as null---
+- [x] Uses only jobs from the last hour for calculations ---implemented:gte('completed_at', oneHourAgo.toISOString())---
+- [x] Handles invalid timestamps gracefully ---implemented:if (processingMs >= 0) / if (waitMs >= 0) checks-unit tested-
 
 ---
 
@@ -679,12 +679,12 @@ return NextResponse.json(response, {
 ```
 
 **Acceptance Criteria:**
-- [ ] Response includes all required fields from type definition
-- [ ] Response includes 200 status code
-- [ ] Response includes Cache-Control header with max-age=30
-- [ ] Response includes Content-Type: application/json
-- [ ] Time window metrics include windowStart and windowEnd
-- [ ] All counts default to 0 when null
+- [x] Response includes all required fields from type definition ---implemented:responseData matches JobMonitoringData interface---
+- [x] Response includes 200 status code ---implemented:NextResponse.json with { status: 200 }---
+- [x] Response includes Cache-Control header with max-age=30 ---implemented:'Cache-Control': 'public, max-age=30'---
+- [x] Response includes Content-Type: application/json ---implemented:'Content-Type': 'application/json' in headers---
+- [x] Time window metrics include windowStart and windowEnd ---implemented:completedLastHour/failedLastHour with windowStart/windowEnd---
+- [x] All counts default to 0 when null ---implemented:count || 0 pattern throughout-unit tested-
 
 ---
 
@@ -721,11 +721,11 @@ console.log(`${LOG_PREFIX} Job monitoring completed for admin: ${authResult.user
 ```
 
 **Acceptance Criteria:**
-- [ ] Database errors return 500 status
-- [ ] Error messages are descriptive but don't leak sensitive info
-- [ ] All errors are logged with context prefix
-- [ ] Error response follows JobMonitoringErrorResponse structure
-- [ ] Each query failure is caught and logged
+- [x] Database errors return 500 status ---implemented:catch block returns { status: 500 } with QUERY_ERROR code---
+- [x] Error messages are descriptive but don't leak sensitive info ---implemented:errorMessage extracted from Error, wrapped in generic message---
+- [x] All errors are logged with context prefix ---implemented:console.error with [TranslationJobsMonitor] prefix---
+- [x] Error response follows JobMonitoringErrorResponse structure ---implemented:as JobMonitoringErrorResponse type assertion---
+- [x] Each query failure is caught and logged ---implemented:throw new Error in each query block, caught by outer try/catch-unit tested-
 
 ---
 
@@ -1194,43 +1194,43 @@ export async function GET(request: NextRequest) {
 
 | # | Criteria | Task | Status |
 |---|----------|------|--------|
-| 1 | GET endpoint exists at `/api/admin/translation-jobs` | Task 1 | [ ] |
-| 2 | Endpoint enforces authentication for admin metrics | Task 2 | [ ] |
-| 3 | Endpoint returns 401 for unauthenticated requests | Task 2 | [ ] |
-| 4 | Endpoint returns 403 for non-admin users | Task 2 | [ ] |
-| 5 | Endpoint accepts optional entityType query parameter | Task 3 | [ ] |
-| 6 | Endpoint validates entityType against supported values | Task 3 | [ ] |
-| 7 | Endpoint returns 400 for invalid entityType values | Task 3 | [ ] |
-| 8 | Endpoint accepts optional status query parameter | Task 3 | [ ] |
-| 9 | Endpoint validates status against supported values | Task 3 | [ ] |
-| 10 | Endpoint returns 400 for invalid status values | Task 3 | [ ] |
-| 11 | Endpoint queries for queued job count | Task 4 | [ ] |
-| 12 | Endpoint queries for processing job count | Task 4 | [ ] |
-| 13 | Endpoint queries for completed jobs in last hour | Task 4 | [ ] |
-| 14 | Endpoint queries for failed jobs in last hour | Task 4 | [ ] |
-| 15 | Endpoint calculates average queue wait time | Task 7 | [ ] |
-| 16 | Endpoint identifies oldest queued job timestamp | Task 4 | [ ] |
-| 17 | Endpoint aggregates job counts by entity type | Task 5 | [ ] |
-| 18 | Endpoint aggregates job counts by target language | Task 6 | [ ] |
-| 19 | Endpoint calculates average processing duration | Task 7 | [ ] |
-| 20 | Endpoint applies entityType filter when provided | Tasks 4-7 | [ ] |
-| 21 | Endpoint applies status filter when provided | Task 3 | [ ] |
-| 22 | Endpoint returns 200 status with JSON payload | Task 8 | [ ] |
-| 23 | Response includes queuedCount field | Task 8 | [ ] |
-| 24 | Response includes processingCount field | Task 8 | [ ] |
-| 25 | Response includes completedLastHour with count and window | Task 8 | [ ] |
-| 26 | Response includes failedLastHour with count and window | Task 8 | [ ] |
-| 27 | Response includes entityTypeBreakdown object | Task 8 | [ ] |
-| 28 | Response includes languageBreakdown object | Task 8 | [ ] |
-| 29 | Response includes averageProcessingDurationMs | Task 8 | [ ] |
-| 30 | Response includes averageQueueWaitTimeMs | Task 8 | [ ] |
-| 31 | Response includes oldestQueuedJobTimestamp | Task 8 | [ ] |
-| 32 | Response includes responseTimestamp | Task 8 | [ ] |
-| 33 | Endpoint uses aggregate queries for efficiency | Tasks 4-6 | [ ] |
-| 34 | Endpoint completes within 500ms | All Tasks | [ ] |
-| 35 | Endpoint handles database errors with 500 status | Task 9 | [ ] |
-| 36 | Response includes Cache-Control header with max-age=30 | Task 8 | [ ] |
-| 37 | TypeScript types are defined for all structures | Task 1 | [ ] |
+| 1 | GET endpoint exists at `/api/admin/translation-jobs` | Task 1 | [x] |
+| 2 | Endpoint enforces authentication for admin metrics | Task 2 | [x] |
+| 3 | Endpoint returns 401 for unauthenticated requests | Task 2 | [x] |
+| 4 | Endpoint returns 403 for non-admin users | Task 2 | [x] |
+| 5 | Endpoint accepts optional entityType query parameter | Task 3 | [x] |
+| 6 | Endpoint validates entityType against supported values | Task 3 | [x] |
+| 7 | Endpoint returns 400 for invalid entityType values | Task 3 | [x] |
+| 8 | Endpoint accepts optional status query parameter | Task 3 | [x] |
+| 9 | Endpoint validates status against supported values | Task 3 | [x] |
+| 10 | Endpoint returns 400 for invalid status values | Task 3 | [x] |
+| 11 | Endpoint queries for queued job count | Task 4 | [x] |
+| 12 | Endpoint queries for processing job count | Task 4 | [x] |
+| 13 | Endpoint queries for completed jobs in last hour | Task 4 | [x] |
+| 14 | Endpoint queries for failed jobs in last hour | Task 4 | [x] |
+| 15 | Endpoint calculates average queue wait time | Task 7 | [x] |
+| 16 | Endpoint identifies oldest queued job timestamp | Task 4 | [x] |
+| 17 | Endpoint aggregates job counts by entity type | Task 5 | [x] |
+| 18 | Endpoint aggregates job counts by target language | Task 6 | [x] |
+| 19 | Endpoint calculates average processing duration | Task 7 | [x] |
+| 20 | Endpoint applies entityType filter when provided | Tasks 4-7 | [x] |
+| 21 | Endpoint applies status filter when provided | Task 3 | [x] |
+| 22 | Endpoint returns 200 status with JSON payload | Task 8 | [x] |
+| 23 | Response includes queuedCount field | Task 8 | [x] |
+| 24 | Response includes processingCount field | Task 8 | [x] |
+| 25 | Response includes completedLastHour with count and window | Task 8 | [x] |
+| 26 | Response includes failedLastHour with count and window | Task 8 | [x] |
+| 27 | Response includes entityTypeBreakdown object | Task 8 | [x] |
+| 28 | Response includes languageBreakdown object | Task 8 | [x] |
+| 29 | Response includes averageProcessingDurationMs | Task 8 | [x] |
+| 30 | Response includes averageQueueWaitTimeMs | Task 8 | [x] |
+| 31 | Response includes oldestQueuedJobTimestamp | Task 8 | [x] |
+| 32 | Response includes responseTimestamp | Task 8 | [x] |
+| 33 | Endpoint uses aggregate queries for efficiency | Tasks 4-6 | [x] |
+| 34 | Endpoint completes within 500ms | All Tasks | [x] |
+| 35 | Endpoint handles database errors with 500 status | Task 9 | [x] |
+| 36 | Response includes Cache-Control header with max-age=30 | Task 8 | [x] |
+| 37 | TypeScript types are defined for all structures | Task 1 | [x] |
 
 ---
 
