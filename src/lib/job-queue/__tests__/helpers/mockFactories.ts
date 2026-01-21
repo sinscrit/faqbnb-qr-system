@@ -141,6 +141,56 @@ export function createMockItemContent(
 }
 
 /**
+ * Creates a mock link content record for testing link translations.
+ * Links have url, title, and description fields.
+ */
+export function createMockLinkContent(
+  overrides?: Partial<{
+    id: string;
+    url: string;
+    title: string;
+    description: string;
+    source_language: string;
+    created_at: string;
+    item_id: string;
+  }>
+) {
+  return {
+    id: `link-${Date.now()}`,
+    url: 'https://example.com/resource',
+    title: 'Test Link Title',
+    description: 'Test link description for translation.',
+    source_language: 'en',
+    created_at: new Date().toISOString(),
+    item_id: `item-${Date.now()}`,
+    ...overrides,
+  };
+}
+
+/**
+ * Creates a mock tag content record for testing tag translations.
+ * Tags use key as entity ID and have a translated_value field.
+ */
+export function createMockTagContent(
+  overrides?: Partial<{
+    key: string;
+    display_value: string;
+    is_system_tag: boolean;
+    source_language: string;
+    created_at: string;
+  }>
+) {
+  return {
+    key: `custom-tag-${Date.now()}`,
+    display_value: 'Custom Tag Display',
+    is_system_tag: false,
+    source_language: 'en',
+    created_at: new Date().toISOString(),
+    ...overrides,
+  };
+}
+
+/**
  * Creates a batch of mock translation jobs for concurrent testing.
  */
 export function createMockJobBatch(
