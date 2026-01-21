@@ -409,6 +409,8 @@ export async function saveTranslation(
       }
 
       case 'tag': {
+        // IMPORTANT: User-created tags must have is_system_tag = false
+        // System tags (is_system_tag = true) are pre-seeded and should not be overwritten
         const { error } = await supabaseAdmin
           .from('tag_translations')
           .upsert(
@@ -416,7 +418,7 @@ export async function saveTranslation(
               tag_key: entityId,
               language: targetLanguage,
               translated_value: translatedFields.translated_value,
-              is_system_tag: false,
+              is_system_tag: false,  // Critical: Always false for user-created tags (REQ-E03-017)
             },
             {
               onConflict: 'tag_key,language',
@@ -484,6 +486,294 @@ function getContentType(
 
   const key = `${entityType}.${fieldName}`;
   return mapping[key] || 'item_description';
+}
+
+// ===========================================================================
+// Tag-Specific Translation Processor (REQ-E03-017)
+// ===========================================================================
+
+/**
+ * Process a tag translation job
+ *
+ * Specialized processor for tag entities that:
+ * 1. Fetches the English source translation from tag_translations table
+ * 2. Translates to target language via translation service
+ * 3. Stores result with is_system_tag = false (user-created tag)
+ * 4. Updates job status (completed or failed)
+ *
+ * This processor differs from other entity processors because:
+ * - Tags are identified by tag_key (string) rather than UUID
+ * - Source content comes from tag_translations table (language='en')
+ * - Only a single field (translated_value) is translated
+ * - Must explicitly set is_system_tag = false to distinguish from system tags
+ *
+ * @param job - The translation job to process (entityType must be 'tag')
+ * @param config - Processor configuration including workerId and logging settings
+ * @returns Processing result with success/failure status and translated value
+ *
+ * @example
+ * ```typescript
+ * const result = await processTagTranslation(tagJob, config);
+ * if (result.success) {
+ *   console.log('Tag translated:', result.translatedFields);
+ * } else {
+ *   console.error('Translation failed:', result.errorMessage);
+ * }
+ * ```
+ *
+ * @see fetchEntityContent - Used to retrieve source tag content
+ * @see saveTranslation - Used to persist translated tag (sets is_system_tag = false)
+ * @see markJobCompleted - Called on successful translation
+ * @see markJobFailed - Called on translation failure
+ */
+export async function processTagTranslationJob(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<JobProcessingResult> {
+  const startTime = Date.now();
+  const { entityType, entityId, sourceLanguage, targetLanguage } = job;
+
+  // Validate entity type
+  if (entityType !== 'tag') {
+    return {
+      jobId: job.id,
+      success: false,
+      entityType,
+      entityId,
+      targetLanguage,
+      errorMessage: `Invalid entity type for tag processor: expected 'tag', got '${entityType}'`,
+      processingTimeMs: Date.now() - startTime,
+    };
+  }
+
+  // Log processing start
+  if (config.enableLogging) {
+    console.log('[TagProcessor] Processing job:', {
+      jobId: job.id,
+      tagKey: entityId,
+      targetLanguage,
+    });
+  }
+
+  // Start heartbeat to prevent lock timeout during processing
+  const stopHeartbeat = createLockHeartbeat(
+    job.id,
+    config.workerId,
+    config.heartbeatIntervalMs || DEFAULT_HEARTBEAT_INTERVAL_MS
+  );
+
+  try {
+    // 1. Fetch source content from tag_translations (language='en')
+    const content = await fetchEntityContent(entityType, entityId);
+
+    if (!content) {
+      // Tag not found - this is a permanent error, do not retry
+      const errorMessage = `Tag not found: ${entityId}`;
+
+      if (config.enableLogging) {
+        console.error('[TagProcessor] Tag not found:', {
+          jobId: job.id,
+          tagKey: entityId,
+        });
+      }
+
+      // Mark job as failed (permanent error)
+      await markJobFailed(job.id, errorMessage);
+
+      return {
+        jobId: job.id,
+        success: false,
+        entityType,
+        entityId,
+        targetLanguage,
+        errorMessage,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    // Validate source content has the required field
+    const sourceValue = content.fields.translated_value;
+    if (!sourceValue) {
+      const errorMessage = `Tag has no source translation: ${entityId}`;
+
+      if (config.enableLogging) {
+        console.error('[TagProcessor] No source translation:', {
+          jobId: job.id,
+          tagKey: entityId,
+        });
+      }
+
+      await markJobFailed(job.id, errorMessage);
+
+      return {
+        jobId: job.id,
+        success: false,
+        entityType,
+        entityId,
+        targetLanguage,
+        errorMessage,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log('[TagProcessor] Source content fetched:', {
+        jobId: job.id,
+        tagKey: entityId,
+        sourceValue,
+      });
+    }
+
+    // 2. Prepare translation context
+    const context = getTranslationContext(entityType);
+    const contentType = getContentType(entityType, 'translated_value');
+
+    // 3. Translate the tag value
+    let translatedValue: string;
+    try {
+      const result = await translateText(
+        sourceValue,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType,
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedValue = result.translatedText;
+    } catch (translationError) {
+      // Translation service error - may be transient (rate limit, network) or permanent
+      const errorMessage = translationError instanceof Error
+        ? translationError.message
+        : String(translationError);
+
+      // Check for transient errors that should be retried (for logging purposes)
+      const isTransientError =
+        errorMessage.includes('rate limit') ||
+        errorMessage.includes('timeout') ||
+        errorMessage.includes('network') ||
+        errorMessage.includes('503') ||
+        errorMessage.includes('529');
+
+      if (config.enableLogging) {
+        console.error('[TagProcessor] Translation service error:', {
+          jobId: job.id,
+          tagKey: entityId,
+          error: errorMessage,
+          isTransient: isTransientError,
+        });
+      }
+
+      // markJobFailed will handle retry logic based on attempts count
+      await markJobFailed(job.id, errorMessage);
+
+      return {
+        jobId: job.id,
+        success: false,
+        entityType,
+        entityId,
+        targetLanguage,
+        errorMessage: `Translation service error: ${errorMessage}`,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log('[TagProcessor] Translation completed:', {
+        jobId: job.id,
+        tagKey: entityId,
+        targetLanguage,
+        translatedValue,
+      });
+    }
+
+    // 4. Save translation to database
+    // Note: saveTranslation for 'tag' entity type already sets is_system_tag = false
+    const translatedFields = { translated_value: translatedValue };
+    const saved = await saveTranslation(
+      entityType,
+      entityId,
+      targetLanguage,
+      translatedFields
+    );
+
+    if (!saved) {
+      const errorMessage = 'Failed to save tag translation to database';
+
+      if (config.enableLogging) {
+        console.error('[TagProcessor] Save failed:', {
+          jobId: job.id,
+          tagKey: entityId,
+          targetLanguage,
+        });
+      }
+
+      await markJobFailed(job.id, errorMessage);
+
+      return {
+        jobId: job.id,
+        success: false,
+        entityType,
+        entityId,
+        targetLanguage,
+        errorMessage,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    // 5. Mark job as completed
+    await markJobCompleted(job.id);
+
+    if (config.enableLogging) {
+      console.log('[TagProcessor] Job completed successfully:', {
+        jobId: job.id,
+        tagKey: entityId,
+        targetLanguage,
+        processingTimeMs: Date.now() - startTime,
+      });
+    }
+
+    return {
+      jobId: job.id,
+      success: true,
+      entityType,
+      entityId,
+      targetLanguage,
+      translatedFields,
+      processingTimeMs: Date.now() - startTime,
+    };
+
+  } catch (error) {
+    // Unexpected error during processing
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    if (config.enableLogging) {
+      console.error('[TagProcessor] Unexpected error:', {
+        jobId: job.id,
+        tagKey: entityId,
+        error: errorMessage,
+      });
+    }
+
+    // Mark job failed
+    await markJobFailed(job.id, errorMessage);
+
+    return {
+      jobId: job.id,
+      success: false,
+      entityType,
+      entityId,
+      targetLanguage,
+      errorMessage,
+      processingTimeMs: Date.now() - startTime,
+    };
+
+  } finally {
+    // Always stop heartbeat when done (success or failure)
+    stopHeartbeat();
+  }
 }
 
 // ===========================================================================
@@ -939,9 +1229,16 @@ async function processTranslationJob(
         };
       }
 
-      case 'tag':
-        result = await processTagTranslation(job, config);
-        break;
+      case 'tag': {
+        // Use dedicated tag processor (REQ-E03-017)
+        // The processTagTranslationJob handles heartbeat and job status internally
+        const tagResult = await processTagTranslationJob(job, config);
+
+        // Stop heartbeat before returning (processor already stopped its own heartbeat)
+        stopHeartbeat();
+
+        return tagResult;
+      }
 
       default:
         // Handle unknown entity types gracefully with error logging

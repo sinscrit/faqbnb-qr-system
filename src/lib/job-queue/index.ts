@@ -50,6 +50,8 @@ export {
   stopJobProcessor,
   fetchEntityContent,
   saveTranslation,
+  // Entity-specific processors (REQ-E03-017)
+  processTagTranslationJob,
 } from './job-processor';
 
 // Job processor types (REQ-244 + REQ-E03-013)
