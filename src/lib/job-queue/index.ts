@@ -52,7 +52,7 @@ export {
   saveTranslation,
 } from './job-processor';
 
-// Job processor types (REQ-244)
+// Job processor types (REQ-244 + REQ-E03-013)
 export type {
   JobProcessorConfig,
   JobProcessingResult,
@@ -63,6 +63,8 @@ export type {
   ItemContent,
   LinkContent,
   TagContent,
+  EntityTranslationResult,  // NEW: REQ-E03-013
+  EntityProcessorFn,        // NEW: REQ-E03-013
 } from './job-processor';
 
 // Concurrency control exports (REQ-245)

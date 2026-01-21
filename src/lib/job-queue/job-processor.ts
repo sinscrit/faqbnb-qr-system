@@ -8,7 +8,33 @@
  *
  * @module job-queue/job-processor
  * @created 2026-01-18
- * @lastModified 2026-01-18
+ * @lastModified 2026-01-21
+ */
+
+/**
+ * Entity-Specific Translation Processing Architecture (REQ-E03-013)
+ *
+ * This module implements content-aware translation job processing using a
+ * routing pattern. When a translation job is dequeued:
+ *
+ * 1. The main router (processTranslationJob) examines job.entityType
+ * 2. Based on the entity type, it dispatches to a specialized handler:
+ *    - 'item' -> processItemTranslation
+ *    - 'article' -> processArticleTranslation
+ *    - 'link' -> processLinkTranslation
+ *    - 'tag' -> processTagTranslation
+ * 3. Each handler knows which fields to translate and how to store results
+ * 4. The router manages heartbeat, job status updates, and error handling
+ *
+ * This architecture is easily extensible for future entity types by:
+ * - Adding a new entity-specific processor function
+ * - Adding a new case to the switch statement in processTranslationJob
+ *
+ * @see processTranslationJob - Main routing function
+ * @see processItemTranslation - Item handler (name, description)
+ * @see processArticleTranslation - Article handler (title, description)
+ * @see processLinkTranslation - Link handler (title only)
+ * @see processTagTranslation - Tag handler (translated_value)
  */
 
 import type {
@@ -84,6 +110,29 @@ export interface ProcessorStats {
   lastProcessedAt?: string;
   lastErrorMessage?: string;
 }
+
+/**
+ * Result of processing a specific entity type translation
+ * Used by entity-specific processor functions
+ * Part of REQ-E03-013: Content-specific job handling
+ */
+export interface EntityTranslationResult {
+  /** Whether the translation processing succeeded */
+  success: boolean;
+  /** Map of field names to translated values (on success) */
+  translatedFields?: Record<string, string>;
+  /** Error message if processing failed */
+  errorMessage?: string;
+}
+
+/**
+ * Processor function signature for entity-specific handlers
+ * Part of REQ-E03-013: Content-specific job handling
+ */
+export type EntityProcessorFn = (
+  job: TranslationJob,
+  config: JobProcessorConfig
+) => Promise<EntityTranslationResult>;
 
 // ===========================================================================
 // Entity Content Types
@@ -433,24 +482,357 @@ function getContentType(
 }
 
 // ===========================================================================
-// Single Job Processing
+// Entity-Specific Processors (REQ-E03-013)
 // ===========================================================================
 
 /**
- * Process a single translation job
+ * Process item translation job
+ * Fetches item, translates name and description, stores results
+ * Part of REQ-E03-013: Content-specific job handling
  *
- * @param job - The translation job to process
+ * @param job - Translation job with entityType='item'
  * @param config - Processor configuration
- * @returns Processing result
+ * @returns Entity translation result
  */
-async function processJob(
+async function processItemTranslation(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<EntityTranslationResult> {
+  const { entityId, sourceLanguage, targetLanguage } = job;
+
+  try {
+    // 1. Fetch item content
+    const content = await fetchEntityContent('item', entityId);
+    if (!content) {
+      return {
+        success: false,
+        errorMessage: `Item not found: ${entityId}`,
+      };
+    }
+
+    // 2. Translate fields with appropriate context
+    const translatedFields: Record<string, string> = {};
+    const context = getTranslationContext('item');
+
+    // Translate name (required field)
+    if (content.fields.name) {
+      const result = await translateText(
+        content.fields.name,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('item', 'name'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.name = result.translatedText;
+    }
+
+    // Translate description (optional field)
+    if (content.fields.description) {
+      const result = await translateText(
+        content.fields.description,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('item', 'description'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.description = result.translatedText;
+    }
+
+    // 3. Store translation
+    const saved = await saveTranslation('item', entityId, targetLanguage, translatedFields);
+    if (!saved) {
+      return {
+        success: false,
+        errorMessage: 'Failed to save item translation to database',
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log(`[JobProcessor] Item ${entityId} translated to ${targetLanguage}`);
+    }
+
+    return {
+      success: true,
+      translatedFields,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      errorMessage,
+    };
+  }
+}
+
+/**
+ * Process article translation job
+ * Fetches article, translates title and description, stores results
+ * Part of REQ-E03-013: Content-specific job handling
+ *
+ * @param job - Translation job with entityType='article'
+ * @param config - Processor configuration
+ * @returns Entity translation result
+ */
+async function processArticleTranslation(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<EntityTranslationResult> {
+  const { entityId, sourceLanguage, targetLanguage } = job;
+
+  try {
+    // 1. Fetch article content
+    const content = await fetchEntityContent('article', entityId);
+    if (!content) {
+      return {
+        success: false,
+        errorMessage: `Article not found: ${entityId}`,
+      };
+    }
+
+    // 2. Translate fields with appropriate context
+    const translatedFields: Record<string, string> = {};
+    const context = getTranslationContext('article');
+
+    // Translate title (required field)
+    if (content.fields.title) {
+      const result = await translateText(
+        content.fields.title,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('article', 'title'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.title = result.translatedText;
+    }
+
+    // Translate description (optional field)
+    if (content.fields.description) {
+      const result = await translateText(
+        content.fields.description,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('article', 'description'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.description = result.translatedText;
+    }
+
+    // 3. Store translation
+    const saved = await saveTranslation('article', entityId, targetLanguage, translatedFields);
+    if (!saved) {
+      return {
+        success: false,
+        errorMessage: 'Failed to save article translation to database',
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log(`[JobProcessor] Article ${entityId} translated to ${targetLanguage}`);
+    }
+
+    return {
+      success: true,
+      translatedFields,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      errorMessage,
+    };
+  }
+}
+
+/**
+ * Process link translation job
+ * Fetches link, translates title only (URLs never translated), stores results
+ * Part of REQ-E03-013: Content-specific job handling
+ *
+ * @param job - Translation job with entityType='link'
+ * @param config - Processor configuration
+ * @returns Entity translation result
+ */
+async function processLinkTranslation(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<EntityTranslationResult> {
+  const { entityId, sourceLanguage, targetLanguage } = job;
+
+  try {
+    // 1. Fetch link content
+    const content = await fetchEntityContent('link', entityId);
+    if (!content) {
+      return {
+        success: false,
+        errorMessage: `Link not found: ${entityId}`,
+      };
+    }
+
+    // 2. Translate title only (URLs are never translated)
+    const translatedFields: Record<string, string> = {};
+    const context = getTranslationContext('link');
+
+    // Translate title (only translatable field for links)
+    if (content.fields.title) {
+      const result = await translateText(
+        content.fields.title,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('link', 'title'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.title = result.translatedText;
+    }
+
+    // 3. Store translation
+    const saved = await saveTranslation('link', entityId, targetLanguage, translatedFields);
+    if (!saved) {
+      return {
+        success: false,
+        errorMessage: 'Failed to save link translation to database',
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log(`[JobProcessor] Link ${entityId} translated to ${targetLanguage}`);
+    }
+
+    return {
+      success: true,
+      translatedFields,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      errorMessage,
+    };
+  }
+}
+
+/**
+ * Process tag translation job
+ * Fetches tag, translates value, stores results
+ * Part of REQ-E03-013: Content-specific job handling
+ *
+ * @param job - Translation job with entityType='tag'
+ * @param config - Processor configuration
+ * @returns Entity translation result
+ */
+async function processTagTranslation(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<EntityTranslationResult> {
+  const { entityId, sourceLanguage, targetLanguage } = job;
+
+  try {
+    // 1. Fetch tag content (entityId is the tag_key)
+    const content = await fetchEntityContent('tag', entityId);
+    if (!content) {
+      return {
+        success: false,
+        errorMessage: `Tag not found: ${entityId}`,
+      };
+    }
+
+    // 2. Translate tag value
+    const translatedFields: Record<string, string> = {};
+    const context = getTranslationContext('tag');
+
+    // Translate tag value
+    if (content.fields.translated_value) {
+      const result = await translateText(
+        content.fields.translated_value,
+        sourceLanguage,
+        targetLanguage,
+        {
+          context: {
+            contentType: getContentType('tag', 'translated_value'),
+            domainContext: context.domainContext,
+          },
+        }
+      );
+      translatedFields.translated_value = result.translatedText;
+    }
+
+    // 3. Store translation
+    const saved = await saveTranslation('tag', entityId, targetLanguage, translatedFields);
+    if (!saved) {
+      return {
+        success: false,
+        errorMessage: 'Failed to save tag translation to database',
+      };
+    }
+
+    if (config.enableLogging) {
+      console.log(`[JobProcessor] Tag ${entityId} translated to ${targetLanguage}`);
+    }
+
+    return {
+      success: true,
+      translatedFields,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      errorMessage,
+    };
+  }
+}
+
+// ===========================================================================
+// Main Routing Function (REQ-E03-013)
+// ===========================================================================
+
+/**
+ * Route translation job to appropriate entity-specific processor
+ *
+ * This is the main entry point for content-aware translation processing.
+ * It examines the job's entityType and dispatches to the appropriate
+ * specialized handler (processItemTranslation, processArticleTranslation, etc.)
+ *
+ * Part of REQ-E03-013: Content-specific job handling
+ *
+ * Routing logic:
+ * - 'item' -> processItemTranslation (translates name, description)
+ * - 'article' -> processArticleTranslation (translates title, description)
+ * - 'link' -> processLinkTranslation (translates title only)
+ * - 'tag' -> processTagTranslation (translates tag value)
+ * - unknown -> returns error without processing
+ *
+ * @param job - Translation job to process
+ * @param config - Processor configuration
+ * @returns Job processing result with success/failure and translated fields
+ */
+async function processTranslationJob(
   job: TranslationJob,
   config: JobProcessorConfig
 ): Promise<JobProcessingResult> {
   const startTime = Date.now();
-  const { entityType, entityId, sourceLanguage, targetLanguage } = job;
+  const { entityType, entityId, targetLanguage } = job;
 
-  // Start heartbeat to prevent lock timeout during processing (Task 4.4.7 - REQ-245)
+  // Start heartbeat to prevent lock timeout during processing
   const stopHeartbeat = createLockHeartbeat(
     job.id,
     config.workerId,
@@ -458,72 +840,82 @@ async function processJob(
   );
 
   try {
-    // 1. Fetch source content
-    const content = await fetchEntityContent(entityType, entityId);
+    let result: EntityTranslationResult;
 
-    if (!content) {
-      throw new Error(`Entity not found: ${entityType}/${entityId}`);
+    // Route to entity-specific processor based on entityType
+    switch (job.entityType) {
+      case 'item':
+        result = await processItemTranslation(job, config);
+        break;
+
+      case 'article':
+        result = await processArticleTranslation(job, config);
+        break;
+
+      case 'link':
+        result = await processLinkTranslation(job, config);
+        break;
+
+      case 'tag':
+        result = await processTagTranslation(job, config);
+        break;
+
+      default:
+        // Handle unknown entity types gracefully with error logging
+        console.error(`[JobProcessor] Unknown entity type: ${entityType}`);
+        await markJobFailed(job.id, `Unknown entity type: ${entityType}`);
+        return {
+          jobId: job.id,
+          success: false,
+          entityType,
+          entityId,
+          targetLanguage,
+          errorMessage: `Unknown entity type: ${entityType}`,
+          processingTimeMs: Date.now() - startTime,
+        };
     }
 
-    // 2. Translate each field
-    const translatedFields: Record<string, string> = {};
-    const context = getTranslationContext(entityType);
+    // Handle processor result
+    if (result.success) {
+      await markJobCompleted(job.id);
 
-    for (const [fieldName, fieldValue] of Object.entries(content.fields)) {
-      if (fieldValue === null || fieldValue === '') {
-        // Skip null/empty fields
-        continue;
+      if (config.enableLogging) {
+        console.log(`[JobProcessor] Job ${job.id} completed successfully via ${entityType} processor`);
       }
 
-      const contentType = getContentType(entityType, fieldName);
+      return {
+        jobId: job.id,
+        success: true,
+        entityType,
+        entityId,
+        targetLanguage,
+        translatedFields: result.translatedFields,
+        processingTimeMs: Date.now() - startTime,
+      };
+    } else {
+      await markJobFailed(job.id, result.errorMessage || 'Unknown error');
 
-      const result = await translateText(fieldValue, sourceLanguage, targetLanguage, {
-        context: {
-          contentType,
-          domainContext: context.domainContext,
-        },
-      });
+      if (config.enableLogging) {
+        console.error(`[JobProcessor] Job ${job.id} failed:`, result.errorMessage);
+      }
 
-      translatedFields[fieldName] = result.translatedText;
+      return {
+        jobId: job.id,
+        success: false,
+        entityType,
+        entityId,
+        targetLanguage,
+        errorMessage: result.errorMessage,
+        processingTimeMs: Date.now() - startTime,
+      };
     }
-
-    // 3. Save to translation table
-    const saved = await saveTranslation(
-      entityType,
-      entityId,
-      targetLanguage,
-      translatedFields
-    );
-
-    if (!saved) {
-      throw new Error('Failed to save translation to database');
-    }
-
-    // 4. Mark job completed
-    await markJobCompleted(job.id);
-
-    if (config.enableLogging) {
-      console.log(`[JobProcessor] Job ${job.id} completed successfully`);
-    }
-
-    return {
-      jobId: job.id,
-      success: true,
-      entityType,
-      entityId,
-      targetLanguage,
-      translatedFields,
-      processingTimeMs: Date.now() - startTime,
-    };
-
   } catch (error) {
+    // Handle unexpected errors during routing/processing
     const errorMessage = error instanceof Error ? error.message : String(error);
-
-    // Mark job failed
     await markJobFailed(job.id, errorMessage);
 
     if (config.enableLogging) {
-      console.error(`[JobProcessor] Job ${job.id} failed:`, errorMessage);
+      console.error(`[JobProcessor] Unexpected error in job ${job.id}:`, errorMessage);
     }
 
     return {
@@ -539,6 +931,28 @@ async function processJob(
     // Always stop heartbeat when done (success or failure)
     stopHeartbeat();
   }
+}
+
+// ===========================================================================
+// Single Job Processing (Delegating)
+// ===========================================================================
+
+/**
+ * Process a single translation job
+ *
+ * This function delegates to processTranslationJob which routes to
+ * entity-specific handlers based on job.entityType.
+ *
+ * @param job - The translation job to process
+ * @param config - Processor configuration
+ * @returns Processing result
+ */
+async function processJob(
+  job: TranslationJob,
+  config: JobProcessorConfig
+): Promise<JobProcessingResult> {
+  // Delegate to the new routing function (REQ-E03-013)
+  return processTranslationJob(job, config);
 }
 
 // ===========================================================================
