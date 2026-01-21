@@ -5,7 +5,11 @@ import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
-import { triggerTagTranslation } from '@/lib/content-translation';
+import {
+  triggerTagTranslation,
+  queueContentTranslations,
+  detectSourceLanguage,
+} from '@/lib/content-translation';
 import type { QueueTranslationResult } from '@/lib/content-translation/content-translation.types';
 import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
@@ -83,6 +87,38 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
       )
     };
   }
+}
+
+/**
+ * Fetches the account's preferred language setting.
+ * Used for source language detection when creating items.
+ *
+ * Note: The accounts table doesn't currently have a preferred_language column.
+ * This function returns null until that column is added to the schema.
+ * Language detection will rely on user preferences instead.
+ *
+ * @param _supabaseClient - Authenticated Supabase client (unused for now)
+ * @param accountId - Account ID to fetch language for
+ * @returns Always returns null until accounts.preferred_language column exists
+ */
+async function getAccountPreferredLanguage(
+  _supabaseClient: ReturnType<typeof createSupabaseServer> extends Promise<infer T> ? T : never,
+  accountId: string | null
+): Promise<string | null> {
+  // TODO: When accounts.preferred_language column is added to the database schema,
+  // uncomment this code:
+  // if (!accountId) return null;
+  // const { data } = await supabaseClient
+  //   .from('accounts')
+  //   .select('preferred_language')
+  //   .eq('id', accountId)
+  //   .single();
+  // return data?.preferred_language || null;
+
+  // For now, accounts don't have preferred_language, so we return null
+  // and rely on user preferences for source language detection
+  void accountId; // suppress unused parameter warning
+  return null;
 }
 
 /**
@@ -453,6 +489,71 @@ export async function POST(request: NextRequest) {
     
     console.log('Item created successfully:', newItem.id);
 
+    // ============================================================
+    // ITEM TRANSLATION INTEGRATION (REQ-E03-008)
+    // Detect source language and queue translations for item content
+    // ============================================================
+    const accountPreferredLanguage = await getAccountPreferredLanguage(supabase, accountId);
+    const detectedSourceLanguage = detectSourceLanguage({
+      user: { preferred_language: (user as any).preferredLanguage || null },
+      account: accountId ? { preferred_language: accountPreferredLanguage } : null,
+      override: body.sourceLanguage
+    });
+    console.log('Source language detected:', detectedSourceLanguage);
+
+    // Update item with source_language
+    const { error: sourceLangError } = await supabase
+      .from('items')
+      .update({ source_language: detectedSourceLanguage })
+      .eq('id', newItem.id);
+
+    if (sourceLangError) {
+      console.error('Failed to update source_language:', sourceLangError);
+      // Non-fatal: continue with translation queuing
+    }
+
+    // Queue translations for item name and description
+    let itemTranslationJobIds: string[] = [];
+    let itemTranslationError: string | undefined;
+    let itemQueuedLanguages: SupportedLanguage[] = [];
+
+    try {
+      const translationResult = await queueContentTranslations({
+        content: {
+          entityType: 'item',
+          entityId: newItem.id,
+          sourceLanguage: detectedSourceLanguage,
+          fields: [
+            {
+              fieldName: 'name',
+              value: newItem.name,
+              context: { contentType: 'item_name', domainContext: 'property_rental_appliances' },
+              maxLength: 255
+            },
+            {
+              fieldName: 'description',
+              value: newItem.description || '',
+              context: { contentType: 'item_description', domainContext: 'property_rental_appliances' }
+            }
+          ]
+        },
+        trigger: 'create'
+      });
+
+      if (translationResult.success) {
+        itemTranslationJobIds = translationResult.jobIds;
+        itemQueuedLanguages = translationResult.queuedLanguages;
+        console.log('Translation jobs queued:', itemTranslationJobIds.length, 'languages:', itemQueuedLanguages);
+      } else {
+        itemTranslationError = translationResult.error;
+        console.error('Translation queuing failed:', itemTranslationError);
+      }
+    } catch (error) {
+      console.error('Translation queuing error:', error);
+      itemTranslationError = error instanceof Error ? error.message : 'Unknown translation error';
+    }
+    // ============================================================
+
     // REQ-151: Create article if article data provided
     let createdArticle: any = null;
     if (bodyWithArticle.article) {
@@ -631,12 +732,16 @@ export async function POST(request: NextRequest) {
       accountContext: {
         accountId,
         accountRole
-      }
+      },
+      // REQ-E03-008: Translation status fields
+      translationJobIds: itemTranslationJobIds,
+      queuedLanguages: itemQueuedLanguages,
+      ...(itemTranslationError && { translationError: itemTranslationError })
     };
-    
+
     // Add audit log for admin operations
     console.log(`Item created by: ${user.email}, account: ${accountId || 'all'}, item: ${newItem.name} (${newItem.public_id})`);
-    
+
     console.log('Item creation completed successfully');
     return NextResponse.json(response, { status: 201 });
     

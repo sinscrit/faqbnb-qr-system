@@ -4,7 +4,11 @@ import { UpdateItemRequest, ItemResponse } from '@/types';
 import { createSupabaseServer } from '@/lib/supabase-server';
 import type { Database } from '@/lib/supabase';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
-import { triggerTagTranslation } from '@/lib/content-translation';
+import {
+  triggerTagTranslation,
+  queueContentTranslations,
+  detectSourceLanguage,
+} from '@/lib/content-translation';
 import type { QueueTranslationResult } from '@/lib/content-translation/content-translation.types';
 import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
@@ -299,15 +303,47 @@ async function validateItemAccess(publicId: string, userId: string, isAdmin: boo
     return {
       canAccess: false,
       error: NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to validate item access',
-          code: 'VALIDATION_ERROR' 
+          code: 'VALIDATION_ERROR'
         },
         { status: 500 }
       )
     };
   }
+}
+
+/**
+ * Fetches the account's preferred language setting.
+ * Used for source language detection when updating items.
+ *
+ * Note: The accounts table doesn't currently have a preferred_language column.
+ * This function returns null until that column is added to the schema.
+ * Language detection will rely on user preferences instead.
+ *
+ * @param _supabaseClient - Authenticated Supabase client (unused for now)
+ * @param accountId - Account ID to fetch language for
+ * @returns Always returns null until accounts.preferred_language column exists
+ */
+async function getAccountPreferredLanguage(
+  _supabaseClient: ReturnType<typeof createSupabaseServer> extends Promise<infer T> ? T : never,
+  accountId: string | null
+): Promise<string | null> {
+  // TODO: When accounts.preferred_language column is added to the database schema,
+  // uncomment this code:
+  // if (!accountId) return null;
+  // const { data } = await supabaseClient
+  //   .from('accounts')
+  //   .select('preferred_language')
+  //   .eq('id', accountId)
+  //   .single();
+  // return data?.preferred_language || null;
+
+  // For now, accounts don't have preferred_language, so we return null
+  // and rely on user preferences for source language detection
+  void accountId; // suppress unused parameter warning
+  return null;
 }
 
 export async function GET(
@@ -519,7 +555,14 @@ export async function PUT(
     
     const body: UpdateItemRequest = await request.json();
     console.log('Request body received');
-    
+
+    // === REQ-E03-008: Detect if translatable fields changed ===
+    const translatableFieldsChanged = (
+      body.name !== item.name ||
+      (body.description || '') !== (item.description || '')
+    );
+    console.log('Translatable fields changed:', translatableFieldsChanged);
+
     // Validate required fields
     if (!body.name) {
       return NextResponse.json(
@@ -769,6 +812,80 @@ export async function PUT(
     }
 
     // ============================================================
+    // ITEM TRANSLATION INTEGRATION (REQ-E03-008)
+    // Detect source language and queue translations when fields change
+    // ============================================================
+    const accountPreferredLanguage = await getAccountPreferredLanguage(supabase, accountId);
+    const detectedSourceLanguage = detectSourceLanguage({
+      user: { preferred_language: (user as any).preferredLanguage || null },
+      account: accountId ? { preferred_language: accountPreferredLanguage } : null,
+      override: (body as any).sourceLanguage
+    });
+    console.log('Source language detected:', detectedSourceLanguage);
+
+    // Update item with source_language
+    const { error: sourceLangError } = await supabase
+      .from('items')
+      .update({ source_language: detectedSourceLanguage })
+      .eq('id', updatedItem.id);
+
+    if (sourceLangError) {
+      console.error('Failed to update source_language:', sourceLangError);
+      // Non-fatal: continue with translation queuing
+    }
+
+    let itemTranslationJobIds: string[] = [];
+    let itemTranslationError: string | undefined;
+    let itemQueuedLanguages: SupportedLanguage[] = [];
+
+    // Only process translations if translatable fields changed
+    if (translatableFieldsChanged) {
+      try {
+        // NOTE: deleteEntityTranslations not yet implemented (REQ-E03-005 pending)
+        // Existing translations will be replaced when new translations complete
+        console.log('Queuing new translations for item:', updatedItem.id);
+
+        // Queue new translations
+        const translationResult = await queueContentTranslations({
+          content: {
+            entityType: 'item',
+            entityId: updatedItem.id,
+            sourceLanguage: detectedSourceLanguage,
+            fields: [
+              {
+                fieldName: 'name',
+                value: updatedItem.name,
+                context: { contentType: 'item_name', domainContext: 'property_rental_appliances' },
+                maxLength: 255
+              },
+              {
+                fieldName: 'description',
+                value: updatedItem.description || '',
+                context: { contentType: 'item_description', domainContext: 'property_rental_appliances' }
+              }
+            ]
+          },
+          trigger: 'update'
+        });
+
+        if (translationResult.success) {
+          itemTranslationJobIds = translationResult.jobIds;
+          itemQueuedLanguages = translationResult.queuedLanguages;
+          console.log('Translation jobs queued:', itemTranslationJobIds.length, 'languages:', itemQueuedLanguages);
+        } else {
+          itemTranslationError = translationResult.error;
+          console.error('Translation queuing failed:', itemTranslationError);
+        }
+      } catch (error) {
+        console.error('Translation queuing error:', error);
+        itemTranslationError = error instanceof Error ? error.message : 'Unknown translation error';
+      }
+    } else {
+      console.log('Skipping translation: no translatable fields changed');
+    }
+    // ============================================================
+
+    // ============================================================
     // TAG TRANSLATION (REQ-E03-011)
     // Queue tag translations after item update
     // ============================================================
@@ -877,11 +994,15 @@ export async function PUT(
       accountContext: {
         accountId,
         accountRole
-      }
+      },
+      // REQ-E03-008: Translation status fields
+      translationJobIds: itemTranslationJobIds,
+      queuedLanguages: itemQueuedLanguages,
+      ...(itemTranslationError && { translationError: itemTranslationError })
     };
-    
+
     console.log(`Item updated by: ${user.email}, account: ${accountId || 'all'}, item: ${updatedItem.name} (${updatedItem.public_id})`);
-    
+
     console.log('Item update completed successfully');
     return NextResponse.json(response);
     
