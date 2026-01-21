@@ -118,3 +118,22 @@ export type {
   PriorityLevel,
   PriorityCalculationOptions,
 } from './priority';
+
+// Concurrency (Translation Semaphore) types (REQ-E03-019)
+export type {
+  SemaphoreConfig,
+  SemaphoreMetrics,
+  BackoffState,
+} from './concurrency';
+
+// Concurrency (Translation Semaphore) exports (REQ-E03-019)
+export {
+  TranslationSemaphore,
+  getTranslationSemaphore,
+  resetTranslationSemaphore,
+  createTranslationSemaphore,
+  isRateLimitError,
+  DEFAULT_SEMAPHORE_CONFIG,
+  RATE_LIMIT_BASE_DELAY_MS,
+  RATE_LIMIT_MAX_DELAY_MS,
+} from './concurrency';

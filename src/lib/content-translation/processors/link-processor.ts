@@ -20,6 +20,10 @@ import type { TranslationContext } from '@/lib/translation-service/translation-s
 import { supabaseAdmin } from '@/lib/supabase';
 import { translateText } from '@/lib/translation-service';
 import { markJobCompleted, markJobFailed } from '@/lib/job-queue/translation-jobs';
+import {
+  getTranslationSemaphore,
+  isRateLimitError,
+} from '@/lib/job-queue';
 
 // ===========================================================================
 // Type Definitions
@@ -384,11 +388,12 @@ export async function processLinkTranslation(
 ): Promise<LinkProcessingResult> {
   const startTime = Date.now();
   const { entityId: linkId, sourceLanguage, targetLanguage } = job;
+  const semaphore = getTranslationSemaphore();
 
   console.log(`[LinkProcessor] Starting job ${job.id} for link ${linkId} (${sourceLanguage} -> ${targetLanguage})`);
 
   try {
-    // 1. Fetch link record (title only - URL is never fetched/translated)
+    // 1. Fetch link record (outside semaphore - DB query doesn't need rate limiting)
     const link = await fetchLinkForTranslation(linkId);
 
     if (!link) {
@@ -413,14 +418,30 @@ export async function processLinkTranslation(
     // Priority: link's source_language > job's sourceLanguage > 'en' default
     const effectiveSourceLanguage = link.source_language || sourceLanguage || 'en';
 
-    // 3. Translate title (the only translatable field for links)
-    const translatedFields = await translateLinkTitle(
-      link,
-      effectiveSourceLanguage,
-      targetLanguage
-    );
+    // 3. Translate title (with concurrency control)
+    // Acquire semaphore slot before making translation API calls
+    await semaphore.acquire();
+    let translatedFields: TranslatedLinkFields;
+    try {
+      translatedFields = await translateLinkTitle(
+        link,
+        effectiveSourceLanguage,
+        targetLanguage
+      );
+      // Notify success to reset rate limit counter
+      semaphore.notifySuccess();
+    } catch (translationError) {
+      // Check for rate limit error and notify semaphore
+      if (isRateLimitError(translationError)) {
+        semaphore.notifyRateLimit();
+      }
+      throw translationError;
+    } finally {
+      // ALWAYS release slot
+      semaphore.release();
+    }
 
-    // 4. Store translation
+    // 4. Store translation (outside semaphore - DB operation doesn't need rate limiting)
     const stored = await storeLinkTranslation(linkId, targetLanguage, translatedFields);
 
     if (!stored) {

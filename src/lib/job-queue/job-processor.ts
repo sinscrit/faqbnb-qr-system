@@ -43,6 +43,7 @@ import type {
   EntityType,
 } from './translation-jobs.types';
 import { createLockHeartbeat, DEFAULT_HEARTBEAT_INTERVAL_MS } from './concurrency-control';
+import { getTranslationSemaphore, isRateLimitError } from './concurrency';
 
 // ===========================================================================
 // Configuration Types
@@ -628,8 +629,12 @@ export async function processTagTranslationJob(
     const context = getTranslationContext(entityType);
     const contentType = getContentType(entityType, 'translated_value');
 
-    // 3. Translate the tag value
+    // 3. Translate the tag value (with concurrency control)
+    const semaphore = getTranslationSemaphore();
     let translatedValue: string;
+
+    // Acquire semaphore slot before making translation API calls
+    await semaphore.acquire();
     try {
       const result = await translateText(
         sourceValue,
@@ -643,7 +648,14 @@ export async function processTagTranslationJob(
         }
       );
       translatedValue = result.translatedText;
+      // Notify success to reset rate limit counter
+      semaphore.notifySuccess();
     } catch (translationError) {
+      // Check for rate limit error and notify semaphore
+      if (isRateLimitError(translationError)) {
+        semaphore.notifyRateLimit();
+      }
+
       // Translation service error - may be transient (rate limit, network) or permanent
       const errorMessage = translationError instanceof Error
         ? translationError.message
@@ -678,6 +690,9 @@ export async function processTagTranslationJob(
         errorMessage: `Translation service error: ${errorMessage}`,
         processingTimeMs: Date.now() - startTime,
       };
+    } finally {
+      // ALWAYS release slot
+      semaphore.release();
     }
 
     if (config.enableLogging) {

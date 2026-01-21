@@ -22,6 +22,10 @@ import type { TranslationContext } from '@/lib/translation-service/translation-s
 import { supabaseAdmin } from '@/lib/supabase';
 import { translateText } from '@/lib/translation-service';
 import { markJobCompleted, markJobFailed } from '@/lib/job-queue/translation-jobs';
+import {
+  getTranslationSemaphore,
+  isRateLimitError,
+} from '@/lib/job-queue';
 
 // ===========================================================================
 // Type Definitions
@@ -377,11 +381,12 @@ export async function processItemTranslation(
 ): Promise<ItemProcessingResult> {
   const startTime = Date.now();
   const { entityId: itemId, sourceLanguage, targetLanguage } = job;
+  const semaphore = getTranslationSemaphore();
 
   console.log(`[ItemProcessor] Starting job ${job.id} for item ${itemId} (${sourceLanguage} -> ${targetLanguage})`);
 
   try {
-    // 1. Fetch item record
+    // 1. Fetch item record (outside semaphore - DB query doesn't need rate limiting)
     const item = await fetchItemForTranslation(itemId);
 
     if (!item) {
@@ -405,14 +410,30 @@ export async function processItemTranslation(
     // 2. Determine effective source language
     const effectiveSourceLanguage = item.source_language || sourceLanguage || 'en';
 
-    // 3. Translate fields
-    const translatedFields = await translateItemFields(
-      item,
-      effectiveSourceLanguage,
-      targetLanguage
-    );
+    // 3. Translate fields (with concurrency control)
+    // Acquire semaphore slot before making translation API calls
+    await semaphore.acquire();
+    let translatedFields: TranslatedItemFields;
+    try {
+      translatedFields = await translateItemFields(
+        item,
+        effectiveSourceLanguage,
+        targetLanguage
+      );
+      // Notify success to reset rate limit counter
+      semaphore.notifySuccess();
+    } catch (translationError) {
+      // Check for rate limit error and notify semaphore
+      if (isRateLimitError(translationError)) {
+        semaphore.notifyRateLimit();
+      }
+      throw translationError;
+    } finally {
+      // ALWAYS release slot
+      semaphore.release();
+    }
 
-    // 4. Store translation
+    // 4. Store translation (outside semaphore - DB operation doesn't need rate limiting)
     const stored = await storeItemTranslation(itemId, targetLanguage, translatedFields);
 
     if (!stored) {
