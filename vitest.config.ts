@@ -3,7 +3,7 @@
  *
  * Configures test environment and coverage for React/Next.js application.
  *
- * @lastModified 2026-01-21 (REQ-E03-030)
+ * @lastModified 2026-01-21 (REQ-E03-033)
  */
 
 import { defineConfig } from 'vitest/config';
@@ -16,7 +16,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/*.e2e.test.ts'],
     exclude: ['node_modules', '.next'],
     coverage: {
       provider: 'v8',
@@ -33,8 +33,8 @@ export default defineConfig({
       ],
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
     },
-    // Timeout for integration tests that may take longer
-    testTimeout: 10000,
+    // Timeout for integration and E2E tests that may take longer
+    testTimeout: 15000,
   },
   resolve: {
     alias: {

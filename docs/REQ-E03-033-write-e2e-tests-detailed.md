@@ -3,8 +3,8 @@
 **Document ID:** REQ-E03-033-detailed
 **Request ID:** E03-033
 **Created:** 2026-01-20 17:15 UTC
-**Last Modified:** 2026-01-20 17:15 UTC
-**Status:** Ready for Implementation
+**Last Modified:** 2026-01-21 UTC
+**Status:** In Progress
 **Overview Document:** REQ-E03-033-write-e2e-tests-overview.md
 **Implementation Plan Reference:** Plan-111-L10N-Epic3-Dynamic-Content-Translation.md (Phase 7, Task 7.4)
 
@@ -116,10 +116,10 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] File created at correct path
-- [ ] All helper modules are properly exported
-- [ ] No circular dependency issues
-- [ ] TypeScript compiles without errors
+- [x] File created at correct path ---implemented: Created src/lib/content-translation/__tests__/e2e/helpers/index.ts-unit tested-
+- [x] All helper modules are properly exported ---implemented: All exports defined with types-unit tested-
+- [x] No circular dependency issues ---implemented: Uses direct imports-unit tested-
+- [x] TypeScript compiles without errors ---implemented: Verified compilation-unit tested-
 
 **Dependencies:** None (first task)
 
@@ -290,10 +290,10 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] `setupE2ETestContext()` initializes mock database and services
-- [ ] `teardownE2ETestContext()` properly cleans up all mocks
-- [ ] All interface types are correctly defined
-- [ ] Helper functions work as expected
+- [x] `setupE2ETestContext()` initializes mock database and services ---implemented: Resets DB, seeds tables, creates mocks-unit tested-
+- [x] `teardownE2ETestContext()` properly cleans up all mocks ---implemented: Calls cleanup and restoreAllMocks-unit tested-
+- [x] All interface types are correctly defined ---implemented: TestItem, TestArticle, TestLink, TestProperty, E2ETestContext-unit tested-
+- [x] Helper functions work as expected ---implemented: advanceTime, generateTestId implemented-unit tested-
 
 **Dependencies:** Task 1 (barrel exports)
 
@@ -523,11 +523,11 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] `waitForJobsToComplete()` correctly polls until jobs complete or timeout
-- [ ] `waitForTranslationStatus()` returns correct status summary
-- [ ] `waitForCondition()` works for generic conditions
-- [ ] Timeout behavior works correctly
-- [ ] Progress callbacks are invoked
+- [x] `waitForJobsToComplete()` correctly polls until jobs complete or timeout ---implemented: Polls TRANSLATION_JOBS table, returns boolean-unit tested-
+- [x] `waitForTranslationStatus()` returns correct status summary ---implemented: Returns TranslationStatusSummary with all fields-unit tested-
+- [x] `waitForCondition()` works for generic conditions ---implemented: Accepts async/sync condition function-unit tested-
+- [x] Timeout behavior works correctly ---implemented: Returns false/null after maxWaitMs-unit tested-
+- [x] Progress callbacks are invoked ---implemented: onProgress called with attempt and elapsed-unit tested-
 
 **Dependencies:** Task 1
 
@@ -1140,12 +1140,12 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] All API methods return proper response types
-- [ ] createItem/createArticle/createLink queue translation jobs
-- [ ] getTranslationStatus correctly aggregates job status
-- [ ] retryTranslations resets failed jobs to queued
-- [ ] setManualTranslation creates/updates translation records
-- [ ] getBatchStatus returns aggregated status for multiple entities
+- [x] All API methods return proper response types ---implemented: Full TypeScript interfaces for all methods-unit tested-
+- [x] createItem/createArticle/createLink queue translation jobs ---implemented: queueTranslationJobs helper queues 5 target languages-unit tested-
+- [x] getTranslationStatus correctly aggregates job status ---implemented: Calculates complete/partial/pending/failed status-unit tested-
+- [x] retryTranslations resets failed jobs to queued ---implemented: Filters failed jobs, resets status and attempts-unit tested-
+- [x] setManualTranslation creates/updates translation records ---implemented: Creates record and updates job status-unit tested-
+- [x] getBatchStatus returns aggregated status for multiple entities ---implemented: Maps entities to status array-unit tested-
 
 **Dependencies:** Task 1
 
@@ -1347,10 +1347,10 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] All factory functions return valid test entities
-- [ ] Factory functions accept partial overrides
-- [ ] IDs are unique across invocations
-- [ ] Multilingual test data covers all 6 supported languages
+- [x] All factory functions return valid test entities ---implemented: createTestItem/Article/Link/Tag/Property/TranslationJob-unit tested-
+- [x] Factory functions accept partial overrides ---implemented: All accept Partial<T> overrides parameter-unit tested-
+- [x] IDs are unique across invocations ---implemented: Uses Date.now() and Math.random()-unit tested-
+- [x] Multilingual test data covers all 6 supported languages ---implemented: MULTILINGUAL_TEST_DATA has en/fr/es/de/nl/it-unit tested-
 
 **Dependencies:** Task 2
 
@@ -1610,11 +1610,11 @@ Before starting implementation, verify the following:
    ```
 
 **Acceptance Criteria:**
-- [ ] AC-1: Test creates item and verifies jobs queued for 5 target languages
-- [ ] AC-5: Test verifies translated content has all required fields
-- [ ] AC-7: Test verifies translation metadata (source language, timestamps)
-- [ ] Tests for items with tags
-- [ ] Tests for item updates triggering re-translation
+- [x] AC-1: Test creates item and verifies jobs queued for 5 target languages ---implemented: Test 'creates item via API and verifies translation jobs queued for all target languages'-unit tested-
+- [x] AC-5: Test verifies translated content has all required fields ---implemented: Test 'stores translated content with all required fields'-unit tested-
+- [x] AC-7: Test verifies translation metadata (source language, timestamps) ---implemented: Test 'translation metadata includes correct source language and timestamps'-unit tested-
+- [x] Tests for items with tags ---implemented: Test 'item with tags triggers item translation jobs'-unit tested-
+- [x] Tests for item updates triggering re-translation ---implemented: Test 'updating item deletes old translations and queues new jobs'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1637,9 +1637,9 @@ Create tests following the same pattern as Task 6, but for articles:
 - Test article update triggers re-translation
 
 **Acceptance Criteria:**
-- [ ] AC-2: Test creates article and verifies jobs queued for all target languages
-- [ ] Test verifies article title and description are translated
-- [ ] Test handles articles with empty description
+- [x] AC-2: Test creates article and verifies jobs queued for all target languages ---implemented: Test 'creates article via API and verifies translation jobs queued for all target languages'-unit tested-
+- [x] Test verifies article title and description are translated ---implemented: Test 'verifies both title and description fields are available for translation'-unit tested-
+- [x] Test handles articles with empty description ---implemented: Test 'handles articles without description (title only)'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1661,9 +1661,9 @@ Create tests for link translation:
 - Test link translations stored correctly
 
 **Acceptance Criteria:**
-- [ ] AC-3: Test creates link and verifies jobs queued for all target languages
-- [ ] Test verifies URL is not modified/translated
-- [ ] Test verifies only title field is translated
+- [x] AC-3: Test creates link and verifies jobs queued for all target languages ---implemented: Test 'creates link via API and verifies translation jobs queued for all target languages'-unit tested-
+- [x] Test verifies URL is not modified/translated ---implemented: Tests 'verifies URL is not modified during link creation' and 'verifies URL is preserved during simulated translation'-unit tested-
+- [x] Test verifies only title field is translated ---implemented: Test 'verifies only title field is included in translation jobs'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1892,11 +1892,11 @@ Create tests for link translation:
    ```
 
 **Acceptance Criteria:**
-- [ ] AC-6: Test checks status endpoint reports "completed" for successful translations
-- [ ] Test returns "pending" for queued jobs
-- [ ] Test returns "partial" for mixed status
-- [ ] Test returns "failed" when all failed
-- [ ] Test includes per-language details
+- [x] AC-6: Test checks status endpoint reports "completed" for successful translations ---implemented: Test 'returns "complete" when all jobs finished successfully'-unit tested-
+- [x] Test returns "pending" for queued jobs ---implemented: Test 'returns "pending" status when jobs are queued'-unit tested-
+- [x] Test returns "partial" for mixed status ---implemented: Test 'returns "partial" when some jobs completed and some failed'-unit tested-
+- [x] Test returns "failed" when all failed ---implemented: Test 'returns "failed" when all jobs failed'-unit tested-
+- [x] Test includes per-language details ---implemented: Test 'includes per-language status with timestamps' and 'includes error message for failed translations'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1920,11 +1920,11 @@ Create tests for:
 - Retry when no failed jobs (no-op)
 
 **Acceptance Criteria:**
-- [ ] AC-8: Test simulates failure and verifies job marked "failed"
-- [ ] AC-9: Test uses retry endpoint to re-queue failed job
-- [ ] AC-10: Test verifies retried job completes successfully
-- [ ] Test retry specific language only
-- [ ] Test retry when no failed jobs returns 0 queued
+- [x] AC-8: Test simulates failure and verifies job marked "failed" ---implemented: Test 'AC-8: simulates translation failure and verifies job status is "failed"'-unit tested-
+- [x] AC-9: Test uses retry endpoint to re-queue failed job ---implemented: Test 'AC-9: uses retry endpoint to re-queue failed jobs'-unit tested-
+- [x] AC-10: Test verifies retried job completes successfully ---implemented: Test 'AC-10: verifies retried job can complete successfully'-unit tested-
+- [x] Test retry specific language only ---implemented: Test 'retries only specific language when specified'-unit tested-
+- [x] Test retry when no failed jobs returns 0 queued ---implemented: Test 'returns zero queued when no failed jobs exist'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1946,10 +1946,10 @@ Create tests for:
 - Manual override tracks reviewer
 
 **Acceptance Criteria:**
-- [ ] AC-11: Test validates manual translation overrides are preserved and flagged
-- [ ] Test verifies manual status is set correctly
-- [ ] Test verifies reviewer ID is tracked
-- [ ] Test manual overrides not affected by retry
+- [x] AC-11: Test validates manual translation overrides are preserved and flagged ---implemented: Test 'AC-11: manual override saves with "manual" status'-unit tested-
+- [x] Test verifies manual status is set correctly ---implemented: Multiple tests verify translation_status is 'manual'-unit tested-
+- [x] Test verifies reviewer ID is tracked ---implemented: Test 'manual override tracks reviewer ID'-unit tested-
+- [x] Test manual overrides not affected by retry ---implemented: Test 'manual translations are not affected by retry'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -1971,9 +1971,9 @@ Create tests for:
 - Performance with 50+ entities
 
 **Acceptance Criteria:**
-- [ ] AC-13: Test verifies batch status endpoint returns correct aggregated status
-- [ ] Test handles multiple entity types in single request
-- [ ] Test handles empty entity list gracefully
+- [x] AC-13: Test verifies batch status endpoint returns correct aggregated status ---implemented: Test 'AC-13: returns correct aggregated status for multiple items'-unit tested-
+- [x] Test handles multiple entity types in single request ---implemented: Test 'handles multiple entity types in single request'-unit tested-
+- [x] Test handles empty entity list gracefully ---implemented: Test 'handles empty entity list gracefully'-unit tested-
 
 **Dependencies:** Tasks 1-5
 
@@ -2020,9 +2020,15 @@ Create tests for:
 - Database error handling
 
 **Acceptance Criteria:**
-- [ ] AC-20: Tests verify proper error handling when translation API unavailable
-- [ ] Test handles invalid entity ID gracefully
-- [ ] Test handles unsupported language requests
+- [x] AC-20: Tests verify proper error handling when translation API unavailable
+- [x] Test handles invalid entity ID gracefully
+- [x] Test handles unsupported language requests
+
+**Implementation Notes (2026-01-21):**
+- Created `error-scenarios.e2e.test.ts` with comprehensive error handling tests
+- Tests cover: API unavailability, partial failures, invalid entities, unsupported languages
+- Added edge case tests: empty content, long content, special characters
+- Added concurrent operation handling tests
 
 **Dependencies:** Tasks 1-5
 
@@ -2120,11 +2126,16 @@ Create tests for:
    ```
 
 **Acceptance Criteria:**
-- [ ] AC-17: All E2E tests pass in CI/CD environment
-- [ ] AC-18: Test execution time under 5 minutes
-- [ ] AC-19: Tests include detailed logging for debugging
-- [ ] Vitest config includes content-translation coverage
-- [ ] README documentation complete
+- [x] AC-17: All E2E tests pass in CI/CD environment
+- [x] AC-18: Test execution time under 5 minutes
+- [x] AC-19: Tests include detailed logging for debugging
+- [x] Vitest config includes content-translation coverage
+- [x] README documentation complete
+
+**Implementation Notes (2026-01-21):**
+- Updated `vitest.config.ts` with E2E test patterns and increased timeout
+- Created comprehensive README.md with test structure, usage examples, and AC mapping
+- All helper modules have JSDoc with debug examples
 
 **Dependencies:** Tasks 1-14
 
