@@ -26,11 +26,11 @@ export default function ConfirmationModal({
   loading = false,
   confirmButtonColor = 'red'
 }: ConfirmationModalProps) {
-  const tCommon = useTranslations('common');
+  const t = useTranslations('common.confirmations');
 
   // Use translations as fallback for default values
-  const resolvedConfirmText = confirmText ?? tCommon('actions.confirm');
-  const resolvedCancelText = cancelText ?? tCommon('actions.cancel');
+  const resolvedConfirmText = confirmText ?? t('buttons.confirm');
+  const resolvedCancelText = cancelText ?? t('buttons.cancel');
   if (!isOpen) return null;
 
   const confirmButtonStyles = {
