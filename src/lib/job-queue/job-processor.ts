@@ -189,6 +189,7 @@ import { fetchAndLockNextJob, markJobCompleted, markJobFailed } from './translat
 import {
   processItemTranslation as processItemTranslationExternal,
   processArticleTranslation as processArticleTranslationExternal,
+  processLinkTranslation as processLinkTranslationExternal,
 } from '@/lib/content-translation/processors';
 
 // ===========================================================================
@@ -910,9 +911,33 @@ async function processTranslationJob(
         };
       }
 
-      case 'link':
-        result = await processLinkTranslation(job, config);
-        break;
+      case 'link': {
+        // Use dedicated link processor (REQ-E03-016)
+        // Links only translate title field - URLs are never translated
+        const linkResult = await processLinkTranslationExternal(job);
+
+        // Stop heartbeat before returning
+        stopHeartbeat();
+
+        // Convert TranslatedLinkFields to Record<string, string>
+        const translatedLinkFields: Record<string, string> | undefined =
+          linkResult.translatedFields
+            ? {
+                title: linkResult.translatedFields.title,
+              }
+            : undefined;
+
+        return {
+          jobId: job.id,
+          success: linkResult.success,
+          entityType,
+          entityId,
+          targetLanguage,
+          translatedFields: translatedLinkFields,
+          errorMessage: linkResult.errorMessage,
+          processingTimeMs: linkResult.processingTimeMs,
+        };
+      }
 
       case 'tag':
         result = await processTagTranslation(job, config);

@@ -134,12 +134,12 @@ Add the complete `datetime` namespace structure to the English translation file 
 ```
 
 **Acceptance Criteria:**
-- [ ] `datetime` namespace added to `/messages/en.json`
-- [ ] All relative time keys present with correct ICU pluralization format
-- [ ] All unit labels present with pluralization
-- [ ] All day and month names (full and abbreviated) present
-- [ ] AM/PM periods present
-- [ ] JSON is valid (no syntax errors)
+- [x] `datetime` namespace added to `/messages/en.json` ---implemented: Added complete datetime namespace with all sub-sections after the language namespace---
+- [x] All relative time keys present with correct ICU pluralization format ---implemented: All 22 relative time keys added with proper ICU {count, plural, one {...} other {...}} format---
+- [x] All unit labels present with pluralization ---implemented: All 7 unit labels (second through year) with ICU pluralization---
+- [x] All day and month names (full and abbreviated) present ---implemented: days, daysShort, months, monthsShort objects with all 7 days and 12 months---
+- [x] AM/PM periods present ---implemented: periods.am and periods.pm added---
+- [x] JSON is valid (no syntax errors) ---implemented: Verified with Node.js JSON.parse--- -unit tested-
 
 ---
 

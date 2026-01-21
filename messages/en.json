@@ -719,6 +719,90 @@
     "changeLanguage": "Change Language",
     "languageChanged": "Language changed successfully"
   },
+  "datetime": {
+    "relative": {
+      "justNow": "Just now",
+      "secondsAgo": "{count, plural, one {# second ago} other {# seconds ago}}",
+      "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}",
+      "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+      "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
+      "weeksAgo": "{count, plural, one {# week ago} other {# weeks ago}}",
+      "monthsAgo": "{count, plural, one {# month ago} other {# months ago}}",
+      "yearsAgo": "{count, plural, one {# year ago} other {# years ago}}",
+      "inSeconds": "{count, plural, one {in # second} other {in # seconds}}",
+      "inMinutes": "{count, plural, one {in # minute} other {in # minutes}}",
+      "inHours": "{count, plural, one {in # hour} other {in # hours}}",
+      "inDays": "{count, plural, one {in # day} other {in # days}}",
+      "inWeeks": "{count, plural, one {in # week} other {in # weeks}}",
+      "inMonths": "{count, plural, one {in # month} other {in # months}}",
+      "inYears": "{count, plural, one {in # year} other {in # years}}",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "nextWeek": "Next week"
+    },
+    "units": {
+      "second": "{count, plural, one {second} other {seconds}}",
+      "minute": "{count, plural, one {minute} other {minutes}}",
+      "hour": "{count, plural, one {hour} other {hours}}",
+      "day": "{count, plural, one {day} other {days}}",
+      "week": "{count, plural, one {week} other {weeks}}",
+      "month": "{count, plural, one {month} other {months}}",
+      "year": "{count, plural, one {year} other {years}}"
+    },
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "daysShort": {
+      "sunday": "Sun",
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "monthsShort": {
+      "january": "Jan",
+      "february": "Feb",
+      "march": "Mar",
+      "april": "Apr",
+      "may": "May",
+      "june": "Jun",
+      "july": "Jul",
+      "august": "Aug",
+      "september": "Sep",
+      "october": "Oct",
+      "november": "Nov",
+      "december": "Dec"
+    },
+    "periods": {
+      "am": "AM",
+      "pm": "PM"
+    }
+  },
   "itemCapture": {
     "metadataStep": {
       "title": "Item Details",
