@@ -125,3 +125,33 @@ npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/datab
 ### Pre-deployment Checks
 
 The build must pass before deploying. TypeScript errors are logged but non-blocking until cleanup is complete.
+
+## Pipeline Orchestrator
+
+### MCP Tool Wildcards Don't Work
+
+**Issue discovered 2026-01-21:** The `--allowedTools` flag in Claude CLI does NOT support wildcards like `mcp__supabase__*`. Using wildcards causes tools to be silently unavailable, resulting in agents hanging for 7+ minutes then failing with `num_turns: 0`.
+
+**Wrong:**
+```yaml
+command:
+  - "claude"
+  - "-p"
+  - "{prompt}"
+  - "--allowedTools"
+  - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*"  # BROKEN
+```
+
+**Correct:**
+```yaml
+command:
+  - "claude"
+  - "-p"
+  - "{prompt}"
+  - "--allowedTools"
+  - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__list_tables,mcp__supabase__execute_sql,mcp__supabase__apply_migration,mcp__supabase__list_migrations,mcp__supabase__generate_typescript_types,mcp__supabase__get_project_url"
+```
+
+### Debug Flags
+
+For troubleshooting pipeline issues, add `--debug` and `--verbose` to the Claude command in pipeline YAML configs. Agent output is saved to `pipelines-execution/agent-output-{task_id}-{timestamp}.log`.

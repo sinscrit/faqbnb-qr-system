@@ -211,7 +211,7 @@ request_stages:
         - "--debug"
         - "--verbose"
         - "--allowedTools"
-        - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__list_tables,mcp__supabase__execute_sql,mcp__supabase__apply_migration,mcp__supabase__list_migrations,mcp__supabase__generate_typescript_types,mcp__supabase__get_project_url"
         - "--dangerously-skip-permissions"
       timeout: 1800
     output:
