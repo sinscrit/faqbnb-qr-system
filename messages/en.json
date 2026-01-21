@@ -180,7 +180,14 @@
         "qrCodeImageUrl": "QR Code Image URL",
         "thumbnailUrl": "Thumbnail URL",
         "linkType": "Link Type",
-        "rememberMe": "Remember me for 30 days"
+        "rememberMe": "Remember me for 30 days",
+        "propertyName": "Property Name",
+        "addressLine1": "Address Line 1",
+        "addressLine2": "Address Line 2",
+        "city": "City",
+        "stateProvince": "State/Province",
+        "postalCode": "Postal Code",
+        "country": "Country"
       },
       "placeholders": {
         "email": "Enter your email address",
@@ -201,10 +208,17 @@
         "search": "Search...",
         "select": "Select an option...",
         "selectProperty": "Select property...",
+        "selectCountry": "Select country...",
         "typeOrSelect": "Type or select...",
         "accessCode": "Enter your 8+ character access code",
         "propertyNickname": "e.g., Main Office, Home, Vacation House",
+        "propertyNameExample": "e.g., Beach House",
         "address": "e.g., 123 Main St, Anytown, State 12345",
+        "streetAddress": "Street address",
+        "addressLine2": "Apt, suite, unit, etc. (optional)",
+        "city": "City",
+        "stateProvince": "State or Province",
+        "postalCode": "ZIP / Postal code",
         "itemName": "e.g., Samsung Washing Machine",
         "uuidGenerated": "UUID will be generated automatically"
       },
@@ -365,7 +379,15 @@
       "propertyNicknameTooLong": "Property nickname must be 100 characters or less",
       "propertyTypeRequired": "Property type is required",
       "addressTooLong": "Address must be 500 characters or less",
-      "invalidUrl": "Please enter a valid URL"
+      "invalidUrl": "Please enter a valid URL",
+      "propertyNameRequired": "Property name is required",
+      "propertyNameTooLong": "Property name must be {max} characters or less",
+      "addressLine1TooLong": "Address must be {max} characters or less",
+      "addressLine2TooLong": "Address must be {max} characters or less",
+      "cityTooLong": "City must be {max} characters or less",
+      "stateProvinceTooLong": "State/Province must be {max} characters or less",
+      "postalCodeTooLong": "Postal code must be {max} characters or less",
+      "invalidCountry": "Please select a valid country"
     }
   },
   "language": {

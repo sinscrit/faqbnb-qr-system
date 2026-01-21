@@ -88,49 +88,59 @@ interface AddPropertyValidationErrors {
 
 /**
  * Task 2.2: Form validation function
+ * Returns validation keys to be translated by the component
  */
-const validateForm = (data: AddPropertyFormData): AddPropertyValidationErrors => {
-  const errors: AddPropertyValidationErrors = {};
+type ValidationKey =
+  | 'nameRequired'
+  | 'nameMaxLength'
+  | 'addressMaxLength'
+  | 'cityMaxLength'
+  | 'stateMaxLength'
+  | 'postalCodeMaxLength'
+  | 'countryInvalid';
+
+const validateForm = (data: AddPropertyFormData): Record<keyof AddPropertyFormData | 'general', ValidationKey | undefined> => {
+  const errors: Partial<Record<keyof AddPropertyFormData | 'general', ValidationKey>> = {};
 
   // Property Name - required, max 100
   const trimmedName = data.name.trim();
   if (!trimmedName) {
-    errors.name = 'Property name is required';
+    errors.name = 'nameRequired';
   } else if (trimmedName.length > 100) {
-    errors.name = 'Property name must be 100 characters or less';
+    errors.name = 'nameMaxLength';
   }
 
   // Address Line 1 - max 200
   if (data.addressLine1.length > 200) {
-    errors.addressLine1 = 'Address must be 200 characters or less';
+    errors.addressLine1 = 'addressMaxLength';
   }
 
   // Address Line 2 - max 200
   if (data.addressLine2.length > 200) {
-    errors.addressLine2 = 'Address must be 200 characters or less';
+    errors.addressLine2 = 'addressMaxLength';
   }
 
   // City - max 100
   if (data.city.length > 100) {
-    errors.city = 'City must be 100 characters or less';
+    errors.city = 'cityMaxLength';
   }
 
   // State - max 100
   if (data.state.length > 100) {
-    errors.state = 'State/Province must be 100 characters or less';
+    errors.state = 'stateMaxLength';
   }
 
   // Postal Code - max 20
   if (data.postalCode.length > 20) {
-    errors.postalCode = 'Postal code must be 20 characters or less';
+    errors.postalCode = 'postalCodeMaxLength';
   }
 
   // Country - validate is valid code or empty
   if (data.country && !COUNTRIES.find(c => c.code === data.country)) {
-    errors.country = 'Please select a valid country';
+    errors.country = 'countryInvalid';
   }
 
-  return errors;
+  return errors as Record<keyof AddPropertyFormData | 'general', ValidationKey | undefined>;
 };
 
 /**
@@ -155,7 +165,10 @@ export function AddPropertyModal({
   onSave,
   className,
 }: AddPropertyModalProps) {
-  const t = useTranslations('common.actions');
+  const tActions = useTranslations('common.actions');
+  const tModal = useTranslations('properties.modal');
+  const tForm = useTranslations('properties.modal.form');
+  const tValidation = useTranslations('properties.modal.validation');
 
   // Task 2.3: Form state management with empty initial values
   const [formData, setFormData] = useState<AddPropertyFormData>({
@@ -205,13 +218,24 @@ export function AddPropertyModal({
 
   // Task 2.5: Handle save with validation and API call
   const handleSave = async () => {
-    // Run validation
-    const validationErrors = validateForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    // Run validation and translate error keys
+    const validationKeys = validateForm(formData);
+    const hasErrors = Object.values(validationKeys).some(v => v !== undefined);
+
+    if (hasErrors) {
+      // Translate validation keys to error messages
+      const translatedErrors: AddPropertyValidationErrors = {};
+      Object.entries(validationKeys).forEach(([field, key]) => {
+        if (key) {
+          translatedErrors[field as keyof AddPropertyValidationErrors] = tValidation(key);
+        }
+      });
+      setErrors(translatedErrors);
       // Focus first error field
-      const firstErrorField = Object.keys(validationErrors)[0];
-      document.getElementById(firstErrorField)?.focus();
+      const firstErrorField = Object.keys(validationKeys).find(k => validationKeys[k as keyof typeof validationKeys]);
+      if (firstErrorField) {
+        document.getElementById(firstErrorField)?.focus();
+      }
       return;
     }
 
@@ -240,7 +264,7 @@ export function AddPropertyModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create property');
+        throw new Error(data.error || tModal('toast.createFailed'));
       }
 
       const { data: newProperty } = await response.json();
@@ -248,7 +272,7 @@ export function AddPropertyModal({
       onClose();
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : 'Failed to create property',
+        general: error instanceof Error ? error.message : tModal('toast.createFailed'),
       });
     } finally {
       setIsSubmitting(false);
@@ -372,10 +396,10 @@ export function AddPropertyModal({
                 id="add-property-modal-title"
                 className="text-xl font-semibold text-[#222222]"
               >
-                Add New Property
+                {tModal('addTitle')}
               </Dialog.Title>
               <Dialog.Description id="add-property-modal-description" className="sr-only">
-                Create a new property by entering the name and address information.
+                {tModal('addDescription')}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -389,7 +413,7 @@ export function AddPropertyModal({
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
-                aria-label="Close modal"
+                aria-label={tModal('closeModal')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -400,7 +424,7 @@ export function AddPropertyModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {/* Screen reader announcement for form state */}
             <div aria-live="polite" className="sr-only">
-              {isSubmitting && 'Creating property...'}
+              {isSubmitting && tModal('creating')}
               {errors.general && `Error: ${errors.general}`}
             </div>
 
@@ -417,47 +441,47 @@ export function AddPropertyModal({
             {/* Form fields */}
             <div className="space-y-4">
               {/* Property Name - required */}
-              {renderTextField('name', 'Property Name', formData.name, {
+              {renderTextField('name', tForm('name.label'), formData.name, {
                 required: true,
                 maxLength: 100,
-                placeholder: 'e.g., Beach House',
+                placeholder: tForm('name.placeholder'),
               })}
 
               {/* Address Line 1 */}
-              {renderTextField('addressLine1', 'Address Line 1', formData.addressLine1, {
+              {renderTextField('addressLine1', tForm('address1.label'), formData.addressLine1, {
                 maxLength: 200,
-                placeholder: 'Street address',
+                placeholder: tForm('address1.placeholder'),
               })}
 
               {/* Address Line 2 */}
-              {renderTextField('addressLine2', 'Address Line 2', formData.addressLine2, {
+              {renderTextField('addressLine2', tForm('address2.label'), formData.addressLine2, {
                 maxLength: 200,
-                placeholder: 'Apt, suite, unit, etc. (optional)',
+                placeholder: tForm('address2.placeholder'),
               })}
 
               {/* City and State - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('city', 'City', formData.city, {
+                {renderTextField('city', tForm('city.label'), formData.city, {
                   maxLength: 100,
-                  placeholder: 'City',
+                  placeholder: tForm('city.placeholder'),
                 })}
-                {renderTextField('state', 'State/Province', formData.state, {
+                {renderTextField('state', tForm('state.label'), formData.state, {
                   maxLength: 100,
-                  placeholder: 'State or Province',
+                  placeholder: tForm('state.placeholder'),
                 })}
               </div>
 
               {/* Postal Code and Country - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('postalCode', 'Postal Code', formData.postalCode, {
+                {renderTextField('postalCode', tForm('postalCode.label'), formData.postalCode, {
                   maxLength: 20,
-                  placeholder: 'ZIP / Postal code',
+                  placeholder: tForm('postalCode.placeholder'),
                 })}
 
                 {/* Country dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="country" className="block text-sm font-medium text-[#222222]">
-                    Country
+                    {tForm('country.label')}
                   </label>
                   <select
                     id="country"
