@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-E03-025 - Create Job Processing API Route
 
 **Generated:** 2026-01-20 12:30:00 UTC
-**Last Modified:** 2026-01-20 12:30:00 UTC
+**Last Modified:** 2026-01-21 18:30:00 UTC
 **Request Reference:** REQ-E03-025 from docs/gen_requests_epic3.md
 **Overview Document:** docs/REQ-E03-025-create-job-processing-api-route-overview.md
 **Implementation Plan:** docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md
@@ -71,10 +71,10 @@ import type { JobProcessingResult } from '@/lib/job-queue/job-processor';
 ```
 
 **Acceptance Criteria:**
-- [ ] File created at `/src/app/api/admin/process-translations/route.ts`
-- [ ] All imports resolve without TypeScript errors
-- [ ] File includes module documentation header with creation date
-- [ ] TypeScript compiles without errors: `npx tsc --noEmit`
+- [x] File created at `/src/app/api/admin/process-translations/route.ts` ---implemented:Created directory and route.ts file with all imports---
+- [x] All imports resolve without TypeScript errors ---implemented:All imports from auth-server, concurrency-control, and job-processor resolve correctly---
+- [x] File includes module documentation header with creation date ---implemented:Module header includes @created 2026-01-21---
+- [x] TypeScript compiles without errors: `npx tsc --noEmit` ---implemented:TypeScript compiles (2 baseline errors in .next/types/, none in new file)-unit tested-
 
 **Verification:**
 ```bash
@@ -176,12 +176,12 @@ const LOG_PREFIX = '[ProcessTranslations]';
 ```
 
 **Acceptance Criteria:**
-- [ ] `ProcessTranslationsRequest` interface defined with optional `batchSize`
-- [ ] `ProcessingStatistics` interface includes all required fields
-- [ ] `DEFAULT_BATCH_SIZE` constant set to 10
-- [ ] `MAX_BATCH_SIZE` constant set to 50
-- [ ] All types are properly documented with JSDoc comments
-- [ ] TypeScript compiles without errors
+- [x] `ProcessTranslationsRequest` interface defined with optional `batchSize` ---implemented:Interface defined with JSDoc documentation---
+- [x] `ProcessingStatistics` interface includes all required fields ---implemented:Contains totalProcessed, successCount, failureCount, staleRecoveryCount, averageProcessingTimeMs, languagesProcessed, entityTypeBreakdown, processingStartedAt, processingCompletedAt---
+- [x] `DEFAULT_BATCH_SIZE` constant set to 10 ---implemented:const DEFAULT_BATCH_SIZE = 10---
+- [x] `MAX_BATCH_SIZE` constant set to 50 ---implemented:const MAX_BATCH_SIZE = 50---
+- [x] All types are properly documented with JSDoc comments ---implemented:All interfaces have JSDoc comments describing purpose and fields---
+- [x] TypeScript compiles without errors ---implemented:Compiles without new errors-unit tested-
 
 **Verification:**
 ```bash
@@ -254,13 +254,13 @@ function validateRequest(
 ```
 
 **Acceptance Criteria:**
-- [ ] Returns `{ valid: true, batchSize: 10 }` when body is null/undefined
-- [ ] Returns `{ valid: true, batchSize: 10 }` when body is empty object `{}`
-- [ ] Returns `{ valid: true, batchSize: 5 }` when `{ batchSize: 5 }` provided
-- [ ] Returns `{ valid: true, batchSize: 50 }` when `{ batchSize: 100 }` provided (capped)
-- [ ] Returns `{ valid: false, error }` when batchSize is negative
-- [ ] Returns `{ valid: false, error }` when batchSize is non-integer (e.g., 5.5)
-- [ ] Returns `{ valid: false, error }` when batchSize is non-numeric (e.g., "10")
+- [x] Returns `{ valid: true, batchSize: 10 }` when body is null/undefined ---implemented:Handles null/undefined with default batch size---
+- [x] Returns `{ valid: true, batchSize: 10 }` when body is empty object `{}` ---implemented:Empty object without batchSize uses defaults---
+- [x] Returns `{ valid: true, batchSize: 5 }` when `{ batchSize: 5 }` provided ---implemented:Accepts valid batchSize values---
+- [x] Returns `{ valid: true, batchSize: 50 }` when `{ batchSize: 100 }` provided (capped) ---implemented:Caps at MAX_BATCH_SIZE (50)---
+- [x] Returns `{ valid: false, error }` when batchSize is negative ---implemented:Validates positive integer minimum 1---
+- [x] Returns `{ valid: false, error }` when batchSize is non-integer (e.g., 5.5) ---implemented:Number.isInteger check---
+- [x] Returns `{ valid: false, error }` when batchSize is non-numeric (e.g., "10") ---implemented:typeof number check-unit tested-
 
 **Test Cases (for manual verification):**
 ```typescript
@@ -343,14 +343,14 @@ function aggregateStatistics(
 ```
 
 **Acceptance Criteria:**
-- [ ] Correctly counts total processed jobs
-- [ ] Correctly counts successful and failed jobs
-- [ ] Includes stale recovery count from cleanup result
-- [ ] Calculates correct average processing time (rounded to integer)
-- [ ] Returns 0 for average when no jobs processed
-- [ ] Extracts and deduplicates language codes (sorted alphabetically)
-- [ ] Groups job counts by entity type correctly
-- [ ] Includes start and end timestamps in output
+- [x] Correctly counts total processed jobs ---implemented:results.length---
+- [x] Correctly counts successful and failed jobs ---implemented:filter by r.success---
+- [x] Includes stale recovery count from cleanup result ---implemented:cleanupResult.jobsReset---
+- [x] Calculates correct average processing time (rounded to integer) ---implemented:Math.round(total/count)---
+- [x] Returns 0 for average when no jobs processed ---implemented:results.length > 0 check---
+- [x] Extracts and deduplicates language codes (sorted alphabetically) ---implemented:Set + Array.from().sort()---
+- [x] Groups job counts by entity type correctly ---implemented:entityTypeCounts[result.entityType]++---
+- [x] Includes start and end timestamps in output ---implemented:processingStartedAt, processingCompletedAt-unit tested-
 
 **Test Cases (for manual verification):**
 ```typescript
@@ -437,11 +437,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 ```
 
 **Acceptance Criteria:**
-- [ ] Returns 401 when no authentication provided (handled by `validateAdminAuth`)
-- [ ] Returns 403 when user is not admin/sysadmin
-- [ ] Logs authentication failure attempts
-- [ ] Logs successful authentication with user details
-- [ ] Audit log includes user ID, email, admin status, and timestamp
+- [x] Returns 401 when no authentication provided (handled by `validateAdminAuth`) ---implemented:validateAdminAuth returns error response---
+- [x] Returns 403 when user is not admin/sysadmin ---implemented:isAdmin && isSysAdmin check returns 403 FORBIDDEN---
+- [x] Logs authentication failure attempts ---implemented:console.warn for auth failures---
+- [x] Logs successful authentication with user details ---implemented:console.info with requestedBy, userEmail---
+- [x] Audit log includes user ID, email, admin status, and timestamp ---implemented:All fields logged in console.info-unit tested-
 
 **Verification:**
 ```bash
@@ -502,13 +502,13 @@ curl -X POST http://localhost:3000/api/admin/process-translations
 ```
 
 **Acceptance Criteria:**
-- [ ] Handles missing body gracefully (uses defaults)
-- [ ] Handles empty body `{}` gracefully (uses defaults)
-- [ ] Handles invalid JSON gracefully (uses defaults, not 400 error)
-- [ ] Returns 400 for invalid batchSize values (negative, non-integer)
-- [ ] Caps batchSize at 50 without returning error
-- [ ] Logs validation failures
-- [ ] Logs accepted batch size
+- [x] Handles missing body gracefully (uses defaults) ---implemented:catch block sets requestBody = null, validateRequest handles null---
+- [x] Handles empty body `{}` gracefully (uses defaults) ---implemented:validateRequest returns default batchSize for empty object---
+- [x] Handles invalid JSON gracefully (uses defaults, not 400 error) ---implemented:try/catch around request.json() silently falls back to null---
+- [x] Returns 400 for invalid batchSize values (negative, non-integer) ---implemented:Returns 400 with VALIDATION_ERROR code---
+- [x] Caps batchSize at 50 without returning error ---implemented:Math.min(requestedSize, MAX_BATCH_SIZE)---
+- [x] Logs validation failures ---implemented:console.warn with error message---
+- [x] Logs accepted batch size ---implemented:console.info with batchSize and requestedBy-unit tested-
 
 ---
 
@@ -587,13 +587,13 @@ curl -X POST http://localhost:3000/api/admin/process-translations
 ```
 
 **Acceptance Criteria:**
-- [ ] Stale cleanup runs before job processing
-- [ ] Stale cleanup errors are logged but don't fail the request
-- [ ] Processing uses `getJobProcessor()` singleton
-- [ ] Processing stops early if no more jobs available
-- [ ] Processing continues even if individual jobs fail
-- [ ] Each job result is logged (success or failure)
-- [ ] Timestamps capture actual processing window
+- [x] Stale cleanup runs before job processing ---implemented:cleanupStaleProcessingJobs() called in Step 3 before Step 4---
+- [x] Stale cleanup errors are logged but don't fail the request ---implemented:try/catch with fallback CleanupResult---
+- [x] Processing uses `getJobProcessor()` singleton ---implemented:const processor = getJobProcessor()---
+- [x] Processing stops early if no more jobs available ---implemented:if (!result) break---
+- [x] Processing continues even if individual jobs fail ---implemented:All results pushed, no early return on failure---
+- [x] Each job result is logged (success or failure) ---implemented:console.debug/warn for each job---
+- [x] Timestamps capture actual processing window ---implemented:processingStartedAt before loop, processingCompletedAt after-unit tested-
 
 ---
 
@@ -650,13 +650,13 @@ curl -X POST http://localhost:3000/api/admin/process-translations
 ```
 
 **Acceptance Criteria:**
-- [ ] Returns 200 status for successful processing
-- [ ] Response includes complete statistics object
-- [ ] Response includes requested batch size
-- [ ] Response includes actual number processed (may be less than requested)
-- [ ] Message correctly describes results (none, all success, mixed)
-- [ ] Completion is logged with summary statistics
-- [ ] Total duration is logged for performance monitoring
+- [x] Returns 200 status for successful processing ---implemented:{ status: 200 }---
+- [x] Response includes complete statistics object ---implemented:data: statistics (all ProcessingStatistics fields)---
+- [x] Response includes requested batch size ---implemented:requestedBatchSize: batchSize---
+- [x] Response includes actual number processed (may be less than requested) ---implemented:actualProcessed: results.length---
+- [x] Message correctly describes results (none, all success, mixed) ---implemented:3 conditional message formats---
+- [x] Completion is logged with summary statistics ---implemented:console.info with all counts---
+- [x] Total duration is logged for performance monitoring ---implemented:durationMs: Date.now() - startTime-unit tested-
 
 ---
 
@@ -693,12 +693,12 @@ curl -X POST http://localhost:3000/api/admin/process-translations
 ```
 
 **Acceptance Criteria:**
-- [ ] Catches all unhandled errors
-- [ ] Logs error message and stack trace
-- [ ] Returns 500 status for processing errors
-- [ ] Includes error details in development only
-- [ ] Never exposes internal stack traces to clients in production
-- [ ] Includes error code for client handling
+- [x] Catches all unhandled errors ---implemented:try/catch wrapping entire POST handler---
+- [x] Logs error message and stack trace ---implemented:console.error with error, stack, durationMs---
+- [x] Returns 500 status for processing errors ---implemented:{ status: 500 }---
+- [x] Includes error details in development only ---implemented:process.env.NODE_ENV !== 'production' check---
+- [x] Never exposes internal stack traces to clients in production ---implemented:details undefined in production---
+- [x] Includes error code for client handling ---implemented:code: 'PROCESSING_ERROR'-unit tested-
 
 ---
 
@@ -728,10 +728,10 @@ curl -I http://localhost:3000/api/admin/process-translations
 ```
 
 **Acceptance Criteria:**
-- [ ] TypeScript compilation succeeds without errors
-- [ ] No ESLint warnings or errors
-- [ ] Route is accessible at `/api/admin/process-translations`
-- [ ] Unauthorized access returns 401 (not 404)
+- [x] TypeScript compilation succeeds without errors ---implemented:npx tsc --noEmit returns baseline 2 errors (in .next/types/, not source)-unit tested-
+- [ ] No ESLint warnings or errors ---implemented:Pre-existing ESLint issues in codebase; new file has no new errors-
+- [x] Route is accessible at `/api/admin/process-translations` ---implemented:File exists at src/app/api/admin/process-translations/route.ts---
+- [ ] Unauthorized access returns 401 (not 404) ---needs manual verification with running server-
 
 ---
 
@@ -1121,31 +1121,31 @@ For successful responses, verify:
 
 ## Acceptance Criteria Checklist (from REQ-E03-025)
 
-- [ ] POST endpoint exists at `/api/admin/process-translations`
-- [ ] Endpoint enforces authentication and verifies administrative or service role privileges
-- [ ] Endpoint returns 403 error when called by users lacking administrative access
-- [ ] Endpoint accepts optional JSON body with batchSize parameter
-- [ ] Endpoint defaults batchSize to 10 when parameter is not provided
-- [ ] Endpoint validates batchSize is a positive integer
-- [ ] Endpoint caps batchSize at maximum value of 50
-- [ ] Endpoint returns 400 error for invalid batchSize values (negative, non-numeric)
-- [ ] Endpoint executes stale job cleanup routine before processing jobs
-- [ ] Endpoint invokes job picker to retrieve up to batchSize queued jobs
-- [ ] Endpoint processes each job using appropriate content-specific handler
-- [ ] Endpoint continues processing remaining jobs even when individual jobs fail
-- [ ] Endpoint tracks processing start and end timestamps
-- [ ] Endpoint tracks count of successful job completions
-- [ ] Endpoint tracks count of failed job attempts
-- [ ] Endpoint tracks count of stale jobs recovered during cleanup
-- [ ] Endpoint calculates average processing duration per job
-- [ ] Endpoint aggregates processed language codes
-- [ ] Endpoint aggregates job counts by entity type
-- [ ] Endpoint returns 200 status with statistics payload on completion
-- [ ] Response payload includes all required statistics fields
-- [ ] Endpoint completes synchronously before returning response
-- [ ] Endpoint handles database errors gracefully with 500 status
-- [ ] Endpoint logs invocation details including requesting user for audit trail
-- [ ] TypeScript types are defined for request body, response payload, and error responses
+- [x] POST endpoint exists at `/api/admin/process-translations`
+- [x] Endpoint enforces authentication and verifies administrative or service role privileges
+- [x] Endpoint returns 403 error when called by users lacking administrative access
+- [x] Endpoint accepts optional JSON body with batchSize parameter
+- [x] Endpoint defaults batchSize to 10 when parameter is not provided
+- [x] Endpoint validates batchSize is a positive integer
+- [x] Endpoint caps batchSize at maximum value of 50
+- [x] Endpoint returns 400 error for invalid batchSize values (negative, non-numeric)
+- [x] Endpoint executes stale job cleanup routine before processing jobs
+- [x] Endpoint invokes job picker to retrieve up to batchSize queued jobs
+- [x] Endpoint processes each job using appropriate content-specific handler
+- [x] Endpoint continues processing remaining jobs even when individual jobs fail
+- [x] Endpoint tracks processing start and end timestamps
+- [x] Endpoint tracks count of successful job completions
+- [x] Endpoint tracks count of failed job attempts
+- [x] Endpoint tracks count of stale jobs recovered during cleanup
+- [x] Endpoint calculates average processing duration per job
+- [x] Endpoint aggregates processed language codes
+- [x] Endpoint aggregates job counts by entity type
+- [x] Endpoint returns 200 status with statistics payload on completion
+- [x] Response payload includes all required statistics fields
+- [x] Endpoint completes synchronously before returning response
+- [x] Endpoint handles database errors gracefully with 500 status
+- [x] Endpoint logs invocation details including requesting user for audit trail
+- [x] TypeScript types are defined for request body, response payload, and error responses
 
 ---
 
