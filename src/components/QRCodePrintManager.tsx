@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { usePrintWindow } from '@/hooks/usePrintWindow';
 import { Item, QRPrintSettings, QRGenerationState } from '@/types';
 import { PDFExportSettings } from '@/types/pdf';
@@ -63,6 +64,9 @@ export function QRCodePrintManager({
   isLoadingItems = false,
   className
 }: QRCodePrintManagerProps) {
+  // Translation hook for notifications
+  const tNotifications = useTranslations('common.notifications');
+
   // Print window management
   const { openPrintWindow } = usePrintWindow();
 
@@ -272,14 +276,14 @@ export function QRCodePrintManager({
           }
         }, 100);
         
-        setSuccessMessage(`Successfully generated ${results.size} QR codes!`);
+        setSuccessMessage(tNotifications('success.qrGenerated', { count: results.size }));
       }
     } catch (error: any) {
       if (isComponentMountedRef.current && !abortController.signal.aborted) {
         console.error('QR generation error:', error);
         const isRetryable = !error.message?.includes('aborted');
         setLastError({
-          message: error.message || 'Failed to generate QR codes',
+          message: error.message || tNotifications('error.generateQR'),
           isRetryable
         });
       }
@@ -413,7 +417,7 @@ export function QRCodePrintManager({
         URL.revokeObjectURL(url);
       }
       
-      setSuccessMessage(`PDF exported successfully! ${qrCodesArray.length} QR codes included.`);
+      setSuccessMessage(tNotifications('success.pdfExported', { count: qrCodesArray.length }));
       console.log('✅ PDF export completed:', {
         qrCodeCount: qrCodesArray.length,
         paperSize: settings.pageFormat,
@@ -427,7 +431,7 @@ export function QRCodePrintManager({
     } catch (error: any) {
       console.error('PDF export error:', error);
       setLastError({
-        message: error.message || 'Failed to export PDF. Please try again.',
+        message: error.message || tNotifications('error.exportPDF'),
         isRetryable: true
       });
     } finally {
