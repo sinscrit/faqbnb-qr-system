@@ -10,6 +10,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
 import { CreateArticleRequest, ArticlesListResponse, ArticleResponse, PurposeType } from '@/types';
+import {
+  queueContentTranslations,
+  detectSourceLanguage,
+} from '@/lib/content-translation';
+import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -68,6 +73,46 @@ async function getAccountContext(request: NextRequest, userId: string, isAdmin: 
       )
     };
   }
+}
+
+/**
+ * Fetches the preferred language for an account.
+ * @param supabase - Supabase client instance
+ * @param accountId - Account ID to fetch preference for
+ * @returns Preferred language code or null if not set
+ */
+async function getAccountPreferredLanguage(
+  supabase: any,
+  accountId: string | null
+): Promise<string | null> {
+  if (!accountId) return null;
+
+  const { data } = await supabase
+    .from('accounts')
+    .select('preferred_language')
+    .eq('id', accountId)
+    .single();
+
+  return data?.preferred_language || null;
+}
+
+/**
+ * Fetches the preferred language for a user.
+ * @param supabase - Supabase client instance
+ * @param userId - User ID to fetch preference for
+ * @returns Preferred language code or null if not set
+ */
+async function getUserPreferredLanguage(
+  supabase: any,
+  userId: string
+): Promise<string | null> {
+  const { data } = await supabase
+    .from('users')
+    .select('preferred_language')
+    .eq('id', userId)
+    .single();
+
+  return data?.preferred_language || null;
 }
 
 // GET /api/admin/articles?item_id=xxx
@@ -373,6 +418,66 @@ export async function POST(request: NextRequest) {
 
     console.log('Article created successfully:', newArticle.id);
 
+    // Fetch language preferences for source language detection
+    const [userPreferredLanguage, accountPreferredLanguage] = await Promise.all([
+      getUserPreferredLanguage(supabase, user.id),
+      getAccountPreferredLanguage(supabase, accountId)
+    ]);
+
+    // Determine source language using priority chain
+    const sourceLanguage = detectSourceLanguage({
+      user: { preferred_language: userPreferredLanguage },
+      account: { preferred_language: accountPreferredLanguage },
+      override: body.sourceLanguage
+    });
+
+    // Update article with source_language
+    await supabase
+      .from('item_articles')
+      .update({ source_language: sourceLanguage })
+      .eq('id', newArticle.id);
+
+    // Queue translations (non-blocking - errors don't fail article creation)
+    let translationJobIds: string[] = [];
+    let translationError: string | undefined;
+    let queuedLanguages: SupportedLanguage[] = [];
+
+    try {
+      const translationResult = await queueContentTranslations({
+        content: {
+          entityType: 'article',
+          entityId: newArticle.id,
+          sourceLanguage,
+          fields: [
+            {
+              fieldName: 'title',
+              value: newArticle.title || '',
+              context: { contentType: 'article_title', domainContext: 'property_rental_instructions' },
+              maxLength: 255
+            },
+            {
+              fieldName: 'description',
+              value: newArticle.description || '',
+              context: { contentType: 'article_description', domainContext: 'property_rental_instructions' }
+            }
+          ]
+        },
+        trigger: 'create'
+      });
+
+      if (translationResult.success) {
+        translationJobIds = translationResult.jobIds;
+        queuedLanguages = translationResult.queuedLanguages;
+        console.log('Translation jobs queued for article:', translationJobIds.length);
+      } else {
+        translationError = translationResult.error;
+        console.error('Translation queuing returned error:', translationError);
+      }
+    } catch (error) {
+      console.error('Translation queuing error:', error);
+      translationError = error instanceof Error ? error.message : 'Unknown translation error';
+    }
+
     const createdAt = newArticle.created_at ?? new Date().toISOString();
     const updatedAt = newArticle.updated_at ?? createdAt;
 
@@ -389,7 +494,11 @@ export async function POST(request: NextRequest) {
         updatedAt,
         links: []
       },
-      accountContext: { accountId, accountRole }
+      accountContext: { accountId, accountRole },
+      // Translation fields
+      translationJobIds,
+      queuedLanguages,
+      ...(translationError && { translationError })
     };
 
     return NextResponse.json(response, { status: 201 });

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { PropertyFormProps, PropertyType, User, PropertyFormData, PropertyValidationErrors } from '@/types';
 
 const PropertyForm: React.FC<PropertyFormProps> = ({
@@ -10,6 +11,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   onSave,
   onCancel
 }) => {
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
+  const tActions = useTranslations('common.actions');
+
   // Form state
   const [formData, setFormData] = useState<PropertyFormData>({
     nickname: property?.nickname || '',
@@ -31,19 +36,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
 
     // Nickname validation
     if (!formData.nickname.trim()) {
-      newErrors.nickname = 'Property nickname is required';
+      newErrors.nickname = tErrors('propertyNicknameRequired');
     } else if (formData.nickname.trim().length > 100) {
-      newErrors.nickname = 'Property nickname must be 100 characters or less';
+      newErrors.nickname = tErrors('propertyNicknameTooLong');
     }
 
     // Property type validation
     if (!formData.propertyTypeId) {
-      newErrors.propertyTypeId = 'Property type is required';
+      newErrors.propertyTypeId = tErrors('propertyTypeRequired');
     }
 
     // Address validation (optional but if provided, must be reasonable length)
     if (formData.address && formData.address.length > 500) {
-      newErrors.address = 'Address must be 500 characters or less';
+      newErrors.address = tErrors('addressTooLong');
     }
 
     setErrors(newErrors);
@@ -155,7 +160,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {users && users.length > 0 && (
           <div>
             <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-              Property Owner <span className="text-red-500">*</span>
+              {tForm('labels.propertyOwner')} <span className="text-red-500">*</span>
             </label>
             <select
               id="userId"
@@ -164,7 +169,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               disabled={isSubmitting || !!property} // Can't change owner of existing property
               className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500`}
             >
-              <option value="">Select property owner...</option>
+              <option value="">{tForm('placeholders.select')}</option>
               {users.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.full_name || user.email} ({user.email})
@@ -173,7 +178,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             </select>
             {property && (
               <p className="mt-1 text-xs text-gray-500">
-                Property owner cannot be changed after creation
+                {tForm('hints.cannotBeChanged')}
               </p>
             )}
           </div>
@@ -182,7 +187,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {/* Property nickname */}
         <div>
           <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
-            Property Nickname <span className="text-red-500">*</span>
+            {tForm('labels.propertyNickname')} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -190,7 +195,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             value={formData.nickname}
             onChange={handleInputChange('nickname')}
             disabled={isSubmitting}
-            placeholder="e.g., Main Office, Home, Vacation House"
+            placeholder={tForm('placeholders.propertyNickname')}
             className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 ${
               errors.nickname ? 'border-red-300' : 'border-gray-300'
             }`}
@@ -200,14 +205,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             <p className="mt-1 text-sm text-red-600">{errors.nickname}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            A friendly name to identify this property ({formData.nickname.length}/100)
+            {tForm('hints.friendlyName', { item: 'property' })} ({tForm('hints.charactersCount', { count: formData.nickname.length, max: 100 })})
           </p>
         </div>
 
         {/* Property type */}
         <div>
           <label htmlFor="propertyTypeId" className="block text-sm font-medium text-gray-700 mb-2">
-            Property Type <span className="text-red-500">*</span>
+            {tForm('labels.propertyType')} <span className="text-red-500">*</span>
           </label>
           <select
             id="propertyTypeId"
@@ -218,7 +223,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               errors.propertyTypeId ? 'border-red-300' : 'border-gray-300'
             }`}
           >
-            <option value="">Select property type...</option>
+            <option value="">{tForm('placeholders.selectProperty')}</option>
             {propertyTypes.map((type) => (
               <option key={type.id} value={type.id}>
                 {type.display_name}
@@ -233,7 +238,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {/* Property address */}
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-            Address <span className="text-gray-400">(Optional)</span>
+            {tForm('labels.address')} <span className="text-gray-400">{tForm('hints.optional')}</span>
           </label>
           <textarea
             id="address"
@@ -241,7 +246,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             value={formData.address}
             onChange={handleInputChange('address')}
             disabled={isSubmitting}
-            placeholder="e.g., 123 Main St, Anytown, State 12345"
+            placeholder={tForm('placeholders.address')}
             className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 resize-none ${
               errors.address ? 'border-red-300' : 'border-gray-300'
             }`}
@@ -251,7 +256,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             <p className="mt-1 text-sm text-red-600">{errors.address}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            Physical address or location description ({formData.address.length}/500)
+            {tForm('hints.charactersCount', { count: formData.address.length, max: 500 })}
           </p>
         </div>
 
@@ -263,7 +268,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             disabled={isSubmitting}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Cancel
+            {tActions('cancel')}
           </button>
           <button
             type="submit"
@@ -276,10 +281,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {property ? 'Updating...' : 'Creating...'}
+                {tActions('saving')}
               </>
             ) : (
-              property ? 'Update Property' : 'Create Property'
+              property ? tActions('editProperty') : tActions('createProperty')
             )}
           </button>
         </div>

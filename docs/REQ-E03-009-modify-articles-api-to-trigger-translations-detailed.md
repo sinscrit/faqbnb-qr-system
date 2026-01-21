@@ -90,8 +90,8 @@ export interface CreateArticleRequest {
 ```
 
 **Acceptance Criteria:**
-- [ ] `sourceLanguage?: SupportedLanguage` field exists in `CreateArticleRequest`
-- [ ] JSDoc comment explains the field purpose
+- [x] `sourceLanguage?: SupportedLanguage` field exists in `CreateArticleRequest` ---implemented:Field already existed in codebase (lines 287-293)---
+- [x] JSDoc comment explains the field purpose ---implemented:Existing JSDoc covers purpose---
 - [ ] TypeScript compilation succeeds (`npm run build` passes)
 
 ---
@@ -127,7 +127,7 @@ export interface UpdateArticleRequest {
 ```
 
 **Acceptance Criteria:**
-- [ ] `sourceLanguage?: SupportedLanguage` field exists in `UpdateArticleRequest`
+- [x] `sourceLanguage?: SupportedLanguage` field exists in `UpdateArticleRequest` ---implemented:Added sourceLanguage field with JSDoc to UpdateArticleRequest---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -175,10 +175,10 @@ export interface ArticleResponse {
 ```
 
 **Acceptance Criteria:**
-- [ ] `translationJobIds?: string[]` field exists in `ArticleResponse`
-- [ ] `translationError?: string` field exists in `ArticleResponse`
-- [ ] `queuedLanguages?: SupportedLanguage[]` field exists in `ArticleResponse`
-- [ ] JSDoc comments explain each field
+- [x] `translationJobIds?: string[]` field exists in `ArticleResponse` ---implemented:Field already exists (lines 329-334)---
+- [x] `translationError?: string` field exists in `ArticleResponse` ---implemented:Field already exists (lines 335-340)---
+- [x] `queuedLanguages?: SupportedLanguage[]` field exists in `ArticleResponse` ---implemented:Field already exists (lines 341-345)---
+- [x] JSDoc comments explain each field ---implemented:Existing JSDoc covers all fields---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -211,10 +211,10 @@ import type { SupportedLanguage } from '@/lib/translation-service/translation-se
 ```
 
 **Acceptance Criteria:**
-- [ ] `queueContentTranslations` import added
-- [ ] `detectSourceLanguage` import added
-- [ ] `SupportedLanguage` type import added
-- [ ] No import errors (file exists and exports the functions)
+- [x] `queueContentTranslations` import added ---implemented:Added to imports section---
+- [x] `detectSourceLanguage` import added ---implemented:Added to imports section---
+- [x] `SupportedLanguage` type import added ---implemented:Added from translation-service.types---
+- [x] No import errors (file exists and exports the functions) ---implemented:Verified---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -272,10 +272,10 @@ async function getUserPreferredLanguage(
 ```
 
 **Acceptance Criteria:**
-- [ ] `getAccountPreferredLanguage` function exists and handles null accountId
-- [ ] `getUserPreferredLanguage` function exists
-- [ ] Both functions have JSDoc comments
-- [ ] Functions return `string | null`
+- [x] `getAccountPreferredLanguage` function exists and handles null accountId ---implemented:Added after getAccountContext---
+- [x] `getUserPreferredLanguage` function exists ---implemented:Added after getAccountContext---
+- [x] Both functions have JSDoc comments ---implemented:Full JSDoc documentation included---
+- [x] Functions return `string | null` ---implemented:Typed correctly---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -358,12 +358,12 @@ console.log('Article created successfully:', newArticle.id);
 ```
 
 **Acceptance Criteria:**
-- [ ] Language preferences fetched in parallel
-- [ ] Source language determined using `detectSourceLanguage`
-- [ ] Article updated with `source_language` column
-- [ ] `queueContentTranslations` called with correct parameters
-- [ ] Translation errors caught and logged but don't fail article creation
-- [ ] `translationJobIds`, `translationError`, `queuedLanguages` variables set correctly
+- [x] Language preferences fetched in parallel ---implemented:Promise.all with getUserPreferredLanguage and getAccountPreferredLanguage---
+- [x] Source language determined using `detectSourceLanguage` ---implemented:Called with user, account, and override params---
+- [x] Article updated with `source_language` column ---implemented:supabase update after article creation---
+- [x] `queueContentTranslations` called with correct parameters ---implemented:entityType 'article', fields for title and description---
+- [x] Translation errors caught and logged but don't fail article creation ---implemented:try/catch wrapping, errors stored in translationError---
+- [x] `translationJobIds`, `translationError`, `queuedLanguages` variables set correctly ---implemented:All three variables initialized and assigned---
 - [ ] TypeScript compilation succeeds
 
 ---
@@ -420,10 +420,10 @@ console.log('Article created successfully:', newArticle.id);
 ```
 
 **Acceptance Criteria:**
-- [ ] `translationJobIds` included in response
-- [ ] `queuedLanguages` included in response
-- [ ] `translationError` included only when there's an error (conditional spread)
-- [ ] Existing response fields unchanged
+- [x] `translationJobIds` included in response ---implemented:Added to response object---
+- [x] `queuedLanguages` included in response ---implemented:Added to response object---
+- [x] `translationError` included only when there's an error (conditional spread) ---implemented:Using spread operator with conditional---
+- [x] Existing response fields unchanged ---implemented:All original fields preserved---
 - [ ] TypeScript compilation succeeds
 
 ---

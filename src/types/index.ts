@@ -316,6 +316,12 @@ export interface UpdateArticleRequest {
   }[];
   /** Optional: Update item's tags (REQ-214) */
   itemTags?: string[];
+  /**
+   * Optional source language override for translations.
+   * If not provided, detected from user/account preferences.
+   * @since Epic 3 - Dynamic Content Translation
+   */
+  sourceLanguage?: SupportedLanguage;
 }
 
 export interface ArticleResponse {
