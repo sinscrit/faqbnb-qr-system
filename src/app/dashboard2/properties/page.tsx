@@ -11,6 +11,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle } from 'lucide-react';
 import {
@@ -22,6 +23,7 @@ import { useDashboardTier } from '@/hooks/useDashboardTier';
 import { Property } from '@/types';
 
 export default function PropertiesPage() {
+  const tNotifications = useTranslations('common.notifications');
   const { user, getUserProperties, userProperties } = useAuth();
 
   // Get tier configuration for property display
@@ -48,7 +50,7 @@ export default function PropertiesPage() {
     // Refresh user properties via AuthContext
     await getUserProperties?.();
     // Show success message
-    setSuccessMessage('Property updated successfully');
+    setSuccessMessage(tNotifications('success.propertyUpdated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -71,7 +73,7 @@ export default function PropertiesPage() {
     // Close the modal
     setAddModalOpen(false);
     // Show success message
-    setSuccessMessage('Property created successfully');
+    setSuccessMessage(tNotifications('success.propertyCreated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };

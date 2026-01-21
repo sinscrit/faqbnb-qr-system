@@ -16,6 +16,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { adminApi } from '@/lib/api';
@@ -48,6 +49,7 @@ const VIEW_MODE_STORAGE_KEY = 'instructionsPage.viewMode';
 
 export default function InstructionsPage() {
   const router = useRouter();
+  const tNotifications = useTranslations('common.notifications');
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
   const { selectedPropertyId } = usePropertyContext();
@@ -333,7 +335,7 @@ export default function InstructionsPage() {
               />
             </svg>
             <p className="text-sm font-medium text-green-800">
-              Guide updated successfully
+              {tNotifications('success.guideUpdated')}
             </p>
           </div>
           <button

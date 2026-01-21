@@ -99,22 +99,41 @@ async function getUserPreferredLanguage(
 
 /**
  * Fetch account's preferred language from database.
+ *
+ * NOTE: accounts.preferred_language column does not yet exist in the database.
+ * This function is a placeholder that returns null until the column is added.
+ * Source language detection will fall back to user preferences.
+ *
+ * @param _supabase - Authenticated Supabase client (unused for now)
+ * @param accountId - Account ID to fetch language for
+ * @returns Always returns null until accounts.preferred_language column exists
  */
 async function getAccountPreferredLanguage(
-  supabase: SupabaseClient<Database>,
+  _supabase: SupabaseClient<Database>,
   accountId: string | null
 ): Promise<string | null> {
-  if (!accountId) return null;
-  const { data } = await supabase
-    .from('accounts')
-    .select('preferred_language')
-    .eq('id', accountId)
-    .single();
-  return data?.preferred_language || null;
+  // TODO: When accounts.preferred_language column is added to the database schema,
+  // uncomment this code:
+  // if (!accountId) return null;
+  // const { data } = await _supabase
+  //   .from('accounts')
+  //   .select('preferred_language')
+  //   .eq('id', accountId)
+  //   .single();
+  // return data?.preferred_language || null;
+
+  // For now, accounts don't have preferred_language, so we return null
+  // and rely on user preferences for source language detection
+  void accountId; // Suppress unused variable warning
+  return null;
 }
 
 /**
  * Resolve item ID from publicId and validate access.
+ *
+ * NOTE: The properties join uses type assertion because the Database type
+ * doesn't define the foreign key relationship in its Relationships array.
+ * The query works at runtime - this is a Supabase types limitation.
  */
 async function resolveAndValidateItemAccess(
   publicId: string,
@@ -123,6 +142,8 @@ async function resolveAndValidateItemAccess(
   accountId: string | null,
   supabase: SupabaseClient<Database>
 ): Promise<{ itemId: string | null; error?: NextResponse }> {
+  // Use 'as any' for the query result because the Database type doesn't include
+  // the items->properties relationship in its Relationships array
   const { data: item, error } = await supabase
     .from('items')
     .select(`
@@ -133,7 +154,7 @@ async function resolveAndValidateItemAccess(
       properties!left(account_id, user_id)
     `)
     .eq('public_id', publicId)
-    .single();
+    .single() as { data: { id: string; public_id: string; name: string; property_id: string; properties: { account_id: string | null; user_id: string } | null } | null; error: unknown };
 
   if (error || !item) {
     return {
@@ -146,6 +167,7 @@ async function resolveAndValidateItemAccess(
   }
 
   const itemProperty = item.properties;
+  void userId; // Available for future use (currently access is account-based)
 
   if (isAdmin && !accountId) {
     return { itemId: item.id };

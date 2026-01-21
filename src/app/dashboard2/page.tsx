@@ -20,6 +20,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { CheckCircle, Home } from 'lucide-react';
 import {
@@ -40,6 +41,7 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function Dashboard2Page() {
   const router = useRouter();
+  const tNotifications = useTranslations('common.notifications');
   const { user, getUserProperties, userProperties } = useAuth();
 
   // REQ-136: Get user preferences
@@ -118,7 +120,7 @@ export default function Dashboard2Page() {
     // Close the modal
     setAddModalOpen(false);
     // Show success message
-    setSuccessMessage('Property created successfully');
+    setSuccessMessage(tNotifications('success.propertyCreated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };
