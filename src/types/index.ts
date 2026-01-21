@@ -952,3 +952,26 @@ export interface TranslationStatusErrorResponse {
   success: false;
   error: string;
 }
+
+// ============================================================================
+// Manual Translation Override Types (REQ-E03-023)
+// ============================================================================
+
+export type {
+  TranslationEntityType as ManualTranslationEntityType,
+  ItemTranslationOverrideRequest,
+  ArticleTranslationOverrideRequest,
+  LinkTranslationOverrideRequest,
+  TagTranslationOverrideRequest,
+  TranslationOverrideRequest,
+  ManualTranslationResponseData,
+  ManualTranslationResponse,
+  ManualTranslationErrorResponse,
+  ManualTranslationApiResponse,
+  ManualTranslationErrorCode,
+} from './translation-management';
+
+export {
+  TRANSLATABLE_FIELDS_BY_ENTITY,
+  MAX_TRANSLATION_FIELD_LENGTHS,
+} from './translation-management';
