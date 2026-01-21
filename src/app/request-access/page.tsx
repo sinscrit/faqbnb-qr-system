@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
 interface AccessRequestForm {
@@ -15,6 +16,7 @@ interface AccessRequestForm {
  * Allows users to request access to accounts
  */
 export default function RequestAccessPage() {
+  const tNotifications = useTranslations('common.notifications');
   const [form, setForm] = useState<AccessRequestForm>({
     requester_email: '',
     requester_name: '',
@@ -45,10 +47,10 @@ export default function RequestAccessPage() {
       if (result.success) {
         setSuccess(true);
       } else {
-        setError(result.error || 'Failed to submit access request');
+        setError(result.error || tNotifications('error.submitRequest'));
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError(tNotifications('error.networkError'));
     } finally {
       setIsSubmitting(false);
     }

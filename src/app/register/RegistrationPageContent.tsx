@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ReadonlyURLSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -90,6 +91,7 @@ function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetect
 }
 
 export default function RegistrationPageContent() {
+  const tNotifications = useTranslations('common.notifications');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, session, loading: authLoading } = useAuth();
@@ -812,7 +814,7 @@ export default function RegistrationPageContent() {
                       console.log('Manual registration successful:', result);
                       setMessage({
                         type: 'success',
-                        message: 'Account created successfully! Redirecting to dashboard...'
+                        message: tNotifications('success.accountCreated')
                       });
 
                       // Redirect to dashboard after successful registration and sign-in
@@ -850,7 +852,7 @@ export default function RegistrationPageContent() {
                 console.log('URL registration successful:', result);
                 setMessage({
                   type: 'success',
-                  message: 'Account created successfully! Redirecting to dashboard...'
+                  message: tNotifications('success.accountCreated')
                 });
 
                 // Redirect to dashboard after successful registration and sign-in
