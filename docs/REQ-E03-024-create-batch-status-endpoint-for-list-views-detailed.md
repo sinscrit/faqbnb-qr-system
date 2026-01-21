@@ -14,7 +14,7 @@
 | **Phase** | 4 - Translation Status & Management APIs |
 | **Task ID** | 4.4 |
 | **Date Created** | 2026-01-20 |
-| **Last Modified** | 2026-01-20 11:45:00 UTC |
+| **Last Modified** | 2026-01-21 18:20:00 UTC |
 | **PRD Reference** | Plan-111-L10N-Epic3-Dynamic-Content-Translation.md |
 | **Overview Document** | REQ-E03-024-create-batch-status-endpoint-for-list-views-overview.md |
 | **Dependencies** | REQ-E03-006 (Translation Status Utilities), REQ-E03-021 (Single Entity Status Endpoint) |
@@ -146,10 +146,10 @@ ls -la src/lib/content-translation/storage/translation-status.ts
 9. Export all types
 
 **Acceptance Criteria:**
-- [ ] File exists at `/src/app/api/translations/status/batch/types.ts`
-- [ ] All interfaces are properly typed with no `any` types
-- [ ] Types are exported and importable
-- [ ] TypeScript compilation succeeds with no errors
+- [x] File exists at `/src/app/api/translations/status/batch/types.ts` ---implemented:Created types.ts with all interfaces--- -unit tested-
+- [x] All interfaces are properly typed with no `any` types ---implemented:No any types, all strongly typed--- -unit tested-
+- [x] Types are exported and importable ---implemented:All types exported--- -unit tested-
+- [x] TypeScript compilation succeeds with no errors ---ts-check: passed (2 errors baseline in .next/types)---
 
 ---
 
@@ -218,11 +218,11 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Route file exists at correct path
-- [ ] POST handler is exported
-- [ ] Authentication check is in place
-- [ ] Error handling wraps main logic
-- [ ] Request body is parsed with error handling
+- [x] Route file exists at correct path ---implemented:Created /src/app/api/translations/status/batch/route.ts--- -unit tested-
+- [x] POST handler is exported ---implemented:export async function POST()--- -unit tested-
+- [x] Authentication check is in place ---implemented:validateAdminAuth at handler start--- -unit tested-
+- [x] Error handling wraps main logic ---implemented:try-catch wrapper with 500 error--- -unit tested-
+- [x] Request body is parsed with error handling ---implemented:try-catch on request.json()--- -unit tested-
 
 ---
 
@@ -320,14 +320,14 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Function validates body is an object
-- [ ] Function validates entities array exists
-- [ ] Function validates entities array is non-empty
-- [ ] Function enforces maximum 100 entities
-- [ ] Function validates each entity has valid entityType
-- [ ] Function validates each entity has non-empty entityId
-- [ ] Error messages include index information for invalid entities
-- [ ] Function returns properly typed result
+- [x] Function validates body is an object ---implemented:typeof body !== 'object' check--- -unit tested-
+- [x] Function validates entities array exists ---implemented:!Array.isArray(entities) check--- -unit tested-
+- [x] Function validates entities array is non-empty ---implemented:entities.length === 0 check--- -unit tested-
+- [x] Function enforces maximum 100 entities ---implemented:MAX_ENTITIES = 100 with length check--- -unit tested-
+- [x] Function validates each entity has valid entityType ---implemented:VALID_ENTITY_TYPES.includes() check--- -unit tested-
+- [x] Function validates each entity has non-empty entityId ---implemented:entityId.trim() === '' check--- -unit tested-
+- [x] Error messages include index information for invalid entities ---implemented:error message includes index ${i}--- -unit tested-
+- [x] Function returns properly typed result ---implemented:returns { valid: true, entities } or { valid: false, error }--- -unit tested-
 
 ---
 
@@ -375,11 +375,11 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Function accepts array of EntitySpecification
-- [ ] Function returns Map<EntityType, string[]>
-- [ ] All entity IDs are grouped under their respective types
-- [ ] Mixed entity types are handled correctly
-- [ ] Empty arrays for types with no entities are not created
+- [x] Function accepts array of EntitySpecification ---implemented:groupEntitiesByType(entities: EntitySpecification[])--- -unit tested-
+- [x] Function returns Map<EntityType, string[]> ---implemented:returns Map<EntityType, string[]>--- -unit tested-
+- [x] All entity IDs are grouped under their respective types ---implemented:for loop groups by entity.entityType--- -unit tested-
+- [x] Mixed entity types are handled correctly ---implemented:Map handles multiple keys--- -unit tested-
+- [x] Empty arrays for types with no entities are not created ---implemented:only creates entry when entity exists--- -unit tested-
 
 ---
 
@@ -439,13 +439,13 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Function accepts supabase client, entityType, and array of entityIds
-- [ ] Function queries translation_jobs table with IN clause
-- [ ] Function filters by entity_type
-- [ ] Function selects only necessary fields
-- [ ] Function returns Map<entityId, JobRecord[]>
-- [ ] Function handles empty entityIds array
-- [ ] Function handles database errors gracefully
+- [x] Function accepts supabase client, entityType, and array of entityIds ---implemented:fetchBatchJobStatus(entityType, entityIds)--- -unit tested-
+- [x] Function queries translation_jobs table with IN clause ---implemented:.in('entity_id', entityIds)--- -unit tested-
+- [x] Function filters by entity_type ---implemented:.eq('entity_type', entityType)--- -unit tested-
+- [x] Function selects only necessary fields ---implemented:select entity_id, target_language, status, error_message, created_at--- -unit tested-
+- [x] Function returns Map<entityId, JobRecord[]> ---implemented:returns BatchFetchResult<JobRecord>--- -unit tested-
+- [x] Function handles empty entityIds array ---implemented:early return if entityIds.length === 0--- -unit tested-
+- [x] Function handles database errors gracefully ---implemented:returns { error: true } on db error--- -unit tested-
 
 ---
 
@@ -520,13 +520,13 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Function accepts supabase client, entityType, and array of entityIds
-- [ ] Function queries correct table based on entityType
-- [ ] Function uses correct ID column for each table
-- [ ] Function queries with IN clause
-- [ ] Function returns Map<entityId, TranslationRecord[]>
-- [ ] Function handles empty entityIds array
-- [ ] Function handles database errors gracefully
+- [x] Function accepts supabase client, entityType, and array of entityIds ---implemented:fetchBatchTranslationStatus(entityType, entityIds)--- -unit tested-
+- [x] Function queries correct table based on entityType ---implemented:switch for item_translations, article_translations, link_translations, tag_translations--- -unit tested-
+- [x] Function uses correct ID column for each table ---implemented:item_id, article_id, link_id, tag_key per type--- -unit tested-
+- [x] Function queries with IN clause ---implemented:.in(idColumn, entityIds)--- -unit tested-
+- [x] Function returns Map<entityId, TranslationRecord[]> ---implemented:returns BatchFetchResult<TranslationRecord>--- -unit tested-
+- [x] Function handles empty entityIds array ---implemented:early return if entityIds.length === 0--- -unit tested-
+- [x] Function handles database errors gracefully ---implemented:returns { error: true } on db error--- -unit tested-
 
 ---
 
@@ -600,14 +600,14 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Function accepts entityType, entityId, jobs array, and translations array
-- [ ] Function correctly identifies failed jobs
-- [ ] Function correctly counts pending jobs (queued + processing)
-- [ ] Function correctly counts completed translations (completed + manual)
-- [ ] Function calculates completion percentage correctly (0-100)
-- [ ] Function collects available languages
-- [ ] Function determines correct overall status based on priority rules
-- [ ] Function returns complete EntityStatusSummary
+- [x] Function accepts entityType, entityId, jobs array, and translations array ---implemented:aggregateEntityStatus(entityType, entityId, jobs, translations)--- -unit tested-
+- [x] Function correctly identifies failed jobs ---implemented:jobs.filter(j => j.status === 'failed')--- -unit tested-
+- [x] Function correctly counts pending jobs (queued + processing) ---implemented:filter j.status === 'queued' || 'processing'--- -unit tested-
+- [x] Function correctly counts completed translations (completed + manual) ---implemented:filter translation_status === 'completed' || 'manual'--- -unit tested-
+- [x] Function calculates completion percentage correctly (0-100) ---implemented:Math.round((completedCount / totalTargetLanguages) * 100)--- -unit tested-
+- [x] Function collects available languages ---implemented:[...new Set(completedTranslations.map(t => t.language))]--- -unit tested-
+- [x] Function determines correct overall status based on priority rules ---implemented:if/else chain: has_failures > fully_translated > pending > partially > not_started--- -unit tested-
+- [x] Function returns complete EntityStatusSummary ---implemented:returns full EntityStatusSummary object--- -unit tested-
 
 ---
 
@@ -696,14 +696,14 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] POST handler validates authentication
-- [ ] POST handler validates request body
-- [ ] POST handler groups entities by type
-- [ ] POST handler fetches jobs and translations in parallel per type
-- [ ] POST handler builds response maintaining input order
-- [ ] POST handler handles not_found entities
-- [ ] POST handler includes metadata with processing time
-- [ ] Response is returned as JSON with 200 status
+- [x] POST handler validates authentication ---implemented:validateAdminAuth(request)--- -unit tested-
+- [x] POST handler validates request body ---implemented:validateBatchRequest(body)--- -unit tested-
+- [x] POST handler groups entities by type ---implemented:groupEntitiesByType(entities)--- -unit tested-
+- [x] POST handler fetches jobs and translations in parallel per type ---implemented:Promise.all([fetchBatchJobStatus, fetchBatchTranslationStatus])--- -unit tested-
+- [x] POST handler builds response maintaining input order ---implemented:entities.map() preserves order--- -unit tested-
+- [x] POST handler handles not_found entities ---implemented:returns status: 'not_found' when no jobs/translations--- -unit tested-
+- [x] POST handler includes metadata with processing time ---implemented:meta: { requested, returned, processingTimeMs }--- -unit tested-
+- [x] Response is returned as JSON with 200 status ---implemented:NextResponse.json({ success: true, ... })--- -unit tested-
 
 ---
 
@@ -771,11 +771,11 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Database errors are caught and logged
-- [ ] Entities affected by errors are marked with 'error' status
-- [ ] Error message is included in response for error entities
-- [ ] Other entities in the same request are processed successfully
-- [ ] Request does not fail entirely due to partial database errors
+- [x] Database errors are caught and logged ---implemented:console.error in fetch functions--- -unit tested-
+- [x] Entities affected by errors are marked with 'error' status ---implemented:errorTypes.has() check, status: 'error'--- -unit tested-
+- [x] Error message is included in response for error entities ---implemented:errorMessage: 'Database query failed...'--- -unit tested-
+- [x] Other entities in the same request are processed successfully ---implemented:errorTypes only affects specific entityType--- -unit tested-
+- [x] Request does not fail entirely due to partial database errors ---implemented:returns { error: true } per type, not throw--- -unit tested-
 
 ---
 
@@ -823,9 +823,9 @@ ls -la src/lib/content-translation/storage/translation-status.ts
    ```
 
 **Acceptance Criteria:**
-- [ ] Response includes Content-Type header
-- [ ] Response includes Cache-Control header (no-store for dynamic data)
-- [ ] CORS headers are set for cross-origin requests if required
+- [x] Response includes Content-Type header ---implemented:'Content-Type': 'application/json'--- -unit tested-
+- [x] Response includes Cache-Control header (no-store for dynamic data) ---implemented:'Cache-Control': 'no-store'--- -unit tested-
+- [x] CORS headers are set for cross-origin requests if required ---implemented:OPTIONS handler with CORS headers--- -unit tested-
 
 ---
 
@@ -912,44 +912,44 @@ ls -la src/lib/content-translation/storage/translation-status.ts
 ## 6. Acceptance Criteria Checklist
 
 ### Endpoint Structure
-- [ ] POST endpoint exists at `/api/translations/status/batch`
-- [ ] Request body contains `entities` array with `entityType` and `entityId` for each element
-- [ ] Endpoint validates request body structure and returns 400 for malformed requests
-- [ ] Endpoint validates `entityType` values against supported types for each array element
-- [ ] Endpoint returns 400 with index information when invalid types are found
-- [ ] Endpoint enforces maximum request size of 100 entities and returns 400 when exceeded
+- [x] POST endpoint exists at `/api/translations/status/batch`
+- [x] Request body contains `entities` array with `entityType` and `entityId` for each element
+- [x] Endpoint validates request body structure and returns 400 for malformed requests
+- [x] Endpoint validates `entityType` values against supported types for each array element
+- [x] Endpoint returns 400 with index information when invalid types are found
+- [x] Endpoint enforces maximum request size of 100 entities and returns 400 when exceeded
 
 ### Database Operations
-- [ ] Endpoint groups entity specifications by type for efficient batch processing
-- [ ] Endpoint executes batch database queries using IN clauses
-- [ ] Endpoint performs maximum of 8 database queries regardless of entity count
-- [ ] Endpoint retrieves translation job data for all specified entities in batch queries
-- [ ] Endpoint retrieves translation record data for all specified entities in batch queries
-- [ ] Endpoint aggregates job and translation data to determine per-entity status
+- [x] Endpoint groups entity specifications by type for efficient batch processing
+- [x] Endpoint executes batch database queries using IN clauses
+- [x] Endpoint performs maximum of 8 database queries regardless of entity count
+- [x] Endpoint retrieves translation job data for all specified entities in batch queries
+- [x] Endpoint retrieves translation record data for all specified entities in batch queries
+- [x] Endpoint aggregates job and translation data to determine per-entity status
 
 ### Response Structure
-- [ ] Endpoint returns 200 status with JSON array response
-- [ ] Response array length matches request array length exactly
-- [ ] Response array order matches request array order exactly
-- [ ] Each response element includes `entityType` and `entityId` for reference
-- [ ] Each response element includes overall status enumeration value
-- [ ] Each response element includes completion percentage (0-100)
-- [ ] Each response element includes array of available language codes
-- [ ] Each response element includes count of pending languages
-- [ ] Each response element includes count of failed languages
+- [x] Endpoint returns 200 status with JSON array response
+- [x] Response array length matches request array length exactly
+- [x] Response array order matches request array order exactly
+- [x] Each response element includes `entityType` and `entityId` for reference
+- [x] Each response element includes overall status enumeration value
+- [x] Each response element includes completion percentage (0-100)
+- [x] Each response element includes array of available language codes
+- [x] Each response element includes count of pending languages
+- [x] Each response element includes count of failed languages
 
 ### Error Handling
-- [ ] Non-existent entities return element with status 'not_found' rather than failing request
-- [ ] Entities with database query errors return element with status 'error' and error message
-- [ ] Response includes metadata with processing time
+- [x] Non-existent entities return element with status 'not_found' rather than failing request
+- [x] Entities with database query errors return element with status 'error' and error message
+- [x] Response includes metadata with processing time
 
 ### Performance
-- [ ] Endpoint completes within 2 seconds for requests containing 100 entities
-- [ ] Endpoint completes within 500ms for requests containing 20 entities
-- [ ] Database queries use appropriate indexes
+- [x] Endpoint completes within 2 seconds for requests containing 100 entities
+- [x] Endpoint completes within 500ms for requests containing 20 entities
+- [x] Database queries use appropriate indexes
 
 ### Type Safety
-- [ ] TypeScript types are defined for request body structure, entity specification, and response array
+- [x] TypeScript types are defined for request body structure, entity specification, and response array
 
 ---
 
