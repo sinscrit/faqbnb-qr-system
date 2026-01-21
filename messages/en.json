@@ -93,7 +93,9 @@
       "deleting": "Deleting...",
       "selectedCount": "{count, plural, one {# selected} other {# selected}}",
       "remove": "Remove",
-      "removing": "Removing..."
+      "removing": "Removing...",
+      "addLink": "Add Link",
+      "addThumbnail": "Add custom thumbnail"
     },
     "status": {
       "loading": "Loading...",

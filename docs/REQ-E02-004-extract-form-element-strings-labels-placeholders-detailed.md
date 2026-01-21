@@ -1,7 +1,7 @@
 # REQ-E02-004: Extract Form Element Strings (Labels, Placeholders, Hints) - Detailed Task Breakdown
 
 *Generated: 2026-01-19 12:30:00 UTC*
-*Last Modified: 2026-01-21 10:00:00 UTC*
+*Last Modified: 2026-01-21 14:30:00 UTC*
 
 ## Reference
 
@@ -596,11 +596,20 @@ Replace all hardcoded form strings in AddMediaLinkForm component.
 | `"Type auto-detected from URL"` | `form.hints.typeAutoDetected` |
 
 #### Acceptance Criteria
-- [ ] Import `useTranslations` hook
-- [ ] Replace all label text
-- [ ] Replace all placeholder text
-- [ ] Replace helper/error text
-- [ ] URL validation error translated
+- [x] Import `useTranslations` hook
+- [x] Replace all label text
+- [x] Replace all placeholder text
+- [x] Replace helper/error text
+- [x] URL validation error translated
+
+#### Implementation Notes (2026-01-21)
+- Added `tForm`, `tErrors`, `tActions` translation hooks
+- Replaced labels: title, url, linkType, thumbnailUrl
+- Replaced placeholders: titleExample, url
+- Replaced validation error: invalidUrl
+- Added translation keys: `common.actions.addLink`, `common.actions.addThumbnail`
+- Updated hints: typeAutoDetected, optional
+- TypeScript check passed (5 pre-existing route type errors, no new errors)
 
 #### Verification Steps
 1. Open media link form

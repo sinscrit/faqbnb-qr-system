@@ -10,6 +10,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Plus, X, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { AddMediaLinkFormProps } from './MediaManagement.types';
@@ -59,6 +60,10 @@ export function AddMediaLinkForm({
   onCancel,
   isExpanded = false,
 }: AddMediaLinkFormProps) {
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
+  const tActions = useTranslations('common.actions');
+
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [linkType, setLinkType] = useState<LinkType>('text');
@@ -73,11 +78,11 @@ export function AddMediaLinkForm({
       setLinkType(detectedType);
       setUrlError(null);
     } else if (url && !isValidUrl(url)) {
-      setUrlError('Please enter a valid URL');
+      setUrlError(tErrors('invalidUrl'));
     } else {
       setUrlError(null);
     }
-  }, [url]);
+  }, [url, tErrors]);
 
   // Reset form
   const resetForm = useCallback(() => {
@@ -102,7 +107,7 @@ export function AddMediaLinkForm({
     }
 
     if (!url.trim() || !isValidUrl(url)) {
-      setUrlError('Please enter a valid URL');
+      setUrlError(tErrors('invalidUrl'));
       return;
     }
 
@@ -114,7 +119,7 @@ export function AddMediaLinkForm({
     });
 
     resetForm();
-  }, [title, url, linkType, thumbnailUrl, onAdd, resetForm]);
+  }, [title, url, linkType, thumbnailUrl, onAdd, resetForm, tErrors]);
 
   const canSubmit = title.trim() && url.trim() && isValidUrl(url);
 
@@ -128,7 +133,7 @@ export function AddMediaLinkForm({
         {/* Title */}
         <div>
           <label htmlFor="new-link-title" className="block text-sm font-medium text-gray-700 mb-1">
-            Title <span className="text-red-500">*</span>
+            {tForm('labels.title')} <span className="text-red-500">*</span>
           </label>
           <input
             id="new-link-title"
@@ -136,7 +141,7 @@ export function AddMediaLinkForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#FF385C] focus:border-transparent"
-            placeholder="e.g., Product Manual"
+            placeholder={tForm('placeholders.titleExample')}
             required
           />
         </div>
@@ -144,7 +149,7 @@ export function AddMediaLinkForm({
         {/* URL */}
         <div>
           <label htmlFor="new-link-url" className="block text-sm font-medium text-gray-700 mb-1">
-            URL <span className="text-red-500">*</span>
+            {tForm('labels.url')} <span className="text-red-500">*</span>
           </label>
           <input
             id="new-link-url"
@@ -155,7 +160,7 @@ export function AddMediaLinkForm({
               'w-full px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#FF385C] focus:border-transparent',
               urlError ? 'border-red-500' : 'border-gray-300'
             )}
-            placeholder="https://..."
+            placeholder={tForm('placeholders.url')}
             required
           />
           {urlError && (
@@ -166,7 +171,7 @@ export function AddMediaLinkForm({
         {/* Type */}
         <div>
           <label htmlFor="new-link-type" className="block text-sm font-medium text-gray-700 mb-1">
-            Type
+            {tForm('labels.linkType')}
           </label>
           <select
             id="new-link-type"
@@ -181,7 +186,7 @@ export function AddMediaLinkForm({
             ))}
           </select>
           <p className="mt-1 text-xs text-gray-500">
-            Type is auto-detected from URL but can be changed
+            {tForm('hints.typeAutoDetected')}
           </p>
         </div>
 
@@ -189,7 +194,7 @@ export function AddMediaLinkForm({
         {(linkType === 'image' || showThumbnailField) && (
           <div>
             <label htmlFor="new-link-thumbnail" className="block text-sm font-medium text-gray-700 mb-1">
-              Thumbnail URL (optional)
+              {tForm('labels.thumbnailUrl')} {tForm('hints.optional')}
             </label>
             <input
               id="new-link-thumbnail"
@@ -197,7 +202,7 @@ export function AddMediaLinkForm({
               value={thumbnailUrl}
               onChange={(e) => setThumbnailUrl(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#FF385C] focus:border-transparent"
-              placeholder="https://..."
+              placeholder={tForm('placeholders.url')}
             />
           </div>
         )}
@@ -209,7 +214,7 @@ export function AddMediaLinkForm({
             onClick={() => setShowThumbnailField(true)}
             className="text-sm text-gray-500 hover:text-gray-700"
           >
-            + Add custom thumbnail
+            + {tActions('addThumbnail')}
           </button>
         )}
 
@@ -220,7 +225,7 @@ export function AddMediaLinkForm({
             onClick={handleCancel}
             className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
           >
-            Cancel
+            {tActions('cancel')}
           </button>
           <button
             type="button"
@@ -229,7 +234,7 @@ export function AddMediaLinkForm({
             className="px-4 py-2 text-sm text-white bg-[#FF385C] hover:bg-[#E31C5F] rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Link
+            {tActions('addLink')}
           </button>
         </div>
       </div>
