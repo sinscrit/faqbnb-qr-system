@@ -469,5 +469,90 @@
         "add": "Add Content"
       }
     }
+  },
+  "propertySearch": {
+    "placeholder": "Immobilien suchen...",
+    "ariaLabel": "Immobilien suchen",
+    "clearSearch": "Suche löschen",
+    "noPropertiesFound": "Keine Immobilien gefunden",
+    "propertyCount": "{count, plural, one {# Immobilie} other {# Immobilien}} gefunden"
+  },
+  "textEditor": {
+    "title": "Anleitung schreiben",
+    "description": "Textbasierte Anleitung mit Markdown-Formatierung hinzufügen",
+    "toolbar": {
+      "ariaLabel": "Textformatierung",
+      "bold": "Fett (Strg+B)",
+      "italic": "Kursiv (Strg+I)",
+      "heading1": "Überschrift 1",
+      "heading2": "Überschrift 2",
+      "heading3": "Überschrift 3",
+      "bulletList": "Aufzählungsliste",
+      "numberedList": "Nummerierte Liste",
+      "link": "Link einfügen (Strg+K)"
+    },
+    "editor": {
+      "placeholder": "Schreiben Sie hier Ihre Anleitung mit Markdown-Formatierung...",
+      "ariaLabel": "Markdown-Inhaltseditor"
+    },
+    "preview": {
+      "label": "Vorschau",
+      "emptyState": "Beginnen Sie zu tippen, um eine Vorschau Ihres formatierten Inhalts zu sehen..."
+    },
+    "tabs": {
+      "editor": "Editor",
+      "preview": "Vorschau"
+    },
+    "characterCount": {
+      "text": "{current} / {max} Zeichen",
+      "ariaLabel": "Fortschritt der Zeichenanzahl"
+    },
+    "errors": {
+      "overLimit": "Inhalt überschreitet die maximale Zeichenanzahl. Bitte kürzen Sie Ihren Text."
+    },
+    "autoSave": {
+      "saving": "Speichern..."
+    },
+    "navigation": {
+      "back": "Zurück",
+      "continue": "Weiter"
+    }
+  },
+  "urlInput": {
+    "title": "Link hinzufügen",
+    "description": "Fügen Sie eine URL zu Ihrem Artikel hinzu. Wir holen automatisch den Titel und die Vorschau ab.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Einfügen",
+      "clearUrl": "URL löschen",
+      "fetchButton": "Vorschau abrufen",
+      "fetching": "Vorschau wird abgerufen..."
+    },
+    "networkError": {
+      "title": "Vorschau nicht verfügbar",
+      "message": "Vorschau konnte aufgrund von Netzwerkproblemen nicht geladen werden.",
+      "retryButton": "Erneut versuchen",
+      "retrying": "Wird erneut versucht...",
+      "proceedButton": "Ohne Vorschau fortfahren"
+    },
+    "proceedWithoutPreview": {
+      "title": "Ohne Vorschau fortfahren",
+      "message": "Der Link wird ohne Vorschau hinzugefügt. Sie können den Titel später bearbeiten.",
+      "addButton": "Link trotzdem hinzufügen",
+      "cancelButton": "Abbrechen"
+    },
+    "preview": {
+      "loadedTitle": "Vorschau geladen",
+      "addButton": "Link hinzufügen",
+      "tryAnotherButton": "Anderen versuchen"
+    },
+    "errors": {
+      "invalidUrl": "Ungültige URL",
+      "clipboardError": "Zwischenablage konnte nicht gelesen werden. Bitte manuell einfügen."
+    },
+    "navigation": {
+      "back": "Zurück"
+    }
   }
 }

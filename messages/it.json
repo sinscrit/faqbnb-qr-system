@@ -469,5 +469,90 @@
         "add": "Add Content"
       }
     }
+  },
+  "propertySearch": {
+    "placeholder": "Cerca proprietà...",
+    "ariaLabel": "Cerca proprietà",
+    "clearSearch": "Cancella ricerca",
+    "noPropertiesFound": "Nessuna proprietà trovata",
+    "propertyCount": "{count, plural, one {# proprietà} other {# proprietà}} trovata/e"
+  },
+  "textEditor": {
+    "title": "Scrivi guida",
+    "description": "Aggiungi guida testuale con formattazione markdown",
+    "toolbar": {
+      "ariaLabel": "Formattazione testo",
+      "bold": "Grassetto (Ctrl+B)",
+      "italic": "Corsivo (Ctrl+I)",
+      "heading1": "Intestazione 1",
+      "heading2": "Intestazione 2",
+      "heading3": "Intestazione 3",
+      "bulletList": "Elenco puntato",
+      "numberedList": "Elenco numerato",
+      "link": "Inserisci link (Ctrl+K)"
+    },
+    "editor": {
+      "placeholder": "Scrivi la tua guida qui usando la formattazione markdown...",
+      "ariaLabel": "Editor contenuto markdown"
+    },
+    "preview": {
+      "label": "Anteprima",
+      "emptyState": "Inizia a digitare per vedere un'anteprima del contenuto formattato..."
+    },
+    "tabs": {
+      "editor": "Editor",
+      "preview": "Anteprima"
+    },
+    "characterCount": {
+      "text": "{current} / {max} caratteri",
+      "ariaLabel": "Progresso conteggio caratteri"
+    },
+    "errors": {
+      "overLimit": "Il contenuto supera il limite massimo di caratteri. Accorcia il testo."
+    },
+    "autoSave": {
+      "saving": "Salvataggio..."
+    },
+    "navigation": {
+      "back": "Indietro",
+      "continue": "Continua"
+    }
+  },
+  "urlInput": {
+    "title": "Aggiungi link",
+    "description": "Aggiungi un URL al tuo articolo. Recupereremo automaticamente il titolo e l'anteprima.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Incolla",
+      "clearUrl": "Cancella URL",
+      "fetchButton": "Recupera anteprima",
+      "fetching": "Recupero anteprima..."
+    },
+    "networkError": {
+      "title": "Anteprima non disponibile",
+      "message": "Impossibile caricare l'anteprima a causa di problemi di connettività di rete.",
+      "retryButton": "Riprova",
+      "retrying": "Nuovo tentativo...",
+      "proceedButton": "Procedi senza anteprima"
+    },
+    "proceedWithoutPreview": {
+      "title": "Procedendo senza anteprima",
+      "message": "Il link verrà aggiunto senza anteprima. Puoi modificare il titolo più tardi.",
+      "addButton": "Aggiungi link comunque",
+      "cancelButton": "Annulla"
+    },
+    "preview": {
+      "loadedTitle": "Anteprima caricata",
+      "addButton": "Aggiungi link",
+      "tryAnotherButton": "Prova un altro"
+    },
+    "errors": {
+      "invalidUrl": "URL non valido",
+      "clipboardError": "Impossibile leggere gli appunti. Incolla manualmente."
+    },
+    "navigation": {
+      "back": "Indietro"
+    }
   }
 }

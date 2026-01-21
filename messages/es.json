@@ -469,5 +469,90 @@
         "add": "Add Content"
       }
     }
+  },
+  "propertySearch": {
+    "placeholder": "Buscar propiedades...",
+    "ariaLabel": "Buscar propiedades",
+    "clearSearch": "Limpiar búsqueda",
+    "noPropertiesFound": "No se encontraron propiedades",
+    "propertyCount": "{count, plural, one {# propiedad} other {# propiedades}} encontrada(s)"
+  },
+  "textEditor": {
+    "title": "Escribir guía",
+    "description": "Agregar guía de texto con formato markdown",
+    "toolbar": {
+      "ariaLabel": "Formato de texto",
+      "bold": "Negrita (Ctrl+B)",
+      "italic": "Cursiva (Ctrl+I)",
+      "heading1": "Título 1",
+      "heading2": "Título 2",
+      "heading3": "Título 3",
+      "bulletList": "Lista con viñetas",
+      "numberedList": "Lista numerada",
+      "link": "Insertar enlace (Ctrl+K)"
+    },
+    "editor": {
+      "placeholder": "Escribe tu guía aquí usando formato markdown...",
+      "ariaLabel": "Editor de contenido markdown"
+    },
+    "preview": {
+      "label": "Vista previa",
+      "emptyState": "Comienza a escribir para ver una vista previa de tu contenido formateado..."
+    },
+    "tabs": {
+      "editor": "Editor",
+      "preview": "Vista previa"
+    },
+    "characterCount": {
+      "text": "{current} / {max} caracteres",
+      "ariaLabel": "Progreso del conteo de caracteres"
+    },
+    "errors": {
+      "overLimit": "El contenido excede el límite máximo de caracteres. Por favor acorta tu texto."
+    },
+    "autoSave": {
+      "saving": "Guardando..."
+    },
+    "navigation": {
+      "back": "Atrás",
+      "continue": "Continuar"
+    }
+  },
+  "urlInput": {
+    "title": "Agregar enlace",
+    "description": "Agrega una URL a tu artículo. Obtendremos automáticamente el título y la vista previa.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Pegar",
+      "clearUrl": "Limpiar URL",
+      "fetchButton": "Obtener vista previa",
+      "fetching": "Obteniendo vista previa..."
+    },
+    "networkError": {
+      "title": "Vista previa no disponible",
+      "message": "No se pudo cargar la vista previa debido a problemas de conectividad de red.",
+      "retryButton": "Reintentar",
+      "retrying": "Reintentando...",
+      "proceedButton": "Continuar sin vista previa"
+    },
+    "proceedWithoutPreview": {
+      "title": "Continuando sin vista previa",
+      "message": "El enlace se agregará sin vista previa. Puedes editar el título más tarde.",
+      "addButton": "Agregar enlace de todos modos",
+      "cancelButton": "Cancelar"
+    },
+    "preview": {
+      "loadedTitle": "Vista previa cargada",
+      "addButton": "Agregar enlace",
+      "tryAnotherButton": "Probar otro"
+    },
+    "errors": {
+      "invalidUrl": "URL inválida",
+      "clipboardError": "No se pudo leer el portapapeles. Por favor pega manualmente."
+    },
+    "navigation": {
+      "back": "Atrás"
+    }
   }
 }

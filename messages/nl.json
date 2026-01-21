@@ -469,5 +469,90 @@
         "add": "Add Content"
       }
     }
+  },
+  "propertySearch": {
+    "placeholder": "Eigenschappen zoeken...",
+    "ariaLabel": "Eigenschappen zoeken",
+    "clearSearch": "Zoekopdracht wissen",
+    "noPropertiesFound": "Geen eigenschappen gevonden",
+    "propertyCount": "{count, plural, one {# eigenschap} other {# eigenschappen}} gevonden"
+  },
+  "textEditor": {
+    "title": "Handleiding schrijven",
+    "description": "Voeg tekstgebaseerde handleiding toe met markdown-opmaak",
+    "toolbar": {
+      "ariaLabel": "Tekstopmaak",
+      "bold": "Vet (Ctrl+B)",
+      "italic": "Cursief (Ctrl+I)",
+      "heading1": "Kop 1",
+      "heading2": "Kop 2",
+      "heading3": "Kop 3",
+      "bulletList": "Opsommingslijst",
+      "numberedList": "Genummerde lijst",
+      "link": "Link invoegen (Ctrl+K)"
+    },
+    "editor": {
+      "placeholder": "Schrijf hier uw handleiding met markdown-opmaak...",
+      "ariaLabel": "Markdown-inhoudseditor"
+    },
+    "preview": {
+      "label": "Voorbeeld",
+      "emptyState": "Begin te typen om een voorbeeld van uw opgemaakte inhoud te zien..."
+    },
+    "tabs": {
+      "editor": "Editor",
+      "preview": "Voorbeeld"
+    },
+    "characterCount": {
+      "text": "{current} / {max} tekens",
+      "ariaLabel": "Voortgang aantal tekens"
+    },
+    "errors": {
+      "overLimit": "Inhoud overschrijdt het maximale aantal tekens. Verkort uw tekst."
+    },
+    "autoSave": {
+      "saving": "Opslaan..."
+    },
+    "navigation": {
+      "back": "Terug",
+      "continue": "Doorgaan"
+    }
+  },
+  "urlInput": {
+    "title": "Link toevoegen",
+    "description": "Voeg een URL toe aan uw artikel. We halen automatisch de titel en preview op.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Plakken",
+      "clearUrl": "URL wissen",
+      "fetchButton": "Preview ophalen",
+      "fetching": "Preview ophalen..."
+    },
+    "networkError": {
+      "title": "Preview niet beschikbaar",
+      "message": "Kan preview niet laden vanwege netwerkproblemen.",
+      "retryButton": "Opnieuw proberen",
+      "retrying": "Opnieuw proberen...",
+      "proceedButton": "Doorgaan zonder preview"
+    },
+    "proceedWithoutPreview": {
+      "title": "Doorgaan zonder preview",
+      "message": "De link wordt toegevoegd zonder preview. U kunt de titel later bewerken.",
+      "addButton": "Link toch toevoegen",
+      "cancelButton": "Annuleren"
+    },
+    "preview": {
+      "loadedTitle": "Preview geladen",
+      "addButton": "Link toevoegen",
+      "tryAnotherButton": "Andere proberen"
+    },
+    "errors": {
+      "invalidUrl": "Ongeldige URL",
+      "clipboardError": "Kan klembord niet lezen. Plak handmatig."
+    },
+    "navigation": {
+      "back": "Terug"
+    }
   }
 }

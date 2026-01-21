@@ -469,5 +469,90 @@
         "add": "Add Content"
       }
     }
+  },
+  "propertySearch": {
+    "placeholder": "Rechercher des propriétés...",
+    "ariaLabel": "Rechercher des propriétés",
+    "clearSearch": "Effacer la recherche",
+    "noPropertiesFound": "Aucune propriété trouvée",
+    "propertyCount": "{count, plural, one {# propriété} other {# propriétés}} trouvée(s)"
+  },
+  "textEditor": {
+    "title": "Rédiger un guide",
+    "description": "Ajouter un guide textuel avec formatage markdown",
+    "toolbar": {
+      "ariaLabel": "Formatage du texte",
+      "bold": "Gras (Ctrl+B)",
+      "italic": "Italique (Ctrl+I)",
+      "heading1": "Titre 1",
+      "heading2": "Titre 2",
+      "heading3": "Titre 3",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée",
+      "link": "Insérer un lien (Ctrl+K)"
+    },
+    "editor": {
+      "placeholder": "Rédigez votre guide ici en utilisant le formatage markdown...",
+      "ariaLabel": "Éditeur de contenu markdown"
+    },
+    "preview": {
+      "label": "Aperçu",
+      "emptyState": "Commencez à taper pour voir un aperçu de votre contenu formaté..."
+    },
+    "tabs": {
+      "editor": "Éditeur",
+      "preview": "Aperçu"
+    },
+    "characterCount": {
+      "text": "{current} / {max} caractères",
+      "ariaLabel": "Progression du nombre de caractères"
+    },
+    "errors": {
+      "overLimit": "Le contenu dépasse la limite maximale de caractères. Veuillez raccourcir votre texte."
+    },
+    "autoSave": {
+      "saving": "Enregistrement..."
+    },
+    "navigation": {
+      "back": "Retour",
+      "continue": "Continuer"
+    }
+  },
+  "urlInput": {
+    "title": "Ajouter un lien",
+    "description": "Ajoutez une URL à votre article. Nous récupérerons automatiquement le titre et l'aperçu.",
+    "form": {
+      "urlLabel": "URL",
+      "placeholder": "https://www.youtube.com/watch?v=...",
+      "pasteButton": "Coller",
+      "clearUrl": "Effacer l'URL",
+      "fetchButton": "Récupérer l'aperçu",
+      "fetching": "Récupération de l'aperçu..."
+    },
+    "networkError": {
+      "title": "Aperçu non disponible",
+      "message": "Impossible de charger l'aperçu en raison de problèmes de connectivité réseau.",
+      "retryButton": "Réessayer",
+      "retrying": "Nouvelle tentative...",
+      "proceedButton": "Continuer sans aperçu"
+    },
+    "proceedWithoutPreview": {
+      "title": "Continuer sans aperçu",
+      "message": "Le lien sera ajouté sans aperçu. Vous pourrez modifier le titre plus tard.",
+      "addButton": "Ajouter le lien quand même",
+      "cancelButton": "Annuler"
+    },
+    "preview": {
+      "loadedTitle": "Aperçu chargé",
+      "addButton": "Ajouter le lien",
+      "tryAnotherButton": "Essayer un autre"
+    },
+    "errors": {
+      "invalidUrl": "URL invalide",
+      "clipboardError": "Impossible de lire le presse-papiers. Veuillez coller manuellement."
+    },
+    "navigation": {
+      "back": "Retour"
+    }
   }
 }

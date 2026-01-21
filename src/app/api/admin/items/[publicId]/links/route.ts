@@ -15,7 +15,9 @@ import {
   detectSourceLanguage,
 } from '@/lib/content-translation';
 import type { SupportedLanguage } from '@/lib/translation-service/translation-service.types';
-import type { CreateLinkRequest, LinkApiResponse, LinksListApiResponse } from '@/types';
+import type { CreateLinkRequest } from '@/types';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/lib/supabase';
 
 // Valid link types
 const VALID_LINK_TYPES = ['youtube', 'pdf', 'image', 'text', 'video'] as const;
@@ -28,7 +30,7 @@ async function getAccountContext(
   request: NextRequest,
   userId: string,
   isAdmin: boolean,
-  supabase: any
+  supabase: SupabaseClient<Database>
 ): Promise<{ accountId: string | null; accountRole: string; error?: NextResponse }> {
   const accountIdHeader = request.headers.get('x-account-id');
 
@@ -84,7 +86,7 @@ async function getAccountContext(
  * Fetch user's preferred language from database.
  */
 async function getUserPreferredLanguage(
-  supabase: any,
+  supabase: SupabaseClient<Database>,
   userId: string
 ): Promise<string | null> {
   const { data } = await supabase
@@ -99,7 +101,7 @@ async function getUserPreferredLanguage(
  * Fetch account's preferred language from database.
  */
 async function getAccountPreferredLanguage(
-  supabase: any,
+  supabase: SupabaseClient<Database>,
   accountId: string | null
 ): Promise<string | null> {
   if (!accountId) return null;
@@ -119,7 +121,7 @@ async function resolveAndValidateItemAccess(
   userId: string,
   isAdmin: boolean,
   accountId: string | null,
-  supabase: any
+  supabase: SupabaseClient<Database>
 ): Promise<{ itemId: string | null; error?: NextResponse }> {
   const { data: item, error } = await supabase
     .from('items')
@@ -295,7 +297,7 @@ export async function POST(
       );
     }
 
-    if (!body.linkType || !VALID_LINK_TYPES.includes(body.linkType as any)) {
+    if (!body.linkType || !VALID_LINK_TYPES.includes(body.linkType as typeof VALID_LINK_TYPES[number])) {
       return NextResponse.json(
         { success: false, error: `Invalid link type: ${body.linkType}. Valid types: ${VALID_LINK_TYPES.join(', ')}` },
         { status: 400 }
