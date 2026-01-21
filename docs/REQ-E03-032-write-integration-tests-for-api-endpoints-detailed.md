@@ -1,6 +1,6 @@
 # Detailed Task Breakdown: REQ-E03-032 - Write Integration Tests for API Endpoints
 
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-21
 **Request ID:** REQ-E03-032
 **Epic:** Epic 3 - Dynamic Content Translation
 **Phase:** 7 - Testing & Validation
@@ -8,6 +8,7 @@
 **Size:** M (Medium)
 **Depends On:** REQ-E03-021, REQ-E03-022, REQ-E03-023, REQ-E03-008, REQ-E03-009
 **Overview Document:** REQ-E03-032-write-integration-tests-for-api-endpoints-overview.md
+**Status:** ✅ COMPLETED
 
 ---
 
@@ -21,13 +22,13 @@ This document provides granular, implementation-ready tasks for creating compreh
 
 Before starting implementation, verify:
 
-- [ ] REQ-E03-008 (Items API modification) is complete and merged
-- [ ] REQ-E03-009 (Articles API modification) is complete and merged
-- [ ] REQ-E03-021 (Translation status API endpoint) is complete and merged
-- [ ] REQ-E03-022 (Retry failed translations endpoint) is complete and merged
-- [ ] REQ-E03-023 (Manual translation override endpoint) is complete and merged
-- [ ] Existing test infrastructure (`vitest.config.ts`, `vitest.setup.ts`) is working
-- [ ] Mock patterns from `src/lib/job-queue/__tests__/` are understood
+- [x] REQ-E03-008 (Items API modification) is complete and merged
+- [x] REQ-E03-009 (Articles API modification) is complete and merged
+- [x] REQ-E03-021 (Translation status API endpoint) is complete and merged
+- [x] REQ-E03-022 (Retry failed translations endpoint) is complete and merged
+- [x] REQ-E03-023 (Manual translation override endpoint) is complete and merged
+- [x] Existing test infrastructure (`vitest.config.ts`, `vitest.setup.ts`) is working
+- [x] Mock patterns from `src/lib/job-queue/__tests__/` are understood
 
 ---
 
@@ -1499,11 +1500,66 @@ coverage: {
 
 After implementation, verify:
 
-- [ ] All tests pass when running `npm run test`
-- [ ] Test coverage for API endpoints exceeds 80%
-- [ ] Tests run consistently without flakiness
-- [ ] Tests complete within reasonable time (< 30 seconds total)
+- [x] All tests pass when running `npm run test`
+- [x] Test coverage for API endpoints exceeds 80%
+- [x] Tests run consistently without flakiness
+- [x] Tests complete within reasonable time (< 30 seconds total)
 - [ ] CI/CD pipeline runs tests successfully
+
+---
+
+## Implementation Completion Summary
+
+**Completed:** 2026-01-21
+
+### Files Created
+
+| File | Description | Test Count |
+|------|-------------|------------|
+| `src/app/api/admin/__tests__/translation-integration.test.ts` | Main integration test file | 20 tests |
+| `src/app/api/admin/__tests__/translation-test-utils.ts` | Test utilities and mock factories | N/A |
+
+### Test Coverage
+
+All 20 integration tests pass successfully:
+
+- **Translation Status Endpoint (7 tests)**:
+  - Returns correct status for fully translated content
+  - Returns correct status for partially translated content
+  - Returns correct status for content with failed translations
+  - Returns 400 for invalid entity type
+  - Returns 404 for non-existent entity
+  - Includes correct cache headers for completed translations
+  - Includes cache headers for non-complete translations
+
+- **Retry Endpoint (4 tests)**:
+  - Successfully requeues failed translation jobs
+  - Requeues only specified languages when provided
+  - Returns success with zero count when no failed jobs exist
+  - Returns 404 for non-existent entity
+
+- **Manual Override Endpoint (6 tests)**:
+  - Successfully updates translation with manual override
+  - Rejects invalid fields for item translations
+  - Rejects URL field for link translations
+  - Returns 403 when user lacks edit permission
+  - Returns 400 for unsupported language code
+  - Performs UPSERT when translation does not exist
+
+- **Error Handling (3 tests)**:
+  - Handles database connection errors gracefully
+  - Handles invalid UUID formats
+  - Returns 401 for unauthenticated requests
+
+### Implementation Notes
+
+1. **Mock Hoisting Fix**: Used inline vi.mock() factory functions to avoid variable hoisting issues that caused "Cannot access before initialization" errors.
+
+2. **UUID Validation**: Tests use valid UUID formats (hex characters only) to comply with the API's UUID_REGEX validation.
+
+3. **Status Mapping**: Tests account for the API's internal status mapping (e.g., 'complete' → 'fully_translated', 'failed' → 'has_failures').
+
+4. **Supabase Chain Mocking**: Created reusable chainable mock patterns that simulate Supabase's fluent query API.
 
 ---
 
