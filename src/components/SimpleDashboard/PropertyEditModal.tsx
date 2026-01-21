@@ -187,6 +187,7 @@ export function PropertyEditModal({
 }: PropertyEditModalProps) {
   const tModal = useTranslations('properties.modal');
   const tCommon = useTranslations('common.actions');
+  const tNotifications = useTranslations('common.notifications');
 
   // Task 3: Form state management
   const [formData, setFormData] = useState<PropertyEditFormData>({
@@ -272,7 +273,7 @@ export function PropertyEditModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to update property');
+        throw new Error(data.error || tNotifications('error.propertyUpdate'));
       }
 
       const { data: updatedProperty } = await response.json();
@@ -280,7 +281,7 @@ export function PropertyEditModal({
       onClose();
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : 'Failed to update property',
+        general: error instanceof Error ? error.message : tNotifications('error.propertyUpdate'),
       });
     } finally {
       setIsSubmitting(false);

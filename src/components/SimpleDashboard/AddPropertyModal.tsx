@@ -170,6 +170,7 @@ export function AddPropertyModal({
   const tModal = useTranslations('properties.modal');
   const tForm = useTranslations('properties.modal.form');
   const tValidation = useTranslations('properties.modal.validation');
+  const tNotifications = useTranslations('common.notifications');
 
   // Task 2.3: Form state management with empty initial values
   const [formData, setFormData] = useState<AddPropertyFormData>({
@@ -265,7 +266,7 @@ export function AddPropertyModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || tModal('toast.createFailed'));
+        throw new Error(data.error || tNotifications('error.propertyCreate'));
       }
 
       const { data: newProperty } = await response.json();
@@ -273,7 +274,7 @@ export function AddPropertyModal({
       onClose();
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : tModal('toast.createFailed'),
+        general: error instanceof Error ? error.message : tNotifications('error.propertyCreate'),
       });
     } finally {
       setIsSubmitting(false);

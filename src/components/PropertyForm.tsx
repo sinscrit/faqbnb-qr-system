@@ -14,6 +14,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   const tForm = useTranslations('common.form');
   const tErrors = useTranslations('errors.form');
   const tActions = useTranslations('common.actions');
+  const tNotifications = useTranslations('common.notifications');
 
   // Form state
   const [formData, setFormData] = useState<PropertyFormData>({
@@ -108,7 +109,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     } catch (error) {
       console.error('Error saving property:', error);
       setErrors({
-        general: error instanceof Error ? error.message : 'Failed to save property. Please try again.'
+        general: error instanceof Error ? error.message : tNotifications('error.propertySave')
       });
     } finally {
       setIsSubmitting(false);
