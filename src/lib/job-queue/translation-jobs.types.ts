@@ -27,6 +27,7 @@ export interface TranslationJob {
   sourceLanguage: SupportedLanguage;
   targetLanguage: SupportedLanguage;
   status: JobStatus;
+  priority: number;  // Job priority (100=urgent, 50=high, 25=normal, 10=low)
   attempts: number;
   errorMessage?: string | null;
   createdAt: string;
@@ -44,6 +45,12 @@ export interface CreateJobParams {
   entityId: string;
   sourceLanguage?: SupportedLanguage;
   targetLanguage: SupportedLanguage;
+  /** Optional priority override (if not provided, calculated automatically) */
+  priority?: number;
+  /** Content creation timestamp for priority calculation */
+  contentCreatedAt?: string;
+  /** Batch import identifier for bulk operations */
+  batchId?: string;
 }
 
 /**
@@ -54,6 +61,12 @@ export interface CreateBatchJobsParams {
   entityId: string;
   sourceLanguage?: SupportedLanguage;
   targetLanguages: SupportedLanguage[];
+  /** Optional priority override (if not provided, calculated automatically) */
+  priority?: number;
+  /** Content creation timestamp for priority calculation */
+  contentCreatedAt?: string;
+  /** Batch import identifier for bulk operations */
+  batchId?: string;
 }
 
 /**

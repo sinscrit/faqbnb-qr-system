@@ -26,6 +26,7 @@ export function createMockTranslationJob(
     sourceLanguage: 'en',
     targetLanguage: 'fr',
     status: 'queued',
+    priority: 50,  // REQ-E03-018: Default to HIGH priority
     attempts: 0,
     errorMessage: null,
     createdAt: new Date().toISOString(),

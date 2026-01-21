@@ -18,6 +18,7 @@ import {
   JobStatus,
   EntityType,
 } from './translation-jobs.types';
+import { calculateJobPriority, PRIORITY_LEVELS } from './priority';
 
 /**
  * Maps a database row to a TranslationJob interface
@@ -31,6 +32,7 @@ function mapRowToJob(row: Record<string, unknown>): TranslationJob {
     sourceLanguage: row.source_language as TranslationJob['sourceLanguage'],
     targetLanguage: row.target_language as TranslationJob['targetLanguage'],
     status: row.status as TranslationJob['status'],
+    priority: (row.priority as number) ?? 50,  // Default to HIGH priority
     attempts: (row.attempts as number) ?? 0,
     errorMessage: row.error_message as string | null,
     createdAt: row.created_at as string,
@@ -51,14 +53,30 @@ export async function createTranslationJob(
   params: CreateJobParams
 ): Promise<JobQueueResult<TranslationJob>> {
   try {
-    const { entityType, entityId, targetLanguage } = params;
+    const {
+      entityType,
+      entityId,
+      targetLanguage,
+      priority: priorityOverride,
+      contentCreatedAt,
+      batchId,
+    } = params;
     const sourceLanguage = params.sourceLanguage || 'en';
+
+    // Calculate priority if not explicitly provided
+    const priority = priorityOverride ?? calculateJobPriority({
+      contentCreatedAt,
+      jobCreatedAt: new Date(),
+      retryCount: 0,
+      batchId,
+    });
 
     console.log('JOB_QUEUE: Creating translation job', {
       entityType,
       entityId,
       sourceLanguage,
       targetLanguage,
+      priority,
     });
 
     const { data, error } = await supabaseAdmin
@@ -69,6 +87,7 @@ export async function createTranslationJob(
           entity_id: entityId,
           source_language: sourceLanguage,
           target_language: targetLanguage,
+          priority,
           status: 'queued',
           attempts: 0,
         },
@@ -142,8 +161,23 @@ export async function createBatchTranslationJobs(
   params: CreateBatchJobsParams
 ): Promise<JobQueueResult<TranslationJob[]>> {
   try {
-    const { entityType, entityId, targetLanguages } = params;
+    const {
+      entityType,
+      entityId,
+      targetLanguages,
+      priority: priorityOverride,
+      contentCreatedAt,
+      batchId,
+    } = params;
     const sourceLanguage = params.sourceLanguage || 'en';
+
+    // Calculate priority if not explicitly provided
+    const priority = priorityOverride ?? calculateJobPriority({
+      contentCreatedAt,
+      jobCreatedAt: new Date(),
+      retryCount: 0,
+      batchId,
+    });
 
     // Filter out source language from targets (can't translate to same language)
     const validTargets = targetLanguages.filter(
@@ -162,6 +196,7 @@ export async function createBatchTranslationJobs(
       entityId,
       sourceLanguage,
       targetLanguages: validTargets,
+      priority,
     });
 
     const jobRecords = validTargets.map((targetLanguage) => ({
@@ -169,6 +204,7 @@ export async function createBatchTranslationJobs(
       entity_id: entityId,
       source_language: sourceLanguage,
       target_language: targetLanguage,
+      priority,
       status: 'queued' as const,
       attempts: 0,
     }));
@@ -407,13 +443,15 @@ async function fetchAndLockJobFallback(
 ): Promise<JobQueueResult<TranslationJob | null>> {
   const now = new Date().toISOString();
 
-  // Find oldest queued job that's not locked
+  // Find highest priority queued job that's not locked
+  // Orders by priority DESC (highest first), then created_at ASC (oldest first within same priority)
   const { data: jobs, error: selectError } = await supabaseAdmin
     .from('translation_jobs')
     .select('*')
     .eq('status', 'queued')
     .is('locked_by', null)
-    .order('created_at', { ascending: true })
+    .order('priority', { ascending: false })  // Highest priority first
+    .order('created_at', { ascending: true }) // Then oldest first
     .limit(1);
 
   if (selectError) {
@@ -449,7 +487,10 @@ async function fetchAndLockJobFallback(
 
   if (lockError || !lockedJob) {
     // Another worker got it, try again (recursive but will terminate when queue empty)
-    console.log('JOB_QUEUE: Job locked by another worker, retrying');
+    console.log('JOB_QUEUE: Job locked by another worker, retrying', {
+      attemptedJobId: job.id,
+      priority: (job as Record<string, unknown>).priority,
+    });
     return fetchAndLockJobFallback(workerId);
   }
 

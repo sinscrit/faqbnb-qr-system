@@ -104,3 +104,17 @@ export type {
   HeartbeatResult,
   DuplicateCheckResult,
 } from './concurrency-control';
+
+// Priority utilities (REQ-E03-018)
+export {
+  PRIORITY_LEVELS,
+  RECENT_CONTENT_THRESHOLD_MINUTES,
+  calculateJobPriority,
+  isRecentContent,
+} from './priority';
+
+// Priority types (REQ-E03-018)
+export type {
+  PriorityLevel,
+  PriorityCalculationOptions,
+} from './priority';

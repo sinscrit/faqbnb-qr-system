@@ -1,7 +1,7 @@
 # REQ-E02-031: Create useCommonTranslations Convenience Hook - Detailed Task Breakdown
 
 *Generated: 2026-01-20 23:55:00 UTC*
-*Last Modified: 2026-01-20 23:55:00 UTC*
+*Last Modified: 2026-01-21 UTC*
 
 ## Reference
 
@@ -32,11 +32,11 @@ This document provides a detailed, step-by-step implementation guide for creatin
 
 Before starting implementation, verify:
 
-- [ ] Epic 1 foundation is complete (next-intl installed and configured)
-- [ ] `/messages/en.json` exists with the `common` namespace
-- [ ] `useTranslations` hook from next-intl works in the project
-- [ ] TypeScript strict mode is enabled
-- [ ] `/src/hooks/` directory exists
+- [x] Epic 1 foundation is complete (next-intl installed and configured) ---implemented: verified next-intl@4.7.0 installed---
+- [x] `/messages/en.json` exists with the `common` namespace ---implemented: verified common namespace exists with nested structure (actions, status, etc.)---
+- [x] `useTranslations` hook from next-intl works in the project ---implemented: verified by existing hooks like useLanguagePreference.ts---
+- [x] TypeScript strict mode is enabled ---implemented: verified in tsconfig.json---
+- [x] `/src/hooks/` directory exists ---implemented: verified directory exists with 15 hook files---
 
 ### Verification Commands
 

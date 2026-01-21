@@ -55,6 +55,7 @@ function jobToSnakeCase(job: TranslationJob): Record<string, unknown> {
     source_language: job.sourceLanguage,
     target_language: job.targetLanguage,
     status: job.status,
+    priority: job.priority,  // REQ-E03-018: Include priority field
     attempts: job.attempts,
     error_message: job.errorMessage,
     created_at: job.createdAt,
@@ -629,6 +630,136 @@ describe('Translation Job Processing Integration', () => {
         const stats = processor.getStats();
         expect(stats.totalJobsProcessed).toBe(0);
         expect(stats.consecutiveErrors).toBe(0);
+      });
+    });
+  });
+
+  // ===========================================================================
+  // Job Prioritization Integration Tests (REQ-E03-018)
+  // ===========================================================================
+  describe('Job Prioritization', () => {
+    describe('Priority Calculation at Job Creation', () => {
+      it('assigns HIGH priority (50) by default when no priority context provided', async () => {
+        const upsertMock = createChainMock();
+        upsertMock.upsert = vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: 'default-priority-job',
+                entity_type: 'article',
+                entity_id: 'test-article-1',
+                source_language: 'en',
+                target_language: 'fr',
+                priority: 50,
+                status: 'queued',
+                attempts: 0,
+                created_at: new Date().toISOString(),
+              },
+              error: null,
+            }),
+          }),
+        });
+        mockSupabaseAdmin.from.mockReturnValueOnce(upsertMock);
+
+        const { createTranslationJob } = await import('../translation-jobs');
+        const result = await createTranslationJob({
+          entityType: 'article',
+          entityId: 'test-article-1',
+          targetLanguage: 'fr',
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.priority).toBe(50);
+      });
+
+      it('assigns URGENT priority (100) for recently created content', async () => {
+        const now = new Date();
+        const upsertMock = createChainMock();
+        upsertMock.upsert = vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: 'urgent-priority-job',
+                entity_type: 'item',
+                entity_id: 'new-item-1',
+                source_language: 'en',
+                target_language: 'fr',
+                priority: 100,
+                status: 'queued',
+                attempts: 0,
+                created_at: now.toISOString(),
+              },
+              error: null,
+            }),
+          }),
+        });
+        mockSupabaseAdmin.from.mockReturnValueOnce(upsertMock);
+
+        const { createTranslationJob } = await import('../translation-jobs');
+        const result = await createTranslationJob({
+          entityType: 'item',
+          entityId: 'new-item-1',
+          targetLanguage: 'fr',
+          contentCreatedAt: now.toISOString(), // Just created
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.priority).toBe(100);
+      });
+
+      it('assigns NORMAL priority (25) for batch imports', async () => {
+        const upsertMock = createChainMock();
+        upsertMock.upsert = vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: 'batch-priority-job',
+                entity_type: 'item',
+                entity_id: 'batch-item-1',
+                source_language: 'en',
+                target_language: 'fr',
+                priority: 25,
+                status: 'queued',
+                attempts: 0,
+                created_at: new Date().toISOString(),
+              },
+              error: null,
+            }),
+          }),
+        });
+        mockSupabaseAdmin.from.mockReturnValueOnce(upsertMock);
+
+        const { createTranslationJob } = await import('../translation-jobs');
+        const result = await createTranslationJob({
+          entityType: 'item',
+          entityId: 'batch-item-1',
+          targetLanguage: 'fr',
+          batchId: 'import-batch-001',
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.priority).toBe(25);
+      });
+    });
+
+    describe('Priority-based Job Fetching', () => {
+      it('includes priority field in fetched job data', async () => {
+        const job = createMockTranslationJob({
+          id: 'priority-fetch-job',
+          status: 'queued',
+          priority: 100,
+        });
+
+        mockSupabaseAdmin.rpc.mockResolvedValueOnce({
+          data: [jobToSnakeCase(job)],
+          error: null,
+        });
+
+        const { fetchAndLockNextJob } = await import('../translation-jobs');
+        const result = await fetchAndLockNextJob({ workerId: 'priority-worker' });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.priority).toBe(100);
       });
     });
   });

@@ -126,6 +126,7 @@ export function mapDbJobToTranslationJob(row: Record<string, unknown>): Translat
     sourceLanguage: row.source_language as TranslationJob['sourceLanguage'],
     targetLanguage: row.target_language as TranslationJob['targetLanguage'],
     status: row.status as TranslationJob['status'],
+    priority: (row.priority as number) ?? 50,  // Default to HIGH priority
     attempts: (row.attempts as number) ?? 0,
     errorMessage: row.error_message as string | null,
     createdAt: row.created_at as string,

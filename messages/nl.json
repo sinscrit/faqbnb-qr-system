@@ -2,552 +2,681 @@
   "common": {
     "loading": {
       "generic": {
-        "loading": "Loading...",
-        "pleaseWait": "Please wait...",
-        "loadingData": "Loading data...",
-        "processing": "Processing..."
+        "loading": "Laden...",
+        "pleaseWait": "Even geduld...",
+        "loadingData": "Gegevens laden...",
+        "processing": "Verwerken..."
       },
       "pages": {
-        "dashboard": "Loading dashboard...",
-        "adminPanel": "Loading admin panel...",
-        "analytics": "Loading analytics...",
-        "item": "Loading item...",
-        "property": "Loading property...",
-        "instructions": "Loading instructions...",
-        "help": "Loading help...",
-        "print": "Loading print view..."
+        "dashboard": "Dashboard laden...",
+        "adminPanel": "Beheerpaneel laden...",
+        "analytics": "Analyses laden...",
+        "item": "Artikel laden...",
+        "property": "Eigendom laden...",
+        "instructions": "Instructies laden...",
+        "help": "Help laden...",
+        "print": "Afdrukweergave laden..."
       },
       "auth": {
-        "authenticating": "Authenticating...",
-        "checkingPermissions": "Checking permissions...",
-        "verifyingCredentials": "Please wait while we verify your credentials",
-        "completingAuth": "Completing authentication..."
+        "authenticating": "Authenticeren...",
+        "checkingPermissions": "Machtigingen controleren...",
+        "verifyingCredentials": "Even geduld terwijl we uw inloggegevens verifiëren",
+        "completingAuth": "Authenticatie voltooien..."
       },
       "status": {
-        "saving": "Saving...",
-        "deleting": "Deleting...",
-        "creating": "Creating...",
-        "updating": "Updating...",
-        "submitting": "Submitting...",
-        "applying": "Applying...",
-        "uploading": "Uploading...",
-        "downloading": "Downloading...",
-        "fetching": "Fetching data...",
-        "processingRotation": "Processing rotation..."
+        "saving": "Opslaan...",
+        "deleting": "Verwijderen...",
+        "creating": "Aanmaken...",
+        "updating": "Bijwerken...",
+        "submitting": "Verzenden...",
+        "applying": "Toepassen...",
+        "uploading": "Uploaden...",
+        "downloading": "Downloaden...",
+        "fetching": "Gegevens ophalen...",
+        "processingRotation": "Rotatie verwerken..."
       },
       "media": {
-        "video": "Loading video...",
-        "image": "Loading image...",
-        "pdf": "Loading PDF...",
-        "preview": "Loading preview..."
+        "video": "Video laden...",
+        "image": "Afbeelding laden...",
+        "pdf": "PDF laden...",
+        "preview": "Voorbeeld laden..."
       },
       "aria": {
-        "loadingItems": "Loading items",
-        "loadingItemsWait": "Loading items, please wait...",
-        "loadingGuides": "Loading guides",
-        "loadingEditor": "Loading editor",
-        "loadingContentPreview": "Loading content preview"
+        "loadingItems": "Artikelen laden",
+        "loadingItemsWait": "Artikelen laden, even geduld...",
+        "loadingGuides": "Handleidingen laden",
+        "loadingEditor": "Editor laden",
+        "loadingContentPreview": "Inhoudsvoorbeeld laden"
       }
     },
     "actions": {
-      "save": "Save",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "edit": "Edit",
-      "create": "Create",
-      "submit": "Submit",
-      "close": "Close",
-      "back": "Back",
-      "next": "Next",
-      "confirm": "Confirm",
-      "done": "Done",
-      "continue": "Continue",
-      "retry": "Retry",
-      "refresh": "Refresh",
-      "search": "Search",
-      "filter": "Filter",
-      "sort": "Sort",
-      "clear": "Clear",
-      "reset": "Reset",
-      "apply": "Apply",
-      "view": "View",
-      "viewAll": "View All",
-      "showMore": "Show More",
-      "showLess": "Show Less",
-      "selectAll": "Select All",
-      "deselectAll": "Deselect All",
-      "select": "Select",
-      "download": "Download",
-      "upload": "Upload",
-      "copy": "Copy",
-      "share": "Share",
-      "signIn": "Sign In",
-      "signInWithEmail": "Sign In with Email",
-      "signingIn": "Signing In...",
-      "signOut": "Sign Out",
-      "signingOut": "Signing Out...",
-      "signUp": "Sign Up",
-      "continueWithGoogle": "Continue with Google",
-      "connectingToGoogle": "Connecting to Google...",
-      "createAccount": "Create Account",
-      "creatingAccount": "Creating Account...",
-      "newQrCodeItem": "New QR Code Item",
-      "viewQrCodeItems": "View QR Code Items",
-      "printQrCode": "Print QR Code",
-      "downloadQrCode": "Download QR Code",
-      "viewQrCode": "View QR Code",
-      "generateQrCodes": "Generate QR Codes",
-      "generatingQrCodes": "Generating QR Codes...",
-      "addProperty": "Add Property",
-      "editProperty": "Edit Property",
-      "deleteProperty": "Delete Property",
-      "createProperty": "Create Property",
-      "moveToProperty": "Move to Property",
-      "addContent": "Add Content",
-      "addArticle": "Add Article",
-      "addFirstItem": "Add First Item",
-      "addMoreItems": "Add More Items",
-      "takePhoto": "Take Photo",
-      "recordVideo": "Record Video",
-      "uploadFile": "Upload File",
-      "retake": "Retake",
-      "useThis": "Use This",
-      "goBack": "Go Back",
-      "exitWorkflow": "Exit Workflow",
-      "exit": "Exit",
-      "stay": "Stay",
-      "skipForNow": "Skip For Now",
-      "doneForNow": "Done for Now",
-      "saveChanges": "Save Changes",
-      "savingChanges": "Saving Changes...",
-      "discardChanges": "Discard Changes",
-      "saveDraft": "Save Draft",
-      "saveItem": "Save Item",
-      "saving": "Saving...",
-      "deleteSelected": "Delete Selected",
-      "moveSelected": "Move Selected",
-      "printSelected": "Print Selected",
-      "addTag": "Add Tag",
-      "removeTag": "Remove Tag",
-      "generatePdf": "Generate PDF",
-      "generatingPdf": "Generating PDF...",
-      "exportPdf": "Export PDF",
-      "printDirectly": "Print Directly",
-      "processing": "Processing...",
-      "getNotified": "Get Notified",
-      "subscribing": "Subscribing...",
-      "subscribe": "Subscribe",
-      "deleteItem": "Delete Item",
-      "deleteItems": "Delete {count} Items",
-      "deleting": "Deleting...",
-      "selectedCount": "{count, plural, one {# selected} other {# selected}}",
-      "remove": "Remove",
-      "removing": "Removing..."
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "delete": "Verwijderen",
+      "edit": "Bewerken",
+      "create": "Aanmaken",
+      "submit": "Verzenden",
+      "close": "Sluiten",
+      "back": "Terug",
+      "next": "Volgende",
+      "confirm": "Bevestigen",
+      "done": "Klaar",
+      "continue": "Doorgaan",
+      "retry": "Opnieuw proberen",
+      "refresh": "Vernieuwen",
+      "search": "Zoeken",
+      "filter": "Filteren",
+      "sort": "Sorteren",
+      "clear": "Wissen",
+      "reset": "Resetten",
+      "apply": "Toepassen",
+      "view": "Bekijken",
+      "viewAll": "Alles Bekijken",
+      "showMore": "Meer Tonen",
+      "showLess": "Minder Tonen",
+      "selectAll": "Alles Selecteren",
+      "deselectAll": "Alles Deselecteren",
+      "select": "Selecteren",
+      "download": "Downloaden",
+      "upload": "Uploaden",
+      "copy": "Kopiëren",
+      "share": "Delen",
+      "signIn": "Inloggen",
+      "signInWithEmail": "Inloggen met E-mail",
+      "signingIn": "Inloggen...",
+      "signOut": "Uitloggen",
+      "signingOut": "Uitloggen...",
+      "signUp": "Registreren",
+      "continueWithGoogle": "Doorgaan met Google",
+      "connectingToGoogle": "Verbinden met Google...",
+      "createAccount": "Account Aanmaken",
+      "creatingAccount": "Account aanmaken...",
+      "newQrCodeItem": "Nieuw QR-code Artikel",
+      "viewQrCodeItems": "QR-code Artikelen Bekijken",
+      "printQrCode": "QR-code Afdrukken",
+      "downloadQrCode": "QR-code Downloaden",
+      "viewQrCode": "QR-code Bekijken",
+      "generateQrCodes": "QR-codes Genereren",
+      "generatingQrCodes": "QR-codes genereren...",
+      "addProperty": "Eigendom Toevoegen",
+      "editProperty": "Eigendom Bewerken",
+      "deleteProperty": "Eigendom Verwijderen",
+      "createProperty": "Eigendom Aanmaken",
+      "moveToProperty": "Verplaatsen naar Eigendom",
+      "addContent": "Inhoud Toevoegen",
+      "addArticle": "Artikel Toevoegen",
+      "addFirstItem": "Eerste Artikel Toevoegen",
+      "addMoreItems": "Meer Artikelen Toevoegen",
+      "takePhoto": "Foto Maken",
+      "recordVideo": "Video Opnemen",
+      "uploadFile": "Bestand Uploaden",
+      "retake": "Opnieuw Maken",
+      "useThis": "Dit Gebruiken",
+      "goBack": "Teruggaan",
+      "exitWorkflow": "Workflow Verlaten",
+      "exit": "Verlaten",
+      "stay": "Blijven",
+      "skipForNow": "Voorlopig Overslaan",
+      "doneForNow": "Voorlopig Klaar",
+      "saveChanges": "Wijzigingen Opslaan",
+      "savingChanges": "Wijzigingen opslaan...",
+      "discardChanges": "Wijzigingen Verwerpen",
+      "saveDraft": "Concept Opslaan",
+      "saveItem": "Artikel Opslaan",
+      "saving": "Opslaan...",
+      "deleteSelected": "Geselecteerde Verwijderen",
+      "moveSelected": "Geselecteerde Verplaatsen",
+      "printSelected": "Geselecteerde Afdrukken",
+      "addTag": "Tag Toevoegen",
+      "removeTag": "Tag Verwijderen",
+      "generatePdf": "PDF Genereren",
+      "generatingPdf": "PDF genereren...",
+      "exportPdf": "PDF Exporteren",
+      "printDirectly": "Direct Afdrukken",
+      "processing": "Verwerken...",
+      "getNotified": "Meldingen Ontvangen",
+      "subscribing": "Abonneren...",
+      "subscribe": "Abonneren",
+      "deleteItem": "Artikel Verwijderen",
+      "deleteItems": "{count} Artikelen Verwijderen",
+      "deleting": "Verwijderen...",
+      "selectedCount": "{count, plural, one {# geselecteerd} other {# geselecteerd}}",
+      "remove": "Verwijderen",
+      "removing": "Verwijderen...",
+      "addLink": "Link Toevoegen",
+      "addThumbnail": "Aangepaste miniatuur toevoegen"
     },
     "status": {
-      "loading": "Loading...",
-      "saving": "Saving...",
-      "deleting": "Deleting...",
-      "success": "Success",
-      "error": "Error",
-      "pending": "Pending",
-      "completed": "Completed",
-      "failed": "Failed",
-      "active": "Active",
-      "inactive": "Inactive",
-      "enabled": "Enabled",
-      "disabled": "Disabled"
+      "loading": "Laden...",
+      "saving": "Opslaan...",
+      "deleting": "Verwijderen...",
+      "success": "Succes",
+      "error": "Fout",
+      "pending": "In afwachting",
+      "completed": "Voltooid",
+      "failed": "Mislukt",
+      "active": "Actief",
+      "inactive": "Inactief",
+      "enabled": "Ingeschakeld",
+      "disabled": "Uitgeschakeld"
     },
     "confirmation": {
-      "title": "Confirm Action",
-      "deleteTitle": "Confirm Delete",
-      "deleteMessage": "Are you sure you want to delete this? This action cannot be undone.",
-      "deleteItemTitle": "Delete Item",
-      "deleteItemsTitle": "Delete Items",
-      "deleteItemMessage": "Are you sure you want to delete this item? This action cannot be undone.",
-      "deleteItemsMessage": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-      "deleteNamedMessage": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
-      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
-      "cannotUndo": "This action cannot be undone.",
-      "itemsToDelete": "Items to be deleted",
-      "andMore": "and {count} more",
-      "yes": "Yes",
-      "no": "No"
+      "title": "Actie Bevestigen",
+      "deleteTitle": "Verwijderen Bevestigen",
+      "deleteMessage": "Weet u zeker dat u dit wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteItemTitle": "Artikel Verwijderen",
+      "deleteItemsTitle": "Artikelen Verwijderen",
+      "deleteItemMessage": "Weet u zeker dat u dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteItemsMessage": "Weet u zeker dat u deze {count} artikelen wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteNamedMessage": "Weet u zeker dat u \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "unsavedChanges": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u wilt doorgaan?",
+      "cannotUndo": "Deze actie kan niet ongedaan worden gemaakt.",
+      "itemsToDelete": "Te verwijderen artikelen",
+      "andMore": "en {count} meer",
+      "yes": "Ja",
+      "no": "Nee"
     },
     "confirmations": {
       "generic": {
-        "title": "Confirm Action",
-        "message": "Are you sure you want to proceed?",
-        "cannotUndo": "This action cannot be undone."
+        "title": "Actie Bevestigen",
+        "message": "Weet u zeker dat u wilt doorgaan?",
+        "cannotUndo": "Deze actie kan niet ongedaan worden gemaakt."
       },
       "delete": {
-        "titleSingle": "Delete Item",
-        "titleMultiple": "Delete Items",
-        "messageSingle": "Are you sure you want to delete this item? This action cannot be undone.",
-        "messageMultiple": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-        "messageWithName": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
-        "buttonSingle": "Delete Item",
-        "buttonMultiple": "Delete {count} Items",
-        "cascadeWarning": "This will also delete:",
-        "resourceLinks": "{count, plural, one {# resource link} other {# resource links}}",
-        "mediaFiles": "{count, plural, one {# media file from storage} other {# media files from storage}}",
-        "ariaItemList": "Items to be deleted",
-        "mediaTitle": "Delete {type}?"
+        "titleSingle": "Artikel Verwijderen",
+        "titleMultiple": "Artikelen Verwijderen",
+        "messageSingle": "Weet u zeker dat u dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "messageMultiple": "Weet u zeker dat u deze {count} artikelen wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "messageWithName": "Weet u zeker dat u \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "buttonSingle": "Artikel Verwijderen",
+        "buttonMultiple": "{count} Artikelen Verwijderen",
+        "cascadeWarning": "Dit zal ook verwijderen:",
+        "resourceLinks": "{count, plural, one {# bronlink} other {# bronlinks}}",
+        "mediaFiles": "{count, plural, one {# mediabestand uit opslag} other {# mediabestanden uit opslag}}",
+        "ariaItemList": "Te verwijderen artikelen",
+        "mediaTitle": "{type} verwijderen?"
       },
       "remove": {
-        "title": "Remove Item?",
-        "message": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
-        "assetTitle": "Remove {type}?",
-        "videoDuration": "Duration: {duration}",
-        "pdfPages": "{count, plural, one {# page} other {# pages}}"
+        "title": "Artikel Verwijderen?",
+        "message": "Weet u zeker dat u \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "assetTitle": "{type} Verwijderen?",
+        "videoDuration": "Duur: {duration}",
+        "pdfPages": "{count, plural, one {# pagina} other {# pagina's}}"
       },
       "exit": {
-        "title": "Exit Workflow?",
-        "messageDefault": "Are you sure you want to exit the workflow?",
-        "messageUnsaved": "You have unsaved changes. Are you sure you want to exit?",
-        "messageWithItems": "You have created {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
-        "messageUnsavedWithItems": "You have unsaved changes and {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
-        "button": "Exit Workflow"
+        "title": "Workflow Verlaten?",
+        "messageDefault": "Weet u zeker dat u de workflow wilt verlaten?",
+        "messageUnsaved": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u wilt verlaten?",
+        "messageWithItems": "U heeft {count, plural, one {# artikel} other {# artikelen}} aangemaakt in deze sessie. Weet u zeker dat u wilt verlaten?",
+        "messageUnsavedWithItems": "U heeft niet-opgeslagen wijzigingen en {count, plural, one {# artikel} other {# artikelen}} in deze sessie. Weet u zeker dat u wilt verlaten?",
+        "button": "Workflow Verlaten"
       },
       "discard": {
-        "title": "Discard Changes?",
-        "message": "You have unsaved changes. Are you sure you want to discard them?",
-        "button": "Discard"
+        "title": "Wijzigingen Verwerpen?",
+        "message": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u deze wilt verwerpen?",
+        "button": "Verwerpen"
       },
       "move": {
-        "title": "Move {count, plural, one {# Item} other {# Items}} to Another Property",
-        "placeholder": "Select a property...",
-        "button": "Move {count, plural, one {# Item} other {# Items}}"
+        "title": "{count, plural, one {# Artikel} other {# Artikelen}} Verplaatsen naar Ander Eigendom",
+        "placeholder": "Selecteer een eigendom...",
+        "button": "{count, plural, one {# Artikel} other {# Artikelen}} Verplaatsen"
       },
       "tags": {
-        "addTitle": "Add Tags to {count, plural, one {# Item} other {# Items}}",
-        "removeTitle": "Remove Tags from {count, plural, one {# Item} other {# Items}}",
-        "addButton": "Add {count, plural, one {# Tag} other {# Tags}}",
-        "removeButton": "Remove {count, plural, one {# Tag} other {# Tags}}"
+        "addTitle": "Tags Toevoegen aan {count, plural, one {# Artikel} other {# Artikelen}}",
+        "removeTitle": "Tags Verwijderen van {count, plural, one {# Artikel} other {# Artikelen}}",
+        "addButton": "{count, plural, one {# Tag} other {# Tags}} Toevoegen",
+        "removeButton": "{count, plural, one {# Tag} other {# Tags}} Verwijderen"
       },
       "buttons": {
-        "confirm": "Confirm",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "remove": "Remove",
-        "yes": "Yes",
-        "no": "No",
-        "proceed": "Proceed",
-        "goBack": "Go Back",
-        "stay": "Stay"
+        "confirm": "Bevestigen",
+        "cancel": "Annuleren",
+        "delete": "Verwijderen",
+        "remove": "Verwijderen",
+        "yes": "Ja",
+        "no": "Nee",
+        "proceed": "Doorgaan",
+        "goBack": "Teruggaan",
+        "stay": "Blijven"
       },
       "status": {
-        "deleting": "Deleting...",
-        "removing": "Removing...",
-        "moving": "Moving...",
-        "processing": "Processing..."
+        "deleting": "Verwijderen...",
+        "removing": "Verwijderen...",
+        "moving": "Verplaatsen...",
+        "processing": "Verwerken..."
       },
       "warnings": {
-        "cannotUndo": "This action cannot be undone.",
-        "permanentDelete": "This will permanently delete the selected content.",
-        "dataLoss": "Any unsaved data will be lost."
+        "cannotUndo": "Deze actie kan niet ongedaan worden gemaakt.",
+        "permanentDelete": "Dit zal de geselecteerde inhoud permanent verwijderen.",
+        "dataLoss": "Alle niet-opgeslagen gegevens gaan verloren."
       },
-      "overflow": "and {count} more",
+      "overflow": "en {count} meer",
       "assetTypes": {
         "video": "Video",
-        "photo": "Photo",
+        "photo": "Foto",
         "pdf": "PDF",
         "asset": "Asset",
-        "pdfDocument": "PDF Document"
+        "pdfDocument": "PDF-document"
       },
       "mediaTypes": {
-        "youtubeVideo": "YouTube Video",
-        "pdfDocument": "PDF Document",
-        "image": "Image",
-        "webLink": "Web Link"
+        "youtubeVideo": "YouTube-video",
+        "pdfDocument": "PDF-document",
+        "image": "Afbeelding",
+        "webLink": "Weblink"
       },
       "aria": {
-        "cancelRemoval": "Cancel removal",
-        "removeAsset": "Remove asset",
-        "confirmDelete": "Confirm delete",
-        "dialogTitle": "Confirmation dialog"
+        "cancelRemoval": "Verwijdering annuleren",
+        "removeAsset": "Asset verwijderen",
+        "confirmDelete": "Verwijdering bevestigen",
+        "dialogTitle": "Bevestigingsdialoog"
       }
     },
     "dialog": {
-      "close": "Close",
-      "closeModal": "Close modal",
-      "closeDialog": "Close dialog"
+      "close": "Sluiten",
+      "closeModal": "Modal sluiten",
+      "closeDialog": "Dialoog sluiten"
     },
     "empty": {
-      "noData": "No data available",
-      "noResults": "No results found",
-      "tryAgain": "Try again with different filters"
+      "noData": "Geen gegevens beschikbaar",
+      "noResults": "Geen resultaten gevonden",
+      "tryAgain": "Probeer opnieuw met andere filters"
     },
     "time": {
-      "justNow": "Just now",
-      "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}",
-      "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
-      "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
-      "today": "Today",
-      "yesterday": "Yesterday"
+      "justNow": "Zojuist",
+      "minutesAgo": "{count, plural, one {# minuut geleden} other {# minuten geleden}}",
+      "hoursAgo": "{count, plural, one {# uur geleden} other {# uur geleden}}",
+      "daysAgo": "{count, plural, one {# dag geleden} other {# dagen geleden}}",
+      "today": "Vandaag",
+      "yesterday": "Gisteren"
     },
     "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "page": "Page {current} of {total}",
-      "showing": "Showing {start} to {end} of {total}"
+      "previous": "Vorige",
+      "next": "Volgende",
+      "page": "Pagina {current} van {total}",
+      "showing": "Tonen {start} tot {end} van {total}"
     },
     "validation": {
-      "required": "This field is required",
-      "invalidEmail": "Please enter a valid email address",
-      "tooShort": "Must be at least {min} characters",
-      "tooLong": "Must be less than {max} characters"
+      "required": "Dit veld is verplicht",
+      "invalidEmail": "Voer een geldig e-mailadres in",
+      "tooShort": "Moet minimaal {min} tekens bevatten",
+      "tooLong": "Moet minder dan {max} tekens bevatten"
     },
     "notifications": {
       "success": {
-        "propertyCreated": "Property created successfully",
-        "propertyUpdated": "Property updated successfully",
-        "propertySaved": "Property saved successfully",
-        "itemSaved": "Item saved successfully",
-        "itemSavedNamed": "{itemName} has been saved successfully",
-        "guideUpdated": "Guide updated successfully",
-        "articleUpdated": "Article updated successfully",
-        "accountCreated": "Account created successfully! Redirecting to dashboard...",
-        "accessApproved": "Access request approved successfully",
-        "emailSent": "Email notification sent successfully",
-        "changesSaved": "Changes saved successfully",
-        "settingsUpdated": "Settings updated successfully",
-        "fileUploaded": "File uploaded successfully",
-        "copySuccess": "Copied to clipboard",
-        "exportSuccess": "Export completed successfully",
-        "qrGenerated": "Successfully generated {count} QR codes!",
-        "pdfExported": "PDF exported successfully! {count} QR codes included."
+        "propertyCreated": "Eigendom succesvol aangemaakt",
+        "propertyUpdated": "Eigendom succesvol bijgewerkt",
+        "propertySaved": "Eigendom succesvol opgeslagen",
+        "itemSaved": "Artikel succesvol opgeslagen",
+        "itemSavedNamed": "{itemName} is succesvol opgeslagen",
+        "guideUpdated": "Handleiding succesvol bijgewerkt",
+        "articleUpdated": "Artikel succesvol bijgewerkt",
+        "accountCreated": "Account succesvol aangemaakt! Doorsturen naar dashboard...",
+        "accessApproved": "Toegangsverzoek succesvol goedgekeurd",
+        "emailSent": "E-mailmelding succesvol verzonden",
+        "changesSaved": "Wijzigingen succesvol opgeslagen",
+        "settingsUpdated": "Instellingen succesvol bijgewerkt",
+        "fileUploaded": "Bestand succesvol geüpload",
+        "copySuccess": "Gekopieerd naar klembord",
+        "exportSuccess": "Export succesvol voltooid",
+        "qrGenerated": "{count} QR-codes succesvol gegenereerd!",
+        "pdfExported": "PDF succesvol geëxporteerd! {count} QR-codes inbegrepen."
       },
       "error": {
-        "generic": "Something went wrong. Please try again.",
-        "propertyCreate": "Failed to create property",
-        "propertyUpdate": "Failed to update property",
-        "propertySave": "Failed to save property. Please try again.",
-        "itemSave": "Failed to save item",
-        "itemUpdate": "Failed to update item. Please try again.",
-        "itemLoad": "Failed to load item data",
-        "loadData": "Failed to load data",
-        "loadVisits": "Failed to load visit counts",
-        "loadViews": "Failed to load views",
-        "loadAnalytics": "Failed to load analytics data",
-        "loadReactions": "Failed to load reaction data",
-        "loadDashboard": "Failed to load dashboard data",
-        "loadProperty": "Failed to load property",
-        "loadPropertyData": "Failed to load property data",
-        "updateReaction": "Failed to update reaction counts",
-        "generateQR": "Failed to generate QR codes",
-        "exportPDF": "Failed to export PDF. Please try again.",
-        "switchAccount": "Failed to switch account",
-        "initSession": "Failed to initialize session",
-        "fetchData": "Failed to fetch data",
-        "subscribe": "Unable to subscribe. Please try again.",
-        "sendEmail": "Failed to send email. Please try again.",
-        "submitRequest": "Failed to submit access request",
-        "approveRequest": "Failed to approve access request",
-        "denyRequest": "Failed to deny access request",
-        "sendNotification": "Failed to send email notification",
-        "uploadFile": "Failed to upload file",
-        "deleteItem": "Failed to delete item",
-        "networkError": "Network error. Please check your connection.",
-        "timeout": "Request timed out. Please try again.",
-        "unauthorized": "You are not authorized to perform this action",
-        "serverError": "Server error. Please try again later.",
-        "loadVideo": "Failed to load video. Please check the file and try again.",
-        "playVideo": "Unable to play video. Please try again.",
-        "loadImage": "Failed to load image. Please try again.",
-        "videoDuration": "Unable to determine video duration",
-        "clipboardRead": "Unable to read clipboard. Please paste manually."
+        "generic": "Er is iets misgegaan. Probeer het opnieuw.",
+        "propertyCreate": "Eigendom aanmaken mislukt",
+        "propertyUpdate": "Eigendom bijwerken mislukt",
+        "propertySave": "Eigendom opslaan mislukt. Probeer het opnieuw.",
+        "itemSave": "Artikel opslaan mislukt",
+        "itemUpdate": "Artikel bijwerken mislukt. Probeer het opnieuw.",
+        "itemLoad": "Artikelgegevens laden mislukt",
+        "loadData": "Gegevens laden mislukt",
+        "loadVisits": "Bezoekteller laden mislukt",
+        "loadViews": "Weergaven laden mislukt",
+        "loadAnalytics": "Analysegegevens laden mislukt",
+        "loadReactions": "Reactiegegevens laden mislukt",
+        "loadDashboard": "Dashboardgegevens laden mislukt",
+        "loadProperty": "Eigendom laden mislukt",
+        "loadPropertyData": "Eigendomsgegevens laden mislukt",
+        "updateReaction": "Reactieteller bijwerken mislukt",
+        "generateQR": "QR-codes genereren mislukt",
+        "exportPDF": "PDF exporteren mislukt. Probeer het opnieuw.",
+        "switchAccount": "Account wisselen mislukt",
+        "initSession": "Sessie initialiseren mislukt",
+        "fetchData": "Gegevens ophalen mislukt",
+        "subscribe": "Abonneren mislukt. Probeer het opnieuw.",
+        "sendEmail": "E-mail verzenden mislukt. Probeer het opnieuw.",
+        "submitRequest": "Toegangsverzoek verzenden mislukt",
+        "approveRequest": "Toegangsverzoek goedkeuren mislukt",
+        "denyRequest": "Toegangsverzoek weigeren mislukt",
+        "sendNotification": "E-mailmelding verzenden mislukt",
+        "uploadFile": "Bestand uploaden mislukt",
+        "deleteItem": "Artikel verwijderen mislukt",
+        "networkError": "Netwerkfout. Controleer uw verbinding.",
+        "timeout": "Verzoek verlopen. Probeer het opnieuw.",
+        "unauthorized": "U bent niet gemachtigd om deze actie uit te voeren",
+        "serverError": "Serverfout. Probeer het later opnieuw.",
+        "loadVideo": "Video laden mislukt. Controleer het bestand en probeer opnieuw.",
+        "playVideo": "Video kan niet worden afgespeeld. Probeer het opnieuw.",
+        "loadImage": "Afbeelding laden mislukt. Probeer het opnieuw.",
+        "videoDuration": "Videoduur kan niet worden bepaald",
+        "clipboardRead": "Klembord kan niet worden gelezen. Plak handmatig."
       },
       "info": {
-        "saving": "Saving...",
-        "loading": "Loading...",
-        "deleting": "Deleting...",
-        "processing": "Processing...",
-        "uploading": "Uploading...",
-        "redirecting": "Redirecting...",
-        "pleaseWait": "Please wait...",
-        "savingChanges": "Saving property changes...",
-        "generatingPDF": "Generating PDF...",
-        "loadingData": "Loading data..."
+        "saving": "Opslaan...",
+        "loading": "Laden...",
+        "deleting": "Verwijderen...",
+        "processing": "Verwerken...",
+        "uploading": "Uploaden...",
+        "redirecting": "Doorsturen...",
+        "pleaseWait": "Even geduld...",
+        "savingChanges": "Eigendomswijzigingen opslaan...",
+        "generatingPDF": "PDF genereren...",
+        "loadingData": "Gegevens laden..."
       },
       "warning": {
-        "unsavedChanges": "You have unsaved changes",
-        "sessionExpiring": "Your session is about to expire",
-        "slowConnection": "Connection is slow. This may take a moment.",
-        "offlineMode": "You appear to be offline"
+        "unsavedChanges": "U heeft niet-opgeslagen wijzigingen",
+        "sessionExpiring": "Uw sessie verloopt bijna",
+        "slowConnection": "Verbinding is traag. Dit kan even duren.",
+        "offlineMode": "U lijkt offline te zijn"
       }
     },
     "emptyStates": {
       "generic": {
-        "noData": "No data available",
-        "noResults": "No results found",
-        "noResultsSearch": "No results match your search",
-        "noResultsFilter": "No results match your filters",
-        "tryAdjusting": "Try adjusting your search or filters"
+        "noData": "Geen gegevens beschikbaar",
+        "noResults": "Geen resultaten gevonden",
+        "noResultsSearch": "Geen resultaten komen overeen met uw zoekopdracht",
+        "noResultsFilter": "Geen resultaten komen overeen met uw filters",
+        "tryAdjusting": "Probeer uw zoekopdracht of filters aan te passen"
       },
       "items": {
-        "title": "No items yet",
-        "description": "Create your first item to get started",
-        "descriptionAlt": "Get started by creating your first item",
-        "noItemsFound": "No items found",
-        "noItemsSearchMatch": "No items match your search for \"{searchTerm}\"",
-        "noItemsAvailable": "No items available",
-        "noItemsForProperty": "There are no items to display for this property.",
-        "noItemsProperty": "No items"
+        "title": "Nog geen artikelen",
+        "description": "Maak uw eerste artikel om te beginnen",
+        "descriptionAlt": "Begin met het aanmaken van uw eerste artikel",
+        "noItemsFound": "Geen artikelen gevonden",
+        "noItemsSearchMatch": "Geen artikelen komen overeen met uw zoekopdracht naar \"{searchTerm}\"",
+        "noItemsAvailable": "Geen artikelen beschikbaar",
+        "noItemsForProperty": "Er zijn geen artikelen om weer te geven voor dit eigendom.",
+        "noItemsProperty": "Geen artikelen"
       },
       "guides": {
-        "title": "No guides yet",
-        "titleNotFound": "No guides found",
-        "description": "Create items and add guide articles to get started. Guides help guests understand how things work.",
-        "descriptionItem": "Guides for this item will appear here",
-        "noGuides": "No guides.",
-        "noGuidesAvailable": "No guides available",
-        "noGuidesProvided": "No guides provided.",
-        "noGuidesAdded": "No guides added."
+        "title": "Nog geen handleidingen",
+        "titleNotFound": "Geen handleidingen gevonden",
+        "description": "Maak artikelen en voeg handleidingen toe om te beginnen. Handleidingen helpen gasten te begrijpen hoe dingen werken.",
+        "descriptionItem": "Handleidingen voor dit artikel verschijnen hier",
+        "noGuides": "Geen handleidingen.",
+        "noGuidesAvailable": "Geen handleidingen beschikbaar",
+        "noGuidesProvided": "Geen handleidingen verstrekt.",
+        "noGuidesAdded": "Geen handleidingen toegevoegd."
       },
       "properties": {
-        "title": "No properties yet",
-        "titleNotFound": "No Properties Found",
-        "titleAdd": "Let's add your property",
-        "description": "A property is where your items live - like a vacation rental or home.",
-        "descriptionCreate": "Get started by creating your first property.",
-        "descriptionSearchNoMatch": "No properties match your search criteria.",
-        "noPropertiesAvailable": "No properties available",
-        "noPropertiesFound": "No properties found"
+        "title": "Nog geen eigendommen",
+        "titleNotFound": "Geen Eigendommen Gevonden",
+        "titleAdd": "Laten we uw eigendom toevoegen",
+        "description": "Een eigendom is waar uw artikelen leven - zoals een vakantiewoning of huis.",
+        "descriptionCreate": "Begin met het aanmaken van uw eerste eigendom.",
+        "descriptionSearchNoMatch": "Geen eigendommen komen overeen met uw zoekcriteria.",
+        "noPropertiesAvailable": "Geen eigendommen beschikbaar",
+        "noPropertiesFound": "Geen eigendommen gevonden"
       },
       "dashboard": {
         "welcome": {
-          "title": "Welcome to FAQBNB!",
-          "description": "Get started by adding your first property. Then you can create QR codes to help guests find what they need."
+          "title": "Welkom bij FAQBNB!",
+          "description": "Begin met het toevoegen van uw eerste eigendom. Daarna kunt u QR-codes maken om gasten te helpen vinden wat ze nodig hebben."
         },
         "noContent": {
-          "title": "Start adding new QR Code items and create guides/instructions",
-          "description": "Create your first item to get started"
+          "title": "Begin met het toevoegen van nieuwe QR-code artikelen en het maken van handleidingen",
+          "description": "Maak uw eerste artikel om te beginnen"
         }
       },
       "resources": {
-        "title": "No Resources Available",
-        "description": "No resources available for this item.",
-        "noResourcesInSection": "No resources in this section.",
-        "noResourcesAvailable": "No resources available for this item."
+        "title": "Geen Bronnen Beschikbaar",
+        "description": "Geen bronnen beschikbaar voor dit artikel.",
+        "noResourcesInSection": "Geen bronnen in deze sectie.",
+        "noResourcesAvailable": "Geen bronnen beschikbaar voor dit artikel."
       },
       "qrCodes": {
-        "title": "No QR codes generated yet",
-        "noCodesForExport": "No QR codes available for PDF export.",
-        "generateFirst": "No QR codes available for PDF export. Please generate QR codes first."
+        "title": "Nog geen QR-codes gegenereerd",
+        "noCodesForExport": "Geen QR-codes beschikbaar voor PDF-export.",
+        "generateFirst": "Geen QR-codes beschikbaar voor PDF-export. Genereer eerst QR-codes."
       },
       "analytics": {
-        "noEngagement": "No engagement data available",
-        "noDailyViews": "No daily view data available",
-        "noReactions": "No reactions data available",
-        "noReactionsYet": "No reactions yet",
-        "noAnalyticsData": "No analytics data available"
+        "noEngagement": "Geen betrokkenheidsgegevens beschikbaar",
+        "noDailyViews": "Geen dagelijkse weergavegegevens beschikbaar",
+        "noReactions": "Geen reactiegegevens beschikbaar",
+        "noReactionsYet": "Nog geen reacties",
+        "noAnalyticsData": "Geen analysegegevens beschikbaar"
       },
       "session": {
-        "title": "No Items Added",
-        "description": "No items added yet. Add items or exit session?",
-        "descriptionAlt": "You haven't created any items in this session yet. Start by adding your first item.",
-        "noItemsYet": "No items yet",
-        "noItemsDescription": "You haven't created any items in this session yet. Start by adding your first item.",
-        "addItems": "Add Items",
-        "addFirstItem": "Add First Item",
-        "exitSession": "Exit Session"
+        "title": "Geen Artikelen Toegevoegd",
+        "description": "Nog geen artikelen toegevoegd. Artikelen toevoegen of sessie verlaten?",
+        "descriptionAlt": "U heeft nog geen artikelen aangemaakt in deze sessie. Begin met het toevoegen van uw eerste artikel.",
+        "noItemsYet": "Nog geen artikelen",
+        "noItemsDescription": "U heeft nog geen artikelen aangemaakt in deze sessie. Begin met het toevoegen van uw eerste artikel.",
+        "addItems": "Artikelen Toevoegen",
+        "addFirstItem": "Eerste Artikel Toevoegen",
+        "exitSession": "Sessie Verlaten"
       },
       "accessRequests": {
-        "title": "No access requests found",
-        "description": "No access requests have been submitted yet"
+        "title": "Geen toegangsverzoeken gevonden",
+        "description": "Er zijn nog geen toegangsverzoeken ingediend"
       },
       "locations": {
-        "noLocationsAvailable": "No locations available"
+        "noLocationsAvailable": "Geen locaties beschikbaar"
       },
       "tags": {
-        "noTagsAvailable": "No tags available"
+        "noTagsAvailable": "Geen tags beschikbaar"
       },
       "cta": {
-        "createItem": "Create Item",
-        "createFirstItem": "Create Your First Item",
-        "newQRCodeItem": "New QR Code Item",
-        "addProperty": "Add Property",
-        "createGuide": "Create Guide",
-        "clearFilters": "Clear Filters"
+        "createItem": "Artikel Aanmaken",
+        "createFirstItem": "Uw Eerste Artikel Aanmaken",
+        "newQRCodeItem": "Nieuw QR-code Artikel",
+        "addProperty": "Eigendom Toevoegen",
+        "createGuide": "Handleiding Aanmaken",
+        "clearFilters": "Filters Wissen"
+      }
+    },
+    "form": {
+      "labels": {
+        "email": "E-mailadres",
+        "password": "Wachtwoord",
+        "confirmPassword": "Wachtwoord Bevestigen",
+        "fullName": "Volledige Naam",
+        "name": "Naam",
+        "title": "Titel",
+        "description": "Beschrijving",
+        "url": "URL",
+        "type": "Type",
+        "address": "Adres",
+        "phone": "Telefoonnummer",
+        "accessCode": "Toegangscode",
+        "propertyNickname": "Eigendomsbijnaam",
+        "propertyType": "Eigendomstype",
+        "propertyOwner": "Eigendomseigenaar",
+        "publicId": "Publieke ID",
+        "itemName": "Artikelnaam",
+        "property": "Eigendom",
+        "qrCodeImageUrl": "QR-code Afbeeldings-URL",
+        "thumbnailUrl": "Miniatuur-URL",
+        "linkType": "Link Type",
+        "rememberMe": "Onthoud mij voor 30 dagen",
+        "propertyName": "Eigendomsnaam",
+        "addressLine1": "Adresregel 1",
+        "addressLine2": "Adresregel 2",
+        "city": "Stad",
+        "stateProvince": "Staat/Provincie",
+        "postalCode": "Postcode",
+        "country": "Land"
+      },
+      "placeholders": {
+        "email": "Voer uw e-mailadres in",
+        "emailExample": "email@voorbeeld.nl",
+        "emailAdmin": "admin@faqbnb.com",
+        "password": "Voer uw wachtwoord in",
+        "passwordCreate": "Maak een sterk wachtwoord",
+        "passwordConfirm": "Bevestig uw wachtwoord",
+        "fullName": "Jan Jansen",
+        "name": "Voer naam in",
+        "title": "Voer titel in",
+        "titleExample": "bijv., Producthandleiding",
+        "description": "Voer beschrijving in...",
+        "descriptionItem": "Beschrijf het artikel, de locatie of belangrijke details...",
+        "url": "https://...",
+        "urlOptional": "https://... (optioneel)",
+        "urlQrCode": "https://voorbeeld.nl/qr-code.png",
+        "search": "Zoeken...",
+        "select": "Selecteer een optie...",
+        "selectProperty": "Selecteer eigendom...",
+        "selectCountry": "Selecteer land...",
+        "typeOrSelect": "Typ of selecteer...",
+        "accessCode": "Voer uw 8+ tekens toegangscode in",
+        "propertyNickname": "bijv., Hoofdkantoor, Thuis, Vakantiehuis",
+        "propertyNameExample": "bijv., Strandhuis",
+        "address": "bijv., Hoofdstraat 123, Stad, Staat 12345",
+        "streetAddress": "Straatadres",
+        "addressLine2": "Apt, suite, unit, etc. (optioneel)",
+        "city": "Stad",
+        "stateProvince": "Staat of Provincie",
+        "postalCode": "Postcode",
+        "itemName": "bijv., Samsung Wasmachine",
+        "uuidGenerated": "UUID wordt automatisch gegenereerd"
+      },
+      "hints": {
+        "optional": "(optioneel)",
+        "required": "(verplicht)",
+        "charactersRemaining": "{remaining} tekens resterend",
+        "charactersCount": "{count}/{max} tekens",
+        "minCharacters": "Minimaal {min} tekens",
+        "maxCharacters": "Maximaal {max} tekens",
+        "emailLinked": "Dit e-mailadres is gekoppeld aan uw toegangscode en kan niet worden gewijzigd.",
+        "cannotBeChanged": "Dit veld kan niet worden gewijzigd na aanmaak.",
+        "friendlyName": "Een vriendelijke naam om dit {item} te identificeren",
+        "accessCodeFormat": "Toegangscode moet 8+ tekens zijn",
+        "accessCodeAlphanumeric": "Toegangscode mag alleen letters en cijfers bevatten",
+        "validAccessCodeFormat": "Geldig toegangscode formaat",
+        "validEmailFormat": "Geldig e-mail formaat",
+        "typeAutoDetected": "Type automatisch gedetecteerd van URL"
+      },
+      "passwordStrength": {
+        "label": "Wachtwoordsterkte:",
+        "enterPassword": "Voer wachtwoord in",
+        "veryWeak": "Zeer Zwak",
+        "weak": "Zwak",
+        "fair": "Redelijk",
+        "good": "Goed",
+        "strong": "Sterk",
+        "requirements": "Vereisten:",
+        "minChars": "Minimaal {min} tekens",
+        "lowercase": "Eén kleine letter",
+        "uppercase": "Eén hoofdletter",
+        "number": "Eén cijfer",
+        "special": "Eén speciaal teken"
+      },
+      "passwordMatch": {
+        "match": "Wachtwoorden komen overeen",
+        "noMatch": "Wachtwoorden komen niet overeen"
+      },
+      "accessibility": {
+        "showPassword": "Wachtwoord tonen",
+        "hidePassword": "Wachtwoord verbergen",
+        "generateNew": "Nieuw {item} genereren",
+        "generateNewUuid": "Nieuwe UUID genereren",
+        "testLink": "Link testen",
+        "removeItem": "{item} verwijderen",
+        "selectMethod": "Registratiemethode selecteren",
+        "emailInput": "E-mail invoer",
+        "passwordInput": "Wachtwoord invoer"
+      },
+      "terms": {
+        "agreeToTerms": "Ik ga akkoord met de",
+        "termsOfService": "Servicevoorwaarden",
+        "and": "en",
+        "privacyPolicy": "Privacybeleid"
+      },
+      "registration": {
+        "continueWithGoogle": "Doorgaan met Google",
+        "quickSignUp": "Snel registreren met uw Google-account",
+        "signUpWithEmail": "Registreren met e-mail",
+        "createPassword": "Maak een wachtwoord voor uw account",
+        "chooseMethod": "Kies hoe u uw account wilt aanmaken",
+        "accessCodeInfo": "Toegangscode:",
+        "accountLinked": "Uw account wordt gekoppeld aan uw geverifieerde toegangscode"
       }
     }
   },
   "auth": {
     "signIn": "Inloggen",
     "signOut": "Uitloggen",
-    "confirmLogout": "Uitloggen bevestigen",
+    "confirmLogout": "Uitloggen Bevestigen",
     "confirmSignOutMessage": "Weet u zeker dat u wilt uitloggen?",
     "signUp": "Registreren",
     "email": "E-mail",
     "password": "Wachtwoord",
-    "forgotPassword": "Wachtwoord vergeten?",
-    "resetPassword": "Wachtwoord resetten",
+    "forgotPassword": "Wachtwoord Vergeten?",
+    "resetPassword": "Wachtwoord Resetten",
     "continueWithGoogle": "Doorgaan met Google",
-    "rememberMe": "Onthoud mij",
+    "rememberMe": "Onthoud Mij",
     "noAccount": "Nog geen account?",
-    "hasAccount": "Heb je al een account?",
-    "createAccount": "Account maken",
-    "verifyEmail": "E-mail verifieren",
-    "resendVerification": "Verificatie opnieuw versturen",
-    "welcomeBack": "Welkom terug",
+    "hasAccount": "Heeft u al een account?",
+    "createAccount": "Account Aanmaken",
+    "verifyEmail": "E-mail Verifiëren",
+    "resendVerification": "Verificatie Opnieuw Verzenden",
+    "welcomeBack": "Welkom Terug",
     "loggedInAs": "Ingelogd als"
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welkom terug",
+    "welcome": "Welkom Terug",
     "properties": "Eigendommen",
-    "items": "Items",
+    "items": "Artikelen",
     "analytics": "Analyses",
     "settings": "Instellingen",
-    "recentActivity": "Recente activiteit",
-    "quickActions": "Snelle acties",
-    "totalProperties": "Totaal eigendommen",
-    "totalItems": "Totaal items",
-    "totalScans": "Totaal scans",
-    "activeUsers": "Actieve gebruikers",
+    "recentActivity": "Recente Activiteit",
+    "quickActions": "Snelle Acties",
+    "totalProperties": "Totaal Eigendommen",
+    "totalItems": "Totaal Artikelen",
+    "totalScans": "Totaal Scans",
+    "activeUsers": "Actieve Gebruikers",
     "overview": "Overzicht",
-    "createProperty": "Eigendom maken",
-    "createItem": "Item maken",
-    "viewAll": "Alles bekijken",
+    "createProperty": "Eigendom Aanmaken",
+    "createItem": "Artikel Aanmaken",
+    "viewAll": "Alles Bekijken",
     "noActivity": "Geen recente activiteit"
   },
   "items": {
     "createNew": "Nieuwe QR-code",
-    "noItems": "Geen items",
-    "name": "Itemnaam",
+    "noItems": "Geen artikelen",
+    "name": "Artikelnaam",
     "description": "Beschrijving",
     "property": "Eigendom",
     "qrCode": "QR-code",
     "articles": "Artikelen",
-    "addArticle": "Artikel toevoegen",
-    "editItem": "Item bewerken",
-    "deleteItem": "Item verwijderen",
-    "viewItem": "Item bekijken",
-    "printQrCode": "QR-code afdrukken",
-    "downloadQrCode": "QR-code downloaden",
-    "scanCount": "Aantal scans",
-    "lastScanned": "Laatst gescand",
-    "createdAt": "Gemaakt op",
-    "updatedAt": "Bijgewerkt op",
-    "selectProperty": "Eigendom selecteren",
-    "itemDetails": "Itemdetails",
+    "addArticle": "Artikel Toevoegen",
+    "editItem": "Artikel Bewerken",
+    "deleteItem": "Artikel Verwijderen",
+    "viewItem": "Artikel Bekijken",
+    "printQrCode": "QR-code Afdrukken",
+    "downloadQrCode": "QR-code Downloaden",
+    "scanCount": "Aantal Scans",
+    "lastScanned": "Laatst Gescand",
+    "createdAt": "Aangemaakt Op",
+    "updatedAt": "Bijgewerkt Op",
+    "selectProperty": "Eigendom Selecteren",
+    "itemDetails": "Artikeldetails",
     "noArticles": "Geen artikelen",
-    "addFirstArticle": "Voeg je eerste artikel toe",
+    "addFirstArticle": "Voeg uw eerste artikel toe",
     "room": "Kamer",
     "tags": "Tags",
-    "addTag": "Tag toevoegen",
-    "removeTag": "Tag verwijderen"
+    "addTag": "Tag Toevoegen",
+    "removeTag": "Tag Verwijderen"
   },
   "errors": {
     "required": "Dit veld is verplicht",
     "invalidEmail": "Ongeldig e-mailadres",
     "networkError": "Netwerkfout. Probeer het opnieuw.",
-    "unauthorized": "Je bent niet gemachtigd om deze actie uit te voeren",
+    "unauthorized": "U bent niet gemachtigd om deze actie uit te voeren",
     "notFound": "De gevraagde bron is niet gevonden",
     "serverError": "Serverfout. Probeer het later opnieuw.",
-    "validationFailed": "Validatie mislukt. Controleer je invoer.",
-    "sessionExpired": "Je sessie is verlopen. Log opnieuw in.",
+    "validationFailed": "Validatie mislukt. Controleer uw invoer.",
+    "sessionExpired": "Uw sessie is verlopen. Log opnieuw in.",
     "tooManyRequests": "Te veel verzoeken. Wacht even.",
     "invalidCredentials": "Ongeldige e-mail of wachtwoord",
     "emailTaken": "Dit e-mailadres is al geregistreerd",
@@ -555,18 +684,39 @@
     "uploadFailed": "Upload mislukt. Probeer het opnieuw.",
     "fileTooLarge": "Bestand is te groot",
     "invalidFileType": "Ongeldig bestandstype",
-    "genericError": "Er is iets misgegaan. Probeer het opnieuw."
+    "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
+    "form": {
+      "emailRequired": "E-mail is verplicht",
+      "invalidEmail": "Voer een geldig e-mailadres in",
+      "passwordRequired": "Wachtwoord is verplicht",
+      "passwordTooShort": "Wachtwoord moet minimaal {min} tekens bevatten",
+      "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "accessCodeRequired": "Toegangscode is verplicht",
+      "propertyNicknameRequired": "Eigendomsbijnaam is verplicht",
+      "propertyNicknameTooLong": "Eigendomsbijnaam mag maximaal 100 tekens zijn",
+      "propertyTypeRequired": "Eigendomstype is verplicht",
+      "addressTooLong": "Adres mag maximaal 500 tekens zijn",
+      "invalidUrl": "Voer een geldige URL in",
+      "propertyNameRequired": "Eigendomsnaam is verplicht",
+      "propertyNameTooLong": "Eigendomsnaam mag maximaal {max} tekens zijn",
+      "addressLine1TooLong": "Adres mag maximaal {max} tekens zijn",
+      "addressLine2TooLong": "Adres mag maximaal {max} tekens zijn",
+      "cityTooLong": "Stad mag maximaal {max} tekens zijn",
+      "stateProvinceTooLong": "Staat/Provincie mag maximaal {max} tekens zijn",
+      "postalCodeTooLong": "Postcode mag maximaal {max} tekens zijn",
+      "invalidCountry": "Selecteer een geldig land"
+    }
   },
   "language": {
-    "select": "Taal selecteren",
-    "current": "Huidige taal",
+    "select": "Taal Selecteren",
+    "current": "Huidige Taal",
     "en": "Engels",
     "fr": "Frans",
     "es": "Spaans",
     "de": "Duits",
     "nl": "Nederlands",
     "it": "Italiaans",
-    "changeLanguage": "Taal wijzigen",
+    "changeLanguage": "Taal Wijzigen",
     "languageChanged": "Taal succesvol gewijzigd"
   },
   "datetime": {
@@ -653,234 +803,295 @@
       "pm": "PM"
     }
   },
+  "itemCapture": {
+    "metadataStep": {
+      "title": "Artikeldetails",
+      "description": "Voer basisinformatie over dit artikel in",
+      "fields": {
+        "itemName": {
+          "label": "Artikelnaam",
+          "placeholder": "bijv., Stoomstrijkijzer, Koffiezetapparaat, Föhn",
+          "helperText": "Dit is de naam van het fysieke artikel (bijv. 'Stoomstrijkijzer'). Instructies zoals 'Hoe te Reinigen' worden apart vastgelegd als handleidingen."
+        },
+        "contentPurpose": {
+          "label": "Inhoudsdoel",
+          "placeholder": "Selecteer inhoudstype...",
+          "helperText": "Optioneel classificeren welk type instructies u aanmaakt"
+        },
+        "room": {
+          "label": "Kamer",
+          "placeholder": "Selecteer of typ een kamer...",
+          "toggleAriaLabel": "Kameropties wisselen",
+          "useCustom": "Aangepast gebruiken:",
+          "noRoomsAvailable": "Geen kamers beschikbaar"
+        },
+        "tags": {
+          "label": "Tags",
+          "placeholder": "Tag toevoegen...",
+          "maxTagsReached": "Maximaal aantal tags bereikt",
+          "suggestedTags": "Voorgestelde tags:",
+          "removeTagAriaLabel": "Tag verwijderen: {tag}"
+        },
+        "itemType": {
+          "label": "Artikeltype",
+          "placeholder": "Selecteer artikeltype..."
+        }
+      },
+      "validation": {
+        "itemNameRequired": "Artikelnaam is verplicht",
+        "itemNameTooLong": "Artikelnaam mag maximaal {max} tekens zijn",
+        "locationTooLong": "Locatie mag maximaal {max} tekens zijn",
+        "maxTagsExceeded": "Maximaal {max} tags toegestaan",
+        "tagTooLong": "Elke tag mag maximaal {max} tekens zijn"
+      }
+    }
+  },
   "workflow": {
     "dialogs": {
       "confirmExit": {
-        "title": "Exit Workflow?",
-        "messageDefault": "Are you sure you want to exit the workflow?",
-        "messageUnsaved": "You have unsaved changes. Are you sure you want to exit?",
-        "messageItems": "You have created {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
-        "messageUnsavedAndItems": "You have unsaved changes and {count, plural, one {# item} other {# items}} in this session. Are you sure you want to exit?",
-        "cancel": "Cancel",
-        "exit": "Exit Workflow"
+        "title": "Workflow Verlaten?",
+        "messageDefault": "Weet u zeker dat u de workflow wilt verlaten?",
+        "messageUnsaved": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u wilt verlaten?",
+        "messageItems": "U heeft {count, plural, one {# artikel} other {# artikelen}} aangemaakt in deze sessie. Weet u zeker dat u wilt verlaten?",
+        "messageUnsavedAndItems": "U heeft niet-opgeslagen wijzigingen en {count, plural, one {# artikel} other {# artikelen}} in deze sessie. Weet u zeker dat u wilt verlaten?",
+        "cancel": "Annuleren",
+        "exit": "Workflow Verlaten"
       },
       "emptySession": {
-        "title": "No Items Added",
-        "message": "No items added yet. Add items or exit session?",
-        "addItems": "Add Items",
-        "exitSession": "Exit Session"
+        "title": "Geen Artikelen Toegevoegd",
+        "message": "Nog geen artikelen toegevoegd. Artikelen toevoegen of sessie verlaten?",
+        "addItems": "Artikelen Toevoegen",
+        "exitSession": "Sessie Verlaten"
       },
       "removeItem": {
-        "title": "Remove Item?",
-        "message": "Are you sure you want to remove \"{itemName}\"? This action cannot be undone.",
-        "cancel": "Cancel",
-        "remove": "Remove"
+        "title": "Artikel Verwijderen?",
+        "message": "Weet u zeker dat u \"{itemName}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "cancel": "Annuleren",
+        "remove": "Verwijderen"
       },
       "pdfExport": {
-        "title": "Export QR Codes as PDF",
-        "itemCount": "{count, plural, one {# item} other {# items}}",
-        "description": "Configure PDF export settings for your QR codes and download them as a printable PDF document.",
-        "errorTitle": "PDF generation failed",
-        "dismissError": "Dismiss error",
-        "cancel": "Cancel",
-        "generating": "Generating...",
-        "export": "Export PDF"
+        "title": "QR-codes Exporteren als PDF",
+        "itemCount": "{count, plural, one {# artikel} other {# artikelen}}",
+        "description": "Configureer PDF-exportinstellingen voor uw QR-codes en download ze als een afdrukbaar PDF-document.",
+        "errorTitle": "PDF-generatie mislukt",
+        "dismissError": "Fout negeren",
+        "cancel": "Annuleren",
+        "generating": "Genereren...",
+        "export": "PDF Exporteren"
       }
     }
   },
   "itemDialogs": {
     "preview": {
-      "title": "Item Preview",
-      "close": "Close preview",
-      "edit": "Edit",
-      "manageAssets": "Manage Assets",
-      "delete": "Delete"
+      "title": "Artikelvoorbeeld",
+      "defaultTitle": "Artikelvoorbeeld",
+      "closePreview": "Voorbeeld sluiten",
+      "close": "Voorbeeld sluiten",
+      "edit": "Bewerken",
+      "manageAssets": "Assets Beheren",
+      "delete": "Verwijderen",
+      "deleteTitle": "Artikel Verwijderen",
+      "deleteConfirmation": "Weet u zeker dat u \"{itemName}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteDialogAnnouncement": "Bevestigingsdialoog voor verwijdering van {itemName} geopend"
     },
     "delete": {
-      "title": "Delete Item",
-      "titleSingle": "Delete Item",
-      "titleMultiple": "Delete Items",
-      "message": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone.",
-      "messageSingle": "Are you sure you want to delete this item? This action cannot be undone.",
-      "messageMultiple": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-      "warningHeader": "This will also delete:",
-      "resourceLinks": "{count, plural, one {# resource link} other {# resource links}}",
-      "mediaFiles": "{count, plural, one {# media file} other {# media files}} from storage",
-      "itemsList": "Items to be deleted",
-      "andMore": "and {count} more",
-      "cancel": "Cancel",
-      "confirm": "Delete",
-      "confirmSingle": "Delete",
-      "confirmMultiple": "Delete {count} Items",
-      "deleting": "Deleting..."
+      "title": "Artikel Verwijderen",
+      "titleSingle": "Artikel Verwijderen",
+      "titleMultiple": "Artikelen Verwijderen",
+      "message": "Weet u zeker dat u \"{itemName}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "messageSingle": "Weet u zeker dat u dit artikel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "messageMultiple": "Weet u zeker dat u deze {count} artikelen wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "warningHeader": "Dit zal ook verwijderen:",
+      "resourceLinks": "{count, plural, one {# bronlink} other {# bronlinks}}",
+      "mediaFiles": "{count, plural, one {# mediabestand} other {# mediabestanden}} uit opslag",
+      "itemsList": "Te verwijderen artikelen",
+      "andMore": "en {count} meer",
+      "cancel": "Annuleren",
+      "confirm": "Verwijderen",
+      "confirmSingle": "Verwijderen",
+      "confirmMultiple": "{count} Artikelen Verwijderen",
+      "deleting": "Verwijderen..."
     },
     "view": {
-      "description": "Description",
-      "created": "Created:",
-      "updated": "Updated:",
-      "resources": "Resources ({count})",
-      "noResources": "No resources attached to this item",
-      "edit": "Edit Item",
-      "delete": "Delete"
+      "close": "Sluiten",
+      "descriptionLabel": "Beschrijving",
+      "description": "Beschrijving",
+      "created": "Aangemaakt: {date, date, medium}",
+      "updated": "Bijgewerkt: {date, date, medium}",
+      "resourcesLabel": "Bronnen ({count})",
+      "resources": "Bronnen ({count})",
+      "noResources": "Geen bronnen gekoppeld aan dit artikel",
+      "editItem": "Artikel Bewerken",
+      "edit": "Artikel Bewerken",
+      "delete": "Verwijderen"
+    },
+    "deleteItem": {
+      "title": "Artikel Verwijderen",
+      "message": "Weet u zeker dat u <strong>\"{itemName}\"</strong> wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "warningTitle": "Dit zal ook verwijderen:",
+      "resourceLinks": "{count, plural, one {# bronlink} other {# bronlinks}}",
+      "mediaFiles": "{count, plural, one {# mediabestand} other {# mediabestanden}} uit opslag",
+      "deleting": "Verwijderen...",
+      "deleteButton": "Artikel Verwijderen"
     },
     "bulkActions": {
       "tags": {
-        "addTitle": "Add Tags to {count, plural, one {# Item} other {# Items}}",
-        "removeTitle": "Remove Tags from {count, plural, one {# Item} other {# Items}}",
-        "addLabel": "Enter tags to add:",
-        "addPlaceholder": "Type a tag and press Enter...",
+        "addTitle": "Tags Toevoegen aan {count, plural, one {# Artikel} other {# Artikelen}}",
+        "removeTitle": "Tags Verwijderen van {count, plural, one {# Artikel} other {# Artikelen}}",
+        "addLabel": "Voer tags in om toe te voegen:",
+        "addPlaceholder": "Typ een tag en druk Enter...",
         "maxTags": "Max {max} tags",
-        "suggestions": "Suggested tags:",
-        "removeLabel": "Select tags to remove:",
-        "noTags": "No tags found on selected items.",
-        "itemsPreview": "Items to be updated:",
-        "andMore": "(and {count} more...)",
-        "cancel": "Cancel",
-        "addConfirm": "Add {count, plural, one {# Tag} other {# Tags}}",
-        "removeConfirm": "Remove {count, plural, one {# Tag} other {# Tags}}",
-        "removeTag": "Remove {tag} tag"
+        "suggestions": "Voorgestelde tags:",
+        "removeLabel": "Selecteer tags om te verwijderen:",
+        "noTags": "Geen tags gevonden op geselecteerde artikelen.",
+        "itemsPreview": "Te updaten artikelen:",
+        "andMore": "(en {count} meer...)",
+        "cancel": "Annuleren",
+        "addConfirm": "{count, plural, one {# Tag} other {# Tags}} Toevoegen",
+        "removeConfirm": "{count, plural, one {# Tag} other {# Tags}} Verwijderen",
+        "removeTag": "Tag {tag} verwijderen"
       },
       "move": {
-        "title": "Move {count, plural, one {# Item} other {# Items}} to Another Property",
-        "propertyLabel": "Destination property",
-        "selectProperty": "Select destination property...",
-        "selectPropertyAlt": "Select a property...",
-        "noProperties": "No properties available",
-        "noOtherProperties": "No other properties available",
-        "itemsPreview": "Items to move:",
-        "andMore": "(and {count} more...)",
-        "cancel": "Cancel",
-        "confirm": "Move {count, plural, one {# Item} other {# Items}}"
+        "title": "{count, plural, one {# Artikel} other {# Artikelen}} Verplaatsen naar Ander Eigendom",
+        "propertyLabel": "Bestemmingseigendom",
+        "selectProperty": "Selecteer bestemmingseigendom...",
+        "selectPropertyAlt": "Selecteer een eigendom...",
+        "noProperties": "Geen eigendommen beschikbaar",
+        "noOtherProperties": "Geen andere eigendommen beschikbaar",
+        "itemsPreview": "Te verplaatsen artikelen:",
+        "andMore": "(en {count} meer...)",
+        "cancel": "Annuleren",
+        "confirm": "{count, plural, one {# Artikel} other {# Artikelen}} Verplaatsen"
       }
     }
   },
   "properties": {
     "modal": {
-      "addTitle": "Add New Property",
-      "addDescription": "Create a new property by entering the name and address information.",
-      "editTitle": "Edit Property",
-      "editDescription": "Edit the details of your property including name and address information.",
-      "saving": "Saving...",
-      "saveChanges": "Save Changes",
-      "creating": "Creating...",
-      "closeModal": "Close modal",
+      "addTitle": "Nieuw Eigendom Toevoegen",
+      "addDescription": "Maak een nieuw eigendom door de naam en adresinformatie in te voeren.",
+      "editTitle": "Eigendom Bewerken",
+      "editDescription": "Bewerk de details van uw eigendom inclusief naam en adresinformatie.",
+      "saving": "Opslaan...",
+      "saveChanges": "Wijzigingen Opslaan",
+      "creating": "Aanmaken...",
+      "closeModal": "Modal sluiten",
       "form": {
         "name": {
-          "label": "Property Name",
-          "placeholder": "e.g., Beach House",
-          "required": "Property name is required"
+          "label": "Eigendomsnaam",
+          "placeholder": "bijv., Strandhuis",
+          "required": "Eigendomsnaam is verplicht"
         },
         "address1": {
-          "label": "Address Line 1",
-          "placeholder": "Street address"
+          "label": "Adresregel 1",
+          "placeholder": "Straatadres"
         },
         "address2": {
-          "label": "Address Line 2",
-          "placeholder": "Apt, suite, unit, etc. (optional)"
+          "label": "Adresregel 2",
+          "placeholder": "Apt, suite, unit, etc. (optioneel)"
         },
         "city": {
-          "label": "City",
-          "placeholder": "City"
+          "label": "Stad",
+          "placeholder": "Stad"
         },
         "state": {
-          "label": "State/Province",
-          "placeholder": "State or Province"
+          "label": "Staat/Provincie",
+          "placeholder": "Staat of Provincie"
         },
         "postalCode": {
-          "label": "Postal Code",
-          "placeholder": "ZIP / Postal code"
+          "label": "Postcode",
+          "placeholder": "Postcode"
         },
         "country": {
-          "label": "Country",
-          "placeholder": "Select country..."
+          "label": "Land",
+          "placeholder": "Selecteer land..."
         }
       },
       "validation": {
-        "nameRequired": "Property name is required",
-        "nameMaxLength": "Property name must be 100 characters or less",
-        "addressMaxLength": "Address must be 200 characters or less",
-        "cityMaxLength": "City must be 100 characters or less",
-        "stateMaxLength": "State/Province must be 100 characters or less",
-        "postalCodeMaxLength": "Postal code must be 20 characters or less",
-        "countryInvalid": "Please select a valid country"
+        "nameRequired": "Eigendomsnaam is verplicht",
+        "nameMaxLength": "Eigendomsnaam mag maximaal 100 tekens zijn",
+        "addressMaxLength": "Adres mag maximaal 200 tekens zijn",
+        "cityMaxLength": "Stad mag maximaal 100 tekens zijn",
+        "stateMaxLength": "Staat/Provincie mag maximaal 100 tekens zijn",
+        "postalCodeMaxLength": "Postcode mag maximaal 20 tekens zijn",
+        "countryInvalid": "Selecteer een geldig land"
       },
       "toast": {
-        "saving": "Saving property changes...",
-        "saveFailed": "Failed to update property",
-        "createFailed": "Failed to create property"
+        "saving": "Eigendomswijzigingen opslaan...",
+        "saveFailed": "Eigendom bijwerken mislukt",
+        "createFailed": "Eigendom aanmaken mislukt"
       }
     }
   },
   "media": {
     "dialogs": {
       "deleteConfirm": {
-        "titleYoutube": "Delete YouTube Video?",
-        "titlePdf": "Delete PDF Document?",
-        "titleImage": "Delete Image?",
-        "titleLink": "Delete Web Link?",
-        "titleGeneric": "Delete Media?",
-        "warning": "This action cannot be undone.",
-        "cancel": "Cancel",
-        "delete": "Delete"
+        "titleYoutube": "YouTube-video Verwijderen?",
+        "titlePdf": "PDF-document Verwijderen?",
+        "titleImage": "Afbeelding Verwijderen?",
+        "titleLink": "Weblink Verwijderen?",
+        "titleGeneric": "Media Verwijderen?",
+        "warning": "Deze actie kan niet ongedaan worden gemaakt.",
+        "cancel": "Annuleren",
+        "delete": "Verwijderen"
       },
       "assetRemove": {
-        "titleVideo": "Remove Video?",
-        "titlePhoto": "Remove Photo?",
-        "titlePdf": "Remove PDF?",
-        "titleGeneric": "Remove Asset?",
+        "titleVideo": "Video Verwijderen?",
+        "titlePhoto": "Foto Verwijderen?",
+        "titlePdf": "PDF Verwijderen?",
+        "titleGeneric": "Asset Verwijderen?",
         "typeVideo": "Video",
-        "typePhoto": "Photo",
+        "typePhoto": "Foto",
         "typePdf": "PDF",
         "typeGeneric": "Asset",
-        "duration": "Duration: {duration}",
-        "pages": "{count, plural, one {# page} other {# pages}}",
-        "warning": "This action cannot be undone.",
-        "cancel": "Cancel",
-        "cancelRemoval": "Cancel removal",
-        "remove": "Remove",
-        "removeAsset": "Remove asset"
+        "duration": "Duur: {duration}",
+        "pages": "{count, plural, one {# pagina} other {# pagina's}}",
+        "warning": "Deze actie kan niet ongedaan worden gemaakt.",
+        "cancel": "Annuleren",
+        "cancelRemoval": "Verwijdering annuleren",
+        "remove": "Verwijderen",
+        "removeAsset": "Asset verwijderen"
       }
     }
   },
   "content": {
     "addModal": {
-      "selectTitle": "Add Content",
-      "createTitle": "Create Content",
+      "selectTitle": "Inhoud Toevoegen",
+      "createTitle": "Inhoud Aanmaken",
       "types": {
-        "text": "Write Text",
-        "link": "Add Link",
-        "file": "Upload File",
-        "fileHint": "Video, Image, PDF"
+        "text": "Tekst Schrijven",
+        "link": "Link Toevoegen",
+        "file": "Bestand Uploaden",
+        "fileHint": "Video, Afbeelding, PDF"
       },
       "form": {
-        "titleLabel": "Title (Optional)",
-        "titlePlaceholder": "Enter a title for this content",
-        "textLabel": "Text Content *",
-        "textPlaceholder": "Enter your text content here...",
-        "charCount": "{count} / {max} characters",
+        "titleLabel": "Titel (Optioneel)",
+        "titlePlaceholder": "Voer een titel in voor deze inhoud",
+        "textLabel": "Tekstinhoud *",
+        "textPlaceholder": "Voer hier uw tekstinhoud in...",
+        "charCount": "{count} / {max} tekens",
         "urlLabel": "URL *",
-        "urlPlaceholder": "https://example.com",
-        "linkTitleLabel": "Link Title (Optional)",
-        "linkTitlePlaceholder": "Enter a title for this link",
-        "fileLabel": "Select File *"
+        "urlPlaceholder": "https://voorbeeld.nl",
+        "linkTitleLabel": "Linktitel (Optioneel)",
+        "linkTitlePlaceholder": "Voer een titel in voor deze link",
+        "fileLabel": "Selecteer Bestand *"
       },
       "actions": {
-        "back": "Back",
-        "cancel": "Cancel",
-        "add": "Add Content"
+        "back": "Terug",
+        "cancel": "Annuleren",
+        "add": "Inhoud Toevoegen"
       }
     }
   },
   "propertySearch": {
-    "placeholder": "Eigenschappen zoeken...",
-    "ariaLabel": "Eigenschappen zoeken",
+    "placeholder": "Eigendommen zoeken...",
+    "ariaLabel": "Eigendommen zoeken",
     "clearSearch": "Zoekopdracht wissen",
-    "noPropertiesFound": "Geen eigenschappen gevonden",
-    "propertyCount": "{count, plural, one {# eigenschap} other {# eigenschappen}} gevonden"
+    "noPropertiesFound": "Geen eigendommen gevonden",
+    "propertyCount": "{count, plural, one {# eigendom} other {# eigendommen}} gevonden"
   },
   "textEditor": {
-    "title": "Handleiding schrijven",
-    "description": "Voeg tekstgebaseerde handleiding toe met markdown-opmaak",
+    "title": "Handleiding Schrijven",
+    "description": "Tekstgebaseerde handleiding met markdown-opmaak toevoegen",
     "toolbar": {
       "ariaLabel": "Tekstopmaak",
       "bold": "Vet (Ctrl+B)",
@@ -889,8 +1100,8 @@
       "heading2": "Kop 2",
       "heading3": "Kop 3",
       "bulletList": "Opsommingslijst",
-      "numberedList": "Genummerde lijst",
-      "link": "Link invoegen (Ctrl+K)"
+      "numberedList": "Genummerde Lijst",
+      "link": "Link Invoegen (Ctrl+K)"
     },
     "editor": {
       "placeholder": "Schrijf hier uw handleiding met markdown-opmaak...",
@@ -906,10 +1117,10 @@
     },
     "characterCount": {
       "text": "{current} / {max} tekens",
-      "ariaLabel": "Voortgang aantal tekens"
+      "ariaLabel": "Voortgang tekentelling"
     },
     "errors": {
-      "overLimit": "Inhoud overschrijdt het maximale aantal tekens. Verkort uw tekst."
+      "overLimit": "Inhoud overschrijdt de maximale tekenlimiet. Kort uw tekst in."
     },
     "autoSave": {
       "saving": "Opslaan..."
@@ -920,37 +1131,37 @@
     }
   },
   "urlInput": {
-    "title": "Link toevoegen",
-    "description": "Voeg een URL toe aan uw artikel. We halen automatisch de titel en preview op.",
+    "title": "Link Toevoegen",
+    "description": "Voeg een URL toe aan uw artikel. We halen automatisch de titel en het voorbeeld op.",
     "form": {
       "urlLabel": "URL",
       "placeholder": "https://www.youtube.com/watch?v=...",
       "pasteButton": "Plakken",
-      "clearUrl": "URL wissen",
-      "fetchButton": "Preview ophalen",
-      "fetching": "Preview ophalen..."
+      "clearUrl": "URL Wissen",
+      "fetchButton": "Voorbeeld Ophalen",
+      "fetching": "Voorbeeld ophalen..."
     },
     "networkError": {
-      "title": "Preview niet beschikbaar",
-      "message": "Kan preview niet laden vanwege netwerkproblemen.",
-      "retryButton": "Opnieuw proberen",
+      "title": "Voorbeeld niet beschikbaar",
+      "message": "Voorbeeld kon niet worden geladen vanwege netwerkproblemen.",
+      "retryButton": "Opnieuw Proberen",
       "retrying": "Opnieuw proberen...",
-      "proceedButton": "Doorgaan zonder preview"
+      "proceedButton": "Doorgaan Zonder Voorbeeld"
     },
     "proceedWithoutPreview": {
-      "title": "Doorgaan zonder preview",
-      "message": "De link wordt toegevoegd zonder preview. U kunt de titel later bewerken.",
-      "addButton": "Link toch toevoegen",
+      "title": "Doorgaan zonder voorbeeld",
+      "message": "De link wordt toegevoegd zonder voorbeeld. U kunt de titel later bewerken.",
+      "addButton": "Link Toch Toevoegen",
       "cancelButton": "Annuleren"
     },
     "preview": {
-      "loadedTitle": "Preview geladen",
-      "addButton": "Link toevoegen",
-      "tryAnotherButton": "Andere proberen"
+      "loadedTitle": "Voorbeeld geladen",
+      "addButton": "Link Toevoegen",
+      "tryAnotherButton": "Andere Proberen"
     },
     "errors": {
       "invalidUrl": "Ongeldige URL",
-      "clipboardError": "Kan klembord niet lezen. Plak handmatig."
+      "clipboardError": "Klembord kon niet worden gelezen. Plak handmatig."
     },
     "navigation": {
       "back": "Terug"
