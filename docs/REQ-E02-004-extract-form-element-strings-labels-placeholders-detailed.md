@@ -1,7 +1,7 @@
 # REQ-E02-004: Extract Form Element Strings (Labels, Placeholders, Hints) - Detailed Task Breakdown
 
 *Generated: 2026-01-19 12:30:00 UTC*
-*Last Modified: 2026-01-19 12:30:00 UTC*
+*Last Modified: 2026-01-21 10:00:00 UTC*
 
 ## Reference
 
@@ -217,16 +217,17 @@ Add the `common.form` sub-namespace to `/messages/en.json` containing all form-r
 ```
 
 #### Acceptance Criteria
-- [ ] `common.form.labels` section added with ~20 keys
-- [ ] `common.form.placeholders` section added with ~25 keys
-- [ ] `common.form.hints` section added with ~15 keys
-- [ ] `common.form.passwordStrength` section added with ~12 keys
-- [ ] `common.form.passwordMatch` section added with 2 keys
-- [ ] `common.form.accessibility` section added with ~10 keys
-- [ ] `common.form.terms` section added with 4 keys
-- [ ] `common.form.registration` section added with ~7 keys
-- [ ] All keys follow camelCase naming convention
-- [ ] ICU format used for interpolated strings (e.g., `{count}/{max}`)
+- [x] `common.form.labels` section added with ~20 keys ---implemented: Added 22 label keys including email, password, fullName, propertyNickname, itemName, etc.---
+- [x] `common.form.placeholders` section added with ~25 keys ---implemented: Added 22 placeholder keys covering email, password, search, address patterns---
+- [x] `common.form.hints` section added with ~15 keys ---implemented: Added 14 hint keys including charactersCount, accessCodeFormat, validation hints---
+- [x] `common.form.passwordStrength` section added with ~12 keys ---implemented: Added 12 password strength keys (veryWeak through strong, requirements list)---
+- [x] `common.form.passwordMatch` section added with 2 keys ---implemented: Added match/noMatch keys---
+- [x] `common.form.accessibility` section added with ~10 keys ---implemented: Added 9 accessibility keys for show/hide password, generate UUID, etc.---
+- [x] `common.form.terms` section added with 4 keys ---implemented: Added agreeToTerms, termsOfService, and, privacyPolicy---
+- [x] `common.form.registration` section added with ~7 keys ---implemented: Added 7 registration keys for Google sign-up and email options---
+- [x] All keys follow camelCase naming convention ---implemented: All keys use camelCase---
+- [x] ICU format used for interpolated strings (e.g., `{count}/{max}`) ---implemented: ICU format used in charactersCount, minChars, etc.---
+- [x] `errors.form` sub-namespace added for form validation errors ---implemented: Added 11 form error keys---
 
 #### Verification Steps
 1. Validate JSON is syntactically correct

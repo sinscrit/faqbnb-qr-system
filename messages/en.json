@@ -154,6 +154,119 @@
       "invalidEmail": "Please enter a valid email address",
       "tooShort": "Must be at least {min} characters",
       "tooLong": "Must be less than {max} characters"
+    },
+    "form": {
+      "labels": {
+        "email": "Email Address",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "fullName": "Full Name",
+        "name": "Name",
+        "title": "Title",
+        "description": "Description",
+        "url": "URL",
+        "type": "Type",
+        "address": "Address",
+        "phone": "Phone Number",
+        "accessCode": "Access Code",
+        "propertyNickname": "Property Nickname",
+        "propertyType": "Property Type",
+        "propertyOwner": "Property Owner",
+        "publicId": "Public ID",
+        "itemName": "Item Name",
+        "property": "Property",
+        "qrCodeImageUrl": "QR Code Image URL",
+        "thumbnailUrl": "Thumbnail URL",
+        "linkType": "Link Type",
+        "rememberMe": "Remember me for 30 days"
+      },
+      "placeholders": {
+        "email": "Enter your email address",
+        "emailExample": "email@example.com",
+        "emailAdmin": "admin@faqbnb.com",
+        "password": "Enter your password",
+        "passwordCreate": "Create a strong password",
+        "passwordConfirm": "Confirm your password",
+        "fullName": "John Doe",
+        "name": "Enter name",
+        "title": "Enter title",
+        "titleExample": "e.g., Product Manual",
+        "description": "Enter description...",
+        "descriptionItem": "Describe the item, its location, or any important details...",
+        "url": "https://...",
+        "urlOptional": "https://... (optional)",
+        "urlQrCode": "https://example.com/qr-code.png",
+        "search": "Search...",
+        "select": "Select an option...",
+        "selectProperty": "Select property...",
+        "typeOrSelect": "Type or select...",
+        "accessCode": "Enter your 8+ character access code",
+        "propertyNickname": "e.g., Main Office, Home, Vacation House",
+        "address": "e.g., 123 Main St, Anytown, State 12345",
+        "itemName": "e.g., Samsung Washing Machine",
+        "uuidGenerated": "UUID will be generated automatically"
+      },
+      "hints": {
+        "optional": "(optional)",
+        "required": "(required)",
+        "charactersRemaining": "{remaining} characters remaining",
+        "charactersCount": "{count}/{max} characters",
+        "minCharacters": "Minimum {min} characters",
+        "maxCharacters": "Maximum {max} characters",
+        "emailLinked": "This email is linked to your access code and cannot be changed.",
+        "cannotBeChanged": "This field cannot be changed after creation.",
+        "friendlyName": "A friendly name to identify this {item}",
+        "accessCodeFormat": "Access code should be 8+ characters",
+        "accessCodeAlphanumeric": "Access code should contain only letters and numbers",
+        "validAccessCodeFormat": "Valid access code format",
+        "validEmailFormat": "Valid email format",
+        "typeAutoDetected": "Type auto-detected from URL"
+      },
+      "passwordStrength": {
+        "label": "Password strength:",
+        "enterPassword": "Enter password",
+        "veryWeak": "Very Weak",
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong",
+        "requirements": "Requirements:",
+        "minChars": "At least {min} characters",
+        "lowercase": "One lowercase letter",
+        "uppercase": "One uppercase letter",
+        "number": "One number",
+        "special": "One special character"
+      },
+      "passwordMatch": {
+        "match": "Passwords match",
+        "noMatch": "Passwords do not match"
+      },
+      "accessibility": {
+        "showPassword": "Show password",
+        "hidePassword": "Hide password",
+        "generateNew": "Generate new {item}",
+        "generateNewUuid": "Generate new UUID",
+        "testLink": "Test link",
+        "removeItem": "Remove {item}",
+        "selectMethod": "Select registration method",
+        "emailInput": "Email input",
+        "passwordInput": "Password input"
+      },
+      "terms": {
+        "agreeToTerms": "I agree to the",
+        "termsOfService": "Terms of Service",
+        "and": "and",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "registration": {
+        "continueWithGoogle": "Continue with Google",
+        "quickSignUp": "Quick sign-up using your Google account",
+        "signUpWithEmail": "Sign up with email",
+        "createPassword": "Create a password for your account",
+        "chooseMethod": "Choose how to create your account",
+        "accessCodeInfo": "Access code:",
+        "accountLinked": "Your account will be linked to your verified access code"
+      }
     }
   },
   "auth": {
@@ -238,7 +351,20 @@
     "uploadFailed": "Upload failed. Please try again.",
     "fileTooLarge": "File is too large",
     "invalidFileType": "Invalid file type",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "form": {
+      "emailRequired": "Email is required",
+      "invalidEmail": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least {min} characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessCodeRequired": "Access code is required",
+      "propertyNicknameRequired": "Property nickname is required",
+      "propertyNicknameTooLong": "Property nickname must be 100 characters or less",
+      "propertyTypeRequired": "Property type is required",
+      "addressTooLong": "Address must be 500 characters or less",
+      "invalidUrl": "Please enter a valid URL"
+    }
   },
   "language": {
     "select": "Select Language",
