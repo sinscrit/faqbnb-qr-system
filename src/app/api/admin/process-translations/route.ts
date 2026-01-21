@@ -1,9 +1,12 @@
 /**
  * Translation Job Processing API Route
  * Part of REQ-E03-025: Create Job Processing API Route
+ * Extended by REQ-E03-026: Service Token Authentication for Cron Jobs
  *
  * Administrative endpoint that triggers on-demand translation job processing
  * with configurable batch sizes and returns detailed processing statistics.
+ * Supports both admin user authentication and service token authentication
+ * for cron job invocations.
  *
  * @module api/admin/process-translations
  * @created 2026-01-21
@@ -11,6 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { cleanupStaleProcessingJobs } from '@/lib/job-queue/concurrency-control';
 import { getJobProcessor } from '@/lib/job-queue/job-processor';
@@ -89,6 +93,57 @@ const LOG_PREFIX = '[ProcessTranslations]';
 
 // Suppress unused variable warnings for interfaces used only for type safety
 void (undefined as unknown as ProcessTranslationsRequest);
+
+// ===========================================================================
+// Service Token Authentication (REQ-E03-026)
+// ===========================================================================
+
+/**
+ * Validate service token authentication for cron job requests
+ *
+ * Supports two header formats:
+ * - Authorization: Bearer <token>
+ * - x-service-token: <token>
+ *
+ * Uses timing-safe comparison to prevent timing attacks.
+ *
+ * @param request - Next.js request object
+ * @returns true if valid service token provided, false otherwise
+ */
+function validateServiceToken(request: NextRequest): boolean {
+  const serviceToken = process.env.TRANSLATION_SERVICE_TOKEN;
+
+  // No service token configured - service auth disabled
+  if (!serviceToken || serviceToken.length < 32) {
+    return false;
+  }
+
+  // Check Authorization header (Bearer token format)
+  const authHeader = request.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.slice(7);
+    if (token.length === serviceToken.length) {
+      try {
+        return timingSafeEqual(Buffer.from(token), Buffer.from(serviceToken));
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  // Check x-service-token header (alternative format)
+  const headerToken = request.headers.get('x-service-token');
+  if (headerToken && headerToken.length === serviceToken.length) {
+    try {
+      return timingSafeEqual(Buffer.from(headerToken), Buffer.from(serviceToken));
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
 
 // ===========================================================================
 // Request Validation
@@ -214,36 +269,57 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     // =========================================================================
-    // Step 1: Validate Authentication
+    // Step 1: Validate Authentication (Service Token or Admin User)
     // =========================================================================
-    const authResult = await validateAdminAuth(request);
 
-    if (authResult.error) {
-      console.warn(`${LOG_PREFIX} Authentication failed`);
-      return authResult.error;
+    // Check service token first (for cron jobs)
+    const isServiceAuth = validateServiceToken(request);
+    let authMethod: 'service-token' | 'admin-auth' = 'service-token';
+    let requestedBy = 'service-cron';
+    let userEmail = 'cron@system';
+
+    if (!isServiceAuth) {
+      // Fall back to admin user authentication
+      authMethod = 'admin-auth';
+      const authResult = await validateAdminAuth(request);
+
+      if (authResult.error) {
+        console.warn(`${LOG_PREFIX} Authentication failed`);
+        return authResult.error;
+      }
+
+      // Verify admin or sysadmin access
+      if (!authResult.isAdmin && !authResult.isSysAdmin) {
+        console.warn(`${LOG_PREFIX} Access denied for user: ${authResult.user?.email}`);
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Admin access required to trigger translation processing',
+            code: 'FORBIDDEN',
+          } as ProcessTranslationsErrorResponse,
+          { status: 403 }
+        );
+      }
+
+      requestedBy = authResult.user.id;
+      userEmail = authResult.user.email;
+
+      // Log admin auth request for audit trail
+      console.info(`${LOG_PREFIX} Processing requested`, {
+        authMethod,
+        requestedBy,
+        userEmail,
+        isAdmin: authResult.isAdmin,
+        isSysAdmin: authResult.isSysAdmin,
+        timestamp: new Date().toISOString(),
+      });
+    } else {
+      // Log service token auth request for audit trail
+      console.info(`${LOG_PREFIX} Processing requested via service token`, {
+        authMethod,
+        timestamp: new Date().toISOString(),
+      });
     }
-
-    // Verify admin or sysadmin access
-    if (!authResult.isAdmin && !authResult.isSysAdmin) {
-      console.warn(`${LOG_PREFIX} Access denied for user: ${authResult.user?.email}`);
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Admin access required to trigger translation processing',
-          code: 'FORBIDDEN',
-        } as ProcessTranslationsErrorResponse,
-        { status: 403 }
-      );
-    }
-
-    // Log request initiation for audit trail
-    console.info(`${LOG_PREFIX} Processing requested`, {
-      requestedBy: authResult.user.id,
-      userEmail: authResult.user.email,
-      isAdmin: authResult.isAdmin,
-      isSysAdmin: authResult.isSysAdmin,
-      timestamp: new Date().toISOString(),
-    });
 
     // =========================================================================
     // Step 2: Parse and Validate Request Body
@@ -277,7 +353,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { batchSize } = validation;
 
     console.info(`${LOG_PREFIX} Batch size: ${batchSize}`, {
-      requestedBy: authResult.user.id,
+      requestedBy,
     });
 
     // =========================================================================
@@ -317,7 +393,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     console.info(`${LOG_PREFIX} Starting batch processing...`, {
       batchSize,
-      requestedBy: authResult.user.id,
+      requestedBy,
     });
 
     for (let i = 0; i < batchSize; i++) {
@@ -353,7 +429,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Log completion summary
     console.info(`${LOG_PREFIX} Processing completed`, {
-      requestedBy: authResult.user.id,
+      authMethod,
+      requestedBy,
       totalProcessed: statistics.totalProcessed,
       successCount: statistics.successCount,
       failureCount: statistics.failureCount,

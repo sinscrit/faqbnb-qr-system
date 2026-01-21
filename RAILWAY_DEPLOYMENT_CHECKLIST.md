@@ -129,15 +129,44 @@ railway up
 railway open
 ```
 
-## Ready for Production ✅
+## Translation Cron Job Setup (REQ-E03-026)
+
+### Environment Variables
+- [ ] `TRANSLATION_SERVICE_TOKEN` set in Railway environment (generate with `openssl rand -hex 32`)
+- [ ] `TRANSLATION_MODE` set appropriately (`responsive` for production, `cost_optimized` for staging)
+- [ ] `TRANSLATION_BATCH_SIZE` configured for selected mode (10 for responsive, 50 for cost-optimized)
+
+### Cron Configuration
+- [ ] Cron job created in Railway dashboard (or GitHub Actions enabled as alternative)
+- [ ] Schedule verified (`* * * * *` for responsive, `*/5 * * * *` for cost-optimized)
+- [ ] Authorization header configured with service token: `Authorization: Bearer <TOKEN>`
+- [ ] Content-Type header set: `Content-Type: application/json`
+- [ ] Request body includes correct batch size: `{"batchSize": 10}` (or 50)
+
+### Verification
+- [ ] Manual test of `/api/admin/process-translations` endpoint successful
+- [ ] First cron execution visible in Railway logs
+- [ ] Jobs being processed (check `translation_jobs` table)
+- [ ] Processing statistics reasonable (no high failure rates)
+
+### Monitoring
+- [ ] Cron execution logs accessible via `railway logs --filter "ProcessTranslations"`
+- [ ] Alert configured for cron failures (optional but recommended)
+
+**Full setup guide:** [docs/deployment/TRANSLATION_CRON_SETUP.md](docs/deployment/TRANSLATION_CRON_SETUP.md)
+
+---
+
+## Ready for Production
 
 This project is now fully configured and ready for Railway deployment with:
-- ✅ Modern Node.js 22 runtime
-- ✅ Optimized build configuration
-- ✅ Production-ready Next.js setup
-- ✅ Comprehensive error handling
-- ✅ Dynamic domain support
-- ✅ Database integration ready
+- Modern Node.js 22 runtime
+- Optimized build configuration
+- Production-ready Next.js setup
+- Comprehensive error handling
+- Dynamic domain support
+- Database integration ready
+- Translation cron job automation (REQ-E03-026)
 
-Deploy with confidence! 🚂
+Deploy with confidence!
 

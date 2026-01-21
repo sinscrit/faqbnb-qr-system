@@ -1,0 +1,109 @@
+# Translation Job Processing Cron (REQ-E03-026)
+# Alternative/backup scheduling mechanism using GitHub Actions
+#
+# Note: GitHub Actions has a minimum 5-minute interval for scheduled workflows.
+# Use Railway cron for more frequent processing (1-minute intervals).
+#
+# @created 2026-01-21
+# @lastModified 2026-01-21
+
+name: Translation Job Processing
+
+on:
+  schedule:
+    # Every 5 minutes (GitHub Actions minimum)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'Number of jobs to process'
+        required: false
+        default: '50'
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  STAGING_URL: https://faqbnb-staging.up.railway.app
+  PRODUCTION_URL: https://faqbnb.up.railway.app
+
+jobs:
+  process-translations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Determine API URL
+        id: config
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ENV="${{ github.event.inputs.environment }}"
+          else
+            # Scheduled runs default to staging
+            ENV="staging"
+          fi
+
+          if [ "$ENV" = "production" ]; then
+            echo "api_url=${{ env.PRODUCTION_URL }}" >> $GITHUB_OUTPUT
+            echo "token_secret=TRANSLATION_SERVICE_TOKEN_PROD" >> $GITHUB_OUTPUT
+          else
+            echo "api_url=${{ env.STAGING_URL }}" >> $GITHUB_OUTPUT
+            echo "token_secret=TRANSLATION_SERVICE_TOKEN" >> $GITHUB_OUTPUT
+          fi
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+
+      - name: Trigger Translation Processing
+        run: |
+          BATCH_SIZE="${{ github.event.inputs.batch_size || '50' }}"
+          API_URL="${{ steps.config.outputs.api_url }}"
+
+          # Get appropriate token based on environment
+          if [ "${{ steps.config.outputs.token_secret }}" = "TRANSLATION_SERVICE_TOKEN_PROD" ]; then
+            TOKEN="${{ secrets.TRANSLATION_SERVICE_TOKEN_PROD }}"
+          else
+            TOKEN="${{ secrets.TRANSLATION_SERVICE_TOKEN }}"
+          fi
+
+          echo "Processing translations on ${{ steps.config.outputs.environment }}"
+          echo "Batch size: $BATCH_SIZE"
+          echo "API URL: $API_URL"
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d "{\"batchSize\": $BATCH_SIZE}" \
+            "$API_URL/api/admin/process-translations" \
+            --max-time 60)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          # Parse response for summary
+          if echo "$body" | grep -q '"success":true'; then
+            processed=$(echo "$body" | grep -o '"actualProcessed":[0-9]*' | grep -o '[0-9]*' || echo "0")
+            echo "::notice::Successfully processed $processed translation jobs"
+          fi
+
+          if [ "$http_code" -ge 400 ]; then
+            echo "::error::Translation processing failed with status $http_code"
+            exit 1
+          fi
+
+          echo "::notice::Translation processing completed successfully"
+
+      - name: Log Summary
+        if: always()
+        run: |
+          echo "## Translation Processing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ steps.config.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY
