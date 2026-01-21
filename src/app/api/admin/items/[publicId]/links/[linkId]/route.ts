@@ -338,7 +338,7 @@ export async function PUT(
     });
 
     // Build update data object
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, string | number | null> = {
       source_language: sourceLanguage
     };
     if (body.title !== undefined) updateData.title = body.title.trim();

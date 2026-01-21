@@ -1,7 +1,7 @@
 # REQ-E02-005: Extract Toast Notification Messages - Detailed Task Breakdown
 
 *Generated: 2026-01-19 17:30:00 UTC*
-*Last Modified: 2026-01-19 17:30:00 UTC*
+*Last Modified: 2026-01-21 10:30:00 UTC*
 
 ## Document Reference
 
@@ -51,11 +51,11 @@ Before starting implementation, verify:
 Add the complete `common.notifications` namespace structure to the English translation file with all identified notification strings organized by category.
 
 **Acceptance Criteria**:
-- [ ] `common.notifications` namespace exists in `/messages/en.json`
-- [ ] Contains `success`, `error`, `info`, and `warning` sub-namespaces
-- [ ] All ~50 notification strings are present with correct keys
-- [ ] ICU format used for strings with variable interpolation
-- [ ] JSON is valid and parseable
+- [x] `common.notifications` namespace exists in `/messages/en.json` ---implemented:Added notifications namespace with all 4 sub-namespaces to en.json---
+- [x] Contains `success`, `error`, `info`, and `warning` sub-namespaces ---implemented:Added success (17 keys), error (31 keys), info (10 keys), warning (4 keys)---
+- [x] All ~50 notification strings are present with correct keys ---implemented:Added 62 notification strings total---
+- [x] ICU format used for strings with variable interpolation ---implemented:Used {count}, {itemName} ICU placeholders---
+- [x] JSON is valid and parseable ---implemented:Validated with node JSON.parse-unit tested-
 
 **Implementation Details**:
 
@@ -163,10 +163,10 @@ Add the following structure to `/messages/en.json` under the `common` namespace:
 Add the same `common.notifications` namespace structure to all 5 non-English translation files with English placeholder text (actual translations will be generated in Task 2H.10).
 
 **Acceptance Criteria**:
-- [ ] All 5 non-English files have identical key structures
-- [ ] English placeholder text used for all values
-- [ ] JSON is valid in all files
-- [ ] No missing keys compared to `en.json`
+- [x] All 5 non-English files have identical key structures ---implemented:Added identical notifications namespace to fr.json, es.json, de.json, nl.json, it.json---
+- [x] English placeholder text used for all values ---implemented:Used English text as placeholders for translation later---
+- [x] JSON is valid in all files ---implemented:Validated all 6 files with node JSON.parse-unit tested-
+- [x] No missing keys compared to `en.json` ---implemented:Copied exact same structure to all files---
 
 **Implementation Details**:
 Copy the exact same `common.notifications` structure from `en.json` to each non-English file. The content remains in English as placeholders until Task 2H.10 generates proper translations.
