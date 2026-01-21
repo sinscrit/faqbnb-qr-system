@@ -14,6 +14,7 @@ import { analyticsApi } from '@/lib/api';
 
 export default function ItemDisplay({ item }: ItemDisplayProps) {
   const tNotifications = useTranslations('common.notifications');
+  const tEmpty = useTranslations('common.emptyStates');
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [visitRecorded, setVisitRecorded] = useState<boolean>(false);
   const [reactionCounts, setReactionCounts] = useState<ReactionCounts | undefined>(undefined);
@@ -227,7 +228,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 italic">No resources in this section.</p>
+                    <p className="text-sm text-gray-400 italic">{tEmpty('resources.noResourcesInSection')}</p>
                   )}
                 </div>
               ))}
@@ -238,7 +239,7 @@ export default function ItemDisplay({ item }: ItemDisplayProps) {
               <div className="text-gray-400 mb-3">
                 <ExternalLink className="w-12 h-12 mx-auto" />
               </div>
-              <p className="text-gray-500">No resources available for this item.</p>
+              <p className="text-gray-500">{tEmpty('resources.noResourcesAvailable')}</p>
             </div>
           ) : (
             // Fallback: flat links view (existing code - backward compatibility)

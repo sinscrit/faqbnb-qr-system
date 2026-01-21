@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TagsEditor } from '@/components/ItemCreationWorkflow/components/shared';
 import { ReadOnlyContextSection } from './components/ReadOnlyContextSection';
@@ -82,6 +83,8 @@ export function InstructionEditor({
   onCancel,
   isSaving = false,
 }: InstructionEditorProps) {
+  const tLoading = useTranslations('common.loading');
+
   // Editable article title
   const [articleTitle, setArticleTitle] = useState(articleData.title);
 
@@ -255,7 +258,7 @@ export function InstructionEditor({
           )}
         >
           {isSaving && <Loader2 className="w-5 h-5 animate-spin" />}
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? tLoading('status.saving') : 'Save Changes'}
         </button>
       </div>
 

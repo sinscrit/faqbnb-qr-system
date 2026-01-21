@@ -5,6 +5,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Building, ChevronDown, Check } from 'lucide-react';
 
 interface Property {
@@ -43,6 +44,7 @@ export default function PropertySelector({
   isAdmin = false,
   placeholder = 'All Properties'
 }: PropertySelectorProps) {
+  const tEmpty = useTranslations('common.emptyStates');
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -292,7 +294,7 @@ export default function PropertySelector({
 
           {properties.length === 0 && (
             <div className={`${sizeClasses.option} text-gray-500 text-center`}>
-              No properties available
+              {tEmpty('properties.noPropertiesAvailable')}
             </div>
           )}
         </div>

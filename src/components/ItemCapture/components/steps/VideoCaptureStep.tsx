@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Circle,
   Square,
@@ -243,6 +244,9 @@ export function VideoCaptureStep({
   config,
   className,
 }: VideoCaptureStepProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // ===========================================================================
   // Hook: Media Capture
   // ===========================================================================
@@ -682,7 +686,7 @@ export function VideoCaptureStep({
             {isProcessing ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Processing...
+                {tLoading('generic.processing')}
               </>
             ) : (
               <>

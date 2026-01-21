@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824223",
-  "updated_at": "2026-01-21T04:52:20.145230",
+  "updated_at": "2026-01-21T06:37:07.947693",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 8,
+  "current_task_index": 13,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic3-Dynamic-Content-Translation.md",
   "source_hash": "499d11917485abcf1bc7b1175f09eebc",
   "tasks": [
@@ -277,9 +277,9 @@
       "title": "Create/Modify Links API to trigger translations",
       "description": "File: `/src/app/api/admin/items/[id]/links/route.ts`\n**POST handler:**\nQueue link title translation after creation\n**PUT handler:**\nDelete existing link translations\nQueue new translations",
       "raw_match": "\n- [ ] **Task 2.4:** Create/Modify Links API to trigger translations",
-      "status": "pending",
+      "status": "failed",
       "request_id": "REQ-E03-010",
-      "error": null,
+      "error": "Stage implementation: Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"0bc686dc-dc46-4aa1-bc2f-d22d5968a7d5\",\"total_cost_usd\":0,\"usage\":{\"i",
       "processed_at": "2026-01-20T08:04:19.324278",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-010",
@@ -334,10 +334,10 @@
       "title": "Update TypeScript types for API responses",
       "description": "File: `/src/types/index.ts`\nAdd `translationJobIds?: string[]` to ItemResponse, ArticleResponse\nAdd `sourceLanguage?: string` to CreateItemRequest, CreateArticleRequest\nExport translation-related types",
       "raw_match": "\n- [ ] **Task 2.6:** Update TypeScript types for API responses",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-E03-012",
       "error": null,
-      "processed_at": "2026-01-20T08:16:53.706339",
+      "processed_at": "2026-01-21T05:56:52.753232",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-012",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-012-update-typescript-types-for-api-responses-overview.md",
@@ -345,7 +345,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": false,
+        "test_summary": "Tests failed or verification error detected"
+      },
+      "tests_ran": true,
+      "tests_passed": false,
+      "test_summary": "Tests failed or verification error detected",
+      "implementation_completed": true
     },
     {
       "id": "3.1",
@@ -357,7 +366,7 @@
       "status": "completed",
       "request_id": "REQ-E03-013",
       "error": null,
-      "processed_at": "2026-01-20T08:22:27.030126",
+      "processed_at": "2026-01-21T06:14:12.236564",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-013",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-013-enhance-job-processor-for-content-specific-overview.md",
@@ -365,7 +374,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.2",
@@ -377,7 +395,7 @@
       "status": "completed",
       "request_id": "REQ-E03-014",
       "error": null,
-      "processed_at": "2026-01-20T08:30:00.527302",
+      "processed_at": "2026-01-21T06:37:07.947553",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic3.md#REQ-E03-014",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E03-014-implement-item-translation-processor-overview.md",
@@ -385,7 +403,16 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "3.3",
@@ -852,10 +879,16 @@
       "task_id": "2.2",
       "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"21ba6828-835c-4788-b206-3a5b9aec36b5\",\"total_cost_usd\":0,\"usage\":{\"i",
       "timestamp": "2026-01-21T04:29:01.366872"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2.4",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"0bc686dc-dc46-4aa1-bc2f-d22d5968a7d5\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T05:43:30.761154"
     }
   ],
   "metadata": {
-    "total_requests_generated": 2,
+    "total_requests_generated": 5,
     "last_request_id": "REQ-E03-034",
     "first_request_id": "REQ-E03-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"

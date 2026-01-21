@@ -15,6 +15,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import ReactCrop, {
   type Crop,
   type PixelCrop,
@@ -104,6 +105,9 @@ export default function ImageCropper({
   outputQuality = 0.92,
   className,
 }: ImageCropperProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // Crop state from react-image-crop
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
@@ -397,7 +401,7 @@ export default function ImageCropper({
           <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded">
             <div className="flex flex-col items-center gap-2">
               <div className="animate-pulse h-8 w-8 bg-gray-300 rounded-full" />
-              <span className="text-sm text-gray-500">Loading image...</span>
+              <span className="text-sm text-gray-500">{tLoading('media.image')}</span>
             </div>
           </div>
         )}
@@ -407,7 +411,7 @@ export default function ImageCropper({
           <div className="absolute inset-0 bg-white/75 flex items-center justify-center z-10 rounded">
             <div className="flex flex-col items-center gap-2">
               <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
-              <span className="text-sm text-gray-600">Applying crop...</span>
+              <span className="text-sm text-gray-600">{tLoading('status.applying')}</span>
             </div>
           </div>
         )}

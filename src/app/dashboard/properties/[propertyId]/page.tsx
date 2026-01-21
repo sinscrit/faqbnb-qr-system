@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import { Property, Item } from '@/types';
@@ -13,6 +14,7 @@ const UserPropertyDetailPage: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
+  const tLoading = useTranslations('common.loading');
 
   // Extract and validate propertyId
   const rawPropertyId = params.propertyId;
@@ -279,7 +281,7 @@ const UserPropertyDetailPage: React.FC = () => {
                 className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Printer className="w-4 h-4 mr-2" />
-                {isQRPrintLoading ? 'Loading...' : 'Print QR Codes'}
+                {isQRPrintLoading ? tLoading('generic.loading') : 'Print QR Codes'}
               </button>
             </div>
           </div>

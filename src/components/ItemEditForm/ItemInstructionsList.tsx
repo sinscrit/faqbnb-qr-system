@@ -7,6 +7,7 @@
  * Shows title, purpose badge, and edit button for each instruction.
  */
 
+import { useTranslations } from 'next-intl';
 import { Pencil, FileText } from 'lucide-react';
 import { ItemInstructionsListProps } from './ItemEditForm.types';
 
@@ -55,6 +56,8 @@ export function ItemInstructionsList({
   onEditInstruction,
   loading = false,
 }: ItemInstructionsListProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+
   // Loading skeleton
   if (loading) {
     return (
@@ -84,8 +87,8 @@ export function ItemInstructionsList({
         <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
         <div className="text-center py-8">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">No guides yet</p>
-          <p className="text-sm text-gray-400 mt-1">Guides for this item will appear here</p>
+          <p className="text-gray-500 font-medium">{tEmpty('guides.title')}</p>
+          <p className="text-sm text-gray-400 mt-1">{tEmpty('guides.descriptionItem')}</p>
         </div>
       </div>
     );

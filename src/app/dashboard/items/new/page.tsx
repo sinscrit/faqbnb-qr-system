@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Property } from '@/types';
@@ -19,6 +20,7 @@ interface ItemFormData {
 export default function CreateItemPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const tLoading = useTranslations('common.loading');
   const { user, loading: authLoading, currentAccount } = useAuth();
   
   // EMERGENCY FIX: Force OWNER permissions for test users
@@ -396,7 +398,7 @@ export default function CreateItemPage() {
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              {loading ? 'Creating...' : 'Create Item'}
+              {loading ? tLoading('status.creating') : 'Create Item'}
             </button>
           </div>
         </form>

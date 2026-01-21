@@ -1,5 +1,54 @@
 {
   "common": {
+    "loading": {
+      "generic": {
+        "loading": "Loading...",
+        "pleaseWait": "Please wait...",
+        "loadingData": "Loading data...",
+        "processing": "Processing..."
+      },
+      "pages": {
+        "dashboard": "Loading dashboard...",
+        "adminPanel": "Loading admin panel...",
+        "analytics": "Loading analytics...",
+        "item": "Loading item...",
+        "property": "Loading property...",
+        "instructions": "Loading instructions...",
+        "help": "Loading help...",
+        "print": "Loading print view..."
+      },
+      "auth": {
+        "authenticating": "Authenticating...",
+        "checkingPermissions": "Checking permissions...",
+        "verifyingCredentials": "Please wait while we verify your credentials",
+        "completingAuth": "Completing authentication..."
+      },
+      "status": {
+        "saving": "Saving...",
+        "deleting": "Deleting...",
+        "creating": "Creating...",
+        "updating": "Updating...",
+        "submitting": "Submitting...",
+        "applying": "Applying...",
+        "uploading": "Uploading...",
+        "downloading": "Downloading...",
+        "fetching": "Fetching data...",
+        "processingRotation": "Processing rotation..."
+      },
+      "media": {
+        "video": "Loading video...",
+        "image": "Loading image...",
+        "pdf": "Loading PDF...",
+        "preview": "Loading preview..."
+      },
+      "aria": {
+        "loadingItems": "Loading items",
+        "loadingItemsWait": "Loading items, please wait...",
+        "loadingGuides": "Loading guides",
+        "loadingEditor": "Loading editor",
+        "loadingContentPreview": "Loading content preview"
+      }
+    },
     "actions": {
       "save": "Save",
       "cancel": "Cancel",
@@ -232,6 +281,101 @@
         "sessionExpiring": "Your session is about to expire",
         "slowConnection": "Connection is slow. This may take a moment.",
         "offlineMode": "You appear to be offline"
+      }
+    },
+    "emptyStates": {
+      "generic": {
+        "noData": "No data available",
+        "noResults": "No results found",
+        "noResultsSearch": "No results match your search",
+        "noResultsFilter": "No results match your filters",
+        "tryAdjusting": "Try adjusting your search or filters"
+      },
+      "items": {
+        "title": "No items yet",
+        "description": "Create your first item to get started",
+        "descriptionAlt": "Get started by creating your first item",
+        "noItemsFound": "No items found",
+        "noItemsSearchMatch": "No items match your search for \"{searchTerm}\"",
+        "noItemsAvailable": "No items available",
+        "noItemsForProperty": "There are no items to display for this property.",
+        "noItemsProperty": "No items"
+      },
+      "guides": {
+        "title": "No guides yet",
+        "titleNotFound": "No guides found",
+        "description": "Create items and add guide articles to get started. Guides help guests understand how things work.",
+        "descriptionItem": "Guides for this item will appear here",
+        "noGuides": "No guides.",
+        "noGuidesAvailable": "No guides available",
+        "noGuidesProvided": "No guides provided.",
+        "noGuidesAdded": "No guides added."
+      },
+      "properties": {
+        "title": "No properties yet",
+        "titleNotFound": "No Properties Found",
+        "titleAdd": "Let's add your property",
+        "description": "A property is where your items live - like a vacation rental or home.",
+        "descriptionCreate": "Get started by creating your first property.",
+        "descriptionSearchNoMatch": "No properties match your search criteria.",
+        "noPropertiesAvailable": "No properties available",
+        "noPropertiesFound": "No properties found"
+      },
+      "dashboard": {
+        "welcome": {
+          "title": "Welcome to FAQBNB!",
+          "description": "Get started by adding your first property. Then you can create QR codes to help guests find what they need."
+        },
+        "noContent": {
+          "title": "Start adding new QR Code items and create guides/instructions",
+          "description": "Create your first item to get started"
+        }
+      },
+      "resources": {
+        "title": "No Resources Available",
+        "description": "No resources available for this item.",
+        "noResourcesInSection": "No resources in this section.",
+        "noResourcesAvailable": "No resources available for this item."
+      },
+      "qrCodes": {
+        "title": "No QR codes generated yet",
+        "noCodesForExport": "No QR codes available for PDF export.",
+        "generateFirst": "No QR codes available for PDF export. Please generate QR codes first."
+      },
+      "analytics": {
+        "noEngagement": "No engagement data available",
+        "noDailyViews": "No daily view data available",
+        "noReactions": "No reactions data available",
+        "noReactionsYet": "No reactions yet",
+        "noAnalyticsData": "No analytics data available"
+      },
+      "session": {
+        "title": "No Items Added",
+        "description": "No items added yet. Add items or exit session?",
+        "descriptionAlt": "You haven't created any items in this session yet. Start by adding your first item.",
+        "noItemsYet": "No items yet",
+        "noItemsDescription": "You haven't created any items in this session yet. Start by adding your first item.",
+        "addItems": "Add Items",
+        "addFirstItem": "Add First Item",
+        "exitSession": "Exit Session"
+      },
+      "accessRequests": {
+        "title": "No access requests found",
+        "description": "No access requests have been submitted yet"
+      },
+      "locations": {
+        "noLocationsAvailable": "No locations available"
+      },
+      "tags": {
+        "noTagsAvailable": "No tags available"
+      },
+      "cta": {
+        "createItem": "Create Item",
+        "createFirstItem": "Create Your First Item",
+        "newQRCodeItem": "New QR Code Item",
+        "addProperty": "Add Property",
+        "createGuide": "Create Guide",
+        "clearFilters": "Clear Filters"
       }
     }
   },

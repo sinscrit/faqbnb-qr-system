@@ -12,6 +12,7 @@
  */
 
 import { Pencil, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { GuideColumnSettingsPopup } from './GuideColumnSettingsPopup';
 import type { InstructionsTableProps, GuideSortOption } from './InstructionsTable.types';
@@ -138,6 +139,7 @@ export function InstructionsTable({
   columnVisibility = DEFAULT_COLUMN_VISIBILITY,
   onToggleColumn,
 }: InstructionsTableProps) {
+  const tEmpty = useTranslations('common.emptyStates');
   // Determine if sorting is enabled
   const isSortable = Boolean(onSortChange);
 
@@ -328,7 +330,7 @@ export function InstructionsTable({
           <tbody className="bg-white">
             <tr>
               <td colSpan={getColspan()} className="px-6 py-12 text-center text-gray-500">
-                No guides available
+                {tEmpty('guides.noGuidesAvailable')}
               </td>
             </tr>
           </tbody>

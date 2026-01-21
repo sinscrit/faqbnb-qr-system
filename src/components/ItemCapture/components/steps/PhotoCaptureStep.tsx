@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Camera,
   SwitchCamera,
@@ -246,6 +247,9 @@ export function PhotoCaptureStep({
   config,
   className,
 }: PhotoCaptureStepProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // ===========================================================================
   // Hook: Media Capture
   // ===========================================================================
@@ -798,7 +802,7 @@ export function PhotoCaptureStep({
             {isCapturing ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Processing...
+                {tLoading('generic.processing')}
               </>
             ) : (
               <>

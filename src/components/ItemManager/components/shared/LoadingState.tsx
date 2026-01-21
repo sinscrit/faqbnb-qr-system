@@ -8,9 +8,10 @@
  *
  * @module ItemManager/components/shared/LoadingState
  * @see docs/REQ-061-implement-empty-and-loading-states-detailed.md
- * @lastModified 2026-01-04 (REQ-061 Task 1.7.3)
+ * @lastModified 2026-01-21 (REQ-E02-027 i18n loading states)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { LoadingStateProps } from '../../ItemManager.types';
 
@@ -102,18 +103,19 @@ export function LoadingState({
   itemCount,
   className,
 }: LoadingStateProps) {
+  const t = useTranslations('common.loading');
   const count = itemCount ?? (viewMode === 'grid' ? DEFAULT_GRID_COUNT : DEFAULT_LIST_COUNT);
 
   if (viewMode === 'list') {
     return (
       <div
         role="status"
-        aria-label="Loading items"
+        aria-label={t('aria.loadingItems')}
         aria-busy="true"
         className={cn('animate-pulse space-y-2', className)}
       >
         {/* Screen reader text */}
-        <span className="sr-only">Loading items, please wait...</span>
+        <span className="sr-only">{t('aria.loadingItemsWait')}</span>
 
         {Array.from({ length: count }).map((_, index) => (
           <ListSkeletonRow key={index} />
@@ -126,7 +128,7 @@ export function LoadingState({
   return (
     <div
       role="status"
-      aria-label="Loading items"
+      aria-label={t('aria.loadingItems')}
       aria-busy="true"
       className={cn(
         'animate-pulse grid gap-4',
@@ -135,7 +137,7 @@ export function LoadingState({
       )}
     >
       {/* Screen reader text */}
-      <span className="sr-only">Loading items, please wait...</span>
+      <span className="sr-only">{t('aria.loadingItemsWait')}</span>
 
       {Array.from({ length: count }).map((_, index) => (
         <GridSkeletonCard key={index} />

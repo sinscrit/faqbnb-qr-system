@@ -66,6 +66,7 @@ export function QRCodePrintManager({
 }: QRCodePrintManagerProps) {
   // Translation hook for notifications
   const tNotifications = useTranslations('common.notifications');
+  const tEmpty = useTranslations('common.emptyStates');
 
   // Print window management
   const { openPrintWindow } = usePrintWindow();
@@ -325,7 +326,7 @@ export function QRCodePrintManager({
 
   const handlePDFExport = useCallback(async (settings: PDFExportSettings): Promise<void> => {
     if (generatedQRCodes.size === 0) {
-      setLastError({ message: 'No QR codes available for PDF export. Please generate QR codes first.', isRetryable: false });
+      setLastError({ message: tEmpty('qrCodes.generateFirst'), isRetryable: false });
       return;
     }
 
@@ -437,16 +438,16 @@ export function QRCodePrintManager({
     } finally {
       setIsGeneratingPDF(false);
     }
-  }, [generatedQRCodes, items, validatePDFSettings]);
+  }, [generatedQRCodes, items, validatePDFSettings, tNotifications, tEmpty]);
 
   const generatePDFDownload = useCallback((): void => {
     if (generatedQRCodes.size === 0) {
-      setLastError({ message: 'No QR codes available for PDF export.', isRetryable: false });
+      setLastError({ message: tEmpty('qrCodes.noCodesForExport'), isRetryable: false });
       return;
     }
-    
+
     setShowPDFOptions(true);
-  }, [generatedQRCodes]);
+  }, [generatedQRCodes, tEmpty]);
 
   const handlePDFSettingsChange = useCallback((settings: Partial<PDFExportSettings>): void => {
     setPDFExportSettings(prev => ({ ...prev, ...settings }));
@@ -586,7 +587,7 @@ export function QRCodePrintManager({
         if (generatedQRCodes.size === 0) {
           return (
             <div className="text-center py-8">
-              <p className="text-gray-500">No QR codes generated yet</p>
+              <p className="text-gray-500">{tEmpty('qrCodes.title')}</p>
             </div>
           );
         }

@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronDown, Building2, Check, Loader2 } from 'lucide-react';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ export interface PropertyDropdownProps {
 }
 
 export function PropertyDropdown({ className }: PropertyDropdownProps) {
+  const tEmpty = useTranslations('common.emptyStates');
   const {
     selectedPropertyId,
     selectedProperty,
@@ -184,7 +186,7 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
           {/* Empty state */}
           {properties.length === 0 && (
             <div className="px-3 py-4 text-sm text-gray-500 text-center">
-              No properties found
+              {tEmpty('properties.noPropertiesFound')}
             </div>
           )}
         </div>

@@ -11,6 +11,7 @@
  * @lastModified 2026-01-13 (REQ-220)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { GuideCard } from './GuideCard';
 import type { InstructionRow } from './InstructionsTable.types';
@@ -63,6 +64,8 @@ export function GuideGrid({
   loading = false,
   className,
 }: GuideGridProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+
   // Loading state - show skeleton grid
   if (loading) {
     return (
@@ -97,8 +100,8 @@ export function GuideGrid({
         role="status"
         aria-live="polite"
       >
-        <p className="text-lg font-medium text-gray-900">No guides found</p>
-        <p className="text-sm mt-1">Try adjusting your search or filters</p>
+        <p className="text-lg font-medium text-gray-900">{tEmpty('guides.titleNotFound')}</p>
+        <p className="text-sm mt-1">{tEmpty('generic.tryAdjusting')}</p>
       </div>
     );
   }

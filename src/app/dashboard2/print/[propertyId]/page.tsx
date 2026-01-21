@@ -7,6 +7,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { QRCodePrintManager } from '@/components/QRCodePrintManager';
 import { Item } from '@/types';
@@ -15,12 +16,14 @@ import { ArrowLeft, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 /**
  * Loading state component
  */
-function LoadingState({ message = 'Loading...' }: { message?: string }) {
+function LoadingState({ message }: { message?: string }) {
+  const t = useTranslations('common.loading');
+  const displayMessage = message ?? t('generic.loading');
   return (
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="text-center">
         <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-        <p className="text-[#717171] text-lg">{message}</p>
+        <p className="text-[#717171] text-lg">{displayMessage}</p>
       </div>
     </div>
   );
@@ -87,6 +90,7 @@ function Breadcrumb({
   onNavigateDashboard: () => void;
   onNavigateSelector: () => void;
 }) {
+  const t = useTranslations('common.loading');
   return (
     <nav className="flex items-center gap-2 text-sm mb-6" aria-label="Breadcrumb">
       <button
@@ -108,7 +112,7 @@ function Breadcrumb({
         </>
       )}
       <span className="text-[#222222] font-medium">
-        {property?.nickname || 'Loading...'}
+        {property?.nickname || t('pages.property')}
       </span>
     </nav>
   );

@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { ExternalLink, RefreshCw, BarChart3 } from 'lucide-react';
 
 export default function UserAnalyticsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const t = useTranslations('common.loading');
 
   // Redirect to unified dashboard analytics after authentication check
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function UserAnalyticsPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('generic.loading')}</p>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { FileText, Loader2, Shield } from 'lucide-react';
@@ -23,6 +24,7 @@ export default function InstructionsPage() {
   const router = useRouter();
   const { user, loading: authLoading, currentAccount } = useAuth();
   const { useCanAccess, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
+  const t = useTranslations('common.loading');
 
   const canViewItems = useCanAccess('view_items');
 
@@ -32,7 +34,7 @@ export default function InstructionsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('pages.instructions')}</p>
         </div>
       </div>
     );

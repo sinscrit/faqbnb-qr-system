@@ -31,6 +31,7 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Video, Image, FileText, Type, Link, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ContentPiece, ContentData, ContentType } from '../../ItemCreationWorkflow.types';
@@ -348,6 +349,9 @@ interface PreviewSkeletonProps {
 }
 
 function PreviewSkeleton({ size, contentType }: PreviewSkeletonProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // Get background color based on content type (or default gray)
   const getBgColor = () => {
     if (!contentType) return 'bg-gray-100';
@@ -370,7 +374,7 @@ function PreviewSkeleton({ size, contentType }: PreviewSkeletonProps) {
       )}
       role="status"
       aria-busy="true"
-      aria-label="Loading content preview"
+      aria-label={tLoading('aria.loadingContentPreview')}
     >
       {/* Icon placeholder */}
       <div className={cn(
@@ -382,7 +386,7 @@ function PreviewSkeleton({ size, contentType }: PreviewSkeletonProps) {
         <div className="mt-2 w-3/4 h-3 rounded bg-gray-200" />
       )}
       {/* Screen reader announcement */}
-      <span className="sr-only">Loading preview...</span>
+      <span className="sr-only">{tLoading('media.preview')}</span>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Calendar, TrendingUp, Eye, Heart, Users, Activity, RefreshCw, Building, Shield } from 'lucide-react';
 import AnalyticsOverviewCards from '@/components/AnalyticsOverviewCards';
 import TimeRangeSelector from '@/components/TimeRangeSelector';
@@ -136,6 +137,7 @@ export function AnalyticsManagement({
   showExportButton = true,
   showPropertySelector = true
 }: AnalyticsManagementProps) {
+  const tEmpty = useTranslations('common.emptyStates');
   const { useCanAccess } = usePermissions(null, undefined, undefined);
 
   // Permission check for export
@@ -362,7 +364,7 @@ export function AnalyticsManagement({
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <Users className="w-8 h-8 mx-auto mb-2" />
-                <p>No engagement data available</p>
+                <p>{tEmpty('analytics.noEngagement')}</p>
               </div>
             )}
           </div>
@@ -434,7 +436,7 @@ export function AnalyticsManagement({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-500">
-                    No daily view data available
+                    {tEmpty('analytics.noDailyViews')}
                   </div>
                 )}
               </div>
@@ -451,7 +453,7 @@ export function AnalyticsManagement({
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-500">
-                    No reactions data available
+                    {tEmpty('analytics.noReactions')}
                   </div>
                 )}
               </div>

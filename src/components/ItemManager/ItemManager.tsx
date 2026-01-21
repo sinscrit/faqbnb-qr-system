@@ -13,6 +13,7 @@
  */
 
 import { useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useItemManagerState } from './hooks/useItemManagerState';
 import { useItemSearch } from './hooks/useItemSearch';
@@ -103,6 +104,12 @@ export function ItemManager({
   renderConfirmDialog,
   classNames,
 }: ItemManagerProps) {
+  // -------------------------------------------------------------------------
+  // Translations
+  // -------------------------------------------------------------------------
+
+  const tEmpty = useTranslations('common.emptyStates');
+
   // -------------------------------------------------------------------------
   // Config Merging
   // -------------------------------------------------------------------------
@@ -589,8 +596,8 @@ export function ItemManager({
     if (filteredItems.length === 0 && isFiltered) {
       return (
         <EmptyState
-          title={effectiveConfig.labels.noResultsTitle || 'No matching items'}
-          description={effectiveConfig.labels.noResultsDescription || 'Try adjusting your search or filters'}
+          title={effectiveConfig.labels.noResultsTitle || tEmpty('generic.noResults')}
+          description={effectiveConfig.labels.noResultsDescription || tEmpty('generic.tryAdjusting')}
           className={classNames?.emptyState}
         />
       );

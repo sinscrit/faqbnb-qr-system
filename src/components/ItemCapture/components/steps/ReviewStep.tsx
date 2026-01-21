@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import {
   Edit,
@@ -316,6 +317,9 @@ export function ReviewStep({
   className,
   debug = false,
 }: ReviewStepProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // Internal state
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -742,7 +746,7 @@ export function ReviewStep({
           {isSubmitting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-              <span>Submitting...</span>
+              <span>{tLoading('status.submitting')}</span>
             </>
           ) : (
             <>

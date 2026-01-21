@@ -23,6 +23,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import {
@@ -319,6 +320,7 @@ export default function HelpPage() {
   const router = useRouter();
   const { user, loading: authLoading, currentAccount } = useAuth();
   const { useCanAccess, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
+  const t = useTranslations('common.loading');
 
   const canViewItems = useCanAccess('view_items');
 
@@ -328,7 +330,7 @@ export default function HelpPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('pages.help')}</p>
         </div>
       </div>
     );

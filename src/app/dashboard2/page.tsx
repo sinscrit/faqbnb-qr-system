@@ -42,6 +42,8 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 export default function Dashboard2Page() {
   const router = useRouter();
   const tNotifications = useTranslations('common.notifications');
+  const tEmpty = useTranslations('common.emptyStates');
+  const tActions = useTranslations('common.actions');
   const { user, getUserProperties, userProperties } = useAuth();
 
   // REQ-136: Get user preferences
@@ -173,9 +175,9 @@ export default function Dashboard2Page() {
         <div className="bg-white rounded-xl shadow-sm">
           <EmptyStateCard
             icon={Home}
-            title="Welcome to FAQBNB!"
-            description="Get started by adding your first property. Then you can create QR codes to help guests find what they need."
-            actionLabel="Add Your First Property"
+            title={tEmpty('dashboard.welcome.title')}
+            description={tEmpty('dashboard.welcome.description')}
+            actionLabel={tActions('addProperty')}
             onAction={handleAddProperty}
             variant="welcome"
           />

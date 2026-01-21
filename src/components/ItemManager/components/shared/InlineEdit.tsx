@@ -21,6 +21,7 @@
 
 import React, { useState, useRef, useCallback, useEffect, useId } from 'react';
 import { Loader2, AlertCircle, Pencil } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -103,6 +104,8 @@ export function InlineEdit({
   inputType = 'text',
   allowEmpty = false,
 }: InlineEditProps) {
+  const tLoading = useTranslations('common.loading');
+
   // ---------------------------------------------------------------------------
   // Refs
   // ---------------------------------------------------------------------------
@@ -398,7 +401,7 @@ export function InlineEdit({
             <Loader2 className="w-4 h-4 animate-spin text-gray-400" aria-hidden="true" />
           </div>
         </div>
-        <span className="sr-only" aria-live="polite">Saving...</span>
+        <span className="sr-only" aria-live="polite">{tLoading('status.saving')}</span>
       </div>
     );
   }

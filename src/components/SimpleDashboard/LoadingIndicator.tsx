@@ -1,9 +1,12 @@
 // src/components/SimpleDashboard/LoadingIndicator.tsx
 // REQ-138: Unified Loading Indicator Component
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-21
+
+'use client';
 
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 /**
@@ -53,23 +56,25 @@ const colorStyles: Record<string, string> = {
  * - Respects prefers-reduced-motion via CSS
  *
  * @param size - Size preset (default: 'md')
- * @param label - Accessible label (default: 'Loading')
+ * @param label - Accessible label (default: translated 'Loading...')
  * @param color - Color preset (default: 'brand')
  * @param className - Optional additional CSS classes
  */
 export function LoadingIndicator({
   size = 'md',
-  label = 'Loading',
+  label,
   color = 'brand',
   className,
 }: LoadingIndicatorProps) {
+  const t = useTranslations('common.loading');
+  const effectiveLabel = label ?? t('generic.loading');
   const sizeClass = sizeStyles[size];
   const colorClass = colorStyles[color];
 
   return (
     <span
       role="status"
-      aria-label={label}
+      aria-label={effectiveLabel}
       className={cn('inline-flex items-center justify-center', className)}
     >
       <Loader2
@@ -80,7 +85,7 @@ export function LoadingIndicator({
         )}
         aria-hidden="true"
       />
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{effectiveLabel}</span>
     </span>
   );
 }

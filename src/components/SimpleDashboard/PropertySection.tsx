@@ -8,6 +8,7 @@
 
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ChevronRight, Home, Plus, Pencil, Package, DoorOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Property } from '@/types';
@@ -123,12 +124,15 @@ interface PropertyEmptyStateProps {
 }
 
 function PropertyEmptyState({ onAddProperty }: PropertyEmptyStateProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+  const tActions = useTranslations('common.actions');
+
   return (
     <EmptyStateCard
       icon={Home}
-      title="Let's add your property"
-      description="A property is where your items live - like a vacation rental or home."
-      actionLabel={onAddProperty ? 'Add Property' : undefined}
+      title={tEmpty('properties.titleAdd')}
+      description={tEmpty('properties.description')}
+      actionLabel={onAddProperty ? tActions('addProperty') : undefined}
       onAction={onAddProperty}
       variant="subtle"
     />

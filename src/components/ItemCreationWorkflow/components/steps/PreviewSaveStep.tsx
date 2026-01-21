@@ -578,8 +578,9 @@ export function PreviewSaveStep({
   isSaving = false,
   className,
 }: PreviewSaveStepProps) {
-  // Translation hook for notifications
+  // Translation hooks
   const tNotifications = useTranslations('common.notifications');
+  const tLoading = useTranslations('common.loading');
 
   // Local state
   const [showSuccess, setShowSuccess] = useState(false);
@@ -843,7 +844,7 @@ export function PreviewSaveStep({
         {isSaving ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-            Saving...
+            {tLoading('status.saving')}
           </>
         ) : (
           <>

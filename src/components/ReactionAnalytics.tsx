@@ -87,12 +87,13 @@ function LoadingSkeleton() {
 }
 
 function EmptyState() {
+  const tEmpty = useTranslations('common.emptyStates');
   return (
     <div className="text-center py-12">
       <div className="text-gray-400 mb-3">
         <Heart className="w-12 h-12 mx-auto" />
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">No reactions yet</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">{tEmpty('analytics.noReactionsYet')}</h3>
       <p className="text-gray-600">
         Reaction data will appear here once users start interacting with your content.
       </p>

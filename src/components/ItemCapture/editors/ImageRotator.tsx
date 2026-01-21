@@ -15,6 +15,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { RotateCcw, RotateCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -91,6 +92,9 @@ export default function ImageRotator({
   className,
   showProcessingIndicator = true,
 }: ImageRotatorProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // ==========================================================================
   // State
   // ==========================================================================
@@ -368,7 +372,7 @@ export default function ImageRotator({
             <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
               <div className="flex flex-col items-center gap-2">
                 <div className="animate-pulse h-8 w-8 bg-gray-300 rounded-full" />
-                <span className="text-sm text-gray-500">Loading image...</span>
+                <span className="text-sm text-gray-500">{tLoading('media.image')}</span>
               </div>
             </div>
           )}

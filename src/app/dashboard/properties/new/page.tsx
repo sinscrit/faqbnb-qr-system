@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { PropertyType, PropertyTypesResponse } from '@/types';
@@ -23,6 +24,7 @@ interface PropertyFormData {
 
 export default function CreatePropertyPage() {
   const router = useRouter();
+  const tLoading = useTranslations('common.loading');
   const { user, loading: authLoading, currentAccount } = useAuth();
 
   // EMERGENCY FIX: Force OWNER permissions for test users
@@ -449,7 +451,7 @@ export default function CreatePropertyPage() {
               ) : (
                 <Save className="w-4 h-4 mr-2" />
               )}
-              {loading ? 'Creating...' : 'Create Property'}
+              {loading ? tLoading('status.creating') : 'Create Property'}
             </button>
           </div>
         </form>

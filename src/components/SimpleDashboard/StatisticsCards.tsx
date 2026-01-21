@@ -11,6 +11,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Package, Home, Tag, ChevronRight, LucideIcon } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { DashboardTier } from '@/hooks/useDashboardTier';
@@ -169,6 +170,9 @@ export function StatisticsCards({
   onCreateItem,
   className = ''
 }: StatisticsCardsProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+  const tActions = useTranslations('common.actions');
+
   // Card configuration with Airbnb DLS colors
   // REQ-203: Added navigation URLs for click navigation
   const cardConfigs: StatCardConfig[] = [
@@ -215,9 +219,9 @@ export function StatisticsCards({
       <div className={`bg-white rounded-xl shadow-sm ${className}`}>
         <EmptyStateCard
           icon={Package}
-          title="Start adding new QR Code items and create guides/instructions"
+          title={tEmpty('dashboard.noContent.title')}
           description=""
-          actionLabel="New QR Code Item"
+          actionLabel={tActions('newQrCodeItem')}
           onAction={onCreateItem}
           variant="default"
         />

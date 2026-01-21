@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthGuard from '@/components/AuthGuard';
-import { 
-  Property, 
+import {
+  Property,
   PropertyResponse,
   Item
 } from '@/types';
@@ -14,44 +15,17 @@ const ViewPropertyPage: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const { user } = useAuth();
+  const tLoading = useTranslations('common.loading');
 
-  // Extract and validate propertyId
+  // Extract propertyId (validation handled in render logic below)
   const rawPropertyId = params.propertyId;
-  if (!rawPropertyId || typeof rawPropertyId !== 'string') {
-    return (
-      <AuthGuard>
-        <div className="p-6">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Invalid Property ID</h3>
-              <p className="mt-1 text-sm text-gray-500">No property ID provided in the URL.</p>
-              <div className="mt-6">
-                <button
-                  onClick={() => router.push('/admin/properties')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                >
-                  Back to Properties
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </AuthGuard>
-    );
-  }
+  const propertyId = typeof rawPropertyId === 'string' ? rawPropertyId : '';
 
-  // propertyId is validated as string above
-  const propertyId = rawPropertyId as string;
-
+  // All hooks must be called unconditionally at the top level
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // QR Print State
   const [isQRPrintLoading, setIsQRPrintLoading] = useState(false);
 
@@ -60,6 +34,7 @@ const ViewPropertyPage: React.FC = () => {
     if (propertyId) {
       loadPropertyData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId]);
 
   const loadPropertyData = async () => {
@@ -187,6 +162,35 @@ const ViewPropertyPage: React.FC = () => {
       minute: '2-digit'
     });
   };
+
+  // Handle invalid propertyId
+  if (!propertyId) {
+    return (
+      <AuthGuard>
+        <div className="p-6">
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Invalid Property ID</h3>
+              <p className="mt-1 text-sm text-gray-500">No property ID provided in the URL.</p>
+              <div className="mt-6">
+                <button
+                  onClick={() => router.push('/admin/properties')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  Back to Properties
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
 
   if (loading) {
     return (
@@ -468,7 +472,7 @@ const ViewPropertyPage: React.FC = () => {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
-                {isQRPrintLoading ? 'Loading...' : 'Print QR Codes'}
+                {isQRPrintLoading ? tLoading('generic.loading') : 'Print QR Codes'}
               </button>
             </div>
           </div>

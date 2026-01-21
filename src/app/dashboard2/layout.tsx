@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Building2, FileText, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
@@ -71,6 +72,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading, authState, signOut } = useAuth();
   const [hasRedirected, setHasRedirected] = useState(false);
+  const t = useTranslations('common.loading');
 
   // Show loading spinner while auth is initializing or in LOADING state
   if (loading || authState === 'LOADING') {
@@ -78,7 +80,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Loading dashboard...</p>
+          <p className="text-gray-600 text-lg">{t('pages.dashboard')}</p>
         </div>
       </div>
     );
@@ -95,7 +97,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Redirecting to login...</p>
+          <p className="text-gray-600 text-lg">{t('auth.completingAuth')}</p>
         </div>
       </div>
     );
@@ -107,7 +109,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Loading...</p>
+          <p className="text-gray-600 text-lg">{t('generic.loading')}</p>
         </div>
       </div>
     );

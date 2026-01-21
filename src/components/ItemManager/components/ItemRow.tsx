@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   MoreVertical,
   Edit,
@@ -102,6 +103,7 @@ export function ItemRow({
   propertyName,
   showPropertyColumn,
 }: ItemRowProps) {
+  const tEmpty = useTranslations('common.emptyStates');
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -344,7 +346,7 @@ export function ItemRow({
   };
 
   // Build comprehensive aria-label
-  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${articlesCount !== undefined && articlesCount > 0 ? `${articlesCount} guides.` : 'No guides.'} Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
+  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${articlesCount !== undefined && articlesCount > 0 ? `${articlesCount} guides.` : tEmpty('guides.noGuides')} Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
 
   return (
     <div

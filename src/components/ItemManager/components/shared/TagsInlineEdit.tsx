@@ -31,6 +31,7 @@ import React, {
   useMemo,
 } from 'react';
 import { Plus, Tag, Loader2, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { TagChip } from './TagChip';
 import { METADATA_CONSTRAINTS, SUGGESTED_TAGS } from '@/components/ItemCapture/utils/constants';
@@ -86,6 +87,8 @@ export function TagsInlineEdit({
   className,
   ariaLabel,
 }: TagsInlineEditProps) {
+  const tLoading = useTranslations('common.loading');
+
   // ---------------------------------------------------------------------------
   // Refs
   // ---------------------------------------------------------------------------
@@ -579,11 +582,11 @@ export function TagsInlineEdit({
           ))}
           <div className="flex items-center gap-1 text-gray-400 ml-auto">
             <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-            <span className="text-xs">Saving...</span>
+            <span className="text-xs">{tLoading('status.saving')}</span>
           </div>
         </div>
         <span id={liveRegionId} className="sr-only" aria-live="polite">
-          Saving tags...
+          {tLoading('status.saving')}
         </span>
       </div>
     );

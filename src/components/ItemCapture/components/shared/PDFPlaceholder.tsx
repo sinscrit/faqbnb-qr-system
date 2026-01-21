@@ -13,6 +13,7 @@
  */
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { FileText, Lock, AlertTriangle, FileWarning } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PDFErrorCode } from '../../utils/pdfConstants';
@@ -74,6 +75,9 @@ export function PDFPlaceholder({
   isLoading,
   className,
 }: PDFPlaceholderProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // Determine which state to display
   const showLoading = isLoading;
   const showPasswordProtected = !isLoading && isPasswordProtected;
@@ -142,7 +146,7 @@ export function PDFPlaceholder({
       role={showLoading ? 'status' : 'img'}
       aria-label={
         showLoading
-          ? 'Loading PDF preview'
+          ? tLoading('media.pdf')
           : showPasswordProtected
             ? 'Password-protected PDF'
             : showCorrupt
@@ -153,7 +157,7 @@ export function PDFPlaceholder({
       }
     >
       {icon}
-      {showLoading && <span className="sr-only">Loading...</span>}
+      {showLoading && <span className="sr-only">{tLoading('generic.loading')}</span>}
     </div>
   );
 }

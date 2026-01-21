@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Property, PropertyType, User } from '@/types';
 import { Plus, Search, Filter, Loader2, Shield, Eye, EyeOff, Edit, Trash2, ExternalLink, RefreshCw } from 'lucide-react';
 
@@ -61,6 +62,8 @@ export function PropertiesManagement({
   className = '',
   itemsPerPage = 10
 }: PropertiesManagementProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+  const tLoading = useTranslations('common.loading');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterPropertyType, setFilterPropertyType] = useState('');
   const [filterUser, setFilterUser] = useState('');
@@ -316,9 +319,9 @@ export function PropertiesManagement({
           <div className="text-gray-400 mb-4">
             <Search className="mx-auto h-12 w-12" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No Properties Found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">{tEmpty('properties.titleNotFound')}</h3>
           <p className="text-gray-600 mb-4">
-            {searchQuery ? 'No properties match your search criteria.' : 'Get started by creating your first property.'}
+            {searchQuery ? tEmpty('properties.descriptionSearchNoMatch') : tEmpty('properties.descriptionCreate')}
           </p>
           {canCreate && !searchQuery && (
             <div className="text-sm text-gray-500">
@@ -559,7 +562,7 @@ export function PropertiesManagement({
                   disabled={deletingProperty}
                   className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
                 >
-                  {deletingProperty ? 'Deleting...' : 'Delete'}
+                  {deletingProperty ? tLoading('status.deleting') : 'Delete'}
                 </button>
               </div>
             </div>

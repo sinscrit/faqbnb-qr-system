@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 // REQ-023: Unified Route Architecture - Permission System Integration
 import { DashboardSection, PERMISSIONS, type PermissionKey } from '@/types/permissions';
@@ -21,13 +22,16 @@ interface LoadingSpinnerProps {
 }
 
 // Loading spinner component
-function LoadingSpinner({ message = 'Authenticating...' }: LoadingSpinnerProps) {
+function LoadingSpinner({ message }: LoadingSpinnerProps) {
+  const tLoading = useTranslations('common.loading');
+  const displayMessage = message ?? tLoading('auth.authenticating');
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600 text-lg">{message}</p>
-        <p className="text-gray-500 text-sm mt-2">Please wait while we verify your credentials</p>
+        <p className="text-gray-600 text-lg">{displayMessage}</p>
+        <p className="text-gray-500 text-sm mt-2">{tLoading('auth.verifyingCredentials')}</p>
       </div>
     </div>
   );
@@ -156,7 +160,7 @@ export default function AuthGuard({
 
   // Show loading state
   if (loading || permissionsLoading) {
-    return fallback || <LoadingSpinner message="Checking permissions..." />;
+    return fallback || <LoadingSpinner />;
   }
 
   // No user authenticated
@@ -311,7 +315,7 @@ export function AdminOnly({ children, fallback }: { children: ReactNode; fallbac
   const { isAdmin: userIsAdmin, loading } = useAuth();
 
   if (loading) {
-    return fallback || <LoadingSpinner message="Checking permissions..." />;
+    return fallback || <LoadingSpinner />;
   }
 
   if (!userIsAdmin) {
@@ -328,7 +332,7 @@ export function SystemAdminOnly({ children, fallback }: { children: ReactNode; f
   const { isAdmin: userIsAdmin, loading } = useAuth();
 
   if (loading) {
-    return fallback || <LoadingSpinner message="Checking system admin permissions..." />;
+    return fallback || <LoadingSpinner />;
   }
 
   if (!userIsAdmin) {
@@ -358,7 +362,7 @@ export function PermissionGate({
   const { hasPermission, permissionsLoading } = useAuth();
 
   if (permissionsLoading) {
-    return fallback || <LoadingSpinner message="Checking permissions..." />;
+    return fallback || <LoadingSpinner />;
   }
 
   const hasAllPermissions = permissions.every(permission => hasPermission(permission));

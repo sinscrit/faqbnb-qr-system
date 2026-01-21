@@ -24,6 +24,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -95,6 +96,9 @@ export default function VideoTrimmer({
   className,
   debug = false,
 }: VideoTrimmerProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // === Refs ===
   const videoRef = useRef<HTMLVideoElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -540,7 +544,7 @@ export default function VideoTrimmer({
         {!isLoaded && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100">
             <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mb-3" />
-            <span className="text-sm text-gray-600">Loading video...</span>
+            <span className="text-sm text-gray-600">{tLoading('media.video')}</span>
           </div>
         )}
       </div>

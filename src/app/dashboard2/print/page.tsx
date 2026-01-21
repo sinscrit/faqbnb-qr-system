@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { useActiveProperty } from '@/hooks/useActiveProperty';
 import { usePropertyItemCounts } from '@/hooks/usePropertyItemCounts';
@@ -43,23 +44,26 @@ function LoadingSpinner() {
  * Empty state component when user has no properties
  */
 function EmptyState({ onNavigateToCreate }: { onNavigateToCreate: () => void }) {
+  const tEmpty = useTranslations('common.emptyStates');
+  const tActions = useTranslations('common.actions');
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
       <div className="bg-[#F7F7F7] rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
         <Building className="w-10 h-10 text-[#717171]" />
       </div>
       <h2 className="text-2xl font-bold text-[#222222] mb-2">
-        No Properties Yet
+        {tEmpty('properties.title')}
       </h2>
       <p className="text-[#717171] text-lg mb-6 max-w-md">
-        You don&apos;t have any properties yet. Add a property to start creating QR codes.
+        {tEmpty('properties.description')}
       </p>
       <button
         onClick={onNavigateToCreate}
         className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#E61E4D] to-[#D70466] text-white rounded-lg font-medium hover:scale-[1.02] hover:brightness-95 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
         aria-label="Add a new property"
       >
-        Add a Property
+        {tActions('addProperty')}
       </button>
     </div>
   );

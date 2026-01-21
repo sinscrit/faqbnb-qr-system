@@ -162,10 +162,10 @@ Add the `common.emptyStates` namespace to the English translation file with all 
 ```
 
 #### Verification
-- [ ] All categories are present in the namespace
-- [ ] JSON is valid (no syntax errors)
-- [ ] Keys follow camelCase convention
-- [ ] ICU format used for interpolation (`{searchTerm}`)
+- [x] All categories are present in the namespace ---implemented:Added emptyStates namespace with all 13 categories (generic, items, guides, properties, dashboard, resources, qrCodes, analytics, session, accessRequests, locations, tags, cta) to en.json---
+- [x] JSON is valid (no syntax errors) -unit tested-
+- [x] Keys follow camelCase convention
+- [x] ICU format used for interpolation (`{searchTerm}`)
 
 ---
 
@@ -185,9 +185,9 @@ Add the same `common.emptyStates` namespace structure to all non-English languag
 3. Verify JSON validity
 
 #### Verification
-- [ ] All 5 language files have identical key structure to en.json
-- [ ] JSON is valid in all files
-- [ ] No missing keys in any file
+- [x] All 5 language files have identical key structure to en.json ---implemented:Added emptyStates namespace with all 13 categories to fr.json, es.json, de.json, nl.json, it.json---
+- [x] JSON is valid in all files -unit tested-
+- [x] No missing keys in any file
 
 ---
 
@@ -258,11 +258,11 @@ export function EmptyState({
 ```
 
 #### Verification
-- [ ] `useTranslations` imported from 'next-intl'
-- [ ] DEFAULT constants removed
-- [ ] Null coalescing used for props
-- [ ] ARIA label uses translated strings
-- [ ] Component renders correctly with default translation
+- [x] `useTranslations` imported from 'next-intl' ---implemented:Added useTranslations import, removed DEFAULT constants, added tEmpty hook and effectiveTitle/effectiveDescription variables with null coalescing---
+- [x] DEFAULT constants removed
+- [x] Null coalescing used for props
+- [x] ARIA label uses translated strings
+- [x] Component renders correctly with default translation -unit tested-
 
 ---
 
@@ -301,9 +301,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Welcome empty state displays translated text
-- [ ] CTA button text is translated
-- [ ] No console warnings about missing keys
+- [x] Welcome empty state displays translated text ---implemented:Added tEmpty and tActions hooks, replaced hardcoded EmptyStateCard title/description/actionLabel with translation calls---
+- [x] CTA button text is translated
+- [x] No console warnings about missing keys -unit tested-
 
 ---
 
@@ -322,8 +322,8 @@ Update the statistics cards empty state messages to use translations.
 2. Replace hardcoded empty state text with translation calls
 
 #### Verification
-- [ ] Empty state title uses translation
-- [ ] Component builds without errors
+- [x] Empty state title uses translation ---implemented:Added tEmpty and tActions hooks, replaced hardcoded title with tEmpty('dashboard.noContent.title') and actionLabel with tActions('newQrCodeItem')---
+- [x] Component builds without errors -unit tested-
 
 ---
 
@@ -351,9 +351,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] "Let's add your property" text translated
-- [ ] Property description translated
-- [ ] "Add Property" button text translated
+- [x] "Let's add your property" text translated ---implemented:Added tEmpty and tActions hooks to PropertyEmptyState, replaced title/description/actionLabel with translation calls---
+- [x] Property description translated
+- [x] "Add Property" button text translated -unit tested-
 
 ---
 
@@ -380,9 +380,9 @@ emptyStateTitle: 'No items yet',
 3. Update the "no results" description text
 
 #### Verification
-- [ ] Default config uses translated empty state title
-- [ ] "Try adjusting your search or filters" is translated
-- [ ] Component functions correctly with translations
+- [x] Default config uses translated empty state title ---implemented:Added useTranslations hook, updated no results EmptyState to use tEmpty('generic.noResults') and tEmpty('generic.tryAdjusting')---
+- [x] "Try adjusting your search or filters" is translated
+- [x] Component functions correctly with translations -unit tested-
 
 ---
 
@@ -413,9 +413,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Default empty state title translated
-- [ ] Search "No items found" text translated
-- [ ] Conditional logic preserved
+- [x] Default empty state title translated ---implemented:Added useTranslations hook, created effectiveEmptyTitle/effectiveEmptyDescription with null coalescing, replaced searchTerm messages with tEmpty calls---
+- [x] Search "No items found" text translated
+- [x] Conditional logic preserved -unit tested-
 
 ---
 
@@ -449,9 +449,9 @@ Update multiple empty state variations in the item selection list.
 5. Replace property-specific message with `tEmpty('items.noItemsForProperty')`
 
 #### Verification
-- [ ] All 4 empty state variations translated
-- [ ] Search term interpolation works correctly
-- [ ] No hardcoded text remains
+- [x] All 4 empty state variations translated ---implemented:Added useTranslations hook, replaced 'No items found', 'No items match your search...', 'No items available', and 'There are no items...' with tEmpty calls including ICU interpolation---
+- [x] Search term interpolation works correctly
+- [x] No hardcoded text remains -unit tested-
 
 ---
 
@@ -476,8 +476,8 @@ emptyStateTitle="No items yet"
 2. Replace prop with: `emptyStateTitle={tEmpty('items.title')}`
 
 #### Verification
-- [ ] Items page empty state translated
-- [ ] Component builds without errors
+- [x] Items page empty state translated ---implemented:Dashboard2 items page uses ItemManager which inherits translations. Legacy /dashboard/items/ not modified per CRITICAL PATH WARNING---
+- [x] Component builds without errors -unit tested-
 
 ---
 
@@ -506,9 +506,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] "No guides found" text translated
-- [ ] "Try adjusting..." text uses generic namespace for reuse
-- [ ] Styling preserved
+- [x] "No guides found" text translated ---implemented:Added useTranslations hook, replaced hardcoded 'No guides found' with tEmpty('guides.titleNotFound') and 'Try adjusting...' with tEmpty('generic.tryAdjusting')---
+- [x] "Try adjusting..." text uses generic namespace for reuse
+- [x] Styling preserved -unit tested-
 
 ---
 
@@ -537,9 +537,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] "No guides yet" heading translated
-- [ ] Description text translated
-- [ ] Layout preserved
+- [x] "No guides yet" heading translated ---implemented:Added tEmpty and tActions hooks, replaced 'No guides yet' with tEmpty('guides.title'), description with tEmpty('guides.description'), and CTA with tEmpty('cta.createFirstItem')---
+- [x] Description text translated
+- [x] Layout preserved -unit tested-
 
 ---
 
@@ -565,7 +565,7 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Item instructions empty state translated
+- [x] Item instructions empty state translated ---implemented:Added useTranslations hook, replaced 'No guides yet' with tEmpty('guides.title') and description with tEmpty('guides.descriptionItem')--- -unit tested-
 
 ---
 
@@ -591,7 +591,7 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Selector empty state translated
+- [x] Selector empty state translated ---implemented:Added useTranslations hook, replaced 'No properties available' with tEmpty('properties.noPropertiesAvailable')--- -unit tested-
 
 ---
 
@@ -620,9 +620,9 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Title translated
-- [ ] Both conditional description variations translated
-- [ ] Search logic preserved
+- [x] Title translated ---implemented:Added useTranslations hook, replaced 'No Properties Found' with tEmpty('properties.titleNotFound') and conditional descriptions with tEmpty calls---
+- [x] Both conditional description variations translated
+- [x] Search logic preserved -unit tested-
 
 ---
 
@@ -648,7 +648,7 @@ const tEmpty = useTranslations('common.emptyStates');
 ```
 
 #### Verification
-- [ ] Dropdown empty state translated
+- [x] Dropdown empty state translated ---implemented:Added useTranslations hook, replaced 'No properties found' with tEmpty('properties.noPropertiesFound')--- -unit tested-
 
 ---
 

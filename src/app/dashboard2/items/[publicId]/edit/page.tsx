@@ -15,6 +15,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2, ArrowLeft, Save } from 'lucide-react';
@@ -39,6 +40,7 @@ export default function EditItemPage() {
   const router = useRouter();
   const params = useParams();
   const publicId = params.publicId as string;
+  const tLoading = useTranslations('common.loading');
 
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
@@ -352,7 +354,7 @@ export default function EditItemPage() {
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Saving...
+                {tLoading('status.saving')}
               </>
             ) : (
               <>

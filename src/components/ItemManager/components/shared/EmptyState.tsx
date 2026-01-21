@@ -11,17 +11,10 @@
  * @lastModified 2026-01-03 (REQ-090 Task 17 - Added accessibility features)
  */
 
+import { useTranslations } from 'next-intl';
 import { Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { EmptyStateProps } from '../../ItemManager.types';
-
-// =============================================================================
-// Constants
-// =============================================================================
-
-/** Default labels for empty state */
-const DEFAULT_TITLE = 'No items yet';
-const DEFAULT_DESCRIPTION = 'Create your first item to get started';
 
 // =============================================================================
 // Component
@@ -45,16 +38,21 @@ const DEFAULT_DESCRIPTION = 'Create your first item to get started';
  * />
  */
 export function EmptyState({
-  title = DEFAULT_TITLE,
-  description = DEFAULT_DESCRIPTION,
+  title,
+  description,
   icon,
   action,
   className,
 }: EmptyStateProps) {
+  const tEmpty = useTranslations('common.emptyStates');
+
+  const effectiveTitle = title ?? tEmpty('items.title');
+  const effectiveDescription = description ?? tEmpty('items.description');
+
   return (
     <div
       role="status"
-      aria-label={`${title}. ${description}`}
+      aria-label={`${effectiveTitle}. ${effectiveDescription}`}
       className={cn('text-center py-12', className)}
     >
       {/* Icon container - decorative */}
@@ -64,12 +62,12 @@ export function EmptyState({
 
       {/* Title */}
       <h3 className="text-lg font-medium text-gray-900 mb-2">
-        {title}
+        {effectiveTitle}
       </h3>
 
       {/* Description */}
       <p className="text-gray-600 mb-6 max-w-md mx-auto">
-        {description}
+        {effectiveDescription}
       </p>
 
       {/* Optional action CTA */}

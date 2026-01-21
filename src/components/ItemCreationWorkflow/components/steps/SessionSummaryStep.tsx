@@ -74,6 +74,7 @@ interface EmptySessionStateProps {
 
 function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
   const t = useTranslations('common.actions');
+  const tEmpty = useTranslations('common.emptyStates');
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -81,10 +82,10 @@ function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
         <Package className="w-8 h-8 text-gray-400" aria-hidden="true" />
       </div>
       <h3 className="text-lg font-medium text-[#222222] mb-2">
-        No items yet
+        {tEmpty('session.noItemsYet')}
       </h3>
       <p className="text-[#717171] mb-6 max-w-sm">
-        You haven&apos;t created any items in this session yet. Start by adding your first item.
+        {tEmpty('session.noItemsDescription')}
       </p>
       <button
         type="button"

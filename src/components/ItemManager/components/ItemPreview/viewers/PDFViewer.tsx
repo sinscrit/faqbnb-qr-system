@@ -20,6 +20,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ChevronLeft,
   ChevronRight,
@@ -84,6 +85,9 @@ export function PDFViewer({
   onLoadComplete,
   className,
 }: PDFViewerProps) {
+  // Translations
+  const tLoading = useTranslations('common.loading');
+
   // ---------------------------------------------------------------------------
   // State
   // ---------------------------------------------------------------------------
@@ -344,7 +348,7 @@ export function PDFViewer({
       {/* Screen reader announcement */}
       <div aria-live="polite" className="sr-only">
         {isLoading
-          ? 'Loading PDF...'
+          ? tLoading('media.pdf')
           : error
             ? `Error: ${error}`
             : `Page ${currentPage} of ${totalPages}`}
@@ -354,7 +358,7 @@ export function PDFViewer({
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-          <span className="mt-2 text-sm text-gray-600">Loading PDF...</span>
+          <span className="mt-2 text-sm text-gray-600">{tLoading('media.pdf')}</span>
         </div>
       )}
 

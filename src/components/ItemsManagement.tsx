@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Item, ItemsListResponse } from '@/types';
 import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter, Shield, Eye, EyeOff } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
@@ -90,10 +91,15 @@ export function ItemsManagement({
   showCreateButton = true,
   createButtonHref = '/dashboard/items/new',
   createButtonText = 'Add Item',
-  emptyStateTitle = 'No items yet',
-  emptyStateDescription = 'Get started by creating your first item'
+  emptyStateTitle,
+  emptyStateDescription
 }: ItemsManagementProps) {
   const router = useRouter();
+  const tEmpty = useTranslations('common.emptyStates');
+
+  // Use translations as fallbacks for empty state props
+  const effectiveEmptyTitle = emptyStateTitle ?? tEmpty('items.title');
+  const effectiveEmptyDescription = emptyStateDescription ?? tEmpty('items.descriptionAlt');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -258,12 +264,12 @@ export function ItemsManagement({
               <Search className="w-12 h-12 mx-auto" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm ? 'No items found' : emptyStateTitle}
+              {searchTerm ? tEmpty('items.noItemsFound') : effectiveEmptyTitle}
             </h3>
             <p className="text-gray-600 mb-6">
               {searchTerm
-                ? 'Try adjusting your search terms'
-                : emptyStateDescription
+                ? tEmpty('generic.tryAdjusting')
+                : effectiveEmptyDescription
               }
             </p>
             {!searchTerm && showCreateButton && canCreate && (

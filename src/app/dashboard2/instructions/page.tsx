@@ -50,6 +50,8 @@ const VIEW_MODE_STORAGE_KEY = 'instructionsPage.viewMode';
 export default function InstructionsPage() {
   const router = useRouter();
   const tNotifications = useTranslations('common.notifications');
+  const tEmpty = useTranslations('common.emptyStates');
+  const tActions = useTranslations('common.actions');
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
   const { selectedPropertyId } = usePropertyContext();
@@ -291,17 +293,16 @@ export default function InstructionsPage() {
       <div className="max-w-2xl mx-auto text-center py-16">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
           <FileQuestion className="w-16 h-16 text-gray-400 mx-auto mb-6" aria-hidden="true" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">No guides yet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">{tEmpty('guides.title')}</h2>
           <p className="text-gray-600 mb-8 max-w-md mx-auto">
-            Create items and add guide articles to get started. Guides help guests
-            understand how to use items in your property.
+            {tEmpty('guides.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard2/create"
               className="inline-flex items-center justify-center px-6 py-3 bg-[#FF385C] text-white text-base font-medium rounded-lg hover:bg-[#E31C5F] transition-colors shadow-sm"
             >
-              Create Your First Item
+              {tEmpty('cta.createFirstItem')}
             </Link>
             <Link
               href="/dashboard2/help"
