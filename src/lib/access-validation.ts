@@ -30,8 +30,8 @@ export interface AccessCodeRegistrationValidation {
 // Metadata extracted from access request for registration
 export interface AccessCodeMetadata {
   requestId: string;
-  requestDate: string;
-  approvalDate?: string;
+  requestDate: string | null;
+  approvalDate?: string | null;
   source: string;
   hasAccount: boolean;
   accountId?: string;
@@ -233,7 +233,7 @@ export async function consumeAccessCode(
     return {
       success: true,
       requestId: updatedRequest.id,
-      registrationDate: updatedRequest.registration_date
+      registrationDate: updatedRequest.registration_date || undefined
     };
 
   } catch (error) {

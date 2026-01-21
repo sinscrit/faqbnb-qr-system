@@ -4,6 +4,9 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase';
 
+// Type for user query results
+type UserSelectResult = { email: string; full_name: string | null; role: string | null };
+
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
@@ -43,20 +46,20 @@ async function validateAdminAuth(request: NextRequest) {
       .select('email, full_name, role')
       .eq('id', user.id)
       .eq('email', user.email)
-      .single();
+      .single() as { data: UserSelectResult | null; error: unknown };
 
     const { data: regularUser, error: regularUserError } = await supabase
       .from('users')
       .select('email, full_name, role')
       .eq('id', user.id)
-      .single();
+      .single() as { data: UserSelectResult | null; error: unknown };
 
     if (adminError && regularUserError) {
       console.log('User validation failed:', {
         userId: user.id,
         email: user.email,
-        adminError: adminError?.message,
-        regularUserError: regularUserError?.message
+        adminError: String(adminError || ''),
+        regularUserError: String(regularUserError || '')
       });
       return {
         error: NextResponse.json(
@@ -128,7 +131,7 @@ interface UserAccessResponse {
       name: string;
       description: string | null;
       memberCount: number;
-      created_at: string;
+      created_at: string | null;
     }>;
     accessibleAccounts: Array<{
       id: string;
@@ -137,17 +140,17 @@ interface UserAccessResponse {
       userRole: string;
       ownerName: string;
       memberCount: number;
-      created_at: string;
+      created_at: string | null;
     }>;
     usersWithAccess: Array<{
       id: string;
       email: string;
       fullName: string | null;
-      role: string;
+      role: string | null;
       accountId: string;
       accountName: string;
       userRoleInAccount: string;
-      joinedAt: string;
+      joinedAt: string | null;
     }>;
     summary: {
       totalOwnedAccounts: number;
@@ -258,7 +261,7 @@ export async function GET(request: NextRequest) {
 
     // Then get the user details separately
     const userIds = [...new Set((accountUsersData || []).map(au => au.user_id))];
-    let usersData = [];
+    let usersData: Array<{ id: string; email: string; full_name: string | null; role: string | null }> = [];
 
     if (userIds.length > 0) {
       const { data: usersResult, error: usersError } = await supabase
@@ -367,11 +370,15 @@ export async function GET(request: NextRequest) {
     );
 
     // Process users with access data
-    const usersWithAccess = (usersWithAccessData || []).map((accessRecord) => {
+    const usersWithAccess = (usersWithAccessData || []).flatMap((accessRecord) => {
+      if (!accessRecord || !accessRecord.accounts || !accessRecord.users) {
+        return [];
+      }
+
       const account = accessRecord.accounts;
       const userData = accessRecord.users;
 
-      return {
+      return [{
         id: userData.id,
         email: userData.email,
         fullName: userData.full_name,
@@ -380,7 +387,7 @@ export async function GET(request: NextRequest) {
         accountName: account.name,
         userRoleInAccount: accessRecord.role,
         joinedAt: accessRecord.joined_at
-      };
+      }];
     });
 
     // Calculate summary statistics

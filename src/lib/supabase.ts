@@ -315,6 +315,9 @@ export type Database = {
           denial_reason: string | null
           processed_by: string | null
           processed_at: string | null
+          email_sent_date: string | null
+          registration_completed_date: string | null
+          approval_notes: string | null
         }
         Insert: {
           id?: string
@@ -336,6 +339,9 @@ export type Database = {
           denial_reason?: string | null
           processed_by?: string | null
           processed_at?: string | null
+          email_sent_date?: string | null
+          registration_completed_date?: string | null
+          approval_notes?: string | null
         }
         Update: {
           id?: string
@@ -357,6 +363,9 @@ export type Database = {
           denial_reason?: string | null
           processed_by?: string | null
           processed_at?: string | null
+          email_sent_date?: string | null
+          registration_completed_date?: string | null
+          approval_notes?: string | null
         }
         Relationships: []
       }
@@ -516,6 +525,7 @@ export type Database = {
           email: string
           full_name: string | null
           role: string | null
+          preferred_language: string | null
           created_at: string | null
           updated_at: string | null
           is_admin: boolean | null
@@ -527,6 +537,7 @@ export type Database = {
           email: string
           full_name?: string | null
           role?: string | null
+          preferred_language?: string | null
           created_at?: string | null
           updated_at?: string | null
           is_admin?: boolean | null
@@ -538,6 +549,7 @@ export type Database = {
           email?: string
           full_name?: string | null
           role?: string | null
+          preferred_language?: string | null
           created_at?: string | null
           updated_at?: string | null
           is_admin?: boolean | null
@@ -603,6 +615,7 @@ export type Database = {
           public_id: string
           name: string
           description: string | null
+          location: string | null
           created_at: string | null
           updated_at: string | null
           qr_code_url: string | null
@@ -616,6 +629,7 @@ export type Database = {
           public_id: string
           name: string
           description?: string | null
+          location?: string | null
           created_at?: string | null
           updated_at?: string | null
           qr_code_url?: string | null
@@ -629,6 +643,7 @@ export type Database = {
           public_id?: string
           name?: string
           description?: string | null
+          location?: string | null
           created_at?: string | null
           updated_at?: string | null
           qr_code_url?: string | null
@@ -664,6 +679,18 @@ export type Database = {
           locked_at: string | null
         }[]
       }
+      get_item_visit_analytics: {
+        Args: {
+          target_item_id: string
+        }
+        Returns: {
+          last_24_hours: number | null
+          last_7_days: number | null
+          last_30_days: number | null
+          last_365_days: number | null
+          all_time: number | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
@@ -697,4 +724,3 @@ export const supabaseAdmin = (supabaseServiceKey
       }
     })
   : supabase) as ReturnType<typeof createClient<Database>>;
-

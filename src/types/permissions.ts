@@ -11,12 +11,7 @@ export enum UserRole {
 }
 
 // Account roles from account_users table
-export enum AccountRole {
-  OWNER = 'owner',
-  ADMIN = 'admin',
-  MEMBER = 'member',
-  VIEWER = 'viewer'
-}
+export type AccountRole = 'owner' | 'admin' | 'member' | 'viewer';
 
 // Permission level interface combining user and account context
 export interface PermissionLevel {
@@ -64,6 +59,8 @@ export const PERMISSIONS = {
   VIEW_ITEMS: 'view_items',
   VIEW_PROPERTIES: 'view_properties',
   VIEW_ANALYTICS: 'view_analytics',
+  VIEW_ADMIN_ANALYTICS: 'view_admin_analytics',
+  ACCESS_DASHBOARD: 'access_dashboard',
 
   // Administrative permissions
   ACCESS_ADMIN_FEATURES: 'access_admin_features',
@@ -77,11 +74,16 @@ export const PERMISSIONS = {
   EDIT_PROPERTIES: 'edit_properties',
   DELETE_PROPERTIES: 'delete_properties',
 
+  // Management permissions (combined CRUD)
+  MANAGE_ITEMS: 'manage_items',
+  MANAGE_PROPERTIES: 'manage_properties',
+
   // Advanced permissions
   MANAGE_USERS: 'manage_users',
   VIEW_ALL_ACCOUNTS: 'view_all_accounts',
   MANAGE_ANALYTICS: 'manage_analytics',
   EXPORT_DATA: 'export_data',
+  EXPORT_ANALYTICS: 'export_analytics',
 
   // Account-specific permissions
   MANAGE_ACCOUNT_USERS: 'manage_account_users',
@@ -106,6 +108,9 @@ export interface PermissionCheck {
   reason?: string;
   requiredRole?: UserRole | AccountRole;
   context?: PermissionContext;
+  permission?: string;
+  userId?: string | null;
+  accountId?: string | null;
 }
 
 // Dashboard section types for navigation tracking (REQ-023)

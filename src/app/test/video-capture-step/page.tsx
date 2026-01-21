@@ -21,11 +21,13 @@ export default function VideoCaptureStepTestPage() {
     stepHistory: ['metadata', 'content-type'] as WizardStep[],
     metadata: { title: 'Test Item for Video Capture' },
     mediaItems: [],
+    urlItems: [],
     instructions: '',
     errors: {},
     isRecording: false,
     isCameraActive: false,
     isSubmitting: false,
+    submitError: null,
     isDirty: false,
   });
 
@@ -73,11 +75,13 @@ export default function VideoCaptureStepTestPage() {
       stepHistory: ['metadata', 'content-type'] as WizardStep[],
       metadata: { title: 'Test Item for Video Capture' },
       mediaItems: [],
+      urlItems: [],
       instructions: '',
       errors: {},
       isRecording: false,
       isCameraActive: false,
       isSubmitting: false,
+      submitError: null,
       isDirty: false,
     });
     setCapturedMedia([]);

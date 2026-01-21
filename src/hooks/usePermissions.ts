@@ -5,9 +5,11 @@ import {
   DashboardPermissions,
   PermissionCheck,
   PermissionContext,
+  UserRole,
   type PermissionKey
 } from '../types/permissions';
 import { User, Account, AccountUser } from '../types';
+import type { AuthUser } from '@/lib/auth';
 import {
   getDashboardPermissions,
   hasPermission,
@@ -41,8 +43,8 @@ interface PermissionResult {
  * Provides role-based access control and permission checking utilities
  */
 export function usePermissions(
-  user: User | null,
-  account?: Account,
+  user: User | AuthUser | null,
+  account?: Account | null,
   accountUser?: AccountUser
 ) {
   // EMERGENCY FIX DISABLED: Was forcing OWNER permissions - removed to allow proper RBAC
@@ -77,10 +79,10 @@ export function usePermissions(
       error: null,
       lastUpdated: Date.now(),
       context: {
-        userId: user.id,
+        userId: user?.id || '',
         accountId: account?.id || 'cceeca1b-2f0b-4a23-89ba-8daf980b26a6',
         accountRole: 'owner',
-        userRole: 'user',
+        userRole: UserRole.USER,
         isSystemAdmin: false
       },
       isSystemAdmin: false,
@@ -157,12 +159,17 @@ export function usePermissions(
     try {
       const permissions = await getDashboardPermissions(user, account, accountUser);
 
+      const resolvedUserRole =
+        user?.role === 'admin' ? UserRole.ADMIN :
+        user?.role === 'system_admin' ? UserRole.SYSTEM_ADMIN :
+        UserRole.USER;
+
       const context: PermissionContext = {
         userId: user?.id || '',
         accountId: account?.id,
         // Enhanced: Use account.userRole if available, otherwise fall back to accountUser.role (REQ-024)
-        accountRole: accountRoleFromAccount || accountRoleFromUser || null,
-        userRole: user?.role === 'admin' ? 'admin' : 'user',
+        accountRole: accountRoleFromAccount || accountRoleFromUser || undefined,
+        userRole: resolvedUserRole,
         isSystemAdmin: user ? canAccessAdminFeatures(user) : false
       };
 

@@ -80,10 +80,11 @@ export default function CreatePropertyPage() {
       if (response.ok) {
         const data: PropertyTypesResponse = await response.json();
         if (data.success && data.data) {
-          setPropertyTypes(data.data);
+          const types = data.data ?? [];
+          setPropertyTypes(types);
           // Set first property type as default if available
-          if (data.data.length > 0) {
-            setFormData(prev => ({ ...prev, propertyType: data.data[0].id }));
+          if (types.length > 0) {
+            setFormData(prev => ({ ...prev, propertyType: types[0].id }));
           }
         }
       }
@@ -147,7 +148,7 @@ export default function CreatePropertyPage() {
 
       const response = await adminApi.createProperty(propertyData, headers);
 
-      if (response.success) {
+      if (response.success && response.data) {
         console.log('🎉 PROPERTY_CREATE: Property created successfully', response.data);
         setSuccess(true);
         

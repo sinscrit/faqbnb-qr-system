@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 
+interface MailingListResponseData {
+  email: string;
+  subscribedAt: string | null;
+  alreadySubscribed: boolean;
+  accessRequest?: {
+    id?: string;
+    status?: string | null;
+    created?: boolean;
+  };
+}
+
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 5; // Max 5 requests per minute per IP
@@ -233,7 +244,7 @@ export async function POST(request: NextRequest) {
         request.headers.get('user-agent')
       );
 
-      let responseData = {
+      let responseData: MailingListResponseData = {
         email: existingSubscription.email,
         subscribedAt: existingSubscription.subscribed_at,
         alreadySubscribed: true,
@@ -308,7 +319,7 @@ export async function POST(request: NextRequest) {
       request.headers.get('user-agent')
     );
 
-    let responseData = {
+    let responseData: MailingListResponseData = {
       email: newSubscription.email,
       subscribedAt: newSubscription.subscribed_at,
       alreadySubscribed: false,

@@ -150,6 +150,12 @@ export function MediaLinkList({
     onDragCancel() {
       return 'Drag cancelled.';
     },
+    onDragOver({ active, over }) {
+      if (over && active.id !== over.id) {
+        return 'Item moved.';
+      }
+      return undefined;
+    },
   }), [links]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {

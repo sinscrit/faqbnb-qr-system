@@ -52,6 +52,7 @@ export default function EditItemPage() {
     propertyId: '',
     url: ''
   });
+  const [itemId, setItemId] = useState<string>('');
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
@@ -98,7 +99,7 @@ export default function EditItemPage() {
 
       if (response.success && response.data) {
         const item = response.data;
-        
+        setItemId(item.id || '');
         setFormData({
           name: item.name || '',
           description: item.description || '',
@@ -137,6 +138,11 @@ export default function EditItemPage() {
       return;
     }
 
+    if (!itemId) {
+      setError('Missing item identifier. Please reload the page.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -150,6 +156,8 @@ export default function EditItemPage() {
 
       // Prepare item data - match API expectations
       const itemData = {
+        id: itemId,
+        publicId,
         name: formData.name.trim(),
         description: formData.description.trim(),
         propertyId: formData.propertyId,
@@ -411,4 +419,3 @@ export default function EditItemPage() {
     </div>
   );
 }
-

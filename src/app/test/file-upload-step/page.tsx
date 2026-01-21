@@ -21,11 +21,13 @@ export default function TestFileUploadStepPage() {
       applianceType: undefined,
     },
     mediaItems: [],
+    urlItems: [],
     instructions: '',
     errors: {},
     isRecording: false,
     isCameraActive: false,
     isSubmitting: false,
+    submitError: null,
     isDirty: false,
   });
 

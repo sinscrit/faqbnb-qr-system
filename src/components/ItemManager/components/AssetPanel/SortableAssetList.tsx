@@ -72,7 +72,7 @@ function getAssetName(asset: MediaItem | PendingAsset | undefined): string {
   if ('metadata' in asset && asset.metadata?.originalFilename) {
     return asset.metadata.originalFilename;
   }
-  if ('file' in asset && asset.file) {
+  if ('file' in asset && asset.file instanceof File) {
     return asset.file.name;
   }
   return `${asset.type} item`;

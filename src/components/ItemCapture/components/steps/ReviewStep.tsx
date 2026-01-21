@@ -159,6 +159,7 @@ function MediaItemCard({
     video: { icon: Video, color: 'bg-purple-100 text-purple-700', label: 'Video' },
     image: { icon: ImageIcon, color: 'bg-blue-100 text-blue-700', label: 'Photo' },
     pdf: { icon: FileText, color: 'bg-amber-100 text-amber-700', label: 'PDF' },
+    url: { icon: LinkIcon, color: 'bg-emerald-100 text-emerald-700', label: 'Link' },
   };
 
   const config = typeConfig[item.type];

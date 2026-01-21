@@ -64,15 +64,32 @@ export {
 } from './triggers';
 
 // Task 1.5: Storage utilities
-// export {
-//   storeItemTranslation,
-//   storeArticleTranslation,
-//   storeLinkTranslation,
-//   storeTagTranslation,
-// } from './storage/translation-storage';
+export {
+  storeItemTranslation,
+  storeArticleTranslation,
+  storeLinkTranslation,
+  storeTagTranslation,
+} from './storage';
 
-// Task 1.6: Status utilities
-// export {
-//   getEntityTranslationStatus,
-//   getBatchTranslationStatus,
-// } from './storage/translation-status';
+// Task 1.5: Storage types
+export type {
+  TranslationStorageResult,
+  ItemTranslationData,
+  ArticleTranslationData,
+  LinkTranslationData,
+} from './storage';
+
+// Task 1.6: Status utilities (REQ-E03-006)
+export {
+  getEntityTranslationStatus,
+  getBatchTranslationStatus,
+} from './storage/translation-status';
+
+// Task 1.6: Status types (REQ-E03-006)
+export type {
+  LanguageStatus,
+  OverallStatus,
+  LanguageTranslationStatus as StatusLanguageTranslationStatus,
+  TranslationStatusResult as StatusTranslationStatusResult,
+  StatusQueryResult,
+} from './storage/translation-status';

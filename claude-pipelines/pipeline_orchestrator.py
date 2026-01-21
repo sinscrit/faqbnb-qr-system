@@ -1951,18 +1951,24 @@ def parse_stage_filter(stages_str: str, config: dict) -> List[str]:
     """
     Parse stage filter string into list of stage IDs.
     Accepts stage names (request, overview, details) or numbers (1, 2, 3).
+    Also accepts built-in pipeline-level stages: testcheck, usecases.
 
     Examples:
         "3" -> ["details"]
         "details" -> ["details"]
         "2,3" -> ["overview", "details"]
         "overview,details" -> ["overview", "details"]
+        "implementation,testcheck,usecases" -> ["implementation", "testcheck", "usecases"]
     """
     request_stages = config.get('request_stages', []) or config.get('stages', [])
 
     # Build mapping of number -> stage_id
     stage_ids = [s['id'] for s in request_stages if s.get('enabled', True)]
     num_to_id = {str(i+1): stage_ids[i] for i in range(len(stage_ids))}
+
+    # Built-in pipeline-level stages that are always valid
+    # These are recognized even if not explicitly defined in YAML
+    builtin_pipeline_stages = ['testcheck', 'usecases']
 
     result = []
     for part in stages_str.split(','):
@@ -1975,12 +1981,17 @@ def parse_stage_filter(stages_str: str, config: dict) -> List[str]:
             stage_id = num_to_id[part]
             if stage_id not in result:
                 result.append(stage_id)
-        # Check if it's a valid stage name
+        # Check if it's a valid stage name from config
         elif part in stage_ids:
             if part not in result:
                 result.append(part)
+        # Check if it's a built-in pipeline-level stage
+        elif part in builtin_pipeline_stages:
+            if part not in result:
+                result.append(part)
         else:
-            print(f"Warning: Unknown stage '{part}', skipping. Valid: {stage_ids} or 1-{len(stage_ids)}")
+            all_valid = stage_ids + [s for s in builtin_pipeline_stages if s not in stage_ids]
+            print(f"Warning: Unknown stage '{part}', skipping. Valid: {all_valid} or 1-{len(stage_ids)}")
 
     return result
 
@@ -2296,6 +2307,29 @@ def run_pipeline_level_stages(state: dict, config: dict, dry_run: bool = False, 
 
     request_stages = config.get('request_stages', []) or config.get('stages', [])
     state_path = config['outputs']['_state_resolved']
+    config_path = config.get('_config_path', 'pipeline.yaml')
+
+    # Check for missing pipeline-level stages and warn user
+    builtin_pipeline_stages = ['testcheck', 'usecases']
+    defined_stage_ids = {s['id'] for s in request_stages}
+
+    if stage_ids:
+        missing_stages = [sid for sid in stage_ids if sid in builtin_pipeline_stages and sid not in defined_stage_ids]
+        if missing_stages:
+            print(f"\n{'='*60}")
+            print(f"⚠️  MISSING PIPELINE STAGES: {', '.join(missing_stages)}")
+            print(f"{'='*60}")
+            print(f"\n  The following stages are not defined in your pipeline YAML:")
+            for stage in missing_stages:
+                print(f"    - {stage}")
+            print(f"\n  These stages require epic-specific context to work properly.")
+            print(f"  Generic fallbacks are not supported.")
+            print(f"\n  To fix this:")
+            print(f"    1. Regenerate the pipeline YAML using Agent 00b (pipeline-creator)")
+            print(f"    2. Or manually add the stages to: {config_path}")
+            print(f"    3. See template: claude-pipelines/templates/pipeline-level-stages-template.yaml")
+            print(f"\n  Skipping missing stages and continuing with defined stages only.\n")
+            logging.warning(f"Missing pipeline stages: {missing_stages}. Skipping.")
 
     for stage in request_stages:
         if stage.get('mode') != 'pipeline':

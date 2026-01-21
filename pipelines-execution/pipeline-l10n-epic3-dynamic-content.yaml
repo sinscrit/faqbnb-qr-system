@@ -215,6 +215,110 @@ request_stages:
     output:
       type: implementation
 
+  # Stage 5: Test Check (Pipeline-level)
+  - id: testcheck
+    name: "Test Check & Verification"
+    description: "Validate implementation against specifications and generate test harness"
+    mode: pipeline
+    enabled: true
+    agent:
+      name: "06a-pipeline-testcheck"
+      invocation_template: |
+        Run pipeline-level test verification for the L10N Epic 3 - Dynamic Content Translation implementation.
+
+        ## Pipeline Context
+        **Pipeline Configuration**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+
+        ## PRD Vision
+        {prd_vision}
+
+        ## Key Features to Verify
+        {key_features}
+
+        ## Epic-Specific Test Scenarios
+        {epic_specific_scenarios}
+
+        ## Instructions
+        1. Read the state file to understand which tasks have been implemented
+        2. Verify each key feature:
+           - Database translation tables created correctly
+           - Translation API endpoints working
+           - Dynamic content translation triggers
+           - Translation caching mechanism
+        3. Run build verification: `npm run type-check` and `npm run build`
+        4. Update the state file with verification results under 'testcheck' key
+        5. Report overall verification status with summary
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep,mcp__supabase__*,mcp__playwright__*"
+        - "--dangerously-skip-permissions"
+      timeout: 1200
+    output:
+      type: verification
+
+  # Stage 6: Use Case Generation (Pipeline-level)
+  - id: usecases
+    name: "Use Case Test Generation"
+    description: "Generate aggregate end-to-end test scenarios based on PRD intent"
+    mode: pipeline
+    enabled: true
+    agent:
+      name: "06b-usecase-generator"
+      invocation_template: |
+        Generate end-to-end use case test scenarios for the L10N Epic 3 - Dynamic Content Translation implementation.
+
+        ## Pipeline Context
+        **Pipeline Configuration**: {pipeline_yaml_path}
+        **State File**: {state_file_path}
+        **Implementation Plan**: {implementation_plan_path}
+        **Total Tasks**: {total_tasks}
+
+        ## PRD Vision
+        {prd_vision}
+
+        ## User Stories
+        {user_stories}
+
+        ## Key Features Implemented
+        {key_features}
+
+        ## Epic-Specific Scenarios to Cover
+        {epic_specific_scenarios}
+
+        ## Instructions
+        1. Read the implementation plan to understand the full PRD context
+        2. Read the state file to see implementation status for all tasks
+        3. Generate comprehensive use case test scenarios covering:
+           - Dynamic content translation workflow
+           - Translation API behavior
+           - Background job processing for translations
+           - Translation caching and invalidation
+        4. Update state file with use cases under 'usecases' key
+
+        ## Use Case Format
+        Each use case should include:
+        - UC-E3-XXX: Unique ID
+        - Title: Brief description
+        - Category: happy-path, edge-case, error-handling, integration
+        - Steps: Numbered test steps
+        - Expected Results: What should happen
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Write,Edit,Bash,Glob,Grep"
+        - "--dangerously-skip-permissions"
+      timeout: 900
+    output:
+      type: usecases
+
 # =============================================================================
 # Implementation Configuration
 # =============================================================================

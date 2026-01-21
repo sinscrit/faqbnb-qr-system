@@ -81,7 +81,7 @@ export type AnnouncementPoliteness = 'polite' | 'assertive';
  * ```
  */
 export function useFocusTrap(
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement | null>,
   isActive: boolean
 ): void {
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);

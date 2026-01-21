@@ -22,11 +22,13 @@ export default function PhotoCaptureStepTestPage() {
     stepHistory: ['metadata', 'content-type'] as WizardStep[],
     metadata: { title: 'Test Item for Photo Capture' },
     mediaItems: [],
+    urlItems: [],
     instructions: '',
     errors: {},
     isRecording: false,
     isCameraActive: false,
     isSubmitting: false,
+    submitError: null,
     isDirty: false,
   });
 
@@ -74,11 +76,13 @@ export default function PhotoCaptureStepTestPage() {
       stepHistory: ['metadata', 'content-type'] as WizardStep[],
       metadata: { title: 'Test Item for Photo Capture' },
       mediaItems: [],
+      urlItems: [],
       instructions: '',
       errors: {},
       isRecording: false,
       isCameraActive: false,
       isSubmitting: false,
+      submitError: null,
       isDirty: false,
     });
     setCapturedMedia([]);

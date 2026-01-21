@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import type { Property } from '@/types';
 
 interface PropertyResponse {
   success: boolean;
-  data?: any[];
+  data?: Property[] | Property;
   error?: string;
   code?: string;
 }
@@ -93,7 +94,19 @@ async function getAccountContext(request: NextRequest, userId: string, supabase:
       return { accounts: [], currentAccount: null };
     }
 
-    const accounts = userAccounts?.map(ua => ({
+    type AccountUserRow = {
+      account_id: string;
+      role: string | null;
+      accounts: {
+        id: string;
+        name: string;
+        description: string | null;
+        owner_id: string;
+        created_at: string | null;
+      };
+    };
+
+    const accounts = (userAccounts as AccountUserRow[] | null)?.map((ua) => ({
       id: ua.accounts.id,
       name: ua.accounts.name,
       description: ua.accounts.description,
@@ -160,11 +173,13 @@ export async function GET(request: NextRequest): Promise<NextResponse<PropertyRe
       .from('properties')
       .select(`
         id,
-        name,
-        description,
+        nickname,
+        address,
         account_id,
         created_at,
-        updated_at
+        updated_at,
+        user_id,
+        property_type_id
       `)
       .eq('account_id', currentAccount.id)
       .order('created_at', { ascending: false });

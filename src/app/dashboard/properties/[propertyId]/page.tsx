@@ -268,7 +268,7 @@ const UserPropertyDetailPage: React.FC = () => {
                 <div className="flex items-center">
                   <Building className="h-6 w-6 text-blue-600 mr-3" />
                   <div>
-                    <h1 className="text-xl font-semibold text-gray-900">{property?.nickname || property?.name}</h1>
+                    <h1 className="text-xl font-semibold text-gray-900">{property?.nickname}</h1>
                     <p className="text-sm text-gray-500">Property Details</p>
                   </div>
                 </div>
@@ -295,7 +295,7 @@ const UserPropertyDetailPage: React.FC = () => {
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Name</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{property?.nickname || property?.name}</dd>
+                    <dd className="mt-1 text-sm text-gray-900">{property?.nickname}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Address</dt>

@@ -5,11 +5,11 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 // REQ-023: Unified Route Architecture - Navigation Integration
 import { DashboardSection, PERMISSIONS } from '@/types/permissions';
+import type { AccountRole } from '@/types';
 import { CompactAccountSelector } from './AccountSelector';
 import { RoleBasedNavigation } from './RoleBasedNavigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Account, AccountRole } from '../types';
-import { Property } from '../lib/auth';
+import type { Account, Property } from '@/types';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -89,15 +89,15 @@ export function DashboardLayout({
     }
   }, [user, currentAccount]);
 
-  // Determine account role
+  // Determine account role from the current account's userRole field
   useEffect(() => {
-    if (userAccounts && currentAccount && user) {
-      const accountUser = userAccounts.find(au => au.account_id === currentAccount.id && au.user_id === user.id);
-      setAccountRole(accountUser?.role || null);
+    if (currentAccount && user) {
+      // The userRole is already populated on the Account object
+      setAccountRole(currentAccount.userRole || null);
     } else {
       setAccountRole(null);
     }
-  }, [userAccounts, currentAccount, user]);
+  }, [currentAccount, user]);
 
   // Persist account and property selection across route changes (REQ-023)
   useEffect(() => {
@@ -115,7 +115,7 @@ export function DashboardLayout({
     if (selectedProperty) {
       const propertyData = {
         id: selectedProperty.id,
-        name: selectedProperty.name,
+        name: selectedProperty.nickname,
         accountId: currentAccount.id,
         timestamp: Date.now()
       };
@@ -261,10 +261,10 @@ export function DashboardLayout({
                   </span>
                   {accountRole && (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {accountRole === AccountRole.OWNER && '🏠 Owner'}
-                      {accountRole === AccountRole.ADMIN && '⚙️ Admin'}
-                      {accountRole === AccountRole.MEMBER && '👥 Member'}
-                      {accountRole === AccountRole.VIEWER && '👁️ Viewer'}
+                      {accountRole === 'owner' && '🏠 Owner'}
+                      {accountRole === 'admin' && '⚙️ Admin'}
+                      {accountRole === 'member' && '👥 Member'}
+                      {accountRole === 'viewer' && '👁️ Viewer'}
                     </span>
                   )}
                   <span className="text-sm text-gray-600">{user.email}</span>

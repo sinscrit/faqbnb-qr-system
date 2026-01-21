@@ -121,13 +121,15 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       // Use AuthContext's signIn which integrates with the sequential state machine
       const result = await signIn(formData.email, formData.password);
 
+      const isSuccess = !result.error && !!result.data?.user;
+
       console.log('🔐 LOGIN_FORM: AuthContext authentication result:', {
-        success: result.success,
+        success: isSuccess,
         user: result.data?.user?.id,
         error: result.error
       });
 
-      if (!result.success || result.error) {
+      if (!isSuccess) {
         console.error('🔐 LOGIN_FORM: Authentication failed:', result.error);
 
         // Set specific error based on error message
@@ -147,7 +149,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
         return;
       }
 
-      if (result.success && result.data?.user) {
+      if (isSuccess && result.data?.user) {
         console.log('🔐 LOGIN_FORM: Authentication successful - AuthContext will handle redirect');
         
         // Reset authentication attempted flag so AuthContext can trigger authentication

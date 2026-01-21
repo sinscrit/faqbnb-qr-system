@@ -174,10 +174,11 @@ export default function FileUploadAdapter({
   // Map addMedia callback: convert MediaItem to ContentPiece
   const handleAddMedia = useCallback(
     (mediaItem: MediaItem) => {
-      const contentPiece = mediaItemToContentPiece(mediaItem, currentItem.content.length);
+      const contentCount = currentItem.content?.length ?? 0;
+      const contentPiece = mediaItemToContentPiece(mediaItem, contentCount);
       onAddContent(contentPiece);
     },
-    [currentItem.content.length, onAddContent]
+    [currentItem.content, onAddContent]
   );
 
   // Map removeMedia callback: not used in workflow context (user manages via preview)

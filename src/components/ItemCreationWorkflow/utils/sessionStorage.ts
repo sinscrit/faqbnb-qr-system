@@ -83,10 +83,17 @@ export interface SerializedCurrentItemState {
   itemType: ItemType;
   specificItem: string;
   itemName: string;
+  itemDescription?: string;
   purpose: string | null;  // PurposeType stored as string
   contentSource: 'existing' | 'create-new';
   contentType: ContentType | null;
   content: SerializedContentPiece[];
+  currentArticle: {
+    title: string;
+    purpose: string | null;
+    content: SerializedContentPiece[];
+  };
+  tags: string[];
   /** Flag indicating if any content needs re-upload */
   hasUnserializableContent: boolean;
 }
@@ -258,16 +265,24 @@ function hasUnserializableContent(content: ContentPiece[]): boolean {
  * @returns Serialized current item state
  */
 function serializeCurrentItem(item: CurrentItemState): SerializedCurrentItemState {
+  const contentPieces = item.content ?? item.currentArticle.content;
   return {
     room: item.room,
     itemType: item.itemType,
     specificItem: item.specificItem,
     itemName: item.itemName,
-    purpose: item.purpose,
+    itemDescription: item.itemDescription,
+    purpose: item.purpose ?? null,
     contentSource: item.contentSource,
     contentType: item.contentType,
-    content: serializeContentPieces(item.content),
-    hasUnserializableContent: hasUnserializableContent(item.content),
+    content: serializeContentPieces(contentPieces),
+    currentArticle: {
+      title: item.currentArticle.title,
+      purpose: item.currentArticle.purpose ?? null,
+      content: serializeContentPieces(item.currentArticle.content),
+    },
+    tags: item.tags,
+    hasUnserializableContent: hasUnserializableContent(contentPieces),
   };
 }
 
@@ -394,10 +409,17 @@ function deserializeCurrentItem(item: SerializedCurrentItemState): CurrentItemSt
     itemType: item.itemType,
     specificItem: item.specificItem,
     itemName: item.itemName,
+    itemDescription: item.itemDescription,
+    currentArticle: {
+      title: item.currentArticle?.title || item.itemName,
+      purpose: (item.currentArticle?.purpose as CurrentItemState['currentArticle']['purpose']) ?? null,
+      content: item.currentArticle ? deserializeContentPieces(item.currentArticle.content) : deserializeContentPieces(item.content),
+    },
     purpose: (item.purpose as CurrentItemState['purpose']) ?? null,
     contentSource: item.contentSource,
     contentType: item.contentType,
     content: deserializeContentPieces(item.content),
+    tags: item.tags || [],
   };
 }
 

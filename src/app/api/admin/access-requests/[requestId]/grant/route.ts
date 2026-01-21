@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
-import { AccessRequestStatus } from '@/types/admin';
+import { AccessRequest, AccessRequestSource, AccessRequestStatus } from '@/types/admin';
 import { randomBytes } from 'crypto';
 import { sendAccessApprovalEmail } from '@/lib/email-service';
 import { generateAccessApprovalEmail } from '@/lib/email-templates';
 import { getServerBaseUrl } from '@/lib/config';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/lib/supabase';
 
 interface RouteParams {
   params: {
@@ -59,6 +61,53 @@ This is an automated message. Please do not reply to this email.`,
       accessCode,
       accountOwnerName: accountOwnerName || ''
     }
+  };
+}
+
+type AccountDetails = {
+  id: string;
+  name: string;
+  owner?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+  };
+};
+
+async function loadAccountDetails(
+  supabase: SupabaseClient<Database>,
+  accountId: string | null
+): Promise<AccountDetails | null> {
+  if (!accountId) {
+    return null;
+  }
+
+  const { data: account, error: accountError } = await supabase
+    .from('accounts')
+    .select('id, name, owner_id')
+    .eq('id', accountId)
+    .single();
+
+  if (accountError || !account) {
+    console.warn('ACCESS_GRANT_DEBUG: Account lookup failed', accountError);
+    return null;
+  }
+
+  const { data: owner, error: ownerError } = await supabase
+    .from('users')
+    .select('id, email, full_name')
+    .eq('id', account.owner_id)
+    .single();
+
+  if (ownerError || !owner) {
+    console.warn('ACCESS_GRANT_DEBUG: Account owner lookup failed', ownerError);
+    return { id: account.id, name: account.name };
+  }
+
+  return {
+    id: account.id,
+    name: account.name,
+    owner
   };
 }
 
@@ -121,18 +170,7 @@ export async function POST(
     // Get current request with account details
     const { data: accessRequest, error: fetchError } = await supabase
       .from('access_requests')
-      .select(`
-        *,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        )
-      `)
+      .select('*')
       .eq('id', requestId)
       .single();
 
@@ -161,6 +199,7 @@ export async function POST(
 
     // Generate or use provided access code
     const accessCode = custom_access_code || generateAccessCode();
+    const accountDetails = await loadAccountDetails(supabase, accessRequest.account_id);
 
     // Ensure access code is unique
     const { data: existingCode, error: codeCheckError } = await supabase
@@ -193,7 +232,15 @@ export async function POST(
     }
 
     // Update request to approved status
-    const updateData = {
+    const updateData: {
+      status: AccessRequestStatus;
+      approval_date: string;
+      approved_by: string;
+      access_code: string;
+      approval_notes?: string;
+      updated_at: string;
+      email_sent_date?: string;
+    } = {
       status: AccessRequestStatus.APPROVED,
       approval_date: new Date().toISOString(),
       approved_by: user.id,
@@ -211,23 +258,7 @@ export async function POST(
       .from('access_requests')
       .update(updateData)
       .eq('id', requestId)
-      .select(`
-        *,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        ),
-        approved_by_user:users!access_requests_approved_by_fkey(
-          id,
-          email,
-          full_name
-        )
-      `)
+      .select('*')
       .single();
 
     if (updateError) {
@@ -247,11 +278,17 @@ export async function POST(
 
     let emailData = null;
     let emailResult = null;
-    if (send_email && accessRequest.account) {
+    if (send_email && accountDetails) {
+      const normalizedAccessRequest: AccessRequest = {
+        ...accessRequest,
+        status: accessRequest.status as AccessRequestStatus | null,
+        source: accessRequest.source as AccessRequestSource | null
+      };
+
       emailData = email_template || generateAccessApprovalEmail(
-        accessRequest,
+        normalizedAccessRequest,
         accessCode,
-        accessRequest.account.name,
+        accountDetails.name,
         baseUrl
       );
 
@@ -289,27 +326,30 @@ export async function POST(
     const response = {
       success: true,
       data: {
-        request: updatedRequest,
+        request: {
+          ...updatedRequest,
+          account: accountDetails
+        },
         accessCode,
         emailSent: send_email && emailResult?.success,
         emailTemplate: emailData,
-        emailResult: emailResult || undefined
+        emailResult: emailResult || undefined,
+        ...(send_email
+          ? {}
+          : {
+              instructions: {
+                nextSteps: [
+                  'Manually send the access code to the requester',
+                  'Provide them with registration instructions',
+                  'Monitor for successful registration completion'
+                ],
+                accessCode,
+                registrationUrl: `${baseUrl}/register`
+              }
+            })
       },
       message: 'Access request approved successfully'
     };
-
-    // Add email instructions if email was not sent
-    if (!send_email) {
-      response.data.instructions = {
-        nextSteps: [
-          'Manually send the access code to the requester',
-          'Provide them with registration instructions',
-          'Monitor for successful registration completion'
-        ],
-        accessCode,
-        registrationUrl: `${baseUrl}/register`
-      };
-    }
 
     return NextResponse.json(response);
 
@@ -361,18 +401,7 @@ export async function PUT(
     // Get current request
     const { data: accessRequest, error: fetchError } = await supabase
       .from('access_requests')
-      .select(`
-        *,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        )
-      `)
+      .select('*')
       .eq('id', requestId)
       .single();
 
@@ -429,11 +458,12 @@ export async function PUT(
     }
 
     // Generate email template
+    const accountDetails = await loadAccountDetails(supabase, accessRequest.account_id);
     const emailData = email_template || generateAccessGrantEmail({
-      requesterName: accessRequest.requester_name,
-      accountName: accessRequest.account?.name || 'Account',
+      requesterName: accessRequest.requester_name ?? undefined,
+      accountName: accountDetails?.name || 'Account',
       accessCode: accessRequest.access_code,
-      accountOwnerName: accessRequest.account?.owner?.full_name
+      accountOwnerName: accountDetails?.owner?.full_name ?? undefined
     });
 
     console.log('✅ ACCESS_GRANT_RESEND_DEBUG: Email resent successfully');

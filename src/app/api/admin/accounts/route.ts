@@ -4,6 +4,9 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase';
 
+// Type for user query results
+type UserSelectResult = { email: string; full_name: string | null; role: string | null };
+
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
@@ -44,7 +47,7 @@ async function validateAdminAuth(request: NextRequest) {
       .select('email, full_name, role')
       .eq('id', user.id)
       .eq('email', user.email)
-      .single();
+      .single() as { data: UserSelectResult | null; error: unknown };
 
     if (adminError || !adminUser) {
       // If not admin, check if user is a regular user
@@ -52,14 +55,16 @@ async function validateAdminAuth(request: NextRequest) {
         .from('users')
         .select('email, full_name, role')
         .eq('id', user.id)
-        .single();
+        .single() as { data: UserSelectResult | null; error: unknown };
 
       if (userError || !regularUser) {
+        const adminErrorMessage = (adminError as { message?: string } | null)?.message;
+        const userErrorMessage = (userError as { message?: string } | null)?.message;
         console.log('User validation failed:', { 
           userId: user.id, 
           email: user.email, 
-          adminError: adminError?.message,
-          userError: userError?.message
+          adminError: adminErrorMessage,
+          userError: userErrorMessage
         });
     return { 
           error: NextResponse.json(

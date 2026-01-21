@@ -107,11 +107,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already has ANY reaction for this item
-    const { data: existingReactions, error: checkError } = await supabase
+    const ipAddress = clientIP !== 'unknown' ? clientIP : null;
+    let existingReactionsQuery = supabase
       .from('item_reactions')
       .select('id, reaction_type')
-      .eq('item_id', body.itemId)
-      .eq('ip_address', clientIP !== 'unknown' ? clientIP : null);
+      .eq('item_id', body.itemId);
+
+    existingReactionsQuery = ipAddress
+      ? existingReactionsQuery.eq('ip_address', ipAddress)
+      : existingReactionsQuery.is('ip_address', null);
+
+    const { data: existingReactions, error: checkError } = await existingReactionsQuery;
 
     if (checkError) {
       console.error('Error checking existing reactions:', checkError);
@@ -142,11 +148,16 @@ export async function POST(request: NextRequest) {
     // Remove any existing different reaction types from same user for this item
     if (existingReactions && existingReactions.length > 0) {
       console.log('Removing previous reactions before adding new one');
-      const { error: deleteError } = await supabase
+      let deletePreviousQuery = supabase
         .from('item_reactions')
         .delete()
-        .eq('item_id', body.itemId)
-        .eq('ip_address', clientIP !== 'unknown' ? clientIP : null);
+        .eq('item_id', body.itemId);
+
+      deletePreviousQuery = ipAddress
+        ? deletePreviousQuery.eq('ip_address', ipAddress)
+        : deletePreviousQuery.is('ip_address', null);
+
+      const { error: deleteError } = await deletePreviousQuery;
 
       if (deleteError) {
         console.error('Error removing previous reactions:', deleteError);
@@ -284,13 +295,18 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete the reaction
-    const { data, error: deleteError } = await supabase
+    const ipAddress = clientIP !== 'unknown' ? clientIP : null;
+    let deleteQuery = supabase
       .from('item_reactions')
       .delete()
       .eq('item_id', body.itemId)
-      .eq('reaction_type', body.reactionType)
-      .eq('ip_address', clientIP !== 'unknown' ? clientIP : null)
-      .select('id');
+      .eq('reaction_type', body.reactionType);
+
+    deleteQuery = ipAddress
+      ? deleteQuery.eq('ip_address', ipAddress)
+      : deleteQuery.is('ip_address', null);
+
+    const { data, error: deleteError } = await deleteQuery.select('id');
 
     if (deleteError) {
       console.error('Reaction deletion error:', deleteError);

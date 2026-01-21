@@ -697,7 +697,7 @@ export interface InputProps {
   /** Input type */
   type: 'file';
   /** Ref for the input element */
-  ref: React.RefObject<HTMLInputElement>;
+  ref: React.RefObject<HTMLInputElement | null>;
   /** Change handler for file selection */
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   /** Accept attribute for file type filtering */

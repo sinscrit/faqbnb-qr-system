@@ -72,7 +72,8 @@ const setupFontsForAPI = () => {
         fs.accessSync(helveticaPath, fs.constants.R_OK);
         console.log('🔤 FONT_PERM_DEBUG: Font file is readable ✅');
       } catch (permError) {
-        console.error('🔤 FONT_PERM_DEBUG: Font permission error:', permError.message);
+        const errorMessage = permError instanceof Error ? permError.message : String(permError);
+        console.error('🔤 FONT_PERM_DEBUG: Font permission error:', errorMessage);
       }
     }
     
@@ -305,12 +306,12 @@ export async function POST(request: NextRequest) {
       if (pdfError?.stack) {
         console.error('🔍 PDF_GENERATION_ERROR: Full stack trace:');
         const stackLines = pdfError.stack.split('\n');
-        stackLines.forEach((line, index) => {
+        stackLines.forEach((line: string, index: number) => {
           console.error(`🔍 PDF_GENERATION_ERROR: Stack[${index}]: ${line.trim()}`);
         });
         
         // Look for specific patterns that indicate the problem
-        const criticalLines = stackLines.filter(line => 
+        const criticalLines = stackLines.filter((line: string) => 
           line.includes('pdf_generator_module') || 
           line.includes('pdfkit') || 
           line.includes('constructor') ||
@@ -320,7 +321,7 @@ export async function POST(request: NextRequest) {
         
         if (criticalLines.length > 0) {
           console.error('🔍 PDF_GENERATION_ERROR: Critical stack lines:');
-          criticalLines.forEach((line, index) => {
+          criticalLines.forEach((line: string, index: number) => {
             console.error(`🔍 PDF_GENERATION_ERROR: Critical[${index}]: ${line.trim()}`);
           });
         }
@@ -336,7 +337,8 @@ export async function POST(request: NextRequest) {
         console.error('🔍 PDF_GENERATION_ERROR: PDFKit constructor test: SUCCESS');
         testDoc.end();
       } catch (constructorError) {
-        console.error('🔍 PDF_GENERATION_ERROR: PDFKit constructor test: FAILED -', constructorError.message);
+        const errorMessage = constructorError instanceof Error ? constructorError.message : String(constructorError);
+        console.error('🔍 PDF_GENERATION_ERROR: PDFKit constructor test: FAILED -', errorMessage);
       }
       
       // Hypothesis 2: Font loading issue
@@ -347,7 +349,8 @@ export async function POST(request: NextRequest) {
         console.error('🔍 PDF_GENERATION_ERROR: Font width test: SUCCESS -', testWidth);
         testDoc.end();
       } catch (fontError) {
-        console.error('🔍 PDF_GENERATION_ERROR: Font width test: FAILED -', fontError.message);
+        const errorMessage = fontError instanceof Error ? fontError.message : String(fontError);
+        console.error('🔍 PDF_GENERATION_ERROR: Font width test: FAILED -', errorMessage);
       }
       
       console.error('🔍 PDF_GENERATION_ERROR: Module config analysis:', {
@@ -386,7 +389,8 @@ export async function POST(request: NextRequest) {
     process.chdir(originalCwd);
 
     // Return PDF as blob response
-    return new NextResponse(pdfBuffer, {
+    const pdfBody = new Uint8Array(pdfBuffer);
+    return new NextResponse(pdfBody, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

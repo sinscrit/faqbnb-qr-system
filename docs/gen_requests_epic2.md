@@ -3632,3 +3632,282 @@ Enables true multilingual item presentation by connecting the UI layer to the tr
 - [ ] Components handle edge cases such as partial translations or mixed language content
 - [ ] Unit tests verify translation loading and fallback behavior
 
+
+
+---
+
+## REQ-E02-081: Update Filter and Sort Components for Internationalization
+
+**Date**: 2026-01-20 19:15
+**Type**: ENHANCEMENT
+**Size**: M
+**Phase**: 2D (Item Management)
+**Task**: 2D.4
+
+### Summary
+Filter and sort components in the ItemManager system must be updated to display all user-facing labels, placeholders, and messages in the current user locale, ensuring that filtering and sorting controls are fully accessible to users in French, Spanish, German, Italian, and Portuguese.
+
+### Current Behavior
+Filter and sort components display all labels, placeholders, buttons, and messages in hardcoded English. The FilterPanel component shows "Filters", "Clear All", "Content Type", "Tags", "Location", and "Apply Filters" in English only. The SortMenu component displays sort option labels like "Title (A-Z)", "Newest First", and "Recently Updated" in English. ContentTypeFilter shows content type labels ("Video", "Photo", "PDF", "Text Only", "Mixed") hardcoded in English. TagFilter and LocationFilter display placeholders like "Add tags..." and "Select location..." in English, along with empty state messages. Users working in their preferred language encounter English-only filter and sort controls, creating a fragmented multilingual experience.
+
+### Expected Behavior
+Filter and sort components detect the current user locale and display all UI text using translated strings from the internationalization system. The FilterPanel component shows section headers, button labels, and action text in the selected language. The SortMenu component presents sort options with locale-appropriate labels explaining ascending/descending order and field names. ContentTypeFilter displays content type options with translated labels while maintaining consistent icon representations. TagFilter and LocationFilter show translated placeholders, empty state messages, and search input hints. RoomFilter displays room-based filtering labels in the current locale. PropertyFilter shows property selection text in the appropriate language. All dropdown menus, chips, buttons, and interactive elements reflect the selected locale. Filter count badges and result indicators display numbers formatted according to locale conventions.
+
+### User Impact
+Users interacting with item filtering and sorting controls in their preferred language see all labels, options, and messages translated appropriately. Property owners managing items in French, Spanish, German, Italian, or Portuguese can filter by content type, tags, location, and rooms using familiar terminology in their language. International users searching and sorting items experience consistent linguistic presentation across all filter controls. Users understand filtering options more clearly when presented in their native language, reducing confusion about content type categories and sort order logic.
+
+### Business Value
+Completes the internationalization of the item management interface by ensuring that all search, filter, and sort controls are accessible in supported languages. Removes language barriers from the primary item discovery and organization tools, making the system more usable for international property owners. Demonstrates attention to detail in multilingual support by translating even secondary UI elements like filter chips and sort menu options. Aligns with the broader Epic 2 goal of comprehensive internationalization across all user-facing components.
+
+### Acceptance Criteria
+- [ ] FilterPanel component uses translation hooks for all section labels and button text
+- [ ] "Filters" title displays translated in the current locale
+- [ ] "Clear All" button label displays translated text
+- [ ] "Apply Filters" button in mobile view shows translated label
+- [ ] Section headers for Content Type, Tags, Location, Rooms, and Property display in current locale
+- [ ] Close button aria-label uses translated text for accessibility
+- [ ] Filter count badge number formatting follows locale conventions
+- [ ] SortMenu component displays sort option labels translated appropriately
+- [ ] "Sort" and "Sort by" labels appear in the selected language
+- [ ] All sort options show translated labels maintaining sort direction clarity
+- [ ] Sort option labels for "Title (A-Z)", "Title (Z-A)", "Newest First", "Oldest First", "Recently Updated", "Least Recently Updated", "Location (A-Z)", "Most Guides", "Fewest Guides" are all translated
+- [ ] ContentTypeFilter displays content type labels in the current locale
+- [ ] Content type options for Video, Photo, PDF, Text Only, and Mixed show translated labels
+- [ ] Content type emojis remain consistent across all locales for visual recognition
+- [ ] TagFilter placeholder text "Add tags..." displays in the selected language
+- [ ] TagFilter search input placeholder "Search tags..." appears translated
+- [ ] TagFilter empty states show appropriate messages in current locale
+- [ ] "No matching tags", "All tags selected", and "No tags available" messages are translated
+- [ ] LocationFilter placeholder "Select location..." displays in current locale
+- [ ] LocationFilter search input placeholder "Search locations..." appears translated
+- [ ] LocationFilter empty states show translated messages
+- [ ] "No matching locations" and "No locations available" messages are translated
+- [ ] RoomFilter (if applicable) displays labels and placeholders in current locale
+- [ ] PropertyFilter shows property selection labels in the selected language
+- [ ] All aria-label attributes use translated text for screen reader accessibility
+- [ ] Filter validation messages display in the current locale when applicable
+- [ ] All hardcoded English strings are replaced with translation keys
+- [ ] Translation keys follow consistent naming conventions for filter components
+- [ ] Component TypeScript interfaces support optional label overrides for all translatable text
+- [ ] Default English translations exist for all new translation keys
+- [ ] Translation files for French, Spanish, German, Italian, and Portuguese include all filter and sort keys
+- [ ] Sort direction terminology ("ascending", "descending", "A-Z", "Z-A") translates appropriately
+- [ ] Numeric formatting in filter counts respects locale number conventions
+- [ ] Date-based sort options display culturally appropriate terminology
+- [ ] Components gracefully handle missing translations by falling back to default language
+- [ ] Visual layout accommodates longer translated text without breaking responsive design
+- [ ] Mobile drawer view displays all translated text correctly within touch target sizes
+- [ ] Keyboard shortcuts and accessibility features work correctly with translated labels
+- [ ] Filter persistence across sessions maintains correct locale-specific labels on reload
+- [ ] Unit tests verify that all components receive and display translated props correctly
+- [ ] Integration tests confirm filter and sort operations work identically across all locales
+
+
+---
+
+## REQ-E02-082: Update Bulk Action Dialogs for Internationalization
+
+**Date**: 2026-01-20 (Current Session)
+**Type**: ENHANCEMENT
+**Size**: M
+**Phase**: 2D (Item Management)
+**Task**: 2D.5
+
+### Summary
+All bulk action dialogs in the item management section must display text that adapts to the user's selected language and follows internationalization best practices.
+
+### Current Behavior
+Bulk action dialogs (delete confirmation, edit, status change, and other bulk operations) display text in a single language with hardcoded strings. Confirmation messages, action labels, success/error notifications, and counts are not localized. Users working in non-English languages see English text throughout these dialogs.
+
+### Expected Behavior
+When users trigger bulk actions on items, all dialog content appears in their selected language. This includes:
+- Dialog titles and descriptions
+- Confirmation prompts showing item counts and operation details
+- Action button labels (confirm, cancel, proceed, etc.)
+- Success and error messages after bulk operations complete
+- Warning text about irreversible actions
+- Descriptive text explaining what will happen to selected items
+
+Item counts and other dynamic values are formatted according to locale conventions. All text supports right-to-left languages where applicable.
+
+### User Impact
+Property managers who work in non-English languages will be able to confidently perform bulk operations on items without language barriers. This particularly benefits users who manage large inventories and frequently use bulk actions to update multiple items simultaneously.
+
+### Business Value
+Enables efficient item management for international property managers by removing language friction from high-frequency bulk operations. Reduces user errors caused by misunderstanding confirmation dialogs in unfamiliar languages.
+
+### Acceptance Criteria
+- [ ] All bulk delete confirmation dialogs display localized text with correct item counts
+- [ ] Bulk edit dialogs show field labels and instructions in the user's language
+- [ ] Bulk status change dialogs present options and confirmations in localized format
+- [ ] Success notifications after bulk operations display in the selected language
+- [ ] Error messages for failed bulk operations are translated appropriately
+- [ ] All numeric values (counts, totals) follow locale formatting rules
+- [ ] Dialog buttons (confirm, cancel, close) use translated labels
+- [ ] Warning messages about irreversible actions are clearly translated
+- [ ] All dialogs support right-to-left text rendering when needed
+- [ ] Language changes are reflected in currently open dialogs without requiring reload
+
+
+
+---
+
+## REQ-E02-083: Update Item Detail and Edit Pages for Internationalization
+
+**Date**: 2026-01-20 15:30
+**Type**: ENHANCEMENT
+**Size**: M
+**Phase**: 2D (Item Management)
+**Task**: 2D.6
+
+### Summary
+Item detail view and edit pages must display all static text using the internationalization system instead of hardcoded strings.
+
+### Current Behavior
+Item detail and edit pages display field labels, section headings, button text, placeholders, helper text, and validation messages in hardcoded English. Users viewing or editing item information see English labels for fields like title, description, location, content type, status, tags, and timestamps regardless of their language preference. Form validation messages, save/cancel buttons, status indicators, and navigation breadcrumbs appear only in English. Empty states and instructional text guiding users through the editing process are not localized.
+
+### Expected Behavior
+Item detail and edit pages detect the current user locale and display all UI text using translated strings from the internationalization system. Field labels for item properties (title, description, content type, location, tags, status, dates) appear in the selected language. Section headings organizing the detail view (Overview, Content, Metadata, History) display translated text. All buttons including Save, Cancel, Delete, Duplicate, and navigation controls show localized labels. Form placeholders and helper text guide users in their preferred language. Validation error messages appear translated with culturally appropriate formatting. Status badges and indicators use locale-specific terminology. Timestamp displays follow locale date and time formatting conventions. Empty state messages when no content exists display in the current language. Breadcrumb navigation and page titles reflect the selected locale.
+
+### User Impact
+Property managers viewing item details in their preferred language can quickly understand all item properties without mental translation overhead. Users editing items see familiar field labels and instructions, reducing errors from misinterpreting English-only forms. International users can confidently verify item information when field labels match their language expectations. Users understand validation feedback more clearly when error messages appear in their native language, improving data quality during edits.
+
+### Business Value
+Completes the internationalization of core item management workflows by ensuring detail viewing and editing experiences are fully accessible in all supported languages. Reduces friction in the primary content management tasks that property owners perform regularly. Demonstrates comprehensive multilingual support by translating detailed editing interfaces beyond just high-level navigation.
+
+### Acceptance Criteria
+- [ ] Item detail page displays all field labels in the current locale
+- [ ] Title, description, content type, location, tags, and status labels are translated
+- [ ] Section headings (Overview, Content, Metadata, Properties, History) appear in selected language
+- [ ] All action buttons (Edit, Delete, Duplicate, Print, Export) show translated labels
+- [ ] Breadcrumb navigation displays translated text for Home, Items, and current item context
+- [ ] Page title and metadata update to reflect current locale
+- [ ] Status badges show translated status text (Active, Archived, Draft, etc.)
+- [ ] Content type indicators display localized labels matching filter terminology
+- [ ] Item edit form displays all field labels translated appropriately
+- [ ] Form placeholders for title, description, and text inputs appear in current locale
+- [ ] Helper text and field hints guiding data entry are translated
+- [ ] Character count indicators use locale-appropriate number formatting
+- [ ] Validation error messages display in the selected language
+- [ ] Required field indicators and labels are translated
+- [ ] Save and Cancel button labels appear in current locale
+- [ ] Confirmation dialogs when discarding changes show translated messages
+- [ ] Success toast notification after saving displays in selected language
+- [ ] Error notifications when save fails show translated error details
+- [ ] Empty state messages when optional fields are blank appear translated
+- [ ] Timestamp displays (Created, Updated, Last Modified) use locale date/time formats
+- [ ] Tag input placeholder "Add tags..." displays in current locale
+- [ ] Location selector shows translated placeholder and labels
+- [ ] Content type dropdown displays options with translated labels
+- [ ] QR code section headings and helper text are translated
+- [ ] Article and link association sections show localized labels and counts
+- [ ] Related items section displays translated headings if applicable
+- [ ] Accessibility labels (aria-label, aria-description) use translated text
+- [ ] All hardcoded English strings are replaced with translation keys
+- [ ] Translation keys follow consistent naming conventions for item detail/edit context
+- [ ] Default English translations exist for all new translation keys
+- [ ] Translation files for French, Spanish, German, Italian, and Portuguese include all item detail/edit keys
+- [ ] Components gracefully handle missing translations with fallback to default language
+- [ ] Visual layout accommodates longer translated text without breaking responsive design
+- [ ] Mobile view displays all translated text correctly within smaller viewports
+- [ ] Form tab navigation labels are translated if tabs are used
+- [ ] Keyboard shortcuts and accessibility features work with translated labels
+- [ ] Unit tests verify components receive and display translated props correctly
+- [ ] Integration tests confirm item detail viewing and editing work identically across all locales
+
+
+
+
+---
+
+## REQ-E02-084: Generate Translations for Item Management Namespace (5 Non-English Languages)
+
+**Date**: 2026-01-20 15:45
+**Type**: NEW FEATURE
+**Size**: L
+**Phase**: 2D (Item Management)
+**Task**: 2D.7
+
+### Summary
+Generate complete translations for all Item Management namespace strings in French, Spanish, German, Italian, and Portuguese.
+
+### Current Behavior
+The Item Management namespace exists with comprehensive English strings covering the ItemManager, ItemGrid, ItemCard, filter and sort controls, bulk action dialogs, detail pages, and edit forms. All translation keys are defined and integrated into components. However, only English language files contain these translations. Users who select French, Spanish, German, Italian, or Portuguese see fallback English text throughout the item management interface because translated message files do not include these keys.
+
+### Expected Behavior
+Translation message files for French, Spanish, German, Italian, and Portuguese contain accurate, contextually appropriate translations for every key in the Item Management namespace. When users select any of these languages, all item management UI elements display properly translated text including field labels, buttons, status indicators, error messages, confirmation dialogs, empty states, and instructional content. Translations account for cultural and linguistic nuances such as formal vs informal address, gender agreement where applicable, and idiomatic expressions that sound natural to native speakers. Numeric formatting patterns, date/time displays, and plural forms follow locale conventions. Character limits and text length considerations ensure translations fit within existing UI layouts without breaking responsive designs.
+
+### User Impact
+Property managers and item administrators working in French, Spanish, German, Italian, or Portuguese gain full access to item management features in their native language. Users can browse item grids, apply filters and sorts, perform bulk operations, view detailed item information, and edit item properties with complete confidence that all text reflects their language preference. International users no longer encounter mixed language experiences where some parts of the application are translated while item management remains in English.
+
+### Business Value
+Completes the localization of the core item management feature set, which represents a primary workflow for property managers. Removes language barriers from critical inventory management tasks, expanding market reach to European and Latin American property management segments. Demonstrates commitment to international users by providing thorough translations beyond basic navigation, building trust and encouraging adoption among non-English speaking audiences.
+
+### Acceptance Criteria
+- [ ] French translation file includes all Item Management namespace keys with accurate translations
+- [ ] Spanish translation file includes all Item Management namespace keys with accurate translations
+- [ ] German translation file includes all Item Management namespace keys with accurate translations
+- [ ] Italian translation file includes all Item Management namespace keys with accurate translations
+- [ ] Portuguese translation file includes all Item Management namespace keys with accurate translations
+- [ ] All field labels (title, description, location, content type, status, tags) are translated appropriately
+- [ ] Button labels (Save, Cancel, Edit, Delete, Duplicate, Export, Print) use correct terminology
+- [ ] Filter labels (Content Type, Room, Status, Tags, Date Range) appear translated
+- [ ] Sort option labels (Title, Created Date, Updated Date, Room, Type) are properly translated
+- [ ] Bulk action dialog messages and confirmations read naturally in each language
+- [ ] Status indicators (Active, Archived, Draft, Pending) use locale-appropriate terms
+- [ ] Empty state messages convey the intended meaning and tone in each language
+- [ ] Error messages and validation feedback are culturally appropriate and clear
+- [ ] Success notification messages sound natural to native speakers
+- [ ] Confirmation dialog prompts ask questions in grammatically correct forms
+- [ ] Placeholder text for search and input fields is translated idiomatically
+- [ ] Helper text and tooltips provide clear guidance in each language
+- [ ] Numeric formatting patterns (counts, totals, ranges) follow locale conventions
+- [ ] Date and time displays match expected formats for each language region
+- [ ] Plural forms are handled correctly for counts and quantities in each language
+- [ ] Gender agreement in languages requiring it (French, Spanish, Italian, Portuguese, German) is correct
+- [ ] Formal/informal address forms match application tone and context appropriately
+- [ ] Technical terminology (QR code, archive, metadata, properties) uses accepted translations
+- [ ] Translations fit within existing UI component sizes without overflow or wrapping issues
+- [ ] Text length variations are tested across all languages to ensure layout integrity
+- [ ] Right-to-left language considerations are documented even if not implemented in this phase
+- [ ] Translation keys maintain consistent naming structure across all language files
+- [ ] No missing translation keys exist in any of the five language files
+- [ ] Translation files are valid JSON without syntax errors
+- [ ] Native speaker review or professional translation validation confirms quality
+- [ ] Automated tests verify that all translation keys load correctly for each locale
+- [ ] Manual QA testing confirms item management workflows function identically in all five languages
+- [ ] Screenshots or visual regression tests capture translated UI for documentation
+- [ ] Translation completion is documented with language, translator information, and review date
+
+
+---
+
+## REQ-E02-085: Create Properties Namespace Structure
+
+**Date**: 2026-01-20 00:00
+**Type**: NEW FEATURE
+**Size**: S
+
+### Summary
+Users need a dedicated organizational structure for all property management functionality to ensure consistent naming, easier navigation, and clear separation of concerns.
+
+### Current Behavior
+The application currently manages items but lacks a dedicated organizational structure for property-related functionality. Property management features, if they exist, are not organized under a unified namespace.
+
+### Expected Behavior
+The application should have a well-defined namespace structure for property management that mirrors the existing item management organization. This includes dedicated areas for property-related UI components, API routes, type definitions, database transforms, and business logic.
+
+### User Impact
+- **Developers** will find property-related code easily organized and discoverable
+- **New team members** will understand where to add property functionality
+- **Maintainers** will benefit from consistent patterns between items and properties
+
+### Business Value
+Establishing a clear namespace structure upfront prevents technical debt and reduces refactoring costs as property management features are built out. It ensures consistency with existing patterns and makes the codebase more maintainable.
+
+### Acceptance Criteria
+- [ ] Property management has a dedicated namespace that follows the same organizational pattern as item management
+- [ ] Developers can easily locate where to add property-related components, types, and logic
+- [ ] The namespace structure supports future property management features without requiring reorganization
+- [ ] Documentation exists explaining the namespace organization and naming conventions
+

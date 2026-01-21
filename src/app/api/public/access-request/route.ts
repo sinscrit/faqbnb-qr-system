@@ -48,7 +48,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Try to find matching account(s)
-    let matchedAccounts = [];
+    type AccountMatch = { id: string; name: string; description: string | null };
+    let matchedAccounts: AccountMatch[] = [];
     
     // Search by exact name match first
     const { data: exactNameMatch } = await supabase
@@ -86,15 +87,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check for duplicate requests
-    const { data: existingRequest } = await supabase
+    let duplicateQuery = supabase
       .from('access_requests')
       .select('id, status, created_at')
       .eq('requester_email', requester_email)
-      .eq('account_id', accountId)
       .in('status', [AccessRequestStatus.PENDING, AccessRequestStatus.APPROVED])
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
+
+    duplicateQuery = accountId
+      ? duplicateQuery.eq('account_id', accountId)
+      : duplicateQuery.is('account_id', null);
+
+    const { data: existingRequest } = await duplicateQuery.single();
 
     if (existingRequest) {
       return NextResponse.json(
@@ -222,7 +227,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (requestId) {
       query = query.eq('id', requestId);
-    } else {
+    } else if (email) {
       query = query.eq('requester_email', email);
     }
 

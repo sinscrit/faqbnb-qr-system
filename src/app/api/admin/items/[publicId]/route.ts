@@ -19,8 +19,9 @@ async function validateAdminAuth(request: NextRequest) {
     // Add current account header to all requests
     const currentAccountId = request.headers.get('x-current-account');
     if (currentAccountId) {
-      supabase.headers = {
-        ...supabase.headers,
+      const supabaseWithHeaders = supabase as unknown as { headers: Record<string, string> };
+      supabaseWithHeaders.headers = {
+        ...(supabaseWithHeaders.headers ?? {}),
         'x-current-account': currentAccountId
       };
     }

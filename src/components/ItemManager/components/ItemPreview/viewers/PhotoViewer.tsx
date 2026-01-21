@@ -258,7 +258,7 @@ export function PhotoViewer({
         // Pinch start
         e.preventDefault();
         isPinchingRef.current = true;
-        initialPinchDistanceRef.current = getDistance(e.touches[0], e.touches[1]);
+        initialPinchDistanceRef.current = getDistance(e.touches[0] as Touch, e.touches[1] as Touch);
         initialScaleRef.current = scale;
       } else if (e.touches.length === 1 && isZoomed) {
         // Drag start
@@ -278,7 +278,7 @@ export function PhotoViewer({
       if (e.touches.length === 2 && isPinchingRef.current) {
         // Pinch move
         e.preventDefault();
-        const currentDistance = getDistance(e.touches[0], e.touches[1]);
+        const currentDistance = getDistance(e.touches[0] as Touch, e.touches[1] as Touch);
         const scaleFactor = currentDistance / initialPinchDistanceRef.current;
         const newScale = clamp(
           initialScaleRef.current * scaleFactor,

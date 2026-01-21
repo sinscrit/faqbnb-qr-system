@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
-import { ItemManager, ItemRecord } from '@/components/ItemManager';
+import { ItemManager, ItemRecordExtended as ItemRecord } from '@/components/ItemManager';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { usePropertyContext } from '@/hooks/usePropertyContext';
 
@@ -117,7 +117,7 @@ export default function ItemsPage() {
         for (const id of ids) {
           // Find the item to get its publicId
           const item = items.find((i) => i.id === id || i.publicId === id);
-          if (item) {
+          if (item?.publicId) {
             await adminApi.deleteItem(item.publicId, headers);
           }
         }
@@ -146,11 +146,25 @@ export default function ItemsPage() {
       try {
         // Use title (which maps to API's name field) or fall back to name
         const itemName = item.title || (item as ItemRecord & { name?: string }).name || '';
+        const extendedItem = item as ItemRecord & { publicId?: string; propertyId?: string; links?: Array<{ title: string; url: string; linkType: string }> };
+        if (!extendedItem.publicId) {
+          throw new Error('Missing publicId for item update');
+        }
+
         await adminApi.updateItem(
-          (item as ItemRecord & { publicId: string }).publicId,
+          extendedItem.publicId,
           {
+            id: item.id,
+            publicId: extendedItem.publicId,
             name: itemName,
             description: item.instructions || (item as ItemRecord & { description?: string }).description || '',
+            propertyId: extendedItem.propertyId || '',
+            links: (extendedItem.links || []).map((link, index) => ({
+              title: link.title,
+              linkType: link.linkType as 'youtube' | 'pdf' | 'image' | 'text',
+              url: link.url,
+              displayOrder: index
+            }))
           },
           headers
         );
@@ -180,13 +194,18 @@ export default function ItemsPage() {
       try {
         // Use title (which maps to API's name field) or fall back to name
         const itemName = item.title || (item as ItemRecord & { name?: string }).name || 'Untitled';
-        const extendedItem = item as ItemRecord & { propertyId?: string; description?: string; links?: unknown[] };
+        const extendedItem = item as ItemRecord & { propertyId?: string; description?: string; links?: Array<{ title: string; url: string; linkType: string }> };
         await adminApi.createItem({
           publicId: newPublicId,
           name: `${itemName} (Copy)`,
           description: item.instructions || extendedItem.description || '',
           propertyId: extendedItem.propertyId || '',
-          links: extendedItem.links || [],
+          links: (extendedItem.links || []).map((link, index) => ({
+            title: link.title,
+            linkType: link.linkType as 'youtube' | 'pdf' | 'image' | 'text',
+            url: link.url,
+            displayOrder: index
+          })),
         });
 
         // Refresh the list
@@ -256,11 +275,10 @@ export default function ItemsPage() {
         onUpdateItem={handleUpdateItem}
         onDuplicateItem={handleDuplicateItem}
         config={{
-          defaultViewMode: 'grid',
+          defaultView: 'grid',
           enableSearch: true,
           enableFilters: true,
           enableBulkActions: true,
-          enableQRPreview: true,
         }}
       />
     </div>

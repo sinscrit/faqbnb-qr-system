@@ -5,39 +5,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { ItemsManagement } from '@/components/ItemsManagement';
-import { Item, Property } from '@/types';
+import { Property, ItemsListResponse } from '@/types';
 import { Plus, Loader2, Shield } from 'lucide-react';
 import { adminApi } from '@/lib/api';
-import { ItemsListResponse } from '@/types';
 import Link from 'next/link';
 
-interface ItemWithDetails extends Item {
-  publicId: string;
-  linksCount?: number;
-  analytics?: {
-    visits: {
-      last24Hours: number;
-      last7Days: number;
-      allTime: number;
-    };
-    reactions: {
-      total: number;
-      byType: {
-        like: number;
-        dislike: number;
-        love: number;
-        confused: number;
-        total: number;
-      };
-    };
-  };
-  property?: {
-    id: string;
-    nickname: string;
-    user_id: string;
-    account_id: string | null;
-  };
-}
+type ItemWithDetails = NonNullable<ItemsListResponse['data']>[number] & {
+  tags?: string[];
+  qrCodeUploadedAt?: string | null;
+};
 
 export default function DashboardItemsPage() {
   const router = useRouter();
@@ -98,7 +74,7 @@ export default function DashboardItemsPage() {
     : useCanAccess('view_analytics');
 
   // State for comprehensive items management
-  const [items, setItems] = useState<ItemsListResponse['data']>([]);
+  const [items, setItems] = useState<ItemWithDetails[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [propertiesLoading, setPropertiesLoading] = useState(true);
@@ -135,7 +111,7 @@ export default function DashboardItemsPage() {
       const response = await adminApi.listItems(undefined, selectedPropertyId || undefined, 1, 20, headers);
 
       if (response.success && response.data) {
-        setItems(response.data);
+        setItems(response.data ?? []);
 
         // Set account context and pagination from response
         if ('accountContext' in response) {

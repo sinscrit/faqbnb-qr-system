@@ -12,7 +12,6 @@
 import React from 'react';
 import { render, screen, waitFor, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ItemCreationWorkflow } from '../ItemCreationWorkflow';
 import {
   createMockWorkflowProps,
   createMockSessionQRGenerationHook,
@@ -31,6 +30,53 @@ import type { ItemRecord, ItemCaptureProps } from '@/components/ItemCapture/Item
 // =============================================================================
 // Mock Setup
 // =============================================================================
+
+// Mock next/dynamic to render components immediately in tests
+vi.mock('next/dynamic', async () => {
+  const React = await import('react');
+
+  const DynamicImportRenderer = ({
+    importer,
+    props,
+  }: {
+    importer: () => Promise<any>;
+    props: Record<string, unknown>;
+  }) => {
+    const [Component, setComponent] = React.useState<React.ComponentType<any> | null>(null);
+
+    React.useEffect(() => {
+      let mounted = true;
+
+      importer().then((mod) => {
+        if (!mounted) return;
+        const Loaded = mod?.default ?? mod;
+        setComponent(() => Loaded);
+      });
+
+      return () => {
+        mounted = false;
+      };
+    }, [importer]);
+
+    if (!Component) return null;
+
+    return <Component {...props} />;
+  };
+
+  return {
+    __esModule: true,
+    default: (importer: () => Promise<any>) => {
+      const DynamicComponent = (props: Record<string, unknown>) => (
+        <DynamicImportRenderer importer={importer} props={props} />
+      );
+
+      return DynamicComponent;
+    },
+  };
+});
+
+type ItemCreationWorkflowComponent = typeof import('../ItemCreationWorkflow').ItemCreationWorkflow;
+let ItemCreationWorkflow: ItemCreationWorkflowComponent;
 
 // Mock crypto.randomUUID
 const mockUUID = vi.fn(() => 'test-uuid-' + Math.random().toString(36).substring(7));
@@ -82,14 +128,15 @@ vi.mock('@/hooks/useQRCodeGeneration', () => ({
  * Helper to select a room and wait for transition.
  */
 const selectRoom = async (user: ReturnType<typeof userEvent.setup>, roomLabel: string) => {
-  await user.click(screen.getByText(roomLabel));
+  const room = await screen.findByText(roomLabel);
+  await user.click(room);
 };
 
 /**
  * Helper to click Continue button.
  */
 const clickContinue = async (user: ReturnType<typeof userEvent.setup>) => {
-  const continueBtn = screen.getByRole('button', { name: /continue/i });
+  const continueBtn = await screen.findByRole('button', { name: /continue/i });
   await user.click(continueBtn);
 };
 
@@ -98,6 +145,10 @@ const clickContinue = async (user: ReturnType<typeof userEvent.setup>) => {
 // =============================================================================
 
 describe('ItemCreationWorkflow Integration Tests', () => {
+  beforeAll(async () => {
+    ({ ItemCreationWorkflow } = await import('../ItemCreationWorkflow'));
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -107,21 +158,22 @@ describe('ItemCreationWorkflow Integration Tests', () => {
   // Task 3: Room Selection Integration Tests
   // ===========================================================================
   describe('Room Selection Integration', () => {
-    it('renders room selection as initial step', () => {
+    it('renders room selection as initial step', async () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      expect(screen.getByText('Select a Room')).toBeInTheDocument();
+      expect(await screen.findByText('Select a Room')).toBeInTheDocument();
       expect(screen.getByText('Kitchen')).toBeInTheDocument();
       expect(screen.getByText('Laundry Room')).toBeInTheDocument();
       expect(screen.getByText('Bedroom')).toBeInTheDocument();
     });
 
-    it('displays all available room options', () => {
+    it('displays all available room options', async () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
       // Check all rooms are present
+      await screen.findByText('Select a Room');
       expect(screen.getByText('Kitchen')).toBeInTheDocument();
       expect(screen.getByText('Laundry Room')).toBeInTheDocument();
       expect(screen.getByText('Bedroom')).toBeInTheDocument();
@@ -138,12 +190,16 @@ describe('ItemCreationWorkflow Integration Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
+      await screen.findByText('Select a Room');
+
       // Initially continue should be disabled
-      const continueBtn = screen.getByRole('button', { name: /continue/i });
+      const continueBtn = await screen.findByRole('button', { name: /continue/i });
       expect(continueBtn).toBeDisabled();
 
-      // Select kitchen
-      await selectRoom(user, 'Kitchen');
+      // Select "Other" to avoid auto-advance
+      await selectRoom(user, 'Other');
+      const customInput = await screen.findByLabelText(/Enter room name/i);
+      await user.type(customInput, 'Pantry');
 
       // Now continue should be enabled
       expect(continueBtn).not.toBeDisabled();
@@ -168,14 +224,11 @@ describe('ItemCreationWorkflow Integration Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Select kitchen and continue
+      // Select kitchen and wait for auto-advance
       await selectRoom(user, 'Kitchen');
-      await clickContinue(user);
 
       // Should be on item type selection step
-      await waitFor(() => {
-        expect(screen.getByText('What type of item is this?')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('What type of item is this?')).toBeInTheDocument();
     });
 
     it('selecting "General" room skips item-type-selection', async () => {
@@ -183,14 +236,11 @@ describe('ItemCreationWorkflow Integration Tests', () => {
       const props = createMockWorkflowProps();
       render(<ItemCreationWorkflow {...props} />);
 
-      // Select "General" and continue
+      // Select "General" and wait for auto-advance
       await selectRoom(user, /General/i);
-      await clickContinue(user);
 
       // Should skip to specific item selection (since General implies general-info)
-      await waitFor(() => {
-        expect(screen.getByText(/What would you like to document/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/What specific item\?/i)).toBeInTheDocument();
     });
 
     it('back navigation from item-type-selection returns to room-selection', async () => {
@@ -200,20 +250,15 @@ describe('ItemCreationWorkflow Integration Tests', () => {
 
       // Navigate to item type selection
       await selectRoom(user, 'Kitchen');
-      await clickContinue(user);
 
-      await waitFor(() => {
-        expect(screen.getByText('What type of item is this?')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('What type of item is this?')).toBeInTheDocument();
 
       // Click back button
       const backBtn = screen.getByLabelText('Go back to previous step');
       await user.click(backBtn);
 
       // Should be back on room selection
-      await waitFor(() => {
-        expect(screen.getByText('Select a Room')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Select a Room')).toBeInTheDocument();
     });
   });
 

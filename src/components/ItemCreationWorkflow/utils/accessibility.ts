@@ -100,7 +100,7 @@ export function useReducedMotion(): boolean {
  * useFocusTrap(dialogRef, isDialogOpen);
  */
 export function useFocusTrap(
-  containerRef: React.RefObject<HTMLElement>,
+  containerRef: React.RefObject<HTMLElement | null>,
   isActive: boolean
 ): void {
   // Store the previously focused element to restore focus when trap is deactivated

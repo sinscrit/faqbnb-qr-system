@@ -242,6 +242,7 @@ export function ContentEditSection({
                   content={toContentPiece(piece)}
                   onRemove={handleRemoveClick}
                   disabled={disabled}
+                  totalCount={content.length}
                 />
               ))}
             </div>

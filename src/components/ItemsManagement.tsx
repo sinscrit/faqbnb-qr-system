@@ -2,38 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Item } from '@/types';
+import { Item, ItemsListResponse } from '@/types';
 import { Plus, Edit, Trash2, ExternalLink, Search, Loader2, Filter, Shield, Eye, EyeOff } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 
-interface ItemWithDetails extends Item {
-  publicId: string;
-  linksCount?: number;
-  analytics?: {
-    visits: {
-      last24Hours: number;
-      last7Days: number;
-      allTime: number;
-    };
-    reactions: {
-      total: number;
-      byType: {
-        like: number;
-        dislike: number;
-        love: number;
-        confused: number;
-        total: number;
-      };
-    };
-  };
-  property?: {
-    id: string;
-    nickname: string;
-    user_id: string;
-    account_id: string | null;
-  };
-}
+type ItemWithDetails = NonNullable<ItemsListResponse['data']>[number] & {
+  tags?: string[];
+  qrCodeUploadedAt?: string | null;
+};
 
 interface PropertyOption {
   id: string;

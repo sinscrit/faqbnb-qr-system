@@ -106,10 +106,11 @@ export default function UrlInputAdapter({
   // Map addUrl callback: convert UrlItem to ContentPiece
   const handleAddUrl = useCallback(
     (urlItem: UrlItem) => {
-      const contentPiece = urlItemToContentPiece(urlItem, currentItem.content.length);
+      const contentCount = currentItem.content?.length ?? 0;
+      const contentPiece = urlItemToContentPiece(urlItem, contentCount);
       onAddContent(contentPiece);
     },
-    [currentItem.content.length, onAddContent]
+    [currentItem.content, onAddContent]
   );
 
   // Map goToStep callback: when navigating to next step, call onComplete

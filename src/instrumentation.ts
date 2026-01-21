@@ -44,5 +44,5 @@ export const onRequestError = async (
         method: request.method,
       },
     },
-  });
+  } as any);
 };

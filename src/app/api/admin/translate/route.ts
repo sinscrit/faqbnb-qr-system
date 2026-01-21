@@ -12,16 +12,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
+import type { SupportedLanguage, TranslateOptions } from '@/lib/translation-service';
 
 // =============================================================================
 // Type Definitions
 // =============================================================================
-
-/**
- * Supported language codes for translation
- * Matches Phase 1 database schema language constraints
- */
-type SupportedLanguage = 'en' | 'fr' | 'es' | 'de' | 'nl' | 'it';
 
 /**
  * Content type categories for context-aware translation
@@ -97,7 +92,7 @@ let translateText: ((
   text: string,
   sourceLanguage: SupportedLanguage,
   targetLanguage: SupportedLanguage,
-  options?: { provider?: 'claude' | 'openai'; context?: { contentType?: ContentType; domainContext?: string } }
+  options?: TranslateOptions
 ) => Promise<{
   translatedText: string;
   provider: 'claude' | 'openai';

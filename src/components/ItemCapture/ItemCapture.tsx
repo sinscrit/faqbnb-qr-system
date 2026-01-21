@@ -511,11 +511,12 @@ export function ItemCapture({
         }
         return (
           <MediaEditorStep
-            mediaItem={editTarget}
-            onSave={(updatedMedia) => {
-              updateMedia(editTarget.id, updatedMedia);
-              goToStep('review');
+            mediaItems={state.mediaItems}
+            initialIndex={0}
+            onUpdateMedia={(mediaId, updates) => {
+              updateMedia(mediaId, updates);
             }}
+            onComplete={() => goToStep('review')}
             onCancel={() => goToStep('review')}
           />
         );

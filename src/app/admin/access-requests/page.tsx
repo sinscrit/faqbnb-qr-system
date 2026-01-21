@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus, AccessRequestSource, AccessRequestWithAccount } from '@/types/admin';
 import ConfirmationModal from '@/components/ConfirmationModal';
 import { useAuth } from '@/contexts/AuthContext';
 import AccessRequestTable from '@/components/AccessRequestTable';
@@ -18,7 +18,7 @@ interface RequestFilters {
 }
 
 interface RequestsData {
-  requests: AccessRequest[];
+  requests: AccessRequestWithAccount[];
   pagination: {
     limit: number;
     offset: number;
@@ -46,7 +46,7 @@ export default function AccessRequestsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSysAdmin, setIsSysAdmin] = useState<boolean | null>(null);
   const [filters, setFilters] = useState<RequestFilters>({});
-  const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<AccessRequestWithAccount | null>(null);
   const [emailPopupOpen, setEmailPopupOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   
@@ -237,7 +237,7 @@ export default function AccessRequestsPage() {
   };
 
   // Handle email click
-  const handleEmailClick = (request: AccessRequest) => {
+  const handleEmailClick = (request: AccessRequestWithAccount) => {
     setSelectedRequest(request);
     setEmailPopupOpen(true);
   };
@@ -278,7 +278,7 @@ export default function AccessRequestsPage() {
   };
 
   // Handle view details
-  const handleViewDetails = (request: AccessRequest) => {
+  const handleViewDetails = (request: AccessRequestWithAccount) => {
     // Navigate to detail page or open detail modal
     console.log('View details for request:', request.id);
     // You could implement a detail modal or navigation here
@@ -490,8 +490,8 @@ export default function AccessRequestsPage() {
               setSelectedRequest(null);
             }}
             onSend={handleSendEmail}
-            accessCode={selectedRequest.access_code}
-            accountName={selectedRequest.account?.name}
+            accessCode={selectedRequest.access_code ?? undefined}
+            accountName={selectedRequest.account?.name ?? undefined}
           />
         )}
 

@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
 import { generateArticleTitle, isValidPurposeType } from '@/lib/titleGenerator';
-import { CreateArticleRequest, ArticlesListResponse, ArticleResponse } from '@/types';
+import { CreateArticleRequest, ArticlesListResponse, ArticleResponse, PurposeType } from '@/types';
 
 // Helper function to extract account context from request
 async function getAccountContext(request: NextRequest, userId: string, isAdmin: boolean, supabase: any) {
@@ -373,17 +373,20 @@ export async function POST(request: NextRequest) {
 
     console.log('Article created successfully:', newArticle.id);
 
+    const createdAt = newArticle.created_at ?? new Date().toISOString();
+    const updatedAt = newArticle.updated_at ?? createdAt;
+
     const response: ArticleResponse = {
       success: true,
       data: {
         id: newArticle.id,
         itemId: newArticle.item_id,
-        purpose: newArticle.purpose,
+        purpose: newArticle.purpose as PurposeType,
         title: newArticle.title,
         description: newArticle.description,
         displayOrder: newArticle.display_order || 0,
-        createdAt: newArticle.created_at,
-        updatedAt: newArticle.updated_at,
+        createdAt,
+        updatedAt,
         links: []
       },
       accountContext: { accountId, accountRole }

@@ -116,14 +116,14 @@ export default function VideoTrimmer({
 
   useEffect(() => {
     // Handle Blob/File sources by creating object URL
-    if (videoSrc instanceof Blob || videoSrc instanceof File) {
+    if (typeof videoSrc !== 'string') {
       const url = URL.createObjectURL(videoSrc);
       setVideoUrl(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      // String URL - use directly
-      setVideoUrl(videoSrc);
     }
+
+    // String URL - use directly
+    setVideoUrl(videoSrc);
   }, [videoSrc]);
 
   // Reset state when video source changes (Task 11)

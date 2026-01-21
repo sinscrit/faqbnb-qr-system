@@ -161,7 +161,7 @@ export function RoleBasedNavigation({
   useEffect(() => {
     if (!pathname || !dashboardPermissions) return;
 
-    let currentSection = DashboardSection.dashboard;
+    let currentSection: typeof DashboardSection[keyof typeof DashboardSection] = DashboardSection.dashboard;
 
     if (pathname.startsWith('/dashboard/items')) {
       currentSection = DashboardSection.items;

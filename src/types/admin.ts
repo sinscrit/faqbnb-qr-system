@@ -19,19 +19,26 @@ export interface UserAnalytics {
 export interface AccessRequest {
   id: string;
   requester_email: string;
-  requester_name?: string;
+  requester_name?: string | null;
   account_id: string | null; // Allow null for beta requests
-  request_date: string;
-  approval_date?: string;
-  approved_by?: string;
-  access_code?: string;
-  registration_date?: string;
-  status: 'pending' | 'approved' | 'denied' | 'registered';
-  notes?: string;
-  source?: AccessRequestSource; // Track request origin
-  metadata?: Record<string, any>; // Additional metadata for beta requests
-  created_at: string;
-  updated_at: string;
+  request_date: string | null;
+  approval_date?: string | null;
+  approved_by?: string | null;
+  access_code?: string | null;
+  registration_date?: string | null;
+  status: AccessRequestStatus | null;
+  notes?: string | null;
+  source?: AccessRequestSource | null; // Track request origin
+  metadata?: unknown | null; // Additional metadata for beta requests
+  created_at: string | null;
+  updated_at: string | null;
+  denial_date?: string | null;
+  denial_reason?: string | null;
+  processed_by?: string | null;
+  processed_at?: string | null;
+  email_sent_date?: string | null;
+  registration_completed_date?: string | null;
+  approval_notes?: string | null;
 }
 
 export interface UserFilters {

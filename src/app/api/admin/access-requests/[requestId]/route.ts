@@ -1,12 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateAdminAuth } from '@/lib/auth-server';
-import { AccessRequestStatus } from '@/types/admin';
+import { AccessRequest, AccessRequestStatus } from '@/types/admin';
 
 interface RouteParams {
   params: {
     requestId: string;
   };
 }
+
+type AccessRequestDetail = AccessRequest & {
+  account?: {
+    id: string;
+    name: string;
+    owner?: {
+      id: string;
+      email: string;
+      full_name: string | null;
+    };
+    items_count?: Array<{ count: number | null }>;
+    recent_visits?: Array<{ count: number | null }>;
+  };
+  approved_by_user?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+  };
+};
 
 export async function GET(
   request: NextRequest,
@@ -50,7 +69,7 @@ export async function GET(
 
   try {
     // Get detailed request information
-    const { data: accessRequest, error } = await supabase
+    const { data: accessRequestData, error } = await supabase
       .from('access_requests')
       .select(`
         *,
@@ -74,6 +93,8 @@ export async function GET(
       .eq('id', requestId)
       .single();
 
+    const accessRequest = accessRequestData as AccessRequestDetail | null;
+
     if (error || !accessRequest) {
       console.error('❌ ACCESS_REQUEST_DETAIL_DEBUG: Request not found:', error);
       return NextResponse.json(
@@ -86,47 +107,72 @@ export async function GET(
     }
 
     // Calculate timeline data
-    const requestDate = new Date(accessRequest.request_date);
+    const requestDate = accessRequest.request_date ? new Date(accessRequest.request_date) : null;
     const approvalDate = accessRequest.approval_date ? new Date(accessRequest.approval_date) : null;
-    const registrationDate = accessRequest.registration_completed_date ? 
-      new Date(accessRequest.registration_completed_date) : null;
+    const registrationDate = accessRequest.registration_completed_date
+      ? new Date(accessRequest.registration_completed_date)
+      : null;
     const emailSentDate = accessRequest.email_sent_date ? new Date(accessRequest.email_sent_date) : null;
     const now = new Date();
 
+    const events: Array<{
+      type: string;
+      date: string;
+      description: string;
+      user?: unknown;
+    }> = [];
+
+    if (accessRequest.request_date) {
+      events.push({
+        type: 'request_created',
+        date: accessRequest.request_date,
+        description: 'Access request submitted'
+      });
+    }
+
+    if (approvalDate && accessRequest.approval_date) {
+      events.push({
+        type: 'request_approved',
+        date: accessRequest.approval_date,
+        description: 'Request approved by admin',
+        user: accessRequest.approved_by_user
+      });
+    }
+
+    if (emailSentDate && accessRequest.email_sent_date) {
+      events.push({
+        type: 'email_sent',
+        date: accessRequest.email_sent_date,
+        description: 'Access email sent to requester'
+      });
+    }
+
+    if (registrationDate && accessRequest.registration_completed_date) {
+      events.push({
+        type: 'user_registered',
+        date: accessRequest.registration_completed_date,
+        description: 'User completed registration'
+      });
+    }
+
     const timeline = {
-      daysSinceRequest: Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)),
-      daysToApproval: approvalDate ? 
-        Math.floor((approvalDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) : null,
-      daysToRegistration: registrationDate ?
-        Math.floor((registrationDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) : null,
+      daysSinceRequest: requestDate
+        ? Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24))
+        : null,
+      daysToApproval: approvalDate && requestDate
+        ? Math.floor((approvalDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24))
+        : null,
+      daysToRegistration: registrationDate && requestDate
+        ? Math.floor((registrationDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24))
+        : null,
       daysSinceEmailSent: emailSentDate ?
         Math.floor((now.getTime() - emailSentDate.getTime()) / (1000 * 60 * 60 * 24)) : null,
       isPending: accessRequest.status === AccessRequestStatus.PENDING,
-      isOverdue: Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) > 7 && 
-                 accessRequest.status === AccessRequestStatus.PENDING,
-      events: [
-        {
-          type: 'request_created',
-          date: accessRequest.request_date,
-          description: 'Access request submitted'
-        },
-        ...(approvalDate ? [{
-          type: 'request_approved',
-          date: accessRequest.approval_date,
-          description: 'Request approved by admin',
-          user: accessRequest.approved_by_user
-        }] : []),
-        ...(emailSentDate ? [{
-          type: 'email_sent',
-          date: accessRequest.email_sent_date,
-          description: 'Access email sent to requester'
-        }] : []),
-        ...(registrationDate ? [{
-          type: 'user_registered',
-          date: accessRequest.registration_completed_date,
-          description: 'User completed registration'
-        }] : [])
-      ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      isOverdue: requestDate
+        ? Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24)) > 7 &&
+            accessRequest.status === AccessRequestStatus.PENDING
+        : false,
+      events: events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     };
 
     // Check if requester is already a user

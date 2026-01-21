@@ -5,15 +5,17 @@
 
 import {
   UserRole,
-  AccountRole,
   DashboardPermissions,
   PERMISSIONS,
   PermissionCheck,
   PermissionContext,
   type PermissionKey
 } from '../types/permissions';
-import { User, Account, AccountUser } from '../types';
+import { User, Account, AccountUser, type AccountRole } from '../types';
+import type { AuthUser } from '@/lib/auth';
 import { Account as AuthAccount } from '@/types';
+
+type PermissionUser = User | AuthUser;
 
 /**
  * Check if a user has the required user role
@@ -22,7 +24,7 @@ import { Account as AuthAccount } from '@/types';
  * @returns PermissionCheck result
  */
 export function checkUserPermission(
-  user: User | null,
+  user: PermissionUser | null,
   requiredRole: UserRole
 ): PermissionCheck {
   if (!user) {
@@ -83,7 +85,7 @@ export function checkUserPermission(
  * @returns PermissionCheck result
  */
 export async function checkAccountPermission(
-  user: User | null,
+  user: PermissionUser | null,
   account: Account,
   requiredRole: AccountRole,
   accountUser?: AccountUser
@@ -118,7 +120,7 @@ export async function checkAccountPermission(
       context: {
         userId: user.id,
         accountId: account.id,
-        accountRole: AccountRole.OWNER,
+        accountRole: 'owner',
         userRole: UserRole.USER,
         isSystemAdmin: false
       }
@@ -127,16 +129,16 @@ export async function checkAccountPermission(
 
   // Check specific account role hierarchy
   const roleHierarchy: Record<AccountRole, number> = {
-    [AccountRole.OWNER]: 4,
-    [AccountRole.ADMIN]: 3,
-    [AccountRole.MEMBER]: 2,
-    [AccountRole.VIEWER]: 1
+    owner: 4,
+    admin: 3,
+    member: 2,
+    viewer: 1
   };
 
   const requiredLevel = roleHierarchy[requiredRole];
 
   // If no account user relationship provided, assume viewer level (most restrictive)
-  const userRole: AccountRole = accountUser?.role || AccountRole.VIEWER;
+  const userRole: AccountRole = accountUser?.role || 'viewer';
   const userLevel = roleHierarchy[userRole];
 
   const hasPermission = userLevel >= requiredLevel;
@@ -160,7 +162,7 @@ export async function checkAccountPermission(
  * @param user - User object
  * @returns boolean
  */
-export function canAccessAdminFeatures(user: User | null): boolean {
+export function canAccessAdminFeatures(user: PermissionUser | null): boolean {
   if (!user) return false;
   return user.role === 'admin' || (user as any).is_admin === true;
 }
@@ -173,11 +175,11 @@ export function canAccessAdminFeatures(user: User | null): boolean {
  * @returns boolean
  */
 export async function canManageProperties(
-  user: User | null,
+  user: PermissionUser | null,
   account: Account,
   accountUser?: AccountUser
 ): Promise<boolean> {
-  const permission = await checkAccountPermission(user, account, AccountRole.ADMIN, accountUser);
+  const permission = await checkAccountPermission(user, account, 'admin', accountUser);
   return permission.granted;
 }
 
@@ -189,12 +191,12 @@ export async function canManageProperties(
  * @returns boolean
  */
 export async function canViewAnalytics(
-  user: User | null,
+  user: PermissionUser | null,
   account: Account,
   accountUser?: AccountUser
 ): Promise<boolean> {
   // Analytics require at least member role
-  const permission = await checkAccountPermission(user, account, AccountRole.MEMBER, accountUser);
+  const permission = await checkAccountPermission(user, account, 'member', accountUser);
   return permission.granted;
 }
 
@@ -206,8 +208,8 @@ export async function canViewAnalytics(
  * @returns DashboardPermissions object
  */
 export async function getDashboardPermissions(
-  user: User | null,
-  account?: Account,
+  user: PermissionUser | null,
+  account?: Account | null,
   accountUser?: AccountUser
 ): Promise<DashboardPermissions> {
   console.log('🔍 PERMISSION_DEBUG: getDashboardPermissions called', {
@@ -265,7 +267,7 @@ export async function getDashboardPermissions(
       source: 'accountUser.role'
     });
   } else {
-    userAccountRole = AccountRole.VIEWER;
+    userAccountRole = 'viewer';
     console.log('🔍 PERMISSION_DEBUG: No role found, defaulting to VIEWER', {
       userAccountRole,
       source: 'default'
@@ -305,35 +307,35 @@ export async function getDashboardPermissions(
 
   if (account) {
     const canManageProps = await canManageProperties(user, account, accountUser);
-    const canViewAnalytics = await canViewAnalytics(user, account, accountUser);
+    const canViewAccountAnalytics = await canViewAnalytics(user, account, accountUser);
 
     // Enhanced: Detailed logging for account permission calculations (REQ-024)
     console.log('🔍 PERMISSION_DEBUG: Calculating account permissions', {
       userAccountRole,
       isAccountOwner,
       canManageProps,
-      canViewAnalytics,
+      canViewAnalytics: canViewAccountAnalytics,
       permissionCalculations: {
-        canCreateItems: userAccountRole !== AccountRole.VIEWER,
-        canEditItems: userAccountRole !== AccountRole.VIEWER,
-        canDeleteItems: [AccountRole.OWNER, AccountRole.ADMIN].includes(userAccountRole),
+        canCreateItems: userAccountRole !== 'viewer',
+        canEditItems: userAccountRole !== 'viewer',
+        canDeleteItems: ['owner', 'admin'].includes(userAccountRole),
         canCreateProperties: canManageProps,
         canEditProperties: canManageProps,
-        canDeleteProperties: isAccountOwner || userAccountRole === AccountRole.ADMIN,
-        canManageAccountUsers: isAccountOwner || userAccountRole === AccountRole.ADMIN,
-        canManageAccountSettings: isAccountOwner || userAccountRole === AccountRole.ADMIN
+        canDeleteProperties: isAccountOwner || userAccountRole === 'admin',
+        canManageAccountUsers: isAccountOwner || userAccountRole === 'admin',
+        canManageAccountSettings: isAccountOwner || userAccountRole === 'admin'
       }
     });
 
     accountPermissions = {
-      canCreateItems: userAccountRole !== AccountRole.VIEWER,
-      canEditItems: userAccountRole !== AccountRole.VIEWER,
-      canDeleteItems: [AccountRole.OWNER, AccountRole.ADMIN].includes(userAccountRole),
+      canCreateItems: userAccountRole !== 'viewer',
+      canEditItems: userAccountRole !== 'viewer',
+      canDeleteItems: ['owner', 'admin'].includes(userAccountRole),
       canCreateProperties: canManageProps,
       canEditProperties: canManageProps,
-      canDeleteProperties: isAccountOwner || userAccountRole === AccountRole.ADMIN,
-      canManageAccountUsers: isAccountOwner || userAccountRole === AccountRole.ADMIN,
-      canManageAccountSettings: isAccountOwner || userAccountRole === AccountRole.ADMIN
+      canDeleteProperties: isAccountOwner || userAccountRole === 'admin',
+      canManageAccountUsers: isAccountOwner || userAccountRole === 'admin',
+      canManageAccountSettings: isAccountOwner || userAccountRole === 'admin'
     };
   }
 
@@ -373,9 +375,9 @@ export async function getDashboardPermissions(
  * @returns boolean
  */
 export async function hasPermission(
-  user: User | null,
+  user: PermissionUser | null,
   permission: PermissionKey,
-  account?: Account,
+  account?: Account | null,
   accountUser?: AccountUser
 ): Promise<boolean> {
   const permissions = await getDashboardPermissions(user, account, accountUser);

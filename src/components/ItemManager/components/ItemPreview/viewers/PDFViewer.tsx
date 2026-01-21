@@ -118,7 +118,7 @@ export function PDFViewer({
       try {
         let loadingTask: pdfjsLib.PDFDocumentLoadingTask;
 
-        if (src instanceof Blob || src instanceof File) {
+        if (typeof src !== 'string') {
           const arrayBuffer = await src.arrayBuffer();
           loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
         } else {

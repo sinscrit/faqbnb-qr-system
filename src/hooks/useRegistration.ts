@@ -208,7 +208,7 @@ export function useRegistration() {
         
         setState(prev => ({ ...prev, isLoading: false }));
         
-        return { success: false, error: errorMessage };
+        return { success: false, error: errorMessage, registrationMethod: formData.accessCode ? 'access_code' : 'standard' };
       }
 
       const result: RegistrationResult = await response.json();
@@ -233,7 +233,7 @@ export function useRegistration() {
       
       setState(prev => ({ ...prev, isLoading: false }));
 
-      return { success: false, error: errorMessage };
+      return { success: false, error: errorMessage, registrationMethod: formData.accessCode ? 'access_code' : 'standard' };
     }
   }, [addError]);
 
@@ -273,7 +273,7 @@ export function useRegistration() {
         
         setState(prev => ({ ...prev, isLoading: false }));
         
-        return { success: false, error: errorMessage };
+        return { success: false, error: errorMessage, registrationMethod: 'oauth' };
       }
 
       const result: OAuthRegistrationResult = await response.json();
@@ -298,7 +298,7 @@ export function useRegistration() {
       
       setState(prev => ({ ...prev, isLoading: false }));
 
-      return { success: false, error: errorMessage };
+      return { success: false, error: errorMessage, registrationMethod: 'oauth' };
     }
   }, [addError]);
 
@@ -372,6 +372,8 @@ export function useRegistration() {
       error: null,
       isValidating: false,
       validationResult: null,
+      errorHistory: [],
+      lastErrorTimestamp: null,
     });
   }, []);
 

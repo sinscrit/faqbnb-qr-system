@@ -95,6 +95,7 @@ export default function TextEditorAdapter({
       // TextEditorStep calls goToStep('add-more') when user clicks Continue
       // Create ContentPiece from text content and proceed to preview-save
       if (step === 'add-more' && textContent.trim()) {
+        const contentCount = currentItem.content?.length ?? 0;
         const contentPiece: ContentPiece = {
           id: generateUUID(),
           type: 'text',
@@ -102,7 +103,7 @@ export default function TextEditorAdapter({
             type: 'text',
             text: textContent,
           },
-          order: currentItem.content.length,
+          order: contentCount,
         };
         onAddContent(contentPiece);
         onComplete();
@@ -111,7 +112,7 @@ export default function TextEditorAdapter({
         onComplete();
       }
     },
-    [textContent, currentItem.content.length, onAddContent, onComplete]
+    [textContent, currentItem.content, onAddContent, onComplete]
   );
 
   // Map prevStep callback directly to onBack

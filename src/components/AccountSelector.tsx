@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDownIcon, CheckIcon, BuildingOfficeIcon, UserIcon } from '@heroicons/react/24/outline';
-import { useAuth, useAccountContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Account } from '@/types';
 
 // Account Selector Component Props
@@ -73,8 +73,7 @@ export function AccountSelector({
   showAccountInfo = true, 
   className = '' 
 }: AccountSelectorProps) {
-  const { user } = useAuth();
-  const { currentAccount, userAccounts, switchingAccount, switchToAccount } = useAccountContext();
+  const { user, currentAccount, userAccounts, switchingAccount, switchToAccount } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
 
@@ -270,8 +269,7 @@ export function CompactAccountSelector({
 
 // Account Info Display (read-only)
 export function AccountInfo({ className = '' }: { className?: string }) {
-  const { currentAccount, userAccounts } = useAccountContext();
-  const { user } = useAuth();
+  const { currentAccount, userAccounts, user } = useAuth();
 
   if (!currentAccount || !user) {
     return null;

@@ -71,8 +71,8 @@ function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetect
   if (!email) missingParams.push('email');
   
   // Validate parameter formats (non-blocking)
-  const hasValidCode = codeToCheck && /^[A-Za-z0-9]{8,}$/.test(codeToCheck);
-  const hasValidEmail = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const hasValidCode = !!codeToCheck && /^[A-Za-z0-9]{8,}$/.test(codeToCheck);
+  const hasValidEmail = !!email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   
   const hasValidParams = hasValidCode && hasValidEmail;
   const mode: 'url' | 'manual' = hasValidParams ? 'url' : 'manual';

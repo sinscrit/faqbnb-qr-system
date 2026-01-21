@@ -157,9 +157,10 @@ export async function aggregateVisitData(accountIds: string[]): Promise<VisitSum
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
     
-    const recentVisits24h = visits?.filter(visit => 
-      new Date(visit.visited_at) > oneDayAgo
-    ).length || 0;
+    const recentVisits24h = visits?.filter(visit => {
+      if (!visit.visited_at) return false;
+      return new Date(visit.visited_at) > oneDayAgo;
+    }).length || 0;
 
     return {
       totalVisits,
@@ -213,8 +214,8 @@ export async function computeAccessStatistics(userId?: string): Promise<AccessSt
     let averageApprovalTime = 0;
     if (approvedWithDates.length > 0) {
       const totalApprovalTime = approvedWithDates.reduce((sum, req) => {
-        const requestDate = new Date(req.request_date);
-        const approvalDate = new Date(req.approval_date);
+        const requestDate = req.request_date ? new Date(req.request_date) : new Date(0);
+        const approvalDate = req.approval_date ? new Date(req.approval_date) : new Date(0);
         const diffTime = approvalDate.getTime() - requestDate.getTime();
         const diffDays = diffTime / (1000 * 60 * 60 * 24);
         return sum + diffDays;
@@ -273,7 +274,7 @@ export function calculateDaysBetweenRequestAndRegistration(
  * Get comprehensive registration status for access request
  */
 export function getRegistrationStatus(request: any): RegistrationStatus {
-  const requestDate = new Date(request.request_date);
+  const requestDate = request.request_date ? new Date(request.request_date) : new Date(0);
   const approvalDate = request.approval_date ? new Date(request.approval_date) : null;
   const registrationDate = request.registration_completed_date ? 
     new Date(request.registration_completed_date) : null;
@@ -288,7 +289,7 @@ export function getRegistrationStatus(request: any): RegistrationStatus {
   const timeline = [
     {
       event: 'Request Submitted',
-      date: request.request_date,
+      date: request.request_date || '',
       daysSinceStart: 0
     }
   ];

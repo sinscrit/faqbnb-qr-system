@@ -200,8 +200,8 @@ export function dbUserToUser(dbUser: DbUser): User {
     created_at: dbUser.created_at || '',
     updated_at: dbUser.updated_at || '',
     is_admin: dbUser.is_admin,
-    profile_picture: dbUser.profile_picture,
-    auth_provider: dbUser.auth_provider,
+    profilePicture: dbUser.profile_picture || undefined,
+    authProvider: dbUser.auth_provider || undefined,
   };
 }
 

@@ -215,7 +215,7 @@ export function SpecificItemStep({
             <div className="mt-3">
               <DuplicateNameWarning
                 matchingNames={duplicateCheck.matchingNames}
-                matchType={duplicateCheck.matchType}
+                matchType={duplicateCheck.matchType === 'none' ? 'similar' : duplicateCheck.matchType}
                 variant="block"
               />
             </div>

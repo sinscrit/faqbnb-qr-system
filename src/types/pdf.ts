@@ -7,8 +7,7 @@
  * generation operations.
  */
 
-import { RGB } from 'pdf-lib';
-import { QRPrintSettings } from './qrcode';
+import { RGB, ColorTypes } from 'pdf-lib';
 
 // ================================
 // Core PDF Configuration Types
@@ -39,13 +38,19 @@ export interface CoordinateSystem {
 /**
  * PDF export settings extending QR print settings with PDF-specific options
  */
-export interface PDFExportSettings extends QRPrintSettings {
+export interface PDFExportSettings {
   /** Page format (A4 or Letter) */
   pageFormat: PDFPageFormat;
   /** Margin size in millimeters */
   margins: number;
   /** QR code size in millimeters */
   qrSize: number;
+  /** QR code size in millimeters (legacy mirror) */
+  qrSizeMm?: number;
+  /** Items per row */
+  itemsPerRow: number;
+  /** Whether to show labels */
+  showLabels: boolean;
   /** Whether to include cutlines in the PDF */
   includeCutlines: boolean;
   /** Whether to include item labels in the PDF */
@@ -102,6 +107,8 @@ export interface PageMargins {
   bottom: number;
   /** Left margin in points */
   left: number;
+  /** Margin unit (points) */
+  unit?: 'pt';
 }
 
 /**
@@ -118,6 +125,30 @@ export interface GridLayout {
   usableHeight: number;
   /** QR code size in points */
   qrSize: number;
+  /** Cell width in points */
+  cellWidth?: number;
+  /** Cell height in points */
+  cellHeight?: number;
+  /** Grid starting X coordinate */
+  startX?: number;
+  /** Grid starting Y coordinate */
+  startY?: number;
+  /** Total grid width in points */
+  gridWidth?: number;
+  /** Total grid height in points */
+  gridHeight?: number;
+  /** Measurement unit */
+  unit?: 'pt';
+  /** Minimum spacing between QR codes in mm */
+  minSpacingMm?: number;
+  /** Minimum spacing between QR codes in points */
+  minSpacingPoints?: number;
+  /** Effective QR size after constraints */
+  effectiveQrSize?: number;
+  /** QR center offset X */
+  qrCenterOffsetX?: number;
+  /** QR center offset Y */
+  qrCenterOffsetY?: number;
   /** Number of columns in the grid */
   columns: number;
   /** Number of rows in the grid */
@@ -387,20 +418,14 @@ export const PAGE_FORMATS: Record<PDFPageFormat, PageDimensions> = {
  * Default PDF export settings
  */
 export const DEFAULT_PDF_EXPORT_SETTINGS: PDFExportSettings = {
-  // QRPrintSettings defaults
-  qrSize: 'medium',
+  pageFormat: 'A4',
+  margins: 10,
+  qrSize: 40,
+  qrSizeMm: 40,
   itemsPerRow: 4,
   showLabels: true,
-  
-  // PDF-specific defaults
-  pageFormat: 'A4',
   includeCutlines: true,
-  includeBorder: true,
-  marginSize: 20, // 20mm margins
-  qrSizeMm: 40, // 40mm QR codes
-  extendLinesToMargins: true,
-  pdfTitle: 'QR Code Print Sheet',
-  pdfCreator: 'FAQBNB QR Code System'
+  includeLabels: true,
 } as const;
 
 /**
@@ -417,6 +442,6 @@ export const DEFAULT_COORDINATE_SYSTEM: CoordinateSystem = {
  */
 export const DEFAULT_CUTLINE_OPTIONS: LineOptions = {
   strokeWidth: 0.75,
-  color: { red: 0.6, green: 0.6, blue: 0.6 }, // #999999 gray
+  color: { type: ColorTypes.RGB, red: 0.6, green: 0.6, blue: 0.6 }, // #999999 gray
   dashPattern: { pattern: [4, 4], phase: 0 }
 } as const;

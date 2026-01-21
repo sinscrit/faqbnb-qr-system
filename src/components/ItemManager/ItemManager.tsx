@@ -50,6 +50,8 @@ const DEFAULT_CONFIG: Required<ItemManagerConfig> = {
   enableSearch: true,
   enableFilters: true,
   enableSort: true,
+  enableAnalytics: true,
+  analyticsPollingInterval: 0,
   multiPropertyMode: false,
   maxBulkSelection: 100,
   labels: {
@@ -109,7 +111,7 @@ export function ItemManager({
 
   const effectiveConfig = useMemo(() => ({
     ...config,
-    multiPropertyMode: config.multiPropertyMode || (properties && properties.length > 0),
+    multiPropertyMode: Boolean(config.multiPropertyMode || (properties && properties.length > 0)),
   }), [config, properties]);
 
   // -------------------------------------------------------------------------

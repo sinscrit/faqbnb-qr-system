@@ -9,7 +9,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { QRCodePrintManager } from '@/components/QRCodePrintManager';
-import { Item, Property } from '@/types';
+import { Item } from '@/types';
 import { ArrowLeft, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 
 /**
@@ -74,13 +74,15 @@ function ErrorState({
 /**
  * Breadcrumb navigation component
  */
+type PropertySummary = { id: string; nickname: string };
+
 function Breadcrumb({
   property,
   showPropertySelector,
   onNavigateDashboard,
   onNavigateSelector
 }: {
-  property: Property | null;
+  property: PropertySummary | null;
   showPropertySelector: boolean;
   onNavigateDashboard: () => void;
   onNavigateSelector: () => void;
@@ -120,7 +122,7 @@ function PageHeader({
   showPropertySelector,
   onBack
 }: {
-  property: Property | null;
+  property: PropertySummary | null;
   showPropertySelector: boolean;
   onBack: () => void;
 }) {

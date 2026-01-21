@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-20T17:30:46.065639",
+  "updated_at": "2026-01-21T01:45:00.474596",
   "status": "completed",
   "current_stage": "request",
   "current_task_index": 25,
@@ -576,5 +576,31 @@
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
   },
-  "recent_errors": []
+  "recent_errors": [],
+  "precheck": {
+    "status": "failed",
+    "completed_at": "2026-01-21T01:45:00.473844",
+    "typescript": {
+      "passed": true,
+      "error_count": 17,
+      "production_error_count": 0,
+      "test_error_count": 0,
+      "generated_error_count": 17,
+      "sample_errors": [
+        "../.next/types/app/admin/items/[publicId]/analytics/page.ts(34,29): error TS2344: Type 'ItemAnalyticsPageProps' does not satisfy the constraint 'PageProps'.",
+        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(166,7): error TS2344: Type '{ __tag__: \"POST\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
+        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
+        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(49,7): error TS2344: Type '{ __tag__: \"GET\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
+        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'."
+      ],
+      "notes": "No blocking errors (0 test, 17 generated)"
+    },
+    "tools": {
+      "playwright_mcp": {
+        "available": false,
+        "notes": "Playwright MCP tool (browser_snapshot) is not available in the current tool set. No MCP browser automation tools are present."
+      }
+    },
+    "next_cache_cleared": false
+  }
 }

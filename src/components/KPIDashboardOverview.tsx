@@ -331,10 +331,14 @@ export default function KPIDashboardOverview({ onRefresh, className = '' }: KPID
         `/admin/analytics${currentAccount?.id ? `?account_id=${currentAccount.id}` : ''}`, 
         {}, 
         true
-      );
+      ) as { success: boolean; data?: any; error?: string };
 
       // Fetch user access data directly
-      const userAccessResult = await apiRequest('/admin/accounts/users', {}, true);
+      const userAccessResult = await apiRequest('/admin/accounts/users', {}, true) as {
+        success: boolean;
+        data?: any;
+        error?: string;
+      };
 
       if (analyticsResult.success) {
         setAnalyticsData(analyticsResult.data);

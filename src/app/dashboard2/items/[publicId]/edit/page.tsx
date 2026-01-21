@@ -18,12 +18,22 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2, ArrowLeft, Save } from 'lucide-react';
-import { ItemWithDetails } from '@/types';
 import { RoomSelector, ItemTypeSelector, ItemInstructionsList } from '@/components/ItemEditForm';
 import { TagsInlineEdit } from '@/components/ItemManager/components/shared/TagsInlineEdit';
 import { extractRoomFromTags, setRoomInTags } from '@/lib/room-utils';
 import { extractItemTypeFromTags, setItemTypeInTags } from '@/lib/item-type-utils';
 import type { RoomTypeConst, ItemTypeConst } from '@/components/ItemCreationWorkflow/utils/constants';
+
+type ItemForEdit = {
+  id: string;
+  publicId: string;
+  name: string;
+  description: string;
+  tags: string[];
+  propertyId?: string | null;
+  property?: { id: string };
+  articles?: any[];
+};
 
 export default function EditItemPage() {
   const router = useRouter();
@@ -33,7 +43,7 @@ export default function EditItemPage() {
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
 
-  const [item, setItem] = useState<ItemWithDetails | null>(null);
+  const [item, setItem] = useState<ItemForEdit | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,10 +91,27 @@ export default function EditItemPage() {
       const response = await adminApi.getItem(publicId, headers);
 
       if (response.success && response.data) {
-        setItem(response.data as ItemWithDetails);
-        setName(response.data.name || '');
-        setDescription(response.data.description || '');
-        setTags(response.data.tags || []);
+        const propertyId =
+          (response.data as any).propertyId ||
+          (response.data as any).property?.id ||
+          (response.data as any).property_id ||
+          null;
+
+        const nextItem: ItemForEdit = {
+          id: response.data.id,
+          publicId: response.data.publicId,
+          name: response.data.name || '',
+          description: response.data.description || '',
+          tags: (response.data as { tags?: string[] }).tags || [],
+          propertyId,
+          property: (response.data as any).property,
+          articles: (response.data as { articles?: any[] }).articles || []
+        };
+
+        setItem(nextItem);
+        setName(nextItem.name);
+        setDescription(nextItem.description);
+        setTags(nextItem.tags);
       } else {
         setError(response.error || 'Failed to fetch item');
       }
@@ -152,6 +179,8 @@ export default function EditItemPage() {
       }
 
       const response = await adminApi.updateItem(publicId, {
+        id: item.id,
+        publicId,
         name,
         description,
         propertyId,

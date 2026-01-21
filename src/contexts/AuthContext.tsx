@@ -3,11 +3,10 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { Account } from '@/types';
+import { Account, type Property } from '@/types';
 import {
   AuthUser,
   AuthResponse,
-  Property,
   User,
   signInWithEmail as authSignIn,
   signOut as authSignOut,
@@ -801,8 +800,8 @@ interface AuthContextType {
   // Authentication functions
   signIn: (email: string, password: string) => Promise<AuthResponse<{ user: AuthUser; session: Session; accounts: Account[]; defaultAccount: Account | null }>>;
   signOut: () => Promise<void>;
-  refreshSession: () => Promise<void>;
-  register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
+  refreshSession: () => Promise<AuthResponse<Session | null>>;
+  register: (email: string, password: string, fullName?: string) => Promise<AuthResponse<{ user: User; session?: Session }>>;
 
   // Property functions (legacy)
   getUserProperties: () => Promise<void>;
@@ -824,8 +823,8 @@ interface AuthContextType {
   checkPermission: (permission: PermissionKey) => Promise<PermissionCheck>;
   hasPermission: (permission: PermissionKey) => boolean;
   refreshPermissions: () => Promise<void>;
-  getUserRole: () => UserRole;
-  getAccountRole: () => Promise<AccountRole | null>;
+  getUserRole: () => UserRole | AccountRole | null;
+  getAccountRole: () => AccountRole | null;
 }
 
 interface AuthProviderProps {
@@ -943,7 +942,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           accounts: updates.accounts ?? userAccounts,
           currentAccount: updates.currentAccount ?? currentAccount,
           authState: updates.authState,
-          error: updates.error ?? error
+          error: (updates.error ?? error) || undefined
         });
       } catch (persistError) {
         console.error('🔄 PERSISTENCE_AFTER_UPDATE_FAILED:', persistError, {
@@ -1035,8 +1034,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       console.log('getUserProperties: Fetching properties for user', { userId: targetUserId });
       const properties = await fetchUserPropertiesFromAuth(targetUserId, currentAccount?.id);
-      console.log('getUserProperties: Fetched properties', { count: properties.length });
-      setUserProperties(properties);
+      const mappedProperties: Property[] = properties.map(property => ({
+        id: property.id,
+        user_id: property.userId,
+        property_type_id: property.propertyTypeId,
+        account_id: property.accountId,
+        nickname: property.nickname,
+        address: property.address || null,
+        created_at: property.createdAt,
+        updated_at: property.updatedAt
+      }));
+      console.log('getUserProperties: Fetched properties', { count: mappedProperties.length });
+      setUserProperties(mappedProperties);
     } catch (error) {
       console.error('getUserProperties: Error fetching properties', error);
       setUserProperties([]);
@@ -1204,8 +1213,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return result;
     } catch (error) {
-            endTiming(stepMetricId, false, { error: error.message });
-            endTiming(authMetricId, false, { error: error.message });
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            endTiming(stepMetricId, false, { error: errorMessage });
+            endTiming(authMetricId, false, { error: errorMessage });
             throw error;
           }
         };
@@ -1424,15 +1434,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // User registration function
   const register = async (
-    email: string, 
-    password: string, 
+    email: string,
+    password: string,
     fullName?: string
-  ): Promise<AuthResponse<{ user: User; session: Session }>> => {
+  ): Promise<AuthResponse<{ user: User; session?: Session }>> => {
     try {
       setLoading(true);
-      
+
       const result = await registerUser(email, password, fullName);
-      
+
       if (result.error) {
         return result;
       }
@@ -1442,16 +1452,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const authUser: AuthUser = {
           id: result.data.user.id,
           email: result.data.user.email,
-          fullName: result.data.user.fullName,
-          role: result.data.user.role,
+          fullName: result.data.user.fullName || undefined,
+          role: result.data.user.role ?? undefined,
         };
-        
+
         setUser(authUser);
-        setSession(result.data.session);
-        
+        setSession(result.data.session ?? null);
+
         // Initialize account context for new user
         await refreshAccountContext();
-        
+
         // Load properties for new user
         if (result.data) {
           await getUserProperties(result.data.user.id);
@@ -1505,7 +1515,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         return {
-          success: true,
           data: {
             user: result.data.user,
             session: result.data.session,
@@ -1521,7 +1530,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
 
         return {
-          success: false,
           error: result.error || 'Sign in failed'
         };
       }
@@ -1533,7 +1541,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       return {
-        success: false,
         error: error instanceof Error ? error.message : 'An unexpected error occurred'
       };
     }
@@ -1823,7 +1830,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [user, currentAccount]);
 
   // REQ-025: Get user role function
-  const getUserRole = useCallback((): UserRole => {
+  const getUserRole = useCallback((): AccountRole | UserRole | null => {
     if (!currentAccount) {
       console.log('🔄 GET_USER_ROLE: No current account, returning viewer');
       return 'viewer';
@@ -1831,18 +1838,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const role = currentAccount.userRole;
     console.log('🔄 GET_USER_ROLE: User role is', role);
-    return role;
+    return role || null;
   }, [currentAccount]);
 
   // REQ-025: Get account role function
-  const getAccountRole = useCallback(async (): Promise<AccountRole | null> => {
+  const getAccountRole = useCallback((): AccountRole | null => {
     if (!currentAccount) {
       console.log('🔄 GET_ACCOUNT_ROLE: No current account, returning null');
       return null;
     }
 
     console.log('🔄 GET_ACCOUNT_ROLE: Account role is', currentAccount.userRole);
-    return currentAccount.userRole as AccountRole;
+    return (currentAccount.userRole as AccountRole) || null;
   }, [currentAccount]);
 
   // Enhanced context value with account management and dashboard permissions (REQ-023)

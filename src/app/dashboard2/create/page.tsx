@@ -78,7 +78,7 @@ export default function CreateItemPage() {
 
         // Create the item
         // Convert content pieces to links, uploading media files as needed
-        const links: Array<{ linkType: string; url: string; title?: string }> = [];
+        const links: Array<{ linkType: 'youtube' | 'pdf' | 'image' | 'text'; url: string; title: string; displayOrder: number }> = [];
 
         for (const piece of item.content || []) {
           if (piece.type === 'url' && piece.data && typeof piece.data === 'object' && 'url' in piece.data) {
@@ -86,10 +86,12 @@ export default function CreateItemPage() {
             const url = urlData.url;
             // Detect YouTube URLs
             const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+            const title = urlData.title?.trim() || (isYouTube ? 'YouTube Video' : url);
             links.push({
               linkType: isYouTube ? 'youtube' : 'text', // Generic URLs stored as text type
               url: url,
-              title: urlData.title || (isYouTube ? 'YouTube Video' : 'Link'),
+              title,
+              displayOrder: links.length
             });
           } else if (piece.type === 'text' && piece.data && typeof piece.data === 'object' && 'text' in piece.data) {
             const textData = piece.data as { text: string };
@@ -100,6 +102,7 @@ export default function CreateItemPage() {
               linkType: 'text',
               url: textDataUri,
               title: 'Text Instructions',
+              displayOrder: links.length
             });
           } else if (piece.type === 'pdf' && piece.data && typeof piece.data === 'object' && 'file' in piece.data) {
             // Upload PDF file to storage
@@ -111,6 +114,7 @@ export default function CreateItemPage() {
                 linkType: 'pdf',
                 url: uploadResult.url,
                 title: 'PDF Document',
+                displayOrder: links.length
               });
               console.log('PDF uploaded successfully:', uploadResult.url);
             } catch (uploadErr) {
@@ -124,9 +128,10 @@ export default function CreateItemPage() {
             try {
               const uploadResult = await uploadMediaFile(videoData.file, 'video.mp4');
               links.push({
-                linkType: 'video',
+                linkType: 'text',
                 url: uploadResult.url,
                 title: 'Video',
+                displayOrder: links.length
               });
               console.log('Video uploaded successfully:', uploadResult.url);
             } catch (uploadErr) {
@@ -143,6 +148,7 @@ export default function CreateItemPage() {
                 linkType: 'image',
                 url: uploadResult.url,
                 title: 'Photo',
+                displayOrder: links.length
               });
               console.log('Photo uploaded successfully:', uploadResult.url);
             } catch (uploadErr) {
@@ -155,7 +161,7 @@ export default function CreateItemPage() {
         const itemData = {
           publicId,
           name: item.name,
-          description: item.room ? `${item.room} - ${item.itemType || 'item'}` : undefined,
+          description: item.room ? `${item.room} - ${item.itemType || 'item'}` : '',
           propertyId,
           links,
         };
@@ -206,10 +212,10 @@ export default function CreateItemPage() {
         return response.data.map((item) => ({
           id: item.publicId,
           name: item.name,
-          room: undefined, // Room info not stored in current API
-          itemType: undefined,
+          room: 'general',
+          itemType: 'general-info',
           content: [],
-          createdAt: item.createdAt,
+          createdAt: new Date(item.createdAt),
         }));
       }
 
@@ -308,7 +314,6 @@ export default function CreateItemPage() {
         onFetchExistingItems={handleFetchExistingItems}
         onSaveItem={handleSaveItem}
         config={{
-          enableSessionPersistence: true,
           enableUrlPreview: true,
           maxItemsPerSession: 50,
         }}

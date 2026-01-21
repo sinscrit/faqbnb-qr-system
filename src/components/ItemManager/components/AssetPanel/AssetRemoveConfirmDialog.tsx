@@ -113,7 +113,7 @@ function getAssetDisplayName(asset: MediaItem | PendingAsset): string {
  * @param type - The media type
  * @returns Human-readable type label
  */
-function getTypeLabel(type: 'video' | 'image' | 'pdf'): string {
+function getTypeLabel(type: 'video' | 'image' | 'pdf' | 'url'): string {
   switch (type) {
     case 'video':
       return 'Video';
@@ -121,6 +121,8 @@ function getTypeLabel(type: 'video' | 'image' | 'pdf'): string {
       return 'Photo';
     case 'pdf':
       return 'PDF';
+    case 'url':
+      return 'Link';
     default:
       return 'Asset';
   }

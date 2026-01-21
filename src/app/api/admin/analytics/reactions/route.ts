@@ -4,21 +4,24 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase';
 
+// Type for user query results
+type UserSelectResult = { email: string; full_name: string | null; role: string | null };
+
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    
+
     const supabase = createRouteHandlerClient<Database>({ cookies });
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+
     if (userError || !user) {
       console.log('User session not found:', userError?.message);
       return {
         error: NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error: 'Invalid or expired token',
-            code: 'UNAUTHORIZED' 
+            code: 'UNAUTHORIZED'
           },
           { status: 401 }
         )
@@ -28,10 +31,10 @@ async function validateAdminAuth(request: NextRequest) {
     if (!user.email) {
       return {
         error: NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error: 'User email not found in token',
-            code: 'UNAUTHORIZED' 
+            code: 'UNAUTHORIZED'
           },
           { status: 401 }
         )
@@ -44,7 +47,7 @@ async function validateAdminAuth(request: NextRequest) {
       .select('email, full_name, role')
       .eq('id', user.id)
       .eq('email', user.email)
-      .single();
+      .single() as { data: UserSelectResult | null; error: unknown };
 
     if (adminError || !adminUser) {
       // If not admin, check if user is a regular user
@@ -52,14 +55,16 @@ async function validateAdminAuth(request: NextRequest) {
         .from('users')
         .select('email, full_name, role')
         .eq('id', user.id)
-        .single();
+        .single() as { data: UserSelectResult | null; error: unknown };
 
       if (userError || !regularUser) {
+        const adminErrorMessage = (adminError as { message?: string } | null)?.message;
+        const userErrorMessage = (userError as { message?: string } | null)?.message;
         console.log('User validation failed:', { 
           userId: user.id, 
           email: user.email, 
-          adminError: adminError?.message,
-          userError: userError?.message
+          adminError: adminErrorMessage,
+          userError: userErrorMessage
         });
         return {
           error: NextResponse.json(
@@ -252,6 +257,14 @@ export async function GET(request: NextRequest) {
       reactionsQuery = reactionsQuery.eq('items.properties.account_id', accountId);
     } else {
       // Regular user can only see reactions within their account context
+      if (!accountId) {
+        return NextResponse.json({
+          success: false,
+          error: 'Account context not found for user',
+          code: 'ACCOUNT_CONTEXT_MISSING'
+        }, { status: 400 });
+      }
+
       reactionsQuery = reactionsQuery
         .eq('items.properties.account_id', accountId)
         .eq('items.properties.user_id', user.id);

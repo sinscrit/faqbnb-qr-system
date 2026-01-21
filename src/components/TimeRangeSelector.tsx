@@ -204,7 +204,9 @@ export default function TimeRangeSelector({
         {TIME_RANGE_OPTIONS.map((option, index) => (
           <button
             key={option.id}
-            ref={(el) => (buttonRefs.current[index] = el)}
+            ref={(el) => {
+              buttonRefs.current[index] = el;
+            }}
             type="button"
             role="radio"
             aria-checked={selectedRange === option.id}

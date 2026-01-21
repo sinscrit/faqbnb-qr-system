@@ -218,7 +218,7 @@ export const adminApi = {
    * @param item The item data including links to create
    * @returns Promise resolving to the created item response
    */
-  async createItem(item: CreateItemRequest): Promise<ItemResponse> {
+  async createItem(item: CreateItemRequest, headers?: Record<string, string>): Promise<ItemResponse> {
     if (!item || !item.publicId || !item.name) {
       throw new ApiError('Invalid item data: publicId and name are required');
     }
@@ -232,6 +232,7 @@ export const adminApi = {
     return apiRequest<ItemResponse>('/admin/items', {
       method: 'POST',
       body: JSON.stringify(item),
+      headers,
     }, true);
   },
 
@@ -268,7 +269,7 @@ export const adminApi = {
     success: boolean; 
     message?: string; 
     deletedItem?: { publicId: string; name: string; deletedLinks: number }; 
-    error?: string;
+    error?: string; 
   }> {
     if (!publicId || typeof publicId !== 'string') {
       throw new ApiError('Invalid publicId: must be a non-empty string');
@@ -277,6 +278,28 @@ export const adminApi = {
     return apiRequest(`/admin/items/${encodeURIComponent(publicId)}`, {
       method: 'DELETE',
       headers
+    }, true);
+  },
+
+  /**
+   * Delete a property
+   * @param propertyId The property ID to delete
+   * @param headers Optional headers to pass with the request (e.g., x-current-account)
+   * @returns Promise resolving to deletion confirmation response
+   */
+  async deleteProperty(propertyId: string, headers?: Record<string, string>): Promise<{ 
+    success: boolean; 
+    message?: string; 
+    deletedProperty?: { id: string; nickname: string }; 
+    error?: string; 
+  }> {
+    if (!propertyId || typeof propertyId !== 'string') {
+      throw new ApiError('Invalid propertyId: must be a non-empty string');
+    }
+
+    return apiRequest(`/admin/properties/${encodeURIComponent(propertyId)}`, {
+      method: 'DELETE',
+      headers,
     }, true);
   },
 
@@ -381,10 +404,14 @@ export const adminApi = {
    * @param property The property data to create
    * @returns Promise resolving to the created property response
    */
-  async createProperty(property: { nickname: string; address?: string; propertyTypeId: string; userId?: string }): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
+  async createProperty(
+    property: { nickname: string; address?: string; propertyTypeId: string; userId?: string },
+    headers?: Record<string, string>
+  ): Promise<{ success: boolean; data?: any; message?: string; error?: string }> {
     return apiRequest('/admin/properties', {
       method: 'POST',
       body: JSON.stringify(property),
+      headers,
     }, true);
   },
 
@@ -674,4 +701,3 @@ export const useApiError = () => {
 
   return { handleError, isAuthError, isRetryableError };
 };
-

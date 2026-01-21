@@ -340,8 +340,11 @@ export function useMediaCapture(
   // Helper: Safe state update (guards against unmount)
   // ==========================================================================
 
+  // Using 'any' for internal helper to avoid generic inference issues
+  // The actual setters are properly typed, so this is safe
   const safeSetState = useCallback(
-    <T>(setter: React.Dispatch<React.SetStateAction<T>>, value: T | ((prev: T) => T)) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (setter: React.Dispatch<React.SetStateAction<any>>, value: any) => {
       if (!isUnmountedRef.current) {
         setter(value);
       }
@@ -434,8 +437,9 @@ export function useMediaCapture(
     // Try Permissions API first (not available in all browsers)
     try {
       if ('permissions' in navigator) {
-        // @ts-expect-error - 'camera' is not in the PermissionName type in all TS versions
-        const result = await navigator.permissions.query({ name: 'camera' });
+        const result = await (navigator.permissions as Permissions).query({
+          name: 'camera' as PermissionName
+        });
         const status = result.state === 'granted' ? 'granted' :
                        result.state === 'denied' ? 'denied' : 'prompt';
         return status;
@@ -860,7 +864,7 @@ export function useMediaCapture(
 
       // Start timer
       timerIntervalRef.current = setInterval(() => {
-        safeSetState(setRecordingTime, (prev) => prev + 1);
+        safeSetState(setRecordingTime, (prev: number) => prev + 1);
       }, 1000);
 
       log('Recording started');

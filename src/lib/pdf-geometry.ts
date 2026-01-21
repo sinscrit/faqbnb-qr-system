@@ -548,6 +548,16 @@ export interface GridLayout {
   gridHeight: number;
   /** Unit of measurement */
   unit: 'pt';
+  /** Minimum spacing between QR codes in millimeters */
+  minSpacingMm?: number;
+  /** Minimum spacing between QR codes in points */
+  minSpacingPoints?: number;
+  /** Effective QR size after spacing optimization */
+  effectiveQrSize?: number;
+  /** QR center offset X */
+  qrCenterOffsetX?: number;
+  /** QR center offset Y */
+  qrCenterOffsetY?: number;
   /** Page width in points */
   pageWidth: number;
   /** Page height in points */
@@ -724,7 +734,7 @@ export function calculateGridLayout(
   
   // Convert margins from mm to points for the margins object
   const marginsPoints = convertMillimetersToPoints(margins);
-  const result = {
+  const result: GridLayout = {
     // Original properties
     columns,
     rows,

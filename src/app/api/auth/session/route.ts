@@ -22,14 +22,14 @@ interface SessionResponse {
       name: string;
       description?: string;
       owner_id: string;
-      created_at: string;
-      updated_at: string;
+      created_at: string | null;
+      updated_at: string | null;
     }>;
   };
   session?: {
     access_token: string;
     refresh_token: string;
-    expires_at: number;
+    expires_at: number | undefined;
   };
   accountContext?: {
     currentAccountId: string | null;

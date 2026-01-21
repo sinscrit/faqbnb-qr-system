@@ -256,6 +256,11 @@ export interface ItemReactionSummary {
  */
 export interface ItemRecordExtended extends ItemRecord {
   /**
+   * Public ID for URL routing (e.g., /items/{publicId})
+   */
+  publicId?: string;
+
+  /**
    * Associated property ID for multi-property mode.
    */
   propertyId?: string;
@@ -289,6 +294,26 @@ export interface ItemRecordExtended extends ItemRecord {
    * @lastModified 2026-01-13 (REQ-216)
    */
   articlesCount?: number;
+
+  /**
+   * Item description (alternative to instructions).
+   */
+  description?: string;
+
+  /**
+   * QR code URL for the item.
+   */
+  qrCodeUrl?: string;
+
+  /**
+   * Associated links for the item.
+   */
+  links?: Array<{ title: string; url: string; linkType: string }>;
+
+  /**
+   * Item name (alternative to title for API compatibility).
+   */
+  name?: string;
 }
 
 /**

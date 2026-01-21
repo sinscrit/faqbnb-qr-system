@@ -158,6 +158,9 @@ export default function InstructionsPage() {
           const item = article.item;
           const room = extractRoomFromTags(item.tags || []);
 
+          const itemPropertyId = (item as any).property_id ?? (item as any).propertyId;
+          const itemProperty = (item as any).property;
+
           return {
             id: `${article.id}-${item.id}`, // Composite key for uniqueness
             articleId: article.id,
@@ -167,8 +170,8 @@ export default function InstructionsPage() {
             room: room,
             purpose: article.purpose || 'other',
             createdAt: article.createdAt || new Date().toISOString(),
-            propertyId: item.property_id || undefined, // REQ-220
-            propertyName: item.property?.name || item.property?.nickname || undefined, // REQ-220
+            propertyId: itemPropertyId || undefined, // REQ-220
+            propertyName: itemProperty?.name || itemProperty?.nickname || undefined, // REQ-220
           };
         });
 

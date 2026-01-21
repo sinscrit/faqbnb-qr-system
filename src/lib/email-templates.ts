@@ -1,6 +1,9 @@
 import { AccessRequest, EmailTemplate, AccessRequestSource } from '@/types/admin';
 import { getServerBaseUrl } from './config';
 
+const formatRequestDate = (dateString: string | null) =>
+  dateString ? new Date(dateString).toLocaleDateString() : 'N/A';
+
 /**
  * Email Template Utilities for REQ-016: System Admin Back Office
  * Last Modified: 2026-01-15 - Updated to use getServerBaseUrl for proper domain handling
@@ -40,7 +43,7 @@ Great news! Your access request for "${accountDisplayName}" has been approved.
 Your Access Details:
 • Account: ${accountDisplayName}
 • Access Code: ${accessCode}
-• Requested on: ${new Date(request.request_date).toLocaleDateString()}
+• Requested on: ${formatRequestDate(request.request_date)}
 
 To complete your access setup:
 1. Click this direct registration link: ${directRegistrationLink}
@@ -66,7 +69,7 @@ If you need assistance, please contact support through the FAQBNB platform.`,
       requesterName,
       accountName: accountDisplayName,
       accessCode,
-      requestDate: new Date(request.request_date).toLocaleDateString(),
+      requestDate: formatRequestDate(request.request_date),
       registrationLink,
       directRegistrationLink
     }
@@ -102,7 +105,7 @@ Your Beta Access Details:
 • Platform: ${accountDisplayName}
 • Access Code: ${accessCode}
 • Beta Access Granted: ${new Date().toLocaleDateString()}
-• Original Request: ${new Date(request.request_date).toLocaleDateString()}
+• Original Request: ${formatRequestDate(request.request_date)}
 
 Getting Started with Your Beta Access:
 1. Click this direct registration link: ${directRegistrationLink}
@@ -139,7 +142,7 @@ For beta support or feedback, please contact us through the platform or reply to
       requesterName,
       accountName: accountDisplayName,
       accessCode,
-      requestDate: new Date(request.request_date).toLocaleDateString(),
+      requestDate: formatRequestDate(request.request_date),
       approvalDate: new Date().toLocaleDateString(),
       registrationLink,
       directRegistrationLink,
@@ -322,7 +325,7 @@ ${reason ? `Reason: ${reason}` : ''}
 
 Request Details:
 • Account: ${accountDisplayName}
-• Requested on: ${new Date(request.request_date).toLocaleDateString()}
+• Requested on: ${formatRequestDate(request.request_date)}
 
 If you believe this is an error or have questions about this decision, please contact the account owner directly.
 
@@ -335,7 +338,7 @@ This is an automated message. Please do not reply to this email.`,
       requesterName,
       accountName: accountDisplayName,
       reason: reason || '',
-      requestDate: new Date(request.request_date).toLocaleDateString()
+      requestDate: formatRequestDate(request.request_date)
     }
   };
 }

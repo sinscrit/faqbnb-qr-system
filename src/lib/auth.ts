@@ -1,6 +1,6 @@
 import { supabase, supabaseAdmin } from './supabase';
 import { Session } from '@supabase/supabase-js';
-import { Account } from '@/types';
+import { Account, AccountRole } from '@/types';
 
 // Auth utility types with account context
 export interface AuthUser {
@@ -43,18 +43,23 @@ export interface Property {
   propertyTypeId: string;
   nickname: string;
   address?: string;
-  createdAt: string;
-  updatedAt: string;
-  accountId: string; // Added for multi-tenant support
+  createdAt: string | null;
+  updatedAt: string | null;
+  accountId: string | null; // Added for multi-tenant support
 }
 
 export interface User {
   id: string;
   email: string;
   fullName?: string;
-  role: 'user' | 'admin';
+  full_name?: string | null;
+  role: string | null;
+  profilePicture?: string;
+  authProvider?: string;
   createdAt: string;
   updatedAt: string;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface AuthResponse<T = unknown> {
@@ -147,8 +152,8 @@ export async function signInWithEmail(
     const authUser: AuthUser = {
       id: data.user.id,
       email: data.user.email,
-      fullName: isAdminByTable ? adminUser.full_name : regularUser?.full_name,
-      role: isAdminByTable ? adminUser.role : 'user',
+      fullName: (isAdminByTable ? adminUser.full_name : regularUser?.full_name) || undefined,
+      role: (isAdminByTable ? adminUser.role : 'user') || undefined,
       currentAccount: currentAccountContext,
       availableAccounts: accounts
     };
@@ -636,15 +641,15 @@ export async function switchAccount(accountId: string): Promise<AccountSwitchRes
       localStorage.setItem('currentAccount', accountId);
     }
 
-    const accountData: Account & { userRole: string | null } = {
+    const accountData: Account = {
       id: account.id,
       owner_id: account.owner_id,
       name: account.name,
       description: account.description,
-      settings: account.settings || {},
+      settings: (account.settings || {}) as Record<string, unknown>,
       created_at: account.created_at,
       updated_at: account.updated_at,
-      userRole: userRole
+      userRole: userRole as AccountRole | null
     };
 
     return {
@@ -669,6 +674,17 @@ export async function getAccountWithUserRole(accountId: string, userId: string):
       userId
     });
 
+    // Type for the query result with joined data
+    type AccountWithJoin = {
+      id: string;
+      owner_id: string;
+      name: string;
+      description: string | null;
+      created_at: string | null;
+      updated_at: string | null;
+      account_users?: Array<{ role: string }>;
+    };
+
     // Use LEFT JOIN to get account data with user's role in one query
     const { data: accountData, error } = await supabaseAdmin
       .from('accounts')
@@ -683,11 +699,11 @@ export async function getAccountWithUserRole(accountId: string, userId: string):
       `)
       .eq('id', accountId)
       .eq('account_users.user_id', userId)
-      .single();
+      .single() as { data: AccountWithJoin | null; error: unknown };
 
     if (error) {
       console.log('🔍 AUTH_DEBUG: Account with role query failed', {
-        error: error.message,
+        error: String(error || ''),
         accountId,
         userId
       });
@@ -700,7 +716,7 @@ export async function getAccountWithUserRole(accountId: string, userId: string):
     }
 
     // Extract user role from the joined data
-    const userRole = accountData.account_users?.[0]?.role || null;
+    const userRole = (accountData.account_users?.[0]?.role as AccountRole | null) || null;
 
     console.log('🔍 AUTH_DEBUG: Account with role fetched successfully', {
       accountId,
@@ -714,7 +730,7 @@ export async function getAccountWithUserRole(accountId: string, userId: string):
       owner_id: accountData.owner_id,
       name: accountData.name,
       description: accountData.description,
-      settings: {}, // Default empty settings
+      settings: {} as Record<string, unknown>, // Default empty settings
       created_at: accountData.created_at,
       updated_at: accountData.updated_at,
       userRole
@@ -858,7 +874,7 @@ export async function requireAuthWithAccount(requiredAccountId?: string): Promis
       owner_id: accountData.owner_id,
       name: accountData.name,
       description: accountData.description,
-      settings: accountData.settings || {},
+      settings: (accountData.settings || {}) as Record<string, unknown>,
       created_at: accountData.created_at,
       updated_at: accountData.updated_at
     };
@@ -876,7 +892,7 @@ export async function requireAuthWithAccount(requiredAccountId?: string): Promis
         owner_id: accountData.owner_id,
         name: accountData.name,
         description: accountData.description,
-        settings: accountData.settings || {},
+        settings: (accountData.settings || {}) as Record<string, unknown>,
         created_at: accountData.created_at,
         updated_at: accountData.updated_at
       };
@@ -1528,14 +1544,14 @@ export async function getAccountsForUser(userId: string): Promise<Account[]> {
     return (accounts || []).map(account => {
       // Find the user's role for this account
       const userAccountRel = userAccountRels.find(rel => rel.account_id === account.id);
-      const userRole = userAccountRel?.role || null;
+      const userRole = (userAccountRel?.role as AccountRole | null) || null;
 
       return {
         id: account.id,
         owner_id: account.owner_id,
         name: account.name,
         description: account.description,
-        settings: {},
+        settings: {} as Record<string, unknown>,
         created_at: account.created_at,
         updated_at: account.updated_at,
         userRole
@@ -1877,9 +1893,11 @@ async function determineCurrentAccountOptimized(accounts: Account[], userId: str
   }
 
   // Strategy 2: Check for most recently updated account
-  const sortedByUpdate = [...accounts].sort((a, b) =>
-    new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-  );
+  const sortedByUpdate = [...accounts].sort((a, b) => {
+    const aTime = a.updated_at ? new Date(a.updated_at).getTime() : 0;
+    const bTime = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+    return bTime - aTime;
+  });
   const selected = sortedByUpdate[0];
   console.log('🚀 DETERMINE_CURRENT_ACCOUNT: Selected most recent account:', selected.id);
 

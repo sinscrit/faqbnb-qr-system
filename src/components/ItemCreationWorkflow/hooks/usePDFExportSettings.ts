@@ -90,7 +90,6 @@ export const DEFAULT_PDF_EXPORT_SETTINGS: PDFExportSettings = {
   itemsPerRow: 4,
 
   // Required inherited QRPrintSettings fields
-  qrSizeMm: 40,
   showLabels: true,
 };
 

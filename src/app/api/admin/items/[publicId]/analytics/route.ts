@@ -149,18 +149,22 @@ export async function GET(
       const analytics: VisitAnalytics = {
         itemId: item.id,
         last24Hours: visits.filter(v => {
+          if (!v.visited_at) return false;
           const visitDate = new Date(v.visited_at);
           return now.getTime() - visitDate.getTime() <= 24 * 60 * 60 * 1000;
         }).length,
         last7Days: visits.filter(v => {
+          if (!v.visited_at) return false;
           const visitDate = new Date(v.visited_at);
           return now.getTime() - visitDate.getTime() <= 7 * 24 * 60 * 60 * 1000;
         }).length,
         last30Days: visits.filter(v => {
+          if (!v.visited_at) return false;
           const visitDate = new Date(v.visited_at);
           return now.getTime() - visitDate.getTime() <= 30 * 24 * 60 * 60 * 1000;
         }).length,
         last365Days: visits.filter(v => {
+          if (!v.visited_at) return false;
           const visitDate = new Date(v.visited_at);
           return now.getTime() - visitDate.getTime() <= 365 * 24 * 60 * 60 * 1000;
         }).length,

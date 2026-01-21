@@ -122,7 +122,7 @@ export function convertPDFToBlob(pdfBytes: Uint8Array, filename: string): Blob {
       : `${sanitizedFilename}.pdf`;
     
     // Create blob with proper MIME type
-    const blob = new Blob([pdfBytes], { 
+    const blob = new Blob([new Uint8Array(pdfBytes)], { 
       type: 'application/pdf' 
     });
     
@@ -1309,6 +1309,15 @@ export interface PDFGenerationResult {
     failedLabels: number;
     /** Pages with cutlines generated */
     pagesWithCutlines: number;
+  };
+  /** Optional quality metrics */
+  qualityMetrics?: {
+    spaceUtilization: string;
+    itemsPerPage: number;
+    actualQrSizeMm: string;
+    gridLayout: string;
+    professionalSpacing: string;
+    printingRecommendations: string[];
   };
 }
 

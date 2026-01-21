@@ -417,7 +417,7 @@ export function InlineEdit({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        disabled={status === 'saving'}
+        disabled={disabled}
         maxLength={maxLength}
         placeholder={placeholder}
         aria-label={ariaLabel || 'Editable text field'}

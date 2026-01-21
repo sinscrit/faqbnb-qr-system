@@ -156,7 +156,7 @@ export async function validateAccessRequest(request: Partial<AccessRequest>): Pr
   }
 
   // Status validation if provided
-  if (request.status && !Object.values(AccessRequestStatus).includes(request.status)) {
+  if (request.status && !(Object.values(AccessRequestStatus) as string[]).includes(request.status)) {
     errors.push('Invalid status value');
   }
 
@@ -257,7 +257,15 @@ export async function processAccessApproval(
     const accessCode = options?.customAccessCode || await generateAccessCode();
 
     // Update request with approval
-    const updateData = {
+    const updateData: {
+      status: AccessRequestStatus;
+      approval_date: string;
+      approved_by: string;
+      access_code: string;
+      approval_notes: string | undefined;
+      updated_at: string;
+      email_sent_date?: string;
+    } = {
       status: AccessRequestStatus.APPROVED,
       approval_date: new Date().toISOString(),
       approved_by: adminId,
@@ -367,26 +375,29 @@ export async function trackRegistrationCompletion(accessCode: string): Promise<R
     }
 
     // Add user to account if not already added
-    const { data: existingAccess } = await supabase
-      .from('account_users')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('account_id', request.account_id)
-      .single();
-
-    if (!existingAccess) {
-      const { error: accessError } = await supabase
+    if (request.account_id) {
+      const accountId = request.account_id;
+      const { data: existingAccess } = await supabase
         .from('account_users')
-        .insert({
-          user_id: user.id,
-          account_id: request.account_id,
-          role: 'member',
-          created_at: registrationDate
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('account_id', accountId)
+        .single();
 
-      if (accessError) {
-        console.error('Account access grant error:', accessError);
-        // Don't fail the registration tracking, but log the error
+      if (!existingAccess) {
+        const { error: accessError } = await supabase
+          .from('account_users')
+          .insert({
+            user_id: user.id,
+            account_id: accountId,
+            role: 'member',
+            created_at: registrationDate
+          });
+
+        if (accessError) {
+          console.error('Account access grant error:', accessError);
+          // Don't fail the registration tracking, but log the error
+        }
       }
     }
 
@@ -410,7 +421,17 @@ export async function trackRegistrationCompletion(accessCode: string): Promise<R
  */
 export async function validateAccessCode(accessCode: string): Promise<{
   isValid: boolean;
-  request?: AccessRequest;
+  request?: (AccessRequest & {
+    account?: {
+      id: string;
+      name: string;
+      owner?: {
+        id: string;
+        email: string;
+        full_name: string | null;
+      };
+    } | null;
+  });
   error?: string;
 }> {
   try {
@@ -445,15 +466,7 @@ export async function validateAccessCode(accessCode: string): Promise<{
     if (request.account_id) {
       const { data: account } = await supabaseAdmin
         .from('accounts')
-        .select(`
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            id,
-            email,
-            full_name
-          )
-        `)
+        .select('id, name')
         .eq('id', request.account_id)
         .single();
       
@@ -461,8 +474,20 @@ export async function validateAccessCode(accessCode: string): Promise<{
     }
 
     // Attach account data to request if available
-    const requestWithAccount = {
+    const requestWithAccount: AccessRequest & {
+      account?: {
+        id: string;
+        name: string;
+        owner?: {
+          id: string;
+          email: string;
+          full_name: string | null;
+        };
+      } | null;
+    } = {
       ...request,
+      status: (request.status as AccessRequestStatus | null) ?? null,
+      source: (request.source as AccessRequestSource | null | undefined),
       account: accountData
     };
 
@@ -526,8 +551,8 @@ export async function getAccessRequestAnalytics(accountId?: string): Promise<{
     let averageApprovalTime = 0;
     if (approvedRequests.length > 0) {
       const totalApprovalTime = approvedRequests.reduce((sum, req) => {
-        const requestDate = new Date(req.request_date);
-        const approvalDate = new Date(req.approval_date!);
+        const requestDate = req.request_date ? new Date(req.request_date) : new Date(0);
+        const approvalDate = req.approval_date ? new Date(req.approval_date) : new Date(0);
         const diffTime = approvalDate.getTime() - requestDate.getTime();
         const diffDays = diffTime / (1000 * 60 * 60 * 24);
         return sum + diffDays;
@@ -538,7 +563,16 @@ export async function getAccessRequestAnalytics(accountId?: string): Promise<{
 
     // Get recent requests (last 10)
     const recentRequests = requests
-      ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      ?.map(request => ({
+        ...request,
+        status: (request.status as AccessRequestStatus | null) ?? null,
+        source: (request.source as AccessRequestSource | null | undefined)
+      }))
+      .sort((a, b) => {
+        const aTime = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const bTime = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return bTime - aTime;
+      })
       .slice(0, 10) || [];
 
     return {

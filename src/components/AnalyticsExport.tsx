@@ -35,8 +35,8 @@ export default function AnalyticsExport({
 
   // Generate CSV content from analytics data
   const generateCSV = (data: any): string => {
-    const headers = [];
-    const rows = [];
+    const headers: string[] = [];
+    const rows: Array<Array<string | number>> = [];
 
     // Build headers based on options
     if (options.includeItemDetails) {
@@ -57,7 +57,7 @@ export default function AnalyticsExport({
     // Process data rows
     if (data.itemDetails && Array.isArray(data.itemDetails)) {
       data.itemDetails.forEach((item: any) => {
-        const row = [];
+        const row: Array<string | number> = [];
         
         if (options.includeItemDetails) {
           row.push(

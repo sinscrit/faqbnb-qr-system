@@ -41,7 +41,6 @@ export default function DashboardPropertiesPage() {
     accountId: currentAccount?.id,
     accountName: currentAccount?.name,
     accountOwnerId: currentAccount?.owner_id,
-    accountUserRole: currentAccount?.userRole,
     hasCurrentAccount: !!currentAccount,
     currentAccountKeys: currentAccount ? Object.keys(currentAccount) : [],
     currentAccountData: currentAccount ? {

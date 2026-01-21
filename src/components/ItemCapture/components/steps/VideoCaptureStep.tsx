@@ -530,7 +530,7 @@ export function VideoCaptureStep({
   const handleUploadFile = useCallback(() => {
     // Navigate to file upload step for video
     cleanup();
-    goToStep('file-upload');
+    goToStep('upload-file');
   }, [cleanup, goToStep]);
 
   // ===========================================================================

@@ -4,21 +4,49 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import type { Database } from '@/lib/supabase';
 
+// Type for user query results
+type UserSelectResult = { email: string; full_name: string | null; role: string | null };
+
+// Types for analytics queries
+type VisitWithItem = {
+  visited_at: string | null;
+  item_id: string | null;
+  items?: { property_id: string; properties?: { account_id: string | null; user_id: string } };
+};
+
+type ItemWithProperty = {
+  id: string;
+  public_id: string;
+  name: string;
+  properties?: { account_id: string | null; user_id: string };
+};
+
+type ReactionData = {
+  reaction_type: string;
+  created_at: string | null;
+};
+
+type PropertyWithItems = {
+  id: string;
+  nickname: string;
+  items?: { id: string }[];
+};
+
 // Helper function to validate authentication for admin operations
 async function validateAdminAuth(request: NextRequest) {
   try {
-    
+
     const supabase = createRouteHandlerClient<Database>({ cookies });
     const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+
     if (userError || !user) {
       console.log('User session not found:', userError?.message);
       return {
         error: NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error: 'Invalid or expired token',
-            code: 'UNAUTHORIZED' 
+            code: 'UNAUTHORIZED'
           },
           { status: 401 }
         )
@@ -28,10 +56,10 @@ async function validateAdminAuth(request: NextRequest) {
     if (!user.email) {
       return {
         error: NextResponse.json(
-          { 
-            success: false, 
+          {
+            success: false,
             error: 'User email not found in token',
-            code: 'UNAUTHORIZED' 
+            code: 'UNAUTHORIZED'
           },
           { status: 401 }
         )
@@ -44,7 +72,7 @@ async function validateAdminAuth(request: NextRequest) {
       .select('email, full_name, role')
       .eq('id', user.id)
       .eq('email', user.email)
-      .single();
+      .single() as { data: UserSelectResult | null; error: unknown };
 
     if (adminError || !adminUser) {
       // If not admin, check if user is a regular user
@@ -52,14 +80,14 @@ async function validateAdminAuth(request: NextRequest) {
         .from('users')
         .select('email, full_name, role')
         .eq('id', user.id)
-        .single();
+        .single() as { data: UserSelectResult | null; error: unknown };
 
       if (userError || !regularUser) {
-        console.log('User validation failed:', { 
-          userId: user.id, 
-          email: user.email, 
-          adminError: adminError?.message,
-          userError: userError?.message
+        console.log('User validation failed:', {
+          userId: user.id,
+          email: user.email,
+          adminError: String(adminError || ''),
+          userError: String(userError || '')
         });
         return {
           error: NextResponse.json(
@@ -224,7 +252,7 @@ interface SystemAnalyticsResponse {
         id: string;
         name: string;
         visitCount: number;
-        lastVisit: string;
+        lastVisit: string | null;
       }>;
       topViewedItems: Array<{
         id: string;
@@ -482,13 +510,13 @@ export async function GET(request: NextRequest) {
       activeItemsQuery = activeItemsQuery.eq('items.property_id', propertyId);
     }
 
-    const { data: activeItemsData, error: activeItemsError } = await activeItemsQuery;
+    const { data: activeItemsData, error: activeItemsError } = await activeItemsQuery as { data: VisitWithItem[] | null; error: unknown };
 
     if (activeItemsError) {
       console.error('Error fetching active items:', activeItemsError);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to fetch active items',
           code: 'ACTIVE_ITEMS_FAILED'
         },
@@ -539,13 +567,13 @@ export async function GET(request: NextRequest) {
       allVisitsQuery = allVisitsQuery.eq('items.property_id', propertyId);
     }
 
-    const { data: allVisitsData, error: allVisitsError } = await allVisitsQuery;
+    const { data: allVisitsData, error: allVisitsError } = await allVisitsQuery as { data: VisitWithItem[] | null; error: unknown };
 
     if (allVisitsError) {
       console.error('Error fetching all visits:', allVisitsError);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to fetch visits data',
           code: 'VISITS_DATA_FAILED'
         },
@@ -555,17 +583,17 @@ export async function GET(request: NextRequest) {
 
     // Calculate time-based counts manually
     const visits = allVisitsData || [];
-    timeBasedVisits.last24Hours = visits.filter(v => 
-      new Date(v.visited_at) >= timeRanges.last24Hours
+    timeBasedVisits.last24Hours = visits.filter(v =>
+      v.visited_at && new Date(v.visited_at) >= timeRanges.last24Hours
     ).length;
-    timeBasedVisits.last7Days = visits.filter(v => 
-      new Date(v.visited_at) >= timeRanges.last7Days
+    timeBasedVisits.last7Days = visits.filter(v =>
+      v.visited_at && new Date(v.visited_at) >= timeRanges.last7Days
     ).length;
-    timeBasedVisits.last30Days = visits.filter(v => 
-      new Date(v.visited_at) >= timeRanges.last30Days
+    timeBasedVisits.last30Days = visits.filter(v =>
+      v.visited_at && new Date(v.visited_at) >= timeRanges.last30Days
     ).length;
-    timeBasedVisits.last365Days = visits.filter(v => 
-      new Date(v.visited_at) >= timeRanges.last365Days
+    timeBasedVisits.last365Days = visits.filter(v =>
+      v.visited_at && new Date(v.visited_at) >= timeRanges.last365Days
     ).length;
 
     // Get top items with visit and reaction counts (with account filtering)
@@ -596,13 +624,13 @@ export async function GET(request: NextRequest) {
       topItemsQuery = topItemsQuery.eq('property_id', propertyId);
     }
     
-    const { data: itemsData, error: topItemsError } = await topItemsQuery;
+    const { data: itemsData, error: topItemsError } = await topItemsQuery as { data: ItemWithProperty[] | null; error: unknown };
 
     if (topItemsError) {
       console.error('Error fetching top items:', topItemsError);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to fetch top items',
           code: 'TOP_ITEMS_FAILED'
         },
@@ -662,13 +690,13 @@ export async function GET(request: NextRequest) {
       reactionTrendsQuery = reactionTrendsQuery.eq('items.property_id', propertyId);
     }
 
-    const { data: reactionsData, error: reactionTrendsError } = await reactionTrendsQuery;
+    const { data: reactionsData, error: reactionTrendsError } = await reactionTrendsQuery as { data: ReactionData[] | null; error: unknown };
 
     if (reactionTrendsError) {
       console.error('Error fetching reaction trends:', reactionTrendsError);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Failed to fetch reaction trends',
           code: 'REACTION_TRENDS_FAILED'
         },
@@ -728,7 +756,11 @@ export async function GET(request: NextRequest) {
         .eq('items.properties.user_id', user.id);
     }
 
-    const { data: activePropertiesData, error: activePropertiesError } = await activePropertiesQuery;
+    type ActivePropertyVisit = {
+      visited_at: string | null;
+      items: { properties: { id: string; nickname: string; account_id: string | null; user_id: string } };
+    };
+    const { data: activePropertiesData, error: activePropertiesError } = await activePropertiesQuery as { data: ActivePropertyVisit[] | null; error: unknown };
 
     if (activePropertiesError) {
       console.error('Error fetching active properties:', activePropertiesError);
@@ -743,7 +775,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Aggregate properties by visit count and last visit
-    const propertyActivity = new Map();
+    const propertyActivity = new Map<string, { id: string; name: string; visitCount: number; lastVisit: string | null }>();
     (activePropertiesData || []).forEach(visit => {
       const property = visit.items.properties;
       if (!propertyActivity.has(property.id)) {
@@ -754,9 +786,9 @@ export async function GET(request: NextRequest) {
           lastVisit: null
         });
       }
-      const activity = propertyActivity.get(property.id);
+      const activity = propertyActivity.get(property.id)!;
       activity.visitCount++;
-      if (!activity.lastVisit || visit.visited_at > activity.lastVisit) {
+      if (!activity.lastVisit || (visit.visited_at && visit.visited_at > activity.lastVisit)) {
         activity.lastVisit = visit.visited_at;
       }
     });
@@ -789,7 +821,7 @@ export async function GET(request: NextRequest) {
           totalVisits: totalVisits || 0,
           totalReactions: totalReactions || 0,
           activeItems,
-          averageItemsPerProperty: totalProperties > 0 ? Math.round((totalItems || 0) / totalProperties * 100) / 100 : 0,
+          averageItemsPerProperty: (totalProperties || 0) > 0 ? Math.round((totalItems || 0) / (totalProperties || 1) * 100) / 100 : 0,
         },
         timeBasedVisits,
         topItems,
@@ -818,7 +850,7 @@ export async function GET(request: NextRequest) {
       totalVisits: totalVisits || 0,
       totalReactions: totalReactions || 0,
       activeItems,
-      averageItemsPerProperty: totalProperties > 0 ? Math.round((totalItems || 0) / totalProperties * 100) / 100 : 0,
+      averageItemsPerProperty: (totalProperties || 0) > 0 ? Math.round((totalItems || 0) / (totalProperties || 1) * 100) / 100 : 0,
       topItemsCount: topItems.length,
       mostActivePropertiesCount: mostActiveProperties.length,
       topViewedItemsCount: topViewedItems.length,

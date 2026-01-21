@@ -12,7 +12,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useActiveProperty } from '@/hooks/useActiveProperty';
 import { usePropertyItemCounts } from '@/hooks/usePropertyItemCounts';
 import { ArrowLeft, Building, QrCode, Loader2, Home, Check } from 'lucide-react';
-import { Property } from '@/types';
+
+type PropertySummary = {
+  id: string;
+  nickname: string;
+  address?: string | null;
+  thumbnail_url?: string | null;
+  property_types?: { display_name?: string | null };
+};
 
 /**
  * Loading spinner component with Airbnb styling
@@ -116,7 +123,7 @@ function PropertyCard({
   itemCount = 0,
   isLoadingCount = false
 }: {
-  property: Property;
+  property: PropertySummary;
   onClick: () => void;
   isSelected?: boolean;
   itemCount?: number;
@@ -194,7 +201,7 @@ function PropertyGrid({
   itemCounts,
   isLoadingCounts
 }: {
-  properties: Property[];
+  properties: PropertySummary[];
   onSelectProperty: (propertyId: string) => void;
   activePropertyId?: string | null;
   itemCounts?: Record<string, number>;
@@ -267,8 +274,16 @@ export default function PrintPropertySelectorPage() {
   const router = useRouter();
   const { userProperties, loading } = useAuth();
 
+  const properties: PropertySummary[] = (userProperties || []).map((property) => ({
+    id: property.id,
+    nickname: property.nickname,
+    address: property.address ?? null,
+    thumbnail_url: (property as { thumbnail_url?: string | null }).thumbnail_url ?? null,
+    property_types: (property as { property_types?: { display_name?: string | null } }).property_types
+  }));
+
   // REQ-135: Get property IDs for active property hook
-  const propertyIds = userProperties?.map(p => p.id) || [];
+  const propertyIds = properties.map((property) => property.id);
 
   // REQ-135: Active property persistence hook
   const { activePropertyId, setActiveProperty } = useActiveProperty(propertyIds);
@@ -278,10 +293,10 @@ export default function PrintPropertySelectorPage() {
 
   // Handle single property case - redirect directly to print flow
   useEffect(() => {
-    if (!loading && userProperties && userProperties.length === 1) {
-      router.replace(`/dashboard2/print/${userProperties[0].id}`);
+    if (!loading && properties.length === 1) {
+      router.replace(`/dashboard2/print/${properties[0].id}`);
     }
-  }, [userProperties, loading, router]);
+  }, [properties, loading, router]);
 
   // Handle navigation
   const handleBack = () => {
@@ -305,7 +320,7 @@ export default function PrintPropertySelectorPage() {
   }
 
   // Empty state - no properties
-  if (!userProperties || userProperties.length === 0) {
+  if (properties.length === 0) {
     return (
       <div>
         <PageHeader onBack={handleBack} />
@@ -315,7 +330,7 @@ export default function PrintPropertySelectorPage() {
   }
 
   // Single property - handled by useEffect redirect
-  if (userProperties.length === 1) {
+  if (properties.length === 1) {
     return <LoadingSpinner />;
   }
 
@@ -324,7 +339,7 @@ export default function PrintPropertySelectorPage() {
     <div className="space-y-6">
       <PageHeader onBack={handleBack} />
       <PropertyGrid
-        properties={userProperties}
+        properties={properties}
         onSelectProperty={handleSelectProperty}
         activePropertyId={activePropertyId}
         itemCounts={itemCounts}

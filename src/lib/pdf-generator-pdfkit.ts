@@ -62,7 +62,7 @@ function getMarginSize(marginMm: number, paperSize: [number, number]): number {
  * Download a PDF buffer as a file
  */
 export function downloadPDFBlob(buffer: Buffer, filename: string = 'qr-codes.pdf'): void {
-  const blob = new Blob([buffer], { type: 'application/pdf' });
+  const blob = new Blob([new Uint8Array(buffer)], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   
   const link = document.createElement('a');
@@ -80,7 +80,7 @@ export function downloadPDFBlob(buffer: Buffer, filename: string = 'qr-codes.pdf
  * Convert PDF buffer to blob
  */
 export function convertPDFToBlob(buffer: Buffer): Blob {
-  return new Blob([buffer], { type: 'application/pdf' });
+  return new Blob([new Uint8Array(buffer)], { type: 'application/pdf' });
 }
 
 export async function generatePDFWithPDFKit(
@@ -122,7 +122,7 @@ export async function generatePDFWithPDFKit(
     
     // Collect PDF data
     const buffers: Buffer[] = [];
-    doc.on('data', (buffer) => buffers.push(buffer));
+    doc.on('data', (buffer: Buffer) => buffers.push(buffer));
     
     onProgress?.({ step: 'Adding page elements', percentage: 20 });
     

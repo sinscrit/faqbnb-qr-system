@@ -208,6 +208,12 @@ export async function generatePDFThumbnailWithMetadata(
       ? Promise.race([loadingTask.promise, abortPromise])
       : loadingTask.promise);
 
+    if (!pdf) {
+      return createResult({
+        error: createError('PDF_LOAD_FAILED', 'Failed to load PDF'),
+      });
+    }
+
     // Check for empty PDF
     if (pdf.numPages === 0) {
       await pdf.destroy();

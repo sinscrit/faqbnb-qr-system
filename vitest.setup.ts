@@ -9,10 +9,14 @@
 
 import '@testing-library/jest-dom';
 import * as axeMatchers from 'vitest-axe/matchers';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 // Extend vitest expect with axe matchers for accessibility testing
 expect.extend(axeMatchers);
+
+// Provide jest-compatible timer/mocking API for legacy tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).jest = vi;
 
 // Mock localStorage for tests
 const localStorageMock = {
@@ -66,3 +70,44 @@ global.IntersectionObserver = class IntersectionObserver {
     return [];
   }
 } as unknown as typeof IntersectionObserver;
+
+// Mock scrollTo to avoid jsdom "not implemented" errors
+if (!window.scrollTo) {
+  window.scrollTo = () => {};
+}
+
+// Mock canvas APIs used by cropper/video tests
+if (!HTMLCanvasElement.prototype.getContext) {
+  HTMLCanvasElement.prototype.getContext = () => null;
+}
+
+const originalGetContext = HTMLCanvasElement.prototype.getContext;
+HTMLCanvasElement.prototype.getContext = function (...args: any[]) {
+  try {
+    const context = originalGetContext?.apply(this, args);
+    if (context) {
+      return context;
+    }
+  } catch {
+    // Fall through to mock context
+  }
+  return {
+    canvas: this,
+    clearRect: () => {},
+    drawImage: () => {},
+    getImageData: () => ({ data: new Uint8ClampedArray(), width: 0, height: 0 }),
+    putImageData: () => {},
+    measureText: () => ({ width: 0 }),
+    scale: () => {},
+    translate: () => {},
+    save: () => {},
+    restore: () => {},
+    beginPath: () => {},
+    rect: () => {},
+    clip: () => {},
+  } as unknown as CanvasRenderingContext2D;
+};
+
+if (!HTMLCanvasElement.prototype.toDataURL) {
+  HTMLCanvasElement.prototype.toDataURL = () => 'data:image/png;base64,';
+}

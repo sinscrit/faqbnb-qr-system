@@ -23,9 +23,9 @@ export interface Account {
   owner_id: string;
   name: string;
   description: string | null;
-  settings: Record<string, any>;
-  created_at: string;
-  updated_at: string;
+  settings: Record<string, unknown>;
+  created_at: string | null;
+  updated_at: string | null;
   // Enhanced: User's role in this account (REQ-024)
   userRole?: AccountRole | null;
 }
@@ -34,9 +34,9 @@ export interface AccountUser {
   account_id: string;
   user_id: string;
   role: 'owner' | 'admin' | 'member' | 'viewer';
-  invited_at: string;
+  invited_at: string | null;
   joined_at: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export type AccountRole = 'owner' | 'admin' | 'member' | 'viewer';
@@ -47,6 +47,7 @@ export interface User {
   fullName?: string;
   full_name: string | null;
   role: string | null;
+  is_admin?: boolean | null;
   profilePicture?: string;
   authProvider?: string;
   created_at: string | null;
@@ -192,12 +193,15 @@ export interface ItemsListResponse {
     id: string;
     publicId: string;
     name: string;
+    description?: string;
     qrCodeUrl?: string;
     createdAt: string;
+    updatedAt?: string;
     propertyId: string;
     property: any; // Property object with account info
     linksCount: number;
     articlesCount: number; // REQ-151: Article count
+    links?: Array<{ title: string; url: string; linkType: string }>;
     analytics: {
       visits: {
         last24Hours: number;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { UserAnalytics, AdminDashboardStats, AccessRequest } from '@/types/admin';
+import { UserAnalytics, AdminDashboardStats, AccessRequest, AccessRequestStatus } from '@/types/admin';
 import { useAuth } from '@/contexts/AuthContext';
 import UserAnalyticsTable from '@/components/UserAnalyticsTable';
 
@@ -81,7 +81,7 @@ export default function SystemBackOfficePage() {
             requester_name: 'John Doe',
             account_id: 'acc-1',
             request_date: new Date().toISOString(),
-            status: 'pending',
+            status: AccessRequestStatus.PENDING,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           },
@@ -91,7 +91,7 @@ export default function SystemBackOfficePage() {
             requester_name: 'Jane Smith',
             account_id: 'acc-2',
             request_date: new Date(Date.now() - 86400000).toISOString(),
-            status: 'approved',
+            status: AccessRequestStatus.APPROVED,
             approval_date: new Date().toISOString(),
             created_at: new Date(Date.now() - 86400000).toISOString(),
             updated_at: new Date().toISOString()
@@ -134,7 +134,7 @@ export default function SystemBackOfficePage() {
           ...prevData,
           accessRequests: prevData.accessRequests.map(request =>
             request.id === requestId
-              ? { ...request, status: 'approved' as const, approval_date: new Date().toISOString() }
+              ? { ...request, status: AccessRequestStatus.APPROVED, approval_date: new Date().toISOString() }
               : request
           )
         };
@@ -164,7 +164,7 @@ export default function SystemBackOfficePage() {
           ...prevData,
           accessRequests: prevData.accessRequests.map(request =>
             request.id === requestId
-              ? { ...request, status: 'denied' as const }
+              ? { ...request, status: AccessRequestStatus.DENIED }
               : request
           )
         };
@@ -424,7 +424,9 @@ export default function SystemBackOfficePage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(request.request_date).toLocaleDateString()}
+                    {request.request_date
+                      ? new Date(request.request_date).toLocaleDateString()
+                      : 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${

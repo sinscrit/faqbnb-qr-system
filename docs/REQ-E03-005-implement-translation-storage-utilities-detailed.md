@@ -7,7 +7,7 @@
 **Type:** NEW FEATURE
 **Size:** M (Medium)
 **Created:** 2026-01-19
-**Last Modified:** 2026-01-19
+**Last Modified:** 2026-01-21
 
 ---
 
@@ -79,9 +79,9 @@ Create the directory structure for the translation storage module within the con
 ```
 
 ### Verification
-- [ ] Directory `/src/lib/content-translation/storage/` exists
-- [ ] File `translation-storage.ts` is created
-- [ ] File `storage/index.ts` is created
+- [x] Directory `/src/lib/content-translation/storage/` exists
+- [x] File `translation-storage.ts` is created
+- [x] File `storage/index.ts` is created
 
 ---
 
@@ -192,9 +192,9 @@ export interface LinkTranslationData {
 ```
 
 ### Verification
-- [ ] All interfaces are defined with proper JSDoc comments
-- [ ] TypeScript compiles without errors for the type definitions
-- [ ] `SupportedLanguage` and `TranslationStatus` imports work correctly
+- [x] All interfaces are defined with proper JSDoc comments
+- [x] TypeScript compiles without errors for the type definitions
+- [x] `SupportedLanguage` and `TranslationStatus` imports work correctly
 
 ---
 
@@ -310,10 +310,10 @@ export async function storeItemTranslation(
 | Logging prefix | `[TranslationStorage]` for consistency |
 
 ### Verification
-- [ ] Function compiles without TypeScript errors
-- [ ] Function handles missing itemId with appropriate error
-- [ ] Function handles missing language with appropriate error
-- [ ] Function handles missing name with appropriate error
+- [x] Function compiles without TypeScript errors
+- [x] Function handles missing itemId with appropriate error
+- [x] Function handles missing language with appropriate error
+- [x] Function handles missing name with appropriate error
 
 ---
 
@@ -426,10 +426,10 @@ export async function storeArticleTranslation(
 | Conflict columns | `article_id,language` |
 
 ### Verification
-- [ ] Function compiles without TypeScript errors
-- [ ] Function handles missing articleId with appropriate error
-- [ ] Function handles missing title with appropriate error
-- [ ] Function correctly stores `reviewed_by` for manual translations
+- [x] Function compiles without TypeScript errors
+- [x] Function handles missing articleId with appropriate error
+- [x] Function handles missing title with appropriate error
+- [x] Function correctly stores `reviewed_by` for manual translations
 
 ---
 
@@ -536,9 +536,9 @@ export async function storeLinkTranslation(
 | Conflict columns | `link_id,language` |
 
 ### Verification
-- [ ] Function compiles without TypeScript errors
-- [ ] Function handles missing linkId with appropriate error
-- [ ] Function handles missing title with appropriate error
+- [x] Function compiles without TypeScript errors
+- [x] Function handles missing linkId with appropriate error
+- [x] Function handles missing title with appropriate error
 
 ---
 
@@ -664,10 +664,10 @@ export async function storeTagTranslation(
 | Conflict columns | `tag_key,language` |
 
 ### Verification
-- [ ] Function compiles without TypeScript errors
-- [ ] Function handles missing tagKey with appropriate error
-- [ ] Function handles missing value with appropriate error
-- [ ] Function correctly sets `is_system_tag` flag
+- [x] Function compiles without TypeScript errors
+- [x] Function handles missing tagKey with appropriate error
+- [x] Function handles missing value with appropriate error
+- [x] Function correctly sets `is_system_tag` flag
 
 ---
 
@@ -744,9 +744,9 @@ function validateStorageParams(
 ```
 
 ### Verification
-- [ ] Helper function is placed before storage functions in the file
-- [ ] Helper is marked as internal (not exported)
-- [ ] Helper validates entity ID and language
+- [x] Helper function is placed before storage functions in the file
+- [x] Helper is marked as internal (not exported)
+- [x] Helper validates entity ID and language
 
 ---
 
@@ -798,9 +798,9 @@ import {
 ```
 
 ### Verification
-- [ ] File exports all public types
-- [ ] File exports all storage functions
-- [ ] No internal helpers are exported
+- [x] File exports all public types
+- [x] File exports all storage functions
+- [x] No internal helpers are exported
 
 ---
 
@@ -858,8 +858,8 @@ import {
 ```
 
 ### Verification
-- [ ] Storage exports are included in main module
-- [ ] Imports from `@/lib/content-translation` resolve correctly
+- [x] Storage exports are included in main module
+- [x] Imports from `@/lib/content-translation` resolve correctly
 
 ---
 
@@ -899,9 +899,9 @@ Verify that all files compile without TypeScript errors and the module is proper
 | Property 'id' does not exist on select result | Supabase typing | Use `.select('id').single()` pattern |
 
 ### Verification
-- [ ] `npx tsc --noEmit` passes with no errors
-- [ ] `npm run build` completes successfully
-- [ ] No type errors in IDE
+- [x] `npx tsc --noEmit` passes with no errors (in translation storage files)
+- [x] `npm run build` completes successfully (compilation passed, pre-existing lint errors in other files)
+- [x] No type errors in IDE
 
 ---
 
@@ -1276,23 +1276,23 @@ export async function storeTagTranslation(
 
 | # | Criteria | Task(s) | Verified |
 |---|----------|---------|----------|
-| 1 | Function exists for storing item translations | Task 3 | [ ] |
-| 2 | Item storage performs UPSERT on `(item_id, language)` | Task 3 | [ ] |
-| 3 | Item storage persists name and description | Task 3 | [ ] |
-| 4 | Function exists for storing article translations | Task 4 | [ ] |
-| 5 | Article storage performs UPSERT on `(article_id, language)` | Task 4 | [ ] |
-| 6 | Article storage persists title and description | Task 4 | [ ] |
-| 7 | Function exists for storing link translations | Task 5 | [ ] |
-| 8 | Link storage performs UPSERT on `(link_id, language)` | Task 5 | [ ] |
-| 9 | Link storage persists title only | Task 5 | [ ] |
-| 10 | Function exists for storing tag translations | Task 6 | [ ] |
-| 11 | Tag storage performs UPSERT on `(tag_key, language)` | Task 6 | [ ] |
-| 12 | All functions record translation metadata (timestamp, status) | Tasks 3-6 | [ ] |
-| 13 | All functions handle database constraint violations | Tasks 3-6 | [ ] |
-| 14 | All functions return typed result objects | Task 2 | [ ] |
-| 15 | All functions validate required parameters | Task 7 | [ ] |
-| 16 | TypeScript types are properly defined | Task 2 | [ ] |
-| 17 | Build succeeds with no TypeScript errors | Task 10 | [ ] |
+| 1 | Function exists for storing item translations | Task 3 | [x] |
+| 2 | Item storage performs UPSERT on `(item_id, language)` | Task 3 | [x] |
+| 3 | Item storage persists name and description | Task 3 | [x] |
+| 4 | Function exists for storing article translations | Task 4 | [x] |
+| 5 | Article storage performs UPSERT on `(article_id, language)` | Task 4 | [x] |
+| 6 | Article storage persists title and description | Task 4 | [x] |
+| 7 | Function exists for storing link translations | Task 5 | [x] |
+| 8 | Link storage performs UPSERT on `(link_id, language)` | Task 5 | [x] |
+| 9 | Link storage persists title only | Task 5 | [x] |
+| 10 | Function exists for storing tag translations | Task 6 | [x] |
+| 11 | Tag storage performs UPSERT on `(tag_key, language)` | Task 6 | [x] |
+| 12 | All functions record translation metadata (timestamp, status) | Tasks 3-6 | [x] |
+| 13 | All functions handle database constraint violations | Tasks 3-6 | [x] |
+| 14 | All functions return typed result objects | Task 2 | [x] |
+| 15 | All functions validate required parameters | Task 7 | [x] |
+| 16 | TypeScript types are properly defined | Task 2 | [x] |
+| 17 | Build succeeds with no TypeScript errors | Task 10 | [x] |
 
 ---
 

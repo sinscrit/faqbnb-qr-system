@@ -139,7 +139,8 @@ export async function validateAdminAuth(request: NextRequest) {
     }
 
     // Return admin user data (prioritize admin_users table if available)
-    const userInfo = isAdminByTable ? adminUser : userWithAdminFlag;
+    // At this point we know at least one of these is truthy
+    const userInfo = isAdminByTable ? adminUser! : userWithAdminFlag!;
     const validatedUser = {
       id: user.id,
       email: userInfo.email,

@@ -194,9 +194,22 @@ export function validateTitle(title: string): ValidationResult {
  */
 export function validateContentRequirement(
   mediaItems: MediaItem[],
+  instructions: string
+): ValidationResult;
+export function validateContentRequirement(
+  mediaItems: MediaItem[],
   urlItems: UrlItem[],
   instructions: string
+): ValidationResult;
+export function validateContentRequirement(
+  mediaItems: MediaItem[],
+  urlItemsOrInstructions: UrlItem[] | string,
+  instructionsOrUndefined?: string
 ): ValidationResult {
+  const { urlItems, instructions, includesUrls } = normalizeContentArgs(
+    urlItemsOrInstructions,
+    instructionsOrUndefined
+  );
   const hasMedia = mediaItems.length > 0;
   const hasUrls = urlItems.length > 0;
   const hasText = instructions?.trim().length > 0;
@@ -204,7 +217,9 @@ export function validateContentRequirement(
   if (!hasMedia && !hasUrls && !hasText) {
     return {
       isValid: false,
-      error: 'At least one media item, link, or text instructions must be provided',
+      error: includesUrls
+        ? 'At least one media item, link, or text instructions must be provided'
+        : 'At least one media item or text instructions must be provided',
     };
   }
 
@@ -488,9 +503,24 @@ export function getMediaTypeFromMime(mimeType: string): 'video' | 'image' | 'pdf
 export function validateItemCapture(
   metadata: ItemMetadata,
   mediaItems: MediaItem[],
+  instructions: string
+): ItemCaptureValidation;
+export function validateItemCapture(
+  metadata: ItemMetadata,
+  mediaItems: MediaItem[],
   urlItems: UrlItem[],
   instructions: string
+): ItemCaptureValidation;
+export function validateItemCapture(
+  metadata: ItemMetadata,
+  mediaItems: MediaItem[],
+  urlItemsOrInstructions: UrlItem[] | string,
+  instructionsOrUndefined?: string
 ): ItemCaptureValidation {
+  const { urlItems, instructions } = normalizeContentArgs(
+    urlItemsOrInstructions,
+    instructionsOrUndefined
+  );
   const errors: Record<string, string> = {};
   const warnings: Record<string, string> = {};
 
@@ -580,6 +610,24 @@ export function validateItemCapture(
         error: totalSizeResult.error,
       },
     },
+  };
+}
+
+function normalizeContentArgs(
+  urlItemsOrInstructions: UrlItem[] | string,
+  instructionsOrUndefined?: string
+) {
+  if (typeof urlItemsOrInstructions === 'string') {
+    return {
+      urlItems: [],
+      instructions: urlItemsOrInstructions,
+      includesUrls: false,
+    };
+  }
+  return {
+    urlItems: urlItemsOrInstructions ?? [],
+    instructions: instructionsOrUndefined ?? '',
+    includesUrls: true,
   };
 }
 

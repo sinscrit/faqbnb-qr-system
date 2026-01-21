@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Check if user already has properties
     const { data: existingProperties, error: propertiesError } = await supabase
       .from('properties')
-      .select('id, nickname, property_type_id, address, created_at')
+      .select('id, nickname, property_type_id, address, created_at, updated_at, user_id, account_id')
       .eq('user_id', user.id);
 
     if (propertiesError) {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     // Get available property types
     const { data: propertyTypes, error: typesError } = await supabase
       .from('property_types')
-      .select('id, name, display_name');
+      .select('id, name, display_name, description, created_at');
 
     if (typesError || !propertyTypes || propertyTypes.length === 0) {
       console.error('Default property API: No property types available:', typesError);

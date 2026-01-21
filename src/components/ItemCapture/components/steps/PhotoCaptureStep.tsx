@@ -579,7 +579,7 @@ export function PhotoCaptureStep({
   const handleUploadFile = useCallback(() => {
     // Navigate to file upload step for images
     cleanup();
-    goToStep('file-upload');
+    goToStep('upload-file');
   }, [cleanup, goToStep]);
 
   // ===========================================================================

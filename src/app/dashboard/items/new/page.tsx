@@ -79,11 +79,12 @@ export default function CreateItemPage() {
       const response = await adminApi.listProperties(headers);
 
       if (response.success && response.data) {
-        setProperties(response.data);
+        const propertyData = response.data ?? [];
+        setProperties(propertyData);
         
         // If no property is preselected and there's only one property, select it
-        if (!formData.propertyId && response.data.length === 1) {
-          setFormData(prev => ({ ...prev, propertyId: response.data[0].id }));
+        if (!formData.propertyId && propertyData.length === 1) {
+          setFormData(prev => ({ ...prev, propertyId: propertyData[0].id }));
         }
       }
     } catch (error) {

@@ -28,6 +28,7 @@ import {
   FileText,
   ImageIcon,
   Video,
+  Link as LinkIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MediaItem } from '@/components/ItemCapture/ItemCapture.types';
@@ -92,6 +93,12 @@ const MEDIA_TYPE_CONFIG = {
     textColor: 'text-amber-700',
     label: 'PDF',
   },
+  url: {
+    Icon: LinkIcon,
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-700',
+    label: 'Link',
+  },
 } as const;
 
 const MIN_SWIPE_DISTANCE = 50; // pixels
@@ -120,7 +127,7 @@ function MediaTypeBadge({
   type,
   showLabel = false,
 }: {
-  type: 'video' | 'image' | 'pdf';
+  type: 'video' | 'image' | 'pdf' | 'url';
   showLabel?: boolean;
 }) {
   const config = MEDIA_TYPE_CONFIG[type];
@@ -316,6 +323,8 @@ export function MediaGallery({
         const blob = item.thumbnail || item.file;
         if (blob) {
           acc[item.id] = createTrackedUrl(blob);
+        } else if (item.type === 'url' && item.metadata?.thumbnailUrl) {
+          acc[item.id] = item.metadata.thumbnailUrl;
         }
         return acc;
       },
@@ -687,6 +696,21 @@ export function MediaGallery({
             )
           )}
 
+          {/* URL display */}
+          {item.type === 'url' && (
+            <div className="flex flex-col items-center justify-center h-full bg-gray-800 px-4 text-center">
+              <LinkIcon className="w-16 h-16 text-emerald-400" />
+              <span className="text-white text-base mt-4">
+                {item.metadata.pageTitle || item.metadata.url || 'Link'}
+              </span>
+              {item.metadata.domain && (
+                <span className="text-emerald-200 text-sm mt-1">
+                  {item.metadata.domain}
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Error/fallback display */}
           {(hasError || !url) && item.type !== 'pdf' && (
             <div className="flex flex-col items-center justify-center h-full bg-gray-800">
@@ -694,6 +718,11 @@ export function MediaGallery({
                 <>
                   <Video className="w-16 h-16 text-gray-400" />
                   <span className="text-gray-400 text-sm mt-2">Video</span>
+                </>
+              ) : item.type === 'url' ? (
+                <>
+                  <LinkIcon className="w-16 h-16 text-gray-400" />
+                  <span className="text-gray-400 text-sm mt-2">Link</span>
                 </>
               ) : (
                 <>

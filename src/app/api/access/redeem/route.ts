@@ -81,6 +81,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    if (!accessRequest.account_id) {
+      console.error('🔑 ACCESS_REDEEM_DEBUG: Access request missing account_id', {
+        accessCode: access_code,
+        requestId: accessRequest.id
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Access request is missing account information'
+        },
+        { status: 500 }
+      );
+    }
+
+    const accountId = accessRequest.account_id;
+
     // Verify user exists and email matches
     const { data: user, error: userError } = await supabase
       .from('users')
@@ -117,9 +133,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Check if user already has access to this account
     const { data: existingAccess, error: accessCheckError } = await supabase
       .from('account_users')
-      .select('id, role')
+      .select('role')
       .eq('user_id', user_id)
-      .eq('account_id', accessRequest.account_id)
+      .eq('account_id', accountId)
       .single();
 
     if (accessCheckError && accessCheckError.code !== 'PGRST116') {
@@ -141,7 +157,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .from('account_users')
         .insert({
           user_id: user_id,
-          account_id: accessRequest.account_id,
+          account_id: accountId,
           role: 'member',
           created_at: new Date().toISOString()
         });
@@ -160,12 +176,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       accountAccessGranted = true;
       console.log('🔑 ACCESS_REDEEM_DEBUG: Account access granted', {
         userId: user_id,
-        accountId: accessRequest.account_id
+        accountId
       });
     } else {
       console.log('🔑 ACCESS_REDEEM_DEBUG: User already has access', {
         userId: user_id,
-        accountId: accessRequest.account_id,
+        accountId,
         role: existingAccess.role
       });
     }
@@ -181,7 +197,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     console.log('✅ ACCESS_REDEEM_DEBUG: Access code redeemed successfully', {
       accessCode: access_code,
       userId: user_id,
-      accountId: accessRequest.account_id,
+      accountId,
       accountAccessGranted,
       registrationTracked: completionResult.success
     });
@@ -229,19 +245,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Validate access code without redeeming it
     const { data: accessRequest, error } = await supabase
       .from('access_requests')
-      .select(`
-        id,
-        status,
-        requester_email,
-        requester_name,
-        account:accounts(
-          id,
-          name,
-          owner:users!accounts_owner_id_fkey(
-            full_name
-          )
-        )
-      `)
+      .select('id, status, requester_email, requester_name, account_id')
       .eq('access_code', accessCode)
       .single();
 
@@ -258,15 +262,44 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const isValid = accessRequest.status === AccessRequestStatus.APPROVED || 
                     accessRequest.status === AccessRequestStatus.REGISTERED;
 
+    let accountName: string | null = null;
+    let ownerName: string | null = null;
+
+    if (accessRequest.account_id) {
+      const { data: account, error: accountError } = await supabase
+        .from('accounts')
+        .select('id, name, owner_id')
+        .eq('id', accessRequest.account_id)
+        .single();
+
+      if (accountError) {
+        console.warn('Access code validation: account lookup failed', accountError);
+      } else if (account) {
+        accountName = account.name;
+
+        const { data: owner, error: ownerError } = await supabase
+          .from('users')
+          .select('full_name')
+          .eq('id', account.owner_id)
+          .single();
+
+        if (ownerError) {
+          console.warn('Access code validation: owner lookup failed', ownerError);
+        } else if (owner) {
+          ownerName = owner.full_name ?? null;
+        }
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
         valid: isValid,
         status: accessRequest.status,
-        account_name: accessRequest.account?.name,
+        account_name: accountName,
         requester_email: accessRequest.requester_email,
         requester_name: accessRequest.requester_name,
-        owner_name: accessRequest.account?.owner?.full_name
+        owner_name: ownerName
       }
     });
 

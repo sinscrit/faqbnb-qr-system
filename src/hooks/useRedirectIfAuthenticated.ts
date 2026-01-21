@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthUser } from '@/types';
+import type { AuthUser } from '@/lib/auth';
 
 /**
  * Custom hook to redirect authenticated users away from public pages (e.g., login, landing).

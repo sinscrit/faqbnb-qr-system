@@ -252,7 +252,7 @@ function ItemStatusRow({ item, onRetry }: ItemStatusRowProps) {
  * Task 4.7
  */
 interface ErrorBannerProps {
-  error: string | null;
+  error?: string | null;
   failedCount: number;
   onRetryAll?: () => void;
   onContinue?: () => void;

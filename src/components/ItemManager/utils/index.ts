@@ -9,4 +9,7 @@ export * from './formatUtils';
 export * from './a11yUtils';
 export * from './filterUtils';
 export * from './sortUtils';
-export * from './constants';
+export {
+  SORT_OPTIONS as SORT_MENU_OPTIONS,
+  DEFAULT_SORT as DEFAULT_SORT_OPTION
+} from './constants';

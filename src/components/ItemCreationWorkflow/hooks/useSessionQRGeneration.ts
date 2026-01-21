@@ -148,17 +148,16 @@ export function useSessionQRGeneration(
   const transformSessionItems = useCallback((items: SessionItem[]): Item[] => {
     return items.map(item => ({
       id: item.id,
-      public_id: item.id, // Use item.id as public_id for QR URL generation
+      publicId: item.id, // Use item.id as publicId for QR URL generation
       name: item.name,
-      // Additional required fields for Item type - provide defaults
-      property_id: '',
-      room: item.room,
-      item_type: item.itemType,
-      content_type: item.content[0]?.type || 'text',
-      content_url: '',
-      created_at: item.createdAt.toISOString(),
-      updated_at: item.createdAt.toISOString(),
-    } as Item));
+      description: null,
+      qrCodeUrl: item.qrCodeUrl || null,
+      qrCodeUploadedAt: null,
+      propertyId: '',
+      tags: item.tags || [],
+      createdAt: item.createdAt.toISOString(),
+      updatedAt: item.createdAt.toISOString(),
+    }));
   }, []);
 
   /**

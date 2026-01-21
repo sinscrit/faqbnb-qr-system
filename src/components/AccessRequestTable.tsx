@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { AccessRequest, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
+import { AccessRequestWithAccount, AccessRequestStatus, AccessRequestSource } from '@/types/admin';
 import { createRegistrationLinkWithCode } from '@/lib/email-templates';
 
 interface AccessRequestTableProps {
-  requests: AccessRequest[];
+  requests: AccessRequestWithAccount[];
   onApprove: (requestId: string) => void;
   onDeny: (requestId: string) => void;
-  onEmailClick: (request: AccessRequest) => void;
-  onViewDetails?: (request: AccessRequest) => void;
+  onEmailClick: (request: AccessRequestWithAccount) => void;
+  onViewDetails?: (request: AccessRequestWithAccount) => void;
   onQuickApprove?: (requestId: string) => void;
   onBatchApprove?: (requestIds: string[]) => void;
   isLoading?: boolean;
@@ -75,8 +75,8 @@ export default function AccessRequestTable({
           bValue = b.requester_email.toLowerCase();
           break;
         case 'request_date':
-          aValue = new Date(a.request_date);
-          bValue = new Date(b.request_date);
+          aValue = a.request_date ? new Date(a.request_date) : new Date(0);
+          bValue = b.request_date ? new Date(b.request_date) : new Date(0);
           break;
         case 'status':
           aValue = a.status;
@@ -97,7 +97,7 @@ export default function AccessRequestTable({
     });
 
   // Get source badge styling
-  const getSourceBadge = (source?: AccessRequestSource) => {
+  const getSourceBadge = (source?: AccessRequestSource | null) => {
     if (!source) return { style: 'bg-gray-100 text-gray-800 border-gray-200', label: 'Unknown', icon: '❓' };
     
     const badges = {
@@ -127,7 +127,8 @@ export default function AccessRequestTable({
   };
 
   // Get status badge styling
-  const getStatusBadge = (status: AccessRequestStatus) => {
+  const getStatusBadge = (status?: AccessRequestStatus | null) => {
+    if (!status) return 'bg-gray-100 text-gray-800 border-gray-200';
     const styles = {
       [AccessRequestStatus.PENDING]: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       [AccessRequestStatus.APPROVED]: 'bg-green-100 text-green-800 border-green-200',
@@ -139,7 +140,15 @@ export default function AccessRequestTable({
   };
 
   // Calculate timeline info
-  const getTimelineInfo = (request: AccessRequest) => {
+  const getTimelineInfo = (request: AccessRequestWithAccount) => {
+    if (!request.request_date) {
+      return {
+        daysSinceRequest: 0,
+        approvalTime: null,
+        isOverdue: false
+      };
+    }
+
     const requestDate = new Date(request.request_date);
     const now = new Date();
     const daysSinceRequest = Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -158,7 +167,8 @@ export default function AccessRequestTable({
   };
 
   // Format date for display
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -179,10 +189,13 @@ export default function AccessRequestTable({
   };
 
   // Handle copy registration link to clipboard
-  const handleCopyRegistrationLink = async (request: AccessRequest, event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCopyRegistrationLink = async (request: AccessRequestWithAccount, event: React.MouseEvent<HTMLButtonElement>) => {
     console.log('handleCopyRegistrationLink called', { request, event });
     
-    if (!request.access_code || !request.requester_email) {
+    const accessCode = request.access_code;
+    const requesterEmail = request.requester_email;
+
+    if (!accessCode || !requesterEmail) {
       console.log('Missing access code or email', { access_code: request.access_code, email: request.requester_email });
       alert('Access code or email not available for this request');
       return;
@@ -193,7 +206,7 @@ export default function AccessRequestTable({
     console.log('Button element captured:', button, 'Original text:', button?.textContent);
 
     try {
-      const registrationLink = createRegistrationLinkWithCode(request.access_code, request.requester_email);
+      const registrationLink = createRegistrationLinkWithCode(accessCode, requesterEmail);
       console.log('Generated registration link:', registrationLink);
       
       await navigator.clipboard.writeText(registrationLink);
@@ -217,7 +230,7 @@ export default function AccessRequestTable({
     } catch (error) {
       console.error('Failed to copy registration link:', error);
       // Fallback: show alert with the link
-      const registrationLink = createRegistrationLinkWithCode(request.access_code, request.requester_email);
+      const registrationLink = createRegistrationLinkWithCode(accessCode, requesterEmail);
       alert(`Copy this registration link:\n\n${registrationLink}`);
     }
   };
