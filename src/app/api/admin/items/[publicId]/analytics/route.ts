@@ -53,7 +53,7 @@ async function validateAdminAuth(request: NextRequest) {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { publicId: string } }
+  { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
     console.log('Admin analytics API called - validating authentication...');

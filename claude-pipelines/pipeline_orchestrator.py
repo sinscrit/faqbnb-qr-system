@@ -652,7 +652,15 @@ To start Chrome with CDP enabled, run:
 /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug
 ```
 """)
-        # Add other tool checks as needed in the future
+        elif tool == 'supabase_mcp':
+            tool_checks.append("""
+**Tool: supabase_mcp**
+- This tool requires the Supabase MCP server to be running locally
+- Verify Supabase MCP is available by running: mcp__supabase__list_tables
+- If the tool fails or times out, the MCP server is NOT running
+
+To start the Supabase MCP server, ensure it's configured in your Claude MCP settings.
+""")
 
     prompt = f"""You are a lightweight precheck agent. Your ONLY job is to verify that required tools are available.
 
@@ -660,14 +668,16 @@ To start Chrome with CDP enabled, run:
 {chr(10).join(tool_checks)}
 
 **Instructions:**
-1. For each tool listed above, attempt to use it
-2. If browser_snapshot fails or you cannot connect, report it as unavailable
+1. For each tool listed above, attempt to use it:
+   - For playwright_mcp: use browser_snapshot to verify
+   - For supabase_mcp: use mcp__supabase__list_tables to verify
+2. If any tool fails or times out, report it as unavailable
 3. Report the result in this EXACT format (JSON):
 
 ```json
 {{
   "tools": {{
-    "playwright_mcp": {{
+    "tool_name": {{
       "available": true/false,
       "notes": "Description of result or error message"
     }}
@@ -757,15 +767,13 @@ def run_typescript_check(config: dict) -> Tuple[bool, dict]:
                     print(f"      ... and {prod_count - 5} more production errors")
                 if test_count > 0:
                     print(f"    ⚠ Also {test_count} error(s) in test files (non-blocking)")
-                if generated_count > 0:
-                    print(f"    ⚠ Also {generated_count} error(s) in .next/types/ (generated files)")
+                # Note: .next/types/ errors are non-blocking (Next.js generated), don't report
             else:
-                # No production errors - just warnings
+                # No production errors
                 print(f"    ✓ TypeScript: No production code errors")
                 if test_count > 0:
-                    print(f"    ⚠ {test_count} error(s) in test files (non-blocking, likely missing @types/jest)")
-                if generated_count > 0:
-                    print(f"    ⚠ {generated_count} error(s) in .next/types/ (generated files)")
+                    print(f"    ⚠ {test_count} error(s) in test files (non-blocking)")
+                # Note: .next/types/ errors are non-blocking (Next.js generated), don't report
                 sample_errors = test_errors[:3] if test_errors else generated_errors[:3]
 
             return not has_blocking_errors, {
@@ -871,96 +879,114 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
         typescript_result = {'passed': True, 'error_count': 0, 'notes': 'Skipped via config'}
 
     # 2. Run tool availability checks (if any required)
-    # Note: Only playwright_mcp requires explicit precheck verification
-    # Other tools like supabase_mcp are validated implicitly during implementation
-    needs_playwright_check = 'playwright_mcp' in required_tools
+    # Check both playwright_mcp and supabase_mcp if configured
+    needs_mcp_check = any(tool in required_tools for tool in ['playwright_mcp', 'supabase_mcp'])
 
     if not required_tools:
         print(f"\n  ○ No required tools configured")
         tools_result = {}
-    elif not needs_playwright_check:
-        # Only supabase_mcp or other non-playwright tools configured
-        # These don't need explicit precheck - they're validated during use
+    elif not needs_mcp_check:
+        # No MCP tools configured - skip check
         print(f"\n  ○ Required tools ({', '.join(required_tools)}) don't need explicit precheck")
-        tools_result = {tool: {'available': True, 'notes': 'Validated during implementation'} for tool in required_tools}
+        tools_result = {tool: {'available': True, 'notes': 'No MCP verification needed'} for tool in required_tools}
     else:
         print(f"\n  Checking required tools: {', '.join(required_tools)}")
-        print(f"  Timeout: {precheck_timeout}s")
 
-        # Build prompt and run tool check agent
-        prompt = build_precheck_prompt(config)
-        command = [
-            "claude",
-            "-p",
-            prompt,
-            "--allowedTools",
-            "mcp__playwright__browser_snapshot,mcp__playwright__browser_navigate"
-        ]
+        # =====================================================================
+        # Pre-flight checks: Verify servers are running before invoking Claude
+        # =====================================================================
+        tools_result = {}
+        preflight_failed = False
 
-        logging.info(f"Running precheck for tools: {required_tools}")
-
+        # Check if dev server is running and healthy (required for any MCP tool)
+        import urllib.request
+        import urllib.error
+        print(f"    Checking dev server on localhost:3000...")
         try:
-            start_time = time.time()
-            result = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                timeout=precheck_timeout,
-                cwd=config.get('_config_dir', Path.cwd())
-            )
-            elapsed = time.time() - start_time
-            elapsed_str = format_duration(elapsed)
-
-            if result.returncode == 0:
-                # Parse the output to find JSON result
-                output = result.stdout
-
-                # Try to extract JSON from output
-                json_match = re.search(r'```json\s*(.*?)\s*```', output, re.DOTALL)
-                if json_match:
-                    try:
-                        parsed = json.loads(json_match.group(1))
-                        tools_passed = parsed.get('all_passed', False)
-                        tools_result = parsed.get('tools', {})
-                    except json.JSONDecodeError:
-                        # Fallback: assume passed if agent completed successfully
-                        tools_passed = True
-                        tools_result = {tool: {'available': True, 'notes': 'Agent completed'} for tool in required_tools}
+            req = urllib.request.Request('http://localhost:3000/', method='HEAD')
+            with urllib.request.urlopen(req, timeout=15) as response:
+                status_code = response.getcode()
+                if status_code >= 200 and status_code < 400:
+                    print(f"    ✓ Dev server is running and healthy (HTTP {status_code})")
+                    tools_result['dev_server'] = {'available': True, 'notes': f'Dev server healthy (HTTP {status_code})'}
                 else:
-                    # No JSON found, check if output suggests success
-                    tools_passed = 'error' not in output.lower() and 'fail' not in output.lower()
-                    tools_result = {tool: {'available': tools_passed, 'notes': 'Inferred from output'} for tool in required_tools}
-
-                if tools_passed:
-                    print(f"    ✓ Tool checks passed ({elapsed_str})")
-                    for tool, info in tools_result.items():
-                        print(f"      ✓ {tool}: {info.get('notes', 'OK')}")
-                else:
-                    all_checks_passed = False
-                    logging.warning(f"Tool checks failed: some tools unavailable")
-                    print(f"    ✗ Tool checks failed ({elapsed_str})")
-                    for tool, info in tools_result.items():
-                        status = "✓" if info.get('available') else "✗"
-                        print(f"      {status} {tool}: {info.get('notes', 'Unknown')}")
-
-            else:
-                error_msg = result.stderr[:200] if result.stderr else "Unknown error"
-                logging.error(f"Tool check agent failed: {error_msg}")
-                all_checks_passed = False
-                tools_result = {tool: {'available': False, 'notes': 'Agent failed'} for tool in required_tools}
-                print(f"    ✗ Tool check agent failed ({elapsed_str}): {error_msg[:60]}...")
-
-        except subprocess.TimeoutExpired:
-            logging.error(f"Tool checks timed out after {precheck_timeout}s")
-            all_checks_passed = False
-            tools_result = {tool: {'available': False, 'notes': 'Timeout'} for tool in required_tools}
-            print(f"    ✗ Tool checks timed out after {precheck_timeout}s")
-
+                    print(f"    ✗ Dev server returned error status: HTTP {status_code}")
+                    print(f"      Fix the server errors before running implementation")
+                    tools_result['dev_server'] = {'available': False, 'notes': f'Server error: HTTP {status_code}'}
+                    preflight_failed = True
+        except urllib.error.HTTPError as e:
+            print(f"    ✗ Dev server returned error: HTTP {e.code}")
+            print(f"      Fix the server errors before running implementation")
+            tools_result['dev_server'] = {'available': False, 'notes': f'Server error: HTTP {e.code}'}
+            preflight_failed = True
+        except urllib.error.URLError as e:
+            print(f"    ✗ Dev server is NOT running on localhost:3000")
+            print(f"      Start it with: npm run dev")
+            tools_result['dev_server'] = {'available': False, 'notes': f'Connection failed: {e.reason}'}
+            preflight_failed = True
         except Exception as e:
-            logging.exception(f"Tool check error: {e}")
+            print(f"    ✗ Failed to check dev server: {e}")
+            tools_result['dev_server'] = {'available': False, 'notes': f'Error: {e}'}
+            preflight_failed = True
+
+        # Check Chrome CDP for playwright_mcp (only if dev server is running)
+        if 'playwright_mcp' in required_tools and not preflight_failed:
+            print(f"    Checking Chrome CDP on port 9223...")
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            try:
+                result = sock.connect_ex(('localhost', 9223))
+                if result == 0:
+                    print(f"    ✓ Chrome CDP is running on port 9223")
+                    tools_result['playwright_mcp'] = {'available': True, 'notes': 'Chrome CDP port 9223 is listening'}
+                else:
+                    print(f"    ✗ Chrome CDP is NOT running on port 9223")
+                    print(f"      Start Chrome with: /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
+                    tools_result['playwright_mcp'] = {'available': False, 'notes': 'Chrome not running with CDP on port 9223'}
+                    preflight_failed = True
+            except socket.error as e:
+                print(f"    ✗ Failed to check Chrome CDP: {e}")
+                tools_result['playwright_mcp'] = {'available': False, 'notes': f'Socket error: {e}'}
+                preflight_failed = True
+            finally:
+                sock.close()
+
+        # Check supabase_mcp by trying to invoke it
+        if 'supabase_mcp' in required_tools and not preflight_failed:
+            print(f"    Checking Supabase MCP server...")
+            # Supabase MCP is managed by Claude's MCP config, so we verify by trying to use it
+            try:
+                test_result = subprocess.run(
+                    ["claude", "-p", "Use mcp__supabase__list_tables to list tables. Just output SUCCESS if it works or FAILED if not.",
+                     "--allowedTools", "mcp__supabase__list_tables"],
+                    capture_output=True,
+                    text=True,
+                    timeout=45,
+                    cwd=config.get('_config_dir', Path.cwd())
+                )
+                if test_result.returncode == 0 and 'success' in test_result.stdout.lower():
+                    print(f"    ✓ Supabase MCP is available")
+                    tools_result['supabase_mcp'] = {'available': True, 'notes': 'Supabase MCP responded successfully'}
+                else:
+                    print(f"    ✗ Supabase MCP is NOT available")
+                    print(f"      Ensure MCP server is configured and running")
+                    tools_result['supabase_mcp'] = {'available': False, 'notes': 'Supabase MCP did not respond'}
+                    preflight_failed = True
+            except subprocess.TimeoutExpired:
+                print(f"    ✗ Supabase MCP check timed out")
+                tools_result['supabase_mcp'] = {'available': False, 'notes': 'MCP check timed out'}
+                preflight_failed = True
+            except Exception as e:
+                print(f"    ✗ Failed to check Supabase MCP: {e}")
+                tools_result['supabase_mcp'] = {'available': False, 'notes': f'Error: {e}'}
+                preflight_failed = True
+
+        # Set all_checks_passed based on preflight results
+        if not preflight_failed:
+            print(f"    ✓ All MCP servers verified")
+        else:
             all_checks_passed = False
-            tools_result = {tool: {'available': False, 'notes': str(e)} for tool in required_tools}
-            print(f"    ✗ Tool check error: {e}")
+            logging.warning(f"MCP server preflight check failed")
 
     # 3. Build final precheck result
     precheck_result = {
@@ -986,6 +1012,147 @@ def run_precheck(config: dict, state: dict, force: bool = False) -> Tuple[bool, 
                 print(f"    - Tool '{tool}' is not available")
 
     return all_checks_passed, precheck_result
+
+
+def run_precheck_fixer(config: dict, precheck_result: dict) -> bool:
+    """
+    Invoke the precheck fixer agent to automatically fix common issues.
+
+    Args:
+        config: Pipeline configuration
+        precheck_result: The failed precheck result with details
+
+    Returns:
+        True if fixes were attempted, False if skipped
+    """
+    print(f"\n{'='*60}")
+    print("ATTEMPTING AUTOMATIC FIX")
+    print(f"{'='*60}\n")
+
+    # Build the failure details for the agent
+    failures = []
+
+    typescript_result = precheck_result.get('typescript', {})
+    if not typescript_result.get('passed'):
+        error_count = typescript_result.get('production_error_count', typescript_result.get('error_count', 0))
+        failures.append(f"- TypeScript: {error_count} production error(s)")
+
+    tools_result = precheck_result.get('tools', {})
+    for tool, info in tools_result.items():
+        if not info.get('available'):
+            failures.append(f"- {tool}: {info.get('notes', 'unavailable')}")
+
+    if not failures:
+        print("  No fixable issues found.")
+        return False
+
+    prompt = f"""You are the Precheck Fixer Agent. Fix the following precheck failures so the pipeline can proceed.
+
+**Failed Checks:**
+{chr(10).join(failures)}
+
+**Instructions:**
+1. Fix TypeScript errors first (if any) - read the files, fix the issues
+2. Fix dev server issues:
+   - Check if port 3000 is in use: `lsof -ti:3000`
+   - Kill stuck processes if needed: `kill -9 <pid>`
+   - ALWAYS clear the .next cache: `rm -rf .next` (prevents corrupted cache issues)
+   - Start dev server in background if not running
+3. Verify fixes by checking that:
+   - `npx tsc --noEmit` has no production errors
+   - `curl -s -o /dev/null -w "%{{http_code}}" http://localhost:3000/` returns 200
+
+**IMPORTANT:**
+- ALWAYS run `rm -rf .next` before starting the dev server to ensure clean state
+- For dev server, use `nohup npm run dev > /tmp/nextjs-dev.log 2>&1 &` so it persists after Claude's task ends
+- Wait for server to be ready by polling `curl -s -o /dev/null -w "%{{http_code}}" http://localhost:3000/` until it returns 200 (may take 15-20 seconds)
+- Do NOT start Chrome - that requires manual user action
+- Focus on automated fixes only
+
+**OUTPUT REQUIREMENT - MANDATORY:**
+You MUST end your response with exactly this format (no code blocks, plain text):
+
+PRECHECK FIX SUMMARY:
+======================
+ACTIONS TAKEN:
+- [Describe each action you took, e.g., "Fixed TypeScript error in src/lib/foo.ts:42 - added missing property 'bar'"]
+- [List every file edited and what was changed]
+- [List every command run and its result]
+
+ISSUES FIXED:
+- TypeScript: FIXED/FAILED/SKIPPED - [brief description]
+- dev_server: FIXED/FAILED/SKIPPED - [brief description]
+- [other issues...]
+
+ISSUES REQUIRING MANUAL ACTION:
+- [List any issues you could not fix, e.g., "Chrome CDP - User must start Chrome with --remote-debugging-port=9223"]
+
+STATUS: SUCCESS/PARTIAL/FAILED
+"""
+
+    # Determine allowed tools based on what needs fixing
+    allowed_tools = ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
+
+    command = [
+        "claude",
+        "-p",
+        prompt,
+        "--allowedTools",
+        ",".join(allowed_tools),
+    ]
+
+    logging.info("Running precheck fixer agent")
+    print("  Running precheck fixer agent...")
+
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=300,  # 5 minutes max
+            cwd=config.get('_config_dir', Path.cwd())
+        )
+
+        if result.returncode == 0:
+            output = result.stdout
+
+            # Extract and display the fix summary prominently
+            summary_start = output.find('PRECHECK FIX SUMMARY:')
+            if summary_start != -1:
+                summary = output[summary_start:]
+                print(f"\n{summary}")
+            else:
+                # No structured summary found, print full output
+                print(output)
+
+            # Check if fixes were successful
+            output_lower = output.lower()
+            if 'status: success' in output_lower:
+                print(f"\n{'='*60}")
+                print("✓ PRECHECK FIXER COMPLETED SUCCESSFULLY")
+                print(f"{'='*60}")
+                return True
+            elif 'status: partial' in output_lower:
+                print(f"\n{'='*60}")
+                print("⚠ PRECHECK FIXER PARTIALLY SUCCESSFUL")
+                print("  Some issues require manual action (see above)")
+                print(f"{'='*60}")
+                return True
+            else:
+                print(f"\n{'='*60}")
+                print("✗ PRECHECK FIXER COULD NOT FIX ALL ISSUES")
+                print(f"{'='*60}")
+                return True
+        else:
+            print(f"\n  ✗ Precheck fixer failed: {result.stderr[:200] if result.stderr else 'Unknown error'}")
+            return False
+
+    except subprocess.TimeoutExpired:
+        print("\n  ✗ Precheck fixer timed out after 5 minutes")
+        return False
+    except Exception as e:
+        print(f"\n  ✗ Precheck fixer error: {e}")
+        return False
 
 
 def build_project_context_prompt(config: dict, state: dict) -> str:
@@ -1793,7 +1960,23 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
             command.append(part.replace('{prompt}', prompt))
         else:
             command.append(part)
-    
+
+    # Add session persistence to keep MCP connections warm across tasks
+    # This avoids the MCP initialization overhead for each task
+    if state is not None and 'claude' in command[0]:
+        import uuid as uuid_module
+        session_key = f"session_id_{stage_id}" if stage_id else "session_id_default"
+
+        if session_key not in state:
+            # First invocation for this stage - create new session
+            state[session_key] = str(uuid_module.uuid4())
+            command.extend(['--session-id', state[session_key]])
+            logging.info(f"Starting new Claude session: {state[session_key][:8]}...")
+        else:
+            # Subsequent invocation - resume existing session
+            command.extend(['--resume', state[session_key]])
+            logging.info(f"Resuming Claude session: {state[session_key][:8]}...")
+
     # Include request_id in log if available
     request_id = task_dict.get('request_id', '') if task_dict else ''
     req_info = f" [{request_id}]" if request_id else ""
@@ -1861,6 +2044,14 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
             error_msg = ' | '.join(error_parts)
             logging.error(f"Agent {agent_name} failed for task {task.id}{req_info} after {elapsed_str}: {error_msg}")
 
+            # Reset session if this looks like an initialization/MCP failure
+            # (error_during_execution with num_turns: 0 suggests MCP connection issue)
+            if state is not None and stage_id:
+                session_key = f"session_id_{stage_id}"
+                if session_key in state and ('"num_turns":0' in result.stdout or 'error_during_execution' in result.stdout):
+                    logging.warning(f"Detected MCP/initialization failure - resetting session for next retry")
+                    del state[session_key]
+
             # Still try to parse test results from failed run
             if stage_id == 'implementation' and task_dict is not None:
                 combined_output = (result.stdout or '') + (result.stderr or '')
@@ -1877,6 +2068,12 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
         elapsed_str = format_duration(elapsed)
         error_msg = f"Agent timed out ({timeout}s)"
         logging.error(f"Agent {agent_name} timed out for task {task.id}{req_info} after {elapsed_str}")
+        # Reset session on timeout - may indicate stale MCP connection
+        if state is not None and stage_id:
+            session_key = f"session_id_{stage_id}"
+            if session_key in state:
+                logging.warning(f"Timeout occurred - resetting session for next retry")
+                del state[session_key]
         return False, error_msg
     except FileNotFoundError as e:
         error_msg = f"Command not found: {command[0]}. Ensure it's in PATH."
@@ -4526,7 +4723,9 @@ def prompt_rerun_action(state: dict, config: dict) -> str:
     print()
     
     while True:
-        response = input("  Choice [R/D/K/A]: ").strip().upper()
+        response = input("  Choice [R/D/K/A] (default: R): ").strip().upper()
+        if response == '':
+            return 'resume'  # Default to Resume
         if response in ['R', 'D', 'K', 'A']:
             return {'R': 'resume', 'D': 'delete', 'K': 'keep', 'A': 'abort'}[response]
         print("  Invalid choice. Please enter R, D, K, or A.")
@@ -4843,6 +5042,11 @@ Examples:
         help='Force continue even if precheck fails (use with caution)'
     )
     parser.add_argument(
+        '--no-auto-fix',
+        action='store_true',
+        help='Disable automatic fix attempts for precheck failures (auto-fix is ON by default)'
+    )
+    parser.add_argument(
         '--test-harness',
         action='store_true',
         help='Display test harness URL(s) from state file and exit'
@@ -4973,12 +5177,26 @@ Examples:
             print("\nPrecheck passed. Ready for implementation.")
             sys.exit(0)
         else:
+            # Try auto-fix (on by default, disable with --no-auto-fix)
+            if not args.no_auto_fix:
+                run_precheck_fixer(config, precheck_result)
+                # Re-run precheck after fix attempt
+                print("\n[RE-RUNNING PRECHECK AFTER FIX ATTEMPT]")
+                success, precheck_result = run_precheck(config, state, force=True)
+                state['precheck'] = precheck_result
+                save_state(state, state_path)
+                if success:
+                    print("\nPrecheck passed after auto-fix. Ready for implementation.")
+                    sys.exit(0)
+
             print("\n  ✗ Precheck failed. Fix the issues before running implementation.")
             print("\n  Common issues:")
             print("    - TypeScript errors: Run 'npx tsc --noEmit' to see errors, then fix them")
+            print("    - Dev server: Run 'npm run dev' and ensure it starts without errors")
             print("    - Playwright MCP: Ensure Chrome is running with CDP enabled:")
             print("      /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
             print("        --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
+            print("\n  Note: Auto-fix was attempted. Use --no-auto-fix to disable it.")
             sys.exit(1)
 
     # From here on, we need proper state handling for pipeline execution
@@ -5058,17 +5276,28 @@ Examples:
             save_state(state, state_path)
 
             if not success:
-                if args.force:
+                # Try auto-fix (on by default, disable with --no-auto-fix)
+                if not args.no_auto_fix:
+                    run_precheck_fixer(config, precheck_result)
+                    # Re-run precheck after fix attempt
+                    print("\n[RE-RUNNING PRECHECK AFTER FIX ATTEMPT]")
+                    success, precheck_result = run_precheck(config, state, force=True)
+                    state['precheck'] = precheck_result
+                    save_state(state, state_path)
+
+                if not success and args.force:
                     print("\n  ⚠ Precheck failed but --force flag set. Continuing anyway...")
                     logging.warning("Precheck failed but continuing due to --force flag")
-                else:
+                elif not success:
                     print("\n  ✗ Precheck failed. Fix the issues before running implementation.")
                     print("\n  Common issues:")
                     print("    - TypeScript errors: Run 'npx tsc --noEmit' to see errors, then fix them")
+                    print("    - Dev server: Run 'npm run dev' and ensure it starts without errors")
                     print("    - Playwright MCP: Ensure Chrome is running with CDP enabled:")
                     print("      /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome \\")
                     print("        --remote-debugging-port=9223 --user-data-dir=/tmp/chrome-debug")
                     print("\n  Options:")
+                    print("    --no-auto-fix   Disable automatic fix attempts")
                     print("    --force         Continue anyway (tests may fail)")
                     print("    --precheck-only Run diagnostics only")
                     sys.exit(1)

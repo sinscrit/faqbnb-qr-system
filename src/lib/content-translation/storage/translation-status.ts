@@ -366,6 +366,7 @@ async function fetchJobsForEntityIds(
   }
 
   // Map database rows to TranslationJob interface
+  // Note: Cast to any for priority field which may not be in generated Supabase types yet
   return (data || []).map(row => ({
     id: row.id,
     entityType: row.entity_type as EntityType,
@@ -373,6 +374,7 @@ async function fetchJobsForEntityIds(
     sourceLanguage: row.source_language as SupportedLanguage,
     targetLanguage: row.target_language as SupportedLanguage,
     status: row.status as JobStatus,
+    priority: (row as Record<string, unknown>).priority as number ?? 25,
     attempts: row.attempts ?? 0,
     errorMessage: row.error_message,
     createdAt: row.created_at ?? '',

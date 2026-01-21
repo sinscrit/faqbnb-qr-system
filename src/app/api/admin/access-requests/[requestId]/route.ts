@@ -3,9 +3,9 @@ import { validateAdminAuth } from '@/lib/auth-server';
 import { AccessRequest, AccessRequestStatus } from '@/types/admin';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     requestId: string;
-  };
+  }>;
 }
 
 type AccessRequestDetail = AccessRequest & {
@@ -31,6 +31,7 @@ export async function GET(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  const { requestId } = await params;
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {
@@ -51,7 +52,6 @@ export async function GET(
   }
 
   const { supabase } = authResult;
-  const { requestId } = params;
 
   console.log('✅ ACCESS_REQUEST_DETAIL_DEBUG: Authentication successful for request:', requestId);
 
@@ -226,6 +226,7 @@ export async function PUT(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  const { requestId } = await params;
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {
@@ -246,7 +247,6 @@ export async function PUT(
   }
 
   const { supabase, user } = authResult;
-  const { requestId } = params;
 
   console.log('✅ ACCESS_REQUEST_UPDATE_DEBUG: Authentication successful for request:', requestId);
 
@@ -385,6 +385,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  const { requestId } = await params;
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {
@@ -405,7 +406,6 @@ export async function DELETE(
   }
 
   const { supabase } = authResult;
-  const { requestId } = params;
 
   console.log('✅ ACCESS_REQUEST_DELETE_DEBUG: Authentication successful for request:', requestId);
 

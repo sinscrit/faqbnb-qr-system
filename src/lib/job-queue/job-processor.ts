@@ -42,7 +42,12 @@ import type {
   SupportedLanguage,
   EntityType,
 } from './translation-jobs.types';
-import { createLockHeartbeat, DEFAULT_HEARTBEAT_INTERVAL_MS } from './concurrency-control';
+import {
+  createLockHeartbeat,
+  DEFAULT_HEARTBEAT_INTERVAL_MS,
+  cleanupStaleProcessingJobs,
+  type CleanupResult,
+} from './concurrency-control';
 import { getTranslationSemaphore, isRateLimitError } from './concurrency';
 
 // ===========================================================================
@@ -67,6 +72,12 @@ export interface JobProcessorConfig {
   enableLogging: boolean;
   /** Heartbeat interval in milliseconds (default: 60000 = 1 minute) */
   heartbeatIntervalMs?: number;
+  /** Enable stale job cleanup before each processing cycle (default: true) (REQ-E03-020) */
+  enableStaleCleanup: boolean;
+  /** Stale threshold in minutes - jobs processing longer than this are stale (default: 5) (REQ-E03-020) */
+  staleThresholdMinutes: number;
+  /** Maximum stale recovery attempts before permanent failure (default: 3) (REQ-E03-020) */
+  maxStaleRetries: number;
 }
 
 // ===========================================================================
@@ -1364,6 +1375,10 @@ const DEFAULT_CONFIG: JobProcessorConfig = {
   workerId: `processor-${process.pid}-${Date.now()}`,
   lockTimeoutMinutes: 5,
   enableLogging: process.env.NODE_ENV !== 'production',
+  // Stale job cleanup configuration (REQ-E03-020)
+  enableStaleCleanup: process.env.TRANSLATION_STALE_CLEANUP_ENABLED !== 'false',
+  staleThresholdMinutes: parseInt(process.env.TRANSLATION_STALE_THRESHOLD_MINUTES || '5', 10),
+  maxStaleRetries: parseInt(process.env.TRANSLATION_MAX_STALE_RETRIES || '3', 10),
 };
 
 // ===========================================================================
@@ -1534,6 +1549,34 @@ export class TranslationJobProcessor {
     const results: JobProcessingResult[] = [];
 
     try {
+      // === STALE JOB CLEANUP (REQ-E03-020) ===
+      // Run cleanup BEFORE picking new jobs to recover stale jobs
+      if (this.config.enableStaleCleanup) {
+        try {
+          const cleanupResult = await cleanupStaleProcessingJobs({
+            lockTimeoutMinutes: this.config.staleThresholdMinutes,
+            maxStaleRetries: this.config.maxStaleRetries,
+          });
+
+          // Log cleanup results if any jobs were affected
+          if (cleanupResult.staleJobsFound > 0) {
+            this.log('info', 'Stale job cleanup completed', {
+              found: cleanupResult.staleJobsFound,
+              reset: cleanupResult.jobsReset,
+              failed: cleanupResult.jobsMarkedFailed,
+              resetJobIds: cleanupResult.resetJobIds,
+              failedJobIds: cleanupResult.failedJobIds,
+            });
+          }
+        } catch (cleanupError) {
+          // Log cleanup errors but don't block job processing
+          this.log('warn', 'Stale job cleanup failed', {
+            error: cleanupError instanceof Error ? cleanupError.message : String(cleanupError),
+          });
+        }
+      }
+      // === END STALE JOB CLEANUP ===
+
       // Process one job per cycle (as specified in requirements)
       const result = await this.processNextJob();
 

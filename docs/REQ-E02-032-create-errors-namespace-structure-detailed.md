@@ -24,11 +24,11 @@ This task creates a comprehensive, categorized `errors` namespace within `/messa
 
 ## Pre-Implementation Checklist
 
-- [ ] Epic 1 foundation is complete (next-intl installed and configured)
-- [ ] `/messages/en.json` file exists with current flat `errors` namespace
-- [ ] Other language files exist (`fr.json`, `es.json`, `de.json`, `nl.json`, `it.json`)
-- [ ] Access to existing error handling patterns in `/src/lib/error-utils.ts`
-- [ ] Access to existing validation patterns in `/src/components/ItemCapture/utils/validation.ts`
+- [x] Epic 1 foundation is complete (next-intl installed and configured) ---implemented:verified next-intl configured---
+- [x] `/messages/en.json` file exists with current flat `errors` namespace ---implemented:verified at lines 671-709---
+- [x] Other language files exist (`fr.json`, `es.json`, `de.json`, `nl.json`, `it.json`) ---implemented:all 6 files found---
+- [x] Access to existing error handling patterns in `/src/lib/error-utils.ts` ---implemented:verified exists---
+- [x] Access to existing validation patterns in `/src/components/ItemCapture/utils/validation.ts` ---implemented:verified exists---
 
 ---
 
@@ -74,8 +74,8 @@ This task creates a comprehensive, categorized `errors` namespace within `/messa
    - Document any existing usage patterns
 
 #### Acceptance Criteria
-- [ ] Current `errors` namespace content is documented
-- [ ] Existing key-to-new-path mapping is prepared
+- [x] Current `errors` namespace content is documented ---implemented:verified current errors namespace at lines 671-709 with 17 flat keys plus nested errors.form---
+- [x] Existing key-to-new-path mapping is prepared ---implemented:mapping prepared per spec document---
 
 ---
 

@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-21T08:23:01.499868",
+  "updated_at": "2026-01-21T15:27:33.034189",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 9,
+  "current_task_index": 2,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -75,10 +75,10 @@
       "title": "Extract modal/dialog strings",
       "description": "",
       "raw_match": "- [ ] **Task 2H.3:** Extract modal/dialog strings",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E02-003",
       "error": null,
-      "processed_at": "2026-01-19T23:46:37.629516",
+      "processed_at": "2026-01-21T15:27:33.034071",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-003",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-003-extract-modaldialog-strings-overview.md",
@@ -88,13 +88,14 @@
       "overview_completed": true,
       "details_completed": true,
       "test_results": {
-        "tests_ran": false,
-        "tests_passed": null,
-        "test_summary": "No test execution detected"
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Explicit TEST SUMMARY indicates success"
       },
-      "tests_ran": false,
-      "tests_passed": null,
-      "test_summary": "No test execution detected"
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Explicit TEST SUMMARY indicates success",
+      "implementation_completed": true
     },
     {
       "id": "2H.4",
@@ -305,7 +306,7 @@
       "title": "Create `useCommonTranslations` convenience hook (optional)",
       "description": "",
       "raw_match": "- [ ] **Task 2H.11:** Create `useCommonTranslations` convenience hook (optional)",
-      "status": "completed",
+      "status": "pending",
       "request_id": "REQ-E02-031",
       "error": null,
       "processed_at": "2026-01-20T08:19:45.781308",
@@ -316,7 +317,15 @@
       },
       "request_completed": true,
       "overview_completed": true,
-      "details_completed": true
+      "details_completed": true,
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": null,
+      "test_summary": "No test execution detected"
     },
     {
       "id": "2J.1",
@@ -325,7 +334,7 @@
       "title": "Create `errors` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2J.1:** Create `errors` namespace structure",
-      "status": "completed",
+      "status": "processing",
       "request_id": "REQ-E02-032",
       "error": null,
       "processed_at": "2026-01-20T08:26:47.298475",
@@ -1797,9 +1806,28 @@
       "current_task_index": 0
     }
   },
-  "errors": [],
+  "errors": [
+    {
+      "stage": "implementation",
+      "task_id": "2H.3",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"64fed1e4-b9fd-4743-8734-c5e04c14749a\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T04:20:56.613246"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2H.4",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"43b59b89-26fe-489a-a88c-27961e5e6cd8\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T05:20:47.089764"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2H.11",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"44ff94b3-6170-4aa6-afb1-e8cb33219098\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-21T08:55:35.162769"
+    }
+  ],
   "metadata": {
-    "total_requests_generated": 6,
+    "total_requests_generated": 1,
     "last_request_id": "REQ-E02-085",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
@@ -1807,23 +1835,21 @@
   "recent_errors": [],
   "precheck": {
     "status": "passed",
-    "completed_at": "2026-01-21T03:25:31.899558",
+    "completed_at": "2026-01-21T15:06:33.773377",
     "typescript": {
       "passed": true,
-      "error_count": 12,
+      "error_count": 2,
       "production_error_count": 0,
       "test_error_count": 0,
-      "generated_error_count": 12,
+      "generated_error_count": 2,
       "sample_errors": [
         "../.next/types/app/admin/items/[publicId]/analytics/page.ts(34,29): error TS2344: Type 'ItemAnalyticsPageProps' does not satisfy the constraint 'PageProps'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(166,7): error TS2344: Type '{ __tag__: \"POST\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(49,7): error TS2344: Type '{ __tag__: \"GET\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'."
+        "../.next/types/app/print/qr-codes/[propertyId]/page.ts(34,29): error TS2344: Type '{ params: { propertyId: string; }; searchParams: { data?: string | undefined; }; }' does not satisfy the constraint 'PageProps'."
       ],
-      "notes": "No blocking errors (0 test, 12 generated)"
+      "notes": "No blocking errors (0 test, 2 generated)"
     },
     "tools": {},
     "next_cache_cleared": false
-  }
+  },
+  "session_id_implementation": "29a76fa6-47eb-4c67-8088-3397478ce34c"
 }

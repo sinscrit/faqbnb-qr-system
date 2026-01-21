@@ -330,9 +330,10 @@ async function canAccessProperty(user: any, propertyId: string, isAdmin: boolean
 // GET /api/admin/properties/[propertyId] - Get specific property with account context
 export async function GET(
   request: NextRequest,
-  { params }: { params: { propertyId: string } }
+  { params }: { params: Promise<{ propertyId: string }> }
 ) {
   try {
+    const { propertyId } = await params;
     // Validate authentication
     const authResult = await validateAdminAuth(request);
     if (authResult.error) {
@@ -342,8 +343,6 @@ export async function GET(
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
     const supabase = authResult.supabase; // Get supabase client from authResult
-
-    const { propertyId } = params;
 
     if (!propertyId) {
       return NextResponse.json(
@@ -390,9 +389,10 @@ export async function GET(
 // PUT /api/admin/properties/[propertyId] - Update specific property with account validation
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { propertyId: string } }
+  { params }: { params: Promise<{ propertyId: string }> }
 ) {
   try {
+    const { propertyId } = await params;
     // Validate authentication
     const authResult = await validateAdminAuth(request);
     if (authResult.error) {
@@ -402,8 +402,6 @@ export async function PUT(
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
     const supabase = authResult.supabase; // Get supabase client from authResult
-
-    const { propertyId } = params;
 
     if (!propertyId) {
       return NextResponse.json(
@@ -510,9 +508,10 @@ export async function PUT(
 // DELETE /api/admin/properties/[propertyId] - Delete specific property with account validation
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { propertyId: string } }
+  { params }: { params: Promise<{ propertyId: string }> }
 ) {
   try {
+    const { propertyId } = await params;
     // Validate authentication
     const authResult = await validateAdminAuth(request);
     if (authResult.error) {
@@ -522,8 +521,6 @@ export async function DELETE(
     const user = authResult.user;
     const userIsAdmin = authResult.isAdmin;
     const supabase = authResult.supabase; // Get supabase client from authResult
-
-    const { propertyId } = params;
 
     if (!propertyId) {
       return NextResponse.json(

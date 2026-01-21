@@ -9,9 +9,9 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     requestId: string;
-  };
+  }>;
 }
 
 /**
@@ -115,8 +115,9 @@ export async function POST(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  const { requestId } = await params;
   console.log('🔥[GRANT_DEBUG] POST request received:', {
-    requestId: params.requestId,
+    requestId,
     url: request.url,
     method: request.method,
     timestamp: new Date().toISOString()
@@ -142,7 +143,6 @@ export async function POST(
   }
 
   const { supabase, user } = authResult;
-  const { requestId } = params;
 
   console.log('✅ ACCESS_GRANT_DEBUG: Authentication successful for request:', requestId);
 
@@ -370,6 +370,7 @@ export async function PUT(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<NextResponse> {
+  const { requestId } = await params;
   const authResult = await validateAdminAuth(request);
 
   if (authResult.error) {
@@ -390,7 +391,6 @@ export async function PUT(
   }
 
   const { supabase } = authResult;
-  const { requestId } = params;
 
   console.log('✅ ACCESS_GRANT_RESEND_DEBUG: Authentication successful for request:', requestId);
 

@@ -4,7 +4,7 @@ import { ReactionCounts } from '@/types/reactions';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { publicId: string } }
+  { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
     const { publicId } = await params;

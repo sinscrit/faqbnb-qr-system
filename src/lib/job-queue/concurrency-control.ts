@@ -41,7 +41,7 @@ export interface ConcurrencyConfig {
 }
 
 /**
- * Result of stale lock cleanup operation
+ * Result of stale lock cleanup operation (REQ-E03-020)
  */
 export interface CleanupResult {
   /** Number of stale jobs found */
@@ -50,10 +50,14 @@ export interface CleanupResult {
   jobsReset: number;
   /** Number of jobs marked as failed (exceeded retry limit) */
   jobsMarkedFailed: number;
-  /** IDs of affected jobs */
-  affectedJobIds: string[];
+  /** IDs of jobs reset to queued */
+  resetJobIds: string[];
+  /** IDs of jobs marked as failed */
+  failedJobIds: string[];
   /** Cleanup timestamp */
   cleanedAt: string;
+  /** Error if cleanup operation failed */
+  error?: string;
 }
 
 /**
@@ -177,8 +181,10 @@ export async function cleanupStaleProcessingJobs(
       staleJobsFound: 0,
       jobsReset: 0,
       jobsMarkedFailed: 0,
-      affectedJobIds: [],
+      resetJobIds: [],
+      failedJobIds: [],
       cleanedAt: new Date().toISOString(),
+      error: findError?.message || 'Failed to find stale jobs',
     };
   }
 
@@ -187,37 +193,44 @@ export async function cleanupStaleProcessingJobs(
       staleJobsFound: 0,
       jobsReset: 0,
       jobsMarkedFailed: 0,
-      affectedJobIds: [],
+      resetJobIds: [],
+      failedJobIds: [],
       cleanedAt: new Date().toISOString(),
     };
   }
 
   const jobsToReset = staleJobs.filter((j: { id: string; attempts: number | null }) => (j.attempts || 0) < maxStaleRetries);
   const jobsToFail = staleJobs.filter((j: { id: string; attempts: number | null }) => (j.attempts || 0) >= maxStaleRetries);
-  const affectedJobIds: string[] = [];
+  const resetJobIds: string[] = [];
+  const failedJobIds: string[] = [];
 
-  // Reset jobs to queued (can be retried)
+  // Reset jobs to queued (can be retried) - increment attempts (REQ-E03-020)
   if (jobsToReset.length > 0) {
-    const resetIds = jobsToReset.map((j: { id: string }) => j.id);
-    const { error: resetError } = await supabaseAdmin
-      .from('translation_jobs')
-      .update({
-        status: 'queued',
-        locked_by: null,
-        locked_at: null,
-        started_at: null,
-      })
-      .in('id', resetIds);
+    for (const job of jobsToReset) {
+      const { error: resetError } = await supabaseAdmin
+        .from('translation_jobs')
+        .update({
+          status: 'queued',
+          locked_by: null,
+          locked_at: null,
+          started_at: null,
+          attempts: (job.attempts || 0) + 1, // INCREMENT ATTEMPTS
+        })
+        .eq('id', job.id);
 
-    if (!resetError) {
-      affectedJobIds.push(...resetIds);
-      console.info(`[ConcurrencyControl] Reset ${resetIds.length} stale jobs to queued`);
-    } else {
-      console.error('[ConcurrencyControl] Error resetting stale jobs:', resetError);
+      if (!resetError) {
+        resetJobIds.push(job.id);
+      } else {
+        console.error(`[ConcurrencyControl] Error resetting job ${job.id}:`, resetError);
+      }
+    }
+
+    if (resetJobIds.length > 0) {
+      console.info(`[ConcurrencyControl] Reset ${resetJobIds.length} stale jobs to queued (attempts incremented)`);
     }
   }
 
-  // Mark jobs as failed (exceeded retry limit)
+  // Mark jobs as failed (exceeded retry limit) - use exact error message from spec (REQ-E03-020)
   if (jobsToFail.length > 0) {
     const failIds = jobsToFail.map((j: { id: string }) => j.id);
     const { error: failError } = await supabaseAdmin
@@ -226,13 +239,13 @@ export async function cleanupStaleProcessingJobs(
         status: 'failed',
         locked_by: null,
         locked_at: null,
-        error_message: `Exceeded maximum processing attempts (${maxStaleRetries}). Job timed out multiple times.`,
+        error_message: 'exceeded_max_retries_after_stale', // EXACT format from spec
         completed_at: new Date().toISOString(),
       })
       .in('id', failIds);
 
     if (!failError) {
-      affectedJobIds.push(...failIds);
+      failedJobIds.push(...failIds);
       console.warn(`[ConcurrencyControl] Marked ${failIds.length} stale jobs as failed (exceeded retries)`);
     } else {
       console.error('[ConcurrencyControl] Error marking jobs as failed:', failError);
@@ -241,9 +254,10 @@ export async function cleanupStaleProcessingJobs(
 
   return {
     staleJobsFound: staleJobs.length,
-    jobsReset: jobsToReset.length,
-    jobsMarkedFailed: jobsToFail.length,
-    affectedJobIds,
+    jobsReset: resetJobIds.length,
+    jobsMarkedFailed: failedJobIds.length,
+    resetJobIds,
+    failedJobIds,
     cleanedAt: new Date().toISOString(),
   };
 }
