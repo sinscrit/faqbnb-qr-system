@@ -27,6 +27,9 @@ export default defineConfig({
         'src/lib/job-queue/**/*.ts',  // Added for REQ-254
         'src/lib/translation-service/**/*.ts',
         'src/lib/content-translation/**/*.ts',  // Added for REQ-E03-030
+        'src/app/api/translations/**/*.ts',      // Added for REQ-E03-032
+        'src/app/api/admin/items/**/*.ts',       // Added for REQ-E03-032
+        'src/app/api/admin/articles/**/*.ts',    // Added for REQ-E03-032
       ],
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**'],
     },
