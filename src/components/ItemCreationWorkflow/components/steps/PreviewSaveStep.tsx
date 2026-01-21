@@ -26,6 +26,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { ArrowLeft, Check, Loader2, Plus } from 'lucide-react';
 import {
   DndContext,
@@ -577,6 +578,9 @@ export function PreviewSaveStep({
   isSaving = false,
   className,
 }: PreviewSaveStepProps) {
+  // Translation hook for notifications
+  const tNotifications = useTranslations('common.notifications');
+
   // Local state
   const [showSuccess, setShowSuccess] = useState(false);
   const [savedResult, setSavedResult] = useState<{ id: string; qrCodeUrl: string; itemName: string } | null>(null);
@@ -851,8 +855,8 @@ export function PreviewSaveStep({
 
       {/* Screen Reader Announcements */}
       <div aria-live="polite" className="sr-only">
-        {showSuccess && 'Item saved successfully'}
-        {saveError && `Error: ${saveError}`}
+        {showSuccess && tNotifications('success.itemSaved')}
+        {saveError && `${tNotifications('error.generic')}: ${saveError}`}
       </div>
 
       {/* Last Piece Removal Confirmation Dialog */}

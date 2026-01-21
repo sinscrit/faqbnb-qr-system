@@ -18,6 +18,7 @@
  */
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Edit, PlusCircle, Package, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -152,6 +153,9 @@ export function WhatsNextStep({
   onDone,
   className,
 }: WhatsNextStepProps) {
+  // Translation hook for notifications
+  const tNotifications = useTranslations('common.notifications');
+
   // Note: savedItemId is available for future use (e.g., analytics, deep linking)
   // Currently used implicitly in callback closures by parent component
   void savedItemId;
@@ -179,7 +183,7 @@ export function WhatsNextStep({
 
         {/* Item name confirmation */}
         <p className="text-gray-600 mt-2">
-          <span className="font-medium">{savedItemName}</span> has been saved successfully.
+          {tNotifications('success.itemSavedNamed', { itemName: savedItemName })}
         </p>
 
         {/* Call to action prompt */}
