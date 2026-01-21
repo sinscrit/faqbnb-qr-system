@@ -61,6 +61,8 @@ export default function RegistrationForm({
   isOAuthCompleting = false
 }: RegistrationFormProps) {
   const t = useTranslations('common.actions');
+  const tForm = useTranslations('common.form');
+  const tErrors = useTranslations('errors.form');
 
   const [formData, setFormData] = useState<FormData>({
     email: email || '',
@@ -157,7 +159,7 @@ export default function RegistrationForm({
   // Password strength calculation
   const calculatePasswordStrength = (password: string): PasswordStrength => {
     if (!password) {
-      return { score: 0, feedback: [], color: 'gray-300', label: 'Enter password' };
+      return { score: 0, feedback: [], color: 'gray-300', label: tForm('passwordStrength.enterPassword') };
     }
 
     let score = 0;
@@ -167,39 +169,45 @@ export default function RegistrationForm({
     if (password.length >= 8) {
       score += 1;
     } else {
-      feedback.push('At least 8 characters');
+      feedback.push(tForm('passwordStrength.minChars', { min: 8 }));
     }
 
     // Lowercase check
     if (/[a-z]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('One lowercase letter');
+      feedback.push(tForm('passwordStrength.lowercase'));
     }
 
     // Uppercase check
     if (/[A-Z]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('One uppercase letter');
+      feedback.push(tForm('passwordStrength.uppercase'));
     }
 
     // Number check
     if (/\d/.test(password)) {
       score += 1;
     } else {
-      feedback.push('One number');
+      feedback.push(tForm('passwordStrength.number'));
     }
 
     // Special character check
     if (/[^a-zA-Z0-9]/.test(password)) {
       score += 1;
     } else {
-      feedback.push('One special character');
+      feedback.push(tForm('passwordStrength.special'));
     }
 
     const colors = ['red-300', 'red-400', 'yellow-400', 'blue-400', 'green-400'];
-    const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+    const labels = [
+      tForm('passwordStrength.veryWeak'),
+      tForm('passwordStrength.weak'),
+      tForm('passwordStrength.fair'),
+      tForm('passwordStrength.good'),
+      tForm('passwordStrength.strong')
+    ];
 
     return {
       score: Math.min(score, 4),
@@ -215,33 +223,33 @@ export default function RegistrationForm({
   const validateField = (name: keyof FormData, value: string | boolean): string | undefined => {
     switch (name) {
       case 'email':
-        if (!value) return 'Email is required';
+        if (!value) return tErrors('emailRequired');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value as string)) return 'Please enter a valid email address';
+        if (!emailRegex.test(value as string)) return tErrors('invalidEmail');
         return undefined;
-      
+
       case 'password':
-        if (!value) return 'Password is required';
+        if (!value) return tErrors('passwordRequired');
         const password = value as string;
-        if (password.length < 8) return 'Password must be at least 8 characters';
-        if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
-        if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
-        if (!/\d/.test(password)) return 'Password must contain at least one number';
+        if (password.length < 8) return tErrors('passwordTooShort', { min: 8 });
+        if (!/[a-z]/.test(password)) return tForm('passwordStrength.lowercase');
+        if (!/[A-Z]/.test(password)) return tForm('passwordStrength.uppercase');
+        if (!/\d/.test(password)) return tForm('passwordStrength.number');
         return undefined;
-      
+
       case 'confirmPassword':
-        if (!value) return 'Please confirm your password';
-        if (value !== formData.password) return 'Passwords do not match';
+        if (!value) return tErrors('passwordRequired');
+        if (value !== formData.password) return tForm('passwordMatch.noMatch');
         return undefined;
-      
+
       case 'fullName':
-        if (value && (value as string).length < 2) return 'Name must be at least 2 characters';
+        if (value && (value as string).length < 2) return tForm('hints.minCharacters', { min: 2 });
         return undefined;
-      
+
       case 'agreeToTerms':
-        if (!value) return 'You must agree to the terms and conditions';
+        if (!value) return tForm('terms.agreeToTerms');
         return undefined;
-      
+
       default:
         return undefined;
     }
@@ -558,13 +566,13 @@ export default function RegistrationForm({
   const REGISTRATION_METHOD_OPTIONS = [
     {
       id: 'google' as const,
-      label: t('continueWithGoogle'),
-      description: 'Quick sign-up using your Google account'
+      label: tForm('registration.continueWithGoogle'),
+      description: tForm('registration.quickSignUp')
     },
     {
       id: 'email-password' as const,
-      label: t('signUp'),
-      description: 'Create a password for your account'
+      label: tForm('registration.signUpWithEmail'),
+      description: tForm('registration.createPassword')
     }
   ];
 
@@ -572,11 +580,11 @@ export default function RegistrationForm({
   const registrationMethodSelector = isGmailEmail ? (
     <div className="space-y-3">
       <label className="block text-sm font-medium text-gray-700">
-        Choose how to create your account
+        {tForm('registration.chooseMethod')}
       </label>
       <div
         role="radiogroup"
-        aria-label="Select registration method"
+        aria-label={tForm('accessibility.selectMethod')}
         className="space-y-2"
       >
         {REGISTRATION_METHOD_OPTIONS.map((option) => (
@@ -678,7 +686,7 @@ export default function RegistrationForm({
           <Shield className="h-4 w-4 text-green-600 flex-shrink-0" />
           <div className="ml-2">
             <p className="text-sm text-green-800">
-              Access code: <span className="font-mono font-semibold">{accessCode.substring(0, 4)}...</span>
+              {tForm('registration.accessCodeInfo')} <span className="font-mono font-semibold">{accessCode.substring(0, 4)}...</span>
             </p>
           </div>
         </div>
@@ -687,7 +695,7 @@ export default function RegistrationForm({
       {/* Email Field (read-only) */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          Email Address
+          {tForm('labels.email')}
         </label>
         <input
           type="email"
@@ -697,12 +705,13 @@ export default function RegistrationForm({
           onChange={handleInputChange}
           disabled={true} // Pre-filled from URL, read-only
           className="w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-700 cursor-not-allowed"
-          placeholder="email@example.com"
+          placeholder={tForm('placeholders.emailExample')}
+          aria-label={tForm('accessibility.emailInput')}
           autoComplete="email"
           required
         />
         <p className="text-xs text-gray-500 mt-1">
-          This email is linked to your access code and cannot be changed.
+          {tForm('hints.emailLinked')}
         </p>
         {errors.email && (
           <p className="text-red-600 text-sm mt-1">{errors.email}</p>
@@ -718,7 +727,7 @@ export default function RegistrationForm({
       }`}>
         <div>
           <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-            Full Name <span className="text-gray-400">(optional)</span>
+            {tForm('labels.fullName')} <span className="text-gray-400">{tForm('hints.optional')}</span>
           </label>
           <input
             type="text"
@@ -730,7 +739,7 @@ export default function RegistrationForm({
             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
               errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'
             } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            placeholder="John Doe"
+            placeholder={tForm('placeholders.fullName')}
             autoComplete="name"
           />
           {errors.fullName && (
@@ -745,7 +754,7 @@ export default function RegistrationForm({
       }`}>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-            Password
+            {tForm('labels.password')}
           </label>
           <div className="relative">
             <input
@@ -758,7 +767,8 @@ export default function RegistrationForm({
               className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
                 errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              placeholder="Create a strong password"
+              placeholder={tForm('placeholders.passwordCreate')}
+              aria-label={tForm('accessibility.passwordInput')}
               autoComplete="new-password"
               required
             />
@@ -768,6 +778,7 @@ export default function RegistrationForm({
               disabled={isLoading}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               tabIndex={-1}
+              title={showPassword ? tForm('accessibility.hidePassword') : tForm('accessibility.showPassword')}
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -781,7 +792,7 @@ export default function RegistrationForm({
           {formData.password && (
             <div className="mt-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-600">Password strength:</span>
+                <span className="text-gray-600">{tForm('passwordStrength.label')}</span>
                 <span className={`font-medium text-${passwordStrength.color.replace('-300', '-600').replace('-400', '-600')}`}>
                   {passwordStrength.label}
                 </span>
@@ -794,7 +805,7 @@ export default function RegistrationForm({
               </div>
               {passwordStrength.feedback.length > 0 && (
                 <div className="mt-1">
-                  <p className="text-xs text-gray-600">Requirements:</p>
+                  <p className="text-xs text-gray-600">{tForm('passwordStrength.requirements')}</p>
                   <ul className="text-xs text-gray-500 space-y-0.5">
                     {passwordStrength.feedback.map((item, index) => (
                       <li key={index} className="flex items-center">
@@ -820,7 +831,7 @@ export default function RegistrationForm({
       }`}>
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-            Confirm Password
+            {tForm('labels.confirmPassword')}
           </label>
           <div className="relative">
             <input
@@ -834,7 +845,7 @@ export default function RegistrationForm({
                 errors.confirmPassword ? 'border-red-300 bg-red-50' :
                 formData.confirmPassword && formData.password === formData.confirmPassword ? 'border-green-300 bg-green-50' : 'border-gray-300'
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              placeholder="Confirm your password"
+              placeholder={tForm('placeholders.passwordConfirm')}
               autoComplete="new-password"
               required
             />
@@ -844,6 +855,7 @@ export default function RegistrationForm({
               disabled={isLoading}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               tabIndex={-1}
+              title={showConfirmPassword ? tForm('accessibility.hidePassword') : tForm('accessibility.showPassword')}
             >
               {showConfirmPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -859,12 +871,12 @@ export default function RegistrationForm({
               {formData.password === formData.confirmPassword ? (
                 <>
                   <Check className="h-3 w-3 text-green-600 mr-1" />
-                  <span className="text-xs text-green-600">Passwords match</span>
+                  <span className="text-xs text-green-600">{tForm('passwordMatch.match')}</span>
                 </>
               ) : (
                 <>
                   <AlertCircle className="h-3 w-3 text-red-600 mr-1" />
-                  <span className="text-xs text-red-600">Passwords do not match</span>
+                  <span className="text-xs text-red-600">{tForm('passwordMatch.noMatch')}</span>
                 </>
               )}
             </div>
@@ -892,27 +904,27 @@ export default function RegistrationForm({
             required
           />
           <label htmlFor="agreeToTerms" className="ml-3 text-sm text-gray-700">
-            I agree to the{' '}
-            <button 
-              type="button" 
+            {tForm('terms.agreeToTerms')}{' '}
+            <button
+              type="button"
               className="text-blue-600 hover:text-blue-700 underline"
               onClick={() => {
                 // TODO: Open terms modal or navigate to terms page
                 console.log('Terms of Service clicked');
               }}
             >
-              Terms of Service
+              {tForm('terms.termsOfService')}
             </button>
-            {' '}and{' '}
-            <button 
-              type="button" 
+            {' '}{tForm('terms.and')}{' '}
+            <button
+              type="button"
               className="text-blue-600 hover:text-blue-700 underline"
               onClick={() => {
                 // TODO: Open privacy modal or navigate to privacy page
                 console.log('Privacy Policy clicked');
               }}
             >
-              Privacy Policy
+              {tForm('terms.privacyPolicy')}
             </button>
           </label>
         </div>
@@ -970,7 +982,7 @@ export default function RegistrationForm({
       {/* Helper Text */}
       <div className="text-center">
         <p className="text-sm text-gray-600">
-          Your account will be linked to your verified access code
+          {tForm('registration.accountLinked')}
         </p>
       </div>
     </form>
