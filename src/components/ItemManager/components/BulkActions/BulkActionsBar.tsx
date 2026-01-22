@@ -10,7 +10,7 @@
  * @module ItemManager/components/BulkActions/BulkActionsBar
  * @see docs/REQ-070-build-bulkactionsbar-component-overview.md
  * @see docs/REQ-070-build-bulkactionsbar-component-detailed.md
- * @lastModified 2026-01-04 (REQ-070)
+ * @lastModified 2026-01-22 (REQ-E02-082 - Updated i18n to use items.bulk namespace)
  */
 
 import { Check, Trash2, Tag, Minus, FolderInput, X, Loader2 } from 'lucide-react';
@@ -145,7 +145,8 @@ export function BulkActionsBar({
   loading = false,
   className,
 }: BulkActionsBarProps) {
-  const t = useTranslations('common.actions');
+  const t = useTranslations('items.bulk');
+  const tActions = useTranslations('items.bulk.actions');
 
   // Don't render if no items selected
   if (selectedCount === 0) {
@@ -155,7 +156,7 @@ export function BulkActionsBar({
   return (
     <div
       role="toolbar"
-      aria-label={`Bulk actions for ${selectedCount} selected item${selectedCount !== 1 ? 's' : ''}`}
+      aria-label={t('ariaLabel', { count: selectedCount })}
       className={cn(
         // Fixed positioning at bottom
         'fixed bottom-0 left-0 right-0 z-40',
@@ -182,11 +183,11 @@ export function BulkActionsBar({
               <Check className="h-4 w-4 text-[#FF385C]" />
             </div>
             <span className="text-sm font-medium text-gray-900 truncate">
-              {selectedCount} selected
+              {t('selected', { count: selectedCount })}
             </span>
             {/* Screen reader announcement */}
             <span className="sr-only">
-              Currently {selectedCount} item{selectedCount !== 1 ? 's' : ''} selected
+              {t('selectedAria', { count: selectedCount })}
             </span>
           </div>
 
@@ -203,7 +204,7 @@ export function BulkActionsBar({
                 {/* Delete button */}
                 <ActionButton
                   icon={Trash2}
-                  label={t('delete')}
+                  label={tActions('delete')}
                   onClick={onDelete}
                   variant="destructive"
                   disabled={loading}
@@ -212,7 +213,7 @@ export function BulkActionsBar({
                 {/* Add Tag button */}
                 <ActionButton
                   icon={Tag}
-                  label={t('addTag')}
+                  label={tActions('addTag')}
                   onClick={onAddTag}
                   variant="primary"
                   disabled={loading}
@@ -221,7 +222,7 @@ export function BulkActionsBar({
                 {/* Remove Tag button */}
                 <ActionButton
                   icon={Minus}
-                  label={t('removeTag')}
+                  label={tActions('removeTag')}
                   onClick={onRemoveTag}
                   variant="secondary"
                   disabled={loading}
@@ -231,7 +232,7 @@ export function BulkActionsBar({
                 {multiPropertyMode && onMoveToProperty && (
                   <ActionButton
                     icon={FolderInput}
-                    label={t('moveToProperty')}
+                    label={tActions('moveToProperty')}
                     onClick={onMoveToProperty}
                     variant="primary"
                     disabled={loading}
@@ -253,8 +254,8 @@ export function BulkActionsBar({
             <button
               type="button"
               onClick={onExitSelection}
-              aria-label={t('cancel')}
-              title={t('cancel')}
+              aria-label={t('cancelSelection')}
+              title={t('cancelSelection')}
               className={cn(
                 'flex items-center justify-center',
                 'min-h-[44px] min-w-[44px]',

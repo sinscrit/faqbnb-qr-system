@@ -1328,51 +1328,52 @@
       "showing": "Showing {start} to {end} of {total}"
     },
     "bulk": {
-      "selected": "{count, plural, one {# selected} other {# selected}}",
-      "selectedAria": "{count, plural, one {Currently # item selected} other {Currently # items selected}}",
-      "processing": "Processing...",
+      "ariaLabel": "{count, plural, one {Bulkacties voor # geselecteerd item} other {Bulkacties voor # geselecteerde items}}",
+      "selected": "{count, plural, one {# geselecteerd} other {# geselecteerd}}",
+      "selectedAria": "{count, plural, one {Momenteel # item geselecteerd} other {Momenteel # items geselecteerd}}",
+      "processing": "Verwerken...",
       "actions": {
-        "delete": "Delete",
-        "addTag": "Add Tag",
-        "removeTag": "Remove Tag",
-        "moveToProperty": "Move to Property"
+        "delete": "Verwijderen",
+        "addTag": "Tag toevoegen",
+        "removeTag": "Tag verwijderen",
+        "moveToProperty": "Verplaatsen naar eigendom"
       },
-      "cancel": "Cancel",
-      "cancelSelection": "Cancel selection",
-      "selectAll": "Select All",
-      "deselectAll": "Deselect All"
+      "cancel": "Annuleren",
+      "cancelSelection": "Selectie annuleren",
+      "selectAll": "Alles selecteren",
+      "deselectAll": "Alles deselecteren"
     },
     "bulkTag": {
-      "addTitle": "Add Tags to Items",
-      "removeTitle": "Remove Tags from Items",
-      "addDescription": "Select tags to add to {count} selected {count, plural, one {item} other {items}}",
-      "removeDescription": "Select tags to remove from {count} selected {count, plural, one {item} other {items}}",
-      "selectTags": "Select tags",
-      "noTagsAvailable": "No tags available",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
+      "addTitle": "Tags toevoegen aan items",
+      "removeTitle": "Tags verwijderen van items",
+      "addDescription": "Selecteer tags om toe te voegen aan {count, plural, one {# geselecteerd item} other {# geselecteerde items}}",
+      "removeDescription": "Selecteer tags om te verwijderen van {count, plural, one {# geselecteerd item} other {# geselecteerde items}}",
+      "selectTags": "Selecteer tags",
+      "noTagsAvailable": "Geen tags beschikbaar",
+      "confirm": "Bevestigen",
+      "cancel": "Annuleren"
     },
     "bulkMove": {
-      "title": "Move Items to Property",
-      "description": "Select a property to move {count} selected {count, plural, one {item} other {items}} to",
-      "selectProperty": "Select property",
-      "confirm": "Move Items",
-      "cancel": "Cancel"
+      "title": "Items verplaatsen naar eigendom",
+      "description": "Selecteer een eigendom om {count, plural, one {# geselecteerd item} other {# geselecteerde items}} naar te verplaatsen",
+      "selectProperty": "Selecteer eigendom",
+      "confirm": "Items verplaatsen",
+      "cancel": "Annuleren"
     },
     "delete": {
-      "title": "Delete Item",
-      "titlePlural": "Delete Items",
+      "title": "Item verwijderen",
+      "titlePlural": "Items verwijderen",
       "message": {
-        "single": "Are you sure you want to delete this item? This action cannot be undone.",
-        "plural": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-        "named": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone."
+        "single": "Weet u zeker dat u dit item wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "plural": "Weet u zeker dat u deze {count} items wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "named": "Weet u zeker dat u \"{itemName}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
       },
-      "confirm": "Delete",
-      "confirmPlural": "Delete {count} Items",
-      "cancel": "Cancel",
-      "deleting": "Deleting...",
-      "overflow": "and {count} more",
-      "itemsToDelete": "Items to be deleted"
+      "confirm": "Verwijderen",
+      "confirmPlural": "{count} items verwijderen",
+      "cancel": "Annuleren",
+      "deleting": "Verwijderen...",
+      "overflow": "en {count} meer",
+      "itemsToDelete": "Te verwijderen items"
     },
     "detail": {
       "title": "Item Details",

@@ -1338,50 +1338,51 @@
       "showing": "Showing {start} to {end} of {total}"
     },
     "bulk": {
-      "selected": "{count, plural, one {# selected} other {# selected}}",
-      "selectedAria": "{count, plural, one {Currently # item selected} other {Currently # items selected}}",
-      "processing": "Processing...",
+      "ariaLabel": "{count, plural, one {Azioni di massa per # elemento selezionato} other {Azioni di massa per # elementi selezionati}}",
+      "selected": "{count, plural, one {# selezionato} other {# selezionati}}",
+      "selectedAria": "{count, plural, one {Attualmente # elemento selezionato} other {Attualmente # elementi selezionati}}",
+      "processing": "Elaborazione...",
       "actions": {
-        "delete": "Delete",
-        "addTag": "Add Tag",
-        "removeTag": "Remove Tag",
-        "moveToProperty": "Move to Property"
+        "delete": "Elimina",
+        "addTag": "Aggiungi tag",
+        "removeTag": "Rimuovi tag",
+        "moveToProperty": "Sposta in proprietà"
       },
-      "cancel": "Cancel",
-      "cancelSelection": "Cancel selection",
-      "selectAll": "Select All",
-      "deselectAll": "Deselect All"
+      "cancel": "Annulla",
+      "cancelSelection": "Annulla selezione",
+      "selectAll": "Seleziona tutto",
+      "deselectAll": "Deseleziona tutto"
     },
     "bulkTag": {
-      "addTitle": "Add Tags to Items",
-      "removeTitle": "Remove Tags from Items",
-      "addDescription": "Select tags to add to {count} selected {count, plural, one {item} other {items}}",
-      "removeDescription": "Select tags to remove from {count} selected {count, plural, one {item} other {items}}",
-      "selectTags": "Select tags",
-      "noTagsAvailable": "No tags available",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
+      "addTitle": "Aggiungi tag agli elementi",
+      "removeTitle": "Rimuovi tag dagli elementi",
+      "addDescription": "Seleziona tag da aggiungere a {count, plural, one {# elemento selezionato} other {# elementi selezionati}}",
+      "removeDescription": "Seleziona tag da rimuovere da {count, plural, one {# elemento selezionato} other {# elementi selezionati}}",
+      "selectTags": "Seleziona tag",
+      "noTagsAvailable": "Nessun tag disponibile",
+      "confirm": "Conferma",
+      "cancel": "Annulla"
     },
     "bulkMove": {
-      "title": "Move Items to Property",
-      "description": "Select a property to move {count} selected {count, plural, one {item} other {items}} to",
-      "selectProperty": "Select property",
-      "confirm": "Move Items",
-      "cancel": "Cancel"
+      "title": "Sposta elementi in proprietà",
+      "description": "Seleziona una proprietà per spostare {count, plural, one {# elemento selezionato} other {# elementi selezionati}}",
+      "selectProperty": "Seleziona proprietà",
+      "confirm": "Sposta elementi",
+      "cancel": "Annulla"
     },
     "delete": {
-      "title": "Delete Item",
-      "titlePlural": "Delete Items",
+      "title": "Elimina elemento",
+      "titlePlural": "Elimina elementi",
       "message": {
-        "single": "Are you sure you want to delete this item? This action cannot be undone.",
-        "plural": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-        "named": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone."
+        "single": "Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata.",
+        "plural": "Sei sicuro di voler eliminare questi {count} elementi? Questa azione non può essere annullata.",
+        "named": "Sei sicuro di voler eliminare \"{itemName}\"? Questa azione non può essere annullata."
       },
-      "confirm": "Delete",
-      "confirmPlural": "Delete {count} Items",
-      "cancel": "Cancel",
-      "deleting": "Deleting...",
-      "overflow": "and {count} more",
+      "confirm": "Elimina",
+      "confirmPlural": "Elimina {count} elementi",
+      "cancel": "Annulla",
+      "deleting": "Eliminazione...",
+      "overflow": "e altri {count}",
       "itemsToDelete": "Items to be deleted"
     },
     "detail": {

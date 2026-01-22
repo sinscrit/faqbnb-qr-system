@@ -1328,51 +1328,52 @@
       "showing": "Showing {start} to {end} of {total}"
     },
     "bulk": {
-      "selected": "{count, plural, one {# selected} other {# selected}}",
-      "selectedAria": "{count, plural, one {Currently # item selected} other {Currently # items selected}}",
-      "processing": "Processing...",
+      "ariaLabel": "{count, plural, one {Actions groupées pour # élément sélectionné} other {Actions groupées pour # éléments sélectionnés}}",
+      "selected": "{count, plural, one {# sélectionné} other {# sélectionnés}}",
+      "selectedAria": "{count, plural, one {Actuellement # élément sélectionné} other {Actuellement # éléments sélectionnés}}",
+      "processing": "Traitement en cours...",
       "actions": {
-        "delete": "Delete",
-        "addTag": "Add Tag",
-        "removeTag": "Remove Tag",
-        "moveToProperty": "Move to Property"
+        "delete": "Supprimer",
+        "addTag": "Ajouter un tag",
+        "removeTag": "Supprimer un tag",
+        "moveToProperty": "Déplacer vers une propriété"
       },
-      "cancel": "Cancel",
-      "cancelSelection": "Cancel selection",
-      "selectAll": "Select All",
-      "deselectAll": "Deselect All"
+      "cancel": "Annuler",
+      "cancelSelection": "Annuler la sélection",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner"
     },
     "bulkTag": {
-      "addTitle": "Add Tags to Items",
-      "removeTitle": "Remove Tags from Items",
-      "addDescription": "Select tags to add to {count} selected {count, plural, one {item} other {items}}",
-      "removeDescription": "Select tags to remove from {count} selected {count, plural, one {item} other {items}}",
-      "selectTags": "Select tags",
-      "noTagsAvailable": "No tags available",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
+      "addTitle": "Ajouter des tags aux éléments",
+      "removeTitle": "Supprimer des tags des éléments",
+      "addDescription": "Sélectionner les tags à ajouter à {count, plural, one {# élément sélectionné} other {# éléments sélectionnés}}",
+      "removeDescription": "Sélectionner les tags à supprimer de {count, plural, one {# élément sélectionné} other {# éléments sélectionnés}}",
+      "selectTags": "Sélectionner les tags",
+      "noTagsAvailable": "Aucun tag disponible",
+      "confirm": "Confirmer",
+      "cancel": "Annuler"
     },
     "bulkMove": {
-      "title": "Move Items to Property",
-      "description": "Select a property to move {count} selected {count, plural, one {item} other {items}} to",
-      "selectProperty": "Select property",
-      "confirm": "Move Items",
-      "cancel": "Cancel"
+      "title": "Déplacer les éléments vers une propriété",
+      "description": "Sélectionner une propriété pour déplacer {count, plural, one {# élément sélectionné} other {# éléments sélectionnés}}",
+      "selectProperty": "Sélectionner une propriété",
+      "confirm": "Déplacer les éléments",
+      "cancel": "Annuler"
     },
     "delete": {
-      "title": "Delete Item",
-      "titlePlural": "Delete Items",
+      "title": "Supprimer l'élément",
+      "titlePlural": "Supprimer les éléments",
       "message": {
-        "single": "Are you sure you want to delete this item? This action cannot be undone.",
-        "plural": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-        "named": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone."
+        "single": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.",
+        "plural": "Êtes-vous sûr de vouloir supprimer ces {count} éléments ? Cette action est irréversible.",
+        "named": "Êtes-vous sûr de vouloir supprimer « {itemName} » ? Cette action est irréversible."
       },
-      "confirm": "Delete",
-      "confirmPlural": "Delete {count} Items",
-      "cancel": "Cancel",
-      "deleting": "Deleting...",
-      "overflow": "and {count} more",
-      "itemsToDelete": "Items to be deleted"
+      "confirm": "Supprimer",
+      "confirmPlural": "Supprimer {count} éléments",
+      "cancel": "Annuler",
+      "deleting": "Suppression...",
+      "overflow": "et {count} de plus",
+      "itemsToDelete": "Éléments à supprimer"
     },
     "detail": {
       "title": "Item Details",

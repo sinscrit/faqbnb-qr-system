@@ -1369,6 +1369,7 @@
     },
 
     "bulk": {
+      "ariaLabel": "{count, plural, one {Bulk actions for # selected item} other {Bulk actions for # selected items}}",
       "selected": "{count, plural, one {# selected} other {# selected}}",
       "selectedAria": "{count, plural, one {Currently # item selected} other {Currently # items selected}}",
       "processing": "Processing...",
