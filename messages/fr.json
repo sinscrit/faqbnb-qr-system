@@ -901,23 +901,114 @@
     }
   },
   "dashboard": {
-    "title": "Tableau de bord",
-    "welcome": "Bon retour",
-    "properties": "Propriétés",
-    "items": "Articles",
-    "analytics": "Analytique",
-    "settings": "Paramètres",
-    "recentActivity": "Activité récente",
-    "quickActions": "Actions rapides",
-    "totalProperties": "Total des propriétés",
-    "totalItems": "Total des articles",
-    "totalScans": "Total des scans",
-    "activeUsers": "Utilisateurs actifs",
-    "overview": "Aperçu",
-    "createProperty": "Créer une propriété",
-    "createItem": "Créer un article",
-    "viewAll": "Voir tout",
-    "noActivity": "Aucune activité récente"
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}!",
+    "overview": "Overview",
+    "nav": {
+      "dashboard": "Dashboard",
+      "items": "Items",
+      "guides": "Guides",
+      "properties": "Properties",
+      "rooms": "Rooms",
+      "tags": "Tags",
+      "instructions": "Instructions",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "help": "Help",
+      "create": "Create",
+      "print": "Print",
+      "mobile": {
+        "dashboard": "D/B",
+        "items": "Items",
+        "guides": "Guide",
+        "properties": "Prop."
+      }
+    },
+    "header": {
+      "logo": "FAQBNB",
+      "logoAlt": "FAQBNB Logo",
+      "logout": "Logout",
+      "logoutAriaLabel": "Sign out of your account"
+    },
+    "loading": {
+      "dashboard": "Loading dashboard...",
+      "redirecting": "Redirecting to login...",
+      "generic": "Loading...",
+      "statistics": "Loading statistics"
+    },
+    "stats": {
+      "items": "Items",
+      "itemsCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
+      "rooms": "Rooms",
+      "roomsCount": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
+      "tags": "Tags",
+      "tagsCount": "{count, plural, =0 {No tags} one {# tag} other {# tags}}",
+      "properties": "Properties",
+      "propertiesCount": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
+      "allProperties": "(all properties)",
+      "totalProperties": "Total Properties",
+      "totalItems": "Total Items",
+      "totalScans": "Total Scans",
+      "activeUsers": "Active Users",
+      "viewAriaLabel": "View {label}: {count}"
+    },
+    "actions": {
+      "newItem": "New QR Code Item",
+      "viewItems": "View QR Code Items",
+      "printQR": "Print QR Code",
+      "addProperty": "Add Property",
+      "createProperty": "Create Property",
+      "createItem": "Create Item",
+      "viewAll": "View All",
+      "quickActions": "Quick Actions",
+      "ariaLabels": {
+        "newItem": "Create a new QR code item",
+        "viewItems": "View all your items",
+        "printQR": "Print QR codes for your items",
+        "addProperty": "Add a new property"
+      }
+    },
+    "empty": {
+      "title": "Start adding new QR Code items and create guides/instructions",
+      "description": "Create your first item to get started",
+      "newUserWelcome": "Welcome to FAQBNB!",
+      "newUserDescription": "Get started by adding your first property. Then you can create QR codes to help guests find what they need.",
+      "newUserAction": "Add Your First Property",
+      "noActivity": "No recent activity",
+      "recentActivity": "Recent Activity"
+    },
+    "property": {
+      "selectProperty": "Select Property",
+      "allProperties": "All Properties",
+      "allPropertiesShort": "All",
+      "noProperties": "No properties found",
+      "propertyList": "Property list",
+      "switchProperty": "Switch property"
+    },
+    "settings": {
+      "title": "Dashboard Settings",
+      "advancedTools": {
+        "label": "Show Advanced Tools",
+        "description": "Always show grouping and bulk operations"
+      },
+      "portfolioView": {
+        "label": "Show Portfolio Summary",
+        "description": "Always show portfolio overview card"
+      },
+      "footer": "These settings override automatic UI adaptation based on your property count.",
+      "close": "Close settings",
+      "closeAriaLabel": "Close dashboard settings"
+    },
+    "messages": {
+      "propertyCreated": "Property created successfully",
+      "propertyUpdated": "Property updated successfully",
+      "propertyDeleted": "Property deleted successfully",
+      "itemCreated": "Item created successfully"
+    },
+    "meta": {
+      "title": "Dashboard",
+      "description": "Manage your QR code items and properties"
+    }
   },
   "items": {
     "createNew": "Nouveau code QR",
