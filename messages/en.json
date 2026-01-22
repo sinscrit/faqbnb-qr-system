@@ -872,6 +872,7 @@
     "validationFailed": "Validation failed. Please check your input.",
     "sessionExpired": "Your session has expired. Please sign in again.",
     "tooManyRequests": "Too many requests. Please wait a moment.",
+    "rateLimited": "Too many authentication attempts. Please try again in {minutes, plural, one {# minute} other {# minutes}}.",
     "invalidCredentials": "Invalid email or password",
     "emailTaken": "This email is already registered",
     "passwordTooWeak": "Password must be at least 8 characters",

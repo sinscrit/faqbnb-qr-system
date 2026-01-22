@@ -872,6 +872,7 @@
     "validationFailed": "Validatie mislukt. Controleer uw invoer.",
     "sessionExpired": "Uw sessie is verlopen. Log opnieuw in.",
     "tooManyRequests": "Te veel verzoeken. Wacht even.",
+    "rateLimited": "Te veel authenticatiepogingen. Probeer het opnieuw over {minutes, plural, one {# minuut} other {# minuten}}.",
     "invalidCredentials": "Ongeldige e-mail of wachtwoord",
     "emailTaken": "Dit e-mailadres is al geregistreerd",
     "passwordTooWeak": "Wachtwoord moet minimaal 8 tekens bevatten",

@@ -25,10 +25,12 @@ export default function GoogleOAuthButton({
   onAuthError,
   disabled = false
 }: GoogleOAuthButtonProps) {
+  const t = useTranslations('common.actions');
+  const tErrors = useTranslations('errors');
+
   const [isLoading, setIsLoading] = useState(false);
   const [lastAttempt, setLastAttempt] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState<number>(0);
-  const t = useTranslations('common.actions');
 
   // Rate limiting: max 3 attempts per 5 minutes
   const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
@@ -41,7 +43,7 @@ export default function GoogleOAuthButton({
     const now = Date.now();
     if (now - lastAttempt < RATE_LIMIT_WINDOW && attemptCount >= MAX_ATTEMPTS) {
       const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - lastAttempt)) / 1000 / 60);
-      onAuthError?.(`Too many authentication attempts. Please try again in ${remainingTime} minutes.`);
+      onAuthError?.(tErrors('rateLimited', { minutes: remainingTime }));
       return;
     }
 
@@ -90,7 +92,7 @@ export default function GoogleOAuthButton({
         error: error instanceof Error ? error.message : 'Unknown error'
       });
 
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      const errorMessage = error instanceof Error ? error.message : tErrors('genericError');
       onAuthError?.(errorMessage);
       setIsLoading(false);
     }

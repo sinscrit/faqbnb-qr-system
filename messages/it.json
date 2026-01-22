@@ -882,6 +882,7 @@
     "validationFailed": "Validazione fallita. Controlla i tuoi dati.",
     "sessionExpired": "La tua sessione è scaduta. Accedi di nuovo.",
     "tooManyRequests": "Troppe richieste. Attendi un momento.",
+    "rateLimited": "Troppi tentativi di autenticazione. Riprova tra {minutes, plural, one {# minuto} other {# minuti}}.",
     "invalidCredentials": "Email o password non validi",
     "emailTaken": "Questa email è già registrata",
     "passwordTooWeak": "La password deve avere almeno 8 caratteri",
