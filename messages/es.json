@@ -3346,66 +3346,66 @@
     }
   },
   "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your account settings and preferences",
+    "title": "Configuración",
+    "subtitle": "Gestione sus configuraciones de cuenta y preferencias",
     "sections": {
-      "account": "Account",
-      "profile": "Profile",
-      "preferences": "Preferences",
-      "notifications": "Notifications",
-      "security": "Security",
-      "navigationAriaLabel": "Settings navigation"
+      "account": "Cuenta",
+      "profile": "Perfil",
+      "preferences": "Preferencias",
+      "notifications": "Notificaciones",
+      "security": "Seguridad",
+      "navigationAriaLabel": "Navegación de configuración"
     },
     "account": {
-      "title": "Account Settings",
-      "subtitle": "Manage your account information and preferences",
-      "email": "Email Address",
-      "emailDescription": "Your account email address",
-      "emailInputAriaLabel": "Email address input field",
-      "changeEmail": "Change Email",
-      "changeEmailButtonAriaLabel": "Change email address",
-      "emailUpdated": "Email updated to {email}",
-      "currentPassword": "Current Password",
-      "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "changePassword": "Change Password",
-      "passwordUpdated": "Password updated successfully",
-      "deleteAccount": "Delete Account",
-      "deleteAccountButtonAriaLabel": "Delete account permanently",
-      "deleteWarning": "This action is permanent and cannot be undone.",
-      "deleteConfirmation": "Are you sure you want to delete your account?",
-      "sessionsActive": "{count, plural, one {# active session} other {# active sessions}}",
-      "lastLogin": "Last login: {date} at {time}",
-      "accountCreated": "Account created: {date}",
-      "manageSubscription": "Manage Subscription"
+      "title": "Configuración de la cuenta",
+      "subtitle": "Gestione su información de cuenta y preferencias",
+      "email": "Correo electrónico",
+      "emailDescription": "Su dirección de correo electrónico de cuenta",
+      "emailInputAriaLabel": "Campo de entrada de correo electrónico",
+      "changeEmail": "Cambiar correo electrónico",
+      "changeEmailButtonAriaLabel": "Cambiar dirección de correo electrónico",
+      "emailUpdated": "Correo electrónico actualizado a {email}",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "changePassword": "Cambiar contraseña",
+      "passwordUpdated": "Contraseña actualizada con éxito",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteAccountButtonAriaLabel": "Eliminar cuenta permanentemente",
+      "deleteWarning": "Esta acción es permanente y no se puede deshacer.",
+      "deleteConfirmation": "¿Está seguro de que desea eliminar su cuenta?",
+      "sessionsActive": "{count, plural, one {# sesión activa} other {# sesiones activas}}",
+      "lastLogin": "Último inicio de sesión: {date} a las {time}",
+      "accountCreated": "Cuenta creada: {date}",
+      "manageSubscription": "Gestionar suscripción"
     },
     "profile": {
-      "title": "Profile",
-      "subtitle": "Manage your public profile information",
-      "displayName": "Display Name",
-      "displayNamePlaceholder": "Enter your name",
-      "displayNameAriaLabel": "Display name input field",
-      "bio": "Bio",
-      "bioPlaceholder": "Tell us about yourself",
-      "bioMaxLength": "Bio must be 500 characters or less",
-      "avatar": "Profile Photo",
-      "uploadAvatar": "Upload Photo",
-      "uploadAvatarAriaLabel": "Upload profile photo",
-      "removeAvatar": "Remove Photo",
-      "removeAvatarAriaLabel": "Remove profile photo",
-      "avatarUpdated": "Profile photo updated",
-      "avatarRemoved": "Profile photo removed",
-      "saveChanges": "Save Changes",
-      "savingChanges": "Saving...",
-      "profileUpdated": "Profile updated successfully"
+      "title": "Perfil",
+      "subtitle": "Gestione su información de perfil público",
+      "displayName": "Nombre para mostrar",
+      "displayNamePlaceholder": "Ingrese su nombre",
+      "displayNameAriaLabel": "Campo de entrada de nombre para mostrar",
+      "bio": "Biografía",
+      "bioPlaceholder": "Cuéntenos sobre usted",
+      "bioMaxLength": "La biografía debe tener 500 caracteres o menos",
+      "avatar": "Foto de perfil",
+      "uploadAvatar": "Subir foto",
+      "uploadAvatarAriaLabel": "Subir foto de perfil",
+      "removeAvatar": "Eliminar foto",
+      "removeAvatarAriaLabel": "Eliminar foto de perfil",
+      "avatarUpdated": "Foto de perfil actualizada",
+      "avatarRemoved": "Foto de perfil eliminada",
+      "saveChanges": "Guardar cambios",
+      "savingChanges": "Guardando...",
+      "profileUpdated": "Perfil actualizado con éxito"
     },
     "preferences": {
-      "title": "Preferences",
-      "subtitle": "Customize your experience",
-      "language": "Language",
-      "languageDescription": "Choose your preferred language",
-      "languageSelectorAriaLabel": "Select your preferred language",
-      "languageUpdated": "Language updated to {language}",
+      "title": "Preferencias",
+      "subtitle": "Personalice su experiencia",
+      "language": "Idioma",
+      "languageDescription": "Elija su idioma preferido",
+      "languageSelectorAriaLabel": "Seleccione su idioma preferido",
+      "languageUpdated": "Idioma actualizado a {language}",
       "supportedLanguages": {
         "en": "English",
         "fr": "Français",
@@ -3414,186 +3414,198 @@
         "nl": "Nederlands",
         "it": "Italiano"
       },
-      "theme": "Theme",
-      "themeDescription": "Choose your preferred color theme",
-      "themeSelectorAriaLabel": "Select your preferred theme",
-      "themeUpdated": "Theme updated to {theme}",
+      "theme": "Tema",
+      "themeDescription": "Elija su tema de color preferido",
+      "themeSelectorAriaLabel": "Seleccione su tema preferido",
+      "themeUpdated": "Tema actualizado a {theme}",
       "themeOptions": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema"
       },
-      "timezone": "Timezone",
-      "timezoneDescription": "Set your timezone for accurate timestamps",
-      "timezoneSelectorAriaLabel": "Select your timezone",
-      "timezoneUpdated": "Timezone updated to {timezone}",
-      "dateFormat": "Date Format",
-      "timeFormat": "Time Format",
-      "preferencesUpdated": "Preferences updated successfully"
+      "timezone": "Zona horaria",
+      "timezoneDescription": "Configure su zona horaria para marcas de tiempo precisas",
+      "timezoneSelectorAriaLabel": "Seleccione su zona horaria",
+      "timezoneUpdated": "Zona horaria actualizada a {timezone}",
+      "dateFormat": "Formato de fecha",
+      "timeFormat": "Formato de hora",
+      "preferencesUpdated": "Preferencias actualizadas con éxito"
     },
     "notifications": {
-      "title": "Notifications",
-      "subtitle": "Manage your notification preferences",
-      "emailNotifications": "Email Notifications",
-      "emailNotificationsDescription": "Receive updates via email",
-      "pushNotifications": "Push Notifications",
-      "pushNotificationsDescription": "Receive push notifications in your browser",
-      "itemUpdates": "Item Updates",
-      "itemUpdatesDescription": "Notify when items are updated",
-      "propertyUpdates": "Property Updates",
-      "propertyUpdatesDescription": "Notify when properties are updated",
-      "systemAnnouncements": "System Announcements",
-      "systemAnnouncementsDescription": "Important updates and announcements",
-      "weeklyDigest": "Weekly Digest",
-      "weeklyDigestDescription": "Receive a weekly summary of activity",
-      "unreadCount": "{count, plural, =0 {No unread notifications} one {# unread notification} other {# unread notifications}}",
-      "markAllRead": "Mark All as Read",
-      "notificationsUpdated": "Notification preferences updated"
+      "title": "Notificaciones",
+      "subtitle": "Gestione sus preferencias de notificación",
+      "emailNotifications": "Notificaciones por correo electrónico",
+      "emailNotificationsDescription": "Recibir actualizaciones por correo electrónico",
+      "pushNotifications": "Notificaciones push",
+      "pushNotificationsDescription": "Recibir notificaciones push en su navegador",
+      "itemUpdates": "Actualizaciones de artículos",
+      "itemUpdatesDescription": "Notificar cuando se actualicen artículos",
+      "propertyUpdates": "Actualizaciones de propiedades",
+      "propertyUpdatesDescription": "Notificar cuando se actualicen propiedades",
+      "systemAnnouncements": "Anuncios del sistema",
+      "systemAnnouncementsDescription": "Actualizaciones importantes y anuncios",
+      "weeklyDigest": "Resumen semanal",
+      "weeklyDigestDescription": "Recibir un resumen semanal de actividad",
+      "unreadCount": "{count, plural, =0 {Sin notificaciones sin leer} one {# notificación sin leer} other {# notificaciones sin leer}}",
+      "markAllRead": "Marcar todo como leído",
+      "notificationsUpdated": "Preferencias de notificación actualizadas"
     },
     "security": {
-      "title": "Security",
-      "subtitle": "Manage your security settings",
-      "twoFactorAuth": "Two-Factor Authentication",
-      "twoFactorAuthDescription": "Add an extra layer of security",
-      "enable2FA": "Enable 2FA",
-      "disable2FA": "Disable 2FA",
-      "twoFactorEnabled": "Two-factor authentication enabled",
-      "twoFactorDisabled": "Two-factor authentication disabled",
-      "activeSessions": "Active Sessions",
-      "activeSessionsDescription": "Manage your active login sessions",
-      "sessionsActive": "{count, plural, one {# active session} other {# active sessions}}",
-      "revokeSession": "Revoke Session",
-      "revokeAllOther": "Revoke All Other Sessions",
-      "currentDevice": "Current Device",
-      "lastActive": "Last active: {date}",
-      "securityUpdated": "Security settings updated"
+      "title": "Seguridad",
+      "subtitle": "Gestione su configuración de seguridad",
+      "twoFactorAuth": "Autenticación de dos factores",
+      "twoFactorAuthDescription": "Agregue una capa adicional de seguridad",
+      "enable2FA": "Activar A2F",
+      "disable2FA": "Desactivar A2F",
+      "twoFactorEnabled": "Autenticación de dos factores activada",
+      "twoFactorDisabled": "Autenticación de dos factores desactivada",
+      "activeSessions": "Sesiones activas",
+      "activeSessionsDescription": "Gestione sus sesiones de inicio de sesión activas",
+      "sessionsActive": "{count, plural, one {# sesión activa} other {# sesiones activas}}",
+      "revokeSession": "Revocar sesión",
+      "revokeAllOther": "Revocar todas las demás sesiones",
+      "currentDevice": "Dispositivo actual",
+      "lastActive": "Última actividad: {date}",
+      "securityUpdated": "Configuración de seguridad actualizada"
     },
     "help": {
       "page": {
-        "title": "Help & User Guide",
-        "subtitle": "Learn how to use FAQBNB to create and manage your property items",
-        "createItemButton": "Create Item",
-        "quickLinksTitle": "Quick Links",
-        "footerTitle": "Still Need Help?",
-        "footerText": "Can't find what you're looking for? Contact our support team for assistance.",
-        "contactButton": "Contact Support",
-        "loadingAriaLabel": "Loading help content"
+        "title": "Ayuda y guía del usuario",
+        "subtitle": "Aprenda a usar FAQBNB para crear y gestionar los artículos de su propiedad",
+        "createItemButton": "Crear artículo",
+        "quickLinksTitle": "Enlaces rápidos",
+        "footerTitle": "¿Todavía necesita ayuda?",
+        "footerText": "¿No encuentra lo que busca? Contacte a nuestro equipo de soporte para obtener asistencia.",
+        "contactButton": "Contactar soporte",
+        "loadingAriaLabel": "Cargando contenido de ayuda"
       },
       "sections": {
-        "gettingStarted": "Getting Started",
-        "propertyManagement": "Managing Properties",
-        "itemCreation": "Creating Items",
-        "qrCodes": "QR Code Generation",
-        "itemManagement": "Managing Items"
+        "gettingStarted": "Primeros pasos",
+        "propertyManagement": "Gestión de propiedades",
+        "itemCreation": "Creación de artículos",
+        "qrCodes": "Generación de códigos QR",
+        "itemManagement": "Gestión de artículos"
       },
       "gettingStarted": {
-        "title": "Getting Started",
-        "description": "Learn the basics of setting up your FAQBNB account",
+        "title": "Primeros pasos",
+        "description": "Aprenda los conceptos básicos para configurar su cuenta FAQBNB",
         "step1": {
-          "title": "Create Your First Property",
-          "content": "After signing in, navigate to Properties and click \"Add Property\" to create your first vacation rental or property.",
-          "tip": "You can add multiple properties to manage different locations.",
-          "linkLabel": "Go to Properties"
+          "title": "Cree su primera propiedad",
+          "content": "Después de iniciar sesión, navegue a Propiedades y haga clic en « Agregar propiedad » para crear su primera propiedad o alquiler vacacional.",
+          "tip": "Puede agregar múltiples propiedades para gestionar diferentes ubicaciones.",
+          "linkLabel": "Ir a propiedades"
         },
         "step2": {
-          "title": "Add Items to Your Property",
-          "content": "Items are the appliances, amenities, or features guests interact with. Create items for things like coffee makers, thermostats, or TVs.",
-          "linkLabel": "Create an Item"
+          "title": "Agregue artículos a su propiedad",
+          "content": "Los artículos son los electrodomésticos, comodidades o características con los que los huéspedes interactúan. Cree artículos para cosas como cafeteras, termostatos o televisores.",
+          "linkLabel": "Crear un artículo"
         },
         "step3": {
-          "title": "Add Instructions for Each Item",
-          "content": "Each item can have multiple instruction articles: how to use, how to clean, troubleshooting tips, and more."
+          "title": "Agregue instrucciones para cada artículo",
+          "content": "Cada artículo puede tener múltiples artículos de instrucciones: cómo usar, cómo limpiar, consejos de solución de problemas y más.",
+          "tip": "Los artículos de instrucciones ayudan a sus huéspedes a usar los equipos de manera autónoma."
         }
       },
       "propertyManagement": {
-        "title": "Managing Properties",
-        "description": "Set up and organize your rental properties",
+        "title": "Gestión de propiedades",
+        "description": "Configure y organice sus propiedades de alquiler",
         "step1": {
-          "title": "Adding a Property",
-          "content": "Click \"Add Property\" from the Properties page. Enter the property name, address, and optional description.",
-          "tip": "Use descriptive names like \"Beach House\" or \"Downtown Apartment\" for easy identification.",
-          "linkLabel": "Manage Properties"
+          "title": "Agregar una propiedad",
+          "content": "Haga clic en « Agregar propiedad » desde la página Propiedades. Ingrese el nombre de la propiedad, dirección y descripción opcional.",
+          "tip": "Use nombres descriptivos como « Casa de playa » o « Apartamento en el centro » para una fácil identificación.",
+          "linkLabel": "Gestionar propiedades"
         },
         "step2": {
-          "title": "Editing Property Details",
-          "content": "Click on any property card to edit its details, including name, address, and settings."
+          "title": "Editar detalles de la propiedad",
+          "content": "Haga clic en cualquier tarjeta de propiedad para editar sus detalles, incluyendo nombre, dirección y configuración.",
+          "tip": "Mantenga su información de propiedad actualizada para una mejor organización."
         },
         "step3": {
-          "title": "Property-Specific Items",
-          "content": "Items are automatically associated with the property you're currently viewing. Switch properties using the property selector."
+          "title": "Artículos específicos de la propiedad",
+          "content": "Los artículos se asocian automáticamente con la propiedad que está viendo actualmente. Cambie de propiedad usando el selector de propiedades.",
+          "tip": "Use el selector de propiedades en la barra de navegación para cambiar entre sus diferentes ubicaciones."
         }
       },
       "itemCreation": {
-        "title": "Creating Items",
-        "description": "Add and document the items in your property",
+        "title": "Creación de artículos",
+        "description": "Agregue y documente los artículos en su propiedad",
         "step1": {
-          "title": "Start the Item Creation Wizard",
-          "content": "From the dashboard, click \"Create New Item\" to launch the step-by-step wizard.",
-          "linkLabel": "Create Item"
+          "title": "Inicie el asistente de creación de artículos",
+          "content": "Desde el panel de control, haga clic en « Crear nuevo artículo » para iniciar el asistente paso a paso.",
+          "linkLabel": "Crear artículo"
         },
         "step2": {
-          "title": "Select Room and Item Type",
-          "content": "Choose where the item is located (Kitchen, Living Room, etc.) and what type of item it is (Appliance, Electronics, etc.)."
+          "title": "Seleccione habitación y tipo de artículo",
+          "content": "Elija dónde se encuentra el artículo (Cocina, Sala de estar, etc.) y qué tipo de artículo es (Electrodoméstico, Electrónica, etc.).",
+          "tip": "Organice sus artículos por habitación para que sus huéspedes puedan encontrarlos fácilmente."
         },
         "step3": {
-          "title": "Name Your Item",
-          "content": "Enter a clear, descriptive name like \"Keurig Coffee Maker\" or \"Samsung Smart TV\". This name appears on the QR code."
+          "title": "Nombre su artículo",
+          "content": "Ingrese un nombre claro y descriptivo como « Cafetera Keurig » o « Smart TV Samsung ». Este nombre aparece en el código QR.",
+          "tip": "Use nombres específicos que incluyan la marca y el modelo cuando sea posible."
         },
         "step4": {
-          "title": "Choose Instruction Purpose",
-          "content": "Select what type of instructions you're creating: How to Use, How to Clean, Troubleshooting, or Safety Information."
+          "title": "Elija el propósito de la instrucción",
+          "content": "Seleccione qué tipo de instrucciones está creando: Cómo usar, Cómo limpiar, Solución de problemas o Información de seguridad.",
+          "tip": "Puede agregar múltiples tipos de instrucciones para el mismo artículo."
         },
         "step5": {
-          "title": "Add Content",
-          "content": "Add photos, videos, text instructions, or links to external resources like YouTube tutorials or PDF manuals.",
-          "tip": "Photos work best for step-by-step visual guides. Videos are great for complex procedures."
+          "title": "Agregue contenido",
+          "content": "Agregue fotos, videos, instrucciones de texto o enlaces a recursos externos como tutoriales de YouTube o manuales PDF.",
+          "tip": "Las fotos funcionan mejor para guías visuales paso a paso. Los videos son excelentes para procedimientos complejos."
         },
         "step6": {
-          "title": "Review and Save",
-          "content": "Preview your item and its instructions, then save to generate the QR code."
+          "title": "Revise y guarde",
+          "content": "Previsualice su artículo y sus instrucciones, luego guarde para generar el código QR.",
+          "tip": "Verifique que toda la información sea correcta antes de guardar."
         }
       },
       "qrCodes": {
-        "title": "QR Code Generation",
-        "description": "Generate and print QR codes for your items",
+        "title": "Generación de códigos QR",
+        "description": "Genere e imprima códigos QR para sus artículos",
         "step1": {
-          "title": "Automatic QR Code Generation",
-          "content": "QR codes are generated automatically when you save an item. Each item gets a unique QR code linked to its instruction page."
+          "title": "Generación automática de código QR",
+          "content": "Los códigos QR se generan automáticamente cuando guarda un artículo. Cada artículo obtiene un código QR único vinculado a su página de instrucciones.",
+          "tip": "Los códigos QR se crean instantáneamente - no se requiere configuración adicional."
         },
         "step2": {
-          "title": "Printing QR Codes",
-          "content": "From the Items page, select items and use \"Print QR Codes\" to generate printable labels for multiple items at once.",
-          "linkLabel": "View Items"
+          "title": "Impresión de códigos QR",
+          "content": "Desde la página Artículos, seleccione artículos y use « Imprimir códigos QR » para generar etiquetas imprimibles para múltiples artículos a la vez.",
+          "linkLabel": "Ver artículos"
         },
         "step3": {
-          "title": "QR Code Placement",
-          "content": "Place QR codes near the item where guests can easily scan them. Common locations: on the appliance, nearby wall, or inside cabinet doors.",
-          "tip": "Use waterproof labels in kitchens and bathrooms."
+          "title": "Colocación de códigos QR",
+          "content": "Coloque los códigos QR cerca del artículo donde los huéspedes puedan escanearlos fácilmente. Ubicaciones comunes: en el electrodoméstico, pared adyacente o dentro de las puertas de los gabinetes.",
+          "tip": "Use etiquetas impermeables en cocinas y baños."
         },
         "step4": {
-          "title": "Testing QR Codes",
-          "content": "Always test your QR codes with a smartphone before placing them. Scan the code to verify it links to the correct instruction page."
+          "title": "Prueba de códigos QR",
+          "content": "Siempre pruebe sus códigos QR con un teléfono inteligente antes de colocarlos. Escanee el código para verificar que enlace a la página de instrucciones correcta.",
+          "tip": "Asegúrese de que los códigos QR estén a una altura cómoda para que los huéspedes puedan escanearlos."
         }
       },
       "itemManagement": {
-        "title": "Managing Items",
-        "description": "Edit, organize, and maintain your item library",
+        "title": "Gestión de artículos",
+        "description": "Edite, organice y mantenga su biblioteca de artículos",
         "step1": {
-          "title": "Viewing All Items",
-          "content": "The Items page shows all items across your properties. Use filters to narrow by property, room, or item type.",
-          "linkLabel": "View Items"
+          "title": "Ver todos los artículos",
+          "content": "La página Artículos muestra todos los artículos de todas sus propiedades. Use filtros para filtrar por propiedad, habitación o tipo de artículo.",
+          "linkLabel": "Ver artículos"
         },
         "step2": {
-          "title": "Editing Items",
-          "content": "Click on any item to edit its details, add new instruction articles, or update existing content."
+          "title": "Editar artículos",
+          "content": "Haga clic en cualquier artículo para editar sus detalles, agregar nuevos artículos de instrucciones o actualizar el contenido existente.",
+          "tip": "Mantenga sus instrucciones actualizadas para reflejar cualquier cambio en equipos o procedimientos."
         },
         "step3": {
-          "title": "Adding Multiple Instructions",
-          "content": "A single item can have multiple instruction articles. Add separate articles for cleaning, troubleshooting, or special features."
+          "title": "Agregar múltiples instrucciones",
+          "content": "Un solo artículo puede tener múltiples artículos de instrucciones. Agregue artículos separados para limpieza, solución de problemas o características especiales.",
+          "tip": "Organice las instrucciones por categoría para facilitar la navegación de los huéspedes."
         },
         "step4": {
-          "title": "Bulk Operations",
-          "content": "Select multiple items to perform bulk actions like printing QR codes, moving to a different property, or deleting."
+          "title": "Operaciones en masa",
+          "content": "Seleccione múltiples artículos para realizar acciones en masa como imprimir códigos QR, mover a una propiedad diferente o eliminar.",
+          "tip": "Las operaciones en masa le ahorran tiempo al gestionar múltiples artículos."
         }
       }
     }

@@ -3346,66 +3346,66 @@
     }
   },
   "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your account settings and preferences",
+    "title": "Instellingen",
+    "subtitle": "Beheer uw accountinstellingen en voorkeuren",
     "sections": {
       "account": "Account",
-      "profile": "Profile",
-      "preferences": "Preferences",
-      "notifications": "Notifications",
-      "security": "Security",
-      "navigationAriaLabel": "Settings navigation"
+      "profile": "Profiel",
+      "preferences": "Voorkeuren",
+      "notifications": "Meldingen",
+      "security": "Beveiliging",
+      "navigationAriaLabel": "Instellingennavigatie"
     },
     "account": {
-      "title": "Account Settings",
-      "subtitle": "Manage your account information and preferences",
-      "email": "Email Address",
-      "emailDescription": "Your account email address",
-      "emailInputAriaLabel": "Email address input field",
-      "changeEmail": "Change Email",
-      "changeEmailButtonAriaLabel": "Change email address",
-      "emailUpdated": "Email updated to {email}",
-      "currentPassword": "Current Password",
-      "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "changePassword": "Change Password",
-      "passwordUpdated": "Password updated successfully",
-      "deleteAccount": "Delete Account",
-      "deleteAccountButtonAriaLabel": "Delete account permanently",
-      "deleteWarning": "This action is permanent and cannot be undone.",
-      "deleteConfirmation": "Are you sure you want to delete your account?",
-      "sessionsActive": "{count, plural, one {# active session} other {# active sessions}}",
-      "lastLogin": "Last login: {date} at {time}",
-      "accountCreated": "Account created: {date}",
-      "manageSubscription": "Manage Subscription"
+      "title": "Accountinstellingen",
+      "subtitle": "Beheer uw accountinformatie en voorkeuren",
+      "email": "E-mailadres",
+      "emailDescription": "Uw account-e-mailadres",
+      "emailInputAriaLabel": "E-mailadres invoerveld",
+      "changeEmail": "E-mail wijzigen",
+      "changeEmailButtonAriaLabel": "E-mailadres wijzigen",
+      "emailUpdated": "E-mail bijgewerkt naar {email}",
+      "currentPassword": "Huidig wachtwoord",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Wachtwoord bevestigen",
+      "changePassword": "Wachtwoord wijzigen",
+      "passwordUpdated": "Wachtwoord succesvol bijgewerkt",
+      "deleteAccount": "Account verwijderen",
+      "deleteAccountButtonAriaLabel": "Account permanent verwijderen",
+      "deleteWarning": "Deze actie is permanent en kan niet ongedaan worden gemaakt.",
+      "deleteConfirmation": "Weet u zeker dat u uw account wilt verwijderen?",
+      "sessionsActive": "{count, plural, one {# actieve sessie} other {# actieve sessies}}",
+      "lastLogin": "Laatste aanmelding: {date} om {time}",
+      "accountCreated": "Account aangemaakt: {date}",
+      "manageSubscription": "Abonnement beheren"
     },
     "profile": {
-      "title": "Profile",
-      "subtitle": "Manage your public profile information",
-      "displayName": "Display Name",
-      "displayNamePlaceholder": "Enter your name",
-      "displayNameAriaLabel": "Display name input field",
-      "bio": "Bio",
-      "bioPlaceholder": "Tell us about yourself",
-      "bioMaxLength": "Bio must be 500 characters or less",
-      "avatar": "Profile Photo",
-      "uploadAvatar": "Upload Photo",
-      "uploadAvatarAriaLabel": "Upload profile photo",
-      "removeAvatar": "Remove Photo",
-      "removeAvatarAriaLabel": "Remove profile photo",
-      "avatarUpdated": "Profile photo updated",
-      "avatarRemoved": "Profile photo removed",
-      "saveChanges": "Save Changes",
-      "savingChanges": "Saving...",
-      "profileUpdated": "Profile updated successfully"
+      "title": "Profiel",
+      "subtitle": "Beheer uw openbare profielinformatie",
+      "displayName": "Weergavenaam",
+      "displayNamePlaceholder": "Voer uw naam in",
+      "displayNameAriaLabel": "Weergavenaam invoerveld",
+      "bio": "Biografie",
+      "bioPlaceholder": "Vertel ons over uzelf",
+      "bioMaxLength": "Biografie moet 500 tekens of minder zijn",
+      "avatar": "Profielfoto",
+      "uploadAvatar": "Foto uploaden",
+      "uploadAvatarAriaLabel": "Profielfoto uploaden",
+      "removeAvatar": "Foto verwijderen",
+      "removeAvatarAriaLabel": "Profielfoto verwijderen",
+      "avatarUpdated": "Profielfoto bijgewerkt",
+      "avatarRemoved": "Profielfoto verwijderd",
+      "saveChanges": "Wijzigingen opslaan",
+      "savingChanges": "Opslaan...",
+      "profileUpdated": "Profiel succesvol bijgewerkt"
     },
     "preferences": {
-      "title": "Preferences",
-      "subtitle": "Customize your experience",
-      "language": "Language",
-      "languageDescription": "Choose your preferred language",
-      "languageSelectorAriaLabel": "Select your preferred language",
-      "languageUpdated": "Language updated to {language}",
+      "title": "Voorkeuren",
+      "subtitle": "Personaliseer uw ervaring",
+      "language": "Taal",
+      "languageDescription": "Kies uw voorkeurstaal",
+      "languageSelectorAriaLabel": "Selecteer uw voorkeurstaal",
+      "languageUpdated": "Taal bijgewerkt naar {language}",
       "supportedLanguages": {
         "en": "English",
         "fr": "Français",
@@ -3414,186 +3414,198 @@
         "nl": "Nederlands",
         "it": "Italiano"
       },
-      "theme": "Theme",
-      "themeDescription": "Choose your preferred color theme",
-      "themeSelectorAriaLabel": "Select your preferred theme",
-      "themeUpdated": "Theme updated to {theme}",
+      "theme": "Thema",
+      "themeDescription": "Kies uw voorkeur kleurthema",
+      "themeSelectorAriaLabel": "Selecteer uw voorkeur thema",
+      "themeUpdated": "Thema bijgewerkt naar {theme}",
       "themeOptions": {
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
+        "light": "Licht",
+        "dark": "Donker",
+        "system": "Systeem"
       },
-      "timezone": "Timezone",
-      "timezoneDescription": "Set your timezone for accurate timestamps",
-      "timezoneSelectorAriaLabel": "Select your timezone",
-      "timezoneUpdated": "Timezone updated to {timezone}",
-      "dateFormat": "Date Format",
-      "timeFormat": "Time Format",
-      "preferencesUpdated": "Preferences updated successfully"
+      "timezone": "Tijdzone",
+      "timezoneDescription": "Stel uw tijdzone in voor nauwkeurige tijdstempels",
+      "timezoneSelectorAriaLabel": "Selecteer uw tijdzone",
+      "timezoneUpdated": "Tijdzone bijgewerkt naar {timezone}",
+      "dateFormat": "Datumformaat",
+      "timeFormat": "Tijdformaat",
+      "preferencesUpdated": "Voorkeuren succesvol bijgewerkt"
     },
     "notifications": {
-      "title": "Notifications",
-      "subtitle": "Manage your notification preferences",
-      "emailNotifications": "Email Notifications",
-      "emailNotificationsDescription": "Receive updates via email",
-      "pushNotifications": "Push Notifications",
-      "pushNotificationsDescription": "Receive push notifications in your browser",
-      "itemUpdates": "Item Updates",
-      "itemUpdatesDescription": "Notify when items are updated",
-      "propertyUpdates": "Property Updates",
-      "propertyUpdatesDescription": "Notify when properties are updated",
-      "systemAnnouncements": "System Announcements",
-      "systemAnnouncementsDescription": "Important updates and announcements",
-      "weeklyDigest": "Weekly Digest",
-      "weeklyDigestDescription": "Receive a weekly summary of activity",
-      "unreadCount": "{count, plural, =0 {No unread notifications} one {# unread notification} other {# unread notifications}}",
-      "markAllRead": "Mark All as Read",
-      "notificationsUpdated": "Notification preferences updated"
+      "title": "Meldingen",
+      "subtitle": "Beheer uw meldingsvoorkeuren",
+      "emailNotifications": "E-mailmeldingen",
+      "emailNotificationsDescription": "Ontvang updates via e-mail",
+      "pushNotifications": "Pushmeldingen",
+      "pushNotificationsDescription": "Ontvang pushmeldingen in uw browser",
+      "itemUpdates": "Artikelupdates",
+      "itemUpdatesDescription": "Melden wanneer artikelen worden bijgewerkt",
+      "propertyUpdates": "Accommodatie-updates",
+      "propertyUpdatesDescription": "Melden wanneer accommodaties worden bijgewerkt",
+      "systemAnnouncements": "Systeemaankondigingen",
+      "systemAnnouncementsDescription": "Belangrijke updates en aankondigingen",
+      "weeklyDigest": "Wekelijks overzicht",
+      "weeklyDigestDescription": "Ontvang een wekelijks overzicht van activiteiten",
+      "unreadCount": "{count, plural, =0 {Geen ongelezen meldingen} one {# ongelezen melding} other {# ongelezen meldingen}}",
+      "markAllRead": "Alles markeren als gelezen",
+      "notificationsUpdated": "Meldingsvoorkeuren bijgewerkt"
     },
     "security": {
-      "title": "Security",
-      "subtitle": "Manage your security settings",
-      "twoFactorAuth": "Two-Factor Authentication",
-      "twoFactorAuthDescription": "Add an extra layer of security",
-      "enable2FA": "Enable 2FA",
-      "disable2FA": "Disable 2FA",
-      "twoFactorEnabled": "Two-factor authentication enabled",
-      "twoFactorDisabled": "Two-factor authentication disabled",
-      "activeSessions": "Active Sessions",
-      "activeSessionsDescription": "Manage your active login sessions",
-      "sessionsActive": "{count, plural, one {# active session} other {# active sessions}}",
-      "revokeSession": "Revoke Session",
-      "revokeAllOther": "Revoke All Other Sessions",
-      "currentDevice": "Current Device",
-      "lastActive": "Last active: {date}",
-      "securityUpdated": "Security settings updated"
+      "title": "Beveiliging",
+      "subtitle": "Beheer uw beveiligingsinstellingen",
+      "twoFactorAuth": "Tweefactorauthenticatie",
+      "twoFactorAuthDescription": "Voeg een extra beveiligingslaag toe",
+      "enable2FA": "2FA inschakelen",
+      "disable2FA": "2FA uitschakelen",
+      "twoFactorEnabled": "Tweefactorauthenticatie ingeschakeld",
+      "twoFactorDisabled": "Tweefactorauthenticatie uitgeschakeld",
+      "activeSessions": "Actieve sessies",
+      "activeSessionsDescription": "Beheer uw actieve aanmeldsessies",
+      "sessionsActive": "{count, plural, one {# actieve sessie} other {# actieve sessies}}",
+      "revokeSession": "Sessie intrekken",
+      "revokeAllOther": "Alle andere sessies intrekken",
+      "currentDevice": "Huidig apparaat",
+      "lastActive": "Laatst actief: {date}",
+      "securityUpdated": "Beveiligingsinstellingen bijgewerkt"
     },
     "help": {
       "page": {
-        "title": "Help & User Guide",
-        "subtitle": "Learn how to use FAQBNB to create and manage your property items",
-        "createItemButton": "Create Item",
-        "quickLinksTitle": "Quick Links",
-        "footerTitle": "Still Need Help?",
-        "footerText": "Can't find what you're looking for? Contact our support team for assistance.",
-        "contactButton": "Contact Support",
-        "loadingAriaLabel": "Loading help content"
+        "title": "Hulp en gebruikershandleiding",
+        "subtitle": "Leer hoe u FAQBNB kunt gebruiken om uw accommodatie-artikelen te maken en te beheren",
+        "createItemButton": "Artikel maken",
+        "quickLinksTitle": "Snelle links",
+        "footerTitle": "Heeft u nog hulp nodig?",
+        "footerText": "Kunt u niet vinden wat u zoekt? Neem contact op met ons ondersteuningsteam voor hulp.",
+        "contactButton": "Neem contact op met ondersteuning",
+        "loadingAriaLabel": "Hulpinhoud laden"
       },
       "sections": {
-        "gettingStarted": "Getting Started",
-        "propertyManagement": "Managing Properties",
-        "itemCreation": "Creating Items",
-        "qrCodes": "QR Code Generation",
-        "itemManagement": "Managing Items"
+        "gettingStarted": "Aan de slag",
+        "propertyManagement": "Accommodaties beheren",
+        "itemCreation": "Artikelen maken",
+        "qrCodes": "QR-code generatie",
+        "itemManagement": "Artikelen beheren"
       },
       "gettingStarted": {
-        "title": "Getting Started",
-        "description": "Learn the basics of setting up your FAQBNB account",
+        "title": "Aan de slag",
+        "description": "Leer de basis van het instellen van uw FAQBNB-account",
         "step1": {
-          "title": "Create Your First Property",
-          "content": "After signing in, navigate to Properties and click \"Add Property\" to create your first vacation rental or property.",
-          "tip": "You can add multiple properties to manage different locations.",
-          "linkLabel": "Go to Properties"
+          "title": "Maak uw eerste accommodatie",
+          "content": "Nadat u zich heeft aangemeld, navigeert u naar Accommodaties en klikt u op \\\"Accommodatie toevoegen\\\" om uw eerste vakantieverhuur of accommodatie te maken.",
+          "tip": "U kunt meerdere accommodaties toevoegen om verschillende locaties te beheren.",
+          "linkLabel": "Ga naar accommodaties"
         },
         "step2": {
-          "title": "Add Items to Your Property",
-          "content": "Items are the appliances, amenities, or features guests interact with. Create items for things like coffee makers, thermostats, or TVs.",
-          "linkLabel": "Create an Item"
+          "title": "Voeg artikelen toe aan uw accommodatie",
+          "content": "Artikelen zijn de apparaten, voorzieningen of functies waarmee gasten interacteren. Maak artikelen voor dingen zoals koffiezetapparaten, thermostaten of tv's.",
+          "linkLabel": "Maak een artikel"
         },
         "step3": {
-          "title": "Add Instructions for Each Item",
-          "content": "Each item can have multiple instruction articles: how to use, how to clean, troubleshooting tips, and more."
+          "title": "Voeg instructies toe voor elk artikel",
+          "content": "Elk artikel kan meerdere instructieartikelen hebben: hoe te gebruiken, hoe schoon te maken, probleemoplossingstips en meer.",
+          "tip": "Instructieartikelen helpen uw gasten de uitrusting zelfstandig te gebruiken."
         }
       },
       "propertyManagement": {
-        "title": "Managing Properties",
-        "description": "Set up and organize your rental properties",
+        "title": "Accommodaties beheren",
+        "description": "Stel uw verhuuraccommodaties in en organiseer ze",
         "step1": {
-          "title": "Adding a Property",
-          "content": "Click \"Add Property\" from the Properties page. Enter the property name, address, and optional description.",
-          "tip": "Use descriptive names like \"Beach House\" or \"Downtown Apartment\" for easy identification.",
-          "linkLabel": "Manage Properties"
+          "title": "Een accommodatie toevoegen",
+          "content": "Klik op \\\"Accommodatie toevoegen\\\" vanaf de pagina Accommodaties. Voer de naam van de accommodatie, het adres en een optionele beschrijving in.",
+          "tip": "Gebruik beschrijvende namen zoals \\\"Strandhuis\\\" of \\\"Appartement in centrum\\\" voor gemakkelijke identificatie.",
+          "linkLabel": "Accommodaties beheren"
         },
         "step2": {
-          "title": "Editing Property Details",
-          "content": "Click on any property card to edit its details, including name, address, and settings."
+          "title": "Accommodatiedetails bewerken",
+          "content": "Klik op een accommodatiekaart om de details te bewerken, inclusief naam, adres en instellingen.",
+          "tip": "Houd uw accommodatie-informatie up-to-date voor een betere organisatie."
         },
         "step3": {
-          "title": "Property-Specific Items",
-          "content": "Items are automatically associated with the property you're currently viewing. Switch properties using the property selector."
+          "title": "Accommodatie-specifieke artikelen",
+          "content": "Artikelen worden automatisch gekoppeld aan de accommodatie die u momenteel bekijkt. Schakel tussen accommodaties met de accommodatieselector.",
+          "tip": "Gebruik de accommodatieselector in de navigatiebalk om te schakelen tussen uw verschillende locaties."
         }
       },
       "itemCreation": {
-        "title": "Creating Items",
-        "description": "Add and document the items in your property",
+        "title": "Artikelen maken",
+        "description": "Voeg de artikelen in uw accommodatie toe en documenteer ze",
         "step1": {
-          "title": "Start the Item Creation Wizard",
-          "content": "From the dashboard, click \"Create New Item\" to launch the step-by-step wizard.",
-          "linkLabel": "Create Item"
+          "title": "Start de wizard voor het maken van artikelen",
+          "content": "Klik vanaf het dashboard op \\\"Nieuw artikel maken\\\" om de stapsgewijze wizard te starten.",
+          "linkLabel": "Artikel maken"
         },
         "step2": {
-          "title": "Select Room and Item Type",
-          "content": "Choose where the item is located (Kitchen, Living Room, etc.) and what type of item it is (Appliance, Electronics, etc.)."
+          "title": "Selecteer kamer en artikeltype",
+          "content": "Kies waar het artikel zich bevindt (Keuken, Woonkamer, enz.) en wat voor soort artikel het is (Apparaat, Elektronica, enz.).",
+          "tip": "Organiseer uw artikelen per kamer zodat uw gasten ze gemakkelijk kunnen vinden."
         },
         "step3": {
-          "title": "Name Your Item",
-          "content": "Enter a clear, descriptive name like \"Keurig Coffee Maker\" or \"Samsung Smart TV\". This name appears on the QR code."
+          "title": "Geef uw artikel een naam",
+          "content": "Voer een duidelijke, beschrijvende naam in zoals \\\"Keurig Koffiezetapparaat\\\" of \\\"Samsung Smart TV\\\". Deze naam verschijnt op de QR-code.",
+          "tip": "Gebruik specifieke namen die merk en model bevatten wanneer mogelijk."
         },
         "step4": {
-          "title": "Choose Instruction Purpose",
-          "content": "Select what type of instructions you're creating: How to Use, How to Clean, Troubleshooting, or Safety Information."
+          "title": "Kies instructiedoel",
+          "content": "Selecteer welk type instructies u maakt: Hoe te gebruiken, Hoe schoon te maken, Probleemoplossing of Veiligheidsinformatie.",
+          "tip": "U kunt meerdere soorten instructies toevoegen voor hetzelfde artikel."
         },
         "step5": {
-          "title": "Add Content",
-          "content": "Add photos, videos, text instructions, or links to external resources like YouTube tutorials or PDF manuals.",
-          "tip": "Photos work best for step-by-step visual guides. Videos are great for complex procedures."
+          "title": "Voeg inhoud toe",
+          "content": "Voeg foto's, video's, tekstinstructies of links naar externe bronnen zoals YouTube-tutorials of PDF-handleidingen toe.",
+          "tip": "Foto's werken het beste voor stapsgewijze visuele handleidingen. Video's zijn geweldig voor complexe procedures."
         },
         "step6": {
-          "title": "Review and Save",
-          "content": "Preview your item and its instructions, then save to generate the QR code."
+          "title": "Bekijk en opslaan",
+          "content": "Bekijk een voorbeeld van uw artikel en de instructies, en sla vervolgens op om de QR-code te genereren.",
+          "tip": "Controleer of alle informatie correct is voordat u opslaat."
         }
       },
       "qrCodes": {
-        "title": "QR Code Generation",
-        "description": "Generate and print QR codes for your items",
+        "title": "QR-code generatie",
+        "description": "Genereer en print QR-codes voor uw artikelen",
         "step1": {
-          "title": "Automatic QR Code Generation",
-          "content": "QR codes are generated automatically when you save an item. Each item gets a unique QR code linked to its instruction page."
+          "title": "Automatische QR-code generatie",
+          "content": "QR-codes worden automatisch gegenereerd wanneer u een artikel opslaat. Elk artikel krijgt een unieke QR-code gekoppeld aan de instructiepagina.",
+          "tip": "QR-codes worden direct gemaakt - geen extra configuratie vereist."
         },
         "step2": {
-          "title": "Printing QR Codes",
-          "content": "From the Items page, select items and use \"Print QR Codes\" to generate printable labels for multiple items at once.",
-          "linkLabel": "View Items"
+          "title": "QR-codes afdrukken",
+          "content": "Selecteer vanaf de pagina Artikelen artikelen en gebruik \\\"QR-codes afdrukken\\\" om afdrukbare labels voor meerdere artikelen tegelijk te genereren.",
+          "linkLabel": "Artikelen bekijken"
         },
         "step3": {
-          "title": "QR Code Placement",
-          "content": "Place QR codes near the item where guests can easily scan them. Common locations: on the appliance, nearby wall, or inside cabinet doors.",
-          "tip": "Use waterproof labels in kitchens and bathrooms."
+          "title": "QR-code plaatsing",
+          "content": "Plaats QR-codes in de buurt van het artikel waar gasten ze gemakkelijk kunnen scannen. Veelvoorkomende locaties: op het apparaat, nabije muur of aan de binnenkant van kastdeuren.",
+          "tip": "Gebruik waterdichte labels in keukens en badkamers."
         },
         "step4": {
-          "title": "Testing QR Codes",
-          "content": "Always test your QR codes with a smartphone before placing them. Scan the code to verify it links to the correct instruction page."
+          "title": "QR-codes testen",
+          "content": "Test uw QR-codes altijd met een smartphone voordat u ze plaatst. Scan de code om te verifiëren dat deze naar de juiste instructiepagina leidt.",
+          "tip": "Zorg ervoor dat QR-codes op een comfortabele hoogte zijn aangebracht zodat gasten ze kunnen scannen."
         }
       },
       "itemManagement": {
-        "title": "Managing Items",
-        "description": "Edit, organize, and maintain your item library",
+        "title": "Artikelen beheren",
+        "description": "Bewerk, organiseer en onderhoud uw artikelenbibliotheek",
         "step1": {
-          "title": "Viewing All Items",
-          "content": "The Items page shows all items across your properties. Use filters to narrow by property, room, or item type.",
-          "linkLabel": "View Items"
+          "title": "Alle artikelen bekijken",
+          "content": "De pagina Artikelen toont alle artikelen van al uw accommodaties. Gebruik filters om te filteren op accommodatie, kamer of artikeltype.",
+          "linkLabel": "Artikelen bekijken"
         },
         "step2": {
-          "title": "Editing Items",
-          "content": "Click on any item to edit its details, add new instruction articles, or update existing content."
+          "title": "Artikelen bewerken",
+          "content": "Klik op een artikel om de details te bewerken, nieuwe instructieartikelen toe te voegen of bestaande inhoud bij te werken.",
+          "tip": "Houd uw instructies up-to-date om eventuele wijzigingen in apparatuur of procedures weer te geven."
         },
         "step3": {
-          "title": "Adding Multiple Instructions",
-          "content": "A single item can have multiple instruction articles. Add separate articles for cleaning, troubleshooting, or special features."
+          "title": "Meerdere instructies toevoegen",
+          "content": "Een enkel artikel kan meerdere instructieartikelen hebben. Voeg aparte artikelen toe voor reiniging, probleemoplossing of speciale functies.",
+          "tip": "Organiseer instructies per categorie om de navigatie voor gasten te vergemakkelijken."
         },
         "step4": {
-          "title": "Bulk Operations",
-          "content": "Select multiple items to perform bulk actions like printing QR codes, moving to a different property, or deleting."
+          "title": "Bulkbewerkingen",
+          "content": "Selecteer meerdere artikelen om bulkacties uit te voeren zoals QR-codes afdrukken, verplaatsen naar een andere accommodatie of verwijderen.",
+          "tip": "Bulkbewerkingen besparen tijd bij het beheren van meerdere artikelen."
         }
       }
     }
