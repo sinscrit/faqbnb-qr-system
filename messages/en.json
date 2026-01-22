@@ -2117,16 +2117,39 @@
         "printQRCodeDescription": "Print a QR code label for this item"
       },
       "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - REQ-E02-065 i18n Integration (2026-01-22)",
+        "header": {
+          "title": "Session Summary",
+          "subtitle": "Review your items before printing"
+        },
+        "empty": {
+          "title": "No items yet",
+          "description": "You haven't created any items in this session yet. Start by adding your first item.",
+          "addButton": "Add First Item"
+        },
+        "newItems": {
+          "title": "New Items in This Session ({count})",
+          "addMore": "Add More Items"
+        },
+        "existingItems": {
+          "title": "Previously Created Items ({count})"
+        },
+        "actions": {
+          "printQRCodes": "Print QR Codes",
+          "skipFinish": "Skip & Finish"
+        },
+        "announcements": {
+          "stepSummary": "Step: Session Summary - {count, plural, =0 {no items} one {# item} other {# items}} created in this session."
+        },
         "title": "Session Complete!",
         "subtitle": "You created {count, plural, =0 {no items} one {# item} other {# items}} in this session",
-        "newItems": "New Items",
+        "newItemsLegacy": "New Items",
         "newItemsCount": "{count, plural, one {# new item} other {# new items}}",
-        "existingItems": "Existing Items Updated",
+        "existingItemsLegacy": "Existing Items Updated",
         "existingItemsCount": "{count, plural, one {# existing item} other {# existing items}}",
         "loadingItems": "Loading items...",
         "noItems": "No items in this session",
         "sessionDuration": "Session duration: {duration}",
-        "printQRCodes": "Print QR Codes",
         "printAll": "Print All",
         "printSelected": "Print Selected",
         "printNewOnly": "Print New Items Only",

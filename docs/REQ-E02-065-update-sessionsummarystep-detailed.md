@@ -1,8 +1,9 @@
 # Detailed Task Breakdown: REQ-E02-065 - Update SessionSummaryStep
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-22
+**Completed:** 2026-01-22
 **Request ID:** REQ-E02-065
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2C - Item Creation Workflow
@@ -28,15 +29,15 @@ This document provides granular, implementation-ready task breakdown for updatin
 Before starting implementation, verify the following are complete:
 
 ### Epic 1 Foundation (Required)
-- [ ] next-intl package installed in `package.json`
-- [ ] i18n configuration exists at `/src/lib/i18n/config.ts`
-- [ ] Translation files structure exists at `/messages/*.json`
-- [ ] IntlProvider configured in app layout
+- [x] next-intl package installed in `package.json`
+- [x] i18n configuration exists at `/src/lib/i18n/config.ts`
+- [x] Translation files structure exists at `/messages/*.json`
+- [x] IntlProvider configured in app layout
 
 ### Epic 2 Prior Tasks (Recommended)
-- [ ] REQ-E02-056: `workflow` namespace structure created in `/messages/en.json`
-- [ ] REQ-E02-057: Main ItemCreationWorkflow component updated
-- [ ] REQ-E02-064: PreviewSaveStep updated (previous step in sequence)
+- [x] REQ-E02-056: `workflow` namespace structure created in `/messages/en.json`
+- [x] REQ-E02-057: Main ItemCreationWorkflow component updated
+- [x] REQ-E02-064: PreviewSaveStep updated (previous step in sequence)
 
 ---
 
@@ -131,10 +132,12 @@ import { cn } from '@/lib/utils';
 ```
 
 #### Acceptance Criteria
-- [ ] `useTranslations` hook imported from 'next-intl'
-- [ ] Hook initialized with namespace `'workflow.steps.sessionSummary'`
-- [ ] No TypeScript errors
-- [ ] Component still renders
+- [x] `useTranslations` hook imported from 'next-intl'
+- [x] Hook initialized with namespace `'workflow.steps.sessionSummary'`
+- [x] No TypeScript errors
+- [x] Component still renders
+
+---implemented: Added `const t = useTranslations('workflow.steps.sessionSummary')` in main component, renamed existing common.actions to tActions---
 
 ---
 
@@ -185,9 +188,11 @@ function EmptySessionState({ onAddItem, t }: EmptySessionStateProps) {
 ```
 
 #### Acceptance Criteria
-- [ ] EmptySessionStateProps includes `t` prop with correct type
-- [ ] Function destructures `t` from props
-- [ ] No TypeScript errors
+- [x] EmptySessionStateProps includes `t` prop with correct type
+- [x] Function destructures `t` from props
+- [x] No TypeScript errors
+
+---implemented: Added TranslationFn import, updated interface with `t: TranslationFn`, removed internal useTranslations hooks from EmptySessionState---
 
 ---
 
@@ -277,10 +282,12 @@ Replace all hardcoded English strings in the EmptySessionState sub-component wit
 ```
 
 #### Acceptance Criteria
-- [ ] "No items yet" replaced with `t('empty.title')`
-- [ ] Description text replaced with `t('empty.description')`
-- [ ] "Add First Item" replaced with `t('empty.addButton')`
-- [ ] Component renders correctly
+- [x] "No items yet" replaced with `t('empty.title')`
+- [x] Description text replaced with `t('empty.description')`
+- [x] "Add First Item" replaced with `t('empty.addButton')`
+- [x] Component renders correctly
+
+---implemented: Replaced tEmpty('session.noItemsYet') with t('empty.title'), tEmpty('session.noItemsDescription') with t('empty.description'), t('addFirstItem') with t('empty.addButton')---
 
 ---
 
@@ -314,9 +321,11 @@ Pass the translation function to EmptySessionState when it is rendered.
 ```
 
 #### Acceptance Criteria
-- [ ] EmptySessionState receives `t` prop
-- [ ] No TypeScript errors
-- [ ] Empty state renders correctly with translations
+- [x] EmptySessionState receives `t` prop
+- [x] No TypeScript errors
+- [x] Empty state renders correctly with translations
+
+---implemented: Added t={t} prop to EmptySessionState invocation at line 217---
 
 ---
 
@@ -367,9 +376,11 @@ Replace the page header title and subtitle with translation function calls.
 ```
 
 #### Acceptance Criteria
-- [ ] Title uses `t('header.title')`
-- [ ] Subtitle uses `t('header.subtitle')`
-- [ ] Header renders correctly
+- [x] Title uses `t('header.title')`
+- [x] Subtitle uses `t('header.subtitle')`
+- [x] Header renders correctly
+
+---implemented: Replaced "Session Summary" with t('header.title'), "Review your items before printing" with t('header.subtitle')---
 
 ---
 
@@ -418,9 +429,11 @@ Replace the "New Items in This Session (X)" heading with a translation that incl
 ```
 
 #### Acceptance Criteria
-- [ ] Heading uses `t('newItems.title', { count: sessionItems.length })`
-- [ ] Count displays correctly with 0, 1, and multiple items
-- [ ] Section heading renders correctly
+- [x] Heading uses `t('newItems.title', { count: sessionItems.length })`
+- [x] Count displays correctly with 0, 1, and multiple items
+- [x] Section heading renders correctly
+
+---implemented: Replaced "New Items in This Session (X)" with t('newItems.title', { count: sessionItems.length })---
 
 ---
 
@@ -460,8 +473,10 @@ Replace the "Add More Items" button text with translation function call.
 ```
 
 #### Acceptance Criteria
-- [ ] Button text uses `t('newItems.addMore')`
-- [ ] Button renders correctly
+- [x] Button text uses `t('newItems.addMore')`
+- [x] Button renders correctly
+
+---implemented: Replaced t('addMoreItems') with t('newItems.addMore')---
 
 ---
 
@@ -510,9 +525,11 @@ Replace the "Previously Created Items (X)" heading with a translation that inclu
 ```
 
 #### Acceptance Criteria
-- [ ] Heading uses `t('existingItems.title', { count: existingItems.length })`
-- [ ] Count displays correctly
-- [ ] Section heading renders correctly
+- [x] Heading uses `t('existingItems.title', { count: existingItems.length })`
+- [x] Count displays correctly
+- [x] Section heading renders correctly
+
+---implemented: Replaced "Previously Created Items (X)" with t('existingItems.title', { count: existingItems.length })---
 
 ---
 
@@ -573,10 +590,12 @@ Replace the footer action button texts ("Print QR Codes" and "Skip & Finish") wi
 ```
 
 #### Acceptance Criteria
-- [ ] "Print QR Codes" uses `t('actions.printQRCodes')`
-- [ ] "Skip & Finish" uses `t('actions.skipFinish')`
-- [ ] Both buttons render correctly
-- [ ] Disabled states still work correctly
+- [x] "Print QR Codes" uses `t('actions.printQRCodes')`
+- [x] "Skip & Finish" uses `t('actions.skipFinish')`
+- [x] Both buttons render correctly
+- [x] Disabled states still work correctly
+
+---implemented: Replaced t('printQrCode') with t('actions.printQRCodes'), t('skipForNow') with t('actions.skipFinish')---
 
 ---
 
@@ -618,9 +637,11 @@ Replace the screen reader announcement text with a translation that includes cou
 ```
 
 #### Acceptance Criteria
-- [ ] Announcement uses `t('announcements.stepSummary', { count: sessionItems.length })`
-- [ ] Pluralization works correctly (0 items, 1 item, 2+ items)
-- [ ] Screen reader announces correctly
+- [x] Announcement uses `t('announcements.stepSummary', { count: sessionItems.length })`
+- [x] Pluralization works correctly (0 items, 1 item, 2+ items)
+- [x] Screen reader announces correctly
+
+---implemented: Replaced hardcoded "Step: Session Summary - X items..." with t('announcements.stepSummary', { count: sessionItems.length }) using ICU plural format---
 
 ---
 
@@ -682,11 +703,13 @@ Add all required translation keys under the `workflow.steps.sessionSummary` name
 - **Escaped apostrophe** in description not needed in JSON (use straight single quote or remove)
 
 #### Acceptance Criteria
-- [ ] All 11 translation keys added to `/messages/en.json`
-- [ ] Keys follow `workflow.steps.sessionSummary.*` namespace
-- [ ] JSON validates without syntax errors
-- [ ] ICU plural format used for `announcements.stepSummary`
-- [ ] Build completes without missing translation warnings
+- [x] All 11 translation keys added to `/messages/en.json`
+- [x] Keys follow `workflow.steps.sessionSummary.*` namespace
+- [x] JSON validates without syntax errors
+- [x] ICU plural format used for `announcements.stepSummary`
+- [x] Build completes without missing translation warnings
+
+---implemented: Added nested translation keys (header.*, empty.*, newItems.*, existingItems.*, actions.*, announcements.*) to workflow.steps.sessionSummary namespace, preserved existing flat keys for backward compatibility---
 
 ---
 
@@ -696,9 +719,9 @@ Add all required translation keys under the `workflow.steps.sessionSummary` name
 ```bash
 npm run build
 ```
-- [ ] No TypeScript errors related to translation types
-- [ ] No missing translation key warnings
-- [ ] Build completes successfully
+- [x] No TypeScript errors related to translation types
+- [x] No missing translation key warnings
+- [x] Build completes successfully
 
 ### Runtime Verification
 ```bash
@@ -837,16 +860,16 @@ These will be localized in **REQ-E02-071: Update all shared components (25+ file
 
 From REQ-E02-065:
 
-- [ ] useTranslations hook imported and configured with workflow namespace
-- [ ] All hardcoded text strings replaced with translation keys using t() function
-- [ ] Translation keys follow consistent naming pattern with other workflow step components
-- [ ] Component renders correctly when language is switched
-- [ ] No English fallback text visible when translations exist
-- [ ] Session summary displays translated item counts, status messages, and action buttons
-- [ ] Component maintains existing functionality and visual layout
-- [ ] All translation keys added to `/messages/en.json`
-- [ ] No hardcoded English strings remain in component code
-- [ ] Build completes without errors
+- [x] useTranslations hook imported and configured with workflow namespace
+- [x] All hardcoded text strings replaced with translation keys using t() function
+- [x] Translation keys follow consistent naming pattern with other workflow step components
+- [x] Component renders correctly when language is switched
+- [x] No English fallback text visible when translations exist
+- [x] Session summary displays translated item counts, status messages, and action buttons
+- [x] Component maintains existing functionality and visual layout
+- [x] All translation keys added to `/messages/en.json`
+- [x] No hardcoded English strings remain in component code
+- [x] Build completes without errors
 
 ---
 

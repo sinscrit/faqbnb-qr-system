@@ -26,7 +26,7 @@
  *
  * @module ItemCreationWorkflow/components/steps/SessionSummaryStep
  * @see PrintOptionsPanel for print configuration
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-065 i18n Integration)
  */
 
 import { useState, useCallback } from 'react';
@@ -34,6 +34,7 @@ import * as Collapsible from '@radix-ui/react-collapsible';
 import { ChevronDown, ChevronUp, Plus, Printer, SkipForward, Package } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import type { TranslationFn } from '@/types/i18n';
 import type { SessionItem } from '../../ItemCreationWorkflow.types';
 import { SessionProgressBar } from '../shared/SessionProgressBar';
 import { SessionItemCard } from '../shared/SessionItemCard';
@@ -70,22 +71,21 @@ export interface SessionSummaryStepProps {
 
 interface EmptySessionStateProps {
   onAddItem: () => void;
+  /** Translation function for sessionSummary namespace (REQ-E02-065) */
+  t: TranslationFn;
 }
 
-function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
-  const t = useTranslations('common.actions');
-  const tEmpty = useTranslations('common.emptyStates');
-
+function EmptySessionState({ onAddItem, t }: EmptySessionStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
         <Package className="w-8 h-8 text-gray-400" aria-hidden="true" />
       </div>
       <h3 className="text-lg font-medium text-[#222222] mb-2">
-        {tEmpty('session.noItemsYet')}
+        {t('empty.title')}
       </h3>
       <p className="text-[#717171] mb-6 max-w-sm">
-        {tEmpty('session.noItemsDescription')}
+        {t('empty.description')}
       </p>
       <button
         type="button"
@@ -100,7 +100,7 @@ function EmptySessionState({ onAddItem }: EmptySessionStateProps) {
         )}
       >
         <Plus className="w-5 h-5" aria-hidden="true" />
-        {t('addFirstItem')}
+        {t('empty.addButton')}
       </button>
     </div>
   );
@@ -141,7 +141,8 @@ export function SessionSummaryStep({
   onFinishWithoutPrint,
   className,
 }: SessionSummaryStepProps) {
-  const t = useTranslations('common.actions');
+  // Translation hooks (REQ-E02-065)
+  const t = useTranslations('workflow.steps.sessionSummary');
 
   // State for collapsible existing items section
   const [isExistingExpanded, setIsExistingExpanded] = useState(false);
@@ -179,9 +180,9 @@ export function SessionSummaryStep({
       <div className="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto">
         {/* Page Header */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#222222]">Session Summary</h2>
+          <h2 className="text-2xl font-bold text-[#222222]">{t('header.title')}</h2>
           <p className="text-base text-[#717171] mt-2">
-            Review your items before printing
+            {t('header.subtitle')}
           </p>
         </div>
 
@@ -196,7 +197,7 @@ export function SessionSummaryStep({
             id="new-items-heading"
             className="text-lg font-semibold text-[#222222] mb-3"
           >
-            New Items in This Session ({sessionItems.length})
+            {t('newItems.title', { count: sessionItems.length })}
           </h3>
 
           {hasSessionItems ? (
@@ -212,7 +213,7 @@ export function SessionSummaryStep({
               ))}
             </div>
           ) : (
-            <EmptySessionState onAddItem={onAddMoreItems} />
+            <EmptySessionState onAddItem={onAddMoreItems} t={t} />
           )}
 
           {/* Add More Items Button */}
@@ -232,7 +233,7 @@ export function SessionSummaryStep({
               )}
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              {t('addMoreItems')}
+              {t('newItems.addMore')}
             </button>
           )}
         </section>
@@ -262,7 +263,7 @@ export function SessionSummaryStep({
                     id="existing-items-heading"
                     className="text-lg font-semibold text-[#222222]"
                   >
-                    Previously Created Items ({existingItems.length})
+                    {t('existingItems.title', { count: existingItems.length })}
                   </h3>
                   {isExistingExpanded ? (
                     <ChevronUp className="w-5 h-5 text-[#717171]" aria-hidden="true" />
@@ -313,7 +314,7 @@ export function SessionSummaryStep({
           )}
         >
           <Printer className="w-5 h-5" aria-hidden="true" />
-          {t('printQrCode')}
+          {t('actions.printQRCodes')}
         </button>
 
         {/* Skip & Finish Button */}
@@ -333,7 +334,7 @@ export function SessionSummaryStep({
           )}
         >
           <SkipForward className="w-5 h-5" aria-hidden="true" />
-          {t('skipForNow')}
+          {t('actions.skipFinish')}
         </button>
       </div>
 
@@ -345,9 +346,9 @@ export function SessionSummaryStep({
         onConfirmRemove={handleConfirmRemove}
       />
 
-      {/* Screen Reader Announcements */}
+      {/* Screen Reader Announcements (REQ-E02-065) */}
       <div aria-live="polite" className="sr-only">
-        Step: Session Summary - {sessionItems.length} items created in this session.
+        {t('announcements.stepSummary', { count: sessionItems.length })}
       </div>
     </div>
   );
