@@ -6,7 +6,7 @@
  *
  * @module ItemManager/utils/constants
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-04 (REQ-066 Task 2.5.1)
+ * @lastModified 2026-01-22 (REQ-E02-079 - i18n translation keys)
  */
 
 import type { SortOption } from '../ItemManager.types';
@@ -17,27 +17,30 @@ import type { SortOption } from '../ItemManager.types';
 
 /**
  * Sort option item structure for the menu.
+ * Uses labelKey for i18n translations (translated at render time).
  */
 export interface SortOptionItem {
   value: SortOption;
-  label: string;
+  /** Translation key relative to 'items.sort.options' namespace */
+  labelKey: string;
   icon?: 'asc' | 'desc' | 'none';
 }
 
 /**
  * Available sort options for ItemManager.
  * Used by SortMenu and useItemSearch.
+ * Components should translate labelKey at render time using t(`sort.options.${labelKey}`).
  */
 export const SORT_OPTIONS: SortOptionItem[] = [
-  { value: 'title-asc', label: 'Title (A-Z)', icon: 'asc' },
-  { value: 'title-desc', label: 'Title (Z-A)', icon: 'desc' },
-  { value: 'created-desc', label: 'Newest First', icon: 'desc' },
-  { value: 'created-asc', label: 'Oldest First', icon: 'asc' },
-  { value: 'updated-desc', label: 'Recently Modified', icon: 'desc' },
-  { value: 'updated-asc', label: 'Least Recently Modified', icon: 'asc' },
-  { value: 'location-asc', label: 'Location (A-Z)', icon: 'asc' },
-  { value: 'instructions-desc', label: 'Most Guides', icon: 'desc' },
-  { value: 'instructions-asc', label: 'Fewest Guides', icon: 'asc' },
+  { value: 'title-asc', labelKey: 'nameAZ', icon: 'asc' },
+  { value: 'title-desc', labelKey: 'nameZA', icon: 'desc' },
+  { value: 'created-desc', labelKey: 'newest', icon: 'desc' },
+  { value: 'created-asc', labelKey: 'oldest', icon: 'asc' },
+  { value: 'updated-desc', labelKey: 'recentlyViewed', icon: 'desc' },
+  { value: 'updated-asc', labelKey: 'oldest', icon: 'asc' },
+  { value: 'location-asc', labelKey: 'nameAZ', icon: 'asc' },
+  { value: 'instructions-desc', labelKey: 'mostViewed', icon: 'desc' },
+  { value: 'instructions-asc', labelKey: 'newest', icon: 'asc' },
 ];
 
 /**

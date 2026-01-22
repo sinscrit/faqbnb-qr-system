@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { X, Filter, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { FilterState, Property } from '../../ItemManager.types';
@@ -83,19 +84,8 @@ export interface FilterPanelProps {
 }
 
 // =============================================================================
-// Default Labels
+// Default Labels (now uses translations - see component for actual defaults)
 // =============================================================================
-
-const DEFAULT_LABELS: Required<FilterPanelLabels> = {
-  title: 'Filters',
-  clearAll: 'Clear All',
-  contentType: 'Content Type',
-  tags: 'Tags',
-  location: 'Location',
-  property: 'Property',
-  applyFilters: 'Apply Filters',
-  close: 'Close',
-};
 
 // =============================================================================
 // Component
@@ -129,11 +119,24 @@ export function FilterPanel({
   disabled = false,
 }: FilterPanelProps) {
   // ---------------------------------------------------------------------------
-  // Merged Labels
+  // i18n Translations (REQ-E02-079)
+  // ---------------------------------------------------------------------------
+
+  const t = useTranslations('items');
+
+  // ---------------------------------------------------------------------------
+  // Merged Labels with Translations as Defaults
   // ---------------------------------------------------------------------------
 
   const labels: Required<FilterPanelLabels> = {
-    ...DEFAULT_LABELS,
+    title: t('filters.title'),
+    clearAll: t('filters.clearAll'),
+    contentType: t('filters.sections.contentType'),
+    tags: t('filters.sections.tags'),
+    location: t('filters.sections.location'),
+    property: t('filters.sections.property'),
+    applyFilters: t('filters.applyFilters'),
+    close: t('filters.close'),
     ...customLabels,
   };
 

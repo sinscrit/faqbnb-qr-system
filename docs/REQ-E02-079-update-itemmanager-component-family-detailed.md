@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-E02-079 - Update ItemManager Component Family for Internationalization
 
 **Generated:** 2026-01-20 18:00 UTC
-**Last Modified:** 2026-01-20 18:00 UTC
+**Last Modified:** 2026-01-22 (REQ-E02-079 implementation in progress)
 **Request Reference:** REQ-E02-079 (docs/gen_requests_epic2.md)
 **Overview Document:** docs/REQ-E02-079-update-itemmanager-component-family-overview.md
 **Implementation Plan:** docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md
@@ -318,10 +318,12 @@ export function ItemManager({ ... }) {
 - No TypeScript errors
 
 **Acceptance Criteria:**
-- [ ] `useTranslations` imported and used
-- [ ] All hardcoded labels replaced with `t()` calls
-- [ ] Component compiles without errors
-- [ ] Component renders correctly
+- [x] `useTranslations` imported and used
+- [x] All hardcoded labels replaced with `t()` calls
+- [x] Component compiles without errors
+- [x] Component renders correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -350,9 +352,11 @@ Add translations to the ItemToolbar component for view toggle, clear filters but
 - Filter labels are translated
 
 **Acceptance Criteria:**
-- [ ] All toolbar labels use translation hooks
-- [ ] Selection count uses ICU pluralization
-- [ ] Room filter dropdown labels translated
+- [x] All toolbar labels use translation hooks
+- [x] Selection count uses ICU pluralization
+- [x] Room filter dropdown labels translated
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -377,9 +381,11 @@ Add translations to the SearchInput component for placeholder text and aria-labe
 - Clear button has translated aria-label
 
 **Acceptance Criteria:**
-- [ ] Placeholder text uses translation
-- [ ] Aria-labels use translations
-- [ ] Component renders correctly
+- [x] Placeholder text uses translation
+- [x] Aria-labels use translations
+- [x] Component renders correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -415,8 +421,10 @@ Update the `SORT_OPTIONS` constant to use translation keys instead of hardcoded 
 - No TypeScript errors
 
 **Acceptance Criteria:**
-- [ ] `SORT_OPTIONS` uses translation keys instead of hardcoded labels
-- [ ] Type definitions updated if needed
+- [x] `SORT_OPTIONS` uses translation keys instead of hardcoded labels
+- [x] Type definitions updated if needed
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -449,9 +457,11 @@ Add translations to the FilterPanel component for all filter-related labels.
 - All filter sections have translated headers
 
 **Acceptance Criteria:**
-- [ ] All filter labels translated
-- [ ] Panel header translated
-- [ ] Action buttons translated
+- [x] All filter labels translated
+- [x] Panel header translated
+- [x] Action buttons translated
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -475,8 +485,10 @@ Add translations to the ContentTypeFilter component.
 - Filter works correctly with translated labels
 
 **Acceptance Criteria:**
-- [ ] All content type names translated
-- [ ] Filter functionality preserved
+- [x] All content type names translated
+- [x] Filter functionality preserved
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -498,8 +510,10 @@ Add translations to the TagFilter component for filter labels.
 - Filter works correctly
 
 **Acceptance Criteria:**
-- [ ] Filter labels translated
-- [ ] Component renders correctly
+- [x] Filter labels translated
+- [x] Component renders correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -520,8 +534,10 @@ Add translations to the LocationFilter component.
 - Location filter displays translated labels
 
 **Acceptance Criteria:**
-- [ ] Filter labels translated
-- [ ] Component renders correctly
+- [x] Filter labels translated
+- [x] Component renders correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -542,8 +558,10 @@ Add translations to the PropertyFilter component.
 - Property filter displays translated labels
 
 **Acceptance Criteria:**
-- [ ] Filter labels translated
-- [ ] Component renders correctly
+- [x] Filter labels translated
+- [x] Component renders correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 
@@ -575,9 +593,11 @@ Add translations to the SortMenu component for sort labels and options.
 - All sort options show translated text
 
 **Acceptance Criteria:**
-- [ ] Sort label translated
-- [ ] All sort options translated
-- [ ] Menu functions correctly
+- [x] Sort label translated
+- [x] All sort options translated
+- [x] Menu functions correctly
+
+**Status:** COMPLETED (2026-01-22)
 
 ---
 

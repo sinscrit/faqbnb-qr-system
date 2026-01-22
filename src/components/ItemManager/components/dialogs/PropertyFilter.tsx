@@ -11,6 +11,7 @@
  * @lastModified 2026-01-04 (REQ-065 Task 2.4.4)
  */
 
+import { useTranslations } from 'next-intl';
 import { Building, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Property } from '../../ItemManager.types';
@@ -53,8 +54,14 @@ export function PropertyFilter({
   onSelectionChange,
   disabled = false,
   className,
-  label = 'Property',
+  label,
 }: PropertyFilterProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  // Use provided label or translation
+  const sectionLabel = label || t('filters.sections.property');
+
   // ---------------------------------------------------------------------------
   // Early Return
   // ---------------------------------------------------------------------------
@@ -89,12 +96,12 @@ export function PropertyFilter({
   return (
     <div className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{label}</p>
+      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
 
       {/* Property Checkboxes */}
       <div
         role="group"
-        aria-label={label}
+        aria-label={sectionLabel}
         className="space-y-2"
       >
         {properties.map((property) => {

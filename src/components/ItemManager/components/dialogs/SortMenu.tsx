@@ -12,6 +12,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ArrowUpDown, ArrowUp, ArrowDown, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -57,17 +58,6 @@ export interface SortMenuProps {
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-/**
- * Get display label for the current sort option.
- */
-function getSortLabel(
-  sort: SortOption,
-  options: SortOptionItem[]
-): string {
-  const option = options.find((o) => o.value === sort);
-  return option?.label ?? 'Sort';
-}
 
 /**
  * Icon component for sort direction indicator.
@@ -120,18 +110,26 @@ export function SortMenu({
   align = 'end',
   side = 'bottom',
 }: SortMenuProps) {
-  // Merge default labels
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  // Merge default labels with translations
   const mergedLabels = {
-    sortLabel: 'Sort',
-    sortByLabel: 'Sort by',
+    sortLabel: t('sort.label'),
+    sortByLabel: t('sort.sortBy'),
     ...labels,
   };
 
+  // Helper to translate sort option labels
+  const translateOption = (option: SortOptionItem): string => {
+    return t(`sort.options.${option.labelKey}`);
+  };
+
   // Get current sort display label
-  const currentLabel = useMemo(
-    () => getSortLabel(currentSort, sortOptions),
-    [currentSort, sortOptions]
-  );
+  const currentLabel = useMemo(() => {
+    const option = sortOptions.find((o) => o.value === currentSort);
+    return option ? translateOption(option) : mergedLabels.sortLabel;
+  }, [currentSort, sortOptions, t]);
 
   return (
     <DropdownMenu.Root>
@@ -238,7 +236,7 @@ export function SortMenu({
                   </div>
 
                   {/* Label */}
-                  <span className="flex-1">{option.label}</span>
+                  <span className="flex-1">{translateOption(option)}</span>
 
                   {/* Direction Icon */}
                   <SortDirectionIcon

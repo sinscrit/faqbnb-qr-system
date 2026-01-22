@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { LayoutGrid, List, X, CheckSquare, ChevronDown } from 'lucide-react';
 import type {
@@ -30,13 +31,18 @@ interface ViewToggleProps {
   viewMode: 'grid' | 'list';
   onViewModeChange: (mode: 'grid' | 'list') => void;
   className?: string;
+  labels: {
+    viewModeLabel: string;
+    gridView: string;
+    listView: string;
+  };
 }
 
 /**
  * Toggle control for switching between grid and list views.
  * Uses radiogroup semantics for proper accessibility.
  */
-function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) {
+function ViewToggle({ viewMode, onViewModeChange, className, labels }: ViewToggleProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, currentMode: 'grid' | 'list') => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
@@ -48,7 +54,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
   return (
     <div
       role="radiogroup"
-      aria-label="View mode"
+      aria-label={labels.viewModeLabel}
       className={cn('inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5', className)}
     >
       <button
@@ -67,7 +73,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
             ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
-        aria-label="Grid view"
+        aria-label={labels.gridView}
       >
         <LayoutGrid className="h-4 w-4" aria-hidden="true" />
       </button>
@@ -87,7 +93,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
             ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
-        aria-label="List view"
+        aria-label={labels.listView}
       >
         <List className="h-4 w-4" aria-hidden="true" />
       </button>
@@ -107,18 +113,19 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
 interface ClearFiltersButtonProps {
   onClick: () => void;
   className?: string;
+  label: string;
 }
 
 /**
  * Button to clear all active filters and search.
  * 48px minimum touch target on mobile.
  */
-function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
+function ClearFiltersButton({ onClick, className, label }: ClearFiltersButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label="Clear all filters"
+      aria-label={label}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 rounded-md',
         'min-h-[48px]',
@@ -131,7 +138,7 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
       )}
     >
       <X className="h-4 w-4" aria-hidden="true" />
-      <span>Clear filters</span>
+      <span>{label}</span>
     </button>
   );
 }
@@ -151,6 +158,12 @@ interface SelectionIndicatorProps {
   totalCount?: number;
   /** Optional additional CSS classes */
   className?: string;
+  /** Labels for i18n */
+  labels: {
+    selected: string;
+    clearSelection: string;
+    selectAll: string;
+  };
 }
 
 /**
@@ -163,6 +176,7 @@ function SelectionIndicator({
   onSelectAll,
   totalCount = 0,
   className,
+  labels,
 }: SelectionIndicatorProps) {
   // Don't render if no items selected
   if (selectedCount === 0) return null;
@@ -181,7 +195,7 @@ function SelectionIndicator({
     >
       <CheckSquare className="h-4 w-4" aria-hidden="true" />
       <span className="text-sm font-medium">
-        {selectedCount} selected
+        {labels.selected}
       </span>
 
       {/* Clear selection button */}
@@ -192,7 +206,7 @@ function SelectionIndicator({
           'ml-1 hover:bg-[#FFE4E9] rounded-full p-0.5 transition-colors',
           'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
         )}
-        aria-label="Clear selection"
+        aria-label={labels.clearSelection}
       >
         <X className="h-3.5 w-3.5" aria-hidden="true" />
       </button>
@@ -209,7 +223,7 @@ function SelectionIndicator({
               'focus:outline-none focus:underline'
             )}
           >
-            Select all ({totalCount})
+            {labels.selectAll}
           </button>
         </>
       )}
@@ -244,6 +258,11 @@ interface RoomFilterDropdownProps {
   selectedRooms: string[];
   onRoomsChange: (rooms: string[]) => void;
   className?: string;
+  labels: {
+    room: string;
+    roomWithCount: string;
+    selectRooms: string;
+  };
 }
 
 function RoomFilterDropdown({
@@ -251,6 +270,7 @@ function RoomFilterDropdown({
   selectedRooms,
   onRoomsChange,
   className,
+  labels,
 }: RoomFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -297,8 +317,8 @@ function RoomFilterDropdown({
       >
         <span>
           {selectedRooms.length > 0
-            ? `Room (${selectedRooms.length})`
-            : 'Room'}
+            ? labels.roomWithCount
+            : labels.room}
         </span>
         <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
       </button>
@@ -306,7 +326,7 @@ function RoomFilterDropdown({
       {isOpen && (
         <div
           role="listbox"
-          aria-label="Select rooms"
+          aria-label={labels.selectRooms}
           className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 max-h-60 overflow-y-auto"
         >
           {rooms.map((room) => (
@@ -384,12 +404,15 @@ export function ItemToolbar({
   renderFilters,
   renderSort,
 }: ItemToolbarProps) {
-  const searchPlaceholder = labels.searchPlaceholder || 'Search items...';
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  const searchPlaceholder = labels.searchPlaceholder || t('search.placeholder');
 
   return (
     <div
       role="toolbar"
-      aria-label="Item management controls"
+      aria-label={t('title')}
       className={cn(
         'flex flex-col gap-4 p-4 bg-white border-b border-gray-200',
         classNames.container
@@ -403,6 +426,11 @@ export function ItemToolbar({
             <ViewToggle
               viewMode={viewMode}
               onViewModeChange={onViewModeChange}
+              labels={{
+                viewModeLabel: t('view.toggle'),
+                gridView: t('view.grid'),
+                listView: t('view.list'),
+              }}
             />
           </div>
         )}
@@ -421,6 +449,7 @@ export function ItemToolbar({
                 value={searchQuery}
                 onChange={onSearchChange}
                 placeholder={searchPlaceholder}
+                clearAriaLabel={t('search.clear')}
                 className="w-full"
               />
             )}
@@ -462,6 +491,11 @@ export function ItemToolbar({
                   rooms={filterOptions.rooms}
                   selectedRooms={filters.rooms || []}
                   onRoomsChange={(rooms) => onFiltersChange({ rooms })}
+                  labels={{
+                    room: t('room'),
+                    roomWithCount: t('filters.tags.selected', { count: (filters.rooms || []).length }),
+                    selectRooms: t('filters.location.placeholder'),
+                  }}
                 />
               )}
             </>
@@ -478,6 +512,11 @@ export function ItemToolbar({
             onClearSelection={onClearSelection}
             onSelectAll={onSelectAll}
             totalCount={resultCount}
+            labels={{
+              selected: t('bulk.selected', { count: selectedCount }),
+              clearSelection: t('bulk.deselectAll'),
+              selectAll: t('bulk.selectAll'),
+            }}
           />
         )}
 
@@ -485,6 +524,7 @@ export function ItemToolbar({
           <ClearFiltersButton
             onClick={onClearFilters}
             className={classNames.clearButton}
+            label={t('filters.clearAll')}
           />
         )}
       </div>

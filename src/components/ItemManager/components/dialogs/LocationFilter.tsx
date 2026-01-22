@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronDown, X, MapPin, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -59,10 +60,18 @@ export function LocationFilter({
   onSelectionChange,
   disabled = false,
   className,
-  label = 'Location',
-  placeholder = 'Select location...',
-  noLocationsMessage = 'No locations available',
+  label,
+  placeholder,
+  noLocationsMessage,
 }: LocationFilterProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  // Use provided labels or translations
+  const sectionLabel = label || t('filters.sections.location');
+  const placeholderText = placeholder || t('filters.location.placeholder');
+  const noLocationsText = noLocationsMessage || t('filters.location.all');
+
   // ---------------------------------------------------------------------------
   // State
   // ---------------------------------------------------------------------------
@@ -185,7 +194,7 @@ export function LocationFilter({
   return (
     <div ref={containerRef} className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{label}</p>
+      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
 
       {/* Dropdown Trigger */}
       <div className="relative flex items-center gap-1">
@@ -220,7 +229,7 @@ export function LocationFilter({
               selectedLocation ? 'text-blue-800' : 'text-gray-500'
             )}
           >
-            {selectedLocation || placeholder}
+            {selectedLocation || placeholderText}
           </span>
 
           <ChevronDown
@@ -279,10 +288,10 @@ export function LocationFilter({
               {filteredLocations.length === 0 ? (
                 <div className="px-3 py-4 text-sm text-gray-500 text-center">
                   {searchQuery
-                    ? 'No matching locations'
+                    ? t('search.results', { count: 0 })
                     : availableLocations.length === 0
-                    ? noLocationsMessage
-                    : 'No locations found'}
+                    ? noLocationsText
+                    : t('filters.location.all')}
                 </div>
               ) : (
                 filteredLocations.map((location) => {

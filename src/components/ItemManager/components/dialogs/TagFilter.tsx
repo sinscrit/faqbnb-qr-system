@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { X, ChevronDown, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -59,10 +60,17 @@ export function TagFilter({
   onSelectionChange,
   disabled = false,
   className,
-  label = 'Tags',
-  placeholder = 'Add tags...',
-  noTagsMessage = 'No tags available',
+  label,
+  placeholder,
+  noTagsMessage,
 }: TagFilterProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  // Use provided labels or translations
+  const sectionLabel = label || t('filters.sections.tags');
+  const placeholderText = placeholder || t('filters.tags.placeholder');
+  const noTagsText = noTagsMessage || t('filters.tags.noTags');
   // ---------------------------------------------------------------------------
   // State
   // ---------------------------------------------------------------------------
@@ -188,7 +196,7 @@ export function TagFilter({
   return (
     <div ref={containerRef} className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{label}</p>
+      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
 
       {/* Selected Tags */}
       {selectedTags.length > 0 && (
@@ -235,7 +243,7 @@ export function TagFilter({
           )}
         >
           <Plus className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">{placeholder}</span>
+          <span className="text-gray-600">{placeholderText}</span>
           <ChevronDown
             className={cn(
               'h-4 w-4 text-gray-400 ml-auto transition-transform',
@@ -275,10 +283,10 @@ export function TagFilter({
               {filteredTags.length === 0 ? (
                 <div className="px-3 py-4 text-sm text-gray-500 text-center">
                   {searchQuery
-                    ? 'No matching tags'
+                    ? t('search.results', { count: 0 })
                     : availableTags.length === 0
-                    ? noTagsMessage
-                    : 'All tags selected'}
+                    ? noTagsText
+                    : t('filters.tags.selected', { count: selectedTags.length })}
                 </div>
               ) : (
                 filteredTags.map((tag) => (

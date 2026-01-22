@@ -41,6 +41,8 @@ import { SUGGESTED_TAGS } from '@/components/ItemCapture/utils/constants';
 // Constants
 // =============================================================================
 
+// NOTE: Labels are now provided via translations in the component
+// This config only contains boolean/number values
 const DEFAULT_CONFIG: Required<ItemManagerConfig> = {
   defaultView: 'grid',
   allowViewToggle: true,
@@ -56,11 +58,11 @@ const DEFAULT_CONFIG: Required<ItemManagerConfig> = {
   multiPropertyMode: false,
   maxBulkSelection: 100,
   labels: {
-    searchPlaceholder: 'Search items...',
-    emptyStateTitle: 'No items yet',
-    emptyStateDescription: 'Create your first item to get started',
-    deleteConfirmTitle: 'Delete Item',
-    deleteConfirmMessage: 'Are you sure you want to delete this item? This action cannot be undone.',
+    searchPlaceholder: '',
+    emptyStateTitle: '',
+    emptyStateDescription: '',
+    deleteConfirmTitle: '',
+    deleteConfirmMessage: '',
   },
 };
 
@@ -105,10 +107,10 @@ export function ItemManager({
   classNames,
 }: ItemManagerProps) {
   // -------------------------------------------------------------------------
-  // Translations
+  // Translations (REQ-E02-079)
   // -------------------------------------------------------------------------
 
-  const tEmpty = useTranslations('common.emptyStates');
+  const t = useTranslations('items');
 
   // -------------------------------------------------------------------------
   // Config Merging
@@ -351,13 +353,13 @@ export function ItemManager({
     const prevCount = prevSelectedCountRef.current;
 
     if (currentCount !== prevCount && currentCount > 0) {
-      announce(`${currentCount} item${currentCount !== 1 ? 's' : ''} selected`);
+      announce(t('bulk.selected', { count: currentCount }));
     } else if (currentCount === 0 && prevCount > 0) {
-      announce('Selection cleared');
+      announce(t('bulk.deselectAll'));
     }
 
     prevSelectedCountRef.current = currentCount;
-  }, [selectedCount, announce]);
+  }, [selectedCount, announce, t]);
 
   // -------------------------------------------------------------------------
   // Bulk Tag Handlers
@@ -585,8 +587,8 @@ export function ItemManager({
       }
       return (
         <EmptyState
-          title={effectiveConfig.labels.emptyStateTitle}
-          description={effectiveConfig.labels.emptyStateDescription}
+          title={effectiveConfig.labels.emptyStateTitle || t('list.empty.title')}
+          description={effectiveConfig.labels.emptyStateDescription || t('list.empty.description')}
           className={classNames?.emptyState}
         />
       );
@@ -596,8 +598,8 @@ export function ItemManager({
     if (filteredItems.length === 0 && isFiltered) {
       return (
         <EmptyState
-          title={effectiveConfig.labels.noResultsTitle || tEmpty('generic.noResults')}
-          description={effectiveConfig.labels.noResultsDescription || tEmpty('generic.tryAdjusting')}
+          title={effectiveConfig.labels.noResultsTitle || t('list.noResults.title')}
+          description={effectiveConfig.labels.noResultsDescription || t('list.noResults.description')}
           className={classNames?.emptyState}
         />
       );
@@ -688,6 +690,7 @@ export function ItemManager({
     handleInlineUpdate,
     handleLongPressSelect,
     allExistingTags,
+    t,
   ]);
 
   // -------------------------------------------------------------------------
@@ -737,7 +740,7 @@ export function ItemManager({
   return (
     <div
       role="region"
-      aria-label="Item manager"
+      aria-label={t('title')}
       className={cn('flex flex-col h-full bg-white', classNames?.container)}
     >
       {/* Screen reader announcements (REQ-090) */}
@@ -800,8 +803,12 @@ export function ItemManager({
       {state.assetPanelItem && (
         <div className={cn('fixed inset-y-0 right-0 w-80 bg-white shadow-xl z-40', classNames?.assetPanel)}>
           <div className="p-4 border-b flex justify-between items-center">
-            <h3 className="font-semibold">Manage Assets</h3>
-            <button onClick={closeAssetPanel} className="text-gray-400 hover:text-gray-600">
+            <h3 className="font-semibold">{t('assets.title')}</h3>
+            <button
+              onClick={closeAssetPanel}
+              className="text-gray-400 hover:text-gray-600"
+              aria-label={t('assets.panel.close')}
+            >
               ✕
             </button>
           </div>

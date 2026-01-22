@@ -27,6 +27,8 @@ export interface SearchInputProps {
   onChange: (query: string) => void;
   /** Placeholder text for input */
   placeholder?: string;
+  /** Clear button aria-label (for i18n) */
+  clearAriaLabel?: string;
   /** Debounce delay in milliseconds (default: 300) */
   debounceMs?: number;
   /** Whether the input is disabled */
@@ -53,6 +55,7 @@ export function SearchInput({
   value,
   onChange,
   placeholder = 'Search items...',
+  clearAriaLabel = 'Clear search',
   debounceMs = DEFAULT_DEBOUNCE_MS,
   disabled = false,
   className,
@@ -212,7 +215,7 @@ export function SearchInput({
             // Touch target - at least 24x24px with padding
             "min-w-[28px] min-h-[28px]"
           )}
-          aria-label="Clear search"
+          aria-label={clearAriaLabel}
         >
           <X className="w-4 h-4" aria-hidden="true" />
         </button>

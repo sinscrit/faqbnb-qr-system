@@ -11,6 +11,7 @@
  * @lastModified 2026-01-04 (REQ-065 Task 2.4.1)
  */
 
+import { useTranslations } from 'next-intl';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,13 +21,14 @@ import { cn } from '@/lib/utils';
 
 /**
  * Available content type filter options.
+ * Labels are translation keys that will be resolved at render time.
  */
 const CONTENT_TYPE_OPTIONS = [
-  { value: 'video', label: 'Video', icon: '🎥' },
-  { value: 'image', label: 'Photo', icon: '📷' },
-  { value: 'pdf', label: 'PDF', icon: '📄' },
-  { value: 'text-only', label: 'Text Only', icon: '📝' },
-  { value: 'mixed', label: 'Mixed', icon: '📦' },
+  { value: 'video', labelKey: 'video', icon: '🎥' },
+  { value: 'image', labelKey: 'photo', icon: '📷' },
+  { value: 'pdf', labelKey: 'pdf', icon: '📄' },
+  { value: 'text-only', labelKey: 'text', icon: '📝' },
+  { value: 'mixed', labelKey: 'mixed', icon: '📦' },
 ] as const;
 
 // =============================================================================
@@ -64,8 +66,14 @@ export function ContentTypeFilter({
   onSelectionChange,
   disabled = false,
   className,
-  label = 'Content Type',
+  label,
 }: ContentTypeFilterProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
+  // Use provided label or translation
+  const sectionLabel = label || t('filters.sections.contentType');
+
   /**
    * Handle toggling a content type selection.
    */
@@ -83,15 +91,16 @@ export function ContentTypeFilter({
   return (
     <div className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{label}</p>
+      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
 
       {/* Content Type Chips */}
       <div
         role="group"
-        aria-label={label}
+        aria-label={sectionLabel}
         className="flex flex-wrap gap-2"
       >
-        {CONTENT_TYPE_OPTIONS.map(({ value, label: typeLabel, icon }) => {
+        {CONTENT_TYPE_OPTIONS.map(({ value, labelKey, icon }) => {
+          const typeLabel = t(`filters.contentTypes.${labelKey}`);
           const isSelected = selectedTypes.includes(value);
 
           return (
