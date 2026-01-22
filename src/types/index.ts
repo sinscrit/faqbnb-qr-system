@@ -847,6 +847,9 @@ export const HTTP_ERROR_MAPPING: Record<number, Omit<UserFriendlyError, 'code'>>
 // Admin types
 export * from './admin';
 
+// API Error types (REQ-E02-034)
+export * from './api-errors';
+
 // Locale/i18n types (REQ-250)
 export type {
   SupportedLanguage,
@@ -975,3 +978,23 @@ export {
   TRANSLATABLE_FIELDS_BY_ENTITY,
   MAX_TRANSLATION_FIELD_LENGTHS,
 } from './translation-management';
+
+// ============================================================================
+// Extended Error Types (REQ-E02-035)
+// ============================================================================
+
+export {
+  ExtendedErrorCode,
+  type AllErrorCodes,
+  type ErrorCategory,
+  type FormErrorKey,
+  type AuthErrorKey,
+  type ApiErrorKey,
+  type NetworkErrorKey,
+  type ItemErrorKey,
+  type PropertyErrorKey,
+  type FileErrorKey,
+  type ErrorParams,
+  type TranslatedError,
+  type ErrorTranslationContext,
+} from './errors';

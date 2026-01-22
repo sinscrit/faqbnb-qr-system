@@ -33,6 +33,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
   const t = useTranslations('common.actions');
   const tForm = useTranslations('common.form');
   const tErrors = useTranslations('errors.form');
+  const tAuth = useTranslations('auth.login');
+  const tAuthErrors = useTranslations('errors.auth');
   
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -141,10 +143,10 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
         if (errorMessage.includes('Invalid login credentials') ||
             errorMessage.includes('Email not confirmed') ||
             errorMessage.includes('Invalid email or password')) {
-          setErrors({ general: 'Invalid email or password. Please check your credentials and try again.' });
+          setErrors({ general: tAuthErrors('invalidCredentials') });
         } else if (errorMessage.includes('admin privileges') ||
                    errorMessage.includes('Access denied')) {
-          setErrors({ general: 'Access denied. Admin privileges are required.' });
+          setErrors({ general: tAuthErrors('accessDenied') });
         } else {
           setErrors({ general: errorMessage });
         }
@@ -199,7 +201,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
           <div className="flex">
             <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Authentication Failed</h3>
+              <h3 className="text-sm font-medium text-red-800">{tAuth('failed')}</h3>
               <p className="mt-1 text-sm text-red-700">{errors.general}</p>
             </div>
           </div>
@@ -209,7 +211,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       {/* OAuth Login Section */}
       <div className="space-y-4">
         <div className="text-center">
-          <p className="text-sm font-medium text-gray-700 mb-4">Sign in with your account</p>
+          <p className="text-sm font-medium text-gray-700 mb-4">{tAuth('signInWithAccount')}</p>
         </div>
         
         <GoogleOAuthButton
@@ -225,7 +227,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+          <span className="px-2 bg-white text-gray-500">{tAuth('orContinueWithEmail')}</span>
         </div>
       </div>
 
@@ -336,7 +338,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
       {/* Helper Text */}
       <div className="text-center">
         <p className="text-sm text-gray-600">
-          Access restricted to authorized administrators only
+          {tAuth('accessRestricted')}
         </p>
       </div>
       </form>

@@ -36,7 +36,9 @@ interface LinkFormData {
 export default function ItemForm({ item, properties = [], selectedPropertyId, onSave, onCancel, loading = false }: ItemFormProps) {
   const tForm = useTranslations('common.form');
   const tErrors = useTranslations('errors.form');
+  const tItemErrors = useTranslations('errors.item');
   const tActions = useTranslations('common.actions');
+  const tItems = useTranslations('items');
 
   const [formData, setFormData] = useState({
     publicId: item?.publicId || '',
@@ -73,34 +75,34 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
     const newErrors: Record<string, string> = {};
 
     if (!formData.publicId.trim()) {
-      newErrors.publicId = 'Public ID is required';
+      newErrors.publicId = tItemErrors('publicIdRequired');
     } else if (!/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/.test(formData.publicId)) {
-      newErrors.publicId = 'Public ID must be a valid UUID format';
+      newErrors.publicId = tItemErrors('publicIdFormat');
     }
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = tItemErrors('titleRequired');
     }
 
     if (!formData.propertyId.trim()) {
-      newErrors.propertyId = 'Property selection is required';
+      newErrors.propertyId = tItemErrors('propertyRequired');
     }
 
     if (formData.qrCodeUrl && !isValidUrl(formData.qrCodeUrl)) {
-      newErrors.qrCodeUrl = 'Please enter a valid QR code image URL';
+      newErrors.qrCodeUrl = tErrors('invalidUrl');
     }
 
     links.forEach((link, index) => {
       if (!link.title.trim()) {
-        newErrors[`link-${index}-title`] = 'Title is required';
+        newErrors[`link-${index}-title`] = tErrors('required');
       }
       if (!link.url.trim()) {
-        newErrors[`link-${index}-url`] = 'URL is required';
+        newErrors[`link-${index}-url`] = tErrors('required');
       } else if (!isValidUrl(link.url)) {
-        newErrors[`link-${index}-url`] = 'Please enter a valid URL';
+        newErrors[`link-${index}-url`] = tErrors('invalidUrl');
       }
       if (link.thumbnailUrl && !isValidUrl(link.thumbnailUrl)) {
-        newErrors[`link-${index}-thumbnail`] = 'Please enter a valid thumbnail URL';
+        newErrors[`link-${index}-thumbnail`] = tErrors('invalidUrl');
       }
     });
 
@@ -173,7 +175,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
   const testLink = (linkIndex: number) => {
     const link = links[linkIndex];
     if (!link.url || !link.title) {
-      alert('Please fill in both title and URL before testing the link.');
+      alert(tItemErrors('incompleteLink'));
       return;
     }
     // Open the link directly in a new tab
@@ -186,10 +188,10 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-gray-900">
-              {item ? 'Edit Item' : 'Create New Item'}
+              {item ? tItems('edit.title') : tItems('create.title')}
             </h1>
             <p className="text-gray-600 mt-1">
-              {item ? 'Update item details and resources' : 'Add a new item with instructions and resources'}
+              {item ? tItems('edit.description') : tItems('create.description')}
             </p>
           </div>
 
@@ -229,7 +231,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 <p className="text-gray-500 text-sm mt-1">
                   {item
                     ? tForm('hints.cannotBeChanged')
-                    : 'This UUID will be used in the QR code URL (e.g., faqbnb.com/item/8d678bd0-e4f7-495f-b4cd-43756813e23a)'
+                    : tForm('hints.uuidUsage')
                   }
                 </p>
               </div>
@@ -279,11 +281,11 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 <p className="text-red-600 text-sm mt-1">{errors.propertyId}</p>
               )}
               <p className="text-gray-500 text-sm mt-1">
-                Select the property where this item is located. Items must belong to a property.
+                {tForm('hints.selectPropertyForItem')}
               </p>
               {properties.length === 0 && (
                 <p className="text-yellow-600 text-sm mt-1">
-                  ⚠️ No properties available. Please create a property first before adding items.
+                  {tForm('hints.noPropertiesWarning')}
                 </p>
               )}
             </div>
@@ -322,7 +324,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                 <p className="text-red-600 text-sm mt-1">{errors.qrCodeUrl}</p>
               )}
               <p className="text-gray-500 text-sm mt-1">
-                URL to the QR code image for this item. Leave empty if no QR code is available.
+                {tForm('hints.qrCodeUrl')}
               </p>
               {formData.qrCodeUrl && (
                 <div className="mt-2">
@@ -341,27 +343,27 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
             {/* Links Section */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Resources & Links</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{tItems('links.sectionTitle')}</h3>
                 <button
                   type="button"
                   onClick={addLink}
                   className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Link
+                  {tItems('links.addLink')}
                 </button>
               </div>
 
               {links.length === 0 ? (
                 <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <p className="text-gray-500 mb-4">No resources added yet</p>
+                  <p className="text-gray-500 mb-4">{tItems('links.noResources')}</p>
                   <button
                     type="button"
                     onClick={addLink}
                     className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Your First Resource
+                    {tItems('links.addFirstResource')}
                   </button>
                 </div>
               ) : (
@@ -482,7 +484,7 @@ export default function ItemForm({ item, properties = [], selectedPropertyId, on
                             <p className="text-red-600 text-sm mt-1">{errors[`link-${index}-thumbnail`]}</p>
                           )}
                           <p className="text-gray-500 text-sm mt-1">
-                            Leave empty to auto-generate thumbnails
+                            {tForm('hints.thumbnailAutoGenerate')}
                           </p>
                         </div>
                       </div>

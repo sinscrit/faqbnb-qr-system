@@ -553,7 +553,12 @@
         "accessCodeAlphanumeric": "Access code should contain only letters and numbers",
         "validAccessCodeFormat": "Valid access code format",
         "validEmailFormat": "Valid email format",
-        "typeAutoDetected": "Type auto-detected from URL"
+        "typeAutoDetected": "Type auto-detected from URL",
+        "uuidUsage": "This UUID will be used in the QR code URL",
+        "selectPropertyForItem": "Select the property where this item is located. Items must belong to a property.",
+        "noPropertiesWarning": "No properties available. Please create a property first before adding items.",
+        "qrCodeUrl": "URL to the QR code image for this item. Leave empty if no QR code is available.",
+        "thumbnailAutoGenerate": "Leave empty to auto-generate thumbnails"
       },
       "passwordStrength": {
         "label": "Password strength:",
@@ -598,7 +603,13 @@
         "createPassword": "Create a password for your account",
         "chooseMethod": "Choose how to create your account",
         "accessCodeInfo": "Access code:",
-        "accountLinked": "Your account will be linked to your verified access code"
+        "accountLinked": "Your account will be linked to your verified access code",
+        "enterDetails": "Enter your details below",
+        "failed": "Registration Failed"
+      },
+      "titles": {
+        "editProperty": "Edit Property",
+        "createProperty": "Create New Property"
       }
     }
   },
@@ -620,7 +631,13 @@
     "verifyEmail": "Verify Email",
     "resendVerification": "Resend Verification",
     "welcomeBack": "Welcome back",
-    "loggedInAs": "Logged in as"
+    "loggedInAs": "Logged in as",
+    "login": {
+      "failed": "Authentication Failed",
+      "signInWithAccount": "Sign in with your account",
+      "orContinueWithEmail": "Or continue with email",
+      "accessRestricted": "Access restricted to authorized administrators only"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -666,7 +683,21 @@
     "room": "Room",
     "tags": "Tags",
     "addTag": "Add Tag",
-    "removeTag": "Remove Tag"
+    "removeTag": "Remove Tag",
+    "edit": {
+      "title": "Edit Item",
+      "description": "Update item details and resources"
+    },
+    "create": {
+      "title": "Create New Item",
+      "description": "Add a new item with instructions and resources"
+    },
+    "links": {
+      "sectionTitle": "Resources & Links",
+      "addLink": "Add Link",
+      "noResources": "No resources added yet",
+      "addFirstResource": "Add Your First Resource"
+    }
   },
   "errors": {
     "required": "This field is required",
@@ -685,18 +716,67 @@
     "fileTooLarge": "File is too large",
     "invalidFileType": "Invalid file type",
     "genericError": "Something went wrong. Please try again.",
+    "boundary": {
+      "title": "Something went wrong!",
+      "message": "We apologize for the inconvenience. Our team has been notified of this error.",
+      "errorId": "Error ID: {digest}",
+      "tryAgain": "Try again",
+      "goHome": "Go to Home",
+      "refresh": "Refresh Page",
+      "contactSupport": "Contact Support"
+    },
+    "notFoundPage": {
+      "title": "Page Not Found",
+      "itemTitle": "Item Not Found",
+      "itemMessage": "The item you're looking for doesn't exist or may have been removed. Please check the QR code and try again.",
+      "pageMessage": "The page you're looking for doesn't exist or may have been moved.",
+      "goBack": "Go Back",
+      "goBackDemo": "Go Back (Demo Mode)",
+      "returnHome": "Return Home",
+      "helpText": "If you believe this is an error, please contact support."
+    },
+    "global": {
+      "title": "Application Error",
+      "message": "A critical error occurred. Please try refreshing the page.",
+      "tryAgain": "Try Again"
+    },
     "form": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
       "emailRequired": "Email is required",
       "invalidEmail": "Please enter a valid email address",
+      "password": {
+        "required": "Password is required",
+        "tooShort": "Password must be at least {min} characters",
+        "tooWeak": "Password must include uppercase, lowercase, and numbers",
+        "mismatch": "Passwords do not match"
+      },
       "passwordRequired": "Password is required",
       "passwordTooShort": "Password must be at least {min} characters",
+      "passwordTooWeak": "Password must include uppercase, lowercase, and numbers",
       "passwordMismatch": "Passwords do not match",
+      "maxLength": "Maximum {max} characters allowed",
+      "minLength": "Minimum {min} characters required",
+      "invalidFormat": "Invalid format",
+      "invalidUrl": "Please enter a valid URL",
+      "invalidPhone": "Please enter a valid phone number",
+      "pattern": "Please match the required format",
+      "unique": "This value is already in use",
+      "number": {
+        "invalid": "Please enter a valid number",
+        "min": "Value must be at least {min}",
+        "max": "Value must be no more than {max}"
+      },
+      "date": {
+        "invalid": "Please enter a valid date",
+        "past": "Date must be in the past",
+        "future": "Date must be in the future"
+      },
       "accessCodeRequired": "Access code is required",
       "propertyNicknameRequired": "Property nickname is required",
       "propertyNicknameTooLong": "Property nickname must be 100 characters or less",
       "propertyTypeRequired": "Property type is required",
       "addressTooLong": "Address must be 500 characters or less",
-      "invalidUrl": "Please enter a valid URL",
       "propertyNameRequired": "Property name is required",
       "propertyNameTooLong": "Property name must be {max} characters or less",
       "addressLine1TooLong": "Address must be {max} characters or less",
@@ -704,8 +784,85 @@
       "cityTooLong": "City must be {max} characters or less",
       "stateProvinceTooLong": "State/Province must be {max} characters or less",
       "postalCodeTooLong": "Postal code must be {max} characters or less",
-      "invalidCountry": "Please select a valid country"
-    }
+      "invalidCountry": "Please select a valid country",
+      "termsRequired": "You must agree to the terms and conditions"
+    },
+    "api": {
+      "generic": "Something went wrong. Please try again.",
+      "notFound": "The requested resource was not found",
+      "unauthorized": "You are not authorized to perform this action",
+      "forbidden": "Access denied",
+      "conflict": "This resource already exists",
+      "serverError": "Server error. Please try again later.",
+      "timeout": "Request timed out. Please try again.",
+      "badRequest": "Invalid request. Please check your input.",
+      "serviceUnavailable": "Service temporarily unavailable. Please try again later.",
+      "methodNotAllowed": "This operation is not allowed.",
+      "tooManyRequests": "Too many requests. Please wait a moment."
+    },
+    "network": {
+      "offline": "You appear to be offline. Please check your connection.",
+      "connectionFailed": "Unable to connect to the server",
+      "slowConnection": "Connection is slow. This may take a moment.",
+      "retryFailed": "Connection retry failed. Please try again later."
+    },
+    "auth": {
+      "invalidCredentials": "Invalid email or password",
+      "emailNotVerified": "Please verify your email address",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "accountLocked": "Account has been locked. Contact support.",
+      "accessDenied": "Access denied to this resource",
+      "emailTaken": "This email is already registered",
+      "oauthFailed": "Authentication failed. Please try again.",
+      "oauthSessionExpired": "OAuth session expired. Please sign in with Google again.",
+      "oauthConflict": "An account with this email already exists. Please try logging in instead.",
+      "accessCodeInvalid": "Invalid access code. Please check your invitation.",
+      "invalidAccessCode": "Invalid access code",
+      "accessCodeExpired": "Access code has expired. Please request a new one.",
+      "emailMismatch": "Email does not match the access request"
+    },
+    "item": {
+      "notFound": "Item not found",
+      "createFailed": "Failed to create item",
+      "updateFailed": "Failed to update item",
+      "deleteFailed": "Failed to delete item",
+      "duplicateName": "An item with this name already exists",
+      "contentRequired": "At least one media item, link, or text instructions must be provided",
+      "titleRequired": "Item title is required",
+      "titleTooLong": "Title must be {max} characters or less",
+      "publicIdRequired": "Public ID is required",
+      "publicIdFormat": "Public ID must be a valid UUID format",
+      "propertyRequired": "Property selection is required",
+      "incompleteLink": "Please fill in both title and URL before testing the link."
+    },
+    "property": {
+      "notFound": "Property not found",
+      "createFailed": "Failed to create property",
+      "updateFailed": "Failed to update property",
+      "deleteFailed": "Failed to delete property",
+      "duplicateName": "A property with this name already exists",
+      "nameRequired": "Property name is required"
+    },
+    "file": {
+      "tooLarge": "File size exceeds {max} limit",
+      "invalidType": "Invalid file type. Allowed: {types}",
+      "uploadFailed": "File upload failed. Please try again.",
+      "countExceeded": "Maximum {max} files allowed",
+      "totalSizeExceeded": "Total upload size exceeds {max} limit",
+      "processingFailed": "Failed to process file. Please try a different file.",
+      "imageCountExceeded": "Maximum {max} photos allowed",
+      "urlCountExceeded": "Maximum {max} links allowed",
+      "urlInvalid": "Please enter a valid URL",
+      "urlProtocol": "Only http and https URLs are allowed"
+    },
+    "system": {
+      "unexpected": "An unexpected error occurred. Please try again.",
+      "maintenance": "System is under maintenance. Please try again later.",
+      "rateLimit": "Too many requests. Please wait a moment.",
+      "permissionDenied": "Permission denied for this operation.",
+      "browserNotSupported": "Your browser is not supported. Please use a modern browser."
+    },
+    "generic": "Something went wrong. Please try again."
   },
   "language": {
     "select": "Select Language",

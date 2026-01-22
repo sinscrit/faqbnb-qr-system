@@ -55,3 +55,22 @@ export {
   type TimeFormatStyle,
   type DateTimeFormatterReturn,
 } from './datetime-formatting';
+
+// Error Translation exports (REQ-E02-035)
+export {
+  useErrorTranslations,
+  getErrorTranslations,
+  getHttpErrorKey,
+  getErrorCodeKey,
+  getErrorCategory,
+  type ErrorTranslationUtils,
+  type ErrorCategory,
+  type FormErrorKey,
+  type AuthErrorKey,
+  type ApiErrorKey,
+  type NetworkErrorKey,
+  type ItemErrorKey,
+  type PropertyErrorKey,
+  type FileErrorKey,
+  type ErrorParams,
+} from './error-translations';

@@ -553,7 +553,12 @@
         "accessCodeAlphanumeric": "Zugangscode sollte nur Buchstaben und Zahlen enthalten",
         "validAccessCodeFormat": "Gültiges Zugangscode-Format",
         "validEmailFormat": "Gültiges E-Mail-Format",
-        "typeAutoDetected": "Typ automatisch aus URL erkannt"
+        "typeAutoDetected": "Typ automatisch aus URL erkannt",
+        "uuidUsage": "Diese UUID wird in der QR-Code-URL verwendet",
+        "selectPropertyForItem": "Wählen Sie die Immobilie aus, in der sich dieses Element befindet. Elemente müssen zu einer Immobilie gehören.",
+        "noPropertiesWarning": "Keine Immobilien verfügbar. Bitte erstellen Sie zuerst eine Immobilie.",
+        "qrCodeUrl": "URL zum QR-Code-Bild für dieses Element. Leer lassen, wenn kein QR-Code verfügbar ist.",
+        "thumbnailAutoGenerate": "Leer lassen, um Miniaturansichten automatisch zu generieren"
       },
       "passwordStrength": {
         "label": "Passwortstärke:",
@@ -598,7 +603,13 @@
         "createPassword": "Erstellen Sie ein Passwort für Ihr Konto",
         "chooseMethod": "Wählen Sie, wie Sie Ihr Konto erstellen möchten",
         "accessCodeInfo": "Zugangscode:",
-        "accountLinked": "Ihr Konto wird mit Ihrem verifizierten Zugangscode verknüpft"
+        "accountLinked": "Ihr Konto wird mit Ihrem verifizierten Zugangscode verknüpft",
+        "enterDetails": "Geben Sie unten Ihre Daten ein",
+        "failed": "Registrierung fehlgeschlagen"
+      },
+      "titles": {
+        "editProperty": "Immobilie Bearbeiten",
+        "createProperty": "Neue Immobilie Erstellen"
       }
     }
   },
@@ -620,7 +631,13 @@
     "verifyEmail": "E-Mail Bestätigen",
     "resendVerification": "Bestätigung Erneut Senden",
     "welcomeBack": "Willkommen Zurück",
-    "loggedInAs": "Angemeldet als"
+    "loggedInAs": "Angemeldet als",
+    "login": {
+      "failed": "Authentifizierung fehlgeschlagen",
+      "signInWithAccount": "Mit Ihrem Konto anmelden",
+      "orContinueWithEmail": "Oder mit E-Mail fortfahren",
+      "accessRestricted": "Zugang nur für autorisierte Administratoren"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -666,7 +683,21 @@
     "room": "Raum",
     "tags": "Tags",
     "addTag": "Tag Hinzufügen",
-    "removeTag": "Tag Entfernen"
+    "removeTag": "Tag Entfernen",
+    "edit": {
+      "title": "Artikel Bearbeiten",
+      "description": "Artikeldetails und Ressourcen aktualisieren"
+    },
+    "create": {
+      "title": "Neuen Artikel Erstellen",
+      "description": "Einen neuen Artikel mit Anleitungen und Ressourcen hinzufügen"
+    },
+    "links": {
+      "sectionTitle": "Ressourcen & Links",
+      "addLink": "Link Hinzufügen",
+      "noResources": "Keine Ressourcen hinzugefügt",
+      "addFirstResource": "Fügen Sie Ihre erste Ressource hinzu"
+    }
   },
   "errors": {
     "required": "Dieses Feld ist erforderlich",
@@ -685,18 +716,67 @@
     "fileTooLarge": "Datei ist zu groß",
     "invalidFileType": "Ungültiger Dateityp",
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "boundary": {
+      "title": "Etwas ist schiefgelaufen!",
+      "message": "Wir entschuldigen uns für die Unannehmlichkeiten. Unser Team wurde über diesen Fehler informiert.",
+      "errorId": "Fehler-ID: {digest}",
+      "tryAgain": "Erneut versuchen",
+      "goHome": "Zur Startseite",
+      "refresh": "Seite aktualisieren",
+      "contactSupport": "Support kontaktieren"
+    },
+    "notFoundPage": {
+      "title": "Seite nicht gefunden",
+      "itemTitle": "Artikel nicht gefunden",
+      "itemMessage": "Der gesuchte Artikel existiert nicht oder wurde entfernt. Bitte überprüfen Sie den QR-Code und versuchen Sie es erneut.",
+      "pageMessage": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+      "goBack": "Zurück",
+      "goBackDemo": "Zurück (Demo-Modus)",
+      "returnHome": "Zur Startseite",
+      "helpText": "Wenn Sie glauben, dass dies ein Fehler ist, kontaktieren Sie bitte den Support."
+    },
+    "global": {
+      "title": "Anwendungsfehler",
+      "message": "Ein kritischer Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite.",
+      "tryAgain": "Erneut versuchen"
+    },
     "form": {
+      "required": "Dieses Feld ist erforderlich",
+      "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
       "emailRequired": "E-Mail ist erforderlich",
       "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "password": {
+        "required": "Passwort ist erforderlich",
+        "tooShort": "Passwort muss mindestens {min} Zeichen haben",
+        "tooWeak": "Passwort muss Groß-, Kleinbuchstaben und Zahlen enthalten",
+        "mismatch": "Passwörter stimmen nicht überein"
+      },
       "passwordRequired": "Passwort ist erforderlich",
       "passwordTooShort": "Passwort muss mindestens {min} Zeichen haben",
+      "passwordTooWeak": "Passwort muss Groß-, Kleinbuchstaben und Zahlen enthalten",
       "passwordMismatch": "Passwörter stimmen nicht überein",
+      "maxLength": "Maximal {max} Zeichen erlaubt",
+      "minLength": "Mindestens {min} Zeichen erforderlich",
+      "invalidFormat": "Ungültiges Format",
+      "invalidUrl": "Bitte geben Sie eine gültige URL ein",
+      "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer ein",
+      "pattern": "Bitte entsprechen Sie dem erforderlichen Format",
+      "unique": "Dieser Wert wird bereits verwendet",
+      "number": {
+        "invalid": "Bitte geben Sie eine gültige Zahl ein",
+        "min": "Der Wert muss mindestens {min} sein",
+        "max": "Der Wert darf nicht mehr als {max} sein"
+      },
+      "date": {
+        "invalid": "Bitte geben Sie ein gültiges Datum ein",
+        "past": "Das Datum muss in der Vergangenheit liegen",
+        "future": "Das Datum muss in der Zukunft liegen"
+      },
       "accessCodeRequired": "Zugangscode ist erforderlich",
       "propertyNicknameRequired": "Immobilien-Spitzname ist erforderlich",
       "propertyNicknameTooLong": "Immobilien-Spitzname darf maximal 100 Zeichen haben",
       "propertyTypeRequired": "Immobilientyp ist erforderlich",
       "addressTooLong": "Adresse darf maximal 500 Zeichen haben",
-      "invalidUrl": "Bitte geben Sie eine gültige URL ein",
       "propertyNameRequired": "Immobilienname ist erforderlich",
       "propertyNameTooLong": "Immobilienname darf maximal {max} Zeichen haben",
       "addressLine1TooLong": "Adresse darf maximal {max} Zeichen haben",
@@ -704,8 +784,85 @@
       "cityTooLong": "Stadt darf maximal {max} Zeichen haben",
       "stateProvinceTooLong": "Bundesland/Kanton darf maximal {max} Zeichen haben",
       "postalCodeTooLong": "Postleitzahl darf maximal {max} Zeichen haben",
-      "invalidCountry": "Bitte wählen Sie ein gültiges Land"
-    }
+      "invalidCountry": "Bitte wählen Sie ein gültiges Land",
+      "termsRequired": "Sie müssen den Nutzungsbedingungen zustimmen"
+    },
+    "api": {
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "notFound": "Die angeforderte Ressource wurde nicht gefunden",
+      "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen",
+      "forbidden": "Zugriff verweigert",
+      "conflict": "Diese Ressource existiert bereits",
+      "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+      "timeout": "Zeitüberschreitung. Bitte versuchen Sie es erneut.",
+      "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe.",
+      "serviceUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
+      "methodNotAllowed": "Diese Operation ist nicht erlaubt.",
+      "tooManyRequests": "Zu viele Anfragen. Bitte warten Sie einen Moment."
+    },
+    "network": {
+      "offline": "Sie scheinen offline zu sein. Bitte überprüfen Sie Ihre Verbindung.",
+      "connectionFailed": "Verbindung zum Server nicht möglich",
+      "slowConnection": "Die Verbindung ist langsam. Dies kann einen Moment dauern.",
+      "retryFailed": "Verbindungswiederholung fehlgeschlagen. Bitte versuchen Sie es später erneut."
+    },
+    "auth": {
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail-Adresse",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "accountLocked": "Konto wurde gesperrt. Kontaktieren Sie den Support.",
+      "accessDenied": "Zugriff auf diese Ressource verweigert",
+      "emailTaken": "Diese E-Mail ist bereits registriert",
+      "oauthFailed": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "oauthSessionExpired": "OAuth-Sitzung abgelaufen. Bitte melden Sie sich erneut mit Google an.",
+      "oauthConflict": "Ein Konto mit dieser E-Mail existiert bereits. Bitte melden Sie sich an.",
+      "accessCodeInvalid": "Ungültiger Zugangscode. Bitte überprüfen Sie Ihre Einladung.",
+      "invalidAccessCode": "Ungültiger Zugangscode",
+      "accessCodeExpired": "Der Zugangscode ist abgelaufen. Bitte fordern Sie einen neuen an.",
+      "emailMismatch": "Die E-Mail stimmt nicht mit der Zugriffsanfrage überein"
+    },
+    "item": {
+      "notFound": "Element nicht gefunden",
+      "createFailed": "Fehler beim Erstellen des Elements",
+      "updateFailed": "Fehler beim Aktualisieren des Elements",
+      "deleteFailed": "Fehler beim Löschen des Elements",
+      "duplicateName": "Ein Element mit diesem Namen existiert bereits",
+      "contentRequired": "Mindestens ein Medium, Link oder Textanweisung ist erforderlich",
+      "titleRequired": "Elementtitel ist erforderlich",
+      "titleTooLong": "Der Titel darf maximal {max} Zeichen haben",
+      "publicIdRequired": "Öffentliche ID ist erforderlich",
+      "publicIdFormat": "Öffentliche ID muss ein gültiges UUID-Format haben",
+      "propertyRequired": "Immobilienauswahl ist erforderlich",
+      "incompleteLink": "Bitte füllen Sie Titel und URL aus, bevor Sie den Link testen."
+    },
+    "property": {
+      "notFound": "Immobilie nicht gefunden",
+      "createFailed": "Fehler beim Erstellen der Immobilie",
+      "updateFailed": "Fehler beim Aktualisieren der Immobilie",
+      "deleteFailed": "Fehler beim Löschen der Immobilie",
+      "duplicateName": "Eine Immobilie mit diesem Namen existiert bereits",
+      "nameRequired": "Immobilienname ist erforderlich"
+    },
+    "file": {
+      "tooLarge": "Die Dateigröße überschreitet das Limit von {max}",
+      "invalidType": "Ungültiger Dateityp. Erlaubt: {types}",
+      "uploadFailed": "Datei-Upload fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "countExceeded": "Maximal {max} Dateien erlaubt",
+      "totalSizeExceeded": "Die Gesamtgröße überschreitet das Limit von {max}",
+      "processingFailed": "Fehler bei der Verarbeitung der Datei. Bitte versuchen Sie eine andere Datei.",
+      "imageCountExceeded": "Maximal {max} Fotos erlaubt",
+      "urlCountExceeded": "Maximal {max} Links erlaubt",
+      "urlInvalid": "Bitte geben Sie eine gültige URL ein",
+      "urlProtocol": "Nur http und https URLs sind erlaubt"
+    },
+    "system": {
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "maintenance": "Das System befindet sich in Wartung. Bitte versuchen Sie es später erneut.",
+      "rateLimit": "Zu viele Anfragen. Bitte warten Sie einen Moment.",
+      "permissionDenied": "Berechtigung für diesen Vorgang verweigert.",
+      "browserNotSupported": "Ihr Browser wird nicht unterstützt. Bitte verwenden Sie einen modernen Browser."
+    },
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "language": {
     "select": "Sprache Auswählen",

@@ -553,7 +553,12 @@
         "accessCodeAlphanumeric": "Toegangscode mag alleen letters en cijfers bevatten",
         "validAccessCodeFormat": "Geldig toegangscode formaat",
         "validEmailFormat": "Geldig e-mail formaat",
-        "typeAutoDetected": "Type automatisch gedetecteerd van URL"
+        "typeAutoDetected": "Type automatisch gedetecteerd van URL",
+        "uuidUsage": "Deze UUID wordt gebruikt in de QR-code URL",
+        "selectPropertyForItem": "Selecteer het eigendom waar dit item zich bevindt. Items moeten bij een eigendom horen.",
+        "noPropertiesWarning": "Geen eigendommen beschikbaar. Maak eerst een eigendom aan.",
+        "qrCodeUrl": "URL naar de QR-code afbeelding voor dit item. Laat leeg als er geen QR-code beschikbaar is.",
+        "thumbnailAutoGenerate": "Laat leeg om miniaturen automatisch te genereren"
       },
       "passwordStrength": {
         "label": "Wachtwoordsterkte:",
@@ -598,7 +603,13 @@
         "createPassword": "Maak een wachtwoord voor uw account",
         "chooseMethod": "Kies hoe u uw account wilt aanmaken",
         "accessCodeInfo": "Toegangscode:",
-        "accountLinked": "Uw account wordt gekoppeld aan uw geverifieerde toegangscode"
+        "accountLinked": "Uw account wordt gekoppeld aan uw geverifieerde toegangscode",
+        "enterDetails": "Vul hieronder uw gegevens in",
+        "failed": "Registratie mislukt"
+      },
+      "titles": {
+        "editProperty": "Eigendom Bewerken",
+        "createProperty": "Nieuw Eigendom Aanmaken"
       }
     }
   },
@@ -620,7 +631,13 @@
     "verifyEmail": "E-mail Verifiëren",
     "resendVerification": "Verificatie Opnieuw Verzenden",
     "welcomeBack": "Welkom Terug",
-    "loggedInAs": "Ingelogd als"
+    "loggedInAs": "Ingelogd als",
+    "login": {
+      "failed": "Authenticatie mislukt",
+      "signInWithAccount": "Log in met uw account",
+      "orContinueWithEmail": "Of ga verder met e-mail",
+      "accessRestricted": "Toegang beperkt tot geautoriseerde beheerders"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -666,7 +683,21 @@
     "room": "Kamer",
     "tags": "Tags",
     "addTag": "Tag Toevoegen",
-    "removeTag": "Tag Verwijderen"
+    "removeTag": "Tag Verwijderen",
+    "edit": {
+      "title": "Artikel Bewerken",
+      "description": "Artikeldetails en bronnen bijwerken"
+    },
+    "create": {
+      "title": "Nieuw Artikel Aanmaken",
+      "description": "Een nieuw artikel met instructies en bronnen toevoegen"
+    },
+    "links": {
+      "sectionTitle": "Bronnen & Links",
+      "addLink": "Link Toevoegen",
+      "noResources": "Geen bronnen toegevoegd",
+      "addFirstResource": "Voeg uw eerste bron toe"
+    }
   },
   "errors": {
     "required": "Dit veld is verplicht",
@@ -685,18 +716,67 @@
     "fileTooLarge": "Bestand is te groot",
     "invalidFileType": "Ongeldig bestandstype",
     "genericError": "Er is iets misgegaan. Probeer het opnieuw.",
+    "boundary": {
+      "title": "Er is iets misgegaan!",
+      "message": "Onze excuses voor het ongemak. Ons team is op de hoogte gesteld van deze fout.",
+      "errorId": "Fout-ID: {digest}",
+      "tryAgain": "Opnieuw proberen",
+      "goHome": "Naar startpagina",
+      "refresh": "Pagina vernieuwen",
+      "contactSupport": "Contact opnemen met support"
+    },
+    "notFoundPage": {
+      "title": "Pagina niet gevonden",
+      "itemTitle": "Item niet gevonden",
+      "itemMessage": "Het item dat u zoekt bestaat niet of is verwijderd. Controleer de QR-code en probeer het opnieuw.",
+      "pageMessage": "De pagina die u zoekt bestaat niet of is verplaatst.",
+      "goBack": "Terug",
+      "goBackDemo": "Terug (Demo-modus)",
+      "returnHome": "Terug naar startpagina",
+      "helpText": "Als u denkt dat dit een fout is, neem dan contact op met de support."
+    },
+    "global": {
+      "title": "Applicatiefout",
+      "message": "Er is een kritieke fout opgetreden. Vernieuw de pagina.",
+      "tryAgain": "Opnieuw proberen"
+    },
     "form": {
+      "required": "Dit veld is verplicht",
+      "email": "Voer een geldig e-mailadres in",
       "emailRequired": "E-mail is verplicht",
       "invalidEmail": "Voer een geldig e-mailadres in",
+      "password": {
+        "required": "Wachtwoord is verplicht",
+        "tooShort": "Wachtwoord moet minimaal {min} tekens bevatten",
+        "tooWeak": "Wachtwoord moet hoofdletters, kleine letters en cijfers bevatten",
+        "mismatch": "Wachtwoorden komen niet overeen"
+      },
       "passwordRequired": "Wachtwoord is verplicht",
       "passwordTooShort": "Wachtwoord moet minimaal {min} tekens bevatten",
+      "passwordTooWeak": "Wachtwoord moet hoofdletters, kleine letters en cijfers bevatten",
       "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "maxLength": "Maximaal {max} tekens toegestaan",
+      "minLength": "Minimaal {min} tekens vereist",
+      "invalidFormat": "Ongeldig formaat",
+      "invalidUrl": "Voer een geldige URL in",
+      "invalidPhone": "Voer een geldig telefoonnummer in",
+      "pattern": "Voldoe aan het vereiste formaat",
+      "unique": "Deze waarde is al in gebruik",
+      "number": {
+        "invalid": "Voer een geldig nummer in",
+        "min": "De waarde moet minimaal {min} zijn",
+        "max": "De waarde mag niet meer dan {max} zijn"
+      },
+      "date": {
+        "invalid": "Voer een geldige datum in",
+        "past": "De datum moet in het verleden liggen",
+        "future": "De datum moet in de toekomst liggen"
+      },
       "accessCodeRequired": "Toegangscode is verplicht",
       "propertyNicknameRequired": "Eigendomsbijnaam is verplicht",
       "propertyNicknameTooLong": "Eigendomsbijnaam mag maximaal 100 tekens zijn",
       "propertyTypeRequired": "Eigendomstype is verplicht",
       "addressTooLong": "Adres mag maximaal 500 tekens zijn",
-      "invalidUrl": "Voer een geldige URL in",
       "propertyNameRequired": "Eigendomsnaam is verplicht",
       "propertyNameTooLong": "Eigendomsnaam mag maximaal {max} tekens zijn",
       "addressLine1TooLong": "Adres mag maximaal {max} tekens zijn",
@@ -704,8 +784,85 @@
       "cityTooLong": "Stad mag maximaal {max} tekens zijn",
       "stateProvinceTooLong": "Staat/Provincie mag maximaal {max} tekens zijn",
       "postalCodeTooLong": "Postcode mag maximaal {max} tekens zijn",
-      "invalidCountry": "Selecteer een geldig land"
-    }
+      "invalidCountry": "Selecteer een geldig land",
+      "termsRequired": "U moet akkoord gaan met de algemene voorwaarden"
+    },
+    "api": {
+      "generic": "Er is iets misgegaan. Probeer het opnieuw.",
+      "notFound": "De gevraagde bron is niet gevonden",
+      "unauthorized": "U bent niet gemachtigd om deze actie uit te voeren",
+      "forbidden": "Toegang geweigerd",
+      "conflict": "Deze bron bestaat al",
+      "serverError": "Serverfout. Probeer het later opnieuw.",
+      "timeout": "Verzoek verlopen. Probeer het opnieuw.",
+      "badRequest": "Ongeldig verzoek. Controleer uw invoer.",
+      "serviceUnavailable": "Service tijdelijk niet beschikbaar. Probeer het later opnieuw.",
+      "methodNotAllowed": "Deze bewerking is niet toegestaan.",
+      "tooManyRequests": "Te veel verzoeken. Wacht even."
+    },
+    "network": {
+      "offline": "U lijkt offline te zijn. Controleer uw verbinding.",
+      "connectionFailed": "Kan geen verbinding maken met de server",
+      "slowConnection": "De verbinding is traag. Dit kan even duren.",
+      "retryFailed": "Opnieuw verbinden mislukt. Probeer het later opnieuw."
+    },
+    "auth": {
+      "invalidCredentials": "Ongeldige e-mail of wachtwoord",
+      "emailNotVerified": "Verifieer uw e-mailadres",
+      "sessionExpired": "Uw sessie is verlopen. Log opnieuw in.",
+      "accountLocked": "Account is vergrendeld. Neem contact op met support.",
+      "accessDenied": "Toegang tot deze bron geweigerd",
+      "emailTaken": "Dit e-mailadres is al geregistreerd",
+      "oauthFailed": "Authenticatie mislukt. Probeer het opnieuw.",
+      "oauthSessionExpired": "OAuth-sessie verlopen. Log opnieuw in met Google.",
+      "oauthConflict": "Een account met dit e-mailadres bestaat al. Log in.",
+      "accessCodeInvalid": "Ongeldige toegangscode. Controleer uw uitnodiging.",
+      "invalidAccessCode": "Ongeldige toegangscode",
+      "accessCodeExpired": "De toegangscode is verlopen. Vraag een nieuwe aan.",
+      "emailMismatch": "E-mail komt niet overeen met het toegangsverzoek"
+    },
+    "item": {
+      "notFound": "Item niet gevonden",
+      "createFailed": "Aanmaken van item mislukt",
+      "updateFailed": "Bijwerken van item mislukt",
+      "deleteFailed": "Verwijderen van item mislukt",
+      "duplicateName": "Een item met deze naam bestaat al",
+      "contentRequired": "Ten minste één media-item, link of tekstinstructie is vereist",
+      "titleRequired": "Itemtitel is verplicht",
+      "titleTooLong": "De titel mag maximaal {max} tekens zijn",
+      "publicIdRequired": "Publieke ID is verplicht",
+      "publicIdFormat": "Publieke ID moet een geldig UUID-formaat hebben",
+      "propertyRequired": "Eigendomselectie is verplicht",
+      "incompleteLink": "Vul zowel titel als URL in voordat u de link test."
+    },
+    "property": {
+      "notFound": "Eigendom niet gevonden",
+      "createFailed": "Aanmaken van eigendom mislukt",
+      "updateFailed": "Bijwerken van eigendom mislukt",
+      "deleteFailed": "Verwijderen van eigendom mislukt",
+      "duplicateName": "Een eigendom met deze naam bestaat al",
+      "nameRequired": "Eigendomsnaam is verplicht"
+    },
+    "file": {
+      "tooLarge": "Bestandsgrootte overschrijdt de limiet van {max}",
+      "invalidType": "Ongeldig bestandstype. Toegestaan: {types}",
+      "uploadFailed": "Bestand uploaden mislukt. Probeer het opnieuw.",
+      "countExceeded": "Maximaal {max} bestanden toegestaan",
+      "totalSizeExceeded": "Totale uploadgrootte overschrijdt de limiet van {max}",
+      "processingFailed": "Bestandsverwerking mislukt. Probeer een ander bestand.",
+      "imageCountExceeded": "Maximaal {max} foto's toegestaan",
+      "urlCountExceeded": "Maximaal {max} links toegestaan",
+      "urlInvalid": "Voer een geldige URL in",
+      "urlProtocol": "Alleen http en https URL's zijn toegestaan"
+    },
+    "system": {
+      "unexpected": "Er is een onverwachte fout opgetreden. Probeer het opnieuw.",
+      "maintenance": "Systeem is in onderhoud. Probeer het later opnieuw.",
+      "rateLimit": "Te veel verzoeken. Wacht even.",
+      "permissionDenied": "Geen toestemming voor deze bewerking.",
+      "browserNotSupported": "Uw browser wordt niet ondersteund. Gebruik een moderne browser."
+    },
+    "generic": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "language": {
     "select": "Taal Selecteren",

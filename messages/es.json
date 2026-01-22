@@ -553,7 +553,12 @@
         "accessCodeAlphanumeric": "El código de acceso solo debe contener letras y números",
         "validAccessCodeFormat": "Formato de código de acceso válido",
         "validEmailFormat": "Formato de correo válido",
-        "typeAutoDetected": "Tipo detectado automáticamente desde la URL"
+        "typeAutoDetected": "Tipo detectado automáticamente desde la URL",
+        "uuidUsage": "Este UUID se usará en la URL del código QR",
+        "selectPropertyForItem": "Selecciona la propiedad donde se encuentra este elemento. Los elementos deben pertenecer a una propiedad.",
+        "noPropertiesWarning": "No hay propiedades disponibles. Por favor crea una propiedad primero.",
+        "qrCodeUrl": "URL de la imagen del código QR para este elemento. Déjalo vacío si no hay código QR disponible.",
+        "thumbnailAutoGenerate": "Déjalo vacío para generar miniaturas automáticamente"
       },
       "passwordStrength": {
         "label": "Fortaleza de la contraseña:",
@@ -598,7 +603,13 @@
         "createPassword": "Crea una contraseña para tu cuenta",
         "chooseMethod": "Elige cómo crear tu cuenta",
         "accessCodeInfo": "Código de acceso:",
-        "accountLinked": "Tu cuenta se vinculará a tu código de acceso verificado"
+        "accountLinked": "Tu cuenta se vinculará a tu código de acceso verificado",
+        "enterDetails": "Ingresa tus datos abajo",
+        "failed": "Error en el registro"
+      },
+      "titles": {
+        "editProperty": "Editar Propiedad",
+        "createProperty": "Crear Nueva Propiedad"
       }
     }
   },
@@ -620,7 +631,13 @@
     "verifyEmail": "Verificar Correo",
     "resendVerification": "Reenviar Verificación",
     "welcomeBack": "Bienvenido de nuevo",
-    "loggedInAs": "Conectado como"
+    "loggedInAs": "Conectado como",
+    "login": {
+      "failed": "Error de autenticación",
+      "signInWithAccount": "Inicia sesión con tu cuenta",
+      "orContinueWithEmail": "O continúa con correo electrónico",
+      "accessRestricted": "Acceso restringido solo a administradores autorizados"
+    }
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -666,7 +683,21 @@
     "room": "Habitación",
     "tags": "Etiquetas",
     "addTag": "Agregar Etiqueta",
-    "removeTag": "Eliminar Etiqueta"
+    "removeTag": "Eliminar Etiqueta",
+    "edit": {
+      "title": "Editar Artículo",
+      "description": "Actualizar detalles y recursos del artículo"
+    },
+    "create": {
+      "title": "Crear Nuevo Artículo",
+      "description": "Agregar un nuevo artículo con instrucciones y recursos"
+    },
+    "links": {
+      "sectionTitle": "Recursos y Enlaces",
+      "addLink": "Agregar Enlace",
+      "noResources": "Sin recursos agregados",
+      "addFirstResource": "Agrega tu primer recurso"
+    }
   },
   "errors": {
     "required": "Este campo es requerido",
@@ -685,18 +716,67 @@
     "fileTooLarge": "El archivo es demasiado grande",
     "invalidFileType": "Tipo de archivo inválido",
     "genericError": "Algo salió mal. Por favor intenta de nuevo.",
+    "boundary": {
+      "title": "¡Algo salió mal!",
+      "message": "Nos disculpamos por las molestias. Nuestro equipo ha sido notificado de este error.",
+      "errorId": "ID de error: {digest}",
+      "tryAgain": "Intentar de nuevo",
+      "goHome": "Ir al inicio",
+      "refresh": "Actualizar página",
+      "contactSupport": "Contactar soporte"
+    },
+    "notFoundPage": {
+      "title": "Página no encontrada",
+      "itemTitle": "Artículo no encontrado",
+      "itemMessage": "El artículo que busca no existe o ha sido eliminado. Por favor, verifique el código QR e inténtelo de nuevo.",
+      "pageMessage": "La página que busca no existe o ha sido movida.",
+      "goBack": "Volver",
+      "goBackDemo": "Volver (Modo Demo)",
+      "returnHome": "Volver al inicio",
+      "helpText": "Si cree que esto es un error, por favor contacte al soporte."
+    },
+    "global": {
+      "title": "Error de aplicación",
+      "message": "Se produjo un error crítico. Por favor, actualice la página.",
+      "tryAgain": "Intentar de nuevo"
+    },
     "form": {
+      "required": "Este campo es requerido",
+      "email": "Por favor ingresa una dirección de correo válida",
       "emailRequired": "El correo es requerido",
       "invalidEmail": "Por favor ingresa una dirección de correo válida",
+      "password": {
+        "required": "La contraseña es requerida",
+        "tooShort": "La contraseña debe tener al menos {min} caracteres",
+        "tooWeak": "La contraseña debe incluir mayúsculas, minúsculas y números",
+        "mismatch": "Las contraseñas no coinciden"
+      },
       "passwordRequired": "La contraseña es requerida",
       "passwordTooShort": "La contraseña debe tener al menos {min} caracteres",
+      "passwordTooWeak": "La contraseña debe incluir mayúsculas, minúsculas y números",
       "passwordMismatch": "Las contraseñas no coinciden",
+      "maxLength": "Máximo {max} caracteres permitidos",
+      "minLength": "Mínimo {min} caracteres requeridos",
+      "invalidFormat": "Formato inválido",
+      "invalidUrl": "Por favor ingresa una URL válida",
+      "invalidPhone": "Por favor ingresa un número de teléfono válido",
+      "pattern": "Por favor respeta el formato requerido",
+      "unique": "Este valor ya está en uso",
+      "number": {
+        "invalid": "Por favor ingresa un número válido",
+        "min": "El valor debe ser al menos {min}",
+        "max": "El valor no debe ser mayor a {max}"
+      },
+      "date": {
+        "invalid": "Por favor ingresa una fecha válida",
+        "past": "La fecha debe estar en el pasado",
+        "future": "La fecha debe estar en el futuro"
+      },
       "accessCodeRequired": "El código de acceso es requerido",
       "propertyNicknameRequired": "El apodo de la propiedad es requerido",
       "propertyNicknameTooLong": "El apodo de la propiedad debe tener 100 caracteres o menos",
       "propertyTypeRequired": "El tipo de propiedad es requerido",
       "addressTooLong": "La dirección debe tener 500 caracteres o menos",
-      "invalidUrl": "Por favor ingresa una URL válida",
       "propertyNameRequired": "El nombre de la propiedad es requerido",
       "propertyNameTooLong": "El nombre de la propiedad debe tener {max} caracteres o menos",
       "addressLine1TooLong": "La dirección debe tener {max} caracteres o menos",
@@ -704,8 +784,85 @@
       "cityTooLong": "La ciudad debe tener {max} caracteres o menos",
       "stateProvinceTooLong": "El estado/provincia debe tener {max} caracteres o menos",
       "postalCodeTooLong": "El código postal debe tener {max} caracteres o menos",
-      "invalidCountry": "Por favor selecciona un país válido"
-    }
+      "invalidCountry": "Por favor selecciona un país válido",
+      "termsRequired": "Debes aceptar los términos y condiciones"
+    },
+    "api": {
+      "generic": "Algo salió mal. Por favor intenta de nuevo.",
+      "notFound": "El recurso solicitado no fue encontrado",
+      "unauthorized": "No estás autorizado para realizar esta acción",
+      "forbidden": "Acceso denegado",
+      "conflict": "Este recurso ya existe",
+      "serverError": "Error del servidor. Por favor intenta más tarde.",
+      "timeout": "La solicitud ha expirado. Por favor intenta de nuevo.",
+      "badRequest": "Solicitud inválida. Por favor verifica tus datos.",
+      "serviceUnavailable": "Servicio temporalmente no disponible. Por favor intenta más tarde.",
+      "methodNotAllowed": "Esta operación no está permitida.",
+      "tooManyRequests": "Demasiadas solicitudes. Por favor espera un momento."
+    },
+    "network": {
+      "offline": "Parece que estás sin conexión. Por favor verifica tu conexión.",
+      "connectionFailed": "No se puede conectar al servidor",
+      "slowConnection": "La conexión es lenta. Esto puede tomar un momento.",
+      "retryFailed": "La reconexión ha fallado. Por favor intenta más tarde."
+    },
+    "auth": {
+      "invalidCredentials": "Correo o contraseña inválidos",
+      "emailNotVerified": "Por favor verifica tu dirección de correo",
+      "sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión de nuevo.",
+      "accountLocked": "La cuenta ha sido bloqueada. Contacta al soporte.",
+      "accessDenied": "Acceso denegado a este recurso",
+      "emailTaken": "Este correo ya está registrado",
+      "oauthFailed": "La autenticación ha fallado. Por favor intenta de nuevo.",
+      "oauthSessionExpired": "Sesión OAuth expirada. Por favor inicia sesión con Google de nuevo.",
+      "oauthConflict": "Ya existe una cuenta con este correo. Por favor inicia sesión.",
+      "accessCodeInvalid": "Código de acceso inválido. Por favor verifica tu invitación.",
+      "invalidAccessCode": "Código de acceso inválido",
+      "accessCodeExpired": "El código de acceso ha expirado. Por favor solicita uno nuevo.",
+      "emailMismatch": "El correo no coincide con la solicitud de acceso"
+    },
+    "item": {
+      "notFound": "Elemento no encontrado",
+      "createFailed": "Error al crear el elemento",
+      "updateFailed": "Error al actualizar el elemento",
+      "deleteFailed": "Error al eliminar el elemento",
+      "duplicateName": "Ya existe un elemento con este nombre",
+      "contentRequired": "Se requiere al menos un medio, enlace o instrucciones de texto",
+      "titleRequired": "El título del elemento es requerido",
+      "titleTooLong": "El título debe tener {max} caracteres o menos",
+      "publicIdRequired": "El ID público es requerido",
+      "publicIdFormat": "El ID público debe tener un formato UUID válido",
+      "propertyRequired": "La selección de propiedad es requerida",
+      "incompleteLink": "Por favor completa el título y la URL antes de probar el enlace."
+    },
+    "property": {
+      "notFound": "Propiedad no encontrada",
+      "createFailed": "Error al crear la propiedad",
+      "updateFailed": "Error al actualizar la propiedad",
+      "deleteFailed": "Error al eliminar la propiedad",
+      "duplicateName": "Ya existe una propiedad con este nombre",
+      "nameRequired": "El nombre de la propiedad es requerido"
+    },
+    "file": {
+      "tooLarge": "El tamaño del archivo excede el límite de {max}",
+      "invalidType": "Tipo de archivo inválido. Permitidos: {types}",
+      "uploadFailed": "Error al subir el archivo. Por favor intenta de nuevo.",
+      "countExceeded": "Máximo {max} archivos permitidos",
+      "totalSizeExceeded": "El tamaño total excede el límite de {max}",
+      "processingFailed": "Error al procesar el archivo. Por favor intenta con otro archivo.",
+      "imageCountExceeded": "Máximo {max} fotos permitidas",
+      "urlCountExceeded": "Máximo {max} enlaces permitidos",
+      "urlInvalid": "Por favor ingresa una URL válida",
+      "urlProtocol": "Solo se permiten URLs http y https"
+    },
+    "system": {
+      "unexpected": "Ocurrió un error inesperado. Por favor intenta de nuevo.",
+      "maintenance": "El sistema está en mantenimiento. Por favor intenta más tarde.",
+      "rateLimit": "Demasiadas solicitudes. Por favor espera un momento.",
+      "permissionDenied": "Permiso denegado para esta operación.",
+      "browserNotSupported": "Tu navegador no es compatible. Por favor usa un navegador moderno."
+    },
+    "generic": "Algo salió mal. Por favor intenta de nuevo."
   },
   "language": {
     "select": "Seleccionar Idioma",

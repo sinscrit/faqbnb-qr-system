@@ -658,7 +658,7 @@ export default function RegistrationForm({
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Enter your details below</span>
+            <span className="px-2 bg-white text-gray-500">{tForm('registration.enterDetails')}</span>
           </div>
         </div>
       </div>
@@ -673,7 +673,7 @@ export default function RegistrationForm({
           <div className="flex">
             <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Registration Failed</h3>
+              <h3 className="text-sm font-medium text-red-800">{tForm('registration.failed')}</h3>
               <p className="mt-1 text-sm text-red-700">{errors.general}</p>
             </div>
           </div>

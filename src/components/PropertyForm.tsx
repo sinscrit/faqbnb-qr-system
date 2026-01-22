@@ -146,7 +146,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">
-        {property ? 'Edit Property' : 'Create New Property'}
+        {property ? tForm('titles.editProperty') : tForm('titles.createProperty')}
       </h2>
 
       {/* General error message */}

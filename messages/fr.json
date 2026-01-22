@@ -553,7 +553,12 @@
         "accessCodeAlphanumeric": "Le code d'accès ne doit contenir que des lettres et des chiffres",
         "validAccessCodeFormat": "Format de code d'accès valide",
         "validEmailFormat": "Format d'e-mail valide",
-        "typeAutoDetected": "Type détecté automatiquement à partir de l'URL"
+        "typeAutoDetected": "Type détecté automatiquement à partir de l'URL",
+        "uuidUsage": "Cet UUID sera utilisé dans l'URL du code QR",
+        "selectPropertyForItem": "Sélectionnez la propriété où se trouve cet élément. Les éléments doivent appartenir à une propriété.",
+        "noPropertiesWarning": "Aucune propriété disponible. Veuillez d'abord créer une propriété.",
+        "qrCodeUrl": "URL de l'image du code QR pour cet élément. Laissez vide si aucun code QR n'est disponible.",
+        "thumbnailAutoGenerate": "Laissez vide pour générer automatiquement les vignettes"
       },
       "passwordStrength": {
         "label": "Force du mot de passe :",
@@ -598,7 +603,13 @@
         "createPassword": "Créez un mot de passe pour votre compte",
         "chooseMethod": "Choisissez comment créer votre compte",
         "accessCodeInfo": "Code d'accès :",
-        "accountLinked": "Votre compte sera lié à votre code d'accès vérifié"
+        "accountLinked": "Votre compte sera lié à votre code d'accès vérifié",
+        "enterDetails": "Entrez vos informations ci-dessous",
+        "failed": "Échec de l'inscription"
+      },
+      "titles": {
+        "editProperty": "Modifier la propriété",
+        "createProperty": "Créer une nouvelle propriété"
       }
     }
   },
@@ -620,7 +631,13 @@
     "verifyEmail": "Vérifier l'e-mail",
     "resendVerification": "Renvoyer la vérification",
     "welcomeBack": "Bon retour",
-    "loggedInAs": "Connecté en tant que"
+    "loggedInAs": "Connecté en tant que",
+    "login": {
+      "failed": "Échec de l'authentification",
+      "signInWithAccount": "Connectez-vous avec votre compte",
+      "orContinueWithEmail": "Ou continuez avec l'e-mail",
+      "accessRestricted": "Accès limité aux administrateurs autorisés uniquement"
+    }
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -666,7 +683,21 @@
     "room": "Pièce",
     "tags": "Étiquettes",
     "addTag": "Ajouter une étiquette",
-    "removeTag": "Supprimer l'étiquette"
+    "removeTag": "Supprimer l'étiquette",
+    "edit": {
+      "title": "Modifier l'article",
+      "description": "Mettre à jour les détails et ressources de l'article"
+    },
+    "create": {
+      "title": "Créer un nouvel article",
+      "description": "Ajouter un nouvel article avec des instructions et ressources"
+    },
+    "links": {
+      "sectionTitle": "Ressources et liens",
+      "addLink": "Ajouter un lien",
+      "noResources": "Aucune ressource ajoutée",
+      "addFirstResource": "Ajoutez votre première ressource"
+    }
   },
   "errors": {
     "required": "Ce champ est requis",
@@ -685,18 +716,67 @@
     "fileTooLarge": "Fichier trop volumineux",
     "invalidFileType": "Type de fichier invalide",
     "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+    "boundary": {
+      "title": "Une erreur s'est produite !",
+      "message": "Nous nous excusons pour ce désagrément. Notre équipe a été informée de cette erreur.",
+      "errorId": "ID d'erreur : {digest}",
+      "tryAgain": "Réessayer",
+      "goHome": "Aller à l'accueil",
+      "refresh": "Actualiser la page",
+      "contactSupport": "Contacter le support"
+    },
+    "notFoundPage": {
+      "title": "Page introuvable",
+      "itemTitle": "Article introuvable",
+      "itemMessage": "L'article que vous recherchez n'existe pas ou a été supprimé. Veuillez vérifier le code QR et réessayer.",
+      "pageMessage": "La page que vous recherchez n'existe pas ou a été déplacée.",
+      "goBack": "Retour",
+      "goBackDemo": "Retour (Mode Démo)",
+      "returnHome": "Retour à l'accueil",
+      "helpText": "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support."
+    },
+    "global": {
+      "title": "Erreur d'application",
+      "message": "Une erreur critique s'est produite. Veuillez actualiser la page.",
+      "tryAgain": "Réessayer"
+    },
     "form": {
+      "required": "Ce champ est requis",
+      "email": "Veuillez entrer une adresse e-mail valide",
       "emailRequired": "L'e-mail est requis",
       "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+      "password": {
+        "required": "Le mot de passe est requis",
+        "tooShort": "Le mot de passe doit contenir au moins {min} caractères",
+        "tooWeak": "Le mot de passe doit inclure majuscules, minuscules et chiffres",
+        "mismatch": "Les mots de passe ne correspondent pas"
+      },
       "passwordRequired": "Le mot de passe est requis",
       "passwordTooShort": "Le mot de passe doit contenir au moins {min} caractères",
+      "passwordTooWeak": "Le mot de passe doit inclure majuscules, minuscules et chiffres",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "maxLength": "Maximum {max} caractères autorisés",
+      "minLength": "Minimum {min} caractères requis",
+      "invalidFormat": "Format invalide",
+      "invalidUrl": "Veuillez entrer une URL valide",
+      "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+      "pattern": "Veuillez respecter le format requis",
+      "unique": "Cette valeur est déjà utilisée",
+      "number": {
+        "invalid": "Veuillez entrer un nombre valide",
+        "min": "La valeur doit être au moins {min}",
+        "max": "La valeur ne doit pas dépasser {max}"
+      },
+      "date": {
+        "invalid": "Veuillez entrer une date valide",
+        "past": "La date doit être dans le passé",
+        "future": "La date doit être dans le futur"
+      },
       "accessCodeRequired": "Le code d'accès est requis",
       "propertyNicknameRequired": "Le surnom de la propriété est requis",
       "propertyNicknameTooLong": "Le surnom de la propriété doit contenir 100 caractères ou moins",
       "propertyTypeRequired": "Le type de propriété est requis",
       "addressTooLong": "L'adresse doit contenir 500 caractères ou moins",
-      "invalidUrl": "Veuillez entrer une URL valide",
       "propertyNameRequired": "Le nom de la propriété est requis",
       "propertyNameTooLong": "Le nom de la propriété doit contenir {max} caractères ou moins",
       "addressLine1TooLong": "L'adresse doit contenir {max} caractères ou moins",
@@ -704,8 +784,85 @@
       "cityTooLong": "La ville doit contenir {max} caractères ou moins",
       "stateProvinceTooLong": "L'état/province doit contenir {max} caractères ou moins",
       "postalCodeTooLong": "Le code postal doit contenir {max} caractères ou moins",
-      "invalidCountry": "Veuillez sélectionner un pays valide"
-    }
+      "invalidCountry": "Veuillez sélectionner un pays valide",
+      "termsRequired": "Vous devez accepter les conditions d'utilisation"
+    },
+    "api": {
+      "generic": "Une erreur s'est produite. Veuillez réessayer.",
+      "notFound": "La ressource demandée n'a pas été trouvée",
+      "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+      "forbidden": "Accès refusé",
+      "conflict": "Cette ressource existe déjà",
+      "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+      "timeout": "La requête a expiré. Veuillez réessayer.",
+      "badRequest": "Requête invalide. Veuillez vérifier vos données.",
+      "serviceUnavailable": "Service temporairement indisponible. Veuillez réessayer plus tard.",
+      "methodNotAllowed": "Cette opération n'est pas autorisée.",
+      "tooManyRequests": "Trop de requêtes. Veuillez patienter."
+    },
+    "network": {
+      "offline": "Vous semblez être hors ligne. Veuillez vérifier votre connexion.",
+      "connectionFailed": "Impossible de se connecter au serveur",
+      "slowConnection": "La connexion est lente. Cela peut prendre un moment.",
+      "retryFailed": "La reconnexion a échoué. Veuillez réessayer plus tard."
+    },
+    "auth": {
+      "invalidCredentials": "E-mail ou mot de passe invalide",
+      "emailNotVerified": "Veuillez vérifier votre adresse e-mail",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "accountLocked": "Le compte a été verrouillé. Contactez le support.",
+      "accessDenied": "Accès refusé à cette ressource",
+      "emailTaken": "Cet e-mail est déjà enregistré",
+      "oauthFailed": "L'authentification a échoué. Veuillez réessayer.",
+      "oauthSessionExpired": "Session OAuth expirée. Veuillez vous reconnecter avec Google.",
+      "oauthConflict": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter.",
+      "accessCodeInvalid": "Code d'accès invalide. Veuillez vérifier votre invitation.",
+      "invalidAccessCode": "Code d'accès invalide",
+      "accessCodeExpired": "Le code d'accès a expiré. Veuillez en demander un nouveau.",
+      "emailMismatch": "L'e-mail ne correspond pas à la demande d'accès"
+    },
+    "item": {
+      "notFound": "Élément non trouvé",
+      "createFailed": "Échec de la création de l'élément",
+      "updateFailed": "Échec de la mise à jour de l'élément",
+      "deleteFailed": "Échec de la suppression de l'élément",
+      "duplicateName": "Un élément avec ce nom existe déjà",
+      "contentRequired": "Au moins un média, lien ou instructions texte doit être fourni",
+      "titleRequired": "Le titre de l'élément est requis",
+      "titleTooLong": "Le titre doit contenir {max} caractères ou moins",
+      "publicIdRequired": "L'identifiant public est requis",
+      "publicIdFormat": "L'identifiant public doit être au format UUID valide",
+      "propertyRequired": "La sélection de propriété est requise",
+      "incompleteLink": "Veuillez remplir le titre et l'URL avant de tester le lien."
+    },
+    "property": {
+      "notFound": "Propriété non trouvée",
+      "createFailed": "Échec de la création de la propriété",
+      "updateFailed": "Échec de la mise à jour de la propriété",
+      "deleteFailed": "Échec de la suppression de la propriété",
+      "duplicateName": "Une propriété avec ce nom existe déjà",
+      "nameRequired": "Le nom de la propriété est requis"
+    },
+    "file": {
+      "tooLarge": "La taille du fichier dépasse la limite de {max}",
+      "invalidType": "Type de fichier invalide. Autorisé : {types}",
+      "uploadFailed": "Échec du téléchargement. Veuillez réessayer.",
+      "countExceeded": "Maximum {max} fichiers autorisés",
+      "totalSizeExceeded": "La taille totale dépasse la limite de {max}",
+      "processingFailed": "Échec du traitement du fichier. Veuillez essayer un autre fichier.",
+      "imageCountExceeded": "Maximum {max} photos autorisées",
+      "urlCountExceeded": "Maximum {max} liens autorisés",
+      "urlInvalid": "Veuillez entrer une URL valide",
+      "urlProtocol": "Seules les URL http et https sont autorisées"
+    },
+    "system": {
+      "unexpected": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "maintenance": "Le système est en maintenance. Veuillez réessayer plus tard.",
+      "rateLimit": "Trop de requêtes. Veuillez patienter.",
+      "permissionDenied": "Permission refusée pour cette opération.",
+      "browserNotSupported": "Votre navigateur n'est pas supporté. Veuillez utiliser un navigateur moderne."
+    },
+    "generic": "Une erreur s'est produite. Veuillez réessayer."
   },
   "language": {
     "select": "Choisir la langue",

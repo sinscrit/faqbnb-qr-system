@@ -192,3 +192,103 @@ export function getErrorDisplayDuration(error: UserFriendlyError): number {
       return 6000; // 6 seconds
   }
 }
+
+// --- REQ-E02-035: Integration with centralized error translations ---
+
+import { getErrorCodeKey, type ErrorTranslationUtils } from '@/lib/i18n/error-translations';
+
+/**
+ * Translates an error message using the centralized i18n utility.
+ * Use this in components that have access to useErrorTranslations() result.
+ *
+ * @param error - Original error string or Error object
+ * @param errorUtils - Result from useErrorTranslations() hook
+ * @returns Translated error message string
+ *
+ * @example
+ * ```tsx
+ * function MyComponent() {
+ *   const errors = useErrorTranslations();
+ *
+ *   const handleError = (err: Error) => {
+ *     const message = translateWithI18n(err, errors);
+ *     toast.error(message);
+ *   };
+ * }
+ * ```
+ */
+export function translateWithI18n(
+  error: string | Error,
+  errorUtils: ErrorTranslationUtils
+): string {
+  const errorStr = typeof error === 'string' ? error : error.message;
+  const friendlyError = translateErrorMessage(errorStr);
+
+  // Get translation key from error code
+  const translationKey = getErrorCodeKey(friendlyError.code);
+
+  // Return translated message
+  return errorUtils.getError(translationKey);
+}
+
+/**
+ * Gets a UserFriendlyError with translated message.
+ * Combines existing error classification with i18n translation.
+ *
+ * @param error - Original error string or Error object
+ * @param statusCode - Optional HTTP status code
+ * @param errorUtils - Result from useErrorTranslations() hook
+ * @returns UserFriendlyError with translated message
+ *
+ * @example
+ * ```tsx
+ * function ErrorHandler({ error }) {
+ *   const errors = useErrorTranslations();
+ *   const friendlyError = getTranslatedUserFriendlyError(error, 400, errors);
+ *
+ *   return (
+ *     <div>
+ *       <p>{friendlyError.message}</p>
+ *       {friendlyError.nextSteps && <p>{friendlyError.nextSteps}</p>}
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export function getTranslatedUserFriendlyError(
+  error: string | Error,
+  statusCode: number | undefined,
+  errorUtils: ErrorTranslationUtils
+): UserFriendlyError {
+  const errorStr = typeof error === 'string' ? error : error.message;
+  const friendlyError = translateErrorMessage(errorStr, statusCode);
+
+  // Get translation key and translate
+  const translationKey = getErrorCodeKey(friendlyError.code);
+
+  return {
+    ...friendlyError,
+    message: errorUtils.getError(translationKey),
+  };
+}
+
+/**
+ * @deprecated Use useErrorTranslations() hook directly instead.
+ * This function is provided for backward compatibility during migration.
+ *
+ * Migration guide:
+ *
+ * Before:
+ * ```ts
+ * const error = translateErrorMessage(errorStr);
+ * showError(error.message);
+ * ```
+ *
+ * After:
+ * ```ts
+ * const errors = useErrorTranslations();
+ * const message = errors.getApiError('generic');
+ * showError(message);
+ * ```
+ */
+// translateErrorMessage is exported above - this comment marks it as deprecated for migration
