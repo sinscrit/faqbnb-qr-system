@@ -223,11 +223,11 @@ export async function generateMetadata(): Promise<Metadata> {
 ```
 
 **Verification:**
-- [ ] Import statements added for `getTranslations` and `getLocale`
-- [ ] Static `metadata` export removed
-- [ ] `generateMetadata` is async function returning `Promise<Metadata>`
-- [ ] `title.template` set to `'%s'` to allow child pages to override completely
-- [ ] OpenGraph locale set dynamically
+- [x] Import statements added for `getTranslations` and `getLocale` ---implemented: Added getTranslations to existing import from next-intl/server---
+- [x] Static `metadata` export removed ---implemented: Replaced with generateMetadata function---
+- [x] `generateMetadata` is async function returning `Promise<Metadata>` ---implemented: Async function with Promise<Metadata> return type---
+- [x] `title.template` set to `'%s'` to allow child pages to override completely ---implemented: title object with default and template properties---
+- [x] OpenGraph locale set dynamically ---implemented: Using await getLocale()---
 
 ---
 

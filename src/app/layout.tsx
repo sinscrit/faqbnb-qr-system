@@ -4,7 +4,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { VersionFooter } from "@/components/VersionFooter";
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
+import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import "./globals.css";
 
 // Force dynamic rendering for next-intl
@@ -32,11 +32,27 @@ const jetbrainsMono = {
   className: "font-mono",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
-  title: "FAQBNB - QR Item Display System",
-  description: "FAQBNB provides instant access to detailed guides, manuals, and resources for any appliance or item via QR codes",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('metadata.app');
+  const locale = await getLocale();
+
+  return {
+    metadataBase: new URL(
+      process.env.NODE_ENV === 'production'
+        ? 'https://faqbnb.com'
+        : 'http://localhost:3000'
+    ),
+    title: {
+      default: `${t('name')} - ${t('tagline')}`,
+      template: '%s',
+    },
+    description: t('defaultDescription'),
+    openGraph: {
+      locale: locale,
+      siteName: t('name'),
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
