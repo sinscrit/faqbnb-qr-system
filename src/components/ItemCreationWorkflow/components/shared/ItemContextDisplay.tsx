@@ -21,9 +21,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/ItemContextDisplay
  * @see docs/req-213-edit-instruction-flow-detailed.md
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { Lock, ChefHat, Shirt, Bed, ShowerHead, Sofa, Car, TreePine, Info, MapPin, type LucideIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { RoomType, ItemType, PurposeType } from '../../ItemCreationWorkflow.types';
 import { ROOM_LABELS, ITEM_TYPE_LABELS, PURPOSE_LABELS } from '../../utils/constants';
@@ -82,6 +84,8 @@ export function ItemContextDisplay({
   itemName,
   purpose,
 }: ItemContextDisplayProps) {
+  // REQ-E02-066: Translation hook for item context display
+  const t = useTranslations('workflow.shared.itemContext');
   const RoomIcon = getRoomIcon(room);
 
   return (
@@ -89,9 +93,9 @@ export function ItemContextDisplay({
       {/* Header with lock icon */}
       <div className="flex items-center gap-2 mb-4">
         <Lock className="w-4 h-4 text-gray-500" aria-hidden="true" />
-        <span className="text-sm font-medium text-gray-600">Editing Guide For:</span>
+        <span className="text-sm font-medium text-gray-600">{t('editingGuideFor')}</span>
         <span className="ml-auto px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded-md">
-          Read-only
+          {t('readOnly')}
         </span>
       </div>
 
@@ -105,7 +109,7 @@ export function ItemContextDisplay({
         {/* Room Badge */}
         <div className="flex flex-col">
           <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-            Room
+            {t('room')}
           </span>
           <div className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-md">
             <RoomIcon className="w-5 h-5 text-gray-600" aria-hidden="true" />
@@ -118,7 +122,7 @@ export function ItemContextDisplay({
         {/* Item Type */}
         <div className="flex flex-col">
           <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-            Item Type
+            {t('itemType')}
           </span>
           <div className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-md">
             <span className="text-sm font-medium text-gray-900">
@@ -130,7 +134,7 @@ export function ItemContextDisplay({
         {/* Purpose */}
         <div className="flex flex-col">
           <span className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-            Purpose
+            {t('purpose')}
           </span>
           <div className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-md">
             <span className="text-sm font-medium text-gray-900">

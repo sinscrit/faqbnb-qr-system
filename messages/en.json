@@ -2228,19 +2228,144 @@
       }
     },
     "shared": {
-      "_comment": "Shared workflow components (session recovery, print options, QR generation, camera, network, tags, content)",
+      "_comment": "REQ-E02-066 - Shared workflow components (2026-01-22)",
+      "header": {
+        "stepOf": "Step {current} of {total}",
+        "backAriaLabel": "Go back to previous step",
+        "exitAriaLabel": "Exit workflow"
+      },
+      "progress": {
+        "itemsCreated": "{count, plural, =0 {No items} one {# item} other {# items}} created",
+        "sessionProgress": "Session progress: {count} items created"
+      },
+      "dialogs": {
+        "confirmExit": {
+          "title": "Exit Workflow?",
+          "messageWithUnsavedAndItems": "You have unsaved changes and {count} {count, plural, one {item} other {items}} in this session. Are you sure you want to exit?",
+          "messageWithUnsaved": "You have unsaved changes. Are you sure you want to exit?",
+          "messageWithItems": "You have created {count} {count, plural, one {item} other {items}} in this session. Are you sure you want to exit?",
+          "messageDefault": "Are you sure you want to exit the workflow?",
+          "cancel": "Cancel",
+          "exit": "Exit Workflow"
+        },
+        "emptySession": {
+          "title": "No Items Added",
+          "message": "No items added yet. Add items or exit session?",
+          "addItems": "Add Items",
+          "exitSession": "Exit Session",
+          "closeAriaLabel": "Close dialog"
+        },
+        "removeItem": {
+          "title": "Remove Item?",
+          "message": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
+          "cancel": "Cancel",
+          "remove": "Remove"
+        },
+        "pdfExport": {
+          "title": "Export QR Codes as PDF",
+          "itemCount": "{count, plural, one {# item} other {# items}}",
+          "description": "Configure PDF export settings for your QR codes and download them as a printable PDF document.",
+          "errorTitle": "PDF generation failed",
+          "dismissError": "Dismiss error",
+          "cancel": "Cancel",
+          "export": "Export PDF",
+          "generating": "Generating..."
+        }
+      },
+      "camera": {
+        "notAvailable": "Camera access not available",
+        "instructionVideo": "To record a video, please allow camera access in your browser settings, or upload an existing video from your device.",
+        "instructionPhoto": "To take a photo, please allow camera access in your browser settings, or upload an existing photo from your device.",
+        "uploadVideo": "Upload Video",
+        "uploadPhoto": "Upload Photo",
+        "tryAgain": "Try Camera Again",
+        "tryAgainAriaLabel": "Try camera again",
+        "helpLink": "How to enable camera access",
+        "permissionRequired": "Camera Access Required",
+        "permissionDescription": "Please allow camera access to capture photos or videos.",
+        "grantPermission": "Grant Permission",
+        "openSettings": "Open Settings",
+        "permissionDenied": "Camera permission denied",
+        "permissionDeniedDescription": "Camera permission denied. Please enable it in your browser settings.",
+        "notSupported": "Camera not supported",
+        "notSupportedDescription": "Your device does not support camera access.",
+        "switchingCamera": "Switching camera...",
+        "cameraError": "Camera error. Please try again."
+      },
+      "network": {
+        "previewUnavailable": "Preview unavailable",
+        "defaultError": "Unable to load preview due to network connectivity issues.",
+        "tryAgain": "Try Again",
+        "retrying": "Retrying...",
+        "proceedWithout": "Proceed Without Preview",
+        "offline": "You appear to be offline",
+        "offlineDescription": "Please check your connection and try again.",
+        "retryConnection": "Retry Connection",
+        "retry": "Retry",
+        "slowConnection": "Slow connection detected",
+        "slowConnectionDescription": "Uploads may take longer than expected.",
+        "connectionRestored": "Connection restored"
+      },
       "sessionRecovery": {
-        "title": "Resume Previous Session?",
+        "title": "Your previous session has been restored",
+        "itemCount": "{count, plural, one {# item} other {# items}}",
+        "needsReUpload": "{count, plural, one {# piece needs} other {# pieces need}} re-upload",
+        "continueSession": "Continue Session",
+        "startFresh": "Start Fresh",
+        "dismiss": "Dismiss notification",
         "message": "We found {count, plural, one {# item} other {# items}} from your last session.",
         "lastSaved": "Last saved: {time}",
         "contentWarning": "{count, plural, one {# piece of content needs} other {# pieces of content need}} to be re-uploaded.",
         "continue": "Continue Session",
-        "startFresh": "Start Fresh",
-        "dismiss": "Dismiss",
         "recovering": "Recovering session...",
         "recoveryFailed": "Failed to recover session"
       },
+      "qrGeneration": {
+        "ready": "Ready to generate",
+        "complete": "Complete!",
+        "completedWithFailures": "{completed} completed, {failed} failed",
+        "failed": "Generation failed",
+        "generatingOf": "Generating QR code {current} of {total}...",
+        "completedOf": "{completed} of {total} completed",
+        "pending": "Pending",
+        "generating": "Generating...",
+        "completed": "Completed",
+        "failedStatus": "Failed",
+        "retry": "Retry",
+        "retryAriaLabel": "Retry QR generation for {name}",
+        "retryFailed": "Retry Failed",
+        "skipAndContinue": "Skip & Continue",
+        "cancel": "Cancel",
+        "cancelAriaLabel": "Cancel QR code generation",
+        "statusAriaLabel": "QR code generation status",
+        "progressAriaLabel": "QR code generation progress",
+        "itemsFailed": "{count, plural, one {# item} other {# items}} failed to generate",
+        "title": "Generating QR Codes",
+        "progress": "Processing {current} of {total}",
+        "progressPercent": "{percent}% complete"
+      },
       "printOptions": {
+        "heading": "Which items would you like to print?",
+        "scopeAll": "All Items",
+        "scopeAllDesc": "Include new and existing items",
+        "scopeNewOnly": "New Items Only",
+        "scopeNewOnlyDesc": "Only items created in this session",
+        "scopeSelected": "Select Items",
+        "scopeSelectedDesc": "Choose specific items to print",
+        "selectAll": "Select All",
+        "deselectAll": "Deselect All",
+        "selectedOf": "({selected} of {total} selected)",
+        "newBadge": "New",
+        "generatingQR": "Generating QR Codes",
+        "generatingQRButton": "Generating QR Codes...",
+        "generatingPDF": "Generating PDF...",
+        "processing": "Processing...",
+        "generatePDF": "Generate PDF",
+        "printDirectly": "Print Directly",
+        "doneForNow": "Done for Now",
+        "errorRetryHint": "Please try again or skip for now.",
+        "dismissError": "Dismiss error",
+        "itemsSelected": "{count, plural, one {# item} other {# items}} selected for printing",
         "title": "Print QR Codes",
         "subtitle": "Choose what to print",
         "scope": "Select items to print",
@@ -2254,51 +2379,85 @@
         "large": "Large (3\" x 3\")",
         "custom": "Custom",
         "labelsPerPage": "Labels per page",
-        "generatePDF": "Generate PDF",
         "printDirect": "Print Directly",
         "skip": "Skip Printing",
-        "generating": "Generating...",
         "sending": "Sending to printer...",
         "printComplete": "Print complete",
         "printFailed": "Print failed"
       },
-      "qrGeneration": {
-        "title": "Generating QR Codes",
-        "progress": "Processing {current} of {total}",
-        "progressPercent": "{percent}% complete",
-        "complete": "QR codes generated successfully",
-        "failed": "Failed to generate QR codes",
-        "retry": "Retry"
+      "content": {
+        "types": {
+          "video": "Video",
+          "photo": "Photo",
+          "pdf": "PDF",
+          "text": "Text",
+          "url": "Link"
+        },
+        "pageCount": "{count, plural, one {# page} other {# pages}}",
+        "photoAlt": "Photo content",
+        "itemPhotoAlt": "Item photo",
+        "dragToReorder": "Drag to reorder",
+        "retakeContent": "Retake content",
+        "removeContent": "Remove content",
+        "removeAriaLabel": "Remove {type} content",
+        "loadingPreview": "Loading preview...",
+        "contentPreviewAriaLabel": "{type} content preview",
+        "preview": "Preview",
+        "edit": "Edit",
+        "remove": "Remove",
+        "reorder": "Reorder",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "contentPiece": "Content piece {index}",
+        "contentPieceOf": "Content piece {index} of {total}",
+        "videoContent": "Video",
+        "photoContent": "Photo",
+        "pdfContent": "PDF Document",
+        "textContent": "Text",
+        "urlContent": "Link",
+        "unknownContent": "Unknown content type",
+        "noContent": "No content added yet",
+        "addContent": "Add content",
+        "contentPieceAriaLabel": "{type} content piece"
       },
-      "camera": {
-        "permissionRequired": "Camera Access Required",
-        "permissionDescription": "Please allow camera access to capture photos or videos.",
-        "grantPermission": "Grant Permission",
-        "openSettings": "Open Settings",
-        "permissionDenied": "Camera permission denied",
-        "permissionDeniedDescription": "Camera permission denied. Please enable it in your browser settings.",
-        "notSupported": "Camera not supported",
-        "notSupportedDescription": "Your device does not support camera access.",
-        "switchingCamera": "Switching camera...",
-        "cameraError": "Camera error. Please try again."
+      "itemEditor": {
+        "itemName": "Item Name",
+        "placeholder": "Enter item name",
+        "hint": "This name will appear on the QR code label"
       },
-      "cameraPermission": {
-        "_comment": "CameraPermissionFallback.tsx - Camera permission denied fallback UI",
-        "title": "Camera access denied",
-        "explanation": "To capture a {contentType}, please allow camera access in your browser settings, or upload an existing {contentType} from your device.",
-        "uploadVideo": "Upload Video Instead",
-        "uploadPhoto": "Upload Photo Instead",
-        "tryAgain": "Try Camera Again",
-        "helpLink": "How to enable camera access"
+      "tagsEditor": {
+        "addTag": "Add Tag",
+        "removeTagAriaLabel": "Remove {tag} tag",
+        "availableTags": "Available tags"
       },
-      "network": {
-        "offline": "You appear to be offline",
-        "offlineDescription": "Please check your connection and try again.",
-        "retryConnection": "Retry Connection",
-        "retry": "Retry",
-        "slowConnection": "Slow connection detected",
-        "slowConnectionDescription": "Uploads may take longer than expected.",
-        "connectionRestored": "Connection restored"
+      "duplicateWarning": {
+        "exact": "Exact name already exists",
+        "similar": "Similar name already used",
+        "moreItems": "+{count} more..."
+      },
+      "cards": {
+        "room": {
+          "selectAriaLabel": "Select {name} room"
+        },
+        "itemType": {
+          "selectAriaLabel": "Select {name} item type"
+        },
+        "suggestion": {
+          "selectAriaLabel": "Select {name}",
+          "created": "Created"
+        },
+        "sessionItem": {
+          "contentPieces": "{count, plural, one {# piece} other {# pieces}} of content",
+          "noContent": "No content yet",
+          "editAriaLabel": "Edit {name}",
+          "removeAriaLabel": "Remove {name} from session",
+          "itemPhotoAlt": "Item photo"
+        },
+        "itemContext": {
+          "room": "Room",
+          "type": "Type",
+          "unknown": "Unknown"
+        }
       },
       "tags": {
         "label": "Tags",
@@ -2316,25 +2475,9 @@
         "tagRemoved": "Tag removed",
         "duplicateTag": "Tag already exists"
       },
-      "content": {
-        "preview": "Preview",
-        "edit": "Edit",
-        "remove": "Remove",
-        "reorder": "Reorder",
-        "moveUp": "Move up",
-        "moveDown": "Move down",
-        "contentPiece": "Content piece {index}",
-        "contentPieceOf": "Content piece {index} of {total}",
-        "videoContent": "Video",
-        "photoContent": "Photo",
-        "pdfContent": "PDF Document",
-        "textContent": "Text",
-        "urlContent": "Link",
-        "unknownContent": "Unknown content type",
-        "noContent": "No content added yet",
-        "addContent": "Add content"
-      },
       "itemContext": {
+        "editingGuideFor": "Editing Guide For:",
+        "readOnly": "Read-only",
         "room": "Room",
         "itemType": "Item Type",
         "itemName": "Item Name",
@@ -2342,6 +2485,15 @@
         "changeRoom": "Change room",
         "changeItemType": "Change item type",
         "changePurpose": "Change purpose"
+      },
+      "cameraPermission": {
+        "_comment": "CameraPermissionFallback.tsx - Camera permission denied fallback UI (legacy)",
+        "title": "Camera access denied",
+        "explanation": "To capture a {contentType}, please allow camera access in your browser settings, or upload an existing {contentType} from your device.",
+        "uploadVideo": "Upload Video Instead",
+        "uploadPhoto": "Upload Photo Instead",
+        "tryAgain": "Try Camera Again",
+        "helpLink": "How to enable camera access"
       }
     },
     "constants": {

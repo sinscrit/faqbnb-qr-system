@@ -8,7 +8,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/CameraPermissionFallback
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n - switched to workflow.shared.camera)
  */
 
 import { useTranslations } from 'next-intl';
@@ -44,8 +44,8 @@ export function CameraPermissionFallback({
   onTryAgain,
   className,
 }: CameraPermissionFallbackProps) {
-  // i18n (REQ-E02-063)
-  const t = useTranslations('workflow.shared.cameraPermission');
+  // REQ-E02-066: Use camera namespace for shared camera translations
+  const t = useTranslations('workflow.shared.camera');
 
   // Get content-type-specific labels
   const uploadLabel = contentType === 'video' ? t('uploadVideo') : t('uploadPhoto');
@@ -70,12 +70,12 @@ export function CameraPermissionFallback({
 
       {/* Title */}
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-        {t('title')}
+        {t('notAvailable')}
       </h3>
 
       {/* Explanation */}
       <p className="text-sm text-gray-600 mb-6 max-w-sm">
-        {t('explanation', { contentType })}
+        {contentType === 'video' ? t('instructionVideo') : t('instructionPhoto')}
       </p>
 
       {/* Action Buttons */}
@@ -111,7 +111,7 @@ export function CameraPermissionFallback({
             'transition-colors duration-200',
             'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
           )}
-          aria-label={t('tryAgain')}
+          aria-label={t('tryAgainAriaLabel')}
         >
           <RefreshCw className="w-5 h-5" aria-hidden="true" />
           {t('tryAgain')}

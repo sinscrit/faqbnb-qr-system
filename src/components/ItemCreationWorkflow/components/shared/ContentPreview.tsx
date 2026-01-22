@@ -27,11 +27,12 @@
  * @module ItemCreationWorkflow/components/shared/ContentPreview
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
  * @created 2026-01-09 (Plan-094 Phase 5)
- * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import type { TranslationFn } from '@/types/i18n';
 import { Video, Image, FileText, Type, Link, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ContentPiece, ContentData, ContentType } from '../../ItemCreationWorkflow.types';
@@ -70,13 +71,13 @@ export const SIZE_CONFIG: Record<ContentPreviewSize, { width: number; height: nu
   large: { width: 200, height: 200, iconSize: 'w-10 h-10', textSize: 'text-sm' },
 };
 
-/** Content type configuration with icon, color theme, and display label */
-export const TYPE_CONFIG: Record<ContentType, { icon: typeof Video; color: string; label: string }> = {
-  video: { icon: Video, color: 'bg-purple-100 text-purple-700', label: 'Video' },
-  photo: { icon: Image, color: 'bg-blue-100 text-blue-700', label: 'Photo' },
-  pdf: { icon: FileText, color: 'bg-amber-100 text-amber-700', label: 'PDF' },
-  text: { icon: Type, color: 'bg-green-100 text-green-700', label: 'Text' },
-  url: { icon: Link, color: 'bg-indigo-100 text-indigo-700', label: 'Link' },
+/** Content type configuration with icon, color theme, and i18n translation key */
+export const TYPE_CONFIG: Record<ContentType, { icon: typeof Video; color: string; labelKey: string }> = {
+  video: { icon: Video, color: 'bg-purple-100 text-purple-700', labelKey: 'video' },
+  photo: { icon: Image, color: 'bg-blue-100 text-blue-700', labelKey: 'photo' },
+  pdf: { icon: FileText, color: 'bg-amber-100 text-amber-700', labelKey: 'pdf' },
+  text: { icon: Type, color: 'bg-green-100 text-green-700', labelKey: 'text' },
+  url: { icon: Link, color: 'bg-indigo-100 text-indigo-700', labelKey: 'url' },
 };
 
 // =============================================================================
@@ -160,9 +161,11 @@ interface PhotoPreviewProps {
   urlsRef: React.MutableRefObject<string[]>;
   /** Content title for alt text */
   contentTitle?: string;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
-function PhotoPreview({ data, size, urlsRef, contentTitle }: PhotoPreviewProps) {
+function PhotoPreview({ data, size, urlsRef, contentTitle, t }: PhotoPreviewProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const sizeConfig = SIZE_CONFIG[size];
@@ -190,7 +193,7 @@ function PhotoPreview({ data, size, urlsRef, contentTitle }: PhotoPreviewProps) 
   return (
     <img
       src={imageUrl}
-      alt={contentTitle ? `Photo: ${contentTitle}` : 'Photo content preview'}
+      alt={contentTitle ? `Photo: ${contentTitle}` : t('photoAlt')}
       className="w-full h-full object-cover"
       onError={() => setHasError(true)}
     />
@@ -204,9 +207,11 @@ function PhotoPreview({ data, size, urlsRef, contentTitle }: PhotoPreviewProps) 
 interface PdfPreviewProps {
   data: Extract<ContentData, { type: 'pdf' }>;
   size: ContentPreviewSize;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
-function PdfPreview({ data, size }: PdfPreviewProps) {
+function PdfPreview({ data, size, t }: PdfPreviewProps) {
   const sizeConfig = SIZE_CONFIG[size];
 
   return (
@@ -214,7 +219,7 @@ function PdfPreview({ data, size }: PdfPreviewProps) {
       <FileText className={cn(sizeConfig.iconSize, 'text-amber-600')} aria-hidden="true" />
       {data.pageCount != null && (
         <span className={cn('mt-1 text-amber-700', sizeConfig.textSize)}>
-          {data.pageCount} {data.pageCount === 1 ? 'page' : 'pages'}
+          {t('pageCount', { count: data.pageCount })}
         </span>
       )}
     </div>
@@ -404,6 +409,9 @@ export function ContentPreview({
   isLoading = false,
   className,
 }: ContentPreviewProps) {
+  // REQ-E02-066: Translation hook for content preview
+  const t = useTranslations('workflow.shared.content');
+
   // Track object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
 
@@ -418,6 +426,7 @@ export function ContentPreview({
   const sizeConfig = SIZE_CONFIG[size];
   const typeConfig = TYPE_CONFIG[content.type];
   const TypeIcon = typeConfig.icon;
+  const typeLabel = t(`types.${typeConfig.labelKey}`);
 
   // Render content based on type
   const renderContent = () => {
@@ -429,9 +438,9 @@ export function ContentPreview({
       case 'video':
         return <VideoPreview data={content.data as Extract<ContentData, { type: 'video' }>} size={size} urlsRef={urlsRef} />;
       case 'photo':
-        return <PhotoPreview data={content.data as Extract<ContentData, { type: 'photo' }>} size={size} urlsRef={urlsRef} />;
+        return <PhotoPreview data={content.data as Extract<ContentData, { type: 'photo' }>} size={size} urlsRef={urlsRef} t={t} />;
       case 'pdf':
-        return <PdfPreview data={content.data as Extract<ContentData, { type: 'pdf' }>} size={size} />;
+        return <PdfPreview data={content.data as Extract<ContentData, { type: 'pdf' }>} size={size} t={t} />;
       case 'text':
         return <TextPreview data={content.data as Extract<ContentData, { type: 'text' }>} size={size} />;
       case 'url':
@@ -453,7 +462,7 @@ export function ContentPreview({
       )}
       style={{ width: sizeConfig.width, height: sizeConfig.height }}
       role={containerRole}
-      aria-label={`${typeConfig.label} content preview`}
+      aria-label={t('contentPreviewAriaLabel', { type: typeLabel })}
     >
       {/* Content preview */}
       {renderContent()}
@@ -469,7 +478,7 @@ export function ContentPreview({
           aria-hidden="true"
         >
           <TypeIcon className={size === 'small' ? 'w-2.5 h-2.5' : 'w-3 h-3'} />
-          {size !== 'small' && <span>{typeConfig.label}</span>}
+          {size !== 'small' && <span>{typeLabel}</span>}
         </div>
       )}
 
@@ -484,7 +493,7 @@ export function ContentPreview({
             'hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500',
             'min-w-[28px] min-h-[28px] flex items-center justify-center'
           )}
-          aria-label={`Remove ${typeConfig.label.toLowerCase()} content`}
+          aria-label={t('removeAriaLabel', { type: typeLabel })}
         >
           <X className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
         </button>

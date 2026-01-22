@@ -26,7 +26,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/PDFExportDialog
  * @see usePDFGeneration for generation logic
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n - switched to workflow.shared.dialogs.pdfExport)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -80,7 +80,8 @@ export function PDFExportDialog({
   onClearError,
   className,
 }: PDFExportDialogProps) {
-  const tPdf = useTranslations('workflow.dialogs.pdfExport');
+  // REQ-E02-066: Use shared namespace for PDF export dialog
+  const t = useTranslations('workflow.shared.dialogs.pdfExport');
   const tCommon = useTranslations('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -173,14 +174,14 @@ export function PDFExportDialog({
                 id="pdf-export-dialog-title"
                 className="text-lg font-semibold text-[#222222]"
               >
-                {tPdf('title')}
+                {t('title')}
               </h2>
               <p className="text-sm text-[#717171]">
                 <span
                   className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
                   style={{ backgroundColor: '#F7F7F7', color: '#222222' }}
                 >
-                  {tPdf('itemCount', { count: itemCount })}
+                  {t('itemCount', { count: itemCount })}
                 </span>
               </p>
             </div>
@@ -207,7 +208,7 @@ export function PDFExportDialog({
 
         {/* Hidden description for accessibility */}
         <p id="pdf-export-dialog-description" className="sr-only">
-          {tPdf('description')}
+          {t('description')}
         </p>
 
         {/* Body - Scrollable content */}
@@ -226,7 +227,7 @@ export function PDFExportDialog({
               />
               <div className="flex-1">
                 <p className="text-sm font-medium" style={{ color: '#DC2626' }}>
-                  {tPdf('errorTitle')}
+                  {t('errorTitle')}
                 </p>
                 <p className="text-sm mt-1" style={{ color: '#7F1D1D' }}>
                   {error}
@@ -237,7 +238,7 @@ export function PDFExportDialog({
                   type="button"
                   onClick={onClearError}
                   className="p-1 rounded-full hover:bg-red-200 transition-colors"
-                  aria-label={tPdf('dismissError')}
+                  aria-label={t('dismissError')}
                 >
                   <X className="w-4 h-4" style={{ color: '#DC2626' }} />
                 </button>
@@ -269,7 +270,7 @@ export function PDFExportDialog({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
             )}
           >
-            {tPdf('cancel')}
+            {t('cancel')}
           </button>
           <button
             type="button"
@@ -293,12 +294,12 @@ export function PDFExportDialog({
                   className={cn('w-4 h-4', !prefersReducedMotion && 'animate-spin')}
                   aria-hidden="true"
                 />
-                <span>{tPdf('generating')}</span>
+                <span>{t('generating')}</span>
               </>
             ) : (
               <>
                 <FileDown className="w-4 h-4" aria-hidden="true" />
-                <span>{tPdf('export')}</span>
+                <span>{t('export')}</span>
               </>
             )}
           </button>

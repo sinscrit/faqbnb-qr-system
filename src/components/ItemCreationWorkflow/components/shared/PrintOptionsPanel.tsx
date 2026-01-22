@@ -29,10 +29,12 @@
  *
  * @module ItemCreationWorkflow/components/shared/PrintOptionsPanel
  * @see SessionSummaryStep for usage context
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
+import type { TranslationFn } from '@/types/i18n';
 import {
   FileDown,
   Printer,
@@ -194,28 +196,30 @@ function getItemThumbnail(
 
 interface ScopeOption {
   value: ScopeType;
-  title: string;
-  description: string;
+  /** Translation key for title (e.g., 'scopeAll', 'scopeNewOnly', 'scopeSelected') */
+  titleKey: string;
+  /** Translation key for description */
+  descriptionKey: string;
   getCount: ((sessionItems: SessionItem[], existingItems: SessionItem[]) => number) | null;
 }
 
 const SCOPE_OPTIONS: ScopeOption[] = [
   {
     value: 'all',
-    title: 'All Items',
-    description: 'Include new and existing items',
+    titleKey: 'scopeAll',
+    descriptionKey: 'scopeAllDesc',
     getCount: (sessionItems, existingItems) => sessionItems.length + existingItems.length,
   },
   {
     value: 'new-only',
-    title: 'New Items Only',
-    description: 'Only items created in this session',
+    titleKey: 'scopeNewOnly',
+    descriptionKey: 'scopeNewOnlyDesc',
     getCount: (sessionItems) => sessionItems.length,
   },
   {
     value: 'selected',
-    title: 'Select Items',
-    description: 'Choose specific items to print',
+    titleKey: 'scopeSelected',
+    descriptionKey: 'scopeSelectedDesc',
     getCount: null, // Shows selected count instead
   },
 ];
@@ -231,6 +235,8 @@ interface ScopeCardProps {
   selectedCount?: number;
   onSelect: () => void;
   tabIndex: number;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
 function ScopeCard({
@@ -240,6 +246,7 @@ function ScopeCard({
   selectedCount,
   onSelect,
   tabIndex,
+  t,
 }: ScopeCardProps) {
   const displayCount = option.value === 'selected' && selectedCount !== undefined
     ? selectedCount
@@ -280,9 +287,9 @@ function ScopeCard({
           >
             {isSelected && <Check className="w-3 h-3 text-white" />}
           </div>
-          <span className="font-medium text-[#222222]">{option.title}</span>
+          <span className="font-medium text-[#222222]">{t(option.titleKey)}</span>
         </div>
-        <p className="text-sm text-[#717171] mt-1 ml-7">{option.description}</p>
+        <p className="text-sm text-[#717171] mt-1 ml-7">{t(option.descriptionKey)}</p>
       </div>
 
       {/* Item count badge */}
@@ -306,6 +313,8 @@ interface SelectableItemRowProps {
   isNew: boolean;
   onToggle: () => void;
   urlsRef: React.MutableRefObject<string[]>;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
 function SelectableItemRow({
@@ -314,6 +323,7 @@ function SelectableItemRow({
   isNew,
   onToggle,
   urlsRef,
+  t,
 }: SelectableItemRowProps) {
   const roomLabel = ROOM_LABELS[item.room as RoomTypeConst] || item.room;
   const checkboxId = `item-checkbox-${item.id}`;
@@ -357,7 +367,7 @@ function SelectableItemRow({
           </span>
           {isNew && (
             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-pink-100 text-[#FF385C]">
-              New
+              {t('newBadge')}
             </span>
           )}
         </div>
@@ -390,6 +400,9 @@ export function PrintOptionsPanel({
   onPDFGenerated,
   className,
 }: PrintOptionsPanelProps) {
+  // REQ-E02-066: Translation hook for print options
+  const t = useTranslations('workflow.shared.printOptions');
+
   // Internal state
   const [scopeType, setScopeType] = useState<ScopeType>('new-only');
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(() => {
@@ -716,7 +729,7 @@ export function PrintOptionsPanel({
           id="print-options-heading"
           className="text-lg font-semibold text-[#222222]"
         >
-          Which items would you like to print?
+          {t('heading')}
         </h2>
 
         {/* Scope Selection Radio Cards */}
@@ -743,6 +756,7 @@ export function PrintOptionsPanel({
                   selectedCount={option.value === 'selected' ? selectedCount : undefined}
                   onSelect={() => setScopeType(option.value)}
                   tabIndex={isSelected ? 0 : -1}
+                  t={t}
                 />
               </div>
             );
@@ -759,7 +773,7 @@ export function PrintOptionsPanel({
           {scopeType === 'selected' && (
             <div
               role="listbox"
-              aria-label="Select items to print"
+              aria-label={t('scope')}
               className="border border-gray-200 rounded-lg overflow-hidden"
             >
               {/* Select All Header */}
@@ -783,9 +797,9 @@ export function PrintOptionsPanel({
                   htmlFor="select-all-checkbox"
                   className="flex-1 font-medium text-[#222222] cursor-pointer"
                 >
-                  {isAllSelected ? 'Deselect All' : 'Select All'}
+                  {isAllSelected ? t('deselectAll') : t('selectAll')}
                   <span className="text-[#717171] font-normal ml-2">
-                    ({selectedCount} of {allItems.length} selected)
+                    {t('selectedOf', { selected: selectedCount, total: allItems.length })}
                   </span>
                 </label>
               </div>
@@ -800,6 +814,7 @@ export function PrintOptionsPanel({
                     isNew={sessionItemIds.has(item.id)}
                     onToggle={() => handleToggleItem(item.id)}
                     urlsRef={urlsRef}
+                    t={t}
                   />
                 ))}
               </div>
@@ -811,7 +826,7 @@ export function PrintOptionsPanel({
         {showQRProgress && (
           <div className="border-t border-gray-200 pt-4">
             <h3 className="text-sm font-medium text-[#222222] mb-3">
-              Generating QR Codes
+              {t('generatingQR')}
             </h3>
             <QRGenerationProgress
               isGenerating={qrGeneration.isGenerating}
@@ -829,7 +844,7 @@ export function PrintOptionsPanel({
 
         {/* Live region for screen reader announcements */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
-          {selectedCount} items selected for printing
+          {t('itemsSelected', { count: selectedCount })}
         </div>
       </div>
 
@@ -848,7 +863,7 @@ export function PrintOptionsPanel({
             <AlertCircle className="w-5 h-5 text-[#FF5A5F] flex-shrink-0 mt-0.5" aria-hidden="true" />
             <div className="flex-1 min-w-0">
               <p className="text-sm text-[#222222]">{error}</p>
-              <p className="text-xs text-[#717171] mt-1">Please try again or skip for now.</p>
+              <p className="text-xs text-[#717171] mt-1">{t('errorRetryHint')}</p>
             </div>
             {onClearError && (
               <button
@@ -859,7 +874,7 @@ export function PrintOptionsPanel({
                   'text-gray-500 hover:text-gray-700 hover:bg-gray-100',
                   'focus:outline-none focus:ring-2 focus:ring-[#FF385C]'
                 )}
-                aria-label="Dismiss error"
+                aria-label={t('dismissError')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -894,22 +909,22 @@ export function PrintOptionsPanel({
           {qrGeneration.isGenerating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-              Generating QR Codes...
+              {t('generatingQRButton')}
             </>
           ) : pdfGeneration.isGenerating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-              Generating PDF...
+              {t('generatingPDF')}
             </>
           ) : isProcessing ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-              Processing...
+              {t('processing')}
             </>
           ) : (
             <>
               <FileDown className="w-5 h-5" aria-hidden="true" />
-              Generate PDF
+              {t('generatePDF')}
             </>
           )}
         </button>
@@ -931,7 +946,7 @@ export function PrintOptionsPanel({
           )}
         >
           <Printer className="w-5 h-5" aria-hidden="true" />
-          Print Directly
+          {t('printDirectly')}
         </button>
 
         {/* Done for Now Link */}
@@ -948,7 +963,7 @@ export function PrintOptionsPanel({
           )}
         >
           <SkipForward className="w-4 h-4" aria-hidden="true" />
-          Done for Now
+          {t('doneForNow')}
         </button>
       </div>
 

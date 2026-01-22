@@ -9,7 +9,7 @@
  * @module ItemCreationWorkflow/components/shared/RemoveItemDialog
  * @see docs/REQ-109-session-summary-step-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n - switched to workflow.shared.dialogs)
  */
 
 import { useEffect, useRef } from 'react';
@@ -46,8 +46,8 @@ export function RemoveItemDialog({
   onConfirmRemove,
   className,
 }: RemoveItemDialogProps) {
-  const tRemove = useTranslations('workflow.dialogs.removeItem');
-  const tCommon = useTranslations('common.actions');
+  // REQ-E02-066: Use shared namespace for dialogs
+  const t = useTranslations('workflow.shared.dialogs.removeItem');
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -123,13 +123,13 @@ export function RemoveItemDialog({
               id="remove-dialog-title"
               className="text-lg font-semibold text-[#222222]"
             >
-              {tRemove('title')}
+              {t('title')}
             </h3>
             <p
               id="remove-dialog-description"
               className="mt-2 text-sm text-[#717171]"
             >
-              {tRemove('message', { itemName: displayName })}
+              {t('message', { name: displayName })}
             </p>
           </div>
         </div>
@@ -150,7 +150,7 @@ export function RemoveItemDialog({
               "min-h-[44px]"
             )}
           >
-            {tRemove('cancel')}
+            {t('cancel')}
           </button>
           <button
             ref={confirmButtonRef}
@@ -167,7 +167,7 @@ export function RemoveItemDialog({
             )}
             style={{ backgroundColor: '#FF5A5F' }}
           >
-            {tRemove('remove')}
+            {t('remove')}
           </button>
         </div>
       </div>

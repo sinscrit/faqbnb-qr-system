@@ -21,11 +21,13 @@
  *
  * @module ItemCreationWorkflow/components/shared/QRGenerationProgress
  * @see useSessionQRGeneration for generation logic
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { Loader2, Check, X, RefreshCw, XCircle, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import type { TranslationFn } from '@/types/i18n';
 
 // =============================================================================
 // Type Definitions (Task 4.4)
@@ -93,24 +95,26 @@ interface ProgressBarProps {
   progress: number;
   stats: { total: number; completed: number; failed: number; remaining: number };
   isGenerating: boolean;
+  /** Translation function (REQ-E02-066) */
+  t: TranslationFn;
 }
 
-function ProgressBar({ progress, stats, isGenerating }: ProgressBarProps) {
-  // Determine the status message
-  let statusMessage = 'Ready to generate';
+function ProgressBar({ progress, stats, isGenerating, t }: ProgressBarProps) {
+  // Determine the status message using translations
+  let statusMessage = t('ready');
   if (stats.total > 0) {
     if (progress === 100) {
       if (stats.failed === 0) {
-        statusMessage = 'Complete!';
+        statusMessage = t('complete');
       } else {
-        statusMessage = `${stats.completed} completed, ${stats.failed} failed`;
+        statusMessage = t('completedWithFailures', { completed: stats.completed, failed: stats.failed });
       }
     } else if (stats.failed === stats.total) {
-      statusMessage = 'Generation failed';
+      statusMessage = t('failed');
     } else if (isGenerating) {
-      statusMessage = `Generating QR code ${Math.min(stats.completed + 1, stats.total)} of ${stats.total}...`;
+      statusMessage = t('generatingOf', { current: Math.min(stats.completed + 1, stats.total), total: stats.total });
     } else {
-      statusMessage = `${stats.completed} of ${stats.total} completed`;
+      statusMessage = t('completedOf', { completed: stats.completed, total: stats.total });
     }
   }
 
@@ -123,7 +127,7 @@ function ProgressBar({ progress, stats, isGenerating }: ProgressBarProps) {
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label="QR code generation progress"
+        aria-label={t('progressAriaLabel')}
       >
         {/* Progress fill */}
         <div
@@ -152,9 +156,11 @@ function ProgressBar({ progress, stats, isGenerating }: ProgressBarProps) {
 interface ItemStatusRowProps {
   item: QRProgressItem;
   onRetry?: (itemId: string) => void;
+  /** Translation function (REQ-E02-066) */
+  t: TranslationFn;
 }
 
-function ItemStatusRow({ item, onRetry }: ItemStatusRowProps) {
+function ItemStatusRow({ item, onRetry, t }: ItemStatusRowProps) {
   const getStatusIcon = () => {
     switch (item.status) {
       case 'pending':
@@ -191,13 +197,13 @@ function ItemStatusRow({ item, onRetry }: ItemStatusRowProps) {
   const getStatusLabel = () => {
     switch (item.status) {
       case 'pending':
-        return 'Pending';
+        return t('pending');
       case 'generating':
-        return 'Generating...';
+        return t('generating');
       case 'completed':
-        return 'Completed';
+        return t('completed');
       case 'failed':
-        return 'Failed';
+        return t('failedStatus');
     }
   };
 
@@ -237,10 +243,10 @@ function ItemStatusRow({ item, onRetry }: ItemStatusRowProps) {
             'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
             'transition-colors duration-150'
           )}
-          aria-label={`Retry QR generation for ${item.name}`}
+          aria-label={t('retryAriaLabel', { name: item.name })}
         >
           <RefreshCw className="w-3 h-3" aria-hidden="true" />
-          Retry
+          {t('retry')}
         </button>
       )}
     </div>
@@ -256,15 +262,17 @@ interface ErrorBannerProps {
   failedCount: number;
   onRetryAll?: () => void;
   onContinue?: () => void;
+  /** Translation function (REQ-E02-066) */
+  t: TranslationFn;
 }
 
-function ErrorBanner({ error, failedCount, onRetryAll, onContinue }: ErrorBannerProps) {
+function ErrorBanner({ error, failedCount, onRetryAll, onContinue, t }: ErrorBannerProps) {
   // Only show if there's an error or failed items
   if (!error && failedCount === 0) {
     return null;
   }
 
-  const message = error || `${failedCount} item${failedCount !== 1 ? 's' : ''} failed to generate`;
+  const message = error || t('itemsFailed', { count: failedCount });
 
   return (
     <div
@@ -300,7 +308,7 @@ function ErrorBanner({ error, failedCount, onRetryAll, onContinue }: ErrorBanner
             )}
           >
             <RefreshCw className="w-4 h-4" aria-hidden="true" />
-            Retry Failed
+            {t('retryFailed')}
           </button>
         )}
 
@@ -315,7 +323,7 @@ function ErrorBanner({ error, failedCount, onRetryAll, onContinue }: ErrorBanner
               'transition-colors duration-150'
             )}
           >
-            Skip & Continue
+            {t('skipAndContinue')}
           </button>
         )}
       </div>
@@ -329,9 +337,11 @@ function ErrorBanner({ error, failedCount, onRetryAll, onContinue }: ErrorBanner
  */
 interface CancelButtonProps {
   onCancel?: () => void;
+  /** Translation function (REQ-E02-066) */
+  t: TranslationFn;
 }
 
-function CancelButton({ onCancel }: CancelButtonProps) {
+function CancelButton({ onCancel, t }: CancelButtonProps) {
   if (!onCancel) {
     return null;
   }
@@ -347,10 +357,10 @@ function CancelButton({ onCancel }: CancelButtonProps) {
         'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2 rounded',
         'transition-colors duration-150'
       )}
-      aria-label="Cancel QR code generation"
+      aria-label={t('cancelAriaLabel')}
     >
       <XCircle className="w-4 h-4" aria-hidden="true" />
-      Cancel
+      {t('cancel')}
     </button>
   );
 }
@@ -377,6 +387,9 @@ export function QRGenerationProgress({
   onContinue,
   className,
 }: QRGenerationProgressProps) {
+  // REQ-E02-066: Translation hook for QR generation messages
+  const t = useTranslations('workflow.shared.qrGeneration');
+
   // Don't render if there are no items
   if (items.length === 0) {
     return null;
@@ -389,19 +402,20 @@ export function QRGenerationProgress({
         progress={progress}
         stats={stats}
         isGenerating={isGenerating}
+        t={t}
       />
 
       {/* Cancel button (only during generation) */}
       {isGenerating && (
         <div className="flex justify-center">
-          <CancelButton onCancel={onCancel} />
+          <CancelButton onCancel={onCancel} t={t} />
         </div>
       )}
 
       {/* Item status list */}
       <div
         role="list"
-        aria-label="QR code generation status"
+        aria-label={t('statusAriaLabel')}
         className={cn(
           'max-h-[200px] md:max-h-[280px] overflow-y-auto',
           'border border-gray-200 rounded-lg p-3',
@@ -413,6 +427,7 @@ export function QRGenerationProgress({
             key={item.id}
             item={item}
             onRetry={onRetryItem}
+            t={t}
           />
         ))}
       </div>
@@ -424,6 +439,7 @@ export function QRGenerationProgress({
           failedCount={stats.failed}
           onRetryAll={onRetry}
           onContinue={onContinue}
+          t={t}
         />
       )}
     </div>

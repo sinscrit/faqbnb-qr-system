@@ -9,7 +9,7 @@
  * @module ItemCreationWorkflow/components/shared/EmptySessionDialog
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Focus Trapping)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n - switched to workflow.shared.dialogs)
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -50,8 +50,8 @@ export function EmptySessionDialog({
   onExitSession,
   className,
 }: EmptySessionDialogProps) {
-  const tEmpty = useTranslations('workflow.dialogs.emptySession');
-  const tCommon = useTranslations('common');
+  // REQ-E02-066: Use shared namespace for dialogs
+  const t = useTranslations('workflow.shared.dialogs.emptySession');
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -131,7 +131,7 @@ export function EmptySessionDialog({
             'motion-reduce:transition-none',
             'focus:outline-none focus:ring-2 focus:ring-gray-500'
           )}
-          aria-label={tCommon('dialog.closeDialog')}
+          aria-label={t('closeAriaLabel')}
         >
           <X className="w-5 h-5" aria-hidden="true" />
         </button>
@@ -150,7 +150,7 @@ export function EmptySessionDialog({
             id="empty-session-title"
             className="text-lg font-semibold text-gray-900 text-center mb-2"
           >
-            {tEmpty('title')}
+            {t('title')}
           </h2>
 
           {/* Description */}
@@ -158,7 +158,7 @@ export function EmptySessionDialog({
             id="empty-session-description"
             className="text-sm text-gray-600 text-center mb-6"
           >
-            {tEmpty('message')}
+            {t('message')}
           </p>
 
           {/* Action Buttons */}
@@ -179,7 +179,7 @@ export function EmptySessionDialog({
               )}
             >
               <Plus className="w-5 h-5" aria-hidden="true" />
-              {tEmpty('addItems')}
+              {t('addItems')}
             </button>
 
             {/* Exit Session - Secondary */}
@@ -198,7 +198,7 @@ export function EmptySessionDialog({
               )}
             >
               <LogOut className="w-5 h-5" aria-hidden="true" />
-              {tEmpty('exitSession')}
+              {t('exitSession')}
             </button>
           </div>
         </div>

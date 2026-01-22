@@ -20,9 +20,10 @@
  * @module ItemCreationWorkflow/components/shared/SuggestionButton
  * @see SpecificItemStep for usage context
  * @see useSuggestions for suggestion tracking
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Check } from 'lucide-react';
 
@@ -46,6 +47,9 @@ export function SuggestionButton({
   onSelect,
   className,
 }: SuggestionButtonProps) {
+  // REQ-E02-066: Translation hook for suggestion button
+  const t = useTranslations('workflow.shared.cards.suggestion');
+
   const handleClick = () => {
     if (!isCreated) {
       onSelect(label);
@@ -93,7 +97,7 @@ export function SuggestionButton({
 
       {/* Status indicator */}
       {isCreated ? (
-        <span className="text-xs text-gray-400">Created</span>
+        <span className="text-xs text-gray-400">{t('created')}</span>
       ) : isSelected ? (
         <Check className="w-4 h-4 text-blue-600" aria-hidden="true" />
       ) : null}

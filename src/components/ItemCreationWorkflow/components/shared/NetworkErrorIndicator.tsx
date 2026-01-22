@@ -19,10 +19,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/NetworkErrorIndicator
  * @see useUrlPreview for error source
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { WifiOff, RefreshCw, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -57,6 +58,9 @@ export function NetworkErrorIndicator({
   errorMessage,
   className,
 }: NetworkErrorIndicatorProps) {
+  // REQ-E02-066: Translation hook for network error messages
+  const t = useTranslations('workflow.shared.network');
+
   return (
     <div
       role="alert"
@@ -74,10 +78,10 @@ export function NetworkErrorIndicator({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium text-amber-800">
-            Preview unavailable
+            {t('previewUnavailable')}
           </h3>
           <p className="mt-1 text-sm text-amber-700">
-            {errorMessage || 'Unable to load preview due to network connectivity issues.'}
+            {errorMessage || t('defaultError')}
           </p>
         </div>
       </div>
@@ -99,13 +103,13 @@ export function NetworkErrorIndicator({
               ? 'bg-amber-200 text-amber-600 cursor-not-allowed'
               : 'bg-amber-600 text-white hover:bg-amber-700'
           )}
-          aria-label={isRetrying ? 'Retrying...' : 'Try again'}
+          aria-label={isRetrying ? t('retrying') : t('tryAgain')}
         >
           <RefreshCw
             className={cn('w-4 h-4', isRetrying && 'animate-spin')}
             aria-hidden="true"
           />
-          {isRetrying ? 'Retrying...' : 'Try Again'}
+          {isRetrying ? t('retrying') : t('tryAgain')}
         </button>
 
         {/* Proceed Without Preview Button - Secondary */}
@@ -124,10 +128,10 @@ export function NetworkErrorIndicator({
               ? 'bg-amber-50 text-amber-400 cursor-not-allowed'
               : 'bg-white text-amber-700 hover:bg-amber-50'
           )}
-          aria-label="Continue without preview"
+          aria-label={t('proceedWithout')}
         >
           <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          Proceed Without Preview
+          {t('proceedWithout')}
         </button>
       </div>
     </div>

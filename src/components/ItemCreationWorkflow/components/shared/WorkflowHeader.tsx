@@ -22,10 +22,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/WorkflowHeader
  * @see ItemCreationWorkflow for usage context
- * @lastModified 2026-01-12 (REQ-198 Hide step counter on post-workflow screens)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { ArrowLeft, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -69,6 +70,9 @@ export function WorkflowHeader({
   className,
   showStepCounter = true,
 }: WorkflowHeaderProps) {
+  // Translation hook (REQ-E02-066)
+  const t = useTranslations('workflow.shared.header');
+
   return (
     <header
       className={cn(
@@ -84,7 +88,7 @@ export function WorkflowHeader({
           aria-valuenow={progressPercent}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Step ${currentStepIndex + 1} of ${totalSteps}`}
+          aria-label={t('stepOf', { current: currentStepIndex + 1, total: totalSteps })}
         >
           <div
             className="h-full transition-all duration-300 ease-out"
@@ -111,7 +115,7 @@ export function WorkflowHeader({
                 "transition-colors duration-150",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] focus-visible:ring-offset-2"
               )}
-              aria-label="Go back to previous step"
+              aria-label={t('backAriaLabel')}
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
@@ -121,7 +125,7 @@ export function WorkflowHeader({
         {/* Step indicator - conditionally rendered (REQ-198) */}
         {showStepCounter ? (
           <div className="text-sm font-medium text-gray-700">
-            Step {currentStepIndex + 1} of {totalSteps}
+            {t('stepOf', { current: currentStepIndex + 1, total: totalSteps })}
           </div>
         ) : (
           <div className="flex-1" aria-hidden="true" />
@@ -140,7 +144,7 @@ export function WorkflowHeader({
                 "transition-colors duration-150",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF385C] focus-visible:ring-offset-2"
               )}
-              aria-label="Exit workflow"
+              aria-label={t('exitAriaLabel')}
             >
               <X className="w-6 h-6" />
             </button>

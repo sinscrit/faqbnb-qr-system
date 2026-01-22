@@ -25,10 +25,13 @@
  *
  * @module ItemCreationWorkflow/components/shared/TagsEditor
  * @created 2026-01-10 (REQ-177 Intelligent Pre-filling)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useState, useCallback } from 'react';
 import { X, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import type { TranslationFn } from '@/types/i18n';
 import { cn } from '@/lib/utils';
 import { AVAILABLE_TAGS, TAG_LABELS, type TagTypeConst } from '../../utils/constants';
 
@@ -60,12 +63,14 @@ interface TagChipProps {
   onRemove: () => void;
   /** Disable remove button */
   disabled?: boolean;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
 /**
  * Individual tag chip with remove button.
  */
-const TagChip: React.FC<TagChipProps> = ({ tag, label, onRemove, disabled }) => {
+const TagChip: React.FC<TagChipProps> = ({ tag, label, onRemove, disabled, t }) => {
   return (
     <div
       className={cn(
@@ -81,7 +86,7 @@ const TagChip: React.FC<TagChipProps> = ({ tag, label, onRemove, disabled }) => 
         <button
           type="button"
           onClick={onRemove}
-          aria-label={`Remove ${label} tag`}
+          aria-label={t('removeTagAriaLabel', { tag: label })}
           className={cn(
             'ml-1 rounded-full p-0.5',
             'hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1',
@@ -109,6 +114,9 @@ export const TagsEditor: React.FC<TagsEditorProps> = ({
   maxTags = 10,
   className,
 }) => {
+  // REQ-E02-066: Translation hook for tags editor
+  const t = useTranslations('workflow.shared.tagsEditor');
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Get available tags (not already selected)
@@ -159,6 +167,7 @@ export const TagsEditor: React.FC<TagsEditorProps> = ({
             label={TAG_LABELS[tag as TagTypeConst] || tag}
             onRemove={() => handleRemoveTag(tag)}
             disabled={disabled}
+            t={t}
           />
         ))}
 
@@ -181,11 +190,11 @@ export const TagsEditor: React.FC<TagsEditorProps> = ({
               'transition-colors duration-150',
               'min-h-[32px]'
             )}
-            aria-label="Add tag"
+            aria-label={t('addTag')}
             aria-expanded={isDropdownOpen}
           >
             <Plus className="w-4 h-4" />
-            <span>Add Tag</span>
+            <span>{t('addTag')}</span>
           </button>
 
           {/* Dropdown menu */}
@@ -206,7 +215,7 @@ export const TagsEditor: React.FC<TagsEditorProps> = ({
                   'py-1'
                 )}
                 role="menu"
-                aria-label="Available tags"
+                aria-label={t('availableTags')}
               >
                 {availableTags.map((tag) => (
                   <button

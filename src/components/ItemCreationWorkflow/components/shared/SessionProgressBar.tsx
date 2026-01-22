@@ -19,9 +19,10 @@
  *
  * @module ItemCreationWorkflow/components/shared/SessionProgressBar
  * @see SessionSummaryStep for usage context
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { WORKFLOW_CONFIG_DEFAULTS } from '../../utils/constants';
 
@@ -50,6 +51,9 @@ export function SessionProgressBar({
   showCount = true,
   className,
 }: SessionProgressBarProps) {
+  // Translation hook (REQ-E02-066)
+  const t = useTranslations('workflow.shared.progress');
+
   // Calculate progress percentage, clamped at 100%
   const progressPercent = Math.min((itemsCreated / maxItems) * 100, 100);
 
@@ -62,7 +66,7 @@ export function SessionProgressBar({
         aria-valuenow={itemsCreated}
         aria-valuemin={0}
         aria-valuemax={maxItems}
-        aria-label={`Session progress: ${itemsCreated} items created`}
+        aria-label={t('sessionProgress', { count: itemsCreated })}
       >
         {/* Progress fill */}
         <div
@@ -77,7 +81,7 @@ export function SessionProgressBar({
       {/* Count text */}
       {showCount && (
         <p className="mt-1.5 text-sm text-gray-600">
-          {itemsCreated} items created
+          {t('itemsCreated', { count: itemsCreated })}
         </p>
       )}
     </div>

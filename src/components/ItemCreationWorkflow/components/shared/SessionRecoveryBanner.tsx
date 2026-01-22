@@ -19,11 +19,12 @@
  *
  * @module ItemCreationWorkflow/components/shared/SessionRecoveryBanner
  * @see useSessionPersistence for recovery logic
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { CheckCircle, X, Upload, RefreshCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -73,6 +74,9 @@ export function SessionRecoveryBanner({
   autoDismissDelay = DEFAULT_AUTO_DISMISS_DELAY,
   className,
 }: SessionRecoveryBannerProps) {
+  // REQ-E02-066: Translation hook for session recovery messages
+  const t = useTranslations('workflow.shared.sessionRecovery');
+
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(100);
 
@@ -146,14 +150,14 @@ export function SessionRecoveryBanner({
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-medium text-green-800">
-                Your previous session has been restored
+                {t('title')}
               </h3>
               <p className="mt-1 text-sm text-green-700">
-                {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                {t('itemCount', { count: itemCount })}
                 {contentNeedingReUpload > 0 && (
                   <span className="inline-flex items-center gap-1 ml-2 text-amber-700">
                     <Upload className="w-3 h-3" aria-hidden="true" />
-                    {contentNeedingReUpload} {contentNeedingReUpload === 1 ? 'piece needs' : 'pieces need'} re-upload
+                    {t('needsReUpload', { count: contentNeedingReUpload })}
                   </span>
                 )}
               </p>
@@ -171,7 +175,7 @@ export function SessionRecoveryBanner({
               'transition-colors duration-200',
               'focus:outline-none focus:ring-2 focus:ring-green-500'
             )}
-            aria-label="Dismiss notification"
+            aria-label={t('dismiss')}
           >
             <X className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -194,7 +198,7 @@ export function SessionRecoveryBanner({
             )}
           >
             <CheckCircle className="w-4 h-4" aria-hidden="true" />
-            Continue Session
+            {t('continueSession')}
           </button>
 
           {/* Start Fresh Button - Secondary */}
@@ -213,7 +217,7 @@ export function SessionRecoveryBanner({
             )}
           >
             <RefreshCcw className="w-4 h-4" aria-hidden="true" />
-            Start Fresh
+            {t('startFresh')}
           </button>
         </div>
       </div>

@@ -19,11 +19,12 @@
  *
  * @module ItemCreationWorkflow/components/shared/SessionItemCard
  * @see SessionSummaryStep for usage context
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useEffect, useRef } from 'react';
 import { Video, Image, FileText, Type, Link, Edit2, Trash2, Package } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { SessionItem, ContentPiece, ContentType, ContentData } from '../../ItemCreationWorkflow.types';
 import { ROOM_LABELS } from '../../utils/constants';
@@ -194,14 +195,7 @@ function getItemThumbnail(
   }
 }
 
-/**
- * Returns the content count label text.
- */
-function getContentCountLabel(count: number): string {
-  if (count === 0) return 'No content';
-  if (count === 1) return '1 content piece';
-  return `${count} content pieces`;
-}
+// getContentCountLabel function moved to component to use translations
 
 // =============================================================================
 // Main Component
@@ -215,6 +209,15 @@ export function SessionItemCard({
   disabled = false,
   className,
 }: SessionItemCardProps) {
+  // REQ-E02-066: Translation hook for session item card
+  const t = useTranslations('workflow.shared.cards.sessionItem');
+
+  // Helper function using translations
+  const getContentCountLabel = (count: number): string => {
+    if (count === 0) return t('noContent');
+    return t('contentPieces', { count });
+  };
+
   // Ref for tracking object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
 
@@ -300,7 +303,7 @@ export function SessionItemCard({
               'disabled:opacity-50 disabled:cursor-not-allowed',
               'min-w-[44px] min-h-[44px] flex items-center justify-center'
             )}
-            aria-label={`Edit ${item.name}`}
+            aria-label={t('editAriaLabel', { name: item.name })}
           >
             <Edit2 className="w-5 h-5" />
           </button>
@@ -320,7 +323,7 @@ export function SessionItemCard({
               'disabled:opacity-50 disabled:cursor-not-allowed',
               'min-w-[44px] min-h-[44px] flex items-center justify-center'
             )}
-            aria-label={`Remove ${item.name}`}
+            aria-label={t('removeAriaLabel', { name: item.name })}
           >
             <Trash2 className="w-5 h-5" />
           </button>

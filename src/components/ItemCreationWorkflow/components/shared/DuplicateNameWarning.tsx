@@ -8,11 +8,12 @@
  *
  * @module ItemCreationWorkflow/components/shared/DuplicateNameWarning
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { AlertTriangle } from 'lucide-react';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -31,15 +32,6 @@ export interface DuplicateNameWarningProps {
 }
 
 // =============================================================================
-// Constants
-// =============================================================================
-
-const MESSAGES = {
-  exact: 'Exact name already exists',
-  similar: 'Similar name already used',
-} as const;
-
-// =============================================================================
 // Main Component
 // =============================================================================
 
@@ -53,7 +45,11 @@ export function DuplicateNameWarning({
   variant = 'block',
   className,
 }: DuplicateNameWarningProps) {
-  const message = MESSAGES[matchType];
+  // REQ-E02-066: Translation hook for duplicate name warnings
+  const t = useTranslations('workflow.shared.duplicateWarning');
+
+  // Get message based on match type
+  const message = matchType === 'exact' ? t('exact') : t('similar');
   const matchList = matchingNames.slice(0, 3); // Show max 3 matches
   const hasMore = matchingNames.length > 3;
 
@@ -96,7 +92,7 @@ export function DuplicateNameWarning({
                 ))}
                 {hasMore && (
                   <li className="text-gray-400">
-                    +{matchingNames.length - 3} more...
+                    {t('moreItems', { count: matchingNames.length - 3 })}
                   </li>
                 )}
               </ul>
@@ -133,7 +129,7 @@ export function DuplicateNameWarning({
             ))}
             {hasMore && (
               <li className="text-amber-600">
-                +{matchingNames.length - 3} more...
+                {t('moreItems', { count: matchingNames.length - 3 })}
               </li>
             )}
           </ul>

@@ -19,10 +19,11 @@
  *
  * @module ItemCreationWorkflow/components/shared/ItemNameEditor
  * @see SpecificItemStep for usage context
- * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Pencil } from 'lucide-react';
 
@@ -44,11 +45,17 @@ export interface ItemNameEditorProps {
 export function ItemNameEditor({
   value,
   onChange,
-  placeholder = 'Enter item name',
+  placeholder,
   maxLength = 100,
   disabled = false,
   className,
 }: ItemNameEditorProps) {
+  // REQ-E02-066: Translation hook for item name editor
+  const t = useTranslations('workflow.shared.itemEditor');
+
+  // Use provided placeholder or translation
+  const resolvedPlaceholder = placeholder ?? t('placeholder');
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange(e.target.value);
@@ -66,7 +73,7 @@ export function ItemNameEditor({
         className="flex items-center gap-2 text-sm font-medium text-[#222222]"
       >
         <Pencil className="w-4 h-4 text-[#717171]" aria-hidden="true" />
-        Item Name
+        {t('itemName')}
       </label>
 
       <div className="relative">
@@ -75,7 +82,7 @@ export function ItemNameEditor({
           type="text"
           value={value}
           onChange={handleChange}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           maxLength={maxLength}
           disabled={disabled}
           className={cn(
@@ -105,7 +112,7 @@ export function ItemNameEditor({
       </div>
 
       <p id="item-name-hint" className="text-[10px] text-[#999999]">
-        This name will appear on the QR code label
+        {t('hint')}
       </p>
     </div>
   );

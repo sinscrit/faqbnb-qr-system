@@ -25,7 +25,7 @@
  *
  * @module ItemCreationWorkflow/components/shared/ConfirmExitDialog
  * @see WorkflowHeader for exit button trigger
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations - switched to workflow.shared.dialogs)
  */
 
 import { useRef, useEffect } from 'react';
@@ -71,13 +71,13 @@ function getExitMessage(
   hasUnsavedChanges: boolean
 ): string {
   if (hasUnsavedChanges && itemCount > 0) {
-    return t('messageUnsavedAndItems', { count: itemCount });
+    return t('messageWithUnsavedAndItems', { count: itemCount });
   }
   if (hasUnsavedChanges) {
-    return t('messageUnsaved');
+    return t('messageWithUnsaved');
   }
   if (itemCount > 0) {
-    return t('messageItems', { count: itemCount });
+    return t('messageWithItems', { count: itemCount });
   }
   return t('messageDefault');
 }
@@ -94,8 +94,8 @@ export function ConfirmExitDialog({
   hasUnsavedChanges = false,
   className,
 }: ConfirmExitDialogProps) {
-  const tExit = useTranslations('workflow.dialogs.confirmExit');
-  const tCommon = useTranslations('common.actions');
+  // REQ-E02-066: Use shared namespace for dialogs
+  const t = useTranslations('workflow.shared.dialogs.confirmExit');
 
   // REQ-114: Focus trapping refs
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -161,13 +161,13 @@ export function ConfirmExitDialog({
               id="exit-dialog-title"
               className="text-lg font-semibold text-[#222222]"
             >
-              {tExit('title')}
+              {t('title')}
             </h3>
             <p
               id="exit-dialog-description"
               className="mt-2 text-sm text-[#717171]"
             >
-              {getExitMessage(tExit as unknown as (key: string, params?: Record<string, unknown> | undefined) => string, itemCount, hasUnsavedChanges)}
+              {getExitMessage(t as unknown as (key: string, params?: Record<string, unknown> | undefined) => string, itemCount, hasUnsavedChanges)}
             </p>
           </div>
         </div>
@@ -187,7 +187,7 @@ export function ConfirmExitDialog({
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
             )}
           >
-            {tExit('cancel')}
+            {t('cancel')}
           </button>
           <button
             type="button"
@@ -202,7 +202,7 @@ export function ConfirmExitDialog({
             )}
             style={{ backgroundColor: '#FF5A5F' }} // Airbnb destructive color
           >
-            {tExit('exit')}
+            {t('exit')}
           </button>
         </div>
       </div>

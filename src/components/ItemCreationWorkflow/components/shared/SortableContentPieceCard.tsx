@@ -8,11 +8,12 @@
  *
  * @module ItemCreationWorkflow/components/shared/SortableContentPieceCard
  * @see docs/REQ-108-multi-content-item-support-detailed.md
- * @lastModified 2026-01-10 (REQ-174 Accessibility - fixed listitem role hierarchy)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useTranslations } from 'next-intl';
 import { ContentPieceCard } from './ContentPieceCard';
 import type { ContentPiece } from '../../ItemCreationWorkflow.types';
 
@@ -51,6 +52,8 @@ export function SortableContentPieceCard({
   disabled = false,
   totalCount,
 }: SortableContentPieceCardProps) {
+  // REQ-E02-066: Translation hook for sortable content card
+  const t = useTranslations('workflow.shared.content');
   const {
     attributes,
     listeners,
@@ -78,12 +81,15 @@ export function SortableContentPieceCard({
   // need role="listitem" when used inside a list context.
   const { role: _role, ...otherAttributes } = attributes;
 
+  // Get translated type label for aria-label
+  const typeLabel = t(`types.${content.type}`);
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       role="listitem"
-      aria-label={`${content.type.charAt(0).toUpperCase() + content.type.slice(1)} content piece`}
+      aria-label={t('contentPieceAriaLabel', { type: typeLabel })}
       {...otherAttributes}
     >
       <ContentPieceCard

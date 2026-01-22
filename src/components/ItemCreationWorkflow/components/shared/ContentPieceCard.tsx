@@ -20,11 +20,13 @@
  * @module ItemCreationWorkflow/components/shared/ContentPieceCard
  * @see PreviewSaveStep for usage context
  * @see SortableContentPieceCard for sortable version
- * @lastModified 2026-01-10 (REQ-174 Accessibility Audit)
+ * @lastModified 2026-01-22 (REQ-E02-066 i18n translations)
  */
 
 import { useState, useEffect, useRef } from 'react';
 import { Video, Image, FileText, Type, Link, Trash2, RotateCcw, Play, GripVertical } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import type { TranslationFn } from '@/types/i18n';
 import { cn } from '@/lib/utils';
 import type { ContentPiece, ContentData } from '../../ItemCreationWorkflow.types';
 
@@ -57,12 +59,13 @@ export interface ContentPieceCardProps {
 // Constants
 // =============================================================================
 
+/** Content type config with i18n translation keys */
 const TYPE_CONFIG = {
-  video: { icon: Video, color: 'bg-purple-100 text-purple-700', label: 'Video' },
-  photo: { icon: Image, color: 'bg-blue-100 text-blue-700', label: 'Photo' },
-  pdf: { icon: FileText, color: 'bg-amber-100 text-amber-700', label: 'PDF' },
-  text: { icon: Type, color: 'bg-green-100 text-green-700', label: 'Text' },
-  url: { icon: Link, color: 'bg-indigo-100 text-indigo-700', label: 'Link' },
+  video: { icon: Video, color: 'bg-purple-100 text-purple-700', labelKey: 'video' },
+  photo: { icon: Image, color: 'bg-blue-100 text-blue-700', labelKey: 'photo' },
+  pdf: { icon: FileText, color: 'bg-amber-100 text-amber-700', labelKey: 'pdf' },
+  text: { icon: Type, color: 'bg-green-100 text-green-700', labelKey: 'text' },
+  url: { icon: Link, color: 'bg-indigo-100 text-indigo-700', labelKey: 'url' },
 } as const;
 
 // =============================================================================
@@ -131,9 +134,11 @@ function VideoPreview({ data, urlsRef }: VideoPreviewProps) {
 interface PhotoPreviewProps {
   data: Extract<ContentData, { type: 'photo' }>;
   urlsRef: React.MutableRefObject<string[]>;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
-function PhotoPreview({ data, urlsRef }: PhotoPreviewProps) {
+function PhotoPreview({ data, urlsRef, t }: PhotoPreviewProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -150,7 +155,7 @@ function PhotoPreview({ data, urlsRef }: PhotoPreviewProps) {
   return imageUrl ? (
     <img
       src={imageUrl}
-      alt="Photo content"
+      alt={t('photoAlt')}
       className="w-full h-full object-cover"
     />
   ) : (
@@ -162,15 +167,17 @@ function PhotoPreview({ data, urlsRef }: PhotoPreviewProps) {
 
 interface PdfPreviewProps {
   data: Extract<ContentData, { type: 'pdf' }>;
+  /** REQ-E02-066: Translation function for i18n */
+  t: TranslationFn;
 }
 
-function PdfPreview({ data }: PdfPreviewProps) {
+function PdfPreview({ data, t }: PdfPreviewProps) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-amber-50">
       <FileText className="w-10 h-10 text-amber-600" aria-hidden="true" />
       {data.pageCount && (
         <span className="mt-1 text-xs text-amber-700">
-          {data.pageCount} {data.pageCount === 1 ? 'page' : 'pages'}
+          {t('pageCount', { count: data.pageCount })}
         </span>
       )}
     </div>
@@ -242,6 +249,9 @@ export function ContentPieceCard({
   className,
   isInSortableContext = false,
 }: ContentPieceCardProps) {
+  // REQ-E02-066: Translation hook for content piece card
+  const t = useTranslations('workflow.shared.content');
+
   // Ref for tracking object URLs for cleanup
   const urlsRef = useRef<string[]>([]);
 
@@ -261,9 +271,9 @@ export function ContentPieceCard({
       case 'video':
         return <VideoPreview data={content.data as Extract<ContentData, { type: 'video' }>} urlsRef={urlsRef} />;
       case 'photo':
-        return <PhotoPreview data={content.data as Extract<ContentData, { type: 'photo' }>} urlsRef={urlsRef} />;
+        return <PhotoPreview data={content.data as Extract<ContentData, { type: 'photo' }>} urlsRef={urlsRef} t={t} />;
       case 'pdf':
-        return <PdfPreview data={content.data as Extract<ContentData, { type: 'pdf' }>} />;
+        return <PdfPreview data={content.data as Extract<ContentData, { type: 'pdf' }>} t={t} />;
       case 'text':
         return <TextPreview data={content.data as Extract<ContentData, { type: 'text' }>} />;
       case 'url':
@@ -276,7 +286,8 @@ export function ContentPieceCard({
   // Only use role="listitem" when not in a sortable context
   // When in sortable context, the parent wrapper has the listitem role
   const containerRole = isInSortableContext ? undefined : 'listitem';
-  const containerAriaLabel = isInSortableContext ? undefined : `${config.label} content piece`;
+  const typeLabel = t(`types.${config.labelKey}`);
+  const containerAriaLabel = isInSortableContext ? undefined : t('contentPreviewAriaLabel', { type: typeLabel });
 
   return (
     <div
@@ -302,7 +313,7 @@ export function ContentPieceCard({
         aria-hidden="true"
       >
         <TypeIcon className="w-3 h-3" />
-        <span>{config.label}</span>
+        <span>{typeLabel}</span>
       </div>
 
       {/* Drag Handle (top-right, visible when showDragHandle is true) */}
@@ -318,7 +329,7 @@ export function ContentPieceCard({
             'hover:bg-white hover:shadow-sm transition-all',
             'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
           )}
-          aria-label="Drag to reorder"
+          aria-label={t('dragToReorder')}
         >
           <GripVertical className="w-5 h-5 text-gray-600" />
         </button>
@@ -346,7 +357,7 @@ export function ContentPieceCard({
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 'min-w-[48px] min-h-[48px] flex items-center justify-center'
               )}
-              aria-label="Retake content"
+              aria-label={t('retakeContent')}
             >
               <RotateCcw className="w-4 h-4 text-gray-700" />
             </button>
@@ -363,7 +374,7 @@ export function ContentPieceCard({
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 'min-w-[48px] min-h-[48px] flex items-center justify-center'
               )}
-              aria-label="Remove content"
+              aria-label={t('removeContent')}
             >
               <Trash2 className="w-4 h-4 text-red-600" />
             </button>
