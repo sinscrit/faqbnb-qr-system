@@ -87,6 +87,36 @@ WORKTREE_COLORS = {
     "idle": "dim",
 }
 
+# Stage timing estimates (calculated from historical data - 2026-01-22)
+# Used for initial ETC calculations when no completed tasks exist yet.
+STAGE_TIMING_ESTIMATES = {
+    'request': {
+        'avg_seconds': 81,      # ~1m 21s
+        'min_seconds': 40,
+        'max_seconds': 204,
+    },
+    'overview': {
+        'avg_seconds': 191,     # ~3m 11s
+        'min_seconds': 72,
+        'max_seconds': 562,
+    },
+    'details': {
+        'avg_seconds': 178,     # ~2m 58s
+        'min_seconds': 33,
+        'max_seconds': 414,
+    },
+    'implementation': {
+        'avg_seconds': 721,     # ~12m 1s
+        'min_seconds': 135,
+        'max_seconds': 1277,
+    },
+    'qa_validation': {
+        'avg_seconds': 384,     # ~6m 24s
+        'min_seconds': 180,
+        'max_seconds': 600,
+    },
+}
+
 # =============================================================================
 # Rate Limit Monitor
 # =============================================================================
@@ -800,18 +830,23 @@ class PipelineState:
             stage_completed_key = f"{stage_id}_completed"
             tasks_completed_from_flags = sum(1 for t in tasks if t.get(stage_completed_key, False))
 
-            status = stage_data.get("status", "pending") if stage_data else "pending"
             started_at_str = stage_data.get("started_at") if stage_data else None
             completed_at_str = stage_data.get("completed_at") if stage_data else None
             # Always use task flags as source of truth (stages dict may be stale)
             tasks_completed = tasks_completed_from_flags
 
-            # Infer status from task flags if not explicitly set
-            if status == "pending" and tasks_completed_from_flags > 0:
-                if tasks_completed_from_flags >= total_tasks:
-                    status = "completed"
-                elif inferred_stage == stage_id:
+            # ALWAYS determine status from task flags (authoritative over stale state)
+            if tasks_completed_from_flags >= total_tasks:
+                status = "completed"
+            elif tasks_completed_from_flags > 0:
+                if inferred_stage == stage_id:
                     status = "running"
+                else:
+                    # Partial completion = in progress even if state says otherwise
+                    status = "in_progress"
+            else:
+                # No tasks completed - use state file status or default to pending
+                status = stage_data.get("status", "pending") if stage_data else "pending"
 
             phase_info = {
                 "name": stage_id,
@@ -830,8 +865,8 @@ class PipelineState:
                 phase_info["duration"] = duration
                 phase_info["etc_display"] = self._format_duration(duration)
 
-            elif status == "running":
-                # Running stage - calculate ETC
+            elif status in ("running", "in_progress"):
+                # Running/in-progress stage - calculate ETC
                 # Use explicit started_at if available, otherwise estimate from pipeline created_at
                 if started_at_str:
                     started_at = datetime.fromisoformat(started_at_str)
@@ -943,11 +978,64 @@ class PipelineState:
                                 "current_task_etc": self._format_duration(task_etc_seconds) if task_etc_seconds > 0 else "any moment",
                             }
                         else:
-                            phase_info["etc_display"] = "calculating..."
+                            # Use historical timing estimates when no task data available
+                            est = STAGE_TIMING_ESTIMATES.get(stage_id, {})
+                            avg_per_task = est.get('avg_seconds', 300)
+                            etc_seconds = remaining_tasks * avg_per_task
+                            phase_info["avg_per_task"] = avg_per_task
+                            phase_info["etc_seconds"] = etc_seconds
+                            phase_info["etc_display"] = f"~{self._format_duration(etc_seconds)} (est)"
+                            result["current_stage"] = {
+                                "name": stage_id,
+                                "elapsed": elapsed,
+                                "completed": 0,
+                                "remaining": remaining_tasks,
+                                "avg_per_task": avg_per_task,
+                                "avg_per_task_display": self._format_duration(avg_per_task),
+                                "etc_seconds": etc_seconds,
+                                "etc_display": self._format_duration(etc_seconds),
+                                "task_elapsed": 0,
+                                "task_etc_seconds": avg_per_task,
+                                "current_task_etc": f"~{self._format_duration(avg_per_task)} (est)",
+                            }
                     else:
-                        phase_info["etc_display"] = "calculating..."
+                        # Use historical estimates when no completed tasks in pipeline
+                        est = STAGE_TIMING_ESTIMATES.get(stage_id, {})
+                        avg_per_task = est.get('avg_seconds', 300)
+                        etc_seconds = remaining_tasks * avg_per_task
+                        phase_info["etc_display"] = f"~{self._format_duration(etc_seconds)} (est)"
+                        result["current_stage"] = {
+                            "name": stage_id,
+                            "elapsed": elapsed,
+                            "completed": tasks_completed,
+                            "remaining": remaining_tasks,
+                            "avg_per_task": avg_per_task,
+                            "avg_per_task_display": self._format_duration(avg_per_task),
+                            "etc_seconds": etc_seconds,
+                            "etc_display": self._format_duration(etc_seconds),
+                            "task_elapsed": 0,
+                            "task_etc_seconds": avg_per_task,
+                            "current_task_etc": f"~{self._format_duration(avg_per_task)} (est)",
+                        }
                 else:
-                    phase_info["etc_display"] = "calculating..."
+                    # Use historical estimates when no elapsed time available
+                    est = STAGE_TIMING_ESTIMATES.get(stage_id, {})
+                    avg_per_task = est.get('avg_seconds', 300)
+                    etc_seconds = remaining_tasks * avg_per_task
+                    phase_info["etc_display"] = f"~{self._format_duration(etc_seconds)} (est)"
+                    result["current_stage"] = {
+                        "name": stage_id,
+                        "elapsed": 0,
+                        "completed": tasks_completed,
+                        "remaining": remaining_tasks,
+                        "avg_per_task": avg_per_task,
+                        "avg_per_task_display": self._format_duration(avg_per_task),
+                        "etc_seconds": etc_seconds,
+                        "etc_display": self._format_duration(etc_seconds),
+                        "task_elapsed": 0,
+                        "task_etc_seconds": avg_per_task,
+                        "current_task_etc": f"~{self._format_duration(avg_per_task)} (est)",
+                    }
 
             result["phases"].append(phase_info)
 
@@ -976,7 +1064,7 @@ class PipelineState:
                     "etc_display": self._format_duration(etc_seconds),
                 }
             elif total_elapsed > 0:
-                # No tasks completed yet - estimate from current stage progress
+                # No tasks completed yet - estimate from current stage progress or historical data
                 current = result.get("current_stage")
                 if current and current.get("avg_per_task"):
                     # Estimate: 4 stages * avg_per_task * remaining_tasks
@@ -988,7 +1076,22 @@ class PipelineState:
                         "completed": 0,
                         "remaining": remaining_tasks,
                         "etc_seconds": etc_seconds,
-                        "etc_display": f"~{self._format_duration(etc_seconds)} (estimated)",
+                        "etc_display": f"~{self._format_duration(etc_seconds)} (est)",
+                    }
+                else:
+                    # Use historical estimates for full pipeline
+                    total_per_task = sum(
+                        STAGE_TIMING_ESTIMATES.get(s, {}).get('avg_seconds', 300)
+                        for s in ['request', 'overview', 'details', 'implementation']
+                    )
+                    etc_seconds = total_per_task * remaining_tasks
+                    result["pipeline"] = {
+                        "elapsed": total_elapsed,
+                        "elapsed_display": self._format_duration(total_elapsed),
+                        "completed": 0,
+                        "remaining": remaining_tasks,
+                        "etc_seconds": etc_seconds,
+                        "etc_display": f"~{self._format_duration(etc_seconds)} (est)",
                     }
 
         return result

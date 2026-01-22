@@ -96,6 +96,42 @@ class Task:
 
 
 # =============================================================================
+# Stage Timing Estimates (calculated from historical data - 2026-01-22)
+# =============================================================================
+# These estimates are used for ETC calculations when no completed tasks exist yet.
+# Based on analysis of 564 request, 564 overview, 402 details, 21 implementation,
+# and 1 qa_validation task completions.
+
+STAGE_TIMING_ESTIMATES = {
+    'request': {
+        'avg_seconds': 81,      # ~1m 21s
+        'min_seconds': 40,
+        'max_seconds': 204,
+    },
+    'overview': {
+        'avg_seconds': 191,     # ~3m 11s
+        'min_seconds': 72,
+        'max_seconds': 562,
+    },
+    'details': {
+        'avg_seconds': 178,     # ~2m 58s
+        'min_seconds': 33,
+        'max_seconds': 414,
+    },
+    'implementation': {
+        'avg_seconds': 721,     # ~12m 1s
+        'min_seconds': 135,
+        'max_seconds': 1277,
+    },
+    'qa_validation': {
+        'avg_seconds': 384,     # ~6m 24s
+        'min_seconds': 180,
+        'max_seconds': 600,
+    },
+}
+
+
+# =============================================================================
 # Configuration Loading
 # =============================================================================
 
