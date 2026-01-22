@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -56,14 +56,14 @@ interface ItemAnalyticsData {
 }
 
 interface ItemAnalyticsPageProps {
-  params: {
+  params: Promise<{
     publicId: string;
-  };
+  }>;
 }
 
 export default function ItemAnalyticsPage({ params }: ItemAnalyticsPageProps) {
   const router = useRouter();
-  const { publicId } = params;
+  const { publicId } = use(params);
   
   const [item, setItem] = useState<ItemDetails | null>(null);
   const [analytics, setAnalytics] = useState<ItemAnalyticsData | null>(null);

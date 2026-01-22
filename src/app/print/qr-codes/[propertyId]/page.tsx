@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { notFound } from 'next/navigation';
 import PrintableQRGrid from '@/components/PrintableQRGrid';
 
@@ -8,21 +8,23 @@ export default function PrintQRCodesPage({
   params,
   searchParams,
 }: {
-  params: { propertyId: string };
-  searchParams: { data?: string };
+  params: Promise<{ propertyId: string }>;
+  searchParams: Promise<{ data?: string }>;
 }) {
+  const resolvedParams = use(params);
+  const resolvedSearchParams = use(searchParams);
   const [isLoading, setIsLoading] = useState(true);
   const [qrData, setQRData] = useState<any[]>([]);
 
   useEffect(() => {
     // Validate and parse QR data
-    if (!searchParams.data) {
+    if (!resolvedSearchParams.data) {
       notFound();
       return;
     }
 
     try {
-      const parsedData = JSON.parse(searchParams.data);
+      const parsedData = JSON.parse(resolvedSearchParams.data);
       setQRData(parsedData);
       setIsLoading(false);
 
@@ -37,7 +39,7 @@ export default function PrintQRCodesPage({
       console.error('Failed to parse QR data:', error);
       notFound();
     }
-  }, [searchParams.data]);
+  }, [resolvedSearchParams.data]);
 
   if (isLoading) {
     return (
