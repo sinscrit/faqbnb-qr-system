@@ -10,13 +10,14 @@
  * @module ItemCreationWorkflow/components/steps/ItemTypeStep
  * @see docs/REQ-099-item-type-selection-step-overview.md
  * @see docs/REQ-114-accessibility-mobile-optimization-overview.md
- * @lastModified 2026-01-05 (REQ-114 Accessibility - Keyboard Navigation)
+ * @lastModified 2026-01-22 (REQ-E02-059 i18n Integration)
  */
 
 import { useCallback, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ItemTypeCard, ITEM_TYPE_ICONS } from '../shared';
-import { ITEM_TYPES, ITEM_TYPE_LABELS, ITEM_TYPE_DESCRIPTIONS } from '../../utils/constants';
+import { ITEM_TYPES } from '../../utils/constants';
 import type { ItemType } from '../../ItemCreationWorkflow.types';
 import { createKeyboardNavigator } from '../../utils/accessibility';
 
@@ -41,6 +42,18 @@ export interface ItemTypeStepProps {
 // Main Component
 // =============================================================================
 
+/**
+ * Helper to convert hyphenated item type to camelCase translation key
+ * e.g., 'room-item' -> 'roomItem', 'general-info' -> 'generalInfo'
+ */
+function getItemTypeTranslationKey(type: string): string {
+  const keyMap: Record<string, string> = {
+    'room-item': 'roomItem',
+    'general-info': 'generalInfo',
+  };
+  return keyMap[type] || type;
+}
+
 export function ItemTypeStep({
   currentItemType,
   onSelectItemType,
@@ -48,6 +61,11 @@ export function ItemTypeStep({
   canNext,
   className,
 }: ItemTypeStepProps) {
+  // i18n hooks for translations (REQ-E02-059)
+  const t = useTranslations('workflow.steps.itemType');
+  const tItemTypes = useTranslations('workflow.constants.itemTypes');
+  const tNav = useTranslations('workflow.navigation');
+
   // REQ-114: Refs for keyboard navigation (roving tabindex)
   const [activeIndex, setActiveIndex] = useState(() =>
     currentItemType ? ITEM_TYPES.indexOf(currentItemType as ItemType) : 0
@@ -95,37 +113,40 @@ export function ItemTypeStep({
       {/* Step header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-[#222222] mb-2">
-          What type of item is this?
+          {t('title')}
         </h2>
         <p className="text-base text-[#717171]">
-          Choose the category that best describes your item
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Item type cards */}
       <div
         role="radiogroup"
-        aria-label="Select item type"
+        aria-label={t('ariaLabel')}
         aria-describedby="item-type-help"
         className="flex flex-col gap-4"
         onKeyDown={handleListKeyDown}
       >
-        {ITEM_TYPES.map((type, index) => (
-          <ItemTypeCard
-            key={type}
-            ref={(el) => { itemRefs.current[index] = el; }}
-            itemType={type}
-            label={ITEM_TYPE_LABELS[type]}
-            description={ITEM_TYPE_DESCRIPTIONS[type]}
-            icon={ITEM_TYPE_ICONS[type]}
-            isSelected={currentItemType === type}
-            onSelect={handleItemTypeSelect}
-            tabIndex={index === activeIndex ? 0 : -1}
-          />
-        ))}
+        {ITEM_TYPES.map((type, index) => {
+          const typeKey = getItemTypeTranslationKey(type);
+          return (
+            <ItemTypeCard
+              key={type}
+              ref={(el) => { itemRefs.current[index] = el; }}
+              itemType={type}
+              label={tItemTypes(`${typeKey}.label`)}
+              description={tItemTypes(`${typeKey}.description`)}
+              icon={ITEM_TYPE_ICONS[type]}
+              isSelected={currentItemType === type}
+              onSelect={handleItemTypeSelect}
+              tabIndex={index === activeIndex ? 0 : -1}
+            />
+          );
+        })}
       </div>
       <p id="item-type-help" className="sr-only">
-        Use up and down arrow keys to navigate. Press Enter or Space to select.
+        {t('ariaHelp')}
       </p>
 
       {/* Continue button */}
@@ -144,7 +165,7 @@ export function ItemTypeStep({
           )}
           aria-disabled={!canNext}
         >
-          Continue
+          {tNav('continue')}
         </button>
       </div>
     </div>
