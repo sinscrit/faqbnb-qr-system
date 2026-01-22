@@ -1824,5 +1824,94 @@
     "navigation": {
       "back": "Back"
     }
+  },
+  "metadata": {
+    "app": {
+      "name": "FAQBNB",
+      "tagline": "QR Item Display System",
+      "defaultDescription": "FAQBNB provides instant access to detailed guides, manuals, and resources for any appliance or item via QR codes"
+    },
+    "home": {
+      "title": "FAQBNB - Instant Access to Product Information via QR Codes",
+      "description": "Transform customer support with FAQBNB. Provide instant access to manuals, videos, and product information through QR codes. No apps required.",
+      "ogTitle": "FAQBNB - Instant Access to Product Information",
+      "ogDescription": "Professional QR code platform for businesses. Transform how customers access product information and support."
+    },
+    "auth": {
+      "login": {
+        "title": "Sign In | FAQBNB",
+        "description": "Sign in to your FAQBNB account to manage your QR code items and properties"
+      },
+      "register": {
+        "title": "Create Account | FAQBNB",
+        "description": "Create a FAQBNB account to start managing your QR code items"
+      },
+      "registerSuccess": {
+        "title": "Registration Successful | FAQBNB",
+        "description": "Your FAQBNB account has been created successfully"
+      },
+      "registerComplete": {
+        "title": "Complete Registration | FAQBNB",
+        "description": "Complete your FAQBNB account setup"
+      }
+    },
+    "dashboard": {
+      "home": {
+        "title": "Dashboard | FAQBNB",
+        "description": "Manage your QR code items and properties from your FAQBNB dashboard"
+      },
+      "items": {
+        "title": "Items | FAQBNB",
+        "description": "View and manage all your QR code items"
+      },
+      "create": {
+        "title": "Create Item | FAQBNB",
+        "description": "Create a new QR code item for your property"
+      },
+      "properties": {
+        "title": "Properties | FAQBNB",
+        "description": "Manage your properties and their QR code items"
+      },
+      "instructions": {
+        "title": "Guides | FAQBNB",
+        "description": "View and manage instruction guides for your items"
+      },
+      "help": {
+        "title": "Help & Support | FAQBNB",
+        "description": "Get help with using FAQBNB to manage your QR code items"
+      },
+      "rooms": {
+        "title": "Rooms | FAQBNB",
+        "description": "Manage room categories for organizing your items"
+      },
+      "tags": {
+        "title": "Tags | FAQBNB",
+        "description": "Manage tags for categorizing your items"
+      },
+      "print": {
+        "title": "Print QR Codes | FAQBNB",
+        "description": "Print QR codes for your items and properties"
+      }
+    },
+    "item": {
+      "view": {
+        "title": "{itemName} | FAQBNB",
+        "description": "View instructions and resources for {itemName}",
+        "ogTitle": "{itemName}",
+        "ogDescription": "View instructions and resources for {itemName}"
+      },
+      "edit": {
+        "title": "Edit {itemName} | FAQBNB",
+        "description": "Edit the details and instructions for {itemName}"
+      },
+      "notFound": {
+        "title": "Item Not Found | FAQBNB",
+        "description": "The requested item could not be found"
+      }
+    },
+    "error": {
+      "title": "Error | FAQBNB",
+      "description": "An error occurred"
+    }
   }
 }
