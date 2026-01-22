@@ -735,6 +735,26 @@
         "error": {
           "autoLoginFailed": "Die automatische Anmeldung ist fehlgeschlagen. Bitte verwenden Sie die manuelle Anmeldeschaltfläche."
         }
+      },
+      "complete": {
+        "title": "Registrierung abschließen",
+        "subtitle": "Admin-Portal",
+        "description": "Geben Sie Ihren Zugangscode ein, um den Registrierungsprozess abzuschließen.",
+        "checkingAuth": "Authentifizierung wird überprüft...",
+        "successTitle": "Registrierung abgeschlossen!",
+        "successMessage": "Ihr Konto wurde erfolgreich eingerichtet.",
+        "redirectingToDashboard": "Weiterleitung zum Dashboard...",
+        "signedInAs": "Angemeldet als:",
+        "enterAccessCodeHint": "Geben Sie den Zugangscode aus Ihrer Einladungs-E-Mail ein, um die Registrierung abzuschließen.",
+        "wrongAccount": "Nicht Ihr Konto?",
+        "requestAccessCode": "Zugangscode anfordern",
+        "form": {
+          "accessCodeLabel": "Zugangscode",
+          "accessCodePlaceholder": "Geben Sie Ihren Zugangscode ein",
+          "accessCodeHint": "Der Zugangscode wurde Ihnen in Ihrer Einladungs-E-Mail zugesandt.",
+          "submitting": "Registrierung wird abgeschlossen...",
+          "submitButton": "Registrierung abschließen"
+        }
       }
     },
     "passwordStrength": {

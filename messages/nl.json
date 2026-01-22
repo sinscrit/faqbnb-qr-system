@@ -735,6 +735,26 @@
         "error": {
           "autoLoginFailed": "Automatisch inloggen mislukt. Gebruik de handmatige inlogknop."
         }
+      },
+      "complete": {
+        "title": "Registratie voltooien",
+        "subtitle": "Admin-portaal",
+        "description": "Voer uw toegangscode in om het registratieproces te voltooien.",
+        "checkingAuth": "Authenticatie wordt gecontroleerd...",
+        "successTitle": "Registratie voltooid!",
+        "successMessage": "Uw account is succesvol ingesteld.",
+        "redirectingToDashboard": "Doorsturen naar dashboard...",
+        "signedInAs": "Ingelogd als:",
+        "enterAccessCodeHint": "Voer de toegangscode uit uw uitnodigingsmail in om de registratie te voltooien.",
+        "wrongAccount": "Niet uw account?",
+        "requestAccessCode": "Toegangscode aanvragen",
+        "form": {
+          "accessCodeLabel": "Toegangscode",
+          "accessCodePlaceholder": "Voer uw toegangscode in",
+          "accessCodeHint": "De toegangscode is naar u verzonden in uw uitnodigingsmail.",
+          "submitting": "Registratie voltooien...",
+          "submitButton": "Registratie voltooien"
+        }
       }
     },
     "passwordStrength": {

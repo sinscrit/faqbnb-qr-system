@@ -745,6 +745,26 @@
         "error": {
           "autoLoginFailed": "Accesso automatico fallito. Usa il pulsante di login manuale."
         }
+      },
+      "complete": {
+        "title": "Completa la registrazione",
+        "subtitle": "Portale amministratore",
+        "description": "Inserisci il tuo codice di accesso per completare il processo di registrazione.",
+        "checkingAuth": "Verifica dell'autenticazione in corso...",
+        "successTitle": "Registrazione completata!",
+        "successMessage": "Il tuo account è stato configurato con successo.",
+        "redirectingToDashboard": "Reindirizzamento alla dashboard...",
+        "signedInAs": "Connesso come:",
+        "enterAccessCodeHint": "Inserisci il codice di accesso dalla tua email di invito per completare la registrazione.",
+        "wrongAccount": "Non è il tuo account?",
+        "requestAccessCode": "Richiedi codice di accesso",
+        "form": {
+          "accessCodeLabel": "Codice di accesso",
+          "accessCodePlaceholder": "Inserisci il tuo codice di accesso",
+          "accessCodeHint": "Il codice di accesso ti è stato inviato nella tua email di invito.",
+          "submitting": "Completamento registrazione...",
+          "submitButton": "Completa registrazione"
+        }
       }
     },
     "passwordStrength": {

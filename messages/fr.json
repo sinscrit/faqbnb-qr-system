@@ -735,6 +735,26 @@
         "error": {
           "autoLoginFailed": "La connexion automatique a échoué. Veuillez utiliser le bouton de connexion manuel."
         }
+      },
+      "complete": {
+        "title": "Finalisez votre inscription",
+        "subtitle": "Portail administrateur",
+        "description": "Saisissez votre code d'accès pour terminer le processus d'inscription.",
+        "checkingAuth": "Vérification de l'authentification...",
+        "successTitle": "Inscription terminée !",
+        "successMessage": "Votre compte a été configuré avec succès.",
+        "redirectingToDashboard": "Redirection vers le tableau de bord...",
+        "signedInAs": "Connecté en tant que :",
+        "enterAccessCodeHint": "Saisissez le code d'accès de votre e-mail d'invitation pour terminer l'inscription.",
+        "wrongAccount": "Ce n'est pas votre compte ?",
+        "requestAccessCode": "Demander un code d'accès",
+        "form": {
+          "accessCodeLabel": "Code d'accès",
+          "accessCodePlaceholder": "Saisissez votre code d'accès",
+          "accessCodeHint": "Le code d'accès vous a été envoyé dans votre e-mail d'invitation.",
+          "submitting": "Finalisation de l'inscription...",
+          "submitButton": "Terminer l'inscription"
+        }
       }
     },
     "passwordStrength": {

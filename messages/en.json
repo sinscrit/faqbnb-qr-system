@@ -735,6 +735,26 @@
         "error": {
           "autoLoginFailed": "Automatic login failed. Please use the manual login button."
         }
+      },
+      "complete": {
+        "title": "Complete Your Registration",
+        "subtitle": "Admin Portal",
+        "description": "Enter your access code to complete the registration process.",
+        "checkingAuth": "Checking authentication...",
+        "successTitle": "Registration Complete!",
+        "successMessage": "Your account has been successfully set up.",
+        "redirectingToDashboard": "Redirecting to dashboard...",
+        "signedInAs": "Signed in as:",
+        "enterAccessCodeHint": "Enter the access code from your invitation email to complete registration.",
+        "wrongAccount": "Not your account?",
+        "requestAccessCode": "Request Access Code",
+        "form": {
+          "accessCodeLabel": "Access Code",
+          "accessCodePlaceholder": "Enter your access code",
+          "accessCodeHint": "The access code was sent to you in your invitation email.",
+          "submitting": "Completing registration...",
+          "submitButton": "Complete Registration"
+        }
       }
     },
     "passwordStrength": {

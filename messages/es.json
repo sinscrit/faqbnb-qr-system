@@ -735,6 +735,26 @@
         "error": {
           "autoLoginFailed": "El inicio de sesión automático falló. Por favor usa el botón de inicio de sesión manual."
         }
+      },
+      "complete": {
+        "title": "Complete su registro",
+        "subtitle": "Portal de administración",
+        "description": "Ingrese su código de acceso para completar el proceso de registro.",
+        "checkingAuth": "Verificando autenticación...",
+        "successTitle": "¡Registro completado!",
+        "successMessage": "Su cuenta ha sido configurada exitosamente.",
+        "redirectingToDashboard": "Redirigiendo al panel de control...",
+        "signedInAs": "Conectado como:",
+        "enterAccessCodeHint": "Ingrese el código de acceso de su correo de invitación para completar el registro.",
+        "wrongAccount": "¿No es su cuenta?",
+        "requestAccessCode": "Solicitar código de acceso",
+        "form": {
+          "accessCodeLabel": "Código de acceso",
+          "accessCodePlaceholder": "Ingrese su código de acceso",
+          "accessCodeHint": "El código de acceso fue enviado en su correo de invitación.",
+          "submitting": "Completando registro...",
+          "submitButton": "Completar registro"
+        }
       }
     },
     "passwordStrength": {
