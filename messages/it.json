@@ -715,6 +715,33 @@
         "invalidData": "Dati di registrazione non validi. Controlla le tue informazioni.",
         "failed": "Registrazione fallita: {error}",
         "oauthFailed": "Registrazione OAuth fallita: {error}. Prova ad accedere manualmente dalla pagina di login."
+      },
+      "success": {
+        "title": "Registrazione completata!",
+        "subtitle": "Registrazione completata",
+        "autoLoginInProgress": "Accesso automatico in corso...",
+        "oauthSuccess": "Il tuo account è stato creato con successo tramite Google OAuth. Verrai reindirizzato alla dashboard a breve.",
+        "accountCreated": "Il tuo account è stato creato con successo. Ora puoi accedere per utilizzare tutte le funzionalità di FAQBNB.",
+        "setupComplete": "Configurazione account completata:",
+        "setup": {
+          "userAccount": "Account utente creato",
+          "defaultAccount": "Account predefinito impostato",
+          "adminPrivileges": "Privilegi amministratore configurati",
+          "accessCodeValidated": "Codice di accesso validato"
+        },
+        "actions": {
+          "goToDashboard": "Vai alla dashboard",
+          "continueToLogin": "Continua al login"
+        },
+        "redirecting": {
+          "autoLogin": "Accesso automatico in corso...",
+          "autoLoginFailed": "Accesso automatico fallito. Usa i pulsanti manuali sopra.",
+          "toDashboard": "Verrai reindirizzato automaticamente alla dashboard tra 2 secondi.",
+          "toLogin": "Verrai reindirizzato automaticamente alla pagina di login tra 5 secondi."
+        },
+        "error": {
+          "autoLoginFailed": "Accesso automatico fallito. Usa il pulsante di login manuale."
+        }
       }
     },
     "passwordStrength": {

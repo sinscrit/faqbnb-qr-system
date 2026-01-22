@@ -705,6 +705,33 @@
         "invalidData": "Données d'inscription invalides. Veuillez vérifier vos informations.",
         "failed": "L'inscription a échoué : {error}",
         "oauthFailed": "L'inscription OAuth a échoué : {error}. Veuillez essayer de vous connecter manuellement sur la page de connexion."
+      },
+      "success": {
+        "title": "Inscription réussie !",
+        "subtitle": "Inscription terminée",
+        "autoLoginInProgress": "Connexion automatique en cours...",
+        "oauthSuccess": "Votre compte a été créé avec succès via Google OAuth. Vous serez redirigé vers le tableau de bord sous peu.",
+        "accountCreated": "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter pour accéder à toutes les fonctionnalités FAQBNB.",
+        "setupComplete": "Configuration du compte terminée :",
+        "setup": {
+          "userAccount": "Compte utilisateur créé",
+          "defaultAccount": "Compte par défaut établi",
+          "adminPrivileges": "Privilèges administrateur configurés",
+          "accessCodeValidated": "Code d'accès validé"
+        },
+        "actions": {
+          "goToDashboard": "Aller au tableau de bord",
+          "continueToLogin": "Continuer vers la connexion"
+        },
+        "redirecting": {
+          "autoLogin": "Connexion automatique en cours...",
+          "autoLoginFailed": "La connexion automatique a échoué. Veuillez utiliser les boutons manuels ci-dessus.",
+          "toDashboard": "Vous serez automatiquement redirigé vers le tableau de bord dans 2 secondes.",
+          "toLogin": "Vous serez automatiquement redirigé vers la page de connexion dans 5 secondes."
+        },
+        "error": {
+          "autoLoginFailed": "La connexion automatique a échoué. Veuillez utiliser le bouton de connexion manuel."
+        }
       }
     },
     "passwordStrength": {

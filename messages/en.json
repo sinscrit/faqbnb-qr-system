@@ -705,6 +705,33 @@
         "invalidData": "Invalid registration data. Please check your information.",
         "failed": "Registration failed: {error}",
         "oauthFailed": "OAuth registration failed: {error}. Please try logging in manually at the login page."
+      },
+      "success": {
+        "title": "Registration Successful!",
+        "subtitle": "Registration Complete",
+        "autoLoginInProgress": "Logging you in automatically...",
+        "oauthSuccess": "Your account has been created successfully with Google OAuth. You will be redirected to the dashboard shortly.",
+        "accountCreated": "Your account has been created successfully. You can now log in to access all FAQBNB features.",
+        "setupComplete": "Account Setup Complete:",
+        "setup": {
+          "userAccount": "User account created",
+          "defaultAccount": "Default account established",
+          "adminPrivileges": "Admin privileges configured",
+          "accessCodeValidated": "Access code validated"
+        },
+        "actions": {
+          "goToDashboard": "Go to Dashboard",
+          "continueToLogin": "Continue to Login"
+        },
+        "redirecting": {
+          "autoLogin": "Automatic login in progress...",
+          "autoLoginFailed": "Automatic login failed. Please use the manual buttons above.",
+          "toDashboard": "You will be automatically redirected to the dashboard in 2 seconds.",
+          "toLogin": "You will be automatically redirected to the login page in 5 seconds."
+        },
+        "error": {
+          "autoLoginFailed": "Automatic login failed. Please use the manual login button."
+        }
       }
     },
     "passwordStrength": {

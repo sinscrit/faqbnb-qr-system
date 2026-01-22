@@ -705,6 +705,33 @@
         "invalidData": "Datos de registro inválidos. Por favor verifica tu información.",
         "failed": "El registro falló: {error}",
         "oauthFailed": "El registro OAuth falló: {error}. Por favor intenta iniciar sesión manualmente en la página de inicio de sesión."
+      },
+      "success": {
+        "title": "¡Registro exitoso!",
+        "subtitle": "Registro completado",
+        "autoLoginInProgress": "Iniciando sesión automáticamente...",
+        "oauthSuccess": "Tu cuenta ha sido creada exitosamente con Google OAuth. Serás redirigido al panel de control en breve.",
+        "accountCreated": "Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión para acceder a todas las funciones de FAQBNB.",
+        "setupComplete": "Configuración de cuenta completada:",
+        "setup": {
+          "userAccount": "Cuenta de usuario creada",
+          "defaultAccount": "Cuenta predeterminada establecida",
+          "adminPrivileges": "Privilegios de administrador configurados",
+          "accessCodeValidated": "Código de acceso validado"
+        },
+        "actions": {
+          "goToDashboard": "Ir al panel de control",
+          "continueToLogin": "Continuar al inicio de sesión"
+        },
+        "redirecting": {
+          "autoLogin": "Inicio de sesión automático en progreso...",
+          "autoLoginFailed": "El inicio de sesión automático falló. Por favor usa los botones manuales arriba.",
+          "toDashboard": "Serás redirigido automáticamente al panel de control en 2 segundos.",
+          "toLogin": "Serás redirigido automáticamente a la página de inicio de sesión en 5 segundos."
+        },
+        "error": {
+          "autoLoginFailed": "El inicio de sesión automático falló. Por favor usa el botón de inicio de sesión manual."
+        }
       }
     },
     "passwordStrength": {

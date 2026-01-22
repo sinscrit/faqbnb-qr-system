@@ -705,6 +705,33 @@
         "invalidData": "Ungültige Registrierungsdaten. Bitte überprüfen Sie Ihre Angaben.",
         "failed": "Registrierung fehlgeschlagen: {error}",
         "oauthFailed": "OAuth-Registrierung fehlgeschlagen: {error}. Bitte versuchen Sie, sich manuell auf der Anmeldeseite anzumelden."
+      },
+      "success": {
+        "title": "Registrierung erfolgreich!",
+        "subtitle": "Registrierung abgeschlossen",
+        "autoLoginInProgress": "Sie werden automatisch angemeldet...",
+        "oauthSuccess": "Ihr Konto wurde erfolgreich mit Google OAuth erstellt. Sie werden in Kürze zum Dashboard weitergeleitet.",
+        "accountCreated": "Ihr Konto wurde erfolgreich erstellt. Sie können sich jetzt anmelden, um alle FAQBNB-Funktionen zu nutzen.",
+        "setupComplete": "Kontoeinrichtung abgeschlossen:",
+        "setup": {
+          "userAccount": "Benutzerkonto erstellt",
+          "defaultAccount": "Standardkonto eingerichtet",
+          "adminPrivileges": "Admin-Berechtigungen konfiguriert",
+          "accessCodeValidated": "Zugangscode validiert"
+        },
+        "actions": {
+          "goToDashboard": "Zum Dashboard",
+          "continueToLogin": "Weiter zur Anmeldung"
+        },
+        "redirecting": {
+          "autoLogin": "Automatische Anmeldung läuft...",
+          "autoLoginFailed": "Die automatische Anmeldung ist fehlgeschlagen. Bitte verwenden Sie die manuellen Schaltflächen oben.",
+          "toDashboard": "Sie werden in 2 Sekunden automatisch zum Dashboard weitergeleitet.",
+          "toLogin": "Sie werden in 5 Sekunden automatisch zur Anmeldeseite weitergeleitet."
+        },
+        "error": {
+          "autoLoginFailed": "Die automatische Anmeldung ist fehlgeschlagen. Bitte verwenden Sie die manuelle Anmeldeschaltfläche."
+        }
       }
     },
     "passwordStrength": {

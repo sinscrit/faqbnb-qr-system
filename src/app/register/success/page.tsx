@@ -6,12 +6,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CheckCircle, Home, LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslations } from 'next-intl';
 
 export default function RegistrationSuccess() {
   const router = useRouter();
   const { user, session, loading: authLoading } = useAuth();
   const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(false);
   const [autoLoginError, setAutoLoginError] = useState<string | null>(null);
+
+  // Translation hooks for internationalization
+  const t = useTranslations('auth.register.success');
+  const tCommon = useTranslations('common');
+
+  // Pre-translate error message for use in useEffect
+  const autoLoginFailedMessage = t('error.autoLoginFailed');
 
   // REQ-021 Task 3.3: OAuth-enhanced auto-redirect logic
   useEffect(() => {
@@ -47,7 +55,7 @@ export default function RegistrationSuccess() {
           router.push('/dashboard2');
         } catch (error) {
           console.error(`${DEBUG_PREFIX} AUTO_LOGIN_ERROR:`, error);
-          setAutoLoginError('Automatic login failed. Please use the manual login button.');
+          setAutoLoginError(autoLoginFailedMessage);
           setIsAutoLoggingIn(false);
         }
       }, 2000); // 2 seconds for OAuth users
@@ -67,7 +75,7 @@ export default function RegistrationSuccess() {
 
       return () => clearTimeout(timer);
     }
-  }, [router, user, session, authLoading]);
+  }, [router, user, session, authLoading, autoLoginFailedMessage]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
@@ -85,7 +93,7 @@ export default function RegistrationSuccess() {
               />
               <div className="text-left">
                 <h1 className="text-xl font-bold text-gray-900">FAQBNB</h1>
-                <p className="text-sm text-gray-600">Registration Complete</p>
+                <p className="text-sm text-gray-600">{t('subtitle')}</p>
               </div>
             </div>
           </div>
@@ -97,12 +105,12 @@ export default function RegistrationSuccess() {
 
           {/* Success Message */}
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Registration Successful!
+            {t('title')}
           </h2>
           {isAutoLoggingIn ? (
             <p className="text-blue-600 mb-6 flex items-center justify-center space-x-2">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Logging you in automatically...</span>
+              <span>{t('autoLoginInProgress')}</span>
             </p>
           ) : autoLoginError ? (
             <p className="text-red-600 mb-6">
@@ -110,24 +118,22 @@ export default function RegistrationSuccess() {
             </p>
           ) : user && session ? (
             <p className="text-green-600 mb-6">
-              Your account has been created successfully with Google OAuth.
-              You will be redirected to the dashboard shortly.
+              {t('oauthSuccess')}
             </p>
           ) : (
             <p className="text-gray-600 mb-6">
-              Your account has been created successfully. 
-              You can now log in to access all FAQBNB features.
+              {t('accountCreated')}
             </p>
           )}
 
           {/* What was created */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-            <h3 className="font-semibold text-gray-900 mb-2">Account Setup Complete:</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">{t('setupComplete')}</h3>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>✅ User account created</li>
-              <li>✅ Default account established</li>
-              <li>✅ Admin privileges configured</li>
-              <li>✅ Access code validated</li>
+              <li>✅ {t('setup.userAccount')}</li>
+              <li>✅ {t('setup.defaultAccount')}</li>
+              <li>✅ {t('setup.adminPrivileges')}</li>
+              <li>✅ {t('setup.accessCodeValidated')}</li>
             </ul>
           </div>
 
@@ -140,15 +146,15 @@ export default function RegistrationSuccess() {
                   className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 font-medium"
                 >
                   <LogIn className="w-5 h-5" />
-                  <span>Go to Dashboard</span>
+                  <span>{t('actions.goToDashboard')}</span>
                 </Link>
-                
+
                 <Link
                   href="/"
                   className="w-full bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Home className="w-5 h-5" />
-                  <span>Back to Home</span>
+                  <span>{tCommon('navigation.backToHome')}</span>
                 </Link>
               </>
             ) : (
@@ -158,15 +164,15 @@ export default function RegistrationSuccess() {
                   className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 font-medium"
                 >
                   <LogIn className="w-5 h-5" />
-                  <span>Continue to Login</span>
+                  <span>{t('actions.continueToLogin')}</span>
                 </Link>
-                
+
                 <Link
                   href="/"
                   className="w-full bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Home className="w-5 h-5" />
-                  <span>Back to Home</span>
+                  <span>{tCommon('navigation.backToHome')}</span>
                 </Link>
               </>
             )}
@@ -175,19 +181,19 @@ export default function RegistrationSuccess() {
           {/* Auto-redirect notice */}
           {isAutoLoggingIn ? (
             <p className="text-xs text-blue-500 mt-4">
-              Automatic login in progress...
+              {t('redirecting.autoLogin')}
             </p>
           ) : autoLoginError ? (
             <p className="text-xs text-red-500 mt-4">
-              Automatic login failed. Please use the manual buttons above.
+              {t('redirecting.autoLoginFailed')}
             </p>
           ) : user && session ? (
             <p className="text-xs text-green-500 mt-4">
-              You will be automatically redirected to the dashboard in 2 seconds.
+              {t('redirecting.toDashboard')}
             </p>
           ) : (
             <p className="text-xs text-gray-500 mt-4">
-              You will be automatically redirected to the login page in 5 seconds.
+              {t('redirecting.toLogin')}
             </p>
           )}
         </div>

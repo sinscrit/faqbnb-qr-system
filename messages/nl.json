@@ -705,6 +705,33 @@
         "invalidData": "Ongeldige registratiegegevens. Controleer je informatie.",
         "failed": "Registratie mislukt: {error}",
         "oauthFailed": "OAuth-registratie mislukt: {error}. Probeer handmatig in te loggen op de inlogpagina."
+      },
+      "success": {
+        "title": "Registratie succesvol!",
+        "subtitle": "Registratie voltooid",
+        "autoLoginInProgress": "Je wordt automatisch ingelogd...",
+        "oauthSuccess": "Je account is succesvol aangemaakt met Google OAuth. Je wordt binnenkort doorgestuurd naar het dashboard.",
+        "accountCreated": "Je account is succesvol aangemaakt. Je kunt nu inloggen om alle FAQBNB-functies te gebruiken.",
+        "setupComplete": "Account instelling voltooid:",
+        "setup": {
+          "userAccount": "Gebruikersaccount aangemaakt",
+          "defaultAccount": "Standaardaccount ingesteld",
+          "adminPrivileges": "Admin-rechten geconfigureerd",
+          "accessCodeValidated": "Toegangscode gevalideerd"
+        },
+        "actions": {
+          "goToDashboard": "Ga naar dashboard",
+          "continueToLogin": "Doorgaan naar inloggen"
+        },
+        "redirecting": {
+          "autoLogin": "Automatisch inloggen bezig...",
+          "autoLoginFailed": "Automatisch inloggen mislukt. Gebruik de handmatige knoppen hierboven.",
+          "toDashboard": "Je wordt binnen 2 seconden automatisch doorgestuurd naar het dashboard.",
+          "toLogin": "Je wordt binnen 5 seconden automatisch doorgestuurd naar de inlogpagina."
+        },
+        "error": {
+          "autoLoginFailed": "Automatisch inloggen mislukt. Gebruik de handmatige inlogknop."
+        }
       }
     },
     "passwordStrength": {
