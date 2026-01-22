@@ -6,7 +6,7 @@
  *
  * @module ItemCapture/editors/__tests__/VideoTrimmer.test
  * @see docs/REQ-049-implement-videotrimmer-v1-simplified-detailed.md
- * @lastModified 2025-12-31 (REQ-049 Task 15)
+ * @lastModified 2026-01-22 (REQ-E02-072 - L10N)
  */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -15,6 +15,39 @@ import VideoTrimmer, { TrimDescriptor } from '../VideoTrimmer';
 // =============================================================================
 // Mock Setup
 // =============================================================================
+
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    const translations: Record<string, string | ((p: Record<string, unknown>) => string)> = {
+      'applyButton': 'Apply Trim',
+      'cancel': 'Cancel',
+      'markers.start': 'S',
+      'markers.end': 'E',
+      'selection.label': 'Selection:',
+      'selection.durationLabel': 'Duration:',
+      'selection.current': (p: Record<string, unknown>) => `Current: ${p.time}`,
+      'selection.trimming': (p: Record<string, unknown>) => `Trimming ${p.duration} (${p.percent}% reduction)`,
+      'errors.durationUnknown': 'Unable to determine video duration',
+      'errors.loadFailed': 'Failed to load video. Please check the file and try again.',
+      'errors.playbackFailed': 'Unable to play video. Please try again.',
+      'errors.invalidTrim': 'Invalid trim selection',
+      'errors.tryAgain': 'Try again',
+      'aria.startMarker': 'Start trim point',
+      'aria.endMarker': 'End trim point',
+      'aria.skipToStart': 'Skip to start marker',
+      'aria.skipToEnd': 'Skip to end marker',
+      'aria.play': 'Play trimmed region',
+      'aria.pause': 'Pause',
+      'media.video': 'Loading video...',
+    };
+    const value = translations[key];
+    if (typeof value === 'function' && params) {
+      return value(params);
+    }
+    return typeof value === 'string' ? value : key;
+  },
+}));
 
 // Mock video element methods
 beforeAll(() => {

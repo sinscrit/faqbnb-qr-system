@@ -11,7 +11,7 @@
  *
  * @module ItemCapture/editors/ImageRotator
  * @see docs/REQ-048-implement-imagerotator-detailed.md
- * @lastModified 2025-12-31
+ * @lastModified 2026-01-22 (REQ-E02-073 - L10N)
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -22,7 +22,7 @@ import {
   type RotationDegrees,
   rotateImage,
   calculateNextRotation,
-  ROTATION_ERROR_MESSAGES,
+  ROTATION_ERROR_KEYS,
 } from './rotationUtils';
 
 // =============================================================================
@@ -93,6 +93,7 @@ export default function ImageRotator({
   showProcessingIndicator = true,
 }: ImageRotatorProps) {
   // Translations
+  const t = useTranslations('articles.rotate');
   const tLoading = useTranslations('common.loading');
 
   // ==========================================================================
@@ -144,7 +145,7 @@ export default function ImageRotator({
         if (isMounted) {
           setState((prev) => ({
             ...prev,
-            error: ROTATION_ERROR_MESSAGES.IMAGE_LOAD_FAILED,
+            error: t(ROTATION_ERROR_KEYS.IMAGE_LOAD_FAILED),
           }));
         }
       }
@@ -155,7 +156,7 @@ export default function ImageRotator({
     return () => {
       isMounted = false;
     };
-  }, [imageSrc]);
+  }, [imageSrc, t]);
 
   // Cleanup object URLs on unmount
   useEffect(() => {
@@ -267,11 +268,11 @@ export default function ImageRotator({
       console.error('Rotation failed:', err);
       setState((prev) => ({
         ...prev,
-        error: err instanceof Error ? err.message : ROTATION_ERROR_MESSAGES.ROTATION_FAILED,
+        error: err instanceof Error ? err.message : t(ROTATION_ERROR_KEYS.ROTATION_FAILED),
         isProcessing: false,
       }));
     }
-  }, [isProcessing, imageUrl, imageSrc, currentRotation, outputFormat, outputQuality, onRotationComplete]);
+  }, [isProcessing, imageUrl, imageSrc, currentRotation, outputFormat, outputQuality, onRotationComplete, t]);
 
   // ==========================================================================
   // Error Handlers (Task 7)
@@ -289,9 +290,9 @@ export default function ImageRotator({
     setState((prev) => ({
       ...prev,
       isImageLoaded: false,
-      error: ROTATION_ERROR_MESSAGES.IMAGE_LOAD_FAILED,
+      error: t(ROTATION_ERROR_KEYS.IMAGE_LOAD_FAILED),
     }));
-  }, []);
+  }, [t]);
 
   // ==========================================================================
   // Keyboard Shortcuts (Task 8)
@@ -330,7 +331,7 @@ export default function ImageRotator({
   // ==========================================================================
 
   const getRotationAnnouncement = () => {
-    return `Image rotated to ${currentRotation} degrees`;
+    return t('aria.announcement', { degrees: currentRotation });
   };
 
   // ==========================================================================
@@ -341,7 +342,7 @@ export default function ImageRotator({
     <div
       ref={containerRef}
       role="region"
-      aria-label="Image rotation editor"
+      aria-label={t('aria.editor')}
       aria-busy={isProcessing}
       className={cn(
         'flex flex-col h-full',
@@ -356,7 +357,7 @@ export default function ImageRotator({
         className="sr-only"
       >
         {isAnimating && getRotationAnnouncement()}
-        {isProcessing && 'Processing rotation...'}
+        {isProcessing && t('aria.processing')}
       </div>
 
       {/* Image Preview Area (Task 4) */}
@@ -382,7 +383,7 @@ export default function ImageRotator({
             <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
               <div className="flex flex-col items-center gap-2">
                 <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-gray-600">Applying rotation...</span>
+                <span className="text-sm text-gray-600">{t('status.applying')}</span>
               </div>
             </div>
           )}
@@ -423,7 +424,7 @@ export default function ImageRotator({
               onClick={handleRetry}
               className="ml-4 text-red-700 hover:text-red-900 font-medium text-sm underline"
             >
-              Try Again
+              {t('errors.tryAgain')}
             </button>
           </div>
         </div>
@@ -434,7 +435,7 @@ export default function ImageRotator({
         <button
           onClick={handleRotateLeft}
           disabled={isAnimating || isProcessing || !!error}
-          aria-label="Rotate image left 90 degrees"
+          aria-label={t('aria.rotateLeft')}
           className={cn(
             'p-3 rounded-full transition-colors',
             'min-w-[48px] min-h-[48px]',
@@ -449,7 +450,7 @@ export default function ImageRotator({
         <button
           onClick={handleRotateRight}
           disabled={isAnimating || isProcessing || !!error}
-          aria-label="Rotate image right 90 degrees"
+          aria-label={t('aria.rotateRight')}
           className={cn(
             'p-3 rounded-full transition-colors',
             'min-w-[48px] min-h-[48px]',
@@ -464,23 +465,23 @@ export default function ImageRotator({
 
       {/* Rotation Info */}
       <div className="text-center text-sm text-gray-500 mb-4">
-        Current rotation: {currentRotation}°
+        {t('currentRotation', { degrees: currentRotation })}
         {currentRotation !== initialRotation && (
-          <span className="text-blue-500 ml-2">(modified)</span>
+          <span className="text-blue-500 ml-2">{t('status.modified')}</span>
         )}
       </div>
 
       {/* Keyboard Shortcuts Help */}
       <div className="text-center text-xs text-gray-400 mb-4 hidden sm:block">
-        <span>Keyboard: </span>
+        <span>{t('keyboard.help')} </span>
         <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">←</kbd>
         <span> / </span>
         <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">→</kbd>
-        <span> to rotate, </span>
+        <span> {t('keyboard.toRotate')}, </span>
         <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">Esc</kbd>
-        <span> to cancel, </span>
+        <span> {t('keyboard.toCancel')}, </span>
         <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">⌘+Enter</kbd>
-        <span> to apply</span>
+        <span> {t('keyboard.toApply')}</span>
       </div>
 
       {/* Action Buttons (Task 6) */}
@@ -497,7 +498,7 @@ export default function ImageRotator({
             'sm:flex-1'
           )}
         >
-          {isProcessing ? 'Applying...' : 'Apply Rotation'}
+          {isProcessing ? t('status.applying') : t('applyButton')}
         </button>
         <button
           onClick={handleCancel}
@@ -511,7 +512,7 @@ export default function ImageRotator({
             'sm:flex-1'
           )}
         >
-          Cancel
+          {t('cancel')}
         </button>
       </div>
     </div>

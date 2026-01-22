@@ -6,7 +6,7 @@
  *
  * @module ItemCapture/editors/rotationUtils
  * @see docs/REQ-048-implement-imagerotator-detailed.md
- * @lastModified 2025-12-31
+ * @lastModified 2026-01-22 (REQ-E02-073 - L10N)
  */
 
 // =============================================================================
@@ -20,16 +20,19 @@
 export type RotationDegrees = 0 | 90 | 180 | 270;
 
 // =============================================================================
-// Error Messages
+// Error Messages (Translation Keys)
 // =============================================================================
 
-export const ROTATION_ERROR_MESSAGES = {
-  IMAGE_LOAD_FAILED: 'Failed to load image. Please try again.',
-  ROTATION_FAILED: 'Failed to rotate image. Please try again.',
-  CANVAS_UNAVAILABLE: 'Your browser does not support image editing.',
-  MEMORY_ERROR: 'Not enough memory to process image. Try closing other tabs.',
-  BLOB_CREATION_FAILED: 'Failed to create image output. Please try again.',
+export const ROTATION_ERROR_KEYS = {
+  IMAGE_LOAD_FAILED: 'errors.loadFailed',
+  ROTATION_FAILED: 'errors.rotationFailed',
+  CANVAS_UNAVAILABLE: 'errors.canvasUnavailable',
+  MEMORY_ERROR: 'errors.memoryError',
+  BLOB_CREATION_FAILED: 'errors.blobCreationFailed',
 } as const;
+
+// Backward compatibility alias
+export const ROTATION_ERROR_MESSAGES = ROTATION_ERROR_KEYS;
 
 // =============================================================================
 // Rotation Calculation Functions

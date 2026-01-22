@@ -6,7 +6,7 @@
  * Modal for adding new content pieces (text, URL, file uploads).
  *
  * @module InstructionEditor/components/AddContentModal
- * @lastModified 2026-01-21 (REQ-E02-003 - L10N)
+ * @lastModified 2026-01-22 (REQ-E02-071 - L10N)
  */
 
 import { useState, useCallback } from 'react';
@@ -288,7 +288,7 @@ export function AddContentModal({
                 />
                 {selectedFile && (
                   <p className="text-sm text-[#717171] mt-2">
-                    Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                    {tContent('form.selectedFile', { fileName: selectedFile.name, fileSize: (selectedFile.size / 1024 / 1024).toFixed(2) })}
                   </p>
                 )}
               </div>

@@ -923,3 +923,121 @@ Automated testing reduces manual QA effort for internationalization features. Ca
 
 ---
 
+## REQ-E04-024: Test Edge Cases
+
+**Date**: 2026-01-22 17:50
+**Type**: TESTING
+**Size**: M
+
+### Summary
+Create comprehensive tests for edge cases in the translation system to ensure robust handling of unusual or error scenarios. Tests should verify graceful degradation when translations are partial, cookies are blocked, or inputs are malformed.
+
+### Current Behavior
+There are no automated tests verifying edge case handling in the translation system. Manual testing is required to confirm the system handles unusual scenarios gracefully.
+
+### Expected Behavior
+A test suite exists that verifies:
+- Partial translations (some fields translated, others not) merge correctly
+- System functions when cookies are blocked or unavailable
+- Malformed Accept-Language headers don't cause errors
+- Unsupported language codes fall back appropriately
+- All edge cases degrade gracefully without breaking the user experience
+
+### User Impact
+Ensures guests have a functional experience even in edge cases. Prevents crashes or broken UI when translations are incomplete or browser settings are unusual. Maintains trust through reliable behavior.
+
+### Business Value
+Reduces production incidents from edge cases. Ensures robust internationalization that works reliably across diverse client configurations. Builds confidence in the system's stability.
+
+### Acceptance Criteria
+- [ ] Test: Item with translated title but untranslated description shows mixed content correctly
+- [ ] Test: Article with translated content but untranslated author name displays correctly
+- [ ] Test: Cookie blocked scenario falls back to Accept-Language detection
+- [ ] Test: Cookie blocked scenario falls back to English when no Accept-Language
+- [ ] Test: Malformed Accept-Language header (e.g., ";;;invalid") doesn't throw error
+- [ ] Test: Empty Accept-Language header handled gracefully
+- [ ] Test: Unsupported language code (e.g., "zh-CN") falls back to English
+- [ ] Test: Invalid language code (e.g., "xyz123") falls back to English
+- [ ] Test: Multiple simultaneous language changes don't cause race conditions
+- [ ] All edge case tests pass in CI pipeline
+
+---
+
+## REQ-E04-025: Mobile Responsiveness Testing
+
+**Date**: 2026-01-22 17:55
+**Type**: TESTING
+**Size**: S
+
+### Summary
+Create tests and verify mobile responsiveness for all guest-facing localization components. Ensure the language switcher, translation banners, and toggle buttons work well on small screens and are touch-friendly.
+
+### Current Behavior
+There are no automated tests or documented verification for mobile responsiveness of localization components. Mobile usability has not been systematically tested.
+
+### Expected Behavior
+All localization components are verified to:
+- Display correctly on mobile screen sizes (320px - 768px)
+- Provide touch-friendly interaction targets (minimum 44x44px)
+- Not obscure important content with banners or overlays
+- Maintain readable text and accessible controls
+- Function correctly with touch interactions
+
+### User Impact
+Guests viewing content on mobile devices have a smooth, usable experience. Language switching and translation controls work reliably with touch input. Content remains accessible and readable on small screens.
+
+### Business Value
+Mobile users represent a significant portion of web traffic. Ensuring mobile responsiveness prevents lost engagement from frustrated mobile users. Provides a professional experience across all devices.
+
+### Acceptance Criteria
+- [ ] Test: GuestLanguageSwitcher dropdown opens and closes correctly on mobile
+- [ ] Test: Language switcher touch targets are at least 44x44px
+- [ ] Test: TranslationBanner doesn't obscure item content on mobile
+- [ ] Test: MissingTranslationBanner doesn't obscure item content on mobile
+- [ ] Test: ViewOriginalToggle button is easily tappable on mobile
+- [ ] Test: LanguageIndicator is readable on small screens
+- [ ] Test: All text remains legible at mobile breakpoints
+- [ ] Test: Dropdown menus don't extend beyond viewport
+- [ ] Test: Components reflow appropriately in portrait orientation
+- [ ] All mobile responsiveness tests pass in CI pipeline
+
+---
+
+## REQ-E04-026: Performance Validation
+
+**Date**: 2026-01-22 18:00
+**Type**: TESTING
+**Size**: S
+
+### Summary
+Validate that the guest language detection and translation system meets performance requirements. Ensure that language detection, content loading with translations, and client-side language switching all operate within acceptable latency thresholds.
+
+### Current Behavior
+There are no performance benchmarks or validation tests for the localization system. Performance characteristics are unknown and unverified.
+
+### Expected Behavior
+Performance validation confirms:
+- Language detection completes in under 10ms
+- Content loading with translations completes in under 200ms
+- Client-side language switching completes in under 100ms
+- No performance regressions from adding translation support
+
+### User Impact
+Guests experience fast, responsive interactions when viewing translated content. Language detection and switching feel instantaneous. Page load times remain acceptable even with translation processing.
+
+### Business Value
+Ensures the localization system doesn't negatively impact user experience. Provides confidence that performance meets standards before production deployment. Establishes benchmarks for ongoing performance monitoring.
+
+### Acceptance Criteria
+- [ ] Verify: Language detection (middleware) completes in < 10ms
+- [ ] Verify: Server-side language detection function completes in < 5ms
+- [ ] Verify: Content fetch with translation merging completes in < 200ms
+- [ ] Verify: Client-side language switch (toggle original) completes in < 100ms
+- [ ] Verify: Language switcher dropdown interaction is responsive (< 50ms)
+- [ ] Verify: No significant increase in Time to First Byte (TTFB) for translated pages
+- [ ] Verify: No significant increase in Largest Contentful Paint (LCP) for translated pages
+- [ ] Performance tests are automated and run in CI pipeline
+- [ ] Performance benchmarks are documented for future reference
+
+---
+

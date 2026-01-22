@@ -1,5 +1,15 @@
 'use client';
 
+/**
+ * ReadOnlyContextSection Component
+ *
+ * Displays page header and read-only item metadata.
+ *
+ * @module InstructionEditor/components/ReadOnlyContextSection
+ * @lastModified 2026-01-22 (REQ-E02-071 - L10N)
+ */
+
+import { useTranslations } from 'next-intl';
 import { extractRoomFromTags } from '@/lib/room-utils';
 import type { ArticleEditData } from '../InstructionEditor.types';
 
@@ -22,7 +32,10 @@ function extractItemTypeFromTags(tags: string[]): string {
  * Shows: Room, Item Type, and Item Name (but NOT Purpose per requirements)
  */
 export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionProps) {
-  const roomName = extractRoomFromTags(articleData.item.tags) || 'Unknown Room';
+  const t = useTranslations('articles.readOnlyContext');
+  const tEdit = useTranslations('articles.instructionEditor');
+
+  const roomName = extractRoomFromTags(articleData.item.tags) || t('unknownRoom');
   const itemType = extractItemTypeFromTags(articleData.item.tags);
   const itemName = articleData.item.name;
 
@@ -30,7 +43,7 @@ export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionPr
     <div className="space-y-4">
       {/* Page Header */}
       <h1 className="text-2xl font-semibold text-[#222222]">
-        Editing Guide For: {articleData.title}
+        {tEdit('pageHeader', { title: articleData.title })}
       </h1>
 
       {/* Read-only metadata container */}
@@ -38,7 +51,7 @@ export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionPr
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Room Field */}
           <div className="space-y-1">
-            <dt className="text-sm font-medium text-[#717171]">Room</dt>
+            <dt className="text-sm font-medium text-[#717171]">{t('room')}</dt>
             <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
               {roomName}
             </dd>
@@ -46,7 +59,7 @@ export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionPr
 
           {/* Item Type Field */}
           <div className="space-y-1">
-            <dt className="text-sm font-medium text-[#717171]">Item Type</dt>
+            <dt className="text-sm font-medium text-[#717171]">{t('itemType')}</dt>
             <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
               {itemType}
             </dd>
@@ -54,7 +67,7 @@ export function ReadOnlyContextSection({ articleData }: ReadOnlyContextSectionPr
 
           {/* Item Name Field */}
           <div className="space-y-1">
-            <dt className="text-sm font-medium text-[#717171]">Item Name</dt>
+            <dt className="text-sm font-medium text-[#717171]">{t('itemName')}</dt>
             <dd className="text-base text-[#222222] bg-gray-50 px-3 py-2 rounded-md">
               {itemName}
             </dd>

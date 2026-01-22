@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   DndContext,
   closestCenter,
@@ -104,6 +105,7 @@ export function ContentEditSection({
   onAddContent,
   disabled = false,
 }: ContentEditSectionProps) {
+  const t = useTranslations('articles.content');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [pieceToRemove, setPieceToRemove] = useState<string | null>(null);
 
@@ -155,29 +157,29 @@ export function ContentEditSection({
     onDragStart({ active }) {
       const piece = content.find(c => c.id === active.id);
       const position = content.findIndex(c => c.id === active.id) + 1;
-      const typeName = piece ? `${piece.type} content` : 'content piece';
-      return `Picked up ${typeName}. Current position: ${position} of ${content.length}. Use arrow keys to move.`;
+      const typeName = piece ? piece.type : 'content';
+      return t('aria.pickedUp', { type: typeName, position, total: content.length });
     },
     onDragOver({ over }) {
       if (over) {
         const position = content.findIndex(c => c.id === over.id) + 1;
-        return `Over position ${position}`;
+        return t('aria.overPosition', { position });
       }
       return undefined;
     },
     onDragEnd({ active, over }) {
       if (over && active.id !== over.id) {
         const piece = content.find(c => c.id === active.id);
-        const typeName = piece ? `${piece.type} content` : 'content piece';
+        const typeName = piece ? piece.type : 'content';
         const newPosition = content.findIndex(c => c.id === over.id) + 1;
-        return `Dropped ${typeName}. New position: ${newPosition} of ${content.length}`;
+        return t('aria.dropped', { type: typeName, position: newPosition, total: content.length });
       }
-      return 'Position unchanged.';
+      return t('aria.unchanged');
     },
     onDragCancel() {
-      return 'Drag cancelled. Content returned to original position.';
+      return t('aria.cancelled');
     },
-  }), [content]);
+  }), [content, t]);
 
   // Handle remove button click - show confirmation for last piece
   const handleRemoveClick = useCallback((contentId: string) => {
@@ -209,9 +211,9 @@ export function ContentEditSection({
         {/* Section Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-[#222222]">
-            Content
+            {t('title')}
             <span className="ml-2 text-sm font-normal text-[#717171]">
-              ({content.length} piece{content.length !== 1 ? 's' : ''})
+              {t('count', { count: content.length })}
             </span>
           </h2>
         </div>
@@ -233,7 +235,7 @@ export function ContentEditSection({
             <div
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
               role="list"
-              aria-label="Content pieces - drag to reorder"
+              aria-label={t('aria.dragToReorder')}
             >
               {content.map((piece) => (
                 <SortableContentPieceCard
@@ -267,7 +269,7 @@ export function ContentEditSection({
           className="mt-4 flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-[#717171] hover:border-[#222222] hover:text-[#222222] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="w-5 h-5" aria-hidden="true" />
-          <span>Add Content</span>
+          <span>{t('addContent')}</span>
         </button>
       </section>
 
@@ -284,11 +286,10 @@ export function ContentEditSection({
               id="remove-dialog-title"
               className="text-lg font-semibold text-[#222222] mb-3"
             >
-              Remove Last Content?
+              {t('removeDialog.title')}
             </h3>
             <p className="text-[#717171] mb-6">
-              This is the only piece of content. Removing it will leave this guide empty.
-              Are you sure you want to remove it?
+              {t('removeDialog.message')}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -296,14 +297,14 @@ export function ContentEditSection({
                 onClick={handleCancelRemove}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-[#222222] hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                {t('removeDialog.cancel')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmRemove}
                 className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
               >
-                Remove
+                {t('removeDialog.remove')}
               </button>
             </div>
           </div>

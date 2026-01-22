@@ -84,6 +84,8 @@ export function InstructionEditor({
   isSaving = false,
 }: InstructionEditorProps) {
   const tLoading = useTranslations('common.loading');
+  const t = useTranslations('articles.instructionEditor');
+  const tEdit = useTranslations('articles.edit');
 
   // Editable article title
   const [articleTitle, setArticleTitle] = useState(articleData.title);
@@ -150,11 +152,11 @@ export function InstructionEditor({
   // Cancel handler with unsaved changes warning
   const handleCancel = useCallback(() => {
     if (isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Are you sure you want to cancel?');
+      const confirmed = window.confirm(tEdit('unsavedChanges'));
       if (!confirmed) return;
     }
     onCancel();
-  }, [isDirty, onCancel]);
+  }, [isDirty, onCancel, tEdit]);
 
   // Check if save is allowed
   const canSave = useMemo(() => {
@@ -176,7 +178,7 @@ export function InstructionEditor({
           htmlFor="article-title"
           className="block text-sm font-medium text-[#717171] mb-2"
         >
-          Article Title
+          {t('articleTitle')}
         </label>
         <input
           id="article-title"
@@ -197,7 +199,7 @@ export function InstructionEditor({
               ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
               : 'border-gray-300 hover:border-gray-400'
           )}
-          placeholder="Enter article title"
+          placeholder={t('articleTitlePlaceholder')}
           maxLength={100}
         />
       </section>
@@ -205,7 +207,7 @@ export function InstructionEditor({
       {/* Tags Editor */}
       <section className="bg-white rounded-lg border border-gray-200 p-6">
         <label className="block text-sm font-medium text-[#717171] mb-2">
-          Tags
+          {t('tags')}
         </label>
         <TagsEditor
           selectedTags={tags}
@@ -241,7 +243,7 @@ export function InstructionEditor({
               : 'hover:bg-gray-50'
           )}
         >
-          Cancel
+          {tEdit('buttons.cancel')}
         </button>
         <button
           type="button"
@@ -258,7 +260,7 @@ export function InstructionEditor({
           )}
         >
           {isSaving && <Loader2 className="w-5 h-5 animate-spin" />}
-          {isSaving ? tLoading('status.saving') : 'Save Changes'}
+          {isSaving ? tLoading('status.saving') : tEdit('buttons.save')}
         </button>
       </div>
 

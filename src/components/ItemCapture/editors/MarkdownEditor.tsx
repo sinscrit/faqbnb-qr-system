@@ -8,10 +8,11 @@
  * with tab switching on small screens and side-by-side view on desktop.
  *
  * @module ItemCapture/editors/MarkdownEditor
- * @lastModified 2025-12-31 (REQ-045)
+ * @lastModified 2026-01-22 (REQ-E02-071 - L10N)
  */
 
 import { useState, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 import {
   Bold,
@@ -67,9 +68,10 @@ interface CharacterCounterProps {
   current: number;
   max: number;
   warning: number;
+  t: ReturnType<typeof useTranslations<'articles.editor'>>;
 }
 
-function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
+function CharacterCounter({ current, max, warning, t }: CharacterCounterProps) {
   const percentage = (current / max) * 100;
   const isWarning = current >= warning;
   const isError = current > max;
@@ -86,7 +88,7 @@ function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
         aria-live="polite"
         aria-atomic="true"
       >
-        {current.toLocaleString()} / {max.toLocaleString()} characters
+        {t('characterCount', { current, max })}
       </span>
 
       <div
@@ -118,14 +120,15 @@ function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
 interface MobileTabSwitcherProps {
   activeTab: 'editor' | 'preview';
   onTabChange: (tab: 'editor' | 'preview') => void;
+  t: ReturnType<typeof useTranslations<'articles.editor'>>;
 }
 
-function MobileTabSwitcher({ activeTab, onTabChange }: MobileTabSwitcherProps) {
+function MobileTabSwitcher({ activeTab, onTabChange, t }: MobileTabSwitcherProps) {
   return (
     <div
       className="flex border-b border-gray-200 md:hidden"
       role="tablist"
-      aria-label="Editor view mode"
+      aria-label={t('aria.viewMode')}
     >
       <button
         id="editor-tab"
@@ -143,7 +146,7 @@ function MobileTabSwitcher({ activeTab, onTabChange }: MobileTabSwitcherProps) {
         )}
       >
         <Edit3 className="w-4 h-4 inline-block mr-2" aria-hidden="true" />
-        Editor
+        {t('tabs.edit')}
       </button>
       <button
         id="preview-tab"
@@ -161,7 +164,7 @@ function MobileTabSwitcher({ activeTab, onTabChange }: MobileTabSwitcherProps) {
         )}
       >
         <Eye className="w-4 h-4 inline-block mr-2" aria-hidden="true" />
-        Preview
+        {t('tabs.preview')}
       </button>
     </div>
   );
@@ -174,26 +177,27 @@ function MobileTabSwitcher({ activeTab, onTabChange }: MobileTabSwitcherProps) {
 interface ToolbarButton {
   icon: React.ComponentType<{ className?: string }>;
   format: MarkdownFormatKey;
-  ariaLabel: string;
+  labelKey: string;
 }
 
 const TOOLBAR_BUTTONS: ToolbarButton[] = [
-  { icon: Bold, format: 'bold', ariaLabel: 'Bold (Ctrl+B)' },
-  { icon: Italic, format: 'italic', ariaLabel: 'Italic (Ctrl+I)' },
-  { icon: Heading1, format: 'heading1', ariaLabel: 'Heading 1' },
-  { icon: Heading2, format: 'heading2', ariaLabel: 'Heading 2' },
-  { icon: Heading3, format: 'heading3', ariaLabel: 'Heading 3' },
-  { icon: List, format: 'bulletList', ariaLabel: 'Bullet List' },
-  { icon: ListOrdered, format: 'numberedList', ariaLabel: 'Numbered List' },
-  { icon: LinkIcon, format: 'link', ariaLabel: 'Insert Link (Ctrl+K)' },
+  { icon: Bold, format: 'bold', labelKey: 'toolbar.boldShortcut' },
+  { icon: Italic, format: 'italic', labelKey: 'toolbar.italicShortcut' },
+  { icon: Heading1, format: 'heading1', labelKey: 'formatting.heading1' },
+  { icon: Heading2, format: 'heading2', labelKey: 'formatting.heading2' },
+  { icon: Heading3, format: 'heading3', labelKey: 'formatting.heading3' },
+  { icon: List, format: 'bulletList', labelKey: 'formatting.list' },
+  { icon: ListOrdered, format: 'numberedList', labelKey: 'formatting.orderedList' },
+  { icon: LinkIcon, format: 'link', labelKey: 'toolbar.linkShortcut' },
 ];
 
 interface MarkdownToolbarProps {
   onFormat: (format: MarkdownFormatKey) => void;
   disabled?: boolean;
+  t: ReturnType<typeof useTranslations<'articles.editor'>>;
 }
 
-function MarkdownToolbar({ onFormat, disabled }: MarkdownToolbarProps) {
+function MarkdownToolbar({ onFormat, disabled, t }: MarkdownToolbarProps) {
   return (
     <div
       className={cn(
@@ -202,27 +206,30 @@ function MarkdownToolbar({ onFormat, disabled }: MarkdownToolbarProps) {
         'md:gap-2'
       )}
       role="toolbar"
-      aria-label="Text formatting"
+      aria-label={t('aria.toolbar')}
     >
-      {TOOLBAR_BUTTONS.map(({ icon: Icon, format, ariaLabel }) => (
-        <button
-          key={format}
-          type="button"
-          onClick={() => onFormat(format)}
-          disabled={disabled}
-          className={cn(
-            'p-2 rounded transition-colors',
-            'min-w-[44px] min-h-[44px] flex items-center justify-center',
-            'hover:bg-gray-200',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent'
-          )}
-          aria-label={ariaLabel}
-          title={ariaLabel}
-        >
-          <Icon className="w-4 h-4 text-gray-700" />
-        </button>
-      ))}
+      {TOOLBAR_BUTTONS.map(({ icon: Icon, format, labelKey }) => {
+        const label = t(labelKey as Parameters<typeof t>[0]);
+        return (
+          <button
+            key={format}
+            type="button"
+            onClick={() => onFormat(format)}
+            disabled={disabled}
+            className={cn(
+              'p-2 rounded transition-colors',
+              'min-w-[44px] min-h-[44px] flex items-center justify-center',
+              'hover:bg-gray-200',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent'
+            )}
+            aria-label={label}
+            title={label}
+          >
+            <Icon className="w-4 h-4 text-gray-700" />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -236,15 +243,20 @@ export function MarkdownEditor({
   onChange,
   maxLength = TEXT_EDITOR_CONSTRAINTS.maxLength,
   warningThreshold = TEXT_EDITOR_CONSTRAINTS.warningThreshold,
-  placeholder = 'Write your content here using markdown formatting...',
+  placeholder,
   disabled = false,
   minHeight = TEXT_EDITOR_CONSTRAINTS.minHeight,
   className,
-  ariaLabel = 'Markdown editor',
+  ariaLabel,
   ariaDescribedBy,
 }: MarkdownEditorProps) {
+  const t = useTranslations('articles.editor');
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Use translated defaults if not provided
+  const resolvedPlaceholder = placeholder ?? t('placeholder');
+  const resolvedAriaLabel = ariaLabel ?? t('aria.editor');
 
   const characterCount = value.length;
   const isOverLimit = characterCount > maxLength;
@@ -342,7 +354,7 @@ export function MarkdownEditor({
   return (
     <div className={cn('flex flex-col', className)}>
       {/* Mobile Tab Switcher */}
-      <MobileTabSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
+      <MobileTabSwitcher activeTab={activeTab} onTabChange={setActiveTab} t={t} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
@@ -359,6 +371,7 @@ export function MarkdownEditor({
           <MarkdownToolbar
             onFormat={applyFormat}
             disabled={disabled || isOverLimit}
+            t={t}
           />
 
           <textarea
@@ -367,7 +380,7 @@ export function MarkdownEditor({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             className={cn(
               'flex-1 w-full p-4 resize-none',
               'border border-t-0 border-gray-200 rounded-b-lg',
@@ -378,7 +391,7 @@ export function MarkdownEditor({
               isOverLimit && 'border-red-300 focus:ring-red-500'
             )}
             style={{ minHeight }}
-            aria-label={ariaLabel}
+            aria-label={resolvedAriaLabel}
             aria-describedby={ariaDescribedBy || 'char-count'}
             aria-invalid={isOverLimit}
           />
@@ -388,13 +401,13 @@ export function MarkdownEditor({
               current={characterCount}
               max={maxLength}
               warning={warningThreshold}
+              t={t}
             />
           </div>
 
           {isOverLimit && (
             <p className="text-red-600 text-sm mt-2" role="alert">
-              Content exceeds the maximum character limit. Please shorten your
-              text.
+              {t('characterError')}
             </p>
           )}
         </div>
@@ -413,7 +426,7 @@ export function MarkdownEditor({
           {/* Preview Header (desktop only) */}
           <div className="hidden md:flex items-center gap-2 mb-2 text-sm text-gray-500">
             <Eye className="w-4 h-4" aria-hidden="true" />
-            <span>Preview</span>
+            <span>{t('preview')}</span>
           </div>
 
           {/* Markdown Preview */}
@@ -435,7 +448,7 @@ export function MarkdownEditor({
               <ReactMarkdown>{value}</ReactMarkdown>
             ) : (
               <p className="text-gray-400 italic">
-                Start typing to see a preview of your formatted content...
+                {t('previewPlaceholder')}
               </p>
             )}
           </div>

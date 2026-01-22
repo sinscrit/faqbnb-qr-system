@@ -2,19 +2,57 @@
  * Unit tests for MarkdownEditor component
  *
  * @module ItemCapture/editors/__tests__/MarkdownEditor.test
- * @lastModified 2025-12-31 (REQ-045)
+ * @lastModified 2026-01-22 (REQ-E02-071 - L10N)
  */
 
+import * as React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MarkdownEditor } from '../MarkdownEditor';
 
+// Mock next-intl to return translation keys or interpolated strings
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    // Map translation keys to expected text for tests
+    const translations: Record<string, string | ((p: Record<string, unknown>) => string)> = {
+      'placeholder': 'Write your content here using markdown formatting...',
+      'previewPlaceholder': 'Start typing to see a preview of your formatted content...',
+      'characterCount': (p: Record<string, unknown>) => `${Number(p.current).toLocaleString()} / ${Number(p.max).toLocaleString()} characters`,
+      'characterError': 'Content exceeds the maximum character limit. Please shorten your text.',
+      'preview': 'Preview',
+      'aria.toolbar': 'Text formatting',
+      'aria.editor': 'Markdown editor',
+      'aria.viewMode': 'Editor view mode',
+      'tabs.edit': 'Editor',
+      'tabs.preview': 'Preview',
+      'toolbar.boldShortcut': 'Bold (Ctrl+B)',
+      'toolbar.italicShortcut': 'Italic (Ctrl+I)',
+      'toolbar.linkShortcut': 'Insert Link (Ctrl+K)',
+      'formatting.heading1': 'Heading 1',
+      'formatting.heading2': 'Heading 2',
+      'formatting.heading3': 'Heading 3',
+      'formatting.list': 'Bullet List',
+      'formatting.orderedList': 'Numbered List',
+    };
+
+    const value = translations[key];
+    if (typeof value === 'function' && params) {
+      return value(params);
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    // Return key if not found
+    return key;
+  },
+}));
+
 // Mock react-markdown for faster tests
-vi.mock('react-markdown', () => {
-  return function MockReactMarkdown({ children }: { children: string }) {
+vi.mock('react-markdown', () => ({
+  default: function MockReactMarkdown({ children }: { children: string }) {
     return <div data-testid="markdown-preview">{children}</div>;
-  };
-});
+  },
+}));
 
 describe('MarkdownEditor', () => {
   const defaultProps = {
@@ -106,7 +144,6 @@ describe('MarkdownEditor', () => {
         return <MarkdownEditor value={value} onChange={setValue} />;
       };
 
-      const React = require('react');
       render(<TestWrapper />);
 
       const textarea = screen.getByRole('textbox');

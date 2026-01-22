@@ -20,7 +20,7 @@
  *
  * @module ItemCapture/editors/VideoTrimmer
  * @see docs/REQ-049-implement-videotrimmer-v1-simplified-detailed.md
- * @lastModified 2025-12-31 (REQ-049)
+ * @lastModified 2026-01-22 (REQ-E02-072 - L10N)
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -97,6 +97,7 @@ export default function VideoTrimmer({
   debug = false,
 }: VideoTrimmerProps) {
   // Translations
+  const t = useTranslations('articles.video');
   const tLoading = useTranslations('common.loading');
 
   // === Refs ===
@@ -151,7 +152,7 @@ export default function VideoTrimmer({
 
     const videoDuration = video.duration;
     if (!Number.isFinite(videoDuration) || videoDuration <= 0) {
-      setError('Unable to determine video duration');
+      setError(t('errors.durationUnknown'));
       return;
     }
 
@@ -197,9 +198,9 @@ export default function VideoTrimmer({
   }, []);
 
   const handleError = useCallback(() => {
-    setError('Failed to load video. Please check the file and try again.');
+    setError(t('errors.loadFailed'));
     setIsLoaded(false);
-  }, []);
+  }, [t]);
 
   // Sync playback when markers change (Task 4)
   useEffect(() => {
@@ -230,7 +231,7 @@ export default function VideoTrimmer({
       }
       video.play().catch((err) => {
         console.error('Playback failed:', err);
-        setError('Unable to play video. Please try again.');
+        setError(t('errors.playbackFailed'));
       });
     }
   }, [isPlaying, startMarker, endMarker]);
@@ -446,7 +447,7 @@ export default function VideoTrimmer({
 
     const validation = validateTrim(startMarker, endMarker, duration, minTrimDuration);
     if (!validation.isValid) {
-      setError(validation.error || 'Invalid trim selection');
+      setError(validation.error || t('errors.invalidTrim'));
       return;
     }
 
@@ -519,7 +520,7 @@ export default function VideoTrimmer({
             }}
             className="mt-2 text-sm text-red-600 underline hover:text-red-800"
           >
-            Try again
+            {t('errors.tryAgain')}
           </button>
         </div>
       )}
@@ -602,7 +603,7 @@ export default function VideoTrimmer({
                 minWidth: `${TOUCH_TARGET_SIZE}px`,
               }}
               role="slider"
-              aria-label="Start trim point"
+              aria-label={t('aria.startMarker')}
               aria-valuemin={0}
               aria-valuemax={duration}
               aria-valuenow={startMarker}
@@ -612,7 +613,7 @@ export default function VideoTrimmer({
               onTouchStart={handleMarkerDragStart('start')}
               onKeyDown={handleMarkerKeyDown('start')}
             >
-              <span className="text-white text-xs font-bold">S</span>
+              <span className="text-white text-xs font-bold">{t('markers.start')}</span>
             </div>
 
             {/* End marker handle */}
@@ -629,7 +630,7 @@ export default function VideoTrimmer({
                 minWidth: `${TOUCH_TARGET_SIZE}px`,
               }}
               role="slider"
-              aria-label="End trim point"
+              aria-label={t('aria.endMarker')}
               aria-valuemin={0}
               aria-valuemax={duration}
               aria-valuenow={endMarker}
@@ -639,7 +640,7 @@ export default function VideoTrimmer({
               onTouchStart={handleMarkerDragStart('end')}
               onKeyDown={handleMarkerKeyDown('end')}
             >
-              <span className="text-white text-xs font-bold">E</span>
+              <span className="text-white text-xs font-bold">{t('markers.end')}</span>
             </div>
 
             {/* Current playhead position */}
@@ -665,26 +666,28 @@ export default function VideoTrimmer({
       {isLoaded && duration && (
         <div className="mt-2 sm:mt-3 text-center">
           <div className="text-xs sm:text-sm text-gray-700">
-            <span className="hidden sm:inline font-medium">Selection: </span>
+            <span className="hidden sm:inline font-medium">{t('selection.label')} </span>
             <span className="text-blue-600 font-mono">
               {formatTime(startMarker)} → {formatTime(endMarker)}
             </span>
             <span className="mx-1 sm:mx-2 text-gray-400">|</span>
-            <span className="hidden sm:inline font-medium">Duration: </span>
+            <span className="hidden sm:inline font-medium">{t('selection.durationLabel')} </span>
             <span className="text-blue-600 font-mono">{formatTime(endMarker - startMarker)}</span>
             <span className="text-gray-500"> / {formatTime(duration)}</span>
           </div>
 
           {/* Current playhead position */}
           <div className="text-xs text-gray-500 mt-1">
-            Current: <span className="font-mono">{formatTime(currentTime)}</span>
+            {t('selection.current', { time: formatTime(currentTime) })}
           </div>
 
           {/* Trim savings indicator */}
           {endMarker - startMarker < duration && (
             <div className="text-xs text-green-600 mt-1">
-              Trimming {formatTime(duration - (endMarker - startMarker))} (
-              {Math.round((1 - (endMarker - startMarker) / duration) * 100)}% reduction)
+              {t('selection.trimming', {
+                duration: formatTime(duration - (endMarker - startMarker)),
+                percent: Math.round((1 - (endMarker - startMarker) / duration) * 100)
+              })}
             </div>
           )}
         </div>
@@ -701,7 +704,7 @@ export default function VideoTrimmer({
             'transition-colors'
           )}
           style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-          aria-label="Skip to start marker"
+          aria-label={t('aria.skipToStart')}
         >
           <SkipBack className="w-5 h-5" />
         </button>
@@ -715,7 +718,7 @@ export default function VideoTrimmer({
             'transition-colors'
           )}
           style={{ minWidth: TOUCH_TARGET_SIZE + 8, minHeight: TOUCH_TARGET_SIZE + 8 }}
-          aria-label={isPlaying ? 'Pause' : 'Play trimmed region'}
+          aria-label={isPlaying ? t('aria.pause') : t('aria.play')}
         >
           {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
         </button>
@@ -729,7 +732,7 @@ export default function VideoTrimmer({
             'transition-colors'
           )}
           style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-          aria-label="Skip to end marker"
+          aria-label={t('aria.skipToEnd')}
         >
           <SkipForward className="w-5 h-5" />
         </button>
@@ -751,7 +754,7 @@ export default function VideoTrimmer({
           )}
           style={{ minHeight: TOUCH_TARGET_SIZE }}
         >
-          Cancel
+          {t('cancel')}
         </button>
 
         <button
@@ -767,7 +770,7 @@ export default function VideoTrimmer({
           )}
           style={{ minHeight: TOUCH_TARGET_SIZE }}
         >
-          Apply Trim
+          {t('applyButton')}
         </button>
       </div>
 

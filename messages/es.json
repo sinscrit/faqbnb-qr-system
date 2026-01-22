@@ -3298,7 +3298,8 @@
         "urlPlaceholder": "https://ejemplo.com",
         "linkTitleLabel": "Título del Enlace (Opcional)",
         "linkTitlePlaceholder": "Ingresa un título para este enlace",
-        "fileLabel": "Seleccionar Archivo *"
+        "fileLabel": "Seleccionar Archivo *",
+        "selectedFile": "Selected: {fileName} ({fileSize} MB)"
       },
       "actions": {
         "back": "Atrás",
@@ -3506,7 +3507,18 @@
       "tabs": {
         "edit": "Edit",
         "preview": "Preview"
-      }
+      },
+      "toolbar": {
+        "boldShortcut": "Bold (Ctrl+B)",
+        "italicShortcut": "Italic (Ctrl+I)",
+        "linkShortcut": "Insert Link (Ctrl+K)"
+      },
+      "aria": {
+        "viewMode": "Editor view mode",
+        "toolbar": "Text formatting",
+        "editor": "Markdown editor"
+      },
+      "previewPlaceholder": "Start typing to see a preview of your formatted content..."
     },
     "media": {
       "upload": "Upload Media",
@@ -3531,7 +3543,27 @@
       "reset": "Reset",
       "cancel": "Cancel",
       "zoom": "Zoom",
-      "rotate": "Rotate"
+      "rotate": "Rotate",
+      "loading": "Loading image...",
+      "processing": "Applying crop...",
+      "applyButton": "Apply Crop",
+      "preview": {
+        "label": "Preview:",
+        "generating": "Generating...",
+        "selectArea": "Select area to preview"
+      },
+      "errors": {
+        "loadFailed": "Failed to load image. Please try again.",
+        "cropFailed": "Crop operation failed",
+        "dismiss": "Dismiss error"
+      },
+      "warnings": {
+        "largeImage": "Large image detected. Output may be scaled down for compatibility."
+      },
+      "aria": {
+        "aspectRatioSelected": "{ratio} aspect ratio selected",
+        "cropPreview": "Crop preview"
+      }
     },
     "video": {
       "title": "Trim Video",
@@ -3543,7 +3575,35 @@
       "cancel": "Cancel",
       "preview": "Preview",
       "playing": "Playing",
-      "paused": "Paused"
+      "paused": "Paused",
+      "loading": "Loading video...",
+      "applyButton": "Apply Trim",
+      "selection": {
+        "label": "Selection:",
+        "durationLabel": "Duration:",
+        "current": "Current: {time}",
+        "trimming": "Trimming {duration} ({percent}% reduction)"
+      },
+      "markers": {
+        "start": "S",
+        "end": "E"
+      },
+      "errors": {
+        "loadFailed": "Failed to load video. Please check the file and try again.",
+        "durationUnknown": "Unable to determine video duration",
+        "playbackFailed": "Unable to play video. Please try again.",
+        "invalidTrim": "Invalid trim selection",
+        "tryAgain": "Try again"
+      },
+      "aria": {
+        "startMarker": "Start trim point",
+        "endMarker": "End trim point",
+        "skipToStart": "Skip to start marker",
+        "skipToEnd": "Skip to end marker",
+        "playPause": "Play or pause trimmed region",
+        "pause": "Pause",
+        "play": "Play trimmed region"
+      }
     },
     "purposes": {
       "howToUse": "How to Use",
@@ -3644,6 +3704,74 @@
       "cancel": "Cancel",
       "success": "Guide deleted successfully",
       "failed": "Failed to delete guide"
+    },
+    "content": {
+      "title": "Content",
+      "count": "({count, plural, one {# piece} other {# pieces}})",
+      "addContent": "Add Content",
+      "removeDialog": {
+        "title": "Remove Last Content?",
+        "message": "This is the only piece of content. Removing it will leave this guide empty. Are you sure you want to remove it?",
+        "cancel": "Cancel",
+        "remove": "Remove"
+      },
+      "aria": {
+        "dragToReorder": "Content pieces - drag to reorder",
+        "pickedUp": "Picked up {type} content. Current position: {position} of {total}. Use arrow keys to move.",
+        "overPosition": "Over position {position}",
+        "dropped": "Dropped {type} content. New position: {position} of {total}",
+        "cancelled": "Drag cancelled. Content returned to original position.",
+        "unchanged": "Position unchanged."
+      }
+    },
+    "instructionEditor": {
+      "articleTitle": "Article Title",
+      "articleTitlePlaceholder": "Enter article title",
+      "tags": "Tags",
+      "pageHeader": "Editing Guide For: {title}"
+    },
+    "readOnlyContext": {
+      "room": "Room",
+      "itemType": "Item Type",
+      "itemName": "Item Name",
+      "unknownRoom": "Unknown Room"
+    },
+    "rotate": {
+      "title": "Rotate Image",
+      "rotateLeft": "Rotate Left",
+      "rotateRight": "Rotate Right",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "applyButton": "Apply Rotation",
+      "currentRotation": "Current rotation: {degrees}°",
+      "aria": {
+        "rotateLeft": "Rotate image left 90 degrees",
+        "rotateRight": "Rotate image right 90 degrees",
+        "reset": "Reset rotation to 0 degrees",
+        "apply": "Apply rotation and close editor",
+        "cancel": "Cancel rotation and close editor",
+        "editor": "Image rotation editor",
+        "announcement": "Image rotated to {degrees} degrees",
+        "processing": "Processing rotation..."
+      },
+      "errors": {
+        "loadFailed": "Failed to load image. Please try again.",
+        "rotationFailed": "Failed to rotate image. Please try again.",
+        "canvasUnavailable": "Your browser does not support image editing.",
+        "memoryError": "Not enough memory to process image. Try closing other tabs.",
+        "blobCreationFailed": "Failed to create image output. Please try again.",
+        "tryAgain": "Try Again"
+      },
+      "keyboard": {
+        "help": "Keyboard:",
+        "toRotate": "to rotate",
+        "toCancel": "to cancel",
+        "toApply": "to apply"
+      },
+      "status": {
+        "modified": "(modified)",
+        "applying": "Applying..."
+      }
     }
   }
 }

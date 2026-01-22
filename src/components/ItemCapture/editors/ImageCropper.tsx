@@ -11,7 +11,7 @@
  *
  * @module ItemCapture/editors/ImageCropper
  * @see docs/REQ-047-implement-imagecropper-detailed.md
- * @lastModified 2025-12-31
+ * @lastModified 2026-01-22 (REQ-E02-072 - L10N)
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
@@ -78,11 +78,11 @@ const ASPECT_RATIOS: Record<AspectRatioPreset, number | undefined> = {
 /**
  * Aspect ratio options for the toolbar
  */
-const ASPECT_RATIO_OPTIONS: { value: AspectRatioPreset; label: string }[] = [
-  { value: 'free', label: 'Free' },
-  { value: '1:1', label: '1:1' },
-  { value: '4:3', label: '4:3' },
-  { value: '16:9', label: '16:9' },
+const ASPECT_RATIO_OPTIONS: { value: AspectRatioPreset; labelKey: string }[] = [
+  { value: 'free', labelKey: 'freeform' },
+  { value: '1:1', labelKey: 'square' },
+  { value: '4:3', labelKey: 'standard' },
+  { value: '16:9', labelKey: 'landscape' },
 ];
 
 /**
@@ -106,6 +106,7 @@ export default function ImageCropper({
   className,
 }: ImageCropperProps) {
   // Translations
+  const t = useTranslations('articles.crop');
   const tLoading = useTranslations('common.loading');
 
   // Crop state from react-image-crop
@@ -166,8 +167,8 @@ export default function ImageCropper({
 
   const handleImageError = useCallback(() => {
     setIsImageLoading(false);
-    setError('Failed to load image. Please try again.');
-  }, []);
+    setError(t('errors.loadFailed'));
+  }, [t]);
 
   // =============================================================================
   // Aspect Ratio Change Handler (Task 3)
@@ -300,13 +301,13 @@ export default function ImageCropper({
       );
       onCropComplete(croppedBlob);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Crop operation failed';
+      const message = err instanceof Error ? err.message : t('errors.cropFailed');
       setError(message);
       console.error('Crop failed:', err);
     } finally {
       setIsProcessing(false);
     }
-  }, [completedCrop, outputFormat, outputQuality, onCropComplete]);
+  }, [completedCrop, outputFormat, outputQuality, onCropComplete, t]);
 
   // =============================================================================
   // Error Dismiss Handler (Task 7)
@@ -368,7 +369,7 @@ export default function ImageCropper({
       {/* Large Image Warning (Task 12) */}
       {isLargeImage && (
         <div className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded mb-2">
-          Large image detected. Output may be scaled down for compatibility.
+          {t('warnings.largeImage')}
         </div>
       )}
 
@@ -389,7 +390,7 @@ export default function ImageCropper({
               isProcessing && 'opacity-50 cursor-not-allowed'
             )}
           >
-            {option.label}
+            {t(option.labelKey)}
           </button>
         ))}
       </div>
@@ -432,7 +433,7 @@ export default function ImageCropper({
           <img
             ref={imageRef}
             src={imageSrc}
-            alt="Crop preview"
+            alt={t('aria.cropPreview')}
             onLoad={onImageLoad}
             onError={handleImageError}
             className="max-w-full max-h-[50vh] sm:max-h-[60vh] object-contain"
@@ -443,17 +444,17 @@ export default function ImageCropper({
       {/* Preview Section (Task 5, 11) */}
       <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-500 font-medium">Preview:</span>
+          <span className="text-xs text-gray-500 font-medium">{t('preview.label')}</span>
           <div className="w-[150px] h-[100px] bg-gray-100 rounded border border-gray-200 flex items-center justify-center overflow-hidden">
             {previewUrl ? (
               <img
                 src={previewUrl}
-                alt="Crop preview thumbnail"
+                alt={t('aria.cropPreview')}
                 className="max-w-full max-h-full object-contain"
               />
             ) : (
               <span className="text-xs text-gray-400">
-                {completedCrop ? 'Generating...' : 'Select area to preview'}
+                {completedCrop ? t('preview.generating') : t('preview.selectArea')}
               </span>
             )}
           </div>
@@ -467,7 +468,7 @@ export default function ImageCropper({
           <button
             onClick={dismissError}
             className="text-red-500 hover:text-red-700 ml-2 text-lg leading-none"
-            aria-label="Dismiss error"
+            aria-label={t('errors.dismiss')}
           >
             &times;
           </button>
@@ -487,7 +488,7 @@ export default function ImageCropper({
             'sm:flex-1'
           )}
         >
-          {isProcessing ? 'Applying...' : 'Apply Crop'}
+          {isProcessing ? tLoading('status.applying') : t('applyButton')}
         </button>
         <button
           onClick={onCancel}
@@ -500,7 +501,7 @@ export default function ImageCropper({
             'sm:flex-1'
           )}
         >
-          Cancel
+          {t('cancel')}
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@
  *
  * @module ItemCapture/editors/__tests__/ImageCropper.test
  * @see docs/REQ-047-implement-imagecropper-detailed.md
- * @lastModified 2025-12-31
+ * @lastModified 2026-01-22 (REQ-E02-072 - L10N)
  */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -14,6 +14,35 @@ import type { AspectRatioPreset } from '../ImageCropper';
 // =============================================================================
 // Mocks
 // =============================================================================
+
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    const translations: Record<string, string | ((p: Record<string, unknown>) => string)> = {
+      'freeform': 'Freeform',
+      'square': 'Square (1:1)',
+      'standard': 'Standard (4:3)',
+      'landscape': 'Landscape (16:9)',
+      'applyButton': 'Apply Crop',
+      'cancel': 'Cancel',
+      'preview.label': 'Preview:',
+      'preview.generating': 'Generating...',
+      'preview.selectArea': 'Select area to preview',
+      'warnings.largeImage': 'Large image detected. Output may be scaled down for compatibility.',
+      'errors.loadFailed': 'Failed to load image. Please try again.',
+      'errors.cropFailed': 'Crop operation failed',
+      'errors.dismiss': 'Dismiss error',
+      'aria.cropPreview': 'Crop preview',
+      'media.image': 'Loading image...',
+      'status.applying': 'Applying...',
+    };
+    const value = translations[key];
+    if (typeof value === 'function' && params) {
+      return value(params);
+    }
+    return typeof value === 'string' ? value : key;
+  },
+}));
 
 // Mock the CSS import
 vi.mock('../imageCropper.css', () => ({}));
