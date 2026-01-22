@@ -1824,5 +1824,94 @@
     "navigation": {
       "back": "Zurück"
     }
+  },
+  "metadata": {
+    "app": {
+      "name": "FAQBNB",
+      "tagline": "QR-Artikel-Anzeigesystem",
+      "defaultDescription": "FAQBNB bietet sofortigen Zugriff auf detaillierte Anleitungen, Handbücher und Ressourcen für jedes Gerät oder Artikel über QR-Codes"
+    },
+    "home": {
+      "title": "FAQBNB - Sofortiger Zugriff auf Produktinformationen über QR-Codes",
+      "description": "Transformieren Sie den Kundensupport mit FAQBNB. Bieten Sie sofortigen Zugriff auf Handbücher, Videos und Produktinformationen über QR-Codes. Keine Apps erforderlich.",
+      "ogTitle": "FAQBNB - Sofortiger Zugriff auf Produktinfos",
+      "ogDescription": "Professionelle QR-Code-Plattform für Unternehmen. Transformieren Sie den Zugang zu Produktinformationen und Support."
+    },
+    "auth": {
+      "login": {
+        "title": "Anmelden | FAQBNB",
+        "description": "Melden Sie sich bei Ihrem FAQBNB-Konto an, um Ihre QR-Artikel und Immobilien zu verwalten"
+      },
+      "register": {
+        "title": "Konto erstellen | FAQBNB",
+        "description": "Erstellen Sie ein FAQBNB-Konto, um Ihre QR-Artikel zu verwalten"
+      },
+      "registerSuccess": {
+        "title": "Registrierung erfolgreich | FAQBNB",
+        "description": "Ihr FAQBNB-Konto wurde erfolgreich erstellt"
+      },
+      "registerComplete": {
+        "title": "Registrierung abschließen | FAQBNB",
+        "description": "Schließen Sie die Einrichtung Ihres FAQBNB-Kontos ab"
+      }
+    },
+    "dashboard": {
+      "home": {
+        "title": "Dashboard | FAQBNB",
+        "description": "Verwalten Sie Ihre QR-Artikel und Immobilien von Ihrem FAQBNB-Dashboard"
+      },
+      "items": {
+        "title": "Artikel | FAQBNB",
+        "description": "Alle Ihre QR-Artikel anzeigen und verwalten"
+      },
+      "create": {
+        "title": "Artikel erstellen | FAQBNB",
+        "description": "Erstellen Sie einen neuen QR-Artikel für Ihre Immobilie"
+      },
+      "properties": {
+        "title": "Immobilien | FAQBNB",
+        "description": "Verwalten Sie Ihre Immobilien und deren QR-Artikel"
+      },
+      "instructions": {
+        "title": "Anleitungen | FAQBNB",
+        "description": "Anleitungen für Ihre Artikel anzeigen und verwalten"
+      },
+      "help": {
+        "title": "Hilfe & Support | FAQBNB",
+        "description": "Erhalten Sie Hilfe zur Nutzung von FAQBNB und zur Verwaltung Ihrer QR-Artikel"
+      },
+      "rooms": {
+        "title": "Räume | FAQBNB",
+        "description": "Raumkategorien zur Organisation Ihrer Artikel verwalten"
+      },
+      "tags": {
+        "title": "Tags | FAQBNB",
+        "description": "Tags zur Kategorisierung Ihrer Artikel verwalten"
+      },
+      "print": {
+        "title": "QR-Codes drucken | FAQBNB",
+        "description": "QR-Codes für Ihre Artikel und Immobilien drucken"
+      }
+    },
+    "item": {
+      "view": {
+        "title": "{itemName} | FAQBNB",
+        "description": "Anleitungen und Ressourcen für {itemName} ansehen",
+        "ogTitle": "{itemName}",
+        "ogDescription": "Anleitungen und Ressourcen für {itemName} ansehen"
+      },
+      "edit": {
+        "title": "{itemName} bearbeiten | FAQBNB",
+        "description": "Details und Anleitungen für {itemName} bearbeiten"
+      },
+      "notFound": {
+        "title": "Artikel nicht gefunden | FAQBNB",
+        "description": "Der angeforderte Artikel konnte nicht gefunden werden"
+      }
+    },
+    "error": {
+      "title": "Fehler | FAQBNB",
+      "description": "Ein Fehler ist aufgetreten"
+    }
   }
 }

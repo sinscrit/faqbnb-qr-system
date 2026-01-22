@@ -1824,5 +1824,94 @@
     "navigation": {
       "back": "Terug"
     }
+  },
+  "metadata": {
+    "app": {
+      "name": "FAQBNB",
+      "tagline": "QR-artikel weergavesysteem",
+      "defaultDescription": "FAQBNB biedt directe toegang tot gedetailleerde handleidingen, manualen en bronnen voor elk apparaat of artikel via QR-codes"
+    },
+    "home": {
+      "title": "FAQBNB - Directe toegang tot productinformatie via QR-codes",
+      "description": "Transformeer klantenondersteuning met FAQBNB. Bied directe toegang tot handleidingen, video's en productinformatie via QR-codes. Geen apps nodig.",
+      "ogTitle": "FAQBNB - Directe toegang tot productinformatie",
+      "ogDescription": "Professioneel QR-code platform voor bedrijven. Transformeer hoe klanten toegang krijgen tot productinformatie en ondersteuning."
+    },
+    "auth": {
+      "login": {
+        "title": "Inloggen | FAQBNB",
+        "description": "Log in op uw FAQBNB-account om uw QR-artikelen en eigenschappen te beheren"
+      },
+      "register": {
+        "title": "Account aanmaken | FAQBNB",
+        "description": "Maak een FAQBNB-account aan om uw QR-artikelen te beheren"
+      },
+      "registerSuccess": {
+        "title": "Registratie succesvol | FAQBNB",
+        "description": "Uw FAQBNB-account is succesvol aangemaakt"
+      },
+      "registerComplete": {
+        "title": "Registratie voltooien | FAQBNB",
+        "description": "Voltooi de configuratie van uw FAQBNB-account"
+      }
+    },
+    "dashboard": {
+      "home": {
+        "title": "Dashboard | FAQBNB",
+        "description": "Beheer uw QR-artikelen en eigenschappen vanaf uw FAQBNB-dashboard"
+      },
+      "items": {
+        "title": "Artikelen | FAQBNB",
+        "description": "Bekijk en beheer al uw QR-artikelen"
+      },
+      "create": {
+        "title": "Artikel aanmaken | FAQBNB",
+        "description": "Maak een nieuw QR-artikel voor uw eigenschap"
+      },
+      "properties": {
+        "title": "Eigenschappen | FAQBNB",
+        "description": "Beheer uw eigenschappen en hun QR-artikelen"
+      },
+      "instructions": {
+        "title": "Handleidingen | FAQBNB",
+        "description": "Bekijk en beheer instructiehandleidingen voor uw artikelen"
+      },
+      "help": {
+        "title": "Hulp & Ondersteuning | FAQBNB",
+        "description": "Krijg hulp bij het gebruik van FAQBNB en het beheren van uw QR-artikelen"
+      },
+      "rooms": {
+        "title": "Kamers | FAQBNB",
+        "description": "Beheer kamercategorieën om uw artikelen te organiseren"
+      },
+      "tags": {
+        "title": "Tags | FAQBNB",
+        "description": "Beheer tags om uw artikelen te categoriseren"
+      },
+      "print": {
+        "title": "QR-codes afdrukken | FAQBNB",
+        "description": "Druk QR-codes af voor uw artikelen en eigenschappen"
+      }
+    },
+    "item": {
+      "view": {
+        "title": "{itemName} | FAQBNB",
+        "description": "Bekijk instructies en bronnen voor {itemName}",
+        "ogTitle": "{itemName}",
+        "ogDescription": "Bekijk instructies en bronnen voor {itemName}"
+      },
+      "edit": {
+        "title": "{itemName} bewerken | FAQBNB",
+        "description": "Bewerk de details en instructies voor {itemName}"
+      },
+      "notFound": {
+        "title": "Artikel niet gevonden | FAQBNB",
+        "description": "Het gevraagde artikel kon niet worden gevonden"
+      }
+    },
+    "error": {
+      "title": "Fout | FAQBNB",
+      "description": "Er is een fout opgetreden"
+    }
   }
 }
