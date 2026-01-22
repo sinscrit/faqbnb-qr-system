@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/PropertyEditModal.tsx
 // REQ-131: PropertyEditModal Component for Dashboard 2
 // Created: 2026-01-06
-// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
+// Last Modified: 2026-01-22 22:50 - REQ-E02-009: Updated to properties namespace
 
 'use client';
 
@@ -123,9 +123,9 @@ const createValidateForm = (
   // Property Name - required, max 100
   const trimmedName = data.name.trim();
   if (!trimmedName) {
-    errors.name = t('validation.propertyNameRequired');
+    errors.name = t('validation.nameRequired');
   } else if (trimmedName.length > 100) {
-    errors.name = t('validation.propertyNameMaxLength');
+    errors.name = t('validation.nameMaxLength');
   }
 
   // Address Line 1 - max 200
@@ -155,7 +155,7 @@ const createValidateForm = (
 
   // Country - validate is valid code or empty
   if (data.country && !COUNTRIES.find(c => c.code === data.country)) {
-    errors.country = t('validation.invalidCountry');
+    errors.country = t('validation.countryInvalid');
   }
 
   return errors;
@@ -185,7 +185,7 @@ export function PropertyEditModal({
   onSave,
   className,
 }: PropertyEditModalProps) {
-  const t = useTranslations('dashboard');
+  const t = useTranslations('properties');
 
   // Task 3: Form state management
   const [formData, setFormData] = useState<PropertyEditFormData>({
@@ -536,7 +536,7 @@ export function PropertyEditModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              {t('buttons.cancel')}
+              {t('actions.cancel')}
             </button>
 
             {/* Save Button */}
@@ -556,11 +556,11 @@ export function PropertyEditModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label={t('buttons.saving')} />
-                  <span>{t('buttons.saving')}</span>
+                  <LoadingIndicator size="sm" color="white" label={t('actions.saving')} />
+                  <span>{t('actions.saving')}</span>
                 </>
               ) : (
-                <span>{t('buttons.saveChanges')}</span>
+                <span>{t('actions.save')}</span>
               )}
             </button>
           </div>

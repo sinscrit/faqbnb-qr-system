@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-22T19:31:00.902550",
+  "updated_at": "2026-01-22T19:47:55.892311",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 12,
+  "current_task_index": 16,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -475,9 +475,10 @@
       "status": "completed",
       "request_id": "REQ-E05-014",
       "error": null,
-      "processed_at": "2026-01-22T16:21:48.872392",
+      "processed_at": "2026-01-22T19:35:54.178916",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-overview.md"
       },
       "stages": {
         "request": {
@@ -496,7 +497,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.3",
@@ -508,9 +510,10 @@
       "status": "completed",
       "request_id": "REQ-E05-015",
       "error": null,
-      "processed_at": "2026-01-22T16:23:53.260110",
+      "processed_at": "2026-01-22T19:40:16.698329",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-create-translationstatusfilter-component-overview.md"
       },
       "stages": {
         "request": {
@@ -529,7 +532,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.4",
@@ -541,9 +545,10 @@
       "status": "completed",
       "request_id": "REQ-E05-016",
       "error": null,
-      "processed_at": "2026-01-22T16:26:13.099040",
+      "processed_at": "2026-01-22T19:43:48.189770",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-integrate-status-widget-into-dashboard-overview.md"
       },
       "stages": {
         "request": {
@@ -562,7 +567,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "3.5",
@@ -574,9 +580,10 @@
       "status": "completed",
       "request_id": "REQ-E05-017",
       "error": null,
-      "processed_at": "2026-01-22T16:29:05.898077",
+      "processed_at": "2026-01-22T19:47:55.892257",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-017"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-017",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-add-translation-status-column-to-items-list-overview.md"
       },
       "stages": {
         "request": {
@@ -595,7 +602,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "4.1",
@@ -1166,7 +1174,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 13,
+    "total_requests_generated": 17,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"

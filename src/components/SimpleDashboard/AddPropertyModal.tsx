@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/AddPropertyModal.tsx
 // REQ-132: AddPropertyModal Component for Dashboard 2
 // Created: 2026-01-06
-// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
+// Last Modified: 2026-01-22 22:52 - REQ-E02-009: Updated to properties namespace
 
 'use client';
 
@@ -166,7 +166,7 @@ export function AddPropertyModal({
   onSave,
   className,
 }: AddPropertyModalProps) {
-  const t = useTranslations('dashboard');
+  const t = useTranslations('properties');
 
   // Task 2.3: Form state management with empty initial values
   const [formData, setFormData] = useState<AddPropertyFormData>({
@@ -224,13 +224,13 @@ export function AddPropertyModal({
       // Translate validation keys to error messages
       const translatedErrors: AddPropertyValidationErrors = {};
       const validationKeyMap: Record<ValidationKey, string> = {
-        nameRequired: 'validation.propertyNameRequired',
-        nameMaxLength: 'validation.propertyNameMaxLength',
+        nameRequired: 'validation.nameRequired',
+        nameMaxLength: 'validation.nameMaxLength',
         addressMaxLength: 'validation.addressMaxLength',
         cityMaxLength: 'validation.cityMaxLength',
         stateMaxLength: 'validation.stateMaxLength',
         postalCodeMaxLength: 'validation.postalCodeMaxLength',
-        countryInvalid: 'validation.invalidCountry',
+        countryInvalid: 'validation.countryInvalid',
       };
       Object.entries(validationKeys).forEach(([field, key]) => {
         if (key) {
@@ -536,7 +536,7 @@ export function AddPropertyModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              {t('buttons.cancel')}
+              {t('actions.cancel')}
             </button>
 
             {/* Create Property Button */}
@@ -556,11 +556,11 @@ export function AddPropertyModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label={t('buttons.creating')} />
-                  <span>{t('buttons.creating')}</span>
+                  <LoadingIndicator size="sm" color="white" label={t('actions.creating')} />
+                  <span>{t('actions.creating')}</span>
                 </>
               ) : (
-                <span>{t('buttons.createProperty')}</span>
+                <span>{t('actions.createProperty')}</span>
               )}
             </button>
           </div>

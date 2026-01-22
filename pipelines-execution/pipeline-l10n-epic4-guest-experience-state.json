@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-22T19:31:33.992494",
+  "updated_at": "2026-01-22T19:47:50.528378",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 15,
+  "current_task_index": 20,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
   "source_hash": "8b789d30e0e9b35c848ab3362a26de99",
   "tasks": [
@@ -580,9 +580,10 @@
       "status": "completed",
       "request_id": "REQ-E04-017",
       "error": null,
-      "processed_at": "2026-01-22T16:10:26.950196",
+      "processed_at": "2026-01-22T19:34:54.806077",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-017"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-017",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-017-update-itemdisplay-component-client-component-overview.md"
       },
       "stages": {
         "request": {
@@ -601,7 +602,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "5.3",
@@ -613,9 +615,10 @@
       "status": "completed",
       "request_id": "REQ-E04-018",
       "error": null,
-      "processed_at": "2026-01-22T16:11:20.360023",
+      "processed_at": "2026-01-22T19:38:14.873513",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-018"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-018",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-018-update-linkcard-component-overview.md"
       },
       "stages": {
         "request": {
@@ -634,7 +637,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "5.4",
@@ -646,9 +650,10 @@
       "status": "completed",
       "request_id": "REQ-E04-019",
       "error": null,
-      "processed_at": "2026-01-22T16:12:02.871412",
+      "processed_at": "2026-01-22T19:41:16.943573",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-019"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-019",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-019-handle-url-parameter-for-shareable-links-overview.md"
       },
       "stages": {
         "request": {
@@ -667,7 +672,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "6.1",
@@ -679,9 +685,10 @@
       "status": "completed",
       "request_id": "REQ-E04-020",
       "error": null,
-      "processed_at": "2026-01-22T16:13:13.743087",
+      "processed_at": "2026-01-22T19:44:20.278681",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-020"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-020",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-020-add-guest-language-detection-to-middleware-overview.md"
       },
       "stages": {
         "request": {
@@ -700,7 +707,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "6.2",
@@ -712,9 +720,10 @@
       "status": "completed",
       "request_id": "REQ-E04-021",
       "error": null,
-      "processed_at": "2026-01-22T16:14:23.529993",
+      "processed_at": "2026-01-22T19:47:50.528326",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-021"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-021",
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-021-create-server-side-language-detection-utility-overview.md"
       },
       "stages": {
         "request": {
@@ -733,7 +742,8 @@
           "status": "pending"
         }
       },
-      "request_completed": true
+      "request_completed": true,
+      "overview_completed": true
     },
     {
       "id": "7.1",
@@ -941,7 +951,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 16,
+    "total_requests_generated": 21,
     "last_request_id": "REQ-E04-026",
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
