@@ -1179,30 +1179,58 @@
         "title": "No matching items",
         "description": "Try adjusting your search or filters"
       },
-      "loading": "Loading items...",
-      "noArticles": "No articles yet",
-      "addFirstArticle": "Add your first article"
+      "loading": "Elemente werden geladen...",
+      "noArticles": "Noch keine Artikel",
+      "addFirstArticle": "Fügen Sie Ihren ersten Artikel hinzu"
     },
+
+    "grid": {
+      "ariaLabel": "{count, plural, =0 {Keine Elemente} one {# Element} other {# Elemente}}",
+      "loading": "Elemente werden geladen"
+    },
+
     "card": {
       "contentType": {
         "link": "LINK",
         "text": "TEXT",
         "pdf": "PDF",
-        "mixed": "MIXED",
+        "mixed": "GEMISCHT",
         "video": "VIDEO",
-        "photo": "PHOTO",
-        "media": "MEDIA"
+        "photo": "FOTO",
+        "media": "MEDIEN"
       },
-      "views": "{count, plural, one {# view} other {# views}}",
-      "pieces": "{count, plural, one {# piece} other {# pieces}} of content",
-      "noContent": "No content yet",
-      "more": "+{count} more",
-      "select": "Select {title}",
-      "thumbnail": "{title} thumbnail",
-      "scanCount": "Scan Count",
-      "lastScanned": "Last Scanned",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "views": "{count, plural, one {# Ansicht} other {# Ansichten}}",
+      "pieces": "{count, plural, one {# Inhalt} other {# Inhalte}}",
+      "noContent": "Noch kein Inhalt",
+      "more": "+{count} weitere",
+      "select": "{title} auswählen",
+      "thumbnail": "Miniaturansicht von {title}",
+      "scanCount": "Anzahl der Scans",
+      "lastScanned": "Zuletzt gescannt",
+      "createdAt": "Erstellt am",
+      "updatedAt": "Aktualisiert am",
+      "placeholder": {
+        "title": "Titel eingeben...",
+        "location": "Standort hinzufügen...",
+        "tags": "Tags hinzufügen..."
+      },
+      "aria": {
+        "location": "Standort: {location}.",
+        "selected": "Ausgewählt",
+        "notSelected": "Nicht ausgewählt",
+        "pressEnterToSelect": "Drücken Sie Enter zum Auswählen",
+        "pressEnterToDeselect": "Drücken Sie Enter zum Abwählen",
+        "pressEnterToPreview": "Drücken Sie Enter zur Vorschau",
+        "selectItem": "{title} auswählen",
+        "thumbnail": "Miniaturansicht von {title}",
+        "editTitle": "Titel von {title} bearbeiten",
+        "editLocation": "Standort von {title} bearbeiten",
+        "editTags": "Tags von {title} bearbeiten",
+        "contentDescription": "{badgeLabel}-Inhalt"
+      },
+      "tags": {
+        "more": "+{count} weitere"
+      }
     },
     "actions": {
       "create": "New Item",

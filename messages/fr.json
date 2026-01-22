@@ -1179,30 +1179,58 @@
         "title": "No matching items",
         "description": "Try adjusting your search or filters"
       },
-      "loading": "Loading items...",
-      "noArticles": "No articles yet",
-      "addFirstArticle": "Add your first article"
+      "loading": "Chargement des éléments...",
+      "noArticles": "Aucun article pour le moment",
+      "addFirstArticle": "Ajoutez votre premier article"
     },
+
+    "grid": {
+      "ariaLabel": "{count, plural, =0 {Aucun élément} one {# élément} other {# éléments}}",
+      "loading": "Chargement des éléments"
+    },
+
     "card": {
       "contentType": {
-        "link": "LINK",
-        "text": "TEXT",
+        "link": "LIEN",
+        "text": "TEXTE",
         "pdf": "PDF",
-        "mixed": "MIXED",
-        "video": "VIDEO",
+        "mixed": "MIXTE",
+        "video": "VIDÉO",
         "photo": "PHOTO",
-        "media": "MEDIA"
+        "media": "MÉDIA"
       },
-      "views": "{count, plural, one {# view} other {# views}}",
-      "pieces": "{count, plural, one {# piece} other {# pieces}} of content",
-      "noContent": "No content yet",
-      "more": "+{count} more",
-      "select": "Select {title}",
-      "thumbnail": "{title} thumbnail",
-      "scanCount": "Scan Count",
-      "lastScanned": "Last Scanned",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "views": "{count, plural, one {# vue} other {# vues}}",
+      "pieces": "{count, plural, one {# contenu} other {# contenus}}",
+      "noContent": "Pas encore de contenu",
+      "more": "+{count} de plus",
+      "select": "Sélectionner {title}",
+      "thumbnail": "Miniature de {title}",
+      "scanCount": "Nombre de scans",
+      "lastScanned": "Dernier scan",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "placeholder": {
+        "title": "Entrez le titre...",
+        "location": "Ajouter un emplacement...",
+        "tags": "Ajouter des tags..."
+      },
+      "aria": {
+        "location": "Emplacement : {location}.",
+        "selected": "Sélectionné",
+        "notSelected": "Non sélectionné",
+        "pressEnterToSelect": "Appuyez sur Entrée pour sélectionner",
+        "pressEnterToDeselect": "Appuyez sur Entrée pour désélectionner",
+        "pressEnterToPreview": "Appuyez sur Entrée pour prévisualiser",
+        "selectItem": "Sélectionner {title}",
+        "thumbnail": "Miniature de {title}",
+        "editTitle": "Modifier le titre de {title}",
+        "editLocation": "Modifier l'emplacement de {title}",
+        "editTags": "Modifier les tags de {title}",
+        "contentDescription": "Contenu {badgeLabel}"
+      },
+      "tags": {
+        "more": "+{count} de plus"
+      }
     },
     "actions": {
       "create": "New Item",

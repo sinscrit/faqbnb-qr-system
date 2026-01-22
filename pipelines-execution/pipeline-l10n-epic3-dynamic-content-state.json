@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824223",
-  "updated_at": "2026-01-22T08:44:35.685709",
+  "updated_at": "2026-01-22T09:04:35.965348",
   "status": "partial",
   "current_stage": "request",
   "current_task_index": 34,
@@ -1087,6 +1087,12 @@
       "task_id": "7.2",
       "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"b8d4c53c-3f81-408b-bc57-16e3272028c6\",\"total_cost_usd\":0,\"usage\":{\"i",
       "timestamp": "2026-01-21T21:02:56.711310"
+    },
+    {
+      "stage": "testcheck",
+      "type": "pipeline_stage",
+      "error": "Timeout after 1200s",
+      "timestamp": "2026-01-22T09:04:35.950655"
     }
   ],
   "metadata": {

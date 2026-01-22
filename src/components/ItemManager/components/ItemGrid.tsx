@@ -7,7 +7,7 @@
  * Each item is displayed using the ItemCard component.
  *
  * @module ItemManager/components/ItemGrid
- * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect prop support)
+ * @lastModified 2026-01-22 (REQ-E02-080 - Updated i18n to use items.grid namespace)
  */
 
 import { useTranslations } from 'next-intl';
@@ -28,8 +28,8 @@ export function ItemGrid({
   existingTags,
   loading,
 }: ItemGridProps & { loading?: boolean }) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-080: i18n translations for grid
+  const t = useTranslations('items.grid');
 
   return (
     <div
@@ -39,7 +39,7 @@ export function ItemGrid({
         className
       )}
       role="grid"
-      aria-label={t('card.pieces', { count: items.length })}
+      aria-label={t('ariaLabel', { count: items.length })}
       aria-busy={loading}
       aria-describedby={items.length === 0 ? 'empty-message-grid' : undefined}
     >

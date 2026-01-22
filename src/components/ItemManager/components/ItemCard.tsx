@@ -14,7 +14,7 @@
  * - Long-press gesture for mobile selection mode entry (REQ-069)
  *
  * @module ItemManager/components/ItemCard
- * @lastModified 2026-01-05 (REQ-091 - Added analytics display: visitStats, reactions)
+ * @lastModified 2026-01-22 (REQ-E02-080 - Updated i18n aria labels)
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -219,10 +219,24 @@ export function ItemCard({
     }
   };
 
-  // Build aria-label with full context
-  const ariaLabel = isSelectionMode
-    ? `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. ${isSelected ? 'Selected.' : 'Not selected.'} Press Enter to ${isSelected ? 'deselect' : 'select'}, or click to preview.`
-    : `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${badge.label} content. Press Enter to preview.`;
+  // Build aria-label with full context using translations
+  const ariaLabel = useMemo(() => {
+    const locationPart = item.location
+      ? t('card.aria.location', { location: item.location })
+      : '';
+    const contentPart = t('card.aria.contentDescription', { badgeLabel: badge.label });
+    const selectionPart = isSelected
+      ? t('card.aria.selected')
+      : t('card.aria.notSelected');
+    const actionPart = isSelectionMode
+      ? (isSelected ? t('card.aria.pressEnterToDeselect') : t('card.aria.pressEnterToSelect'))
+      : t('card.aria.pressEnterToPreview');
+
+    if (isSelectionMode) {
+      return `${item.title}. ${locationPart} ${contentPart}. ${selectionPart}. ${actionPart}`;
+    }
+    return `${item.title}. ${locationPart} ${contentPart}. ${actionPart}`;
+  }, [item.title, item.location, badge.label, isSelectionMode, isSelected, t]);
 
   return (
     <article
@@ -252,7 +266,7 @@ export function ItemCard({
         {objectUrl && !imageError && (
           <img
             src={objectUrl}
-            alt={`${item.title} thumbnail`}
+            alt={t('card.aria.thumbnail', { title: item.title })}
             className={cn(
               'w-full h-full object-cover transition-all duration-200 group-hover:scale-105',
               imageLoading ? 'opacity-0' : 'opacity-100'
@@ -302,7 +316,7 @@ export function ItemCard({
                 'focus:ring-blue-500 bg-white/80 cursor-pointer',
                 'shadow-sm hover:border-blue-400'
               )}
-              aria-label={t('card.select', { title: item.title })}
+              aria-label={t('card.aria.selectItem', { title: item.title })}
             />
           </label>
         )}

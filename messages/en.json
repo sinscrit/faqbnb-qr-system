@@ -1206,6 +1206,11 @@
       "showColumns": "Show Columns"
     },
 
+    "grid": {
+      "ariaLabel": "{count, plural, =0 {No items} one {# item} other {# items}}",
+      "loading": "Loading items"
+    },
+
     "card": {
       "contentType": {
         "link": "LINK",
@@ -1226,7 +1231,29 @@
       "scanCount": "Scan Count",
       "lastScanned": "Last Scanned",
       "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "updatedAt": "Updated At",
+      "placeholder": {
+        "title": "Enter title...",
+        "location": "Add location...",
+        "tags": "Add tags..."
+      },
+      "aria": {
+        "location": "Location: {location}.",
+        "selected": "Selected",
+        "notSelected": "Not selected",
+        "pressEnterToSelect": "Press Enter to select",
+        "pressEnterToDeselect": "Press Enter to deselect",
+        "pressEnterToPreview": "Press Enter to preview",
+        "selectItem": "Select {title}",
+        "thumbnail": "{title} thumbnail",
+        "editTitle": "Edit title for {title}",
+        "editLocation": "Edit location for {title}",
+        "editTags": "Edit tags for {title}",
+        "contentDescription": "{badgeLabel} content"
+      },
+      "tags": {
+        "more": "+{count} more"
+      }
     },
 
     "row": {

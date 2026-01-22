@@ -1179,30 +1179,58 @@
         "title": "No matching items",
         "description": "Try adjusting your search or filters"
       },
-      "loading": "Loading items...",
-      "noArticles": "No articles yet",
-      "addFirstArticle": "Add your first article"
+      "loading": "Items laden...",
+      "noArticles": "Nog geen artikelen",
+      "addFirstArticle": "Voeg uw eerste artikel toe"
     },
+
+    "grid": {
+      "ariaLabel": "{count, plural, =0 {Geen items} one {# item} other {# items}}",
+      "loading": "Items laden"
+    },
+
     "card": {
       "contentType": {
         "link": "LINK",
-        "text": "TEXT",
+        "text": "TEKST",
         "pdf": "PDF",
-        "mixed": "MIXED",
+        "mixed": "GEMENGD",
         "video": "VIDEO",
-        "photo": "PHOTO",
+        "photo": "FOTO",
         "media": "MEDIA"
       },
-      "views": "{count, plural, one {# view} other {# views}}",
-      "pieces": "{count, plural, one {# piece} other {# pieces}} of content",
-      "noContent": "No content yet",
-      "more": "+{count} more",
-      "select": "Select {title}",
-      "thumbnail": "{title} thumbnail",
-      "scanCount": "Scan Count",
-      "lastScanned": "Last Scanned",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "views": "{count, plural, one {# weergave} other {# weergaven}}",
+      "pieces": "{count, plural, one {# inhoud} other {# inhouden}}",
+      "noContent": "Nog geen inhoud",
+      "more": "+{count} meer",
+      "select": "{title} selecteren",
+      "thumbnail": "Miniatuur van {title}",
+      "scanCount": "Aantal scans",
+      "lastScanned": "Laatst gescand",
+      "createdAt": "Aangemaakt op",
+      "updatedAt": "Bijgewerkt op",
+      "placeholder": {
+        "title": "Titel invoeren...",
+        "location": "Locatie toevoegen...",
+        "tags": "Tags toevoegen..."
+      },
+      "aria": {
+        "location": "Locatie: {location}.",
+        "selected": "Geselecteerd",
+        "notSelected": "Niet geselecteerd",
+        "pressEnterToSelect": "Druk op Enter om te selecteren",
+        "pressEnterToDeselect": "Druk op Enter om te deselecteren",
+        "pressEnterToPreview": "Druk op Enter voor preview",
+        "selectItem": "{title} selecteren",
+        "thumbnail": "Miniatuur van {title}",
+        "editTitle": "Titel van {title} bewerken",
+        "editLocation": "Locatie van {title} bewerken",
+        "editTags": "Tags van {title} bewerken",
+        "contentDescription": "{badgeLabel} inhoud"
+      },
+      "tags": {
+        "more": "+{count} meer"
+      }
     },
     "actions": {
       "create": "New Item",

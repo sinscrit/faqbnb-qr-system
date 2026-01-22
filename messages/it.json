@@ -1189,30 +1189,58 @@
         "title": "No matching items",
         "description": "Try adjusting your search or filters"
       },
-      "loading": "Loading items...",
-      "noArticles": "No articles yet",
-      "addFirstArticle": "Add your first article"
+      "loading": "Caricamento elementi...",
+      "noArticles": "Ancora nessun articolo",
+      "addFirstArticle": "Aggiungi il tuo primo articolo"
     },
+
+    "grid": {
+      "ariaLabel": "{count, plural, =0 {Nessun elemento} one {# elemento} other {# elementi}}",
+      "loading": "Caricamento elementi"
+    },
+
     "card": {
       "contentType": {
         "link": "LINK",
-        "text": "TEXT",
+        "text": "TESTO",
         "pdf": "PDF",
-        "mixed": "MIXED",
+        "mixed": "MISTO",
         "video": "VIDEO",
-        "photo": "PHOTO",
+        "photo": "FOTO",
         "media": "MEDIA"
       },
-      "views": "{count, plural, one {# view} other {# views}}",
-      "pieces": "{count, plural, one {# piece} other {# pieces}} of content",
-      "noContent": "No content yet",
-      "more": "+{count} more",
-      "select": "Select {title}",
-      "thumbnail": "{title} thumbnail",
-      "scanCount": "Scan Count",
-      "lastScanned": "Last Scanned",
-      "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "views": "{count, plural, one {# visualizzazione} other {# visualizzazioni}}",
+      "pieces": "{count, plural, one {# contenuto} other {# contenuti}}",
+      "noContent": "Ancora nessun contenuto",
+      "more": "+{count} altri",
+      "select": "Seleziona {title}",
+      "thumbnail": "Miniatura di {title}",
+      "scanCount": "Numero di scansioni",
+      "lastScanned": "Ultima scansione",
+      "createdAt": "Creato il",
+      "updatedAt": "Aggiornato il",
+      "placeholder": {
+        "title": "Inserisci titolo...",
+        "location": "Aggiungi posizione...",
+        "tags": "Aggiungi tag..."
+      },
+      "aria": {
+        "location": "Posizione: {location}.",
+        "selected": "Selezionato",
+        "notSelected": "Non selezionato",
+        "pressEnterToSelect": "Premi Invio per selezionare",
+        "pressEnterToDeselect": "Premi Invio per deselezionare",
+        "pressEnterToPreview": "Premi Invio per anteprima",
+        "selectItem": "Seleziona {title}",
+        "thumbnail": "Miniatura di {title}",
+        "editTitle": "Modifica titolo di {title}",
+        "editLocation": "Modifica posizione di {title}",
+        "editTags": "Modifica tag di {title}",
+        "contentDescription": "Contenuto {badgeLabel}"
+      },
+      "tags": {
+        "more": "+{count} altri"
+      }
     },
     "actions": {
       "create": "New Item",
