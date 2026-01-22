@@ -5,13 +5,14 @@
  * Supports swipe-to-dismiss gesture, backdrop tap-to-close, and proper focus management.
  *
  * @module ItemManager/components/shared/BottomSheet
- * @lastModified 2026-01-03 (REQ-089)
+ * @lastModified 2026-01-22 (REQ-E02-079 Task 4) - Added i18n for close aria-label
  */
 
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -54,6 +55,7 @@ export function BottomSheet({
   swipeThreshold = 100,
   maxHeightPercent = 90,
 }: BottomSheetProps) {
+  const t = useTranslations('common');
   const sheetRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number | null>(null);
   const currentOffsetY = useRef<number>(0);
@@ -217,7 +219,7 @@ export function BottomSheet({
                 'transition-colors',
                 'touch-manipulation'
               )}
-              aria-label="Close"
+              aria-label={t('dialog.close')}
             >
               <X className="w-5 h-5" />
             </button>

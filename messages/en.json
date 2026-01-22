@@ -1173,6 +1173,12 @@
     "tags": "Tags",
 
     "list": {
+      "title": "My Items",
+      "count": "{count, plural, one {# item} other {# items}} total",
+      "createNew": "New QR Code Item",
+      "loginRequired": "Please log in to view items.",
+      "dismiss": "Dismiss",
+      "error": "An error occurred",
       "empty": {
         "title": "No items yet",
         "description": "Create your first QR code item to get started",
@@ -1477,7 +1483,7 @@
         "placeholder": "Add tags...",
         "ariaLabel": "Edit tags for {itemName}",
         "add": "Add Tag",
-        "remove": "Remove Tag"
+        "remove": "Remove tag {tag}"
       },
       "save": "Save",
       "cancel": "Cancel",
@@ -1527,8 +1533,86 @@
     },
 
     "edit": {
-      "title": "Edit Item",
-      "description": "Update item details and resources"
+      "pageTitle": "Edit Item",
+      "backToItems": "Back to Items",
+      "loading": "Loading item...",
+      "loginRequired": "Please log in to edit items.",
+      "returnToItems": "Return to Items",
+      "notFound": "Item not found",
+      "loadError": "Failed to load item. Please try again.",
+      "form": {
+        "nameLabel": "Item Name",
+        "namePlaceholder": "Enter item name",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Enter item description (optional)",
+        "roomLabel": "Room",
+        "roomPlaceholder": "Select a room...",
+        "roomAriaLabel": "Select room for this item",
+        "itemTypeLabel": "Item Type",
+        "itemTypePlaceholder": "Select item type...",
+        "itemTypeAriaLabel": "Select item type",
+        "tagsLabel": "Additional Tags",
+        "tagsHelper": "Add custom tags for additional categorization",
+        "tagsPlaceholder": "Click to add tags..."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "saving": "Saving..."
+      },
+      "guides": {
+        "title": "Guides",
+        "description": "Content associated with this item",
+        "empty": "No guides yet",
+        "emptyDescription": "Guides for this item will appear here",
+        "edit": "Edit"
+      },
+      "purposes": {
+        "howToUse": "How To Use",
+        "troubleshooting": "Troubleshooting",
+        "howToClean": "How To Clean",
+        "safetyInfo": "Safety Info",
+        "maintenance": "Maintenance",
+        "features": "Features",
+        "other": "Other"
+      },
+      "rooms": {
+        "kitchen": "Kitchen",
+        "bathroom": "Bathroom",
+        "bedroom": "Bedroom",
+        "livingRoom": "Living Room",
+        "laundry": "Laundry",
+        "garage": "Garage",
+        "outdoor": "Outdoor",
+        "office": "Office",
+        "gym": "Gym",
+        "pool": "Pool",
+        "other": "Other"
+      },
+      "itemTypes": {
+        "appliance": "Appliance",
+        "roomItem": "Room Item",
+        "generalInfo": "General Info"
+      },
+      "tags": {
+        "addTags": "Add tags...",
+        "typeToAdd": "Type to add...",
+        "maxReached": "Max tags reached",
+        "saving": "Saving...",
+        "editTags": "Edit tags",
+        "tagsSelected": "{count} tags selected",
+        "savingTags": "Saving tags...",
+        "moreCount": "+{count} more",
+        "suggestions": "Tag suggestions",
+        "addNewTag": "Add new tag",
+        "removeTag": "Remove tag {tag}",
+        "validation": {
+          "empty": "Tag cannot be empty",
+          "tooLong": "Tag must be {max} characters or less",
+          "duplicate": "Tag already exists",
+          "maxTags": "Maximum {max} tags allowed"
+        }
+      }
     },
 
     "create": {

@@ -6,13 +6,14 @@
  *
  * @module ItemManager/components/SearchInput
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.3)
- * @lastModified 2026-01-04 (REQ-064 - Initial implementation)
+ * @lastModified 2026-01-22 (REQ-E02-079 Task 3) - Added i18n for placeholder and aria-labels
  */
 
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useDebounce, DEFAULT_DEBOUNCE_MS } from '../hooks/useDebounce';
 
@@ -54,8 +55,8 @@ export interface SearchInputProps {
 export function SearchInput({
   value,
   onChange,
-  placeholder = 'Search items...',
-  clearAriaLabel = 'Clear search',
+  placeholder,
+  clearAriaLabel,
   debounceMs = DEFAULT_DEBOUNCE_MS,
   disabled = false,
   className,
@@ -65,6 +66,12 @@ export function SearchInput({
   onFocus,
   onBlur,
 }: SearchInputProps) {
+  const t = useTranslations('items');
+
+  // Use translations for defaults if not provided
+  const effectivePlaceholder = placeholder ?? t('search.placeholder');
+  const effectiveClearAriaLabel = clearAriaLabel ?? t('search.clear');
+
   // Internal state for immediate UI feedback
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -172,7 +179,7 @@ export function SearchInput({
         onKeyDown={handleKeyDown}
         onFocus={onFocus}
         onBlur={onBlur}
-        placeholder={placeholder}
+        placeholder={effectivePlaceholder}
         disabled={disabled}
         autoFocus={autoFocus}
         className={cn(
@@ -196,7 +203,7 @@ export function SearchInput({
           inputClassName
         )}
         role="searchbox"
-        aria-label={placeholder}
+        aria-label={effectivePlaceholder}
       />
 
       {/* Clear Button - only visible when has value and not disabled (Task 2.3.4) */}
@@ -215,7 +222,7 @@ export function SearchInput({
             // Touch target - at least 24x24px with padding
             "min-w-[28px] min-h-[28px]"
           )}
-          aria-label={clearAriaLabel}
+          aria-label={effectiveClearAriaLabel}
         >
           <X className="w-4 h-4" aria-hidden="true" />
         </button>

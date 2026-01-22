@@ -7,10 +7,11 @@
  * Provides clear visual indication of the current selection.
  *
  * @module ItemManager/components/shared/ViewModeToggle
- * @lastModified 2026-01-03 (REQ-060 Task 2)
+ * @lastModified 2026-01-22 (REQ-E02-079 Task 1) - Added i18n for aria-labels
  */
 
 import { LayoutGrid, List } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ViewModeToggleProps } from '../../ItemManager.types';
 
@@ -20,6 +21,8 @@ export function ViewModeToggle({
   disabled = false,
   className,
 }: ViewModeToggleProps) {
+  const t = useTranslations('items');
+
   return (
     <div
       className={cn(
@@ -28,13 +31,13 @@ export function ViewModeToggle({
         className
       )}
       role="group"
-      aria-label="View mode selection"
+      aria-label={t('view.toggle')}
     >
       <button
         type="button"
         onClick={() => onViewModeChange('grid')}
         disabled={disabled}
-        aria-label="Grid view"
+        aria-label={t('view.grid')}
         aria-pressed={viewMode === 'grid'}
         className={cn(
           "p-2 rounded-md transition-all duration-200",
@@ -51,7 +54,7 @@ export function ViewModeToggle({
         type="button"
         onClick={() => onViewModeChange('list')}
         disabled={disabled}
-        aria-label="List view"
+        aria-label={t('view.list')}
         aria-pressed={viewMode === 'list'}
         className={cn(
           "p-2 rounded-md transition-all duration-200",

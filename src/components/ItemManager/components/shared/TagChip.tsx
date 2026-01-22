@@ -15,11 +15,12 @@
  * - Minimum 44px touch target for remove button on mobile
  *
  * @module ItemManager/components/shared/TagChip
- * @lastModified 2026-01-03 (REQ-089 - Mobile touch target optimization)
+ * @lastModified 2026-01-22 (REQ-E02-079 Task 2) - Added i18n for remove aria-label
  */
 
 import React from 'react';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 // =============================================================================
@@ -56,6 +57,8 @@ export function TagChip({
   variant = 'default',
   className,
 }: TagChipProps) {
+  const t = useTranslations('items');
+
   // ---------------------------------------------------------------------------
   // Event Handlers
   // ---------------------------------------------------------------------------
@@ -122,7 +125,7 @@ export function TagChip({
           onKeyDown={handleRemoveKeyDown}
           disabled={disabled}
           className={removeButtonStyles}
-          aria-label={`Remove tag ${tag}`}
+          aria-label={t('inline.tags.remove', { tag })}
           tabIndex={disabled ? -1 : 0}
         >
           <X className="w-3 h-3" aria-hidden="true" />
