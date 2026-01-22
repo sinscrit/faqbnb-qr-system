@@ -12,10 +12,12 @@
  * @module ItemCapture/components/steps/FileUploadStep
  * @see docs/REQ-042-implement-fileuploadstep-detailed.md
  * @see docs/REQ-043-add-pdf-thumbnail-generation-detailed.md
- * @lastModified 2026-01-10 (REQ-173 Mobile Responsiveness - Touch targets 48px)
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
  */
 
 import React, { useCallback, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import type { TranslationFn } from '@/types/i18n';
 import {
   Upload,
   Image,
@@ -130,9 +132,11 @@ function getFileIcon(category: ValidatedFile['category']): React.ReactNode {
 interface PDFFileCardProps {
   file: ValidatedFile;
   onRemove: (id: string) => void;
+  /** Translation function for i18n (REQ-E02-063) */
+  t: TranslationFn;
 }
 
-function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
+function PDFFileCard({ file, onRemove, t }: PDFFileCardProps) {
   const sizeLabel = formatFileSize(file.size);
 
   // Use the PDF thumbnail hook
@@ -183,7 +187,7 @@ function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
         {/* Show page count in text for PDFs without thumbnail */}
         {!thumbnailUrl && pageCount > 0 && (
           <p className="text-xs text-gray-500">
-            {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+            {t('pdf.pageCount', { count: pageCount })}
           </p>
         )}
       </div>
@@ -195,10 +199,10 @@ function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
         </p>
       )}
       {isPasswordProtected && (
-        <p className="text-xs text-amber-600 mt-1">Password protected</p>
+        <p className="text-xs text-amber-600 mt-1">{t('pdf.passwordProtected')}</p>
       )}
       {isCorrupt && (
-        <p className="text-xs text-red-600 mt-1">File may be damaged</p>
+        <p className="text-xs text-red-600 mt-1">{t('pdf.fileDamaged')}</p>
       )}
 
       {/* Remove button - always visible on mobile, hover on desktop */}
@@ -213,7 +217,7 @@ function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
           'transition-opacity hover:bg-red-200',
           'focus:outline-none focus:ring-2 focus:ring-red-500 focus:opacity-100'
         )}
-        aria-label={`Remove ${file.name}`}
+        aria-label={t('aria.removeFile', { filename: file.name })}
       >
         <X className="h-4 w-4" />
       </button>
@@ -228,12 +232,14 @@ function PDFFileCard({ file, onRemove }: PDFFileCardProps) {
 interface FileCardProps {
   file: ValidatedFile;
   onRemove: (id: string) => void;
+  /** Translation function for i18n (REQ-E02-063) */
+  t: TranslationFn;
 }
 
-function FileCard({ file, onRemove }: FileCardProps) {
+function FileCard({ file, onRemove, t }: FileCardProps) {
   // Use specialized PDFFileCard for PDF files
   if (file.category === 'pdf') {
-    return <PDFFileCard file={file} onRemove={onRemove} />;
+    return <PDFFileCard file={file} onRemove={onRemove} t={t} />;
   }
 
   const icon = getFileIcon(file.category);
@@ -288,7 +294,7 @@ function FileCard({ file, onRemove }: FileCardProps) {
           'transition-opacity hover:bg-red-200',
           'focus:outline-none focus:ring-2 focus:ring-red-500 focus:opacity-100'
         )}
-        aria-label={`Remove ${file.name}`}
+        aria-label={t('aria.removeFile', { filename: file.name })}
       >
         <X className="h-4 w-4" />
       </button>
@@ -305,6 +311,8 @@ interface ErrorDisplayProps {
   onDismissError: () => void;
   onClearRejections: () => void;
   showRejections: boolean;
+  /** Translation function for i18n (REQ-E02-063) */
+  t: TranslationFn;
 }
 
 function ErrorDisplay({
@@ -313,6 +321,7 @@ function ErrorDisplay({
   onDismissError,
   onClearRejections,
   showRejections,
+  t,
 }: ErrorDisplayProps) {
   if (!error && (!showRejections || rejectedFiles.length === 0)) return null;
 
@@ -333,7 +342,7 @@ function ErrorDisplay({
             type="button"
             onClick={onDismissError}
             className="text-red-400 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
-            aria-label="Dismiss error"
+            aria-label={t('aria.dismissError')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -345,15 +354,14 @@ function ErrorDisplay({
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <p className="text-yellow-800 font-medium">
-              {rejectedFiles.length} file
-              {rejectedFiles.length > 1 ? 's' : ''} couldn&apos;t be added
+              {t('rejections.title', { count: rejectedFiles.length })}
             </p>
             <button
               type="button"
               onClick={onClearRejections}
               className="text-yellow-600 hover:text-yellow-800 text-sm underline focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
             >
-              Dismiss
+              {t('rejections.dismiss')}
             </button>
           </div>
           <ul className="space-y-1">
@@ -379,6 +387,8 @@ interface UploadProgressProps {
   maxFiles: number;
   totalSize: number;
   maxTotalSize: number;
+  /** Translation function for i18n (REQ-E02-063) */
+  t: TranslationFn;
 }
 
 function UploadProgress({
@@ -386,10 +396,11 @@ function UploadProgress({
   maxFiles,
   totalSize,
   maxTotalSize,
+  t,
 }: UploadProgressProps) {
   const sizePercent = Math.min((totalSize / maxTotalSize) * 100, 100);
-  const countText = `${fileCount}/${maxFiles} files`;
-  const sizeText = `${formatFileSize(totalSize)} / ${formatFileSize(maxTotalSize)}`;
+  const countText = t('progress.fileCount', { current: fileCount, max: maxFiles });
+  const sizeText = t('progress.sizeProgress', { current: formatFileSize(totalSize), max: formatFileSize(maxTotalSize) });
 
   return (
     <div className="flex items-center justify-between text-sm text-gray-600 mt-4">
@@ -406,7 +417,7 @@ function UploadProgress({
             aria-valuenow={sizePercent}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Upload size progress"
+            aria-label={t('aria.uploadProgress')}
           />
         </div>
         <span>{sizeText}</span>
@@ -455,6 +466,12 @@ export function FileUploadStep({
   className,
   compact = false,
 }: FileUploadStepProps) {
+  // ===========================================================================
+  // i18n (REQ-E02-063)
+  // ===========================================================================
+
+  const t = useTranslations('workflow.steps.fileUpload');
+
   // ===========================================================================
   // Configuration
   // ===========================================================================
@@ -593,9 +610,9 @@ export function FileUploadStep({
       {/* Header */}
       {!compact && (
         <div className="text-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Upload Files</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('title')}</h2>
           <p className="text-sm text-gray-600">
-            Drag and drop files or click to select
+            {t('subtitle')}
           </p>
         </div>
       )}
@@ -607,6 +624,7 @@ export function FileUploadStep({
         onDismissError={clearError}
         onClearRejections={handleClearRejections}
         showRejections={!clearedRejections}
+        t={t}
       />
 
       {/* Drop Zone */}
@@ -653,25 +671,25 @@ export function FileUploadStep({
         {/* Conditional text content */}
         {isDragActive ? (
           isDragValid ? (
-            <p className="text-blue-600 font-medium">Drop files here</p>
+            <p className="text-blue-600 font-medium">{t('dropZone.dropValid')}</p>
           ) : (
-            <p className="text-red-600 font-medium">Invalid file type</p>
+            <p className="text-red-600 font-medium">{t('dropZone.dropInvalid')}</p>
           )
         ) : hasFiles ? (
           <div className="flex items-center gap-2 text-gray-600">
             <Plus className="h-5 w-5" />
-            <span>Add more files</span>
+            <span>{t('dropZone.addMore')}</span>
           </div>
         ) : (
           <>
             <p className="text-gray-700 font-medium">
-              Drag files here or click to browse
+              {t('dropZone.default')}
             </p>
             <p className="text-gray-500 text-sm mt-2">
-              Supports images, videos, and PDF files
+              {t('dropZone.supportedFormats')}
             </p>
             <p className="text-gray-400 text-xs mt-4">
-              Max {maxFiles} files, {formatFileSize(maxFileSize)} each
+              {t('dropZone.maxLimits', { maxFiles, maxSize: formatFileSize(maxFileSize) })}
             </p>
           </>
         )}
@@ -689,7 +707,7 @@ export function FileUploadStep({
             )}
           >
             {files.map((file) => (
-              <FileCard key={file.id} file={file} onRemove={handleRemove} />
+              <FileCard key={file.id} file={file} onRemove={handleRemove} t={t} />
             ))}
           </div>
 
@@ -698,13 +716,14 @@ export function FileUploadStep({
             maxFiles={maxFiles}
             totalSize={totalSize}
             maxTotalSize={maxTotalSize}
+            t={t}
           />
         </>
       )}
 
       {/* Screen reader announcements */}
       <div aria-live="polite" className="sr-only">
-        {hasFiles && `${files.length} files uploaded`}
+        {hasFiles && t('announcements.filesUploaded', { count: files.length })}
       </div>
 
       {/* Sticky Navigation Footer (REQ-165) */}
@@ -715,7 +734,7 @@ export function FileUploadStep({
             onClick={handleBack}
             className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
-            Back
+            {t('buttons.back')}
           </button>
 
           {hasFiles && (
@@ -728,7 +747,7 @@ export function FileUploadStep({
                 'bg-blue-600 text-white hover:bg-blue-700'
               )}
             >
-              Continue
+              {t('buttons.continue')}
             </button>
           )}
         </div>

@@ -1632,11 +1632,21 @@
         }
       },
       "mediaCapture": {
-        "_comment": "MediaCaptureStep.tsx - Step 6 and all adapter components",
+        "_comment": "MediaCaptureStep.tsx - Step 6 router component",
         "title": "Capture Content",
         "subtitle": "Add content for your item",
         "takePhoto": "Take Photo",
         "recordVideo": "Record Video",
+        "errors": {
+          "noContentType": {
+            "title": "No Content Type Selected",
+            "message": "Please go back and select a content type before proceeding."
+          },
+          "unsupportedType": {
+            "title": "Unsupported Content Type",
+            "message": "The content type \"{contentType}\" is not supported. Please go back and select a different option."
+          }
+        },
         "startRecording": "Start Recording",
         "stopRecording": "Stop Recording",
         "pauseRecording": "Pause Recording",
@@ -1710,6 +1720,265 @@
           "noPreview": "No preview available",
           "linkTitle": "Link title",
           "linkDescription": "Link description"
+        }
+      },
+      "videoCapture": {
+        "_comment": "VideoCaptureStep.tsx - Video recording component",
+        "title": {
+          "preview": "Record Video",
+          "recording": "Recording Video",
+          "review": "Review Your Video"
+        },
+        "subtitle": {
+          "preview": "Position your camera and tap record to start",
+          "recording": "Recording in progress - tap stop when finished",
+          "review": "Play to review, then accept or retake"
+        },
+        "buttons": {
+          "startRecording": "Start recording",
+          "stopRecording": "Stop recording",
+          "switchCamera": "Switch camera",
+          "retake": "Retake",
+          "accept": "Accept",
+          "tryAgain": "Try Again",
+          "back": "Back"
+        },
+        "states": {
+          "processing": "Processing...",
+          "initializing": "Initializing camera...",
+          "rec": "REC"
+        },
+        "timer": {
+          "remaining": "{time} remaining"
+        },
+        "aria": {
+          "discardAndRecord": "Discard and record again",
+          "acceptVideo": "Accept video"
+        },
+        "announcements": {
+          "recordingStarted": "Recording started",
+          "recordingStopped": "Recording stopped. Review your video.",
+          "retaking": "Retaking video. Ready to record.",
+          "processing": "Processing video...",
+          "cameraSwitched": "Switched to {camera} camera",
+          "retrying": "Retrying camera initialization"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Camera access was denied",
+            "guidance": "Please enable camera access in your browser settings to record video."
+          },
+          "browserNotSupported": {
+            "message": "Your browser does not support video recording",
+            "guidance": "Camera access requires HTTPS. Please go back and use \"Upload Video\" instead, or access via HTTPS."
+          },
+          "recordingFailed": {
+            "message": "Video recording failed",
+            "guidance": "Please check your camera and try again."
+          },
+          "startFailed": "Failed to start recording",
+          "noData": "No video data captured",
+          "thumbnailFailed": {
+            "message": "Failed to process video",
+            "guidance": "Video saved but thumbnail generation failed."
+          },
+          "loadFailed": "Failed to load video for playback",
+          "unexpected": "An unexpected error occurred. Please try again."
+        }
+      },
+      "photoCapture": {
+        "_comment": "PhotoCaptureStep.tsx - Photo capture component",
+        "title": {
+          "preview": "Capture Photos",
+          "review": "Review Your Photo"
+        },
+        "subtitle": {
+          "preview": "Tap the capture button to take photos ({count} / {max})",
+          "review": "Accept to add or retake for a new shot"
+        },
+        "buttons": {
+          "capture": "Capture photo",
+          "switchCamera": "Switch camera",
+          "retake": "Retake",
+          "accept": "Accept",
+          "back": "Back",
+          "continue": "Continue",
+          "tryAgain": "Try Again"
+        },
+        "states": {
+          "processing": "Processing...",
+          "initializing": "Initializing camera..."
+        },
+        "gallery": {
+          "title": "Photo gallery",
+          "deletePhoto": "Delete photo",
+          "closeGallery": "Close gallery",
+          "counter": "{current} of {total}",
+          "previousPhoto": "Previous photo",
+          "nextPhoto": "Next photo"
+        },
+        "thumbnailStrip": {
+          "title": "Captured photos",
+          "photoAlt": "Photo {index}",
+          "removePhoto": "Remove photo {index}",
+          "add": "Add"
+        },
+        "flash": {
+          "auto": "Auto"
+        },
+        "aria": {
+          "discardAndCapture": "Discard and capture again",
+          "acceptPhoto": "Accept photo",
+          "capturedPhotoPreview": "Captured photo preview"
+        },
+        "announcements": {
+          "photoCaptured": "Photo captured. Review or retake.",
+          "retaking": "Retaking photo. Ready to capture.",
+          "processing": "Processing photo...",
+          "added": "Photo added to collection.",
+          "removed": "Photo removed.",
+          "switchedCamera": "Switched to {camera} camera",
+          "retrying": "Retrying camera initialization"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Camera access was denied",
+            "guidance": "Please enable camera access in your browser settings to capture photos."
+          },
+          "browserNotSupported": {
+            "message": "Your browser does not support photo capture",
+            "guidance": "Camera access requires HTTPS. Please go back and use \"Upload Photo\" instead, or access via HTTPS."
+          },
+          "captureFailed": {
+            "message": "Photo capture failed",
+            "guidance": "Please check your camera and try again."
+          },
+          "processFailed": "Failed to process photo",
+          "maxPhotosReached": {
+            "message": "Maximum of {max} photos reached",
+            "guidance": "You have reached the maximum of {max} photos. Remove a photo to add more."
+          },
+          "storageFull": {
+            "message": "Device storage is full",
+            "guidance": "Please free up space and try again."
+          },
+          "unexpected": "An unexpected error occurred. Please try again."
+        }
+      },
+      "fileUpload": {
+        "_comment": "FileUploadStep.tsx - File upload component",
+        "title": "Upload Files",
+        "subtitle": "Drag and drop files or click to select",
+        "dropZone": {
+          "default": "Drag files here or click to browse",
+          "dropValid": "Drop files here",
+          "dropInvalid": "Invalid file type",
+          "hasFiles": "Add more files",
+          "supportedFormats": "Supports images, videos, and PDF files",
+          "limits": "Max {count} files, {size} each"
+        },
+        "progress": {
+          "fileCount": "{count}/{max} files"
+        },
+        "errors": {
+          "rejectionTitle": "{count, plural, one {# file} other {# files}} couldn't be added",
+          "dismiss": "Dismiss"
+        },
+        "pdf": {
+          "passwordProtected": "Password protected",
+          "corrupted": "File may be damaged",
+          "pageCount": "{count, plural, one {# page} other {# pages}}"
+        },
+        "buttons": {
+          "back": "Back",
+          "continue": "Continue"
+        },
+        "aria": {
+          "removeFile": "Remove {filename}",
+          "uploadProgress": "Upload size progress"
+        },
+        "announcements": {
+          "filesUploaded": "{count} files uploaded"
+        }
+      },
+      "textEditor": {
+        "_comment": "TextEditorStep.tsx - Text editor component (REQ-E02-063)",
+        "title": "Write Guide",
+        "description": "Add text-based guide using markdown formatting",
+        "toolbar": {
+          "ariaLabel": "Text formatting",
+          "bold": "Bold (Ctrl+B)",
+          "italic": "Italic (Ctrl+I)",
+          "heading1": "Heading 1",
+          "heading2": "Heading 2",
+          "heading3": "Heading 3",
+          "bulletList": "Bullet List",
+          "numberedList": "Numbered List",
+          "link": "Insert Link (Ctrl+K)"
+        },
+        "editor": {
+          "placeholder": "Write your item guide here using markdown formatting...",
+          "ariaLabel": "Markdown content editor"
+        },
+        "preview": {
+          "label": "Preview",
+          "emptyState": "Start typing to see a preview of your formatted content..."
+        },
+        "tabs": {
+          "editor": "Editor",
+          "preview": "Preview"
+        },
+        "characterCount": {
+          "text": "{current} / {max} characters",
+          "ariaLabel": "Character count progress"
+        },
+        "errors": {
+          "overLimit": "Content exceeds the maximum character limit. Please shorten your text."
+        },
+        "autoSave": {
+          "saving": "Saving..."
+        },
+        "navigation": {
+          "back": "Back",
+          "continue": "Continue"
+        }
+      },
+      "urlInput": {
+        "_comment": "UrlInputStep.tsx - URL input component (REQ-E02-063)",
+        "title": "Add Link",
+        "description": "Add a URL to your item. We'll fetch the title and preview automatically.",
+        "form": {
+          "urlLabel": "URL",
+          "placeholder": "https://www.youtube.com/watch?v=...",
+          "pasteButton": "Paste",
+          "clearUrl": "Clear URL",
+          "fetchButton": "Fetch Preview",
+          "fetching": "Fetching preview..."
+        },
+        "networkError": {
+          "title": "Preview unavailable",
+          "message": "Unable to load preview due to network connectivity issues.",
+          "retryButton": "Try Again",
+          "retrying": "Retrying...",
+          "proceedButton": "Proceed Without Preview"
+        },
+        "proceedWithoutPreview": {
+          "title": "Proceeding without preview",
+          "message": "The link will be added without a preview. You can edit the title later.",
+          "addButton": "Add Link Anyway",
+          "cancelButton": "Cancel"
+        },
+        "preview": {
+          "loadedTitle": "Preview loaded",
+          "addButton": "Add Link",
+          "tryAnotherButton": "Try Another"
+        },
+        "errors": {
+          "invalidUrl": "Invalid URL",
+          "clipboardError": "Unable to read clipboard. Please paste manually."
+        },
+        "navigation": {
+          "back": "Back"
         }
       },
       "contentCreation": {
@@ -1926,6 +2195,15 @@
         "notSupportedDescription": "Your device does not support camera access.",
         "switchingCamera": "Switching camera...",
         "cameraError": "Camera error. Please try again."
+      },
+      "cameraPermission": {
+        "_comment": "CameraPermissionFallback.tsx - Camera permission denied fallback UI",
+        "title": "Camera access denied",
+        "explanation": "To capture a {contentType}, please allow camera access in your browser settings, or upload an existing {contentType} from your device.",
+        "uploadVideo": "Upload Video Instead",
+        "uploadPhoto": "Upload Photo Instead",
+        "tryAgain": "Try Camera Again",
+        "helpLink": "How to enable camera access"
       },
       "network": {
         "offline": "You appear to be offline",

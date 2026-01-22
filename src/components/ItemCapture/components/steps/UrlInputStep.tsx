@@ -8,7 +8,7 @@
  *
  * @module ItemCapture/components/steps/UrlInputStep
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-10 (REQ-165 - Sticky navigation)
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration - update to workflow.steps namespace)
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -34,7 +34,8 @@ export default function UrlInputStep({
   prevStep,
   config,
 }: UrlInputStepProps) {
-  const t = useTranslations('urlInput');
+  // i18n (REQ-E02-063)
+  const t = useTranslations('workflow.steps.urlInput');
   const [urlInput, setUrlInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

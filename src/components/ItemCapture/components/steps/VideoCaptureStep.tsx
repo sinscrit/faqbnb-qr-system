@@ -9,7 +9,7 @@
  * @module ItemCapture/components/steps/VideoCaptureStep
  * @see docs/REQ-038-implement-videocapturestep-detailed.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-10 (REQ-165 - Sticky navigation in preview mode)
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -159,54 +159,7 @@ const generateVideoThumbnail = (blob: Blob, maxWidth = 320): Promise<Blob | null
   });
 };
 
-/**
- * Maps hook errors to component-specific errors.
- */
-const mapHookErrorToComponentError = (
-  error: MediaCaptureError | null
-): VideoCaptureError | null => {
-  if (!error) return null;
-
-  switch (error.code) {
-    case 'PERMISSION_DENIED':
-      return {
-        code: 'PERMISSION_DENIED',
-        message: 'Camera access was denied',
-        recoverable: false,
-      };
-    case 'BROWSER_NOT_SUPPORTED':
-      return {
-        code: 'BROWSER_NOT_SUPPORTED',
-        message: 'Your browser does not support video recording',
-        recoverable: false,
-      };
-    case 'RECORDING_ERROR':
-    default:
-      return {
-        code: 'RECORDING_FAILED',
-        message: error.message || 'Video recording failed',
-        recoverable: true,
-      };
-  }
-};
-
-/**
- * Gets user-friendly guidance for error codes.
- */
-const getErrorGuidance = (code: string): string => {
-  switch (code) {
-    case 'PERMISSION_DENIED':
-      return 'Please enable camera access in your browser settings to record video.';
-    case 'BROWSER_NOT_SUPPORTED':
-      return 'Camera access requires HTTPS. Please go back and use "Upload Video" instead, or access via HTTPS.';
-    case 'RECORDING_FAILED':
-      return 'Please check your camera and try again.';
-    case 'THUMBNAIL_FAILED':
-      return 'Video saved but thumbnail generation failed.';
-    default:
-      return 'An unexpected error occurred. Please try again.';
-  }
-};
+// Error mapping functions moved inside component to access translations
 
 // =============================================================================
 // Component
@@ -244,8 +197,62 @@ export function VideoCaptureStep({
   config,
   className,
 }: VideoCaptureStepProps) {
-  // Translations
+  // Translations (REQ-E02-063)
+  const t = useTranslations('workflow.steps.videoCapture');
   const tLoading = useTranslations('common.loading');
+
+  // ===========================================================================
+  // Error Mapping Functions (inside component to access t)
+  // ===========================================================================
+
+  /**
+   * Maps hook errors to component-specific errors.
+   */
+  const mapHookErrorToComponentError = (
+    error: MediaCaptureError | null
+  ): VideoCaptureError | null => {
+    if (!error) return null;
+
+    switch (error.code) {
+      case 'PERMISSION_DENIED':
+        return {
+          code: 'PERMISSION_DENIED',
+          message: t('errors.permissionDenied.message'),
+          recoverable: false,
+        };
+      case 'BROWSER_NOT_SUPPORTED':
+        return {
+          code: 'BROWSER_NOT_SUPPORTED',
+          message: t('errors.browserNotSupported.message'),
+          recoverable: false,
+        };
+      case 'RECORDING_ERROR':
+      default:
+        return {
+          code: 'RECORDING_FAILED',
+          message: error.message || t('errors.recordingFailed.message'),
+          recoverable: true,
+        };
+    }
+  };
+
+  /**
+   * Gets user-friendly guidance for error codes.
+   */
+  const getErrorGuidance = (code: string): string => {
+    switch (code) {
+      case 'PERMISSION_DENIED':
+        return t('errors.permissionDenied.guidance');
+      case 'BROWSER_NOT_SUPPORTED':
+        return t('errors.browserNotSupported.guidance');
+      case 'RECORDING_FAILED':
+        return t('errors.recordingFailed.guidance');
+      case 'THUMBNAIL_FAILED':
+        return t('errors.thumbnailFailed.guidance');
+      default:
+        return t('errors.unexpected');
+    }
+  };
 
   // ===========================================================================
   // Hook: Media Capture
@@ -404,15 +411,15 @@ export function VideoCaptureStep({
     const success = await hookStartRecording();
     if (success) {
       setMode('recording');
-      announce('Recording started');
+      announce(t('announcements.recordingStarted'));
     } else {
       setError({
         code: 'RECORDING_FAILED',
-        message: 'Failed to start recording',
+        message: t('errors.startFailed'),
         recoverable: true,
       });
     }
-  }, [hookStartRecording, announce]);
+  }, [hookStartRecording, announce, t]);
 
   const handleStopRecording = useCallback(async () => {
     // Clear timer first
@@ -427,16 +434,16 @@ export function VideoCaptureStep({
       setRecordedBlob(blob);
       setRecordedUrl(url);
       setMode('review');
-      announce('Recording stopped. Review your video.');
+      announce(t('announcements.recordingStopped'));
     } else {
       setError({
         code: 'RECORDING_FAILED',
-        message: 'No video data captured',
+        message: t('errors.noData'),
         recoverable: true,
       });
       setMode('preview');
     }
-  }, [hookStopRecording, announce]);
+  }, [hookStopRecording, announce, t]);
 
   // ===========================================================================
   // Review Handlers
@@ -453,14 +460,14 @@ export function VideoCaptureStep({
     setElapsedTime(0);
     setMode('preview');
     setError(null);
-    announce('Retaking video. Ready to record.');
-  }, [recordedUrl, announce]);
+    announce(t('announcements.retaking'));
+  }, [recordedUrl, announce, t]);
 
   const handleAccept = useCallback(async () => {
     if (!recordedBlob) return;
 
     setIsProcessing(true);
-    announce('Processing video...');
+    announce(t('announcements.processing'));
 
     try {
       // Generate thumbnail
@@ -498,13 +505,13 @@ export function VideoCaptureStep({
       console.error('Failed to process video:', err);
       setError({
         code: 'THUMBNAIL_FAILED',
-        message: 'Failed to process video',
+        message: t('errors.thumbnailFailed.message'),
         recoverable: true,
       });
     } finally {
       setIsProcessing(false);
     }
-  }, [recordedBlob, recordedUrl, state.mediaItems.length, addMedia, goToStep, announce]);
+  }, [recordedBlob, recordedUrl, state.mediaItems.length, addMedia, goToStep, announce, t]);
 
   // ===========================================================================
   // Camera Switch Handler
@@ -513,8 +520,8 @@ export function VideoCaptureStep({
   const handleSwitchCamera = useCallback(async () => {
     if (mode === 'recording') return;
     await toggleFacingMode();
-    announce(`Switched to ${facingMode === 'user' ? 'back' : 'front'} camera`);
-  }, [mode, toggleFacingMode, facingMode, announce]);
+    announce(t('announcements.cameraSwitched', { camera: facingMode === 'user' ? 'back' : 'front' }));
+  }, [mode, toggleFacingMode, facingMode, announce, t]);
 
   // ===========================================================================
   // Error Retry Handler
@@ -524,8 +531,8 @@ export function VideoCaptureStep({
     setError(null);
     setMode('preview');
     await startCamera();
-    announce('Retrying camera initialization');
-  }, [startCamera, announce]);
+    announce(t('announcements.retrying'));
+  }, [startCamera, announce, t]);
 
   // ===========================================================================
   // Upload Fallback Handler
@@ -592,7 +599,7 @@ export function VideoCaptureStep({
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               <RotateCcw className="h-5 w-5 mr-2" />
-              Try Again
+              {t('buttons.tryAgain')}
             </button>
           )}
         </div>
@@ -611,7 +618,7 @@ export function VideoCaptureStep({
       <div className={cn('flex flex-col items-center justify-center min-h-[400px]', className)}>
         <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" aria-hidden="true" />
         <p className="text-gray-600" role="status" aria-live="polite">
-          Initializing camera...
+          {t('states.initializing')}
         </p>
       </div>
     );
@@ -626,8 +633,8 @@ export function VideoCaptureStep({
       <div className={cn('flex flex-col', className)}>
         {/* Header */}
         <div className="text-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Review Your Video</h2>
-          <p className="text-sm text-gray-600">Play to review, then accept or retake</p>
+          <h2 className="text-xl font-semibold text-gray-900">{t('title.review')}</h2>
+          <p className="text-sm text-gray-600">{t('subtitle.review')}</p>
         </div>
 
         {/* Video Player */}
@@ -642,7 +649,7 @@ export function VideoCaptureStep({
             onError={() => {
               setError({
                 code: 'RECORDING_FAILED',
-                message: 'Failed to load video for playback',
+                message: t('errors.loadFailed'),
                 recoverable: true,
               });
             }}
@@ -663,10 +670,10 @@ export function VideoCaptureStep({
               'active:scale-95',
               isProcessing && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Discard and record again"
+            aria-label={t('aria.discardAndRecord')}
           >
             <RotateCcw className="h-5 w-5 mr-2" />
-            Retake
+            {t('buttons.retake')}
           </button>
 
           <button
@@ -681,17 +688,17 @@ export function VideoCaptureStep({
               'active:scale-95',
               isProcessing && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Accept video"
+            aria-label={t('aria.acceptVideo')}
           >
             {isProcessing ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                {tLoading('generic.processing')}
+                {t('states.processing')}
               </>
             ) : (
               <>
                 <Check className="h-5 w-5 mr-2" />
-                Accept
+                {t('buttons.accept')}
               </>
             )}
           </button>
@@ -715,12 +722,12 @@ export function VideoCaptureStep({
       {/* Header */}
       <div className="text-center mb-4">
         <h2 className="text-xl font-semibold text-gray-900">
-          {mode === 'recording' ? 'Recording Video' : 'Record Video'}
+          {mode === 'recording' ? t('title.recording') : t('title.preview')}
         </h2>
         <p className="text-sm text-gray-600">
           {mode === 'recording'
-            ? 'Recording in progress - tap stop when finished'
-            : 'Position your camera and tap record to start'}
+            ? t('subtitle.recording')
+            : t('subtitle.preview')}
         </p>
       </div>
 
@@ -745,7 +752,7 @@ export function VideoCaptureStep({
             aria-live="polite"
           >
             <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
-            <span className="text-white text-sm font-medium">REC</span>
+            <span className="text-white text-sm font-medium">{t('states.rec')}</span>
           </div>
         )}
 
@@ -781,7 +788,7 @@ export function VideoCaptureStep({
               'focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2',
               mode === 'recording' && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Switch camera"
+            aria-label={t('buttons.switchCamera')}
           >
             <SwitchCamera className="h-6 w-6" />
           </button>
@@ -799,7 +806,7 @@ export function VideoCaptureStep({
               'focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2',
               'active:scale-95'
             )}
-            aria-label="Start recording"
+            aria-label={t('buttons.startRecording')}
           >
             <Circle className="h-8 w-8 text-white fill-white" />
           </button>
@@ -814,7 +821,7 @@ export function VideoCaptureStep({
               'focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2',
               'active:scale-95'
             )}
-            aria-label="Stop recording"
+            aria-label={t('buttons.stopRecording')}
           >
             <Square className="h-6 w-6 text-white fill-white" />
           </button>
@@ -833,7 +840,7 @@ export function VideoCaptureStep({
               onClick={prevStep}
               className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
             >
-              Back
+              {t('buttons.back')}
             </button>
           </div>
         </div>
@@ -843,7 +850,7 @@ export function VideoCaptureStep({
       {mode === 'recording' && (
         <div className="sr-only" aria-live="polite">
           {elapsedTime % 30 === 0 && elapsedTime > 0 && (
-            <span>{formatTime(remainingTime)} remaining</span>
+            <span>{t('timer.remaining', { time: formatTime(remainingTime) })}</span>
           )}
         </div>
       )}

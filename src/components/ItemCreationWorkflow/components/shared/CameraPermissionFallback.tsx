@@ -8,9 +8,10 @@
  *
  * @module ItemCreationWorkflow/components/shared/CameraPermissionFallback
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
  */
 
+import { useTranslations } from 'next-intl';
 import { Camera, Upload, RefreshCw, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -30,20 +31,6 @@ export interface CameraPermissionFallbackProps {
 }
 
 // =============================================================================
-// Constants
-// =============================================================================
-
-const CONTENT_TYPE_LABELS = {
-  video: 'video',
-  photo: 'photo',
-} as const;
-
-const CONTENT_TYPE_FILE_LABELS = {
-  video: 'Upload Video',
-  photo: 'Upload Photo',
-} as const;
-
-// =============================================================================
 // Main Component
 // =============================================================================
 
@@ -57,8 +44,11 @@ export function CameraPermissionFallback({
   onTryAgain,
   className,
 }: CameraPermissionFallbackProps) {
-  const contentLabel = CONTENT_TYPE_LABELS[contentType];
-  const uploadLabel = CONTENT_TYPE_FILE_LABELS[contentType];
+  // i18n (REQ-E02-063)
+  const t = useTranslations('workflow.shared.cameraPermission');
+
+  // Get content-type-specific labels
+  const uploadLabel = contentType === 'video' ? t('uploadVideo') : t('uploadPhoto');
 
   return (
     <div
@@ -80,13 +70,12 @@ export function CameraPermissionFallback({
 
       {/* Title */}
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-        Camera access not available
+        {t('title')}
       </h3>
 
       {/* Explanation */}
       <p className="text-sm text-gray-600 mb-6 max-w-sm">
-        To record a {contentLabel}, please allow camera access in your browser settings,
-        or upload an existing {contentLabel} from your device.
+        {t('explanation', { contentType })}
       </p>
 
       {/* Action Buttons */}
@@ -122,10 +111,10 @@ export function CameraPermissionFallback({
             'transition-colors duration-200',
             'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
           )}
-          aria-label="Try camera again"
+          aria-label={t('tryAgain')}
         >
           <RefreshCw className="w-5 h-5" aria-hidden="true" />
-          Try Camera Again
+          {t('tryAgain')}
         </button>
       </div>
 
@@ -142,7 +131,7 @@ export function CameraPermissionFallback({
             'focus:outline-none focus:underline'
           )}
         >
-          How to enable camera access
+          {t('helpLink')}
           <ExternalLink className="w-3 h-3" aria-hidden="true" />
         </a>
       </div>

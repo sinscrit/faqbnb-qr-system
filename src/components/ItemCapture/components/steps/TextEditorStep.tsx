@@ -18,7 +18,7 @@
  *
  * @module ItemCapture/components/steps/TextEditorStep
  * @see docs/REQ-044-implement-texteditorstep-detailed.md
- * @lastModified 2026-01-10 (REQ-165 - Sticky navigation with conditional Continue button)
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration - update to workflow.steps namespace)
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -112,7 +112,7 @@ interface MarkdownToolbarProps {
 }
 
 function MarkdownToolbar({ onFormat, disabled }: MarkdownToolbarProps) {
-  const t = useTranslations('textEditor');
+  const t = useTranslations('workflow.steps.textEditor');
   return (
     <div
       className="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg flex-wrap"
@@ -153,7 +153,7 @@ interface CharacterCounterProps {
 }
 
 function CharacterCounter({ current, max, warning }: CharacterCounterProps) {
-  const t = useTranslations('textEditor');
+  const t = useTranslations('workflow.steps.textEditor');
   const percentage = (current / max) * 100;
   const isWarning = current >= warning;
   const isError = current > max;
@@ -203,7 +203,7 @@ interface TabSwitcherProps {
 }
 
 function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
-  const t = useTranslations('textEditor');
+  const t = useTranslations('workflow.steps.textEditor');
   return (
     <div className="flex border-b border-gray-200 md:hidden" role="tablist">
       <button
@@ -277,10 +277,10 @@ export function TextEditorStep({
   className,
 }: TextEditorStepProps) {
   // ===========================================================================
-  // Translations
+  // Translations (REQ-E02-063)
   // ===========================================================================
 
-  const t = useTranslations('textEditor');
+  const t = useTranslations('workflow.steps.textEditor');
 
   // ===========================================================================
   // Local State

@@ -1,8 +1,8 @@
 # Detailed Task Breakdown: REQ-E02-062 - Update ContentTypeStep Component
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-22
 **Request ID:** REQ-E02-062
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2C - Item Creation Workflow
@@ -25,10 +25,10 @@ This document provides granular, implementation-ready tasks for updating the `Co
 
 Before starting implementation, verify:
 
-- [ ] Epic 1 i18n foundation is complete (`next-intl` installed and configured)
-- [ ] REQ-E02-056 (workflow namespace structure) is complete
-- [ ] `/messages/en.json` exists with `workflow` namespace
-- [ ] `useTranslations` hook is available from `next-intl`
+- [x] Epic 1 i18n foundation is complete (`next-intl` installed and configured) ---verified---
+- [x] REQ-E02-056 (workflow namespace structure) is complete ---verified---
+- [x] `/messages/en.json` exists with `workflow` namespace ---verified---
+- [x] `useTranslations` hook is available from `next-intl` ---verified---
 
 ---
 
@@ -546,9 +546,9 @@ Execute tasks in this order to minimize conflicts:
 ```bash
 npm run build
 ```
-- [ ] No TypeScript errors
-- [ ] No missing translation key warnings
-- [ ] Build completes successfully
+- [x] No TypeScript errors ---ts-check: passed (0 errors, baseline: 0)---
+- [x] No missing translation key warnings ---verified: all keys exist in en.json---
+- [x] Build completes successfully ---verified: precommit passed---
 
 ### Runtime Verification
 ```bash

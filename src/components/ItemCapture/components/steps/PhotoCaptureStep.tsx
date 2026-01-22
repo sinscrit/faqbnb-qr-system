@@ -10,7 +10,7 @@
  * @module ItemCapture/components/steps/PhotoCaptureStep
  * @see docs/REQ-039-implement-photocapturestep-detailed.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-10 (REQ-165 - Sticky navigation with conditional Continue button)
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -159,56 +159,7 @@ const generateImageThumbnail = (blob: Blob, maxWidth = 320): Promise<Blob | null
   });
 };
 
-/**
- * Maps hook errors to component-specific errors.
- */
-const mapHookErrorToComponentError = (
-  error: MediaCaptureError | null
-): PhotoCaptureError | null => {
-  if (!error) return null;
-
-  switch (error.code) {
-    case 'PERMISSION_DENIED':
-      return {
-        code: 'PERMISSION_DENIED',
-        message: 'Camera access was denied',
-        recoverable: false,
-      };
-    case 'BROWSER_NOT_SUPPORTED':
-      return {
-        code: 'BROWSER_NOT_SUPPORTED',
-        message: 'Your browser does not support photo capture',
-        recoverable: false,
-      };
-    case 'CAPTURE_ERROR':
-    default:
-      return {
-        code: 'CAPTURE_FAILED',
-        message: error.message || 'Photo capture failed',
-        recoverable: true,
-      };
-  }
-};
-
-/**
- * Gets user-friendly guidance for error codes.
- */
-const getErrorGuidance = (code: string, maxPhotos: number): string => {
-  switch (code) {
-    case 'PERMISSION_DENIED':
-      return 'Please enable camera access in your browser settings to capture photos.';
-    case 'BROWSER_NOT_SUPPORTED':
-      return 'Camera access requires HTTPS. Please go back and use "Upload Photo" instead, or access via HTTPS.';
-    case 'CAPTURE_FAILED':
-      return 'Please check your camera and try again.';
-    case 'MAX_PHOTOS_REACHED':
-      return `You have reached the maximum of ${maxPhotos} photos. Remove a photo to add more.`;
-    case 'STORAGE_FULL':
-      return 'Device storage is full. Please free up space and try again.';
-    default:
-      return 'An unexpected error occurred. Please try again.';
-  }
-};
+// Error mapping functions moved inside component to access translations
 
 // =============================================================================
 // Component
@@ -247,8 +198,64 @@ export function PhotoCaptureStep({
   config,
   className,
 }: PhotoCaptureStepProps) {
-  // Translations
+  // Translations (REQ-E02-063)
+  const t = useTranslations('workflow.steps.photoCapture');
   const tLoading = useTranslations('common.loading');
+
+  // ===========================================================================
+  // Error Mapping Functions (inside component to access t)
+  // ===========================================================================
+
+  /**
+   * Maps hook errors to component-specific errors.
+   */
+  const mapHookErrorToComponentError = (
+    error: MediaCaptureError | null
+  ): PhotoCaptureError | null => {
+    if (!error) return null;
+
+    switch (error.code) {
+      case 'PERMISSION_DENIED':
+        return {
+          code: 'PERMISSION_DENIED',
+          message: t('errors.permissionDenied.message'),
+          recoverable: false,
+        };
+      case 'BROWSER_NOT_SUPPORTED':
+        return {
+          code: 'BROWSER_NOT_SUPPORTED',
+          message: t('errors.browserNotSupported.message'),
+          recoverable: false,
+        };
+      case 'CAPTURE_ERROR':
+      default:
+        return {
+          code: 'CAPTURE_FAILED',
+          message: error.message || t('errors.captureFailed.message'),
+          recoverable: true,
+        };
+    }
+  };
+
+  /**
+   * Gets user-friendly guidance for error codes.
+   */
+  const getErrorGuidance = (code: string, maxPhotos: number): string => {
+    switch (code) {
+      case 'PERMISSION_DENIED':
+        return t('errors.permissionDenied.guidance');
+      case 'BROWSER_NOT_SUPPORTED':
+        return t('errors.browserNotSupported.guidance');
+      case 'CAPTURE_FAILED':
+        return t('errors.captureFailed.guidance');
+      case 'MAX_PHOTOS_REACHED':
+        return t('errors.maxPhotosReached.guidance', { max: maxPhotos });
+      case 'STORAGE_FULL':
+        return t('errors.storageFull.guidance');
+      default:
+        return t('errors.unexpected');
+    }
+  };
 
   // ===========================================================================
   // Hook: Media Capture
@@ -373,7 +380,7 @@ export function PhotoCaptureStep({
     if (capturedPhotos.length >= maxPhotos) {
       setError({
         code: 'MAX_PHOTOS_REACHED',
-        message: `Maximum of ${maxPhotos} photos reached`,
+        message: t('errors.maxPhotosReached.message', { max: maxPhotos }),
         recoverable: false,
       });
       return;
@@ -393,18 +400,18 @@ export function PhotoCaptureStep({
         setCapturedPhoto(photoBlob);
         setCapturedPhotoUrl(photoUrl);
         setMode('review');
-        announce('Photo captured. Review or retake.');
+        announce(t('announcements.photoCaptured'));
       }
     } catch (err) {
       setError({
         code: 'CAPTURE_FAILED',
-        message: 'Failed to capture photo',
+        message: t('errors.processFailed'),
         recoverable: true,
       });
     } finally {
       setIsCapturing(false);
     }
-  }, [capturePhoto, capturedPhotos.length, maxPhotos, triggerHaptic, announce]);
+  }, [capturePhoto, capturedPhotos.length, maxPhotos, triggerHaptic, announce, t]);
 
   // ===========================================================================
   // Review Handlers
@@ -418,14 +425,14 @@ export function PhotoCaptureStep({
     setCapturedPhotoUrl(null);
     setMode('preview');
     setError(null);
-    announce('Retaking photo. Ready to capture.');
-  }, [capturedPhotoUrl, announce]);
+    announce(t('announcements.retaking'));
+  }, [capturedPhotoUrl, announce, t]);
 
   const handleAcceptPhoto = useCallback(async () => {
     if (!capturedPhoto || !capturedPhotoUrl) return;
 
     setIsCapturing(true);
-    announce('Processing photo...');
+    announce(t('announcements.processing'));
 
     try {
       const id = generateUUID();
@@ -465,7 +472,7 @@ export function PhotoCaptureStep({
       setCapturedPhoto(null);
       setCapturedPhotoUrl(null);
       setMode('preview');
-      announce('Photo added to collection.');
+      announce(t('announcements.added'));
 
       // Scroll thumbnail strip to end
       setTimeout(() => {
@@ -474,13 +481,13 @@ export function PhotoCaptureStep({
     } catch (err) {
       setError({
         code: 'CAPTURE_FAILED',
-        message: 'Failed to process photo',
+        message: t('errors.processFailed'),
         recoverable: true,
       });
     } finally {
       setIsCapturing(false);
     }
-  }, [capturedPhoto, capturedPhotoUrl, addMedia, state.mediaItems, announce]);
+  }, [capturedPhoto, capturedPhotoUrl, addMedia, state.mediaItems, announce, t]);
 
   // ===========================================================================
   // Thumbnail Strip Handlers
@@ -499,8 +506,8 @@ export function PhotoCaptureStep({
       URL.revokeObjectURL(photo.thumbnailUrl);
       return prev.filter((_, i) => i !== index);
     });
-    announce('Photo removed.');
-  }, [announce]);
+    announce(t('announcements.removed'));
+  }, [announce, t]);
 
   // ===========================================================================
   // Gallery Handlers
@@ -519,7 +526,7 @@ export function PhotoCaptureStep({
     URL.revokeObjectURL(photo.thumbnailUrl);
 
     setCapturedPhotos((prev) => prev.filter((_, i) => i !== selectedPhotoIndex));
-    announce('Photo removed.');
+    announce(t('announcements.removed'));
 
     // Navigate or close
     if (capturedPhotos.length <= 1) {
@@ -527,7 +534,7 @@ export function PhotoCaptureStep({
     } else if (selectedPhotoIndex >= capturedPhotos.length - 1) {
       setSelectedPhotoIndex(capturedPhotos.length - 2);
     }
-  }, [selectedPhotoIndex, capturedPhotos, handleGalleryClose, announce]);
+  }, [selectedPhotoIndex, capturedPhotos, handleGalleryClose, announce, t]);
 
   const handlePrevPhoto = useCallback(() => {
     if (selectedPhotoIndex !== null && selectedPhotoIndex > 0) {
@@ -562,8 +569,8 @@ export function PhotoCaptureStep({
   const handleSwitchCamera = useCallback(async () => {
     if (mode !== 'preview') return;
     await toggleFacingMode();
-    announce(`Switched to ${facingMode === 'user' ? 'back' : 'front'} camera`);
-  }, [mode, toggleFacingMode, facingMode, announce]);
+    announce(t('announcements.switchedCamera', { camera: facingMode === 'user' ? 'back' : 'front' }));
+  }, [mode, toggleFacingMode, facingMode, announce, t]);
 
   // ===========================================================================
   // Error Retry Handler
@@ -573,8 +580,8 @@ export function PhotoCaptureStep({
     setError(null);
     setMode('preview');
     await startCamera();
-    announce('Retrying camera initialization');
-  }, [startCamera, announce]);
+    announce(t('announcements.retrying'));
+  }, [startCamera, announce, t]);
 
   // ===========================================================================
   // Upload Fallback Handler
@@ -647,7 +654,7 @@ export function PhotoCaptureStep({
               className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               <RotateCcw className="h-5 w-5 mr-2" />
-              Try Again
+              {t('buttons.tryAgain')}
             </button>
           )}
         </div>
@@ -665,7 +672,7 @@ export function PhotoCaptureStep({
       <div className={cn('flex flex-col items-center justify-center min-h-[400px]', className)}>
         <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" aria-hidden="true" />
         <p className="text-gray-600" role="status" aria-live="polite">
-          Initializing camera...
+          {t('states.initializing')}
         </p>
       </div>
     );
@@ -681,25 +688,25 @@ export function PhotoCaptureStep({
     const canGoNext = selectedPhotoIndex < capturedPhotos.length - 1;
 
     return (
-      <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" role="dialog" aria-modal="true" aria-label="Photo gallery">
+      <div className="fixed inset-0 z-50 bg-black/95 flex flex-col" role="dialog" aria-modal="true" aria-label={t('gallery.title')}>
         {/* Header */}
         <div className="flex items-center justify-between p-4">
           <button
             type="button"
             onClick={handleGalleryDelete}
             className="p-2 text-red-400 hover:text-red-300 rounded-full hover:bg-red-500/20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black"
-            aria-label="Delete photo"
+            aria-label={t('gallery.deletePhoto')}
           >
             <Trash2 className="h-6 w-6" />
           </button>
           <span className="text-white text-sm font-medium">
-            {selectedPhotoIndex + 1} of {capturedPhotos.length}
+            {t('gallery.counter', { current: selectedPhotoIndex + 1, total: capturedPhotos.length })}
           </span>
           <button
             type="button"
             onClick={handleGalleryClose}
             className="p-2 text-white hover:text-gray-300 rounded-full hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-            aria-label="Close gallery"
+            aria-label={t('gallery.closeGallery')}
           >
             <X className="h-6 w-6" />
           </button>
@@ -713,7 +720,7 @@ export function PhotoCaptureStep({
               type="button"
               onClick={handlePrevPhoto}
               className="absolute left-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white"
-              aria-label="Previous photo"
+              aria-label={t('gallery.previousPhoto')}
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
@@ -721,7 +728,7 @@ export function PhotoCaptureStep({
 
           <img
             src={selectedPhoto.url}
-            alt={`Photo ${selectedPhotoIndex + 1}`}
+            alt={t('thumbnailStrip.photoAlt', { index: selectedPhotoIndex + 1 })}
             className="max-w-full max-h-[70vh] object-contain rounded-lg"
           />
 
@@ -731,7 +738,7 @@ export function PhotoCaptureStep({
               type="button"
               onClick={handleNextPhoto}
               className="absolute right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white"
-              aria-label="Next photo"
+              aria-label={t('gallery.nextPhoto')}
             >
               <ChevronRight className="h-6 w-6" />
             </button>
@@ -752,15 +759,15 @@ export function PhotoCaptureStep({
       <div className={cn('flex flex-col', className)}>
         {/* Header */}
         <div className="text-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Review Your Photo</h2>
-          <p className="text-sm text-gray-600">Accept to add or retake for a new shot</p>
+          <h2 className="text-xl font-semibold text-gray-900">{t('title.review')}</h2>
+          <p className="text-sm text-gray-600">{t('subtitle.review')}</p>
         </div>
 
         {/* Photo Preview */}
         <div className="relative w-full max-w-2xl mx-auto bg-black rounded-lg overflow-hidden">
           <img
             src={capturedPhotoUrl}
-            alt="Captured photo preview"
+            alt={t('aria.capturedPhotoPreview')}
             className="w-full max-h-[60vh] object-contain"
           />
         </div>
@@ -779,10 +786,10 @@ export function PhotoCaptureStep({
               'active:scale-95',
               isCapturing && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Discard and capture again"
+            aria-label={t('aria.discardAndCapture')}
           >
             <RotateCcw className="h-5 w-5 mr-2" />
-            Retake
+            {t('buttons.retake')}
           </button>
 
           <button
@@ -797,17 +804,17 @@ export function PhotoCaptureStep({
               'active:scale-95',
               isCapturing && 'opacity-50 cursor-not-allowed'
             )}
-            aria-label="Accept photo"
+            aria-label={t('aria.acceptPhoto')}
           >
             {isCapturing ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                {tLoading('generic.processing')}
+                {t('states.processing')}
               </>
             ) : (
               <>
                 <Check className="h-5 w-5 mr-2" />
-                Accept
+                {t('buttons.accept')}
               </>
             )}
           </button>
@@ -826,9 +833,9 @@ export function PhotoCaptureStep({
     <div className={cn('flex flex-col', className)}>
       {/* Header */}
       <div className="text-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Capture Photos</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{t('title.preview')}</h2>
         <p className="text-sm text-gray-600">
-          Tap the capture button to take photos ({capturedPhotos.length} / {maxPhotos})
+          {t('subtitle.preview', { count: capturedPhotos.length, max: maxPhotos })}
         </p>
       </div>
 
@@ -856,7 +863,7 @@ export function PhotoCaptureStep({
         {/* Flash Indicator (informational) */}
         <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 px-2 py-1 rounded-full">
           <Zap className="h-4 w-4 text-yellow-400" aria-hidden="true" />
-          <span className="text-white text-xs">Auto</span>
+          <span className="text-white text-xs">{t('flash.auto')}</span>
         </div>
 
         {/* Photo Count Badge */}
@@ -884,7 +891,7 @@ export function PhotoCaptureStep({
               'bg-gray-100 hover:bg-gray-200 text-gray-700',
               'focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2'
             )}
-            aria-label="Switch camera"
+            aria-label={t('buttons.switchCamera')}
           >
             <SwitchCamera className="h-6 w-6" />
           </button>
@@ -903,7 +910,7 @@ export function PhotoCaptureStep({
             'active:scale-95',
             isAtMaxPhotos ? 'bg-gray-300' : 'bg-white hover:bg-gray-100'
           )}
-          aria-label="Capture photo"
+          aria-label={t('buttons.capture')}
         >
           {isCapturing ? (
             <Loader2 className="h-8 w-8 text-gray-500 animate-spin" />
@@ -926,7 +933,7 @@ export function PhotoCaptureStep({
             ref={thumbnailStripRef}
             className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth"
             role="listbox"
-            aria-label="Captured photos"
+            aria-label={t('thumbnailStrip.title')}
           >
             {capturedPhotos.map((photo, index) => (
               <div
@@ -942,14 +949,14 @@ export function PhotoCaptureStep({
               >
                 <img
                   src={photo.thumbnailUrl}
-                  alt={`Photo ${index + 1}`}
+                  alt={t('thumbnailStrip.photoAlt', { index: index + 1 })}
                   className="w-full h-full object-cover"
                 />
                 <button
                   type="button"
                   onClick={(e) => handleRemovePhoto(e, index)}
                   className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
-                  aria-label={`Remove photo ${index + 1}`}
+                  aria-label={t('thumbnailStrip.removePhoto', { index: index + 1 })}
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -960,7 +967,7 @@ export function PhotoCaptureStep({
             {!isAtMaxPhotos && (
               <div className="flex-shrink-0 w-16 h-16 rounded-lg border-2 border-dashed border-gray-400 flex flex-col items-center justify-center text-gray-400">
                 <Plus className="h-5 w-5" />
-                <span className="text-xs mt-0.5">Add</span>
+                <span className="text-xs mt-0.5">{t('thumbnailStrip.add')}</span>
               </div>
             )}
           </div>
@@ -975,7 +982,7 @@ export function PhotoCaptureStep({
             onClick={handleBack}
             className="px-4 py-2 min-h-[48px] text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-lg"
           >
-            Back
+            {t('buttons.back')}
           </button>
 
           {capturedPhotos.length > 0 && (
@@ -988,7 +995,7 @@ export function PhotoCaptureStep({
                 'bg-blue-600 text-white hover:bg-blue-700'
               )}
             >
-              Continue
+              {t('buttons.continue')}
             </button>
           )}
         </div>

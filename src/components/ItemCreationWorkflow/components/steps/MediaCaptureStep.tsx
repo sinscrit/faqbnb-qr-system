@@ -17,10 +17,11 @@
  * @module ItemCreationWorkflow/components/steps/MediaCaptureStep
  * @see REQ-176 Add Missing Media Capture Step
  * @created 2026-01-10
- * @lastModified 2026-01-10
+ * @lastModified 2026-01-22 (REQ-E02-063 i18n Integration)
  */
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CurrentItemState, ContentPiece } from '../../ItemCreationWorkflow.types';
@@ -67,22 +68,26 @@ export default function MediaCaptureStep({
   onBack,
   className,
 }: MediaCaptureStepProps) {
+  // Initialize translations (REQ-E02-063)
+  const t = useTranslations('workflow.steps.mediaCapture');
+  const tCommon = useTranslations('common.actions');
+
   // Validate that we have the necessary information
   if (!currentItem.contentType) {
     return (
       <div className={cn('flex flex-col items-center justify-center min-h-[400px] p-6', className)}>
         <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          No Content Type Selected
+          {t('errors.noContentType.title')}
         </h2>
         <p className="text-gray-600 text-center max-w-md mb-6">
-          Please go back and select a content type before proceeding.
+          {t('errors.noContentType.message')}
         </p>
         <button
           onClick={onBack}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
-          Go Back
+          {tCommon('goBack')}
         </button>
       </div>
     );
@@ -131,16 +136,16 @@ export default function MediaCaptureStep({
         <div className={cn('flex flex-col items-center justify-center min-h-[400px] p-6', className)}>
           <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Unsupported Content Type
+            {t('errors.unsupportedType.title')}
           </h2>
           <p className="text-gray-600 text-center max-w-md mb-6">
-            The content type "{contentType}" is not supported. Please go back and select a different option.
+            {t('errors.unsupportedType.message', { contentType })}
           </p>
           <button
             onClick={onBack}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Go Back
+            {tCommon('goBack')}
           </button>
         </div>
       );
