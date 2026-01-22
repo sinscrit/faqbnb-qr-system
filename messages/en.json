@@ -1602,14 +1602,34 @@
       },
       "contentType": {
         "_comment": "ContentTypeStep.tsx - Step 5",
-        "title": "How do you want to add content?",
-        "subtitle": "Choose how to provide instructions",
+        "title": "What content would you like to add?",
+        "subtitle": "Choose how you want to add information for this item",
         "selectContentType": "Select content type",
         "recommendedFor": "Recommended for {purpose}",
         "ariaLabel": "Select content type",
         "ariaHelp": "Use arrow keys to navigate. Press Enter or Space to select.",
+        "keyboardHelp": "Use arrow keys to navigate. Press Enter or Space to select.",
+        "continueButton": "Continue",
         "ariaContentTypeSelected": "{contentType} selected",
-        "ariaContentTypeOption": "{contentType}: {description}"
+        "ariaContentTypeOption": "{contentType}: {description}",
+        "options": {
+          "recordVideo": {
+            "label": "Record Video"
+          },
+          "takePhoto": {
+            "label": "Take Photo"
+          },
+          "writeText": {
+            "label": "Write Text"
+          },
+          "uploadFile": {
+            "label": "Upload File",
+            "subtitle": "Video, Image, PDF, Text"
+          },
+          "addLink": {
+            "label": "Add Link"
+          }
+        }
       },
       "mediaCapture": {
         "_comment": "MediaCaptureStep.tsx - Step 6 and all adapter components",

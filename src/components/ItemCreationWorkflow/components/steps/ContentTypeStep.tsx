@@ -19,10 +19,11 @@
  *
  * @module ItemCreationWorkflow/components/steps/ContentTypeStep
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 3
- * @lastModified 2026-01-10 (Plan-094 Phase 3, REQ-175)
+ * @lastModified 2026-01-22 (REQ-E02-062 i18n Integration)
  */
 
 import { useCallback, useRef, useState, forwardRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { createKeyboardNavigator } from '../../utils/accessibility';
 import {
@@ -88,6 +89,18 @@ const ICON_MAP: Record<string, LucideIcon> = {
  */
 const getIconComponent = (iconName: string): LucideIcon => {
   return ICON_MAP[iconName] || Upload;
+};
+
+/**
+ * Maps content option IDs (kebab-case) to translation keys (camelCase).
+ * Used for looking up translations in the workflow.steps.contentType.options namespace.
+ */
+const CONTENT_OPTION_TO_KEY: Record<string, string> = {
+  'record-video': 'recordVideo',
+  'take-photo': 'takePhoto',
+  'write-text': 'writeText',
+  'upload-file': 'uploadFile',
+  'add-link': 'addLink',
 };
 
 // =============================================================================
@@ -209,6 +222,9 @@ export function ContentTypeStep({
   canNext,
   className,
 }: ContentTypeStepProps) {
+  // Initialize translations (REQ-E02-062)
+  const t = useTranslations('workflow.steps.contentType');
+
   // Use unified options directly from constants
   const contentOptions = UNIFIED_CONTENT_OPTIONS;
 
@@ -219,10 +235,6 @@ export function ContentTypeStep({
     return idx >= 0 ? idx : 0;
   });
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // Updated header text for unified options
-  const headerText = 'What content would you like to add?';
-  const descriptionText = 'Choose how you want to add information for this item';
 
   // Handle unified content selection - sets both type and source, then auto-advances
   const handleContentSelect = useCallback((option: UnifiedContentOption) => {
@@ -271,39 +283,42 @@ export function ContentTypeStep({
       {/* Step header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-[#222222] mb-2">
-          {headerText}
+          {t('title')}
         </h2>
         <p className="text-base text-[#717171]">
-          {descriptionText}
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Content type cards grid */}
       <div
         role="radiogroup"
-        aria-label="Select content type"
+        aria-label={t('ariaLabel')}
         aria-describedby="content-type-help"
         className="grid grid-cols-1 sm:grid-cols-2 gap-3"
         onKeyDown={handleGridKeyDown}
       >
-        {contentOptions.map((option, index) => (
-          <ContentTypeCard
-            key={option.id}
-            ref={(el) => { cardRefs.current[index] = el; }}
-            option={{
-              type: option.id,
-              label: option.label,
-              subtitle: option.subtitle,
-              icon: getIconComponent(option.icon),
-            }}
-            isSelected={currentSelection === option.id}
-            onSelect={() => handleContentSelect(option)}
-            tabIndex={index === activeIndex ? 0 : -1}
-          />
-        ))}
+        {contentOptions.map((option, index) => {
+          const optionKey = CONTENT_OPTION_TO_KEY[option.id];
+          return (
+            <ContentTypeCard
+              key={option.id}
+              ref={(el) => { cardRefs.current[index] = el; }}
+              option={{
+                type: option.id,
+                label: t(`options.${optionKey}.label`),
+                subtitle: option.subtitle ? t(`options.${optionKey}.subtitle`) : undefined,
+                icon: getIconComponent(option.icon),
+              }}
+              isSelected={currentSelection === option.id}
+              onSelect={() => handleContentSelect(option)}
+              tabIndex={index === activeIndex ? 0 : -1}
+            />
+          );
+        })}
       </div>
       <p id="content-type-help" className="sr-only">
-        Use arrow keys to navigate. Press Enter or Space to select.
+        {t('keyboardHelp')}
       </p>
 
       {/* Continue button */}
@@ -322,7 +337,7 @@ export function ContentTypeStep({
           )}
           aria-disabled={!canNext}
         >
-          Continue
+          {t('continueButton')}
         </button>
       </div>
     </div>
