@@ -70,170 +70,6 @@ interface InstructionStep {
 }
 
 // ============================================================================
-// Instruction Content Constants
-// ============================================================================
-
-const INSTRUCTION_SECTIONS: InstructionSection[] = [
-  {
-    id: 'getting-started',
-    title: 'Getting Started',
-    icon: PlusCircle,
-    description: 'Learn the basics of setting up your FAQBNB account',
-    steps: [
-      {
-        step: 1,
-        title: 'Create Your First Property',
-        content:
-          'After signing in, navigate to Properties and click "Add Property" to create your first vacation rental or property.',
-        tip: 'You can add multiple properties to manage different locations.',
-        link: { href: '/dashboard2/properties', label: 'Go to Properties' },
-      },
-      {
-        step: 2,
-        title: 'Add Items to Your Property',
-        content:
-          'Items are the appliances, amenities, or features guests interact with. Create items for things like coffee makers, thermostats, or TVs.',
-        link: { href: '/dashboard2/create', label: 'Create an Item' },
-      },
-      {
-        step: 3,
-        title: 'Add Instructions for Each Item',
-        content:
-          'Each item can have multiple instruction articles: how to use, how to clean, troubleshooting tips, and more.',
-      },
-    ],
-  },
-  {
-    id: 'property-management',
-    title: 'Managing Properties',
-    icon: Building2,
-    description: 'Set up and organize your rental properties',
-    steps: [
-      {
-        title: 'Adding a Property',
-        content:
-          'Click "Add Property" from the Properties page. Enter the property name, address, and optional description.',
-        tip: 'Use descriptive names like "Beach House" or "Downtown Apartment" for easy identification.',
-        link: { href: '/dashboard2/properties', label: 'Manage Properties' },
-      },
-      {
-        title: 'Editing Property Details',
-        content:
-          'Click on any property card to edit its details, including name, address, and settings.',
-      },
-      {
-        title: 'Property-Specific Items',
-        content:
-          "Items are automatically associated with the property you're currently viewing. Switch properties using the property selector.",
-      },
-    ],
-  },
-  {
-    id: 'item-creation',
-    title: 'Creating Items',
-    icon: Package,
-    description: 'Add and document the items in your property',
-    steps: [
-      {
-        step: 1,
-        title: 'Start the Item Creation Wizard',
-        content: 'From the dashboard, click "Create New Item" to launch the step-by-step wizard.',
-        link: { href: '/dashboard2/create', label: 'Create Item' },
-      },
-      {
-        step: 2,
-        title: 'Select Room and Item Type',
-        content:
-          'Choose where the item is located (Kitchen, Living Room, etc.) and what type of item it is (Appliance, Electronics, etc.).',
-      },
-      {
-        step: 3,
-        title: 'Name Your Item',
-        content:
-          'Enter a clear, descriptive name like "Keurig Coffee Maker" or "Samsung Smart TV". This name appears on the QR code.',
-      },
-      {
-        step: 4,
-        title: 'Choose Instruction Purpose',
-        content:
-          "Select what type of instructions you're creating: How to Use, How to Clean, Troubleshooting, or Safety Information.",
-      },
-      {
-        step: 5,
-        title: 'Add Content',
-        content:
-          'Add photos, videos, text instructions, or links to external resources like YouTube tutorials or PDF manuals.',
-        tip: 'Photos work best for step-by-step visual guides. Videos are great for complex procedures.',
-      },
-      {
-        step: 6,
-        title: 'Review and Save',
-        content: 'Preview your item and its instructions, then save to generate the QR code.',
-      },
-    ],
-  },
-  {
-    id: 'qr-codes',
-    title: 'QR Code Generation',
-    icon: QrCode,
-    description: 'Generate and print QR codes for your items',
-    steps: [
-      {
-        title: 'Automatic QR Code Generation',
-        content:
-          'QR codes are generated automatically when you save an item. Each item gets a unique QR code linked to its instruction page.',
-      },
-      {
-        title: 'Printing QR Codes',
-        content:
-          'From the Items page, select items and use "Print QR Codes" to generate printable labels for multiple items at once.',
-        link: { href: '/dashboard2/items', label: 'View Items' },
-      },
-      {
-        title: 'QR Code Placement',
-        content:
-          'Place QR codes near the item where guests can easily scan them. Common locations: on the appliance, nearby wall, or inside cabinet doors.',
-        tip: 'Use waterproof labels in kitchens and bathrooms.',
-      },
-      {
-        title: 'Testing QR Codes',
-        content:
-          'Always test your QR codes with a smartphone before placing them. Scan the code to verify it links to the correct instruction page.',
-      },
-    ],
-  },
-  {
-    id: 'item-management',
-    title: 'Managing Items',
-    icon: Settings,
-    description: 'Edit, organize, and maintain your item library',
-    steps: [
-      {
-        title: 'Viewing All Items',
-        content:
-          'The Items page shows all items across your properties. Use filters to narrow by property, room, or item type.',
-        link: { href: '/dashboard2/items', label: 'View Items' },
-      },
-      {
-        title: 'Editing Items',
-        content:
-          'Click on any item to edit its details, add new instruction articles, or update existing content.',
-      },
-      {
-        title: 'Adding Multiple Instructions',
-        content:
-          'A single item can have multiple instruction articles. Add separate articles for cleaning, troubleshooting, or special features.',
-      },
-      {
-        title: 'Bulk Operations',
-        content:
-          'Select multiple items to perform bulk actions like printing QR codes, moving to a different property, or deleting.',
-      },
-    ],
-  },
-];
-
-// ============================================================================
 // InstructionCard Component
 // ============================================================================
 
@@ -320,17 +156,166 @@ export default function HelpPage() {
   const router = useRouter();
   const { user, loading: authLoading, currentAccount } = useAuth();
   const { useCanAccess, isLoading: permissionsLoading } = usePermissions(user, currentAccount);
-  const t = useTranslations('common.loading');
+  const t = useTranslations('settings.help');
 
   const canViewItems = useCanAccess('view_items');
+
+  // Instruction sections - must be inside component to access t()
+  const INSTRUCTION_SECTIONS: InstructionSection[] = [
+    {
+      id: 'getting-started',
+      title: t('gettingStarted.title'),
+      icon: PlusCircle,
+      description: t('gettingStarted.description'),
+      steps: [
+        {
+          step: 1,
+          title: t('gettingStarted.step1.title'),
+          content: t('gettingStarted.step1.content'),
+          tip: t('gettingStarted.step1.tip'),
+          link: { href: '/dashboard2/properties', label: t('gettingStarted.step1.linkLabel') },
+        },
+        {
+          step: 2,
+          title: t('gettingStarted.step2.title'),
+          content: t('gettingStarted.step2.content'),
+          link: { href: '/dashboard2/create', label: t('gettingStarted.step2.linkLabel') },
+        },
+        {
+          step: 3,
+          title: t('gettingStarted.step3.title'),
+          content: t('gettingStarted.step3.content'),
+          tip: t('gettingStarted.step3.tip'),
+        },
+      ],
+    },
+    {
+      id: 'property-management',
+      title: t('propertyManagement.title'),
+      icon: Building2,
+      description: t('propertyManagement.description'),
+      steps: [
+        {
+          title: t('propertyManagement.step1.title'),
+          content: t('propertyManagement.step1.content'),
+          tip: t('propertyManagement.step1.tip'),
+          link: { href: '/dashboard2/properties', label: t('propertyManagement.step1.linkLabel') },
+        },
+        {
+          title: t('propertyManagement.step2.title'),
+          content: t('propertyManagement.step2.content'),
+          link: { href: '/dashboard2/properties', label: t('propertyManagement.step2.linkLabel') },
+        },
+        {
+          title: t('propertyManagement.step3.title'),
+          content: t('propertyManagement.step3.content'),
+          tip: t('propertyManagement.step3.tip'),
+        },
+      ],
+    },
+    {
+      id: 'item-creation',
+      title: t('itemCreation.title'),
+      icon: Package,
+      description: t('itemCreation.description'),
+      steps: [
+        {
+          step: 1,
+          title: t('itemCreation.step1.title'),
+          content: t('itemCreation.step1.content'),
+          link: { href: '/dashboard2/create', label: t('itemCreation.step1.linkLabel') },
+        },
+        {
+          step: 2,
+          title: t('itemCreation.step2.title'),
+          content: t('itemCreation.step2.content'),
+          tip: t('itemCreation.step2.tip'),
+        },
+        {
+          step: 3,
+          title: t('itemCreation.step3.title'),
+          content: t('itemCreation.step3.content'),
+        },
+        {
+          step: 4,
+          title: t('itemCreation.step4.title'),
+          content: t('itemCreation.step4.content'),
+        },
+        {
+          step: 5,
+          title: t('itemCreation.step5.title'),
+          content: t('itemCreation.step5.content'),
+          tip: t('itemCreation.step5.tip'),
+        },
+        {
+          step: 6,
+          title: t('itemCreation.step6.title'),
+          content: t('itemCreation.step6.content'),
+        },
+      ],
+    },
+    {
+      id: 'qr-codes',
+      title: t('qrCodes.title'),
+      icon: QrCode,
+      description: t('qrCodes.description'),
+      steps: [
+        {
+          title: t('qrCodes.step1.title'),
+          content: t('qrCodes.step1.content'),
+          tip: t('qrCodes.step1.tip'),
+        },
+        {
+          title: t('qrCodes.step2.title'),
+          content: t('qrCodes.step2.content'),
+        },
+        {
+          title: t('qrCodes.step3.title'),
+          content: t('qrCodes.step3.content'),
+          tip: t('qrCodes.step3.tip'),
+        },
+        {
+          title: t('qrCodes.step4.title'),
+          content: t('qrCodes.step4.content'),
+        },
+      ],
+    },
+    {
+      id: 'item-management',
+      title: t('itemManagement.title'),
+      icon: Settings,
+      description: t('itemManagement.description'),
+      steps: [
+        {
+          title: t('itemManagement.step1.title'),
+          content: t('itemManagement.step1.content'),
+          link: { href: '/dashboard2/items', label: t('itemManagement.step1.linkLabel') },
+        },
+        {
+          title: t('itemManagement.step2.title'),
+          content: t('itemManagement.step2.content'),
+          tip: t('itemManagement.step2.tip'),
+        },
+        {
+          title: t('itemManagement.step3.title'),
+          content: t('itemManagement.step3.content'),
+        },
+        {
+          title: t('itemManagement.step4.title'),
+          content: t('itemManagement.step4.content'),
+          tip: t('itemManagement.step4.tip'),
+        },
+      ],
+    },
+  ];
 
   // Loading state
   if (authLoading || permissionsLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">{t('pages.help')}</p>
+          <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-label={t('page.loadingAriaLabel')} />
+          <p className="text-gray-600">{t('page.loadingAriaLabel')}</p>
         </div>
       </div>
     );
@@ -379,11 +364,11 @@ export default function HelpPage() {
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-[#FF385C]" aria-hidden="true" />
               <h1 id="help-title" className="text-2xl font-bold text-gray-900">
-                Help & User Guide
+                {t('page.title')}
               </h1>
             </div>
             <p className="text-gray-600 mt-1">
-              Learn how to use FAQBNB to create and manage your property items
+              {t('page.subtitle')}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -392,7 +377,7 @@ export default function HelpPage() {
               className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors flex items-center gap-2"
             >
               <PlusCircle className="w-4 h-4" aria-hidden="true" />
-              Create Item
+              {t('page.createItemButton')}
             </Link>
           </div>
         </div>
@@ -400,7 +385,7 @@ export default function HelpPage() {
 
       {/* Quick Links */}
       <div className="mb-8 p-4 bg-[#FFEEEF] rounded-xl">
-        <h2 className="text-sm font-semibold text-[#FF385C] mb-3">Quick Links</h2>
+        <h2 className="text-sm font-semibold text-[#FF385C] mb-3">{t('page.quickLinksTitle')}</h2>
         <div className="flex flex-wrap gap-2">
           {INSTRUCTION_SECTIONS.map((section) => (
             <a
@@ -423,15 +408,15 @@ export default function HelpPage() {
 
       {/* Help Footer */}
       <div className="mt-8 p-6 bg-gray-50 rounded-xl text-center">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Still Need Help?</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('page.footerTitle')}</h2>
         <p className="text-gray-600 mb-4">
-          Can&apos;t find what you&apos;re looking for? Contact our support team for assistance.
+          {t('page.footerText')}
         </p>
         <a
           href="mailto:support@faqbnb.com"
           className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
         >
-          Contact Support
+          {t('page.contactButton')}
         </a>
       </div>
     </div>

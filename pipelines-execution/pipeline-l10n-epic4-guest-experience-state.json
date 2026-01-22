@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-22T20:06:48.769215",
-  "status": "completed",
+  "updated_at": "2026-01-22T22:27:52.427682",
+  "status": "running",
   "current_stage": "request",
-  "current_task_index": 25,
+  "current_task_index": 1,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
   "source_hash": "8b789d30e0e9b35c848ab3362a26de99",
   "tasks": [
@@ -20,10 +20,11 @@
       "status": "completed",
       "request_id": "REQ-E04-001",
       "error": null,
-      "processed_at": "2026-01-22T18:44:37.343879",
+      "processed_at": "2026-01-22T22:24:59.271309",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-001",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-001-create-localization-types-file-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-001-create-localization-types-file-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-001-create-localization-types-file-detailed.md"
       },
       "stages": {
         "request": {
@@ -43,7 +44,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.2",
@@ -55,10 +57,11 @@
       "status": "completed",
       "request_id": "REQ-E04-002",
       "error": null,
-      "processed_at": "2026-01-22T18:48:07.001956",
+      "processed_at": "2026-01-22T22:27:52.427652",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-002",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-002-create-guest-language-utility-module-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-002-create-guest-language-utility-module-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-002-create-guest-language-utility-module-detailed.md"
       },
       "stages": {
         "request": {
@@ -78,7 +81,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.3",
@@ -961,7 +965,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 26,
+    "total_requests_generated": 2,
     "last_request_id": "REQ-E04-026",
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
@@ -994,7 +998,7 @@
     "next_cache_cleared": false
   },
   "session_id_overview": "fe69f5d1-9b8a-48a5-8ab8-87bdd3e3741f",
-  "session_id_details": null,
+  "session_id_details": "b44b90d3-0a15-4c63-b274-d7070bc4a6ea",
   "session_id_implementation": null,
   "session_id_qa_validation": null,
   "session_id_request": "56d52a1e-2c19-425c-bef3-0be9c6a185d0"

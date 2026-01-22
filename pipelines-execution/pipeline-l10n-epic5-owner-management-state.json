@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-22T21:06:18.804308",
-  "status": "completed",
+  "updated_at": "2026-01-22T22:25:55.943339",
+  "status": "running",
   "current_stage": "request",
-  "current_task_index": 32,
+  "current_task_index": 0,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -20,10 +20,11 @@
       "status": "completed",
       "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-22T18:45:21.350868",
+      "processed_at": "2026-01-22T22:25:55.939233",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-detailed.md"
       },
       "stages": {
         "request": {
@@ -43,7 +44,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "1.2",
@@ -1206,14 +1208,14 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 33,
+    "total_requests_generated": 1,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   },
   "recent_errors": [],
   "session_id_overview": "ecaa0a48-ebd5-4381-bacd-d29023d7dab5",
-  "session_id_details": null,
+  "session_id_details": "0e64c81c-52e8-4f9c-9b85-6fd3b190d120",
   "session_id_implementation": null,
   "session_id_qa_validation": null,
   "session_id_request": "7e1facab-4ada-4962-b1cd-83c4b3963fd2"
