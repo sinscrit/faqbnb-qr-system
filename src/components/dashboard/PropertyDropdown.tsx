@@ -23,7 +23,8 @@ export interface PropertyDropdownProps {
 }
 
 export function PropertyDropdown({ className }: PropertyDropdownProps) {
-  const tEmpty = useTranslations('common.emptyStates');
+  // REQ-E02-053: Use dashboard.property namespace for translations
+  const t = useTranslations('dashboard.property');
   const {
     selectedPropertyId,
     selectedProperty,
@@ -69,10 +70,10 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
 
   // Display text for the button
   // Full name for desktop, truncated (first 3 chars) for mobile
-  const fullDisplayText = selectedProperty?.nickname || 'All Properties';
+  const fullDisplayText = selectedProperty?.nickname || t('allProperties');
   const mobileDisplayText = selectedProperty?.nickname
     ? selectedProperty.nickname.substring(0, 3) + '...'
-    : 'All';
+    : t('allPropertiesShort');
 
   // Don't render if only 0 or 1 property (no need for selector)
   if (!isLoading && properties.length <= 1) {
@@ -88,7 +89,7 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
         disabled={isLoading}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label="Select property"
+        aria-label={t('selectProperty')}
         className={cn(
           'flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg',
           'border border-gray-200 bg-white',
@@ -121,7 +122,7 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
       {isOpen && (
         <div
           role="listbox"
-          aria-label="Property list"
+          aria-label={t('propertyList')}
           className={cn(
             'absolute top-full left-0 mt-1 z-50',
             'min-w-full w-max max-w-[280px]',
@@ -144,7 +145,7 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
             )}
           >
             <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
-            <span className="flex-1 font-medium text-gray-700">All Properties</span>
+            <span className="flex-1 font-medium text-gray-700">{t('allProperties')}</span>
             {!selectedPropertyId && (
               <Check className="w-4 h-4 text-[#FF385C] flex-shrink-0" aria-hidden="true" />
             )}
@@ -186,7 +187,7 @@ export function PropertyDropdown({ className }: PropertyDropdownProps) {
           {/* Empty state */}
           {properties.length === 0 && (
             <div className="px-3 py-4 text-sm text-gray-500 text-center">
-              {tEmpty('properties.noPropertiesFound')}
+              {t('noProperties')}
             </div>
           )}
         </div>
