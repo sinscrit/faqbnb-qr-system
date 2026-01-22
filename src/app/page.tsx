@@ -4,38 +4,49 @@ import { QrCode, Smartphone, Zap, Shield, Clock, Settings, Users, ArrowRight, St
 import MailingListSignup from '@/components/MailingListSignup';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Metadata } from 'next';
+import { getTranslations, getLocale } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
-  title: 'FAQBNB - Instant Access to Product Information via QR Codes | SaaS Platform',
-  description: 'Transform customer support with FAQBNB. Provide instant access to manuals, videos, and product information through QR codes. No apps required.',
-  keywords: 'QR code platform, product support, customer service, digital manuals, SaaS, product information, mobile support',
-  openGraph: {
-    title: 'FAQBNB - Instant Access to Product Information',
-    description: 'Professional QR code platform for businesses. Transform how customers access product information and support.',
-    url: 'https://faqbnb.com',
-    siteName: 'FAQBNB',
-    type: 'website',
-    images: [
-      {
-        url: '/faqbnb_logolong_alt.png',
-        width: 500,
-        height: 167,
-        alt: 'FAQBNB Platform Preview',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'FAQBNB - Instant Access to Product Information',
-    description: 'Professional QR code platform for businesses. Transform how customers access product information and support.',
-    images: ['/faqbnb_logolong_alt.png'],
-  },
-  robots: 'index, follow',
-  alternates: {
-    canonical: 'https://faqbnb.com',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('metadata.home');
+  const locale = await getLocale();
+
+  return {
+    metadataBase: new URL(
+      process.env.NODE_ENV === 'production'
+        ? 'https://faqbnb.com'
+        : 'http://localhost:3000'
+    ),
+    title: t('title'),
+    description: t('description'),
+    keywords: 'QR code platform, product support, customer service, digital manuals, SaaS, product information, mobile support',
+    openGraph: {
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+      url: 'https://faqbnb.com',
+      siteName: 'FAQBNB',
+      type: 'website',
+      locale: locale,
+      images: [
+        {
+          url: '/faqbnb_logolong_alt.png',
+          width: 500,
+          height: 167,
+          alt: 'FAQBNB Platform Preview',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('ogTitle'),
+      description: t('ogDescription'),
+      images: ['/faqbnb_logolong_alt.png'],
+    },
+    robots: 'index, follow',
+    alternates: {
+      canonical: 'https://faqbnb.com',
+    },
+  };
+}
 
 // Schema.org JSON-LD structured data
 const jsonLd = {

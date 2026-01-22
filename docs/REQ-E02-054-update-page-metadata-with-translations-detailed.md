@@ -305,10 +305,10 @@ export async function generateMetadata(): Promise<Metadata> {
 **Note:** Keep `keywords` in English as it's a technical SEO field that doesn't benefit from translation. Keep JSON-LD structured data in English (schema.org standard).
 
 **Verification:**
-- [ ] All user-visible metadata strings use `t()` function
-- [ ] OpenGraph includes `locale` property
-- [ ] Twitter cards use translated strings
-- [ ] JSON-LD remains in English (schema.org standard)
+- [x] All user-visible metadata strings use `t()` function ---implemented: title, description, ogTitle, ogDescription now use t()---
+- [x] OpenGraph includes `locale` property ---implemented: Added locale from getLocale()---
+- [x] Twitter cards use translated strings ---implemented: Twitter title and description use t()---
+- [x] JSON-LD remains in English (schema.org standard) ---implemented: JSON-LD unchanged---
 
 ---
 
