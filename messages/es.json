@@ -3191,59 +3191,153 @@
     }
   },
   "properties": {
+    "title": "My Properties",
+    "subtitle": "Manage your properties and their settings",
+    "list": {
+      "loginRequired": "Please log in to view properties.",
+      "empty": {
+        "title": "No properties yet",
+        "description": "Add your first property to organize your items",
+        "action": "Add Property"
+      }
+    },
+    "types": {
+      "apartment": "Apartment",
+      "house": "House",
+      "condo": "Condo",
+      "townhouse": "Townhouse",
+      "cabin": "Cabin",
+      "villa": "Villa",
+      "other": "Other"
+    },
+    "selector": {
+      "selectProperty": "Select Property",
+      "allProperties": "All Properties",
+      "unassigned": "Unassigned",
+      "filterLabel": "Property Filter",
+      "filterDescription": "Filter analytics data by property",
+      "filterAriaLabel": "Select property for analytics filtering",
+      "loading": "Loading properties...",
+      "noPropertiesAvailable": "No properties available"
+    },
+    "actions": {
+      "add": "Add Property",
+      "edit": "Edit Property",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "delete": "Delete Property",
+      "view": "View Property",
+      "createProperty": "Create Property",
+      "creating": "Creating...",
+      "editProperty": "Edit Property"
+    },
+    "form": {
+      "propertyName": "Property Name",
+      "propertyNamePlaceholder": "e.g., Beach House, Downtown Apartment",
+      "propertyType": "Property Type",
+      "propertyOwner": "Property Owner",
+      "address": "Address",
+      "addressPlaceholder": "Enter property address",
+      "addressLine1": "Address Line 1",
+      "addressLine1Placeholder": "Street address",
+      "addressLine2": "Address Line 2",
+      "addressLine2Placeholder": "Apt, suite, unit, etc. (optional)",
+      "city": "City",
+      "cityPlaceholder": "City",
+      "stateProvince": "State/Province",
+      "stateProvincePlaceholder": "State or Province",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "ZIP / Postal code",
+      "country": "Country",
+      "selectCountry": "Select country...",
+      "optional": "(optional)",
+      "required": "Required",
+      "cannotBeChanged": "This field cannot be changed"
+    },
+    "notifications": {
+      "propertyUpdated": "Property updated successfully",
+      "propertyCreated": "Property created successfully",
+      "propertyDeleted": "Property deleted successfully",
+      "updateFailed": "Failed to update property",
+      "createFailed": "Failed to create property",
+      "deleteFailed": "Failed to delete property"
+    },
+    "delete": {
+      "title": "Delete Property",
+      "message": "Are you sure you want to delete \"{name}\"? All items in this property will be moved to \"Unassigned\".",
+      "confirm": "Delete Property",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "saveFailed": "Failed to save property",
+      "createFailed": "Failed to create property",
+      "updateFailed": "Failed to update property",
+      "loadFailed": "Failed to load properties",
+      "deleteFailed": "Failed to delete property"
+    },
     "modal": {
-      "addTitle": "Agregar Nueva Propiedad",
-      "addDescription": "Crea una nueva propiedad ingresando el nombre y la información de dirección.",
-      "editTitle": "Editar Propiedad",
-      "editDescription": "Edita los detalles de tu propiedad incluyendo nombre e información de dirección.",
-      "saving": "Guardando...",
-      "saveChanges": "Guardar Cambios",
-      "creating": "Creando...",
-      "closeModal": "Cerrar modal",
+      "addTitle": "Add New Property",
+      "addDescription": "Create a new property by entering the name and address information.",
+      "addProperty": "Add Property",
+      "addPropertyDescription": "Create a new property by entering the name and address information.",
+      "editTitle": "Edit Property",
+      "editDescription": "Edit the details of your property including name and address information.",
+      "editProperty": "Edit Property",
+      "editPropertyDescription": "Edit the details of your property including name and address information.",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "savingProperty": "Saving property changes...",
+      "creating": "Creating...",
+      "creatingProperty": "Creating property...",
+      "closeModal": "Close modal",
       "form": {
         "name": {
-          "label": "Nombre de la Propiedad",
-          "placeholder": "ej., Casa de Playa",
-          "required": "El nombre de la propiedad es requerido"
+          "label": "Property Name",
+          "placeholder": "e.g., Beach House",
+          "required": "Property name is required"
         },
         "address1": {
-          "label": "Línea de Dirección 1",
-          "placeholder": "Dirección"
+          "label": "Address Line 1",
+          "placeholder": "Street address"
         },
         "address2": {
-          "label": "Línea de Dirección 2",
-          "placeholder": "Apto, suite, unidad, etc. (opcional)"
+          "label": "Address Line 2",
+          "placeholder": "Apt, suite, unit, etc. (optional)"
         },
         "city": {
-          "label": "Ciudad",
-          "placeholder": "Ciudad"
+          "label": "City",
+          "placeholder": "City"
         },
         "state": {
-          "label": "Estado/Provincia",
-          "placeholder": "Estado o Provincia"
+          "label": "State/Province",
+          "placeholder": "State or Province"
         },
         "postalCode": {
-          "label": "Código Postal",
-          "placeholder": "Código Postal"
+          "label": "Postal Code",
+          "placeholder": "ZIP / Postal code"
         },
         "country": {
-          "label": "País",
-          "placeholder": "Seleccionar país..."
+          "label": "Country",
+          "placeholder": "Select country..."
         }
       },
       "validation": {
-        "nameRequired": "El nombre de la propiedad es requerido",
-        "nameMaxLength": "El nombre de la propiedad debe tener 100 caracteres o menos",
-        "addressMaxLength": "La dirección debe tener 200 caracteres o menos",
-        "cityMaxLength": "La ciudad debe tener 100 caracteres o menos",
-        "stateMaxLength": "El estado/provincia debe tener 100 caracteres o menos",
-        "postalCodeMaxLength": "El código postal debe tener 20 caracteres o menos",
-        "countryInvalid": "Por favor selecciona un país válido"
+        "nameRequired": "Property name is required",
+        "nameMaxLength": "Property name must be 100 characters or less",
+        "addressMaxLength": "Address must be 200 characters or less",
+        "cityMaxLength": "City must be 100 characters or less",
+        "stateMaxLength": "State/Province must be 100 characters or less",
+        "postalCodeMaxLength": "Postal code must be 20 characters or less",
+        "countryInvalid": "Please select a valid country",
+        "propertyTypeRequired": "Property type is required",
+        "addressTooLong": "Address is too long",
+        "invalidCountry": "Invalid country selection"
       },
       "toast": {
-        "saving": "Guardando cambios de la propiedad...",
-        "saveFailed": "Error al actualizar la propiedad",
-        "createFailed": "Error al crear la propiedad"
+        "saving": "Saving property changes...",
+        "saveFailed": "Failed to update property",
+        "createFailed": "Failed to create property"
       }
     }
   },
@@ -3483,104 +3577,104 @@
     }
   },
   "articles": {
-    "title": "Instructions",
-    "subtitle": "Manage content and instructions",
-    "pageTitle": "All Guides",
+    "title": "Instrucciones",
+    "subtitle": "Gestionar contenido e instrucciones",
+    "pageTitle": "Todas las guías",
     "editor": {
-      "title": "Edit Content",
-      "preview": "Preview",
-      "edit": "Edit",
-      "placeholder": "Write your instructions here...",
-      "characterCount": "{current, number} / {max, number} characters",
-      "characterWarning": "Approaching character limit",
-      "characterError": "Character limit exceeded",
+      "title": "Editar contenido",
+      "preview": "Vista previa",
+      "edit": "Editar",
+      "placeholder": "Escriba sus instrucciones aquí...",
+      "characterCount": "{current, number} / {max, number} caracteres",
+      "characterWarning": "Límite de caracteres próximo",
+      "characterError": "Límite de caracteres excedido",
       "formatting": {
-        "bold": "Bold",
-        "italic": "Italic",
-        "heading1": "Heading 1",
-        "heading2": "Heading 2",
-        "heading3": "Heading 3",
-        "list": "Bullet List",
-        "orderedList": "Numbered List",
-        "link": "Insert Link"
+        "bold": "Negrita",
+        "italic": "Cursiva",
+        "heading1": "Título 1",
+        "heading2": "Título 2",
+        "heading3": "Título 3",
+        "list": "Lista con viñetas",
+        "orderedList": "Lista numerada",
+        "link": "Insertar enlace"
       },
       "tabs": {
-        "edit": "Edit",
-        "preview": "Preview"
+        "edit": "Editar",
+        "preview": "Vista previa"
       },
       "toolbar": {
-        "boldShortcut": "Bold (Ctrl+B)",
-        "italicShortcut": "Italic (Ctrl+I)",
-        "linkShortcut": "Insert Link (Ctrl+K)"
+        "boldShortcut": "Negrita (Ctrl+B)",
+        "italicShortcut": "Cursiva (Ctrl+I)",
+        "linkShortcut": "Insertar enlace (Ctrl+K)"
       },
       "aria": {
-        "viewMode": "Editor view mode",
-        "toolbar": "Text formatting",
-        "editor": "Markdown editor"
+        "viewMode": "Modo de vista del editor",
+        "toolbar": "Formato de texto",
+        "editor": "Editor Markdown"
       },
-      "previewPlaceholder": "Start typing to see a preview of your formatted content..."
+      "previewPlaceholder": "Comience a escribir para ver una vista previa de su contenido formateado..."
     },
     "media": {
-      "upload": "Upload Media",
-      "dragDrop": "Drag and drop files here",
-      "or": "or",
-      "browse": "Browse files",
-      "supportedFormats": "Supported formats: {formats}",
-      "maxSize": "Maximum file size: {size}MB",
-      "uploading": "Uploading...",
-      "uploadComplete": "Upload complete",
-      "uploadFailed": "Upload failed"
+      "upload": "Subir medios",
+      "dragDrop": "Arrastre y suelte archivos aquí",
+      "or": "o",
+      "browse": "Examinar archivos",
+      "supportedFormats": "Formatos compatibles: {formats}",
+      "maxSize": "Tamaño máximo de archivo: {size} MB",
+      "uploading": "Subiendo...",
+      "uploadComplete": "Subida completada",
+      "uploadFailed": "Error al subir"
     },
     "crop": {
-      "title": "Crop Image",
-      "aspectRatio": "Aspect Ratio",
-      "freeform": "Freeform",
-      "square": "Square (1:1)",
-      "landscape": "Landscape (16:9)",
-      "portrait": "Portrait (9:16)",
-      "standard": "Standard (4:3)",
-      "apply": "Apply Crop",
-      "reset": "Reset",
-      "cancel": "Cancel",
+      "title": "Recortar imagen",
+      "aspectRatio": "Relación de aspecto",
+      "freeform": "Forma libre",
+      "square": "Cuadrado (1:1)",
+      "landscape": "Paisaje (16:9)",
+      "portrait": "Retrato (9:16)",
+      "standard": "Estándar (4:3)",
+      "apply": "Aplicar recorte",
+      "reset": "Restablecer",
+      "cancel": "Cancelar",
       "zoom": "Zoom",
-      "rotate": "Rotate",
-      "loading": "Loading image...",
-      "processing": "Applying crop...",
-      "applyButton": "Apply Crop",
+      "rotate": "Rotar",
+      "loading": "Cargando imagen...",
+      "processing": "Aplicando recorte...",
+      "applyButton": "Aplicar recorte",
       "preview": {
-        "label": "Preview:",
-        "generating": "Generating...",
-        "selectArea": "Select area to preview"
+        "label": "Vista previa:",
+        "generating": "Generando...",
+        "selectArea": "Seleccione área para vista previa"
       },
       "errors": {
-        "loadFailed": "Failed to load image. Please try again.",
-        "cropFailed": "Crop operation failed",
-        "dismiss": "Dismiss error"
+        "loadFailed": "Error al cargar la imagen. Por favor, inténtelo de nuevo.",
+        "cropFailed": "Operación de recorte fallida",
+        "dismiss": "Descartar error"
       },
       "warnings": {
-        "largeImage": "Large image detected. Output may be scaled down for compatibility."
+        "largeImage": "Imagen grande detectada. La salida puede reducirse para compatibilidad."
       },
       "aria": {
-        "aspectRatioSelected": "{ratio} aspect ratio selected",
-        "cropPreview": "Crop preview"
+        "aspectRatioSelected": "Relación de aspecto {ratio} seleccionada",
+        "cropPreview": "Vista previa de recorte"
       }
     },
     "video": {
-      "title": "Trim Video",
-      "startTime": "Start Time",
-      "endTime": "End Time",
-      "duration": "Duration: {duration}",
-      "apply": "Apply Trim",
-      "reset": "Reset",
-      "cancel": "Cancel",
-      "preview": "Preview",
-      "playing": "Playing",
-      "paused": "Paused",
-      "loading": "Loading video...",
-      "applyButton": "Apply Trim",
+      "title": "Recortar video",
+      "startTime": "Hora de inicio",
+      "endTime": "Hora de fin",
+      "duration": "Duración: {duration}",
+      "apply": "Aplicar recorte",
+      "reset": "Restablecer",
+      "cancel": "Cancelar",
+      "preview": "Vista previa",
+      "playing": "Reproduciendo",
+      "paused": "Pausado",
+      "loading": "Cargando video...",
+      "applyButton": "Aplicar recorte",
       "selection": {
-        "label": "Selection:",
-        "durationLabel": "Duration:",
+        "label": "Selección:",
+        "durationLabel": "Duración:",
         "current": "Current: {time}",
         "trimming": "Trimming {duration} ({percent}% reduction)"
       },

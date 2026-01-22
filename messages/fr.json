@@ -3191,59 +3191,153 @@
     }
   },
   "properties": {
+    "title": "My Properties",
+    "subtitle": "Manage your properties and their settings",
+    "list": {
+      "loginRequired": "Please log in to view properties.",
+      "empty": {
+        "title": "No properties yet",
+        "description": "Add your first property to organize your items",
+        "action": "Add Property"
+      }
+    },
+    "types": {
+      "apartment": "Apartment",
+      "house": "House",
+      "condo": "Condo",
+      "townhouse": "Townhouse",
+      "cabin": "Cabin",
+      "villa": "Villa",
+      "other": "Other"
+    },
+    "selector": {
+      "selectProperty": "Select Property",
+      "allProperties": "All Properties",
+      "unassigned": "Unassigned",
+      "filterLabel": "Property Filter",
+      "filterDescription": "Filter analytics data by property",
+      "filterAriaLabel": "Select property for analytics filtering",
+      "loading": "Loading properties...",
+      "noPropertiesAvailable": "No properties available"
+    },
+    "actions": {
+      "add": "Add Property",
+      "edit": "Edit Property",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "delete": "Delete Property",
+      "view": "View Property",
+      "createProperty": "Create Property",
+      "creating": "Creating...",
+      "editProperty": "Edit Property"
+    },
+    "form": {
+      "propertyName": "Property Name",
+      "propertyNamePlaceholder": "e.g., Beach House, Downtown Apartment",
+      "propertyType": "Property Type",
+      "propertyOwner": "Property Owner",
+      "address": "Address",
+      "addressPlaceholder": "Enter property address",
+      "addressLine1": "Address Line 1",
+      "addressLine1Placeholder": "Street address",
+      "addressLine2": "Address Line 2",
+      "addressLine2Placeholder": "Apt, suite, unit, etc. (optional)",
+      "city": "City",
+      "cityPlaceholder": "City",
+      "stateProvince": "State/Province",
+      "stateProvincePlaceholder": "State or Province",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "ZIP / Postal code",
+      "country": "Country",
+      "selectCountry": "Select country...",
+      "optional": "(optional)",
+      "required": "Required",
+      "cannotBeChanged": "This field cannot be changed"
+    },
+    "notifications": {
+      "propertyUpdated": "Property updated successfully",
+      "propertyCreated": "Property created successfully",
+      "propertyDeleted": "Property deleted successfully",
+      "updateFailed": "Failed to update property",
+      "createFailed": "Failed to create property",
+      "deleteFailed": "Failed to delete property"
+    },
+    "delete": {
+      "title": "Delete Property",
+      "message": "Are you sure you want to delete \"{name}\"? All items in this property will be moved to \"Unassigned\".",
+      "confirm": "Delete Property",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "saveFailed": "Failed to save property",
+      "createFailed": "Failed to create property",
+      "updateFailed": "Failed to update property",
+      "loadFailed": "Failed to load properties",
+      "deleteFailed": "Failed to delete property"
+    },
     "modal": {
-      "addTitle": "Ajouter une nouvelle propriété",
-      "addDescription": "Créez une nouvelle propriété en entrant le nom et les informations d'adresse.",
-      "editTitle": "Modifier la propriété",
-      "editDescription": "Modifiez les détails de votre propriété, y compris le nom et les informations d'adresse.",
-      "saving": "Enregistrement...",
-      "saveChanges": "Enregistrer les modifications",
-      "creating": "Création...",
-      "closeModal": "Fermer la fenêtre",
+      "addTitle": "Add New Property",
+      "addDescription": "Create a new property by entering the name and address information.",
+      "addProperty": "Add Property",
+      "addPropertyDescription": "Create a new property by entering the name and address information.",
+      "editTitle": "Edit Property",
+      "editDescription": "Edit the details of your property including name and address information.",
+      "editProperty": "Edit Property",
+      "editPropertyDescription": "Edit the details of your property including name and address information.",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "savingProperty": "Saving property changes...",
+      "creating": "Creating...",
+      "creatingProperty": "Creating property...",
+      "closeModal": "Close modal",
       "form": {
         "name": {
-          "label": "Nom de la propriété",
-          "placeholder": "ex. Maison de plage",
-          "required": "Le nom de la propriété est requis"
+          "label": "Property Name",
+          "placeholder": "e.g., Beach House",
+          "required": "Property name is required"
         },
         "address1": {
-          "label": "Ligne d'adresse 1",
-          "placeholder": "Adresse postale"
+          "label": "Address Line 1",
+          "placeholder": "Street address"
         },
         "address2": {
-          "label": "Ligne d'adresse 2",
-          "placeholder": "Apt, suite, unité, etc. (facultatif)"
+          "label": "Address Line 2",
+          "placeholder": "Apt, suite, unit, etc. (optional)"
         },
         "city": {
-          "label": "Ville",
-          "placeholder": "Ville"
+          "label": "City",
+          "placeholder": "City"
         },
         "state": {
-          "label": "État/Province",
-          "placeholder": "État ou Province"
+          "label": "State/Province",
+          "placeholder": "State or Province"
         },
         "postalCode": {
-          "label": "Code postal",
-          "placeholder": "Code postal"
+          "label": "Postal Code",
+          "placeholder": "ZIP / Postal code"
         },
         "country": {
-          "label": "Pays",
-          "placeholder": "Sélectionner un pays..."
+          "label": "Country",
+          "placeholder": "Select country..."
         }
       },
       "validation": {
-        "nameRequired": "Le nom de la propriété est requis",
-        "nameMaxLength": "Le nom de la propriété doit contenir 100 caractères ou moins",
-        "addressMaxLength": "L'adresse doit contenir 200 caractères ou moins",
-        "cityMaxLength": "La ville doit contenir 100 caractères ou moins",
-        "stateMaxLength": "L'état/province doit contenir 100 caractères ou moins",
-        "postalCodeMaxLength": "Le code postal doit contenir 20 caractères ou moins",
-        "countryInvalid": "Veuillez sélectionner un pays valide"
+        "nameRequired": "Property name is required",
+        "nameMaxLength": "Property name must be 100 characters or less",
+        "addressMaxLength": "Address must be 200 characters or less",
+        "cityMaxLength": "City must be 100 characters or less",
+        "stateMaxLength": "State/Province must be 100 characters or less",
+        "postalCodeMaxLength": "Postal code must be 20 characters or less",
+        "countryInvalid": "Please select a valid country",
+        "propertyTypeRequired": "Property type is required",
+        "addressTooLong": "Address is too long",
+        "invalidCountry": "Invalid country selection"
       },
       "toast": {
-        "saving": "Enregistrement des modifications de la propriété...",
-        "saveFailed": "Échec de la mise à jour de la propriété",
-        "createFailed": "Échec de la création de la propriété"
+        "saving": "Saving property changes...",
+        "saveFailed": "Failed to update property",
+        "createFailed": "Failed to create property"
       }
     }
   },
@@ -3484,279 +3578,126 @@
   },
   "articles": {
     "title": "Instructions",
-    "subtitle": "Manage content and instructions",
-    "pageTitle": "All Guides",
+    "subtitle": "Gérer le contenu et les instructions",
+    "pageTitle": "Tous les guides",
     "editor": {
-      "title": "Edit Content",
-      "preview": "Preview",
-      "edit": "Edit",
-      "placeholder": "Write your instructions here...",
-      "characterCount": "{current, number} / {max, number} characters",
-      "characterWarning": "Approaching character limit",
-      "characterError": "Character limit exceeded",
+      "title": "Modifier le contenu",
+      "preview": "Aperçu",
+      "edit": "Modifier",
+      "placeholder": "Rédigez vos instructions ici...",
+      "characterCount": "{current, number} / {max, number} caractères",
+      "characterWarning": "Limite de caractères proche",
+      "characterError": "Limite de caractères dépassée",
       "formatting": {
-        "bold": "Bold",
-        "italic": "Italic",
-        "heading1": "Heading 1",
-        "heading2": "Heading 2",
-        "heading3": "Heading 3",
-        "list": "Bullet List",
-        "orderedList": "Numbered List",
-        "link": "Insert Link"
+        "bold": "Gras",
+        "italic": "Italique",
+        "heading1": "Titre 1",
+        "heading2": "Titre 2",
+        "heading3": "Titre 3",
+        "list": "Liste à puces",
+        "orderedList": "Liste numérotée",
+        "link": "Insérer un lien"
       },
       "tabs": {
-        "edit": "Edit",
-        "preview": "Preview"
+        "edit": "Modifier",
+        "preview": "Aperçu"
       },
       "toolbar": {
-        "boldShortcut": "Bold (Ctrl+B)",
-        "italicShortcut": "Italic (Ctrl+I)",
-        "linkShortcut": "Insert Link (Ctrl+K)"
+        "boldShortcut": "Gras (Ctrl+B)",
+        "italicShortcut": "Italique (Ctrl+I)",
+        "linkShortcut": "Insérer un lien (Ctrl+K)"
       },
       "aria": {
-        "viewMode": "Editor view mode",
-        "toolbar": "Text formatting",
-        "editor": "Markdown editor"
+        "viewMode": "Mode d'affichage de l'éditeur",
+        "toolbar": "Formatage du texte",
+        "editor": "Éditeur Markdown"
       },
-      "previewPlaceholder": "Start typing to see a preview of your formatted content..."
+      "previewPlaceholder": "Commencez à saisir pour voir un aperçu de votre contenu formaté..."
     },
     "media": {
-      "upload": "Upload Media",
-      "dragDrop": "Drag and drop files here",
-      "or": "or",
-      "browse": "Browse files",
-      "supportedFormats": "Supported formats: {formats}",
-      "maxSize": "Maximum file size: {size}MB",
-      "uploading": "Uploading...",
-      "uploadComplete": "Upload complete",
-      "uploadFailed": "Upload failed"
+      "upload": "Téléverser un média",
+      "dragDrop": "Glissez et déposez vos fichiers ici",
+      "or": "ou",
+      "browse": "Parcourir les fichiers",
+      "supportedFormats": "Formats pris en charge : {formats}",
+      "maxSize": "Taille maximale du fichier : {size} Mo",
+      "uploading": "Téléversement...",
+      "uploadComplete": "Téléversement terminé",
+      "uploadFailed": "Échec du téléversement"
     },
     "crop": {
-      "title": "Crop Image",
-      "aspectRatio": "Aspect Ratio",
-      "freeform": "Freeform",
-      "square": "Square (1:1)",
-      "landscape": "Landscape (16:9)",
+      "title": "Recadrer l'image",
+      "aspectRatio": "Ratio d'aspect",
+      "freeform": "Forme libre",
+      "square": "Carré (1:1)",
+      "landscape": "Paysage (16:9)",
       "portrait": "Portrait (9:16)",
       "standard": "Standard (4:3)",
-      "apply": "Apply Crop",
-      "reset": "Reset",
-      "cancel": "Cancel",
+      "apply": "Appliquer le recadrage",
+      "reset": "Réinitialiser",
+      "cancel": "Annuler",
       "zoom": "Zoom",
-      "rotate": "Rotate",
-      "loading": "Loading image...",
-      "processing": "Applying crop...",
-      "applyButton": "Apply Crop",
+      "rotate": "Pivoter",
+      "loading": "Chargement de l'image...",
+      "processing": "Application du recadrage...",
+      "applyButton": "Appliquer le recadrage",
       "preview": {
-        "label": "Preview:",
-        "generating": "Generating...",
-        "selectArea": "Select area to preview"
+        "label": "Aperçu :",
+        "generating": "Génération...",
+        "selectArea": "Sélectionnez une zone pour l'aperçu"
       },
       "errors": {
-        "loadFailed": "Failed to load image. Please try again.",
-        "cropFailed": "Crop operation failed",
-        "dismiss": "Dismiss error"
+        "loadFailed": "Échec du chargement de l'image. Veuillez réessayer.",
+        "cropFailed": "Échec de l'opération de recadrage",
+        "dismiss": "Ignorer l'erreur"
       },
       "warnings": {
-        "largeImage": "Large image detected. Output may be scaled down for compatibility."
+        "largeImage": "Grande image détectée. La sortie peut être réduite pour des raisons de compatibilité."
       },
       "aria": {
-        "aspectRatioSelected": "{ratio} aspect ratio selected",
-        "cropPreview": "Crop preview"
+        "aspectRatioSelected": "Ratio d'aspect {ratio} sélectionné",
+        "cropPreview": "Aperçu du recadrage"
       }
     },
     "video": {
-      "title": "Trim Video",
-      "startTime": "Start Time",
-      "endTime": "End Time",
-      "duration": "Duration: {duration}",
-      "apply": "Apply Trim",
-      "reset": "Reset",
-      "cancel": "Cancel",
-      "preview": "Preview",
-      "playing": "Playing",
-      "paused": "Paused",
-      "loading": "Loading video...",
-      "applyButton": "Apply Trim",
+      "title": "Rogner la vidéo",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "duration": "Durée : {duration}",
+      "apply": "Appliquer le rognage",
+      "reset": "Réinitialiser",
+      "cancel": "Annuler",
+      "preview": "Aperçu",
+      "playing": "Lecture en cours",
+      "paused": "En pause",
+      "loading": "Chargement de la vidéo...",
+      "applyButton": "Appliquer le rognage",
       "selection": {
-        "label": "Selection:",
-        "durationLabel": "Duration:",
-        "current": "Current: {time}",
-        "trimming": "Trimming {duration} ({percent}% reduction)"
+        "label": "Sélection :",
+        "durationLabel": "Durée :",
+        "current": "Actuel : {time}",
+        "trimming": "Rognage de {duration} (réduction de {percent} %)"
       },
       "markers": {
-        "start": "S",
-        "end": "E"
+        "start": "D",
+        "end": "F"
       },
       "errors": {
-        "loadFailed": "Failed to load video. Please check the file and try again.",
-        "durationUnknown": "Unable to determine video duration",
-        "playbackFailed": "Unable to play video. Please try again.",
-        "invalidTrim": "Invalid trim selection",
-        "tryAgain": "Try again"
+        "loadFailed": "Échec du chargement de la vidéo. Veuillez vérifier le fichier et réessayer.",
+        "durationUnknown": "Impossible de déterminer la durée de la vidéo",
+        "playbackFailed": "Impossible de lire la vidéo. Veuillez réessayer.",
+        "invalidTrim": "Sélection de rognage invalide",
+        "tryAgain": "Réessayer"
       },
       "aria": {
-        "startMarker": "Start trim point",
-        "endMarker": "End trim point",
-        "skipToStart": "Skip to start marker",
-        "skipToEnd": "Skip to end marker",
-        "playPause": "Play or pause trimmed region",
+        "startMarker": "Point de départ du rognage",
+        "endMarker": "Point de fin du rognage",
+        "skipToStart": "Aller au marqueur de début",
+        "skipToEnd": "Aller au marqueur de fin",
+        "playPause": "Lire ou mettre en pause la région rognée",
         "pause": "Pause",
-        "play": "Play trimmed region"
+        "play": "Lire la région rognée"
       }
-    },
-    "purposes": {
-      "howToUse": "How to Use",
-      "troubleshooting": "Troubleshooting",
-      "howToClean": "How to Clean",
-      "safetyInfo": "Safety Information",
-      "maintenance": "Maintenance",
-      "features": "Features",
-      "warranty": "Warranty & Support",
-      "other": "Other"
-    },
-    "list": {
-      "title": "Instructions",
-      "subtitle": "Manage your guides and instructions",
-      "count": "{count, plural, =0 {No guides} one {# guide} other {# guides}}",
-      "createNew": "Create New Guide",
-      "search": {
-        "placeholder": "Search guides...",
-        "noResults": "No guides found matching your search",
-        "clear": "Clear search"
-      },
-      "columns": {
-        "title": "Title",
-        "item": "Item",
-        "room": "Room",
-        "purpose": "Purpose",
-        "created": "Created",
-        "updated": "Updated",
-        "actions": "Actions"
-      },
-      "sort": {
-        "label": "Sort by",
-        "newestFirst": "Newest First",
-        "oldestFirst": "Oldest First",
-        "titleAZ": "Title A-Z",
-        "titleZA": "Title Z-A",
-        "itemAZ": "Item A-Z",
-        "recentlyModified": "Recently Modified"
-      },
-      "viewMode": {
-        "grid": "Grid view",
-        "list": "List view",
-        "label": "View mode"
-      },
-      "filters": {
-        "purpose": "Filter by purpose",
-        "clear": "Clear filters",
-        "showing": "Showing {count} of {total}"
-      },
-      "loading": "Loading guides...",
-      "loginRequired": "Please log in to view guides",
-      "returnToItems": "Return to Items"
-    },
-    "edit": {
-      "pageTitle": "Edit Guide",
-      "backToList": "Back to Guides",
-      "loading": "Loading guide...",
-      "notFound": "Guide not found",
-      "loadError": "Failed to load guide",
-      "saveSuccess": "Guide saved successfully",
-      "saveFailed": "Failed to save guide",
-      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
-      "form": {
-        "titleLabel": "Title",
-        "titlePlaceholder": "Enter a title for this guide",
-        "descriptionLabel": "Description",
-        "descriptionPlaceholder": "Brief description (optional)",
-        "purposeLabel": "Purpose",
-        "purposePlaceholder": "Select purpose"
-      },
-      "buttons": {
-        "save": "Save Guide",
-        "saving": "Saving...",
-        "cancel": "Cancel",
-        "delete": "Delete Guide"
-      },
-      "loginRequired": "Please log in to edit guides"
-    },
-    "grid": {
-      "ariaLabel": "Guides grid",
-      "viewItem": "View guide details",
-      "editItem": "Edit guide",
-      "deleteItem": "Delete guide",
-      "empty": "No guides to display"
-    },
-    "table": {
-      "ariaLabel": "Guides table",
-      "selectRow": "Select this guide",
-      "actions": "Actions",
-      "noGuides": "No guides to display",
-      "columnSettings": {
-        "title": "Column Settings",
-        "show": "Show",
-        "hide": "Hide",
-        "apply": "Apply",
-        "cancel": "Cancel"
-      }
-    },
-    "empty": {
-      "title": "No guides yet",
-      "description": "Create your first guide to help guests with instructions for your items.",
-      "action": "Create Guide",
-      "noResults": {
-        "title": "No guides found",
-        "description": "Try adjusting your search or filters"
-      }
-    },
-    "validation": {
-      "titleRequired": "Title is required",
-      "titleTooLong": "Title must be less than {max} characters",
-      "contentTooLong": "Content exceeds maximum length of {max} characters",
-      "purposeRequired": "Please select a purpose",
-      "invalidMediaType": "This file type is not supported",
-      "fileTooLarge": "File size exceeds {max}MB limit"
-    },
-    "delete": {
-      "title": "Delete Guide",
-      "message": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
-      "confirm": "Delete",
-      "cancel": "Cancel",
-      "success": "Guide deleted successfully",
-      "failed": "Failed to delete guide"
-    },
-    "content": {
-      "title": "Content",
-      "count": "({count, plural, one {# piece} other {# pieces}})",
-      "addContent": "Add Content",
-      "removeDialog": {
-        "title": "Remove Last Content?",
-        "message": "This is the only piece of content. Removing it will leave this guide empty. Are you sure you want to remove it?",
-        "cancel": "Cancel",
-        "remove": "Remove"
-      },
-      "aria": {
-        "dragToReorder": "Content pieces - drag to reorder",
-        "pickedUp": "Picked up {type} content. Current position: {position} of {total}. Use arrow keys to move.",
-        "overPosition": "Over position {position}",
-        "dropped": "Dropped {type} content. New position: {position} of {total}",
-        "cancelled": "Drag cancelled. Content returned to original position.",
-        "unchanged": "Position unchanged."
-      }
-    },
-    "instructionEditor": {
-      "articleTitle": "Article Title",
-      "articleTitlePlaceholder": "Enter article title",
-      "tags": "Tags",
-      "pageHeader": "Editing Guide For: {title}"
-    },
-    "readOnlyContext": {
-      "room": "Room",
-      "itemType": "Item Type",
-      "itemName": "Item Name",
-      "unknownRoom": "Unknown Room"
     },
     "rotate": {
       "title": "Rotate Image",
@@ -3795,12 +3736,165 @@
         "applying": "Applying..."
       }
     },
+    "purposes": {
+      "howToUse": "Mode d'emploi",
+      "troubleshooting": "Dépannage",
+      "howToClean": "Comment nettoyer",
+      "safetyInfo": "Informations de sécurité",
+      "maintenance": "Entretien",
+      "features": "Caractéristiques",
+      "warranty": "Garantie et assistance",
+      "other": "Autre"
+    },
+    "list": {
+      "title": "Instructions",
+      "subtitle": "Gérez vos guides et instructions",
+      "count": "{count, plural, =0 {Aucun guide} one {# guide} other {# guides}}",
+      "createNew": "Créer un nouveau guide",
+      "search": {
+        "placeholder": "Rechercher des guides...",
+        "noResults": "Aucun guide trouvé correspondant à votre recherche",
+        "clear": "Effacer la recherche"
+      },
+      "columns": {
+        "title": "Titre",
+        "item": "Article",
+        "room": "Pièce",
+        "purpose": "Objectif",
+        "created": "Créé",
+        "updated": "Mis à jour",
+        "actions": "Actions"
+      },
+      "sort": {
+        "label": "Trier par",
+        "newestFirst": "Plus récent d'abord",
+        "oldestFirst": "Plus ancien d'abord",
+        "titleAZ": "Titre A-Z",
+        "titleZA": "Titre Z-A",
+        "itemAZ": "Article A-Z",
+        "recentlyModified": "Récemment modifié"
+      },
+      "viewMode": {
+        "grid": "Vue grille",
+        "list": "Vue liste",
+        "label": "Mode d'affichage"
+      },
+      "filters": {
+        "purpose": "Filtrer par objectif",
+        "clear": "Effacer les filtres",
+        "showing": "Affichage de {count} sur {total}"
+      },
+      "loading": "Chargement des guides...",
+      "loginRequired": "Veuillez vous connecter pour voir les guides",
+      "returnToItems": "Retour aux articles"
+    },
+    "edit": {
+      "pageTitle": "Modifier le guide",
+      "backToList": "Retour aux guides",
+      "loading": "Chargement du guide...",
+      "notFound": "Guide non trouvé",
+      "loadError": "Échec du chargement du guide",
+      "saveSuccess": "Guide enregistré avec succès",
+      "saveFailed": "Échec de l'enregistrement du guide",
+      "unsavedChanges": "Vous avez des modifications non enregistrées. Êtes-vous sûr(e) de vouloir quitter ?",
+      "loginRequired": "Veuillez vous connecter pour modifier les guides",
+      "form": {
+        "titleLabel": "Titre",
+        "titlePlaceholder": "Saisissez un titre pour ce guide",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Brève description (facultative)",
+        "purposeLabel": "Objectif",
+        "purposePlaceholder": "Sélectionnez un objectif"
+      },
+      "buttons": {
+        "save": "Enregistrer le guide",
+        "saving": "Enregistrement...",
+        "cancel": "Annuler",
+        "delete": "Supprimer le guide"
+      }
+    },
+    "grid": {
+      "ariaLabel": "Grille de guides",
+      "viewItem": "Voir les détails du guide",
+      "editItem": "Modifier le guide",
+      "deleteItem": "Supprimer le guide",
+      "empty": "Aucun guide à afficher"
+    },
     "card": {
       "createdAt": "Created {date}",
       "updatedAt": "Updated {date}",
       "viewDetails": "View details",
       "edit": "Edit",
       "delete": "Delete"
+    },
+    "table": {
+      "ariaLabel": "Tableau de guides",
+      "selectRow": "Sélectionner ce guide",
+      "actions": "Actions",
+      "noGuides": "Aucun guide à afficher",
+      "columnSettings": {
+        "title": "Paramètres de colonnes",
+        "show": "Afficher",
+        "hide": "Masquer",
+        "apply": "Appliquer",
+        "cancel": "Annuler"
+      }
+    },
+    "empty": {
+      "title": "Aucun guide pour le moment",
+      "description": "Créez votre premier guide pour aider les invités avec les instructions de vos articles.",
+      "action": "Créer un guide",
+      "noResults": {
+        "title": "Aucun guide trouvé",
+        "description": "Essayez d'ajuster votre recherche ou vos filtres"
+      }
+    },
+    "validation": {
+      "titleRequired": "Le titre est requis",
+      "titleTooLong": "Le titre doit comporter moins de {max} caractères",
+      "contentTooLong": "Le contenu dépasse la longueur maximale de {max} caractères",
+      "purposeRequired": "Veuillez sélectionner un objectif",
+      "invalidMediaType": "Ce type de fichier n'est pas pris en charge",
+      "fileTooLarge": "La taille du fichier dépasse la limite de {max} Mo"
+    },
+    "delete": {
+      "title": "Supprimer le guide",
+      "message": "Êtes-vous sûr(e) de vouloir supprimer « {title} » ? Cette action est irréversible.",
+      "confirm": "Supprimer",
+      "cancel": "Annuler",
+      "success": "Guide supprimé avec succès",
+      "failed": "Échec de la suppression du guide"
+    },
+    "content": {
+      "title": "Contenu",
+      "count": "({count, plural, one {# élément} other {# éléments}})",
+      "addContent": "Ajouter du contenu",
+      "removeDialog": {
+        "title": "Retirer le dernier contenu ?",
+        "message": "C'est le seul élément de contenu. Le retirer laissera ce guide vide. Êtes-vous sûr(e) de vouloir le retirer ?",
+        "cancel": "Annuler",
+        "remove": "Retirer"
+      },
+      "aria": {
+        "dragToReorder": "Éléments de contenu - glisser pour réorganiser",
+        "pickedUp": "Contenu de type {type} saisi. Position actuelle : {position} sur {total}. Utilisez les touches fléchées pour déplacer.",
+        "overPosition": "Au-dessus de la position {position}",
+        "dropped": "Contenu de type {type} déposé. Nouvelle position : {position} sur {total}",
+        "cancelled": "Glisser annulé. Le contenu est revenu à sa position d'origine.",
+        "unchanged": "Position inchangée."
+      }
+    },
+    "instructionEditor": {
+      "articleTitle": "Titre de l'article",
+      "articleTitlePlaceholder": "Saisissez le titre de l'article",
+      "tags": "Étiquettes",
+      "pageHeader": "Modification du guide pour : {title}"
+    },
+    "readOnlyContext": {
+      "room": "Pièce",
+      "itemType": "Type d'article",
+      "itemName": "Nom de l'article",
+      "unknownRoom": "Pièce inconnue"
     }
   }
 }

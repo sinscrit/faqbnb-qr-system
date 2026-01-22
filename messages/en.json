@@ -3217,14 +3217,105 @@
     }
   },
   "properties": {
+    "title": "My Properties",
+    "subtitle": "Manage your properties and their settings",
+    "list": {
+      "loginRequired": "Please log in to view properties.",
+      "empty": {
+        "title": "No properties yet",
+        "description": "Add your first property to organize your items",
+        "action": "Add Property"
+      }
+    },
+    "types": {
+      "apartment": "Apartment",
+      "house": "House",
+      "condo": "Condo",
+      "townhouse": "Townhouse",
+      "cabin": "Cabin",
+      "villa": "Villa",
+      "other": "Other"
+    },
+    "selector": {
+      "selectProperty": "Select Property",
+      "allProperties": "All Properties",
+      "unassigned": "Unassigned",
+      "filterLabel": "Property Filter",
+      "filterDescription": "Filter analytics data by property",
+      "filterAriaLabel": "Select property for analytics filtering",
+      "loading": "Loading properties...",
+      "noPropertiesAvailable": "No properties available"
+    },
+    "actions": {
+      "add": "Add Property",
+      "edit": "Edit Property",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "delete": "Delete Property",
+      "view": "View Property",
+      "createProperty": "Create Property",
+      "creating": "Creating...",
+      "editProperty": "Edit Property"
+    },
+    "form": {
+      "propertyName": "Property Name",
+      "propertyNamePlaceholder": "e.g., Beach House, Downtown Apartment",
+      "propertyType": "Property Type",
+      "propertyOwner": "Property Owner",
+      "address": "Address",
+      "addressPlaceholder": "Enter property address",
+      "addressLine1": "Address Line 1",
+      "addressLine1Placeholder": "Street address",
+      "addressLine2": "Address Line 2",
+      "addressLine2Placeholder": "Apt, suite, unit, etc. (optional)",
+      "city": "City",
+      "cityPlaceholder": "City",
+      "stateProvince": "State/Province",
+      "stateProvincePlaceholder": "State or Province",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "ZIP / Postal code",
+      "country": "Country",
+      "selectCountry": "Select country...",
+      "optional": "(optional)",
+      "required": "Required",
+      "cannotBeChanged": "This field cannot be changed"
+    },
+    "notifications": {
+      "propertyUpdated": "Property updated successfully",
+      "propertyCreated": "Property created successfully",
+      "propertyDeleted": "Property deleted successfully",
+      "updateFailed": "Failed to update property",
+      "createFailed": "Failed to create property",
+      "deleteFailed": "Failed to delete property"
+    },
+    "delete": {
+      "title": "Delete Property",
+      "message": "Are you sure you want to delete \"{name}\"? All items in this property will be moved to \"Unassigned\".",
+      "confirm": "Delete Property",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "saveFailed": "Failed to save property",
+      "createFailed": "Failed to create property",
+      "updateFailed": "Failed to update property",
+      "loadFailed": "Failed to load properties",
+      "deleteFailed": "Failed to delete property"
+    },
     "modal": {
       "addTitle": "Add New Property",
       "addDescription": "Create a new property by entering the name and address information.",
+      "addProperty": "Add Property",
+      "addPropertyDescription": "Create a new property by entering the name and address information.",
       "editTitle": "Edit Property",
       "editDescription": "Edit the details of your property including name and address information.",
+      "editProperty": "Edit Property",
+      "editPropertyDescription": "Edit the details of your property including name and address information.",
       "saving": "Saving...",
       "saveChanges": "Save Changes",
+      "savingProperty": "Saving property changes...",
       "creating": "Creating...",
+      "creatingProperty": "Creating property...",
       "closeModal": "Close modal",
       "form": {
         "name": {
@@ -3264,7 +3355,10 @@
         "cityMaxLength": "City must be 100 characters or less",
         "stateMaxLength": "State/Province must be 100 characters or less",
         "postalCodeMaxLength": "Postal code must be 20 characters or less",
-        "countryInvalid": "Please select a valid country"
+        "countryInvalid": "Please select a valid country",
+        "propertyTypeRequired": "Property type is required",
+        "addressTooLong": "Address is too long",
+        "invalidCountry": "Invalid country selection"
       },
       "toast": {
         "saving": "Saving property changes...",

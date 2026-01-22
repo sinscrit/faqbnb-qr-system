@@ -796,14 +796,15 @@ class PipelineState:
         for stage_id in stage_order:
             stage_data = stages.get(stage_id, {})
 
-            # Count completed tasks for this stage from task flags
+            # Count completed tasks for this stage from task flags (source of truth)
             stage_completed_key = f"{stage_id}_completed"
             tasks_completed_from_flags = sum(1 for t in tasks if t.get(stage_completed_key, False))
 
             status = stage_data.get("status", "pending") if stage_data else "pending"
             started_at_str = stage_data.get("started_at") if stage_data else None
             completed_at_str = stage_data.get("completed_at") if stage_data else None
-            tasks_completed = stage_data.get("tasks_completed", tasks_completed_from_flags) if stage_data else tasks_completed_from_flags
+            # Always use task flags as source of truth (stages dict may be stale)
+            tasks_completed = tasks_completed_from_flags
 
             # Infer status from task flags if not explicitly set
             if status == "pending" and tasks_completed_from_flags > 0:
