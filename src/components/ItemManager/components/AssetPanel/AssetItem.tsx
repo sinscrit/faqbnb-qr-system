@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Play,
   FileText,
@@ -91,6 +92,10 @@ export function AssetItem({
   dragHandleProps,
   isDragging = false,
 }: ExtendedAssetItemProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('media.assetItem');
+  const tCommon = useTranslations('common.actions');
+
   // ===========================================================================
   // State
   // ===========================================================================
@@ -163,7 +168,11 @@ export function AssetItem({
         className
       )}
       role="listitem"
-      aria-label={`${assetName}, ${asset.type}${isMarkedForRemoval ? ', marked for removal' : ''}${isDragging ? ', dragging' : ''}`}
+      aria-label={t('ariaLabel', {
+        name: assetName,
+        type: asset.type === 'pdf' ? 'PDF' : asset.type,
+        status: isMarkedForRemoval ? t('markedForRemoval') : (isDragging ? t('dragging') : '')
+      })}
     >
       {/* Drag Handle (optional) - hidden when marked for removal - 48px touch target */}
       {showDragHandle && !isMarkedForRemoval && (
@@ -179,7 +188,7 @@ export function AssetItem({
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:rounded',
             isDragging && 'cursor-grabbing'
           )}
-          aria-label="Drag to reorder"
+          aria-label={t('dragToReorder')}
           role="button"
           tabIndex={0}
         >
@@ -248,7 +257,7 @@ export function AssetItem({
         {/* Page Count Badge - PDF */}
         {asset.type === 'pdf' && asset.metadata?.pageCount !== undefined && (
           <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-xs font-medium text-white bg-black/70 rounded">
-            {asset.metadata.pageCount} {asset.metadata.pageCount === 1 ? 'page' : 'pages'}
+            {t('pages', { count: asset.metadata.pageCount })}
           </span>
         )}
       </div>
@@ -270,7 +279,7 @@ export function AssetItem({
           </span>
           {isPending && !isMarkedForRemoval && (
             <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 py-0.5 rounded">
-              New
+              {t('new')}
             </span>
           )}
         </div>
@@ -290,9 +299,9 @@ export function AssetItem({
               'min-h-[48px] flex items-center',
               'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
-            aria-label="Restore this asset"
+            aria-label={t('restoreAsset')}
           >
-            Restore
+            {tCommon('restore')}
           </button>
         ) : (
           <button
@@ -308,7 +317,7 @@ export function AssetItem({
               'flex items-center justify-center',
               'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
-            aria-label={`Remove ${assetName}`}
+            aria-label={t('removeAsset', { name: assetName })}
           >
             <X className="w-4 h-4" />
           </button>

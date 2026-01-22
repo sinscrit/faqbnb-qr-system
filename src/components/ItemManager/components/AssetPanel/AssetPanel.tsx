@@ -12,6 +12,7 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { X, Loader2, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssetManagement } from '../../hooks/useAssetManagement';
@@ -52,6 +53,10 @@ export function AssetPanel({
   allowedMediaTypes,
   maxFileSize,
 }: AssetPanelProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('media.assetPanel');
+  const tCommon = useTranslations('common.actions');
+
   // Refs for focus management
   const panelRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
@@ -204,7 +209,7 @@ export function AssetPanel({
             id="asset-panel-title"
             className="text-lg font-semibold text-gray-900"
           >
-            Manage Assets
+            {t('title')}
           </h2>
           <button
             ref={firstFocusableRef}
@@ -216,7 +221,7 @@ export function AssetPanel({
               'min-h-[48px] min-w-[48px] flex items-center justify-center',
               'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
-            aria-label="Close panel"
+            aria-label={t('closePanel')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -230,7 +235,7 @@ export function AssetPanel({
               onClick={clearError}
               className="text-xs text-red-600 hover:text-red-800 underline mt-1"
             >
-              Dismiss
+              {tCommon('dismiss')}
             </button>
           </div>
         )}
@@ -266,8 +271,8 @@ export function AssetPanel({
           {currentAssets.length === 0 && (
             <div className="text-center py-12 text-gray-500">
               <ImageIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="font-medium">No assets yet</p>
-              <p className="text-sm">Add media to get started</p>
+              <p className="font-medium">{t('empty.title')}</p>
+              <p className="text-sm">{t('empty.description')}</p>
             </div>
           )}
         </div>
@@ -285,7 +290,7 @@ export function AssetPanel({
               'touch-manipulation [-webkit-tap-highlight-color:transparent]'
             )}
           >
-            Cancel
+            {tCommon('cancel')}
           </button>
           <button
             onClick={handleDone}
@@ -304,7 +309,7 @@ export function AssetPanel({
             {isCommitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              'Done'
+              tCommon('done')
             )}
           </button>
         </div>

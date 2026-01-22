@@ -7,9 +7,10 @@
  * Each item is displayed using the ItemRow component.
  *
  * @module ItemManager/components/ItemList
- * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect prop support)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ItemRow } from './ItemRow';
 import type { ItemListProps, ItemRecordExtended, SortOption, ColumnVisibilityState } from '../ItemManager.types';
@@ -26,6 +27,10 @@ interface SortableColumnHeaderProps {
   className?: string;
 }
 
+interface SortableColumnHeaderPropsWithT extends SortableColumnHeaderProps {
+  t: ReturnType<typeof useTranslations<'items'>>;
+}
+
 function SortableColumnHeader({
   label,
   shortLabel,
@@ -34,7 +39,8 @@ function SortableColumnHeader({
   currentSort,
   onSortChange,
   className,
-}: SortableColumnHeaderProps) {
+  t,
+}: SortableColumnHeaderPropsWithT) {
   const isActive = currentSort === sortKeyAsc || currentSort === sortKeyDesc;
   const isAscending = currentSort === sortKeyAsc;
 
@@ -56,7 +62,7 @@ function SortableColumnHeader({
         isActive ? 'text-gray-900' : 'text-gray-500',
         className
       )}
-      aria-label={`Sort by ${label}`}
+      aria-label={t('list.sortBy', { column: label })}
     >
       <span className="hidden md:inline">{label}</span>
       <span className="md:hidden">{shortLabel || label}</span>
@@ -94,6 +100,9 @@ export function ItemList({
   columnVisibility,
   onToggleColumn,
 }: ItemListProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   // Helper function to look up property name from ID (REQ-218)
   const getPropertyName = (propertyId?: string): string | undefined => {
     if (!propertyId || !properties) return undefined;
@@ -107,13 +116,13 @@ export function ItemList({
         className
       )}
       role="table"
-      aria-label={`${items.length} item${items.length !== 1 ? 's' : ''}`}
+      aria-label={t('card.pieces', { count: items.length })}
       aria-describedby={items.length === 0 ? 'empty-message-list' : undefined}
     >
       {/* Screen reader only table caption */}
       <div className="sr-only" role="caption">
-        Item list showing {items.length} items.
-        {isSelectionMode && ` Selection mode active with ${selectedIds.size} selected.`}
+        {t('list.caption', { count: items.length })}
+        {isSelectionMode && ` ${t('list.selectionActive', { count: selectedIds.size })}`}
       </div>
       {/* Header Row - Hidden on mobile, role=rowgroup for table structure */}
       <div role="rowgroup" className="hidden md:block min-w-fit">
@@ -121,70 +130,74 @@ export function ItemList({
           role="row"
           className="flex items-center gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider"
         >
-          {isSelectionMode && <div role="columnheader" className="w-8 flex-shrink-0" aria-label="Selection" />}
-          <div role="columnheader" className="w-12 flex-shrink-0" aria-label="Item preview" />
+          {isSelectionMode && <div role="columnheader" className="w-8 flex-shrink-0" aria-label={t('list.columns.selection')} />}
+          <div role="columnheader" className="w-12 flex-shrink-0" aria-label={t('list.columns.preview')} />
           {onSortChange ? (
             <SortableColumnHeader
-              label="Title"
+              label={t('list.columns.title')}
               sortKeyAsc="title-asc"
               sortKeyDesc="title-desc"
               currentSort={currentSort || 'created-desc'}
               onSortChange={onSortChange}
               className="flex-1 min-w-[120px]"
+              t={t}
             />
           ) : (
-            <div role="columnheader" className="flex-1 min-w-[120px]">Title</div>
+            <div role="columnheader" className="flex-1 min-w-[120px]">{t('list.columns.title')}</div>
           )}
           {onSortChange ? (
             <SortableColumnHeader
-              label="Location"
+              label={t('list.columns.location')}
               sortKeyAsc="location-asc"
               sortKeyDesc="location-asc"
               currentSort={currentSort || 'created-desc'}
               onSortChange={onSortChange}
               className="w-24 flex-shrink-0"
+              t={t}
             />
           ) : (
-            <div role="columnheader" className="w-24 flex-shrink-0">Location</div>
+            <div role="columnheader" className="w-24 flex-shrink-0">{t('list.columns.location')}</div>
           )}
           {onSortChange ? (
             <SortableColumnHeader
-              label="Guides"
-              shortLabel="Guide"
+              label={t('list.columns.guides')}
+              shortLabel={t('list.columns.guidesShort')}
               sortKeyAsc="instructions-asc"
               sortKeyDesc="instructions-desc"
               currentSort={currentSort || 'created-desc'}
               onSortChange={onSortChange}
               className="w-20 flex-shrink-0"
+              t={t}
             />
           ) : (
             <div role="columnheader" className="w-20 flex-shrink-0">
-              <span className="hidden md:inline">Guides</span>
-              <span className="md:hidden">Guide</span>
+              <span className="hidden md:inline">{t('list.columns.guides')}</span>
+              <span className="md:hidden">{t('list.columns.guidesShort')}</span>
             </div>
           )}
-          <div role="columnheader" className="hidden lg:block w-40 flex-shrink-0">Tags</div>
+          <div role="columnheader" className="hidden lg:block w-40 flex-shrink-0">{t('list.columns.tags')}</div>
           {columnVisibility?.property && (
-            <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">Property</div>
+            <div role="columnheader" className="hidden lg:block w-32 flex-shrink-0">{t('list.columns.property')}</div>
           )}
           {onSortChange ? (
             <SortableColumnHeader
-              label="Created"
+              label={t('list.columns.created')}
               sortKeyAsc="created-asc"
               sortKeyDesc="created-desc"
               currentSort={currentSort || 'created-desc'}
               onSortChange={onSortChange}
               className="w-28 flex-shrink-0"
+              t={t}
             />
           ) : (
-            <div role="columnheader" className="w-28 flex-shrink-0">Created</div>
+            <div role="columnheader" className="w-28 flex-shrink-0">{t('list.columns.created')}</div>
           )}
           {/* Views Column Header (REQ-091) - matches ItemRow w-20 */}
-          <div role="columnheader" className="hidden lg:block w-20 flex-shrink-0">Views</div>
+          <div role="columnheader" className="hidden lg:block w-20 flex-shrink-0">{t('list.columns.views')}</div>
           {/* Reactions Column Header (REQ-091) - matches ItemRow w-24 */}
-          <div role="columnheader" className="hidden xl:block w-24 flex-shrink-0">Reactions</div>
+          <div role="columnheader" className="hidden xl:block w-24 flex-shrink-0">{t('list.columns.reactions')}</div>
           {/* Actions + Column Settings combined (REQ-218) */}
-          <div role="columnheader" className="w-10 flex-shrink-0 flex items-center justify-end sticky right-0 bg-gray-50" aria-label="Actions">
+          <div role="columnheader" className="w-10 flex-shrink-0 flex items-center justify-end sticky right-0 bg-gray-50" aria-label={t('list.columns.actions')}>
             {onToggleColumn && columnVisibility && (
               <ColumnSettingsPopup
                 columnVisibility={columnVisibility}

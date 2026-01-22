@@ -18,6 +18,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { Play, FileText, ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InlineEdit, TagsInlineEdit, TagChip, VisitCountBadge, ReactionSummary, EngagementIndicator } from './shared';
@@ -25,36 +26,34 @@ import { useLongPress } from '../hooks/useLongPress';
 import type { ItemCardProps } from '../ItemManager.types';
 
 /**
- * Helper function to determine badge info based on content type and media type.
- * Returns label and appropriate CSS classes for each content type.
+ * Content type to translation key mapping.
  */
-function getContentTypeBadge(contentType: string, firstMediaType?: string) {
-  if (contentType === 'url-only') {
-    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
+const CONTENT_TYPE_KEYS: Record<string, { key: string; classes: string }> = {
+  'url-only': { key: 'link', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+  'text-only': { key: 'text', classes: 'bg-purple-100 text-purple-800 border-purple-200' },
+  'pdf-only': { key: 'pdf', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
+  'mixed': { key: 'mixed', classes: 'bg-orange-100 text-orange-800 border-orange-200' },
+  'url': { key: 'link', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+  'video': { key: 'video', classes: 'bg-red-100 text-red-800 border-red-200' },
+  'image': { key: 'photo', classes: 'bg-green-100 text-green-800 border-green-200' },
+  'pdf': { key: 'pdf', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
+  'default': { key: 'media', classes: 'bg-gray-100 text-gray-800 border-gray-200' },
+};
+
+/**
+ * Helper function to determine badge info based on content type and media type.
+ * Returns translation key and appropriate CSS classes for each content type.
+ */
+function getContentTypeBadgeKey(contentType: string, firstMediaType?: string): { key: string; classes: string } {
+  // Check content type first
+  if (CONTENT_TYPE_KEYS[contentType]) {
+    return CONTENT_TYPE_KEYS[contentType];
   }
-  if (contentType === 'text-only') {
-    return { label: 'TEXT', classes: 'bg-purple-100 text-purple-800 border-purple-200' };
+  // Then check media type
+  if (firstMediaType && CONTENT_TYPE_KEYS[firstMediaType]) {
+    return CONTENT_TYPE_KEYS[firstMediaType];
   }
-  if (contentType === 'pdf-only') {
-    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
-  }
-  if (contentType === 'mixed') {
-    return { label: 'MIXED', classes: 'bg-orange-100 text-orange-800 border-orange-200' };
-  }
-  // contentType === 'media'
-  if (firstMediaType === 'url') {
-    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
-  }
-  if (firstMediaType === 'video') {
-    return { label: 'VIDEO', classes: 'bg-red-100 text-red-800 border-red-200' };
-  }
-  if (firstMediaType === 'image') {
-    return { label: 'PHOTO', classes: 'bg-green-100 text-green-800 border-green-200' };
-  }
-  if (firstMediaType === 'pdf') {
-    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
-  }
-  return { label: 'MEDIA', classes: 'bg-gray-100 text-gray-800 border-gray-200' };
+  return CONTENT_TYPE_KEYS['default'];
 }
 
 /**
@@ -77,6 +76,9 @@ export function ItemCard({
   visitStats,
   reactions,
 }: ItemCardProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -152,7 +154,11 @@ export function ItemCard({
   }, [item.id]);
 
   // Get content type badge info
-  const badge = getContentTypeBadge(item.contentType, item.media[0]?.type);
+  const badgeInfo = getContentTypeBadgeKey(item.contentType, item.media[0]?.type);
+  const badge = {
+    label: t(`card.contentType.${badgeInfo.key}`),
+    classes: badgeInfo.classes,
+  };
 
   // Get fallback icon based on content type and media type
   const getFallbackIcon = () => {
@@ -296,7 +302,7 @@ export function ItemCard({
                 'focus:ring-blue-500 bg-white/80 cursor-pointer',
                 'shadow-sm hover:border-blue-400'
               )}
-              aria-label={`Select ${item.title}`}
+              aria-label={t('card.select', { title: item.title })}
             />
           </label>
         )}
@@ -333,8 +339,8 @@ export function ItemCard({
             <InlineEdit
               value={item.title}
               onSave={handleTitleSave}
-              placeholder="Enter title..."
-              ariaLabel={`Edit title for ${item.title}`}
+              placeholder={t('inline.title.placeholder')}
+              ariaLabel={t('inline.title.ariaLabel', { itemName: item.title })}
               maxLength={100}
               minLength={1}
               className="font-semibold text-gray-900 text-sm leading-tight"
@@ -351,8 +357,8 @@ export function ItemCard({
             <InlineEdit
               value={item.location || ''}
               onSave={handleLocationSave}
-              placeholder="Add location..."
-              ariaLabel={`Edit location for ${item.title}`}
+              placeholder={t('inline.location.placeholder')}
+              ariaLabel={t('inline.location.ariaLabel', { itemName: item.title })}
               maxLength={100}
               allowEmpty
               className="text-xs text-gray-500"
@@ -374,8 +380,8 @@ export function ItemCard({
               tags={item.tags || []}
               onSave={handleTagsSave}
               existingTags={existingTags}
-              placeholder="Add tags..."
-              ariaLabel={`Edit tags for ${item.title}`}
+              placeholder={t('inline.tags.placeholder')}
+              ariaLabel={t('inline.tags.ariaLabel', { itemName: item.title })}
             />
           </div>
         ) : (
@@ -386,7 +392,7 @@ export function ItemCard({
               ))}
               {item.tags.length > 3 && (
                 <span className="text-xs text-gray-500 ml-1">
-                  +{item.tags.length - 3} more
+                  {t('card.more', { count: item.tags.length - 3 })}
                 </span>
               )}
             </div>

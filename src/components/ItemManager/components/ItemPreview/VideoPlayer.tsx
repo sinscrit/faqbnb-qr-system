@@ -16,6 +16,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Play,
   Pause,
@@ -82,6 +83,9 @@ export function VideoPlayer({
   onError,
   className,
 }: VideoPlayerProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('media.videoPlayer');
+
   // ---------------------------------------------------------------------------
   // Refs
   // ---------------------------------------------------------------------------
@@ -184,11 +188,11 @@ export function VideoPlayer({
   }, [onEnded]);
 
   const handleVideoError = useCallback(() => {
-    const errorMessage = 'Failed to load video. Please check the file and try again.';
+    const errorMessage = t('error.loadFailed');
     setError(errorMessage);
     setIsLoading(false);
     onError?.(errorMessage);
-  }, [onError]);
+  }, [onError, t]);
 
   // ---------------------------------------------------------------------------
   // Playback Controls
@@ -462,7 +466,7 @@ export function VideoPlayer({
         )}
       >
         <div className="text-red-400 text-center">
-          <p className="font-medium">Video Error</p>
+          <p className="font-medium">{t('error.title')}</p>
           <p className="text-sm mt-1">{error}</p>
         </div>
       </div>
@@ -485,7 +489,7 @@ export function VideoPlayer({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="region"
-      aria-label="Video player"
+      aria-label={t('ariaLabel')}
     >
       {/* Video Element */}
       <video
@@ -527,7 +531,7 @@ export function VideoPlayer({
             'transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
           )}
           style={{ minWidth: TOUCH_TARGET_SIZE + 16, minHeight: TOUCH_TARGET_SIZE + 16 }}
-          aria-label="Play video"
+          aria-label={t('controls.playVideo')}
         >
           <Play className="w-10 h-10 fill-current" />
         </button>
@@ -565,7 +569,7 @@ export function VideoPlayer({
             style={{
               background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${progressPercent}%, #4b5563 ${progressPercent}%, #4b5563 100%)`,
             }}
-            aria-label="Seek"
+            aria-label={t('controls.seek')}
             aria-valuemin={0}
             aria-valuemax={duration}
             aria-valuenow={currentTime}
@@ -584,7 +588,7 @@ export function VideoPlayer({
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
               )}
               style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-              aria-label="Skip backward 10 seconds"
+              aria-label={t('controls.skipBackward')}
             >
               <SkipBack className="w-5 h-5" />
             </button>
@@ -597,7 +601,7 @@ export function VideoPlayer({
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
               )}
               style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
+              aria-label={isPlaying ? t('controls.pause') : t('controls.play')}
             >
               {isPlaying ? (
                 <Pause className="w-6 h-6" />
@@ -614,7 +618,7 @@ export function VideoPlayer({
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
               )}
               style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-              aria-label="Skip forward 10 seconds"
+              aria-label={t('controls.skipForward')}
             >
               <SkipForward className="w-5 h-5" />
             </button>
@@ -628,7 +632,7 @@ export function VideoPlayer({
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
                 )}
                 style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
+                aria-label={isMuted ? t('controls.unmute') : t('controls.mute')}
               >
                 <VolumeIcon className="w-5 h-5" />
               </button>
@@ -648,7 +652,7 @@ export function VideoPlayer({
                   [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3
                   [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
                   [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
-                aria-label="Volume"
+                aria-label={t('controls.volume')}
               />
             </div>
           </div>
@@ -674,7 +678,7 @@ export function VideoPlayer({
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
                 )}
                 style={{ minWidth: TOUCH_TARGET_SIZE, minHeight: TOUCH_TARGET_SIZE }}
-                aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}
+                aria-label={isFullscreen ? t('controls.exitFullscreen') : t('controls.enterFullscreen')}
               >
                 {isFullscreen ? (
                   <Minimize className="w-5 h-5" />

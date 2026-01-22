@@ -10,6 +10,7 @@
  * @lastModified 2026-01-05 (REQ-091)
  */
 
+import { useTranslations } from 'next-intl';
 import { Eye, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ItemVisitStats, ItemReactionSummary } from '../../ItemManager.types';
@@ -45,18 +46,18 @@ export interface AnalyticsSectionProps {
 // Constants
 // =============================================================================
 
-const REACTION_DISPLAY: Record<keyof Omit<ItemReactionSummary, 'total'>, { emoji: string; label: string }> = {
-  like: { emoji: '👍', label: 'Likes' },
-  love: { emoji: '❤️', label: 'Loves' },
-  dislike: { emoji: '👎', label: 'Dislikes' },
-  confused: { emoji: '😕', label: 'Confused' },
+const REACTION_DISPLAY: Record<keyof Omit<ItemReactionSummary, 'total'>, { emoji: string; labelKey: string }> = {
+  like: { emoji: '👍', labelKey: 'like' },
+  love: { emoji: '❤️', labelKey: 'love' },
+  dislike: { emoji: '👎', labelKey: 'dislike' },
+  confused: { emoji: '😕', labelKey: 'confused' },
 };
 
-const TIME_PERIODS: { key: keyof ItemVisitStats; label: string }[] = [
-  { key: 'last24Hours', label: 'Last 24 hours' },
-  { key: 'last7Days', label: 'Last 7 days' },
-  { key: 'last30Days', label: 'Last 30 days' },
-  { key: 'allTime', label: 'All time' },
+const TIME_PERIODS: { key: keyof ItemVisitStats; labelKey: string }[] = [
+  { key: 'last24Hours', labelKey: 'last24Hours' },
+  { key: 'last7Days', labelKey: 'last7Days' },
+  { key: 'last30Days', labelKey: 'last30Days' },
+  { key: 'allTime', labelKey: 'allTime' },
 ];
 
 // =============================================================================
@@ -69,6 +70,9 @@ export function AnalyticsSection({
   loading = false,
   className,
 }: AnalyticsSectionProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items.analyticsSection');
+
   const hasData = visitStats || reactions;
 
   if (loading) {
@@ -87,7 +91,7 @@ export function AnalyticsSection({
     return (
       <div className={cn('text-center py-4 text-gray-500', className)}>
         <Eye className="w-6 h-6 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No analytics data available</p>
+        <p className="text-sm">{t('noData')}</p>
       </div>
     );
   }
@@ -98,7 +102,7 @@ export function AnalyticsSection({
       <div className="flex items-center gap-2">
         <TrendingUp className="w-4 h-4 text-gray-500" aria-hidden="true" />
         <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-          Analytics
+          {t('title')}
         </h3>
       </div>
 
@@ -108,12 +112,12 @@ export function AnalyticsSection({
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
               <Eye className="w-4 h-4 text-gray-500" aria-hidden="true" />
-              <h4 className="text-sm font-medium text-gray-700">Views</h4>
+              <h4 className="text-sm font-medium text-gray-700">{t('views.title')}</h4>
             </div>
             <div className="space-y-2">
-              {TIME_PERIODS.map(({ key, label }) => (
+              {TIME_PERIODS.map(({ key, labelKey }) => (
                 <div key={key} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{label}</span>
+                  <span className="text-sm text-gray-600">{t(`views.periods.${labelKey}`)}</span>
                   <span className="text-sm font-medium text-gray-900">
                     {visitStats[key].toLocaleString()}
                   </span>
@@ -128,14 +132,14 @@ export function AnalyticsSection({
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-base" aria-hidden="true">😊</span>
-              <h4 className="text-sm font-medium text-gray-700">Reactions</h4>
+              <h4 className="text-sm font-medium text-gray-700">{t('reactions.title')}</h4>
               <span className="text-xs text-gray-500 ml-auto">
-                {reactions.total} total
+                {t('reactions.total', { count: reactions.total })}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              {(Object.entries(REACTION_DISPLAY) as [keyof typeof REACTION_DISPLAY, { emoji: string; label: string }][]).map(
-                ([key, { emoji, label }]) => {
+              {(Object.entries(REACTION_DISPLAY) as [keyof typeof REACTION_DISPLAY, { emoji: string; labelKey: string }][]).map(
+                ([key, { emoji, labelKey }]) => {
                   const count = reactions[key];
                   return (
                     <div
@@ -147,7 +151,7 @@ export function AnalyticsSection({
                     >
                       <span className="text-lg" aria-hidden="true">{emoji}</span>
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 truncate">{label}</div>
+                        <div className="text-xs text-gray-500 truncate">{t(`reactions.types.${labelKey}`)}</div>
                         <div className={cn(
                           'text-sm font-medium',
                           count > 0 ? 'text-gray-900' : 'text-gray-400'

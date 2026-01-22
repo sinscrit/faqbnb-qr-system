@@ -7,9 +7,10 @@
  * Uses an Eye icon and formats numbers for readability (e.g., 1.2K).
  *
  * @module ItemManager/components/shared/VisitCountBadge
- * @lastModified 2026-01-05 (REQ-091)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -72,6 +73,9 @@ export function VisitCountBadge({
   className,
   loading = false,
 }: VisitCountBadgeProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   const sizeClasses = {
     small: 'text-xs px-1.5 py-0.5 gap-1',
     medium: 'text-sm px-2 py-1 gap-1.5',
@@ -88,7 +92,7 @@ export function VisitCountBadge({
           'w-12 h-5',
           className
         )}
-        aria-label="Loading view count"
+        aria-label={t('analytics.loading')}
       />
     );
   }
@@ -102,7 +106,7 @@ export function VisitCountBadge({
         sizeClasses[size],
         className
       )}
-      aria-label={`${count} views`}
+      aria-label={t('card.views', { count })}
     >
       <Eye className={cn(iconSize, 'flex-shrink-0')} aria-hidden="true" />
       <span>{formatCount(count)}</span>

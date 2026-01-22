@@ -155,7 +155,8 @@
       "removing": "Removing...",
       "addLink": "Add Link",
       "addThumbnail": "Add custom thumbnail",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "restore": "Restore"
     },
     "status": {
       "loading": "Loading...",
@@ -1183,7 +1184,26 @@
       },
       "loading": "Loading items...",
       "noArticles": "No articles yet",
-      "addFirstArticle": "Add your first article"
+      "addFirstArticle": "Add your first article",
+      "caption": "{count, plural, =0 {No items} one {# item} other {# items}}",
+      "selectionActive": "Selection mode active with {count, plural, one {# item} other {# items}} selected.",
+      "sortBy": "Sort by {column}",
+      "columns": {
+        "selection": "Selection",
+        "preview": "Item preview",
+        "title": "Title",
+        "location": "Location",
+        "guides": "Guides",
+        "guidesShort": "Guide",
+        "tags": "Tags",
+        "property": "Property",
+        "created": "Created",
+        "views": "Views",
+        "reactions": "Reactions",
+        "actions": "Actions"
+      },
+      "columnSettings": "Column settings",
+      "showColumns": "Show Columns"
     },
 
     "card": {
@@ -1202,10 +1222,24 @@
       "more": "+{count} more",
       "select": "Select {title}",
       "thumbnail": "{title} thumbnail",
+      "ariaLabel": "{title}. {type} content. Press Enter to preview.",
       "scanCount": "Scan Count",
       "lastScanned": "Last Scanned",
       "createdAt": "Created At",
       "updatedAt": "Updated At"
+    },
+
+    "row": {
+      "ariaLocation": "Location: {location}.",
+      "ariaGuides": "{count, plural, one {# guide.} other {# guides.}}",
+      "ariaNoGuides": "No guides.",
+      "ariaCreated": "Created {date}.",
+      "ariaViews": " {count, plural, one {# view.} other {# views.}}",
+      "ariaReactions": " {count, plural, one {# reaction.} other {# reactions.}}",
+      "ariaSelected": " Selected.",
+      "ariaNotSelected": " Not selected.",
+      "actionsMenu": "Item actions",
+      "actionsFor": "Actions for {title}"
     },
 
     "actions": {
@@ -1400,8 +1434,27 @@
       "thisWeek": "This week",
       "thisMonth": "This month",
       "reactions": "Reactions",
-      "engagement": "Engagement",
-      "noData": "No analytics data yet"
+      "engagement": {
+        "title": "Engagement",
+        "high": "High engagement",
+        "medium": "Medium engagement",
+        "low": "Low engagement"
+      },
+      "level": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "noData": "No analytics data yet",
+      "loading": "Loading view count",
+      "loadingReactions": "Loading reactions",
+      "loadingEngagement": "Loading engagement indicator",
+      "reactionCount": {
+        "like": "{count, plural, one {# like} other {# likes}}",
+        "love": "{count, plural, one {# love} other {# loves}}",
+        "dislike": "{count, plural, one {# dislike} other {# dislikes}}",
+        "confused": "{count, plural, one {# confused} other {# confused}}"
+      }
     },
 
     "view": {
@@ -1431,6 +1484,36 @@
       "addLink": "Add Link",
       "noResources": "No resources added yet",
       "addFirstResource": "Add Your First Resource"
+    },
+
+    "analyticsSection": {
+      "title": "Analytics",
+      "noData": "No analytics data available",
+      "views": {
+        "title": "Views",
+        "periods": {
+          "last24Hours": "Last 24 hours",
+          "last7Days": "Last 7 days",
+          "last30Days": "Last 30 days",
+          "allTime": "All time"
+        }
+      },
+      "reactions": {
+        "title": "Reactions",
+        "total": "{count} total",
+        "types": {
+          "like": "Likes",
+          "love": "Loves",
+          "dislike": "Dislikes",
+          "confused": "Confused"
+        }
+      }
+    },
+
+    "instructionsViewer": {
+      "ariaLabel": "Item guides",
+      "headerText": "Guides",
+      "empty": "No guides provided."
     }
   },
   "errors": {
@@ -3077,6 +3160,85 @@
         "cancelRemoval": "Cancel removal",
         "remove": "Remove",
         "removeAsset": "Remove asset"
+      }
+    },
+    "assetPanel": {
+      "title": "Manage Assets",
+      "closePanel": "Close panel",
+      "empty": {
+        "title": "No assets yet",
+        "description": "Add media to get started"
+      }
+    },
+    "dropZone": {
+      "types": {
+        "images": "images",
+        "videos": "videos",
+        "pdfs": "PDFs"
+      },
+      "rejected": {
+        "title": "{count, plural, one {# file couldn't be added} other {# files couldn't be added}}"
+      },
+      "dragActive": {
+        "valid": "Drop zone active. Release to upload files.",
+        "invalid": "Invalid file type. Cannot drop this file."
+      },
+      "dropFilesHere": "Drop files here",
+      "invalidFileType": "Invalid file type",
+      "dragOrClick": "Drag files here or click to browse",
+      "supports": "Supports {types}",
+      "maxFileSize": "Max {size} per file"
+    },
+    "assetItem": {
+      "ariaLabel": "{name}, {type}{status, select, other { }}",
+      "markedForRemoval": ", marked for removal",
+      "dragging": ", dragging",
+      "dragToReorder": "Drag to reorder",
+      "pages": "{count, plural, one {# page} other {# pages}}",
+      "new": "New",
+      "restoreAsset": "Restore this asset",
+      "removeAsset": "Remove {name}"
+    },
+    "videoPlayer": {
+      "ariaLabel": "Video player",
+      "error": {
+        "title": "Video Error",
+        "loadFailed": "Failed to load video. Please check the file and try again."
+      },
+      "controls": {
+        "playVideo": "Play video",
+        "play": "Play",
+        "pause": "Pause",
+        "seek": "Seek",
+        "skipBackward": "Skip backward 10 seconds",
+        "skipForward": "Skip forward 10 seconds",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "volume": "Volume",
+        "enterFullscreen": "Enter full screen",
+        "exitFullscreen": "Exit full screen"
+      }
+    },
+    "gallery": {
+      "empty": "No media to display",
+      "ariaLabel": "Media gallery, {count, plural, one {# item} other {# items}}",
+      "types": {
+        "video": "Video",
+        "photo": "Photo",
+        "pdf": "PDF",
+        "link": "Link"
+      },
+      "nav": {
+        "previous": "Previous media",
+        "next": "Next media"
+      },
+      "fullscreen": {
+        "ariaLabel": "Media gallery full screen",
+        "enter": "Enter full screen",
+        "exit": "Exit full screen"
+      },
+      "thumbnails": {
+        "ariaLabel": "Media thumbnails"
       }
     }
   },

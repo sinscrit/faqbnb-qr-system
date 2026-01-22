@@ -10,7 +10,7 @@
  * long-press gesture for mobile selection mode entry (REQ-069).
  *
  * @module ItemManager/components/ItemRow
- * @lastModified 2026-01-05 (REQ-091 - Added Views and Reactions columns)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -50,30 +50,34 @@ function formatDate(date: Date): string {
 }
 
 /**
- * Helper function to determine badge info based on content type and media type.
- * Returns label and appropriate CSS classes for each content type.
+ * Content type to translation key mapping (matches ItemCard pattern).
  */
-function getContentTypeBadge(contentType: string, firstMediaType?: string) {
-  if (contentType === 'url-only') {
-    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
+const CONTENT_TYPE_KEYS: Record<string, { key: string; classes: string }> = {
+  'url-only': { key: 'link', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+  'text-only': { key: 'text', classes: 'bg-purple-100 text-purple-800 border-purple-200' },
+  'pdf-only': { key: 'pdf', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
+  'mixed': { key: 'mixed', classes: 'bg-orange-100 text-orange-800 border-orange-200' },
+  'url': { key: 'link', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' },
+  'video': { key: 'video', classes: 'bg-red-100 text-red-800 border-red-200' },
+  'image': { key: 'photo', classes: 'bg-green-100 text-green-800 border-green-200' },
+  'pdf': { key: 'pdf', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
+  'default': { key: 'media', classes: 'bg-gray-100 text-gray-800 border-gray-200' },
+};
+
+/**
+ * Helper function to determine badge info based on content type and media type.
+ * Returns translation key and appropriate CSS classes for each content type.
+ */
+function getContentTypeBadgeKey(contentType: string, firstMediaType?: string): { key: string; classes: string } {
+  // Check content type first
+  if (CONTENT_TYPE_KEYS[contentType]) {
+    return CONTENT_TYPE_KEYS[contentType];
   }
-  if (contentType === 'text-only') {
-    return { label: 'TEXT', classes: 'bg-purple-100 text-purple-800 border-purple-200' };
+  // Then check media type
+  if (firstMediaType && CONTENT_TYPE_KEYS[firstMediaType]) {
+    return CONTENT_TYPE_KEYS[firstMediaType];
   }
-  if (contentType === 'pdf-only') {
-    return { label: 'PDF', classes: 'bg-blue-100 text-blue-800 border-blue-200' };
-  }
-  if (contentType === 'mixed') {
-    return { label: 'MIXED', classes: 'bg-orange-100 text-orange-800 border-orange-200' };
-  }
-  // contentType === 'media'
-  if (firstMediaType === 'url') {
-    return { label: 'LINK', classes: 'bg-cyan-100 text-cyan-800 border-cyan-200' };
-  }
-  if (firstMediaType === 'video') {
-    return { label: 'VIDEO', classes: 'bg-red-100 text-red-800 border-red-200' };
-  }
-  return { label: 'PHOTO', classes: 'bg-green-100 text-green-800 border-green-200' };
+  return CONTENT_TYPE_KEYS['default'];
 }
 
 /**
@@ -103,7 +107,8 @@ export function ItemRow({
   propertyName,
   showPropertyColumn,
 }: ItemRowProps) {
-  const tEmpty = useTranslations('common.emptyStates');
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
   // Image loading/error state
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -233,8 +238,12 @@ export function ItemRow({
     setMenuOpen(!menuOpen);
   }, [menuOpen]);
 
-  // Get content type badge info
-  const badge = getContentTypeBadge(item.contentType, item.media[0]?.type);
+  // Get content type badge info with translation
+  const badgeInfo = getContentTypeBadgeKey(item.contentType, item.media[0]?.type);
+  const badge = {
+    label: t(`card.contentType.${badgeInfo.key}`),
+    classes: badgeInfo.classes,
+  };
 
   // Get fallback icon based on content type and media type
   const getFallbackIcon = () => {
@@ -291,12 +300,12 @@ export function ItemRow({
     );
   };
 
-  // Define menu items
+  // Define menu items with translated labels
   const menuItems = [
-    { icon: Edit, label: 'Edit', onClick: () => onEdit(item), show: true },
-    { icon: Layers, label: 'Manage Assets', onClick: () => onManageAssets?.(item), show: !!onManageAssets },
-    { icon: Copy, label: 'Duplicate', onClick: () => onDuplicate?.(item), show: !!onDuplicate },
-    { icon: Trash2, label: 'Delete', onClick: () => onDelete(item), show: true, danger: true },
+    { icon: Edit, label: t('actions.edit'), onClick: () => onEdit(item), show: true },
+    { icon: Layers, label: t('actions.manageAssets'), onClick: () => onManageAssets?.(item), show: !!onManageAssets },
+    { icon: Copy, label: t('actions.duplicate'), onClick: () => onDuplicate?.(item), show: !!onDuplicate },
+    { icon: Trash2, label: t('actions.delete'), onClick: () => onDelete(item), show: true, danger: true },
   ];
 
   // Handle row click (for preview or selection)
@@ -345,8 +354,18 @@ export function ItemRow({
     }
   };
 
-  // Build comprehensive aria-label
-  const ariaLabel = `${item.title}. ${item.location ? `Location: ${item.location}.` : ''} ${articlesCount !== undefined && articlesCount > 0 ? `${articlesCount} guides.` : tEmpty('guides.noGuides')} Created ${formatDate(item.createdAt)}.${visitStats ? ` ${visitStats.allTime} views.` : ''}${reactions?.total ? ` ${reactions.total} reactions.` : ''}${isSelectionMode ? ` ${isSelected ? 'Selected.' : 'Not selected.'}` : ''}`;
+  // Build comprehensive aria-label with translations
+  const locationPart = item.location ? t('row.ariaLocation', { location: item.location }) : '';
+  const guidesPart = articlesCount !== undefined && articlesCount > 0
+    ? t('row.ariaGuides', { count: articlesCount })
+    : t('row.ariaNoGuides');
+  const createdPart = t('row.ariaCreated', { date: formatDate(item.createdAt) });
+  const viewsPart = visitStats ? t('row.ariaViews', { count: visitStats.allTime }) : '';
+  const reactionsPart = reactions?.total ? t('row.ariaReactions', { count: reactions.total }) : '';
+  const selectionPart = isSelectionMode
+    ? (isSelected ? t('row.ariaSelected') : t('row.ariaNotSelected'))
+    : '';
+  const ariaLabel = `${item.title}. ${locationPart} ${guidesPart} ${createdPart}${viewsPart}${reactionsPart}${selectionPart}`.trim();
 
   return (
     <div
@@ -387,7 +406,7 @@ export function ItemRow({
               onSelectionChange(item.id, e.target.checked);
             }}
             className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-            aria-label={`Select ${item.title}`}
+            aria-label={t('card.select', { title: item.title })}
           />
         </label>
       )}
@@ -433,8 +452,8 @@ export function ItemRow({
             <InlineEdit
               value={item.title}
               onSave={handleTitleSave}
-              placeholder="Enter title..."
-              ariaLabel={`Edit title for ${item.title}`}
+              placeholder={t('inline.title.placeholder')}
+              ariaLabel={t('inline.title.ariaLabel', { itemName: item.title })}
               maxLength={100}
               minLength={1}
               className="font-medium text-gray-900"
@@ -461,8 +480,8 @@ export function ItemRow({
             <InlineEdit
               value={item.location || ''}
               onSave={handleLocationSave}
-              placeholder="Add location"
-              ariaLabel={`Edit location for ${item.title}`}
+              placeholder={t('inline.location.placeholder')}
+              ariaLabel={t('inline.location.ariaLabel', { itemName: item.title })}
               maxLength={100}
               allowEmpty
               className="text-sm text-gray-500 w-full"
@@ -495,8 +514,8 @@ export function ItemRow({
               tags={item.tags || []}
               onSave={handleTagsSave}
               existingTags={existingTags}
-              placeholder="Add tags..."
-              ariaLabel={`Edit tags for ${item.title}`}
+              placeholder={t('inline.tags.placeholder')}
+              ariaLabel={t('inline.tags.ariaLabel', { itemName: item.title })}
             />
           </div>
         ) : (
@@ -547,7 +566,7 @@ export function ItemRow({
             'min-h-[48px] min-w-[48px] md:min-h-0 md:min-w-0 md:p-2',
             'touch-manipulation [-webkit-tap-highlight-color:transparent]'
           )}
-          aria-label="Item actions"
+          aria-label={t('row.actionsMenu')}
           aria-haspopup="true"
           aria-expanded={menuOpen}
         >
@@ -557,7 +576,7 @@ export function ItemRow({
         {menuOpen && (
           <div
             role="menu"
-            aria-label={`Actions for ${item.title}`}
+            aria-label={t('row.actionsFor', { title: item.title })}
             className="bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
             style={menuStyle}
           >

@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useCallback, useId } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Upload, AlertCircle } from 'lucide-react';
 import { useFileUpload } from '@/components/ItemCapture/hooks/useFileUpload';
@@ -110,6 +111,10 @@ export function AssetDropZone({
   compact = false,
   className,
 }: AssetDropZoneProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('media.dropZone');
+  const tCommon = useTranslations('common.actions');
+
   // Generate unique IDs for accessibility
   const baseId = useId();
   const descriptionId = `${baseId}-description`;
@@ -170,11 +175,11 @@ export function AssetDropZone({
 
   const supportedTypesLabel = useMemo(() => {
     const labels: string[] = [];
-    if (allowedMediaTypes.includes('image')) labels.push('images');
-    if (allowedMediaTypes.includes('video')) labels.push('videos');
-    if (allowedMediaTypes.includes('pdf')) labels.push('PDFs');
+    if (allowedMediaTypes.includes('image')) labels.push(t('types.images'));
+    if (allowedMediaTypes.includes('video')) labels.push(t('types.videos'));
+    if (allowedMediaTypes.includes('pdf')) labels.push(t('types.pdfs'));
     return labels.join(', ');
-  }, [allowedMediaTypes]);
+  }, [allowedMediaTypes, t]);
 
   // ==========================================================================
   // Render
@@ -192,7 +197,7 @@ export function AssetDropZone({
               onClick={clearError}
               className="text-red-600 text-xs underline mt-1 hover:text-red-800"
             >
-              Dismiss
+              {tCommon('dismiss')}
             </button>
           </div>
         </div>
@@ -204,7 +209,7 @@ export function AssetDropZone({
           <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-yellow-800 font-medium">
-              {rejectedFiles.length} file(s) couldn&apos;t be added
+              {t('rejected.title', { count: rejectedFiles.length })}
             </p>
             <ul className="mt-1 space-y-0.5">
               {rejectedFiles.map((rejection, index) => (
@@ -240,15 +245,15 @@ export function AssetDropZone({
 
         {/* Screen Reader Announcements */}
         <div aria-live="polite" className="sr-only">
-          {isDragActive && isDragValid && 'Drop zone active. Release to upload files.'}
-          {isDragActive && !isDragValid && 'Invalid file type. Cannot drop this file.'}
+          {isDragActive && isDragValid && t('dragActive.valid')}
+          {isDragActive && !isDragValid && t('dragActive.invalid')}
         </div>
 
         {/* Drag Active State: Valid */}
         {isDragActive && isDragValid && (
           <div className="text-center text-blue-600">
             <Upload className="w-8 h-8 mx-auto mb-2" />
-            <p className="font-medium">Drop files here</p>
+            <p className="font-medium">{t('dropFilesHere')}</p>
           </div>
         )}
 
@@ -256,7 +261,7 @@ export function AssetDropZone({
         {isDragActive && !isDragValid && (
           <div className="text-center text-red-600">
             <AlertCircle className="w-8 h-8 mx-auto mb-2" />
-            <p className="font-medium">Invalid file type</p>
+            <p className="font-medium">{t('invalidFileType')}</p>
           </div>
         )}
 
@@ -265,15 +270,15 @@ export function AssetDropZone({
           <div className="text-center">
             <Upload className={cn('mx-auto mb-2 text-gray-400', compact ? 'w-6 h-6' : 'w-8 h-8')} />
             <p className="text-gray-700 font-medium">
-              Drag files here or click to browse
+              {t('dragOrClick')}
             </p>
             {!compact && (
               <>
                 <p id={descriptionId} className="text-gray-500 text-sm mt-1">
-                  Supports {supportedTypesLabel}
+                  {t('supports', { types: supportedTypesLabel })}
                 </p>
                 <p className="text-gray-400 text-xs mt-1">
-                  Max {formatFileSize(maxFileSize)} per file
+                  {t('maxFileSize', { size: formatFileSize(maxFileSize) })}
                 </p>
               </>
             )}

@@ -8,9 +8,10 @@
  *
  * @module ItemManager/components/dialogs/ColumnSettingsPopup
  * @see docs/req-218-items-list-ui-improvements-Overview.md
- * @lastModified 2026-01-13 (REQ-218)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Settings2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -35,11 +36,11 @@ export interface ColumnSettingsPopupProps {
 
 interface ColumnOption {
   key: keyof ColumnVisibilityState;
-  label: string;
+  labelKey: string;
 }
 
 const COLUMN_OPTIONS: ColumnOption[] = [
-  { key: 'property', label: 'Property' },
+  { key: 'property', labelKey: 'property' },
 ];
 
 // ============================================================================
@@ -51,6 +52,9 @@ export function ColumnSettingsPopup({
   onToggleColumn,
   className,
 }: ColumnSettingsPopupProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   return (
     <DropdownMenu.Root>
       {/* Trigger Button - Gear Icon */}
@@ -65,7 +69,7 @@ export function ColumnSettingsPopup({
             'transition-colors duration-150',
             className
           )}
-          aria-label="Column settings"
+          aria-label={t('list.columnSettings')}
         >
           <Settings2 className="w-4 h-4" aria-hidden="true" />
         </button>
@@ -88,7 +92,7 @@ export function ColumnSettingsPopup({
           {/* Header */}
           <div className="px-3 py-2 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Show Columns
+              {t('list.showColumns')}
             </p>
           </div>
 
@@ -127,7 +131,7 @@ export function ColumnSettingsPopup({
                 </div>
 
                 {/* Label */}
-                <span>{option.label}</span>
+                <span>{t(`list.columns.${option.labelKey}`)}</span>
               </DropdownMenu.CheckboxItem>
             );
           })}

@@ -19,6 +19,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ChevronLeft,
   ChevronRight,
@@ -79,25 +80,25 @@ const MEDIA_TYPE_CONFIG = {
     Icon: Play,
     bgColor: 'bg-purple-100',
     textColor: 'text-purple-700',
-    label: 'Video',
+    labelKey: 'video',
   },
   image: {
     Icon: ImageIcon,
     bgColor: 'bg-green-100',
     textColor: 'text-green-700',
-    label: 'Photo',
+    labelKey: 'photo',
   },
   pdf: {
     Icon: FileText,
     bgColor: 'bg-amber-100',
     textColor: 'text-amber-700',
-    label: 'PDF',
+    labelKey: 'pdf',
   },
   url: {
     Icon: LinkIcon,
     bgColor: 'bg-emerald-100',
     textColor: 'text-emerald-700',
-    label: 'Link',
+    labelKey: 'link',
   },
 } as const;
 
@@ -126,9 +127,11 @@ function formatDuration(seconds: number): string {
 function MediaTypeBadge({
   type,
   showLabel = false,
+  getLabel,
 }: {
   type: 'video' | 'image' | 'pdf' | 'url';
   showLabel?: boolean;
+  getLabel: (key: string) => string;
 }) {
   const config = MEDIA_TYPE_CONFIG[type];
   const { Icon } = config;
@@ -142,7 +145,7 @@ function MediaTypeBadge({
       )}
     >
       <Icon className="w-3 h-3" />
-      {showLabel && <span>{config.label}</span>}
+      {showLabel && <span>{getLabel(config.labelKey)}</span>}
     </div>
   );
 }
@@ -252,6 +255,9 @@ export function MediaGallery({
   className,
   debug = false,
 }: MediaGalleryProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('media.gallery');
+
   // ---------------------------------------------------------------------------
   // Controlled/Uncontrolled state management
   // ---------------------------------------------------------------------------
@@ -493,9 +499,9 @@ export function MediaGallery({
     if (mediaItems.length === 0) return;
     const item = mediaItems[safeActiveIndex];
     if (!item) return;
-    const typeLabel = MEDIA_TYPE_CONFIG[item.type].label;
+    const typeLabel = t(`types.${MEDIA_TYPE_CONFIG[item.type].labelKey}`);
     setAnnouncement(`${typeLabel} ${safeActiveIndex + 1} of ${mediaItems.length}`);
-  }, [safeActiveIndex, mediaItems]);
+  }, [safeActiveIndex, mediaItems, t]);
 
   // ---------------------------------------------------------------------------
   // Handle dynamic mediaItems changes
@@ -777,7 +783,7 @@ export function MediaGallery({
         )}
       >
         <ImageIcon className="w-12 h-12 text-gray-300" />
-        <p className="text-gray-500 text-sm">No media to display</p>
+        <p className="text-gray-500 text-sm">{t('empty')}</p>
       </div>
     );
   }
@@ -792,7 +798,7 @@ export function MediaGallery({
       className="fixed inset-0 z-50 bg-black flex flex-col"
       role="dialog"
       aria-modal="true"
-      aria-label="Media gallery full screen"
+      aria-label={t('fullscreen.ariaLabel')}
       onClick={(e) => {
         // Exit on backdrop click
         if (e.target === e.currentTarget) {
@@ -808,14 +814,14 @@ export function MediaGallery({
           'bg-white/10 hover:bg-white/20 text-white',
           'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
         )}
-        aria-label="Exit full screen"
+        aria-label={t('fullscreen.exit')}
       >
         <X className="w-6 h-6" />
       </button>
 
       {/* Type badge and counter */}
       <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-        <MediaTypeBadge type={currentItem.type} showLabel />
+        <MediaTypeBadge type={currentItem.type} showLabel getLabel={(key) => t(`types.${key}`)} />
         <span className="text-sm text-white bg-black/50 px-2 py-1 rounded">
           {safeActiveIndex + 1} / {mediaItems.length}
         </span>
@@ -838,7 +844,7 @@ export function MediaGallery({
             'bg-white/10 hover:bg-white/20 text-white',
             'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
           )}
-          aria-label="Previous media"
+          aria-label={t('nav.previous')}
         >
           <ChevronLeft className="w-8 h-8" />
         </button>
@@ -852,7 +858,7 @@ export function MediaGallery({
             'bg-white/10 hover:bg-white/20 text-white',
             'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
           )}
-          aria-label="Next media"
+          aria-label={t('nav.next')}
         >
           <ChevronRight className="w-8 h-8" />
         </button>
@@ -869,7 +875,7 @@ export function MediaGallery({
               msOverflowStyle: 'none',
             }}
             role="tablist"
-            aria-label="Media thumbnails"
+            aria-label={t('thumbnails.ariaLabel')}
           >
             {mediaItems.map((item, idx) => (
               <GalleryThumbnail
@@ -906,7 +912,7 @@ export function MediaGallery({
         className={cn('relative', className)}
         role="region"
         aria-roledescription="carousel"
-        aria-label={`Media gallery, ${mediaItems.length} items`}
+        aria-label={t('ariaLabel', { count: mediaItems.length })}
       >
         {/* Main carousel area */}
         <div
@@ -917,7 +923,7 @@ export function MediaGallery({
         >
           {/* Type badge and counter */}
           <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-            <MediaTypeBadge type={currentItem.type} showLabel />
+            <MediaTypeBadge type={currentItem.type} showLabel getLabel={(key) => t(`types.${key}`)} />
             {!isSingleItem && (
               <span className="text-sm text-white bg-black/50 px-2 py-1 rounded">
                 {safeActiveIndex + 1} / {mediaItems.length}
@@ -934,7 +940,7 @@ export function MediaGallery({
                 'bg-black/50 hover:bg-black/70 text-white',
                 'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white'
               )}
-              aria-label="Enter full screen"
+              aria-label={t('fullscreen.enter')}
             >
               <Maximize2 className="w-5 h-5" />
             </button>
@@ -965,7 +971,7 @@ export function MediaGallery({
                 'bg-white/80 hover:bg-white shadow-lg transition-colors',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
               )}
-              aria-label="Previous media"
+              aria-label={t('nav.previous')}
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -981,7 +987,7 @@ export function MediaGallery({
                 'bg-white/80 hover:bg-white shadow-lg transition-colors',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
               )}
-              aria-label="Next media"
+              aria-label={t('nav.next')}
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -1013,7 +1019,7 @@ export function MediaGallery({
               msOverflowStyle: 'none',
             }}
             role="tablist"
-            aria-label="Media thumbnails"
+            aria-label={t('thumbnails.ariaLabel')}
           >
             {mediaItems.map((item, idx) => (
               <GalleryThumbnail

@@ -13,6 +13,7 @@
  */
 
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { FileText } from 'lucide-react';
 
@@ -73,23 +74,30 @@ export function InstructionsViewer({
   maxHeight = '400px',
   minHeight = '100px',
   className,
-  ariaLabel = 'Item guides',
+  ariaLabel,
   showHeader = false,
-  headerText = 'Guides',
+  headerText,
 }: InstructionsViewerProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items.instructionsViewer');
+
   // Check if there is content to display
   const hasContent = instructions?.trim().length > 0;
+
+  // Use props if provided, otherwise use translations
+  const effectiveAriaLabel = ariaLabel || t('ariaLabel');
+  const effectiveHeaderText = headerText || t('headerText');
 
   return (
     <section
       className={cn('flex flex-col', className)}
-      aria-label={ariaLabel}
+      aria-label={effectiveAriaLabel}
     >
       {/* Optional Header */}
       {showHeader && (
         <div className="flex items-center gap-2 mb-3">
           <FileText className="w-5 h-5 text-gray-500" aria-hidden="true" />
-          <h4 className="text-sm font-medium text-gray-700">{headerText}</h4>
+          <h4 className="text-sm font-medium text-gray-700">{effectiveHeaderText}</h4>
         </div>
       )}
 
@@ -111,7 +119,7 @@ export function InstructionsViewer({
         {hasContent ? (
           <ReactMarkdown>{instructions}</ReactMarkdown>
         ) : (
-          <p className="text-gray-400 italic">No guides provided.</p>
+          <p className="text-gray-400 italic">{t('empty')}</p>
         )}
       </div>
     </section>

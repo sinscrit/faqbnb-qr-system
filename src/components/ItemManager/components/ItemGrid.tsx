@@ -10,6 +10,7 @@
  * @lastModified 2026-01-04 (REQ-069 - Added onLongPressSelect prop support)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { ItemCard } from './ItemCard';
 import type { ItemGridProps } from '../ItemManager.types';
@@ -27,6 +28,9 @@ export function ItemGrid({
   existingTags,
   loading,
 }: ItemGridProps & { loading?: boolean }) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   return (
     <div
       className={cn(
@@ -35,7 +39,7 @@ export function ItemGrid({
         className
       )}
       role="grid"
-      aria-label={`${items.length} item${items.length !== 1 ? 's' : ''}`}
+      aria-label={t('card.pieces', { count: items.length })}
       aria-busy={loading}
       aria-describedby={items.length === 0 ? 'empty-message-grid' : undefined}
     >

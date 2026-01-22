@@ -7,9 +7,10 @@
  * Shows top reactions by count, with tooltips for full details.
  *
  * @module ItemManager/components/shared/ReactionSummary
- * @lastModified 2026-01-05 (REQ-091)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ItemReactionSummary } from '../../ItemManager.types';
 
@@ -64,12 +65,8 @@ const REACTION_EMOJIS: Record<keyof Omit<ItemReactionSummary, 'total'>, string> 
   confused: '😕',
 };
 
-const REACTION_LABELS: Record<keyof Omit<ItemReactionSummary, 'total'>, string> = {
-  like: 'likes',
-  love: 'loves',
-  dislike: 'dislikes',
-  confused: 'confused',
-};
+// Reaction type keys for i18n lookup
+const REACTION_KEYS: (keyof Omit<ItemReactionSummary, 'total'>)[] = ['like', 'love', 'dislike', 'confused'];
 
 // =============================================================================
 // Component
@@ -83,6 +80,9 @@ export function ReactionSummary({
   loading = false,
   variant = 'inline',
 }: ReactionSummaryProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   const sizeClasses = {
     small: 'text-xs gap-1',
     medium: 'text-sm gap-1.5',
@@ -98,7 +98,7 @@ export function ReactionSummary({
           'w-16 h-5',
           className
         )}
-        aria-label="Loading reactions"
+        aria-label={t('analytics.loadingReactions')}
       />
     );
   }
@@ -116,9 +116,9 @@ export function ReactionSummary({
     .sort((a, b) => b[1] - a[1])
     .slice(0, maxReactions);
 
-  // Build aria-label for accessibility
+  // Build aria-label for accessibility using translations
   const ariaLabel = sortedReactions
-    .map(([type, count]) => `${count} ${REACTION_LABELS[type as keyof typeof REACTION_LABELS]}`)
+    .map(([type, count]) => t(`analytics.reactionCount.${type}`, { count }))
     .join(', ');
 
   if (variant === 'stacked') {

@@ -7,9 +7,10 @@
  * view counts and reactions. Uses color-coded badges/icons.
  *
  * @module ItemManager/components/shared/EngagementIndicator
- * @lastModified 2026-01-05 (REQ-091)
+ * @lastModified 2026-01-22 (REQ-E02-079 - Added i18n translations)
  */
 
+import { useTranslations } from 'next-intl';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ItemVisitStats, ItemReactionSummary } from '../../ItemManager.types';
@@ -112,11 +113,8 @@ const LEVEL_STYLES: Record<EngagementLevel, { bg: string; text: string; border: 
   },
 };
 
-const LEVEL_LABELS: Record<EngagementLevel, string> = {
-  high: 'High engagement',
-  medium: 'Medium engagement',
-  low: 'Low engagement',
-};
+// Engagement level keys for i18n lookup
+const LEVEL_KEYS: EngagementLevel[] = ['high', 'medium', 'low'];
 
 // =============================================================================
 // Helper Functions
@@ -159,9 +157,13 @@ export function EngagementIndicator({
   className,
   loading = false,
 }: EngagementIndicatorProps) {
+  // REQ-E02-079: i18n translations
+  const t = useTranslations('items');
+
   const mergedThresholds = { ...DEFAULT_THRESHOLDS, ...thresholds };
   const level = calculateEngagementLevel(visitStats, reactions, mergedThresholds);
   const styles = LEVEL_STYLES[level];
+  const levelLabel = t(`analytics.engagement.${level}`);
 
   const sizeClasses = {
     small: 'text-xs',
@@ -178,7 +180,7 @@ export function EngagementIndicator({
           variant === 'dot' ? 'w-2 h-2' : 'w-12 h-5',
           className
         )}
-        aria-label="Loading engagement indicator"
+        aria-label={t('analytics.loadingEngagement')}
       />
     );
   }
@@ -194,7 +196,7 @@ export function EngagementIndicator({
           styles.bg,
           className
         )}
-        aria-label={LEVEL_LABELS[level]}
+        aria-label={levelLabel}
         role="img"
       />
     );
@@ -208,7 +210,7 @@ export function EngagementIndicator({
           styles.text,
           className
         )}
-        aria-label={LEVEL_LABELS[level]}
+        aria-label={levelLabel}
         role="img"
       >
         <Icon className={iconSize} aria-hidden="true" />
@@ -228,10 +230,10 @@ export function EngagementIndicator({
         'font-medium',
         className
       )}
-      aria-label={LEVEL_LABELS[level]}
+      aria-label={levelLabel}
     >
       <Icon className={iconSize} aria-hidden="true" />
-      <span className="capitalize">{level}</span>
+      <span className="capitalize">{t(`analytics.level.${level}`)}</span>
     </span>
   );
 }
