@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from '@/components/LoginForm';
 import { AlertCircle, CheckCircle, Home } from 'lucide-react';
@@ -18,7 +19,8 @@ export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading, authState } = useAuth();
-  
+  const t = useTranslations('auth.login');
+
   // REQ-025: Debug logging for sequential authentication state machine
   const DEBUG_PREFIX = "🔄 LOGIN_PAGE_DEBUG:";
 
@@ -131,7 +133,7 @@ export default function LoginPageContent() {
       // Just show a loading message while auth processes
       setLoginMessage({
         type: 'info',
-        message: 'Completing Google sign-in...',
+        message: t('messages.completingGoogle'),
       });
       
       // Clean up URL after a brief delay to let auth context process
@@ -141,7 +143,7 @@ export default function LoginPageContent() {
         }
       }, 1000);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   // REQ-025: Show loading indicator during authentication state machine transitions
   // Only show loading if we have a user or we're in the middle of authentication
@@ -162,10 +164,10 @@ export default function LoginPageContent() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">
-            {authState === 'LOADING' ? 'Completing authentication...' : 'Loading authentication...'}
+            {authState === 'LOADING' ? t('loading.authenticating') : t('loading.loading')}
           </p>
           <p className="text-xs text-gray-400 mt-2">
-            Debug: Check console for LOGIN_PAGE_DEBUG logs (REQ-025)
+            {t('debug.consoleNote')}
           </p>
         </div>
       </div>
@@ -175,7 +177,7 @@ export default function LoginPageContent() {
   const handleLoginSuccess = () => {
     setLoginMessage({
       type: 'success',
-      message: 'Login successful! Redirecting...',
+      message: t('messages.success'),
     });
   };
 
@@ -233,22 +235,22 @@ export default function LoginPageContent() {
           <Link href="/" className="inline-flex items-center space-x-3 mb-6">
             <Image
               src="/faqbnb_logoshort.png"
-              alt="FAQBNB Logo"
+              alt={t('logoAlt')}
               width={48}
               height={48}
               className="rounded-lg"
             />
             <div className="text-left">
               <h1 className="text-2xl font-bold text-gray-900">FAQBNB</h1>
-              <p className="text-sm text-gray-600">Admin Access</p>
+              <p className="text-sm text-gray-600">{t('adminAccess')}</p>
             </div>
           </Link>
           
           <h2 className="text-3xl font-bold text-gray-900">
-            Sign in to your account
+            {t('title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Access the FAQBNB administration panel
+            {t('subtitle')}
           </p>
         </div>
 
@@ -272,7 +274,7 @@ export default function LoginPageContent() {
               className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               <Home className="w-4 h-4 mr-1" />
-              Back to Home
+              {t('backToHome')}
             </Link>
             {/* Clear Session Button for stuck users */}
             {(user || loginMessage) && (
@@ -284,16 +286,16 @@ export default function LoginPageContent() {
                   window.location.reload();
                 }}
                 className="text-sm text-red-600 hover:text-red-700 underline"
-                title="Clear stored session and reload page"
+                title={t('clearSessionTooltip')}
               >
-                Clear Session
+                {t('clearSession')}
               </button>
             )}
           </div>
           
           <div className="mt-4">
             <p className="text-xs text-gray-500">
-              © 2024 FAQBNB. All rights reserved.
+              {t('copyright')}
             </p>
           </div>
         </div>
@@ -329,11 +331,10 @@ export default function LoginPageContent() {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-gray-800">
-                Secure Access
+                {t('secureAccess')}
               </h3>
               <p className="text-xs text-gray-600 mt-1">
-                This area is restricted to authorized administrators only.
-                All access attempts are logged and monitored.
+                {t('secureAccessDescription')}
               </p>
             </div>
           </div>

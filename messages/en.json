@@ -617,6 +617,14 @@
     "login": {
       "title": "Sign in to your account",
       "subtitle": "Access the FAQBNB administration panel",
+      "logoAlt": "FAQBNB Logo",
+      "adminAccess": "Admin Access",
+      "backToHome": "Back to Home",
+      "clearSession": "Clear Session",
+      "clearSessionTooltip": "Clear stored session and reload page",
+      "secureAccess": "Secure Access",
+      "secureAccessDescription": "This area is restricted to authorized administrators only. All access attempts are logged and monitored.",
+      "copyright": "© 2024 FAQBNB. All rights reserved.",
       "emailLabel": "Email Address",
       "emailPlaceholder": "admin@faqbnb.com",
       "passwordLabel": "Password",
@@ -627,8 +635,17 @@
       "rememberMe": "Remember me for 30 days",
       "dividerText": "Or continue with email",
       "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "loading": {
+        "authenticating": "Completing authentication...",
+        "loading": "Loading authentication..."
+      },
+      "messages": {
+        "success": "Login successful! Redirecting...",
+        "completingGoogle": "Completing Google sign-in..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Check console for LOGIN_PAGE_DEBUG logs (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",

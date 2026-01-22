@@ -615,20 +615,37 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to your account",
-      "subtitle": "Access the FAQBNB administration panel",
-      "emailLabel": "Email Address",
+      "title": "Inicia sesión en tu cuenta",
+      "subtitle": "Accede al panel de administración de FAQBNB",
+      "logoAlt": "Logo de FAQBNB",
+      "adminAccess": "Acceso de administrador",
+      "backToHome": "Volver al inicio",
+      "clearSession": "Borrar sesión",
+      "clearSessionTooltip": "Borrar la sesión almacenada y recargar la página",
+      "secureAccess": "Acceso seguro",
+      "secureAccessDescription": "Esta área está restringida solo a administradores autorizados. Todos los intentos de acceso se registran y monitorean.",
+      "copyright": "© 2024 FAQBNB. Todos los derechos reservados.",
+      "emailLabel": "Correo electrónico",
       "emailPlaceholder": "admin@faqbnb.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "submitButton": "Sign In",
-      "emailButton": "Sign In with Email",
-      "submittingButton": "Signing In...",
-      "rememberMe": "Remember me for 30 days",
-      "dividerText": "Or continue with email",
-      "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Ingresa tu contraseña",
+      "submitButton": "Iniciar sesión",
+      "emailButton": "Iniciar sesión con correo",
+      "submittingButton": "Iniciando sesión...",
+      "rememberMe": "Recordarme por 30 días",
+      "dividerText": "O continuar con correo",
+      "accessRestricted": "Acceso restringido solo a administradores autorizados",
+      "loading": {
+        "authenticating": "Completando autenticación...",
+        "loading": "Cargando autenticación..."
+      },
+      "messages": {
+        "success": "¡Inicio de sesión exitoso! Redirigiendo...",
+        "completingGoogle": "Completando inicio de sesión con Google..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Revisa la consola para los registros LOGIN_PAGE_DEBUG (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",

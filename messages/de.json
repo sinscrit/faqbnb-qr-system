@@ -615,20 +615,37 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to your account",
-      "subtitle": "Access the FAQBNB administration panel",
-      "emailLabel": "Email Address",
+      "title": "Bei Ihrem Konto anmelden",
+      "subtitle": "Zugriff auf das FAQBNB-Administrationspanel",
+      "logoAlt": "FAQBNB-Logo",
+      "adminAccess": "Admin-Zugang",
+      "backToHome": "Zurück zur Startseite",
+      "clearSession": "Sitzung löschen",
+      "clearSessionTooltip": "Gespeicherte Sitzung löschen und Seite neu laden",
+      "secureAccess": "Sicherer Zugang",
+      "secureAccessDescription": "Dieser Bereich ist nur für autorisierte Administratoren zugänglich. Alle Zugriffsversuche werden protokolliert und überwacht.",
+      "copyright": "© 2024 FAQBNB. Alle Rechte vorbehalten.",
+      "emailLabel": "E-Mail-Adresse",
       "emailPlaceholder": "admin@faqbnb.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "submitButton": "Sign In",
-      "emailButton": "Sign In with Email",
-      "submittingButton": "Signing In...",
-      "rememberMe": "Remember me for 30 days",
-      "dividerText": "Or continue with email",
-      "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
+      "submitButton": "Anmelden",
+      "emailButton": "Mit E-Mail anmelden",
+      "submittingButton": "Anmeldung läuft...",
+      "rememberMe": "30 Tage angemeldet bleiben",
+      "dividerText": "Oder mit E-Mail fortfahren",
+      "accessRestricted": "Zugang nur für autorisierte Administratoren",
+      "loading": {
+        "authenticating": "Authentifizierung wird abgeschlossen...",
+        "loading": "Authentifizierung wird geladen..."
+      },
+      "messages": {
+        "success": "Anmeldung erfolgreich! Weiterleitung...",
+        "completingGoogle": "Google-Anmeldung wird abgeschlossen..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Konsole auf LOGIN_PAGE_DEBUG-Protokolle prüfen (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",

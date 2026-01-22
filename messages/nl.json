@@ -615,20 +615,37 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to your account",
-      "subtitle": "Access the FAQBNB administration panel",
-      "emailLabel": "Email Address",
+      "title": "Log in op uw account",
+      "subtitle": "Toegang tot het FAQBNB-beheerpaneel",
+      "logoAlt": "FAQBNB-logo",
+      "adminAccess": "Beheerderstoegang",
+      "backToHome": "Terug naar home",
+      "clearSession": "Sessie wissen",
+      "clearSessionTooltip": "Opgeslagen sessie wissen en pagina herladen",
+      "secureAccess": "Beveiligde toegang",
+      "secureAccessDescription": "Dit gebied is alleen toegankelijk voor geautoriseerde beheerders. Alle toegangspogingen worden geregistreerd en gemonitord.",
+      "copyright": "© 2024 FAQBNB. Alle rechten voorbehouden.",
+      "emailLabel": "E-mailadres",
       "emailPlaceholder": "admin@faqbnb.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "submitButton": "Sign In",
-      "emailButton": "Sign In with Email",
-      "submittingButton": "Signing In...",
-      "rememberMe": "Remember me for 30 days",
-      "dividerText": "Or continue with email",
-      "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "Voer uw wachtwoord in",
+      "submitButton": "Inloggen",
+      "emailButton": "Inloggen met e-mail",
+      "submittingButton": "Bezig met inloggen...",
+      "rememberMe": "Onthoud me voor 30 dagen",
+      "dividerText": "Of doorgaan met e-mail",
+      "accessRestricted": "Toegang beperkt tot geautoriseerde beheerders",
+      "loading": {
+        "authenticating": "Authenticatie voltooien...",
+        "loading": "Authenticatie laden..."
+      },
+      "messages": {
+        "success": "Inloggen geslaagd! Doorsturen...",
+        "completingGoogle": "Google-aanmelding voltooien..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Controleer console voor LOGIN_PAGE_DEBUG logs (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",

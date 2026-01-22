@@ -615,20 +615,37 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to your account",
-      "subtitle": "Access the FAQBNB administration panel",
-      "emailLabel": "Email Address",
+      "title": "Connectez-vous à votre compte",
+      "subtitle": "Accédez au panneau d'administration FAQBNB",
+      "logoAlt": "Logo FAQBNB",
+      "adminAccess": "Accès administrateur",
+      "backToHome": "Retour à l'accueil",
+      "clearSession": "Effacer la session",
+      "clearSessionTooltip": "Effacer la session stockée et recharger la page",
+      "secureAccess": "Accès sécurisé",
+      "secureAccessDescription": "Cette zone est réservée aux administrateurs autorisés uniquement. Toutes les tentatives d'accès sont enregistrées et surveillées.",
+      "copyright": "© 2024 FAQBNB. Tous droits réservés.",
+      "emailLabel": "Adresse e-mail",
       "emailPlaceholder": "admin@faqbnb.com",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "submitButton": "Sign In",
-      "emailButton": "Sign In with Email",
-      "submittingButton": "Signing In...",
-      "rememberMe": "Remember me for 30 days",
-      "dividerText": "Or continue with email",
-      "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "submitButton": "Se connecter",
+      "emailButton": "Se connecter par e-mail",
+      "submittingButton": "Connexion en cours...",
+      "rememberMe": "Se souvenir de moi pendant 30 jours",
+      "dividerText": "Ou continuer par e-mail",
+      "accessRestricted": "Accès réservé aux administrateurs autorisés uniquement",
+      "loading": {
+        "authenticating": "Authentification en cours...",
+        "loading": "Chargement de l'authentification..."
+      },
+      "messages": {
+        "success": "Connexion réussie ! Redirection...",
+        "completingGoogle": "Finalisation de la connexion Google..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Consultez la console pour les logs LOGIN_PAGE_DEBUG (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",

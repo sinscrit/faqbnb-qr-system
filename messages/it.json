@@ -625,20 +625,37 @@
   },
   "auth": {
     "login": {
-      "title": "Sign in to your account",
-      "subtitle": "Access the FAQBNB administration panel",
-      "emailLabel": "Email Address",
+      "title": "Accedi al tuo account",
+      "subtitle": "Accedi al pannello di amministrazione FAQBNB",
+      "logoAlt": "Logo FAQBNB",
+      "adminAccess": "Accesso amministratore",
+      "backToHome": "Torna alla home",
+      "clearSession": "Cancella sessione",
+      "clearSessionTooltip": "Cancella la sessione memorizzata e ricarica la pagina",
+      "secureAccess": "Accesso sicuro",
+      "secureAccessDescription": "Quest'area è riservata esclusivamente agli amministratori autorizzati. Tutti i tentativi di accesso vengono registrati e monitorati.",
+      "copyright": "© 2024 FAQBNB. Tutti i diritti riservati.",
+      "emailLabel": "Indirizzo e-mail",
       "emailPlaceholder": "admin@faqbnb.com",
       "passwordLabel": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "submitButton": "Sign In",
-      "emailButton": "Sign In with Email",
-      "submittingButton": "Signing In...",
-      "rememberMe": "Remember me for 30 days",
-      "dividerText": "Or continue with email",
-      "accessRestricted": "Access restricted to authorized administrators only",
-      "backToHome": "Back to Home",
-      "clearSession": "Clear Session"
+      "passwordPlaceholder": "Inserisci la tua password",
+      "submitButton": "Accedi",
+      "emailButton": "Accedi con e-mail",
+      "submittingButton": "Accesso in corso...",
+      "rememberMe": "Ricordami per 30 giorni",
+      "dividerText": "Oppure continua con e-mail",
+      "accessRestricted": "Accesso riservato solo agli amministratori autorizzati",
+      "loading": {
+        "authenticating": "Completamento autenticazione...",
+        "loading": "Caricamento autenticazione..."
+      },
+      "messages": {
+        "success": "Accesso riuscito! Reindirizzamento...",
+        "completingGoogle": "Completamento accesso Google..."
+      },
+      "debug": {
+        "consoleNote": "Debug: Controlla la console per i log LOGIN_PAGE_DEBUG (REQ-025)"
+      }
     },
     "register": {
       "title": "Create your account",
