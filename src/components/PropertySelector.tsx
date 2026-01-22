@@ -1,6 +1,6 @@
 // src/components/PropertySelector.tsx
 // REQ-134: Updated Airbnb Design System colors
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 - REQ-E02-011: Updated for i18n with properties.selector namespace
 
 'use client';
 
@@ -42,9 +42,9 @@ export default function PropertySelector({
   disabled = false,
   loading = false,
   isAdmin = false,
-  placeholder = 'All Properties'
+  placeholder
 }: PropertySelectorProps) {
-  const tEmpty = useTranslations('common.emptyStates');
+  const t = useTranslations('properties.selector');
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -142,15 +142,15 @@ export default function PropertySelector({
 
   // Get selected property display text
   const getSelectedPropertyDisplay = () => {
-    if (!selectedPropertyId) return placeholder;
+    if (!selectedPropertyId) return placeholder || t('allProperties');
     const selectedProperty = properties.find(p => p.id === selectedPropertyId);
-    if (!selectedProperty) return placeholder;
-    
+    if (!selectedProperty) return placeholder || t('allProperties');
+
     let displayText = selectedProperty.nickname;
     if (isAdmin && selectedProperty.users?.email) {
       displayText += ` (${selectedProperty.users.email})`;
     }
-    
+
     return displayText;
   };
 
@@ -162,10 +162,10 @@ export default function PropertySelector({
         <div className="mb-3">
           <h3 className="text-sm font-medium text-gray-700 flex items-center space-x-2">
             <Building className="w-4 h-4" />
-            <span>Property Filter</span>
+            <span>{t('filterLabel')}</span>
           </h3>
           <p className="text-xs text-gray-500 mt-1">
-            Filter analytics data by property
+            {t('filterDescription')}
           </p>
         </div>
       )}
@@ -191,12 +191,12 @@ export default function PropertySelector({
         disabled={disabled || loading}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        aria-label="Select property for analytics filtering"
+        aria-label={t('filterAriaLabel')}
       >
         <div className="flex items-center space-x-2 min-w-0 flex-1">
           <Building className={`${sizeClasses.icon} text-gray-400 flex-shrink-0`} />
           <span className="truncate text-left">
-            {loading ? 'Loading properties...' : getSelectedPropertyDisplay()}
+            {loading ? t('loading') : getSelectedPropertyDisplay()}
           </span>
         </div>
         <ChevronDown 
@@ -236,7 +236,7 @@ export default function PropertySelector({
           >
             <div className="flex items-center space-x-2">
               <Building className={`${sizeClasses.icon} text-gray-400`} />
-              <span>{placeholder}</span>
+              <span>{placeholder || t('allProperties')}</span>
             </div>
             {!selectedPropertyId && (
               <Check className={`${sizeClasses.icon} text-[#FF385C]`} />
@@ -294,7 +294,7 @@ export default function PropertySelector({
 
           {properties.length === 0 && (
             <div className={`${sizeClasses.option} text-gray-500 text-center`}>
-              {tEmpty('properties.noPropertiesAvailable')}
+              {t('noPropertiesAvailable')}
             </div>
           )}
         </div>
@@ -306,7 +306,7 @@ export default function PropertySelector({
           <div className={`${sizeClasses.option} text-center text-gray-500`}>
             <div className="flex items-center justify-center space-x-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FF385C]"></div>
-              <span>Loading properties...</span>
+              <span>{t('loading')}</span>
             </div>
           </div>
         </div>

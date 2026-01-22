@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-22T20:01:14.093257",
+  "updated_at": "2026-01-22T20:15:17.787422",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 65,
+  "current_task_index": 66,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -2262,10 +2262,10 @@
       "title": "Update property pages",
       "description": "",
       "raw_match": "- [ ] **Task 2F.4:** Update property pages",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-E02-010",
       "error": null,
-      "processed_at": "2026-01-20T01:20:09.070051",
+      "processed_at": "2026-01-22T20:10:23.327407",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-010",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-010-update-property-pages-overview.md",
@@ -2287,7 +2287,16 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2F.5",
@@ -2296,7 +2305,7 @@
       "title": "Update PropertySelector",
       "description": "",
       "raw_match": "- [ ] **Task 2F.5:** Update PropertySelector",
-      "status": "pending",
+      "status": "processing",
       "request_id": "REQ-E02-011",
       "error": null,
       "processed_at": "2026-01-20T01:24:50.378026",
@@ -2933,7 +2942,7 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 10,
+    "total_requests_generated": 11,
     "last_request_id": "REQ-E02-085",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"

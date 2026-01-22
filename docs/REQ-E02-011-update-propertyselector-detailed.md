@@ -1,7 +1,7 @@
 # REQ-E02-011: Update PropertySelector Component with Localized Strings - Detailed Specification
 
 **Document Created**: 2026-01-22 10:45:00
-**Last Modified**: 2026-01-22 10:45:00
+**Last Modified**: 2026-01-22 20:15:00
 **Request ID**: REQ-E02-011
 **Epic**: Epic 2 - Localization (L10N)
 **Sub-Epic**: 2F - Property Management
@@ -15,9 +15,10 @@
 ## Reference Documents
 
 - **Source Request**: `/docs/gen_requests_epic2.md#REQ-E02-011`
+- **Overview Document**: `/docs/REQ-E02-011-update-propertyselector-overview.md`
 - **Properties Namespace Spec**: `/docs/REQ-E02-085-create-properties-namespace-structure-detailed.md`
-- **Component File**: `/src/components/PropertySelector.tsx` (317 lines)
-- **Translation File**: `/messages/en.json` (properties.selector namespace, lines 3239-3247)
+- **Component File**: `/src/components/PropertySelector.tsx` (325 lines)
+- **Translation File**: `/messages/en.json` (properties.selector namespace, lines 3239-3248)
 
 ---
 
@@ -144,9 +145,11 @@ From `/messages/en.json` lines 3239-3247 (properties.selector namespace):
 - 1 aria-label attribute
 - 1 namespace change (common.emptyStates → properties.selector)
 
-**Lines to Modify**: ~9 lines
+**Lines to Modify**: ~12 lines
+- Line 3: Update last modified comment
 - Line 45: Remove hardcoded default for `placeholder` prop
 - Line 47: Change namespace from `common.emptyStates` to `properties.selector`
+- Lines 145, 147: Update `getSelectedPropertyDisplay()` to use translation fallback
 - Lines 165, 168, 194, 199, 239, 297, 309: Replace hardcoded strings with `t()` calls
 
 **Files to Modify**: 1 file
@@ -182,26 +185,26 @@ npm run lint
 
 ## Task Breakdown
 
-### Task 1: Update Translation Hook and Remove Placeholder Default (1 story point)
+### Task 1: Update Translation Hook (1 story point)
 
-**Context**: The component currently uses `useTranslations('common.emptyStates')` (line 47) and has a hardcoded default value for the `placeholder` prop (line 45). We need to change the namespace to `properties.selector` and remove the hardcoded default.
+**Context**: The component currently uses `useTranslations('common.emptyStates')` (line 47) for a single empty state key. We need to change the namespace to `properties.selector` to access all PropertySelector-specific translation keys.
 
 **Files to Modify**:
 - `/src/components/PropertySelector.tsx`
 
-**Estimated Effort**: 1 story point (simple hook update and prop default removal)
+**Estimated Effort**: 1 story point (simple hook update)
 
 **Subtasks**:
-- [ ] **1.1** Update line 47 from `const tEmpty = useTranslations('common.emptyStates');` to `const t = useTranslations('properties.selector');`
-- [ ] **1.2** Update line 45 to remove the hardcoded default: change `placeholder = 'All Properties'` to just `placeholder`
-- [ ] **1.3** Update line 32 to make placeholder optional with undefined default: change `placeholder?: string;` to `placeholder?: string;` (keep as-is, already optional)
+- [ ] **1.1** Locate line 3 with the last modified comment
+- [ ] **1.2** Update the @lastModified comment to: `// Last Modified: 2026-01-22 - REQ-E02-011: Updated for i18n with properties.selector namespace`
+- [ ] **1.3** Update line 47 from `const tEmpty = useTranslations('common.emptyStates');` to `const t = useTranslations('properties.selector');`
 - [ ] **1.4** Run `npm run typecheck` to verify no TypeScript errors
 - [ ] **1.5** Verify the component still compiles without errors
 
 **Acceptance Criteria**:
 - Translation hook uses `properties.selector` namespace
 - Variable is named `t` (not `tEmpty`)
-- `placeholder` prop has no hardcoded default value
+- Last modified comment updated with current date and request ID
 - TypeScript compilation succeeds
 
 ---
@@ -275,25 +278,30 @@ npm run lint
 
 ---
 
-### Task 5: Update "All Properties" Option Label (1 story point)
+### Task 5: Update Placeholder Display Logic (1 story point)
 
-**Context**: The "All Properties" option in the dropdown (line 239) currently uses the `placeholder` prop value. Since we removed the hardcoded default, we need to use the translation directly or provide a fallback.
+**Context**: The component has a hardcoded default value for the `placeholder` prop (line 45: `'All Properties'`). The `getSelectedPropertyDisplay()` function (lines 143-155) and the dropdown "All Properties" option (line 239) both use this placeholder. We need to maintain backward compatibility while providing a translated default.
 
 **Files to Modify**:
 - `/src/components/PropertySelector.tsx`
 
-**Estimated Effort**: 1 story point (simple text replacement)
+**Estimated Effort**: 1 story point (update function and dropdown option)
 
 **Subtasks**:
-- [ ] **5.1** Locate line 239 with `<span>{placeholder}</span>`
-- [ ] **5.2** Replace with translation fallback: change to `<span>{placeholder || t('allProperties')}</span>`
-- [ ] **5.3** This ensures if a custom placeholder is passed, it's used; otherwise fall back to translation
-- [ ] **5.4** Run `npm run typecheck` to verify no errors
+- [ ] **5.1** Locate line 45 with `placeholder = 'All Properties'`
+- [ ] **5.2** Remove the hardcoded default: change to just `placeholder` (no equals sign or value)
+- [ ] **5.3** Locate the `getSelectedPropertyDisplay()` function at lines 143-155
+- [ ] **5.4** Update line 145 to use fallback: change `if (!selectedPropertyId) return placeholder;` to `if (!selectedPropertyId) return placeholder || t('allProperties');`
+- [ ] **5.5** Update line 147 to use fallback: change `if (!selectedProperty) return placeholder;` to `if (!selectedProperty) return placeholder || t('allProperties');`
+- [ ] **5.6** Locate line 239 with `<span>{placeholder}</span>` in the dropdown
+- [ ] **5.7** Update line 239 to use fallback: change to `<span>{placeholder || t('allProperties')}</span>`
+- [ ] **5.8** Run `npm run typecheck` to verify no errors
 
 **Acceptance Criteria**:
-- "All Properties" option uses `placeholder || t('allProperties')` pattern
-- Custom placeholder prop still works if provided by parent
-- Default displays "All Properties" from translation
+- `placeholder` prop has no hardcoded default value
+- `getSelectedPropertyDisplay()` returns translation when placeholder is not provided
+- "All Properties" option in dropdown uses translation when placeholder is not provided
+- Custom placeholder prop from parent components still works (backward compatible)
 - TypeScript compilation succeeds
 
 ---
@@ -442,7 +450,11 @@ All keys are defined in `/messages/en.json` lines 3239-3247:
 
 | Line | Current Text | Translation Key | New Code |
 |------|-------------|-----------------|----------|
-| 45 | `placeholder = 'All Properties'` | `allProperties` | `placeholder` (no default, use in line 239) |
+| 3 | Last modified comment | N/A | Add REQ-E02-011 reference |
+| 45 | `placeholder = 'All Properties'` | `allProperties` | `placeholder` (no default) |
+| 47 | `const tEmpty = useTranslations(...)` | N/A | `const t = useTranslations('properties.selector')` |
+| 145 | `return placeholder;` | `allProperties` | `return placeholder \|\| t('allProperties');` |
+| 147 | `return placeholder;` | `allProperties` | `return placeholder \|\| t('allProperties');` |
 | 165 | `Property Filter` | `filterLabel` | `{t('filterLabel')}` |
 | 168 | `Filter analytics data by property` | `filterDescription` | `{t('filterDescription')}` |
 | 194 | `Select property for analytics filtering` | `filterAriaLabel` | `{t('filterAriaLabel')}` |
