@@ -3,7 +3,7 @@
 /**
  * REQ-212: Instructions List Page
  * Created: 2026-01-12
- * @lastModified 2026-01-13 (REQ-220 - Added toolbar, search, view toggle, and filters)
+ * @lastModified 2026-01-22 18:20 (REQ-E02-074 - L10N)
  *
  * Displays a list of instruction articles with joined item data.
  * Shows article title, item name, room (extracted from tags), purpose, and actions.
@@ -49,6 +49,7 @@ const VIEW_MODE_STORAGE_KEY = 'instructionsPage.viewMode';
 
 export default function InstructionsPage() {
   const router = useRouter();
+  const t = useTranslations('articles.list');
   const tNotifications = useTranslations('common.notifications');
   const tEmpty = useTranslations('common.emptyStates');
   const tActions = useTranslations('common.actions');
@@ -246,7 +247,7 @@ export default function InstructionsPage() {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Authentication Required</h2>
-        <p className="text-gray-600 mb-6">Please log in to access guides.</p>
+        <p className="text-gray-600 mb-6">{t('loginRequired')}</p>
         <button
           onClick={() => router.push('/login')}
           className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
@@ -263,7 +264,7 @@ export default function InstructionsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">Loading guides...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -358,11 +359,11 @@ export default function InstructionsPage() {
             <div className="flex items-center gap-2">
               <FileText className="h-6 w-6 text-[#FF385C]" aria-hidden="true" />
               <h1 id="instructions-title" className="text-2xl font-bold text-gray-900">
-                Guides
+                {t('title')}
               </h1>
             </div>
             <p className="text-gray-600 mt-1">
-              Manage guide articles for your items
+              {t('subtitle')}
             </p>
           </div>
         </div>

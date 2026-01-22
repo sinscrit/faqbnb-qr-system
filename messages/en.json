@@ -3695,7 +3695,20 @@
         "titleZA": "Title Z-A",
         "itemAZ": "Item A-Z",
         "recentlyModified": "Recently Modified"
-      }
+      },
+      "viewMode": {
+        "grid": "Grid view",
+        "list": "List view",
+        "label": "View mode"
+      },
+      "filters": {
+        "purpose": "Filter by purpose",
+        "clear": "Clear filters",
+        "showing": "Showing {count} of {total}"
+      },
+      "loading": "Loading guides...",
+      "loginRequired": "Please log in to view guides",
+      "returnToItems": "Return to Items"
     },
     "edit": {
       "pageTitle": "Edit Guide",
@@ -3706,6 +3719,7 @@
       "saveSuccess": "Guide saved successfully",
       "saveFailed": "Failed to save guide",
       "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "loginRequired": "Please log in to edit guides",
       "form": {
         "titleLabel": "Title",
         "titlePlaceholder": "Enter a title for this guide",
@@ -3725,13 +3739,28 @@
       "ariaLabel": "Guides grid",
       "viewItem": "View guide details",
       "editItem": "Edit guide",
-      "deleteItem": "Delete guide"
+      "deleteItem": "Delete guide",
+      "empty": "No guides to display"
+    },
+    "card": {
+      "createdAt": "Created {date}",
+      "updatedAt": "Updated {date}",
+      "viewDetails": "View details",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "table": {
       "ariaLabel": "Guides table",
       "selectRow": "Select this guide",
       "actions": "Actions",
-      "noGuides": "No guides to display"
+      "noGuides": "No guides to display",
+      "columnSettings": {
+        "title": "Column Settings",
+        "show": "Show",
+        "hide": "Hide",
+        "apply": "Apply",
+        "cancel": "Cancel"
+      }
     },
     "empty": {
       "title": "No guides yet",

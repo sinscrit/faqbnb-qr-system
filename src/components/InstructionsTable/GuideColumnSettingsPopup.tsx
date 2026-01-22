@@ -8,10 +8,11 @@
  *
  * @module InstructionsTable/components/GuideColumnSettingsPopup
  * @see docs/req-220-toolbar-infrastructure-guides-list-overview.md
- * @lastModified 2026-01-13 (REQ-220 - Added property column option)
+ * @lastModified 2026-01-22 18:42 (REQ-E02-074 - L10N)
  */
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useTranslations } from 'next-intl';
 import { Settings2, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { GuideColumnVisibilityState } from './InstructionsTable.types';
@@ -53,6 +54,8 @@ export function GuideColumnSettingsPopup({
   onToggleColumn,
   className,
 }: GuideColumnSettingsPopupProps) {
+  const tColumns = useTranslations('articles.list.columns');
+
   return (
     <DropdownMenu.Root>
       {/* Trigger Button - Gear Icon */}
@@ -129,7 +132,7 @@ export function GuideColumnSettingsPopup({
                 </div>
 
                 {/* Label */}
-                <span>{option.label}</span>
+                <span>{tColumns(option.key)}</span>
               </DropdownMenu.CheckboxItem>
             );
           })}

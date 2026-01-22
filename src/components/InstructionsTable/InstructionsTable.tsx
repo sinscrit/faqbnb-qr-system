@@ -4,7 +4,7 @@
  * InstructionsTable Component
  * Created: 2026-01-12
  * REQ-212: Instructions List Page
- * @lastModified 2026-01-13 (REQ-220 - Added Property column)
+ * @lastModified 2026-01-22 18:30 (REQ-E02-074 - L10N)
  *
  * Displays a table of instruction articles with item information.
  * Shows title, item name, room, property, purpose, and actions.
@@ -139,6 +139,8 @@ export function InstructionsTable({
   columnVisibility = DEFAULT_COLUMN_VISIBILITY,
   onToggleColumn,
 }: InstructionsTableProps) {
+  const t = useTranslations('articles.table');
+  const tColumns = useTranslations('articles.list.columns');
   const tEmpty = useTranslations('common.emptyStates');
   // Determine if sorting is enabled
   const isSortable = Boolean(onSortChange);
@@ -151,7 +153,7 @@ export function InstructionsTable({
         <th className="px-6 py-3 text-left">
           {isSortable ? (
             <SortableColumnHeader
-              label="Title"
+              label={tColumns('title')}
               sortKeyAsc="title-asc"
               sortKeyDesc="title-desc"
               currentSort={currentSort}
@@ -159,7 +161,7 @@ export function InstructionsTable({
             />
           ) : (
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Title
+              {tColumns('title')}
             </span>
           )}
         </th>
@@ -168,7 +170,7 @@ export function InstructionsTable({
         <th className="px-6 py-3 text-left">
           {isSortable ? (
             <SortableColumnHeader
-              label="Item"
+              label={tColumns('item')}
               sortKeyAsc="item-asc"
               sortKeyDesc="item-desc"
               currentSort={currentSort}
@@ -176,7 +178,7 @@ export function InstructionsTable({
             />
           ) : (
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Item
+              {tColumns('item')}
             </span>
           )}
         </th>
@@ -185,7 +187,7 @@ export function InstructionsTable({
         {columnVisibility.room && (
           <th className="px-6 py-3 text-left hidden md:table-cell">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Room
+              {tColumns('room')}
             </span>
           </th>
         )}
@@ -194,7 +196,7 @@ export function InstructionsTable({
         {columnVisibility.property && (
           <th className="px-6 py-3 text-left hidden md:table-cell">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Property
+              {tColumns('room')}
             </span>
           </th>
         )}
@@ -204,7 +206,7 @@ export function InstructionsTable({
           <th className="px-6 py-3 text-left hidden sm:table-cell">
             {isSortable ? (
               <SortableColumnHeader
-                label="Purpose"
+                label={tColumns('purpose')}
                 sortKeyAsc="purpose-asc"
                 sortKeyDesc="purpose-desc"
                 currentSort={currentSort}
@@ -212,7 +214,7 @@ export function InstructionsTable({
               />
             ) : (
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Purpose
+                {tColumns('purpose')}
               </span>
             )}
           </th>
@@ -222,7 +224,7 @@ export function InstructionsTable({
         <th className="px-6 py-3 text-left hidden lg:table-cell">
           {isSortable ? (
             <SortableColumnHeader
-              label="Created"
+              label={tColumns('created')}
               sortKeyAsc="created-asc"
               sortKeyDesc="created-desc"
               currentSort={currentSort}
@@ -230,7 +232,7 @@ export function InstructionsTable({
             />
           ) : (
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created
+              {tColumns('created')}
             </span>
           )}
         </th>
@@ -239,7 +241,7 @@ export function InstructionsTable({
         <th className="px-6 py-3 text-right">
           <div className="flex items-center justify-end gap-2">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
+              {t('actions')}
             </span>
             {onToggleColumn && (
               <GuideColumnSettingsPopup

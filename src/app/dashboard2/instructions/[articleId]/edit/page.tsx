@@ -3,7 +3,7 @@
 /**
  * REQ-214: Dedicated Single-Page Edit Experience - Edit Page
  * Created: 2026-01-12
- * Last Modified: 2026-01-12
+ * @lastModified 2026-01-22 18:25 (REQ-E02-074 - L10N)
  *
  * Edit page for existing instruction articles using new InstructionEditor.
  * Routes to /dashboard2/instructions/[articleId]/edit
@@ -15,6 +15,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function EditArticlePage() {
   const router = useRouter();
   const params = useParams();
   const articleId = params.articleId as string;
+  const t = useTranslations('articles.edit');
 
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
@@ -194,7 +196,7 @@ export default function EditArticlePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">Redirecting to login...</p>
+          <p className="text-gray-600">{t('loginRequired')}</p>
         </div>
       </div>
     );
@@ -206,7 +208,7 @@ export default function EditArticlePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" aria-hidden="true" />
-          <p className="text-gray-600">Loading article data...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -217,7 +219,7 @@ export default function EditArticlePage() {
     return (
       <div className="max-w-2xl mx-auto py-12 px-4">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Article</h2>
+          <h2 className="text-xl font-semibold text-red-900 mb-2">{t('loadError')}</h2>
           <p className="text-red-700 mb-4">{error.message}</p>
           <div className="flex gap-4">
             <button
@@ -230,7 +232,7 @@ export default function EditArticlePage() {
               onClick={() => router.push('/dashboard2/instructions')}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Back to Guides
+              {t('backToList')}
             </button>
           </div>
         </div>

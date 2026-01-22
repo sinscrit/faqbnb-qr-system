@@ -8,10 +8,11 @@
  *
  * @module InstructionsTable/GuideCard
  * @see docs/req-220-toolbar-infrastructure-guides-list-overview.md
- * @lastModified 2026-01-13 (REQ-220)
+ * @lastModified 2026-01-22 18:35 (REQ-E02-074 - L10N)
  */
 
 import { Pencil, FileText, Home } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { InstructionRow } from './InstructionsTable.types';
 
@@ -89,6 +90,7 @@ function formatDate(dateString: string): string {
 // =============================================================================
 
 export function GuideCard({ guide, onEdit, className }: GuideCardProps) {
+  const t = useTranslations('articles.card');
   const purposeBadgeColor = getPurposeBadgeColor(guide.purpose);
   const formattedPurpose = formatPurposeLabel(guide.purpose);
   const formattedDate = formatDate(guide.createdAt);
@@ -186,10 +188,10 @@ export function GuideCard({ guide, onEdit, className }: GuideCardProps) {
               'rounded-lg transition-colors',
               'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-1'
             )}
-            aria-label={`Edit ${guide.articleTitle}`}
+            aria-label={`${t('edit')} ${guide.articleTitle}`}
           >
             <Pencil className="w-4 h-4" aria-hidden="true" />
-            <span>Edit</span>
+            <span>{t('edit')}</span>
           </button>
         </div>
       </div>

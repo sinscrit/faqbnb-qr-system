@@ -3642,7 +3642,20 @@
         "titleZA": "Title Z-A",
         "itemAZ": "Item A-Z",
         "recentlyModified": "Recently Modified"
-      }
+      },
+      "viewMode": {
+        "grid": "Grid view",
+        "list": "List view",
+        "label": "View mode"
+      },
+      "filters": {
+        "purpose": "Filter by purpose",
+        "clear": "Clear filters",
+        "showing": "Showing {count} of {total}"
+      },
+      "loading": "Loading guides...",
+      "loginRequired": "Please log in to view guides",
+      "returnToItems": "Return to Items"
     },
     "edit": {
       "pageTitle": "Edit Guide",
@@ -3666,19 +3679,28 @@
         "saving": "Saving...",
         "cancel": "Cancel",
         "delete": "Delete Guide"
-      }
+      },
+      "loginRequired": "Please log in to edit guides"
     },
     "grid": {
       "ariaLabel": "Guides grid",
       "viewItem": "View guide details",
       "editItem": "Edit guide",
-      "deleteItem": "Delete guide"
+      "deleteItem": "Delete guide",
+      "empty": "No guides to display"
     },
     "table": {
       "ariaLabel": "Guides table",
       "selectRow": "Select this guide",
       "actions": "Actions",
-      "noGuides": "No guides to display"
+      "noGuides": "No guides to display",
+      "columnSettings": {
+        "title": "Column Settings",
+        "show": "Show",
+        "hide": "Hide",
+        "apply": "Apply",
+        "cancel": "Cancel"
+      }
     },
     "empty": {
       "title": "No guides yet",
@@ -3772,6 +3794,13 @@
         "modified": "(modified)",
         "applying": "Applying..."
       }
+    },
+    "card": {
+      "createdAt": "Created {date}",
+      "updatedAt": "Updated {date}",
+      "viewDetails": "View details",
+      "edit": "Edit",
+      "delete": "Delete"
     }
   }
 }

@@ -8,10 +8,11 @@
  *
  * @module InstructionsTable/GuideToolbar
  * @see docs/req-220-toolbar-infrastructure-guides-list-overview.md
- * @lastModified 2026-01-13 (REQ-220)
+ * @lastModified 2026-01-22 18:40 (REQ-E02-074 - L10N)
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { LayoutGrid, List, X, ChevronDown, Check } from 'lucide-react';
 import { SearchInput } from '@/components/ItemManager/components/SearchInput';
@@ -63,6 +64,8 @@ interface ViewToggleProps {
 }
 
 function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) {
+  const t = useTranslations('articles.list.viewMode');
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, currentMode: 'grid' | 'list') => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
@@ -74,7 +77,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
   return (
     <div
       role="radiogroup"
-      aria-label="View mode"
+      aria-label={t('label')}
       className={cn('inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5', className)}
     >
       <button
@@ -93,7 +96,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
             ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
-        aria-label="Grid view"
+        aria-label={t('grid')}
       >
         <LayoutGrid className="h-4 w-4" aria-hidden="true" />
       </button>
@@ -113,7 +116,7 @@ function ViewToggle({ viewMode, onViewModeChange, className }: ViewToggleProps) 
             ? 'bg-[#FF385C] text-white shadow-sm'
             : 'text-gray-600 hover:bg-gray-100'
         )}
-        aria-label="List view"
+        aria-label={t('list')}
       >
         <List className="h-4 w-4" aria-hidden="true" />
       </button>
@@ -255,11 +258,13 @@ interface ClearFiltersButtonProps {
 }
 
 function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
+  const t = useTranslations('articles.list.filters');
+
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label="Clear all filters"
+      aria-label={t('clear')}
       className={cn(
         'inline-flex items-center gap-1.5 px-3 rounded-md',
         'min-h-[48px]',
@@ -272,7 +277,7 @@ function ClearFiltersButton({ onClick, className }: ClearFiltersButtonProps) {
       )}
     >
       <X className="h-4 w-4" aria-hidden="true" />
-      <span>Clear filters</span>
+      <span>{t('clear')}</span>
     </button>
   );
 }
@@ -294,6 +299,8 @@ export function GuideToolbar({
   totalCount,
   isFiltered,
 }: GuideToolbarProps) {
+  const t = useTranslations('articles.list');
+
   return (
     <div
       role="toolbar"
@@ -315,7 +322,7 @@ export function GuideToolbar({
           <SearchInput
             value={searchQuery}
             onChange={onSearchChange}
-            placeholder="Search guides..."
+            placeholder={t('search.placeholder')}
             className="w-full"
           />
         </div>
@@ -337,7 +344,7 @@ export function GuideToolbar({
         <div className="flex items-center justify-between gap-4">
           {/* Result Count */}
           <div className="text-sm text-gray-500">
-            Showing {resultCount} of {totalCount} guides
+            {t('filters.showing', { count: resultCount, total: totalCount })}
           </div>
 
           {/* Clear Filters Button */}

@@ -8,7 +8,7 @@
  *
  * @module InstructionsTable/GuideGrid
  * @see docs/req-220-toolbar-infrastructure-guides-list-overview.md
- * @lastModified 2026-01-13 (REQ-220)
+ * @lastModified 2026-01-22 18:32 (REQ-E02-074 - L10N)
  */
 
 import { useTranslations } from 'next-intl';
@@ -64,6 +64,7 @@ export function GuideGrid({
   loading = false,
   className,
 }: GuideGridProps) {
+  const t = useTranslations('articles.grid');
   const tEmpty = useTranslations('common.emptyStates');
 
   // Loading state - show skeleton grid
@@ -76,7 +77,7 @@ export function GuideGrid({
           className
         )}
         role="grid"
-        aria-label="Loading guides"
+        aria-label={t('ariaLabel')}
         aria-busy="true"
       >
         {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -115,7 +116,7 @@ export function GuideGrid({
         className
       )}
       role="grid"
-      aria-label={`${guides.length} guide${guides.length !== 1 ? 's' : ''}`}
+      aria-label={t('ariaLabel')}
     >
       {guides.map((guide) => (
         <div key={guide.id} role="gridcell">
