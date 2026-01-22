@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-22T23:05:07.057025",
+  "updated_at": "2026-01-22T23:44:03.973134",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 74,
+  "current_task_index": 75,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -2649,9 +2649,9 @@
       "title": "Create `emails` namespace and translation structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2I.1:** Create `emails` namespace and translation structure",
-      "status": "processing",
+      "status": "failed",
       "request_id": "REQ-E02-019",
-      "error": null,
+      "error": "Stage implementation: Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"ee56cfd4-aac8-4582-bcd2-b5fc672d3ed5\",\"total_cost_usd\":0,\"usage\":{\"i",
       "processed_at": "2026-01-20T02:21:03.752255",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-019",
@@ -2674,7 +2674,15 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": false,
+        "tests_passed": null,
+        "test_summary": "No test execution detected"
+      },
+      "tests_ran": false,
+      "tests_passed": null,
+      "test_summary": "No test execution detected"
     },
     {
       "id": "2I.2",
@@ -2683,7 +2691,7 @@
       "title": "Create `getEmailTranslation` utility function",
       "description": "",
       "raw_match": "- [ ] **Task 2I.2:** Create `getEmailTranslation` utility function",
-      "status": "pending",
+      "status": "processing",
       "request_id": "REQ-E02-020",
       "error": null,
       "processed_at": "2026-01-20T02:28:55.073304",
@@ -3011,6 +3019,12 @@
       "task_id": "2D.4",
       "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"1ffe125e-281d-4d57-be6d-62decc44ed57\",\"total_cost_usd\":0,\"usage\":{\"i",
       "timestamp": "2026-01-22T09:52:01.980685"
+    },
+    {
+      "stage": "implementation",
+      "task_id": "2I.1",
+      "error": "Exit code 1 | Stderr: (empty) | Stdout errors: {\"type\":\"result\",\"subtype\":\"error_during_execution\",\"duration_ms\":0,\"duration_api_ms\":0,\"is_error\":true,\"num_turns\":0,\"session_id\":\"ee56cfd4-aac8-4582-bcd2-b5fc672d3ed5\",\"total_cost_usd\":0,\"usage\":{\"i",
+      "timestamp": "2026-01-22T23:36:20.208552"
     }
   ],
   "metadata": {
@@ -3033,6 +3047,5 @@
   },
   "session_id_overview": "abd0ed15-d09b-428c-848d-db02aa6f65a7",
   "session_id_details": "1b85a967-cb53-4971-89e8-89cd44903031",
-  "session_id_qa_validation": null,
-  "session_id_implementation": "86e5fcac-c249-43d7-9269-a2b278c1dd7e"
+  "session_id_qa_validation": null
 }
