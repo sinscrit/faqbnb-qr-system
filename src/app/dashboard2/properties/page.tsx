@@ -8,6 +8,7 @@
  *
  * @route /dashboard2/properties
  * @created 2026-01-08
+ * @lastModified 2026-01-22 - REQ-E02-010: Updated for i18n with properties namespace
  */
 
 import { useState, useCallback } from 'react';
@@ -23,7 +24,7 @@ import { useDashboardTier } from '@/hooks/useDashboardTier';
 import { Property } from '@/types';
 
 export default function PropertiesPage() {
-  const tNotifications = useTranslations('common.notifications');
+  const t = useTranslations('properties');
   const { user, getUserProperties, userProperties } = useAuth();
 
   // Get tier configuration for property display
@@ -50,7 +51,7 @@ export default function PropertiesPage() {
     // Refresh user properties via AuthContext
     await getUserProperties?.();
     // Show success message
-    setSuccessMessage(tNotifications('success.propertyUpdated'));
+    setSuccessMessage(t('notifications.propertyUpdated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -73,7 +74,7 @@ export default function PropertiesPage() {
     // Close the modal
     setAddModalOpen(false);
     // Show success message
-    setSuccessMessage(tNotifications('success.propertyCreated'));
+    setSuccessMessage(t('notifications.propertyCreated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -81,7 +82,7 @@ export default function PropertiesPage() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Please log in to view properties.</p>
+        <p className="text-gray-600">{t('list.loginRequired')}</p>
       </div>
     );
   }
@@ -90,9 +91,9 @@ export default function PropertiesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Properties</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
         <p className="text-gray-600 mt-1">
-          Manage your properties and their settings
+          {t('subtitle')}
         </p>
       </div>
 
