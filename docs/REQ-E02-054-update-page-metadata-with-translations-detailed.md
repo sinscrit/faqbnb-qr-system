@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-E02-054 - Update Page Metadata with Translations
 
 **Generated:** 2026-01-20 23:45:00 UTC
-**Last Modified:** 2026-01-22 03:45:00 UTC
+**Last Modified:** 2026-01-22 05:00:00 UTC
 **Request ID:** REQ-E02-054
 **Epic:** 2 - Static UI Translation
 **Sub-Epic:** 2B - Dashboard & Navigation
@@ -1007,31 +1007,31 @@ For each page, verify browser tab shows correct translated title:
 
 From REQ-E02-054:
 
-- [ ] All dashboard page components update metadata using next-intl translation functions
-- [ ] All authentication page components update metadata using translation keys
-- [ ] All settings and profile page components update metadata using translation keys
-- [ ] All property management page components update metadata using translation keys
-- [ ] All navigation and layout page components update metadata using translation keys
-- [ ] Page titles dynamically render in user's selected language
-- [ ] Meta descriptions dynamically render in user's selected language
-- [ ] Open Graph title tags use localized strings where present
-- [ ] Open Graph description tags use localized strings where present
-- [ ] Twitter Card metadata uses localized strings where applicable
-- [ ] Metadata translations added to existing namespace files (in `metadata` namespace)
-- [ ] Metadata follows consistent structure across all pages (title patterns)
-- [ ] Dynamic metadata uses variable interpolation correctly (`{itemName}`)
-- [ ] Metadata translations support variables where dynamic content is included
-- [ ] Page titles follow consistent pattern ("Page Name | FAQBNB")
-- [ ] Browser tab titles update correctly when user changes language
-- [ ] Metadata properly handles special characters and non-Latin scripts
-- [ ] Long metadata strings do not exceed SEO character limits
-- [ ] All metadata keys use descriptive, namespace-appropriate naming
-- [ ] Metadata translations generated for all five non-English languages
-- [ ] Missing metadata gracefully defaults to English
-- [ ] Server-side generated metadata uses proper locale detection
-- [ ] No hardcoded English metadata strings remain
-- [ ] TypeScript types remain consistent with Next.js Metadata API
-- [ ] Metadata updates do not cause hydration mismatches
+- [x] All dashboard page components update metadata using next-intl translation functions ---implemented: dashboard2 layout and all sub-routes have generateMetadata---
+- [x] All authentication page components update metadata using translation keys ---implemented: login, register, register/success, register/complete layouts---
+- [x] All settings and profile page components update metadata using translation keys ---implemented: covered by dashboard layout---
+- [x] All property management page components update metadata using translation keys ---implemented: properties layout created---
+- [x] All navigation and layout page components update metadata using translation keys ---implemented: root layout, dashboard2 layout, all sub-route layouts---
+- [x] Page titles dynamically render in user's selected language ---implemented: All use getTranslations with locale---
+- [x] Meta descriptions dynamically render in user's selected language ---implemented: All generateMetadata return translated description---
+- [x] Open Graph title tags use localized strings where present ---implemented: Home page and item page have OG titles---
+- [x] Open Graph description tags use localized strings where present ---implemented: Home page and item page have OG descriptions---
+- [x] Twitter Card metadata uses localized strings where applicable ---implemented: Home page Twitter cards translated---
+- [x] Metadata translations added to existing namespace files (in `metadata` namespace) ---implemented: All 6 locale files have metadata namespace---
+- [x] Metadata follows consistent structure across all pages (title patterns) ---implemented: "Page Name | FAQBNB" pattern used---
+- [x] Dynamic metadata uses variable interpolation correctly (`{itemName}`) ---implemented: item pages use {itemName} interpolation---
+- [x] Metadata translations support variables where dynamic content is included ---implemented: All locale files preserve {itemName}---
+- [x] Page titles follow consistent pattern ("Page Name | FAQBNB") ---implemented: All titles follow this pattern---
+- [ ] Browser tab titles update correctly when user changes language ---requires manual testing---
+- [x] Metadata properly handles special characters and non-Latin scripts ---implemented: UTF-8 encoding in all JSON files---
+- [x] Long metadata strings do not exceed SEO character limits ---implemented: Titles <60 chars, descriptions <160 chars---
+- [x] All metadata keys use descriptive, namespace-appropriate naming ---implemented: metadata.{area}.{page}.{element} convention---
+- [x] Metadata translations generated for all five non-English languages ---implemented: fr, es, de, nl, it all have metadata---
+- [x] Missing metadata gracefully defaults to English ---implemented: next-intl fallback behavior---
+- [x] Server-side generated metadata uses proper locale detection ---implemented: Using getLocale() from next-intl/server---
+- [x] No hardcoded English metadata strings remain ---implemented: All strings use t() calls---
+- [x] TypeScript types remain consistent with Next.js Metadata API ---implemented: Promise<Metadata> return types---
+- [ ] Metadata updates do not cause hydration mismatches ---requires manual testing---
 
 ---
 
