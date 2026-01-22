@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { AuthProvider, useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { CompactAccountSelector } from '@/components/AccountSelector';
 import { Account } from '@/types';
@@ -17,6 +18,7 @@ interface PropertyContextType {
 function UserLayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('common');
   const { user, loading, signOut, isAdmin, userProperties, selectedProperty, setSelectedProperty } = useAuth();
   const { currentAccount, userAccounts } = useAccountContext();
   
@@ -95,6 +97,7 @@ function UserLayoutContent({ children }: { children: React.ReactNode }) {
       { name: 'Items', href: '/user/items', icon: '📦' },
       { name: 'Properties', href: '/user/properties', icon: '🏠' },
       { name: 'Analytics', href: '/user/analytics', icon: '📈' },
+      { name: t('settings.title'), href: '/user/account', icon: '⚙️' },
       // Admin users can also access admin features
       ...(isAdmin ? [
         { name: 'Admin Panel', href: '/admin', icon: '👑' }
@@ -184,12 +187,12 @@ function UserLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Left side - Title and user info */}
             <div className="flex items-center space-x-4">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">FAQBNB Dashboard</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t('dashboard.title')}</h1>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                   }`}>
-                    {isAdmin ? '👑 Admin' : '👤 User'}
+                    {isAdmin ? `👑 ${t('roles.admin')}` : `👤 ${t('roles.user')}`}
                   </span>
                   <span className="text-sm text-gray-600">{user?.email}</span>
                 </div>
@@ -201,7 +204,7 @@ function UserLayoutContent({ children }: { children: React.ReactNode }) {
               onClick={() => signOut()}
               className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 whitespace-nowrap"
             >
-              Logout
+              {t('actions.logout')}
             </button>
           </div>
         </div>
