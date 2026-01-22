@@ -1,5 +1,12 @@
 {
   "common": {
+    "navigation": {
+      "backToHome": "Terug naar home",
+      "goToHome": "Ga naar de homepage"
+    },
+    "footer": {
+      "copyright": "© {year} FAQBNB. Alle rechten voorbehouden."
+    },
     "loading": {
       "generic": {
         "loading": "Laden...",
@@ -650,22 +657,55 @@
       }
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Complete your registration to access FAQBNB",
-      "pageSubtitle": "Account Registration",
-      "fullNameLabel": "Full Name",
-      "fullNamePlaceholder": "John Doe",
-      "fullNameOptional": "(optional)",
-      "emailLabel": "Email Address",
-      "emailReadOnlyHint": "This email is linked to your access code and cannot be changed.",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Create a strong password",
-      "confirmPasswordLabel": "Confirm Password",
-      "confirmPasswordPlaceholder": "Confirm your password",
-      "submitButton": "Create Account",
-      "submittingButton": "Creating Account...",
-      "accountLinkedHint": "Your account will be linked to your verified access code",
-      "alreadyHaveAccount": "Already have an account?"
+      "title": "Maak je account aan",
+      "subtitle": "Voltooi je registratie om toegang te krijgen tot FAQBNB",
+      "pageSubtitle": "Account registratie",
+      "fullNameLabel": "Volledige naam",
+      "fullNamePlaceholder": "Jan Jansen",
+      "fullNameOptional": "(optioneel)",
+      "emailLabel": "E-mailadres",
+      "emailReadOnlyHint": "Dit e-mailadres is gekoppeld aan je toegangscode en kan niet worden gewijzigd.",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "Maak een sterk wachtwoord",
+      "confirmPasswordLabel": "Bevestig wachtwoord",
+      "confirmPasswordPlaceholder": "Bevestig je wachtwoord",
+      "submitButton": "Account aanmaken",
+      "submittingButton": "Account aanmaken...",
+      "accountLinkedHint": "Je account wordt gekoppeld aan je geverifieerde toegangscode",
+      "alreadyHaveAccount": "Heb je al een account?",
+      "accessCodeVerified": "Toegangscode geverifieerd: {code}...",
+      "loading": {
+        "page": "Registratiepagina laden...",
+        "checkingAuth": "Authenticatie controleren...",
+        "validatingLink": "Registratielink valideren...",
+        "completing": "Je registratie voltooien...",
+        "settingUp": "Even geduld terwijl we je account instellen."
+      },
+      "invalidLink": {
+        "title": "Ongeldige registratielink",
+        "subtitle": "De registratielink die je volgde is ongeldig",
+        "issuesTitle": "Problemen met registratielink",
+        "problemsFound": "De volgende problemen zijn gevonden:",
+        "checkEmail": "Controleer je registratie-e-mail voor de juiste link, of neem contact op met de ondersteuning voor hulp.",
+        "requestAccess": "Nieuwe toegang aanvragen"
+      },
+      "oauthError": {
+        "alreadyRegistered": "Al geregistreerd!",
+        "tryLogin": "Probeer in te loggen"
+      },
+      "security": {
+        "title": "Veilige registratie",
+        "description": "Je registratie is beschermd door toegangscode-validatie. Alle registratiepogingen worden gelogd en gemonitord."
+      },
+      "error": {
+        "invalidLink": "Registratielink is ongeldig: {errors}",
+        "generic": "Registratie mislukt. Probeer het opnieuw.",
+        "authExpired": "Authenticatie verlopen. Probeer het registratieproces opnieuw.",
+        "alreadyRegistered": "Gebruiker al geregistreerd. Probeer in te loggen.",
+        "invalidData": "Ongeldige registratiegegevens. Controleer je informatie.",
+        "failed": "Registratie mislukt: {error}",
+        "oauthFailed": "OAuth-registratie mislukt: {error}. Probeer handmatig in te loggen op de inlogpagina."
+      }
     },
     "passwordStrength": {
       "label": "Password strength:",

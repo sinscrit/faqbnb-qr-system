@@ -1,5 +1,12 @@
 {
   "common": {
+    "navigation": {
+      "backToHome": "Back to Home",
+      "goToHome": "Go to Home Page"
+    },
+    "footer": {
+      "copyright": "© {year} FAQBNB. All rights reserved."
+    },
     "loading": {
       "generic": {
         "loading": "Loading...",
@@ -665,7 +672,40 @@
       "submitButton": "Create Account",
       "submittingButton": "Creating Account...",
       "accountLinkedHint": "Your account will be linked to your verified access code",
-      "alreadyHaveAccount": "Already have an account?"
+      "alreadyHaveAccount": "Already have an account?",
+      "accessCodeVerified": "Access code verified: {code}...",
+      "loading": {
+        "page": "Loading registration page...",
+        "checkingAuth": "Checking authentication...",
+        "validatingLink": "Validating registration link...",
+        "completing": "Completing your registration...",
+        "settingUp": "Please wait while we set up your account."
+      },
+      "invalidLink": {
+        "title": "Invalid Registration Link",
+        "subtitle": "The registration link you followed is not valid",
+        "issuesTitle": "Registration Link Issues",
+        "problemsFound": "The following problems were found:",
+        "checkEmail": "Please check your registration email for the correct link, or contact support for assistance.",
+        "requestAccess": "Request New Access"
+      },
+      "oauthError": {
+        "alreadyRegistered": "Already Registered!",
+        "tryLogin": "Try logging in instead"
+      },
+      "security": {
+        "title": "Secure Registration",
+        "description": "Your registration is protected by access code validation. All registration attempts are logged and monitored."
+      },
+      "error": {
+        "invalidLink": "Registration link is invalid: {errors}",
+        "generic": "Registration failed. Please try again.",
+        "authExpired": "Authentication expired. Please try the registration process again.",
+        "alreadyRegistered": "User already registered. Please try logging in instead.",
+        "invalidData": "Invalid registration data. Please check your information.",
+        "failed": "Registration failed: {error}",
+        "oauthFailed": "OAuth registration failed: {error}. Please try logging in manually at the login page."
+      }
     },
     "passwordStrength": {
       "label": "Password strength:",

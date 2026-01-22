@@ -1,5 +1,12 @@
 {
   "common": {
+    "navigation": {
+      "backToHome": "Volver al inicio",
+      "goToHome": "Ir a la página de inicio"
+    },
+    "footer": {
+      "copyright": "© {year} FAQBNB. Todos los derechos reservados."
+    },
     "loading": {
       "generic": {
         "loading": "Cargando...",
@@ -650,22 +657,55 @@
       }
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Complete your registration to access FAQBNB",
-      "pageSubtitle": "Account Registration",
-      "fullNameLabel": "Full Name",
-      "fullNamePlaceholder": "John Doe",
-      "fullNameOptional": "(optional)",
-      "emailLabel": "Email Address",
-      "emailReadOnlyHint": "This email is linked to your access code and cannot be changed.",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Create a strong password",
-      "confirmPasswordLabel": "Confirm Password",
-      "confirmPasswordPlaceholder": "Confirm your password",
-      "submitButton": "Create Account",
-      "submittingButton": "Creating Account...",
-      "accountLinkedHint": "Your account will be linked to your verified access code",
-      "alreadyHaveAccount": "Already have an account?"
+      "title": "Crea tu cuenta",
+      "subtitle": "Completa tu registro para acceder a FAQBNB",
+      "pageSubtitle": "Registro de cuenta",
+      "fullNameLabel": "Nombre completo",
+      "fullNamePlaceholder": "Juan Pérez",
+      "fullNameOptional": "(opcional)",
+      "emailLabel": "Correo electrónico",
+      "emailReadOnlyHint": "Este correo electrónico está vinculado a tu código de acceso y no se puede cambiar.",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Crea una contraseña segura",
+      "confirmPasswordLabel": "Confirmar contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "submitButton": "Crear cuenta",
+      "submittingButton": "Creando cuenta...",
+      "accountLinkedHint": "Tu cuenta estará vinculada a tu código de acceso verificado",
+      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "accessCodeVerified": "Código de acceso verificado: {code}...",
+      "loading": {
+        "page": "Cargando página de registro...",
+        "checkingAuth": "Verificando autenticación...",
+        "validatingLink": "Validando enlace de registro...",
+        "completing": "Completando tu registro...",
+        "settingUp": "Por favor espera mientras configuramos tu cuenta."
+      },
+      "invalidLink": {
+        "title": "Enlace de registro inválido",
+        "subtitle": "El enlace de registro que seguiste no es válido",
+        "issuesTitle": "Problemas con el enlace de registro",
+        "problemsFound": "Se encontraron los siguientes problemas:",
+        "checkEmail": "Por favor revisa tu correo de registro para el enlace correcto, o contacta al soporte para obtener ayuda.",
+        "requestAccess": "Solicitar nuevo acceso"
+      },
+      "oauthError": {
+        "alreadyRegistered": "¡Ya registrado!",
+        "tryLogin": "Intenta iniciar sesión"
+      },
+      "security": {
+        "title": "Registro seguro",
+        "description": "Tu registro está protegido por la validación del código de acceso. Todos los intentos de registro se registran y monitorean."
+      },
+      "error": {
+        "invalidLink": "El enlace de registro es inválido: {errors}",
+        "generic": "El registro falló. Por favor intenta de nuevo.",
+        "authExpired": "La autenticación expiró. Por favor intenta el proceso de registro de nuevo.",
+        "alreadyRegistered": "Usuario ya registrado. Por favor intenta iniciar sesión.",
+        "invalidData": "Datos de registro inválidos. Por favor verifica tu información.",
+        "failed": "El registro falló: {error}",
+        "oauthFailed": "El registro OAuth falló: {error}. Por favor intenta iniciar sesión manualmente en la página de inicio de sesión."
+      }
     },
     "passwordStrength": {
       "label": "Password strength:",

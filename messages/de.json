@@ -1,5 +1,12 @@
 {
   "common": {
+    "navigation": {
+      "backToHome": "Zurück zur Startseite",
+      "goToHome": "Zur Startseite gehen"
+    },
+    "footer": {
+      "copyright": "© {year} FAQBNB. Alle Rechte vorbehalten."
+    },
     "loading": {
       "generic": {
         "loading": "Wird geladen...",
@@ -650,22 +657,55 @@
       }
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Complete your registration to access FAQBNB",
-      "pageSubtitle": "Account Registration",
-      "fullNameLabel": "Full Name",
-      "fullNamePlaceholder": "John Doe",
+      "title": "Erstellen Sie Ihr Konto",
+      "subtitle": "Schließen Sie Ihre Registrierung ab, um auf FAQBNB zuzugreifen",
+      "pageSubtitle": "Kontoregistrierung",
+      "fullNameLabel": "Vollständiger Name",
+      "fullNamePlaceholder": "Max Mustermann",
       "fullNameOptional": "(optional)",
-      "emailLabel": "Email Address",
-      "emailReadOnlyHint": "This email is linked to your access code and cannot be changed.",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "Create a strong password",
-      "confirmPasswordLabel": "Confirm Password",
-      "confirmPasswordPlaceholder": "Confirm your password",
-      "submitButton": "Create Account",
-      "submittingButton": "Creating Account...",
-      "accountLinkedHint": "Your account will be linked to your verified access code",
-      "alreadyHaveAccount": "Already have an account?"
+      "emailLabel": "E-Mail-Adresse",
+      "emailReadOnlyHint": "Diese E-Mail-Adresse ist mit Ihrem Zugangscode verknüpft und kann nicht geändert werden.",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Erstellen Sie ein sicheres Passwort",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+      "submitButton": "Konto erstellen",
+      "submittingButton": "Konto wird erstellt...",
+      "accountLinkedHint": "Ihr Konto wird mit Ihrem verifizierten Zugangscode verknüpft",
+      "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+      "accessCodeVerified": "Zugangscode verifiziert: {code}...",
+      "loading": {
+        "page": "Registrierungsseite wird geladen...",
+        "checkingAuth": "Authentifizierung wird überprüft...",
+        "validatingLink": "Registrierungslink wird validiert...",
+        "completing": "Ihre Registrierung wird abgeschlossen...",
+        "settingUp": "Bitte warten Sie, während wir Ihr Konto einrichten."
+      },
+      "invalidLink": {
+        "title": "Ungültiger Registrierungslink",
+        "subtitle": "Der Registrierungslink, dem Sie gefolgt sind, ist ungültig",
+        "issuesTitle": "Probleme mit dem Registrierungslink",
+        "problemsFound": "Die folgenden Probleme wurden gefunden:",
+        "checkEmail": "Bitte überprüfen Sie Ihre Registrierungs-E-Mail für den richtigen Link oder kontaktieren Sie den Support für Hilfe.",
+        "requestAccess": "Neuen Zugang anfordern"
+      },
+      "oauthError": {
+        "alreadyRegistered": "Bereits registriert!",
+        "tryLogin": "Versuchen Sie, sich anzumelden"
+      },
+      "security": {
+        "title": "Sichere Registrierung",
+        "description": "Ihre Registrierung ist durch die Zugangscode-Validierung geschützt. Alle Registrierungsversuche werden protokolliert und überwacht."
+      },
+      "error": {
+        "invalidLink": "Registrierungslink ist ungültig: {errors}",
+        "generic": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "authExpired": "Authentifizierung abgelaufen. Bitte versuchen Sie den Registrierungsprozess erneut.",
+        "alreadyRegistered": "Benutzer bereits registriert. Bitte versuchen Sie, sich anzumelden.",
+        "invalidData": "Ungültige Registrierungsdaten. Bitte überprüfen Sie Ihre Angaben.",
+        "failed": "Registrierung fehlgeschlagen: {error}",
+        "oauthFailed": "OAuth-Registrierung fehlgeschlagen: {error}. Bitte versuchen Sie, sich manuell auf der Anmeldeseite anzumelden."
+      }
     },
     "passwordStrength": {
       "label": "Password strength:",

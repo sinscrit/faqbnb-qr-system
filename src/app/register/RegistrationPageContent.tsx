@@ -91,6 +91,10 @@ function detectEntryMode(searchParams: ReadonlyURLSearchParams): EntryModeDetect
 }
 
 export default function RegistrationPageContent() {
+  // Translation hooks for internationalization
+  const t = useTranslations('auth.register');
+  const tAuth = useTranslations('auth');
+  const tCommon = useTranslations('common');
   const tNotifications = useTranslations('common.notifications');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -286,7 +290,7 @@ export default function RegistrationPageContent() {
       if (entryDetection.mode === 'url' && !isValid) {
         setMessage({
           type: 'error',
-          message: `Registration link is invalid: ${errors.join(', ')}`
+          message: t('error.invalidLink', { errors: errors.join(', ') })
         });
       } else if (entryDetection.mode === 'manual') {
         // Clear any existing error messages for manual mode - allow graceful fallback
@@ -458,18 +462,18 @@ export default function RegistrationPageContent() {
             });
             
             // REQ-021 Task 2.2: Enhanced error handling for API call failures
-            let userFriendlyMessage = 'Registration failed. Please try again.';
-            
+            let userFriendlyMessage = t('error.generic');
+
             if (response.status === 401) {
-              userFriendlyMessage = 'Authentication expired. Please try the registration process again.';
+              userFriendlyMessage = t('error.authExpired');
             } else if (response.status === 409) {
-              userFriendlyMessage = 'User already registered. Please try logging in instead.';
+              userFriendlyMessage = t('error.alreadyRegistered');
             } else if (response.status === 400) {
-              userFriendlyMessage = 'Invalid registration data. Please check your information.';
+              userFriendlyMessage = t('error.invalidData');
             } else if (result.error) {
-              userFriendlyMessage = `Registration failed: ${result.error}`;
+              userFriendlyMessage = t('error.failed', { error: result.error });
             }
-            
+
             setMessage({
               type: 'error',
               message: userFriendlyMessage
@@ -479,7 +483,7 @@ export default function RegistrationPageContent() {
 
         } catch (error) {
           console.error(`${DEBUG_PREFIX_OAUTH} API_CALL_ERROR:`, error);
-          
+
           // REQ-021 Task 1.3: Enhanced error handling for OAuth success detection failures
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           console.error(`${DEBUG_PREFIX_OAUTH} OAUTH_SUCCESS_FAILURE`, {
@@ -488,17 +492,17 @@ export default function RegistrationPageContent() {
             email: email,
             accessCode: accessCode?.substring(0, 4) + '...'
           });
-          
+
           // REQ-021 Task 3.2: Fallback logic for automatic login failures
           console.error(`${DEBUG_PREFIX_OAUTH} AUTOMATIC_LOGIN_FAILURE`, {
             timestamp: new Date().toISOString(),
             error: errorMessage,
             fallbackAction: 'Showing error message with manual login suggestion'
           });
-          
+
           setMessage({
             type: 'error',
-            message: `OAuth registration failed: ${errorMessage}. Please try logging in manually at the login page.`
+            message: t('error.oauthFailed', { error: errorMessage })
           });
           setOauthProcessingComplete(true);
         }
@@ -540,10 +544,7 @@ export default function RegistrationPageContent() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">
-            {authLoading ? 'Checking authentication...' : 'Validating registration link...'}
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Debug: Check console for REGISTRATION_PAGE_DEBUG logs
+            {authLoading ? t('loading.checkingAuth') : t('loading.validatingLink')}
           </p>
         </div>
       </div>
@@ -566,20 +567,20 @@ export default function RegistrationPageContent() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center max-w-md mx-auto p-6">
             <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Already Registered!</h2>
-            <p className="text-gray-600 mb-6">Try logging in instead</p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('oauthError.alreadyRegistered')}</h2>
+            <p className="text-gray-600 mb-6">{t('oauthError.tryLogin')}</p>
             <div className="space-y-3">
               <Link
                 href="/login"
                 className="block w-full px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors text-center"
               >
-                Login
+                {tAuth('login.submitButton')}
               </Link>
               <Link
                 href="/"
                 className="block w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
               >
-                Go to Home Page
+                {tCommon('navigation.goToHome')}
               </Link>
             </div>
           </div>
@@ -592,8 +593,8 @@ export default function RegistrationPageContent() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Completing your registration...</p>
-          <p className="text-xs text-gray-400 mt-2">Please wait while we set up your account.</p>
+          <p className="text-gray-600">{t('loading.completing')}</p>
+          <p className="text-xs text-gray-400 mt-2">{t('loading.settingUp')}</p>
         </div>
       </div>
     );
@@ -689,46 +690,46 @@ export default function RegistrationPageContent() {
               />
               <div className="text-left">
                 <h1 className="text-2xl font-bold text-gray-900">FAQBNB</h1>
-                <p className="text-sm text-gray-600">Registration</p>
+                <p className="text-sm text-gray-600">{t('pageSubtitle')}</p>
               </div>
             </Link>
-            
+
             <h2 className="text-3xl font-bold text-gray-900">
-              Invalid Registration Link
+              {t('invalidLink.title')}
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              The registration link you followed is not valid
+              {t('invalidLink.subtitle')}
             </p>
           </div>
 
           {/* Error Card */}
           <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
             {message && <MessageAlert message={message} />}
-            
+
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Registration Link Issues
+                {t('invalidLink.issuesTitle')}
               </h3>
               <div className="text-sm text-gray-600 mb-6">
-                <p className="mb-2">The following problems were found:</p>
+                <p className="mb-2">{t('invalidLink.problemsFound')}</p>
                 <ul className="list-disc list-inside text-left space-y-1">
                   {urlParams.errors.map((error, index) => (
                     <li key={index}>{error}</li>
                   ))}
                 </ul>
               </div>
-              
+
               <div className="space-y-3">
                 <p className="text-sm text-gray-600">
-                  Please check your registration email for the correct link, or contact support for assistance.
+                  {t('invalidLink.checkEmail')}
                 </p>
-                
+
                 <Link
                   href="/request-access"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Request New Access
+                  {t('invalidLink.requestAccess')}
                 </Link>
               </div>
             </div>
@@ -741,7 +742,7 @@ export default function RegistrationPageContent() {
               className="flex items-center justify-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               <Home className="w-4 h-4 mr-1" />
-              Back to Home
+              {tCommon('navigation.backToHome')}
             </Link>
           </div>
         </div>
@@ -765,22 +766,22 @@ export default function RegistrationPageContent() {
             />
             <div className="text-left">
               <h1 className="text-2xl font-bold text-gray-900">FAQBNB</h1>
-              <p className="text-sm text-gray-600">Account Registration</p>
+              <p className="text-sm text-gray-600">{t('pageSubtitle')}</p>
             </div>
           </Link>
-          
+
           <h2 className="text-3xl font-bold text-gray-900">
-            Create your account
+            {t('title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Complete your registration to access FAQBNB
+            {t('subtitle')}
           </p>
-          
+
           {/* Access code info - only show for URL mode */}
           {entryMode === 'url' && urlParams.isValid && (
             <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               <Shield className="w-3 h-3 mr-1" />
-              Access code verified: {urlParams.code?.substring(0, 4)}...
+              {t('accessCodeVerified', { code: urlParams.code?.substring(0, 4) ?? '' })}
             </div>
           )}
         </div>
@@ -886,19 +887,19 @@ export default function RegistrationPageContent() {
               className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               <Home className="w-4 h-4 mr-1" />
-              Back to Home
+              {tCommon('navigation.backToHome')}
             </Link>
             <Link
               href="/login"
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Already have an account?
+              {t('alreadyHaveAccount')}
             </Link>
           </div>
-          
+
           <div className="mt-4">
             <p className="text-xs text-gray-500">
-              © 2024 FAQBNB. All rights reserved.
+              {tCommon('footer.copyright', { year: new Date().getFullYear() })}
             </p>
           </div>
         </div>
@@ -913,11 +914,10 @@ export default function RegistrationPageContent() {
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-gray-800">
-                Secure Registration
+                {t('security.title')}
               </h3>
               <p className="text-xs text-gray-600 mt-1">
-                Your registration is protected by access code validation.
-                All registration attempts are logged and monitored.
+                {t('security.description')}
               </p>
             </div>
           </div>
