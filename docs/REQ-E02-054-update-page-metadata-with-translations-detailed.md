@@ -669,9 +669,9 @@ export default function PrintLayout({
 ```
 
 **Verification:**
-- [ ] All 9 dashboard layout files created/updated
+- [x] All 9 dashboard layout files created/updated ---implemented: dashboard2/layout.tsx refactored to server component with generateMetadata; created items/layout.tsx, create/layout.tsx, properties/layout.tsx, instructions/layout.tsx, help/layout.tsx, rooms/layout.tsx, tags/layout.tsx, print/layout.tsx---
 - [ ] Each shows correct translated title in browser tab
-- [ ] No interference with existing layouts (dashboard2/layout.tsx)
+- [x] No interference with existing layouts (dashboard2/layout.tsx) ---implemented: Client component extracted to Dashboard2LayoutClient.tsx, server layout wraps it---
 
 ---
 
