@@ -215,7 +215,7 @@ request_stages:
     description: "Autonomously implement all tasks from the detailed specification"
     enabled: true
     agent:
-      name: "05-spec-implementation"
+      name: "04-spec-implementation"
       invocation_template: |
         Implement all tasks from the detailed specification for Request #{request_id_num}
 
@@ -258,7 +258,49 @@ request_stages:
     output:
       type: implementation
 
-  # Stage 5: Test Check (Pipeline-level)
+
+  # Stage 5: QA Validation
+  - id: qa_validation
+    name: "QA Validation"
+    description: "Validate that implementation matches the detailed specification"
+    enabled: true
+    validates: implementation
+    max_validation_retries: 1
+    agent:
+      name: "05-qa-validation"
+      invocation_template: |
+        Validate the implementation for Request #{request_id_num}
+
+        **Detailed Specification**: {details_file}
+
+        **Task Context**:
+        - Request ID: {request_id}
+        - Task ID: {task_id}
+        - Title: {task_title}
+
+        **Instructions**:
+        1. Read the detailed specification at {details_file}
+        2. For EACH subtask marked as complete ([x]):
+           a. Verify the implementation matches what was specified
+           b. Check the implementation note matches the actual code
+           c. Verify the target files exist and contain the expected changes
+        3. Run type check and build verification
+        4. Output a QA Validation Report with:
+           - **Status**: PASS or FAIL
+           - Summary of subtasks checked
+           - Detailed issues (if any) with specific fix instructions
+        5. If issues found, format them clearly for the implementation agent to fix on retry
+      command:
+        - "claude"
+        - "-p"
+        - "{prompt}"
+        - "--allowedTools"
+        - "Read,Glob,Grep,Bash"
+        - "--dangerously-skip-permissions"
+      timeout: 1200
+    output:
+      type: validation
+  # Stage 6: Test Check (Pipeline-level)
   - id: testcheck
     name: "Test Check & Verification"
     description: "Validate implementation against specifications and generate test harness"
@@ -321,7 +363,7 @@ request_stages:
     output:
       type: verification
 
-  # Stage 6: Use Case Generation (Pipeline-level)
+  # Stage 7: Use Case Generation (Pipeline-level)
   - id: usecases
     name: "Use Case Test Generation"
     description: "Generate aggregate end-to-end test scenarios based on PRD intent"

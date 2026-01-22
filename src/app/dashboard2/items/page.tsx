@@ -8,10 +8,12 @@
  *
  * @route /dashboard2/items
  * @created 2026-01-06
+ * @lastModified 2026-01-22 (REQ-E02-083 i18n support)
  */
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { ItemManager, ItemRecordExtended as ItemRecord } from '@/components/ItemManager';
@@ -20,6 +22,7 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function ItemsPage() {
   const router = useRouter();
+  const t = useTranslations('items.list');
   const { user } = useAuth();
   const { currentAccount } = useAccountContext();
   const { selectedPropertyId } = usePropertyContext();
@@ -221,7 +224,7 @@ export default function ItemsPage() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Please log in to view items.</p>
+        <p className="text-gray-600">{t('loginRequired')}</p>
       </div>
     );
   }
@@ -231,7 +234,7 @@ export default function ItemsPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600">Loading items...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -242,9 +245,9 @@ export default function ItemsPage() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Items</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-gray-600 mt-1">
-            {items.length} {items.length === 1 ? 'item' : 'items'} total
+            {t('count', { count: items.length })}
           </p>
         </div>
         <button
@@ -252,7 +255,7 @@ export default function ItemsPage() {
           className="inline-flex items-center px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors"
         >
           <PlusCircle className="w-4 h-4 mr-2" />
-          New QR Code Item
+          {t('createNew')}
         </button>
       </div>
 
@@ -260,7 +263,7 @@ export default function ItemsPage() {
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-700">{error.message}</p>
           <button onClick={() => setError(null)} className="mt-2 text-sm text-red-600 underline">
-            Dismiss
+            {t('dismiss')}
           </button>
         </div>
       )}

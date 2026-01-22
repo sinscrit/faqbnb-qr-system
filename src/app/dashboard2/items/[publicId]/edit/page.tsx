@@ -19,6 +19,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 import { adminApi } from '@/lib/api';
 import { Loader2, ArrowLeft, Save } from 'lucide-react';
+import Link from 'next/link';
 import { RoomSelector, ItemTypeSelector, ItemInstructionsList } from '@/components/ItemEditForm';
 import { TagsInlineEdit } from '@/components/ItemManager/components/shared/TagsInlineEdit';
 import { extractRoomFromTags, setRoomInTags } from '@/lib/room-utils';
@@ -40,6 +41,7 @@ export default function EditItemPage() {
   const router = useRouter();
   const params = useParams();
   const publicId = params.publicId as string;
+  const t = useTranslations('items.edit');
   const tLoading = useTranslations('common.loading');
 
   const { user } = useAuth();
@@ -206,7 +208,7 @@ export default function EditItemPage() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Please log in to edit items.</p>
+        <p className="text-gray-600">{t('loginRequired')}</p>
       </div>
     );
   }
@@ -216,7 +218,7 @@ export default function EditItemPage() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600">Loading item...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -227,12 +229,12 @@ export default function EditItemPage() {
       <div className="text-center py-12">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
           <p className="text-red-700 mb-4">{error}</p>
-          <button
-            onClick={() => router.push('/dashboard2/items')}
+          <Link
+            href="/dashboard2/items"
             className="text-[#FF385C] hover:underline"
           >
-            Return to Items
-          </button>
+            {t('returnToItems')}
+          </Link>
         </div>
       </div>
     );
@@ -247,9 +249,9 @@ export default function EditItemPage() {
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Items
+          {t('backToItems')}
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Item</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pageTitle')}</h1>
       </div>
 
       {/* Error Banner */}
@@ -265,7 +267,7 @@ export default function EditItemPage() {
           {/* Name Field */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              Item Name
+              {t('form.nameLabel')}
             </label>
             <input
               type="text"
@@ -275,14 +277,14 @@ export default function EditItemPage() {
               required
               disabled={saving}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent disabled:opacity-50"
-              placeholder="Enter item name"
+              placeholder={t('form.namePlaceholder')}
             />
           </div>
 
           {/* Description Field */}
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description
+              {t('form.descriptionLabel')}
             </label>
             <textarea
               id="description"
@@ -291,7 +293,7 @@ export default function EditItemPage() {
               rows={4}
               disabled={saving}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF385C] focus:border-transparent resize-none disabled:opacity-50"
-              placeholder="Enter item description (optional)"
+              placeholder={t('form.descriptionPlaceholder')}
             />
           </div>
 
@@ -312,16 +314,16 @@ export default function EditItemPage() {
           {/* Additional Tags */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Additional Tags
+              {t('form.tagsLabel')}
             </label>
             <p className="text-xs text-gray-500 mb-2">
-              Add custom tags for additional categorization
+              {t('form.tagsHelper')}
             </p>
             <TagsInlineEdit
               tags={customTags}
               onSave={handleCustomTagsSave}
               disabled={saving}
-              placeholder="Click to add tags..."
+              placeholder={t('form.tagsPlaceholder')}
             />
           </div>
 
@@ -344,7 +346,7 @@ export default function EditItemPage() {
             disabled={saving}
             className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
-            Cancel
+            {t('buttons.cancel')}
           </button>
           <button
             type="submit"
@@ -354,12 +356,12 @@ export default function EditItemPage() {
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                {tLoading('status.saving')}
+                {t('buttons.saving')}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                Save Changes
+                {t('buttons.save')}
               </>
             )}
           </button>

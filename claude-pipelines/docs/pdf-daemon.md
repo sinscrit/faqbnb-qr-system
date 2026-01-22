@@ -480,10 +480,18 @@ request_stages:
   - id: implementation
     name: "Implementation"
     agent:
-      name: "05-spec-implementation"
+      name: "04-spec-implementation"
       ...
 
-  # Stage 5-6: Pipeline-level stages (run ONCE, not per-task)
+  - id: qa_validation
+    name: "QA Validation"
+    validates: implementation         # <-- Triggers retry of implementation on failure
+    max_validation_retries: 1         # <-- Max retries before marking as failed
+    agent:
+      name: "05-qa-validation"
+      ...
+
+  # Stage 6-7: Pipeline-level stages (run ONCE, not per-task)
   - id: testcheck
     name: "Test Check & Verification"
     mode: pipeline              # <-- Critical: runs once

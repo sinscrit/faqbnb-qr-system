@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-20T17:30:46.072000",
-  "status": "completed",
+  "updated_at": "2026-01-22T16:15:45.044155",
+  "status": "running",
   "current_stage": "request",
-  "current_task_index": 32,
+  "current_task_index": 10,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -20,15 +20,28 @@
       "status": "completed",
       "request_id": "REQ-E05-001",
       "error": null,
-      "processed_at": "2026-01-19T23:29:20.742995",
+      "processed_at": "2026-01-22T15:56:26.249538",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-translation-status-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "1.2",
@@ -38,17 +51,30 @@
       "description": "File: `/src/app/api/translations/[entityType]/[entityId]/[language]/route.ts`\nPUT to update translation content\nSet status to 'manual', record reviewedBy\nValidate user has access to entity",
       "raw_match": "\n- [ ] **Task 1.2:** Create update translation API endpoint",
       "status": "completed",
-      "request_id": "REQ-E05-001",
+      "request_id": "REQ-E05-002",
       "error": null,
-      "processed_at": "2026-01-19T23:36:54.521373",
+      "processed_at": "2026-01-22T15:57:50.174595",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-001",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-update-translation-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-001-create-update-translation-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-002"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "1.3",
@@ -58,17 +84,30 @@
       "description": "File: `/src/app/api/translations/retranslate/route.ts`\nPOST to queue re-translation jobs\nSupport bulk entities\nOption to skip/overwrite manual edits\nReturn job count and skipped count",
       "raw_match": "\n- [ ] **Task 1.3:** Create re-translate API endpoint",
       "status": "completed",
-      "request_id": "REQ-E05-002",
+      "request_id": "REQ-E05-003",
       "error": null,
-      "processed_at": "2026-01-19T23:42:47.764646",
+      "processed_at": "2026-01-22T15:59:28.758278",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-002",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-re-translate-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-002-create-re-translate-api-endpoint-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-003"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "1.4",
@@ -78,17 +117,30 @@
       "description": "File: Apply via Supabase MCP\nAdd columns to track source content version\nCreate indexes for status queries",
       "raw_match": "\n- [ ] **Task 1.4:** Add source_version_at columns via migration",
       "status": "completed",
-      "request_id": "REQ-E05-003",
+      "request_id": "REQ-E05-004",
       "error": null,
-      "processed_at": "2026-01-19T23:47:20.749365",
+      "processed_at": "2026-01-22T16:01:01.306755",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-003",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-add-sourceversionat-columns-via-migration-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-003-add-sourceversionat-columns-via-migration-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-004"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "1.5",
@@ -98,17 +150,30 @@
       "description": "File: `/src/lib/supabase.ts`\nAdd translation table types (if not already from Epic 1)\nAdd new column types",
       "raw_match": "\n- [ ] **Task 1.5:** Update TypeScript database types",
       "status": "completed",
-      "request_id": "REQ-E05-004",
+      "request_id": "REQ-E05-005",
       "error": null,
-      "processed_at": "2026-01-19T23:52:35.403926",
+      "processed_at": "2026-01-22T16:02:35.446458",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-004",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-update-typescript-database-types-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-004-update-typescript-database-types-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-005"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.1",
@@ -118,17 +183,30 @@
       "description": "File: `/src/components/TranslationManagement/TranslationManagement.types.ts`\nAll shared interfaces and types",
       "raw_match": "\n- [ ] **Task 2.1:** Create TranslationManagement types file",
       "status": "completed",
-      "request_id": "REQ-E05-005",
+      "request_id": "REQ-E05-006",
       "error": null,
-      "processed_at": "2026-01-19T23:59:06.068632",
+      "processed_at": "2026-01-22T16:04:37.672627",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-005",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-create-translationmanagement-types-file-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-005-create-translationmanagement-types-file-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-006"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.2",
@@ -138,17 +216,30 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationPreviewPanel.tsx`\nSlide-in panel from right (400px width)\nShows source content at top\nLists all 6 languages with status\nAction buttons: Edit, Re-translate, Retry",
       "raw_match": "\n- [ ] **Task 2.2:** Create TranslationPreviewPanel component",
       "status": "completed",
-      "request_id": "REQ-E05-006",
+      "request_id": "REQ-E05-007",
       "error": null,
-      "processed_at": "2026-01-20T00:06:19.981846",
+      "processed_at": "2026-01-22T16:06:32.719228",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-006",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationpreviewpanel-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-006-create-translationpreviewpanel-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-007"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.3",
@@ -158,17 +249,30 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationStatusItem.tsx`\nSingle row showing: flag, language name, status icon, preview text\nAction buttons per row\nStatus colors per spec (green=complete, orange=pending, red=failed, purple=manual)",
       "raw_match": "\n- [ ] **Task 2.3:** Create TranslationStatusItem component",
       "status": "completed",
-      "request_id": "REQ-E05-007",
+      "request_id": "REQ-E05-008",
       "error": null,
-      "processed_at": "2026-01-20T00:13:03.272737",
+      "processed_at": "2026-01-22T16:08:19.499881",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-007",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationstatusitem-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-007-create-translationstatusitem-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-008"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.4",
@@ -178,17 +282,30 @@
       "description": "File: `/src/components/TranslationManagement/TranslationPreviewPanel/TranslationProgressBar.tsx`\nVisual progress indicator (e.g., \"3/5 translations complete\")\nAnimated during processing",
       "raw_match": "\n- [ ] **Task 2.4:** Create TranslationProgressBar component",
       "status": "completed",
-      "request_id": "REQ-E05-008",
+      "request_id": "REQ-E05-009",
       "error": null,
-      "processed_at": "2026-01-20T07:47:48.380492",
+      "processed_at": "2026-01-22T16:10:28.722711",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-008",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationprogressbar-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-008-create-translationprogressbar-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-009"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.5",
@@ -198,17 +315,30 @@
       "description": "File: `/src/components/TranslationManagement/TranslationEditor/TranslationEditor.tsx`\nModal dialog (Radix Dialog)\nSide-by-side view: Original | Translation\nTextarea for editing\nCharacter count (with warning if applicable)\nSave/Cancel buttons\nDirty state tracking",
       "raw_match": "\n- [ ] **Task 2.5:** Create TranslationEditor component",
       "status": "completed",
-      "request_id": "REQ-E05-009",
+      "request_id": "REQ-E05-010",
       "error": null,
-      "processed_at": "2026-01-20T07:55:00.002461",
+      "processed_at": "2026-01-22T16:13:27.216221",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-009",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationeditor-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-009-create-translationeditor-component-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-010"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.6",
@@ -218,17 +348,30 @@
       "description": "File: `/src/hooks/useTranslationStatus.ts`\nFetch translation status from API\nSupport single entity or property-wide\nReturn loading, error, data states",
       "raw_match": "\n- [ ] **Task 2.6:** Create useTranslationStatus hook",
       "status": "completed",
-      "request_id": "REQ-E05-010",
+      "request_id": "REQ-E05-011",
       "error": null,
-      "processed_at": "2026-01-20T08:00:46.345353",
+      "processed_at": "2026-01-22T16:15:45.044105",
       "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-010",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-usetranslationstatus-hook-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-010-create-usetranslationstatus-hook-detailed.md"
+        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-011"
       },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      },
+      "request_completed": true
     },
     {
       "id": "2.7",
@@ -237,18 +380,28 @@
       "title": "Create useTranslationRealtime hook",
       "description": "File: `/src/hooks/useTranslationRealtime.ts`\nSupabase realtime subscription for translation updates\nAuto-update UI when translations complete\nCleanup on unmount",
       "raw_match": "\n- [ ] **Task 2.7:** Create useTranslationRealtime hook",
-      "status": "completed",
-      "request_id": "REQ-E05-011",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:06:44.552444",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-011",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationrealtime-hook-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-011-create-usetranslationrealtime-hook-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "3.1",
@@ -257,18 +410,28 @@
       "title": "Create TranslationStatusWidget component",
       "description": "File: `/src/components/TranslationManagement/TranslationStatusWidget/TranslationStatusWidget.tsx`\nSummary card for dashboard\nProgress bar with percentage\nCounts by status (complete, partial, pending, failed)\n\"View Details\" link",
       "raw_match": "\n- [ ] **Task 3.1:** Create TranslationStatusWidget component",
-      "status": "completed",
-      "request_id": "REQ-E05-013",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:13:16.550297",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-013",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-013-create-translationstatuswidget-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "3.2",
@@ -277,18 +440,28 @@
       "title": "Create TranslationStatusColumn component",
       "description": "File: `/src/components/TranslationManagement/TranslationStatusColumn/TranslationStatusColumn.tsx`\nCompact status indicator for table columns\nShows 6 dots/icons for each language\nClickable to open preview panel",
       "raw_match": "\n- [ ] **Task 3.2:** Create TranslationStatusColumn component",
-      "status": "completed",
-      "request_id": "REQ-E05-014",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:19:57.346414",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatuscolumn-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "3.3",
@@ -297,18 +470,28 @@
       "title": "Create TranslationStatusFilter component",
       "description": "File: `/src/components/TranslationManagement/TranslationStatusFilter/TranslationStatusFilter.tsx`\nDropdown filter for item lists\nOptions: All, Fully Translated, Partially Translated, Pending, Failed, Manually Edited",
       "raw_match": "\n- [ ] **Task 3.3:** Create TranslationStatusFilter component",
-      "status": "completed",
-      "request_id": "REQ-E05-014",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:26:54.079247",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-014",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatusfilter-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-014-create-translationstatusfilter-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "3.4",
@@ -317,18 +500,28 @@
       "title": "Integrate status widget into dashboard",
       "description": "File: `/src/app/dashboard2/page.tsx` (modify)\nAdd TranslationStatusWidget to dashboard layout\nFetch status summary on load",
       "raw_match": "\n- [ ] **Task 3.4:** Integrate status widget into dashboard",
-      "status": "completed",
-      "request_id": "REQ-E05-015",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:32:04.262749",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-015",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-integrate-status-widget-into-dashboard-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-015-integrate-status-widget-into-dashboard-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "3.5",
@@ -337,18 +530,28 @@
       "title": "Add translation status column to Items list",
       "description": "File: `/src/components/ItemManager/components/ItemGrid.tsx` (modify)\nAdd optional translation status column\nIntegrate click handler for preview",
       "raw_match": "\n- [ ] **Task 3.5:** Add translation status column to Items list",
-      "status": "completed",
-      "request_id": "REQ-E05-016",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:38:33.273874",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-016",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-add-translation-status-column-to-items-list-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-016-add-translation-status-column-to-items-list-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "4.1",
@@ -357,18 +560,28 @@
       "title": "Create BulkTranslationBar component",
       "description": "File: `/src/components/TranslationManagement/BulkTranslationBar/BulkTranslationBar.tsx`\nAppears when items selected\nActions: Re-translate All, Re-translate Specific Language\nProgress indicator during bulk operations",
       "raw_match": "\n- [ ] **Task 4.1:** Create BulkTranslationBar component",
-      "status": "completed",
-      "request_id": "REQ-E05-017",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:45:49.507697",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-017",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-create-bulktranslationbar-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-017-create-bulktranslationbar-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "4.2",
@@ -377,18 +590,28 @@
       "title": "Create LanguageSelectorDialog component",
       "description": "File: `/src/components/TranslationManagement/BulkTranslationBar/LanguageSelectorDialog.tsx`\nModal for selecting languages for bulk re-translate\nCheckbox list of languages\nSelect All / Deselect All",
       "raw_match": "\n- [ ] **Task 4.2:** Create LanguageSelectorDialog component",
-      "status": "completed",
-      "request_id": "REQ-E05-018",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T08:53:39.348704",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-018",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-018-create-languageselectordialog-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-018-create-languageselectordialog-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "4.3",
@@ -397,18 +620,28 @@
       "title": "Create Translation Management page",
       "description": "File: `/src/app/dashboard2/translations/page.tsx`\nFull-width table showing all content\nColumns: Item/Article name, language status columns, Actions\nFilter bar: Type, Language, Status\nBulk selection support",
       "raw_match": "\n- [ ] **Task 4.3:** Create Translation Management page",
-      "status": "completed",
-      "request_id": "REQ-E05-020",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:00:41.520390",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-020",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-020-create-translation-management-page-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-020-create-translation-management-page-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "4.4",
@@ -417,18 +650,28 @@
       "title": "Add translations link to navigation",
       "description": "File: `/src/app/dashboard2/layout.tsx` (modify)\nAdd \"Translations\" nav item (or sub-nav under settings)\nIcon: Languages or Globe",
       "raw_match": "\n- [ ] **Task 4.4:** Add translations link to navigation",
-      "status": "completed",
-      "request_id": "REQ-E05-022",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:05:13.224125",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-022",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-add-translations-link-to-navigation-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-add-translations-link-to-navigation-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "5.1",
@@ -437,18 +680,28 @@
       "title": "Create ManualEditWarningDialog component",
       "description": "File: `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx`\nShown when source content updated and manual translations exist\nOptions: Keep manual edits, Re-translate all (with warning)\nList affected languages",
       "raw_match": "\n- [ ] **Task 5.1:** Create ManualEditWarningDialog component",
-      "status": "completed",
-      "request_id": "REQ-E05-022",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:12:43.086240",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-022",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-create-manualeditwarningdialog-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-022-create-manualeditwarningdialog-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "5.2",
@@ -457,18 +710,28 @@
       "title": "Implement stale translation indicator",
       "description": "Update TranslationStatusItem to show stale warning icon\nYellow border/indicator for stale manual edits\n\"Update Translation\" action button",
       "raw_match": "\n- [ ] **Task 5.2:** Implement stale translation indicator",
-      "status": "completed",
-      "request_id": "REQ-E05-023",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:21:01.327229",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-023",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-023-implement-stale-translation-indicator-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-023-implement-stale-translation-indicator-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "5.3",
@@ -477,18 +740,28 @@
       "title": "Integrate warning into content save flow",
       "description": "Hook into article/item save handlers\nCheck for manual translations before save\nShow warning dialog if detected",
       "raw_match": "\n- [ ] **Task 5.3:** Integrate warning into content save flow",
-      "status": "completed",
-      "request_id": "REQ-E05-024",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:31:06.539590",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-024",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "6.1",
@@ -497,18 +770,28 @@
       "title": "Create LanguagePreferenceSection component",
       "description": "File: `/src/components/TranslationManagement/LanguagePreference/LanguagePreferenceSection.tsx`\nLanguage dropdown selector\nSave button with loading state\nHelp text explaining the setting",
       "raw_match": "\n- [ ] **Task 6.1:** Create LanguagePreferenceSection component",
-      "status": "completed",
-      "request_id": "REQ-E05-025",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:39:00.943634",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-025",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "6.2",
@@ -517,18 +800,28 @@
       "title": "Create account preference API endpoint",
       "description": "File: `/src/app/api/accounts/[accountId]/preferences/route.ts`\nPUT endpoint to update preferredLanguage\nValidate account access",
       "raw_match": "\n- [ ] **Task 6.2:** Create account preference API endpoint",
-      "status": "completed",
-      "request_id": "REQ-E05-026",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:45:51.377996",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-026",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "6.3",
@@ -537,18 +830,28 @@
       "title": "Integrate into account settings (or profile)",
       "description": "Determine location (account settings vs user profile)\nAdd LanguagePreferenceSection component\nPre-populate with current preference",
       "raw_match": "\n- [ ] **Task 6.3:** Integrate into account settings (or profile)",
-      "status": "completed",
-      "request_id": "REQ-E05-027",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:53:20.774651",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-027",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.1",
@@ -557,18 +860,28 @@
       "title": "Integrate preview panel into article editor",
       "description": "File: `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` (modify)\nShow panel after save\nAuto-open if translations are pending",
       "raw_match": "\n- [ ] **Task 7.1:** Integrate preview panel into article editor",
-      "status": "completed",
-      "request_id": "REQ-E05-028",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T10:59:35.856880",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-028",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.2",
@@ -577,18 +890,28 @@
       "title": "Integrate preview panel into item editor",
       "description": "File: `/src/app/dashboard2/items/[publicId]/edit/page.tsx` (modify)\nSame pattern as article editor",
       "raw_match": "\n- [ ] **Task 7.2:** Integrate preview panel into item editor",
-      "status": "completed",
-      "request_id": "REQ-E05-029",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T11:04:56.441069",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-029",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.3",
@@ -597,18 +920,28 @@
       "title": "Add loading states and error handling",
       "description": "All components: proper loading spinners\nError toasts/messages for API failures\nRetry buttons for failed operations",
       "raw_match": "\n- [ ] **Task 7.3:** Add loading states and error handling",
-      "status": "completed",
-      "request_id": "REQ-E05-030",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T11:14:09.657073",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-030",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.4",
@@ -617,18 +950,28 @@
       "title": "Add accessibility features",
       "description": "ARIA labels for status icons\nKeyboard navigation in preview panel\nScreen reader announcements for status changes\nFocus management in modals",
       "raw_match": "\n- [ ] **Task 7.4:** Add accessibility features",
-      "status": "completed",
-      "request_id": "REQ-E05-031",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T11:22:04.037553",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-031",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-031-add-accessibility-features-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-031-add-accessibility-features-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.5",
@@ -637,18 +980,28 @@
       "title": "Write unit tests for hooks",
       "description": "Test useTranslationStatus\nTest useTranslationRealtime\nMock Supabase responses",
       "raw_match": "\n- [ ] **Task 7.5:** Write unit tests for hooks",
-      "status": "completed",
-      "request_id": "REQ-E05-032",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T12:58:15.070841",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-032",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-write-unit-tests-for-hooks-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-write-unit-tests-for-hooks-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     },
     {
       "id": "7.6",
@@ -657,18 +1010,28 @@
       "title": "Write component tests",
       "description": "Test TranslationPreviewPanel rendering\nTest TranslationEditor save flow\nTest TranslationStatusWidget counts",
       "raw_match": "\n- [ ] **Task 7.6:** Write component tests",
-      "status": "completed",
-      "request_id": "REQ-E05-034",
+      "status": "pending",
+      "request_id": null,
       "error": null,
       "processed_at": "2026-01-20T13:08:18.368998",
-      "files": {
-        "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-034",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-overview.md",
-        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-detailed.md"
-      },
-      "request_completed": true,
-      "overview_completed": true,
-      "details_completed": true
+      "files": {},
+      "stages": {
+        "request": {
+          "status": "pending"
+        },
+        "overview": {
+          "status": "pending"
+        },
+        "details": {
+          "status": "pending"
+        },
+        "implementation": {
+          "status": "pending"
+        },
+        "qa_validation": {
+          "status": "pending"
+        }
+      }
     }
   ],
   "stages": {
@@ -711,10 +1074,15 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 2,
-    "last_request_id": "REQ-E05-034",
+    "total_requests_generated": 11,
+    "last_request_id": "REQ-E05-011",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   },
-  "recent_errors": []
+  "recent_errors": [],
+  "session_id_overview": null,
+  "session_id_details": null,
+  "session_id_implementation": null,
+  "session_id_qa_validation": null,
+  "session_id_request": "178a74f9-84f6-4036-9eda-c43b58d6686e"
 }

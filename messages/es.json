@@ -1170,26 +1170,50 @@
     "room": "Room",
     "tags": "Tags",
     "list": {
+      "title": "Mis artículos",
+      "count": "{count, plural, one {# artículo} other {# artículos}} en total",
+      "createNew": "Nuevo artículo QR Code",
+      "loginRequired": "Por favor inicie sesión para ver artículos.",
+      "dismiss": "Descartar",
+      "error": "Ocurrió un error",
       "empty": {
-        "title": "No items yet",
-        "description": "Create your first QR code item to get started",
-        "action": "Create Item"
+        "title": "Sin artículos todavía",
+        "description": "Cree su primer artículo QR Code para comenzar",
+        "action": "Crear artículo"
       },
       "noResults": {
-        "title": "No matching items",
-        "description": "Try adjusting your search or filters"
+        "title": "Sin artículos coincidentes",
+        "description": "Intente ajustar su búsqueda o filtros"
       },
-      "loading": "Cargando elementos...",
+      "loading": "Cargando artículos...",
       "noArticles": "Sin artículos aún",
-      "addFirstArticle": "Añade tu primer artículo"
+      "addFirstArticle": "Añade tu primer artículo",
+      "caption": "{count, plural, =0 {Sin artículos} one {# artículo} other {# artículos}}",
+      "selectionActive": "Modo de selección activo con {count, plural, one {# artículo seleccionado} other {# artículos seleccionados}}.",
+      "sortBy": "Ordenar por {column}",
+      "columns": {
+        "selection": "Selección",
+        "preview": "Vista previa del artículo",
+        "title": "Título",
+        "location": "Ubicación",
+        "guides": "Guías",
+        "guidesShort": "Guía",
+        "tags": "Etiquetas",
+        "property": "Propiedad",
+        "created": "Creado",
+        "views": "Vistas",
+        "reactions": "Reacciones",
+        "actions": "Acciones"
+      },
+      "columnSettings": "Configuración de columnas",
+      "showColumns": "Mostrar columnas"
     },
-
     "grid": {
       "ariaLabel": "{count, plural, =0 {Sin elementos} one {# elemento} other {# elementos}}",
       "loading": "Cargando elementos"
     },
-
     "card": {
+      "ariaLabel": "{title}. Contenido {type}. Presiona Enter para previsualizar.",
       "contentType": {
         "link": "ENLACE",
         "text": "TEXTO",
@@ -1231,6 +1255,18 @@
       "tags": {
         "more": "+{count} más"
       }
+    },
+    "row": {
+      "ariaLocation": "Ubicación: {location}.",
+      "ariaGuides": "{count, plural, one {# guía.} other {# guías.}}",
+      "ariaNoGuides": "Sin guías.",
+      "ariaCreated": "Creado el {date}.",
+      "ariaViews": " {count, plural, one {# vista.} other {# vistas.}}",
+      "ariaReactions": " {count, plural, one {# reacción.} other {# reacciones.}}",
+      "ariaSelected": " Seleccionado.",
+      "ariaNotSelected": " No seleccionado.",
+      "actionsMenu": "Acciones del artículo",
+      "actionsFor": "Acciones para {title}"
     },
     "actions": {
       "create": "New Item",
@@ -1436,14 +1472,33 @@
       "edit": "Click to edit"
     },
     "analytics": {
-      "title": "Analytics",
-      "views": "{count, plural, one {# view} other {# views}}",
-      "allTime": "All time",
-      "thisWeek": "This week",
-      "thisMonth": "This month",
-      "reactions": "Reactions",
-      "engagement": "Engagement",
-      "noData": "No analytics data yet"
+      "title": "Estadísticas",
+      "views": "{count, plural, one {# vista} other {# vistas}}",
+      "allTime": "Todo el tiempo",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "reactions": "Reacciones",
+      "engagement": {
+        "title": "Interacción",
+        "high": "Interacción alta",
+        "medium": "Interacción media",
+        "low": "Interacción baja"
+      },
+      "level": {
+        "high": "Alta",
+        "medium": "Media",
+        "low": "Baja"
+      },
+      "loading": "Cargando número de vistas",
+      "loadingReactions": "Cargando reacciones",
+      "loadingEngagement": "Cargando indicador de interacción",
+      "reactionCount": {
+        "like": "{count, plural, one {# me gusta} other {# me gusta}}",
+        "love": "{count, plural, one {# me encanta} other {# me encanta}}",
+        "dislike": "{count, plural, one {# no me gusta} other {# no me gusta}}",
+        "confused": "{count, plural, one {# confundido} other {# confundidos}}"
+      },
+      "noData": "Sin datos estadísticos aún"
     },
     "view": {
       "grid": "Grid view",
@@ -1456,18 +1511,124 @@
       "duplicateName": "An item with this name already exists"
     },
     "edit": {
-      "title": "Edit Item",
-      "description": "Update item details and resources"
+      "pageTitle": "Editar artículo",
+      "backToItems": "Volver a artículos",
+      "loading": "Cargando artículo...",
+      "loginRequired": "Por favor inicie sesión para editar artículos.",
+      "returnToItems": "Volver a artículos",
+      "notFound": "Artículo no encontrado",
+      "loadError": "Error al cargar el artículo. Por favor intente de nuevo.",
+      "form": {
+        "nameLabel": "Nombre del artículo",
+        "namePlaceholder": "Ingrese el nombre del artículo",
+        "descriptionLabel": "Descripción",
+        "descriptionPlaceholder": "Ingrese la descripción del artículo (opcional)",
+        "roomLabel": "Habitación",
+        "roomPlaceholder": "Seleccionar una habitación...",
+        "roomAriaLabel": "Seleccionar habitación para este artículo",
+        "itemTypeLabel": "Tipo de artículo",
+        "itemTypePlaceholder": "Seleccionar tipo de artículo...",
+        "itemTypeAriaLabel": "Seleccionar tipo de artículo",
+        "tagsLabel": "Etiquetas adicionales",
+        "tagsHelper": "Agregar etiquetas personalizadas para categorización adicional",
+        "tagsPlaceholder": "Haga clic para agregar etiquetas..."
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "save": "Guardar cambios",
+        "saving": "Guardando..."
+      },
+      "guides": {
+        "title": "Guías",
+        "description": "Contenido asociado a este artículo",
+        "empty": "Sin guías todavía",
+        "emptyDescription": "Las guías para este artículo aparecerán aquí",
+        "edit": "Editar"
+      },
+      "purposes": {
+        "howToUse": "Cómo usar",
+        "troubleshooting": "Solución de problemas",
+        "howToClean": "Cómo limpiar",
+        "safetyInfo": "Información de seguridad",
+        "maintenance": "Mantenimiento",
+        "features": "Características",
+        "other": "Otro"
+      },
+      "rooms": {
+        "kitchen": "Cocina",
+        "bathroom": "Baño",
+        "bedroom": "Dormitorio",
+        "livingRoom": "Sala de estar",
+        "laundry": "Lavandería",
+        "garage": "Garaje",
+        "outdoor": "Exterior",
+        "office": "Oficina",
+        "gym": "Gimnasio",
+        "pool": "Piscina",
+        "other": "Otro"
+      },
+      "itemTypes": {
+        "appliance": "Electrodoméstico",
+        "roomItem": "Artículo de habitación",
+        "generalInfo": "Información general"
+      },
+      "tags": {
+        "addTags": "Agregar etiquetas...",
+        "typeToAdd": "Escriba para agregar...",
+        "maxReached": "Máximo de etiquetas alcanzado",
+        "saving": "Guardando...",
+        "editTags": "Editar etiquetas",
+        "tagsSelected": "{count} etiquetas seleccionadas",
+        "savingTags": "Guardando etiquetas...",
+        "moreCount": "+{count} más",
+        "suggestions": "Sugerencias de etiquetas",
+        "addNewTag": "Agregar nueva etiqueta",
+        "removeTag": "Eliminar etiqueta {tag}",
+        "validation": {
+          "empty": "La etiqueta no puede estar vacía",
+          "tooLong": "La etiqueta debe tener {max} caracteres o menos",
+          "duplicate": "La etiqueta ya existe",
+          "maxTags": "Máximo {max} etiquetas permitidas"
+        }
+      }
     },
     "create": {
       "title": "Create New Item",
       "description": "Add a new item with instructions and resources"
     },
     "links": {
-      "sectionTitle": "Resources & Links",
-      "addLink": "Add Link",
-      "noResources": "No resources added yet",
-      "addFirstResource": "Add Your First Resource"
+      "sectionTitle": "Recursos y enlaces",
+      "addLink": "Agregar enlace",
+      "noResources": "Sin recursos agregados aún",
+      "addFirstResource": "Agrega tu primer recurso"
+    },
+    "analyticsSection": {
+      "title": "Estadísticas",
+      "noData": "Sin datos estadísticos disponibles",
+      "views": {
+        "title": "Vistas",
+        "periods": {
+          "last24Hours": "Últimas 24 horas",
+          "last7Days": "Últimos 7 días",
+          "last30Days": "Últimos 30 días",
+          "allTime": "Todo el tiempo"
+        }
+      },
+      "reactions": {
+        "title": "Reacciones",
+        "total": "{count} en total",
+        "types": {
+          "like": "Me gusta",
+          "love": "Me encanta",
+          "dislike": "No me gusta",
+          "confused": "Confundido"
+        }
+      }
+    },
+    "instructionsViewer": {
+      "ariaLabel": "Guías del artículo",
+      "headerText": "Guías",
+      "empty": "No se proporcionaron guías."
     }
   },
   "errors": {
@@ -3318,6 +3479,171 @@
     "error": {
       "title": "Error | FAQBNB",
       "description": "Ocurrió un error"
+    }
+  },
+  "articles": {
+    "title": "Instructions",
+    "subtitle": "Manage content and instructions",
+    "pageTitle": "All Guides",
+    "editor": {
+      "title": "Edit Content",
+      "preview": "Preview",
+      "edit": "Edit",
+      "placeholder": "Write your instructions here...",
+      "characterCount": "{current, number} / {max, number} characters",
+      "characterWarning": "Approaching character limit",
+      "characterError": "Character limit exceeded",
+      "formatting": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "list": "Bullet List",
+        "orderedList": "Numbered List",
+        "link": "Insert Link"
+      },
+      "tabs": {
+        "edit": "Edit",
+        "preview": "Preview"
+      }
+    },
+    "media": {
+      "upload": "Upload Media",
+      "dragDrop": "Drag and drop files here",
+      "or": "or",
+      "browse": "Browse files",
+      "supportedFormats": "Supported formats: {formats}",
+      "maxSize": "Maximum file size: {size}MB",
+      "uploading": "Uploading...",
+      "uploadComplete": "Upload complete",
+      "uploadFailed": "Upload failed"
+    },
+    "crop": {
+      "title": "Crop Image",
+      "aspectRatio": "Aspect Ratio",
+      "freeform": "Freeform",
+      "square": "Square (1:1)",
+      "landscape": "Landscape (16:9)",
+      "portrait": "Portrait (9:16)",
+      "standard": "Standard (4:3)",
+      "apply": "Apply Crop",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "zoom": "Zoom",
+      "rotate": "Rotate"
+    },
+    "video": {
+      "title": "Trim Video",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "duration": "Duration: {duration}",
+      "apply": "Apply Trim",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "preview": "Preview",
+      "playing": "Playing",
+      "paused": "Paused"
+    },
+    "purposes": {
+      "howToUse": "How to Use",
+      "troubleshooting": "Troubleshooting",
+      "howToClean": "How to Clean",
+      "safetyInfo": "Safety Information",
+      "maintenance": "Maintenance",
+      "features": "Features",
+      "warranty": "Warranty & Support",
+      "other": "Other"
+    },
+    "list": {
+      "title": "Instructions",
+      "subtitle": "Manage your guides and instructions",
+      "count": "{count, plural, =0 {No guides} one {# guide} other {# guides}}",
+      "createNew": "Create New Guide",
+      "search": {
+        "placeholder": "Search guides...",
+        "noResults": "No guides found matching your search",
+        "clear": "Clear search"
+      },
+      "columns": {
+        "title": "Title",
+        "item": "Item",
+        "room": "Room",
+        "purpose": "Purpose",
+        "created": "Created",
+        "updated": "Updated",
+        "actions": "Actions"
+      },
+      "sort": {
+        "label": "Sort by",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "titleAZ": "Title A-Z",
+        "titleZA": "Title Z-A",
+        "itemAZ": "Item A-Z",
+        "recentlyModified": "Recently Modified"
+      }
+    },
+    "edit": {
+      "pageTitle": "Edit Guide",
+      "backToList": "Back to Guides",
+      "loading": "Loading guide...",
+      "notFound": "Guide not found",
+      "loadError": "Failed to load guide",
+      "saveSuccess": "Guide saved successfully",
+      "saveFailed": "Failed to save guide",
+      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "form": {
+        "titleLabel": "Title",
+        "titlePlaceholder": "Enter a title for this guide",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Brief description (optional)",
+        "purposeLabel": "Purpose",
+        "purposePlaceholder": "Select purpose"
+      },
+      "buttons": {
+        "save": "Save Guide",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "delete": "Delete Guide"
+      }
+    },
+    "grid": {
+      "ariaLabel": "Guides grid",
+      "viewItem": "View guide details",
+      "editItem": "Edit guide",
+      "deleteItem": "Delete guide"
+    },
+    "table": {
+      "ariaLabel": "Guides table",
+      "selectRow": "Select this guide",
+      "actions": "Actions",
+      "noGuides": "No guides to display"
+    },
+    "empty": {
+      "title": "No guides yet",
+      "description": "Create your first guide to help guests with instructions for your items.",
+      "action": "Create Guide",
+      "noResults": {
+        "title": "No guides found",
+        "description": "Try adjusting your search or filters"
+      }
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleTooLong": "Title must be less than {max} characters",
+      "contentTooLong": "Content exceeds maximum length of {max} characters",
+      "purposeRequired": "Please select a purpose",
+      "invalidMediaType": "This file type is not supported",
+      "fileTooLarge": "File size exceeds {max}MB limit"
+    },
+    "delete": {
+      "title": "Delete Guide",
+      "message": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Guide deleted successfully",
+      "failed": "Failed to delete guide"
     }
   }
 }

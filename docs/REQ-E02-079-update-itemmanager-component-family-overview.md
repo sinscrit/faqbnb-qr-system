@@ -1,581 +1,364 @@
-# Implementation Breakdown: REQ-E02-079 - Update ItemManager Component Family for Internationalization
+# Implementation Overview: Update ItemManager Component Family for Internationalization
 
-**Generated:** 2026-01-20 17:30 UTC
-**Last Modified:** 2026-01-20 17:30 UTC
-**Request Reference:** REQ-E02-079 (docs/gen_requests_epic2.md)
-**Implementation Plan Reference:** docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md
-**Epic:** L10N Epic 2 - Static UI Translation
-**Sub-Epic:** 2D - Item Management
-**Task ID:** 2D.2
-**Size:** M (Medium)
+**Last Modified:** 2026-01-22 12:49
+
+## Header
+
+| Field | Value |
+|-------|-------|
+| Request Reference | REQ-E02-079 |
+| Source File | docs/gen_requests_epic2.md |
+| Original Request Date | 2026-01-20 16:45 |
+| Breakdown Created | 2026-01-22 12:49 |
+| Epic | 2 - Static UI Translation |
+| Sub-Epic | 2D - Item Management |
+| Task ID | 2D.2 |
+| T-shirt Size | M (Medium) |
+| Estimated Effort | 1-2 days |
+| Status | PENDING |
 
 ---
 
 ## 1. Summary
 
-Update all ItemManager components and related child components to use `next-intl` translation hooks, replacing hardcoded English strings with localized translations from the `items` namespace. This enables users to manage their item inventory in their preferred language (English, French, Spanish, German, Dutch, Italian).
+Update all ItemManager components and related sub-components to use translation hooks and display all user-facing text in the selected language, replacing any remaining hardcoded English strings with localized translations from the `items` namespace.
+
+**Key Observations from Codebase Investigation:**
+
+1. **Many components already have i18n implemented** - The main `ItemManager.tsx`, `ItemToolbar.tsx`, and most dialog components already use `useTranslations('items')`.
+
+2. **Translation keys already exist** - The `/messages/en.json` file has a comprehensive `items` namespace with ~400+ keys covering most UI strings.
+
+3. **Focus areas** - Components that still need attention:
+   - `SearchInput.tsx` - Has hardcoded placeholder and aria-labels
+   - `ViewModeToggle.tsx` - Has hardcoded aria-labels
+   - `TagChip.tsx` - Has hardcoded aria-label pattern
+   - `TouchButton.tsx`, `BottomSheet.tsx` - May have hardcoded strings
+   - Various utility components in `/shared/`
 
 ---
 
-## 2. Current State Analysis
+## 2. Goals
 
-### 2.1 Component Inventory
+### Functional Requirements (Technical Terms)
 
-The ItemManager component family consists of **40+ components** across multiple directories:
+1. **Complete i18n coverage** - All user-facing strings in ItemManager component family must use translation functions
+2. **Consistent namespace** - All components use the `items` namespace for translations
+3. **No hardcoded strings** - Zero hardcoded English text in any component file
+4. **Dynamic language switching** - Components update immediately when locale changes (no page reload required)
+5. **Accessibility compliance** - All aria-labels and screen reader text are translated
 
-| Category | Component Count | Location |
-|----------|----------------|----------|
-| Main Component | 1 | `/src/components/ItemManager/ItemManager.tsx` |
-| Grid/List Components | 4 | `/src/components/ItemManager/components/` |
-| Dialog Components | 6 | `/src/components/ItemManager/components/dialogs/` |
-| Shared Components | 11 | `/src/components/ItemManager/components/shared/` |
-| Bulk Action Components | 3 | `/src/components/ItemManager/components/BulkActions/` |
-| Asset Panel Components | 4 | `/src/components/ItemManager/components/AssetPanel/` |
-| Item Preview Components | 5 | `/src/components/ItemManager/components/ItemPreview/` |
-| Utility Files | 4 | `/src/components/ItemManager/utils/` |
+### Assumptions & Clarifications
 
-### 2.2 Hardcoded String Locations
-
-Identified hardcoded strings requiring translation:
-
-1. **ItemManager.tsx** (lines 55-61): Default labels configuration
-   - `searchPlaceholder: 'Search items...'`
-   - `emptyStateTitle: 'No items yet'`
-   - `emptyStateDescription: 'Create your first item to get started'`
-   - `deleteConfirmTitle: 'Delete Item'`
-   - `deleteConfirmMessage: 'Are you sure you want to delete this item?...'`
-
-2. **ItemToolbar.tsx** (lines 134, 184, 212, 301, etc.):
-   - `Clear filters`
-   - `{selectedCount} selected`
-   - `Select all ({totalCount})`
-   - `Room` / `Room ({count})`
-
-3. **FilterPanel.tsx** (lines 89-98): Default labels
-   - `title: 'Filters'`
-   - `clearAll: 'Clear All'`
-   - `contentType: 'Content Type'`
-   - `tags: 'Tags'`
-   - `location: 'Location'`
-   - `property: 'Property'`
-   - `applyFilters: 'Apply Filters'`
-   - `close: 'Close'`
-
-4. **SortMenu.tsx** (lines 125-128): Default labels
-   - `sortLabel: 'Sort'`
-   - `sortByLabel: 'Sort by'`
-
-5. **constants.ts** (lines 31-41): Sort option labels
-   - `'Title (A-Z)'`, `'Title (Z-A)'`
-   - `'Newest First'`, `'Oldest First'`
-   - `'Recently Modified'`, `'Least Recently Modified'`
-   - `'Location (A-Z)'`
-   - `'Most Guides'`, `'Fewest Guides'`
-
-6. **BulkActionsBar.tsx** (lines 182, 186, 197, 203, 214, 220, 230, 254, 266):
-   - `{selectedCount} selected`
-   - `Currently {selectedCount} item(s) selected`
-   - `Processing...`
-   - `Delete`, `Add Tag`, `Remove Tag`, `Move to Property`, `Cancel`
-
-7. **ConfirmDeleteDialog.tsx** (lines 62-88, 230, 252, 271):
-   - `Delete Item` / `Delete Items`
-   - `Are you sure you want to delete...`
-   - `and {count} more`
-   - `Cancel`, `Delete {count} Items`, `Deleting...`
-
-8. **EmptyState.tsx** (lines 23-24):
-   - `No items yet`
-   - `Create your first item to get started`
-
-9. **LoadingState.tsx** (lines 116, 138):
-   - `Loading items, please wait...`
-
-10. **ItemCard.tsx** (lines 32-57, 218-219, 336-337, etc.):
-    - Content type labels: `LINK`, `TEXT`, `PDF`, `MIXED`, `VIDEO`, `PHOTO`, `MEDIA`
-    - `Enter title...`, `Add location...`, `Add tags...`
-    - `+{count} more`
-    - Aria labels with dynamic context
-
-11. **ItemGrid.tsx** (line 38):
-    - `{count} item(s)` (aria-label)
-
-12. **SearchInput.tsx** (lines 56, 216):
-    - `Search items...`
-    - `Clear search`
+- Epic 1 foundation (next-intl setup) is complete and operational
+- Translation files exist at `/messages/{locale}.json`
+- The `items` namespace in `en.json` is the source of truth
+- Components are client-side and should use `useTranslations` hook (not `getTranslations`)
+- Translations for non-English languages (fr, es, de, nl, it) will be generated in a separate task
 
 ---
 
-## 3. Implementation Approach
+## 3. Implementation Plan
 
-### 3.1 Translation Pattern
+### Step 1: Audit All ItemManager Components for Hardcoded Strings
 
-Following the established pattern from `LogoutButton.tsx`:
+- **Description**: Systematically review all 50+ component files in `/src/components/ItemManager/` to identify any remaining hardcoded English strings
+- **Rationale**: Need complete inventory before making changes to ensure nothing is missed
+- **Estimated Effort**: S (2-3 hours)
+
+### Step 2: Update Shared Components in `/components/shared/`
+
+- **Description**: Update utility components that don't currently use translations
+- **Rationale**: Shared components are used across multiple parent components; fixing them propagates fixes upward
+- **Estimated Effort**: S (2-3 hours)
+
+**Components to update:**
+- `ViewModeToggle.tsx` - Add props for translated labels or use translations internally
+- `TagChip.tsx` - Translate aria-label pattern
+- `TouchButton.tsx` - Check for hardcoded strings
+- `BottomSheet.tsx` - Check for hardcoded strings
+
+### Step 3: Update SearchInput Component
+
+- **Description**: Replace hardcoded placeholder and aria-labels with props or translations
+- **Rationale**: SearchInput is used in the toolbar and needs i18n support
+- **Estimated Effort**: XS (1 hour)
+
+### Step 4: Verify and Fix Dialog Components
+
+- **Description**: Double-check all dialog components for complete i18n coverage
+- **Rationale**: Dialogs contain critical user-facing text like confirmations and warnings
+- **Estimated Effort**: S (2 hours)
+
+**Components to verify:**
+- `ConfirmDeleteDialog.tsx`
+- `BulkTagDialog.tsx`
+- `BulkMoveDialog.tsx`
+- `AssetRemoveConfirmDialog.tsx`
+- `FilterPanel.tsx`
+- `SortMenu.tsx`
+- `LocationFilter.tsx`
+- `PropertyFilter.tsx`
+- `TagFilter.tsx`
+- `ContentTypeFilter.tsx`
+- `ColumnSettingsPopup.tsx`
+
+### Step 5: Verify and Fix Preview Components
+
+- **Description**: Ensure all preview-related components use translations
+- **Rationale**: Preview modal is a key user interaction point
+- **Estimated Effort**: S (2 hours)
+
+**Components to verify:**
+- `ItemPreviewModal.tsx`
+- `MediaGallery.tsx`
+- `InstructionsViewer.tsx`
+- `AnalyticsSection.tsx`
+- `VideoPlayer.tsx`
+- `PhotoViewer.tsx`
+- `PDFViewer.tsx`
+
+### Step 6: Verify Core Components
+
+- **Description**: Final verification of main ItemManager components
+- **Rationale**: Core components orchestrate the entire feature; must be complete
+- **Estimated Effort**: S (1-2 hours)
+
+**Components to verify:**
+- `ItemManager.tsx` (already has translations)
+- `ItemToolbar.tsx` (already has translations)
+- `ItemGrid.tsx`
+- `ItemList.tsx`
+- `ItemCard.tsx`
+- `ItemRow.tsx`
+
+### Step 7: Add Missing Translation Keys
+
+- **Description**: Add any new translation keys discovered during implementation to `/messages/en.json`
+- **Rationale**: New keys must be added to support previously hardcoded strings
+- **Estimated Effort**: S (1-2 hours)
+
+### Step 8: Verify TypeScript Compilation
+
+- **Description**: Run `npm run typecheck` to ensure no type errors from i18n changes
+- **Rationale**: Type safety is critical; changes must not break compilation
+- **Estimated Effort**: XS (30 minutes)
+
+---
+
+## 4. Authorized Files and Functions for Modification
+
+> ⚠️ **APPROVED SCOPE**: Changes outside this list require review
+
+### 4.1 Shared Components (Step 2)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/components/shared/ViewModeToggle.tsx` | Component props or i18n hook | Modify |
+| `src/components/ItemManager/components/shared/TagChip.tsx` | aria-label translation | Modify |
+| `src/components/ItemManager/components/shared/TouchButton.tsx` | i18n verification | Modify |
+| `src/components/ItemManager/components/shared/BottomSheet.tsx` | i18n verification | Modify |
+| `src/components/ItemManager/components/shared/EmptyState.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/LoadingState.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/InlineEdit.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/TagsInlineEdit.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/VisitCountBadge.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/ReactionSummary.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/shared/EngagementIndicator.tsx` | i18n verification | Verify |
+
+### 4.2 SearchInput (Step 3)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/components/SearchInput.tsx` | Add translations for placeholder/aria-labels | Modify |
+
+### 4.3 Dialog Components (Step 4)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/components/dialogs/ConfirmDeleteDialog.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/FilterPanel.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/SortMenu.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/LocationFilter.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/PropertyFilter.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/TagFilter.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/ContentTypeFilter.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/dialogs/ColumnSettingsPopup.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/BulkActions/BulkActionsBar.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/BulkActions/BulkTagDialog.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/BulkActions/BulkMoveDialog.tsx` | i18n verification | Verify |
+
+### 4.4 Preview Components (Step 5)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/components/ItemPreview/ItemPreviewModal.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/MediaGallery.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/AnalyticsSection.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/VideoPlayer.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/viewers/PhotoViewer.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemPreview/viewers/PDFViewer.tsx` | i18n verification | Verify |
+
+### 4.5 Asset Panel Components (Step 5)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/components/AssetPanel/AssetPanel.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/AssetPanel/AssetDropZone.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/AssetPanel/AssetItem.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/AssetPanel/AssetRemoveConfirmDialog.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/AssetPanel/SortableAssetList.tsx` | i18n verification | Verify |
+
+### 4.6 Core Components (Step 6)
+
+| File | Target | Type |
+|------|--------|------|
+| `src/components/ItemManager/ItemManager.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemToolbar.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemGrid.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemList.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemCard.tsx` | i18n verification | Verify |
+| `src/components/ItemManager/components/ItemRow.tsx` | i18n verification | Verify |
+
+### 4.7 Translation Files (Step 7)
+
+| File | Target | Type |
+|------|--------|------|
+| `messages/en.json` | `items` namespace - add missing keys | Modify |
+| `messages/fr.json` | `items` namespace - add missing keys (if generating translations) | Modify |
+| `messages/es.json` | `items` namespace - add missing keys (if generating translations) | Modify |
+| `messages/de.json` | `items` namespace - add missing keys (if generating translations) | Modify |
+| `messages/nl.json` | `items` namespace - add missing keys (if generating translations) | Modify |
+| `messages/it.json` | `items` namespace - add missing keys (if generating translations) | Modify |
+
+---
+
+## 5. Dependencies
+
+### 5.1 Depends On (Completed First)
+
+- **REQ-E02-078** (Task 2D.1): Create items namespace structure - **Required**. The `items` namespace must exist with proper key hierarchy before components can use it. (Investigation shows this is already complete.)
+- **Epic 1 Foundation**: next-intl setup, `IntlProvider`, translation files must be operational. (Investigation shows this is already complete.)
+
+### 5.2 Blocks (Requires This First)
+
+- **REQ-E02-080** (Task 2D.3): Update ItemGrid and ItemCard for locale-aware content display - Can proceed in parallel but may need to coordinate on translation keys.
+- **REQ-E02-081** (Task 2D.4): Update filter and sort components - May already be complete based on codebase investigation.
+- **REQ-E02-082** (Task 2D.5): Update bulk action dialogs - May already be complete based on codebase investigation.
+
+### 5.3 Parallel Safety
+
+- **Files touched**: All files in `src/components/ItemManager/`
+- **Conflicts with**: REQ-E02-080, REQ-E02-081, REQ-E02-082 (all modify ItemManager components)
+- **Safe to parallelize with**: Tasks in other sub-epics (2A Auth, 2B Dashboard, 2C Workflow, etc.)
+
+### 5.4 External Dependencies
+
+- **next-intl**: i18n framework (already installed)
+- **No API changes required**: All changes are frontend-only
+
+---
+
+## 6. Risks and Considerations
+
+### 6.1 Potential Side Effects
+
+1. **Text length variations**: German and French text is typically 20-40% longer than English. UI components may need layout adjustments.
+2. **Prop drilling**: Some components receive labels via props instead of using hooks directly. This pattern should be preserved where it exists.
+3. **Test updates**: Unit tests with snapshot testing may fail if they include translated text.
+
+### 6.2 Testing Requirements
+
+1. **Visual regression testing**: Verify UI doesn't break with longer translated strings
+2. **Language switching**: Test that changing locale updates all ItemManager text immediately
+3. **Screen reader testing**: Verify aria-labels are properly translated
+4. **Edge cases**: Test empty states, loading states, error states in non-English locales
+
+### 6.3 Open Questions
+
+- [ ] Should `ViewModeToggle` use internal translations or receive labels via props? (Props pattern is used in `ItemToolbar`, may want consistency)
+- [ ] Should missing translation keys fall back to English or show the key? (Recommend: Fall back to English with console warning in dev)
+- [ ] Are there any component tests that will need updating for i18n?
+
+---
+
+## 7. Out of Scope
+
+The following are explicitly **NOT** part of this task:
+
+1. **Creating translations for non-English languages** - Only English source strings are added; translation generation is a separate task
+2. **Modifying database schema** - No changes to item_translations or other tables
+3. **Locale detection/switching logic** - Handled by Epic 1 foundation
+4. **RTL (right-to-left) language support** - Not in current supported languages
+5. **Date/time/number formatting** - Covered by separate i18n formatting utilities
+6. **Refactoring component architecture** - Only i18n-specific changes; no structural refactoring
+
+---
+
+## 8. Implementation Pattern Reference
+
+### Client Component Pattern
 
 ```typescript
-// Client components
+// Before (hardcoded strings)
+function ViewModeToggle({ viewMode, onViewModeChange }) {
+  return (
+    <div aria-label="View mode selection">
+      <button aria-label="Grid view">...</button>
+      <button aria-label="List view">...</button>
+    </div>
+  );
+}
+
+// After (translated)
 import { useTranslations } from 'next-intl';
 
-function MyComponent() {
+function ViewModeToggle({ viewMode, onViewModeChange }) {
   const t = useTranslations('items');
-  const tCommon = useTranslations('common');
-
-  return <button>{t('delete.confirm')}</button>;
+  return (
+    <div aria-label={t('view.toggle')}>
+      <button aria-label={t('view.grid')}>...</button>
+      <button aria-label={t('view.list')}>...</button>
+    </div>
+  );
 }
 ```
 
-### 3.2 Namespace Organization
+### Props-Based Pattern (Alternative)
 
-All ItemManager translations will use the `items` namespace with the following structure:
+```typescript
+// For components that receive labels via props (maintains flexibility)
+interface ViewModeToggleProps {
+  viewMode: 'grid' | 'list';
+  onViewModeChange: (mode: 'grid' | 'list') => void;
+  labels?: {
+    toggle?: string;
+    grid?: string;
+    list?: string;
+  };
+}
 
-```json
-{
-  "items": {
-    "manager": {
-      "title": "Items",
-      "ariaLabel": "Item manager"
-    },
-    "search": {
-      "placeholder": "Search items...",
-      "clear": "Clear search"
-    },
-    "filters": {
-      "title": "Filters",
-      "clearAll": "Clear All",
-      "contentType": "Content Type",
-      "tags": "Tags",
-      "location": "Location",
-      "property": "Property",
-      "applyFilters": "Apply Filters",
-      "close": "Close",
-      "room": "Room",
-      "roomWithCount": "Room ({count})"
-    },
-    "sort": {
-      "label": "Sort",
-      "sortBy": "Sort by",
-      "options": {
-        "titleAsc": "Title (A-Z)",
-        "titleDesc": "Title (Z-A)",
-        "newestFirst": "Newest First",
-        "oldestFirst": "Oldest First",
-        "recentlyModified": "Recently Modified",
-        "leastRecentlyModified": "Least Recently Modified",
-        "locationAsc": "Location (A-Z)",
-        "mostGuides": "Most Guides",
-        "fewestGuides": "Fewest Guides"
-      }
-    },
-    "empty": {
-      "title": "No items yet",
-      "description": "Create your first item to get started",
-      "noResults": "No matching items",
-      "noResultsDescription": "Try adjusting your search or filters"
-    },
-    "loading": {
-      "text": "Loading items, please wait...",
-      "label": "Loading items"
-    },
-    "selection": {
-      "selected": "{count} selected",
-      "currentlySelected": "Currently {count, plural, one {# item} other {# items}} selected",
-      "selectAll": "Select all ({count})",
-      "clearSelection": "Clear selection",
-      "selectionCleared": "Selection cleared"
-    },
-    "bulkActions": {
-      "ariaLabel": "Bulk actions for {count, plural, one {# selected item} other {# selected items}}",
-      "delete": "Delete",
-      "addTag": "Add Tag",
-      "removeTag": "Remove Tag",
-      "moveToProperty": "Move to Property",
-      "cancel": "Cancel",
-      "cancelSelection": "Cancel selection",
-      "processing": "Processing..."
-    },
-    "delete": {
-      "titleSingle": "Delete Item",
-      "titlePlural": "Delete Items",
-      "messageSingle": "Are you sure you want to delete this item? This action cannot be undone.",
-      "messagePlural": "Are you sure you want to delete these {count} items? This action cannot be undone.",
-      "confirmSingle": "Delete",
-      "confirmPlural": "Delete {count} Items",
-      "deleting": "Deleting...",
-      "andMore": "and {count} more"
-    },
-    "card": {
-      "enterTitle": "Enter title...",
-      "addLocation": "Add location...",
-      "addTags": "Add tags...",
-      "moreCount": "+{count} more",
-      "selectItem": "Select {title}",
-      "editTitle": "Edit title for {title}",
-      "editLocation": "Edit location for {title}",
-      "editTags": "Edit tags for {title}"
-    },
-    "contentTypes": {
-      "link": "LINK",
-      "text": "TEXT",
-      "pdf": "PDF",
-      "mixed": "MIXED",
-      "video": "VIDEO",
-      "photo": "PHOTO",
-      "media": "MEDIA"
-    },
-    "grid": {
-      "ariaLabel": "{count, plural, one {# item} other {# items}}"
-    },
-    "toolbar": {
-      "ariaLabel": "Item management controls",
-      "clearFilters": "Clear all filters"
-    },
-    "viewMode": {
-      "label": "View mode",
-      "grid": "Grid view",
-      "list": "List view"
-    }
-  }
+function ViewModeToggle({ viewMode, onViewModeChange, labels }: ViewModeToggleProps) {
+  const t = useTranslations('items');
+  return (
+    <div aria-label={labels?.toggle || t('view.toggle')}>
+      <button aria-label={labels?.grid || t('view.grid')}>...</button>
+      <button aria-label={labels?.list || t('view.list')}>...</button>
+    </div>
+  );
 }
 ```
 
 ---
 
-## 4. Ordered Task List
-
-### Phase 1: Translation Infrastructure (~2 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 1.1 | Extend `items` namespace in `/messages/en.json` with all ItemManager strings | `/messages/en.json` |
-| 1.2 | Replicate structure to other language files (fr, es, de, nl, it) with English placeholders | `/messages/*.json` |
-| 1.3 | Create helper function for pluralized strings | `/src/components/ItemManager/utils/i18nUtils.ts` (new) |
-
-### Phase 2: Core Components (~3 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 2.1 | Update ItemManager.tsx to use translations for default labels | `ItemManager.tsx` |
-| 2.2 | Update ItemToolbar.tsx with translation hooks | `ItemToolbar.tsx` |
-| 2.3 | Update SearchInput.tsx placeholder and aria-labels | `SearchInput.tsx` |
-| 2.4 | Update constants.ts to export translation keys instead of hardcoded labels | `utils/constants.ts` |
-
-### Phase 3: Filter & Sort Components (~2 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 3.1 | Update FilterPanel.tsx with translation hooks | `dialogs/FilterPanel.tsx` |
-| 3.2 | Update ContentTypeFilter.tsx | `dialogs/ContentTypeFilter.tsx` |
-| 3.3 | Update TagFilter.tsx | `dialogs/TagFilter.tsx` |
-| 3.4 | Update LocationFilter.tsx | `dialogs/LocationFilter.tsx` |
-| 3.5 | Update PropertyFilter.tsx | `dialogs/PropertyFilter.tsx` |
-| 3.6 | Update SortMenu.tsx with translation hooks | `dialogs/SortMenu.tsx` |
-
-### Phase 4: Item Display Components (~2 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 4.1 | Update ItemCard.tsx with content type labels and aria strings | `ItemCard.tsx` |
-| 4.2 | Update ItemGrid.tsx aria-label | `ItemGrid.tsx` |
-| 4.3 | Update ItemList.tsx | `ItemList.tsx` |
-| 4.4 | Update ItemRow.tsx | `ItemRow.tsx` |
-
-### Phase 5: Shared Components (~1.5 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 5.1 | Update EmptyState.tsx | `shared/EmptyState.tsx` |
-| 5.2 | Update LoadingState.tsx | `shared/LoadingState.tsx` |
-| 5.3 | Update ViewModeToggle.tsx | `shared/ViewModeToggle.tsx` |
-| 5.4 | Update InlineEdit.tsx placeholder strings | `shared/InlineEdit.tsx` |
-| 5.5 | Update TagsInlineEdit.tsx | `shared/TagsInlineEdit.tsx` |
-| 5.6 | Update TagChip.tsx (if any labels) | `shared/TagChip.tsx` |
-
-### Phase 6: Bulk Actions Components (~1.5 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 6.1 | Update BulkActionsBar.tsx with all action labels | `BulkActions/BulkActionsBar.tsx` |
-| 6.2 | Update BulkTagDialog.tsx | `BulkActions/BulkTagDialog.tsx` |
-| 6.3 | Update BulkMoveDialog.tsx | `BulkActions/BulkMoveDialog.tsx` |
-
-### Phase 7: Dialog Components (~1.5 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 7.1 | Update ConfirmDeleteDialog.tsx with all messages | `dialogs/ConfirmDeleteDialog.tsx` |
-| 7.2 | Update ColumnSettingsPopup.tsx | `dialogs/ColumnSettingsPopup.tsx` |
-
-### Phase 8: Asset Panel Components (~1 hour)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 8.1 | Update AssetPanel.tsx | `AssetPanel/AssetPanel.tsx` |
-| 8.2 | Update AssetDropZone.tsx | `AssetPanel/AssetDropZone.tsx` |
-| 8.3 | Update AssetRemoveConfirmDialog.tsx | `AssetPanel/AssetRemoveConfirmDialog.tsx` |
-| 8.4 | Update SortableAssetList.tsx | `AssetPanel/SortableAssetList.tsx` |
-
-### Phase 9: Item Preview Components (~1 hour)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 9.1 | Update ItemPreviewModal.tsx | `ItemPreview/ItemPreviewModal.tsx` |
-| 9.2 | Update MediaGallery.tsx | `ItemPreview/MediaGallery.tsx` |
-| 9.3 | Update AnalyticsSection.tsx | `ItemPreview/AnalyticsSection.tsx` |
-| 9.4 | Update InstructionsViewer.tsx | `ItemPreview/InstructionsViewer.tsx` |
-| 9.5 | Update VideoPlayer.tsx | `ItemPreview/VideoPlayer.tsx` |
-
-### Phase 10: Translations & Verification (~2 hours)
-
-| Task | Description | File(s) |
-|------|-------------|---------|
-| 10.1 | Generate French translations for `items` namespace | `/messages/fr.json` |
-| 10.2 | Generate Spanish translations for `items` namespace | `/messages/es.json` |
-| 10.3 | Generate German translations for `items` namespace | `/messages/de.json` |
-| 10.4 | Generate Dutch translations for `items` namespace | `/messages/nl.json` |
-| 10.5 | Generate Italian translations for `items` namespace | `/messages/it.json` |
-| 10.6 | Verify all components render correctly in each language | - |
-| 10.7 | Test language switching without page reload | - |
-
----
-
-## 5. Authorized Files and Functions for Modification
-
-### 5.1 Translation Files
-
-| File | Modification Type |
-|------|------------------|
-| `/messages/en.json` | EXTEND - Add `items` namespace with ~80 new keys |
-| `/messages/fr.json` | EXTEND - Add translated `items` namespace |
-| `/messages/es.json` | EXTEND - Add translated `items` namespace |
-| `/messages/de.json` | EXTEND - Add translated `items` namespace |
-| `/messages/nl.json` | EXTEND - Add translated `items` namespace |
-| `/messages/it.json` | EXTEND - Add translated `items` namespace |
-
-### 5.2 New Files
-
-| File | Purpose |
-|------|---------|
-| `/src/components/ItemManager/utils/i18nUtils.ts` | Helper functions for ItemManager i18n |
-
-### 5.3 Core Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `ItemManager.tsx` | Add `useTranslations`, update `DEFAULT_CONFIG.labels`, update aria-labels |
-| `ItemToolbar.tsx` | Add `useTranslations`, update `ViewToggle`, `ClearFiltersButton`, `SelectionIndicator`, `RoomFilterDropdown` |
-| `SearchInput.tsx` | Add `useTranslations`, update placeholder and aria-label |
-
-### 5.4 Dialog Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `dialogs/FilterPanel.tsx` | Add `useTranslations`, update `DEFAULT_LABELS`, `renderHeader`, `renderFilters` |
-| `dialogs/SortMenu.tsx` | Add `useTranslations`, update `mergedLabels`, label rendering |
-| `dialogs/ConfirmDeleteDialog.tsx` | Add `useTranslations`, update `getDeleteTitle`, `getDeleteMessage`, `getConfirmButtonText`, button labels |
-| `dialogs/ContentTypeFilter.tsx` | Add `useTranslations` for filter labels |
-| `dialogs/TagFilter.tsx` | Add `useTranslations` for filter labels |
-| `dialogs/LocationFilter.tsx` | Add `useTranslations` for filter labels |
-| `dialogs/PropertyFilter.tsx` | Add `useTranslations` for filter labels |
-| `dialogs/ColumnSettingsPopup.tsx` | Add `useTranslations` for column labels |
-
-### 5.5 Shared Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `shared/EmptyState.tsx` | Add `useTranslations`, update `DEFAULT_TITLE`, `DEFAULT_DESCRIPTION` |
-| `shared/LoadingState.tsx` | Add `useTranslations`, update sr-only text and aria-label |
-| `shared/ViewModeToggle.tsx` | Add `useTranslations`, update aria-labels |
-| `shared/InlineEdit.tsx` | Add `useTranslations` for placeholder if needed |
-| `shared/TagsInlineEdit.tsx` | Add `useTranslations` for placeholder |
-
-### 5.6 Bulk Action Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `BulkActions/BulkActionsBar.tsx` | Add `useTranslations`, update `ActionButton` labels, selection count, processing text |
-| `BulkActions/BulkTagDialog.tsx` | Add `useTranslations`, update dialog content |
-| `BulkActions/BulkMoveDialog.tsx` | Add `useTranslations`, update dialog content |
-
-### 5.7 Item Display Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `ItemCard.tsx` | Add `useTranslations`, update `getContentTypeBadge`, inline edit placeholders, aria-labels |
-| `ItemGrid.tsx` | Add `useTranslations`, update aria-label |
-| `ItemList.tsx` | Add `useTranslations`, update column headers and labels |
-| `ItemRow.tsx` | Add `useTranslations`, update labels and tooltips |
-
-### 5.8 Asset Panel Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `AssetPanel/AssetPanel.tsx` | Add `useTranslations`, update section headers |
-| `AssetPanel/AssetDropZone.tsx` | Add `useTranslations`, update drop zone text |
-| `AssetPanel/AssetRemoveConfirmDialog.tsx` | Add `useTranslations`, update confirmation messages |
-| `AssetPanel/SortableAssetList.tsx` | Add `useTranslations`, update labels |
-
-### 5.9 Item Preview Components
-
-| File | Functions to Modify |
-|------|---------------------|
-| `ItemPreview/ItemPreviewModal.tsx` | Add `useTranslations`, update modal labels |
-| `ItemPreview/MediaGallery.tsx` | Add `useTranslations`, update gallery labels |
-| `ItemPreview/AnalyticsSection.tsx` | Add `useTranslations`, update metric labels |
-| `ItemPreview/InstructionsViewer.tsx` | Add `useTranslations`, update viewer labels |
-| `ItemPreview/VideoPlayer.tsx` | Add `useTranslations`, update player controls |
-
-### 5.10 Utility Files
-
-| File | Functions to Modify |
-|------|---------------------|
-| `utils/constants.ts` | Update `SORT_OPTIONS` to use translation keys |
-
----
-
-## 6. Dependencies
-
-### 6.1 Required from Epic 1
-
-| Dependency | Status | Location |
-|------------|--------|----------|
-| next-intl package | ✅ Installed | `package.json` |
-| IntlProvider wrapper | ✅ Configured | `/src/app/layout.tsx` |
-| Translation files | ✅ Created | `/messages/*.json` |
-| useTranslations hook | ✅ Available | `next-intl` |
-
-### 6.2 Internal Dependencies
-
-| Task | Depends On |
-|------|------------|
-| All Phase 2-9 tasks | Phase 1 (translation file setup) |
-| Phase 10 (verification) | All prior phases |
-
----
-
-## 7. Technical Decisions
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Namespace | `items` | Follows Epic 2 namespace convention for feature areas |
-| Pluralization | ICU format | Industry standard, native next-intl support |
-| Dynamic labels | Pass translation key, not translated string | Allows components to handle translations internally |
-| Default labels | Fallback to translation key | Prevents blank UI if translation missing |
-| Aria labels | Translate with context variables | Maintains accessibility across languages |
-
----
-
-## 8. Risks & Mitigations
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Text length variations break layouts | Medium | Low | Design components to handle 40% text expansion |
-| Missing translations at runtime | Low | Medium | Use English fallback, console warning in dev |
-| Performance impact from many hooks | Low | Low | React memoization handles re-renders |
-| Inconsistent key naming | Medium | Medium | Follow established naming convention strictly |
-
----
-
-## 9. Acceptance Criteria Mapping
-
-| Requirement | Implementation Task |
-|-------------|---------------------|
-| ItemManager root component uses translation hooks | Task 2.1 |
-| Item list headers display translated text | Tasks 2.2, 4.1-4.4 |
-| Sort controls display in selected language | Tasks 2.4, 3.6 |
-| Search placeholder is translated | Task 2.3 |
-| Filter controls display translated labels | Tasks 3.1-3.5 |
-| Action buttons show translated labels | Tasks 6.1-6.3 |
-| Bulk action controls translated | Tasks 6.1-6.3 |
-| Status indicators translated | Task 4.1 (content type badges) |
-| Empty state messages translated | Task 5.1 |
-| Loading state messages translated | Task 5.2 |
-| Confirmation dialogs translated | Task 7.1 |
-| Toast notifications translated | Part of existing toast system |
-| Item count uses locale formatting | Task 2.1 (use ICU pluralization) |
-| Date/time uses locale formatting | Handled by next-intl DateTimeFormat |
-| Pagination controls translated | Existing pagination components |
-| Error messages translated | Uses `errors` namespace from Epic 1 |
-| All hardcoded strings removed | All tasks |
-| Language switching works without reload | Native next-intl behavior |
-| Accessibility labels reflect language | All tasks with aria-labels |
-| Component handles text length variations | CSS design consideration |
-
----
-
-## 10. Estimated Effort
-
-| Phase | Duration | Confidence |
-|-------|----------|------------|
-| Phase 1: Translation Infrastructure | 2 hours | High |
-| Phase 2: Core Components | 3 hours | High |
-| Phase 3: Filter & Sort | 2 hours | High |
-| Phase 4: Item Display | 2 hours | High |
-| Phase 5: Shared Components | 1.5 hours | High |
-| Phase 6: Bulk Actions | 1.5 hours | High |
-| Phase 7: Dialogs | 1.5 hours | High |
-| Phase 8: Asset Panel | 1 hour | High |
-| Phase 9: Item Preview | 1 hour | High |
-| Phase 10: Translations & Verification | 2 hours | Medium |
-| **Total** | **17.5 hours** | Medium |
-
----
-
-## 11. Files Summary
-
-### New Files (1)
-- `/src/components/ItemManager/utils/i18nUtils.ts`
-
-### Modified Files (40+)
-- `/messages/en.json` (extend)
-- `/messages/fr.json` (extend)
-- `/messages/es.json` (extend)
-- `/messages/de.json` (extend)
-- `/messages/nl.json` (extend)
-- `/messages/it.json` (extend)
-- `/src/components/ItemManager/ItemManager.tsx`
-- `/src/components/ItemManager/components/ItemToolbar.tsx`
-- `/src/components/ItemManager/components/SearchInput.tsx`
-- `/src/components/ItemManager/components/ItemCard.tsx`
-- `/src/components/ItemManager/components/ItemGrid.tsx`
-- `/src/components/ItemManager/components/ItemList.tsx`
-- `/src/components/ItemManager/components/ItemRow.tsx`
-- `/src/components/ItemManager/components/dialogs/FilterPanel.tsx`
-- `/src/components/ItemManager/components/dialogs/SortMenu.tsx`
-- `/src/components/ItemManager/components/dialogs/ConfirmDeleteDialog.tsx`
-- `/src/components/ItemManager/components/dialogs/ContentTypeFilter.tsx`
-- `/src/components/ItemManager/components/dialogs/TagFilter.tsx`
-- `/src/components/ItemManager/components/dialogs/LocationFilter.tsx`
-- `/src/components/ItemManager/components/dialogs/PropertyFilter.tsx`
-- `/src/components/ItemManager/components/dialogs/ColumnSettingsPopup.tsx`
-- `/src/components/ItemManager/components/shared/EmptyState.tsx`
-- `/src/components/ItemManager/components/shared/LoadingState.tsx`
-- `/src/components/ItemManager/components/shared/ViewModeToggle.tsx`
-- `/src/components/ItemManager/components/shared/InlineEdit.tsx`
-- `/src/components/ItemManager/components/shared/TagsInlineEdit.tsx`
-- `/src/components/ItemManager/components/BulkActions/BulkActionsBar.tsx`
-- `/src/components/ItemManager/components/BulkActions/BulkTagDialog.tsx`
-- `/src/components/ItemManager/components/BulkActions/BulkMoveDialog.tsx`
-- `/src/components/ItemManager/components/AssetPanel/AssetPanel.tsx`
-- `/src/components/ItemManager/components/AssetPanel/AssetDropZone.tsx`
-- `/src/components/ItemManager/components/AssetPanel/AssetRemoveConfirmDialog.tsx`
-- `/src/components/ItemManager/components/AssetPanel/SortableAssetList.tsx`
-- `/src/components/ItemManager/components/ItemPreview/ItemPreviewModal.tsx`
-- `/src/components/ItemManager/components/ItemPreview/MediaGallery.tsx`
-- `/src/components/ItemManager/components/ItemPreview/AnalyticsSection.tsx`
-- `/src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx`
-- `/src/components/ItemManager/components/ItemPreview/VideoPlayer.tsx`
-- `/src/components/ItemManager/utils/constants.ts`
-
----
-
-## 12. References
-
-- [Request REQ-E02-079](/docs/gen_requests_epic2.md)
-- [Implementation Plan: L10N Epic 2](/docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md)
+## 9. References
+
+- [Implementation Plan: L10N Epic 2](/docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md) - Sub-Epic 2D section
+- [Request Document](/docs/gen_requests_epic2.md) - REQ-E02-079
+- [CLAUDE.md](/CLAUDE.md) - Translation function types and conventions
 - [next-intl Documentation](https://next-intl-docs.vercel.app/)
-- [ICU Message Format](https://unicode-org.github.io/icu/userguide/format_parse/messages/)
-- [Existing i18n Pattern Example](/src/components/LogoutButton.tsx)
 
 ---
 
-*Implementation breakdown generated for FAQBNB L10N Epic 2, Sub-Epic 2D, Task 2D.2*
+*Document generated: 2026-01-22 12:49*

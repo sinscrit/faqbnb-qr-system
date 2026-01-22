@@ -2,6 +2,7 @@
  * ItemInstructionsList Component
  * Created: 2026-01-13
  * REQ-215: Simplified Item Edit Page
+ * Last Modified: 2026-01-22 (REQ-E02-083 i18n support)
  *
  * Displays a list of instruction articles associated with an item.
  * Shows title, purpose badge, and edit button for each instruction.
@@ -37,33 +38,36 @@ function getPurposeBadgeColor(purpose: string): string {
   }
 }
 
-/**
- * Format purpose label for display
- * Copied from InstructionsTable for consistency
- */
-function formatPurposeLabel(purpose: string): string {
-  return purpose
-    .replace(/_/g, ' ')
-    .replace(/-/g, ' ')
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 export function ItemInstructionsList({
   articles,
   itemName,
   onEditInstruction,
   loading = false,
 }: ItemInstructionsListProps) {
-  const tEmpty = useTranslations('common.emptyStates');
+  const t = useTranslations('items.edit');
+
+  // Map purpose values to translation keys
+  const getPurposeLabel = (purpose: string): string => {
+    const keyMap: Record<string, string> = {
+      'how_to_use': 'purposes.howToUse',
+      'how-to-use': 'purposes.howToUse',
+      'troubleshooting': 'purposes.troubleshooting',
+      'how_to_clean': 'purposes.howToClean',
+      'how-to-clean': 'purposes.howToClean',
+      'safety_info': 'purposes.safetyInfo',
+      'safety-info': 'purposes.safetyInfo',
+      'maintenance': 'purposes.maintenance',
+      'features': 'purposes.features',
+    };
+    return t(keyMap[purpose] || 'purposes.other');
+  };
 
   // Loading skeleton
   if (loading) {
     return (
       <div className="pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
-        <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('guides.title')}</h3>
+        <p className="text-sm text-gray-500 mb-4">{t('guides.description')}</p>
         <ul className="space-y-2">
           {[1, 2].map((i) => (
             <li
@@ -83,12 +87,12 @@ export function ItemInstructionsList({
   if (articles.length === 0) {
     return (
       <div className="pt-6 border-t border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
-        <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('guides.title')}</h3>
+        <p className="text-sm text-gray-500 mb-4">{t('guides.description')}</p>
         <div className="text-center py-8">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 font-medium">{tEmpty('guides.title')}</p>
-          <p className="text-sm text-gray-400 mt-1">{tEmpty('guides.descriptionItem')}</p>
+          <p className="text-gray-500 font-medium">{t('guides.empty')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('guides.emptyDescription')}</p>
         </div>
       </div>
     );
@@ -97,8 +101,8 @@ export function ItemInstructionsList({
   // Instructions list
   return (
     <div className="pt-6 border-t border-gray-200">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Guides</h3>
-      <p className="text-sm text-gray-500 mb-4">Content associated with this item</p>
+      <h3 className="text-lg font-medium text-gray-900 mb-4">{t('guides.title')}</h3>
+      <p className="text-sm text-gray-500 mb-4">{t('guides.description')}</p>
       <ul className="space-y-2">
         {articles.map((article) => (
           <li
@@ -115,7 +119,7 @@ export function ItemInstructionsList({
                   article.purpose
                 )}`}
               >
-                {formatPurposeLabel(article.purpose)}
+                {getPurposeLabel(article.purpose)}
               </span>
             </div>
             <button
@@ -123,7 +127,7 @@ export function ItemInstructionsList({
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-[#FF385C] hover:text-[#E31C5F] hover:bg-[#FFEEEF] rounded-lg transition-colors flex-shrink-0"
             >
               <Pencil className="w-4 h-4" />
-              <span>Edit</span>
+              <span>{t('guides.edit')}</span>
             </button>
           </li>
         ))}

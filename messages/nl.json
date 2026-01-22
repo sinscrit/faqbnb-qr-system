@@ -1170,26 +1170,50 @@
     "room": "Room",
     "tags": "Tags",
     "list": {
+      "title": "Mijn items",
+      "count": "{count, plural, one {# item} other {# items}} totaal",
+      "createNew": "Nieuw QR-code item",
+      "loginRequired": "Log in om items te bekijken.",
+      "dismiss": "Sluiten",
+      "error": "Er is een fout opgetreden",
       "empty": {
-        "title": "No items yet",
-        "description": "Create your first QR code item to get started",
-        "action": "Create Item"
+        "title": "Nog geen items",
+        "description": "Maak uw eerste QR-code item om te beginnen",
+        "action": "Item maken"
       },
       "noResults": {
-        "title": "No matching items",
-        "description": "Try adjusting your search or filters"
+        "title": "Geen overeenkomende items",
+        "description": "Probeer uw zoekopdracht of filters aan te passen"
       },
       "loading": "Items laden...",
       "noArticles": "Nog geen artikelen",
-      "addFirstArticle": "Voeg uw eerste artikel toe"
+      "addFirstArticle": "Voeg uw eerste artikel toe",
+      "caption": "{count, plural, =0 {Geen items} one {# item} other {# items}}",
+      "selectionActive": "Selectiemodus actief met {count, plural, one {# geselecteerd item} other {# geselecteerde items}}.",
+      "sortBy": "Sorteren op {column}",
+      "columns": {
+        "selection": "Selectie",
+        "preview": "Item preview",
+        "title": "Titel",
+        "location": "Locatie",
+        "guides": "Handleidingen",
+        "guidesShort": "Handleiding",
+        "tags": "Tags",
+        "property": "Eigendom",
+        "created": "Aangemaakt",
+        "views": "Weergaven",
+        "reactions": "Reacties",
+        "actions": "Acties"
+      },
+      "columnSettings": "Kolominstellingen",
+      "showColumns": "Kolommen weergeven"
     },
-
     "grid": {
       "ariaLabel": "{count, plural, =0 {Geen items} one {# item} other {# items}}",
       "loading": "Items laden"
     },
-
     "card": {
+      "ariaLabel": "{title}. {type} inhoud. Druk op Enter voor preview.",
       "contentType": {
         "link": "LINK",
         "text": "TEKST",
@@ -1231,6 +1255,18 @@
       "tags": {
         "more": "+{count} meer"
       }
+    },
+    "row": {
+      "ariaLocation": "Locatie: {location}.",
+      "ariaGuides": "{count, plural, one {# handleiding.} other {# handleidingen.}}",
+      "ariaNoGuides": "Geen handleidingen.",
+      "ariaCreated": "Aangemaakt op {date}.",
+      "ariaViews": " {count, plural, one {# weergave.} other {# weergaven.}}",
+      "ariaReactions": " {count, plural, one {# reactie.} other {# reacties.}}",
+      "ariaSelected": " Geselecteerd.",
+      "ariaNotSelected": " Niet geselecteerd.",
+      "actionsMenu": "Item acties",
+      "actionsFor": "Acties voor {title}"
     },
     "actions": {
       "create": "New Item",
@@ -1436,14 +1472,33 @@
       "edit": "Click to edit"
     },
     "analytics": {
-      "title": "Analytics",
-      "views": "{count, plural, one {# view} other {# views}}",
-      "allTime": "All time",
-      "thisWeek": "This week",
-      "thisMonth": "This month",
-      "reactions": "Reactions",
-      "engagement": "Engagement",
-      "noData": "No analytics data yet"
+      "title": "Statistieken",
+      "views": "{count, plural, one {# weergave} other {# weergaven}}",
+      "allTime": "Alle tijd",
+      "thisWeek": "Deze week",
+      "thisMonth": "Deze maand",
+      "reactions": "Reacties",
+      "engagement": {
+        "title": "Betrokkenheid",
+        "high": "Hoge betrokkenheid",
+        "medium": "Gemiddelde betrokkenheid",
+        "low": "Lage betrokkenheid"
+      },
+      "level": {
+        "high": "Hoog",
+        "medium": "Gemiddeld",
+        "low": "Laag"
+      },
+      "loading": "Aantal weergaven laden",
+      "loadingReactions": "Reacties laden",
+      "loadingEngagement": "Betrokkenheidsindicator laden",
+      "reactionCount": {
+        "like": "{count, plural, one {# vind ik leuk} other {# vind ik leuk}}",
+        "love": "{count, plural, one {# geweldig} other {# geweldig}}",
+        "dislike": "{count, plural, one {# vind ik niet leuk} other {# vind ik niet leuk}}",
+        "confused": "{count, plural, one {# verward} other {# verward}}"
+      },
+      "noData": "Nog geen statistiekgegevens"
     },
     "view": {
       "grid": "Grid view",
@@ -1456,18 +1511,124 @@
       "duplicateName": "An item with this name already exists"
     },
     "edit": {
-      "title": "Edit Item",
-      "description": "Update item details and resources"
+      "pageTitle": "Item bewerken",
+      "backToItems": "Terug naar items",
+      "loading": "Item laden...",
+      "loginRequired": "Log in om items te bewerken.",
+      "returnToItems": "Terug naar items",
+      "notFound": "Item niet gevonden",
+      "loadError": "Item laden mislukt. Probeer het opnieuw.",
+      "form": {
+        "nameLabel": "Itemnaam",
+        "namePlaceholder": "Voer itemnaam in",
+        "descriptionLabel": "Beschrijving",
+        "descriptionPlaceholder": "Voer itembeschrijving in (optioneel)",
+        "roomLabel": "Kamer",
+        "roomPlaceholder": "Selecteer een kamer...",
+        "roomAriaLabel": "Selecteer kamer voor dit item",
+        "itemTypeLabel": "Itemtype",
+        "itemTypePlaceholder": "Selecteer itemtype...",
+        "itemTypeAriaLabel": "Selecteer itemtype",
+        "tagsLabel": "Extra tags",
+        "tagsHelper": "Voeg aangepaste tags toe voor extra categorisatie",
+        "tagsPlaceholder": "Klik om tags toe te voegen..."
+      },
+      "buttons": {
+        "cancel": "Annuleren",
+        "save": "Wijzigingen opslaan",
+        "saving": "Opslaan..."
+      },
+      "guides": {
+        "title": "Handleidingen",
+        "description": "Inhoud gekoppeld aan dit item",
+        "empty": "Nog geen handleidingen",
+        "emptyDescription": "Handleidingen voor dit item verschijnen hier",
+        "edit": "Bewerken"
+      },
+      "purposes": {
+        "howToUse": "Hoe te gebruiken",
+        "troubleshooting": "Probleemoplossing",
+        "howToClean": "Hoe schoon te maken",
+        "safetyInfo": "Veiligheidsinformatie",
+        "maintenance": "Onderhoud",
+        "features": "Functies",
+        "other": "Overig"
+      },
+      "rooms": {
+        "kitchen": "Keuken",
+        "bathroom": "Badkamer",
+        "bedroom": "Slaapkamer",
+        "livingRoom": "Woonkamer",
+        "laundry": "Wasruimte",
+        "garage": "Garage",
+        "outdoor": "Buiten",
+        "office": "Kantoor",
+        "gym": "Sportschool",
+        "pool": "Zwembad",
+        "other": "Overig"
+      },
+      "itemTypes": {
+        "appliance": "Apparaat",
+        "roomItem": "Kameritem",
+        "generalInfo": "Algemene informatie"
+      },
+      "tags": {
+        "addTags": "Tags toevoegen...",
+        "typeToAdd": "Typ om toe te voegen...",
+        "maxReached": "Maximum tags bereikt",
+        "saving": "Opslaan...",
+        "editTags": "Tags bewerken",
+        "tagsSelected": "{count} tags geselecteerd",
+        "savingTags": "Tags opslaan...",
+        "moreCount": "+{count} meer",
+        "suggestions": "Tag suggesties",
+        "addNewTag": "Nieuwe tag toevoegen",
+        "removeTag": "Tag {tag} verwijderen",
+        "validation": {
+          "empty": "Tag mag niet leeg zijn",
+          "tooLong": "Tag moet {max} tekens of minder zijn",
+          "duplicate": "Tag bestaat al",
+          "maxTags": "Maximaal {max} tags toegestaan"
+        }
+      }
     },
     "create": {
       "title": "Create New Item",
       "description": "Add a new item with instructions and resources"
     },
     "links": {
-      "sectionTitle": "Resources & Links",
-      "addLink": "Add Link",
-      "noResources": "No resources added yet",
-      "addFirstResource": "Add Your First Resource"
+      "sectionTitle": "Bronnen en links",
+      "addLink": "Link toevoegen",
+      "noResources": "Nog geen bronnen toegevoegd",
+      "addFirstResource": "Voeg uw eerste bron toe"
+    },
+    "analyticsSection": {
+      "title": "Statistieken",
+      "noData": "Geen statistiekgegevens beschikbaar",
+      "views": {
+        "title": "Weergaven",
+        "periods": {
+          "last24Hours": "Laatste 24 uur",
+          "last7Days": "Laatste 7 dagen",
+          "last30Days": "Laatste 30 dagen",
+          "allTime": "Alle tijd"
+        }
+      },
+      "reactions": {
+        "title": "Reacties",
+        "total": "{count} totaal",
+        "types": {
+          "like": "Vind ik leuk",
+          "love": "Geweldig",
+          "dislike": "Vind ik niet leuk",
+          "confused": "Verward"
+        }
+      }
+    },
+    "instructionsViewer": {
+      "ariaLabel": "Item handleidingen",
+      "headerText": "Handleidingen",
+      "empty": "Geen handleidingen aanwezig."
     }
   },
   "errors": {
@@ -3318,6 +3479,171 @@
     "error": {
       "title": "Fout | FAQBNB",
       "description": "Er is een fout opgetreden"
+    }
+  },
+  "articles": {
+    "title": "Instructions",
+    "subtitle": "Manage content and instructions",
+    "pageTitle": "All Guides",
+    "editor": {
+      "title": "Edit Content",
+      "preview": "Preview",
+      "edit": "Edit",
+      "placeholder": "Write your instructions here...",
+      "characterCount": "{current, number} / {max, number} characters",
+      "characterWarning": "Approaching character limit",
+      "characterError": "Character limit exceeded",
+      "formatting": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "list": "Bullet List",
+        "orderedList": "Numbered List",
+        "link": "Insert Link"
+      },
+      "tabs": {
+        "edit": "Edit",
+        "preview": "Preview"
+      }
+    },
+    "media": {
+      "upload": "Upload Media",
+      "dragDrop": "Drag and drop files here",
+      "or": "or",
+      "browse": "Browse files",
+      "supportedFormats": "Supported formats: {formats}",
+      "maxSize": "Maximum file size: {size}MB",
+      "uploading": "Uploading...",
+      "uploadComplete": "Upload complete",
+      "uploadFailed": "Upload failed"
+    },
+    "crop": {
+      "title": "Crop Image",
+      "aspectRatio": "Aspect Ratio",
+      "freeform": "Freeform",
+      "square": "Square (1:1)",
+      "landscape": "Landscape (16:9)",
+      "portrait": "Portrait (9:16)",
+      "standard": "Standard (4:3)",
+      "apply": "Apply Crop",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "zoom": "Zoom",
+      "rotate": "Rotate"
+    },
+    "video": {
+      "title": "Trim Video",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "duration": "Duration: {duration}",
+      "apply": "Apply Trim",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "preview": "Preview",
+      "playing": "Playing",
+      "paused": "Paused"
+    },
+    "purposes": {
+      "howToUse": "How to Use",
+      "troubleshooting": "Troubleshooting",
+      "howToClean": "How to Clean",
+      "safetyInfo": "Safety Information",
+      "maintenance": "Maintenance",
+      "features": "Features",
+      "warranty": "Warranty & Support",
+      "other": "Other"
+    },
+    "list": {
+      "title": "Instructions",
+      "subtitle": "Manage your guides and instructions",
+      "count": "{count, plural, =0 {No guides} one {# guide} other {# guides}}",
+      "createNew": "Create New Guide",
+      "search": {
+        "placeholder": "Search guides...",
+        "noResults": "No guides found matching your search",
+        "clear": "Clear search"
+      },
+      "columns": {
+        "title": "Title",
+        "item": "Item",
+        "room": "Room",
+        "purpose": "Purpose",
+        "created": "Created",
+        "updated": "Updated",
+        "actions": "Actions"
+      },
+      "sort": {
+        "label": "Sort by",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "titleAZ": "Title A-Z",
+        "titleZA": "Title Z-A",
+        "itemAZ": "Item A-Z",
+        "recentlyModified": "Recently Modified"
+      }
+    },
+    "edit": {
+      "pageTitle": "Edit Guide",
+      "backToList": "Back to Guides",
+      "loading": "Loading guide...",
+      "notFound": "Guide not found",
+      "loadError": "Failed to load guide",
+      "saveSuccess": "Guide saved successfully",
+      "saveFailed": "Failed to save guide",
+      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "form": {
+        "titleLabel": "Title",
+        "titlePlaceholder": "Enter a title for this guide",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Brief description (optional)",
+        "purposeLabel": "Purpose",
+        "purposePlaceholder": "Select purpose"
+      },
+      "buttons": {
+        "save": "Save Guide",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "delete": "Delete Guide"
+      }
+    },
+    "grid": {
+      "ariaLabel": "Guides grid",
+      "viewItem": "View guide details",
+      "editItem": "Edit guide",
+      "deleteItem": "Delete guide"
+    },
+    "table": {
+      "ariaLabel": "Guides table",
+      "selectRow": "Select this guide",
+      "actions": "Actions",
+      "noGuides": "No guides to display"
+    },
+    "empty": {
+      "title": "No guides yet",
+      "description": "Create your first guide to help guests with instructions for your items.",
+      "action": "Create Guide",
+      "noResults": {
+        "title": "No guides found",
+        "description": "Try adjusting your search or filters"
+      }
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleTooLong": "Title must be less than {max} characters",
+      "contentTooLong": "Content exceeds maximum length of {max} characters",
+      "purposeRequired": "Please select a purpose",
+      "invalidMediaType": "This file type is not supported",
+      "fileTooLarge": "File size exceeds {max}MB limit"
+    },
+    "delete": {
+      "title": "Delete Guide",
+      "message": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Guide deleted successfully",
+      "failed": "Failed to delete guide"
     }
   }
 }

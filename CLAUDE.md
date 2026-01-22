@@ -1,6 +1,6 @@
 # FAQBNB Project Notes
 
-Last Modified: 2026-01-21
+Last Modified: 2026-01-22
 
 ## URLs
 
@@ -155,3 +155,52 @@ command:
 ### Debug Flags
 
 For troubleshooting pipeline issues, add `--debug` and `--verbose` to the Claude command in pipeline YAML configs. Agent output is saved to `pipelines-execution/agent-output-{task_id}-{timestamp}.log`.
+
+### Pipeline Scripts
+
+#### Run Multiple Epics
+
+Use `./scripts/run-epics.sh` to run multiple epic pipelines:
+
+```bash
+# Run specific epics in parallel
+./scripts/run-epics.sh --epics "4,5" --parallel --keep
+
+# Run all epics sequentially
+./scripts/run-epics.sh
+
+# Run epics 2,3,4 in parallel
+./scripts/run-epics.sh --epics "2,3,4" --parallel --keep
+
+# Dry run to see what would execute
+./scripts/run-epics.sh --epics "4,5" --parallel --dry-run
+```
+
+Options:
+- `--epics "X,Y"` - Comma-separated epic numbers (1-5)
+- `--parallel` - Run epics in parallel with background processes
+- `--staged` - Run Stage 1 sequential, then Stage 2+ parallel
+- `--keep` - Keep existing requests, process remaining
+- `--resume` - Resume from previous run
+- `--delete` - Delete previous requests and regenerate
+- `--stages "X,Y"` - Run specific stages only
+- `--dry-run` - Show commands without executing
+
+Logs are saved to `pipelines-execution/epic{N}-parallel.log`.
+
+#### Monitor Progress
+
+Use `./scripts/dashboard.sh` to monitor pipeline progress:
+
+```bash
+./scripts/dashboard.sh              # One-time view
+./scripts/dashboard.sh --refresh 5  # Auto-refresh every 5 seconds
+```
+
+#### Reset Pipelines
+
+Use `./scripts/reset-pipelines.sh` to reset pipeline state:
+
+```bash
+./scripts/reset-pipelines.sh        # Interactive reset
+```

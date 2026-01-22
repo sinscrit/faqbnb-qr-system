@@ -1,789 +1,503 @@
-# Implementation Breakdown: REQ-E02-070 - Create Articles Namespace Structure
+# REQ-E02-070: Create `articles` Namespace Structure
 
-**Document Version:** 1.0
-**Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Document Type:** Implementation Breakdown (Overview)
 **Request ID:** REQ-E02-070
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2E - Article & Content Management
-**Task ID:** 2E.1
-**Estimated Strings:** ~300
+**Task Reference:** 2E.1
+**Priority:** High
+**Size:** S (Small)
+
+**Created:** 2026-01-22 15:59
+**Last Modified:** 2026-01-22 15:59
 
 ---
 
-## Overview
+## 1. Header
 
-This document provides the implementation breakdown for creating the `articles` namespace structure in the messages file. The articles namespace will organize all translation keys for article creation, editing, management, and display throughout the FAQBNB application.
-
-The Article & Content Management system consists of:
-- Instructions/Guides list page with table and grid views
-- Article edit page with markdown editor
-- Media editing components (image cropper, video trimmer)
-- Content viewers and galleries
-- Asset panel for managing attachments
-
-Related Components:
-- `/src/app/dashboard2/instructions/page.tsx` - Instructions list page
-- `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` - Article edit page
-- `/src/components/InstructionsTable/` - Guide list components
-- `/src/components/ItemCapture/editors/` - Markdown, image, video editors
-- `/src/components/ItemManager/components/AssetPanel/` - Asset management
+| Field | Value |
+|-------|-------|
+| Request Reference | REQ-E02-070 (Task 2E.1) |
+| Source File | docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md |
+| Original Request Date | 2026-01-17 |
+| Breakdown Created | 2026-01-22 15:59 |
+| T-shirt Size | S (Small) |
+| Estimated Effort | 2-4 hours |
+| Status | PENDING |
 
 ---
 
-## Dependencies
+## 2. Summary
 
-### Prerequisites (Epic 1 Foundation)
-| Dependency | Location | Status |
-|------------|----------|--------|
-| next-intl package | `package.json` | Required |
-| i18n config | `/src/lib/i18n/config.ts` | Complete |
-| Translation files | `/messages/en.json` | Complete (base structure exists) |
-| useTranslations hook | next-intl | Available |
-| getTranslations | next-intl/server | Available |
+This document provides the implementation breakdown for creating the `articles` namespace structure in the translation files. This is the foundation task for Sub-Epic 2E (Article & Content Management), which will enable translation of approximately 300 UI strings across article editor components, media handling utilities, and instructions pages.
 
-### Existing Patterns to Follow
-- Translation file structure in `/messages/en.json` (common, auth, dashboard, items, errors, language namespaces)
-- Key naming convention: `{namespace}.{component/area}.{element}.{variant?}`
-- ICU message format for pluralization
+The `articles` namespace will contain translation keys for:
+- Article/instruction editor UI
+- Media handling and upload components
+- Image cropping and video trimming utilities
+- Instructions list and edit pages
+- Purpose/category labels
 
 ---
 
-## Technical Context
+## 3. Goals
 
-### Current State Analysis
+### 3.1 Functional Requirements
 
-#### Instructions Table Components
-| Component | Location | Estimated Strings |
-|-----------|----------|-------------------|
-| InstructionsTable | `/src/components/InstructionsTable/InstructionsTable.tsx` | ~25 |
-| GuideToolbar | `/src/components/InstructionsTable/GuideToolbar.tsx` | ~15 |
-| GuideGrid | `/src/components/InstructionsTable/GuideGrid.tsx` | ~10 |
-| GuideCard | `/src/components/InstructionsTable/GuideCard.tsx` | ~10 |
-| GuideColumnSettingsPopup | `/src/components/InstructionsTable/GuideColumnSettingsPopup.tsx` | ~10 |
+1. Create a comprehensive `articles` namespace in `/messages/en.json`
+2. Define translation key structure covering all article/content management UI strings
+3. Organize keys logically by component area (editor, media, crop, video, purposes)
+4. Include all user-visible strings with ICU message format support where needed
+5. Ensure consistency with existing namespace patterns (common, items, workflow)
 
-#### Instructions Pages
-| Page | Location | Estimated Strings |
-|------|----------|-------------------|
-| Instructions List | `/src/app/dashboard2/instructions/page.tsx` | ~40 |
-| Article Edit | `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` | ~30 |
+### 3.2 Assumptions & Clarifications
 
-#### Editor Components
-| Component | Location | Estimated Strings |
-|-----------|----------|-------------------|
-| MarkdownEditor | `/src/components/ItemCapture/editors/MarkdownEditor.tsx` | ~40 |
-| ImageCropper | `/src/components/ItemCapture/editors/ImageCropper.tsx` | ~25 |
-| VideoTrimmer | `/src/components/ItemCapture/editors/VideoTrimmer.tsx` | ~25 |
-| ImageRotator | `/src/components/ItemCapture/editors/ImageRotator.tsx` | ~10 |
-
-#### Asset Panel Components
-| Component | Location | Estimated Strings |
-|-----------|----------|-------------------|
-| AssetPanel | `/src/components/ItemManager/components/AssetPanel/AssetPanel.tsx` | ~25 |
-| AssetDropZone | `/src/components/ItemManager/components/AssetPanel/AssetDropZone.tsx` | ~15 |
-| AssetItem | `/src/components/ItemManager/components/AssetPanel/AssetItem.tsx` | ~10 |
-| AssetRemoveConfirmDialog | `/src/components/ItemManager/components/AssetPanel/AssetRemoveConfirmDialog.tsx` | ~10 |
-| SortableAssetList | `/src/components/ItemManager/components/AssetPanel/SortableAssetList.tsx` | ~5 |
-
-#### Content Viewer Components
-| Component | Location | Estimated Strings |
-|-----------|----------|-------------------|
-| MediaGallery | `/src/components/ItemManager/components/ItemPreview/MediaGallery.tsx` | ~15 |
-| InstructionsViewer | `/src/components/ItemManager/components/ItemPreview/InstructionsViewer.tsx` | ~10 |
-| VideoPlayer | `/src/components/ItemManager/components/ItemPreview/VideoPlayer.tsx` | ~10 |
-| PhotoViewer | `/src/components/ItemManager/components/ItemPreview/viewers/PhotoViewer.tsx` | ~5 |
-| PDFViewer | `/src/components/ItemManager/components/ItemPreview/viewers/PDFViewer.tsx` | ~5 |
+- The `articles` namespace will be a top-level key in the translation files
+- Some article-related components currently use keys from `common.*` or `media.*` namespaces - these should remain in their current locations for shared functionality
+- Purpose labels overlap with `items.edit.purposes` - coordinate to avoid duplication
+- Editor formatting labels align with `common.actions` patterns
+- Media upload strings exist in `media.*` namespace - `articles` will contain article-specific media strings
 
 ---
 
-## Namespace Structure Design
+## 4. Requirements Analysis
 
-The `articles` namespace will be organized into logical sub-sections:
+### 4.1 Source Components Analysis
 
-```json
-{
-  "articles": {
-    "title": "",           // Page title
-    "subtitle": "",        // Page subtitle
-    "list": { },           // List/table view strings
-    "grid": { },           // Grid view strings
-    "card": { },           // Article card strings
-    "toolbar": { },        // Toolbar UI strings
-    "columns": { },        // Table column headers
-    "sort": { },           // Sort options
-    "filters": { },        // Filter options
-    "editor": { },         // Markdown editor strings
-    "media": { },          // Media upload/handling
-    "crop": { },           // Image cropper strings
-    "video": { },          // Video trimmer strings
-    "rotate": { },         // Image rotator strings
-    "assets": { },         // Asset panel strings
-    "viewer": { },         // Content viewer strings
-    "purposes": { },       // Purpose type labels
-    "status": { },         // Status indicators
-    "actions": { },        // Action buttons
-    "empty": { },          // Empty states
-    "loading": { },        // Loading states
-    "validation": { },     // Validation messages
-    "success": { },        // Success messages
-    "errors": { }          // Error messages
-  }
-}
-```
+Based on codebase investigation, the following components will use the `articles` namespace:
+
+| Component | Location | Current i18n Status |
+|-----------|----------|---------------------|
+| MarkdownEditor | `/src/components/ItemCapture/editors/MarkdownEditor.tsx` | Hardcoded strings |
+| ImageCropper | `/src/components/ItemCapture/editors/ImageCropper.tsx` | Uses `common.loading` only |
+| VideoTrimmer | `/src/components/ItemCapture/editors/VideoTrimmer.tsx` | Uses `common.loading` only |
+| ImageRotator | `/src/components/ItemCapture/editors/ImageRotator.tsx` | Uses `common.loading` only |
+| InstructionEditor | `/src/components/InstructionEditor/InstructionEditor.tsx` | Partial i18n |
+| ContentEditSection | `/src/components/InstructionEditor/components/ContentEditSection.tsx` | Partial i18n |
+| AddContentModal | `/src/components/InstructionEditor/components/AddContentModal.tsx` | Partial i18n |
+| InstructionsPage | `/src/app/dashboard2/instructions/page.tsx` | Uses `common.*` namespaces |
+| EditArticlePage | `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` | Hardcoded strings |
+| InstructionsTable | `/src/components/InstructionsTable/InstructionsTable.tsx` | Uses `common.emptyStates` |
+| GuideGrid | `/src/components/InstructionsTable/GuideGrid.tsx` | Uses `common.emptyStates` |
+| GuideToolbar | `/src/components/InstructionsTable/GuideToolbar.tsx` | Unknown |
+| GuideCard | `/src/components/InstructionsTable/GuideCard.tsx` | Unknown |
+
+### 4.2 String Inventory
+
+Estimated ~300 translation keys organized as follows:
+
+| Category | Estimated Keys | Description |
+|----------|---------------|-------------|
+| `articles.title/subtitle` | ~5 | Page-level labels |
+| `articles.editor.*` | ~50 | Editor UI, toolbar, formatting |
+| `articles.media.*` | ~30 | Upload, drag-drop, file handling |
+| `articles.crop.*` | ~20 | Image cropping controls |
+| `articles.video.*` | ~20 | Video trimming controls |
+| `articles.purposes.*` | ~15 | Content purpose/category labels |
+| `articles.list.*` | ~40 | Instructions list page |
+| `articles.edit.*` | ~40 | Edit page labels |
+| `articles.grid.*` | ~20 | Grid view components |
+| `articles.table.*` | ~30 | Table view components |
+| `articles.empty.*` | ~15 | Empty states |
+| `articles.validation.*` | ~15 | Validation messages |
 
 ---
 
-## Implementation Tasks
+## 5. Technical Approach
 
-### Task 1: Create Base Namespace Structure
-**Priority:** Critical
-**Estimate:** 1 story point
+### 5.1 Namespace Structure
 
-Create the `articles` namespace skeleton in `/messages/en.json` with all required sub-sections.
-
-**Acceptance Criteria:**
-- [ ] Articles namespace added to en.json at root level
-- [ ] All sub-sections created (list, grid, editor, media, crop, video, assets, viewer, purposes, etc.)
-- [ ] Structure follows existing patterns in the messages file
-- [ ] JSON validates without syntax errors
-
-### Task 2: Add Page Title and Navigation Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for page titles and navigation.
-
-**Keys to add:**
 ```json
 {
   "articles": {
-    "title": "Guides",
-    "subtitle": "Manage guide articles for your items",
-    "pageTitle": "Instructions",
-    "breadcrumb": {
-      "dashboard": "Dashboard",
-      "guides": "Guides",
-      "edit": "Edit Guide"
-    }
-  }
-}
-```
+    "title": "Instructions",
+    "subtitle": "Manage content and instructions",
+    "pageTitle": "All Guides",
 
-### Task 3: Add List View Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for the instructions list/table view.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "list": {
-      "title": "Guides",
-      "noGuides": "No guides available",
-      "noResults": "No guides match your search or filters",
-      "showingResults": "Showing {count} {count, plural, one {guide} other {guides}}"
-    },
-    "columns": {
-      "title": "Title",
-      "item": "Item",
-      "room": "Room",
-      "property": "Property",
-      "purpose": "Purpose",
-      "created": "Created",
-      "updated": "Updated",
-      "actions": "Actions"
-    },
-    "sort": {
-      "label": "Sort by",
-      "titleAsc": "Title (A-Z)",
-      "titleDesc": "Title (Z-A)",
-      "itemAsc": "Item (A-Z)",
-      "itemDesc": "Item (Z-A)",
-      "purposeAsc": "Purpose (A-Z)",
-      "purposeDesc": "Purpose (Z-A)",
-      "createdAsc": "Oldest First",
-      "createdDesc": "Newest First",
-      "ascending": "Ascending",
-      "descending": "Descending"
-    }
-  }
-}
-```
-
-### Task 4: Add Toolbar and Filter Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for the guide toolbar and filters.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "toolbar": {
-      "search": "Search guides...",
-      "searchPlaceholder": "Search by title, item, or room...",
-      "viewMode": "View Mode",
-      "gridView": "Grid View",
-      "listView": "List View",
-      "columnSettings": "Column Settings",
-      "showColumns": "Show Columns"
-    },
-    "filters": {
-      "label": "Filters",
-      "purpose": "Purpose",
-      "room": "Room",
-      "property": "Property",
-      "allPurposes": "All Purposes",
-      "allRooms": "All Rooms",
-      "allProperties": "All Properties",
-      "clearFilters": "Clear Filters",
-      "activeFilters": "{count} active {count, plural, one {filter} other {filters}}"
-    }
-  }
-}
-```
-
-### Task 5: Add Grid and Card Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for grid view and article cards.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "grid": {
-      "noGuides": "No guides to display",
-      "loadMore": "Load More"
-    },
-    "card": {
-      "item": "Item",
-      "room": "Room",
-      "purpose": "Purpose",
-      "created": "Created {date}",
-      "updated": "Updated {date}",
-      "untitled": "Untitled",
-      "noRoom": "No room",
-      "viewGuide": "View Guide",
-      "editGuide": "Edit Guide"
-    }
-  }
-}
-```
-
-### Task 6: Add Editor Keys
-**Priority:** High
-**Estimate:** 1 story point
-
-Add keys for the markdown editor component.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "editor": {
       "title": "Edit Content",
-      "tabs": {
-        "editor": "Editor",
-        "preview": "Preview"
-      },
-      "toolbar": {
-        "label": "Text formatting",
+      "preview": "Preview",
+      "edit": "Edit",
+      "placeholder": "Write your instructions here...",
+      "formatting": {
         "bold": "Bold",
-        "boldShortcut": "Bold (Ctrl+B)",
         "italic": "Italic",
-        "italicShortcut": "Italic (Ctrl+I)",
         "heading1": "Heading 1",
         "heading2": "Heading 2",
         "heading3": "Heading 3",
-        "bulletList": "Bullet List",
-        "numberedList": "Numbered List",
-        "link": "Insert Link",
-        "linkShortcut": "Insert Link (Ctrl+K)"
+        "list": "Bullet List",
+        "orderedList": "Numbered List",
+        "link": "Insert Link"
       },
-      "placeholder": "Write your content here using markdown formatting...",
-      "previewPlaceholder": "Start typing to see a preview of your formatted content...",
-      "characterCount": "{current} / {max} characters",
-      "characterLimitWarning": "Content exceeds the maximum character limit. Please shorten your text.",
-      "ariaLabel": "Markdown editor",
-      "viewModeLabel": "Editor view mode"
-    }
-  }
-}
-```
+      "tabs": {
+        "edit": "Edit",
+        "preview": "Preview"
+      },
+      "characterCount": "{current, number} / {max, number} characters",
+      "characterWarning": "Approaching character limit",
+      "characterError": "Character limit exceeded"
+    },
 
-### Task 7: Add Media Upload Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for media upload functionality.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "media": {
       "upload": "Upload Media",
       "dragDrop": "Drag and drop files here",
       "or": "or",
       "browse": "Browse files",
-      "browseFiles": "Choose files",
       "supportedFormats": "Supported formats: {formats}",
       "maxSize": "Maximum file size: {size}MB",
       "uploading": "Uploading...",
-      "uploadProgress": "Uploading {percent}%",
       "uploadComplete": "Upload complete",
-      "uploadFailed": "Upload failed",
-      "processing": "Processing...",
-      "dragActive": "Drop files here",
-      "invalidFileType": "Invalid file type. Allowed: {types}",
-      "fileTooLarge": "File size exceeds {max}MB limit"
-    }
-  }
-}
-```
+      "uploadFailed": "Upload failed"
+    },
 
-### Task 8: Add Image Cropper Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for the image cropper component.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "crop": {
       "title": "Crop Image",
       "aspectRatio": "Aspect Ratio",
-      "free": "Free",
-      "square": "Square",
-      "standard": "Standard",
-      "widescreen": "Widescreen",
-      "custom": "Custom",
-      "preview": "Preview:",
-      "previewGenerating": "Generating...",
-      "previewPlaceholder": "Select area to preview",
-      "applyCrop": "Apply Crop",
-      "applying": "Applying...",
-      "cancel": "Cancel",
+      "freeform": "Freeform",
+      "square": "Square (1:1)",
+      "landscape": "Landscape (16:9)",
+      "portrait": "Portrait (9:16)",
+      "standard": "Standard (4:3)",
+      "apply": "Apply Crop",
       "reset": "Reset",
-      "loadingImage": "Loading image...",
-      "applyingCrop": "Applying crop...",
-      "largeImageWarning": "Large image detected. Output may be scaled down for compatibility.",
-      "loadError": "Failed to load image. Please try again.",
-      "cropError": "Crop operation failed"
-    }
-  }
-}
-```
+      "cancel": "Cancel",
+      "zoom": "Zoom",
+      "rotate": "Rotate"
+    },
 
-### Task 9: Add Video Trimmer Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for the video trimmer component.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "video": {
       "title": "Trim Video",
       "startTime": "Start Time",
       "endTime": "End Time",
       "duration": "Duration: {duration}",
-      "trimDuration": "Trim Duration: {duration}",
-      "maxDuration": "Maximum duration: {max}",
+      "apply": "Apply Trim",
+      "reset": "Reset",
+      "cancel": "Cancel",
       "preview": "Preview",
-      "playPreview": "Play Preview",
-      "pausePreview": "Pause Preview",
-      "applyTrim": "Apply Trim",
-      "applying": "Applying...",
-      "cancel": "Cancel",
-      "reset": "Reset to Original",
-      "processing": "Processing video...",
-      "loadingVideo": "Loading video...",
-      "trimError": "Trim operation failed"
-    }
-  }
-}
-```
+      "playing": "Playing",
+      "paused": "Paused"
+    },
 
-### Task 10: Add Image Rotator Keys
-**Priority:** Medium
-**Estimate:** 0.25 story points
-
-Add keys for image rotation functionality.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "rotate": {
-      "title": "Rotate Image",
-      "rotateLeft": "Rotate Left",
-      "rotateRight": "Rotate Right",
-      "flip": "Flip",
-      "flipHorizontal": "Flip Horizontal",
-      "flipVertical": "Flip Vertical",
-      "apply": "Apply",
-      "cancel": "Cancel",
-      "reset": "Reset"
-    }
-  }
-}
-```
-
-### Task 11: Add Asset Panel Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for the asset panel component.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "assets": {
-      "title": "Assets",
-      "subtitle": "Manage attached files",
-      "addAsset": "Add Asset",
-      "dropZone": {
-        "title": "Drop files here",
-        "subtitle": "or click to browse",
-        "active": "Drop to upload",
-        "formats": "Images, PDFs, and videos accepted"
-      },
-      "item": {
-        "preview": "Preview",
-        "download": "Download",
-        "remove": "Remove",
-        "moveUp": "Move Up",
-        "moveDown": "Move Down",
-        "reorder": "Drag to reorder"
-      },
-      "removeConfirm": {
-        "title": "Remove Asset?",
-        "message": "Are you sure you want to remove \"{name}\"? This action cannot be undone.",
-        "cancel": "Cancel",
-        "remove": "Remove"
-      },
-      "empty": {
-        "title": "No assets",
-        "description": "Add images, PDFs, or videos to this guide"
-      },
-      "count": "{count, plural, one {# asset} other {# assets}}"
-    }
-  }
-}
-```
-
-### Task 12: Add Content Viewer Keys
-**Priority:** Medium
-**Estimate:** 0.5 story points
-
-Add keys for content viewer components.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "viewer": {
-      "gallery": {
-        "title": "Gallery",
-        "previous": "Previous",
-        "next": "Next",
-        "close": "Close",
-        "imageOf": "Image {current} of {total}",
-        "fullscreen": "View Fullscreen",
-        "exitFullscreen": "Exit Fullscreen"
-      },
-      "video": {
-        "play": "Play",
-        "pause": "Pause",
-        "mute": "Mute",
-        "unmute": "Unmute",
-        "fullscreen": "Fullscreen",
-        "loading": "Loading video...",
-        "error": "Error loading video"
-      },
-      "photo": {
-        "zoom": "Zoom",
-        "zoomIn": "Zoom In",
-        "zoomOut": "Zoom Out",
-        "resetZoom": "Reset Zoom",
-        "loading": "Loading image...",
-        "error": "Error loading image"
-      },
-      "pdf": {
-        "page": "Page {current} of {total}",
-        "previousPage": "Previous Page",
-        "nextPage": "Next Page",
-        "download": "Download PDF",
-        "loading": "Loading PDF...",
-        "error": "Error loading PDF"
-      },
-      "instructions": {
-        "title": "Instructions",
-        "noContent": "No instructions available"
-      }
-    }
-  }
-}
-```
-
-### Task 13: Add Purpose Labels
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add translation keys for purpose types.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "purposes": {
       "howToUse": "How to Use",
-      "howToClean": "How to Clean",
       "troubleshooting": "Troubleshooting",
+      "howToClean": "How to Clean",
       "safetyInfo": "Safety Information",
       "maintenance": "Maintenance",
-      "features": "Features & Tips",
+      "features": "Features",
       "warranty": "Warranty & Support",
       "other": "Other"
-    }
-  }
-}
-```
-
-### Task 14: Add Status and Action Keys
-**Priority:** High
-**Estimate:** 0.5 story points
-
-Add keys for status indicators and actions.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "status": {
-      "draft": "Draft",
-      "published": "Published",
-      "archived": "Archived",
-      "scheduled": "Scheduled",
-      "underReview": "Under Review"
     },
-    "actions": {
-      "create": "Create Guide",
-      "edit": "Edit",
-      "delete": "Delete",
-      "duplicate": "Duplicate",
-      "archive": "Archive",
-      "restore": "Restore",
-      "publish": "Publish",
-      "unpublish": "Unpublish",
-      "save": "Save",
-      "saveChanges": "Save Changes",
-      "cancel": "Cancel",
-      "discard": "Discard Changes",
-      "preview": "Preview",
-      "view": "View",
-      "print": "Print",
-      "share": "Share"
-    }
-  }
-}
-```
 
-### Task 15: Add Empty and Loading State Keys
-**Priority:** High
-**Estimate:** 0.5 story points
+    "list": {
+      "title": "Instructions",
+      "subtitle": "Manage your guides and instructions",
+      "count": "{count, plural, =0 {No guides} one {# guide} other {# guides}}",
+      "createNew": "Create New Guide",
+      "search": {
+        "placeholder": "Search guides...",
+        "noResults": "No guides found matching your search",
+        "clear": "Clear search"
+      },
+      "columns": {
+        "title": "Title",
+        "item": "Item",
+        "room": "Room",
+        "purpose": "Purpose",
+        "created": "Created",
+        "updated": "Updated",
+        "actions": "Actions"
+      },
+      "sort": {
+        "label": "Sort by",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "titleAZ": "Title A-Z",
+        "titleZA": "Title Z-A",
+        "itemAZ": "Item A-Z",
+        "recentlyModified": "Recently Modified"
+      }
+    },
 
-Add keys for empty states and loading states.
+    "edit": {
+      "pageTitle": "Edit Guide",
+      "backToList": "Back to Guides",
+      "loading": "Loading guide...",
+      "notFound": "Guide not found",
+      "loadError": "Failed to load guide",
+      "saveSuccess": "Guide saved successfully",
+      "saveFailed": "Failed to save guide",
+      "form": {
+        "titleLabel": "Title",
+        "titlePlaceholder": "Enter a title for this guide",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Brief description (optional)",
+        "purposeLabel": "Purpose",
+        "purposePlaceholder": "Select purpose"
+      },
+      "buttons": {
+        "save": "Save Guide",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "delete": "Delete Guide"
+      },
+      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+    },
 
-**Keys to add:**
-```json
-{
-  "articles": {
+    "grid": {
+      "ariaLabel": "Guides grid",
+      "viewItem": "View guide details",
+      "editItem": "Edit guide",
+      "deleteItem": "Delete guide"
+    },
+
+    "table": {
+      "ariaLabel": "Guides table",
+      "selectRow": "Select this guide",
+      "actions": "Actions",
+      "noGuides": "No guides to display"
+    },
+
     "empty": {
       "title": "No guides yet",
-      "description": "Create items and add guide articles to get started. Guides help guests understand how to use items in your property.",
-      "noResults": "No guides match your filters",
-      "noResultsDescription": "Try adjusting your search or filters",
-      "createFirst": "Create Your First Item",
-      "learnMore": "Learn More"
+      "description": "Create your first guide to help guests with instructions for your items.",
+      "action": "Create Guide",
+      "noResults": {
+        "title": "No guides found",
+        "description": "Try adjusting your search or filters"
+      }
     },
-    "loading": {
-      "guides": "Loading guides...",
-      "guide": "Loading guide...",
-      "saving": "Saving...",
-      "publishing": "Publishing...",
-      "deleting": "Deleting..."
-    }
-  }
-}
-```
 
-### Task 16: Add Validation and Error Keys
-**Priority:** Medium
-**Estimate:** 0.5 story points
-
-Add keys for validation messages and errors.
-
-**Keys to add:**
-```json
-{
-  "articles": {
     "validation": {
-      "titleRequired": "Guide title is required",
-      "titleTooLong": "Title must be less than 200 characters",
-      "contentRequired": "Content is required",
-      "contentTooLong": "Content exceeds maximum length",
-      "invalidPurpose": "Please select a valid purpose"
+      "titleRequired": "Title is required",
+      "titleTooLong": "Title must be less than {max} characters",
+      "contentTooLong": "Content exceeds maximum length of {max} characters",
+      "purposeRequired": "Please select a purpose",
+      "invalidMediaType": "This file type is not supported",
+      "fileTooLarge": "File size exceeds {max}MB limit"
     },
-    "errors": {
-      "loadFailed": "Failed to load guide",
-      "saveFailed": "Failed to save guide",
-      "deleteFailed": "Failed to delete guide",
-      "uploadFailed": "Failed to upload file",
-      "notFound": "Guide not found",
-      "unauthorized": "You are not authorized to edit this guide"
-    },
-    "success": {
-      "saved": "Guide saved successfully",
-      "updated": "Guide updated successfully",
-      "deleted": "Guide deleted successfully",
-      "published": "Guide published successfully",
-      "duplicated": "Guide duplicated successfully"
+
+    "delete": {
+      "title": "Delete Guide",
+      "message": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Guide deleted successfully",
+      "failed": "Failed to delete guide"
     }
   }
 }
 ```
 
-### Task 17: Add Authentication and Access Keys
-**Priority:** Medium
-**Estimate:** 0.25 story points
+### 5.2 Key Naming Convention
 
-Add keys for authentication-related messages.
-
-**Keys to add:**
-```json
-{
-  "articles": {
-    "auth": {
-      "required": "Authentication Required",
-      "loginPrompt": "Please log in to access guides.",
-      "goToLogin": "Go to Login"
-    },
-    "error": {
-      "title": "Error Loading Guides",
-      "retry": "Retry"
-    }
-  }
-}
-```
+Following established project patterns:
+- `{namespace}.{area}.{element}.{variant?}`
+- Use camelCase for key names
+- Use descriptive names that indicate UI context
+- Include `aria*` prefixes for accessibility labels
 
 ---
 
-## Authorized Files and Functions for Modification
+## 6. Implementation Tasks
 
-### Primary File to Modify
-| File | Purpose | Modification Type |
-|------|---------|-------------------|
-| `/messages/en.json` | Add articles namespace structure | Add new namespace |
+### Task 1: Define `articles` namespace structure in en.json (Priority: High)
 
-### Files to Reference (Read-Only for Structure Analysis)
+**Description:** Add the complete `articles` namespace to `/messages/en.json` with all translation keys for article/content management UI.
+
+**Details:**
+- Add top-level `"articles"` key
+- Include all sub-namespaces: editor, media, crop, video, purposes, list, edit, grid, table, empty, validation, delete
+- Use ICU message format for plurals and interpolation
+- Ensure keys align with component prop names where applicable
+
+**Acceptance Criteria:**
+- [ ] `articles` namespace added to en.json
+- [ ] All ~300 keys defined with English source strings
+- [ ] ICU plural syntax used for count messages
+- [ ] Variable interpolation syntax correct (`{variableName}`)
+- [ ] JSON structure valid
+
+---
+
+### Task 2: Coordinate with existing namespaces (Priority: High)
+
+**Description:** Review existing namespaces for potential duplication and determine which keys belong in `articles` vs shared namespaces.
+
+**Details:**
+- Review `media.*` namespace - keep shared media strings there
+- Review `common.emptyStates.*` - keep generic empty states there
+- Review `items.edit.purposes.*` - determine if `articles.purposes` should reference these
+- Document namespace boundaries
+
+**Acceptance Criteria:**
+- [ ] Namespace boundaries documented
+- [ ] No duplicate keys across namespaces
+- [ ] Shared functionality uses appropriate shared namespace
+
+---
+
+### Task 3: Validate JSON structure (Priority: High)
+
+**Description:** Validate that the updated en.json file is valid JSON and follows project conventions.
+
+**Details:**
+- Run JSON linting/validation
+- Verify key structure consistency
+- Check for trailing commas or syntax errors
+
+**Acceptance Criteria:**
+- [ ] en.json passes JSON validation
+- [ ] No syntax errors
+- [ ] Consistent key naming throughout
+
+---
+
+### Task 4: Add placeholder translations to other language files (Priority: Medium)
+
+**Description:** Copy the `articles` namespace structure to all 5 non-English translation files with English placeholder text.
+
+**Files to Update:**
+- `/messages/fr.json`
+- `/messages/es.json`
+- `/messages/de.json`
+- `/messages/nl.json`
+- `/messages/it.json`
+
+**Details:**
+- Copy exact key structure from en.json
+- Use English strings as placeholders (will be translated in Task 2E.6)
+- Ensure all 6 files have identical key structure
+
+**Acceptance Criteria:**
+- [ ] `articles` namespace added to all 6 language files
+- [ ] Key structure identical across all files
+- [ ] All files pass JSON validation
+
+---
+
+## 7. Authorized Files and Functions for Modification
+
+> **APPROVED SCOPE**: Changes outside this list require review
+
+### 7.1 Translation Files (Modify)
+
+| File | Target | Type | Notes |
+|------|--------|------|-------|
+| `/messages/en.json` | `articles` namespace | Modify | Add new namespace |
+| `/messages/fr.json` | `articles` namespace | Modify | Add placeholder keys |
+| `/messages/es.json` | `articles` namespace | Modify | Add placeholder keys |
+| `/messages/de.json` | `articles` namespace | Modify | Add placeholder keys |
+| `/messages/nl.json` | `articles` namespace | Modify | Add placeholder keys |
+| `/messages/it.json` | `articles` namespace | Modify | Add placeholder keys |
+
+### 7.2 Reference Files (Read-Only)
+
 | File | Purpose |
 |------|---------|
-| `/src/app/dashboard2/instructions/page.tsx` | Instructions list page strings |
-| `/src/app/dashboard2/instructions/[articleId]/edit/page.tsx` | Article edit page strings |
-| `/src/components/InstructionsTable/InstructionsTable.tsx` | Table component strings |
-| `/src/components/InstructionsTable/GuideToolbar.tsx` | Toolbar component strings |
-| `/src/components/InstructionsTable/GuideGrid.tsx` | Grid view strings |
-| `/src/components/InstructionsTable/GuideCard.tsx` | Card component strings |
-| `/src/components/ItemCapture/editors/MarkdownEditor.tsx` | Markdown editor strings |
-| `/src/components/ItemCapture/editors/ImageCropper.tsx` | Image cropper strings |
-| `/src/components/ItemCapture/editors/VideoTrimmer.tsx` | Video trimmer strings |
-| `/src/components/ItemManager/components/AssetPanel/AssetPanel.tsx` | Asset panel strings |
-
-### Files for Future Tasks (Component Updates in 2E.2-2E.6)
-These files will be modified in subsequent tasks to use the translation keys:
-
-| Category | Files |
-|----------|-------|
-| Instruction Pages | `instructions/page.tsx`, `instructions/[articleId]/edit/page.tsx` |
-| Table Components | `InstructionsTable.tsx`, `GuideToolbar.tsx`, `GuideGrid.tsx`, `GuideCard.tsx`, `GuideColumnSettingsPopup.tsx` |
-| Editor Components | `MarkdownEditor.tsx`, `ImageCropper.tsx`, `VideoTrimmer.tsx`, `ImageRotator.tsx` |
-| Asset Components | `AssetPanel.tsx`, `AssetDropZone.tsx`, `AssetItem.tsx`, `AssetRemoveConfirmDialog.tsx`, `SortableAssetList.tsx` |
-| Viewer Components | `MediaGallery.tsx`, `InstructionsViewer.tsx`, `VideoPlayer.tsx`, `PhotoViewer.tsx`, `PDFViewer.tsx` |
+| `/src/components/ItemCapture/editors/*.tsx` | String extraction reference |
+| `/src/components/InstructionEditor/**/*.tsx` | String extraction reference |
+| `/src/components/InstructionsTable/**/*.tsx` | String extraction reference |
+| `/src/app/dashboard2/instructions/**/*.tsx` | String extraction reference |
+| `/docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md` | Namespace structure reference |
 
 ---
 
-## Verification Steps
+## 8. Dependencies
 
-1. **JSON Validation**
-   - Run `cat /messages/en.json | python -m json.tool` to verify valid JSON
-   - Ensure no duplicate keys exist
+### 8.1 Depends On (Completed First)
 
-2. **Structure Verification**
-   - Verify all sub-namespaces are created
-   - Confirm key naming follows `{namespace}.{area}.{element}` convention
+| Request | Dependency Type | Status |
+|---------|-----------------|--------|
+| Epic 1 Foundation | next-intl setup, IntlProvider | Complete |
+| Sub-Epic 2H | Common namespace (shared strings) | Complete |
+| REQ-E02-079 | `media.*` namespace established | Complete |
 
-3. **Completeness Check**
-   - Cross-reference with component strings
-   - Ensure all identified strings have corresponding keys
+### 8.2 Blocks (Requires This First)
 
-4. **Build Verification**
-   - Run `npm run build` to ensure no build errors
-   - Verify the application starts without i18n errors
+| Request | What This Provides |
+|---------|-------------------|
+| **REQ-E02-071** (Task 2E.2) | `articles.editor.*` keys for editor components |
+| **REQ-E02-072** (Task 2E.3) | `articles.media.*` keys for media handling |
+| **REQ-E02-073** (Task 2E.4) | `articles.crop.*`, `articles.video.*` keys |
+| **REQ-E02-074** (Task 2E.5) | `articles.list.*`, `articles.edit.*` keys |
+| **REQ-E02-075** (Task 2E.6) | Namespace structure for translation generation |
 
----
+### 8.3 Parallel Safety
 
-## Risks and Mitigations
+- **Files touched**: `/messages/*.json` (all 6 translation files)
+- **Conflicts with**: Any other Epic 2 namespace creation tasks running concurrently
+- **Safe to parallelize with**: Component update tasks in other Sub-Epics (they read, not write, translation files)
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Missing strings discovered later | Medium | Low | Iterative addition; namespace structure allows easy extension |
-| Key naming inconsistency | Low | Medium | Follow established patterns; review during implementation |
-| JSON syntax errors | Low | High | Validate JSON after each change |
-| Overlap with items namespace | Low | Low | Articles focuses on guides/content; items focuses on QR items |
+### 8.4 External Dependencies
 
----
-
-## Notes for Implementation
-
-1. **Key Naming Convention**
-   - Use camelCase for keys: `articles.editor.toolbar.bold`
-   - Group related keys under descriptive parents
-   - Use plural form for collections: `purposes`, `columns`
-
-2. **ICU Message Format**
-   - Use `{count, plural, one {# guide} other {# guides}}` for pluralization
-   - Use `{name}` for simple interpolation
-   - Use `{date}` for date placeholders
-
-3. **Distinction from Items Namespace**
-   - `items` namespace: QR code items, item management, item cards
-   - `articles` namespace: Guides/instructions, content editing, media handling
-
-4. **Coordination with Other Tasks**
-   - Tasks 2E.2-2E.5 will update components to use these keys
-   - Task 2E.6 will generate translations for 5 non-English languages
+- None - uses existing next-intl framework from Epic 1
 
 ---
 
-## References
+## 9. Risks and Considerations
 
-- [Implementation Plan: L10N Epic 2](/docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md)
-- [Request Documentation](/docs/gen_requests_epic2.md#REQ-E02-070)
-- [next-intl Documentation](https://next-intl-docs.vercel.app/)
-- [ICU Message Format](https://unicode-org.github.io/icu/userguide/format_parse/messages/)
+### 9.1 Potential Side Effects
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Large JSON file manipulation | Medium | Use careful editing, validate after changes |
+| Key naming inconsistency | Low | Follow established patterns, code review |
+| Duplicate keys with existing namespaces | Medium | Audit existing namespaces first |
+
+### 9.2 Testing Requirements
+
+- JSON validation after all edits
+- Verify TypeScript compilation succeeds
+- Spot-check key availability with `useTranslations('articles')` in dev environment
+
+### 9.3 Open Questions
+
+- [ ] Should `articles.purposes.*` duplicate or reference `items.edit.purposes.*`?
+- [ ] Are there additional crop/trim controls not listed in the plan?
+- [ ] Should toolbar formatting labels be in `articles.editor.formatting` or reference `common.actions`?
 
 ---
 
+## 10. Out of Scope
+
+- **Component updates** - covered by Tasks 2E.2 through 2E.5
+- **Actual translations** - covered by Task 2E.6
+- **Dynamic content translation** - covered by Epic 3
+- **Email templates** - covered by Sub-Epic 2I
+- **Modifying component code** - this task only creates translation keys
+
+---
+
+## 11. Verification Checklist
+
+### Pre-Implementation
+- [ ] Review existing `media.*` namespace for overlap
+- [ ] Review `common.emptyStates.*` for overlap
+- [ ] Confirm Epic 1 foundation is complete
+
+### Implementation
+- [ ] `articles` namespace added to en.json with ~300 keys
+- [ ] Namespace structure matches plan specification
+- [ ] ICU syntax correct for plurals and interpolation
+- [ ] JSON validates without errors
+
+### Post-Implementation
+- [ ] All 6 language files have identical key structure
+- [ ] TypeScript compilation succeeds
+- [ ] Build completes without errors
+- [ ] Downstream tasks (2E.2-2E.6) can proceed
+
+---
+
+## 12. References
+
+- **Implementation Plan:** `/docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md`
+- **Epic 1 Foundation:** `/docs/prd/Plan-110-L10N-Epic1-Foundation.md`
+- **next-intl Documentation:** https://next-intl-docs.vercel.app/
+- **ICU Message Format:** https://unicode-org.github.io/icu/userguide/format_parse/messages/
+
+---
+
+*Document generated: 2026-01-22 15:59*
 *Document generated for FAQBNB Localization Epic 2 - Sub-Epic 2E: Article & Content Management*

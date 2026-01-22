@@ -19,7 +19,7 @@
  * - Event propagation control to prevent parent actions
  *
  * @module ItemManager/components/shared/TagsInlineEdit
- * @lastModified 2026-01-03 (REQ-088 Tasks 2-6)
+ * @lastModified 2026-01-22 (REQ-E02-083 i18n support)
  */
 
 import React, {
@@ -87,6 +87,7 @@ export function TagsInlineEdit({
   className,
   ariaLabel,
 }: TagsInlineEditProps) {
+  const t = useTranslations('items.edit.tags');
   const tLoading = useTranslations('common.loading');
 
   // ---------------------------------------------------------------------------
@@ -197,29 +198,29 @@ export function TagsInlineEdit({
 
     // Check for empty
     if (!trimmed) {
-      return 'Tag cannot be empty';
+      return t('validation.empty');
     }
 
     // Check length
     if (trimmed.length > maxTagLength) {
-      return `Tag must be ${maxTagLength} characters or less`;
+      return t('validation.tooLong', { max: maxTagLength });
     }
 
     // Check for duplicates (case-insensitive)
     const isDuplicate = editTags.some(
-      t => t.toLowerCase() === trimmed.toLowerCase()
+      existingTag => existingTag.toLowerCase() === trimmed.toLowerCase()
     );
     if (isDuplicate) {
-      return 'Tag already exists';
+      return t('validation.duplicate');
     }
 
     // Check max count
     if (editTags.length >= maxTags) {
-      return `Maximum ${maxTags} tags allowed`;
+      return t('validation.maxTags', { max: maxTags });
     }
 
     return null;
-  }, [editTags, maxTagLength, maxTags]);
+  }, [editTags, maxTagLength, maxTags, t]);
 
   // ---------------------------------------------------------------------------
   // Enter Edit Mode
@@ -532,7 +533,7 @@ export function TagsInlineEdit({
           onClick={handleDisplayClick}
           onKeyDown={handleDisplayKeyDown}
           disabled={disabled}
-          aria-label={ariaLabel || 'Edit tags'}
+          aria-label={ariaLabel || t('editTags')}
           className={displayStyles}
         >
           {displayTags.length > 0 ? (
@@ -542,14 +543,14 @@ export function TagsInlineEdit({
               ))}
               {displayTags.length > 3 && (
                 <span className="text-xs text-gray-500 ml-1">
-                  +{displayTags.length - 3} more
+                  {t('moreCount', { count: displayTags.length - 3 })}
                 </span>
               )}
             </>
           ) : (
             <span className="flex items-center gap-1.5 text-sm text-gray-400 italic">
               <Tag className="w-4 h-4" aria-hidden="true" />
-              {placeholder}
+              {placeholder || t('addTags')}
             </span>
           )}
           <Plus
@@ -582,11 +583,11 @@ export function TagsInlineEdit({
           ))}
           <div className="flex items-center gap-1 text-gray-400 ml-auto">
             <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-            <span className="text-xs">{tLoading('status.saving')}</span>
+            <span className="text-xs">{t('saving')}</span>
           </div>
         </div>
         <span id={liveRegionId} className="sr-only" aria-live="polite">
-          {tLoading('status.saving')}
+          {t('savingTags')}
         </span>
       </div>
     );
@@ -602,7 +603,7 @@ export function TagsInlineEdit({
       className={containerStyles}
       onClick={handleContainerClick}
       role="group"
-      aria-label={ariaLabel || 'Edit tags'}
+      aria-label={ariaLabel || t('editTags')}
     >
       <div className={editContainerStyles}>
         {/* Existing Tags as Removable Chips */}
@@ -625,11 +626,11 @@ export function TagsInlineEdit({
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
           onFocus={handleInputFocus}
-          placeholder={isAtMaxTags ? 'Max tags reached' : 'Type to add...'}
+          placeholder={isAtMaxTags ? t('maxReached') : t('typeToAdd')}
           disabled={isAtMaxTags}
           maxLength={maxTagLength}
           className={inputStyles}
-          aria-label="Add new tag"
+          aria-label={t('addNewTag')}
           aria-autocomplete="list"
           aria-expanded={showSuggestions && filteredSuggestions.length > 0}
           aria-controls={suggestionsId}
@@ -648,7 +649,7 @@ export function TagsInlineEdit({
         <ul
           id={suggestionsId}
           role="listbox"
-          aria-label="Tag suggestions"
+          aria-label={t('suggestions')}
           className={suggestionsStyles}
         >
           {filteredSuggestions.map((suggestion, index) => (
@@ -687,7 +688,7 @@ export function TagsInlineEdit({
       {/* Screen reader live region for announcements */}
       <span id={liveRegionId} className="sr-only" aria-live="polite">
         {hasError && errorMessage}
-        {editTags.length} tags selected
+        {t('tagsSelected', { count: editTags.length })}
       </span>
     </div>
   );

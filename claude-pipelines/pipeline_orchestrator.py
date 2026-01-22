@@ -199,11 +199,8 @@ def find_agent_definition_file(agent_name: str, config: dict) -> Optional[Path]:
 
     # Search directories in priority order
     search_dirs = [
-        config_dir / 'agents',
-        config_dir.parent / 'claude-pipelines' / 'agents-backup',
-        config_dir.parent / 'claude-pipelines' / 'agents',
-        Path.cwd() / 'claude-pipelines' / 'agents-backup',
-        Path.cwd() / 'claude-pipelines' / 'agents',
+        Path.home() / '.claude' / 'agents',           # User's Claude agents (primary)
+        config_dir.parent / 'claude-pipelines' / 'agents',  # Project's claude-pipelines/agents/ (fallback)
     ]
 
     for search_dir in search_dirs:
@@ -1521,6 +1518,12 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     if stage_id == 'implementation' and config and state:
         project_context = build_project_context_prompt(config, state)
 
+        # If this is a retry after QA failure, inject the QA issues as context
+        qa_issues_context = task_dict.get('qa_issues_for_retry', '') if task_dict else ''
+        if qa_issues_context:
+            project_context = f"{project_context}\n\n{qa_issues_context}"
+            logging.info(f"Injecting QA issues context for implementation retry")
+
     # Get pipeline and state file paths for testcheck stage
     pipeline_yaml_path = ''
     state_file_path = ''
@@ -1905,6 +1908,133 @@ def parse_test_results(output: str) -> dict:
     }
 
 
+def parse_qa_validation_results(output: str) -> dict:
+    """
+    Parse QA validation agent output to extract validation results.
+
+    The QA agent outputs a structured report with:
+    - **Status**: PASS or FAIL
+    - Issues Found section with specific problems
+
+    Returns:
+        dict with:
+            - passed: bool - True if validation passed, False if failed
+            - issues: list - List of issue dicts with task_id, type, expected, actual, file, action
+            - summary: str - Brief summary of validation results
+            - total_checked: int - Number of subtasks checked
+            - issues_count: int - Number of issues found
+    """
+    import re
+
+    if not output:
+        return {
+            'passed': None,
+            'issues': [],
+            'summary': 'No output to parse',
+            'total_checked': 0,
+            'issues_count': 0
+        }
+
+    output_lower = output.lower()
+
+    # Look for explicit Status line: **Status**: PASS or **Status**: FAIL
+    status_match = re.search(r'\*\*status\*\*:\s*(pass|fail)', output_lower)
+
+    if status_match:
+        passed = status_match.group(1) == 'pass'
+    else:
+        # Fallback: look for other indicators
+        if 'validation passed' in output_lower or 'all subtasks verified' in output_lower:
+            passed = True
+        elif 'validation failed' in output_lower or 'issues found' in output_lower:
+            passed = False
+        else:
+            passed = None
+
+    # Parse summary metrics
+    total_match = re.search(r'total subtasks checked\s*\|\s*(\d+)', output_lower)
+    total_checked = int(total_match.group(1)) if total_match else 0
+
+    issues_match = re.search(r'issues found\s*\|\s*(\d+)', output_lower)
+    issues_count = int(issues_match.group(1)) if issues_match else 0
+
+    # Extract individual issues for retry context
+    issues = []
+
+    # Look for issue blocks: #### Issue N: [Task X.Y] - [Issue Type]
+    issue_pattern = r'####\s*issue\s*\d+:\s*\[task\s*([\d.]+)\]\s*-\s*(\w+)\s*\n(.*?)(?=####\s*issue|\Z|###\s*verified)'
+    issue_matches = re.finditer(issue_pattern, output_lower, re.DOTALL)
+
+    for match in issue_matches:
+        task_id = match.group(1)
+        issue_type = match.group(2).upper()
+        issue_body = match.group(3)
+
+        # Extract details from issue body
+        expected_match = re.search(r'\*\*expected\*\*:\s*(.+?)(?:\n|$)', issue_body)
+        actual_match = re.search(r'\*\*actual\*\*:\s*(.+?)(?:\n|$)', issue_body)
+        file_match = re.search(r'\*\*file\*\*:\s*(.+?)(?:\n|$)', issue_body)
+        action_match = re.search(r'\*\*action required\*\*:\s*(.+?)(?:\n|$)', issue_body)
+
+        issues.append({
+            'task_id': task_id,
+            'type': issue_type,
+            'expected': expected_match.group(1).strip() if expected_match else '',
+            'actual': actual_match.group(1).strip() if actual_match else '',
+            'file': file_match.group(1).strip() if file_match else '',
+            'action': action_match.group(1).strip() if action_match else ''
+        })
+
+    # Generate summary
+    if passed is True:
+        summary = f'QA validation PASSED - {total_checked} subtasks verified'
+    elif passed is False:
+        summary = f'QA validation FAILED - {issues_count} issues found in {total_checked} subtasks'
+    else:
+        summary = 'QA validation result unclear'
+
+    return {
+        'passed': passed,
+        'issues': issues,
+        'summary': summary,
+        'total_checked': total_checked,
+        'issues_count': issues_count
+    }
+
+
+def format_qa_issues_for_retry(qa_results: dict) -> str:
+    """
+    Format QA validation issues into a context string for implementation retry.
+
+    This provides the implementation agent with specific issues to fix.
+    """
+    if not qa_results or not qa_results.get('issues'):
+        return ""
+
+    lines = [
+        "## QA Validation Issues to Fix",
+        "",
+        "The previous implementation failed QA validation. Fix these specific issues:",
+        ""
+    ]
+
+    for i, issue in enumerate(qa_results['issues'], 1):
+        lines.append(f"### Issue {i}: Task {issue['task_id']} - {issue['type']}")
+        if issue.get('expected'):
+            lines.append(f"**Expected**: {issue['expected']}")
+        if issue.get('actual'):
+            lines.append(f"**Actual**: {issue['actual']}")
+        if issue.get('file'):
+            lines.append(f"**File**: {issue['file']}")
+        if issue.get('action'):
+            lines.append(f"**Action Required**: {issue['action']}")
+        lines.append("")
+
+    lines.append("After fixing these issues, the implementation will be re-validated.")
+
+    return '\n'.join(lines)
+
+
 @dataclass
 class AgentResult:
     """Result from agent invocation."""
@@ -2004,7 +2134,7 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
         import uuid as uuid_module
         session_key = f"session_id_{stage_id}" if stage_id else "session_id_default"
 
-        if session_key not in state:
+        if session_key not in state or not state[session_key]:
             # First invocation for this stage - create new session
             state[session_key] = str(uuid_module.uuid4())
             command.extend(['--session-id', state[session_key]])
@@ -2088,6 +2218,22 @@ def invoke_agent(task: Task, stage_config: dict, dry_run: bool = False,
                         logging.warning(f"Task {task.id}: Tests FAILED - {test_results.get('test_summary')}")
                     else:
                         logging.info(f"Task {task.id}: Test status unclear - {test_results.get('test_summary')}")
+
+            # Parse QA validation results for qa_validation stage
+            if stage_id == 'qa_validation' and task_dict is not None:
+                qa_results = parse_qa_validation_results(result.stdout)
+                task_dict['qa_results'] = qa_results
+                task_dict['qa_passed'] = qa_results.get('passed')
+                task_dict['qa_summary'] = qa_results.get('summary', '')
+                task_dict['qa_issues'] = qa_results.get('issues', [])
+
+                # Log QA results
+                if qa_results.get('passed') is True:
+                    logging.info(f"Task {task.id}: QA PASSED - {qa_results.get('summary')}")
+                elif qa_results.get('passed') is False:
+                    logging.warning(f"Task {task.id}: QA FAILED - {qa_results.get('summary')}")
+                else:
+                    logging.info(f"Task {task.id}: QA status unclear - {qa_results.get('summary')}")
 
             return True, None
         else:
@@ -2228,6 +2374,10 @@ def run_task_stages(
             return False
 
         if stage_id == 'testcheck' and not task_dict.get('implementation_completed'):
+            print(f"    ✗ Skipping: Implementation stage not completed")
+            return False
+
+        if stage_id == 'qa_validation' and not task_dict.get('implementation_completed'):
             print(f"    ✗ Skipping: Implementation stage not completed")
             return False
 
@@ -2381,6 +2531,100 @@ def run_task_stages(
                     print(f"    ✓ Implemented - test status unclear ({stage_elapsed_str})")
             else:
                 print(f"    ✓ Implemented - no tests detected ({stage_elapsed_str})")
+
+        elif stage_id == 'qa_validation' and not dry_run:
+            # Handle QA validation results and retry logic
+            qa_passed = task_dict.get('qa_passed')
+            qa_summary = task_dict.get('qa_summary', '')
+            qa_issues = task_dict.get('qa_issues', [])
+            qa_retry_count = task_dict.get('qa_retry_count', 0)
+
+            if qa_passed is True:
+                print(f"    ✓ QA Validation PASSED ({stage_elapsed_str})")
+            elif qa_passed is False:
+                print(f"    ✗ QA Validation FAILED - {len(qa_issues)} issues found ({stage_elapsed_str})")
+                if qa_summary:
+                    print(f"      → {qa_summary}")
+
+                # Check if we should retry implementation
+                validates_stage = stage.get('validates', 'implementation')
+                max_qa_retries = stage.get('max_validation_retries', 1)
+
+                if qa_retry_count < max_qa_retries:
+                    print(f"\n    ↻ Retrying {validates_stage} with QA feedback (attempt {qa_retry_count + 1}/{max_qa_retries})...")
+                    task_dict['qa_retry_count'] = qa_retry_count + 1
+
+                    # Find the validated stage (implementation)
+                    impl_stage = None
+                    for s in request_stages:
+                        if s['id'] == validates_stage:
+                            impl_stage = s
+                            break
+
+                    if impl_stage:
+                        # Store QA issues for injection into implementation prompt
+                        task_dict['qa_issues_for_retry'] = format_qa_issues_for_retry(task_dict.get('qa_results', {}))
+
+                        # Clear implementation completed flag to allow re-run
+                        task_dict['implementation_completed'] = False
+
+                        # Reset session for fresh implementation attempt
+                        session_key = f"session_id_{validates_stage}"
+                        if session_key in state:
+                            del state[session_key]
+
+                        # Re-run implementation stage
+                        print(f"  → Re-running {impl_stage.get('name', validates_stage)}...")
+                        retry_success, retry_error = invoke_agent(task, impl_stage, dry_run, task_dict, config, state, validates_stage)
+
+                        if retry_success:
+                            task_dict['implementation_completed'] = True
+                            print(f"    ✓ Re-implementation completed")
+
+                            # Re-run QA validation
+                            print(f"  → Re-running QA Validation...")
+                            qa_retry_success, qa_retry_error = invoke_agent(task, stage, dry_run, task_dict, config, state, stage_id)
+
+                            if qa_retry_success:
+                                # Check if QA passed this time
+                                qa_passed_retry = task_dict.get('qa_passed')
+                                if qa_passed_retry is True:
+                                    print(f"    ✓ QA Validation PASSED on retry")
+                                else:
+                                    print(f"    ✗ QA Validation FAILED again after retry")
+                                    task_dict['qa_failed_final'] = True
+                                    state['errors'].append({
+                                        'stage': 'qa_validation',
+                                        'task_id': task.id,
+                                        'error': f"QA failed after {qa_retry_count + 1} implementation retries",
+                                        'issues': qa_issues,
+                                        'timestamp': datetime.now().isoformat()
+                                    })
+                                    if on_failure == 'stop':
+                                        return False
+                            else:
+                                print(f"    ✗ QA re-validation failed to run: {qa_retry_error}")
+                        else:
+                            print(f"    ✗ Re-implementation failed: {retry_error}")
+                            task_dict['qa_failed_final'] = True
+                    else:
+                        print(f"    ⚠ Could not find stage '{validates_stage}' for retry")
+                else:
+                    # Max retries exceeded
+                    print(f"    ✗ Max QA retries ({max_qa_retries}) exceeded - marking as failed")
+                    task_dict['qa_failed_final'] = True
+                    state['errors'].append({
+                        'stage': 'qa_validation',
+                        'task_id': task.id,
+                        'error': f"QA failed after {qa_retry_count} retries",
+                        'issues': qa_issues,
+                        'timestamp': datetime.now().isoformat()
+                    })
+                    if on_failure == 'stop':
+                        return False
+            else:
+                print(f"    ⚠ QA Validation result unclear ({stage_elapsed_str})")
+
         else:
             if not dry_run:
                 print(f"    ✓ Completed ({stage_elapsed_str})")
@@ -4921,6 +5165,166 @@ def cmd_reset_state(config: dict):
         print("Cancelled.")
 
 
+def cmd_reset_request(config: dict, request_id: str, from_stage: str):
+    """
+    Reset a specific request from a given stage, cascading to dependent stages.
+
+    Stage cascade order (each resets itself and all stages after it):
+    - overview: overview, details, implementation, qa_validation
+    - details: details, implementation, qa_validation
+    - implementation: implementation, qa_validation
+    - qa_validation: qa_validation only
+    """
+    # Define stage order and cascade rules
+    stage_order = ['overview', 'details', 'implementation', 'qa_validation']
+    stage_files = {
+        'overview': 'overview',   # files key in task_dict
+        'details': 'details',
+        'implementation': None,   # No file to delete, just completion flag
+        'qa_validation': None,
+    }
+    stage_completion_flags = {
+        'overview': 'overview_completed',
+        'details': 'details_completed',
+        'implementation': 'implementation_completed',
+        'qa_validation': 'qa_validation_completed',
+    }
+    # Additional flags to reset for each stage
+    stage_extra_flags = {
+        'implementation': ['tests_ran', 'tests_passed', 'test_summary', 'test_results'],
+        'qa_validation': ['qa_passed', 'qa_summary', 'qa_issues', 'qa_results', 'qa_retry_count', 'qa_failed_final'],
+    }
+
+    # Normalize from_stage
+    from_stage = from_stage.lower().replace('-', '_')
+    if from_stage not in stage_order:
+        print(f"Error: Unknown stage '{from_stage}'")
+        print(f"Valid stages: {', '.join(stage_order)}")
+        return False
+
+    # Normalize request_id (accept with or without REQ- prefix)
+    request_id_normalized = request_id.upper()
+    if not request_id_normalized.startswith('REQ-'):
+        request_id_normalized = f"REQ-{request_id_normalized}"
+
+    # Load state
+    state_path = config['outputs']['_state_resolved']
+    if not state_path.exists():
+        print(f"Error: State file not found: {state_path}")
+        return False
+
+    state = load_state(state_path)
+    if not state:
+        print("Error: Could not load state file")
+        return False
+
+    # Find the task with this request_id
+    tasks = state.get('tasks', [])
+    task_found = None
+    task_index = None
+
+    for i, task in enumerate(tasks):
+        if task.get('request_id', '').upper() == request_id_normalized:
+            task_found = task
+            task_index = i
+            break
+
+    if not task_found:
+        print(f"Error: Request '{request_id_normalized}' not found in state")
+        print(f"\nAvailable requests:")
+        for t in tasks:
+            req_id = t.get('request_id', 'N/A')
+            title = t.get('title', t.get('id', 'Unknown'))[:50]
+            print(f"  - {req_id}: {title}")
+        return False
+
+    # Determine which stages to reset (from_stage and all after it)
+    start_index = stage_order.index(from_stage)
+    stages_to_reset = stage_order[start_index:]
+
+    print(f"\n{'='*60}")
+    print(f"Reset Request: {request_id_normalized}")
+    print(f"{'='*60}")
+    print(f"\nTask: {task_found.get('title', task_found.get('id', 'Unknown'))}")
+    print(f"Resetting from: {from_stage}")
+    print(f"Stages to reset: {', '.join(stages_to_reset)}")
+
+    # Show files that will be deleted
+    files_to_delete = []
+    files_dict = task_found.get('files', {})
+    for stage in stages_to_reset:
+        file_key = stage_files.get(stage)
+        if file_key and files_dict.get(file_key):
+            files_to_delete.append(files_dict[file_key])
+
+    if files_to_delete:
+        print(f"\nFiles to delete:")
+        for f in files_to_delete:
+            exists = Path(f).exists() if f else False
+            status = "exists" if exists else "not found"
+            print(f"  - {f} ({status})")
+
+    # Confirm
+    response = input(f"\nProceed with reset? (yes/N): ")
+    if response.lower() != 'yes':
+        print("Cancelled.")
+        return False
+
+    # Perform reset
+    print(f"\nResetting...")
+
+    # 1. Delete files
+    for file_path in files_to_delete:
+        if file_path and Path(file_path).exists():
+            try:
+                Path(file_path).unlink()
+                print(f"  Deleted: {file_path}")
+            except Exception as e:
+                print(f"  Warning: Could not delete {file_path}: {e}")
+
+    # 2. Reset completion flags and file references
+    for stage in stages_to_reset:
+        # Reset completion flag
+        flag = stage_completion_flags.get(stage)
+        if flag and flag in task_found:
+            del task_found[flag]
+            print(f"  Reset flag: {flag}")
+
+        # Reset file reference
+        file_key = stage_files.get(stage)
+        if file_key and file_key in files_dict:
+            del files_dict[file_key]
+            print(f"  Reset file ref: files.{file_key}")
+
+        # Reset extra flags
+        extra_flags = stage_extra_flags.get(stage, [])
+        for ef in extra_flags:
+            if ef in task_found:
+                del task_found[ef]
+                print(f"  Reset flag: {ef}")
+
+    # 3. Clear any error for this task
+    if 'error' in task_found:
+        del task_found['error']
+        print(f"  Cleared error flag")
+
+    # 4. Save updated state
+    state['updated_at'] = datetime.now().isoformat()
+    save_state(state, state_path)
+    print(f"\nState saved to: {state_path}")
+
+    print(f"\n{'='*60}")
+    print(f"Reset complete!")
+    print(f"{'='*60}")
+    print(f"\nTo re-run the reset stages, use:")
+    print(f"  python claude-pipelines/pipeline_orchestrator.py \\")
+    print(f"    --config {config.get('_config_path', 'pipeline.yaml')} \\")
+    print(f"    --stages {','.join(stages_to_reset)} \\")
+    print(f"    --tasks {task_index + 1}")
+
+    return True
+
+
 def cmd_show_test_harness(config: dict):
     """Display test harness URL(s) from state file."""
     state_path = config['outputs']['_state_resolved']
@@ -5086,6 +5490,19 @@ Examples:
         help='Reset pipeline state (interactive)'
     )
     parser.add_argument(
+        '--reset-request',
+        type=str,
+        metavar='REQ_ID',
+        help='Reset a specific request (e.g., REQ-E02-079). Use with --reset-from-stage to specify starting point.'
+    )
+    parser.add_argument(
+        '--reset-from-stage',
+        type=str,
+        default='overview',
+        metavar='STAGE',
+        help='Stage to reset from (cascades to dependent stages). Options: overview, details, implementation, qa_validation. Default: overview'
+    )
+    parser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Enable verbose logging'
@@ -5169,6 +5586,10 @@ Examples:
 
     if args.reset:
         cmd_reset_state(config)
+        return
+
+    if args.reset_request:
+        cmd_reset_request(config, args.reset_request, args.reset_from_stage)
         return
 
     if args.test_harness:

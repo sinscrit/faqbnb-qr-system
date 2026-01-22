@@ -101,9 +101,11 @@ The Pipeline Orchestration System automates the process of converting high-level
 ### Agent Flow
 
 ```
-PDF/PRD ──▶ Agent 00 ──▶ Agent 00b ──▶ Agent 01 ──▶ Agent 02 ──▶ Agent 03 ──▶ Agent 05 ──▶ Agent 06a ──▶ Agent 06b
-            (Plan)       (YAML)        (Request)   (Overview)   (Details)    (Impl)       (Verify)      (UseCases)
+PDF/PRD ──▶ Agent 00 ──▶ Agent 00b ──▶ Agent 01 ──▶ Agent 02 ──▶ Agent 03 ──▶ Agent 04 ──▶ Agent 05 ──▶ Agent 06a ──▶ Agent 06b
+            (Plan)       (YAML)        (Request)   (Overview)   (Details)    (Impl)       (QA)         (Verify)      (UseCases)
 ```
+
+**QA Validation Loop**: Agent 05 validates implementation. If FAIL, Agent 04 retries once with specific issues. If still FAIL, task is marked failed and non-blocked tasks continue.
 
 ### Orchestrator-Only Flow (No Daemon)
 
@@ -670,7 +672,8 @@ The pipeline uses specialized AI agents for each stage. Each agent is designed f
 | `02-techlead-overview` | Tech Lead Overview | overview | Creates implementation breakdown (default: docs/gen_requests.md) |
 | `02p-techlead-overview-pipeline` | Tech Lead (Pipeline) | overview | Creates implementation breakdown (REQUIRES explicit file path) |
 | `03-senior-dev-task-breakdown` | Senior Dev Task Breakdown | details | Creates granular 1-point implementation tasks |
-| `05-spec-implementation` | Spec Implementation | implementation | Autonomously implements all tasks from spec |
+| `04-spec-implementation` | Spec Implementation | implementation | Autonomously implements all tasks from spec |
+| `05-qa-validation` | QA Validation | qa_validation | Validates implementation matches spec, triggers retry on failure |
 | `06a-pipeline-testcheck` | Pipeline Test Check | testcheck | Verifies implementation, generates test harness |
 | `06b-usecase-generator` | Use Case Generator | usecases | Creates E2E test scenarios from PRD intent |
 
@@ -735,7 +738,8 @@ The `/pipeline` slash command orchestrates the full development workflow for ind
 1. **Stage 1** (`01-request-fa`): Formalizes request into `docs/gen_requests.md`
 2. **Stage 2** (`02-techlead-overview`): Creates implementation breakdown
 3. **Stage 3** (`03-senior-dev-task-breakdown`): Creates granular tasks
-4. **Stage 4** (`05-spec-implementation`): Implements all tasks
+4. **Stage 4** (`04-spec-implementation`): Implements all tasks
+5. **Stage 5** (`05-qa-validation`): Validates implementation matches spec (retries Stage 4 on failure)
 
 **Smart Resume:** When given a `REQ-XXX` number, automatically detects existing documents and resumes from the appropriate stage.
 
