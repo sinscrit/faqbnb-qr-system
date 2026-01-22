@@ -908,17 +908,32 @@
     "nav": {
       "ariaLabel": "Dashboard-Navigation",
       "dashboard": "Dashboard",
+      "home": "Startseite",
+      "dashboardMobile": "D/B",
+      "dashboardDescription": "Übersicht und wichtige Kennzahlen",
       "items": "Artikel",
+      "itemsDescription": "QR-Code-Artikel verwalten",
       "guides": "Anleitungen",
+      "guidesMobile": "Anleit.",
+      "guidesDescription": "Anleitungen anzeigen und verwalten",
       "properties": "Immobilien",
+      "propertiesMobile": "Immo.",
+      "propertiesDescription": "Immobilienverwaltung",
       "rooms": "Räume",
       "tags": "Tags",
       "instructions": "Anweisungen",
       "analytics": "Analysen",
+      "analyticsDescription": "Analysen und Statistiken anzeigen",
       "settings": "Einstellungen",
       "help": "Hilfe",
       "create": "Erstellen",
       "print": "Drucken",
+      "systemAdmin": "Systemadmin",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "Systemverwaltung",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Hauptmenü öffnen",
       "mobile": {
         "dashboard": "D/B",
         "items": "Artikel",
@@ -939,7 +954,9 @@
       "statistics": "Statistiken werden geladen",
       "default": "Laden",
       "content": "Inhalt wird geladen",
-      "pleaseWait": "{label}, bitte warten..."
+      "pleaseWait": "{label}, bitte warten...",
+      "navigation": "Navigation wird geladen...",
+      "permissions": "Berechtigungen werden geladen..."
     },
     "stats": {
       "items": "Artikel",
@@ -1115,6 +1132,30 @@
     },
     "hints": {
       "compareStats": "Verwenden Sie die Immobilienauswahl, um Statistiken über Ihre Immobilien zu vergleichen."
+    },
+    "auth": {
+      "required": "Authentifizierung erforderlich",
+      "pleaseLogin": "Bitte melden Sie sich an, um auf das Dashboard zuzugreifen.",
+      "goHome": "Zur Startseite",
+      "goLogin": "Zur Anmeldung",
+      "logout": "Abmelden",
+      "logoutTitle": "Von Ihrem Konto abmelden"
+    },
+    "section": {
+      "dashboard": "Dashboard",
+      "items": "Artikel",
+      "guides": "Anleitungen",
+      "properties": "Immobilien",
+      "analytics": "Analysen",
+      "systemAdmin": "Systemadmin"
+    },
+    "role": {
+      "systemAdmin": "Systemadmin",
+      "user": "Benutzer",
+      "owner": "Eigentümer",
+      "admin": "Administrator",
+      "member": "Mitglied",
+      "viewer": "Betrachter"
     }
   },
   "items": {

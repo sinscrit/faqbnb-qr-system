@@ -918,17 +918,32 @@
     "nav": {
       "ariaLabel": "Navigazione dashboard",
       "dashboard": "Dashboard",
+      "home": "Home",
+      "dashboardMobile": "D/B",
+      "dashboardDescription": "Panoramica e metriche chiave",
       "items": "Articoli",
+      "itemsDescription": "Gestisci articoli con codice QR",
       "guides": "Guide",
+      "guidesMobile": "Guida",
+      "guidesDescription": "Visualizza e gestisci guide",
       "properties": "Proprietà",
+      "propertiesMobile": "Prop.",
+      "propertiesDescription": "Gestione proprietà",
       "rooms": "Stanze",
       "tags": "Tag",
       "instructions": "Istruzioni",
       "analytics": "Analisi",
+      "analyticsDescription": "Visualizza analisi e approfondimenti",
       "settings": "Impostazioni",
       "help": "Aiuto",
       "create": "Crea",
       "print": "Stampa",
+      "systemAdmin": "Amministrazione Sistema",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "Amministrazione del sistema",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Apri menu principale",
       "mobile": {
         "dashboard": "D/B",
         "items": "Articoli",
@@ -949,7 +964,9 @@
       "statistics": "Caricamento statistiche",
       "default": "Caricamento",
       "content": "Caricamento contenuto",
-      "pleaseWait": "{label}, attendere prego..."
+      "pleaseWait": "{label}, attendere prego...",
+      "navigation": "Caricamento navigazione...",
+      "permissions": "Caricamento permessi..."
     },
     "stats": {
       "items": "Articoli",
@@ -1125,6 +1142,30 @@
     },
     "hints": {
       "compareStats": "Usa il selettore delle proprietà per confrontare le statistiche tra le tue proprietà."
+    },
+    "auth": {
+      "required": "Autenticazione richiesta",
+      "pleaseLogin": "Effettua l'accesso per accedere alla dashboard.",
+      "goHome": "Vai alla home",
+      "goLogin": "Vai al login",
+      "logout": "Esci",
+      "logoutTitle": "Disconnettiti dal tuo account"
+    },
+    "section": {
+      "dashboard": "Dashboard",
+      "items": "Articoli",
+      "guides": "Guide",
+      "properties": "Proprietà",
+      "analytics": "Analisi",
+      "systemAdmin": "Amministrazione Sistema"
+    },
+    "role": {
+      "systemAdmin": "Amministratore di Sistema",
+      "user": "Utente",
+      "owner": "Proprietario",
+      "admin": "Amministratore",
+      "member": "Membro",
+      "viewer": "Visualizzatore"
     }
   },
   "items": {

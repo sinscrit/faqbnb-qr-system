@@ -908,17 +908,32 @@
     "nav": {
       "ariaLabel": "Navigation du tableau de bord",
       "dashboard": "Tableau de bord",
+      "home": "Accueil",
+      "dashboardMobile": "T/B",
+      "dashboardDescription": "Vue d'ensemble et métriques clés",
       "items": "Articles",
+      "itemsDescription": "Gérer les articles QR code",
       "guides": "Guides",
+      "guidesMobile": "Guide",
+      "guidesDescription": "Voir et gérer les guides",
       "properties": "Propriétés",
+      "propertiesMobile": "Prop.",
+      "propertiesDescription": "Gestion des propriétés",
       "rooms": "Pièces",
       "tags": "Étiquettes",
       "instructions": "Instructions",
       "analytics": "Analytiques",
+      "analyticsDescription": "Voir les analyses et statistiques",
       "settings": "Paramètres",
       "help": "Aide",
       "create": "Créer",
       "print": "Imprimer",
+      "systemAdmin": "Admin système",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "Administration système",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Ouvrir le menu principal",
       "mobile": {
         "dashboard": "T/B",
         "items": "Articles",
@@ -939,7 +954,9 @@
       "statistics": "Chargement des statistiques",
       "default": "Chargement",
       "content": "Chargement du contenu",
-      "pleaseWait": "{label}, veuillez patienter..."
+      "pleaseWait": "{label}, veuillez patienter...",
+      "navigation": "Chargement de la navigation...",
+      "permissions": "Chargement des permissions..."
     },
     "stats": {
       "items": "Articles",
@@ -1115,6 +1132,30 @@
     },
     "hints": {
       "compareStats": "Utilisez le sélecteur de propriété pour comparer les statistiques de vos propriétés."
+    },
+    "auth": {
+      "required": "Authentification requise",
+      "pleaseLogin": "Veuillez vous connecter pour accéder au tableau de bord.",
+      "goHome": "Aller à l'accueil",
+      "goLogin": "Aller à la connexion",
+      "logout": "Déconnexion",
+      "logoutTitle": "Se déconnecter de votre compte"
+    },
+    "section": {
+      "dashboard": "Tableau de bord",
+      "items": "Articles",
+      "guides": "Guides",
+      "properties": "Propriétés",
+      "analytics": "Analytiques",
+      "systemAdmin": "Admin système"
+    },
+    "role": {
+      "systemAdmin": "Admin système",
+      "user": "Utilisateur",
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre",
+      "viewer": "Observateur"
     }
   },
   "items": {

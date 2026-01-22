@@ -908,17 +908,32 @@
     "nav": {
       "ariaLabel": "Dashboard-navigatie",
       "dashboard": "Dashboard",
+      "home": "Home",
+      "dashboardMobile": "D/B",
+      "dashboardDescription": "Overzicht en belangrijke statistieken",
       "items": "Artikelen",
+      "itemsDescription": "QR-code artikelen beheren",
       "guides": "Gidsen",
+      "guidesMobile": "Gids",
+      "guidesDescription": "Gidsen bekijken en beheren",
       "properties": "Eigendommen",
+      "propertiesMobile": "Eig.",
+      "propertiesDescription": "Eigendom beheer",
       "rooms": "Kamers",
       "tags": "Tags",
       "instructions": "Instructies",
       "analytics": "Analyses",
+      "analyticsDescription": "Analyses en statistieken bekijken",
       "settings": "Instellingen",
       "help": "Help",
       "create": "Maken",
       "print": "Afdrukken",
+      "systemAdmin": "Systeembeheer",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "Systeembeheer",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Hoofdmenu openen",
       "mobile": {
         "dashboard": "D/B",
         "items": "Items",
@@ -939,7 +954,9 @@
       "statistics": "Statistieken worden geladen",
       "default": "Laden",
       "content": "Inhoud wordt geladen",
-      "pleaseWait": "{label}, even geduld..."
+      "pleaseWait": "{label}, even geduld...",
+      "navigation": "Navigatie wordt geladen...",
+      "permissions": "Rechten worden geladen..."
     },
     "stats": {
       "items": "Artikelen",
@@ -1115,6 +1132,30 @@
     },
     "hints": {
       "compareStats": "Gebruik de eigendomsselector om statistieken over uw eigendommen te vergelijken."
+    },
+    "auth": {
+      "required": "Authenticatie vereist",
+      "pleaseLogin": "Log in om toegang te krijgen tot het dashboard.",
+      "goHome": "Naar home",
+      "goLogin": "Naar inloggen",
+      "logout": "Uitloggen",
+      "logoutTitle": "Uitloggen van uw account"
+    },
+    "section": {
+      "dashboard": "Dashboard",
+      "items": "Artikelen",
+      "guides": "Gidsen",
+      "properties": "Eigendommen",
+      "analytics": "Analyses",
+      "systemAdmin": "Systeembeheer"
+    },
+    "role": {
+      "systemAdmin": "Systeembeheer",
+      "user": "Gebruiker",
+      "owner": "Eigenaar",
+      "admin": "Beheerder",
+      "member": "Lid",
+      "viewer": "Kijker"
     }
   },
   "items": {

@@ -908,17 +908,32 @@
     "nav": {
       "ariaLabel": "Navegación del panel de control",
       "dashboard": "Panel de control",
+      "home": "Inicio",
+      "dashboardMobile": "Panel",
+      "dashboardDescription": "Resumen y métricas clave",
       "items": "Artículos",
+      "itemsDescription": "Gestionar artículos con código QR",
       "guides": "Guías",
+      "guidesMobile": "Guía",
+      "guidesDescription": "Ver y gestionar guías",
       "properties": "Propiedades",
+      "propertiesMobile": "Prop.",
+      "propertiesDescription": "Gestión de propiedades",
       "rooms": "Habitaciones",
       "tags": "Etiquetas",
       "instructions": "Instrucciones",
       "analytics": "Analíticas",
+      "analyticsDescription": "Ver análisis y estadísticas",
       "settings": "Configuración",
       "help": "Ayuda",
       "create": "Crear",
       "print": "Imprimir",
+      "systemAdmin": "Admin del sistema",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "Administración del sistema",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Abrir menú principal",
       "mobile": {
         "dashboard": "Panel",
         "items": "Artículos",
@@ -939,7 +954,9 @@
       "statistics": "Cargando estadísticas",
       "default": "Cargando",
       "content": "Cargando contenido",
-      "pleaseWait": "{label}, por favor espera..."
+      "pleaseWait": "{label}, por favor espera...",
+      "navigation": "Cargando navegación...",
+      "permissions": "Cargando permisos..."
     },
     "stats": {
       "items": "Artículos",
@@ -1115,6 +1132,30 @@
     },
     "hints": {
       "compareStats": "Usa el selector de propiedades para comparar estadísticas entre tus propiedades."
+    },
+    "auth": {
+      "required": "Autenticación requerida",
+      "pleaseLogin": "Por favor inicia sesión para acceder al panel de control.",
+      "goHome": "Ir al inicio",
+      "goLogin": "Ir al inicio de sesión",
+      "logout": "Cerrar sesión",
+      "logoutTitle": "Cerrar sesión de tu cuenta"
+    },
+    "section": {
+      "dashboard": "Panel de control",
+      "items": "Artículos",
+      "guides": "Guías",
+      "properties": "Propiedades",
+      "analytics": "Analíticas",
+      "systemAdmin": "Admin del sistema"
+    },
+    "role": {
+      "systemAdmin": "Admin del sistema",
+      "user": "Usuario",
+      "owner": "Propietario",
+      "admin": "Administrador",
+      "member": "Miembro",
+      "viewer": "Observador"
     }
   },
   "items": {
