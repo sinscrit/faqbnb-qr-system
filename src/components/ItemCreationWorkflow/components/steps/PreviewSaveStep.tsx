@@ -22,7 +22,7 @@
  * @see docs/REQ-106-preview-save-step-overview.md (original)
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 5
  * @see docs/REQ-210-update-previewsavestep-display-detailed.md
- * @lastModified 2026-01-15 (Restructured UI: Item Name first, removed Purpose field, added Item Description)
+ * @lastModified 2026-01-22 (REQ-E02-064 i18n Integration)
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -48,6 +48,7 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { cn } from '@/lib/utils';
+import type { TranslationFn } from '@/types/i18n';
 import type { CurrentItemState, ContentPiece, RoomType, ItemType } from '../../ItemCreationWorkflow.types';
 import { ItemNameEditor, ContentPieceCard, SortableContentPieceCard, TagsEditor } from '../shared';
 import {
@@ -103,19 +104,21 @@ export interface PreviewSaveStepProps {
 
 interface EmptyContentStateProps {
   onAddContent: () => void;
+  /** Translation function for preview namespace (REQ-E02-064) */
+  t: TranslationFn;
 }
 
-function EmptyContentState({ onAddContent }: EmptyContentStateProps) {
+function EmptyContentState({ onAddContent, t }: EmptyContentStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
       <Plus className="w-12 h-12 text-gray-400 mb-3" aria-hidden="true" />
-      <p className="text-[#717171] mb-4">No content added yet</p>
+      <p className="text-[#717171] mb-4">{t('empty.message')}</p>
       <button
         type="button"
         onClick={onAddContent}
         className="px-4 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2"
       >
-        Add Content
+        {t('empty.addButton')}
       </button>
     </div>
   );
@@ -142,15 +145,17 @@ interface ItemDetailsDisplayProps {
   onUpdateRoom?: (room: RoomType) => void;
   onUpdateItemType?: (itemType: ItemType) => void;
   disabled?: boolean;
+  /** Translation function for preview namespace (REQ-E02-064) */
+  t: TranslationFn;
 }
 
-function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, disabled }: ItemDetailsDisplayProps) {
+function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, disabled, t }: ItemDetailsDisplayProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Room Dropdown */}
       <div className="space-y-2">
         <label htmlFor="room-select" className="block text-sm font-medium text-[#222222]">
-          Room
+          {t('details.roomLabel')}
         </label>
         <select
           id="room-select"
@@ -176,7 +181,7 @@ function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, di
       {/* Item Type Dropdown */}
       <div className="space-y-2">
         <label htmlFor="item-type-select" className="block text-sm font-medium text-[#222222]">
-          Item Type
+          {t('details.itemTypeLabel')}
         </label>
         <select
           id="item-type-select"
@@ -222,6 +227,8 @@ interface ItemDetailsSectionProps {
   /** Callback when tags change */
   onUpdateTags: (tags: string[]) => void;
   disabled?: boolean;
+  /** Translation function for preview namespace (REQ-E02-064) */
+  t: TranslationFn;
 }
 
 function ItemDetailsSection({
@@ -233,6 +240,7 @@ function ItemDetailsSection({
   onUpdateItemType,
   onUpdateTags,
   disabled,
+  t,
 }: ItemDetailsSectionProps) {
   // Derive article title from purpose (REQ-210)
   // Default to purpose label + item name format
@@ -256,7 +264,7 @@ function ItemDetailsSection({
           onChange={onUpdateItemName}
           disabled={disabled}
           maxLength={50}
-          placeholder="Enter item name"
+          placeholder={t('details.itemNamePlaceholder')}
         />
       </div>
 
@@ -266,7 +274,7 @@ function ItemDetailsSection({
           htmlFor="item-description-editor"
           className="block text-sm font-medium text-[#222222] mb-2"
         >
-          Item Description
+          {t('details.itemDescriptionLabel')}
         </label>
         <textarea
           id="item-description-editor"
@@ -275,7 +283,7 @@ function ItemDetailsSection({
           disabled={disabled}
           maxLength={500}
           rows={3}
-          placeholder="Enter a brief description of this item (optional)"
+          placeholder={t('details.itemDescriptionPlaceholder')}
           className={cn(
             'w-full px-4 py-3 border-2 rounded-lg',
             'text-base text-[#222222] placeholder:text-[#717171]',
@@ -297,6 +305,7 @@ function ItemDetailsSection({
           onUpdateRoom={onUpdateRoom}
           onUpdateItemType={onUpdateItemType}
           disabled={disabled}
+          t={t}
         />
       </div>
 
@@ -306,7 +315,7 @@ function ItemDetailsSection({
           htmlFor="article-title-editor"
           className="block text-sm font-medium text-[#222222] mb-2"
         >
-          Guide/Article Title
+          {t('details.articleTitleLabel')}
         </label>
         <input
           id="article-title-editor"
@@ -315,7 +324,7 @@ function ItemDetailsSection({
           onChange={(e) => onUpdateArticleTitle?.(e.target.value)}
           disabled={disabled}
           maxLength={100}
-          placeholder="Enter guide/article title"
+          placeholder={t('details.articleTitlePlaceholder')}
           className={cn(
             'w-full px-4 py-3 border-2 rounded-lg',
             'min-h-[48px]',
@@ -332,7 +341,7 @@ function ItemDetailsSection({
       {/* Tags */}
       <div>
         <label className="block text-sm font-medium text-[#717171] mb-2">
-          Tags
+          {t('details.tagsLabel')}
         </label>
         <TagsEditor
           selectedTags={currentItem.tags || []}
@@ -363,6 +372,8 @@ interface ContentSectionProps {
   onAddMore: () => void;
   maxContentPieces: number;
   disabled?: boolean;
+  /** Translation function for preview namespace (REQ-E02-064) */
+  t: TranslationFn;
 }
 
 function ContentSection({
@@ -379,6 +390,7 @@ function ContentSection({
   onAddMore,
   maxContentPieces,
   disabled,
+  t,
 }: ContentSectionProps) {
   const contentCount = content.length;
   const canAddMore = contentCount < maxContentPieces;
@@ -395,25 +407,25 @@ function ContentSection({
             id="content-section-heading"
             className="text-lg font-medium text-[#222222]"
           >
-            Content
+            {t('content.title')}
           </h3>
           <span
             className="px-2 py-0.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full"
-            aria-label={`${contentCount} content pieces`}
+            aria-label={t('content.countLabel', { count: contentCount })}
           >
             {contentCount}
           </span>
         </div>
         {contentCount >= maxContentPieces && (
           <span className="text-sm text-amber-600 font-medium">
-            Maximum reached
+            {t('content.maxReached')}
           </span>
         )}
       </div>
 
       {/* Content grid with previews */}
       {contentCount === 0 ? (
-        <EmptyContentState onAddContent={onAddMore} />
+        <EmptyContentState onAddContent={onAddMore} t={t} />
       ) : (
         <DndContext
           sensors={sensors}
@@ -431,7 +443,7 @@ function ContentSection({
             <div
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
               role="list"
-              aria-label="Content pieces - drag to reorder"
+              aria-label={t('content.dragHint')}
             >
               {content.map((piece) => (
                 <SortableContentPieceCard
@@ -473,7 +485,7 @@ function ContentSection({
           )}
         >
           <Plus className="w-4 h-4" aria-hidden="true" />
-          Add More
+          {t('content.addMore')}
         </button>
       )}
     </section>
@@ -511,9 +523,11 @@ interface SuccessOverlayProps {
   qrCodeUrl: string;
   /** Callback when user clicks Continue button */
   onContinue: () => void;
+  /** Translation function for preview namespace (REQ-E02-064) */
+  t: TranslationFn;
 }
 
-function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps) {
+function SuccessOverlay({ itemName, qrCodeUrl, onContinue, t }: SuccessOverlayProps) {
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-8">
       <div className="text-center max-w-md">
@@ -524,14 +538,14 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
 
         {/* Title */}
         <h2 className="text-2xl font-semibold text-[#222222] mb-4">
-          Item Saved!
+          {t('success.title')}
         </h2>
 
         {/* QR Code */}
         <div className="p-4 bg-white border border-gray-200 rounded-lg inline-block mb-4 shadow-sm">
           <img
             src={qrCodeUrl}
-            alt={`QR code for ${itemName}`}
+            alt={t('success.qrAlt', { itemName })}
             className="w-40 h-40"
           />
           <p className="mt-2 text-sm font-medium text-[#222222]">
@@ -541,7 +555,7 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
 
         {/* Description */}
         <p className="text-[#717171] mb-8">
-          Your item has been saved and is ready for your guests!
+          {t('success.message')}
         </p>
 
         {/* Continue Button */}
@@ -550,7 +564,7 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue }: SuccessOverlayProps
           onClick={onContinue}
           className="px-8 py-3 bg-[#FF385C] text-white rounded-lg font-medium hover:bg-[#E31C5F] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2"
         >
-          Continue
+          {t('success.continueButton')}
         </button>
       </div>
     </div>
@@ -578,7 +592,9 @@ export function PreviewSaveStep({
   isSaving = false,
   className,
 }: PreviewSaveStepProps) {
-  // Translation hooks
+  // Translation hooks (REQ-E02-064)
+  const t = useTranslations('workflow.steps.preview');
+  const tCommon = useTranslations('common');
   const tNotifications = useTranslations('common.notifications');
   const tLoading = useTranslations('common.loading');
 
@@ -638,33 +654,38 @@ export function PreviewSaveStep({
 
   // Accessibility announcements for screen readers
   const contentArray = currentItem?.content ?? [];
+  // DnD announcements for screen readers (REQ-E02-064)
   const announcements: Announcements = useMemo(() => ({
     onDragStart({ active }) {
       const piece = contentArray.find(c => c.id === active.id);
       const position = contentArray.findIndex(c => c.id === active.id) + 1;
-      const typeName = piece ? `${piece.type} content` : 'content piece';
-      return `Picked up ${typeName}. Current position: ${position} of ${contentArray.length}. Use arrow keys to move.`;
+      const typeName = piece
+        ? t('dnd.contentType', { type: piece.type })
+        : t('dnd.contentPiece');
+      return t('dnd.pickedUp', { typeName, position, total: contentArray.length });
     },
     onDragOver({ over }) {
       if (over) {
         const position = contentArray.findIndex(c => c.id === over.id) + 1;
-        return `Over position ${position}`;
+        return t('dnd.overPosition', { position });
       }
       return undefined;
     },
     onDragEnd({ active, over }) {
       if (over && active.id !== over.id) {
         const piece = contentArray.find(c => c.id === active.id);
-        const typeName = piece ? `${piece.type} content` : 'content piece';
+        const typeName = piece
+          ? t('dnd.contentType', { type: piece.type })
+          : t('dnd.contentPiece');
         const newPosition = contentArray.findIndex(c => c.id === over.id) + 1;
-        return `Dropped ${typeName}. New position: ${newPosition} of ${contentArray.length}`;
+        return t('dnd.dropped', { typeName, position: newPosition, total: contentArray.length });
       }
-      return 'Position unchanged.';
+      return t('dnd.unchanged');
     },
     onDragCancel() {
-      return 'Drag cancelled. Content returned to original position.';
+      return t('dnd.cancelled');
     },
-  }), [contentArray]);
+  }), [contentArray, t]);
 
   // Handle remove button click - show confirmation for last piece
   const handleRemoveClick = useCallback((contentId: string) => {
@@ -735,6 +756,7 @@ export function PreviewSaveStep({
           itemName={savedResult.itemName}
           qrCodeUrl={savedResult.qrCodeUrl}
           onContinue={handleContinue}
+          t={t}
         />
       </div>
     );
@@ -747,14 +769,14 @@ export function PreviewSaveStep({
     return (
       <div className={cn('flex flex-col items-center justify-center gap-4 p-6 min-h-[300px]', className)}>
         <p className="text-[#717171] text-center">
-          No item data available. Please start a new item.
+          {t('errors.noItemData')}
         </p>
         <button
           type="button"
           onClick={onCancel}
           className="px-6 py-2 bg-[#FF385C] text-white rounded-lg hover:bg-[#E31C5F] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2"
         >
-          Go Back
+          {tCommon('actions.goBack')}
         </button>
       </div>
     );
@@ -773,12 +795,12 @@ export function PreviewSaveStep({
             'focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
-          aria-label="Go back"
+          aria-label={t('header.backAriaLabel')}
         >
           <ArrowLeft className="w-5 h-5 text-[#222222]" aria-hidden="true" />
         </button>
         <h2 className="text-xl font-semibold text-[#222222]">
-          Preview & Save
+          {t('header.title')}
         </h2>
       </div>
 
@@ -792,6 +814,7 @@ export function PreviewSaveStep({
         onUpdateItemType={onUpdateItemType}
         onUpdateTags={onUpdateTags}
         disabled={isSaving}
+        t={t}
       />
 
       {/* Content Section with count badge and small add more link */}
@@ -809,6 +832,7 @@ export function PreviewSaveStep({
         onAddMore={onRetake}
         maxContentPieces={MAX_CONTENT_PIECES}
         disabled={isSaving}
+        t={t}
       />
 
       {/* Error Display */}
@@ -820,7 +844,7 @@ export function PreviewSaveStep({
             onClick={() => setSaveError(null)}
             className="mt-2 text-red-700 underline text-sm hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
           >
-            Dismiss
+            {tCommon('actions.dismiss')}
           </button>
         </div>
       )}
@@ -844,20 +868,20 @@ export function PreviewSaveStep({
         {isSaving ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-            {tLoading('status.saving')}
+            {t('buttons.saving')}
           </>
         ) : (
           <>
             <Check className="w-5 h-5" aria-hidden="true" />
-            Save Item
+            {t('buttons.saveItem')}
           </>
         )}
       </button>
 
-      {/* Screen Reader Announcements */}
+      {/* Screen Reader Announcements (REQ-E02-064) */}
       <div aria-live="polite" className="sr-only">
-        {showSuccess && tNotifications('success.itemSaved')}
-        {saveError && `${tNotifications('error.generic')}: ${saveError}`}
+        {showSuccess && t('announcements.saved')}
+        {saveError && t('announcements.error', { error: saveError })}
       </div>
 
       {/* Last Piece Removal Confirmation Dialog */}
@@ -873,11 +897,10 @@ export function PreviewSaveStep({
               id="remove-confirm-title"
               className="text-lg font-semibold text-[#222222] mb-2"
             >
-              Remove Last Content?
+              {t('dialogs.removeLastContent.title')}
             </h3>
             <p className="text-[#717171] mb-6">
-              This is the only piece of content. Removing it will leave this item empty.
-              Are you sure you want to remove it?
+              {t('dialogs.removeLastContent.message')}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -885,14 +908,14 @@ export function PreviewSaveStep({
                 onClick={handleCancelRemove}
                 className="px-4 py-2 text-[#222222] border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#FF385C]"
               >
-                Keep
+                {t('dialogs.removeLastContent.keepButton')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmRemove}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
               >
-                Remove
+                {t('dialogs.removeLastContent.removeButton')}
               </button>
             </div>
           </div>

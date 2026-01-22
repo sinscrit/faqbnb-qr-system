@@ -154,7 +154,8 @@
       "remove": "Remove",
       "removing": "Removing...",
       "addLink": "Add Link",
-      "addThumbnail": "Add custom thumbnail"
+      "addThumbnail": "Add custom thumbnail",
+      "dismiss": "Dismiss"
     },
     "status": {
       "loading": "Loading...",
@@ -1992,6 +1993,68 @@
         "contentRemoved": "Content removed",
         "contentCount": "{count, plural, =0 {No content} one {# content piece} other {# content pieces}}",
         "reorderHint": "Drag to reorder content pieces"
+      },
+      "preview": {
+        "_comment": "PreviewSaveStep.tsx - REQ-E02-064 i18n Integration (2026-01-22)",
+        "header": {
+          "title": "Preview & Save",
+          "backAriaLabel": "Go back"
+        },
+        "details": {
+          "roomLabel": "Room",
+          "itemTypeLabel": "Item Type",
+          "itemNamePlaceholder": "Enter item name",
+          "itemDescriptionLabel": "Item Description",
+          "itemDescriptionPlaceholder": "Enter a brief description of this item (optional)",
+          "articleTitleLabel": "Guide/Article Title",
+          "articleTitlePlaceholder": "Enter guide/article title",
+          "tagsLabel": "Tags"
+        },
+        "empty": {
+          "message": "No content added yet",
+          "addButton": "Add Content"
+        },
+        "content": {
+          "title": "Content",
+          "countLabel": "{count, plural, one {# content piece} other {# content pieces}}",
+          "maxReached": "Maximum reached",
+          "dragHint": "Content pieces - drag to reorder",
+          "addMore": "Add More"
+        },
+        "buttons": {
+          "saveItem": "Save Item",
+          "saving": "Saving..."
+        },
+        "success": {
+          "title": "Item Saved!",
+          "qrAlt": "QR code for {itemName}",
+          "message": "Your item has been saved and is ready for your guests!",
+          "continueButton": "Continue"
+        },
+        "dnd": {
+          "contentType": "{type} content",
+          "contentPiece": "content piece",
+          "pickedUp": "Picked up {typeName}. Current position: {position} of {total}. Use arrow keys to move.",
+          "overPosition": "Over position {position}",
+          "dropped": "Dropped {typeName}. New position: {position} of {total}",
+          "unchanged": "Position unchanged.",
+          "cancelled": "Drag cancelled. Content returned to original position."
+        },
+        "dialogs": {
+          "removeLastContent": {
+            "title": "Remove Last Content?",
+            "message": "This is the only piece of content. Removing it will leave this item empty. Are you sure you want to remove it?",
+            "keepButton": "Keep",
+            "removeButton": "Remove"
+          }
+        },
+        "errors": {
+          "noItemData": "No item data available. Please start a new item."
+        },
+        "announcements": {
+          "saved": "Item saved successfully",
+          "error": "Error: {error}"
+        }
       },
       "previewSave": {
         "_comment": "PreviewSaveStep.tsx - Step 8",

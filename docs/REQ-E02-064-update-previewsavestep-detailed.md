@@ -1,8 +1,9 @@
 # Detailed Task Breakdown: REQ-E02-064 - Update PreviewSaveStep
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-22
+**Completed:** 2026-01-22
 **Request ID:** REQ-E02-064
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2C - Item Creation Workflow
@@ -24,10 +25,10 @@ This document provides granular, actionable tasks for localizing the PreviewSave
 
 Before starting implementation, verify:
 
-- [ ] Epic 1 foundation complete (next-intl installed and configured)
-- [ ] `/messages/en.json` exists with base structure
-- [ ] `workflow` namespace exists in translation files (REQ-E02-056)
-- [ ] Understand the pattern used in other workflow steps (e.g., RoomSelectionStep, MediaCaptureStep)
+- [x] Epic 1 foundation complete (next-intl installed and configured)
+- [x] `/messages/en.json` exists with base structure
+- [x] `workflow` namespace exists in translation files (REQ-E02-056)
+- [x] Understand the pattern used in other workflow steps (e.g., RoomSelectionStep, MediaCaptureStep)
 
 ---
 
@@ -64,9 +65,9 @@ const tCommon = useTranslations('common');
 ```
 
 **Verification:**
-- [ ] Import statement added
-- [ ] Hook initialized in main component
-- [ ] No TypeScript errors
+- [x] Import statement added
+- [x] Hook initialized in main component
+- [x] No TypeScript errors
 
 ---
 
@@ -156,9 +157,9 @@ function EmptyContentState({ onAddContent, t }: EmptyContentStateProps) {
 | `workflow.steps.preview.empty.addButton` | `"Add Content"` |
 
 **Verification:**
-- [ ] Interface updated with `t` prop
-- [ ] Both strings replaced with translation keys
-- [ ] Call site updated to pass `t`
+- [x] Interface updated with `t` prop
+- [x] Both strings replaced with translation keys
+- [x] Call site updated to pass `t`
 
 ---
 
@@ -275,9 +276,9 @@ function ItemDetailsDisplay({ room, itemType, onUpdateRoom, onUpdateItemType, di
 | `workflow.steps.preview.details.itemTypeLabel` | `"Item Type"` |
 
 **Verification:**
-- [ ] Interface updated with `t` prop
-- [ ] Both label strings replaced
-- [ ] Call site updated
+- [x] Interface updated with `t` prop
+- [x] Both label strings replaced
+- [x] Call site updated
 
 ---
 
@@ -489,10 +490,10 @@ placeholder={t('details.articleTitlePlaceholder')}
 | `workflow.steps.preview.details.tagsLabel` | `"Tags"` |
 
 **Verification:**
-- [ ] Interface updated with `t` prop
-- [ ] All 6 strings replaced
-- [ ] Call site updated
-- [ ] ItemDetailsDisplay call site updated with `t`
+- [x] Interface updated with `t` prop
+- [x] All 6 strings replaced
+- [x] Call site updated
+- [x] ItemDetailsDisplay call site updated with `t`
 
 ---
 
@@ -742,11 +743,11 @@ function ContentSection({
 | `workflow.steps.preview.content.addMore` | `"Add More"` |
 
 **Verification:**
-- [ ] Interface updated with `t` prop
-- [ ] All 5 strings replaced
-- [ ] Pluralization works for countLabel (test with 0, 1, 5 content pieces)
-- [ ] Call site updated
-- [ ] EmptyContentState call inside ContentSection updated with `t`
+- [x] Interface updated with `t` prop
+- [x] All 5 strings replaced
+- [x] Pluralization works for countLabel (test with 0, 1, 5 content pieces)
+- [x] Call site updated
+- [x] EmptyContentState call inside ContentSection updated with `t`
 
 ---
 
@@ -899,10 +900,10 @@ function SuccessOverlay({ itemName, qrCodeUrl, onContinue, t }: SuccessOverlayPr
 | `workflow.steps.preview.success.continueButton` | `"Continue"` |
 
 **Verification:**
-- [ ] Interface updated with `t` prop
-- [ ] All 4 strings replaced
-- [ ] QR alt text correctly interpolates itemName
-- [ ] Call site updated
+- [x] Interface updated with `t` prop
+- [x] All 4 strings replaced
+- [x] QR alt text correctly interpolates itemName
+- [x] Call site updated
 
 ---
 
@@ -996,9 +997,9 @@ const announcements: Announcements = useMemo(() => ({
 | `workflow.steps.preview.dnd.cancelled` | `"Drag cancelled. Content returned to original position."` |
 
 **Verification:**
-- [ ] All 7 announcement strings use translation keys
-- [ ] `t` added to useMemo dependency array
-- [ ] Screen reader announces correctly during drag operations
+- [x] All 7 announcement strings use translation keys
+- [x] `t` added to useMemo dependency array
+- [x] Screen reader announces correctly during drag operations
 
 ---
 
@@ -1043,8 +1044,8 @@ aria-label={t('header.backAriaLabel')}
 | `workflow.steps.preview.header.backAriaLabel` | `"Go back"` |
 
 **Verification:**
-- [ ] Page title localized
-- [ ] Back button aria-label localized
+- [x] Page title localized
+- [x] Back button aria-label localized
 
 ---
 
@@ -1103,8 +1104,8 @@ aria-label={t('header.backAriaLabel')}
 | `workflow.steps.preview.buttons.saving` | `"Saving..."` |
 
 **Verification:**
-- [ ] Save button shows "Save Item" normally
-- [ ] Save button shows "Saving..." during save operation
+- [x] Save button shows "Save Item" normally
+- [x] Save button shows "Saving..." during save operation
 
 ---
 
@@ -1145,8 +1146,8 @@ aria-label={t('header.backAriaLabel')}
 | `workflow.steps.preview.announcements.error` | `"Error: {error}"` |
 
 **Verification:**
-- [ ] Screen readers announce "Item saved successfully" after successful save
-- [ ] Screen readers announce error message when save fails
+- [x] Screen readers announce "Item saved successfully" after successful save
+- [x] Screen readers announce error message when save fails
 
 ---
 
@@ -1188,7 +1189,7 @@ aria-label={t('header.backAriaLabel')}
 | `common.actions.dismiss` | `"Dismiss"` |
 
 **Verification:**
-- [ ] Dismiss button text localized
+- [x] Dismiss button text localized
 
 ---
 
@@ -1294,9 +1295,9 @@ aria-label={t('header.backAriaLabel')}
 | `workflow.steps.preview.dialogs.removeLastContent.removeButton` | `"Remove"` |
 
 **Verification:**
-- [ ] Dialog title localized
-- [ ] Dialog message localized
-- [ ] Both buttons localized
+- [x] Dialog title localized
+- [x] Dialog message localized
+- [x] Both buttons localized
 
 ---
 
@@ -1353,8 +1354,8 @@ aria-label={t('header.backAriaLabel')}
 | `common.actions.goBack` | `"Go Back"` |
 
 **Verification:**
-- [ ] Empty state message localized
-- [ ] Go Back button localized
+- [x] Empty state message localized
+- [x] Go Back button localized
 
 ---
 
@@ -1454,11 +1455,11 @@ Verify these keys exist in `common` namespace (or add them):
 ```
 
 **Verification:**
-- [ ] All preview step keys exist in `/messages/en.json`
-- [ ] Common actions keys exist
-- [ ] JSON validates without syntax errors
-- [ ] ICU format used correctly for pluralization
-- [ ] All variable interpolations correctly formatted
+- [x] All preview step keys exist in `/messages/en.json`
+- [x] Common actions keys exist
+- [x] JSON validates without syntax errors
+- [x] ICU format used correctly for pluralization
+- [x] All variable interpolations correctly formatted
 
 ---
 
@@ -1491,7 +1492,7 @@ Execute tasks in this order:
 npm run build
 ```
 
-- [ ] No TypeScript errors
+- [x] No TypeScript errors
 - [ ] No missing translation key warnings
 - [ ] Build completes successfully
 
