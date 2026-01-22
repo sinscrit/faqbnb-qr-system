@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { LayoutDashboard, Package, Home, BarChart3, Crown, FileText } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { User, AccountRole } from '../types';
 // REQ-023: Unified Route Architecture - Navigation Integration
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,6 +39,10 @@ export function RoleBasedNavigation({
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // REQ-E02-053: Translation hooks for i18n
+  const t = useTranslations('dashboard.nav');
+  const tLoading = useTranslations('dashboard.loading');
+
   // REQ-023: Use enhanced AuthContext for navigation state management
   const {
     user,
@@ -64,11 +69,11 @@ export function RoleBasedNavigation({
     // Dashboard - always available if user has dashboard access
     if (dashboardPermissions.canAccessDashboard) {
       items.push({
-        name: compactMode ? 'Home' : 'Dashboard',
-        mobileName: 'D/B',
+        name: compactMode ? t('home') : t('dashboard'),
+        mobileName: t('dashboardMobile'),
         href: '/dashboard',
         icon: <LayoutDashboard className="h-5 w-5" />,
-        description: 'Overview and key metrics',
+        description: t('dashboardDescription'),
         dashboardSection: DashboardSection.dashboard,
         requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
       });
@@ -77,22 +82,22 @@ export function RoleBasedNavigation({
     // Items management - check permissions
     if (dashboardPermissions.canAccessItems) {
       items.push({
-        name: 'Items',
-        mobileName: 'Items',
+        name: t('items'),
+        mobileName: t('items'),
         href: '/dashboard/items',
         icon: <Package className="h-5 w-5" />,
-        description: 'Manage QR code items',
+        description: t('itemsDescription'),
         dashboardSection: DashboardSection.items,
         requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
       });
 
       // Instructions - uses same permissions as items (REQ-195)
       items.push({
-        name: 'Guides',
-        mobileName: 'Guide',
+        name: t('guides'),
+        mobileName: t('guidesMobile'),
         href: '/dashboard/instructions',
         icon: <FileText className="h-5 w-5" />,
-        description: 'View and manage guides',
+        description: t('guidesDescription'),
         dashboardSection: DashboardSection.instructions,
         requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
       });
@@ -101,11 +106,11 @@ export function RoleBasedNavigation({
     // Properties management - check permissions
     if (dashboardPermissions.canAccessProperties) {
       items.push({
-        name: 'Properties',
-        mobileName: 'Prop.',
+        name: t('properties'),
+        mobileName: t('propertiesMobile'),
         href: '/dashboard/properties',
         icon: <Home className="h-5 w-5" />,
-        description: 'Property management',
+        description: t('propertiesDescription'),
         dashboardSection: DashboardSection.properties,
         requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
       });
@@ -114,11 +119,11 @@ export function RoleBasedNavigation({
     // Analytics - only for admin users
     if (isAdmin && dashboardPermissions.canAccessAnalytics) {
       items.push({
-        name: 'Analytics',
-        mobileName: 'Analytics',
+        name: t('analytics'),
+        mobileName: t('analytics'),
         href: '/dashboard/analytics',
         icon: <BarChart3 className="h-5 w-5" />,
-        description: 'View analytics and insights',
+        description: t('analyticsDescription'),
         dashboardSection: DashboardSection.analytics,
         requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
       });
@@ -127,11 +132,11 @@ export function RoleBasedNavigation({
     // System admin section - only for system admins and if enabled
     if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
       items.push({
-        name: compactMode ? 'Admin' : 'System Admin',
-        mobileName: 'Admin',
+        name: compactMode ? t('admin') : t('systemAdmin'),
+        mobileName: t('systemAdminMobile'),
         href: '/admin/system',
         icon: <Crown className="h-5 w-5" />,
-        description: 'System administration',
+        description: t('systemAdminDescription'),
         dashboardSection: DashboardSection.systemAdmin,
         systemAdminOnly: true,
         requiredPermissions: [PERMISSIONS.ACCESS_SYSTEM_ADMIN]
@@ -188,14 +193,14 @@ export function RoleBasedNavigation({
     return (
       <div className={`flex items-center justify-center py-4 ${className}`}>
         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-sm text-gray-600">Loading navigation...</span>
+        <span className="ml-2 text-sm text-gray-600">{tLoading('navigation')}</span>
       </div>
     );
   }
 
   // Desktop navigation component
   const DesktopNavigation = () => (
-    <nav className="hidden md:flex space-x-8" aria-label="Dashboard Navigation">
+    <nav className="hidden md:flex space-x-8" aria-label={t('ariaLabel')}>
       {navigationItems.map((item) => {
         const isActive = pathname === item.href ||
                         (item.href !== '/dashboard' && pathname.startsWith(item.href)) ||
@@ -216,7 +221,7 @@ export function RoleBasedNavigation({
             {item.name}
             {item.systemAdminOnly && (
               <span className="ml-1 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
-                Admin
+                {t('adminBadge')}
               </span>
             )}
           </button>
@@ -234,7 +239,7 @@ export function RoleBasedNavigation({
         className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
         aria-expanded="false"
       >
-        <span className="sr-only">Open main menu</span>
+        <span className="sr-only">{t('openMenu')}</span>
         {/* Hamburger icon */}
         <svg
           className={`${isMobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
@@ -285,7 +290,7 @@ export function RoleBasedNavigation({
                         <span>{item.mobileName || item.name}</span>
                         {item.systemAdminOnly && (
                           <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
-                            Admin
+                            {t('adminBadge')}
                           </span>
                         )}
                       </div>
@@ -311,27 +316,76 @@ export function RoleBasedNavigation({
   );
 }
 
+// Navigation translation keys interface for utility function
+export interface NavigationTranslations {
+  dashboard: string;
+  home: string;
+  dashboardMobile: string;
+  dashboardDescription: string;
+  items: string;
+  itemsDescription: string;
+  guides: string;
+  guidesMobile: string;
+  guidesDescription: string;
+  properties: string;
+  propertiesMobile: string;
+  propertiesDescription: string;
+  analytics: string;
+  analyticsDescription: string;
+  systemAdmin: string;
+  admin: string;
+  systemAdminMobile: string;
+  systemAdminDescription: string;
+}
+
+// Default English translations for backward compatibility
+const defaultTranslations: NavigationTranslations = {
+  dashboard: 'Dashboard',
+  home: 'Home',
+  dashboardMobile: 'D/B',
+  dashboardDescription: 'Overview and key metrics',
+  items: 'Items',
+  itemsDescription: 'Manage QR code items',
+  guides: 'Guides',
+  guidesMobile: 'Guide',
+  guidesDescription: 'View and manage guides',
+  properties: 'Properties',
+  propertiesMobile: 'Prop.',
+  propertiesDescription: 'Property management',
+  analytics: 'Analytics',
+  analyticsDescription: 'View analytics and insights',
+  systemAdmin: 'System Admin',
+  admin: 'Admin',
+  systemAdminMobile: 'Admin',
+  systemAdminDescription: 'System administration',
+};
+
 // Utility function to get navigation items (can be used independently) - REQ-023 enhanced
+// REQ-E02-053: Added translations parameter for i18n support
 export function getNavigationItemsForUser(
   user: User | null,
   isAdmin: boolean,
   dashboardPermissions: any,
   accountRole: AccountRole | null,
   showSystemAdminItems: boolean = true,
-  compactMode: boolean = false
+  compactMode: boolean = false,
+  translations?: Partial<NavigationTranslations>
 ): NavigationItem[] {
   if (!user || !dashboardPermissions) return [];
+
+  // Merge provided translations with defaults for backward compatibility
+  const t = { ...defaultTranslations, ...translations };
 
   const items: NavigationItem[] = [];
 
   // Dashboard - always available if user has dashboard access
   if (dashboardPermissions.canAccessDashboard) {
     items.push({
-      name: compactMode ? 'Home' : 'Dashboard',
-      mobileName: 'D/B',
+      name: compactMode ? t.home : t.dashboard,
+      mobileName: t.dashboardMobile,
       href: '/dashboard',
       icon: <LayoutDashboard className="h-5 w-5" />,
-      description: 'Overview and key metrics',
+      description: t.dashboardDescription,
       dashboardSection: DashboardSection.dashboard,
       requiredPermissions: [PERMISSIONS.ACCESS_DASHBOARD]
     });
@@ -340,22 +394,22 @@ export function getNavigationItemsForUser(
   // Items management - check permissions
   if (dashboardPermissions.canAccessItems) {
     items.push({
-      name: 'Items',
-      mobileName: 'Items',
+      name: t.items,
+      mobileName: t.items,
       href: '/dashboard/items',
       icon: <Package className="h-5 w-5" />,
-      description: 'Manage QR code items',
+      description: t.itemsDescription,
       dashboardSection: DashboardSection.items,
       requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
     });
 
     // Instructions - uses same permissions as items
     items.push({
-      name: 'Guides',
-      mobileName: 'Guide',
+      name: t.guides,
+      mobileName: t.guidesMobile,
       href: '/dashboard/instructions',
       icon: <FileText className="h-5 w-5" />,
-      description: 'View and manage guides',
+      description: t.guidesDescription,
       dashboardSection: DashboardSection.items,
       requiredPermissions: [PERMISSIONS.MANAGE_ITEMS]
     });
@@ -364,11 +418,11 @@ export function getNavigationItemsForUser(
   // Properties management - check permissions
   if (dashboardPermissions.canAccessProperties) {
     items.push({
-      name: 'Properties',
-      mobileName: 'Prop.',
+      name: t.properties,
+      mobileName: t.propertiesMobile,
       href: '/dashboard/properties',
       icon: <Home className="h-5 w-5" />,
-      description: 'Property management',
+      description: t.propertiesDescription,
       dashboardSection: DashboardSection.properties,
       requiredPermissions: [PERMISSIONS.MANAGE_PROPERTIES]
     });
@@ -377,11 +431,11 @@ export function getNavigationItemsForUser(
   // Analytics - only for admin users
   if (isAdmin && dashboardPermissions.canAccessAnalytics) {
     items.push({
-      name: 'Analytics',
-      mobileName: 'Analytics',
+      name: t.analytics,
+      mobileName: t.analytics,
       href: '/dashboard/analytics',
       icon: <BarChart3 className="h-5 w-5" />,
-      description: 'View analytics and insights',
+      description: t.analyticsDescription,
       dashboardSection: DashboardSection.analytics,
       requiredPermissions: [PERMISSIONS.VIEW_ANALYTICS]
     });
@@ -390,11 +444,11 @@ export function getNavigationItemsForUser(
   // System admin section - only for system admins and if enabled
   if (showSystemAdminItems && dashboardPermissions.canAccessSystemAdmin && isAdmin) {
     items.push({
-      name: compactMode ? 'Admin' : 'System Admin',
-      mobileName: 'Admin',
+      name: compactMode ? t.admin : t.systemAdmin,
+      mobileName: t.systemAdminMobile,
       href: '/admin/system',
       icon: <Crown className="h-5 w-5" />,
-      description: 'System administration',
+      description: t.systemAdminDescription,
       dashboardSection: DashboardSection.systemAdmin,
       systemAdminOnly: true,
       requiredPermissions: [PERMISSIONS.ACCESS_SYSTEM_ADMIN]

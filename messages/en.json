@@ -908,17 +908,32 @@
     "nav": {
       "ariaLabel": "Dashboard Navigation",
       "dashboard": "Dashboard",
+      "home": "Home",
+      "dashboardMobile": "D/B",
+      "dashboardDescription": "Overview and key metrics",
       "items": "Items",
+      "itemsDescription": "Manage QR code items",
       "guides": "Guides",
+      "guidesMobile": "Guide",
+      "guidesDescription": "View and manage guides",
       "properties": "Properties",
+      "propertiesMobile": "Prop.",
+      "propertiesDescription": "Property management",
       "rooms": "Rooms",
       "tags": "Tags",
       "instructions": "Instructions",
       "analytics": "Analytics",
+      "analyticsDescription": "View analytics and insights",
       "settings": "Settings",
       "help": "Help",
       "create": "Create",
       "print": "Print",
+      "systemAdmin": "System Admin",
+      "systemAdminMobile": "Admin",
+      "systemAdminDescription": "System administration",
+      "admin": "Admin",
+      "adminBadge": "Admin",
+      "openMenu": "Open main menu",
       "mobile": {
         "dashboard": "D/B",
         "items": "Items",
@@ -939,7 +954,9 @@
       "statistics": "Loading statistics",
       "default": "Loading",
       "content": "Loading content",
-      "pleaseWait": "{label}, please wait..."
+      "pleaseWait": "{label}, please wait...",
+      "navigation": "Loading navigation...",
+      "permissions": "Loading permissions..."
     },
     "stats": {
       "items": "Items",
@@ -1115,6 +1132,30 @@
     },
     "hints": {
       "compareStats": "Use the property selector to compare statistics across your properties."
+    },
+    "auth": {
+      "required": "Authentication Required",
+      "pleaseLogin": "Please log in to access the dashboard.",
+      "goHome": "Go to Home",
+      "goLogin": "Go to Login",
+      "logout": "Logout",
+      "logoutTitle": "Sign out of your account"
+    },
+    "section": {
+      "dashboard": "Dashboard",
+      "items": "Items",
+      "guides": "Guides",
+      "properties": "Properties",
+      "analytics": "Analytics",
+      "systemAdmin": "System Admin"
+    },
+    "role": {
+      "systemAdmin": "System Admin",
+      "user": "User",
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
     }
   },
   "items": {
