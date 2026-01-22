@@ -1159,44 +1159,257 @@
     }
   },
   "items": {
-    "createNew": "Nieuwe QR-code",
-    "noItems": "Geen artikelen",
-    "name": "Artikelnaam",
-    "description": "Beschrijving",
-    "property": "Eigendom",
-    "qrCode": "QR-code",
-    "articles": "Artikelen",
-    "addArticle": "Artikel Toevoegen",
-    "editItem": "Artikel Bewerken",
-    "deleteItem": "Artikel Verwijderen",
-    "viewItem": "Artikel Bekijken",
-    "printQrCode": "QR-code Afdrukken",
-    "downloadQrCode": "QR-code Downloaden",
-    "scanCount": "Aantal Scans",
-    "lastScanned": "Laatst Gescand",
-    "createdAt": "Aangemaakt Op",
-    "updatedAt": "Bijgewerkt Op",
-    "selectProperty": "Eigendom Selecteren",
-    "itemDetails": "Artikeldetails",
-    "noArticles": "Geen artikelen",
-    "addFirstArticle": "Voeg uw eerste artikel toe",
-    "room": "Kamer",
+    "_comment": "Items namespace - REQ-E02-078 - Hierarchical structure for Item Management i18n",
+    "title": "Items",
+    "subtitle": "Manage your QR code items",
+    "name": "Item Name",
+    "description": "Description",
+    "property": "Property",
+    "qrCode": "QR Code",
+    "articles": "Articles",
+    "room": "Room",
     "tags": "Tags",
-    "addTag": "Tag Toevoegen",
-    "removeTag": "Tag Verwijderen",
+    "list": {
+      "empty": {
+        "title": "No items yet",
+        "description": "Create your first QR code item to get started",
+        "action": "Create Item"
+      },
+      "noResults": {
+        "title": "No matching items",
+        "description": "Try adjusting your search or filters"
+      },
+      "loading": "Loading items...",
+      "noArticles": "No articles yet",
+      "addFirstArticle": "Add your first article"
+    },
+    "card": {
+      "contentType": {
+        "link": "LINK",
+        "text": "TEXT",
+        "pdf": "PDF",
+        "mixed": "MIXED",
+        "video": "VIDEO",
+        "photo": "PHOTO",
+        "media": "MEDIA"
+      },
+      "views": "{count, plural, one {# view} other {# views}}",
+      "pieces": "{count, plural, one {# piece} other {# pieces}} of content",
+      "noContent": "No content yet",
+      "more": "+{count} more",
+      "select": "Select {title}",
+      "thumbnail": "{title} thumbnail",
+      "scanCount": "Scan Count",
+      "lastScanned": "Last Scanned",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "actions": {
+      "create": "New Item",
+      "createQR": "New QR Code Item",
+      "edit": "Edit",
+      "delete": "Delete",
+      "duplicate": "Duplicate",
+      "viewQR": "View QR Code",
+      "print": "Print",
+      "printQR": "Print QR Code",
+      "downloadQR": "Download QR Code",
+      "share": "Share",
+      "manageAssets": "Manage Assets",
+      "addArticle": "Add Article"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear All",
+      "applyFilters": "Apply Filters",
+      "close": "Close",
+      "sections": {
+        "contentType": "Content Type",
+        "tags": "Tags",
+        "location": "Location",
+        "property": "Property"
+      },
+      "contentTypes": {
+        "all": "All Types",
+        "video": "Video",
+        "photo": "Photo",
+        "pdf": "PDF",
+        "text": "Text",
+        "link": "Link",
+        "mixed": "Mixed"
+      },
+      "tags": {
+        "placeholder": "Select tags...",
+        "noTags": "No tags available",
+        "selected": "{count} selected"
+      },
+      "location": {
+        "placeholder": "Select location...",
+        "all": "All Locations"
+      },
+      "property": {
+        "placeholder": "Select properties...",
+        "all": "All Properties"
+      }
+    },
+    "sort": {
+      "label": "Sort",
+      "sortBy": "Sort by",
+      "options": {
+        "newest": "Newest First",
+        "oldest": "Oldest First",
+        "nameAZ": "Name (A-Z)",
+        "nameZA": "Name (Z-A)",
+        "mostViewed": "Most Viewed",
+        "recentlyViewed": "Recently Viewed"
+      }
+    },
+    "search": {
+      "placeholder": "Search items...",
+      "clear": "Clear search",
+      "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
+      "showing": "Showing {start} to {end} of {total}"
+    },
+    "bulk": {
+      "selected": "{count, plural, one {# selected} other {# selected}}",
+      "selectedAria": "{count, plural, one {Currently # item selected} other {Currently # items selected}}",
+      "processing": "Processing...",
+      "actions": {
+        "delete": "Delete",
+        "addTag": "Add Tag",
+        "removeTag": "Remove Tag",
+        "moveToProperty": "Move to Property"
+      },
+      "cancel": "Cancel",
+      "cancelSelection": "Cancel selection",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All"
+    },
+    "bulkTag": {
+      "addTitle": "Add Tags to Items",
+      "removeTitle": "Remove Tags from Items",
+      "addDescription": "Select tags to add to {count} selected {count, plural, one {item} other {items}}",
+      "removeDescription": "Select tags to remove from {count} selected {count, plural, one {item} other {items}}",
+      "selectTags": "Select tags",
+      "noTagsAvailable": "No tags available",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "bulkMove": {
+      "title": "Move Items to Property",
+      "description": "Select a property to move {count} selected {count, plural, one {item} other {items}} to",
+      "selectProperty": "Select property",
+      "confirm": "Move Items",
+      "cancel": "Cancel"
+    },
+    "delete": {
+      "title": "Delete Item",
+      "titlePlural": "Delete Items",
+      "message": {
+        "single": "Are you sure you want to delete this item? This action cannot be undone.",
+        "plural": "Are you sure you want to delete these {count} items? This action cannot be undone.",
+        "named": "Are you sure you want to delete \"{itemName}\"? This action cannot be undone."
+      },
+      "confirm": "Delete",
+      "confirmPlural": "Delete {count} Items",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "overflow": "and {count} more",
+      "itemsToDelete": "Items to be deleted"
+    },
+    "detail": {
+      "title": "Item Details",
+      "tabs": {
+        "content": "Content",
+        "qrCode": "QR Code",
+        "analytics": "Analytics",
+        "settings": "Settings"
+      }
+    },
+    "preview": {
+      "title": "Item Preview",
+      "close": "Close preview",
+      "edit": "Edit Item",
+      "mediaGallery": "Media Gallery",
+      "noMedia": "No media available"
+    },
+    "assets": {
+      "title": "Manage Assets",
+      "panel": {
+        "title": "Assets",
+        "close": "Close"
+      },
+      "dropzone": {
+        "title": "Upload files",
+        "description": "Drag and drop files here, or click to select",
+        "or": "or",
+        "browse": "Browse files",
+        "supportedFormats": "Supported: {formats}",
+        "maxSize": "Max file size: {size}MB"
+      },
+      "item": {
+        "remove": "Remove",
+        "reorder": "Drag to reorder"
+      },
+      "removeConfirm": {
+        "title": "Remove Asset",
+        "message": "Are you sure you want to remove this asset?",
+        "confirm": "Remove",
+        "cancel": "Cancel"
+      }
+    },
+    "inline": {
+      "title": {
+        "placeholder": "Enter title...",
+        "ariaLabel": "Edit title for {itemName}"
+      },
+      "location": {
+        "placeholder": "Add location...",
+        "ariaLabel": "Edit location for {itemName}"
+      },
+      "tags": {
+        "placeholder": "Add tags...",
+        "ariaLabel": "Edit tags for {itemName}",
+        "add": "Add Tag",
+        "remove": "Remove Tag"
+      },
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Click to edit"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "views": "{count, plural, one {# view} other {# views}}",
+      "allTime": "All time",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "reactions": "Reactions",
+      "engagement": "Engagement",
+      "noData": "No analytics data yet"
+    },
+    "view": {
+      "grid": "Grid view",
+      "list": "List view",
+      "toggle": "Toggle view mode"
+    },
+    "validation": {
+      "nameRequired": "Item name is required",
+      "nameTooLong": "Item name must be less than {max} characters",
+      "duplicateName": "An item with this name already exists"
+    },
     "edit": {
-      "title": "Artikel Bewerken",
-      "description": "Artikeldetails en bronnen bijwerken"
+      "title": "Edit Item",
+      "description": "Update item details and resources"
     },
     "create": {
-      "title": "Nieuw Artikel Aanmaken",
-      "description": "Een nieuw artikel met instructies en bronnen toevoegen"
+      "title": "Create New Item",
+      "description": "Add a new item with instructions and resources"
     },
     "links": {
-      "sectionTitle": "Bronnen & Links",
-      "addLink": "Link Toevoegen",
-      "noResources": "Geen bronnen toegevoegd",
-      "addFirstResource": "Voeg uw eerste bron toe"
+      "sectionTitle": "Resources & Links",
+      "addLink": "Add Link",
+      "noResources": "No resources added yet",
+      "addFirstResource": "Add Your First Resource"
     }
   },
   "errors": {

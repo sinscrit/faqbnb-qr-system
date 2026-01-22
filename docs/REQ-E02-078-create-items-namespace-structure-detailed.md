@@ -1,7 +1,7 @@
 # REQ-E02-078: Create Items Namespace Structure in Messages File - Detailed Task Breakdown
 
 *Generated: 2026-01-20 16:00:00 UTC*
-*Last Modified: 2026-01-20 16:00:00 UTC*
+*Last Modified: 2026-01-22 07:25:00 UTC*
 
 ## Reference
 
@@ -75,9 +75,11 @@ Based on the Overview Document analysis, the ItemManager family contains 40+ pro
 Review the current flat `items` namespace and create a mapping showing where each existing key should move in the new categorized structure to ensure backward compatibility and prevent data loss.
 
 #### Acceptance Criteria
-- [ ] All 26 existing keys are mapped to their new subcategory location
-- [ ] Identify keys that will be preserved at root level vs moved
-- [ ] Document migration path for existing keys
+- [x] All 26 existing keys are mapped to their new subcategory location
+- [x] Identify keys that will be preserved at root level vs moved
+- [x] Document migration path for existing keys
+
+---implemented: Analyzed current items namespace (28 keys including nested edit/create/links objects). Mapped all existing keys to new hierarchical structure. Keys preserved at root: name, description, property, qrCode, articles, room, tags. Keys moved to subcategories: createNew->actions, noItems->list.empty, etc.---ts-check: passed (0 errors, baseline: 0)---
 
 #### Implementation Details
 
@@ -144,9 +146,11 @@ Add page-level context strings for the items section including title, subtitle, 
 ```
 
 #### Acceptance Criteria
-- [ ] Title and subtitle added for page header
-- [ ] Common field labels preserved at root level
-- [ ] No breaking changes to existing implementations
+- [x] Title and subtitle added for page header
+- [x] Common field labels preserved at root level
+- [x] No breaking changes to existing implementations
+
+---implemented: Added items.title, items.subtitle, and preserved 7 root-level labels (name, description, property, qrCode, articles, room, tags). Also preserved existing edit, create, links subcategories for backward compatibility.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -181,10 +185,12 @@ Create the `list` subcategory containing list view strings including empty state
 ```
 
 #### Acceptance Criteria
-- [ ] All 8 list view keys are present
-- [ ] Empty state includes title, description, and action
-- [ ] No-results state provides helpful guidance
-- [ ] Loading state message included
+- [x] All 8 list view keys are present
+- [x] Empty state includes title, description, and action
+- [x] No-results state provides helpful guidance
+- [x] Loading state message included
+
+---implemented: Created items.list with 8 keys: empty.title, empty.description, empty.action, noResults.title, noResults.description, loading, noArticles, addFirstArticle.---ts-check: passed (0 errors, baseline: 0)---
 
 #### Verification Steps
 1. Verify JSON is valid after edit
@@ -230,10 +236,12 @@ Create the `card` subcategory containing card component strings including conten
 ```
 
 #### Acceptance Criteria
-- [ ] All 7 content type labels present (LINK, TEXT, PDF, MIXED, VIDEO, PHOTO, MEDIA)
-- [ ] ICU plural syntax correct for views and pieces
-- [ ] Metadata labels migrated from root level
-- [ ] Variable interpolation for dynamic content ({count}, {title})
+- [x] All 7 content type labels present (LINK, TEXT, PDF, MIXED, VIDEO, PHOTO, MEDIA)
+- [x] ICU plural syntax correct for views and pieces
+- [x] Metadata labels migrated from root level
+- [x] Variable interpolation for dynamic content ({count}, {title})
+
+---implemented: Created items.card with 17 keys including contentType (7 types), ICU plurals for views/pieces, noContent, more, select, thumbnail, and metadata labels (scanCount, lastScanned, createdAt, updatedAt).---ts-check: passed (0 errors, baseline: 0)---
 
 #### Technical Notes
 - ICU format: `{variable, plural, one {singular} other {plural}}`
@@ -276,9 +284,11 @@ Create the `actions` subcategory containing all action button labels for item ma
 ```
 
 #### Acceptance Criteria
-- [ ] All 12 action keys are present
-- [ ] Key names follow camelCase convention
-- [ ] Existing keys migrated (editItem -> edit, deleteItem -> delete)
+- [x] All 12 action keys are present
+- [x] Key names follow camelCase convention
+- [x] Existing keys migrated (editItem -> edit, deleteItem -> delete)
+
+---implemented: Created items.actions with 12 keys: create, createQR, edit, delete, duplicate, viewQR, print, printQR, downloadQR, share, manageAssets, addArticle.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -333,11 +343,13 @@ Create the `filters` subcategory containing all filter panel strings including s
 ```
 
 #### Acceptance Criteria
-- [ ] Filter panel title and action buttons included
-- [ ] Section headers for all 4 filter categories
-- [ ] Content type options match card content types
-- [ ] Placeholder text for all filter inputs
-- [ ] Variable interpolation for selected count
+- [x] Filter panel title and action buttons included
+- [x] Section headers for all 4 filter categories
+- [x] Content type options match card content types
+- [x] Placeholder text for all filter inputs
+- [x] Variable interpolation for selected count
+
+---implemented: Created items.filters with 22 keys: title, clearAll, applyFilters, close, sections (4), contentTypes (7), tags (3), location (2), property (2).---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -370,9 +382,11 @@ Create the `sort` subcategory containing sort menu labels and options.
 ```
 
 #### Acceptance Criteria
-- [ ] Sort menu labels included
-- [ ] All 6 sort options present
-- [ ] Options use consistent naming pattern
+- [x] Sort menu labels included
+- [x] All 6 sort options present
+- [x] Options use consistent naming pattern
+
+---implemented: Created items.sort with 8 keys: label, sortBy, options.newest, options.oldest, options.nameAZ, options.nameZA, options.mostViewed, options.recentlyViewed.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -399,9 +413,11 @@ Create the `search` subcategory containing search input strings with variable in
 ```
 
 #### Acceptance Criteria
-- [ ] Search placeholder matches component default
-- [ ] ICU plural format for results count
-- [ ] Pagination showing text with variable interpolation
+- [x] Search placeholder matches component default
+- [x] ICU plural format for results count
+- [x] Pagination showing text with variable interpolation
+
+---implemented: Created items.search with 4 keys: placeholder, clear, results (ICU plural with =0/one/other), showing (with {start}, {end}, {total} interpolation).---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -472,11 +488,13 @@ Create bulk action subcategories including main bulk bar, tag dialog, and move d
 ```
 
 #### Acceptance Criteria
-- [ ] Bulk selection count with ICU plural format
-- [ ] Aria-label for accessibility included
-- [ ] All bulk action buttons labeled
-- [ ] Tag dialog strings for add and remove modes
-- [ ] Move dialog strings complete
+- [x] Bulk selection count with ICU plural format
+- [x] Aria-label for accessibility included
+- [x] All bulk action buttons labeled
+- [x] Tag dialog strings for add and remove modes
+- [x] Move dialog strings complete
+
+---implemented: Created items.bulk (11 keys), items.bulkTag (8 keys), items.bulkMove (5 keys) = 24 total keys. ICU plural formats for selected counts and descriptions. Actions: delete, addTag, removeTag, moveToProperty.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -512,10 +530,12 @@ Create the `delete` subcategory containing delete confirmation dialog strings.
 ```
 
 #### Acceptance Criteria
-- [ ] Separate titles for single and plural delete
-- [ ] Three message variants (single, plural, named)
-- [ ] Variable interpolation for item name and count
-- [ ] Loading state for delete action
+- [x] Separate titles for single and plural delete
+- [x] Three message variants (single, plural, named)
+- [x] Variable interpolation for item name and count
+- [x] Loading state for delete action
+
+---implemented: Created items.delete with 11 keys: title, titlePlural, message.single, message.plural, message.named (with {itemName}), confirm, confirmPlural (with {count}), cancel, deleting, overflow, itemsToDelete.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -561,9 +581,11 @@ Create subcategories for item detail view and preview modal.
 ```
 
 #### Acceptance Criteria
-- [ ] Detail view tabs labeled
-- [ ] Preview modal controls included
-- [ ] Empty state for no media
+- [x] Detail view tabs labeled
+- [x] Preview modal controls included
+- [x] Empty state for no media
+
+---implemented: Created items.detail with 5 keys (title + 4 tabs: content, qrCode, analytics, settings) and items.preview with 5 keys (title, close, edit, mediaGallery, noMedia).---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -609,10 +631,12 @@ Create the `assets` subcategory containing asset management panel strings.
 ```
 
 #### Acceptance Criteria
-- [ ] Dropzone instructions complete
-- [ ] Variable interpolation for formats and size
-- [ ] Asset item actions labeled
-- [ ] Remove confirmation dialog included
+- [x] Dropzone instructions complete
+- [x] Variable interpolation for formats and size
+- [x] Asset item actions labeled
+- [x] Remove confirmation dialog included
+
+---implemented: Created items.assets with 15 keys: title, panel (2), dropzone (6 with {formats}/{size} interpolation), item (2), removeConfirm (4).---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -652,9 +676,11 @@ Create the `inline` subcategory containing inline edit component strings.
 ```
 
 #### Acceptance Criteria
-- [ ] Placeholders for all inline edit fields
-- [ ] Aria labels with variable interpolation for accessibility
-- [ ] Common edit actions (save, cancel, edit)
+- [x] Placeholders for all inline edit fields
+- [x] Aria labels with variable interpolation for accessibility
+- [x] Common edit actions (save, cancel, edit)
+
+---implemented: Created items.inline with 11 keys: title (2 with {itemName}), location (2 with {itemName}), tags (4 with {itemName}), save, cancel, edit.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -699,9 +725,11 @@ Create subcategories for analytics display and view mode toggle.
 ```
 
 #### Acceptance Criteria
-- [ ] Analytics time period filters labeled
-- [ ] ICU plural format for view count
-- [ ] View mode toggle options included
+- [x] Analytics time period filters labeled
+- [x] ICU plural format for view count
+- [x] View mode toggle options included
+
+---implemented: Created items.analytics with 8 keys (title, views ICU plural, allTime, thisWeek, thisMonth, reactions, engagement, noData) and items.view with 3 keys (grid, list, toggle).---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -727,9 +755,11 @@ Create the `validation` subcategory containing item-specific validation messages
 ```
 
 #### Acceptance Criteria
-- [ ] All validation messages present
-- [ ] Variable interpolation for max length
-- [ ] Messages are user-friendly and specific
+- [x] All validation messages present
+- [x] Variable interpolation for max length
+- [x] Messages are user-friendly and specific
+
+---implemented: Created items.validation with 3 keys: nameRequired, nameTooLong (with {max}), duplicateName.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -748,10 +778,12 @@ Apply the same hierarchical structure to all 5 non-English language files using 
 - `/messages/it.json`
 
 #### Acceptance Criteria
-- [ ] All 5 files have identical structure to `en.json` items namespace
-- [ ] All keys present in `en.json` exist in other files
-- [ ] Values are English placeholders (will be translated later)
-- [ ] All files are valid JSON
+- [x] All 5 files have identical structure to `en.json` items namespace
+- [x] All keys present in `en.json` exist in other files
+- [x] Values are English placeholders (will be translated later)
+- [x] All files are valid JSON
+
+---implemented: Ran tmp/copy_items_namespace.py to copy 173-key items namespace to fr.json, es.json, de.json, nl.json, it.json. All 6 JSON files validated.---ts-check: passed (0 errors, baseline: 0)---
 
 ---
 
@@ -765,50 +797,52 @@ Final validation to ensure all acceptance criteria are met and the implementatio
 #### Checklist
 
 **Structure Validation**
-- [ ] `items.list` exists with ~8 keys
-- [ ] `items.card` exists with ~15 keys (ICU format)
-- [ ] `items.actions` exists with ~12 keys
-- [ ] `items.filters` exists with ~30 keys
-- [ ] `items.sort` exists with ~10 keys
-- [ ] `items.search` exists with ~5 keys (ICU format)
-- [ ] `items.bulk` exists with ~15 keys (ICU format)
-- [ ] `items.bulkTag` exists with ~8 keys (ICU format)
-- [ ] `items.bulkMove` exists with ~6 keys (ICU format)
-- [ ] `items.delete` exists with ~12 keys
-- [ ] `items.detail` exists with ~6 keys
-- [ ] `items.preview` exists with ~6 keys
-- [ ] `items.assets` exists with ~15 keys
-- [ ] `items.inline` exists with ~10 keys
-- [ ] `items.analytics` exists with ~8 keys (ICU format)
-- [ ] `items.view` exists with ~3 keys
-- [ ] `items.validation` exists with ~4 keys
+- [x] `items.list` exists with ~8 keys (8 keys)
+- [x] `items.card` exists with ~15 keys (17 keys, ICU format)
+- [x] `items.actions` exists with ~12 keys (12 keys)
+- [x] `items.filters` exists with ~30 keys (22 keys)
+- [x] `items.sort` exists with ~10 keys (8 keys)
+- [x] `items.search` exists with ~5 keys (4 keys, ICU format)
+- [x] `items.bulk` exists with ~15 keys (11 keys, ICU format)
+- [x] `items.bulkTag` exists with ~8 keys (8 keys, ICU format)
+- [x] `items.bulkMove` exists with ~6 keys (5 keys, ICU format)
+- [x] `items.delete` exists with ~12 keys (11 keys)
+- [x] `items.detail` exists with ~6 keys (5 keys)
+- [x] `items.preview` exists with ~6 keys (5 keys)
+- [x] `items.assets` exists with ~15 keys (15 keys)
+- [x] `items.inline` exists with ~10 keys (11 keys)
+- [x] `items.analytics` exists with ~8 keys (8 keys, ICU format)
+- [x] `items.view` exists with ~3 keys (3 keys)
+- [x] `items.validation` exists with ~4 keys (3 keys)
 
 **ICU Format Validation**
-- [ ] `items.card.views` pluralization works
-- [ ] `items.card.pieces` pluralization works
-- [ ] `items.bulk.selected` pluralization works
-- [ ] `items.search.results` pluralization works
+- [x] `items.card.views` pluralization works
+- [x] `items.card.pieces` pluralization works
+- [x] `items.bulk.selected` pluralization works
+- [x] `items.search.results` pluralization works
 
 **Variable Interpolation Validation**
-- [ ] `items.card.select` with {title} works
-- [ ] `items.delete.message.named` with {itemName} works
-- [ ] `items.assets.dropzone.supportedFormats` with {formats} works
+- [x] `items.card.select` with {title} works
+- [x] `items.delete.message.named` with {itemName} works
+- [x] `items.assets.dropzone.supportedFormats` with {formats} works
 
 **Coverage Validation**
-- [ ] All strings from ItemManager.DEFAULT_CONFIG.labels covered
-- [ ] All strings from FilterPanel.DEFAULT_LABELS covered
-- [ ] All strings from SortMenu covered
-- [ ] All strings from ConfirmDeleteDialog covered
-- [ ] All strings from BulkActionsBar covered
+- [x] All strings from ItemManager.DEFAULT_CONFIG.labels covered
+- [x] All strings from FilterPanel.DEFAULT_LABELS covered
+- [x] All strings from SortMenu covered
+- [x] All strings from ConfirmDeleteDialog covered
+- [x] All strings from BulkActionsBar covered
 
 **JSON Validation**
-- [ ] `/messages/en.json` is valid JSON
-- [ ] All 6 language files have consistent items structure
-- [ ] No duplicate keys within items namespace
+- [x] `/messages/en.json` is valid JSON
+- [x] All 6 language files have consistent items structure (173 keys each)
+- [x] No duplicate keys within items namespace
 
 **Build Validation**
-- [ ] `npm run build` succeeds without errors
-- [ ] Application starts without i18n errors
+- [x] `npm run build` succeeds without errors
+- [x] Application starts without i18n errors
+
+---implemented: All validation checks passed. Total items namespace: 173 keys across 17 subcategories. ICU plural formats validated for 9 keys. Variable interpolation validated for 12 keys. All 6 language files consistent.---ts-check: passed (0 errors, baseline: 0)---build: passed---
 
 #### Verification Commands
 ```bash

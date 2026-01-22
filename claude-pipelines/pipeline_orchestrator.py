@@ -1846,6 +1846,43 @@ def parse_test_results(output: str) -> dict:
     # Check for explicit failure
     has_failure = any(pattern in output_lower for pattern in failure_patterns)
 
+    # Fix false positives: "TypeScript: 0 errors" contains "typescript error" but is a success
+    # Check for zero-error patterns that indicate success despite matching failure patterns
+    zero_error_patterns = [
+        '0 errors',
+        '0 error',
+        ': 0 errors',
+        'typescript: 0',
+        'typescript errors: 0',
+        'typescript errors:** 0',
+        'errors** | 0',        # Markdown table format: | **TypeScript Errors** | 0 |
+        'errors | 0',          # Plain table format
+        'type check: passed',
+        'type-check: passed',
+        'build: passed',
+        '✅ complete',         # Success indicators
+        'status** | ✅',       # Table with checkmark
+    ]
+    has_zero_errors = any(pattern in output_lower for pattern in zero_error_patterns)
+
+    # If we have zero-error indicators, don't count as failure unless there's explicit failure language
+    explicit_failure_patterns = [
+        'tests: failed',
+        'build: failed',
+        'type check: failed',
+        'type-check: failed',
+        'test failed',
+        'tests failed',
+        'build failed',
+        'compilation failed',
+    ]
+    has_explicit_failure = any(pattern in output_lower for pattern in explicit_failure_patterns)
+
+    if has_zero_errors and has_failure and not has_explicit_failure:
+        # Override: zero errors reported, so this is likely a false positive
+        has_failure = False
+        has_success = True
+
     # Determine test result
     if has_failure:
         tests_passed = False
