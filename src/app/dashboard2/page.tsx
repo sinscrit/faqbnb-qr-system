@@ -41,9 +41,7 @@ import { usePropertyContext } from '@/hooks/usePropertyContext';
 
 export default function Dashboard2Page() {
   const router = useRouter();
-  const tNotifications = useTranslations('common.notifications');
-  const tEmpty = useTranslations('common.emptyStates');
-  const tActions = useTranslations('common.actions');
+  const t = useTranslations('dashboard');
   const { user, getUserProperties, userProperties } = useAuth();
 
   // REQ-136: Get user preferences
@@ -122,7 +120,7 @@ export default function Dashboard2Page() {
     // Close the modal
     setAddModalOpen(false);
     // Show success message
-    setSuccessMessage(tNotifications('success.propertyCreated'));
+    setSuccessMessage(t('messages.propertyCreated'));
     // Clear after 3 seconds
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -175,9 +173,9 @@ export default function Dashboard2Page() {
         <div className="bg-white rounded-xl shadow-sm">
           <EmptyStateCard
             icon={Home}
-            title={tEmpty('dashboard.welcome.title')}
-            description={tEmpty('dashboard.welcome.description')}
-            actionLabel={tActions('addProperty')}
+            title={t('empty.newUserWelcome')}
+            description={t('empty.newUserDescription')}
+            actionLabel={t('empty.newUserAction')}
             onAction={handleAddProperty}
             variant="welcome"
           />
@@ -193,8 +191,8 @@ export default function Dashboard2Page() {
                 onPreferenceChange={setPreference}
               />
             </div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {firstName}!</h1>
-            <p className="text-white/80 text-lg">Create and manage your QR code items</p>
+            <h1 className="text-3xl font-bold mb-2">{t('welcome', { name: firstName })}</h1>
+            <p className="text-white/80 text-lg">{t('subtitle')}</p>
           </div>
 
           {/* REQ-142: Property selection moved to header PropertyDropdown */}
