@@ -2,58 +2,64 @@ import { notFound } from 'next/navigation';
 import ItemDisplay from '@/components/ItemDisplay';
 import { Metadata } from 'next';
 import { getItemByPublicId } from '@/data/demo-data';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 interface PageProps {
   params: Promise<{ publicId: string }>;
 }
 
-// Generate metadata for SEO
+// Generate metadata for SEO with i18n support
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const t = await getTranslations('metadata.item');
+  const locale = await getLocale();
+
   try {
     const { publicId } = await params;
-    
+
     // Try API first
     const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/items/${publicId}`, {
       next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
-    
+
     if (response.ok) {
       const { data: item } = await response.json();
       return {
         metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
-        title: `${item.name} - FAQBNB`,
-        description: item.description || `View instructions and resources for ${item.name}`,
+        title: t('view.title', { itemName: item.name }),
+        description: item.description || t('view.description', { itemName: item.name }),
         openGraph: {
-          title: item.name,
-          description: item.description || `View instructions and resources for ${item.name}`,
+          title: t('view.ogTitle', { itemName: item.name }),
+          description: item.description || t('view.ogDescription', { itemName: item.name }),
           type: 'website',
+          locale: locale,
         },
       };
     }
-    
+
     // Fallback to demo data
     const demoItem = getItemByPublicId(publicId);
     if (demoItem) {
       return {
         metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://faqbnb.com' : 'http://localhost:3000'),
-        title: `${demoItem.name} - FAQBNB`,
-        description: demoItem.description || `View instructions and resources for ${demoItem.name}`,
+        title: t('view.title', { itemName: demoItem.name }),
+        description: demoItem.description || t('view.description', { itemName: demoItem.name }),
         openGraph: {
-          title: demoItem.name,
-          description: demoItem.description || `View instructions and resources for ${demoItem.name}`,
+          title: t('view.ogTitle', { itemName: demoItem.name }),
+          description: demoItem.description || t('view.ogDescription', { itemName: demoItem.name }),
           type: 'website',
+          locale: locale,
         },
       };
     }
 
     return {
-      title: 'Item Not Found',
-      description: 'The requested item could not be found.',
+      title: t('notFound.title'),
+      description: t('notFound.description'),
     };
   } catch (error) {
     return {
-      title: 'FAQBNB',
-      description: 'View item instructions and resources',
+      title: t('notFound.title'),
+      description: t('notFound.description'),
     };
   }
 }

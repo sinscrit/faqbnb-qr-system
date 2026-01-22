@@ -725,10 +725,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 **Note:** Keep the existing item fetching logic; only modify the metadata string sources.
 
 **Verification:**
-- [ ] Dynamic item names interpolated correctly
-- [ ] Not-found case returns translated metadata
-- [ ] OpenGraph includes locale
-- [ ] Item's custom description takes precedence over generic translation
+- [x] Dynamic item names interpolated correctly ---implemented: Using t('view.title', { itemName: item.name }) etc.---
+- [x] Not-found case returns translated metadata ---implemented: Returns t('notFound.title') and t('notFound.description')---
+- [x] OpenGraph includes locale ---implemented: Added locale from getLocale()---
+- [x] Item's custom description takes precedence over generic translation ---implemented: item.description || t('view.description', { itemName: ... })---
 
 ---
 
