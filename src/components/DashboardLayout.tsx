@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth, useAccountContext } from '@/contexts/AuthContext';
 // REQ-023: Unified Route Architecture - Navigation Integration
 import { DashboardSection, PERMISSIONS } from '@/types/permissions';
@@ -26,6 +27,10 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  // REQ-E02-053: Translation hook for i18n
+  const t = useTranslations('dashboard');
+
   const {
     user,
     loading: authLoading,
@@ -176,7 +181,7 @@ export function DashboardLayout({
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">
-            {permissionsLoading ? 'Loading permissions...' : 'Loading dashboard...'}
+            {permissionsLoading ? t('loading.permissions') : t('loading.dashboard')}
           </p>
         </div>
       </div>
@@ -203,20 +208,20 @@ export function DashboardLayout({
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h1>
-          <p className="text-gray-600 mb-6">Please log in to access the dashboard.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('auth.required')}</h1>
+          <p className="text-gray-600 mb-6">{t('auth.pleaseLogin')}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => window.location.href = '/'}
               className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
-              Go to Home
+              {t('auth.goHome')}
             </button>
             <button
               onClick={() => window.location.href = '/login'}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Go to Login
+              {t('auth.goLogin')}
             </button>
           </div>
         </div>
@@ -244,12 +249,12 @@ export function DashboardLayout({
                         ? 'bg-green-100 text-green-800'
                         : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {currentDashboardSection === DashboardSection.dashboard && '📊 Dashboard'}
-                      {currentDashboardSection === DashboardSection.items && '📦 Items'}
-                      {currentDashboardSection === DashboardSection.instructions && '📄 Guides'}
-                      {currentDashboardSection === DashboardSection.properties && '🏠 Properties'}
-                      {currentDashboardSection === DashboardSection.analytics && '📈 Analytics'}
-                      {currentDashboardSection === DashboardSection.systemAdmin && '👑 System Admin'}
+                      {currentDashboardSection === DashboardSection.dashboard && `📊 ${t('section.dashboard')}`}
+                      {currentDashboardSection === DashboardSection.items && `📦 ${t('section.items')}`}
+                      {currentDashboardSection === DashboardSection.instructions && `📄 ${t('section.guides')}`}
+                      {currentDashboardSection === DashboardSection.properties && `🏠 ${t('section.properties')}`}
+                      {currentDashboardSection === DashboardSection.analytics && `📈 ${t('section.analytics')}`}
+                      {currentDashboardSection === DashboardSection.systemAdmin && `👑 ${t('section.systemAdmin')}`}
                     </span>
                   )}
                 </div>
@@ -257,14 +262,14 @@ export function DashboardLayout({
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                   }`}>
-                    {isAdmin ? '👑 System Admin' : '👤 User'}
+                    {isAdmin ? `👑 ${t('role.systemAdmin')}` : `👤 ${t('role.user')}`}
                   </span>
                   {accountRole && (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {accountRole === 'owner' && '🏠 Owner'}
-                      {accountRole === 'admin' && '⚙️ Admin'}
-                      {accountRole === 'member' && '👥 Member'}
-                      {accountRole === 'viewer' && '👁️ Viewer'}
+                      {accountRole === 'owner' && `🏠 ${t('role.owner')}`}
+                      {accountRole === 'admin' && `⚙️ ${t('role.admin')}`}
+                      {accountRole === 'member' && `👥 ${t('role.member')}`}
+                      {accountRole === 'viewer' && `👁️ ${t('role.viewer')}`}
                     </span>
                   )}
                   <span className="text-sm text-gray-600">{user.email}</span>
@@ -293,9 +298,9 @@ export function DashboardLayout({
               <button
                 onClick={() => signOut()}
                 className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-50 whitespace-nowrap"
-                title="Sign out of your account"
+                title={t('auth.logoutTitle')}
               >
-                Logout
+                {t('auth.logout')}
               </button>
             </div>
           </div>
