@@ -9,6 +9,8 @@ export interface AuthUser {
   fullName?: string;
   role?: string;
   isSystemAdmin?: boolean; // Added for REQ-016: System Admin Back Office
+  profilePicture?: string; // Added for REQ-E02-015: Profile components
+  bio?: string | null; // Added for REQ-E02-015: Profile components
   // Account context for multi-tenant system
   currentAccount?: {
     id: string;

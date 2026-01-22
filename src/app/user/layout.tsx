@@ -97,6 +97,7 @@ function UserLayoutContent({ children }: { children: React.ReactNode }) {
       { name: 'Items', href: '/user/items', icon: '📦' },
       { name: 'Properties', href: '/user/properties', icon: '🏠' },
       { name: 'Analytics', href: '/user/analytics', icon: '📈' },
+      { name: t('settings.profile.title'), href: '/user/profile', icon: '👤' },
       { name: t('settings.title'), href: '/user/account', icon: '⚙️' },
       // Admin users can also access admin features
       ...(isAdmin ? [

@@ -49,6 +49,8 @@ export interface User {
   role: string | null;
   is_admin?: boolean | null;
   profilePicture?: string;
+  // Future feature - not yet in database
+  bio?: string | null;
   authProvider?: string;
   created_at: string | null;
   updated_at: string | null;
