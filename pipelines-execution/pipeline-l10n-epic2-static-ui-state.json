@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824842",
-  "updated_at": "2026-01-22T20:15:17.787422",
+  "updated_at": "2026-01-22T20:47:44.120932",
   "status": "running",
   "current_stage": "request",
-  "current_task_index": 66,
+  "current_task_index": 68,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic2-Static-UI-Translation.md",
   "source_hash": "6ccca79abc5e79ec5b6d47a73ab416a7",
   "tasks": [
@@ -2305,10 +2305,10 @@
       "title": "Update PropertySelector",
       "description": "",
       "raw_match": "- [ ] **Task 2F.5:** Update PropertySelector",
-      "status": "processing",
+      "status": "completed",
       "request_id": "REQ-E02-011",
       "error": null,
-      "processed_at": "2026-01-20T01:24:50.378026",
+      "processed_at": "2026-01-22T20:25:38.426132",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-011",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-011-update-propertyselector-overview.md",
@@ -2330,7 +2330,16 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": true,
+        "test_summary": "Tests passed successfully"
+      },
+      "tests_ran": true,
+      "tests_passed": true,
+      "test_summary": "Tests passed successfully",
+      "implementation_completed": true
     },
     {
       "id": "2F.6",
@@ -2339,10 +2348,10 @@
       "title": "Generate translations for 5 non-English languages",
       "description": "",
       "raw_match": "- [ ] **Task 2F.6:** Generate translations for 5 non-English languages",
-      "status": "pending",
+      "status": "completed",
       "request_id": "REQ-E02-012",
       "error": null,
-      "processed_at": "2026-01-20T01:30:43.775563",
+      "processed_at": "2026-01-22T20:36:26.855059",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic2.md#REQ-E02-012",
         "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E02-012-generate-translations-for-5-non-english-languages-overview.md",
@@ -2364,7 +2373,16 @@
         "qa_validation": {
           "status": "pending"
         }
-      }
+      },
+      "test_results": {
+        "tests_ran": true,
+        "tests_passed": null,
+        "test_summary": "Tests executed but result unclear"
+      },
+      "tests_ran": true,
+      "tests_passed": null,
+      "test_summary": "Tests executed but result unclear",
+      "implementation_completed": true
     },
     {
       "id": "2G.1",
@@ -2373,7 +2391,7 @@
       "title": "Create `settings` namespace structure",
       "description": "",
       "raw_match": "\n- [ ] **Task 2G.1:** Create `settings` namespace structure",
-      "status": "pending",
+      "status": "processing",
       "request_id": "REQ-E02-013",
       "error": null,
       "processed_at": "2026-01-20T01:37:41.072528",
@@ -2942,7 +2960,7 @@
     }
   ],
   "metadata": {
-    "total_requests_generated": 11,
+    "total_requests_generated": 13,
     "last_request_id": "REQ-E02-085",
     "first_request_id": "REQ-E02-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic2-static-ui.yaml"
