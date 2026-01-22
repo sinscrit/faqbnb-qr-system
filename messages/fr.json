@@ -7,6 +7,9 @@
     "footer": {
       "copyright": "© {year} FAQBNB. Tous droits réservés."
     },
+    "branding": {
+      "logoAlt": "Logo FAQBNB"
+    },
     "loading": {
       "generic": {
         "loading": "Chargement...",
@@ -780,17 +783,25 @@
       "requestAccessCode": "Request Access Code"
     },
     "complete": {
-      "title": "Almost there!",
-      "subtitle": "Your Google sign-in was successful, but we need an access code to complete your registration.",
-      "pageSubtitle": "Complete Registration",
-      "signedInAs": "Signed in as:",
-      "enterCodeHint": "Enter your access code to complete account setup.",
-      "submitButton": "Complete Registration",
-      "submittingButton": "Completing Registration...",
-      "successTitle": "Registration Complete!",
-      "successMessage": "Your account has been set up successfully.",
-      "redirectingToDashboard": "Redirecting to dashboard...",
-      "wrongAccount": "Wrong account? Sign out and try again."
+      "title": "Presque terminé !",
+      "subtitle": "Compléter l'inscription",
+      "description": "Votre connexion Google a réussi, mais nous avons besoin d'un code d'accès pour compléter votre inscription.",
+      "pageSubtitle": "Compléter l'inscription",
+      "checkingAuth": "Vérification de l'authentification...",
+      "signedInAs": "Connecté en tant que :",
+      "enterAccessCodeHint": "Entrez votre code d'accès pour terminer la configuration du compte.",
+      "wrongAccount": "Mauvais compte ? Déconnectez-vous et réessayez.",
+      "requestAccessCode": "Demander un code d'accès",
+      "successTitle": "Inscription terminée !",
+      "successMessage": "Votre compte a été configuré avec succès.",
+      "redirectingToDashboard": "Redirection vers le tableau de bord...",
+      "form": {
+        "accessCodeLabel": "Code d'accès",
+        "accessCodePlaceholder": "Entrez votre code d'accès",
+        "accessCodeHint": "Consultez votre email pour le code d'accès de votre invitation.",
+        "submitButton": "Compléter l'inscription",
+        "submitting": "Inscription en cours..."
+      }
     },
     "success": {
       "pageSubtitle": "Registration Complete",

@@ -7,6 +7,9 @@
     "footer": {
       "copyright": "© {year} FAQBNB. Tutti i diritti riservati."
     },
+    "branding": {
+      "logoAlt": "Logo FAQBNB"
+    },
     "loading": {
       "generic": {
         "loading": "Caricamento...",
@@ -790,17 +793,25 @@
       "requestAccessCode": "Request Access Code"
     },
     "complete": {
-      "title": "Almost there!",
-      "subtitle": "Your Google sign-in was successful, but we need an access code to complete your registration.",
-      "pageSubtitle": "Complete Registration",
-      "signedInAs": "Signed in as:",
-      "enterCodeHint": "Enter your access code to complete account setup.",
-      "submitButton": "Complete Registration",
-      "submittingButton": "Completing Registration...",
-      "successTitle": "Registration Complete!",
-      "successMessage": "Your account has been set up successfully.",
-      "redirectingToDashboard": "Redirecting to dashboard...",
-      "wrongAccount": "Wrong account? Sign out and try again."
+      "title": "Quasi fatto!",
+      "subtitle": "Completa la registrazione",
+      "description": "L'accesso con Google è riuscito, ma abbiamo bisogno di un codice di accesso per completare la registrazione.",
+      "pageSubtitle": "Completa la registrazione",
+      "checkingAuth": "Verifica autenticazione...",
+      "signedInAs": "Connesso come:",
+      "enterAccessCodeHint": "Inserisci il tuo codice di accesso per completare la configurazione dell'account.",
+      "wrongAccount": "Account sbagliato? Disconnettiti e riprova.",
+      "requestAccessCode": "Richiedi codice di accesso",
+      "successTitle": "Registrazione completata!",
+      "successMessage": "Il tuo account è stato configurato con successo.",
+      "redirectingToDashboard": "Reindirizzamento alla dashboard...",
+      "form": {
+        "accessCodeLabel": "Codice di accesso",
+        "accessCodePlaceholder": "Inserisci il tuo codice di accesso",
+        "accessCodeHint": "Controlla la tua email per il codice di accesso dall'invito.",
+        "submitButton": "Completa la registrazione",
+        "submitting": "Completamento registrazione..."
+      }
     },
     "success": {
       "pageSubtitle": "Registration Complete",

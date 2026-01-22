@@ -44,6 +44,11 @@ function CompleteRegistrationContent() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // Translation hooks for internationalization
+  const t = useTranslations('auth.register.complete');
+  const tAuth = useTranslations('auth');
+  const tCommon = useTranslations('common');
+
   const emailFromUrl = searchParams.get('email') || user?.email || '';
 
   const DEBUG_PREFIX = '🔧 COMPLETE_REGISTRATION:';
@@ -146,7 +151,7 @@ function CompleteRegistrationContent() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Checking authentication...</p>
+          <p className="text-gray-600">{t('checkingAuth')}</p>
         </div>
       </div>
     );
@@ -159,9 +164,9 @@ function CompleteRegistrationContent() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Complete!</h2>
-            <p className="text-gray-600 mb-4">Your account has been set up successfully.</p>
-            <p className="text-sm text-gray-500">Redirecting to dashboard...</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('successTitle')}</h2>
+            <p className="text-gray-600 mb-4">{t('successMessage')}</p>
+            <p className="text-sm text-gray-500">{t('redirectingToDashboard')}</p>
           </div>
         </div>
       </div>
@@ -176,22 +181,22 @@ function CompleteRegistrationContent() {
           <Link href="/" className="inline-flex items-center space-x-3 mb-6">
             <Image
               src="/faqbnb_logoshort.png"
-              alt="FAQBNB Logo"
+              alt={tCommon('branding.logoAlt')}
               width={48}
               height={48}
               className="rounded-lg"
             />
             <div className="text-left">
               <h1 className="text-2xl font-bold text-gray-900">FAQBNB</h1>
-              <p className="text-sm text-gray-600">Complete Registration</p>
+              <p className="text-sm text-gray-600">{t('subtitle')}</p>
             </div>
           </Link>
 
           <h2 className="text-3xl font-bold text-gray-900">
-            Almost there!
+            {t('title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Your Google sign-in was successful, but we need an access code to complete your registration.
+            {t('description')}
           </p>
         </div>
 
@@ -203,10 +208,10 @@ function CompleteRegistrationContent() {
               <Shield className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="ml-3">
                 <p className="text-sm text-blue-800">
-                  <strong>Signed in as:</strong> {emailFromUrl}
+                  <strong>{t('signedInAs')}</strong> {emailFromUrl}
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
-                  Enter your access code to complete account setup.
+                  {t('enterAccessCodeHint')}
                 </p>
               </div>
             </div>
@@ -228,7 +233,7 @@ function CompleteRegistrationContent() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="accessCode" className="block text-sm font-medium text-gray-700">
-                Access Code
+                {t('form.accessCodeLabel')}
               </label>
               <div className="mt-1">
                 <input
@@ -237,14 +242,14 @@ function CompleteRegistrationContent() {
                   name="accessCode"
                   value={accessCode}
                   onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-                  placeholder="Enter your access code"
+                  placeholder={t('form.accessCodePlaceholder')}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm font-mono tracking-wider"
                   required
                   disabled={isSubmitting}
                 />
               </div>
               <p className="mt-2 text-xs text-gray-500">
-                Check your email for the access code from your invitation.
+                {t('form.accessCodeHint')}
               </p>
             </div>
 
@@ -257,10 +262,10 @@ function CompleteRegistrationContent() {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Completing Registration...
+                    {t('form.submitting')}
                   </>
                 ) : (
-                  'Complete Registration'
+                  t('form.submitButton')
                 )}
               </button>
             </div>
@@ -269,14 +274,14 @@ function CompleteRegistrationContent() {
           {/* Sign Out Option */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center mb-3">
-              Wrong account? Sign out and try again.
+              {t('wrongAccount')}
             </p>
             <button
               onClick={handleSignOut}
               className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
+              {tAuth('signOut')}
             </button>
           </div>
         </div>
@@ -289,19 +294,19 @@ function CompleteRegistrationContent() {
               className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               <Home className="w-4 h-4 mr-1" />
-              Back to Home
+              {tCommon('navigation.backToHome')}
             </Link>
             <Link
               href="/request-access"
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Request Access Code
+              {t('requestAccessCode')}
             </Link>
           </div>
 
           <div className="mt-4">
             <p className="text-xs text-gray-500">
-              2024 FAQBNB. All rights reserved.
+              {tCommon('footer.copyright', { year: new Date().getFullYear() })}
             </p>
           </div>
         </div>

@@ -7,6 +7,9 @@
     "footer": {
       "copyright": "© {year} FAQBNB. Alle Rechte vorbehalten."
     },
+    "branding": {
+      "logoAlt": "FAQBNB-Logo"
+    },
     "loading": {
       "generic": {
         "loading": "Wird geladen...",
@@ -780,17 +783,25 @@
       "requestAccessCode": "Request Access Code"
     },
     "complete": {
-      "title": "Almost there!",
-      "subtitle": "Your Google sign-in was successful, but we need an access code to complete your registration.",
-      "pageSubtitle": "Complete Registration",
-      "signedInAs": "Signed in as:",
-      "enterCodeHint": "Enter your access code to complete account setup.",
-      "submitButton": "Complete Registration",
-      "submittingButton": "Completing Registration...",
-      "successTitle": "Registration Complete!",
-      "successMessage": "Your account has been set up successfully.",
-      "redirectingToDashboard": "Redirecting to dashboard...",
-      "wrongAccount": "Wrong account? Sign out and try again."
+      "title": "Fast geschafft!",
+      "subtitle": "Registrierung abschließen",
+      "description": "Ihre Google-Anmeldung war erfolgreich, aber wir benötigen einen Zugangscode, um Ihre Registrierung abzuschließen.",
+      "pageSubtitle": "Registrierung abschließen",
+      "checkingAuth": "Authentifizierung wird überprüft...",
+      "signedInAs": "Angemeldet als:",
+      "enterAccessCodeHint": "Geben Sie Ihren Zugangscode ein, um die Kontoeinrichtung abzuschließen.",
+      "wrongAccount": "Falsches Konto? Abmelden und erneut versuchen.",
+      "requestAccessCode": "Zugangscode anfordern",
+      "successTitle": "Registrierung abgeschlossen!",
+      "successMessage": "Ihr Konto wurde erfolgreich eingerichtet.",
+      "redirectingToDashboard": "Weiterleitung zum Dashboard...",
+      "form": {
+        "accessCodeLabel": "Zugangscode",
+        "accessCodePlaceholder": "Geben Sie Ihren Zugangscode ein",
+        "accessCodeHint": "Überprüfen Sie Ihre E-Mail auf den Zugangscode aus Ihrer Einladung.",
+        "submitButton": "Registrierung abschließen",
+        "submitting": "Registrierung wird abgeschlossen..."
+      }
     },
     "success": {
       "pageSubtitle": "Registration Complete",

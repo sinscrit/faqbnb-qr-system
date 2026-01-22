@@ -7,6 +7,9 @@
     "footer": {
       "copyright": "© {year} FAQBNB. Alle rechten voorbehouden."
     },
+    "branding": {
+      "logoAlt": "FAQBNB-logo"
+    },
     "loading": {
       "generic": {
         "loading": "Laden...",
@@ -780,17 +783,25 @@
       "requestAccessCode": "Request Access Code"
     },
     "complete": {
-      "title": "Almost there!",
-      "subtitle": "Your Google sign-in was successful, but we need an access code to complete your registration.",
-      "pageSubtitle": "Complete Registration",
-      "signedInAs": "Signed in as:",
-      "enterCodeHint": "Enter your access code to complete account setup.",
-      "submitButton": "Complete Registration",
-      "submittingButton": "Completing Registration...",
-      "successTitle": "Registration Complete!",
-      "successMessage": "Your account has been set up successfully.",
-      "redirectingToDashboard": "Redirecting to dashboard...",
-      "wrongAccount": "Wrong account? Sign out and try again."
+      "title": "Bijna klaar!",
+      "subtitle": "Registratie voltooien",
+      "description": "Je Google-aanmelding was succesvol, maar we hebben een toegangscode nodig om je registratie te voltooien.",
+      "pageSubtitle": "Registratie voltooien",
+      "checkingAuth": "Authenticatie controleren...",
+      "signedInAs": "Ingelogd als:",
+      "enterAccessCodeHint": "Voer je toegangscode in om het instellen van je account te voltooien.",
+      "wrongAccount": "Verkeerd account? Log uit en probeer opnieuw.",
+      "requestAccessCode": "Toegangscode aanvragen",
+      "successTitle": "Registratie voltooid!",
+      "successMessage": "Je account is succesvol ingesteld.",
+      "redirectingToDashboard": "Doorsturen naar dashboard...",
+      "form": {
+        "accessCodeLabel": "Toegangscode",
+        "accessCodePlaceholder": "Voer je toegangscode in",
+        "accessCodeHint": "Controleer je e-mail voor de toegangscode uit je uitnodiging.",
+        "submitButton": "Registratie voltooien",
+        "submitting": "Registratie voltooien..."
+      }
     },
     "success": {
       "pageSubtitle": "Registration Complete",

@@ -7,6 +7,9 @@
     "footer": {
       "copyright": "© {year} FAQBNB. All rights reserved."
     },
+    "branding": {
+      "logoAlt": "FAQBNB Logo"
+    },
     "loading": {
       "generic": {
         "loading": "Loading...",
@@ -781,16 +784,24 @@
     },
     "complete": {
       "title": "Almost there!",
-      "subtitle": "Your Google sign-in was successful, but we need an access code to complete your registration.",
+      "subtitle": "Complete Registration",
+      "description": "Your Google sign-in was successful, but we need an access code to complete your registration.",
       "pageSubtitle": "Complete Registration",
+      "checkingAuth": "Checking authentication...",
       "signedInAs": "Signed in as:",
-      "enterCodeHint": "Enter your access code to complete account setup.",
-      "submitButton": "Complete Registration",
-      "submittingButton": "Completing Registration...",
+      "enterAccessCodeHint": "Enter your access code to complete account setup.",
+      "wrongAccount": "Wrong account? Sign out and try again.",
+      "requestAccessCode": "Request Access Code",
       "successTitle": "Registration Complete!",
       "successMessage": "Your account has been set up successfully.",
       "redirectingToDashboard": "Redirecting to dashboard...",
-      "wrongAccount": "Wrong account? Sign out and try again."
+      "form": {
+        "accessCodeLabel": "Access Code",
+        "accessCodePlaceholder": "Enter your access code",
+        "accessCodeHint": "Check your email for the access code from your invitation.",
+        "submitButton": "Complete Registration",
+        "submitting": "Completing Registration..."
+      }
     },
     "success": {
       "pageSubtitle": "Registration Complete",

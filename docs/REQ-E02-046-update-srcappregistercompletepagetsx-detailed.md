@@ -1,7 +1,7 @@
 # Detailed Task Breakdown: REQ-E02-046 - Update Register Complete Page for Internationalization
 
 **Document Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-22
 **Request ID:** REQ-E02-046
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2A - Authentication & Registration
@@ -205,10 +205,10 @@ Add the following keys under the existing `auth.register` namespace:
 ```
 
 **Verification:**
-- [ ] JSON syntax is valid
-- [ ] Keys are nested correctly under `auth.register.complete`
-- [ ] All 15 unique strings are included
-- [ ] `auth.signOut` key exists (add if missing)
+- [x] JSON syntax is valid ---implemented: Verified with node JSON.parse---
+- [x] Keys are nested correctly under `auth.register.complete` ---implemented: Added missing keys and form.* nested structure---
+- [x] All 15 unique strings are included ---implemented: Added checkingAuth, enterAccessCodeHint, form.* keys---
+- [x] `auth.signOut` key exists (add if missing) ---implemented: Already exists at auth.signOut---
 
 ---
 
@@ -240,10 +240,10 @@ Verify if these keys exist in `common` namespace:
 ```
 
 **Verification:**
-- [ ] `common.backToHome` key exists
-- [ ] `common.logoAlt` key exists
-- [ ] `common.copyright` key exists
-- [ ] `common.loading` key exists (optional, for future use)
+- [x] `common.backToHome` key exists ---implemented: At common.navigation.backToHome---
+- [x] `common.logoAlt` key exists ---implemented: Added at common.branding.logoAlt---
+- [x] `common.copyright` key exists ---implemented: At common.footer.copyright---
+- [x] `common.loading` key exists (optional, for future use) ---implemented: At common.loading.generic.loading---
 
 ---
 
@@ -270,8 +270,8 @@ import { useTranslations } from 'next-intl';
 ```
 
 **Verification:**
-- [ ] Import statement added after line 12
-- [ ] No TypeScript errors
+- [x] Import statement added after line 12 ---implemented: Already imported at line 11---
+- [x] No TypeScript errors ---implemented: Import already exists---
 
 ---
 
@@ -308,10 +308,10 @@ function CompleteRegistrationContent() {
 ```
 
 **Verification:**
-- [ ] Hooks initialized inside component function
-- [ ] Hooks declared before `emailFromUrl` constant
-- [ ] No TypeScript errors
-- [ ] Three translation hooks initialized: `t`, `tAuth`, `tCommon`
+- [x] Hooks initialized inside component function ---implemented---
+- [x] Hooks declared before `emailFromUrl` constant ---implemented---
+- [x] No TypeScript errors ---implemented---
+- [x] Three translation hooks initialized: `t`, `tAuth`, `tCommon` ---implemented---
 
 ---
 
@@ -338,8 +338,8 @@ function CompleteRegistrationContent() {
 ```
 
 **Verification:**
-- [ ] String replaced with `{t('checkingAuth')}`
-- [ ] CSS classes unchanged
+- [x] String replaced with `{t('checkingAuth')}` ---implemented---
+- [x] CSS classes unchanged ---implemented---
 
 ---
 
@@ -370,10 +370,10 @@ function CompleteRegistrationContent() {
 ```
 
 **Verification:**
-- [ ] `successTitle` replaced
-- [ ] `successMessage` replaced
-- [ ] `redirectingToDashboard` replaced
-- [ ] CSS classes unchanged
+- [x] `successTitle` replaced ---implemented---
+- [x] `successMessage` replaced ---implemented---
+- [x] `redirectingToDashboard` replaced ---implemented---
+- [x] CSS classes unchanged ---implemented---
 
 ---
 
@@ -442,11 +442,11 @@ function CompleteRegistrationContent() {
 ```
 
 **Verification:**
-- [ ] Logo alt text replaced with `{tCommon('logoAlt')}`
-- [ ] Subtitle replaced with `{t('subtitle')}`
-- [ ] Title replaced with `{t('title')}`
-- [ ] Description replaced with `{t('description')}`
-- [ ] "FAQBNB" brand name kept hardcoded (line 183)
+- [x] Logo alt text replaced with `{tCommon('branding.logoAlt')}` ---implemented---
+- [x] Subtitle replaced with `{t('subtitle')}` ---implemented---
+- [x] Title replaced with `{t('title')}` ---implemented---
+- [x] Description replaced with `{t('description')}` ---implemented---
+- [x] "FAQBNB" brand name kept hardcoded (line 183) ---implemented: Unchanged---
 
 ---
 
@@ -483,9 +483,9 @@ function CompleteRegistrationContent() {
 ```
 
 **Verification:**
-- [ ] "Signed in as:" replaced with `{t('signedInAs')}`
-- [ ] Hint text replaced with `{t('enterAccessCodeHint')}`
-- [ ] Email display `{emailFromUrl}` unchanged
+- [x] "Signed in as:" replaced with `{t('signedInAs')}` ---implemented---
+- [x] Hint text replaced with `{t('enterAccessCodeHint')}` ---implemented---
+- [x] Email display `{emailFromUrl}` unchanged ---implemented---
 
 ---
 
@@ -540,9 +540,9 @@ placeholder={t('form.accessCodePlaceholder')}
 ```
 
 **Verification:**
-- [ ] Form label replaced with `{t('form.accessCodeLabel')}`
-- [ ] Placeholder replaced with `{t('form.accessCodePlaceholder')}`
-- [ ] Helper text replaced with `{t('form.accessCodeHint')}`
+- [x] Form label replaced with `{t('form.accessCodeLabel')}` ---implemented---
+- [x] Placeholder replaced with `{t('form.accessCodePlaceholder')}` ---implemented---
+- [x] Helper text replaced with `{t('form.accessCodeHint')}` ---implemented---
 
 ---
 
@@ -583,9 +583,9 @@ placeholder={t('form.accessCodePlaceholder')}
 ```
 
 **Verification:**
-- [ ] Loading text replaced with `{t('form.submitting')}`
-- [ ] Button text replaced with `{t('form.submitButton')}`
-- [ ] Spinner element unchanged
+- [x] Loading text replaced with `{t('form.submitting')}` ---implemented---
+- [x] Button text replaced with `{t('form.submitButton')}` ---implemented---
+- [x] Spinner element unchanged ---implemented---
 
 ---
 
@@ -628,9 +628,9 @@ Sign Out
 ```
 
 **Verification:**
-- [ ] Hint text replaced with `{t('wrongAccount')}`
-- [ ] "Sign Out" replaced with `{tAuth('signOut')}`
-- [ ] LogOut icon unchanged
+- [x] Hint text replaced with `{t('wrongAccount')}` ---implemented---
+- [x] "Sign Out" replaced with `{tAuth('signOut')}` ---implemented---
+- [x] LogOut icon unchanged ---implemented---
 
 ---
 
@@ -707,10 +707,10 @@ Sign Out
 ```
 
 **Verification:**
-- [ ] "Back to Home" replaced with `{tCommon('backToHome')}`
-- [ ] "Request Access Code" replaced with `{t('requestAccessCode')}`
-- [ ] Copyright replaced with `{tCommon('copyright')}`
-- [ ] Link hrefs unchanged
+- [x] "Back to Home" replaced with `{tCommon('navigation.backToHome')}` ---implemented---
+- [x] "Request Access Code" replaced with `{t('requestAccessCode')}` ---implemented---
+- [x] Copyright replaced with `{tCommon('footer.copyright', { year: new Date().getFullYear() })}` ---implemented---
+- [x] Link hrefs unchanged ---implemented---
 
 ---
 
