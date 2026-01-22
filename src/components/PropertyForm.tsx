@@ -1,3 +1,14 @@
+/**
+ * PropertyForm Component
+ *
+ * @lastModified 2026-01-22 - REQ-E02-008: Updated for i18n with properties namespace
+ * - Migrated from scattered namespaces (common.form, errors.form, common.actions, common.notifications)
+ *   to unified properties.* namespaces (properties.form, properties.validation, properties.actions,
+ *   properties.errors, properties.types)
+ * - Added dynamic translation lookup for property types using properties.types namespace
+ * - Updated all 25 translation key references across 10 component sections
+ * - Added ICU message format support for character count interpolation
+ */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -11,10 +22,11 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   onSave,
   onCancel
 }) => {
-  const tForm = useTranslations('common.form');
-  const tErrors = useTranslations('errors.form');
-  const tActions = useTranslations('common.actions');
-  const tNotifications = useTranslations('common.notifications');
+  const t = useTranslations('properties.form');
+  const tValidation = useTranslations('properties.validation');
+  const tActions = useTranslations('properties.actions');
+  const tErrors = useTranslations('properties.errors');
+  const tTypes = useTranslations('properties.types');
 
   // Form state
   const [formData, setFormData] = useState<PropertyFormData>({
@@ -37,19 +49,19 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
 
     // Nickname validation
     if (!formData.nickname.trim()) {
-      newErrors.nickname = tErrors('propertyNicknameRequired');
+      newErrors.nickname = tValidation('nameRequired');
     } else if (formData.nickname.trim().length > 100) {
-      newErrors.nickname = tErrors('propertyNicknameTooLong');
+      newErrors.nickname = tValidation('nameMaxLength');
     }
 
     // Property type validation
     if (!formData.propertyTypeId) {
-      newErrors.propertyTypeId = tErrors('propertyTypeRequired');
+      newErrors.propertyTypeId = tValidation('propertyTypeRequired');
     }
 
     // Address validation (optional but if provided, must be reasonable length)
     if (formData.address && formData.address.length > 500) {
-      newErrors.address = tErrors('addressTooLong');
+      newErrors.address = tValidation('addressTooLong');
     }
 
     setErrors(newErrors);
@@ -109,7 +121,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     } catch (error) {
       console.error('Error saving property:', error);
       setErrors({
-        general: error instanceof Error ? error.message : tNotifications('error.propertySave')
+        general: error instanceof Error ? error.message : tErrors('saveFailed')
       });
     } finally {
       setIsSubmitting(false);
@@ -146,7 +158,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">
-        {property ? tForm('titles.editProperty') : tForm('titles.createProperty')}
+        {property ? tActions('editProperty') : tActions('createProperty')}
       </h2>
 
       {/* General error message */}
@@ -161,7 +173,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {users && users.length > 0 && (
           <div>
             <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-              {tForm('labels.propertyOwner')} <span className="text-red-500">*</span>
+              {t('propertyOwner')} <span className="text-red-500">*</span>
             </label>
             <select
               id="userId"
@@ -170,7 +182,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               disabled={isSubmitting || !!property} // Can't change owner of existing property
               className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500`}
             >
-              <option value="">{tForm('placeholders.select')}</option>
+              <option value="">{t('selectOwner')}</option>
               {users.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.full_name || user.email} ({user.email})
@@ -179,7 +191,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             </select>
             {property && (
               <p className="mt-1 text-xs text-gray-500">
-                {tForm('hints.cannotBeChanged')}
+                {t('cannotBeChanged')}
               </p>
             )}
           </div>
@@ -188,7 +200,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {/* Property nickname */}
         <div>
           <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
-            {tForm('labels.propertyNickname')} <span className="text-red-500">*</span>
+            {t('propertyName')} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -196,7 +208,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             value={formData.nickname}
             onChange={handleInputChange('nickname')}
             disabled={isSubmitting}
-            placeholder={tForm('placeholders.propertyNickname')}
+            placeholder={t('propertyNamePlaceholder')}
             className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 ${
               errors.nickname ? 'border-red-300' : 'border-gray-300'
             }`}
@@ -206,14 +218,14 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             <p className="mt-1 text-sm text-red-600">{errors.nickname}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            {tForm('hints.friendlyName', { item: 'property' })} ({tForm('hints.charactersCount', { count: formData.nickname.length, max: 100 })})
+            {t('nameHint')} ({t('characterCount', { count: formData.nickname.length, max: 100 })})
           </p>
         </div>
 
         {/* Property type */}
         <div>
           <label htmlFor="propertyTypeId" className="block text-sm font-medium text-gray-700 mb-2">
-            {tForm('labels.propertyType')} <span className="text-red-500">*</span>
+            {t('propertyType')} <span className="text-red-500">*</span>
           </label>
           <select
             id="propertyTypeId"
@@ -224,10 +236,10 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
               errors.propertyTypeId ? 'border-red-300' : 'border-gray-300'
             }`}
           >
-            <option value="">{tForm('placeholders.selectProperty')}</option>
+            <option value="">{t('selectPropertyType')}</option>
             {propertyTypes.map((type) => (
               <option key={type.id} value={type.id}>
-                {type.display_name}
+                {tTypes(type.display_name.toLowerCase())}
               </option>
             ))}
           </select>
@@ -239,7 +251,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
         {/* Property address */}
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-            {tForm('labels.address')} <span className="text-gray-400">{tForm('hints.optional')}</span>
+            {t('address')} <span className="text-gray-400">{t('optional')}</span>
           </label>
           <textarea
             id="address"
@@ -247,7 +259,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             value={formData.address}
             onChange={handleInputChange('address')}
             disabled={isSubmitting}
-            placeholder={tForm('placeholders.address')}
+            placeholder={t('addressPlaceholder')}
             className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 resize-none ${
               errors.address ? 'border-red-300' : 'border-gray-300'
             }`}
@@ -257,7 +269,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
             <p className="mt-1 text-sm text-red-600">{errors.address}</p>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            {tForm('hints.charactersCount', { count: formData.address.length, max: 500 })}
+            {t('characterCount', { count: formData.address.length, max: 500 })}
           </p>
         </div>
 
@@ -285,7 +297,7 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
                 {tActions('saving')}
               </>
             ) : (
-              property ? tActions('editProperty') : tActions('createProperty')
+              property ? tActions('save') : tActions('createProperty')
             )}
           </button>
         </div>

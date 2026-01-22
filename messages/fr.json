@@ -3235,8 +3235,12 @@
     "form": {
       "propertyName": "Property Name",
       "propertyNamePlaceholder": "e.g., Beach House, Downtown Apartment",
+      "nameHint": "A friendly name to identify this property",
+      "characterCount": "{count}/{max} characters",
       "propertyType": "Property Type",
+      "selectPropertyType": "Select property type...",
       "propertyOwner": "Property Owner",
+      "selectOwner": "Select an owner...",
       "address": "Address",
       "addressPlaceholder": "Enter property address",
       "addressLine1": "Address Line 1",
