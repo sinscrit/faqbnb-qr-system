@@ -916,6 +916,7 @@
     "subtitle": "Create and manage your QR code items",
     "overview": "Overview",
     "nav": {
+      "ariaLabel": "Dashboard Navigation",
       "dashboard": "Dashboard",
       "items": "Items",
       "guides": "Guides",

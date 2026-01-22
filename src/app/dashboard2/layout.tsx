@@ -37,42 +37,45 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-// Navigation items for the dashboard
+// Navigation items moved inside component for translation support
 // REQ-205: Updated navigation structure per FAQBNB Review ITEM-04
 // Order: Dashboard → Items → Instructions → Properties
-const navigationItems: NavItem[] = [
-  {
-    name: 'Dashboard',
-    mobileLabel: 'D/B',
-    href: '/dashboard2',
-    icon: LayoutDashboard,
-  },
-  {
-    name: 'Items',
-    mobileLabel: 'Items',
-    href: '/dashboard2/items',
-    icon: Package,
-  },
-  {
-    name: 'Guides',
-    mobileLabel: 'Guide',
-    href: '/dashboard2/instructions',
-    icon: FileText,
-  },
-  {
-    name: 'Properties',
-    mobileLabel: 'Prop.',
-    href: '/dashboard2/properties',
-    icon: Building2,
-  },
-];
 
 function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading, authState, signOut } = useAuth();
   const [hasRedirected, setHasRedirected] = useState(false);
-  const t = useTranslations('common.loading');
+  const t = useTranslations('dashboard');
+
+  // Navigation items with translated labels
+  // REQ-205: Updated navigation structure per FAQBNB Review ITEM-04
+  const navigationItems: NavItem[] = [
+    {
+      name: t('nav.dashboard'),
+      mobileLabel: t('nav.mobile.dashboard'),
+      href: '/dashboard2',
+      icon: LayoutDashboard,
+    },
+    {
+      name: t('nav.items'),
+      mobileLabel: t('nav.mobile.items'),
+      href: '/dashboard2/items',
+      icon: Package,
+    },
+    {
+      name: t('nav.guides'),
+      mobileLabel: t('nav.mobile.guides'),
+      href: '/dashboard2/instructions',
+      icon: FileText,
+    },
+    {
+      name: t('nav.properties'),
+      mobileLabel: t('nav.mobile.properties'),
+      href: '/dashboard2/properties',
+      icon: Building2,
+    },
+  ];
 
   // Show loading spinner while auth is initializing or in LOADING state
   if (loading || authState === 'LOADING') {
@@ -80,7 +83,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">{t('pages.dashboard')}</p>
+          <p className="text-gray-600 text-lg">{t('loading.dashboard')}</p>
         </div>
       </div>
     );
@@ -97,7 +100,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">{t('auth.completingAuth')}</p>
+          <p className="text-gray-600 text-lg">{t('loading.redirecting')}</p>
         </div>
       </div>
     );
@@ -109,7 +112,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#FF385C] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">{t('generic.loading')}</p>
+          <p className="text-gray-600 text-lg">{t('loading.generic')}</p>
         </div>
       </div>
     );
@@ -125,12 +128,12 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
             <Link href="/dashboard2" className="flex items-center space-x-2">
               <Image
                 src="/faqbnb_logoshort.png"
-                alt="FAQBNB Logo"
+                alt={t('header.logoAlt')}
                 width={32}
                 height={32}
                 className="rounded-md"
               />
-              <h1 className="text-xl font-bold text-gray-900 hidden sm:block">FAQBNB</h1>
+              <h1 className="text-xl font-bold text-gray-900 hidden sm:block">{t('header.logo')}</h1>
             </Link>
 
             {/* Center - Property Dropdown (REQ-142) */}
@@ -143,10 +146,10 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
               <button
                 onClick={() => signOut()}
                 className="text-sm text-gray-600 hover:text-gray-800 border border-gray-300 p-1.5 sm:px-3 sm:py-1.5 rounded-md hover:bg-gray-50 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
-                aria-label="Logout"
+                aria-label={t('header.logoutAriaLabel')}
               >
                 <LogOut className="w-4 h-4 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('header.logout')}</span>
               </button>
             </div>
           </div>
@@ -154,7 +157,7 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200" aria-label="Dashboard Navigation">
+      <nav className="bg-white border-b border-gray-200" aria-label={t('nav.ariaLabel')}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-4 sm:space-x-8">
             {navigationItems.map((item) => {
