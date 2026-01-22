@@ -1,10 +1,11 @@
 // src/components/SimpleDashboard/BulkOperationsToolbar.tsx
 // REQ-136: Bulk Operations Toolbar Component
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { CheckSquare, Square, Printer, X } from 'lucide-react';
 
 /**
@@ -52,6 +53,7 @@ export function BulkOperationsToolbar({
   onPrintSelected,
   className = '',
 }: BulkOperationsToolbarProps) {
+  const t = useTranslations('dashboard');
   const hasSelection = selectedCount > 0;
   const allSelected = selectedCount === totalCount && totalCount > 0;
 
@@ -68,14 +70,14 @@ export function BulkOperationsToolbar({
     <div
       className={`bg-white rounded-xl shadow-sm p-4 flex flex-wrap items-center gap-4 ${className}`}
       role="toolbar"
-      aria-label="Bulk operations"
+      aria-label={t('bulk.toolbarAriaLabel')}
     >
       {/* Select All Checkbox */}
       <button
         type="button"
         onClick={handleCheckboxClick}
         className="flex items-center gap-2 min-h-[48px] px-3 py-2 rounded-lg hover:bg-[#F7F7F7] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]"
-        aria-label={allSelected ? 'Deselect all properties' : 'Select all properties'}
+        aria-label={allSelected ? t('bulk.deselectAllAriaLabel') : t('bulk.selectAllAriaLabel')}
       >
         {allSelected ? (
           <CheckSquare className="w-5 h-5 text-[#FF385C]" />
@@ -83,7 +85,7 @@ export function BulkOperationsToolbar({
           <Square className="w-5 h-5 text-[#717171]" />
         )}
         <span className="text-sm text-[#222222]">
-          {allSelected ? 'All selected' : 'Select all'}
+          {allSelected ? t('bulk.allSelected') : t('bulk.selectAll')}
         </span>
       </button>
 
@@ -91,13 +93,13 @@ export function BulkOperationsToolbar({
       {hasSelection && (
         <div className="flex items-center gap-2 px-3 py-2 bg-[#F7F7F7] rounded-lg">
           <span className="text-sm font-medium text-[#222222]">
-            {selectedCount} selected
+            {t('bulk.selectedCount', { count: selectedCount })}
           </span>
           <button
             type="button"
             onClick={onDeselectAll}
             className="p-1 rounded-full hover:bg-[#E0E0E0] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]"
-            aria-label="Clear selection"
+            aria-label={t('bulk.clearSelectionAriaLabel')}
           >
             <X className="w-4 h-4 text-[#717171]" />
           </button>
@@ -113,10 +115,10 @@ export function BulkOperationsToolbar({
         onClick={onPrintSelected}
         disabled={!hasSelection}
         className="flex items-center gap-2 min-h-[48px] px-6 py-3 rounded-lg font-medium text-base bg-gradient-to-r from-[#E61E4D] to-[#D70466] text-white transition-all duration-200 ease-out hover:brightness-95 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
-        aria-label={`Print ${selectedCount} selected properties`}
+        aria-label={t('bulk.printAriaLabel', { count: selectedCount })}
       >
         <Printer className="w-5 h-5" />
-        <span>Print Selected</span>
+        <span>{t('bulk.printSelected')}</span>
       </button>
     </div>
   );

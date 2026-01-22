@@ -901,114 +901,220 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
-    "welcome": "Welcome back, {name}!",
-    "subtitle": "Create and manage your QR code items",
-    "overview": "Overview",
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {name} !",
+    "subtitle": "Créez et gérez vos articles QR code",
+    "overview": "Vue d'ensemble",
     "nav": {
-      "dashboard": "Dashboard",
-      "items": "Items",
+      "ariaLabel": "Navigation du tableau de bord",
+      "dashboard": "Tableau de bord",
+      "items": "Articles",
       "guides": "Guides",
-      "properties": "Properties",
-      "rooms": "Rooms",
-      "tags": "Tags",
+      "properties": "Propriétés",
+      "rooms": "Pièces",
+      "tags": "Étiquettes",
       "instructions": "Instructions",
-      "analytics": "Analytics",
-      "settings": "Settings",
-      "help": "Help",
-      "create": "Create",
-      "print": "Print",
+      "analytics": "Analytiques",
+      "settings": "Paramètres",
+      "help": "Aide",
+      "create": "Créer",
+      "print": "Imprimer",
       "mobile": {
-        "dashboard": "D/B",
-        "items": "Items",
+        "dashboard": "T/B",
+        "items": "Articles",
         "guides": "Guide",
         "properties": "Prop."
       }
     },
     "header": {
       "logo": "FAQBNB",
-      "logoAlt": "FAQBNB Logo",
-      "logout": "Logout",
-      "logoutAriaLabel": "Sign out of your account"
+      "logoAlt": "Logo FAQBNB",
+      "logout": "Déconnexion",
+      "logoutAriaLabel": "Se déconnecter de votre compte"
     },
     "loading": {
-      "dashboard": "Loading dashboard...",
-      "redirecting": "Redirecting to login...",
-      "generic": "Loading...",
-      "statistics": "Loading statistics"
+      "dashboard": "Chargement du tableau de bord...",
+      "redirecting": "Redirection vers la connexion...",
+      "generic": "Chargement...",
+      "statistics": "Chargement des statistiques",
+      "default": "Chargement",
+      "content": "Chargement du contenu",
+      "pleaseWait": "{label}, veuillez patienter..."
     },
     "stats": {
-      "items": "Items",
-      "itemsCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
-      "rooms": "Rooms",
-      "roomsCount": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
-      "tags": "Tags",
-      "tagsCount": "{count, plural, =0 {No tags} one {# tag} other {# tags}}",
-      "properties": "Properties",
-      "propertiesCount": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
-      "allProperties": "(all properties)",
-      "totalProperties": "Total Properties",
-      "totalItems": "Total Items",
-      "totalScans": "Total Scans",
-      "activeUsers": "Active Users",
-      "viewAriaLabel": "View {label}: {count}"
+      "items": "Articles",
+      "itemsCount": "{count, plural, =0 {Aucun article} one {# article} other {# articles}}",
+      "rooms": "Pièces",
+      "roomsCount": "{count, plural, =0 {Aucune pièce} one {# pièce} other {# pièces}}",
+      "tags": "Étiquettes",
+      "tagsCount": "{count, plural, =0 {Aucune étiquette} one {# étiquette} other {# étiquettes}}",
+      "properties": "Propriétés",
+      "propertiesCount": "{count, plural, =0 {Aucune propriété} one {# propriété} other {# propriétés}}",
+      "allProperties": "(toutes les propriétés)",
+      "totalProperties": "Total des propriétés",
+      "totalItems": "Total des articles",
+      "totalScans": "Total des scans",
+      "activeUsers": "Utilisateurs actifs",
+      "viewAriaLabel": "Voir {label} : {count}",
+      "loadingStats": "Chargement des statistiques",
+      "emptyTitle": "Commencez à ajouter des articles QR code et créez des guides/instructions",
+      "emptyAction": "Nouvel article QR code"
     },
     "actions": {
-      "newItem": "New QR Code Item",
-      "viewItems": "View QR Code Items",
-      "printQR": "Print QR Code",
-      "addProperty": "Add Property",
-      "createProperty": "Create Property",
-      "createItem": "Create Item",
-      "viewAll": "View All",
-      "quickActions": "Quick Actions",
+      "newItem": "Nouvel article QR code",
+      "viewItems": "Voir les articles QR code",
+      "printQR": "Imprimer le QR code",
+      "addProperty": "Ajouter une propriété",
+      "createProperty": "Créer une propriété",
+      "createItem": "Créer un article",
+      "viewAll": "Voir tout",
+      "quickActions": "Actions rapides",
       "ariaLabels": {
-        "newItem": "Create a new QR code item",
-        "viewItems": "View all your items",
-        "printQR": "Print QR codes for your items",
-        "addProperty": "Add a new property"
+        "newItem": "Créer un nouvel article QR code",
+        "viewItems": "Voir tous vos articles",
+        "printQR": "Imprimer les QR codes de vos articles",
+        "addProperty": "Ajouter une nouvelle propriété"
       }
     },
     "empty": {
-      "title": "Start adding new QR Code items and create guides/instructions",
-      "description": "Create your first item to get started",
-      "newUserWelcome": "Welcome to FAQBNB!",
-      "newUserDescription": "Get started by adding your first property. Then you can create QR codes to help guests find what they need.",
-      "newUserAction": "Add Your First Property",
-      "noActivity": "No recent activity",
-      "recentActivity": "Recent Activity"
+      "title": "Commencez à ajouter des articles QR code et créez des guides/instructions",
+      "description": "Créez votre premier article pour commencer",
+      "newUserWelcome": "Bienvenue sur FAQBNB !",
+      "newUserDescription": "Commencez par ajouter votre première propriété. Ensuite, vous pourrez créer des QR codes pour aider vos invités à trouver ce dont ils ont besoin.",
+      "newUserAction": "Ajouter votre première propriété",
+      "noActivity": "Aucune activité récente",
+      "recentActivity": "Activité récente"
     },
     "property": {
-      "selectProperty": "Select Property",
-      "allProperties": "All Properties",
-      "allPropertiesShort": "All",
-      "noProperties": "No properties found",
-      "propertyList": "Property list",
-      "switchProperty": "Switch property"
+      "selectProperty": "Sélectionner une propriété",
+      "allProperties": "Toutes les propriétés",
+      "allPropertiesShort": "Toutes",
+      "noProperties": "Aucune propriété trouvée",
+      "propertyList": "Liste des propriétés",
+      "switchProperty": "Changer de propriété",
+      "singular": "Ma propriété",
+      "plural": "Mes propriétés",
+      "itemCount": "{count, plural, =0 {0 article} one {# article} other {# articles}}",
+      "roomCount": "{count, plural, =0 {0 pièce} one {# pièce} other {# pièces}}",
+      "addNew": "Ajouter une nouvelle propriété",
+      "editAriaLabel": "Modifier la propriété : {name}",
+      "addAriaLabel": "Ajouter une nouvelle propriété",
+      "loadingProperties": "Chargement des propriétés",
+      "listAriaLabel": "Vos propriétés",
+      "emptyTitle": "Ajoutons votre propriété",
+      "emptyDescription": "Une propriété est l'endroit où vivent vos articles - comme une location de vacances ou une maison.",
+      "addProperty": "Ajouter une propriété"
     },
     "settings": {
-      "title": "Dashboard Settings",
+      "title": "Paramètres du tableau de bord",
       "advancedTools": {
-        "label": "Show Advanced Tools",
-        "description": "Always show grouping and bulk operations"
+        "label": "Afficher les outils avancés",
+        "description": "Toujours afficher le regroupement et les opérations en masse"
       },
       "portfolioView": {
-        "label": "Show Portfolio Summary",
-        "description": "Always show portfolio overview card"
+        "label": "Afficher le résumé du portefeuille",
+        "description": "Toujours afficher la carte de vue d'ensemble du portefeuille"
       },
-      "footer": "These settings override automatic UI adaptation based on your property count.",
-      "close": "Close settings",
-      "closeAriaLabel": "Close dashboard settings"
+      "footer": "Ces paramètres remplacent l'adaptation automatique de l'interface en fonction du nombre de vos propriétés.",
+      "close": "Fermer les paramètres",
+      "closeAriaLabel": "Fermer les paramètres du tableau de bord"
     },
     "messages": {
-      "propertyCreated": "Property created successfully",
-      "propertyUpdated": "Property updated successfully",
-      "propertyDeleted": "Property deleted successfully",
-      "itemCreated": "Item created successfully"
+      "propertyCreated": "Propriété créée avec succès",
+      "propertyUpdated": "Propriété mise à jour avec succès",
+      "propertyDeleted": "Propriété supprimée avec succès",
+      "itemCreated": "Article créé avec succès"
     },
     "meta": {
-      "title": "Dashboard",
-      "description": "Manage your QR code items and properties"
+      "title": "Tableau de bord",
+      "description": "Gérez vos articles QR code et vos propriétés"
+    },
+    "modal": {
+      "editProperty": "Modifier la propriété",
+      "editPropertyDescription": "Modifiez les détails de votre propriété, y compris le nom et les informations d'adresse.",
+      "addProperty": "Ajouter une nouvelle propriété",
+      "addPropertyDescription": "Créez une nouvelle propriété en entrant le nom et les informations d'adresse.",
+      "closeModal": "Fermer la fenêtre",
+      "savingProperty": "Enregistrement des modifications de la propriété...",
+      "creatingProperty": "Création de la propriété..."
+    },
+    "form": {
+      "propertyName": "Nom de la propriété",
+      "propertyNamePlaceholder": "ex. Maison de plage",
+      "addressLine1": "Adresse ligne 1",
+      "addressLine1Placeholder": "Adresse",
+      "addressLine2": "Adresse ligne 2",
+      "addressLine2Placeholder": "Appt, suite, unité, etc. (optionnel)",
+      "city": "Ville",
+      "cityPlaceholder": "Ville",
+      "stateProvince": "État/Province",
+      "stateProvincePlaceholder": "État ou Province",
+      "postalCode": "Code postal",
+      "postalCodePlaceholder": "Code postal",
+      "country": "Pays",
+      "selectCountry": "Sélectionner un pays..."
+    },
+    "validation": {
+      "propertyNameRequired": "Le nom de la propriété est requis",
+      "propertyNameMaxLength": "Le nom de la propriété doit contenir 100 caractères ou moins",
+      "addressMaxLength": "L'adresse doit contenir 200 caractères ou moins",
+      "cityMaxLength": "La ville doit contenir 100 caractères ou moins",
+      "stateMaxLength": "L'état/province doit contenir 100 caractères ou moins",
+      "postalCodeMaxLength": "Le code postal doit contenir 20 caractères ou moins",
+      "invalidCountry": "Veuillez sélectionner un pays valide"
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "createProperty": "Créer la propriété",
+      "creating": "Création...",
+      "addProperty": "Ajouter une propriété",
+      "addNewProperty": "Ajouter une nouvelle propriété"
+    },
+    "errors": {
+      "updateFailed": "Échec de la mise à jour de la propriété",
+      "createFailed": "Échec de la création de la propriété"
+    },
+    "portfolio": {
+      "title": "Vue d'ensemble du portefeuille",
+      "totalProperties": "Total des propriétés",
+      "totalItems": "Total des articles",
+      "avgItemsPerProperty": "Moy. articles/propriété",
+      "insight": "Vous avez {roomCount, plural, one {# pièce} other {# pièces}} réparties sur {propertyCount, plural, one {# propriété} other {# propriétés}}",
+      "loadingSummary": "Chargement du résumé du portefeuille",
+      "ariaLabel": "Résumé du portefeuille"
+    },
+    "search": {
+      "placeholder": "Rechercher des propriétés...",
+      "ariaLabel": "Rechercher des propriétés",
+      "clearAriaLabel": "Effacer la recherche",
+      "noResults": "Aucune propriété trouvée",
+      "resultCount": "{count, plural, one {# propriété} other {# propriétés}} trouvée(s)"
+    },
+    "grouping": {
+      "label": "Grouper par",
+      "noGrouping": "Pas de regroupement",
+      "byLocation": "Par emplacement",
+      "byItemCount": "Par nombre d'articles",
+      "ariaLabel": "Option de regroupement des propriétés"
+    },
+    "bulk": {
+      "selectAll": "Tout sélectionner",
+      "allSelected": "Tout sélectionné",
+      "selectAllAriaLabel": "Sélectionner toutes les propriétés",
+      "deselectAllAriaLabel": "Désélectionner toutes les propriétés",
+      "selectedCount": "{count} sélectionné(s)",
+      "clearSelectionAriaLabel": "Effacer la sélection",
+      "printSelected": "Imprimer la sélection",
+      "printAriaLabel": "Imprimer {count} propriétés sélectionnées",
+      "toolbarAriaLabel": "Opérations en masse"
+    },
+    "advancedTools": {
+      "title": "Outils avancés"
+    },
+    "hints": {
+      "compareStats": "Utilisez le sélecteur de propriété pour comparer les statistiques de vos propriétés."
     }
   },
   "items": {

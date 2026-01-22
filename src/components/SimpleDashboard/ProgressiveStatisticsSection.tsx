@@ -2,10 +2,11 @@
 // REQ-136: Progressive Statistics Section Wrapper
 // REQ-137: Added onCreateItem passthrough for empty states
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardTier, DashboardTierOverrides } from '@/hooks/useDashboardTier';
@@ -59,6 +60,7 @@ export function ProgressiveStatisticsSection({
 }: ProgressiveStatisticsSectionProps) {
   const { userProperties } = useAuth();
   const propertyCount = userProperties?.length ?? 0;
+  const t = useTranslations('dashboard');
 
   // Get tier configuration based on property count (with optional overrides)
   const tierConfig = useDashboardTier(propertyCount, overrides);
@@ -77,7 +79,7 @@ export function ProgressiveStatisticsSection({
       {/* REQ-136: Comparison hint for multiple tier */}
       {tierConfig.tier === 'multiple' && !isLoading && (
         <p className="text-sm text-[#717171]">
-          Use the property selector to compare statistics across your properties.
+          {t('hints.compareStats')}
         </p>
       )}
 

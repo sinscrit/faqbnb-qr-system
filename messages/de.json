@@ -902,113 +902,219 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome back, {name}!",
-    "subtitle": "Create and manage your QR code items",
-    "overview": "Overview",
+    "welcome": "Willkommen zurück, {name}!",
+    "subtitle": "Erstellen und verwalten Sie Ihre QR-Code-Artikel",
+    "overview": "Übersicht",
     "nav": {
+      "ariaLabel": "Dashboard-Navigation",
       "dashboard": "Dashboard",
-      "items": "Items",
-      "guides": "Guides",
-      "properties": "Properties",
-      "rooms": "Rooms",
+      "items": "Artikel",
+      "guides": "Anleitungen",
+      "properties": "Immobilien",
+      "rooms": "Räume",
       "tags": "Tags",
-      "instructions": "Instructions",
-      "analytics": "Analytics",
-      "settings": "Settings",
-      "help": "Help",
-      "create": "Create",
-      "print": "Print",
+      "instructions": "Anweisungen",
+      "analytics": "Analysen",
+      "settings": "Einstellungen",
+      "help": "Hilfe",
+      "create": "Erstellen",
+      "print": "Drucken",
       "mobile": {
         "dashboard": "D/B",
-        "items": "Items",
-        "guides": "Guide",
-        "properties": "Prop."
+        "items": "Artikel",
+        "guides": "Anleit.",
+        "properties": "Immo."
       }
     },
     "header": {
       "logo": "FAQBNB",
-      "logoAlt": "FAQBNB Logo",
-      "logout": "Logout",
-      "logoutAriaLabel": "Sign out of your account"
+      "logoAlt": "FAQBNB-Logo",
+      "logout": "Abmelden",
+      "logoutAriaLabel": "Von Ihrem Konto abmelden"
     },
     "loading": {
-      "dashboard": "Loading dashboard...",
-      "redirecting": "Redirecting to login...",
-      "generic": "Loading...",
-      "statistics": "Loading statistics"
+      "dashboard": "Dashboard wird geladen...",
+      "redirecting": "Weiterleitung zur Anmeldung...",
+      "generic": "Wird geladen...",
+      "statistics": "Statistiken werden geladen",
+      "default": "Laden",
+      "content": "Inhalt wird geladen",
+      "pleaseWait": "{label}, bitte warten..."
     },
     "stats": {
-      "items": "Items",
-      "itemsCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
-      "rooms": "Rooms",
-      "roomsCount": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
+      "items": "Artikel",
+      "itemsCount": "{count, plural, =0 {Keine Artikel} one {# Artikel} other {# Artikel}}",
+      "rooms": "Räume",
+      "roomsCount": "{count, plural, =0 {Keine Räume} one {# Raum} other {# Räume}}",
       "tags": "Tags",
-      "tagsCount": "{count, plural, =0 {No tags} one {# tag} other {# tags}}",
-      "properties": "Properties",
-      "propertiesCount": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
-      "allProperties": "(all properties)",
-      "totalProperties": "Total Properties",
-      "totalItems": "Total Items",
-      "totalScans": "Total Scans",
-      "activeUsers": "Active Users",
-      "viewAriaLabel": "View {label}: {count}"
+      "tagsCount": "{count, plural, =0 {Keine Tags} one {# Tag} other {# Tags}}",
+      "properties": "Immobilien",
+      "propertiesCount": "{count, plural, =0 {Keine Immobilien} one {# Immobilie} other {# Immobilien}}",
+      "allProperties": "(alle Immobilien)",
+      "totalProperties": "Immobilien gesamt",
+      "totalItems": "Artikel gesamt",
+      "totalScans": "Scans gesamt",
+      "activeUsers": "Aktive Benutzer",
+      "viewAriaLabel": "{label} anzeigen: {count}",
+      "loadingStats": "Statistiken werden geladen",
+      "emptyTitle": "Beginnen Sie mit dem Hinzufügen von QR-Code-Artikeln und erstellen Sie Anleitungen",
+      "emptyAction": "Neuer QR-Code-Artikel"
     },
     "actions": {
-      "newItem": "New QR Code Item",
-      "viewItems": "View QR Code Items",
-      "printQR": "Print QR Code",
-      "addProperty": "Add Property",
-      "createProperty": "Create Property",
-      "createItem": "Create Item",
-      "viewAll": "View All",
-      "quickActions": "Quick Actions",
+      "newItem": "Neuer QR-Code-Artikel",
+      "viewItems": "QR-Code-Artikel anzeigen",
+      "printQR": "QR-Code drucken",
+      "addProperty": "Immobilie hinzufügen",
+      "createProperty": "Immobilie erstellen",
+      "createItem": "Artikel erstellen",
+      "viewAll": "Alle anzeigen",
+      "quickActions": "Schnellaktionen",
       "ariaLabels": {
-        "newItem": "Create a new QR code item",
-        "viewItems": "View all your items",
-        "printQR": "Print QR codes for your items",
-        "addProperty": "Add a new property"
+        "newItem": "Einen neuen QR-Code-Artikel erstellen",
+        "viewItems": "Alle Ihre Artikel anzeigen",
+        "printQR": "QR-Codes Ihrer Artikel drucken",
+        "addProperty": "Eine neue Immobilie hinzufügen"
       }
     },
     "empty": {
-      "title": "Start adding new QR Code items and create guides/instructions",
-      "description": "Create your first item to get started",
-      "newUserWelcome": "Welcome to FAQBNB!",
-      "newUserDescription": "Get started by adding your first property. Then you can create QR codes to help guests find what they need.",
-      "newUserAction": "Add Your First Property",
-      "noActivity": "No recent activity",
-      "recentActivity": "Recent Activity"
+      "title": "Beginnen Sie mit dem Hinzufügen von QR-Code-Artikeln und erstellen Sie Anleitungen",
+      "description": "Erstellen Sie Ihren ersten Artikel, um zu beginnen",
+      "newUserWelcome": "Willkommen bei FAQBNB!",
+      "newUserDescription": "Beginnen Sie mit dem Hinzufügen Ihrer ersten Immobilie. Dann können Sie QR-Codes erstellen, um Gästen zu helfen, das zu finden, was sie brauchen.",
+      "newUserAction": "Fügen Sie Ihre erste Immobilie hinzu",
+      "noActivity": "Keine kürzliche Aktivität",
+      "recentActivity": "Kürzliche Aktivität"
     },
     "property": {
-      "selectProperty": "Select Property",
-      "allProperties": "All Properties",
-      "allPropertiesShort": "All",
-      "noProperties": "No properties found",
-      "propertyList": "Property list",
-      "switchProperty": "Switch property"
+      "selectProperty": "Immobilie auswählen",
+      "allProperties": "Alle Immobilien",
+      "allPropertiesShort": "Alle",
+      "noProperties": "Keine Immobilien gefunden",
+      "propertyList": "Immobilienliste",
+      "switchProperty": "Immobilie wechseln",
+      "singular": "Meine Immobilie",
+      "plural": "Meine Immobilien",
+      "itemCount": "{count, plural, =0 {0 Artikel} one {# Artikel} other {# Artikel}}",
+      "roomCount": "{count, plural, =0 {0 Räume} one {# Raum} other {# Räume}}",
+      "addNew": "Neue Immobilie hinzufügen",
+      "editAriaLabel": "Immobilie bearbeiten: {name}",
+      "addAriaLabel": "Eine neue Immobilie hinzufügen",
+      "loadingProperties": "Immobilien werden geladen",
+      "listAriaLabel": "Ihre Immobilien",
+      "emptyTitle": "Fügen wir Ihre Immobilie hinzu",
+      "emptyDescription": "Eine Immobilie ist der Ort, an dem Ihre Artikel leben - wie eine Ferienwohnung oder ein Haus.",
+      "addProperty": "Immobilie hinzufügen"
     },
     "settings": {
-      "title": "Dashboard Settings",
+      "title": "Dashboard-Einstellungen",
       "advancedTools": {
-        "label": "Show Advanced Tools",
-        "description": "Always show grouping and bulk operations"
+        "label": "Erweiterte Werkzeuge anzeigen",
+        "description": "Gruppierung und Massenoperationen immer anzeigen"
       },
       "portfolioView": {
-        "label": "Show Portfolio Summary",
-        "description": "Always show portfolio overview card"
+        "label": "Portfolio-Zusammenfassung anzeigen",
+        "description": "Portfolio-Übersichtskarte immer anzeigen"
       },
-      "footer": "These settings override automatic UI adaptation based on your property count.",
-      "close": "Close settings",
-      "closeAriaLabel": "Close dashboard settings"
+      "footer": "Diese Einstellungen überschreiben die automatische UI-Anpassung basierend auf Ihrer Immobilienanzahl.",
+      "close": "Einstellungen schließen",
+      "closeAriaLabel": "Dashboard-Einstellungen schließen"
     },
     "messages": {
-      "propertyCreated": "Property created successfully",
-      "propertyUpdated": "Property updated successfully",
-      "propertyDeleted": "Property deleted successfully",
-      "itemCreated": "Item created successfully"
+      "propertyCreated": "Immobilie erfolgreich erstellt",
+      "propertyUpdated": "Immobilie erfolgreich aktualisiert",
+      "propertyDeleted": "Immobilie erfolgreich gelöscht",
+      "itemCreated": "Artikel erfolgreich erstellt"
     },
     "meta": {
       "title": "Dashboard",
-      "description": "Manage your QR code items and properties"
+      "description": "Verwalten Sie Ihre QR-Code-Artikel und Immobilien"
+    },
+    "modal": {
+      "editProperty": "Immobilie bearbeiten",
+      "editPropertyDescription": "Bearbeiten Sie die Details Ihrer Immobilie einschließlich Name und Adressinformationen.",
+      "addProperty": "Neue Immobilie hinzufügen",
+      "addPropertyDescription": "Erstellen Sie eine neue Immobilie durch Eingabe von Name und Adressinformationen.",
+      "closeModal": "Fenster schließen",
+      "savingProperty": "Immobilienänderungen werden gespeichert...",
+      "creatingProperty": "Immobilie wird erstellt..."
+    },
+    "form": {
+      "propertyName": "Immobilienname",
+      "propertyNamePlaceholder": "z.B. Strandhaus",
+      "addressLine1": "Adresszeile 1",
+      "addressLine1Placeholder": "Straßenadresse",
+      "addressLine2": "Adresszeile 2",
+      "addressLine2Placeholder": "Wohnung, Suite, Einheit usw. (optional)",
+      "city": "Stadt",
+      "cityPlaceholder": "Stadt",
+      "stateProvince": "Bundesland/Provinz",
+      "stateProvincePlaceholder": "Bundesland oder Provinz",
+      "postalCode": "Postleitzahl",
+      "postalCodePlaceholder": "PLZ",
+      "country": "Land",
+      "selectCountry": "Land auswählen..."
+    },
+    "validation": {
+      "propertyNameRequired": "Immobilienname ist erforderlich",
+      "propertyNameMaxLength": "Immobilienname darf maximal 100 Zeichen haben",
+      "addressMaxLength": "Adresse darf maximal 200 Zeichen haben",
+      "cityMaxLength": "Stadt darf maximal 100 Zeichen haben",
+      "stateMaxLength": "Bundesland/Provinz darf maximal 100 Zeichen haben",
+      "postalCodeMaxLength": "Postleitzahl darf maximal 20 Zeichen haben",
+      "invalidCountry": "Bitte wählen Sie ein gültiges Land"
+    },
+    "buttons": {
+      "cancel": "Abbrechen",
+      "saveChanges": "Änderungen speichern",
+      "saving": "Wird gespeichert...",
+      "createProperty": "Immobilie erstellen",
+      "creating": "Wird erstellt...",
+      "addProperty": "Immobilie hinzufügen",
+      "addNewProperty": "Neue Immobilie hinzufügen"
+    },
+    "errors": {
+      "updateFailed": "Aktualisierung der Immobilie fehlgeschlagen",
+      "createFailed": "Erstellung der Immobilie fehlgeschlagen"
+    },
+    "portfolio": {
+      "title": "Portfolio-Übersicht",
+      "totalProperties": "Immobilien gesamt",
+      "totalItems": "Artikel gesamt",
+      "avgItemsPerProperty": "Durchschn. Artikel/Immobilie",
+      "insight": "Sie haben {roomCount, plural, one {# Raum} other {# Räume}} in {propertyCount, plural, one {# Immobilie} other {# Immobilien}}",
+      "loadingSummary": "Portfolio-Zusammenfassung wird geladen",
+      "ariaLabel": "Portfolio-Zusammenfassung"
+    },
+    "search": {
+      "placeholder": "Immobilien suchen...",
+      "ariaLabel": "Immobilien suchen",
+      "clearAriaLabel": "Suche löschen",
+      "noResults": "Keine Immobilien gefunden",
+      "resultCount": "{count, plural, one {# Immobilie} other {# Immobilien}} gefunden"
+    },
+    "grouping": {
+      "label": "Gruppieren nach",
+      "noGrouping": "Keine Gruppierung",
+      "byLocation": "Nach Standort",
+      "byItemCount": "Nach Artikelanzahl",
+      "ariaLabel": "Immobilien-Gruppierungsoption"
+    },
+    "bulk": {
+      "selectAll": "Alle auswählen",
+      "allSelected": "Alle ausgewählt",
+      "selectAllAriaLabel": "Alle Immobilien auswählen",
+      "deselectAllAriaLabel": "Alle Immobilien abwählen",
+      "selectedCount": "{count} ausgewählt",
+      "clearSelectionAriaLabel": "Auswahl löschen",
+      "printSelected": "Ausgewählte drucken",
+      "printAriaLabel": "{count} ausgewählte Immobilien drucken",
+      "toolbarAriaLabel": "Massenoperationen"
+    },
+    "advancedTools": {
+      "title": "Erweiterte Werkzeuge"
+    },
+    "hints": {
+      "compareStats": "Verwenden Sie die Immobilienauswahl, um Statistiken über Ihre Immobilien zu vergleichen."
     }
   },
   "items": {

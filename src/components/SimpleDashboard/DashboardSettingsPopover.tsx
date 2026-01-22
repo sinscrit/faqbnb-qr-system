@@ -1,11 +1,12 @@
 // src/components/SimpleDashboard/DashboardSettingsPopover.tsx
 // REQ-136: Dashboard Settings Popover Component
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { Settings, X } from 'lucide-react';
 import { DashboardPreferences } from '@/hooks/useDashboardPreferences';
 
@@ -82,6 +83,7 @@ export function DashboardSettingsPopover({
   onPreferenceChange,
   className = '',
 }: DashboardSettingsPopoverProps) {
+  const t = useTranslations('dashboard');
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -146,7 +148,7 @@ export function DashboardSettingsPopover({
         type="button"
         onClick={handleToggle}
         className="p-2 rounded-lg hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-        aria-label="Dashboard settings"
+        aria-label={t('settings.title')}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -159,18 +161,18 @@ export function DashboardSettingsPopover({
           ref={popoverRef}
           className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-[#DDDDDD] z-50 animate-in fade-in slide-in-from-top-2 duration-200"
           role="dialog"
-          aria-label="Dashboard settings"
+          aria-label={t('settings.title')}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-[#DDDDDD]">
             <h3 className="text-base font-semibold text-[#222222]">
-              Dashboard Settings
+              {t('settings.title')}
             </h3>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="p-1 rounded-full hover:bg-[#F7F7F7] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]"
-              aria-label="Close settings"
+              aria-label={t('settings.closeAriaLabel')}
             >
               <X className="w-4 h-4 text-[#717171]" />
             </button>
@@ -182,22 +184,22 @@ export function DashboardSettingsPopover({
               id="forceAdvancedTools"
               checked={preferences.forceAdvancedTools}
               onChange={handleAdvancedToolsChange}
-              label="Show Advanced Tools"
-              description="Always show grouping and bulk operations"
+              label={t('settings.advancedTools.label')}
+              description={t('settings.advancedTools.description')}
             />
             <ToggleSwitch
               id="forcePortfolioView"
               checked={preferences.forcePortfolioView}
               onChange={handlePortfolioViewChange}
-              label="Show Portfolio Summary"
-              description="Always show portfolio overview card"
+              label={t('settings.portfolioView.label')}
+              description={t('settings.portfolioView.description')}
             />
           </div>
 
           {/* Footer hint */}
           <div className="px-4 py-3 border-t border-[#DDDDDD] bg-[#F7F7F7] rounded-b-xl">
             <p className="text-xs text-[#717171]">
-              These settings override automatic UI adaptation based on your property count.
+              {t('settings.footer')}
             </p>
           </div>
         </div>

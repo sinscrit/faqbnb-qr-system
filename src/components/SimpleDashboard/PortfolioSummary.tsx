@@ -1,10 +1,11 @@
 // src/components/SimpleDashboard/PortfolioSummary.tsx
 // REQ-136: Portfolio Summary Component for Dashboard
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Building2, TrendingUp, Activity } from 'lucide-react';
 import { DashboardStats } from '@/hooks/useDashboardStats';
 import { SkeletonBase } from './skeletons';
@@ -27,9 +28,9 @@ export interface PortfolioSummaryProps {
  * Loading skeleton for PortfolioSummary
  * REQ-138: Wrapped with SkeletonBase for accessibility
  */
-function LoadingSkeleton() {
+function LoadingSkeleton({ loadingLabel }: { loadingLabel: string }) {
   return (
-    <SkeletonBase label="Loading portfolio summary">
+    <SkeletonBase label={loadingLabel}>
       <div className="bg-gradient-to-r from-[#E61E4D] to-[#D70466] rounded-xl p-6 text-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-white/20 rounded-lg" />
@@ -93,9 +94,11 @@ export function PortfolioSummary({
   isLoading = false,
   className = '',
 }: PortfolioSummaryProps) {
+  const t = useTranslations('dashboard');
+
   // Show loading skeleton
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <LoadingSkeleton loadingLabel={t('portfolio.loadingSummary')} />;
   }
 
   // Calculate derived stats
@@ -112,31 +115,31 @@ export function PortfolioSummary({
     <div
       className={`bg-gradient-to-r from-[#E61E4D] to-[#D70466] rounded-xl p-6 text-white shadow-lg ${className}`}
       role="region"
-      aria-label="Portfolio summary"
+      aria-label={t('portfolio.ariaLabel')}
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 bg-white/20 rounded-lg">
           <Building2 className="w-6 h-6" />
         </div>
-        <h2 className="text-xl font-semibold">Portfolio Overview</h2>
+        <h2 className="text-xl font-semibold">{t('portfolio.title')}</h2>
       </div>
 
       {/* Summary Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SummaryStat
           value={propertyCount}
-          label="Total Properties"
+          label={t('portfolio.totalProperties')}
           icon={<Building2 className="w-4 h-4" />}
         />
         <SummaryStat
           value={totalItems}
-          label="Total Items"
+          label={t('portfolio.totalItems')}
           icon={<Activity className="w-4 h-4" />}
         />
         <SummaryStat
           value={avgItemsPerProperty}
-          label="Avg Items/Property"
+          label={t('portfolio.avgItemsPerProperty')}
           icon={<TrendingUp className="w-4 h-4" />}
         />
       </div>
@@ -145,7 +148,7 @@ export function PortfolioSummary({
       {propertyCount > 0 && (
         <div className="mt-4 pt-4 border-t border-white/20">
           <p className="text-sm text-white/70">
-            You have {totalRooms} room{totalRooms !== 1 ? 's' : ''} across {propertyCount} propert{propertyCount !== 1 ? 'ies' : 'y'}
+            {t('portfolio.insight', { roomCount: totalRooms, propertyCount })}
           </p>
         </div>
       )}

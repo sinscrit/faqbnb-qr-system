@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/PropertyEditModal.tsx
 // REQ-131: PropertyEditModal Component for Dashboard 2
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
 
 'use client';
 
@@ -123,9 +123,9 @@ const createValidateForm = (
   // Property Name - required, max 100
   const trimmedName = data.name.trim();
   if (!trimmedName) {
-    errors.name = t('validation.nameRequired');
+    errors.name = t('validation.propertyNameRequired');
   } else if (trimmedName.length > 100) {
-    errors.name = t('validation.nameMaxLength');
+    errors.name = t('validation.propertyNameMaxLength');
   }
 
   // Address Line 1 - max 200
@@ -155,7 +155,7 @@ const createValidateForm = (
 
   // Country - validate is valid code or empty
   if (data.country && !COUNTRIES.find(c => c.code === data.country)) {
-    errors.country = t('validation.countryInvalid');
+    errors.country = t('validation.invalidCountry');
   }
 
   return errors;
@@ -185,9 +185,7 @@ export function PropertyEditModal({
   onSave,
   className,
 }: PropertyEditModalProps) {
-  const tModal = useTranslations('properties.modal');
-  const tCommon = useTranslations('common.actions');
-  const tNotifications = useTranslations('common.notifications');
+  const t = useTranslations('dashboard');
 
   // Task 3: Form state management
   const [formData, setFormData] = useState<PropertyEditFormData>({
@@ -237,7 +235,7 @@ export function PropertyEditModal({
   }, [errors]);
 
   // Create validate function with translation
-  const validateForm = createValidateForm(tModal);
+  const validateForm = createValidateForm(t);
 
   // Task 6: Handle save with validation and API call
   const handleSave = async () => {
@@ -273,7 +271,7 @@ export function PropertyEditModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || tNotifications('error.propertyUpdate'));
+        throw new Error(data.error || t('errors.updateFailed'));
       }
 
       const { data: updatedProperty } = await response.json();
@@ -281,7 +279,7 @@ export function PropertyEditModal({
       onClose();
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : tNotifications('error.propertyUpdate'),
+        general: error instanceof Error ? error.message : t('errors.updateFailed'),
       });
     } finally {
       setIsSubmitting(false);
@@ -405,10 +403,10 @@ export function PropertyEditModal({
                 id="property-edit-modal-title"
                 className="text-xl font-semibold text-[#222222]"
               >
-                {tModal('editTitle')}
+                {t('modal.editProperty')}
               </Dialog.Title>
               <Dialog.Description id="property-edit-modal-description" className="sr-only">
-                {tModal('editDescription')}
+                {t('modal.editPropertyDescription')}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -422,7 +420,7 @@ export function PropertyEditModal({
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
-                aria-label={tModal('closeModal')}
+                aria-label={t('modal.closeModal')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -433,7 +431,7 @@ export function PropertyEditModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {/* Task 13: Screen reader announcement for form state */}
             <div aria-live="polite" className="sr-only">
-              {isSubmitting && tModal('toast.saving')}
+              {isSubmitting && t('modal.savingProperty')}
               {errors.general && `Error: ${errors.general}`}
             </div>
 
@@ -450,47 +448,47 @@ export function PropertyEditModal({
             {/* Form fields */}
             <div className="space-y-4">
               {/* Property Name - required */}
-              {renderTextField('name', tModal('form.name.label'), formData.name, {
+              {renderTextField('name', t('form.propertyName'), formData.name, {
                 required: true,
                 maxLength: 100,
-                placeholder: tModal('form.name.placeholder'),
+                placeholder: t('form.propertyNamePlaceholder'),
               })}
 
               {/* Address Line 1 */}
-              {renderTextField('addressLine1', tModal('form.address1.label'), formData.addressLine1, {
+              {renderTextField('addressLine1', t('form.addressLine1'), formData.addressLine1, {
                 maxLength: 200,
-                placeholder: tModal('form.address1.placeholder'),
+                placeholder: t('form.addressLine1Placeholder'),
               })}
 
               {/* Address Line 2 */}
-              {renderTextField('addressLine2', tModal('form.address2.label'), formData.addressLine2, {
+              {renderTextField('addressLine2', t('form.addressLine2'), formData.addressLine2, {
                 maxLength: 200,
-                placeholder: tModal('form.address2.placeholder'),
+                placeholder: t('form.addressLine2Placeholder'),
               })}
 
               {/* Task 12: City and State - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('city', tModal('form.city.label'), formData.city, {
+                {renderTextField('city', t('form.city'), formData.city, {
                   maxLength: 100,
-                  placeholder: tModal('form.city.placeholder'),
+                  placeholder: t('form.cityPlaceholder'),
                 })}
-                {renderTextField('state', tModal('form.state.label'), formData.state, {
+                {renderTextField('state', t('form.stateProvince'), formData.state, {
                   maxLength: 100,
-                  placeholder: tModal('form.state.placeholder'),
+                  placeholder: t('form.stateProvincePlaceholder'),
                 })}
               </div>
 
               {/* Task 12: Postal Code and Country - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('postalCode', tModal('form.postalCode.label'), formData.postalCode, {
+                {renderTextField('postalCode', t('form.postalCode'), formData.postalCode, {
                   maxLength: 20,
-                  placeholder: tModal('form.postalCode.placeholder'),
+                  placeholder: t('form.postalCodePlaceholder'),
                 })}
 
                 {/* Task 2 & 4: Country dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="country" className="block text-sm font-medium text-[#222222]">
-                    {tModal('form.country.label')}
+                    {t('form.country')}
                   </label>
                   <select
                     id="country"
@@ -538,7 +536,7 @@ export function PropertyEditModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              {tCommon('cancel')}
+              {t('buttons.cancel')}
             </button>
 
             {/* Save Button */}
@@ -558,11 +556,11 @@ export function PropertyEditModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label={tModal('saving')} />
-                  <span>{tModal('saving')}</span>
+                  <LoadingIndicator size="sm" color="white" label={t('buttons.saving')} />
+                  <span>{t('buttons.saving')}</span>
                 </>
               ) : (
-                <span>{tModal('saveChanges')}</span>
+                <span>{t('buttons.saveChanges')}</span>
               )}
             </button>
           </div>

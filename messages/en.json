@@ -936,7 +936,10 @@
       "dashboard": "Loading dashboard...",
       "redirecting": "Redirecting to login...",
       "generic": "Loading...",
-      "statistics": "Loading statistics"
+      "statistics": "Loading statistics",
+      "default": "Loading",
+      "content": "Loading content",
+      "pleaseWait": "{label}, please wait..."
     },
     "stats": {
       "items": "Items",
@@ -952,7 +955,10 @@
       "totalItems": "Total Items",
       "totalScans": "Total Scans",
       "activeUsers": "Active Users",
-      "viewAriaLabel": "View {label}: {count}"
+      "viewAriaLabel": "View {label}: {count}",
+      "loadingStats": "Loading statistics",
+      "emptyTitle": "Start adding new QR Code items and create guides/instructions",
+      "emptyAction": "New QR Code Item"
     },
     "actions": {
       "newItem": "New QR Code Item",
@@ -985,7 +991,19 @@
       "allPropertiesShort": "All",
       "noProperties": "No properties found",
       "propertyList": "Property list",
-      "switchProperty": "Switch property"
+      "switchProperty": "Switch property",
+      "singular": "My Property",
+      "plural": "My Properties",
+      "itemCount": "{count, plural, =0 {0 items} one {# item} other {# items}}",
+      "roomCount": "{count, plural, =0 {0 rooms} one {# room} other {# rooms}}",
+      "addNew": "Add New Property",
+      "editAriaLabel": "Edit property: {name}",
+      "addAriaLabel": "Add a new property",
+      "loadingProperties": "Loading properties",
+      "listAriaLabel": "Your properties",
+      "emptyTitle": "Let's add your property",
+      "emptyDescription": "A property is where your items live - like a vacation rental or home.",
+      "addProperty": "Add Property"
     },
     "settings": {
       "title": "Dashboard Settings",
@@ -1010,6 +1028,93 @@
     "meta": {
       "title": "Dashboard",
       "description": "Manage your QR code items and properties"
+    },
+    "modal": {
+      "editProperty": "Edit Property",
+      "editPropertyDescription": "Edit the details of your property including name and address information.",
+      "addProperty": "Add New Property",
+      "addPropertyDescription": "Create a new property by entering the name and address information.",
+      "closeModal": "Close modal",
+      "savingProperty": "Saving property changes...",
+      "creatingProperty": "Creating property..."
+    },
+    "form": {
+      "propertyName": "Property Name",
+      "propertyNamePlaceholder": "e.g., Beach House",
+      "addressLine1": "Address Line 1",
+      "addressLine1Placeholder": "Street address",
+      "addressLine2": "Address Line 2",
+      "addressLine2Placeholder": "Apt, suite, unit, etc. (optional)",
+      "city": "City",
+      "cityPlaceholder": "City",
+      "stateProvince": "State/Province",
+      "stateProvincePlaceholder": "State or Province",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "ZIP / Postal code",
+      "country": "Country",
+      "selectCountry": "Select country..."
+    },
+    "validation": {
+      "propertyNameRequired": "Property name is required",
+      "propertyNameMaxLength": "Property name must be 100 characters or less",
+      "addressMaxLength": "Address must be 200 characters or less",
+      "cityMaxLength": "City must be 100 characters or less",
+      "stateMaxLength": "State/Province must be 100 characters or less",
+      "postalCodeMaxLength": "Postal code must be 20 characters or less",
+      "invalidCountry": "Please select a valid country"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "createProperty": "Create Property",
+      "creating": "Creating...",
+      "addProperty": "Add Property",
+      "addNewProperty": "Add New Property"
+    },
+    "errors": {
+      "updateFailed": "Failed to update property",
+      "createFailed": "Failed to create property"
+    },
+    "portfolio": {
+      "title": "Portfolio Overview",
+      "totalProperties": "Total Properties",
+      "totalItems": "Total Items",
+      "avgItemsPerProperty": "Avg Items/Property",
+      "insight": "You have {roomCount, plural, one {# room} other {# rooms}} across {propertyCount, plural, one {# property} other {# properties}}",
+      "loadingSummary": "Loading portfolio summary",
+      "ariaLabel": "Portfolio summary"
+    },
+    "search": {
+      "placeholder": "Search properties...",
+      "ariaLabel": "Search properties",
+      "clearAriaLabel": "Clear search",
+      "noResults": "No properties found",
+      "resultCount": "{count, plural, one {# property} other {# properties}} found"
+    },
+    "grouping": {
+      "label": "Group by",
+      "noGrouping": "No Grouping",
+      "byLocation": "By Location",
+      "byItemCount": "By Item Count",
+      "ariaLabel": "Property grouping option"
+    },
+    "bulk": {
+      "selectAll": "Select all",
+      "allSelected": "All selected",
+      "selectAllAriaLabel": "Select all properties",
+      "deselectAllAriaLabel": "Deselect all properties",
+      "selectedCount": "{count} selected",
+      "clearSelectionAriaLabel": "Clear selection",
+      "printSelected": "Print Selected",
+      "printAriaLabel": "Print {count} selected properties",
+      "toolbarAriaLabel": "Bulk operations"
+    },
+    "advancedTools": {
+      "title": "Advanced Tools"
+    },
+    "hints": {
+      "compareStats": "Use the property selector to compare statistics across your properties."
     }
   },
   "items": {

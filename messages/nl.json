@@ -902,113 +902,219 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome back, {name}!",
-    "subtitle": "Create and manage your QR code items",
-    "overview": "Overview",
+    "welcome": "Welkom terug, {name}!",
+    "subtitle": "Maak en beheer uw QR-code artikelen",
+    "overview": "Overzicht",
     "nav": {
+      "ariaLabel": "Dashboard-navigatie",
       "dashboard": "Dashboard",
-      "items": "Items",
-      "guides": "Guides",
-      "properties": "Properties",
-      "rooms": "Rooms",
+      "items": "Artikelen",
+      "guides": "Gidsen",
+      "properties": "Eigendommen",
+      "rooms": "Kamers",
       "tags": "Tags",
-      "instructions": "Instructions",
-      "analytics": "Analytics",
-      "settings": "Settings",
+      "instructions": "Instructies",
+      "analytics": "Analyses",
+      "settings": "Instellingen",
       "help": "Help",
-      "create": "Create",
-      "print": "Print",
+      "create": "Maken",
+      "print": "Afdrukken",
       "mobile": {
         "dashboard": "D/B",
         "items": "Items",
-        "guides": "Guide",
-        "properties": "Prop."
+        "guides": "Gids",
+        "properties": "Eig."
       }
     },
     "header": {
       "logo": "FAQBNB",
-      "logoAlt": "FAQBNB Logo",
-      "logout": "Logout",
-      "logoutAriaLabel": "Sign out of your account"
+      "logoAlt": "FAQBNB-logo",
+      "logout": "Uitloggen",
+      "logoutAriaLabel": "Uitloggen van uw account"
     },
     "loading": {
-      "dashboard": "Loading dashboard...",
-      "redirecting": "Redirecting to login...",
-      "generic": "Loading...",
-      "statistics": "Loading statistics"
+      "dashboard": "Dashboard wordt geladen...",
+      "redirecting": "Doorverwijzen naar inloggen...",
+      "generic": "Laden...",
+      "statistics": "Statistieken worden geladen",
+      "default": "Laden",
+      "content": "Inhoud wordt geladen",
+      "pleaseWait": "{label}, even geduld..."
     },
     "stats": {
-      "items": "Items",
-      "itemsCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
-      "rooms": "Rooms",
-      "roomsCount": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
+      "items": "Artikelen",
+      "itemsCount": "{count, plural, =0 {Geen artikelen} one {# artikel} other {# artikelen}}",
+      "rooms": "Kamers",
+      "roomsCount": "{count, plural, =0 {Geen kamers} one {# kamer} other {# kamers}}",
       "tags": "Tags",
-      "tagsCount": "{count, plural, =0 {No tags} one {# tag} other {# tags}}",
-      "properties": "Properties",
-      "propertiesCount": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
-      "allProperties": "(all properties)",
-      "totalProperties": "Total Properties",
-      "totalItems": "Total Items",
-      "totalScans": "Total Scans",
-      "activeUsers": "Active Users",
-      "viewAriaLabel": "View {label}: {count}"
+      "tagsCount": "{count, plural, =0 {Geen tags} one {# tag} other {# tags}}",
+      "properties": "Eigendommen",
+      "propertiesCount": "{count, plural, =0 {Geen eigendommen} one {# eigendom} other {# eigendommen}}",
+      "allProperties": "(alle eigendommen)",
+      "totalProperties": "Totaal eigendommen",
+      "totalItems": "Totaal artikelen",
+      "totalScans": "Totaal scans",
+      "activeUsers": "Actieve gebruikers",
+      "viewAriaLabel": "{label} bekijken: {count}",
+      "loadingStats": "Statistieken worden geladen",
+      "emptyTitle": "Begin met het toevoegen van QR-code artikelen en maak gidsen/instructies",
+      "emptyAction": "Nieuw QR-code artikel"
     },
     "actions": {
-      "newItem": "New QR Code Item",
-      "viewItems": "View QR Code Items",
-      "printQR": "Print QR Code",
-      "addProperty": "Add Property",
-      "createProperty": "Create Property",
-      "createItem": "Create Item",
-      "viewAll": "View All",
-      "quickActions": "Quick Actions",
+      "newItem": "Nieuw QR-code artikel",
+      "viewItems": "QR-code artikelen bekijken",
+      "printQR": "QR-code afdrukken",
+      "addProperty": "Eigendom toevoegen",
+      "createProperty": "Eigendom maken",
+      "createItem": "Artikel maken",
+      "viewAll": "Alles bekijken",
+      "quickActions": "Snelle acties",
       "ariaLabels": {
-        "newItem": "Create a new QR code item",
-        "viewItems": "View all your items",
-        "printQR": "Print QR codes for your items",
-        "addProperty": "Add a new property"
+        "newItem": "Een nieuw QR-code artikel maken",
+        "viewItems": "Al uw artikelen bekijken",
+        "printQR": "QR-codes van uw artikelen afdrukken",
+        "addProperty": "Een nieuw eigendom toevoegen"
       }
     },
     "empty": {
-      "title": "Start adding new QR Code items and create guides/instructions",
-      "description": "Create your first item to get started",
-      "newUserWelcome": "Welcome to FAQBNB!",
-      "newUserDescription": "Get started by adding your first property. Then you can create QR codes to help guests find what they need.",
-      "newUserAction": "Add Your First Property",
-      "noActivity": "No recent activity",
-      "recentActivity": "Recent Activity"
+      "title": "Begin met het toevoegen van QR-code artikelen en maak gidsen/instructies",
+      "description": "Maak uw eerste artikel om te beginnen",
+      "newUserWelcome": "Welkom bij FAQBNB!",
+      "newUserDescription": "Begin met het toevoegen van uw eerste eigendom. Daarna kunt u QR-codes maken om gasten te helpen vinden wat ze nodig hebben.",
+      "newUserAction": "Voeg uw eerste eigendom toe",
+      "noActivity": "Geen recente activiteit",
+      "recentActivity": "Recente activiteit"
     },
     "property": {
-      "selectProperty": "Select Property",
-      "allProperties": "All Properties",
-      "allPropertiesShort": "All",
-      "noProperties": "No properties found",
-      "propertyList": "Property list",
-      "switchProperty": "Switch property"
+      "selectProperty": "Eigendom selecteren",
+      "allProperties": "Alle eigendommen",
+      "allPropertiesShort": "Alle",
+      "noProperties": "Geen eigendommen gevonden",
+      "propertyList": "Eigendommenlijst",
+      "switchProperty": "Eigendom wisselen",
+      "singular": "Mijn eigendom",
+      "plural": "Mijn eigendommen",
+      "itemCount": "{count, plural, =0 {0 artikelen} one {# artikel} other {# artikelen}}",
+      "roomCount": "{count, plural, =0 {0 kamers} one {# kamer} other {# kamers}}",
+      "addNew": "Nieuw eigendom toevoegen",
+      "editAriaLabel": "Eigendom bewerken: {name}",
+      "addAriaLabel": "Een nieuw eigendom toevoegen",
+      "loadingProperties": "Eigendommen worden geladen",
+      "listAriaLabel": "Uw eigendommen",
+      "emptyTitle": "Laten we uw eigendom toevoegen",
+      "emptyDescription": "Een eigendom is waar uw artikelen leven - zoals een vakantiewoning of huis.",
+      "addProperty": "Eigendom toevoegen"
     },
     "settings": {
-      "title": "Dashboard Settings",
+      "title": "Dashboard-instellingen",
       "advancedTools": {
-        "label": "Show Advanced Tools",
-        "description": "Always show grouping and bulk operations"
+        "label": "Geavanceerde hulpmiddelen tonen",
+        "description": "Altijd groepering en bulkoperaties tonen"
       },
       "portfolioView": {
-        "label": "Show Portfolio Summary",
-        "description": "Always show portfolio overview card"
+        "label": "Portfolio-samenvatting tonen",
+        "description": "Altijd portfolio-overzichtskaart tonen"
       },
-      "footer": "These settings override automatic UI adaptation based on your property count.",
-      "close": "Close settings",
-      "closeAriaLabel": "Close dashboard settings"
+      "footer": "Deze instellingen overschrijven de automatische UI-aanpassing op basis van uw eigendomsaantal.",
+      "close": "Instellingen sluiten",
+      "closeAriaLabel": "Dashboard-instellingen sluiten"
     },
     "messages": {
-      "propertyCreated": "Property created successfully",
-      "propertyUpdated": "Property updated successfully",
-      "propertyDeleted": "Property deleted successfully",
-      "itemCreated": "Item created successfully"
+      "propertyCreated": "Eigendom succesvol aangemaakt",
+      "propertyUpdated": "Eigendom succesvol bijgewerkt",
+      "propertyDeleted": "Eigendom succesvol verwijderd",
+      "itemCreated": "Artikel succesvol aangemaakt"
     },
     "meta": {
       "title": "Dashboard",
-      "description": "Manage your QR code items and properties"
+      "description": "Beheer uw QR-code artikelen en eigendommen"
+    },
+    "modal": {
+      "editProperty": "Eigendom bewerken",
+      "editPropertyDescription": "Bewerk de details van uw eigendom inclusief naam en adresgegevens.",
+      "addProperty": "Nieuw eigendom toevoegen",
+      "addPropertyDescription": "Maak een nieuw eigendom aan door naam en adresgegevens in te voeren.",
+      "closeModal": "Venster sluiten",
+      "savingProperty": "Eigendomswijzigingen worden opgeslagen...",
+      "creatingProperty": "Eigendom wordt aangemaakt..."
+    },
+    "form": {
+      "propertyName": "Eigendomsnaam",
+      "propertyNamePlaceholder": "bijv. Strandhuis",
+      "addressLine1": "Adresregel 1",
+      "addressLine1Placeholder": "Straat en huisnummer",
+      "addressLine2": "Adresregel 2",
+      "addressLine2Placeholder": "Appartement, suite, etc. (optioneel)",
+      "city": "Stad",
+      "cityPlaceholder": "Stad",
+      "stateProvince": "Provincie",
+      "stateProvincePlaceholder": "Provincie",
+      "postalCode": "Postcode",
+      "postalCodePlaceholder": "Postcode",
+      "country": "Land",
+      "selectCountry": "Selecteer land..."
+    },
+    "validation": {
+      "propertyNameRequired": "Eigendomsnaam is verplicht",
+      "propertyNameMaxLength": "Eigendomsnaam mag maximaal 100 tekens bevatten",
+      "addressMaxLength": "Adres mag maximaal 200 tekens bevatten",
+      "cityMaxLength": "Stad mag maximaal 100 tekens bevatten",
+      "stateMaxLength": "Provincie mag maximaal 100 tekens bevatten",
+      "postalCodeMaxLength": "Postcode mag maximaal 20 tekens bevatten",
+      "invalidCountry": "Selecteer een geldig land"
+    },
+    "buttons": {
+      "cancel": "Annuleren",
+      "saveChanges": "Wijzigingen opslaan",
+      "saving": "Opslaan...",
+      "createProperty": "Eigendom maken",
+      "creating": "Maken...",
+      "addProperty": "Eigendom toevoegen",
+      "addNewProperty": "Nieuw eigendom toevoegen"
+    },
+    "errors": {
+      "updateFailed": "Bijwerken van eigendom mislukt",
+      "createFailed": "Aanmaken van eigendom mislukt"
+    },
+    "portfolio": {
+      "title": "Portfolio-overzicht",
+      "totalProperties": "Totaal eigendommen",
+      "totalItems": "Totaal artikelen",
+      "avgItemsPerProperty": "Gem. artikelen/eigendom",
+      "insight": "U hebt {roomCount, plural, one {# kamer} other {# kamers}} verdeeld over {propertyCount, plural, one {# eigendom} other {# eigendommen}}",
+      "loadingSummary": "Portfolio-samenvatting wordt geladen",
+      "ariaLabel": "Portfolio-samenvatting"
+    },
+    "search": {
+      "placeholder": "Eigendommen zoeken...",
+      "ariaLabel": "Eigendommen zoeken",
+      "clearAriaLabel": "Zoekopdracht wissen",
+      "noResults": "Geen eigendommen gevonden",
+      "resultCount": "{count, plural, one {# eigendom} other {# eigendommen}} gevonden"
+    },
+    "grouping": {
+      "label": "Groeperen op",
+      "noGrouping": "Geen groepering",
+      "byLocation": "Op locatie",
+      "byItemCount": "Op artikelaantal",
+      "ariaLabel": "Eigendom-groeperingsoptie"
+    },
+    "bulk": {
+      "selectAll": "Alles selecteren",
+      "allSelected": "Alles geselecteerd",
+      "selectAllAriaLabel": "Alle eigendommen selecteren",
+      "deselectAllAriaLabel": "Alle eigendommen deselecteren",
+      "selectedCount": "{count} geselecteerd",
+      "clearSelectionAriaLabel": "Selectie wissen",
+      "printSelected": "Selectie afdrukken",
+      "printAriaLabel": "{count} geselecteerde eigendommen afdrukken",
+      "toolbarAriaLabel": "Bulkoperaties"
+    },
+    "advancedTools": {
+      "title": "Geavanceerde hulpmiddelen"
+    },
+    "hints": {
+      "compareStats": "Gebruik de eigendomsselector om statistieken over uw eigendommen te vergelijken."
     }
   },
   "items": {

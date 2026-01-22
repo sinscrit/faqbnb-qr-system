@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/AddPropertyModal.tsx
 // REQ-132: AddPropertyModal Component for Dashboard 2
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
 
 'use client';
 
@@ -166,11 +166,7 @@ export function AddPropertyModal({
   onSave,
   className,
 }: AddPropertyModalProps) {
-  const tActions = useTranslations('common.actions');
-  const tModal = useTranslations('properties.modal');
-  const tForm = useTranslations('properties.modal.form');
-  const tValidation = useTranslations('properties.modal.validation');
-  const tNotifications = useTranslations('common.notifications');
+  const t = useTranslations('dashboard');
 
   // Task 2.3: Form state management with empty initial values
   const [formData, setFormData] = useState<AddPropertyFormData>({
@@ -227,9 +223,18 @@ export function AddPropertyModal({
     if (hasErrors) {
       // Translate validation keys to error messages
       const translatedErrors: AddPropertyValidationErrors = {};
+      const validationKeyMap: Record<ValidationKey, string> = {
+        nameRequired: 'validation.propertyNameRequired',
+        nameMaxLength: 'validation.propertyNameMaxLength',
+        addressMaxLength: 'validation.addressMaxLength',
+        cityMaxLength: 'validation.cityMaxLength',
+        stateMaxLength: 'validation.stateMaxLength',
+        postalCodeMaxLength: 'validation.postalCodeMaxLength',
+        countryInvalid: 'validation.invalidCountry',
+      };
       Object.entries(validationKeys).forEach(([field, key]) => {
         if (key) {
-          translatedErrors[field as keyof AddPropertyValidationErrors] = tValidation(key);
+          translatedErrors[field as keyof AddPropertyValidationErrors] = t(validationKeyMap[key]);
         }
       });
       setErrors(translatedErrors);
@@ -266,7 +271,7 @@ export function AddPropertyModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || tNotifications('error.propertyCreate'));
+        throw new Error(data.error || t('errors.createFailed'));
       }
 
       const { data: newProperty } = await response.json();
@@ -274,7 +279,7 @@ export function AddPropertyModal({
       onClose();
     } catch (error) {
       setErrors({
-        general: error instanceof Error ? error.message : tNotifications('error.propertyCreate'),
+        general: error instanceof Error ? error.message : t('errors.createFailed'),
       });
     } finally {
       setIsSubmitting(false);
@@ -398,10 +403,10 @@ export function AddPropertyModal({
                 id="add-property-modal-title"
                 className="text-xl font-semibold text-[#222222]"
               >
-                {tModal('addTitle')}
+                {t('modal.addProperty')}
               </Dialog.Title>
               <Dialog.Description id="add-property-modal-description" className="sr-only">
-                {tModal('addDescription')}
+                {t('modal.addPropertyDescription')}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -415,7 +420,7 @@ export function AddPropertyModal({
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]',
                   'disabled:opacity-50 disabled:cursor-not-allowed'
                 )}
-                aria-label={tModal('closeModal')}
+                aria-label={t('modal.closeModal')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -426,7 +431,7 @@ export function AddPropertyModal({
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
             {/* Screen reader announcement for form state */}
             <div aria-live="polite" className="sr-only">
-              {isSubmitting && tModal('creating')}
+              {isSubmitting && t('modal.creatingProperty')}
               {errors.general && `Error: ${errors.general}`}
             </div>
 
@@ -443,47 +448,47 @@ export function AddPropertyModal({
             {/* Form fields */}
             <div className="space-y-4">
               {/* Property Name - required */}
-              {renderTextField('name', tForm('name.label'), formData.name, {
+              {renderTextField('name', t('form.propertyName'), formData.name, {
                 required: true,
                 maxLength: 100,
-                placeholder: tForm('name.placeholder'),
+                placeholder: t('form.propertyNamePlaceholder'),
               })}
 
               {/* Address Line 1 */}
-              {renderTextField('addressLine1', tForm('address1.label'), formData.addressLine1, {
+              {renderTextField('addressLine1', t('form.addressLine1'), formData.addressLine1, {
                 maxLength: 200,
-                placeholder: tForm('address1.placeholder'),
+                placeholder: t('form.addressLine1Placeholder'),
               })}
 
               {/* Address Line 2 */}
-              {renderTextField('addressLine2', tForm('address2.label'), formData.addressLine2, {
+              {renderTextField('addressLine2', t('form.addressLine2'), formData.addressLine2, {
                 maxLength: 200,
-                placeholder: tForm('address2.placeholder'),
+                placeholder: t('form.addressLine2Placeholder'),
               })}
 
               {/* City and State - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('city', tForm('city.label'), formData.city, {
+                {renderTextField('city', t('form.city'), formData.city, {
                   maxLength: 100,
-                  placeholder: tForm('city.placeholder'),
+                  placeholder: t('form.cityPlaceholder'),
                 })}
-                {renderTextField('state', tForm('state.label'), formData.state, {
+                {renderTextField('state', t('form.stateProvince'), formData.state, {
                   maxLength: 100,
-                  placeholder: tForm('state.placeholder'),
+                  placeholder: t('form.stateProvincePlaceholder'),
                 })}
               </div>
 
               {/* Postal Code and Country - side by side on desktop, stacked on mobile */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {renderTextField('postalCode', tForm('postalCode.label'), formData.postalCode, {
+                {renderTextField('postalCode', t('form.postalCode'), formData.postalCode, {
                   maxLength: 20,
-                  placeholder: tForm('postalCode.placeholder'),
+                  placeholder: t('form.postalCodePlaceholder'),
                 })}
 
                 {/* Country dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="country" className="block text-sm font-medium text-[#222222]">
-                    {tForm('country.label')}
+                    {t('form.country')}
                   </label>
                   <select
                     id="country"
@@ -501,7 +506,7 @@ export function AddPropertyModal({
                   >
                     {COUNTRIES.map((country) => (
                       <option key={country.code} value={country.code}>
-                        {'labelKey' in country ? tForm(`country.${country.labelKey}`) : country.label}
+                        {'labelKey' in country ? t('form.selectCountry') : country.label}
                       </option>
                     ))}
                   </select>
@@ -531,7 +536,7 @@ export function AddPropertyModal({
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}
             >
-              {tActions('cancel')}
+              {t('buttons.cancel')}
             </button>
 
             {/* Create Property Button */}
@@ -551,11 +556,11 @@ export function AddPropertyModal({
             >
               {isSubmitting ? (
                 <>
-                  <LoadingIndicator size="sm" color="white" label={tModal('creating')} />
-                  <span>{tModal('creating')}</span>
+                  <LoadingIndicator size="sm" color="white" label={t('buttons.creating')} />
+                  <span>{t('buttons.creating')}</span>
                 </>
               ) : (
-                <span>{tActions('createProperty')}</span>
+                <span>{t('buttons.createProperty')}</span>
               )}
             </button>
           </div>

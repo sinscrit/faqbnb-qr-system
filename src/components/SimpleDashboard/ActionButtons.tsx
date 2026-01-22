@@ -2,7 +2,7 @@
 // REQ-126: Action Buttons Component for Dashboard Operations
 // REQ-127: Print QR Code Navigation Logic Enhancement
 // Created: 2026-01-06
-// Last Modified: 2026-01-06 (REQ-127 verified)
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
 
 'use client';
 
@@ -121,7 +121,7 @@ export function ActionButtons({
 }: ActionButtonsProps) {
   const router = useRouter();
   const { userProperties } = useAuth();
-  const t = useTranslations('common.actions');
+  const t = useTranslations('dashboard');
 
   /**
    * Handle Print QR Code button click
@@ -158,27 +158,27 @@ export function ActionButtons({
   const buttonConfigs: ActionButtonConfig[] = [
     {
       key: 'create',
-      label: t('newQrCodeItem'),
+      label: t('actions.newItem'),
       icon: PlusCircle,
       variant: 'primary',
       onClick: onCreateClick || (() => router.push('/dashboard2/create')),
-      ariaLabel: t('newQrCodeItem'),
+      ariaLabel: t('actions.ariaLabels.newItem'),
     },
     {
       key: 'view',
-      label: t('viewQrCodeItems'),
+      label: t('actions.viewItems'),
       icon: Package,
       variant: 'secondary',
       onClick: onViewClick || (() => router.push('/dashboard2/items')),
-      ariaLabel: t('viewQrCodeItems'),
+      ariaLabel: t('actions.ariaLabels.viewItems'),
     },
     {
       key: 'print',
-      label: t('printQrCode'),
+      label: t('actions.printQR'),
       icon: QrCode,
       variant: 'secondary',
       onClick: handlePrintQRCode,
-      ariaLabel: t('printQrCode'),
+      ariaLabel: t('actions.ariaLabels.printQR'),
     },
   ];
 

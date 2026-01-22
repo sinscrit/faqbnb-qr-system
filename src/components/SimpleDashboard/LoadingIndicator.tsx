@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/LoadingIndicator.tsx
 // REQ-138: Unified Loading Indicator Component
 // Created: 2026-01-06
-// Last Modified: 2026-01-21
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
 
 'use client';
 
@@ -66,8 +66,8 @@ export function LoadingIndicator({
   color = 'brand',
   className,
 }: LoadingIndicatorProps) {
-  const t = useTranslations('common.loading');
-  const effectiveLabel = label ?? t('generic.loading');
+  const t = useTranslations('dashboard');
+  const effectiveLabel = label ?? t('loading.default');
   const sizeClass = sizeStyles[size];
   const colorClass = colorStyles[color];
 

@@ -2,7 +2,7 @@
 
 **Document Type:** Detailed Implementation Guide
 **Created:** 2026-01-20 21:15 UTC
-**Last Modified:** 2026-01-20 21:15 UTC
+**Last Modified:** 2026-01-22 (Implementation in progress)
 **Request ID:** REQ-E02-052
 **Epic:** 2 - Static UI Translation
 **Sub-Epic:** 2B - Dashboard & Navigation
@@ -229,10 +229,12 @@ Add all SimpleDashboard-specific translation keys to the `dashboard` namespace i
 3. **ICU syntax:** Verify pluralization patterns compile (no syntax errors in build)
 
 ### Acceptance Criteria
-- [ ] All translation keys from implementation plan added to en.json
-- [ ] JSON is valid (no syntax errors)
-- [ ] Build completes successfully
-- [ ] No duplicate keys within namespace
+- [x] All translation keys from implementation plan added to en.json
+- [x] JSON is valid (no syntax errors)
+- [x] Build completes successfully
+- [x] No duplicate keys within namespace
+
+---implemented: Added ~80 new translation keys to dashboard namespace including stats, property, modal, form, validation, buttons, errors, portfolio, search, grouping, bulk, advancedTools, loading, hints sub-namespaces. Merged with existing keys from REQ-E02-049.-unit tested-
 
 ---
 

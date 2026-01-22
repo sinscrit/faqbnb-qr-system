@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/PropertySearchBar.tsx
 // REQ-136: Property Search Bar Component for Dashboard
 // Created: 2026-01-06
-// Last Modified: 2026-01-21 (REQ-E02-004: i18n translation support)
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Updated to dashboard namespace
 
 'use client';
 
@@ -64,12 +64,12 @@ export function PropertySearchBar({
   className = '',
   debounceMs = 300,
 }: PropertySearchBarProps) {
-  const t = useTranslations('propertySearch');
+  const t = useTranslations('dashboard');
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Use provided placeholder or default from translations
-  const effectivePlaceholder = placeholder ?? t('placeholder');
+  const effectivePlaceholder = placeholder ?? t('search.placeholder');
 
   // Debounce the search value
   const debouncedValue = useDebounce(inputValue, debounceMs);
@@ -116,7 +116,7 @@ export function PropertySearchBar({
         onKeyDown={handleKeyDown}
         placeholder={effectivePlaceholder}
         className="w-full min-h-[48px] pl-10 pr-10 py-3 text-base text-[#222222] placeholder-[#717171] bg-white border border-[#DDDDDD] rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#222222] focus:border-transparent"
-        aria-label={t('ariaLabel')}
+        aria-label={t('search.ariaLabel')}
       />
 
       {/* Clear button - only show when value exists */}
@@ -125,7 +125,7 @@ export function PropertySearchBar({
           type="button"
           onClick={handleClear}
           className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#F7F7F7] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222]"
-          aria-label={t('clearSearch')}
+          aria-label={t('search.clearAriaLabel')}
         >
           <X className="w-4 h-4 text-[#717171]" />
         </button>

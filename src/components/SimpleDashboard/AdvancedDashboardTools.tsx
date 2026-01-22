@@ -1,11 +1,12 @@
 // src/components/SimpleDashboard/AdvancedDashboardTools.tsx
 // REQ-136: Advanced Dashboard Tools Container
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronDown, ChevronUp, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboardTier } from '@/hooks/useDashboardTier';
@@ -63,6 +64,7 @@ export function AdvancedDashboardTools({
 }: AdvancedDashboardToolsProps) {
   const { userProperties } = useAuth();
   const propertyCount = userProperties?.length ?? 0;
+  const t = useTranslations('dashboard');
 
   // Get tier configuration
   const tierConfig = useDashboardTier(propertyCount);
@@ -96,7 +98,7 @@ export function AdvancedDashboardTools({
             id="advanced-tools-heading"
             className="text-lg font-semibold text-[#222222]"
           >
-            Advanced Tools
+            {t('advancedTools.title')}
           </span>
         </div>
         {isExpanded ? (
@@ -113,7 +115,7 @@ export function AdvancedDashboardTools({
           id="advanced-tools-heading-desktop"
           className="text-lg font-semibold text-[#222222]"
         >
-          Advanced Tools
+          {t('advancedTools.title')}
         </h2>
       </div>
 

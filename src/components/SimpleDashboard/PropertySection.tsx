@@ -4,7 +4,7 @@
 // REQ-137: Updated EmptyState with friendly messaging and CTA
 // REQ-140: Added min-h-[48px] to PropertyRow for touch target compliance
 // Created: 2026-01-06
-// Last Modified: 2026-01-11 - Added item counts display
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Internationalized all UI strings
 
 'use client';
 
@@ -31,13 +31,15 @@ interface PropertyRowProps {
   roomCount?: number;
   /** Whether counts are loading */
   countsLoading?: boolean;
+  /** Translation function for ICU messages */
+  t: ReturnType<typeof useTranslations<'dashboard'>>;
 }
 
 /**
  * Individual property row with click interaction
  * Displays property nickname, item count, room count, and chevron icon
  */
-function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false }: PropertyRowProps) {
+function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false, t }: PropertyRowProps) {
   const handleClick = () => onClick(property);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -52,7 +54,7 @@ function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLo
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className="w-full flex items-center justify-between min-h-[48px] p-4 bg-white border-b border-[#DDDDDD] last:border-b-0 hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset"
-      aria-label={`Edit property: ${property.nickname}`}
+      aria-label={t('property.editAriaLabel', { name: property.nickname })}
     >
       <div className="flex flex-col items-start gap-0.5">
         <span className="text-[#222222] font-medium">
@@ -65,11 +67,11 @@ function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLo
             <>
               <span className="flex items-center gap-1">
                 <Package className="w-3.5 h-3.5" />
-                {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                {t('property.itemCount', { count: itemCount })}
               </span>
               <span className="flex items-center gap-1">
                 <DoorOpen className="w-3.5 h-3.5" />
-                {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+                {t('property.roomCount', { count: roomCount })}
               </span>
             </>
           )}
@@ -85,9 +87,9 @@ function PropertyRow({ property, onClick, itemCount = 0, roomCount = 0, countsLo
  * Shows shimmer animation while property data loads
  * REQ-138: Wrapped with SkeletonBase for accessibility
  */
-function LoadingSkeleton() {
+function LoadingSkeleton({ loadingLabel }: { loadingLabel: string }) {
   return (
-    <SkeletonBase label="Loading properties">
+    <SkeletonBase label={loadingLabel}>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {/* Header skeleton */}
         <div className="p-4 border-b border-[#DDDDDD]">
@@ -123,16 +125,13 @@ interface PropertyEmptyStateProps {
   onAddProperty?: () => void;
 }
 
-function PropertyEmptyState({ onAddProperty }: PropertyEmptyStateProps) {
-  const tEmpty = useTranslations('common.emptyStates');
-  const tActions = useTranslations('common.actions');
-
+function PropertyEmptyState({ onAddProperty, t }: PropertyEmptyStateProps & { t: ReturnType<typeof useTranslations<'dashboard'>> }) {
   return (
     <EmptyStateCard
       icon={Home}
-      title={tEmpty('properties.titleAdd')}
-      description={tEmpty('properties.description')}
-      actionLabel={onAddProperty ? tActions('addProperty') : undefined}
+      title={t('property.emptyTitle')}
+      description={t('property.emptyDescription')}
+      actionLabel={onAddProperty ? t('buttons.addProperty') : undefined}
       onAction={onAddProperty}
       variant="subtle"
     />
@@ -154,6 +153,8 @@ interface SinglePropertyCardProps {
   roomCount?: number;
   /** Whether counts are loading */
   countsLoading?: boolean;
+  /** Translation function for ICU messages */
+  t: ReturnType<typeof useTranslations<'dashboard'>>;
 }
 
 /**
@@ -161,7 +162,7 @@ interface SinglePropertyCardProps {
  * Shows property prominently with edit icon instead of chevron
  * Designed for users with only one property - no list styling
  */
-function SinglePropertyCard({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false }: SinglePropertyCardProps) {
+function SinglePropertyCard({ property, onClick, itemCount = 0, roomCount = 0, countsLoading = false, t }: SinglePropertyCardProps) {
   const handleClick = () => onClick(property);
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -176,7 +177,7 @@ function SinglePropertyCard({ property, onClick, itemCount = 0, roomCount = 0, c
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className="w-full flex items-center justify-between min-h-[48px] p-4 bg-white hover:bg-[#F7F7F7] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-inset rounded-lg"
-      aria-label={`Edit property: ${property.nickname}`}
+      aria-label={t('property.editAriaLabel', { name: property.nickname })}
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-[#FFEEEF] rounded-lg flex items-center justify-center">
@@ -193,11 +194,11 @@ function SinglePropertyCard({ property, onClick, itemCount = 0, roomCount = 0, c
               <>
                 <span className="flex items-center gap-1">
                   <Package className="w-3.5 h-3.5" />
-                  {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                  {t('property.itemCount', { count: itemCount })}
                 </span>
                 <span className="flex items-center gap-1">
                   <DoorOpen className="w-3.5 h-3.5" />
-                  {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+                  {t('property.roomCount', { count: roomCount })}
                 </span>
               </>
             )}
@@ -249,6 +250,7 @@ export function PropertySection({
   className = '',
 }: PropertySectionProps) {
   const { userProperties, loading } = useAuth();
+  const t = useTranslations('dashboard');
 
   // Get property IDs for fetching item and room counts
   const propertyIds = userProperties?.map(p => p.id) || [];
@@ -257,7 +259,7 @@ export function PropertySection({
   const { itemCounts, roomCounts, loading: countsLoading } = usePropertyItemCounts(propertyIds);
 
   // Dynamic heading based on property count
-  const headingText = userProperties?.length === 1 ? 'My Property' : 'My Properties';
+  const headingText = userProperties?.length === 1 ? t('property.singular') : t('property.plural');
 
   // REQ-136: Determine if we should use single property compact view
   const useSingleView = tier === 'single' && userProperties?.length === 1;
@@ -284,7 +286,7 @@ export function PropertySection({
 
   // Show loading skeleton
   if (loading) {
-    return <LoadingSkeleton />;
+    return <LoadingSkeleton loadingLabel={t('property.loadingProperties')} />;
   }
 
   const hasProperties = userProperties && userProperties.length > 0;
@@ -313,11 +315,12 @@ export function PropertySection({
               itemCount={itemCounts[userProperties[0].id] || 0}
               roomCount={roomCounts[userProperties[0].id] || 0}
               countsLoading={countsLoading}
+              t={t}
             />
           </div>
         ) : (
           // Other tiers: List view
-          <div role="list" aria-label="Your properties">
+          <div role="list" aria-label={t('property.listAriaLabel')}>
             {userProperties.map((property) => (
               <PropertyRow
                 key={property.id}
@@ -326,12 +329,13 @@ export function PropertySection({
                 itemCount={itemCounts[property.id] || 0}
                 roomCount={roomCounts[property.id] || 0}
                 countsLoading={countsLoading}
+                t={t}
               />
             ))}
           </div>
         )
       ) : (
-        <PropertyEmptyState onAddProperty={onAddProperty} />
+        <PropertyEmptyState onAddProperty={onAddProperty} t={t} />
       )}
 
       {/* Add Property Button */}
@@ -340,10 +344,10 @@ export function PropertySection({
           type="button"
           onClick={handleAddClick}
           className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-lg font-medium text-base bg-gradient-to-r from-[#E61E4D] to-[#D70466] text-white transition-all duration-200 ease-out hover:scale-[1.02] hover:brightness-95 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#222222] focus-visible:ring-offset-2"
-          aria-label="Add a new property"
+          aria-label={t('property.addAriaLabel')}
         >
           <Plus className="w-5 h-5" />
-          <span>Add New Property</span>
+          <span>{t('buttons.addNewProperty')}</span>
         </button>
       </div>
     </section>

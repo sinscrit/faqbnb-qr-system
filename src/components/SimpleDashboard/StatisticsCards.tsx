@@ -6,7 +6,7 @@
 // REQ-140: Updated grid breakpoint from sm: to md: for Airbnb mobile alignment
 // REQ-203: Added click navigation to stat cards
 // Created: 2026-01-06 17:00:00 UTC
-// Last Modified: 2026-01-12 20:30:00 UTC
+// Last Modified: 2026-01-22 08:00:00 UTC
 
 'use client';
 
@@ -71,6 +71,8 @@ interface StatCardProps {
   config: StatCardConfig;
   /** Numeric value to display */
   value: number;
+  /** Translated aria-label for the card */
+  ariaLabel: string;
 }
 
 /**
@@ -78,7 +80,7 @@ interface StatCardProps {
  * REQ-203: Now renders as a clickable Link with navigation
  * Displays icon, large number, label, and chevron indicator
  */
-function StatCard({ config, value }: StatCardProps) {
+function StatCard({ config, value, ariaLabel }: StatCardProps) {
   const Icon = config.icon;
 
   return (
@@ -88,7 +90,7 @@ function StatCard({ config, value }: StatCardProps) {
                  hover:shadow-md hover:bg-gray-50 transition-all cursor-pointer
                  focus:outline-none focus:ring-2 focus:ring-[#FF385C] focus:ring-offset-2
                  active:scale-[0.98]"
-      aria-label={`View ${config.label}: ${value}`}
+      aria-label={ariaLabel}
     >
       {/* Icon Container */}
       <div className={`p-3 rounded-xl ${config.iconBgColor}`}>
@@ -116,9 +118,9 @@ function StatCard({ config, value }: StatCardProps) {
  * Shows shimmer animation while data is loading
  * REQ-138: Wrapped with SkeletonBase for accessibility
  */
-function LoadingSkeleton() {
+function LoadingSkeleton({ loadingLabel }: { loadingLabel: string }) {
   return (
-    <SkeletonBase label="Loading statistics">
+    <SkeletonBase label={loadingLabel}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map((i) => (
           <div
@@ -170,15 +172,14 @@ export function StatisticsCards({
   onCreateItem,
   className = ''
 }: StatisticsCardsProps) {
-  const tEmpty = useTranslations('common.emptyStates');
-  const tActions = useTranslations('common.actions');
+  const t = useTranslations('dashboard');
 
   // Card configuration with Airbnb DLS colors
   // REQ-203: Added navigation URLs for click navigation
   const cardConfigs: StatCardConfig[] = [
     {
       key: 'itemCount',
-      label: 'Items',
+      label: t('stats.items'),
       icon: Package,
       iconColor: 'text-[#FF385C]',
       iconBgColor: 'bg-[#FFEEEF]',
@@ -186,7 +187,7 @@ export function StatisticsCards({
     },
     {
       key: 'roomCount',
-      label: 'Rooms',
+      label: t('stats.rooms'),
       icon: Home,
       iconColor: 'text-[#00A699]',
       iconBgColor: 'bg-[#E6F7F6]',
@@ -194,7 +195,7 @@ export function StatisticsCards({
     },
     {
       key: 'tagCount',
-      label: 'Tags',
+      label: t('stats.tags'),
       icon: Tag,
       iconColor: 'text-[#484848]',
       iconBgColor: 'bg-gray-100',
@@ -204,7 +205,7 @@ export function StatisticsCards({
 
   // Show loading skeleton while fetching data
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <LoadingSkeleton loadingLabel={t('stats.loadingStats')} />;
   }
 
   // REQ-137: Check if all stats are zero (new user / empty state)
@@ -219,9 +220,9 @@ export function StatisticsCards({
       <div className={`bg-white rounded-xl shadow-sm ${className}`}>
         <EmptyStateCard
           icon={Package}
-          title={tEmpty('dashboard.noContent.title')}
+          title={t('stats.emptyTitle')}
           description=""
-          actionLabel={tActions('newQrCodeItem')}
+          actionLabel={t('stats.emptyAction')}
           onAction={onCreateItem}
           variant="default"
         />
@@ -246,20 +247,24 @@ export function StatisticsCards({
               {stats.propertyContext.propertyName}
             </span>
           ) : (
-            <span>(all properties)</span>
+            <span>{t('stats.allProperties')}</span>
           )}
         </div>
       )}
 
       {/* Statistics cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {cardConfigs.map((config) => (
-          <StatCard
-            key={config.key}
-            config={config}
-            value={stats?.[config.key] ?? 0}
-          />
-        ))}
+        {cardConfigs.map((config) => {
+          const statValue = stats?.[config.key] ?? 0;
+          return (
+            <StatCard
+              key={config.key}
+              config={config}
+              value={statValue}
+              ariaLabel={t('stats.viewAriaLabel', { label: config.label, count: String(statValue) })}
+            />
+          );
+        })}
       </div>
     </div>
   );

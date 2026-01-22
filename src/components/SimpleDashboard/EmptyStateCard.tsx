@@ -1,7 +1,7 @@
 // src/components/SimpleDashboard/EmptyStateCard.tsx
 // REQ-137: Reusable Empty State Card Component
 // Created: 2026-01-06
-// Last Modified: 2026-01-06
+// Last Modified: 2026-01-22 08:00:00 UTC - REQ-E02-052: Verified for i18n (receives translated props)
 
 'use client';
 
