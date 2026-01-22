@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 
 // =============================================================================
 // Constants
@@ -498,6 +499,7 @@ export function getStepAnnouncement(
 /**
  * Step names for announcement purposes
  * Updated for REQ-176: Added media-capture step
+ * @deprecated Use useTranslatedStepNames() hook for translated step names (REQ-E02-057)
  */
 export const STEP_NAMES: Record<string, string> = {
   'room-selection': 'Select a room',
@@ -511,3 +513,56 @@ export const STEP_NAMES: Record<string, string> = {
   'next-action': 'Choose next action',
   'session-summary': 'Session summary',
 };
+
+// =============================================================================
+// useTranslatedStepNames Hook (REQ-E02-057)
+// =============================================================================
+
+/**
+ * Hook to provide translated step names and announcements for accessibility.
+ * Uses the workflow.accessibility namespace for all translations.
+ *
+ * @returns Object with translated step names and announcement function
+ *
+ * @example
+ * const { stepNames, getTranslatedStepAnnouncement } = useTranslatedStepNames();
+ * const announcement = getTranslatedStepAnnouncement(1, 8, 'room-selection');
+ */
+export function useTranslatedStepNames(): {
+  stepNames: Record<string, string>;
+  getTranslatedStepAnnouncement: (
+    currentStep: number,
+    totalSteps: number,
+    stepKey: string
+  ) => string;
+} {
+  const t = useTranslations('workflow.accessibility');
+
+  const stepNames: Record<string, string> = {
+    'room-selection': t('roomSelectionScreen'),
+    'item-type-selection': t('itemTypeScreen'),
+    'specific-item-selection': t('specificItemScreen'),
+    'purpose-selection': t('purposeScreen'),
+    'content-type-selection': t('contentTypeScreen'),
+    'media-capture': t('mediaCaptureScreen'),
+    'content-creation': t('contentCreationScreen'),
+    'preview-save': t('previewSaveScreen'),
+    'next-action': t('nextActionScreen'),
+    'session-summary': t('sessionSummaryScreen'),
+  };
+
+  const getTranslatedStepAnnouncement = (
+    currentStep: number,
+    totalSteps: number,
+    stepKey: string
+  ): string => {
+    const stepName = stepNames[stepKey] || stepKey;
+    return t('stepAnnouncement', {
+      current: currentStep,
+      total: totalSteps,
+      stepName: stepName
+    });
+  };
+
+  return { stepNames, getTranslatedStepAnnouncement };
+}

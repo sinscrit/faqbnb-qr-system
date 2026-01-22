@@ -1506,6 +1506,11 @@
   },
   "workflow": {
     "_comment": "Translation keys for the multi-step item creation workflow (86+ files, ~500 strings)",
+    "placeholder": {
+      "_comment": "Temporary StepPlaceholder component strings for unimplemented steps",
+      "description": "Step component placeholder - Implementation coming in later phases",
+      "continueTest": "Continue (Test)"
+    },
     "header": {
       "_comment": "WorkflowHeader component - progress indicator and exit button",
       "stepOf": "Step {current} of {total}",

@@ -36,6 +36,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { ItemCreationWorkflowProps, PrintScope } from './ItemCreationWorkflow.types';
 import { useWorkflowState } from './hooks';
@@ -53,7 +54,7 @@ const SessionSummaryStep = dynamic(() => import('./components/steps/SessionSumma
 const WhatsNextStep = dynamic(() => import('@/components/ItemCapture/components/steps/WhatsNextStep').then(mod => ({ default: mod.WhatsNextStep })), { ssr: false });
 import type { SessionItem, CurrentItemState, ContentType } from './ItemCreationWorkflow.types';
 import { loadMostRecentWorkflowState, getContentNeedingReUpload, clearAllWorkflowStates } from './utils/sessionStorage';
-import { useAnnounce, STEP_NAMES, getStepAnnouncement } from './utils/accessibility';
+import { useAnnounce, useTranslatedStepNames } from './utils/accessibility';
 import { generateUUID } from '@/components/ItemCapture/utils/generateUUID';
 import { POST_WORKFLOW_SCREENS, USER_VISIBLE_STEPS } from './utils/constants';
 
@@ -69,9 +70,10 @@ interface StepPlaceholderProps {
   step: string;
   onNext?: () => void;
   canNext?: boolean;
+  t: (key: string) => string;  // Translation function (REQ-E02-057)
 }
 
-function StepPlaceholder({ step, onNext, canNext }: StepPlaceholderProps) {
+function StepPlaceholder({ step, onNext, canNext, t }: StepPlaceholderProps) {
   // Format step name for display
   const formattedStepName = step
     .split('-')
@@ -85,7 +87,7 @@ function StepPlaceholder({ step, onNext, canNext }: StepPlaceholderProps) {
           {formattedStepName}
         </h2>
         <p className="text-[#717171] mb-8">
-          Step component placeholder - Implementation coming in later phases
+          {t('placeholder.description')}
         </p>
 
         {/* Temporary navigation for testing */}
@@ -102,7 +104,7 @@ function StepPlaceholder({ step, onNext, canNext }: StepPlaceholderProps) {
                 : "bg-gray-300 cursor-not-allowed"
             )}
           >
-            Continue (Test)
+            {t('placeholder.continueTest')}
           </button>
         )}
       </div>
@@ -128,6 +130,11 @@ export function ItemCreationWorkflow({
   initialArticleId,
   initialArticleData,
 }: ItemCreationWorkflowProps) {
+  // REQ-E02-057: Initialize translation hook for workflow namespace
+  const t = useTranslations('workflow');
+  // REQ-E02-057: Get translated step names for accessibility announcements
+  const { stepNames, getTranslatedStepAnnouncement } = useTranslatedStepNames();
+
   // State management hook
   const {
     state,
@@ -218,15 +225,20 @@ export function ItemCreationWorkflow({
 
   // REQ-114: Announce step changes to screen readers and manage focus
   // REQ-199: Use display values for accurate step announcements
+  // REQ-E02-057: Use translated step names for announcements
   useEffect(() => {
     // Only announce if step actually changed
     if (previousStepRef.current !== state.currentStep) {
-      const stepName = STEP_NAMES[state.currentStep] || state.currentStep;
+      const stepName = stepNames[state.currentStep] || state.currentStep;
 
       // Only announce step numbers for user-visible steps
       // Post-workflow screens don't get step number announcements
       if (!isPostWorkflow) {
-        const announcement = getStepAnnouncement(displayStepIndex + 1, displayTotalSteps, stepName);
+        const announcement = getTranslatedStepAnnouncement(
+          displayStepIndex + 1,
+          displayTotalSteps,
+          state.currentStep
+        );
         announce(announcement);
       } else {
         // For post-workflow, just announce the screen name
@@ -248,7 +260,7 @@ export function ItemCreationWorkflow({
 
       previousStepRef.current = state.currentStep;
     }
-  }, [state.currentStep, displayStepIndex, displayTotalSteps, isPostWorkflow, announce]);
+  }, [state.currentStep, displayStepIndex, displayTotalSteps, isPostWorkflow, announce, stepNames, getTranslatedStepAnnouncement]);
 
   // REQ-213: Initialize edit mode state when editMode is enabled
   // When in edit mode, skip item context steps and start at content-type-selection
@@ -725,13 +737,14 @@ export function ItemCreationWorkflow({
           />
         );
       default:
-        return <StepPlaceholder step={state.currentStep} {...commonProps} />;
+        return <StepPlaceholder step={state.currentStep} {...commonProps} t={t} />;
     }
   }, [state.currentStep, state.currentItem, state.session.items, state.isDirty, nextStep, prevStep, canGoNext, selectRoom, selectItemType, selectSpecificItem, setItemName, selectPurpose, handleUnifiedContentSelect, addContentPiece, removeContentPiece, reorderContent, goToStep, handleSaveItem, isSaving, itemCount, startNewItem, existingItems, isLoadingExisting, handleEditItem, removeSessionItem, handleProceedToPrint, handleFinishWithoutPrint, handleExitClick]);
 
   return (
     <div className={cn("flex flex-col min-h-screen bg-white", className)}>
       {/* REQ-114: Skip link for keyboard navigation */}
+      {/* REQ-E02-057: Use translated skip link text */}
       <a
         href="#main-content"
         className={cn(
@@ -741,7 +754,7 @@ export function ItemCreationWorkflow({
           'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF385C]'
         )}
       >
-        Skip to main content
+        {t('accessibility.skipToContent')}
       </a>
 
       {/* REQ-198: Hide step counter on post-workflow screens */}
