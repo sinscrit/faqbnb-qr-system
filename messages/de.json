@@ -635,6 +635,8 @@
       "rememberMe": "30 Tage angemeldet bleiben",
       "dividerText": "Oder mit E-Mail fortfahren",
       "accessRestricted": "Zugang nur für autorisierte Administratoren",
+      "failed": "Authentifizierung fehlgeschlagen",
+      "signInWithAccount": "Mit Ihrem Konto anmelden",
       "loading": {
         "authenticating": "Authentifizierung wird abgeschlossen...",
         "loading": "Authentifizierung wird geladen..."

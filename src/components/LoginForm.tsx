@@ -166,8 +166,8 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
         onSuccess?.();
       } else {
         console.error('🔐 LOGIN_FORM: Authentication failed: No user returned');
-        setErrors({ general: 'Login failed: No user returned' });
-        onError?.('Login failed: No user returned');
+        setErrors({ general: tAuthErrors('noUserReturned') });
+        onError?.(tAuthErrors('noUserReturned'));
       }
 
     } catch (error) {
@@ -227,7 +227,7 @@ export default function LoginForm({ onSuccess, onError, className = '' }: LoginF
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">{tAuth('orContinueWithEmail')}</span>
+          <span className="px-2 bg-white text-gray-500">{tAuth('dividerText')}</span>
         </div>
       </div>
 

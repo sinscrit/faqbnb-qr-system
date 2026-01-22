@@ -635,6 +635,8 @@
       "rememberMe": "Remember me for 30 days",
       "dividerText": "Or continue with email",
       "accessRestricted": "Access restricted to authorized administrators only",
+      "failed": "Authentication Failed",
+      "signInWithAccount": "Sign in with your account",
       "loading": {
         "authenticating": "Completing authentication...",
         "loading": "Loading authentication..."

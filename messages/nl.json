@@ -635,6 +635,8 @@
       "rememberMe": "Onthoud me voor 30 dagen",
       "dividerText": "Of doorgaan met e-mail",
       "accessRestricted": "Toegang beperkt tot geautoriseerde beheerders",
+      "failed": "Authenticatie mislukt",
+      "signInWithAccount": "Log in met uw account",
       "loading": {
         "authenticating": "Authenticatie voltooien...",
         "loading": "Authenticatie laden..."

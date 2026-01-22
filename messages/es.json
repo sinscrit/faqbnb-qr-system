@@ -635,6 +635,8 @@
       "rememberMe": "Recordarme por 30 días",
       "dividerText": "O continuar con correo",
       "accessRestricted": "Acceso restringido solo a administradores autorizados",
+      "failed": "Falló la autenticación",
+      "signInWithAccount": "Inicia sesión con tu cuenta",
       "loading": {
         "authenticating": "Completando autenticación...",
         "loading": "Cargando autenticación..."
