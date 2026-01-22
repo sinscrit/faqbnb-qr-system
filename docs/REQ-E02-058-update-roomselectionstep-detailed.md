@@ -1,8 +1,8 @@
 # Detailed Task Breakdown: REQ-E02-058 - Update RoomSelectionStep Component
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Created:** 2026-01-20
-**Last Modified:** 2026-01-20
+**Last Modified:** 2026-01-22
 **Request ID:** REQ-E02-058
 **Epic:** L10N Epic 2 - Static UI Translation
 **Sub-Epic:** 2C - Item Creation Workflow
@@ -760,19 +760,22 @@ npm run dev
 
 From REQ-E02-058 requirements document:
 
-- [ ] Step header text "Select a Room" is extracted to localization namespace
-- [ ] Instructional text "Choose where this item is located in your property" is extracted to localization namespace
-- [ ] Accessibility label "Select a room for your item" is extracted to localization namespace
-- [ ] Keyboard navigation help text "Use arrow keys to navigate between rooms. Press Enter or Space to select." is extracted to localization namespace
-- [ ] Custom room input label "Enter room name" is extracted to localization namespace
-- [ ] Placeholder text "e.g., Home Office, Wine Cellar, Mudroom" is extracted to localization namespace with appropriate locale-specific examples
-- [ ] Character limit hint "Maximum 50 characters" is extracted to localization namespace
-- [ ] Continue button text "Continue" is extracted to localization namespace
-- [ ] All room type labels (Kitchen, Laundry Room, Bedroom, Bathroom, Living Room, Garage, Outdoor/Patio, General/Whole Property, Other) are accessible through the translation system
-- [ ] Component uses appropriate i18n hooks to retrieve all translated strings
-- [ ] All ARIA labels and accessibility strings are properly localized
-- [ ] Component renders correctly with translations in all supported languages
-- [ ] No hardcoded English strings remain in the component code
+- [x] Step header text "Select a Room" is extracted to localization namespace
+- [x] Instructional text "Choose where this item is located in your property" is extracted to localization namespace
+- [x] Accessibility label "Select a room for your item" is extracted to localization namespace
+- [x] Keyboard navigation help text "Use arrow keys to navigate between rooms. Press Enter or Space to select." is extracted to localization namespace
+- [x] Custom room input label "Enter room name" is extracted to localization namespace
+- [x] Placeholder text "e.g., Home Office, Wine Cellar, Mudroom" is extracted to localization namespace with appropriate locale-specific examples
+- [x] Character limit hint "Maximum 50 characters" is extracted to localization namespace
+- [x] Continue button text "Continue" is extracted to localization namespace
+- [x] All room type labels (Kitchen, Laundry Room, Bedroom, Bathroom, Living Room, Garage, Outdoor/Patio, General/Whole Property, Other) are accessible through the translation system
+- [x] Component uses appropriate i18n hooks to retrieve all translated strings
+- [x] All ARIA labels and accessibility strings are properly localized
+- [x] Component renders correctly with translations in all supported languages
+- [x] No hardcoded English strings remain in the component code
+
+**Implementation Completed:** 2026-01-22
+**Implemented By:** Claude (REQ-E02-058)
 
 ---
 

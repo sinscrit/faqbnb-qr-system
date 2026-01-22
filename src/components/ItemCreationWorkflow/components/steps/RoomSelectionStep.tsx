@@ -20,13 +20,14 @@
  *
  * @module ItemCreationWorkflow/components/steps/RoomSelectionStep
  * @see RoomCard for individual room selection UI
- * @lastModified 2026-01-05 (REQ-118 Documentation Updates)
+ * @lastModified 2026-01-22 (REQ-E02-058 i18n Integration)
  */
 
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { RoomCard } from '../shared';
-import { ROOM_TYPES, ROOM_LABELS, ROOM_ICONS } from '../../utils/constants';
+import { ROOM_TYPES, ROOM_ICONS } from '../../utils/constants';
 import type { RoomType } from '../../ItemCreationWorkflow.types';
 import { createKeyboardNavigator } from '../../utils/accessibility';
 
@@ -51,6 +52,14 @@ export interface RoomSelectionStepProps {
 // Main Component
 // =============================================================================
 
+/**
+ * Helper to convert hyphenated room type to camelCase translation key
+ * e.g., 'living-room' -> 'livingRoom', 'dining-room' -> 'diningRoom'
+ */
+function getRoomTranslationKey(room: RoomType): string {
+  return room.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
 export function RoomSelectionStep({
   currentRoom,
   onSelectRoom,
@@ -58,6 +67,11 @@ export function RoomSelectionStep({
   canNext,
   className,
 }: RoomSelectionStepProps) {
+  // i18n hooks for translations (REQ-E02-058)
+  const t = useTranslations('workflow.steps.roomSelection');
+  const tRooms = useTranslations('workflow.constants.rooms');
+  const tNav = useTranslations('workflow.navigation');
+
   // Local state for custom room name when "Other" is selected
   const [customRoomName, setCustomRoomName] = useState('');
 
@@ -139,17 +153,17 @@ export function RoomSelectionStep({
       {/* Step header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-[#222222] mb-2">
-          Select a Room
+          {t('title')}
         </h2>
         <p className="text-base text-[#717171]">
-          Choose where this item is located in your property
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Room grid */}
       <div
         role="radiogroup"
-        aria-label="Select a room for your item"
+        aria-label={t('ariaLabel')}
         aria-describedby="room-selection-help"
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
         onKeyDown={handleGridKeyDown}
@@ -159,7 +173,7 @@ export function RoomSelectionStep({
             key={room}
             ref={(el) => { roomRefs.current[index] = el; }}
             room={room}
-            label={ROOM_LABELS[room]}
+            label={tRooms(getRoomTranslationKey(room))}
             icon={ROOM_ICONS[room]}
             isSelected={currentRoom === room}
             onSelect={handleRoomSelect}
@@ -168,7 +182,7 @@ export function RoomSelectionStep({
         ))}
       </div>
       <p id="room-selection-help" className="sr-only">
-        Use arrow keys to navigate between rooms. Press Enter or Space to select.
+        {t('ariaHelp')}
       </p>
 
       {/* Custom room input for "Other" option */}
@@ -178,14 +192,14 @@ export function RoomSelectionStep({
             htmlFor="custom-room-input"
             className="block text-sm font-medium text-[#222222] mb-2"
           >
-            Enter room name
+            {t('customRoomLabel')}
           </label>
           <input
             id="custom-room-input"
             type="text"
             value={customRoomName}
             onChange={handleCustomRoomNameChange}
-            placeholder="e.g., Home Office, Wine Cellar, Mudroom"
+            placeholder={t('customRoomPlaceholder')}
             maxLength={50}
             className={cn(
               'w-full px-4 py-3 border-2 rounded-lg',
@@ -198,7 +212,7 @@ export function RoomSelectionStep({
             aria-describedby="custom-room-hint"
           />
           <p id="custom-room-hint" className="mt-1 text-sm text-[#717171]">
-            Maximum 50 characters
+            {t('customRoomHint')}
           </p>
         </div>
       )}
@@ -219,7 +233,7 @@ export function RoomSelectionStep({
           )}
           aria-disabled={!isValidSelection}
         >
-          Continue
+          {tNav('continue')}
         </button>
       </div>
     </div>
