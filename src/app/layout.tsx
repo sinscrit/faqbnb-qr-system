@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Inter, JetBrains_Mono } from "next/font/google"; // Temporarily disabled due to 404 errors
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { VersionFooter } from "@/components/VersionFooter";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
@@ -70,8 +71,10 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <LocaleProvider>
-              {children}
-              <VersionFooter />
+              <ThemeProvider>
+                {children}
+                <VersionFooter />
+              </ThemeProvider>
             </LocaleProvider>
           </AuthProvider>
         </NextIntlClientProvider>
