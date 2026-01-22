@@ -18,10 +18,11 @@
  * @see docs/prd/Plan-094-UI-UX-Workflow-Improvements.md Phase 2
  * @see generateArticleTitle() for title generation
  * @created 2026-01-09 (Plan-094 Phase 2)
- * @lastModified 2026-01-10 (REQ-175 Documentation Sync)
+ * @lastModified 2026-01-22 (REQ-E02-061 i18n Integration)
  */
 
 import { useCallback, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import {
   PlayCircle,
@@ -34,9 +35,27 @@ import {
   Check,
   type LucideIcon,
 } from 'lucide-react';
-import { PURPOSE_TYPES, PURPOSE_LABELS, PURPOSE_DESCRIPTIONS } from '../../utils/constants';
+import { PURPOSE_TYPES } from '../../utils/constants';
 import type { PurposeType } from '../../ItemCreationWorkflow.types';
 import { createKeyboardNavigator } from '../../utils/accessibility';
+
+// =============================================================================
+// Translation Key Mapping
+// =============================================================================
+
+/**
+ * Maps hyphenated purpose types to camelCase translation keys.
+ * E.g., 'how-to-use' -> 'howToUse', 'safety-info' -> 'safetyInfo'
+ */
+const PURPOSE_TYPE_TO_KEY: Record<PurposeType, string> = {
+  'how-to-use': 'howToUse',
+  'how-to-clean': 'howToClean',
+  'troubleshooting': 'troubleshooting',
+  'safety-info': 'safetyInfo',
+  'maintenance': 'maintenance',
+  'features': 'features',
+  'other': 'other',
+};
 
 // =============================================================================
 // Type Definitions
@@ -83,6 +102,11 @@ export function PurposeStep({
   canNext,
   className,
 }: PurposeStepProps) {
+  // i18n hooks for translations (REQ-E02-061)
+  const t = useTranslations('workflow.steps.purpose');
+  const tPurposes = useTranslations('workflow.constants.purposes');
+  const tNav = useTranslations('workflow.navigation');
+
   // State for roving tabindex pattern
   const [activeIndex, setActiveIndex] = useState(() =>
     currentPurpose ? PURPOSE_TYPES.indexOf(currentPurpose as PurposeType) : 0
@@ -130,17 +154,17 @@ export function PurposeStep({
       {/* Step header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-[#222222] mb-2">
-          What&apos;s the purpose of this content?
+          {t('title')}
         </h2>
         <p className="text-base text-[#717171]">
-          Choose what you want to help guests with
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Purpose cards */}
       <div
         role="radiogroup"
-        aria-label="Select content purpose"
+        aria-label={t('ariaLabel')}
         aria-describedby="purpose-help"
         className="flex flex-col gap-4"
         onKeyDown={handleListKeyDown}
@@ -148,6 +172,7 @@ export function PurposeStep({
         {PURPOSE_TYPES.map((type, index) => {
           const Icon = PURPOSE_ICONS[type];
           const isSelected = currentPurpose === type;
+          const purposeKey = PURPOSE_TYPE_TO_KEY[type];
 
           return (
             <button
@@ -204,7 +229,7 @@ export function PurposeStep({
                     isSelected ? 'text-blue-700' : 'text-gray-900'
                   )}
                 >
-                  {PURPOSE_LABELS[type]}
+                  {tPurposes(`${purposeKey}.label`)}
                 </span>
                 <span
                   id={`${type}-description`}
@@ -213,7 +238,7 @@ export function PurposeStep({
                     isSelected ? 'text-blue-600' : 'text-gray-500'
                   )}
                 >
-                  {PURPOSE_DESCRIPTIONS[type]}
+                  {tPurposes(`${purposeKey}.description`)}
                 </span>
               </div>
 
@@ -228,7 +253,7 @@ export function PurposeStep({
         })}
       </div>
       <p id="purpose-help" className="sr-only">
-        Use up and down arrow keys to navigate. Press Enter or Space to select.
+        {t('ariaHelp')}
       </p>
 
       {/* Continue button */}
@@ -247,7 +272,7 @@ export function PurposeStep({
           )}
           aria-disabled={!canNext}
         >
-          Continue
+          {tNav('continue')}
         </button>
       </div>
     </div>
