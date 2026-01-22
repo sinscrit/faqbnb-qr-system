@@ -10,10 +10,11 @@
  * @module ItemCreationWorkflow/components/steps/SpecificItemStep
  * @see docs/REQ-100-specific-item-selection-step-overview.md
  * @see docs/REQ-113-error-handling-edge-cases-overview.md
- * @lastModified 2026-01-05 (REQ-113)
+ * @lastModified 2026-01-22 (REQ-E02-060 i18n Integration)
  */
 
 import { useState, useCallback, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useSuggestions } from '../../hooks';
 import { SuggestionButton, ItemNameEditor, DuplicateNameWarning } from '../shared';
@@ -56,6 +57,11 @@ export function SpecificItemStep({
   canNext,
   className,
 }: SpecificItemStepProps) {
+  // i18n hooks for translations (REQ-E02-060)
+  const t = useTranslations('workflow.steps.specificItem');
+  const tRooms = useTranslations('workflow.constants.rooms');
+  const tNav = useTranslations('workflow.navigation');
+
   // Local state for custom item mode
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customItemValue, setCustomItemValue] = useState('');
@@ -125,18 +131,26 @@ export function SpecificItemStep({
   const isSuggestionSelected = (suggestion: string) =>
     !isCustomMode && currentSpecificItem === suggestion;
 
-  // Room label for display
-  const roomLabel = ROOM_LABELS[currentRoom] || currentRoom;
+  // Room label for display - use translation with fallback
+  const roomLabel = (() => {
+    // Convert hyphenated room types to camelCase for translation key lookup
+    const roomKey = currentRoom.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+    try {
+      return tRooms(roomKey);
+    } catch {
+      return ROOM_LABELS[currentRoom] || currentRoom;
+    }
+  })();
 
   return (
     <div className={cn('flex flex-col flex-1 p-6', className)}>
       {/* Step header */}
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-[#222222] mb-2">
-          What specific item?
+          {t('title')}
         </h2>
         <p className="text-base text-[#717171]">
-          Select from suggestions or enter a custom item for {roomLabel}
+          {t('subtitle', { room: roomLabel })}
         </p>
       </div>
 
@@ -144,11 +158,11 @@ export function SpecificItemStep({
       {hasSuggestions && (
         <div className="mb-6">
           <h3 className="text-sm font-medium text-[#717171] mb-3 uppercase tracking-wide">
-            Suggestions
+            {t('suggestionsLabel')}
           </h3>
           <div
             role="radiogroup"
-            aria-label="Select a specific item"
+            aria-label={t('ariaLabel')}
             className="grid grid-cols-2 gap-3 sm:grid-cols-3"
           >
             {suggestions.map((suggestion) => (
@@ -162,7 +176,7 @@ export function SpecificItemStep({
             ))}
             {/* "Other" option */}
             <SuggestionButton
-              label="Other..."
+              label={t('other')}
               isSelected={isCustomMode}
               isCreated={false}
               onSelect={handleOtherClick}
@@ -178,14 +192,14 @@ export function SpecificItemStep({
             htmlFor="custom-item-input"
             className="block text-sm font-medium text-[#222222] mb-2"
           >
-            {hasSuggestions ? 'Enter custom item name' : 'Enter item name'}
+            {hasSuggestions ? t('customItemLabel') : t('itemLabel')}
           </label>
           <input
             id="custom-item-input"
             type="text"
             value={customItemValue}
             onChange={handleCustomItemChange}
-            placeholder="e.g., Coffee Maker, Smart Thermostat"
+            placeholder={t('customItemPlaceholder')}
             maxLength={50}
             className={cn(
               'w-full px-4 py-3 border-2 rounded-lg',
@@ -206,7 +220,7 @@ export function SpecificItemStep({
           <ItemNameEditor
             value={currentItemName}
             onChange={onSetItemName}
-            placeholder="Enter item name"
+            placeholder={t('itemNamePlaceholder')}
             maxLength={100}
           />
 
@@ -239,7 +253,7 @@ export function SpecificItemStep({
           )}
           aria-disabled={!canNext}
         >
-          Continue
+          {tNav('continue')}
         </button>
       </div>
     </div>
