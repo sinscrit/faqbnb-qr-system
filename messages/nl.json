@@ -1505,38 +1505,1173 @@
     }
   },
   "workflow": {
+    "_comment": "Vertalingssleutels voor de meerstappen-workflow voor het aanmaken van artikelen (86+ bestanden, ~500 strings)",
+    "placeholder": {
+      "_comment": "Tijdelijke StepPlaceholder-component strings voor niet-geïmplementeerde stappen",
+      "description": "Stapcomponent-placeholder - Implementatie komt in latere fasen",
+      "continueTest": "Doorgaan (Test)"
+    },
+    "header": {
+      "_comment": "WorkflowHeader-component - voortgangsindicator en exit-knop",
+      "stepOf": "Stap {current} van {total}",
+      "progressLabel": "Stap {current} van {total}: {stepName}",
+      "exitButton": "Afsluiten",
+      "exitAriaLabel": "Workflow afsluiten"
+    },
+    "navigation": {
+      "_comment": "Navigatieknoppen gebruikt in alle stappen",
+      "back": "Terug",
+      "next": "Volgende",
+      "continue": "Doorgaan",
+      "exit": "Afsluiten",
+      "skip": "Overslaan",
+      "done": "Klaar",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "finish": "Voltooien",
+      "goBackLabel": "Ga terug naar vorige stap",
+      "goNextLabel": "Ga door naar volgende stap",
+      "exitWorkflowLabel": "Workflow afsluiten",
+      "savingLabel": "Uw artikel wordt opgeslagen"
+    },
+    "steps": {
+      "_comment": "Stap-specifieke strings georganiseerd per stapcomponent",
+      "roomSelection": {
+        "_comment": "RoomSelectionStep.tsx - Stap 1",
+        "title": "Selecteer een Kamer",
+        "subtitle": "Kies waar dit artikel zich in uw eigendom bevindt",
+        "searchPlaceholder": "Kamers zoeken...",
+        "noResults": "Geen kamers gevonden die aan uw zoekopdracht voldoen",
+        "customRoomLabel": "Aangepaste Kamer",
+        "customRoomPlaceholder": "bijv. Thuiskantoor, Wijnkelder, Bijkeuken",
+        "customRoomHint": "Maximaal 50 tekens",
+        "useCustomName": "Aangepaste kamernaam gebruiken",
+        "popularRooms": "Populaire Kamers",
+        "allRooms": "Alle Kamers",
+        "selectedRoom": "Geselecteerd: {roomName}",
+        "ariaLabel": "Selecteer een kamer voor uw artikel",
+        "ariaHelp": "Gebruik pijltjestoetsen om tussen kamers te navigeren. Druk op Enter of Spatie om te selecteren.",
+        "ariaRoomSelected": "{roomName} geselecteerd",
+        "ariaRoomOption": "{roomName}, kameroptie"
+      },
+      "itemType": {
+        "_comment": "ItemTypeStep.tsx - Stap 2",
+        "title": "Welk type artikel?",
+        "subtitle": "Selecteer de categorie die uw artikel het beste beschrijft",
+        "ariaLabel": "Selecteer artikeltype",
+        "ariaHelp": "Gebruik pijltjestoetsen om te navigeren. Druk op Enter of Spatie om te selecteren.",
+        "ariaTypeSelected": "{typeName} geselecteerd",
+        "ariaTypeOption": "{typeName}: {description}",
+        "selectedType": "Geselecteerd: {typeName}"
+      },
+      "specificItem": {
+        "_comment": "SpecificItemStep.tsx - Stap 3",
+        "title": "Welk specifiek artikel?",
+        "subtitle": "Selecteer uit suggesties of voer een aangepast artikel in voor {room}",
+        "searchPlaceholder": "Zoek of typ artikelnaam...",
+        "suggestionsLabel": "Suggesties",
+        "recentItems": "Recente Artikelen",
+        "popularItems": "Populaire Artikelen",
+        "customLabel": "Aangepaste naam gebruiken",
+        "other": "Anders...",
+        "customItemLabel": "Voer aangepaste artikelnaam in",
+        "itemLabel": "Voer artikelnaam in",
+        "itemNameLabel": "Artikelnaam",
+        "itemNamePlaceholder": "Voer artikelnaam in",
+        "customItemPlaceholder": "bijv. Koffiezetapparaat, Slimme Thermostaat",
+        "itemNameHint": "Wees specifiek - bijv. \"Samsung Wasmachine\" in plaats van \"Wasmachine\"",
+        "noSuggestions": "Geen suggesties gevonden",
+        "duplicateWarning": "Een artikel met deze naam bestaat al in uw sessie",
+        "duplicateInProperty": "Een artikel met deze naam bestaat al in dit eigendom",
+        "maxLength": "Maximaal {max} tekens",
+        "ariaLabel": "Selecteer een specifiek artikel",
+        "ariaHelp": "Typ om te zoeken of selecteer uit onderstaande suggesties",
+        "ariaSuggestion": "{itemName}, voorgesteld artikel"
+      },
+      "purpose": {
+        "_comment": "PurposeStep.tsx - Stap 4",
+        "title": "Wat is het doel van deze inhoud?",
+        "subtitle": "Kies waarmee u gasten wilt helpen",
+        "selectPurpose": "Selecteer een doel",
+        "multiplePurposes": "U kunt meerdere doelen selecteren",
+        "selectedCount": "{count, plural, one {# doel geselecteerd} other {# doelen geselecteerd}}",
+        "ariaLabel": "Selecteer inhoudsdoel",
+        "ariaHelp": "Gebruik pijltjestoetsen omhoog en omlaag om te navigeren. Druk op Enter of Spatie om te selecteren.",
+        "ariaPurposeSelected": "{purposeName} geselecteerd",
+        "ariaPurposeOption": "{purposeName}: {description}"
+      },
+      "contentType": {
+        "_comment": "ContentTypeStep.tsx - Stap 5",
+        "title": "Welke inhoud wilt u toevoegen?",
+        "subtitle": "Kies hoe u informatie voor dit artikel wilt toevoegen",
+        "selectContentType": "Selecteer inhoudstype",
+        "recommendedFor": "Aanbevolen voor {purpose}",
+        "ariaLabel": "Selecteer inhoudstype",
+        "ariaHelp": "Gebruik pijltjestoetsen om te navigeren. Druk op Enter of Spatie om te selecteren.",
+        "keyboardHelp": "Gebruik pijltjestoetsen om te navigeren. Druk op Enter of Spatie om te selecteren.",
+        "continueButton": "Doorgaan",
+        "ariaContentTypeSelected": "{contentType} geselecteerd",
+        "ariaContentTypeOption": "{contentType}: {description}",
+        "options": {
+          "recordVideo": {
+            "label": "Video Opnemen"
+          },
+          "takePhoto": {
+            "label": "Foto Maken"
+          },
+          "writeText": {
+            "label": "Tekst Schrijven"
+          },
+          "uploadFile": {
+            "label": "Bestand Uploaden",
+            "subtitle": "Video, Afbeelding, PDF, Tekst"
+          },
+          "addLink": {
+            "label": "Link Toevoegen"
+          }
+        }
+      },
+      "mediaCapture": {
+        "_comment": "MediaCaptureStep.tsx - Stap 6 router-component",
+        "title": "Inhoud Vastleggen",
+        "subtitle": "Voeg inhoud toe voor uw artikel",
+        "takePhoto": "Foto Maken",
+        "recordVideo": "Video Opnemen",
+        "errors": {
+          "noContentType": {
+            "title": "Geen Inhoudstype Geselecteerd",
+            "message": "Ga terug en selecteer een inhoudstype voordat u verdergaat."
+          },
+          "unsupportedType": {
+            "title": "Niet-ondersteund Inhoudstype",
+            "message": "Het inhoudstype \"{contentType}\" wordt niet ondersteund. Ga terug en selecteer een andere optie."
+          }
+        },
+        "startRecording": "Opname Starten",
+        "stopRecording": "Opname Stoppen",
+        "pauseRecording": "Opname Pauzeren",
+        "resumeRecording": "Opname Hervatten",
+        "retake": "Opnieuw Opnemen",
+        "useThis": "Dit Gebruiken",
+        "discard": "Verwijderen",
+        "uploading": "Uploaden...",
+        "processing": "Verwerken...",
+        "saving": "Opslaan...",
+        "video": {
+          "title": "Video Opnemen",
+          "instructions": "Positioneer uw camera en druk op opnemen",
+          "recording": "Opnemen...",
+          "recordingTime": "Opname: {duration}",
+          "maxDuration": "Maximale duur: {duration}",
+          "minDuration": "Minimale duur: {duration}",
+          "tapToStart": "Tik om opname te starten",
+          "tapToStop": "Tik om opname te stoppen",
+          "processing": "Video verwerken...",
+          "previewTitle": "Videovoorbeeld",
+          "playVideo": "Video afspelen",
+          "pauseVideo": "Video pauzeren"
+        },
+        "photo": {
+          "title": "Foto Maken",
+          "instructions": "Positioneer uw camera en druk op vastleggen",
+          "tapToCapture": "Tik om vast te leggen",
+          "captured": "Foto vastgelegd",
+          "previewTitle": "Fotovoorbeeld",
+          "switchCamera": "Camera wisselen",
+          "frontCamera": "Frontcamera",
+          "backCamera": "Achtercamera"
+        },
+        "upload": {
+          "title": "Bestand Uploaden",
+          "dragDrop": "Sleep bestanden hierheen",
+          "or": "of",
+          "browse": "Bladeren",
+          "browseFiles": "Bladeren door bestanden op uw apparaat",
+          "supportedFormats": "Ondersteunde formaten: {formats}",
+          "maxSize": "Maximale bestandsgrootte: {size}MB",
+          "uploading": "Uploaden {progress}%",
+          "uploadComplete": "Upload voltooid",
+          "uploadFailed": "Upload mislukt. Probeer het opnieuw.",
+          "selectFile": "Selecteer een bestand",
+          "selectedFile": "Geselecteerd: {fileName}",
+          "removeFile": "Bestand verwijderen",
+          "multipleFiles": "{count, plural, one {# bestand geselecteerd} other {# bestanden geselecteerd}}"
+        },
+        "text": {
+          "title": "Instructies Schrijven",
+          "placeholder": "Schrijf hier uw instructies...",
+          "characterCount": "{count} / {max} tekens",
+          "formatting": "Opmaakopties",
+          "bold": "Vet",
+          "italic": "Cursief",
+          "list": "Ongenummerde lijst",
+          "numberedList": "Genummerde lijst",
+          "preview": "Voorbeeld",
+          "edit": "Bewerken"
+        },
+        "url": {
+          "title": "Link Toevoegen",
+          "placeholder": "Plak URL hier...",
+          "urlLabel": "URL",
+          "urlHint": "Voer een geldig webadres in",
+          "invalidUrl": "Voer een geldige URL in",
+          "fetchingPreview": "Linkvoorbeeld ophalen...",
+          "previewTitle": "Linkvoorbeeld",
+          "noPreview": "Geen voorbeeld beschikbaar",
+          "linkTitle": "Linktitel",
+          "linkDescription": "Linkbeschrijving"
+        }
+      },
+      "videoCapture": {
+        "_comment": "VideoCaptureStep.tsx - Video-opnamecomponent",
+        "title": {
+          "preview": "Video Opnemen",
+          "recording": "Video Wordt Opgenomen",
+          "review": "Bekijk Uw Video"
+        },
+        "subtitle": {
+          "preview": "Positioneer uw camera en tik op opnemen om te starten",
+          "recording": "Opname bezig - tik op stoppen wanneer klaar",
+          "review": "Speel af om te bekijken, accepteer of neem opnieuw op"
+        },
+        "buttons": {
+          "startRecording": "Opname starten",
+          "stopRecording": "Opname stoppen",
+          "switchCamera": "Camera wisselen",
+          "retake": "Opnieuw opnemen",
+          "accept": "Accepteren",
+          "tryAgain": "Opnieuw Proberen",
+          "back": "Terug"
+        },
+        "states": {
+          "processing": "Verwerken...",
+          "initializing": "Camera initialiseren...",
+          "rec": "OPN"
+        },
+        "timer": {
+          "remaining": "{time} resterend"
+        },
+        "aria": {
+          "discardAndRecord": "Verwijderen en opnieuw opnemen",
+          "acceptVideo": "Video accepteren"
+        },
+        "announcements": {
+          "recordingStarted": "Opname gestart",
+          "recordingStopped": "Opname gestopt. Bekijk uw video.",
+          "retaking": "Video opnieuw opnemen. Klaar om op te nemen.",
+          "processing": "Video verwerken...",
+          "cameraSwitched": "Gewisseld naar {camera} camera",
+          "retrying": "Camera-initialisatie opnieuw proberen"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Cameratoegang geweigerd",
+            "guidance": "Schakel cameratoegang in uw browserinstellingen in om video op te nemen."
+          },
+          "browserNotSupported": {
+            "message": "Uw browser ondersteunt geen video-opname",
+            "guidance": "Cameratoegang vereist HTTPS. Ga terug en gebruik \"Video Uploaden\" in plaats daarvan, of krijg toegang via HTTPS."
+          },
+          "recordingFailed": {
+            "message": "Video-opname mislukt",
+            "guidance": "Controleer uw camera en probeer het opnieuw."
+          },
+          "startFailed": "Opname starten mislukt",
+          "noData": "Geen videogegevens vastgelegd",
+          "thumbnailFailed": {
+            "message": "Video verwerken mislukt",
+            "guidance": "Video opgeslagen maar miniatuur genereren mislukt."
+          },
+          "loadFailed": "Video laden voor afspelen mislukt",
+          "unexpected": "Er is een onverwachte fout opgetreden. Probeer het opnieuw."
+        }
+      },
+      "photoCapture": {
+        "_comment": "PhotoCaptureStep.tsx - Foto-vastlegcomponent",
+        "title": {
+          "preview": "Foto's Vastleggen",
+          "review": "Bekijk Uw Foto"
+        },
+        "subtitle": {
+          "preview": "Tik op de vastlegknop om foto's te maken ({count} / {max})",
+          "review": "Accepteer om toe te voegen of maak opnieuw voor een nieuwe opname"
+        },
+        "buttons": {
+          "capture": "Foto vastleggen",
+          "switchCamera": "Camera wisselen",
+          "retake": "Opnieuw vastleggen",
+          "accept": "Accepteren",
+          "back": "Terug",
+          "continue": "Doorgaan",
+          "tryAgain": "Opnieuw Proberen"
+        },
+        "states": {
+          "processing": "Verwerken...",
+          "initializing": "Camera initialiseren..."
+        },
+        "gallery": {
+          "title": "Fotogalerij",
+          "deletePhoto": "Foto verwijderen",
+          "closeGallery": "Galerij sluiten",
+          "counter": "{current} van {total}",
+          "previousPhoto": "Vorige foto",
+          "nextPhoto": "Volgende foto"
+        },
+        "thumbnailStrip": {
+          "title": "Vastgelegde foto's",
+          "photoAlt": "Foto {index}",
+          "removePhoto": "Foto {index} verwijderen",
+          "add": "Toevoegen"
+        },
+        "flash": {
+          "auto": "Auto"
+        },
+        "aria": {
+          "discardAndCapture": "Verwijderen en opnieuw vastleggen",
+          "acceptPhoto": "Foto accepteren",
+          "capturedPhotoPreview": "Vastgelegde fotovoorbeeld"
+        },
+        "announcements": {
+          "photoCaptured": "Foto vastgelegd. Bekijken of opnieuw vastleggen.",
+          "retaking": "Foto opnieuw vastleggen. Klaar om vast te leggen.",
+          "processing": "Foto verwerken...",
+          "added": "Foto toegevoegd aan collectie.",
+          "removed": "Foto verwijderd.",
+          "switchedCamera": "Gewisseld naar {camera} camera",
+          "retrying": "Camera-initialisatie opnieuw proberen"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Cameratoegang geweigerd",
+            "guidance": "Schakel cameratoegang in uw browserinstellingen in om foto's vast te leggen."
+          },
+          "browserNotSupported": {
+            "message": "Uw browser ondersteunt geen foto-vastlegging",
+            "guidance": "Cameratoegang vereist HTTPS. Ga terug en gebruik \"Foto Uploaden\" in plaats daarvan, of krijg toegang via HTTPS."
+          },
+          "captureFailed": {
+            "message": "Foto vastleggen mislukt",
+            "guidance": "Controleer uw camera en probeer het opnieuw."
+          },
+          "processFailed": "Foto verwerken mislukt",
+          "maxPhotosReached": {
+            "message": "Maximum van {max} foto's bereikt",
+            "guidance": "U heeft het maximum van {max} foto's bereikt. Verwijder een foto om meer toe te voegen."
+          },
+          "storageFull": {
+            "message": "Apparaatopslag is vol",
+            "guidance": "Maak ruimte vrij en probeer het opnieuw."
+          },
+          "unexpected": "Er is een onverwachte fout opgetreden. Probeer het opnieuw."
+        }
+      },
+      "fileUpload": {
+        "_comment": "FileUploadStep.tsx - Bestand-uploadcomponent",
+        "title": "Bestanden Uploaden",
+        "subtitle": "Sleep bestanden hierheen of klik om te selecteren",
+        "dropZone": {
+          "default": "Sleep bestanden hierheen of klik om te bladeren",
+          "dropValid": "Laat bestanden hier vallen",
+          "dropInvalid": "Ongeldig bestandstype",
+          "hasFiles": "Meer bestanden toevoegen",
+          "supportedFormats": "Ondersteunt afbeeldingen, video's en PDF-bestanden",
+          "limits": "Max {count} bestanden, {size} elk"
+        },
+        "progress": {
+          "fileCount": "{count}/{max} bestanden"
+        },
+        "errors": {
+          "rejectionTitle": "{count, plural, one {# bestand} other {# bestanden}} kon(den) niet worden toegevoegd",
+          "dismiss": "Negeren"
+        },
+        "pdf": {
+          "passwordProtected": "Wachtwoordbeveiligd",
+          "corrupted": "Bestand kan beschadigd zijn",
+          "pageCount": "{count, plural, one {# pagina} other {# pagina's}}"
+        },
+        "buttons": {
+          "back": "Terug",
+          "continue": "Doorgaan"
+        },
+        "aria": {
+          "removeFile": "{filename} verwijderen",
+          "uploadProgress": "Upload groottevoortgang"
+        },
+        "announcements": {
+          "filesUploaded": "{count} bestanden geüpload"
+        }
+      },
+      "textEditor": {
+        "_comment": "TextEditorStep.tsx - Teksteditorcomponent (REQ-E02-063)",
+        "title": "Gids Schrijven",
+        "description": "Voeg tekstgebaseerde gids toe met markdown-opmaak",
+        "toolbar": {
+          "ariaLabel": "Tekstopmaak",
+          "bold": "Vet (Ctrl+B)",
+          "italic": "Cursief (Ctrl+I)",
+          "heading1": "Kop 1",
+          "heading2": "Kop 2",
+          "heading3": "Kop 3",
+          "bulletList": "Ongenummerde Lijst",
+          "numberedList": "Genummerde Lijst",
+          "link": "Link Invoegen (Ctrl+K)"
+        },
+        "editor": {
+          "placeholder": "Schrijf hier uw artikelgids met markdown-opmaak...",
+          "ariaLabel": "Markdown-inhoudeditor"
+        },
+        "preview": {
+          "label": "Voorbeeld",
+          "emptyState": "Begin met typen om een voorbeeld van uw opgemaakte inhoud te zien..."
+        },
+        "tabs": {
+          "editor": "Editor",
+          "preview": "Voorbeeld"
+        },
+        "characterCount": {
+          "text": "{current} / {max} tekens",
+          "ariaLabel": "Tekentellingvoortgang"
+        },
+        "errors": {
+          "overLimit": "Inhoud overschrijdt de maximale tekenlimiet. Verkort uw tekst."
+        },
+        "autoSave": {
+          "saving": "Opslaan..."
+        },
+        "navigation": {
+          "back": "Terug",
+          "continue": "Doorgaan"
+        }
+      },
+      "urlInput": {
+        "_comment": "UrlInputStep.tsx - URL-invoercomponent (REQ-E02-063)",
+        "title": "Link Toevoegen",
+        "description": "Voeg een URL toe aan uw artikel. We halen automatisch de titel en het voorbeeld op.",
+        "form": {
+          "urlLabel": "URL",
+          "placeholder": "https://www.youtube.com/watch?v=...",
+          "pasteButton": "Plakken",
+          "clearUrl": "URL wissen",
+          "fetchButton": "Voorbeeld Ophalen",
+          "fetching": "Voorbeeld ophalen..."
+        },
+        "networkError": {
+          "title": "Voorbeeld niet beschikbaar",
+          "message": "Kan voorbeeld niet laden vanwege netwerkproblemen.",
+          "retryButton": "Opnieuw Proberen",
+          "retrying": "Opnieuw proberen...",
+          "proceedButton": "Doorgaan Zonder Voorbeeld"
+        },
+        "proceedWithoutPreview": {
+          "title": "Doorgaan zonder voorbeeld",
+          "message": "De link wordt toegevoegd zonder voorbeeld. U kunt de titel later bewerken.",
+          "addButton": "Link Toch Toevoegen",
+          "cancelButton": "Annuleren"
+        },
+        "preview": {
+          "loadedTitle": "Voorbeeld geladen",
+          "addButton": "Link Toevoegen",
+          "tryAnotherButton": "Andere Proberen"
+        },
+        "errors": {
+          "invalidUrl": "Ongeldige URL",
+          "clipboardError": "Kan klembord niet lezen. Plak handmatig."
+        },
+        "navigation": {
+          "back": "Terug"
+        }
+      },
+      "contentCreation": {
+        "_comment": "ContentCreationStep.tsx - Stap 7",
+        "title": "Inhoud Aanmaken",
+        "subtitle": "Voeg instructies of informatie toe voor dit artikel",
+        "addContent": "Inhoud Toevoegen",
+        "editContent": "Inhoud Bewerken",
+        "contentAdded": "Inhoud succesvol toegevoegd",
+        "contentUpdated": "Inhoud bijgewerkt",
+        "contentRemoved": "Inhoud verwijderd",
+        "contentCount": "{count, plural, =0 {Geen inhoud} one {# inhoudsstuk} other {# inhoudsstukken}}",
+        "reorderHint": "Sleep om inhoudsstukken te herordenen"
+      },
+      "preview": {
+        "_comment": "PreviewSaveStep.tsx - REQ-E02-064 i18n-integratie (2026-01-22)",
+        "header": {
+          "title": "Voorbeeld & Opslaan",
+          "backAriaLabel": "Ga terug"
+        },
+        "details": {
+          "roomLabel": "Kamer",
+          "itemTypeLabel": "Artikeltype",
+          "itemNamePlaceholder": "Voer artikelnaam in",
+          "itemDescriptionLabel": "Artikelbeschrijving",
+          "itemDescriptionPlaceholder": "Voer een korte beschrijving van dit artikel in (optioneel)",
+          "articleTitleLabel": "Gids/Artikeltitel",
+          "articleTitlePlaceholder": "Voer gids/artikeltitel in",
+          "tagsLabel": "Tags"
+        },
+        "empty": {
+          "message": "Nog geen inhoud toegevoegd",
+          "addButton": "Inhoud Toevoegen"
+        },
+        "content": {
+          "title": "Inhoud",
+          "countLabel": "{count, plural, one {# inhoudsstuk} other {# inhoudsstukken}}",
+          "maxReached": "Maximum bereikt",
+          "dragHint": "Inhoudsstukken - sleep om te herordenen",
+          "addMore": "Meer Toevoegen"
+        },
+        "buttons": {
+          "saveItem": "Artikel Opslaan",
+          "saving": "Opslaan..."
+        },
+        "success": {
+          "title": "Artikel Opgeslagen!",
+          "qrAlt": "QR-code voor {itemName}",
+          "message": "Uw artikel is opgeslagen en klaar voor uw gasten!",
+          "continueButton": "Doorgaan"
+        },
+        "dnd": {
+          "contentType": "{type} inhoud",
+          "contentPiece": "inhoudsstuk",
+          "pickedUp": "{typeName} opgepakt. Huidige positie: {position} van {total}. Gebruik pijltjestoetsen om te verplaatsen.",
+          "overPosition": "Over positie {position}",
+          "dropped": "{typeName} losgelaten. Nieuwe positie: {position} van {total}",
+          "unchanged": "Positie ongewijzigd.",
+          "cancelled": "Slepen geannuleerd. Inhoud terug naar oorspronkelijke positie."
+        },
+        "dialogs": {
+          "removeLastContent": {
+            "title": "Laatste Inhoud Verwijderen?",
+            "message": "Dit is het enige inhoudsstuk. Verwijderen laat dit artikel leeg. Weet u zeker dat u het wilt verwijderen?",
+            "keepButton": "Behouden",
+            "removeButton": "Verwijderen"
+          }
+        },
+        "errors": {
+          "noItemData": "Geen artikelgegevens beschikbaar. Begin een nieuw artikel."
+        },
+        "announcements": {
+          "saved": "Artikel succesvol opgeslagen",
+          "error": "Fout: {error}"
+        }
+      },
+      "previewSave": {
+        "_comment": "PreviewSaveStep.tsx - Stap 8",
+        "title": "Controleren & Opslaan",
+        "subtitle": "Controleer uw artikel voordat u opslaat",
+        "itemNameLabel": "Artikelnaam",
+        "itemNamePlaceholder": "Voer artikelnaam in",
+        "itemNameRequired": "Artikelnaam is vereist",
+        "descriptionLabel": "Beschrijving",
+        "descriptionPlaceholder": "Voeg een optionele beschrijving toe",
+        "descriptionHint": "Help gasten begrijpen waarvoor dit artikel dient",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Voeg tags toe om te organiseren",
+        "addTag": "Tag toevoegen",
+        "removeTag": "Tag \"{tagName}\" verwijderen",
+        "suggestedTags": "Voorgestelde tags",
+        "roomLabel": "Kamer",
+        "editRoom": "Kamer Bewerken",
+        "itemTypeLabel": "Artikeltype",
+        "editItemType": "Artikeltype Bewerken",
+        "purposeLabel": "Doel",
+        "editPurpose": "Doel Bewerken",
+        "contentLabel": "Inhoud",
+        "contentPieces": "{count, plural, =0 {Geen inhoud} one {# inhoudsstuk} other {# inhoudsstukken}}",
+        "addMoreContent": "Meer Inhoud Toevoegen",
+        "reorderContent": "Inhoud Herordenen",
+        "dragToReorder": "Sleep om te herordenen",
+        "removeContent": "Verwijderen",
+        "removeContentConfirm": "Deze inhoud verwijderen?",
+        "contentPreview": "Inhoudsvoorbeeld",
+        "saveItem": "Artikel Opslaan",
+        "saving": "Opslaan...",
+        "saveAndAddAnother": "Opslaan & Nog Eén Toevoegen",
+        "saveError": "Artikel opslaan mislukt. Probeer het opnieuw.",
+        "saveSuccess": "Artikel succesvol opgeslagen!",
+        "unsavedChanges": "U heeft niet-opgeslagen wijzigingen",
+        "discardChanges": "Wijzigingen verwerpen?",
+        "ariaReorderContent": "Herorden inhoudsstukken met slepen en neerzetten",
+        "ariaContentPiece": "Inhoudsstuk {index} van {total}: {type}"
+      }
+    },
+    "postWorkflow": {
+      "_comment": "Post-workflow schermen (NextAction, SessionSummary)",
+      "nextAction": {
+        "title": "Wat Nu?",
+        "subtitle": "Artikel succesvol opgeslagen!",
+        "congratulations": "Goed gedaan!",
+        "itemCreated": "Uw artikel \"{itemName}\" is aangemaakt",
+        "editInstructions": "Instructies Bewerken",
+        "editDescription": "Bekijk en wijzig de inhoud die u zojuist heeft toegevoegd",
+        "addNewInstructions": "Nieuwe Instructies Toevoegen",
+        "addNewDescription": "Voeg meer inhoud toe aan dit artikel",
+        "createNewItem": "Nieuw Artikel Aanmaken",
+        "createNewDescription": "Begin opnieuw met een ander artikel",
+        "viewItem": "Artikel Bekijken",
+        "viewItemDescription": "Bekijk hoe uw artikel eruitziet voor gasten",
+        "done": "Klaar",
+        "doneDescription": "Terug naar uw dashboard",
+        "printQRCode": "QR-code Afdrukken",
+        "printQRCodeDescription": "Druk een QR-codelabel af voor dit artikel"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - REQ-E02-065 i18n-integratie (2026-01-22)",
+        "header": {
+          "title": "Sessie-overzicht",
+          "subtitle": "Bekijk uw artikelen voordat u afdrukt"
+        },
+        "empty": {
+          "title": "Nog geen artikelen",
+          "description": "U heeft nog geen artikelen aangemaakt in deze sessie. Begin met het toevoegen van uw eerste artikel.",
+          "addButton": "Eerste Artikel Toevoegen"
+        },
+        "newItems": {
+          "title": "Nieuwe Artikelen in Deze Sessie ({count})",
+          "addMore": "Meer Artikelen Toevoegen"
+        },
+        "existingItems": {
+          "title": "Eerder Aangemaakte Artikelen ({count})"
+        },
+        "actions": {
+          "printQRCodes": "QR-codes Afdrukken",
+          "skipFinish": "Overslaan & Voltooien"
+        },
+        "announcements": {
+          "stepSummary": "Stap: Sessie-overzicht - {count, plural, =0 {geen artikelen} one {# artikel} other {# artikelen}} aangemaakt in deze sessie."
+        },
+        "title": "Sessie Voltooid!",
+        "subtitle": "U heeft {count, plural, =0 {geen artikelen} one {# artikel} other {# artikelen}} aangemaakt in deze sessie",
+        "newItemsLegacy": "Nieuwe Artikelen",
+        "newItemsCount": "{count, plural, one {# nieuw artikel} other {# nieuwe artikelen}}",
+        "existingItemsLegacy": "Bestaande Artikelen Bijgewerkt",
+        "existingItemsCount": "{count, plural, one {# bestaand artikel} other {# bestaande artikelen}}",
+        "loadingItems": "Artikelen laden...",
+        "noItems": "Geen artikelen in deze sessie",
+        "sessionDuration": "Sessieduur: {duration}",
+        "printAll": "Alles Afdrukken",
+        "printSelected": "Geselecteerde Afdrukken",
+        "printNewOnly": "Alleen Nieuwe Artikelen Afdrukken",
+        "selectItemsToPrint": "Selecteer artikelen om af te drukken",
+        "createAnother": "Nog Een Artikel Aanmaken",
+        "viewAllItems": "Alle Artikelen Bekijken",
+        "finishSession": "Sessie Voltooien",
+        "finishWithoutPrint": "Voltooien Zonder Afdrukken",
+        "itemSummary": "{itemName} in {roomName}",
+        "contentSummary": "{count, plural, one {# inhoudsstuk} other {# inhoudsstukken}}"
+      }
+    },
     "dialogs": {
+      "_comment": "Alle workflow-dialogen (bevestig afsluiten, artikel verwijderen, lege sessie, PDF-export)",
       "confirmExit": {
         "title": "Workflow Verlaten?",
-        "messageDefault": "Weet u zeker dat u de workflow wilt verlaten?",
+        "messageUnsavedAndItems": "U heeft niet-opgeslagen wijzigingen en {count, plural, one {# artikel} other {# artikelen}} in deze sessie. Weet u zeker dat u wilt verlaten?",
         "messageUnsaved": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u wilt verlaten?",
         "messageItems": "U heeft {count, plural, one {# artikel} other {# artikelen}} aangemaakt in deze sessie. Weet u zeker dat u wilt verlaten?",
-        "messageUnsavedAndItems": "U heeft niet-opgeslagen wijzigingen en {count, plural, one {# artikel} other {# artikelen}} in deze sessie. Weet u zeker dat u wilt verlaten?",
+        "messageDefault": "Weet u zeker dat u de workflow wilt verlaten?",
+        "warningDataLoss": "Niet-opgeslagen wijzigingen gaan verloren",
         "cancel": "Annuleren",
-        "exit": "Workflow Verlaten"
-      },
-      "emptySession": {
-        "title": "Geen Artikelen Toegevoegd",
-        "message": "Nog geen artikelen toegevoegd. Artikelen toevoegen of sessie verlaten?",
-        "addItems": "Artikelen Toevoegen",
-        "exitSession": "Sessie Verlaten"
+        "stay": "Blijven",
+        "exit": "Workflow Verlaten",
+        "exitAndSave": "Opslaan & Verlaten"
       },
       "removeItem": {
         "title": "Artikel Verwijderen?",
-        "message": "Weet u zeker dat u \"{itemName}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+        "message": "Weet u zeker dat u \"{name}\" uit deze sessie wilt verwijderen?",
+        "messageWithContent": "Dit artikel heeft {count, plural, one {# inhoudsstuk} other {# inhoudsstukken}} dat ook wordt verwijderd.",
+        "warning": "Deze actie kan niet ongedaan worden gemaakt",
         "cancel": "Annuleren",
-        "remove": "Verwijderen"
+        "remove": "Verwijderen",
+        "removing": "Verwijderen..."
+      },
+      "emptySession": {
+        "title": "Geen Artikelen Toegevoegd",
+        "message": "U heeft nog geen artikelen toegevoegd. Voeg minstens één artikel toe om door te gaan.",
+        "messageExit": "U heeft geen artikelen toegevoegd. Toch verlaten?",
+        "ok": "OK",
+        "addItem": "Artikel Toevoegen",
+        "addItems": "Artikelen Toevoegen",
+        "exitAnyway": "Toch Verlaten",
+        "exitSession": "Sessie Verlaten"
       },
       "pdfExport": {
-        "title": "QR-codes Exporteren als PDF",
+        "title": "Exporteren naar PDF",
+        "subtitle": "Genereer afdrukbare QR-codes",
+        "selectItems": "Selecteer artikelen om op te nemen",
+        "allItems": "Alle Artikelen",
+        "allItemsCount": "Alle Artikelen ({count})",
+        "newOnly": "Alleen Nieuwe Artikelen",
+        "newOnlyCount": "Alleen Nieuwe Artikelen ({count})",
+        "selectedItems": "Geselecteerde Artikelen",
+        "selectedItemsCount": "Geselecteerde Artikelen ({count})",
+        "noItemsSelected": "Geen artikelen geselecteerd",
+        "selectAtLeastOne": "Selecteer minstens één artikel",
+        "options": "Opties",
+        "includeInstructions": "Instructies opnemen",
+        "includeQRCode": "QR-code opnemen",
+        "pageSize": "Paginagrootte",
+        "orientation": "Oriëntatie",
+        "portrait": "Staand",
+        "landscape": "Liggend",
+        "generating": "PDF genereren...",
+        "generatingProgress": "PDF genereren... {progress}%",
+        "download": "PDF Downloaden",
+        "print": "Afdrukken",
+        "cancel": "Annuleren",
+        "export": "PDF Exporteren",
+        "error": "PDF genereren mislukt. Probeer het opnieuw.",
         "itemCount": "{count, plural, one {# artikel} other {# artikelen}}",
         "description": "Configureer PDF-exportinstellingen voor uw QR-codes en download ze als een afdrukbaar PDF-document.",
         "errorTitle": "PDF-generatie mislukt",
-        "dismissError": "Fout negeren",
-        "cancel": "Annuleren",
-        "generating": "Genereren...",
-        "export": "PDF Exporteren"
+        "dismissError": "Fout negeren"
       }
+    },
+    "shared": {
+      "_comment": "REQ-E02-066 - Gedeelde workflow-componenten (2026-01-22)",
+      "header": {
+        "stepOf": "Stap {current} van {total}",
+        "backAriaLabel": "Ga terug naar vorige stap",
+        "exitAriaLabel": "Workflow afsluiten"
+      },
+      "progress": {
+        "itemsCreated": "{count, plural, =0 {Geen artikelen} one {# artikel} other {# artikelen}} aangemaakt",
+        "sessionProgress": "Sessievoortgang: {count} artikelen aangemaakt"
+      },
+      "dialogs": {
+        "confirmExit": {
+          "title": "Workflow Verlaten?",
+          "messageWithUnsavedAndItems": "U heeft niet-opgeslagen wijzigingen en {count} {count, plural, one {artikel} other {artikelen}} in deze sessie. Weet u zeker dat u wilt verlaten?",
+          "messageWithUnsaved": "U heeft niet-opgeslagen wijzigingen. Weet u zeker dat u wilt verlaten?",
+          "messageWithItems": "U heeft {count} {count, plural, one {artikel} other {artikelen}} aangemaakt in deze sessie. Weet u zeker dat u wilt verlaten?",
+          "messageDefault": "Weet u zeker dat u de workflow wilt verlaten?",
+          "cancel": "Annuleren",
+          "exit": "Workflow Verlaten"
+        },
+        "emptySession": {
+          "title": "Geen Artikelen Toegevoegd",
+          "message": "Nog geen artikelen toegevoegd. Artikelen toevoegen of sessie verlaten?",
+          "addItems": "Artikelen Toevoegen",
+          "exitSession": "Sessie Verlaten",
+          "closeAriaLabel": "Dialoog sluiten"
+        },
+        "removeItem": {
+          "title": "Artikel Verwijderen?",
+          "message": "Weet u zeker dat u \"{name}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+          "cancel": "Annuleren",
+          "remove": "Verwijderen"
+        },
+        "pdfExport": {
+          "title": "QR-codes Exporteren als PDF",
+          "itemCount": "{count, plural, one {# artikel} other {# artikelen}}",
+          "description": "Configureer PDF-exportinstellingen voor uw QR-codes en download ze als een afdrukbaar PDF-document.",
+          "errorTitle": "PDF-generatie mislukt",
+          "dismissError": "Fout negeren",
+          "cancel": "Annuleren",
+          "export": "PDF Exporteren",
+          "generating": "Genereren..."
+        }
+      },
+      "camera": {
+        "notAvailable": "Cameratoegang niet beschikbaar",
+        "instructionVideo": "Om een video op te nemen, staat u cameratoegang toe in uw browserinstellingen, of upload een bestaande video van uw apparaat.",
+        "instructionPhoto": "Om een foto te maken, staat u cameratoegang toe in uw browserinstellingen, of upload een bestaande foto van uw apparaat.",
+        "uploadVideo": "Video Uploaden",
+        "uploadPhoto": "Foto Uploaden",
+        "tryAgain": "Camera Opnieuw Proberen",
+        "tryAgainAriaLabel": "Camera opnieuw proberen",
+        "helpLink": "Hoe cameratoegang in te schakelen",
+        "permissionRequired": "Cameratoegang Vereist",
+        "permissionDescription": "Sta cameratoegang toe om foto's of video's vast te leggen.",
+        "grantPermission": "Toestemming Verlenen",
+        "openSettings": "Instellingen Openen",
+        "permissionDenied": "Cameratoegang geweigerd",
+        "permissionDeniedDescription": "Cameratoegang geweigerd. Schakel het in uw browserinstellingen in.",
+        "notSupported": "Camera niet ondersteund",
+        "notSupportedDescription": "Uw apparaat ondersteunt geen cameratoegang.",
+        "switchingCamera": "Camera wisselen...",
+        "cameraError": "Camerafout. Probeer het opnieuw."
+      },
+      "network": {
+        "previewUnavailable": "Voorbeeld niet beschikbaar",
+        "defaultError": "Kan voorbeeld niet laden vanwege netwerkproblemen.",
+        "tryAgain": "Opnieuw Proberen",
+        "retrying": "Opnieuw proberen...",
+        "proceedWithout": "Doorgaan Zonder Voorbeeld",
+        "offline": "U lijkt offline te zijn",
+        "offlineDescription": "Controleer uw verbinding en probeer het opnieuw.",
+        "retryConnection": "Verbinding Opnieuw Proberen",
+        "retry": "Opnieuw",
+        "slowConnection": "Trage verbinding gedetecteerd",
+        "slowConnectionDescription": "Uploads kunnen langer duren dan verwacht.",
+        "connectionRestored": "Verbinding hersteld"
+      },
+      "sessionRecovery": {
+        "title": "Uw vorige sessie is hersteld",
+        "itemCount": "{count, plural, one {# artikel} other {# artikelen}}",
+        "needsReUpload": "{count, plural, one {# stuk moet} other {# stukken moeten}} opnieuw worden geüpload",
+        "continueSession": "Sessie Voortzetten",
+        "startFresh": "Opnieuw Beginnen",
+        "dismiss": "Melding negeren",
+        "message": "We hebben {count, plural, one {# artikel} other {# artikelen}} gevonden van uw laatste sessie.",
+        "lastSaved": "Laatst opgeslagen: {time}",
+        "contentWarning": "{count, plural, one {# inhoudsstuk moet} other {# inhoudsstukken moeten}} opnieuw worden geüpload.",
+        "continue": "Sessie Voortzetten",
+        "recovering": "Sessie herstellen...",
+        "recoveryFailed": "Sessie herstellen mislukt"
+      },
+      "qrGeneration": {
+        "ready": "Klaar om te genereren",
+        "complete": "Voltooid!",
+        "completedWithFailures": "{completed} voltooid, {failed} mislukt",
+        "failed": "Genereren mislukt",
+        "generatingOf": "QR-code {current} van {total} genereren...",
+        "completedOf": "{completed} van {total} voltooid",
+        "pending": "In behandeling",
+        "generating": "Genereren...",
+        "completed": "Voltooid",
+        "failedStatus": "Mislukt",
+        "retry": "Opnieuw",
+        "retryAriaLabel": "QR-generatie opnieuw proberen voor {name}",
+        "retryFailed": "Opnieuw Proberen Mislukt",
+        "skipAndContinue": "Overslaan & Doorgaan",
+        "cancel": "Annuleren",
+        "cancelAriaLabel": "QR-codegeneratie annuleren",
+        "statusAriaLabel": "QR-codegeneratiestatus",
+        "progressAriaLabel": "QR-codegeneratievoortgang",
+        "itemsFailed": "{count, plural, one {# artikel} other {# artikelen}} kon(den) niet worden gegenereerd",
+        "title": "QR-codes Genereren",
+        "progress": "Verwerken {current} van {total}",
+        "progressPercent": "{percent}% voltooid"
+      },
+      "printOptions": {
+        "heading": "Welke artikelen wilt u afdrukken?",
+        "scopeAll": "Alle Artikelen",
+        "scopeAllDesc": "Inclusief nieuwe en bestaande artikelen",
+        "scopeNewOnly": "Alleen Nieuwe Artikelen",
+        "scopeNewOnlyDesc": "Alleen artikelen aangemaakt in deze sessie",
+        "scopeSelected": "Artikelen Selecteren",
+        "scopeSelectedDesc": "Kies specifieke artikelen om af te drukken",
+        "selectAll": "Alles Selecteren",
+        "deselectAll": "Alles Deselecteren",
+        "selectedOf": "({selected} van {total} geselecteerd)",
+        "newBadge": "Nieuw",
+        "generatingQR": "QR-codes Genereren",
+        "generatingQRButton": "QR-codes Genereren...",
+        "generatingPDF": "PDF Genereren...",
+        "processing": "Verwerken...",
+        "generatePDF": "PDF Genereren",
+        "printDirectly": "Direct Afdrukken",
+        "doneForNow": "Voorlopig Klaar",
+        "errorRetryHint": "Probeer het opnieuw of sla voor nu over.",
+        "dismissError": "Fout negeren",
+        "itemsSelected": "{count, plural, one {# artikel} other {# artikelen}} geselecteerd voor afdrukken",
+        "title": "QR-codes Afdrukken",
+        "subtitle": "Kies wat af te drukken",
+        "scope": "Selecteer artikelen om af te drukken",
+        "allItems": "Alle Artikelen ({count})",
+        "newOnly": "Alleen Nieuwe Artikelen ({count})",
+        "selectItems": "Artikelen Selecteren",
+        "selectedCount": "{count} geselecteerd",
+        "labelSize": "Labelgrootte",
+        "small": "Klein (1\" x 1\")",
+        "medium": "Middel (2\" x 2\")",
+        "large": "Groot (3\" x 3\")",
+        "custom": "Aangepast",
+        "labelsPerPage": "Labels per pagina",
+        "printDirect": "Direct Afdrukken",
+        "skip": "Afdrukken Overslaan",
+        "sending": "Verzenden naar printer...",
+        "printComplete": "Afdrukken voltooid",
+        "printFailed": "Afdrukken mislukt"
+      },
+      "content": {
+        "types": {
+          "video": "Video",
+          "photo": "Foto",
+          "pdf": "PDF",
+          "text": "Tekst",
+          "url": "Link"
+        },
+        "pageCount": "{count, plural, one {# pagina} other {# pagina's}}",
+        "photoAlt": "Foto-inhoud",
+        "itemPhotoAlt": "Artikelfoto",
+        "dragToReorder": "Sleep om te herordenen",
+        "retakeContent": "Inhoud opnieuw vastleggen",
+        "removeContent": "Inhoud verwijderen",
+        "removeAriaLabel": "{type} inhoud verwijderen",
+        "loadingPreview": "Voorbeeld laden...",
+        "contentPreviewAriaLabel": "{type} inhoudsvoorbeeld",
+        "preview": "Voorbeeld",
+        "edit": "Bewerken",
+        "remove": "Verwijderen",
+        "reorder": "Herordenen",
+        "moveUp": "Omhoog verplaatsen",
+        "moveDown": "Omlaag verplaatsen",
+        "contentPiece": "Inhoudsstuk {index}",
+        "contentPieceOf": "Inhoudsstuk {index} van {total}",
+        "videoContent": "Video",
+        "photoContent": "Foto",
+        "pdfContent": "PDF-document",
+        "textContent": "Tekst",
+        "urlContent": "Link",
+        "unknownContent": "Onbekend inhoudstype",
+        "noContent": "Nog geen inhoud toegevoegd",
+        "addContent": "Inhoud toevoegen",
+        "contentPieceAriaLabel": "{type} inhoudsstuk"
+      },
+      "itemEditor": {
+        "itemName": "Artikelnaam",
+        "placeholder": "Voer artikelnaam in",
+        "hint": "Deze naam verschijnt op het QR-codelabel"
+      },
+      "tagsEditor": {
+        "addTag": "Tag Toevoegen",
+        "removeTagAriaLabel": "{tag} tag verwijderen",
+        "availableTags": "Beschikbare tags"
+      },
+      "duplicateWarning": {
+        "exact": "Exacte naam bestaat al",
+        "similar": "Vergelijkbare naam al gebruikt",
+        "moreItems": "+{count} meer..."
+      },
+      "cards": {
+        "room": {
+          "selectAriaLabel": "{name} kamer selecteren"
+        },
+        "itemType": {
+          "selectAriaLabel": "{name} artikeltype selecteren"
+        },
+        "suggestion": {
+          "selectAriaLabel": "{name} selecteren",
+          "created": "Aangemaakt"
+        },
+        "sessionItem": {
+          "contentPieces": "{count, plural, one {# stuk} other {# stukken}} inhoud",
+          "noContent": "Nog geen inhoud",
+          "editAriaLabel": "{name} bewerken",
+          "removeAriaLabel": "{name} uit sessie verwijderen",
+          "itemPhotoAlt": "Artikelfoto"
+        },
+        "itemContext": {
+          "room": "Kamer",
+          "type": "Type",
+          "unknown": "Onbekend"
+        }
+      },
+      "tags": {
+        "label": "Tags",
+        "addTag": "Tag toevoegen",
+        "addTagPlaceholder": "Typ om tag toe te voegen...",
+        "removeTag": "Tag verwijderen",
+        "removeTagNamed": "Tag \"{name}\" verwijderen",
+        "placeholder": "Typ om tags toe te voegen...",
+        "noTags": "Geen tags",
+        "suggestions": "Suggesties",
+        "recentTags": "Recente tags",
+        "popularTags": "Populaire tags",
+        "maxTags": "Maximaal {max} tags",
+        "tagAdded": "Tag toegevoegd",
+        "tagRemoved": "Tag verwijderd",
+        "duplicateTag": "Tag bestaat al"
+      },
+      "itemContext": {
+        "editingGuideFor": "Gids Bewerken Voor:",
+        "readOnly": "Alleen-lezen",
+        "room": "Kamer",
+        "itemType": "Artikeltype",
+        "itemName": "Artikelnaam",
+        "purpose": "Doel",
+        "changeRoom": "Kamer wijzigen",
+        "changeItemType": "Artikeltype wijzigen",
+        "changePurpose": "Doel wijzigen"
+      },
+      "cameraPermission": {
+        "_comment": "CameraPermissionFallback.tsx - Camera toestemming geweigerd fallback UI (legacy)",
+        "title": "Cameratoegang geweigerd",
+        "explanation": "Om een {contentType} vast te leggen, staat u cameratoegang toe in uw browserinstellingen, of upload een bestaande {contentType} van uw apparaat.",
+        "uploadVideo": "Video Uploaden In Plaats Daarvan",
+        "uploadPhoto": "Foto Uploaden In Plaats Daarvan",
+        "tryAgain": "Camera Opnieuw Proberen",
+        "helpLink": "Hoe cameratoegang in te schakelen"
+      }
+    },
+    "constants": {
+      "_comment": "Workflow-constanten (kamers, artikeltypes, doelen, inhoudstypes, tags)",
+      "rooms": {
+        "kitchen": "Keuken",
+        "laundry": "Wasruimte",
+        "bedroom": "Slaapkamer",
+        "bathroom": "Badkamer",
+        "livingRoom": "Woonkamer",
+        "diningRoom": "Eetkamer",
+        "garage": "Garage",
+        "basement": "Kelder",
+        "attic": "Zolder",
+        "outdoor": "Buiten/Terras",
+        "pool": "Zwembadgebied",
+        "gym": "Sportruimte",
+        "office": "Thuiskantoor",
+        "gameRoom": "Speelkamer",
+        "mediaRoom": "Mediaruimte",
+        "general": "Algemeen/Gehele Eigendom",
+        "other": "Overig"
+      },
+      "itemTypes": {
+        "appliance": {
+          "label": "Apparaat",
+          "description": "Wasmachine, droger, fornuis, koelkast, vaatwasser, enz."
+        },
+        "roomItem": {
+          "label": "Kamerartikel",
+          "description": "Voorraadkast, kasten, kast, wastafel, thermostaat, enz."
+        },
+        "generalInfo": {
+          "label": "Algemene Info",
+          "description": "Afvalschema, WiFi-info, huisregels, uitcheckinstructies, enz."
+        }
+      },
+      "purposes": {
+        "howToUse": {
+          "label": "Hoe te Gebruiken",
+          "description": "Bedieningsinstructies en bediening"
+        },
+        "howToClean": {
+          "label": "Hoe Schoon te Maken",
+          "description": "Schoonmaak- en onderhoudsinstructies"
+        },
+        "troubleshooting": {
+          "label": "Probleemoplossing",
+          "description": "Veelvoorkomende problemen en hoe ze op te lossen"
+        },
+        "safetyInfo": {
+          "label": "Veiligheidsinformatie",
+          "description": "Veiligheidswaarschuwingen en voorzorgsmaatregelen"
+        },
+        "maintenance": {
+          "label": "Onderhoud",
+          "description": "Reguliere onderhoudstaken en -schema's"
+        },
+        "features": {
+          "label": "Functies & Tips",
+          "description": "Speciale functies, snelkoppelingen en tips"
+        },
+        "location": {
+          "label": "Locatie-info",
+          "description": "Waar dingen te vinden of hoe er te komen"
+        },
+        "other": {
+          "label": "Overig",
+          "description": "Algemene informatie niet hierboven behandeld"
+        }
+      },
+      "contentTypes": {
+        "recordVideo": {
+          "label": "Video Opnemen",
+          "description": "Neem een video op die demonstreert hoe het artikel te gebruiken"
+        },
+        "takePhoto": {
+          "label": "Foto Maken",
+          "description": "Maak een foto die het artikel of instructies toont"
+        },
+        "writeText": {
+          "label": "Tekst Schrijven",
+          "description": "Schrijf tekstinstructies of notities"
+        },
+        "uploadFile": {
+          "label": "Bestand Uploaden",
+          "description": "Upload een video, afbeelding, PDF of document"
+        },
+        "addLink": {
+          "label": "Link Toevoegen",
+          "description": "Voeg een link toe naar externe instructies of handleiding"
+        }
+      },
+      "tags": {
+        "kitchen": "Keuken",
+        "laundry": "Wasgoed",
+        "bedroom": "Slaapkamer",
+        "bathroom": "Badkamer",
+        "livingRoom": "Woonkamer",
+        "garage": "Garage",
+        "outdoor": "Buiten",
+        "general": "Algemeen",
+        "appliance": "Apparaat",
+        "roomItem": "Kamerartikel",
+        "instructions": "Instructies",
+        "cleaning": "Schoonmaken",
+        "troubleshooting": "Probleemoplossing",
+        "safety": "Veiligheid",
+        "maintenance": "Onderhoud",
+        "features": "Functies",
+        "tips": "Tips",
+        "info": "Info",
+        "important": "Belangrijk",
+        "wifi": "WiFi",
+        "emergency": "Noodgeval"
+      }
+    },
+    "validation": {
+      "_comment": "Workflow-specifieke validatieberichten",
+      "roomRequired": "Selecteer een kamer",
+      "itemTypeRequired": "Selecteer een artikeltype",
+      "itemNameRequired": "Artikelnaam is vereist",
+      "itemNameTooShort": "Artikelnaam moet minstens {min} tekens zijn",
+      "itemNameTooLong": "Artikelnaam moet minder dan {max} tekens zijn",
+      "itemNameInvalid": "Artikelnaam bevat ongeldige tekens",
+      "contentRequired": "Minstens één inhoudsstuk is vereist",
+      "purposeRequired": "Selecteer een doel",
+      "contentTypeRequired": "Selecteer een inhoudstype",
+      "invalidUrl": "Voer een geldige URL in",
+      "urlRequired": "URL is vereist",
+      "fileTooLarge": "Bestandsgrootte overschrijdt {max}MB limiet",
+      "invalidFileType": "Ongeldig bestandstype. Toegestaan: {types}",
+      "textTooShort": "Tekst moet minstens {min} tekens zijn",
+      "textTooLong": "Tekst moet minder dan {max} tekens zijn",
+      "duplicateItemName": "Een artikel met deze naam bestaat al",
+      "duplicateItemInProperty": "Een artikel met deze naam bestaat al in dit eigendom",
+      "videoTooShort": "Video moet minstens {min} seconden zijn",
+      "videoTooLong": "Video moet minder dan {max} seconden zijn",
+      "maxContentPieces": "Maximaal {max} inhoudsstukken toegestaan",
+      "maxTags": "Maximaal {max} tags toegestaan",
+      "tagTooLong": "Tag moet minder dan {max} tekens zijn",
+      "customRoomRequired": "Voer een kamernaam in",
+      "customRoomTooLong": "Kamernaam moet minder dan {max} tekens zijn"
+    },
+    "accessibility": {
+      "_comment": "Schermlezer-aankondigingen en toegankelijkheidslabels",
+      "stepAnnouncement": "Stap {current} van {total}: {stepName}",
+      "stepComplete": "Stap {stepName} voltooid",
+      "stepError": "Fout bij stap {stepName}",
+      "roomSelectionScreen": "Kamerselectie",
+      "itemTypeScreen": "Artikeltypeselectie",
+      "specificItemScreen": "Specifieke Artikelselectie",
+      "purposeScreen": "Doelselectie",
+      "contentTypeScreen": "Inhoudstypeselectie",
+      "mediaCaptureScreen": "Media Vastleggen",
+      "contentCreationScreen": "Inhoud Aanmaken",
+      "previewSaveScreen": "Voorbeeld en Opslaan",
+      "nextActionScreen": "Wat Nu",
+      "sessionSummaryScreen": "Sessie-overzicht",
+      "skipToContent": "Ga naar hoofdinhoud",
+      "skipToNavigation": "Ga naar navigatie",
+      "selectedItem": "{name} geselecteerd",
+      "deselectedItem": "{name} gedeselecteerd",
+      "itemSaved": "Artikel succesvol opgeslagen",
+      "itemSaveFailed": "Artikel opslaan mislukt",
+      "contentAdded": "Inhoud toegevoegd",
+      "contentRemoved": "Inhoud verwijderd",
+      "contentReordered": "Inhoud geherordend",
+      "uploadStarted": "Upload gestart",
+      "uploadComplete": "Upload voltooid",
+      "uploadFailed": "Upload mislukt",
+      "recordingStarted": "Opname gestart",
+      "recordingStopped": "Opname gestopt",
+      "formError": "Formulier heeft {count, plural, one {# fout} other {# fouten}}. Controleer en corrigeer.",
+      "requiredField": "{fieldName} is vereist",
+      "optionalField": "{fieldName} is optioneel",
+      "characterCount": "{current} van {max} tekens",
+      "loadingContent": "Inhoud laden...",
+      "contentLoaded": "Inhoud geladen"
     }
   },
   "itemDialogs": {

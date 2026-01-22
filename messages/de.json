@@ -1505,38 +1505,1173 @@
     }
   },
   "workflow": {
+    "_comment": "Übersetzungsschlüssel für den mehrstufigen Artikelerstellungs-Workflow (86+ Dateien, ~500 Zeichenketten)",
+    "placeholder": {
+      "_comment": "Temporäre StepPlaceholder-Komponentenzeichenketten für nicht implementierte Schritte",
+      "description": "Schritt-Komponentenplatzhalter - Implementierung kommt in späteren Phasen",
+      "continueTest": "Fortfahren (Test)"
+    },
+    "header": {
+      "_comment": "WorkflowHeader-Komponente - Fortschrittsanzeige und Beenden-Schaltfläche",
+      "stepOf": "Schritt {current} von {total}",
+      "progressLabel": "Schritt {current} von {total}: {stepName}",
+      "exitButton": "Beenden",
+      "exitAriaLabel": "Workflow beenden"
+    },
+    "navigation": {
+      "_comment": "Navigationsschaltflächen, die in allen Schritten verwendet werden",
+      "back": "Zurück",
+      "next": "Weiter",
+      "continue": "Fortfahren",
+      "exit": "Beenden",
+      "skip": "Überspringen",
+      "done": "Fertig",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "finish": "Abschließen",
+      "goBackLabel": "Zum vorherigen Schritt zurückkehren",
+      "goNextLabel": "Zum nächsten Schritt fortfahren",
+      "exitWorkflowLabel": "Workflow beenden",
+      "savingLabel": "Ihr Artikel wird gespeichert"
+    },
+    "steps": {
+      "_comment": "Schrittspezifische Zeichenketten, organisiert nach Schrittkomponente",
+      "roomSelection": {
+        "_comment": "RoomSelectionStep.tsx - Schritt 1",
+        "title": "Raum auswählen",
+        "subtitle": "Wählen Sie, wo sich dieser Artikel in Ihrer Immobilie befindet",
+        "searchPlaceholder": "Räume suchen...",
+        "noResults": "Keine Räume entsprechen Ihrer Suche",
+        "customRoomLabel": "Benutzerdefinierter Raum",
+        "customRoomPlaceholder": "z.B. Homeoffice, Weinkeller, Flur",
+        "customRoomHint": "Maximal 50 Zeichen",
+        "useCustomName": "Benutzerdefinierten Namen verwenden",
+        "popularRooms": "Beliebte Räume",
+        "allRooms": "Alle Räume",
+        "selectedRoom": "Ausgewählt: {roomName}",
+        "ariaLabel": "Raum für Ihren Artikel auswählen",
+        "ariaHelp": "Verwenden Sie die Pfeiltasten, um zwischen Räumen zu navigieren. Drücken Sie Enter oder Leertaste zum Auswählen.",
+        "ariaRoomSelected": "{roomName} ausgewählt",
+        "ariaRoomOption": "{roomName}, Raumoption"
+      },
+      "itemType": {
+        "_comment": "ItemTypeStep.tsx - Schritt 2",
+        "title": "Welcher Artikeltyp?",
+        "subtitle": "Wählen Sie die Kategorie, die Ihren Artikel am besten beschreibt",
+        "ariaLabel": "Artikeltyp auswählen",
+        "ariaHelp": "Verwenden Sie die Pfeiltasten zum Navigieren. Drücken Sie Enter oder Leertaste zum Auswählen.",
+        "ariaTypeSelected": "{typeName} ausgewählt",
+        "ariaTypeOption": "{typeName}: {description}",
+        "selectedType": "Ausgewählt: {typeName}"
+      },
+      "specificItem": {
+        "_comment": "SpecificItemStep.tsx - Schritt 3",
+        "title": "Welcher spezifische Artikel?",
+        "subtitle": "Wählen Sie aus Vorschlägen oder geben Sie einen benutzerdefinierten Artikel für {room} ein",
+        "searchPlaceholder": "Artikelnamen suchen oder eingeben...",
+        "suggestionsLabel": "Vorschläge",
+        "recentItems": "Kürzliche Artikel",
+        "popularItems": "Beliebte Artikel",
+        "customLabel": "Benutzerdefinierten Namen verwenden",
+        "other": "Andere...",
+        "customItemLabel": "Benutzerdefinierten Artikelnamen eingeben",
+        "itemLabel": "Artikelnamen eingeben",
+        "itemNameLabel": "Artikelname",
+        "itemNamePlaceholder": "Artikelnamen eingeben",
+        "customItemPlaceholder": "z.B. Kaffeemaschine, Smart-Thermostat",
+        "itemNameHint": "Seien Sie spezifisch - z.B. \"Samsung Waschmaschine\" statt \"Waschmaschine\"",
+        "noSuggestions": "Keine Vorschläge gefunden",
+        "duplicateWarning": "Ein Artikel mit diesem Namen existiert bereits in Ihrer Sitzung",
+        "duplicateInProperty": "Ein Artikel mit diesem Namen existiert bereits in dieser Immobilie",
+        "maxLength": "Maximal {max} Zeichen",
+        "ariaLabel": "Einen spezifischen Artikel auswählen",
+        "ariaHelp": "Tippen Sie zum Suchen oder wählen Sie aus den Vorschlägen unten",
+        "ariaSuggestion": "{itemName}, vorgeschlagener Artikel"
+      },
+      "purpose": {
+        "_comment": "PurposeStep.tsx - Schritt 4",
+        "title": "Was ist der Zweck dieses Inhalts?",
+        "subtitle": "Wählen Sie, womit Sie Gästen helfen möchten",
+        "selectPurpose": "Einen Zweck auswählen",
+        "multiplePurposes": "Sie können mehrere Zwecke auswählen",
+        "selectedCount": "{count, plural, one {# Zweck ausgewählt} other {# Zwecke ausgewählt}}",
+        "ariaLabel": "Inhaltszweck auswählen",
+        "ariaHelp": "Verwenden Sie die Auf- und Ab-Pfeiltasten zum Navigieren. Drücken Sie Enter oder Leertaste zum Auswählen.",
+        "ariaPurposeSelected": "{purposeName} ausgewählt",
+        "ariaPurposeOption": "{purposeName}: {description}"
+      },
+      "contentType": {
+        "_comment": "ContentTypeStep.tsx - Schritt 5",
+        "title": "Welchen Inhalt möchten Sie hinzufügen?",
+        "subtitle": "Wählen Sie, wie Sie Informationen für diesen Artikel hinzufügen möchten",
+        "selectContentType": "Inhaltstyp auswählen",
+        "recommendedFor": "Empfohlen für {purpose}",
+        "ariaLabel": "Inhaltstyp auswählen",
+        "ariaHelp": "Verwenden Sie die Pfeiltasten zum Navigieren. Drücken Sie Enter oder Leertaste zum Auswählen.",
+        "keyboardHelp": "Verwenden Sie die Pfeiltasten zum Navigieren. Drücken Sie Enter oder Leertaste zum Auswählen.",
+        "continueButton": "Fortfahren",
+        "ariaContentTypeSelected": "{contentType} ausgewählt",
+        "ariaContentTypeOption": "{contentType}: {description}",
+        "options": {
+          "recordVideo": {
+            "label": "Video aufnehmen"
+          },
+          "takePhoto": {
+            "label": "Foto aufnehmen"
+          },
+          "writeText": {
+            "label": "Text schreiben"
+          },
+          "uploadFile": {
+            "label": "Datei hochladen",
+            "subtitle": "Video, Bild, PDF, Text"
+          },
+          "addLink": {
+            "label": "Link hinzufügen"
+          }
+        }
+      },
+      "mediaCapture": {
+        "_comment": "MediaCaptureStep.tsx - Router-Komponente für Schritt 6",
+        "title": "Inhalt aufnehmen",
+        "subtitle": "Inhalt für Ihren Artikel hinzufügen",
+        "takePhoto": "Foto aufnehmen",
+        "recordVideo": "Video aufnehmen",
+        "errors": {
+          "noContentType": {
+            "title": "Kein Inhaltstyp ausgewählt",
+            "message": "Bitte gehen Sie zurück und wählen Sie einen Inhaltstyp aus, bevor Sie fortfahren."
+          },
+          "unsupportedType": {
+            "title": "Nicht unterstützter Inhaltstyp",
+            "message": "Der Inhaltstyp \"{contentType}\" wird nicht unterstützt. Bitte gehen Sie zurück und wählen Sie eine andere Option."
+          }
+        },
+        "startRecording": "Aufnahme starten",
+        "stopRecording": "Aufnahme stoppen",
+        "pauseRecording": "Aufnahme pausieren",
+        "resumeRecording": "Aufnahme fortsetzen",
+        "retake": "Erneut aufnehmen",
+        "useThis": "Dies verwenden",
+        "discard": "Verwerfen",
+        "uploading": "Wird hochgeladen...",
+        "processing": "Wird verarbeitet...",
+        "saving": "Wird gespeichert...",
+        "video": {
+          "title": "Video aufnehmen",
+          "instructions": "Positionieren Sie Ihre Kamera und drücken Sie Aufnahme",
+          "recording": "Aufnahme läuft...",
+          "recordingTime": "Aufnahme: {duration}",
+          "maxDuration": "Maximale Dauer: {duration}",
+          "minDuration": "Minimale Dauer: {duration}",
+          "tapToStart": "Tippen Sie zum Starten der Aufnahme",
+          "tapToStop": "Tippen Sie zum Stoppen der Aufnahme",
+          "processing": "Video wird verarbeitet...",
+          "previewTitle": "Videovorschau",
+          "playVideo": "Video abspielen",
+          "pauseVideo": "Video pausieren"
+        },
+        "photo": {
+          "title": "Foto aufnehmen",
+          "instructions": "Positionieren Sie Ihre Kamera und drücken Sie Aufnehmen",
+          "tapToCapture": "Tippen zum Aufnehmen",
+          "captured": "Foto aufgenommen",
+          "previewTitle": "Fotovorschau",
+          "switchCamera": "Kamera wechseln",
+          "frontCamera": "Frontkamera",
+          "backCamera": "Rückkamera"
+        },
+        "upload": {
+          "title": "Datei hochladen",
+          "dragDrop": "Dateien hierher ziehen und ablegen",
+          "or": "oder",
+          "browse": "Dateien durchsuchen",
+          "browseFiles": "Dateien von Ihrem Gerät durchsuchen",
+          "supportedFormats": "Unterstützte Formate: {formats}",
+          "maxSize": "Maximale Dateigröße: {size} MB",
+          "uploading": "Hochladen {progress}%",
+          "uploadComplete": "Upload abgeschlossen",
+          "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut.",
+          "selectFile": "Eine Datei auswählen",
+          "selectedFile": "Ausgewählt: {fileName}",
+          "removeFile": "Datei entfernen",
+          "multipleFiles": "{count, plural, one {# Datei ausgewählt} other {# Dateien ausgewählt}}"
+        },
+        "text": {
+          "title": "Anleitung schreiben",
+          "placeholder": "Schreiben Sie Ihre Anleitung hier...",
+          "characterCount": "{count} / {max} Zeichen",
+          "formatting": "Formatierungsoptionen",
+          "bold": "Fett",
+          "italic": "Kursiv",
+          "list": "Aufzählungsliste",
+          "numberedList": "Nummerierte Liste",
+          "preview": "Vorschau",
+          "edit": "Bearbeiten"
+        },
+        "url": {
+          "title": "Link hinzufügen",
+          "placeholder": "URL hier einfügen...",
+          "urlLabel": "URL",
+          "urlHint": "Geben Sie eine gültige Webadresse ein",
+          "invalidUrl": "Bitte geben Sie eine gültige URL ein",
+          "fetchingPreview": "Link-Vorschau wird abgerufen...",
+          "previewTitle": "Link-Vorschau",
+          "noPreview": "Keine Vorschau verfügbar",
+          "linkTitle": "Link-Titel",
+          "linkDescription": "Link-Beschreibung"
+        }
+      },
+      "videoCapture": {
+        "_comment": "VideoCaptureStep.tsx - Videoaufnahme-Komponente",
+        "title": {
+          "preview": "Video aufnehmen",
+          "recording": "Video wird aufgenommen",
+          "review": "Ihr Video überprüfen"
+        },
+        "subtitle": {
+          "preview": "Positionieren Sie Ihre Kamera und tippen Sie auf Aufnahme zum Starten",
+          "recording": "Aufnahme läuft - tippen Sie auf Stopp, wenn Sie fertig sind",
+          "review": "Abspielen zum Überprüfen, dann akzeptieren oder erneut aufnehmen"
+        },
+        "buttons": {
+          "startRecording": "Aufnahme starten",
+          "stopRecording": "Aufnahme stoppen",
+          "switchCamera": "Kamera wechseln",
+          "retake": "Erneut aufnehmen",
+          "accept": "Akzeptieren",
+          "tryAgain": "Erneut versuchen",
+          "back": "Zurück"
+        },
+        "states": {
+          "processing": "Wird verarbeitet...",
+          "initializing": "Kamera wird initialisiert...",
+          "rec": "AUFN"
+        },
+        "timer": {
+          "remaining": "{time} verbleibend"
+        },
+        "aria": {
+          "discardAndRecord": "Verwerfen und erneut aufnehmen",
+          "acceptVideo": "Video akzeptieren"
+        },
+        "announcements": {
+          "recordingStarted": "Aufnahme gestartet",
+          "recordingStopped": "Aufnahme gestoppt. Überprüfen Sie Ihr Video.",
+          "retaking": "Video wird erneut aufgenommen. Bereit zur Aufnahme.",
+          "processing": "Video wird verarbeitet...",
+          "cameraSwitched": "Zur {camera}-Kamera gewechselt",
+          "retrying": "Kamera-Initialisierung wird wiederholt"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Kamerazugriff wurde verweigert",
+            "guidance": "Bitte aktivieren Sie den Kamerazugriff in Ihren Browsereinstellungen, um Videos aufzunehmen."
+          },
+          "browserNotSupported": {
+            "message": "Ihr Browser unterstützt keine Videoaufnahme",
+            "guidance": "Kamerazugriff erfordert HTTPS. Bitte gehen Sie zurück und verwenden Sie stattdessen \"Video hochladen\" oder greifen Sie über HTTPS zu."
+          },
+          "recordingFailed": {
+            "message": "Videoaufnahme fehlgeschlagen",
+            "guidance": "Bitte überprüfen Sie Ihre Kamera und versuchen Sie es erneut."
+          },
+          "startFailed": "Aufnahme konnte nicht gestartet werden",
+          "noData": "Keine Videodaten aufgenommen",
+          "thumbnailFailed": {
+            "message": "Video konnte nicht verarbeitet werden",
+            "guidance": "Video gespeichert, aber Miniaturbildgenerierung fehlgeschlagen."
+          },
+          "loadFailed": "Video konnte nicht zur Wiedergabe geladen werden",
+          "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+        }
+      },
+      "photoCapture": {
+        "_comment": "PhotoCaptureStep.tsx - Fotoaufnahme-Komponente",
+        "title": {
+          "preview": "Fotos aufnehmen",
+          "review": "Ihr Foto überprüfen"
+        },
+        "subtitle": {
+          "preview": "Tippen Sie auf die Aufnahmetaste, um Fotos aufzunehmen ({count} / {max})",
+          "review": "Akzeptieren zum Hinzufügen oder erneut aufnehmen für eine neue Aufnahme"
+        },
+        "buttons": {
+          "capture": "Foto aufnehmen",
+          "switchCamera": "Kamera wechseln",
+          "retake": "Erneut aufnehmen",
+          "accept": "Akzeptieren",
+          "back": "Zurück",
+          "continue": "Fortfahren",
+          "tryAgain": "Erneut versuchen"
+        },
+        "states": {
+          "processing": "Wird verarbeitet...",
+          "initializing": "Kamera wird initialisiert..."
+        },
+        "gallery": {
+          "title": "Fotogalerie",
+          "deletePhoto": "Foto löschen",
+          "closeGallery": "Galerie schließen",
+          "counter": "{current} von {total}",
+          "previousPhoto": "Vorheriges Foto",
+          "nextPhoto": "Nächstes Foto"
+        },
+        "thumbnailStrip": {
+          "title": "Aufgenommene Fotos",
+          "photoAlt": "Foto {index}",
+          "removePhoto": "Foto {index} entfernen",
+          "add": "Hinzufügen"
+        },
+        "flash": {
+          "auto": "Auto"
+        },
+        "aria": {
+          "discardAndCapture": "Verwerfen und erneut aufnehmen",
+          "acceptPhoto": "Foto akzeptieren",
+          "capturedPhotoPreview": "Vorschau des aufgenommenen Fotos"
+        },
+        "announcements": {
+          "photoCaptured": "Foto aufgenommen. Überprüfen oder erneut aufnehmen.",
+          "retaking": "Foto wird erneut aufgenommen. Bereit zur Aufnahme.",
+          "processing": "Foto wird verarbeitet...",
+          "added": "Foto zur Sammlung hinzugefügt.",
+          "removed": "Foto entfernt.",
+          "switchedCamera": "Zur {camera}-Kamera gewechselt",
+          "retrying": "Kamera-Initialisierung wird wiederholt"
+        },
+        "errors": {
+          "permissionDenied": {
+            "message": "Kamerazugriff wurde verweigert",
+            "guidance": "Bitte aktivieren Sie den Kamerazugriff in Ihren Browsereinstellungen, um Fotos aufzunehmen."
+          },
+          "browserNotSupported": {
+            "message": "Ihr Browser unterstützt keine Fotoaufnahme",
+            "guidance": "Kamerazugriff erfordert HTTPS. Bitte gehen Sie zurück und verwenden Sie stattdessen \"Foto hochladen\" oder greifen Sie über HTTPS zu."
+          },
+          "captureFailed": {
+            "message": "Fotoaufnahme fehlgeschlagen",
+            "guidance": "Bitte überprüfen Sie Ihre Kamera und versuchen Sie es erneut."
+          },
+          "processFailed": "Foto konnte nicht verarbeitet werden",
+          "maxPhotosReached": {
+            "message": "Maximum von {max} Fotos erreicht",
+            "guidance": "Sie haben das Maximum von {max} Fotos erreicht. Entfernen Sie ein Foto, um weitere hinzuzufügen."
+          },
+          "storageFull": {
+            "message": "Gerätespeicher ist voll",
+            "guidance": "Bitte geben Sie Speicherplatz frei und versuchen Sie es erneut."
+          },
+          "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+        }
+      },
+      "fileUpload": {
+        "_comment": "FileUploadStep.tsx - Datei-Upload-Komponente",
+        "title": "Dateien hochladen",
+        "subtitle": "Dateien hierher ziehen oder zum Auswählen klicken",
+        "dropZone": {
+          "default": "Dateien hierher ziehen oder zum Durchsuchen klicken",
+          "dropValid": "Dateien hier ablegen",
+          "dropInvalid": "Ungültiger Dateityp",
+          "hasFiles": "Weitere Dateien hinzufügen",
+          "supportedFormats": "Unterstützt Bilder, Videos und PDF-Dateien",
+          "limits": "Max. {count} Dateien, {size} je"
+        },
+        "progress": {
+          "fileCount": "{count}/{max} Dateien"
+        },
+        "errors": {
+          "rejectionTitle": "{count, plural, one {# Datei} other {# Dateien}} konnten nicht hinzugefügt werden",
+          "dismiss": "Schließen"
+        },
+        "pdf": {
+          "passwordProtected": "Passwortgeschützt",
+          "corrupted": "Datei ist möglicherweise beschädigt",
+          "pageCount": "{count, plural, one {# Seite} other {# Seiten}}"
+        },
+        "buttons": {
+          "back": "Zurück",
+          "continue": "Fortfahren"
+        },
+        "aria": {
+          "removeFile": "{filename} entfernen",
+          "uploadProgress": "Upload-Größenfortschritt"
+        },
+        "announcements": {
+          "filesUploaded": "{count} Dateien hochgeladen"
+        }
+      },
+      "textEditor": {
+        "_comment": "TextEditorStep.tsx - Texteditor-Komponente",
+        "title": "Anleitung schreiben",
+        "description": "Textbasierte Anleitung mit Markdown-Formatierung hinzufügen",
+        "toolbar": {
+          "ariaLabel": "Textformatierung",
+          "bold": "Fett (Strg+B)",
+          "italic": "Kursiv (Strg+I)",
+          "heading1": "Überschrift 1",
+          "heading2": "Überschrift 2",
+          "heading3": "Überschrift 3",
+          "bulletList": "Aufzählungsliste",
+          "numberedList": "Nummerierte Liste",
+          "link": "Link einfügen (Strg+K)"
+        },
+        "editor": {
+          "placeholder": "Schreiben Sie Ihre Artikelanleitung hier mit Markdown-Formatierung...",
+          "ariaLabel": "Markdown-Inhaltseditor"
+        },
+        "preview": {
+          "label": "Vorschau",
+          "emptyState": "Beginnen Sie zu tippen, um eine Vorschau Ihres formatierten Inhalts zu sehen..."
+        },
+        "tabs": {
+          "editor": "Editor",
+          "preview": "Vorschau"
+        },
+        "characterCount": {
+          "text": "{current} / {max} Zeichen",
+          "ariaLabel": "Zeichenzähler-Fortschritt"
+        },
+        "errors": {
+          "overLimit": "Inhalt überschreitet das maximale Zeichenlimit. Bitte kürzen Sie Ihren Text."
+        },
+        "autoSave": {
+          "saving": "Wird gespeichert..."
+        },
+        "navigation": {
+          "back": "Zurück",
+          "continue": "Fortfahren"
+        }
+      },
+      "urlInput": {
+        "_comment": "UrlInputStep.tsx - URL-Eingabe-Komponente",
+        "title": "Link hinzufügen",
+        "description": "Fügen Sie eine URL zu Ihrem Artikel hinzu. Wir rufen Titel und Vorschau automatisch ab.",
+        "form": {
+          "urlLabel": "URL",
+          "placeholder": "https://www.youtube.com/watch?v=...",
+          "pasteButton": "Einfügen",
+          "clearUrl": "URL löschen",
+          "fetchButton": "Vorschau abrufen",
+          "fetching": "Vorschau wird abgerufen..."
+        },
+        "networkError": {
+          "title": "Vorschau nicht verfügbar",
+          "message": "Vorschau kann aufgrund von Netzwerkverbindungsproblemen nicht geladen werden.",
+          "retryButton": "Erneut versuchen",
+          "retrying": "Wird wiederholt...",
+          "proceedButton": "Ohne Vorschau fortfahren"
+        },
+        "proceedWithoutPreview": {
+          "title": "Ohne Vorschau fortfahren",
+          "message": "Der Link wird ohne Vorschau hinzugefügt. Sie können den Titel später bearbeiten.",
+          "addButton": "Link trotzdem hinzufügen",
+          "cancelButton": "Abbrechen"
+        },
+        "preview": {
+          "loadedTitle": "Vorschau geladen",
+          "addButton": "Link hinzufügen",
+          "tryAnotherButton": "Anderen versuchen"
+        },
+        "errors": {
+          "invalidUrl": "Ungültige URL",
+          "clipboardError": "Zwischenablage kann nicht gelesen werden. Bitte manuell einfügen."
+        },
+        "navigation": {
+          "back": "Zurück"
+        }
+      },
+      "contentCreation": {
+        "_comment": "ContentCreationStep.tsx - Schritt 7",
+        "title": "Inhalt erstellen",
+        "subtitle": "Anleitungen oder Informationen für diesen Artikel hinzufügen",
+        "addContent": "Inhalt hinzufügen",
+        "editContent": "Inhalt bearbeiten",
+        "contentAdded": "Inhalt erfolgreich hinzugefügt",
+        "contentUpdated": "Inhalt aktualisiert",
+        "contentRemoved": "Inhalt entfernt",
+        "contentCount": "{count, plural, =0 {Kein Inhalt} one {# Inhaltselement} other {# Inhaltselemente}}",
+        "reorderHint": "Ziehen Sie zum Neuordnen der Inhaltselemente"
+      },
+      "preview": {
+        "_comment": "PreviewSaveStep.tsx - i18n-Integration",
+        "header": {
+          "title": "Vorschau & Speichern",
+          "backAriaLabel": "Zurück gehen"
+        },
+        "details": {
+          "roomLabel": "Raum",
+          "itemTypeLabel": "Artikeltyp",
+          "itemNamePlaceholder": "Artikelnamen eingeben",
+          "itemDescriptionLabel": "Artikelbeschreibung",
+          "itemDescriptionPlaceholder": "Geben Sie eine kurze Beschreibung dieses Artikels ein (optional)",
+          "articleTitleLabel": "Anleitung-/Artikeltitel",
+          "articleTitlePlaceholder": "Anleitungs-/Artikeltitel eingeben",
+          "tagsLabel": "Tags"
+        },
+        "empty": {
+          "message": "Noch kein Inhalt hinzugefügt",
+          "addButton": "Inhalt hinzufügen"
+        },
+        "content": {
+          "title": "Inhalt",
+          "countLabel": "{count, plural, one {# Inhaltselement} other {# Inhaltselemente}}",
+          "maxReached": "Maximum erreicht",
+          "dragHint": "Inhaltselemente - zum Neuordnen ziehen",
+          "addMore": "Mehr hinzufügen"
+        },
+        "buttons": {
+          "saveItem": "Artikel speichern",
+          "saving": "Wird gespeichert..."
+        },
+        "success": {
+          "title": "Artikel gespeichert!",
+          "qrAlt": "QR-Code für {itemName}",
+          "message": "Ihr Artikel wurde gespeichert und ist bereit für Ihre Gäste!",
+          "continueButton": "Fortfahren"
+        },
+        "dnd": {
+          "contentType": "{type}-Inhalt",
+          "contentPiece": "Inhaltselement",
+          "pickedUp": "{typeName} aufgenommen. Aktuelle Position: {position} von {total}. Verwenden Sie die Pfeiltasten zum Verschieben.",
+          "overPosition": "Über Position {position}",
+          "dropped": "{typeName} abgelegt. Neue Position: {position} von {total}",
+          "unchanged": "Position unverändert.",
+          "cancelled": "Ziehen abgebrochen. Inhalt an ursprüngliche Position zurückgekehrt."
+        },
+        "dialogs": {
+          "removeLastContent": {
+            "title": "Letzten Inhalt entfernen?",
+            "message": "Dies ist das einzige Inhaltselement. Das Entfernen lässt diesen Artikel leer. Sind Sie sicher, dass Sie es entfernen möchten?",
+            "keepButton": "Behalten",
+            "removeButton": "Entfernen"
+          }
+        },
+        "errors": {
+          "noItemData": "Keine Artikeldaten verfügbar. Bitte starten Sie einen neuen Artikel."
+        },
+        "announcements": {
+          "saved": "Artikel erfolgreich gespeichert",
+          "error": "Fehler: {error}"
+        }
+      },
+      "previewSave": {
+        "_comment": "PreviewSaveStep.tsx - Schritt 8",
+        "title": "Überprüfen & Speichern",
+        "subtitle": "Überprüfen Sie Ihren Artikel vor dem Speichern",
+        "itemNameLabel": "Artikelname",
+        "itemNamePlaceholder": "Artikelnamen eingeben",
+        "itemNameRequired": "Artikelname ist erforderlich",
+        "descriptionLabel": "Beschreibung",
+        "descriptionPlaceholder": "Optionale Beschreibung hinzufügen",
+        "descriptionHint": "Helfen Sie Gästen zu verstehen, wofür dieser Artikel ist",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Tags zur Organisation hinzufügen",
+        "addTag": "Tag hinzufügen",
+        "removeTag": "Tag \"{tagName}\" entfernen",
+        "suggestedTags": "Vorgeschlagene Tags",
+        "roomLabel": "Raum",
+        "editRoom": "Raum bearbeiten",
+        "itemTypeLabel": "Artikeltyp",
+        "editItemType": "Artikeltyp bearbeiten",
+        "purposeLabel": "Zweck",
+        "editPurpose": "Zweck bearbeiten",
+        "contentLabel": "Inhalt",
+        "contentPieces": "{count, plural, =0 {Kein Inhalt} one {# Inhaltselement} other {# Inhaltselemente}}",
+        "addMoreContent": "Mehr Inhalt hinzufügen",
+        "reorderContent": "Inhalt neu ordnen",
+        "dragToReorder": "Zum Neuordnen ziehen",
+        "removeContent": "Entfernen",
+        "removeContentConfirm": "Diesen Inhalt entfernen?",
+        "contentPreview": "Inhaltsvorschau",
+        "saveItem": "Artikel speichern",
+        "saving": "Wird gespeichert...",
+        "saveAndAddAnother": "Speichern & weiteren hinzufügen",
+        "saveError": "Artikel konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+        "saveSuccess": "Artikel erfolgreich gespeichert!",
+        "unsavedChanges": "Sie haben ungespeicherte Änderungen",
+        "discardChanges": "Änderungen verwerfen?",
+        "ariaReorderContent": "Inhaltselemente durch Ziehen und Ablegen neu ordnen",
+        "ariaContentPiece": "Inhaltselement {index} von {total}: {type}"
+      }
+    },
+    "postWorkflow": {
+      "_comment": "Bildschirme nach dem Workflow (NextAction, SessionSummary)",
+      "nextAction": {
+        "title": "Was kommt als Nächstes?",
+        "subtitle": "Artikel erfolgreich gespeichert!",
+        "congratulations": "Tolle Arbeit!",
+        "itemCreated": "Ihr Artikel \"{itemName}\" wurde erstellt",
+        "editInstructions": "Anleitungen bearbeiten",
+        "editDescription": "Den gerade hinzugefügten Inhalt überprüfen und ändern",
+        "addNewInstructions": "Neue Anleitungen hinzufügen",
+        "addNewDescription": "Mehr Inhalt zu diesem Artikel hinzufügen",
+        "createNewItem": "Neuen Artikel erstellen",
+        "createNewDescription": "Mit einem anderen Artikel von vorne beginnen",
+        "viewItem": "Artikel ansehen",
+        "viewItemDescription": "Sehen Sie, wie Ihr Artikel für Gäste aussieht",
+        "done": "Fertig",
+        "doneDescription": "Zurück zu Ihrem Dashboard",
+        "printQRCode": "QR-Code drucken",
+        "printQRCodeDescription": "QR-Code-Etikett für diesen Artikel drucken"
+      },
+      "sessionSummary": {
+        "_comment": "SessionSummaryStep.tsx - i18n-Integration",
+        "header": {
+          "title": "Sitzungszusammenfassung",
+          "subtitle": "Überprüfen Sie Ihre Artikel vor dem Drucken"
+        },
+        "empty": {
+          "title": "Noch keine Artikel",
+          "description": "Sie haben in dieser Sitzung noch keine Artikel erstellt. Beginnen Sie mit dem Hinzufügen Ihres ersten Artikels.",
+          "addButton": "Ersten Artikel hinzufügen"
+        },
+        "newItems": {
+          "title": "Neue Artikel in dieser Sitzung ({count})",
+          "addMore": "Mehr Artikel hinzufügen"
+        },
+        "existingItems": {
+          "title": "Zuvor erstellte Artikel ({count})"
+        },
+        "actions": {
+          "printQRCodes": "QR-Codes drucken",
+          "skipFinish": "Überspringen & Beenden"
+        },
+        "announcements": {
+          "stepSummary": "Schritt: Sitzungszusammenfassung - {count, plural, =0 {keine Artikel} one {# Artikel} other {# Artikel}} in dieser Sitzung erstellt."
+        },
+        "title": "Sitzung abgeschlossen!",
+        "subtitle": "Sie haben {count, plural, =0 {keine Artikel} one {# Artikel} other {# Artikel}} in dieser Sitzung erstellt",
+        "newItemsLegacy": "Neue Artikel",
+        "newItemsCount": "{count, plural, one {# neuer Artikel} other {# neue Artikel}}",
+        "existingItemsLegacy": "Aktualisierte bestehende Artikel",
+        "existingItemsCount": "{count, plural, one {# bestehender Artikel} other {# bestehende Artikel}}",
+        "loadingItems": "Artikel werden geladen...",
+        "noItems": "Keine Artikel in dieser Sitzung",
+        "sessionDuration": "Sitzungsdauer: {duration}",
+        "printAll": "Alle drucken",
+        "printSelected": "Ausgewählte drucken",
+        "printNewOnly": "Nur neue Artikel drucken",
+        "selectItemsToPrint": "Artikel zum Drucken auswählen",
+        "createAnother": "Weiteren Artikel erstellen",
+        "viewAllItems": "Alle Artikel ansehen",
+        "finishSession": "Sitzung beenden",
+        "finishWithoutPrint": "Ohne Drucken beenden",
+        "itemSummary": "{itemName} in {roomName}",
+        "contentSummary": "{count, plural, one {# Inhaltselement} other {# Inhaltselemente}}"
+      }
+    },
     "dialogs": {
+      "_comment": "Alle Workflow-Dialoge",
       "confirmExit": {
-        "title": "Workflow Beenden?",
-        "messageDefault": "Sind Sie sicher, dass Sie den Workflow beenden möchten?",
+        "title": "Workflow beenden?",
+        "messageUnsavedAndItems": "Sie haben ungespeicherte Änderungen und {count, plural, one {# Artikel} other {# Artikel}} in dieser Sitzung. Sind Sie sicher, dass Sie beenden möchten?",
         "messageUnsaved": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie beenden möchten?",
         "messageItems": "Sie haben {count, plural, one {# Artikel} other {# Artikel}} in dieser Sitzung erstellt. Sind Sie sicher, dass Sie beenden möchten?",
-        "messageUnsavedAndItems": "Sie haben ungespeicherte Änderungen und {count, plural, one {# Artikel} other {# Artikel}} in dieser Sitzung. Sind Sie sicher, dass Sie beenden möchten?",
+        "messageDefault": "Sind Sie sicher, dass Sie den Workflow beenden möchten?",
+        "warningDataLoss": "Ungespeicherte Änderungen gehen verloren",
         "cancel": "Abbrechen",
-        "exit": "Workflow Beenden"
-      },
-      "emptySession": {
-        "title": "Keine Artikel Hinzugefügt",
-        "message": "Noch keine Artikel hinzugefügt. Artikel hinzufügen oder Sitzung beenden?",
-        "addItems": "Artikel Hinzufügen",
-        "exitSession": "Sitzung Beenden"
+        "stay": "Bleiben",
+        "exit": "Workflow beenden",
+        "exitAndSave": "Speichern & Beenden"
       },
       "removeItem": {
-        "title": "Artikel Entfernen?",
-        "message": "Sind Sie sicher, dass Sie \"{itemName}\" entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "title": "Artikel entfernen?",
+        "message": "Sind Sie sicher, dass Sie \"{name}\" aus dieser Sitzung entfernen möchten?",
+        "messageWithContent": "Dieser Artikel hat {count, plural, one {# Inhaltselement} other {# Inhaltselemente}}, das/die ebenfalls entfernt wird/werden.",
+        "warning": "Diese Aktion kann nicht rückgängig gemacht werden",
         "cancel": "Abbrechen",
-        "remove": "Entfernen"
+        "remove": "Entfernen",
+        "removing": "Wird entfernt..."
+      },
+      "emptySession": {
+        "title": "Keine Artikel hinzugefügt",
+        "message": "Sie haben noch keine Artikel hinzugefügt. Fügen Sie mindestens einen Artikel hinzu, um fortzufahren.",
+        "messageExit": "Sie haben keine Artikel hinzugefügt. Trotzdem beenden?",
+        "ok": "OK",
+        "addItem": "Artikel hinzufügen",
+        "addItems": "Artikel hinzufügen",
+        "exitAnyway": "Trotzdem beenden",
+        "exitSession": "Sitzung beenden"
       },
       "pdfExport": {
-        "title": "QR-Codes als PDF Exportieren",
+        "title": "Als PDF exportieren",
+        "subtitle": "Druckbare QR-Codes generieren",
+        "selectItems": "Artikel zum Einschließen auswählen",
+        "allItems": "Alle Artikel",
+        "allItemsCount": "Alle Artikel ({count})",
+        "newOnly": "Nur neue Artikel",
+        "newOnlyCount": "Nur neue Artikel ({count})",
+        "selectedItems": "Ausgewählte Artikel",
+        "selectedItemsCount": "Ausgewählte Artikel ({count})",
+        "noItemsSelected": "Keine Artikel ausgewählt",
+        "selectAtLeastOne": "Wählen Sie mindestens einen Artikel",
+        "options": "Optionen",
+        "includeInstructions": "Anleitungen einschließen",
+        "includeQRCode": "QR-Code einschließen",
+        "pageSize": "Seitengröße",
+        "orientation": "Ausrichtung",
+        "portrait": "Hochformat",
+        "landscape": "Querformat",
+        "generating": "PDF wird generiert...",
+        "generatingProgress": "PDF wird generiert... {progress}%",
+        "download": "PDF herunterladen",
+        "print": "Drucken",
+        "cancel": "Abbrechen",
+        "export": "PDF exportieren",
+        "error": "PDF konnte nicht generiert werden. Bitte versuchen Sie es erneut.",
         "itemCount": "{count, plural, one {# Artikel} other {# Artikel}}",
         "description": "Konfigurieren Sie die PDF-Exporteinstellungen für Ihre QR-Codes und laden Sie sie als druckbares PDF-Dokument herunter.",
         "errorTitle": "PDF-Generierung fehlgeschlagen",
-        "dismissError": "Fehler schließen",
-        "cancel": "Abbrechen",
-        "generating": "Wird generiert...",
-        "export": "PDF Exportieren"
+        "dismissError": "Fehler schließen"
       }
+    },
+    "shared": {
+      "_comment": "Gemeinsame Workflow-Komponenten",
+      "header": {
+        "stepOf": "Schritt {current} von {total}",
+        "backAriaLabel": "Zum vorherigen Schritt zurückkehren",
+        "exitAriaLabel": "Workflow beenden"
+      },
+      "progress": {
+        "itemsCreated": "{count, plural, =0 {Keine Artikel} one {# Artikel} other {# Artikel}} erstellt",
+        "sessionProgress": "Sitzungsfortschritt: {count} Artikel erstellt"
+      },
+      "dialogs": {
+        "confirmExit": {
+          "title": "Workflow beenden?",
+          "messageWithUnsavedAndItems": "Sie haben ungespeicherte Änderungen und {count} {count, plural, one {Artikel} other {Artikel}} in dieser Sitzung. Sind Sie sicher, dass Sie beenden möchten?",
+          "messageWithUnsaved": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie beenden möchten?",
+          "messageWithItems": "Sie haben {count} {count, plural, one {Artikel} other {Artikel}} in dieser Sitzung erstellt. Sind Sie sicher, dass Sie beenden möchten?",
+          "messageDefault": "Sind Sie sicher, dass Sie den Workflow beenden möchten?",
+          "cancel": "Abbrechen",
+          "exit": "Workflow beenden"
+        },
+        "emptySession": {
+          "title": "Keine Artikel hinzugefügt",
+          "message": "Noch keine Artikel hinzugefügt. Artikel hinzufügen oder Sitzung beenden?",
+          "addItems": "Artikel hinzufügen",
+          "exitSession": "Sitzung beenden",
+          "closeAriaLabel": "Dialog schließen"
+        },
+        "removeItem": {
+          "title": "Artikel entfernen?",
+          "message": "Sind Sie sicher, dass Sie \"{name}\" entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+          "cancel": "Abbrechen",
+          "remove": "Entfernen"
+        },
+        "pdfExport": {
+          "title": "QR-Codes als PDF exportieren",
+          "itemCount": "{count, plural, one {# Artikel} other {# Artikel}}",
+          "description": "Konfigurieren Sie die PDF-Exporteinstellungen für Ihre QR-Codes und laden Sie sie als druckbares PDF-Dokument herunter.",
+          "errorTitle": "PDF-Generierung fehlgeschlagen",
+          "dismissError": "Fehler schließen",
+          "cancel": "Abbrechen",
+          "export": "PDF exportieren",
+          "generating": "Wird generiert..."
+        }
+      },
+      "camera": {
+        "notAvailable": "Kamerazugriff nicht verfügbar",
+        "instructionVideo": "Um ein Video aufzunehmen, erlauben Sie bitte den Kamerazugriff in Ihren Browsereinstellungen oder laden Sie ein vorhandenes Video von Ihrem Gerät hoch.",
+        "instructionPhoto": "Um ein Foto aufzunehmen, erlauben Sie bitte den Kamerazugriff in Ihren Browsereinstellungen oder laden Sie ein vorhandenes Foto von Ihrem Gerät hoch.",
+        "uploadVideo": "Video hochladen",
+        "uploadPhoto": "Foto hochladen",
+        "tryAgain": "Kamera erneut versuchen",
+        "tryAgainAriaLabel": "Kamera erneut versuchen",
+        "helpLink": "Wie Sie den Kamerazugriff aktivieren",
+        "permissionRequired": "Kamerazugriff erforderlich",
+        "permissionDescription": "Bitte erlauben Sie den Kamerazugriff, um Fotos oder Videos aufzunehmen.",
+        "grantPermission": "Berechtigung erteilen",
+        "openSettings": "Einstellungen öffnen",
+        "permissionDenied": "Kameraberechtigung verweigert",
+        "permissionDeniedDescription": "Kameraberechtigung verweigert. Bitte aktivieren Sie sie in Ihren Browsereinstellungen.",
+        "notSupported": "Kamera nicht unterstützt",
+        "notSupportedDescription": "Ihr Gerät unterstützt keinen Kamerazugriff.",
+        "switchingCamera": "Kamera wird gewechselt...",
+        "cameraError": "Kamerafehler. Bitte versuchen Sie es erneut."
+      },
+      "network": {
+        "previewUnavailable": "Vorschau nicht verfügbar",
+        "defaultError": "Vorschau kann aufgrund von Netzwerkverbindungsproblemen nicht geladen werden.",
+        "tryAgain": "Erneut versuchen",
+        "retrying": "Wird wiederholt...",
+        "proceedWithout": "Ohne Vorschau fortfahren",
+        "offline": "Sie scheinen offline zu sein",
+        "offlineDescription": "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+        "retryConnection": "Verbindung erneut versuchen",
+        "retry": "Wiederholen",
+        "slowConnection": "Langsame Verbindung erkannt",
+        "slowConnectionDescription": "Uploads können länger dauern als erwartet.",
+        "connectionRestored": "Verbindung wiederhergestellt"
+      },
+      "sessionRecovery": {
+        "title": "Ihre vorherige Sitzung wurde wiederhergestellt",
+        "itemCount": "{count, plural, one {# Artikel} other {# Artikel}}",
+        "needsReUpload": "{count, plural, one {# Element muss} other {# Elemente müssen}} erneut hochgeladen werden",
+        "continueSession": "Sitzung fortsetzen",
+        "startFresh": "Neu starten",
+        "dismiss": "Benachrichtigung schließen",
+        "message": "Wir haben {count, plural, one {# Artikel} other {# Artikel}} von Ihrer letzten Sitzung gefunden.",
+        "lastSaved": "Zuletzt gespeichert: {time}",
+        "contentWarning": "{count, plural, one {# Inhaltselement muss} other {# Inhaltselemente müssen}} erneut hochgeladen werden.",
+        "continue": "Sitzung fortsetzen",
+        "recovering": "Sitzung wird wiederhergestellt...",
+        "recoveryFailed": "Sitzungswiederherstellung fehlgeschlagen"
+      },
+      "qrGeneration": {
+        "ready": "Bereit zur Generierung",
+        "complete": "Abgeschlossen!",
+        "completedWithFailures": "{completed} abgeschlossen, {failed} fehlgeschlagen",
+        "failed": "Generierung fehlgeschlagen",
+        "generatingOf": "QR-Code {current} von {total} wird generiert...",
+        "completedOf": "{completed} von {total} abgeschlossen",
+        "pending": "Ausstehend",
+        "generating": "Wird generiert...",
+        "completed": "Abgeschlossen",
+        "failedStatus": "Fehlgeschlagen",
+        "retry": "Wiederholen",
+        "retryAriaLabel": "QR-Generierung für {name} wiederholen",
+        "retryFailed": "Wiederholung fehlgeschlagen",
+        "skipAndContinue": "Überspringen & Fortfahren",
+        "cancel": "Abbrechen",
+        "cancelAriaLabel": "QR-Code-Generierung abbrechen",
+        "statusAriaLabel": "QR-Code-Generierungsstatus",
+        "progressAriaLabel": "QR-Code-Generierungsfortschritt",
+        "itemsFailed": "{count, plural, one {# Artikel} other {# Artikel}} konnten nicht generiert werden",
+        "title": "QR-Codes werden generiert",
+        "progress": "Verarbeitung von {current} von {total}",
+        "progressPercent": "{percent}% abgeschlossen"
+      },
+      "printOptions": {
+        "heading": "Welche Artikel möchten Sie drucken?",
+        "scopeAll": "Alle Artikel",
+        "scopeAllDesc": "Neue und bestehende Artikel einschließen",
+        "scopeNewOnly": "Nur neue Artikel",
+        "scopeNewOnlyDesc": "Nur in dieser Sitzung erstellte Artikel",
+        "scopeSelected": "Artikel auswählen",
+        "scopeSelectedDesc": "Bestimmte Artikel zum Drucken auswählen",
+        "selectAll": "Alle auswählen",
+        "deselectAll": "Alle abwählen",
+        "selectedOf": "({selected} von {total} ausgewählt)",
+        "newBadge": "Neu",
+        "generatingQR": "QR-Codes werden generiert",
+        "generatingQRButton": "QR-Codes werden generiert...",
+        "generatingPDF": "PDF wird generiert...",
+        "processing": "Wird verarbeitet...",
+        "generatePDF": "PDF generieren",
+        "printDirectly": "Direkt drucken",
+        "doneForNow": "Für jetzt fertig",
+        "errorRetryHint": "Bitte versuchen Sie es erneut oder überspringen Sie vorerst.",
+        "dismissError": "Fehler schließen",
+        "itemsSelected": "{count, plural, one {# Artikel} other {# Artikel}} zum Drucken ausgewählt",
+        "title": "QR-Codes drucken",
+        "subtitle": "Wählen Sie, was gedruckt werden soll",
+        "scope": "Artikel zum Drucken auswählen",
+        "allItems": "Alle Artikel ({count})",
+        "newOnly": "Nur neue Artikel ({count})",
+        "selectItems": "Artikel auswählen",
+        "selectedCount": "{count} ausgewählt",
+        "labelSize": "Etikettengröße",
+        "small": "Klein (2,5 x 2,5 cm)",
+        "medium": "Mittel (5 x 5 cm)",
+        "large": "Groß (7,5 x 7,5 cm)",
+        "custom": "Benutzerdefiniert",
+        "labelsPerPage": "Etiketten pro Seite",
+        "printDirect": "Direkt drucken",
+        "skip": "Drucken überspringen",
+        "sending": "Wird an Drucker gesendet...",
+        "printComplete": "Druck abgeschlossen",
+        "printFailed": "Druck fehlgeschlagen"
+      },
+      "content": {
+        "types": {
+          "video": "Video",
+          "photo": "Foto",
+          "pdf": "PDF",
+          "text": "Text",
+          "url": "Link"
+        },
+        "pageCount": "{count, plural, one {# Seite} other {# Seiten}}",
+        "photoAlt": "Fotoinhalt",
+        "itemPhotoAlt": "Artikelfoto",
+        "dragToReorder": "Zum Neuordnen ziehen",
+        "retakeContent": "Inhalt erneut aufnehmen",
+        "removeContent": "Inhalt entfernen",
+        "removeAriaLabel": "{type}-Inhalt entfernen",
+        "loadingPreview": "Vorschau wird geladen...",
+        "contentPreviewAriaLabel": "{type}-Inhaltsvorschau",
+        "preview": "Vorschau",
+        "edit": "Bearbeiten",
+        "remove": "Entfernen",
+        "reorder": "Neu ordnen",
+        "moveUp": "Nach oben",
+        "moveDown": "Nach unten",
+        "contentPiece": "Inhaltselement {index}",
+        "contentPieceOf": "Inhaltselement {index} von {total}",
+        "videoContent": "Video",
+        "photoContent": "Foto",
+        "pdfContent": "PDF-Dokument",
+        "textContent": "Text",
+        "urlContent": "Link",
+        "unknownContent": "Unbekannter Inhaltstyp",
+        "noContent": "Noch kein Inhalt hinzugefügt",
+        "addContent": "Inhalt hinzufügen",
+        "contentPieceAriaLabel": "{type}-Inhaltselement"
+      },
+      "itemEditor": {
+        "itemName": "Artikelname",
+        "placeholder": "Artikelnamen eingeben",
+        "hint": "Dieser Name erscheint auf dem QR-Code-Etikett"
+      },
+      "tagsEditor": {
+        "addTag": "Tag hinzufügen",
+        "removeTagAriaLabel": "Tag {tag} entfernen",
+        "availableTags": "Verfügbare Tags"
+      },
+      "duplicateWarning": {
+        "exact": "Genauer Name existiert bereits",
+        "similar": "Ähnlicher Name bereits verwendet",
+        "moreItems": "+{count} weitere..."
+      },
+      "cards": {
+        "room": {
+          "selectAriaLabel": "Raum {name} auswählen"
+        },
+        "itemType": {
+          "selectAriaLabel": "Artikeltyp {name} auswählen"
+        },
+        "suggestion": {
+          "selectAriaLabel": "{name} auswählen",
+          "created": "Erstellt"
+        },
+        "sessionItem": {
+          "contentPieces": "{count, plural, one {# Element} other {# Elemente}} Inhalt",
+          "noContent": "Noch kein Inhalt",
+          "editAriaLabel": "{name} bearbeiten",
+          "removeAriaLabel": "{name} aus Sitzung entfernen",
+          "itemPhotoAlt": "Artikelfoto"
+        },
+        "itemContext": {
+          "room": "Raum",
+          "type": "Typ",
+          "unknown": "Unbekannt"
+        }
+      },
+      "tags": {
+        "label": "Tags",
+        "addTag": "Tag hinzufügen",
+        "addTagPlaceholder": "Zum Hinzufügen tippen...",
+        "removeTag": "Tag entfernen",
+        "removeTagNamed": "Tag \"{name}\" entfernen",
+        "placeholder": "Zum Hinzufügen von Tags tippen...",
+        "noTags": "Keine Tags",
+        "suggestions": "Vorschläge",
+        "recentTags": "Kürzliche Tags",
+        "popularTags": "Beliebte Tags",
+        "maxTags": "Maximal {max} Tags",
+        "tagAdded": "Tag hinzugefügt",
+        "tagRemoved": "Tag entfernt",
+        "duplicateTag": "Tag existiert bereits"
+      },
+      "itemContext": {
+        "editingGuideFor": "Anleitung bearbeiten für:",
+        "readOnly": "Nur lesen",
+        "room": "Raum",
+        "itemType": "Artikeltyp",
+        "itemName": "Artikelname",
+        "purpose": "Zweck",
+        "changeRoom": "Raum ändern",
+        "changeItemType": "Artikeltyp ändern",
+        "changePurpose": "Zweck ändern"
+      },
+      "cameraPermission": {
+        "_comment": "CameraPermissionFallback.tsx - Fallback-UI für verweigerte Kameraberechtigung",
+        "title": "Kamerazugriff verweigert",
+        "explanation": "Um {contentType} aufzunehmen, erlauben Sie bitte den Kamerazugriff in Ihren Browsereinstellungen oder laden Sie vorhandene {contentType} von Ihrem Gerät hoch.",
+        "uploadVideo": "Stattdessen Video hochladen",
+        "uploadPhoto": "Stattdessen Foto hochladen",
+        "tryAgain": "Kamera erneut versuchen",
+        "helpLink": "Wie Sie den Kamerazugriff aktivieren"
+      }
+    },
+    "constants": {
+      "_comment": "Workflow-Konstanten (Räume, Artikeltypen, Zwecke, Inhaltstypen, Tags)",
+      "rooms": {
+        "kitchen": "Küche",
+        "laundry": "Waschküche",
+        "bedroom": "Schlafzimmer",
+        "bathroom": "Badezimmer",
+        "livingRoom": "Wohnzimmer",
+        "diningRoom": "Esszimmer",
+        "garage": "Garage",
+        "basement": "Keller",
+        "attic": "Dachboden",
+        "outdoor": "Außenbereich/Terrasse",
+        "pool": "Poolbereich",
+        "gym": "Fitnessraum",
+        "office": "Homeoffice",
+        "gameRoom": "Spielzimmer",
+        "mediaRoom": "Medienraum",
+        "general": "Allgemein/Gesamte Immobilie",
+        "other": "Andere"
+      },
+      "itemTypes": {
+        "appliance": {
+          "label": "Gerät",
+          "description": "Waschmaschine, Trockner, Herd, Kühlschrank, Geschirrspüler usw."
+        },
+        "roomItem": {
+          "label": "Raumelement",
+          "description": "Speisekammer, Schränke, Garderobe, Waschbecken, Thermostat usw."
+        },
+        "generalInfo": {
+          "label": "Allgemeine Informationen",
+          "description": "Müllabfuhr-Zeiten, WLAN-Info, Hausregeln, Check-out-Anweisungen usw."
+        }
+      },
+      "purposes": {
+        "howToUse": {
+          "label": "Bedienungsanleitung",
+          "description": "Bedienungsanleitungen und Steuerungen"
+        },
+        "howToClean": {
+          "label": "Reinigung",
+          "description": "Reinigungs- und Pflegeanleitungen"
+        },
+        "troubleshooting": {
+          "label": "Fehlerbehebung",
+          "description": "Häufige Probleme und deren Lösung"
+        },
+        "safetyInfo": {
+          "label": "Sicherheitsinformationen",
+          "description": "Sicherheitswarnungen und Vorsichtsmaßnahmen"
+        },
+        "maintenance": {
+          "label": "Wartung",
+          "description": "Regelmäßige Wartungsaufgaben und -pläne"
+        },
+        "features": {
+          "label": "Funktionen & Tipps",
+          "description": "Besondere Funktionen, Abkürzungen und Tipps"
+        },
+        "location": {
+          "label": "Standortinformationen",
+          "description": "Wo man Dinge findet oder wie man dorthin kommt"
+        },
+        "other": {
+          "label": "Andere",
+          "description": "Allgemeine Informationen, die oben nicht abgedeckt sind"
+        }
+      },
+      "contentTypes": {
+        "recordVideo": {
+          "label": "Video aufnehmen",
+          "description": "Ein Video aufnehmen, das die Verwendung des Artikels demonstriert"
+        },
+        "takePhoto": {
+          "label": "Foto aufnehmen",
+          "description": "Ein Foto aufnehmen, das den Artikel oder die Anleitung zeigt"
+        },
+        "writeText": {
+          "label": "Text schreiben",
+          "description": "Textanleitungen oder Notizen schreiben"
+        },
+        "uploadFile": {
+          "label": "Datei hochladen",
+          "description": "Ein Video, Bild, PDF oder Dokument hochladen"
+        },
+        "addLink": {
+          "label": "Link hinzufügen",
+          "description": "Einen Link zu externen Anleitungen oder Handbüchern hinzufügen"
+        }
+      },
+      "tags": {
+        "kitchen": "Küche",
+        "laundry": "Waschküche",
+        "bedroom": "Schlafzimmer",
+        "bathroom": "Badezimmer",
+        "livingRoom": "Wohnzimmer",
+        "garage": "Garage",
+        "outdoor": "Außenbereich",
+        "general": "Allgemein",
+        "appliance": "Gerät",
+        "roomItem": "Raumelement",
+        "instructions": "Anleitungen",
+        "cleaning": "Reinigung",
+        "troubleshooting": "Fehlerbehebung",
+        "safety": "Sicherheit",
+        "maintenance": "Wartung",
+        "features": "Funktionen",
+        "tips": "Tipps",
+        "info": "Info",
+        "important": "Wichtig",
+        "wifi": "WLAN",
+        "emergency": "Notfall"
+      }
+    },
+    "validation": {
+      "_comment": "Workflow-spezifische Validierungsmeldungen",
+      "roomRequired": "Bitte wählen Sie einen Raum",
+      "itemTypeRequired": "Bitte wählen Sie einen Artikeltyp",
+      "itemNameRequired": "Artikelname ist erforderlich",
+      "itemNameTooShort": "Artikelname muss mindestens {min} Zeichen haben",
+      "itemNameTooLong": "Artikelname darf maximal {max} Zeichen haben",
+      "itemNameInvalid": "Artikelname enthält ungültige Zeichen",
+      "contentRequired": "Mindestens ein Inhaltselement ist erforderlich",
+      "purposeRequired": "Bitte wählen Sie einen Zweck",
+      "contentTypeRequired": "Bitte wählen Sie einen Inhaltstyp",
+      "invalidUrl": "Bitte geben Sie eine gültige URL ein",
+      "urlRequired": "URL ist erforderlich",
+      "fileTooLarge": "Dateigröße überschreitet das Limit von {max} MB",
+      "invalidFileType": "Ungültiger Dateityp. Erlaubt: {types}",
+      "textTooShort": "Text muss mindestens {min} Zeichen haben",
+      "textTooLong": "Text darf maximal {max} Zeichen haben",
+      "duplicateItemName": "Ein Artikel mit diesem Namen existiert bereits",
+      "duplicateItemInProperty": "Ein Artikel mit diesem Namen existiert bereits in dieser Immobilie",
+      "videoTooShort": "Video muss mindestens {min} Sekunden sein",
+      "videoTooLong": "Video darf maximal {max} Sekunden sein",
+      "maxContentPieces": "Maximal {max} Inhaltselemente erlaubt",
+      "maxTags": "Maximal {max} Tags erlaubt",
+      "tagTooLong": "Tag darf maximal {max} Zeichen haben",
+      "customRoomRequired": "Bitte geben Sie einen Raumnamen ein",
+      "customRoomTooLong": "Raumname darf maximal {max} Zeichen haben"
+    },
+    "accessibility": {
+      "_comment": "Screenreader-Ansagen und Barrierefreiheits-Labels",
+      "stepAnnouncement": "Schritt {current} von {total}: {stepName}",
+      "stepComplete": "Schritt {stepName} abgeschlossen",
+      "stepError": "Fehler bei Schritt {stepName}",
+      "roomSelectionScreen": "Raumauswahl",
+      "itemTypeScreen": "Artikeltyp-Auswahl",
+      "specificItemScreen": "Spezifische Artikelauswahl",
+      "purposeScreen": "Zweckauswahl",
+      "contentTypeScreen": "Inhaltstyp-Auswahl",
+      "mediaCaptureScreen": "Medienaufnahme",
+      "contentCreationScreen": "Inhaltserstellung",
+      "previewSaveScreen": "Vorschau und Speichern",
+      "nextActionScreen": "Nächste Schritte",
+      "sessionSummaryScreen": "Sitzungszusammenfassung",
+      "skipToContent": "Zum Hauptinhalt springen",
+      "skipToNavigation": "Zur Navigation springen",
+      "selectedItem": "{name} ausgewählt",
+      "deselectedItem": "{name} abgewählt",
+      "itemSaved": "Artikel erfolgreich gespeichert",
+      "itemSaveFailed": "Artikel konnte nicht gespeichert werden",
+      "contentAdded": "Inhalt hinzugefügt",
+      "contentRemoved": "Inhalt entfernt",
+      "contentReordered": "Inhalt neu geordnet",
+      "uploadStarted": "Upload gestartet",
+      "uploadComplete": "Upload abgeschlossen",
+      "uploadFailed": "Upload fehlgeschlagen",
+      "recordingStarted": "Aufnahme gestartet",
+      "recordingStopped": "Aufnahme gestoppt",
+      "formError": "Formular hat {count, plural, one {# Fehler} other {# Fehler}}. Bitte überprüfen und korrigieren.",
+      "requiredField": "{fieldName} ist erforderlich",
+      "optionalField": "{fieldName} ist optional",
+      "characterCount": "{current} von {max} Zeichen",
+      "loadingContent": "Inhalt wird geladen...",
+      "contentLoaded": "Inhalt geladen"
     }
   },
   "itemDialogs": {
