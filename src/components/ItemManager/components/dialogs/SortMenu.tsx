@@ -119,16 +119,16 @@ export function SortMenu({
     sortByLabel: labels?.sortByLabel ?? t('sortBy'),
   };
 
+  // Get current sort display label (using inline translation to avoid deps warning)
+  const currentLabel = useMemo(() => {
+    const option = sortOptions.find((o) => o.value === currentSort);
+    return option ? t(`options.${option.labelKey}`) : mergedLabels.sortLabel;
+  }, [currentSort, sortOptions, t, mergedLabels.sortLabel]);
+
   // Helper to translate sort option labels
   const translateOption = (option: SortOptionItem): string => {
     return t(`options.${option.labelKey}`);
   };
-
-  // Get current sort display label
-  const currentLabel = useMemo(() => {
-    const option = sortOptions.find((o) => o.value === currentSort);
-    return option ? translateOption(option) : mergedLabels.sortLabel;
-  }, [currentSort, sortOptions, t]);
 
   return (
     <DropdownMenu.Root>

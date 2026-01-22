@@ -5,7 +5,7 @@
  * @lastModified 2026-01-04 (REQ-065 - Initial integration test suite)
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FilterPanel } from '../FilterPanel';
 import type { FilterState, Property } from '../../../ItemManager.types';
