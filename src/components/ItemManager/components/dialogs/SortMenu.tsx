@@ -6,7 +6,7 @@
  *
  * @module ItemManager/components/dialogs/SortMenu
  * @see docs/prd/item-capture-manager-implementation-plan.md (Phase 2, Task 2.5)
- * @lastModified 2026-01-04
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.sort namespace)
  */
 
 'use client';
@@ -110,19 +110,18 @@ export function SortMenu({
   align = 'end',
   side = 'bottom',
 }: SortMenuProps) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-081: i18n translations
+  const t = useTranslations('items.sort');
 
-  // Merge default labels with translations
+  // Merge default labels with translations, using nullish coalescing for prop overrides
   const mergedLabels = {
-    sortLabel: t('sort.label'),
-    sortByLabel: t('sort.sortBy'),
-    ...labels,
+    sortLabel: labels?.sortLabel ?? t('label'),
+    sortByLabel: labels?.sortByLabel ?? t('sortBy'),
   };
 
   // Helper to translate sort option labels
   const translateOption = (option: SortOptionItem): string => {
-    return t(`sort.options.${option.labelKey}`);
+    return t(`options.${option.labelKey}`);
   };
 
   // Get current sort display label

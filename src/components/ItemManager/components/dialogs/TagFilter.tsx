@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/dialogs/TagFilter
  * @see docs/REQ-065-implement-filterpanel-detailed.md
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.2)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.filters.tags namespace)
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -64,13 +64,16 @@ export function TagFilter({
   placeholder,
   noTagsMessage,
 }: TagFilterProps) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-081: i18n translations
+  const t = useTranslations('items.filters.tags');
 
-  // Use provided labels or translations
-  const sectionLabel = label || t('filters.sections.tags');
-  const placeholderText = placeholder || t('filters.tags.placeholder');
-  const noTagsText = noTagsMessage || t('filters.tags.noTags');
+  // Resolve translated strings with prop overrides
+  const resolvedLabel = label ?? t('label');
+  const resolvedPlaceholder = placeholder ?? t('placeholder');
+  const resolvedNoTagsMessage = noTagsMessage ?? t('noTags');
+  const searchPlaceholder = t('searchPlaceholder');
+  const noMatchingMessage = t('noMatching');
+  const allSelectedMessage = t('allSelected');
   // ---------------------------------------------------------------------------
   // State
   // ---------------------------------------------------------------------------
@@ -196,7 +199,7 @@ export function TagFilter({
   return (
     <div ref={containerRef} className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
+      <p className="text-sm font-medium text-gray-700">{resolvedLabel}</p>
 
       {/* Selected Tags */}
       {selectedTags.length > 0 && (
@@ -216,7 +219,7 @@ export function TagFilter({
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
                   disabled && 'cursor-not-allowed opacity-50'
                 )}
-                aria-label={`Remove ${tag} tag`}
+                aria-label={t('removeTag', { tag })}
               >
                 <X className="h-3 w-3" />
               </button>
@@ -243,7 +246,7 @@ export function TagFilter({
           )}
         >
           <Plus className="h-4 w-4 text-gray-500" />
-          <span className="text-gray-600">{placeholderText}</span>
+          <span className="text-gray-600">{resolvedPlaceholder}</span>
           <ChevronDown
             className={cn(
               'h-4 w-4 text-gray-400 ml-auto transition-transform',
@@ -269,7 +272,7 @@ export function TagFilter({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search tags..."
+                placeholder={searchPlaceholder}
                 className={cn(
                   'w-full px-3 py-2 text-sm rounded-md',
                   'border border-gray-200 focus:border-blue-500',
@@ -283,10 +286,10 @@ export function TagFilter({
               {filteredTags.length === 0 ? (
                 <div className="px-3 py-4 text-sm text-gray-500 text-center">
                   {searchQuery
-                    ? t('search.results', { count: 0 })
+                    ? noMatchingMessage
                     : availableTags.length === 0
-                    ? noTagsText
-                    : t('filters.tags.selected', { count: selectedTags.length })}
+                    ? resolvedNoTagsMessage
+                    : allSelectedMessage}
                 </div>
               ) : (
                 filteredTags.map((tag) => (

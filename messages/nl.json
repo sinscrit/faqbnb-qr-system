@@ -1248,48 +1248,77 @@
     },
     "filters": {
       "title": "Filters",
-      "clearAll": "Clear All",
-      "applyFilters": "Apply Filters",
-      "close": "Close",
+      "clearAll": "Alles wissen",
+      "applyFilters": "Filters toepassen",
+      "close": "Sluiten",
       "sections": {
-        "contentType": "Content Type",
+        "contentType": "Inhoudstype",
         "tags": "Tags",
-        "location": "Location",
-        "property": "Property"
+        "location": "Locatie",
+        "property": "Eigendom"
+      },
+      "contentType": {
+        "label": "Inhoudstype",
+        "video": "Video",
+        "photo": "Foto",
+        "pdf": "PDF",
+        "textOnly": "Alleen tekst",
+        "mixed": "Gemengd"
       },
       "contentTypes": {
-        "all": "All Types",
+        "all": "Alle types",
         "video": "Video",
-        "photo": "Photo",
+        "photo": "Foto",
         "pdf": "PDF",
-        "text": "Text",
+        "text": "Tekst",
         "link": "Link",
-        "mixed": "Mixed"
+        "mixed": "Gemengd"
       },
       "tags": {
-        "placeholder": "Select tags...",
-        "noTags": "No tags available",
-        "selected": "{count} selected"
+        "label": "Tags",
+        "placeholder": "Tags toevoegen...",
+        "searchPlaceholder": "Tags zoeken...",
+        "noTags": "Geen tags beschikbaar",
+        "noMatching": "Geen overeenkomende tags",
+        "allSelected": "Alle tags geselecteerd",
+        "removeTag": "Tag {tag} verwijderen",
+        "selected": "{count} geselecteerd"
       },
       "location": {
-        "placeholder": "Select location...",
-        "all": "All Locations"
+        "label": "Locatie",
+        "placeholder": "Locatie selecteren...",
+        "searchPlaceholder": "Locaties zoeken...",
+        "noLocations": "Geen locaties beschikbaar",
+        "noMatching": "Geen overeenkomende locaties",
+        "noFound": "Geen locaties gevonden",
+        "clearSelection": "Locatieselectie wissen",
+        "all": "Alle locaties"
       },
       "property": {
-        "placeholder": "Select properties...",
-        "all": "All Properties"
+        "label": "Eigendom",
+        "placeholder": "Eigendommen selecteren...",
+        "all": "Alle eigendommen"
       }
     },
     "sort": {
-      "label": "Sort",
-      "sortBy": "Sort by",
+      "label": "Sorteren",
+      "sortBy": "Sorteren op",
       "options": {
-        "newest": "Newest First",
-        "oldest": "Oldest First",
-        "nameAZ": "Name (A-Z)",
-        "nameZA": "Name (Z-A)",
-        "mostViewed": "Most Viewed",
-        "recentlyViewed": "Recently Viewed"
+        "titleAsc": "Titel (A-Z)",
+        "titleDesc": "Titel (Z-A)",
+        "newestFirst": "Nieuwste eerst",
+        "oldestFirst": "Oudste eerst",
+        "recentlyModified": "Recent gewijzigd",
+        "leastRecentlyModified": "Minst recent gewijzigd",
+        "locationAsc": "Locatie (A-Z)",
+        "mostGuides": "Meeste handleidingen",
+        "fewestGuides": "Minste handleidingen",
+        "newest": "Nieuwste eerst",
+        "oldest": "Oudste eerst",
+        "nameAZ": "Naam (A-Z)",
+        "nameZA": "Naam (Z-A)",
+        "mostViewed": "Meest bekeken",
+        "recentlyViewed": "Recent bekeken"
       }
     },
     "search": {

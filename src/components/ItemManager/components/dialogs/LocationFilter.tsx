@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/dialogs/LocationFilter
  * @see docs/REQ-065-implement-filterpanel-detailed.md
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.3)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.filters.location namespace)
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -64,13 +64,17 @@ export function LocationFilter({
   placeholder,
   noLocationsMessage,
 }: LocationFilterProps) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-081: i18n translations
+  const t = useTranslations('items.filters.location');
 
-  // Use provided labels or translations
-  const sectionLabel = label || t('filters.sections.location');
-  const placeholderText = placeholder || t('filters.location.placeholder');
-  const noLocationsText = noLocationsMessage || t('filters.location.all');
+  // Resolve translated strings with prop overrides
+  const resolvedLabel = label ?? t('label');
+  const resolvedPlaceholder = placeholder ?? t('placeholder');
+  const resolvedNoLocationsMessage = noLocationsMessage ?? t('noLocations');
+  const searchPlaceholder = t('searchPlaceholder');
+  const noMatchingMessage = t('noMatching');
+  const noFoundMessage = t('noFound');
+  const clearAriaLabel = t('clearSelection');
 
   // ---------------------------------------------------------------------------
   // State
@@ -194,7 +198,7 @@ export function LocationFilter({
   return (
     <div ref={containerRef} className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
+      <p className="text-sm font-medium text-gray-700">{resolvedLabel}</p>
 
       {/* Dropdown Trigger */}
       <div className="relative flex items-center gap-1">
@@ -229,7 +233,7 @@ export function LocationFilter({
               selectedLocation ? 'text-blue-800' : 'text-gray-500'
             )}
           >
-            {selectedLocation || placeholderText}
+            {selectedLocation || resolvedPlaceholder}
           </span>
 
           <ChevronDown
@@ -251,7 +255,7 @@ export function LocationFilter({
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
               'min-h-[44px] min-w-[44px] flex items-center justify-center'
             )}
-            aria-label="Clear location selection"
+            aria-label={clearAriaLabel}
           >
             <X className="h-4 w-4 text-blue-600" />
           </button>
@@ -274,7 +278,7 @@ export function LocationFilter({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search locations..."
+                placeholder={searchPlaceholder}
                 className={cn(
                   'w-full px-3 py-2 text-sm rounded-md',
                   'border border-gray-200 focus:border-blue-500',
@@ -288,10 +292,10 @@ export function LocationFilter({
               {filteredLocations.length === 0 ? (
                 <div className="px-3 py-4 text-sm text-gray-500 text-center">
                   {searchQuery
-                    ? t('search.results', { count: 0 })
+                    ? noMatchingMessage
                     : availableLocations.length === 0
-                    ? noLocationsText
-                    : t('filters.location.all')}
+                    ? resolvedNoLocationsMessage
+                    : noFoundMessage}
                 </div>
               ) : (
                 filteredLocations.map((location) => {

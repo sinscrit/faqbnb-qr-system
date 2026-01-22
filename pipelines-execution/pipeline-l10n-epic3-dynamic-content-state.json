@@ -3,7 +3,7 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.824223",
-  "updated_at": "2026-01-22T09:04:35.965348",
+  "updated_at": "2026-01-22T09:31:54.470946",
   "status": "partial",
   "current_stage": "request",
   "current_task_index": 34,
@@ -1102,8 +1102,8 @@
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic3-dynamic-content.yaml"
   },
   "precheck": {
-    "status": "passed",
-    "completed_at": "2026-01-21T17:50:15.717092",
+    "status": "failed",
+    "completed_at": "2026-01-22T09:31:54.469691",
     "typescript": {
       "passed": true,
       "error_count": 0,
@@ -1115,12 +1115,856 @@
         "notes": "Dev server healthy (HTTP 200)"
       },
       "supabase_mcp": {
-        "available": true,
-        "notes": "Supabase MCP responded successfully"
+        "available": false,
+        "notes": "MCP check timed out"
       }
     },
     "next_cache_cleared": false
   },
   "recent_errors": [],
-  "session_id_implementation": "fa45b40b-428f-4b09-9a1d-d1ff269e5f33"
+  "session_id_implementation": "fa45b40b-428f-4b09-9a1d-d1ff269e5f33",
+  "usecases_completed": true,
+  "usecases_completed_at": "2026-01-22T09:19:50.098289",
+  "usecases": {
+    "generated_at": "2026-01-22T09:30:00.000000",
+    "total_count": 42,
+    "categories": {
+      "happy-path": 15,
+      "edge-case": 12,
+      "error-handling": 10,
+      "integration": 5
+    },
+    "scenarios": [
+      {
+        "id": "UC-E3-001",
+        "title": "Create Item Triggers Translation to All 5 Languages",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.2",
+          "1.2",
+          "1.3"
+        ],
+        "steps": [
+          "1. Admin user logs in with French (fr) as preferred language",
+          "2. Navigate to Items management",
+          "3. Create new item with name='Machine \u00e0 caf\u00e9' and description='Cafeti\u00e8re automatique avec broyeur'",
+          "4. Submit the item creation form",
+          "5. Check API response for translationJobIds"
+        ],
+        "expectedResults": [
+          "Item is created successfully with source_language='fr'",
+          "5 translation jobs are queued (en, es, de, nl, it)",
+          "API response includes array of 5 translationJobIds",
+          "Translation jobs have status='queued' in translation_jobs table",
+          "Jobs have priority=100 (recently created content)"
+        ]
+      },
+      {
+        "id": "UC-E3-002",
+        "title": "Update Item Re-triggers All Translations",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.2",
+          "1.5"
+        ],
+        "steps": [
+          "1. Retrieve existing item that has completed translations",
+          "2. Update item name from 'Coffee Machine' to 'Espresso Machine'",
+          "3. Submit the update via PUT /api/admin/items/{id}",
+          "4. Verify existing translations are deleted",
+          "5. Check new translation jobs are queued"
+        ],
+        "expectedResults": [
+          "Existing translations in item_translations table are deleted",
+          "5 new translation jobs are created with status='queued'",
+          "API response includes new translationJobIds",
+          "Jobs have priority=50 (updated content)",
+          "Item's source content is updated in items table"
+        ]
+      },
+      {
+        "id": "UC-E3-003",
+        "title": "Create Article Triggers Translation",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.3",
+          "1.3"
+        ],
+        "steps": [
+          "1. Admin creates new article with title='How to use the dishwasher'",
+          "2. Add description='Step by step instructions for the dishwasher'",
+          "3. Associate article with an existing item",
+          "4. Submit article creation",
+          "5. Verify translation jobs are created"
+        ],
+        "expectedResults": [
+          "Article is created with source_language based on user preference",
+          "5 translation jobs queued for title and description fields",
+          "article_translations table ready to receive translations",
+          "translationJobIds returned in API response"
+        ]
+      },
+      {
+        "id": "UC-E3-004",
+        "title": "Create Link Triggers Title Translation Only",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.4",
+          "1.3"
+        ],
+        "steps": [
+          "1. Navigate to existing item",
+          "2. Add new link with title='Installation Video' and url='https://youtube.com/...'",
+          "3. Submit link creation via POST /api/admin/items/{id}/links",
+          "4. Verify translation jobs created"
+        ],
+        "expectedResults": [
+          "Link is created successfully",
+          "5 translation jobs queued for title field only",
+          "URL is NOT translated (stored as-is)",
+          "link_translations table receives translated titles after processing"
+        ]
+      },
+      {
+        "id": "UC-E3-005",
+        "title": "User Tag Translation on Item Save",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.5",
+          "1.4"
+        ],
+        "steps": [
+          "1. Create item with tags=['kitchen appliance', 'coffee']",
+          "2. Verify tags are identified as user tags (not system tags)",
+          "3. Check tag_translations table for existing translations",
+          "4. If not exists, verify translation jobs are queued"
+        ],
+        "expectedResults": [
+          "User tags (not starting with #) are identified for translation",
+          "Translation jobs created only if tag doesn't exist in tag_translations",
+          "System tags (starting with #) are skipped",
+          "Tags are globally cached for reuse across accounts"
+        ]
+      },
+      {
+        "id": "UC-E3-006",
+        "title": "Job Processing Completes Item Translation",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.1",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item to trigger translation jobs",
+          "2. Call POST /api/admin/process-translations with batchSize=10",
+          "3. Wait for job processor to pick up jobs",
+          "4. Verify translation service is called with correct context",
+          "5. Check item_translations table for results"
+        ],
+        "expectedResults": [
+          "Job processor picks up queued jobs ordered by priority",
+          "Item name and description are translated",
+          "Translations stored in item_translations with status='completed'",
+          "translation_jobs status updated to 'completed'",
+          "completed_at timestamp is set"
+        ]
+      },
+      {
+        "id": "UC-E3-007",
+        "title": "Translation Status API Returns Complete Status",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.1",
+          "1.6"
+        ],
+        "steps": [
+          "1. Create item and wait for all translations to complete",
+          "2. Call GET /api/translations/status/item/{itemId}",
+          "3. Parse response for translation details"
+        ],
+        "expectedResults": [
+          "Response includes entityId, entityType, sourceLanguage",
+          "overallStatus is 'complete' when all 5 languages done",
+          "Each language has status='completed' with translatedAt timestamp",
+          "Cache-Control headers set for optimization"
+        ]
+      },
+      {
+        "id": "UC-E3-008",
+        "title": "Manual Translation Override",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. Have an item with completed automatic translations",
+          "2. Call PUT /api/translations/item/{itemId}/fr with corrected translation",
+          "3. Provide name='Cafeti\u00e8re professionnelle' in request body",
+          "4. Verify translation is updated"
+        ],
+        "expectedResults": [
+          "Translation is updated via UPSERT",
+          "translation_status set to 'manual'",
+          "reviewed_by set to current user ID",
+          "Original automatic translation is overwritten",
+          "Manual translations preserved on future auto-translations"
+        ]
+      },
+      {
+        "id": "UC-E3-009",
+        "title": "Retry Failed Translations",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.2"
+        ],
+        "steps": [
+          "1. Have an item with some failed translation jobs",
+          "2. Call POST /api/translations/retry with entityType='item', entityId",
+          "3. Optionally specify specific languages to retry",
+          "4. Check translation_jobs table"
+        ],
+        "expectedResults": [
+          "Failed jobs are found for the entity",
+          "Jobs reset to status='queued' with attempts reset",
+          "Priority set to 10 (retry failed translations)",
+          "Response shows count of jobs re-queued"
+        ]
+      },
+      {
+        "id": "UC-E3-010",
+        "title": "Batch Status for Dashboard List View",
+        "category": "happy-path",
+        "relatedTasks": [
+          "4.4"
+        ],
+        "steps": [
+          "1. Have multiple items in the system",
+          "2. Call POST /api/translations/status/batch with array of entities",
+          "3. Include [{entityType: 'item', entityId: 'id1'}, {entityType: 'article', entityId: 'id2'}]"
+        ],
+        "expectedResults": [
+          "Single request returns status for all entities",
+          "Each entity has summary status (complete/partial/pending/failed)",
+          "Optimized for dashboard rendering performance",
+          "Query uses efficient batch lookup"
+        ]
+      },
+      {
+        "id": "UC-E3-011",
+        "title": "Source Language Detection Priority",
+        "category": "happy-path",
+        "relatedTasks": [
+          "2.1"
+        ],
+        "steps": [
+          "1. User has preferred_language='fr'",
+          "2. Account has preferred_language='en'",
+          "3. Create item with sourceLanguage override='de' in request",
+          "4. Create another item without override"
+        ],
+        "expectedResults": [
+          "With override: source_language='de' (highest priority)",
+          "Without override: source_language='fr' (user preference)",
+          "If user has no preference: source_language='en' (account)",
+          "Ultimate fallback is 'en'"
+        ]
+      },
+      {
+        "id": "UC-E3-012",
+        "title": "Job Processing Endpoint with Custom Batch Size",
+        "category": "happy-path",
+        "relatedTasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Queue 20 translation jobs",
+          "2. Call POST /api/admin/process-translations with batchSize=5",
+          "3. Check response statistics"
+        ],
+        "expectedResults": [
+          "Only 5 jobs are processed in this batch",
+          "Response includes: processed count, success count, failure count",
+          "Remaining 15 jobs stay queued for next batch",
+          "Admin authentication required"
+        ]
+      },
+      {
+        "id": "UC-E3-013",
+        "title": "Job Monitoring Statistics",
+        "category": "happy-path",
+        "relatedTasks": [
+          "5.3"
+        ],
+        "steps": [
+          "1. Have jobs in various states in the system",
+          "2. Call GET /api/admin/translation-jobs",
+          "3. Optionally filter by entityType or status"
+        ],
+        "expectedResults": [
+          "Response includes: queued count, processing count",
+          "Completed (last hour) count, Failed (last hour) count",
+          "Filtering by entityType works correctly",
+          "Filtering by status works correctly"
+        ]
+      },
+      {
+        "id": "UC-E3-014",
+        "title": "High Priority for Recently Created Content",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.6"
+        ],
+        "steps": [
+          "1. Create new item (generates priority 100 jobs)",
+          "2. Update existing item (generates priority 50 jobs)",
+          "3. Trigger batch import (generates priority 25 jobs)",
+          "4. Call process-translations endpoint"
+        ],
+        "expectedResults": [
+          "Jobs with priority 100 are processed first",
+          "Within same priority, ordered by created_at ASC",
+          "Batch imports processed after immediate user actions",
+          "Fair ordering ensures all jobs eventually process"
+        ]
+      },
+      {
+        "id": "UC-E3-015",
+        "title": "Concurrency Control Limits API Calls",
+        "category": "happy-path",
+        "relatedTasks": [
+          "3.7"
+        ],
+        "steps": [
+          "1. Queue 50 translation jobs",
+          "2. Trigger processing with large batch size",
+          "3. Monitor concurrent API calls to translation service"
+        ],
+        "expectedResults": [
+          "Maximum 10 concurrent translation API calls",
+          "Semaphore/throttling prevents rate limit issues",
+          "Jobs queue up when concurrency limit reached",
+          "Provider rate limits are respected"
+        ]
+      },
+      {
+        "id": "UC-E3-016",
+        "title": "Empty Description Handled Gracefully",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create item with name='Microwave' but no description",
+          "2. Trigger translation job processing",
+          "3. Check item_translations result"
+        ],
+        "expectedResults": [
+          "Translation job still queued for name field",
+          "Empty/null description handled gracefully",
+          "item_translations entry has translated name, null/empty description",
+          "No errors thrown for missing optional fields"
+        ]
+      },
+      {
+        "id": "UC-E3-017",
+        "title": "Very Long Content Translation",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.3",
+          "3.2"
+        ],
+        "steps": [
+          "1. Create article with very long description (5000+ characters)",
+          "2. Check if maxLength constraint applied",
+          "3. Process translation job"
+        ],
+        "expectedResults": [
+          "Long content is accepted and queued",
+          "maxLength in context helps translation service optimize",
+          "Translation may be truncated if exceeds storage limit",
+          "No timeout errors for long translations"
+        ]
+      },
+      {
+        "id": "UC-E3-018",
+        "title": "Special Characters in Content",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2",
+          "3.3"
+        ],
+        "steps": [
+          "1. Create item with name containing special chars: 'Caf\u00e9 & Espresso \u00abPremium\u00bb'",
+          "2. Include emoji in description: 'Makes great coffee \u2615'",
+          "3. Process translation"
+        ],
+        "expectedResults": [
+          "Special characters preserved in translation",
+          "Emoji handled correctly (may be kept or translated)",
+          "HTML entities properly escaped",
+          "Unicode characters fully supported"
+        ]
+      },
+      {
+        "id": "UC-E3-019",
+        "title": "Same Source and Target Language Skipped",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.2"
+        ],
+        "steps": [
+          "1. Create item with source_language='en'",
+          "2. Check translation jobs created"
+        ],
+        "expectedResults": [
+          "Only 5 jobs created (fr, es, de, nl, it)",
+          "No job created for source language (en)",
+          "excludeLanguages parameter can further limit targets"
+        ]
+      },
+      {
+        "id": "UC-E3-020",
+        "title": "System Tag Translation Skipped",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.4",
+          "2.5"
+        ],
+        "steps": [
+          "1. Create item with tags=['#kitchen', '#appliance', 'coffee maker']",
+          "2. Check which tags trigger translation jobs"
+        ],
+        "expectedResults": [
+          "Tags starting with '#' are identified as system tags",
+          "System tags are NOT queued for translation (pre-seeded in Epic 1)",
+          "Only 'coffee maker' user tag is queued for translation",
+          "System tags display from pre-seeded tag_translations"
+        ]
+      },
+      {
+        "id": "UC-E3-021",
+        "title": "Duplicate Tag Translation Avoided",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.4"
+        ],
+        "steps": [
+          "1. Create item with tag 'kitchen appliance'",
+          "2. Wait for tag translation to complete",
+          "3. Create another item with same tag 'kitchen appliance'"
+        ],
+        "expectedResults": [
+          "First item triggers tag translation job",
+          "Second item checks tag_translations table first",
+          "No duplicate translation job created",
+          "Existing translation is reused globally"
+        ]
+      },
+      {
+        "id": "UC-E3-022",
+        "title": "Partial Translation Status",
+        "category": "edge-case",
+        "relatedTasks": [
+          "1.6",
+          "4.1"
+        ],
+        "steps": [
+          "1. Create item triggering 5 translation jobs",
+          "2. Process only 3 jobs (simulate partial processing)",
+          "3. Query translation status"
+        ],
+        "expectedResults": [
+          "overallStatus is 'partial'",
+          "completedLanguages array contains 3 languages",
+          "pendingLanguages array contains 2 languages",
+          "Individual language statuses reflect actual state"
+        ]
+      },
+      {
+        "id": "UC-E3-023",
+        "title": "Stale Job Recovery",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.8"
+        ],
+        "steps": [
+          "1. Have job stuck in 'processing' state for > 5 minutes",
+          "2. Trigger job processing (cleanup runs first)",
+          "3. Check job status"
+        ],
+        "expectedResults": [
+          "Stale job detected (processing > 5 minutes)",
+          "Job reset to status='queued'",
+          "Attempts incremented",
+          "Job eligible for re-processing"
+        ]
+      },
+      {
+        "id": "UC-E3-024",
+        "title": "Rapid Sequential Updates",
+        "category": "edge-case",
+        "relatedTasks": [
+          "2.2"
+        ],
+        "steps": [
+          "1. Update item multiple times in quick succession",
+          "2. Check translation jobs and translations table"
+        ],
+        "expectedResults": [
+          "Each update deletes previous translations",
+          "Only latest translation jobs are relevant",
+          "No duplicate or conflicting translations stored",
+          "System handles rapid updates gracefully"
+        ]
+      },
+      {
+        "id": "UC-E3-025",
+        "title": "Entity Deleted Before Translation Completes",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.2",
+          "3.3",
+          "3.4"
+        ],
+        "steps": [
+          "1. Create item triggering translation jobs",
+          "2. Delete item before jobs are processed",
+          "3. Process translation jobs"
+        ],
+        "expectedResults": [
+          "Job processor attempts to fetch item by ID",
+          "Item not found in database",
+          "Job marked as failed or skipped gracefully",
+          "No orphan translations created"
+        ]
+      },
+      {
+        "id": "UC-E3-026",
+        "title": "Concurrent Job Processing Safety",
+        "category": "edge-case",
+        "relatedTasks": [
+          "3.1",
+          "3.7"
+        ],
+        "steps": [
+          "1. Trigger multiple process-translations requests simultaneously",
+          "2. Check for job locking behavior"
+        ],
+        "expectedResults": [
+          "Database locking prevents same job picked twice",
+          "FOR UPDATE SKIP LOCKED pattern used",
+          "No duplicate translations created",
+          "Concurrent processors don't conflict"
+        ]
+      },
+      {
+        "id": "UC-E3-027",
+        "title": "Mixed Entity Types in Batch Status",
+        "category": "edge-case",
+        "relatedTasks": [
+          "4.4"
+        ],
+        "steps": [
+          "1. Request batch status for items, articles, and links together",
+          "2. Include some non-existent IDs"
+        ],
+        "expectedResults": [
+          "Valid entities return proper status",
+          "Non-existent entities handled gracefully",
+          "Mixed entity types processed correctly",
+          "Response maintains order of input"
+        ]
+      },
+      {
+        "id": "UC-E3-028",
+        "title": "Translation API Error - Rate Limited",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1",
+          "3.7"
+        ],
+        "steps": [
+          "1. Translation provider returns 429 rate limit error",
+          "2. Check job handling behavior"
+        ],
+        "expectedResults": [
+          "Job attempts incremented",
+          "Job status remains 'queued' for retry",
+          "Exponential backoff applied before retry",
+          "error_message stored on job record",
+          "After 3 failures, job marked as 'failed'"
+        ]
+      },
+      {
+        "id": "UC-E3-029",
+        "title": "Translation API Error - Service Unavailable",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.1"
+        ],
+        "steps": [
+          "1. Translation provider returns 503 service unavailable",
+          "2. Check retry behavior"
+        ],
+        "expectedResults": [
+          "Job re-queued with incremented attempts",
+          "Backoff strategy prevents immediate retry flood",
+          "Other jobs continue processing normally",
+          "After max attempts, job fails permanently"
+        ]
+      },
+      {
+        "id": "UC-E3-030",
+        "title": "Translation API Returns Empty Result",
+        "category": "error-handling",
+        "relatedTasks": [
+          "3.2",
+          "3.3"
+        ],
+        "steps": [
+          "1. Translation API returns empty or null translation",
+          "2. Check storage and job status"
+        ],
+        "expectedResults": [
+          "Empty translation detected",
+          "Job marked as failed or retried",
+          "Original content preserved",
+          "Fallback to source language at display time"
+        ]
+      },
+      {
+        "id": "UC-E3-031",
+        "title": "Invalid Entity Type in Status Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.1"
+        ],
+        "steps": [
+          "1. Call GET /api/translations/status/invalidType/123"
+        ],
+        "expectedResults": [
+          "400 Bad Request returned",
+          "Error message indicates valid entity types",
+          "No server crash or unhandled exception"
+        ]
+      },
+      {
+        "id": "UC-E3-032",
+        "title": "Invalid UUID in Status Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.1"
+        ],
+        "steps": [
+          "1. Call GET /api/translations/status/item/not-a-uuid"
+        ],
+        "expectedResults": [
+          "400 Bad Request or 404 Not Found",
+          "Proper error message returned",
+          "Database query doesn't fail unexpectedly"
+        ]
+      },
+      {
+        "id": "UC-E3-033",
+        "title": "Unauthorized Access to Manual Override",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. User tries to override translation for item they don't own",
+          "2. Call PUT /api/translations/item/{othersItemId}/fr"
+        ],
+        "expectedResults": [
+          "403 Forbidden returned",
+          "User access validated against entity ownership",
+          "Translation not modified"
+        ]
+      },
+      {
+        "id": "UC-E3-034",
+        "title": "Retry Request for Entity with No Failed Jobs",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.2"
+        ],
+        "steps": [
+          "1. Have item with all translations completed successfully",
+          "2. Call POST /api/translations/retry"
+        ],
+        "expectedResults": [
+          "Response indicates 0 jobs re-queued",
+          "No error thrown",
+          "Existing completed translations untouched"
+        ]
+      },
+      {
+        "id": "UC-E3-035",
+        "title": "Process Translations Without Admin Auth",
+        "category": "error-handling",
+        "relatedTasks": [
+          "5.1"
+        ],
+        "steps": [
+          "1. Call POST /api/admin/process-translations without authentication",
+          "2. Call with regular user (non-admin) token"
+        ],
+        "expectedResults": [
+          "401 Unauthorized without authentication",
+          "403 Forbidden for non-admin users",
+          "Endpoint secured properly"
+        ]
+      },
+      {
+        "id": "UC-E3-036",
+        "title": "Database Connection Error During Storage",
+        "category": "error-handling",
+        "relatedTasks": [
+          "1.5",
+          "3.2"
+        ],
+        "steps": [
+          "1. Translation completes successfully",
+          "2. Database write fails (connection issue)",
+          "3. Check job handling"
+        ],
+        "expectedResults": [
+          "Job marked for retry (not completed)",
+          "Translation not lost - can retry from scratch",
+          "Error logged for debugging",
+          "Database transaction rolled back if applicable"
+        ]
+      },
+      {
+        "id": "UC-E3-037",
+        "title": "Invalid Language Code in Override Request",
+        "category": "error-handling",
+        "relatedTasks": [
+          "4.3"
+        ],
+        "steps": [
+          "1. Call PUT /api/translations/item/{id}/xx (invalid language)"
+        ],
+        "expectedResults": [
+          "400 Bad Request returned",
+          "Error message lists supported languages",
+          "Only en, fr, es, de, nl, it accepted"
+        ]
+      },
+      {
+        "id": "UC-E3-038",
+        "title": "Full E2E: Create Item to Guest View",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "3.1",
+          "3.2",
+          "4.1"
+        ],
+        "steps": [
+          "1. Owner creates item in French",
+          "2. Wait for background job processing (cron or manual trigger)",
+          "3. Verify all 5 translations complete",
+          "4. Check translation status shows 'complete'",
+          "5. (Future Epic 4) Guest views item in German"
+        ],
+        "expectedResults": [
+          "Complete workflow from creation to translated storage",
+          "Job processing completes within 60 seconds",
+          "All translations stored in item_translations",
+          "Status API reflects completion",
+          "Ready for guest consumption in Epic 4"
+        ]
+      },
+      {
+        "id": "UC-E3-039",
+        "title": "Full E2E: Update with Manual Override Preserved",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "4.3"
+        ],
+        "steps": [
+          "1. Create item and wait for translations",
+          "2. Manually override French translation",
+          "3. Update item content",
+          "4. Wait for new translations",
+          "5. Check French translation"
+        ],
+        "expectedResults": [
+          "Manual override status is 'manual'",
+          "After update, new auto-translations created",
+          "Manual French translation handling per design decision",
+          "System tracks manual vs automatic translations"
+        ]
+      },
+      {
+        "id": "UC-E3-040",
+        "title": "Database Index Performance",
+        "category": "integration",
+        "relatedTasks": [
+          "6.1",
+          "6.2"
+        ],
+        "steps": [
+          "1. Have 1000+ translation jobs in various states",
+          "2. Query for pending jobs",
+          "3. Query for entity translation status",
+          "4. Check query execution plans"
+        ],
+        "expectedResults": [
+          "idx_translation_jobs_pending used for job pickup",
+          "idx_translation_jobs_entity used for status queries",
+          "idx_*_translations_lookup used for translation retrieval",
+          "Query times remain fast with large datasets"
+        ]
+      },
+      {
+        "id": "UC-E3-041",
+        "title": "Cron Job Continuous Processing",
+        "category": "integration",
+        "relatedTasks": [
+          "5.2",
+          "5.1"
+        ],
+        "steps": [
+          "1. Configure cron to run every 30 seconds",
+          "2. Create items over time",
+          "3. Monitor job queue over several minutes"
+        ],
+        "expectedResults": [
+          "Cron consistently triggers processing",
+          "Job queue drains at steady rate",
+          "No missed jobs or stuck queue",
+          "Processing statistics available for monitoring"
+        ]
+      },
+      {
+        "id": "UC-E3-042",
+        "title": "End-to-End Multi-Entity Translation",
+        "category": "integration",
+        "relatedTasks": [
+          "2.2",
+          "2.3",
+          "2.4",
+          "2.5"
+        ],
+        "steps": [
+          "1. Create item with name, description, tags",
+          "2. Add article with title, description to item",
+          "3. Add link with title to item",
+          "4. Process all translation jobs",
+          "5. Verify all entities have translations"
+        ],
+        "expectedResults": [
+          "Item: name and description translated",
+          "Article: title and description translated",
+          "Link: title translated (URL preserved)",
+          "Tags: user tags translated, system tags skipped",
+          "All translations stored in respective tables"
+        ]
+      }
+    ]
+  }
 }

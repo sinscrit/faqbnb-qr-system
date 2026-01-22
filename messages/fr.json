@@ -1247,49 +1247,78 @@
       "addArticle": "Add Article"
     },
     "filters": {
-      "title": "Filters",
-      "clearAll": "Clear All",
-      "applyFilters": "Apply Filters",
-      "close": "Close",
+      "title": "Filtres",
+      "clearAll": "Tout effacer",
+      "applyFilters": "Appliquer les filtres",
+      "close": "Fermer",
       "sections": {
-        "contentType": "Content Type",
+        "contentType": "Type de contenu",
         "tags": "Tags",
-        "location": "Location",
-        "property": "Property"
+        "location": "Emplacement",
+        "property": "Propriété"
       },
-      "contentTypes": {
-        "all": "All Types",
-        "video": "Video",
+      "contentType": {
+        "label": "Type de contenu",
+        "video": "Vidéo",
         "photo": "Photo",
         "pdf": "PDF",
-        "text": "Text",
-        "link": "Link",
-        "mixed": "Mixed"
+        "textOnly": "Texte seul",
+        "mixed": "Mixte"
+      },
+      "contentTypes": {
+        "all": "Tous les types",
+        "video": "Vidéo",
+        "photo": "Photo",
+        "pdf": "PDF",
+        "text": "Texte",
+        "link": "Lien",
+        "mixed": "Mixte"
       },
       "tags": {
-        "placeholder": "Select tags...",
-        "noTags": "No tags available",
-        "selected": "{count} selected"
+        "label": "Tags",
+        "placeholder": "Ajouter des tags...",
+        "searchPlaceholder": "Rechercher des tags...",
+        "noTags": "Aucun tag disponible",
+        "noMatching": "Aucun tag correspondant",
+        "allSelected": "Tous les tags sélectionnés",
+        "removeTag": "Supprimer le tag {tag}",
+        "selected": "{count} sélectionnés"
       },
       "location": {
-        "placeholder": "Select location...",
-        "all": "All Locations"
+        "label": "Emplacement",
+        "placeholder": "Sélectionner un emplacement...",
+        "searchPlaceholder": "Rechercher des emplacements...",
+        "noLocations": "Aucun emplacement disponible",
+        "noMatching": "Aucun emplacement correspondant",
+        "noFound": "Aucun emplacement trouvé",
+        "clearSelection": "Effacer la sélection d'emplacement",
+        "all": "Tous les emplacements"
       },
       "property": {
-        "placeholder": "Select properties...",
-        "all": "All Properties"
+        "label": "Propriété",
+        "placeholder": "Sélectionner des propriétés...",
+        "all": "Toutes les propriétés"
       }
     },
     "sort": {
-      "label": "Sort",
-      "sortBy": "Sort by",
+      "label": "Trier",
+      "sortBy": "Trier par",
       "options": {
-        "newest": "Newest First",
-        "oldest": "Oldest First",
-        "nameAZ": "Name (A-Z)",
-        "nameZA": "Name (Z-A)",
-        "mostViewed": "Most Viewed",
-        "recentlyViewed": "Recently Viewed"
+        "titleAsc": "Titre (A-Z)",
+        "titleDesc": "Titre (Z-A)",
+        "newestFirst": "Plus récent d'abord",
+        "oldestFirst": "Plus ancien d'abord",
+        "recentlyModified": "Récemment modifié",
+        "leastRecentlyModified": "Moins récemment modifié",
+        "locationAsc": "Emplacement (A-Z)",
+        "mostGuides": "Plus de guides",
+        "fewestGuides": "Moins de guides",
+        "newest": "Plus récent d'abord",
+        "oldest": "Plus ancien d'abord",
+        "nameAZ": "Nom (A-Z)",
+        "nameZA": "Nom (Z-A)",
+        "mostViewed": "Plus vus",
+        "recentlyViewed": "Vus récemment"
       }
     },
     "search": {

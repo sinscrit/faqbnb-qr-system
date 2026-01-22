@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/dialogs/FilterPanel
  * @see docs/REQ-065-implement-filterpanel-detailed.md
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.5)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.filters namespace)
  */
 
 import { useMemo, useEffect, useCallback } from 'react';
@@ -119,25 +119,24 @@ export function FilterPanel({
   disabled = false,
 }: FilterPanelProps) {
   // ---------------------------------------------------------------------------
-  // i18n Translations (REQ-E02-079)
+  // i18n Translations (REQ-E02-081)
   // ---------------------------------------------------------------------------
 
-  const t = useTranslations('items');
+  const t = useTranslations('items.filters');
 
   // ---------------------------------------------------------------------------
   // Merged Labels with Translations as Defaults
   // ---------------------------------------------------------------------------
 
   const labels: Required<FilterPanelLabels> = {
-    title: t('filters.title'),
-    clearAll: t('filters.clearAll'),
-    contentType: t('filters.sections.contentType'),
-    tags: t('filters.sections.tags'),
-    location: t('filters.sections.location'),
-    property: t('filters.sections.property'),
-    applyFilters: t('filters.applyFilters'),
-    close: t('filters.close'),
-    ...customLabels,
+    title: customLabels.title ?? t('title'),
+    clearAll: customLabels.clearAll ?? t('clearAll'),
+    contentType: customLabels.contentType ?? t('contentType.label'),
+    tags: customLabels.tags ?? t('tags.label'),
+    location: customLabels.location ?? t('location.label'),
+    property: customLabels.property ?? t('property.label'),
+    applyFilters: customLabels.applyFilters ?? t('applyFilters'),
+    close: customLabels.close ?? t('close'),
   };
 
   // ---------------------------------------------------------------------------

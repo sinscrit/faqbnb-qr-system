@@ -8,7 +8,7 @@
  *
  * @module ItemManager/components/dialogs/PropertyFilter
  * @see docs/REQ-065-implement-filterpanel-detailed.md
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.4)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.filters.property namespace)
  */
 
 import { useTranslations } from 'next-intl';
@@ -56,11 +56,11 @@ export function PropertyFilter({
   className,
   label,
 }: PropertyFilterProps) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-081: i18n translations (called before early return to follow React rules of hooks)
+  const t = useTranslations('items.filters.property');
 
-  // Use provided label or translation
-  const sectionLabel = label || t('filters.sections.property');
+  // Resolve label with prop override
+  const resolvedLabel = label ?? t('label');
 
   // ---------------------------------------------------------------------------
   // Early Return
@@ -96,12 +96,12 @@ export function PropertyFilter({
   return (
     <div className={cn('space-y-2', className)}>
       {/* Section Label */}
-      <p className="text-sm font-medium text-gray-700">{sectionLabel}</p>
+      <p className="text-sm font-medium text-gray-700">{resolvedLabel}</p>
 
       {/* Property Checkboxes */}
       <div
         role="group"
-        aria-label={sectionLabel}
+        aria-label={resolvedLabel}
         className="space-y-2"
       >
         {properties.map((property) => {

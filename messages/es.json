@@ -1247,49 +1247,78 @@
       "addArticle": "Add Article"
     },
     "filters": {
-      "title": "Filters",
-      "clearAll": "Clear All",
-      "applyFilters": "Apply Filters",
-      "close": "Close",
+      "title": "Filtros",
+      "clearAll": "Borrar todo",
+      "applyFilters": "Aplicar filtros",
+      "close": "Cerrar",
       "sections": {
-        "contentType": "Content Type",
-        "tags": "Tags",
-        "location": "Location",
-        "property": "Property"
+        "contentType": "Tipo de contenido",
+        "tags": "Etiquetas",
+        "location": "Ubicación",
+        "property": "Propiedad"
+      },
+      "contentType": {
+        "label": "Tipo de contenido",
+        "video": "Video",
+        "photo": "Foto",
+        "pdf": "PDF",
+        "textOnly": "Solo texto",
+        "mixed": "Mixto"
       },
       "contentTypes": {
-        "all": "All Types",
+        "all": "Todos los tipos",
         "video": "Video",
-        "photo": "Photo",
+        "photo": "Foto",
         "pdf": "PDF",
-        "text": "Text",
-        "link": "Link",
-        "mixed": "Mixed"
+        "text": "Texto",
+        "link": "Enlace",
+        "mixed": "Mixto"
       },
       "tags": {
-        "placeholder": "Select tags...",
-        "noTags": "No tags available",
-        "selected": "{count} selected"
+        "label": "Etiquetas",
+        "placeholder": "Agregar etiquetas...",
+        "searchPlaceholder": "Buscar etiquetas...",
+        "noTags": "No hay etiquetas disponibles",
+        "noMatching": "No hay etiquetas coincidentes",
+        "allSelected": "Todas las etiquetas seleccionadas",
+        "removeTag": "Eliminar etiqueta {tag}",
+        "selected": "{count} seleccionadas"
       },
       "location": {
-        "placeholder": "Select location...",
-        "all": "All Locations"
+        "label": "Ubicación",
+        "placeholder": "Seleccionar ubicación...",
+        "searchPlaceholder": "Buscar ubicaciones...",
+        "noLocations": "No hay ubicaciones disponibles",
+        "noMatching": "No hay ubicaciones coincidentes",
+        "noFound": "No se encontraron ubicaciones",
+        "clearSelection": "Borrar selección de ubicación",
+        "all": "Todas las ubicaciones"
       },
       "property": {
-        "placeholder": "Select properties...",
-        "all": "All Properties"
+        "label": "Propiedad",
+        "placeholder": "Seleccionar propiedades...",
+        "all": "Todas las propiedades"
       }
     },
     "sort": {
-      "label": "Sort",
-      "sortBy": "Sort by",
+      "label": "Ordenar",
+      "sortBy": "Ordenar por",
       "options": {
-        "newest": "Newest First",
-        "oldest": "Oldest First",
-        "nameAZ": "Name (A-Z)",
-        "nameZA": "Name (Z-A)",
-        "mostViewed": "Most Viewed",
-        "recentlyViewed": "Recently Viewed"
+        "titleAsc": "Título (A-Z)",
+        "titleDesc": "Título (Z-A)",
+        "newestFirst": "Más reciente primero",
+        "oldestFirst": "Más antiguo primero",
+        "recentlyModified": "Modificado recientemente",
+        "leastRecentlyModified": "Menos recientemente modificado",
+        "locationAsc": "Ubicación (A-Z)",
+        "mostGuides": "Más guías",
+        "fewestGuides": "Menos guías",
+        "newest": "Más reciente primero",
+        "oldest": "Más antiguo primero",
+        "nameAZ": "Nombre (A-Z)",
+        "nameZA": "Nombre (Z-A)",
+        "mostViewed": "Más vistos",
+        "recentlyViewed": "Vistos recientemente"
       }
     },
     "search": {

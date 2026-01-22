@@ -1295,6 +1295,14 @@
         "location": "Location",
         "property": "Property"
       },
+      "contentType": {
+        "label": "Content Type",
+        "video": "Video",
+        "photo": "Photo",
+        "pdf": "PDF",
+        "textOnly": "Text Only",
+        "mixed": "Mixed"
+      },
       "contentTypes": {
         "all": "All Types",
         "video": "Video",
@@ -1305,15 +1313,27 @@
         "mixed": "Mixed"
       },
       "tags": {
-        "placeholder": "Select tags...",
+        "label": "Tags",
+        "placeholder": "Add tags...",
+        "searchPlaceholder": "Search tags...",
         "noTags": "No tags available",
+        "noMatching": "No matching tags",
+        "allSelected": "All tags selected",
+        "removeTag": "Remove {tag} tag",
         "selected": "{count} selected"
       },
       "location": {
+        "label": "Location",
         "placeholder": "Select location...",
+        "searchPlaceholder": "Search locations...",
+        "noLocations": "No locations available",
+        "noMatching": "No matching locations",
+        "noFound": "No locations found",
+        "clearSelection": "Clear location selection",
         "all": "All Locations"
       },
       "property": {
+        "label": "Property",
         "placeholder": "Select properties...",
         "all": "All Properties"
       }
@@ -1323,6 +1343,15 @@
       "label": "Sort",
       "sortBy": "Sort by",
       "options": {
+        "titleAsc": "Title (A-Z)",
+        "titleDesc": "Title (Z-A)",
+        "newestFirst": "Newest First",
+        "oldestFirst": "Oldest First",
+        "recentlyModified": "Recently Modified",
+        "leastRecentlyModified": "Least Recently Modified",
+        "locationAsc": "Location (A-Z)",
+        "mostGuides": "Most Guides",
+        "fewestGuides": "Fewest Guides",
         "newest": "Newest First",
         "oldest": "Oldest First",
         "nameAZ": "Name (A-Z)",

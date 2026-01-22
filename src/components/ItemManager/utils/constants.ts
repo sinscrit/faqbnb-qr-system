@@ -6,7 +6,7 @@
  *
  * @module ItemManager/utils/constants
  * @see docs/prd/item-capture-manager-implementation-plan.md
- * @lastModified 2026-01-22 (REQ-E02-079 - i18n translation keys)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated labelKey values for i18n)
  */
 
 import type { SortOption } from '../ItemManager.types';
@@ -29,18 +29,18 @@ export interface SortOptionItem {
 /**
  * Available sort options for ItemManager.
  * Used by SortMenu and useItemSearch.
- * Components should translate labelKey at render time using t(`sort.options.${labelKey}`).
+ * Components should translate labelKey at render time using t(`options.${labelKey}`).
  */
 export const SORT_OPTIONS: SortOptionItem[] = [
-  { value: 'title-asc', labelKey: 'nameAZ', icon: 'asc' },
-  { value: 'title-desc', labelKey: 'nameZA', icon: 'desc' },
-  { value: 'created-desc', labelKey: 'newest', icon: 'desc' },
-  { value: 'created-asc', labelKey: 'oldest', icon: 'asc' },
-  { value: 'updated-desc', labelKey: 'recentlyViewed', icon: 'desc' },
-  { value: 'updated-asc', labelKey: 'oldest', icon: 'asc' },
-  { value: 'location-asc', labelKey: 'nameAZ', icon: 'asc' },
-  { value: 'instructions-desc', labelKey: 'mostViewed', icon: 'desc' },
-  { value: 'instructions-asc', labelKey: 'newest', icon: 'asc' },
+  { value: 'title-asc', labelKey: 'titleAsc', icon: 'asc' },
+  { value: 'title-desc', labelKey: 'titleDesc', icon: 'desc' },
+  { value: 'created-desc', labelKey: 'newestFirst', icon: 'desc' },
+  { value: 'created-asc', labelKey: 'oldestFirst', icon: 'asc' },
+  { value: 'updated-desc', labelKey: 'recentlyModified', icon: 'desc' },
+  { value: 'updated-asc', labelKey: 'leastRecentlyModified', icon: 'asc' },
+  { value: 'location-asc', labelKey: 'locationAsc', icon: 'asc' },
+  { value: 'instructions-desc', labelKey: 'mostGuides', icon: 'desc' },
+  { value: 'instructions-asc', labelKey: 'fewestGuides', icon: 'asc' },
 ];
 
 /**

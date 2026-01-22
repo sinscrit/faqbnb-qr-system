@@ -1247,49 +1247,78 @@
       "addArticle": "Add Article"
     },
     "filters": {
-      "title": "Filters",
-      "clearAll": "Clear All",
-      "applyFilters": "Apply Filters",
-      "close": "Close",
+      "title": "Filter",
+      "clearAll": "Alle löschen",
+      "applyFilters": "Filter anwenden",
+      "close": "Schließen",
       "sections": {
-        "contentType": "Content Type",
+        "contentType": "Inhaltstyp",
         "tags": "Tags",
-        "location": "Location",
-        "property": "Property"
+        "location": "Standort",
+        "property": "Immobilie"
+      },
+      "contentType": {
+        "label": "Inhaltstyp",
+        "video": "Video",
+        "photo": "Foto",
+        "pdf": "PDF",
+        "textOnly": "Nur Text",
+        "mixed": "Gemischt"
       },
       "contentTypes": {
-        "all": "All Types",
+        "all": "Alle Typen",
         "video": "Video",
-        "photo": "Photo",
+        "photo": "Foto",
         "pdf": "PDF",
         "text": "Text",
         "link": "Link",
-        "mixed": "Mixed"
+        "mixed": "Gemischt"
       },
       "tags": {
-        "placeholder": "Select tags...",
-        "noTags": "No tags available",
-        "selected": "{count} selected"
+        "label": "Tags",
+        "placeholder": "Tags hinzufügen...",
+        "searchPlaceholder": "Tags suchen...",
+        "noTags": "Keine Tags verfügbar",
+        "noMatching": "Keine passenden Tags",
+        "allSelected": "Alle Tags ausgewählt",
+        "removeTag": "Tag {tag} entfernen",
+        "selected": "{count} ausgewählt"
       },
       "location": {
-        "placeholder": "Select location...",
-        "all": "All Locations"
+        "label": "Standort",
+        "placeholder": "Standort auswählen...",
+        "searchPlaceholder": "Standorte suchen...",
+        "noLocations": "Keine Standorte verfügbar",
+        "noMatching": "Keine passenden Standorte",
+        "noFound": "Keine Standorte gefunden",
+        "clearSelection": "Standortauswahl löschen",
+        "all": "Alle Standorte"
       },
       "property": {
-        "placeholder": "Select properties...",
-        "all": "All Properties"
+        "label": "Immobilie",
+        "placeholder": "Immobilien auswählen...",
+        "all": "Alle Immobilien"
       }
     },
     "sort": {
-      "label": "Sort",
-      "sortBy": "Sort by",
+      "label": "Sortieren",
+      "sortBy": "Sortieren nach",
       "options": {
-        "newest": "Newest First",
-        "oldest": "Oldest First",
+        "titleAsc": "Titel (A-Z)",
+        "titleDesc": "Titel (Z-A)",
+        "newestFirst": "Neueste zuerst",
+        "oldestFirst": "Älteste zuerst",
+        "recentlyModified": "Kürzlich geändert",
+        "leastRecentlyModified": "Am wenigsten kürzlich geändert",
+        "locationAsc": "Standort (A-Z)",
+        "mostGuides": "Meiste Anleitungen",
+        "fewestGuides": "Wenigste Anleitungen",
+        "newest": "Neueste zuerst",
+        "oldest": "Älteste zuerst",
         "nameAZ": "Name (A-Z)",
         "nameZA": "Name (Z-A)",
-        "mostViewed": "Most Viewed",
-        "recentlyViewed": "Recently Viewed"
+        "mostViewed": "Meistgesehen",
+        "recentlyViewed": "Kürzlich angesehen"
       }
     },
     "search": {

@@ -8,9 +8,10 @@
  *
  * @module ItemManager/components/dialogs/ContentTypeFilter
  * @see docs/REQ-065-implement-filterpanel-detailed.md
- * @lastModified 2026-01-04 (REQ-065 Task 2.4.1)
+ * @lastModified 2026-01-22 (REQ-E02-081 - Updated i18n to use items.filters.contentType namespace)
  */
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -20,14 +21,14 @@ import { cn } from '@/lib/utils';
 // =============================================================================
 
 /**
- * Available content type filter options.
- * Labels are translation keys that will be resolved at render time.
+ * Available content type filter options with translation keys.
+ * Labels are resolved at render time using items.filters.contentType namespace.
  */
-const CONTENT_TYPE_OPTIONS = [
+const CONTENT_TYPE_OPTIONS_BASE = [
   { value: 'video', labelKey: 'video', icon: '🎥' },
   { value: 'image', labelKey: 'photo', icon: '📷' },
   { value: 'pdf', labelKey: 'pdf', icon: '📄' },
-  { value: 'text-only', labelKey: 'text', icon: '📝' },
+  { value: 'text-only', labelKey: 'textOnly', icon: '📝' },
   { value: 'mixed', labelKey: 'mixed', icon: '📦' },
 ] as const;
 
@@ -68,11 +69,21 @@ export function ContentTypeFilter({
   className,
   label,
 }: ContentTypeFilterProps) {
-  // REQ-E02-079: i18n translations
-  const t = useTranslations('items');
+  // REQ-E02-081: i18n translations
+  const t = useTranslations('items.filters.contentType');
+
+  // Build translated content type options
+  const contentTypeOptions = useMemo(() =>
+    CONTENT_TYPE_OPTIONS_BASE.map((opt) => ({
+      value: opt.value,
+      label: t(opt.labelKey),
+      icon: opt.icon,
+    })),
+    [t]
+  );
 
   // Use provided label or translation
-  const sectionLabel = label || t('filters.sections.contentType');
+  const sectionLabel = label ?? t('label');
 
   /**
    * Handle toggling a content type selection.
@@ -99,8 +110,7 @@ export function ContentTypeFilter({
         aria-label={sectionLabel}
         className="flex flex-wrap gap-2"
       >
-        {CONTENT_TYPE_OPTIONS.map(({ value, labelKey, icon }) => {
-          const typeLabel = t(`filters.contentTypes.${labelKey}`);
+        {contentTypeOptions.map(({ value, label: typeLabel, icon }) => {
           const isSelected = selectedTypes.includes(value);
 
           return (
