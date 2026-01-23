@@ -933,6 +933,7 @@
       "properties": "Properties",
       "propertiesMobile": "Prop.",
       "propertiesDescription": "Property management",
+      "translations": "Translations",
       "rooms": "Rooms",
       "tags": "Tags",
       "instructions": "Instructions",
@@ -952,7 +953,8 @@
         "dashboard": "D/B",
         "items": "Items",
         "guides": "Guide",
-        "properties": "Prop."
+        "properties": "Prop.",
+        "translations": "Trans."
       }
     },
     "header": {
@@ -1183,7 +1185,6 @@
     "articles": "Articles",
     "room": "Room",
     "tags": "Tags",
-
     "list": {
       "title": "My Items",
       "count": "{count, plural, one {# item} other {# items}} total",
@@ -1223,12 +1224,10 @@
       "columnSettings": "Column settings",
       "showColumns": "Show Columns"
     },
-
     "grid": {
       "ariaLabel": "{count, plural, =0 {No items} one {# item} other {# items}}",
       "loading": "Loading items"
     },
-
     "card": {
       "contentType": {
         "link": "LINK",
@@ -1273,7 +1272,6 @@
         "more": "+{count} more"
       }
     },
-
     "row": {
       "ariaLocation": "Location: {location}.",
       "ariaGuides": "{count, plural, one {# guide.} other {# guides.}}",
@@ -1286,7 +1284,6 @@
       "actionsMenu": "Item actions",
       "actionsFor": "Actions for {title}"
     },
-
     "actions": {
       "create": "New Item",
       "createQR": "New QR Code Item",
@@ -1301,7 +1298,6 @@
       "manageAssets": "Manage Assets",
       "addArticle": "Add Article"
     },
-
     "filters": {
       "title": "Filters",
       "clearAll": "Clear All",
@@ -1356,7 +1352,6 @@
         "all": "All Properties"
       }
     },
-
     "sort": {
       "label": "Sort",
       "sortBy": "Sort by",
@@ -1378,14 +1373,12 @@
         "recentlyViewed": "Recently Viewed"
       }
     },
-
     "search": {
       "placeholder": "Search items...",
       "clear": "Clear search",
       "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
       "showing": "Showing {start} to {end} of {total}"
     },
-
     "bulk": {
       "ariaLabel": "{count, plural, one {Bulk actions for # selected item} other {Bulk actions for # selected items}}",
       "selected": "{count, plural, one {# selected} other {# selected}}",
@@ -1402,7 +1395,6 @@
       "selectAll": "Select All",
       "deselectAll": "Deselect All"
     },
-
     "bulkTag": {
       "addTitle": "Add Tags to Items",
       "removeTitle": "Remove Tags from Items",
@@ -1413,7 +1405,6 @@
       "confirm": "Confirm",
       "cancel": "Cancel"
     },
-
     "bulkMove": {
       "title": "Move Items to Property",
       "description": "Select a property to move {count} selected {count, plural, one {item} other {items}} to",
@@ -1421,7 +1412,6 @@
       "confirm": "Move Items",
       "cancel": "Cancel"
     },
-
     "delete": {
       "title": "Delete Item",
       "titlePlural": "Delete Items",
@@ -1437,7 +1427,6 @@
       "overflow": "and {count} more",
       "itemsToDelete": "Items to be deleted"
     },
-
     "detail": {
       "title": "Item Details",
       "tabs": {
@@ -1447,7 +1436,6 @@
         "settings": "Settings"
       }
     },
-
     "preview": {
       "title": "Item Preview",
       "close": "Close preview",
@@ -1455,7 +1443,6 @@
       "mediaGallery": "Media Gallery",
       "noMedia": "No media available"
     },
-
     "assets": {
       "title": "Manage Assets",
       "panel": {
@@ -1481,7 +1468,6 @@
         "cancel": "Cancel"
       }
     },
-
     "inline": {
       "title": {
         "placeholder": "Enter title...",
@@ -1501,7 +1487,6 @@
       "cancel": "Cancel",
       "edit": "Click to edit"
     },
-
     "analytics": {
       "title": "Analytics",
       "views": "{count, plural, one {# view} other {# views}}",
@@ -1531,19 +1516,16 @@
         "confused": "{count, plural, one {# confused} other {# confused}}"
       }
     },
-
     "view": {
       "grid": "Grid view",
       "list": "List view",
       "toggle": "Toggle view mode"
     },
-
     "validation": {
       "nameRequired": "Item name is required",
       "nameTooLong": "Item name must be less than {max} characters",
       "duplicateName": "An item with this name already exists"
     },
-
     "edit": {
       "pageTitle": "Edit Item",
       "backToItems": "Back to Items",
@@ -1626,19 +1608,16 @@
         }
       }
     },
-
     "create": {
       "title": "Create New Item",
       "description": "Add a new item with instructions and resources"
     },
-
     "links": {
       "sectionTitle": "Resources & Links",
       "addLink": "Add Link",
       "noResources": "No resources added yet",
       "addFirstResource": "Add Your First Resource"
     },
-
     "analyticsSection": {
       "title": "Analytics",
       "noData": "No analytics data available",
@@ -1662,7 +1641,6 @@
         }
       }
     },
-
     "instructionsViewer": {
       "ariaLabel": "Item guides",
       "headerText": "Guides",
@@ -4287,7 +4265,10 @@
       "notes": "Important Notes:",
       "note1": "Keep your access code secure and don't share it with others",
       "note2": "Your access code will remain valid until you complete registration",
-      "note3": "If you have any questions, please contact the account owner"
+      "note3": "If you have any questions, please contact the account owner",
+      "step1Note": "(This link pre-fills your access code and email for convenience)",
+      "accessCodeLabel": "Your access code: {accessCode}",
+      "directLinkLabel": "Direct registration link: {link}"
     },
     "accessDenial": {
       "subject": "Access Request Update: {accountName}",
@@ -4311,6 +4292,7 @@
       "originalRequest": "Original Request: {requestDate}",
       "gettingStarted": "Getting Started with Your Beta Access:",
       "step1": "Click this direct registration link: {link}",
+      "step1Note": "(This link pre-fills your access code and email for convenience)",
       "step2": "Complete your account registration",
       "step3": "Start exploring the platform features and capabilities",
       "accessCodeLabel": "Your beta access code: {accessCode}",
@@ -4338,6 +4320,7 @@
       "accessCodeLabel": "Your Access Code: {accessCode}",
       "instructions": "To complete your access setup:",
       "step1": "Click this direct registration link: {link}",
+      "step1Note": "(This link pre-fills your access code and email for convenience)",
       "step2": "Complete your account registration",
       "alternative": "Alternative: Visit {registrationLink} and enter your access code: {accessCode}",
       "closing": "Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.",
@@ -4349,7 +4332,8 @@
       "footer": "This is an automated message. Please do not reply to this email.",
       "accountLabel": "Account: {accountName}",
       "accessCodeLabel": "Access Code: {accessCode}",
-      "requestedOnLabel": "Requested on: {date}"
+      "requestedOnLabel": "Requested on: {date}",
+      "footerSupport": "If you need assistance, please contact support through the FAQBNB platform."
     }
   }
 }

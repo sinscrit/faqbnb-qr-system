@@ -555,9 +555,9 @@ class PipelineState:
     def get_progress(self) -> tuple:
         """Return (completed_work_units, total_work_units) for overall progress.
 
-        Calculates progress across all 4 stages (request, overview, details, implementation).
+        Calculates progress across all 5 stages (request, overview, details, implementation, qa_validation).
         Each stage completion for each task counts as 1 work unit.
-        Total = tasks * 4 stages.
+        Total = tasks * 5 stages.
         """
         tasks = self.tasks
         total_tasks = len(tasks)
@@ -566,7 +566,7 @@ class PipelineState:
             return 0, 0
 
         # Count completed stage flags across all tasks
-        stages = ["request", "overview", "details", "implementation"]
+        stages = ["request", "overview", "details", "implementation", "qa_validation"]
         completed_units = 0
 
         for task in tasks:
@@ -586,7 +586,7 @@ class PipelineState:
     def get_stage_completion_stats(self) -> dict:
         """Return completion counts for each stage.
 
-        Returns dict with keys: request, overview, details, implementation
+        Returns dict with keys: request, overview, details, implementation, qa_validation
         Each value is a tuple of (completed, total).
         """
         tasks = self.tasks
@@ -597,6 +597,7 @@ class PipelineState:
             "overview": (sum(1 for t in tasks if t.get("overview_completed")), total),
             "details": (sum(1 for t in tasks if t.get("details_completed")), total),
             "implementation": (sum(1 for t in tasks if t.get("implementation_completed")), total),
+            "qa_validation": (sum(1 for t in tasks if t.get("qa_validation_completed")), total),
         }
 
     def get_last_error(self) -> Optional[dict]:
@@ -634,7 +635,7 @@ class PipelineState:
 
     def get_current_task(self) -> Optional[dict]:
         """Get the currently processing task based on stage completion flags."""
-        stage_order = ["request", "overview", "details", "implementation"]
+        stage_order = ["request", "overview", "details", "implementation", "qa_validation"]
 
         # Method 1: Check stage status for running stage
         stages = self.data.get("stages", {})
@@ -821,7 +822,7 @@ class PipelineState:
         inferred_stage = self.get_current_stage_name()
 
         # Calculate per-stage ETCs
-        stage_order = ["request", "overview", "details", "implementation"]
+        stage_order = ["request", "overview", "details", "implementation", "qa_validation"]
 
         for stage_id in stage_order:
             stage_data = stages.get(stage_id, {})
@@ -903,7 +904,13 @@ class PipelineState:
                 remaining_tasks = total_tasks - tasks_completed
 
                 if tasks_completed > 0 and elapsed > 0:
-                    avg_per_task = elapsed / tasks_completed
+                    # If we have stage-specific timing (started_at was set), use it
+                    # Otherwise use historical estimates to avoid inflated pipeline average
+                    if started_at_str:
+                        avg_per_task = elapsed / tasks_completed
+                    else:
+                        est = STAGE_TIMING_ESTIMATES.get(stage_id, {})
+                        avg_per_task = est.get('avg_seconds', 300)
                     etc_seconds = remaining_tasks * avg_per_task
                     phase_info["elapsed"] = elapsed
                     phase_info["avg_per_task"] = avg_per_task
@@ -1067,8 +1074,8 @@ class PipelineState:
                 # No tasks completed yet - estimate from current stage progress or historical data
                 current = result.get("current_stage")
                 if current and current.get("avg_per_task"):
-                    # Estimate: 4 stages * avg_per_task * remaining_tasks
-                    stages_remaining = 4  # request, overview, details, implementation
+                    # Estimate: 5 stages * avg_per_task * remaining_tasks
+                    stages_remaining = 5  # request, overview, details, implementation, qa_validation
                     etc_seconds = stages_remaining * current["avg_per_task"] * remaining_tasks
                     result["pipeline"] = {
                         "elapsed": total_elapsed,
@@ -1082,7 +1089,7 @@ class PipelineState:
                     # Use historical estimates for full pipeline
                     total_per_task = sum(
                         STAGE_TIMING_ESTIMATES.get(s, {}).get('avg_seconds', 300)
-                        for s in ['request', 'overview', 'details', 'implementation']
+                        for s in ['request', 'overview', 'details', 'implementation', 'qa_validation']
                     )
                     etc_seconds = total_per_task * remaining_tasks
                     result["pipeline"] = {
@@ -1619,6 +1626,7 @@ def create_header(pipelines: list) -> Panel:
         o_done, o_total = stage_stats["overview"]
         d_done, d_total = stage_stats["details"]
         i_done, i_total = stage_stats["implementation"]
+        q_done, q_total = stage_stats["qa_validation"]
 
         # Color code: green if complete, yellow if in progress, dim if not started
         def stage_color(done, total):
@@ -1635,8 +1643,9 @@ def create_header(pipelines: list) -> Panel:
         o_col = stage_color(o_done, o_total)
         d_col = stage_color(d_done, d_total)
         i_col = stage_color(i_done, i_total)
+        q_col = stage_color(q_done, q_total)
 
-        lines.append(f"  Stages: [{r_col}]R:{r_done}/{r_total} ({pct(r_done, r_total)}%)[/{r_col}] → [{o_col}]O:{o_done}/{o_total} ({pct(o_done, o_total)}%)[/{o_col}] → [{d_col}]D:{d_done}/{d_total} ({pct(d_done, d_total)}%)[/{d_col}] → [{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}]")
+        lines.append(f"  Stages: [{r_col}]R:{r_done}/{r_total} ({pct(r_done, r_total)}%)[/{r_col}] → [{o_col}]O:{o_done}/{o_total} ({pct(o_done, o_total)}%)[/{o_col}] → [{d_col}]D:{d_done}/{d_total} ({pct(d_done, d_total)}%)[/{d_col}] → [{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}] → [{q_col}]Q:{q_done}/{q_total} ({pct(q_done, q_total)}%)[/{q_col}]")
 
         current = p.get_current_task()
         if current:
@@ -1887,6 +1896,7 @@ def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
             o_done, o_total = stage_stats["overview"]
             d_done, d_total = stage_stats["details"]
             i_done, i_total = stage_stats["implementation"]
+            q_done, q_total = stage_stats["qa_validation"]
 
             # Color code: green if complete, yellow if in progress, dim if not started
             def stage_color(done, total):
@@ -1903,6 +1913,7 @@ def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
             o_col = stage_color(o_done, o_total)
             d_col = stage_color(d_done, d_total)
             i_col = stage_color(i_done, i_total)
+            q_col = stage_color(q_done, q_total)
 
             # Get pipeline status
             status = pipeline.status
@@ -1916,7 +1927,8 @@ def create_epics_panel(search_dir: str = ".") -> Optional[Panel]:
                 f"[{r_col}]R:{r_done}/{r_total} ({pct(r_done, r_total)}%)[/{r_col}] → "
                 f"[{o_col}]O:{o_done}/{o_total} ({pct(o_done, o_total)}%)[/{o_col}] → "
                 f"[{d_col}]D:{d_done}/{d_total} ({pct(d_done, d_total)}%)[/{d_col}] → "
-                f"[{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}]"
+                f"[{i_col}]I:{i_done}/{i_total} ({pct(i_done, i_total)}%)[/{i_col}] → "
+                f"[{q_col}]Q:{q_done}/{q_total} ({pct(q_done, q_total)}%)[/{q_col}]"
             )
 
             lines.append(f"[bold cyan]{epic_name}[/bold cyan] [{status_color}]({status})[/{status_color}] [dim]{time_ago}[/dim]")

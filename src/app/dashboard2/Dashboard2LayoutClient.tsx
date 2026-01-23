@@ -6,10 +6,11 @@
  * Client-side dashboard layout with navigation, auth handling, and property context.
  * Extracted from layout.tsx to enable server-side metadata generation.
  * REQ-140: Improved navigation touch targets on mobile
+ * REQ-E05-021: Added Translations navigation link
  *
  * @route /dashboard2
  * @created 2026-01-06
- * @modified 2026-01-22 - Extracted to separate file for metadata support
+ * @modified 2026-01-22 - Added Translations navigation item (REQ-E05-021)
  */
 
 import { useState } from 'react';
@@ -18,7 +19,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import { Building2, FileText, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
+import { Building2, FileText, Languages, LayoutDashboard, Loader2, LogOut, Package } from 'lucide-react';
 import { PropertyProvider } from '@/contexts/PropertyContext';
 import { PropertyDropdown } from '@/components/dashboard';
 
@@ -74,6 +75,12 @@ function Dashboard2LayoutContent({ children }: { children: React.ReactNode }) {
       mobileLabel: t('nav.mobile.properties'),
       href: '/dashboard2/properties',
       icon: Building2,
+    },
+    {
+      name: t('nav.translations'),
+      mobileLabel: t('nav.mobile.translations'),
+      href: '/dashboard2/translations',
+      icon: Languages,
     },
   ];
 

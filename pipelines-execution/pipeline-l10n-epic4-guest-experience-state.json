@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.828731",
-  "updated_at": "2026-01-22T23:55:34.733227",
-  "status": "running",
+  "updated_at": "2026-01-23T02:30:02.913035",
+  "status": "paused",
   "current_stage": "request",
-  "current_task_index": 22,
+  "current_task_index": 0,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic4-Guest-Experience.md",
   "source_hash": "8b789d30e0e9b35c848ab3362a26de99",
   "tasks": [
@@ -17,7 +17,7 @@
       "title": "Create localization types file",
       "description": "File: `/src/types/l10n.ts`\nDefine `SupportedLanguage`, `LanguageInfo`, `TranslatedContent`, etc.\nExport `SUPPORTED_LANGUAGES` constant\nExport language utility functions",
       "raw_match": "\n- [ ] **Task 1.1:** Create localization types file",
-      "status": "completed",
+      "status": "processing",
       "request_id": "REQ-E04-001",
       "error": null,
       "processed_at": "2026-01-22T22:24:59.271309",
@@ -871,10 +871,11 @@
       "status": "completed",
       "request_id": "REQ-E04-024",
       "error": null,
-      "processed_at": "2026-01-22T20:04:10.847517",
+      "processed_at": "2026-01-23T00:01:38.866027",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-024",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-024-test-edge-cases-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-024-test-edge-cases-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-024-test-edge-cases-detailed.md"
       },
       "stages": {
         "request": {
@@ -894,7 +895,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.4",
@@ -906,10 +908,11 @@
       "status": "completed",
       "request_id": "REQ-E04-025",
       "error": null,
-      "processed_at": "2026-01-22T20:05:22.912369",
+      "processed_at": "2026-01-23T00:06:26.304711",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-025",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-025-mobile-responsiveness-testing-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-025-mobile-responsiveness-testing-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-025-mobile-responsiveness-testing-detailed.md"
       },
       "stages": {
         "request": {
@@ -929,7 +932,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.5",
@@ -941,10 +945,11 @@
       "status": "completed",
       "request_id": "REQ-E04-026",
       "error": null,
-      "processed_at": "2026-01-22T20:06:48.763088",
+      "processed_at": "2026-01-23T00:11:30.470951",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic4.md#REQ-E04-026",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-026-performance-validation-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-026-performance-validation-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E04-026-performance-validation-detailed.md"
       },
       "stages": {
         "request": {
@@ -964,7 +969,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     }
   ],
   "stages": {
@@ -1007,7 +1013,7 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 23,
+    "total_requests_generated": 26,
     "last_request_id": "REQ-E04-026",
     "first_request_id": "REQ-E04-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic4-guest-experience.yaml"
@@ -1015,33 +1021,31 @@
   "recent_errors": [],
   "precheck": {
     "status": "failed",
-    "completed_at": "2026-01-21T01:45:00.473844",
+    "completed_at": "2026-01-23T02:30:02.912538",
     "typescript": {
       "passed": true,
-      "error_count": 17,
-      "production_error_count": 0,
-      "test_error_count": 0,
-      "generated_error_count": 17,
-      "sample_errors": [
-        "../.next/types/app/admin/items/[publicId]/analytics/page.ts(34,29): error TS2344: Type 'ItemAnalyticsPageProps' does not satisfy the constraint 'PageProps'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(166,7): error TS2344: Type '{ __tag__: \"POST\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/grant/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(49,7): error TS2344: Type '{ __tag__: \"GET\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'.",
-        "../.next/types/app/api/admin/access-requests/[requestId]/route.ts(205,7): error TS2344: Type '{ __tag__: \"PUT\"; __param_position__: \"second\"; __param_type__: RouteParams; }' does not satisfy the constraint 'ParamCheck<RouteContext>'."
-      ],
-      "notes": "No blocking errors (0 test, 17 generated)"
+      "error_count": 0,
+      "notes": "No type errors found"
     },
     "tools": {
+      "dev_server": {
+        "available": true,
+        "notes": "Dev server healthy (HTTP 200)"
+      },
       "playwright_mcp": {
+        "available": true,
+        "notes": "Chrome CDP port 9223 is listening"
+      },
+      "supabase_mcp": {
         "available": false,
-        "notes": "Playwright MCP tool (browser_snapshot) is not available in the current tool set. No MCP browser automation tools are present."
+        "notes": "Supabase MCP did not respond"
       }
     },
     "next_cache_cleared": false
   },
   "session_id_overview": "fe69f5d1-9b8a-48a5-8ab8-87bdd3e3741f",
   "session_id_details": "b44b90d3-0a15-4c63-b274-d7070bc4a6ea",
-  "session_id_implementation": null,
+  "session_id_implementation": "a719b8d0-4109-4caf-85b3-b8cd61bd6f71",
   "session_id_qa_validation": null,
   "session_id_request": "56d52a1e-2c19-425c-bef3-0be9c6a185d0"
 }

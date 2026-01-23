@@ -1,629 +1,443 @@
-# REQ-E05-024: Integrate Manual Edit Warning into Content Save Flow - Detailed Task Breakdown
+# Integrate Manual Edit Warning into Content Save Flow - Detailed Implementation Tasks
 
-**Created**: 2026-01-22 23:54
-**Status**: PENDING
-**Epic**: Epic 5 - Owner Translation Management
-**Phase**: Phase 5 - Manual Edit Preservation
-**Task**: 5.3 - Integrate warning into content save flow
-**Size**: M (6-8 hours)
+**Generated:** 2026-01-23 11:15
+**Reference Documents:**
+- Requirements: docs/gen_requests_epic5.md (Request #24)
+- Overview: docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md
+- Implementation Plan: docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md
 
----
-
-## Reference Documents
-
-- **Overview**: `/docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md`
-- **Requirements**: `/docs/gen_requests_epic5.md` (lines 3971-4280)
-- **Implementation Plan**: `/docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md`
+**CRITICAL INSTRUCTIONS FOR IMPLEMENTING AGENT:**
+- Operate from the project root folder ONLY
+- **DO NOT ATTEMPT TO NAVIGATE TO OTHER FOLDERS UNDER ANY CIRCUMSTANCES**
+- All file paths must be relative to project root
 
 ---
 
 ## Build & Test Commands
 
-```bash
-# Type check (MUST pass before commit)
-npm run typecheck
-
-# Run development server
-npm run dev
-
-# Build for production (MUST succeed)
-npm run build
-
-# Run tests
-npm test
-
-# Lint
-npm run lint
-```
+| Action | Command |
+|--------|---------|
+| Type Check | `npx tsc --noEmit` |
+| Unit Tests | `npm test` |
+| Build | `npm run build` |
+| Lint | `npm run lint` |
 
 ---
 
-## Overview
+## 1. Create useManualEditCheck Hook
 
-Integrate ManualEditWarningDialog into article and item save flows to protect manual translations from accidental overwriting. When users edit source content (article title, item name/description), the system checks for existing manual translations and shows a warning dialog with three options: (1) Keep manual edits (translations become stale), (2) Re-translate all (overwrite manual edits), or (3) Cancel (abort save). Create a reusable `useManualEditCheck` hook to detect manual translations, update save handlers to call the check before proceeding, and pass `skipRetranslation` or `forceRetranslation` flags to API endpoints.
+**Context:** This hook centralizes the logic for detecting manual translations before save operations. It queries the translation records directly to identify which languages have manual edits (`status === 'manual'`) and returns this information to editor components. The hook implements fail-safe behavior: if the API check fails, it returns `hasManualEdits: false` to allow the save to proceed rather than blocking the user.
 
-**Key Requirements:**
-- Create `/src/hooks/useManualEditCheck.ts` for manual translation detection
-- Integrate into InstructionEditor for article saves
-- Integrate into ItemForm for item saves
-- Add `skipRetranslation` and `forceRetranslation` flags to payload types
-- Update article and item API endpoints to process translation flags
-- Add translation keys for loading states
-- Fail-safe behavior: if check fails, allow save to proceed with warning
+**Files to modify:**
+- `/src/hooks/useManualEditCheck.ts` (NEW)
 
----
+**Estimated effort:** 1 story point
 
-## Task Breakdown
-
-### Task 1: Create useManualEditCheck hook file and structure
-**Estimated effort**: 0.5 hours
-
-- [ ] **1.1** Create directory `/src/hooks/` if it doesn't already exist
-- [ ] **1.2** Create file `/src/hooks/useManualEditCheck.ts`
-- [ ] **1.3** Add 'use client' directive at the top
-- [ ] **1.4** Add JSDoc file header describing the hook purpose
-- [ ] **1.5** Add creation date: 2026-01-22
-- [ ] **1.6** Reference REQ-E05-024 in file header
-- [ ] **1.7** Import React hooks: `useState`, `useCallback`
-- [ ] **1.8** Import type: `SupportedLanguage` from '@/lib/translation-service/translation-service.types'
+- [ ] **1.1** Create the hook file at `/src/hooks/useManualEditCheck.ts` with 'use client' directive
+- [ ] **1.2** Import required types: `SupportedLanguage` from `@/lib/translation-service/translation-service.types`, and React hooks `useState`, `useCallback`
+- [ ] **1.3** Define the `ManualEditCheckOptions` interface with `entityType: 'item' | 'article'` and `entityId: string` properties
+- [ ] **1.4** Define the `ManualEditCheckResult` interface with `hasManualEdits: boolean` and `manuallyEditedLanguages: SupportedLanguage[]` properties
+- [ ] **1.5** Define the `UseManualEditCheckReturn` interface with `checkForManualEdits`, `isChecking`, `error`, and `reset` properties
+- [ ] **1.6** Implement the hook function with state for `isChecking` (boolean, initial: false) and `error` (string | null, initial: null)
+- [ ] **1.7** Implement `checkForManualEdits` async function using `useCallback` that fetches `/api/translations/${entityType}/${entityId}`
+- [ ] **1.8** In `checkForManualEdits`, set `isChecking` to true and `error` to null at start
+- [ ] **1.9** Parse the response JSON and filter translations where `status === 'manual'`, extracting the `language` field to build `manuallyEditedLanguages` array
+- [ ] **1.10** Return `{ hasManualEdits: manuallyEditedLanguages.length > 0, manuallyEditedLanguages }`
+- [ ] **1.11** Add try-catch error handling that logs the error and returns fail-safe `{ hasManualEdits: false, manuallyEditedLanguages: [] }` to allow save to proceed
+- [ ] **1.12** In finally block, set `isChecking` to false
+- [ ] **1.13** Implement `reset` function using `useCallback` that sets `error` to null
+- [ ] **1.14** Return object with `{ checkForManualEdits, isChecking, error, reset }` from the hook
+- [ ] **1.15** Run type check: `npx tsc --noEmit` and verify no errors
 
 ---
 
-### Task 2: Define TypeScript interfaces for hook
-**Estimated effort**: 0.3 hours
+## 2. Update InstructionEditor Component
 
-- [ ] **2.1** Create `ManualEditCheckOptions` interface
-- [ ] **2.2** Add property: `entityType: 'item' | 'article'`
-- [ ] **2.3** Add property: `entityId: string`
-- [ ] **2.4** Add JSDoc comments explaining each property
-- [ ] **2.5** Create `ManualEditCheckResult` interface
-- [ ] **2.6** Add property: `hasManualEdits: boolean`
-- [ ] **2.7** Add property: `manuallyEditedLanguages: SupportedLanguage[]`
-- [ ] **2.8** Add JSDoc comments explaining result properties
-- [ ] **2.9** Create `UseManualEditCheckReturn` interface
-- [ ] **2.10** Add property: `checkForManualEdits: (options: ManualEditCheckOptions) => Promise<ManualEditCheckResult>`
-- [ ] **2.11** Add property: `isChecking: boolean`
-- [ ] **2.12** Add property: `error: string | null`
-- [ ] **2.13** Add property: `reset: () => void`
-- [ ] **2.14** Export all interfaces
+**Context:** The InstructionEditor component handles article editing. We intercept the save flow to check for manual translations before proceeding. When manual translations are detected, the ManualEditWarningDialog is displayed, giving users three choices: keep manual edits (skip re-translation), re-translate all (overwrite manual edits), or cancel (abort save). The component manages dialog state and passes appropriate flags to the save handler.
 
----
+**Files to modify:**
+- `/src/components/InstructionEditor/InstructionEditor.tsx` (lines 79-149)
 
-### Task 3: Implement useManualEditCheck hook state
-**Estimated effort**: 0.2 hours
+**Estimated effort:** 1 story point
 
-- [ ] **3.1** Create function `useManualEditCheck` with return type `UseManualEditCheckReturn`
-- [ ] **3.2** Add state: `const [isChecking, setIsChecking] = useState(false)`
-- [ ] **3.3** Add state: `const [error, setError] = useState<string | null>(null)`
-- [ ] **3.4** Verify state types are correct
-
----
-
-### Task 4: Implement checkForManualEdits function
-**Estimated effort**: 1.5 hours
-
-- [ ] **4.1** Create `checkForManualEdits` using `useCallback` with deps array `[]`
-- [ ] **4.2** Accept parameter: `options: ManualEditCheckOptions`
-- [ ] **4.3** Return type: `Promise<ManualEditCheckResult>`
-- [ ] **4.4** Set `isChecking` to true at start
-- [ ] **4.5** Set `error` to null at start
-- [ ] **4.6** Wrap logic in try-catch block
-- [ ] **4.7** Construct API URL: `/api/translations/${options.entityType}/${options.entityId}`
-- [ ] **4.8** Call `fetch()` with GET request
-- [ ] **4.9** Check if `response.ok` - throw error if not
-- [ ] **4.10** Parse JSON response: `const translations = await response.json()`
-- [ ] **4.11** Check if response is array: `Array.isArray(translations)`
-- [ ] **4.12** Initialize empty array: `const manuallyEditedLanguages: SupportedLanguage[] = []`
-- [ ] **4.13** Iterate over translations array
-- [ ] **4.14** For each translation, check if `t.status === 'manual'`
-- [ ] **4.15** If manual, push `t.language` to `manuallyEditedLanguages` array
-- [ ] **4.16** Cast language to `SupportedLanguage` type
-- [ ] **4.17** Calculate `hasManualEdits`: `manuallyEditedLanguages.length > 0`
-- [ ] **4.18** Return object with `hasManualEdits` and `manuallyEditedLanguages`
-- [ ] **4.19** In catch block, extract error message
-- [ ] **4.20** Set error state: `setError(errorMessage)`
-- [ ] **4.21** Log error to console: `console.error('Error checking manual edits:', err)`
-- [ ] **4.22** Return fail-safe result: `{ hasManualEdits: false, manuallyEditedLanguages: [] }`
-- [ ] **4.23** In finally block, set `isChecking` to false
-- [ ] **4.24** Add comment explaining fail-safe behavior
+- [ ] **2.1** Add imports: `ManualEditWarningDialog` from `@/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog`, `useManualEditCheck` from `@/hooks/useManualEditCheck`, and `SupportedLanguage` type
+- [ ] **2.2** Initialize `useManualEditCheck` hook and destructure `checkForManualEdits` and `isChecking`
+- [ ] **2.3** Add state `showManualEditWarning` (boolean, initial: false)
+- [ ] **2.4** Add state `manuallyEditedLanguages` (SupportedLanguage[], initial: [])
+- [ ] **2.5** Add state `pendingPayload` (UpdateArticlePayload | null, initial: null)
+- [ ] **2.6** Add state `saveMode` ('skip' | 'overwrite' | null, initial: null)
+- [ ] **2.7** Modify `handleSave` to call `checkForManualEdits({ entityType: 'article', entityId: articleData.id })` before proceeding
+- [ ] **2.8** If `result.hasManualEdits` is true, set `manuallyEditedLanguages`, `pendingPayload`, and `showManualEditWarning` states, then return early
+- [ ] **2.9** If no manual edits, proceed with normal `onSave(payload)` call
+- [ ] **2.10** Create `handleKeepManualEdits` function that calls `onSave({ ...pendingPayload, skipRetranslation: true })` and closes dialog
+- [ ] **2.11** Create `handleOverwriteManualEdits` function that calls `onSave({ ...pendingPayload, forceRetranslation: true })` and closes dialog
+- [ ] **2.12** Create `handleCancelWarning` function that closes dialog and clears all warning-related state
+- [ ] **2.13** Add `ManualEditWarningDialog` component to JSX with props: `isOpen`, `manuallyEditedLanguages`, `onKeepManual`, `onOverwrite`, `onCancel`, `loading`, `entityType="article"`
+- [ ] **2.14** Update save button's `disabled` prop to include `isChecking`: `disabled={isSaving || isChecking}`
+- [ ] **2.15** Add conditional button text: show "Checking translations..." when `isChecking`, "Saving..." when `isSaving`, otherwise "Save"
+- [ ] **2.16** Import `Loader2` icon from `lucide-react` and add spinner animation during `isChecking` or `isSaving`
+- [ ] **2.17** Run type check: `npx tsc --noEmit`
 
 ---
 
-### Task 5: Implement reset function and hook return
-**Estimated effort**: 0.1 hours
+## 3. Update InstructionEditor Types
 
-- [ ] **5.1** Create `reset` function using `useCallback` with empty deps
-- [ ] **5.2** In reset, set `error` to null
-- [ ] **5.3** Return object with all hook properties: `checkForManualEdits`, `isChecking`, `error`, `reset`
-- [ ] **5.4** Export hook: `export function useManualEditCheck()`
-- [ ] **5.5** Run `npm run typecheck` to verify types
+**Context:** The UpdateArticlePayload interface needs optional flags to control translation behavior. The `skipRetranslation` flag tells the API to preserve manual translations (which become stale). The `forceRetranslation` flag triggers re-translation, overwriting manual edits.
 
----
+**Files to modify:**
+- `/src/components/InstructionEditor/InstructionEditor.types.ts`
 
-### Task 6: Update InstructionEditor types to support translation flags
-**Estimated effort**: 0.2 hours
+**Estimated effort:** 1 story point
 
-- [ ] **6.1** Open file `/src/components/InstructionEditor/InstructionEditor.types.ts`
-- [ ] **6.2** Locate `UpdateArticlePayload` interface
-- [ ] **6.3** Add optional property: `skipRetranslation?: boolean`
-- [ ] **6.4** Add JSDoc: "If true, skip re-translation. Existing translations become stale."
-- [ ] **6.5** Add optional property: `forceRetranslation?: boolean`
-- [ ] **6.6** Add JSDoc: "If true, queue re-translation for all languages, overwriting manual edits."
-- [ ] **6.7** Verify interface exports correctly
-- [ ] **6.8** Run `npm run typecheck`
+- [ ] **3.1** Open `/src/components/InstructionEditor/InstructionEditor.types.ts`
+- [ ] **3.2** Locate the `UpdateArticlePayload` interface definition
+- [ ] **3.3** Add optional property `skipRetranslation?: boolean` with JSDoc comment: "If true, skip re-translation. Existing manual translations are preserved but marked stale."
+- [ ] **3.4** Add optional property `forceRetranslation?: boolean` with JSDoc comment: "If true, queue re-translation for all languages, overwriting manual edits."
+- [ ] **3.5** Run type check: `npx tsc --noEmit` to verify the interface update
 
 ---
 
-### Task 7: Add state and imports to InstructionEditor component
-**Estimated effort**: 0.3 hours
+## 4. Update ItemForm Component
 
-- [ ] **7.1** Open file `/src/components/InstructionEditor/InstructionEditor.tsx`
-- [ ] **7.2** Import ManualEditWarningDialog: `from '@/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog'`
-- [ ] **7.3** Import useManualEditCheck: `from '@/hooks/useManualEditCheck'`
-- [ ] **7.4** Import SupportedLanguage type: `from '@/lib/translation-service/translation-service.types'`
-- [ ] **7.5** Add hook call: `const { checkForManualEdits, isChecking } = useManualEditCheck()`
-- [ ] **7.6** Add state: `const [showManualEditWarning, setShowManualEditWarning] = useState(false)`
-- [ ] **7.7** Add state: `const [manuallyEditedLanguages, setManuallyEditedLanguages] = useState<SupportedLanguage[]>([])`
-- [ ] **7.8** Add state: `const [pendingPayload, setPendingPayload] = useState<UpdateArticlePayload | null>(null)`
-- [ ] **7.9** Add state: `const [saveMode, setSaveMode] = useState<'skip' | 'overwrite' | null>(null)`
+**Context:** ItemForm handles both creating new items and updating existing items. Manual translation checks should only run when editing existing items (when `item?.id` exists), not during new item creation. The integration follows the same pattern as InstructionEditor.
 
----
+**Files to modify:**
+- `/src/components/ItemForm.tsx` (lines 35-139)
 
-### Task 8: Update handleSave function in InstructionEditor
-**Estimated effort**: 1 hour
+**Estimated effort:** 1 story point
 
-- [ ] **8.1** Locate `handleSave` function in InstructionEditor component
-- [ ] **8.2** Keep existing payload construction logic
-- [ ] **8.3** After payload is constructed, add manual translation check
-- [ ] **8.4** Call: `const result = await checkForManualEdits({ entityType: 'article', entityId: articleData.id })`
-- [ ] **8.5** Check if `result.hasManualEdits` is true
-- [ ] **8.6** If true, set `manuallyEditedLanguages` state: `setManuallyEditedLanguages(result.manuallyEditedLanguages)`
-- [ ] **8.7** Set `pendingPayload` state: `setPendingPayload(payload)`
-- [ ] **8.8** Set `showManualEditWarning` to true
-- [ ] **8.9** Return early (don't call onSave yet)
-- [ ] **8.10** If `result.hasManualEdits` is false, proceed with normal save
-- [ ] **8.11** Call: `await onSave(payload)`
-- [ ] **8.12** Update useCallback dependencies to include `checkForManualEdits` and `articleData.id`
+- [ ] **4.1** Add imports: `ManualEditWarningDialog`, `useManualEditCheck`, and `SupportedLanguage` type
+- [ ] **4.2** Initialize `useManualEditCheck` hook and destructure `checkForManualEdits` and `isChecking`
+- [ ] **4.3** Add state for `showManualEditWarning`, `manuallyEditedLanguages`, `pendingItemData`, and `saveMode` (same pattern as InstructionEditor)
+- [ ] **4.4** Modify `handleSubmit` to check `if (item?.id)` to determine if editing existing item
+- [ ] **4.5** If editing, call `checkForManualEdits({ entityType: 'item', entityId: item.id })` before proceeding with save
+- [ ] **4.6** If manual edits detected, show dialog with `setPendingItemData({ ...itemData, id: item.id })` and return early
+- [ ] **4.7** If no manual edits or new item, proceed with normal `onSave` call with appropriate type (CreateItemRequest or UpdateItemRequest)
+- [ ] **4.8** Create `handleKeepManualEdits` function that saves with `skipRetranslation: true` flag
+- [ ] **4.9** Create `handleOverwriteManualEdits` function that saves with `forceRetranslation: true` flag
+- [ ] **4.10** Create `handleCancelWarning` function to close dialog and clear state
+- [ ] **4.11** Add `ManualEditWarningDialog` component to form JSX with props for `entityType="item"`
+- [ ] **4.12** Update submit button to be disabled when `isChecking` and show "Checking translations..." loading state
+- [ ] **4.13** Run type check: `npx tsc --noEmit`
 
 ---
 
-### Task 9: Implement dialog handlers in InstructionEditor
-**Estimated effort**: 0.5 hours
+## 5. Update Item Types
 
-- [ ] **9.1** Create `handleKeepManualEdits` function using `useCallback`
-- [ ] **9.2** Check if `pendingPayload` is null - return early if so
-- [ ] **9.3** Set `saveMode` to 'skip'
-- [ ] **9.4** Wrap in try-finally block
-- [ ] **9.5** In try, call `onSave` with payload: `{ ...pendingPayload, skipRetranslation: true }`
-- [ ] **9.6** Close dialog: `setShowManualEditWarning(false)`
-- [ ] **9.7** Clear pending: `setPendingPayload(null)`
-- [ ] **9.8** In finally, reset saveMode: `setSaveMode(null)`
-- [ ] **9.9** Create `handleOverwriteManualEdits` function using `useCallback`
-- [ ] **9.10** Same structure as handleKeepManualEdits but pass `{ ...pendingPayload, forceRetranslation: true }`
-- [ ] **9.11** Create `handleCancelWarning` function using `useCallback`
-- [ ] **9.12** Close dialog: `setShowManualEditWarning(false)`
-- [ ] **9.13** Clear states: `setPendingPayload(null)` and `setManuallyEditedLanguages([])`
-- [ ] **9.14** Add dependencies to all useCallback calls
+**Context:** The UpdateItemRequest interface needs the same translation control flags as UpdateArticlePayload to maintain API consistency across entity types.
+
+**Files to modify:**
+- `/src/types/index.ts`
+
+**Estimated effort:** 1 story point
+
+- [ ] **5.1** Open `/src/types/index.ts` file
+- [ ] **5.2** Locate the `UpdateItemRequest` interface definition
+- [ ] **5.3** Add optional property `skipRetranslation?: boolean` with JSDoc comment explaining it preserves manual translations
+- [ ] **5.4** Add optional property `forceRetranslation?: boolean` with JSDoc comment explaining it overwrites manual edits
+- [ ] **5.5** Run type check: `npx tsc --noEmit` to verify the interface update
 
 ---
 
-### Task 10: Render ManualEditWarningDialog in InstructionEditor
-**Estimated effort**: 0.2 hours
+## 6. Update Article Update API Endpoint
 
-- [ ] **10.1** Locate the component return statement in InstructionEditor
-- [ ] **10.2** Before closing div, add ManualEditWarningDialog component
-- [ ] **10.3** Pass prop: `isOpen={showManualEditWarning}`
-- [ ] **10.4** Pass prop: `manuallyEditedLanguages={manuallyEditedLanguages}`
-- [ ] **10.5** Pass prop: `onKeepManual={handleKeepManualEdits}`
-- [ ] **10.6** Pass prop: `onOverwrite={handleOverwriteManualEdits}`
-- [ ] **10.7** Pass prop: `onCancel={handleCancelWarning}`
-- [ ] **10.8** Pass prop: `loading={saveMode}`
-- [ ] **10.9** Pass prop: `entityType="article"`
+**Context:** The article update API needs to accept and process the `skipRetranslation` and `forceRetranslation` flags. When `skipRetranslation` is true, no re-translation is triggered (manual translations become stale). When `forceRetranslation` is true, the translation API is called with `forceRetranslate: true` to queue jobs that will overwrite manual edits.
 
----
+**Files to modify:**
+- `/src/app/api/articles/[id]/route.ts` (PUT handler)
 
-### Task 11: Update save button loading state in InstructionEditor
-**Estimated effort**: 0.3 hours
+**Estimated effort:** 1 story point
 
-- [ ] **11.1** Locate save button in InstructionEditor component
-- [ ] **11.2** Update disabled condition to include: `disabled={isSaving || isChecking}`
-- [ ] **11.3** Add conditional button content based on `isChecking`
-- [ ] **11.4** If `isChecking`, show Loader2 icon with text: `t('checkingTranslations')`
-- [ ] **11.5** If `isSaving`, show Loader2 icon with text: `t('saving')`
-- [ ] **11.6** Otherwise, show normal save text: `t('save')`
-- [ ] **11.7** Import Loader2 icon from lucide-react if not already imported
+- [ ] **6.1** Open `/src/app/api/articles/[id]/route.ts` and locate the PUT handler function
+- [ ] **6.2** Extract `skipRetranslation` and `forceRetranslation` from request body with default values of `false`
+- [ ] **6.3** After the article database update succeeds, add conditional translation logic
+- [ ] **6.4** If `skipRetranslation === true`, log "Skipping re-translation for article: [articleId]" and do NOT queue re-translation
+- [ ] **6.5** Else if `forceRetranslation === true`, make fetch call to `POST /api/translations/translate` with body `{ entityType: 'article', entityId: articleId, forceRetranslate: true }`
+- [ ] **6.6** Add error handling for the translation API call using try-catch with console.error logging (errors should not fail the article update)
+- [ ] **6.7** If neither flag is true, use existing default translation behavior
+- [ ] **6.8** Add comments explaining each branch of the translation control logic
+- [ ] **6.9** Run type check: `npx tsc --noEmit`
 
 ---
 
-### Task 12: Update ItemForm types to support translation flags
-**Estimated effort**: 0.2 hours
+## 7. Update Item Update API Endpoint
 
-- [ ] **12.1** Open file `/src/types/index.ts`
-- [ ] **12.2** Locate `UpdateItemRequest` interface
-- [ ] **12.3** Add optional property: `skipRetranslation?: boolean`
-- [ ] **12.4** Add JSDoc: "If true, skip re-translation. Existing translations become stale."
-- [ ] **12.5** Add optional property: `forceRetranslation?: boolean`
-- [ ] **12.6** Add JSDoc: "If true, queue re-translation for all languages, overwriting manual edits."
-- [ ] **12.7** Run `npm run typecheck`
+**Context:** The item update API needs identical translation control logic to the article endpoint for consistency. The implementation pattern is the same: check flags, skip or force re-translation accordingly.
 
----
+**Files to modify:**
+- `/src/app/api/items/[id]/route.ts` (PUT handler)
 
-### Task 13: Add state and imports to ItemForm component
-**Estimated effort**: 0.3 hours
+**Estimated effort:** 1 story point
 
-- [ ] **13.1** Open file `/src/components/ItemForm.tsx`
-- [ ] **13.2** Import ManualEditWarningDialog
-- [ ] **13.3** Import useManualEditCheck hook
-- [ ] **13.4** Import SupportedLanguage type
-- [ ] **13.5** Add hook call: `const { checkForManualEdits, isChecking } = useManualEditCheck()`
-- [ ] **13.6** Add state: `const [showManualEditWarning, setShowManualEditWarning] = useState(false)`
-- [ ] **13.7** Add state: `const [manuallyEditedLanguages, setManuallyEditedLanguages] = useState<SupportedLanguage[]>([])`
-- [ ] **13.8** Add state: `const [pendingItemData, setPendingItemData] = useState<any>(null)`
-- [ ] **13.9** Add state: `const [saveMode, setSaveMode] = useState<'skip' | 'overwrite' | null>(null)`
+- [ ] **7.1** Open `/src/app/api/items/[id]/route.ts` and locate the PUT handler function
+- [ ] **7.2** Extract `skipRetranslation` and `forceRetranslation` from request body with default values of `false`
+- [ ] **7.3** After the item database update succeeds, add conditional translation logic
+- [ ] **7.4** If `skipRetranslation === true`, log "Skipping re-translation for item: [itemId]" and skip translation
+- [ ] **7.5** Else if `forceRetranslation === true`, make fetch call to `POST /api/translations/translate` with body `{ entityType: 'item', entityId: itemId, forceRetranslate: true }`
+- [ ] **7.6** Add error handling with try-catch and console.error logging
+- [ ] **7.7** If neither flag, use default behavior
+- [ ] **7.8** Add explanatory comments
+- [ ] **7.9** Run type check: `npx tsc --noEmit`
 
 ---
 
-### Task 14: Update handleSubmit function in ItemForm
-**Estimated effort**: 1 hour
+## 8. Add Translation Keys to messages/en.json
 
-- [ ] **14.1** Locate `handleSubmit` function in ItemForm component
-- [ ] **14.2** Keep existing validation and itemData construction
-- [ ] **14.3** After itemData is constructed, check if editing existing item: `if (item?.id)`
-- [ ] **14.4** If editing, call: `const result = await checkForManualEdits({ entityType: 'item', entityId: item.id })`
-- [ ] **14.5** Check if `result.hasManualEdits` is true
-- [ ] **14.6** If true, set `manuallyEditedLanguages` state
-- [ ] **14.7** Set `pendingItemData` state: `setPendingItemData({ ...itemData, id: item.id })`
-- [ ] **14.8** Set `showManualEditWarning` to true
-- [ ] **14.9** Return early
-- [ ] **14.10** If no manual edits or new item, proceed with normal save
-- [ ] **14.11** Call `onSave` with appropriate type (CreateItemRequest or UpdateItemRequest)
+**Context:** The loading states need i18n support. English is the base language, so we add the keys here first, then propagate to other locales.
 
----
+**Files to modify:**
+- `/messages/en.json`
 
-### Task 15: Implement dialog handlers in ItemForm
-**Estimated effort**: 0.5 hours
+**Estimated effort:** 1 story point
 
-- [ ] **15.1** Create `handleKeepManualEdits` function
-- [ ] **15.2** Check if `pendingItemData` is null - return early if so
-- [ ] **15.3** Set `saveMode` to 'skip'
-- [ ] **15.4** Wrap in try-finally block
-- [ ] **15.5** Call `onSave` with `{ ...pendingItemData, skipRetranslation: true }` cast to UpdateItemRequest
-- [ ] **15.6** Close dialog and clear states
-- [ ] **15.7** In finally, reset saveMode
-- [ ] **15.8** Create `handleOverwriteManualEdits` function with same pattern
-- [ ] **15.9** Pass `{ ...pendingItemData, forceRetranslation: true }`
-- [ ] **15.10** Create `handleCancelWarning` function
-- [ ] **15.11** Close dialog and clear all states
+- [ ] **8.1** Open `/messages/en.json` file
+- [ ] **8.2** Locate or create the `articles.instructionEditor` namespace
+- [ ] **8.3** Add key `"checkingTranslations": "Checking translations..."`
+- [ ] **8.4** Add key `"translationCheckFailed": "Failed to check translations. Proceeding with save."`
+- [ ] **8.5** Locate or create the `items.form` namespace
+- [ ] **8.6** Add key `"checkingTranslations": "Checking translations..."`
+- [ ] **8.7** Add key `"translationCheckFailed": "Failed to check translations. Proceeding with save."`
+- [ ] **8.8** Verify JSON syntax is valid by running: `npm run build`
 
 ---
 
-### Task 16: Render ManualEditWarningDialog in ItemForm
-**Estimated effort**: 0.2 hours
+## 9. Add Translation Keys to messages/es.json
 
-- [ ] **16.1** Locate the form return statement in ItemForm
-- [ ] **16.2** Before closing form tag, add ManualEditWarningDialog component
-- [ ] **16.3** Pass all required props (isOpen, manuallyEditedLanguages, callbacks, loading, entityType='item')
-- [ ] **16.4** Verify component placement doesn't break form layout
+**Context:** Spanish translations for the loading state messages.
 
----
+**Files to modify:**
+- `/messages/es.json`
 
-### Task 17: Update submit button loading state in ItemForm
-**Estimated effort**: 0.3 hours
+**Estimated effort:** 1 story point
 
-- [ ] **17.1** Locate submit button in ItemForm
-- [ ] **17.2** Update disabled condition: `disabled={loading || isChecking}`
-- [ ] **17.3** Add conditional button content based on `isChecking`
-- [ ] **17.4** Show "Checking translations..." when `isChecking`
-- [ ] **17.5** Show "Saving..." when `loading`
-- [ ] **17.6** Show normal text otherwise
-- [ ] **17.7** Import Loader2 icon if needed
+- [ ] **9.1** Open `/messages/es.json` file
+- [ ] **9.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Verificando traducciones..."`
+- [ ] **9.3** Add to `articles.instructionEditor`: `"translationCheckFailed": "Error al verificar traducciones. Continuando con guardar."`
+- [ ] **9.4** Add the same two keys to `items.form` namespace
+- [ ] **9.5** Verify JSON syntax is valid
 
 ---
 
-### Task 18: Update article API endpoint to process translation flags
-**Estimated effort**: 0.5 hours
+## 10. Add Translation Keys to messages/fr.json
 
-- [ ] **18.1** Open file `/src/app/api/articles/[id]/route.ts`
-- [ ] **18.2** Locate the PUT handler function
-- [ ] **18.3** In request body parsing, destructure new flags: `const { title, links, itemTags, skipRetranslation = false, forceRetranslation = false } = body`
-- [ ] **18.4** After article update succeeds, add conditional translation logic
-- [ ] **18.5** If `skipRetranslation === true`, log message and skip translation
-- [ ] **18.6** If `forceRetranslation === true`, queue re-translation for all languages
-- [ ] **18.7** Call translation API: `POST /api/translations/translate` with `{ entityType: 'article', entityId, forceRetranslate: true }`
-- [ ] **18.8** Handle translation errors gracefully (log but don't fail the update)
-- [ ] **18.9** If neither flag, use existing translation behavior (default)
-- [ ] **18.10** Add comments explaining each branch
+**Context:** French translations for the loading state messages.
 
----
+**Files to modify:**
+- `/messages/fr.json`
 
-### Task 19: Update item API endpoint to process translation flags
-**Estimated effort**: 0.5 hours
+**Estimated effort:** 1 story point
 
-- [ ] **19.1** Open file `/src/app/api/items/[id]/route.ts`
-- [ ] **19.2** Locate the PUT handler function
-- [ ] **19.3** In request body parsing, add: `skipRetranslation = false, forceRetranslation = false`
-- [ ] **19.4** After item update succeeds, add conditional translation logic
-- [ ] **19.5** If `skipRetranslation === true`, log and skip
-- [ ] **19.6** If `forceRetranslation === true`, call translation API
-- [ ] **19.7** POST to `/api/translations/translate` with `{ entityType: 'item', entityId, forceRetranslate: true }`
-- [ ] **19.8** Handle errors gracefully
-- [ ] **19.9** Add comments explaining behavior
+- [ ] **10.1** Open `/messages/fr.json` file
+- [ ] **10.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Vérification des traductions..."`
+- [ ] **10.3** Add to `articles.instructionEditor`: `"translationCheckFailed": "Échec de la vérification des traductions. Enregistrement en cours."`
+- [ ] **10.4** Add the same two keys to `items.form` namespace
+- [ ] **10.5** Verify JSON syntax is valid
 
 ---
 
-### Task 20: Add English translation keys to messages/en.json
-**Estimated effort**: 0.2 hours
+## 11. Add Translation Keys to messages/de.json
 
-- [ ] **20.1** Open file `/messages/en.json`
-- [ ] **20.2** Locate or create `articles.instructionEditor` namespace
-- [ ] **20.3** Add key: `"checkingTranslations": "Checking translations..."`
-- [ ] **20.4** Add key: `"translationCheckFailed": "Failed to check translations. Proceeding with save."`
-- [ ] **20.5** Locate or create `items.form` namespace
-- [ ] **20.6** Add key: `"checkingTranslations": "Checking translations..."`
-- [ ] **20.7** Add key: `"translationCheckFailed": "Failed to check translations. Proceeding with save."`
-- [ ] **20.8** Verify JSON syntax is valid
+**Context:** German translations for the loading state messages.
 
----
+**Files to modify:**
+- `/messages/de.json`
 
-### Task 21: Add Spanish translation keys to messages/es.json
-**Estimated effort**: 0.1 hours
+**Estimated effort:** 1 story point
 
-- [ ] **21.1** Open file `/messages/es.json`
-- [ ] **21.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Verificando traducciones..."`
-- [ ] **21.3** Add: `"translationCheckFailed": "Error al verificar traducciones. Continuando con guardar."`
-- [ ] **21.4** Add same keys to `items.form` namespace
-- [ ] **21.5** Verify JSON syntax
+- [ ] **11.1** Open `/messages/de.json` file
+- [ ] **11.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Übersetzungen werden überprüft..."`
+- [ ] **11.3** Add to `articles.instructionEditor`: `"translationCheckFailed": "Übersetzungsprüfung fehlgeschlagen. Speichern wird fortgesetzt."`
+- [ ] **11.4** Add the same two keys to `items.form` namespace
+- [ ] **11.5** Verify JSON syntax is valid
 
 ---
 
-### Task 22: Add French translation keys to messages/fr.json
-**Estimated effort**: 0.1 hours
+## 12. Add Translation Keys to messages/it.json
 
-- [ ] **22.1** Open file `/messages/fr.json`
-- [ ] **22.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Vérification des traductions..."`
-- [ ] **22.3** Add: `"translationCheckFailed": "Échec de la vérification des traductions. Enregistrement en cours."`
-- [ ] **22.4** Add same keys to `items.form`
-- [ ] **22.5** Verify JSON syntax
+**Context:** Italian translations for the loading state messages.
 
----
+**Files to modify:**
+- `/messages/it.json`
 
-### Task 23: Add German translation keys to messages/de.json
-**Estimated effort**: 0.1 hours
+**Estimated effort:** 1 story point
 
-- [ ] **23.1** Open file `/messages/de.json`
-- [ ] **23.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Übersetzungen prüfen..."`
-- [ ] **23.3** Add: `"translationCheckFailed": "Fehler beim Überprüfen der Übersetzungen. Speichern wird fortgesetzt."`
-- [ ] **23.4** Add same keys to `items.form`
-- [ ] **23.5** Verify JSON syntax
+- [ ] **12.1** Open `/messages/it.json` file
+- [ ] **12.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Controllo traduzioni..."`
+- [ ] **12.3** Add to `articles.instructionEditor`: `"translationCheckFailed": "Impossibile controllare le traduzioni. Salvataggio in corso."`
+- [ ] **12.4** Add the same two keys to `items.form` namespace
+- [ ] **12.5** Verify JSON syntax is valid
 
 ---
 
-### Task 24: Add Italian translation keys to messages/it.json
-**Estimated effort**: 0.1 hours
+## 13. Add Translation Keys to messages/nl.json
 
-- [ ] **24.1** Open file `/messages/it.json`
-- [ ] **24.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Verifica traduzioni..."`
-- [ ] **24.3** Add: `"translationCheckFailed": "Impossibile verificare le traduzioni. Salvataggio in corso."`
-- [ ] **24.4** Add same keys to `items.form`
-- [ ] **24.5** Verify JSON syntax
+**Context:** Dutch translations for the loading state messages.
 
----
+**Files to modify:**
+- `/messages/nl.json`
 
-### Task 25: Add Dutch translation keys to messages/nl.json
-**Estimated effort**: 0.1 hours
+**Estimated effort:** 1 story point
 
-- [ ] **25.1** Open file `/messages/nl.json`
-- [ ] **25.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Vertalingen controleren..."`
-- [ ] **25.3** Add: `"translationCheckFailed": "Kon vertalingen niet controleren. Doorgaan met opslaan."`
-- [ ] **25.4** Add same keys to `items.form`
-- [ ] **25.5** Verify JSON syntax
+- [ ] **13.1** Open `/messages/nl.json` file
+- [ ] **13.2** Add to `articles.instructionEditor`: `"checkingTranslations": "Vertalingen controleren..."`
+- [ ] **13.3** Add to `articles.instructionEditor`: `"translationCheckFailed": "Controle van vertalingen mislukt. Doorgaan met opslaan."`
+- [ ] **13.4** Add the same two keys to `items.form` namespace
+- [ ] **13.5** Verify JSON syntax is valid
 
 ---
 
-### Task 26: Verify TypeScript compilation
-**Estimated effort**: 0.2 hours
+## 14. Add Error Handling UI
 
-- [ ] **26.1** Run `npm run typecheck` from project root
-- [ ] **26.2** Fix any type errors in useManualEditCheck.ts
-- [ ] **26.3** Fix any type errors in InstructionEditor.tsx
-- [ ] **26.4** Fix any type errors in ItemForm.tsx
-- [ ] **26.5** Fix any type errors related to payload interfaces
-- [ ] **26.6** Verify API route type compatibility
-- [ ] **26.7** Run `npm run typecheck` again and confirm zero errors
+**Context:** When the translation check fails, the hook's fail-safe behavior allows the save to proceed. However, we should log errors and optionally notify the user via console warnings. This ensures developers can debug issues while users aren't blocked.
 
----
+**Files to modify:**
+- `/src/components/InstructionEditor/InstructionEditor.tsx`
+- `/src/components/ItemForm.tsx`
 
-### Task 27: Test useManualEditCheck hook with articles
-**Estimated effort**: 0.5 hours
+**Estimated effort:** 1 story point
 
-- [ ] **27.1** Create test article with manual translations
-- [ ] **27.2** Edit article title in InstructionEditor
-- [ ] **27.3** Click Save button
-- [ ] **27.4** Verify "Checking translations..." appears briefly
-- [ ] **27.5** Verify ManualEditWarningDialog appears
-- [ ] **27.6** Verify affected languages are listed correctly
-- [ ] **27.7** Test with article that has NO manual translations
-- [ ] **27.8** Verify dialog does NOT appear
-- [ ] **27.9** Verify save proceeds normally
+- [ ] **14.1** In InstructionEditor, destructure `error` from the `useManualEditCheck` hook
+- [ ] **14.2** Add a `useEffect` hook that watches `error` state
+- [ ] **14.3** When `error` is not null, log it to console: `console.error('Translation check error:', error)`
+- [ ] **14.4** Optionally display a toast notification if toast system exists (check for existing toast implementation)
+- [ ] **14.5** Repeat steps 14.1-14.4 for ItemForm component
+- [ ] **14.6** Run type check: `npx tsc --noEmit`
 
 ---
 
-### Task 28: Test "Keep manual edits" option in article editor
-**Estimated effort**: 0.3 hours
+## 15. Write Unit Tests for useManualEditCheck Hook
 
-- [ ] **28.1** Edit article with manual translations
-- [ ] **28.2** Click Save
-- [ ] **28.3** When dialog appears, click "Keep manual edits" button
-- [ ] **28.4** Verify article saves successfully
-- [ ] **28.5** Verify dialog closes
-- [ ] **28.6** Check API request includes `skipRetranslation: true`
-- [ ] **28.7** Verify manual translations still exist (not overwritten)
-- [ ] **28.8** Verify translations are marked as stale (if stale detection implemented)
+**Context:** The hook needs comprehensive test coverage to verify it correctly identifies manual translations, handles API responses, manages loading state, and implements fail-safe error handling.
 
----
+**Files to modify:**
+- `/src/hooks/__tests__/useManualEditCheck.test.ts` (NEW)
 
-### Task 29: Test "Re-translate all" option in article editor
-**Estimated effort**: 0.3 hours
+**Estimated effort:** 1 story point
 
-- [ ] **29.1** Edit article with manual translations
-- [ ] **29.2** Click Save
-- [ ] **29.3** When dialog appears, click "Re-translate all" button
-- [ ] **29.4** Verify article saves successfully
-- [ ] **29.5** Verify dialog closes
-- [ ] **29.6** Check API request includes `forceRetranslation: true`
-- [ ] **29.7** Verify re-translation job is queued
-- [ ] **29.8** Verify manual translations will be overwritten
+- [ ] **15.1** Create test file at `/src/hooks/__tests__/useManualEditCheck.test.ts`
+- [ ] **15.2** Import testing utilities: `renderHook`, `waitFor` from `@testing-library/react`, and `describe`, `it`, `expect`, `vi` from `vitest`
+- [ ] **15.3** Mock global `fetch` function using `vi.stubGlobal('fetch', vi.fn())`
+- [ ] **15.4** Write test: "returns hasManualEdits: true when translations with status='manual' exist" - mock API returning translations with manual status
+- [ ] **15.5** Write test: "returns hasManualEdits: false when no manual translations exist" - mock API returning only automated translations
+- [ ] **15.6** Write test: "returns hasManualEdits: false on API error (fail-safe behavior)" - mock API throwing error
+- [ ] **15.7** Write test: "correctly extracts manuallyEditedLanguages array from API response" - verify array contains correct language codes
+- [ ] **15.8** Write test: "sets isChecking to true during fetch and false after" - verify loading state transitions
+- [ ] **15.9** Write test: "sets error state on fetch failure" - verify error message is captured
+- [ ] **15.10** Write test: "reset() clears error state" - call reset and verify error becomes null
+- [ ] **15.11** Run tests: `npm test` and verify all tests pass
 
 ---
 
-### Task 30: Test "Cancel" option in article editor
-**Estimated effort**: 0.2 hours
+## 16. Write Integration Tests for InstructionEditor
 
-- [ ] **30.1** Edit article with manual translations
-- [ ] **30.2** Click Save
-- [ ] **30.3** When dialog appears, click "Cancel" button
-- [ ] **30.4** Verify dialog closes
-- [ ] **30.5** Verify article is NOT saved (changes still in editor)
-- [ ] **30.6** Verify editor remains open
-- [ ] **30.7** Verify no API calls were made
+**Context:** End-to-end testing ensures the complete save flow works correctly with manual edit detection, dialog display, and all three user choices (keep, overwrite, cancel).
 
----
+**Files to modify:**
+- `/src/components/InstructionEditor/__tests__/InstructionEditor.integration.test.tsx` (NEW)
 
-### Task 31: Test useManualEditCheck hook with items
-**Estimated effort**: 0.5 hours
+**Estimated effort:** 1 story point
 
-- [ ] **31.1** Create test item with manual translations
-- [ ] **31.2** Edit item name or description in ItemForm
-- [ ] **31.3** Click Save button
-- [ ] **31.4** Verify "Checking translations..." appears
-- [ ] **31.5** Verify ManualEditWarningDialog appears
-- [ ] **31.6** Verify affected languages listed correctly
-- [ ] **31.7** Test with NEW item (no translations yet)
-- [ ] **31.8** Verify dialog does NOT appear for new items
-- [ ] **31.9** Verify save proceeds normally
+- [ ] **16.1** Create test file at `/src/components/InstructionEditor/__tests__/InstructionEditor.integration.test.tsx`
+- [ ] **16.2** Import testing utilities, React Testing Library, and vitest
+- [ ] **16.3** Mock the `useManualEditCheck` hook to return controlled results
+- [ ] **16.4** Mock the `ManualEditWarningDialog` component to test integration without dialog implementation details
+- [ ] **16.5** Write test: "save proceeds without dialog when no manual translations exist" - verify onSave called directly
+- [ ] **16.6** Write test: "dialog appears when manual translations are detected" - verify dialog state becomes true
+- [ ] **16.7** Write test: "Keep manual edits saves with skipRetranslation: true" - verify correct payload passed to onSave
+- [ ] **16.8** Write test: "Re-translate all saves with forceRetranslation: true" - verify correct payload
+- [ ] **16.9** Write test: "Cancel aborts save and closes dialog" - verify onSave not called, dialog closed
+- [ ] **16.10** Write test: "loading states display correctly during check and save" - verify button text and disabled state
+- [ ] **16.11** Write test: "error handling works when translation check fails" - verify save still proceeds
+- [ ] **16.12** Run tests: `npm test` and verify all tests pass
 
 ---
 
-### Task 32: Test all dialog options in item editor
-**Estimated effort**: 0.5 hours
+## 17. Final Verification and Manual Testing
 
-- [ ] **32.1** Test "Keep manual edits" - verify item saves with skipRetranslation flag
-- [ ] **32.2** Test "Re-translate all" - verify item saves with forceRetranslation flag
-- [ ] **32.3** Test "Cancel" - verify save aborted, form remains open
-- [ ] **32.4** Verify loading states work correctly
-- [ ] **32.5** Verify dialog closes after each action
+**Context:** Before marking complete, we must verify all components work together in a live environment, type checking passes, and the build succeeds.
 
----
+**Estimated effort:** 1 story point
 
-### Task 33: Test error handling and fail-safe behavior
-**Estimated effort**: 0.3 hours
-
-- [ ] **33.1** Simulate API error by disconnecting network
-- [ ] **33.2** Edit article and click Save
-- [ ] **33.3** Verify save proceeds despite translation check failure
-- [ ] **33.4** Check console for error log
-- [ ] **33.5** Verify no user-facing error blocks the save
-- [ ] **33.6** Restore network and verify normal operation
-
----
-
-### Task 34: Test internationalization for all languages
-**Estimated effort**: 0.3 hours
-
-- [ ] **34.1** Set locale to English - verify "Checking translations..." text
-- [ ] **34.2** Set locale to Spanish - verify "Verificando traducciones..."
-- [ ] **34.3** Set locale to French - verify "Vérification des traductions..."
-- [ ] **34.4** Set locale to German - verify "Übersetzungen prüfen..."
-- [ ] **34.5** Set locale to Italian - verify "Verifica traduzioni..."
-- [ ] **34.6** Set locale to Dutch - verify "Vertalingen controleren..."
+- [ ] **17.1** Run full type check: `npx tsc --noEmit` and verify zero errors
+- [ ] **17.2** Run linter: `npm run lint` and fix any issues that arise
+- [ ] **17.3** Run full test suite: `npm test` and verify all tests pass
+- [ ] **17.4** Build the project: `npm run build` and verify successful build with no errors
+- [ ] **17.5** Start dev server: `npm run dev` and navigate to article editor
+- [ ] **17.6** Create a test article, manually add a translation with status='manual' (via database or existing UI)
+- [ ] **17.7** Edit the article title and click Save
+- [ ] **17.8** Verify "Checking translations..." appears briefly
+- [ ] **17.9** Verify ManualEditWarningDialog appears with correct languages listed
+- [ ] **17.10** Click "Keep manual edits" and verify article saves, dialog closes, and skipRetranslation flag is sent
+- [ ] **17.11** Edit article again, click Save, then click "Re-translate all" and verify forceRetranslation flag is sent
+- [ ] **17.12** Edit article again, click Save, then click "Cancel" and verify save is aborted, editor remains open
+- [ ] **17.13** Test the same scenarios with ItemForm by editing an existing item with manual translations
+- [ ] **17.14** Verify loading states appear correctly during translation check for both editors
+- [ ] **17.15** Test with an article/item that has no manual translations and verify dialog does NOT appear
+- [ ] **17.16** Simulate error by temporarily breaking the translation API endpoint and verify save proceeds with console warning
 
 ---
 
-### Task 35: Test loading states and button disabling
-**Estimated effort**: 0.3 hours
+## Authorized Files for Modification
 
-- [ ] **35.1** Verify save button disabled during translation check
-- [ ] **35.2** Verify save button shows spinner during check
-- [ ] **35.3** Verify save button disabled while dialog is open
-- [ ] **35.4** Verify appropriate button in dialog shows loading state
-- [ ] **35.5** Verify button re-enabled after operation completes
+### New Files to Create
+1. `/src/hooks/useManualEditCheck.ts` - Custom hook for manual translation detection
+2. `/src/hooks/__tests__/useManualEditCheck.test.ts` - Unit tests for hook
+3. `/src/components/InstructionEditor/__tests__/InstructionEditor.integration.test.tsx` - Integration tests
 
----
+### Existing Files to Modify
+1. `/src/components/InstructionEditor/InstructionEditor.tsx` (lines 79-149) - Add manual edit check integration
+2. `/src/components/InstructionEditor/InstructionEditor.types.ts` - Add `skipRetranslation` and `forceRetranslation` flags
+3. `/src/components/ItemForm.tsx` (lines 35-139) - Add manual edit check integration
+4. `/src/types/index.ts` - Update `UpdateItemRequest` interface
+5. `/src/app/api/articles/[id]/route.ts` - Accept and process translation control flags (PUT handler)
+6. `/src/app/api/items/[id]/route.ts` - Accept and process translation control flags (PUT handler)
+7. `/messages/en.json` - Add translation keys for loading states
+8. `/messages/es.json` - Add Spanish translations
+9. `/messages/fr.json` - Add French translations
+10. `/messages/de.json` - Add German translations
+11. `/messages/it.json` - Add Italian translations
+12. `/messages/nl.json` - Add Dutch translations
 
-### Task 36: Perform production build test
-**Estimated effort**: 0.2 hours
-
-- [ ] **36.1** Run `npm run build` from project root
-- [ ] **36.2** Verify build succeeds without errors
-- [ ] **36.3** Verify no warnings related to new code
-- [ ] **36.4** Start production server: `npm start`
-- [ ] **36.5** Test article save flow in production mode
-- [ ] **36.6** Test item save flow in production mode
-- [ ] **36.7** Verify no console errors
-
----
-
-### Task 37: Code quality and linting
-**Estimated effort**: 0.2 hours
-
-- [ ] **37.1** Run `npm run lint` from project root
-- [ ] **37.2** Fix any ESLint warnings in useManualEditCheck.ts
-- [ ] **37.3** Fix any ESLint warnings in InstructionEditor.tsx
-- [ ] **37.4** Fix any ESLint warnings in ItemForm.tsx
-- [ ] **37.5** Fix any warnings in API route files
-- [ ] **37.6** Verify no unused imports or variables
-- [ ] **37.7** Run `npm run lint` again and confirm zero warnings
+### Files to Reference (No Changes)
+- `/src/components/TranslationManagement/ManualEditWarning/ManualEditWarningDialog.tsx` - Warning dialog component (from REQ-E05-022)
+- `/src/lib/translation-service/translation-service.types.ts` - SupportedLanguage type
 
 ---
 
-### Task 38: Final documentation and cleanup
-**Estimated effort**: 0.2 hours
+## Dependencies
 
-- [ ] **38.1** Review JSDoc comments for completeness
-- [ ] **38.2** Verify hook has clear usage documentation
-- [ ] **38.3** Remove any debugging code or console.log statements
-- [ ] **38.4** Remove any commented-out code
-- [ ] **38.5** Verify all file headers include correct dates
-- [ ] **38.6** Create brief summary of integration
-- [ ] **38.7** Document fail-safe behavior in comments
-- [ ] **38.8** Mark task as complete when all verification passes
+### Required (Must Be Complete First)
+- **REQ-E05-001**: Translation Status API - Provides endpoint for checking translation status
+- **REQ-E05-022**: ManualEditWarningDialog Component - UI component for warning dialog
+
+### Related (Should Exist)
+- **REQ-E05-003**: Re-Translate API Endpoint - For queuing re-translation when `forceRetranslation: true`
+- Translation records must use `status` field with value 'manual' for manually edited translations
 
 ---
 
-## Completion Checklist
+## Success Criteria
 
-- [ ] Hook created: `/src/hooks/useManualEditCheck.ts` with full implementation
-- [ ] Hook returns `checkForManualEdits`, `isChecking`, `error`, `reset`
-- [ ] Hook queries translations API and detects `status === 'manual'`
-- [ ] Hook implements fail-safe behavior (returns false on error, allows save)
-- [ ] InstructionEditor types updated with `skipRetranslation` and `forceRetranslation` flags
-- [ ] InstructionEditor integrated with useManualEditCheck hook
-- [ ] InstructionEditor shows ManualEditWarningDialog when manual translations detected
-- [ ] InstructionEditor implements all three dialog options (Keep, Re-translate, Cancel)
-- [ ] InstructionEditor save button shows "Checking translations..." during check
-- [ ] ItemForm types updated with translation flags (UpdateItemRequest interface)
-- [ ] ItemForm integrated with useManualEditCheck hook
-- [ ] ItemForm shows ManualEditWarningDialog when manual translations detected
-- [ ] ItemForm implements all three dialog options
-- [ ] ItemForm only checks translations for existing items (not new items)
-- [ ] Article API endpoint processes `skipRetranslation` flag correctly
-- [ ] Article API endpoint processes `forceRetranslation` flag correctly
-- [ ] Item API endpoint processes both translation flags
-- [ ] Translation keys added to all 6 locale files (en, es, fr, de, it, nl)
-- [ ] TypeScript compilation passes (`npm run typecheck`)
-- [ ] Production build succeeds (`npm run build`)
-- [ ] Linting passes (`npm run lint`)
-- [ ] All test scenarios pass (articles, items, all dialog options)
-- [ ] Error handling works correctly (fail-safe behavior)
-- [ ] Loading states display correctly
-- [ ] All 6 languages tested and display correctly
-- [ ] No console errors or warnings
-- [ ] Documentation complete with JSDoc comments
+This implementation will be considered successful when:
+
+1. ✅ `useManualEditCheck` hook correctly identifies manual translations
+2. ✅ InstructionEditor shows ManualEditWarningDialog when manual translations exist
+3. ✅ ItemForm shows ManualEditWarningDialog when editing items with manual translations
+4. ✅ "Keep manual edits" option saves with `skipRetranslation: true`, preserving translations (which become stale)
+5. ✅ "Re-translate all" option saves with `forceRetranslation: true`, queuing re-translation jobs
+6. ✅ "Cancel" option aborts save and closes dialog
+7. ✅ Save proceeds without dialog when no manual translations exist
+8. ✅ Loading states display correctly ("Checking translations..." → "Saving...")
+9. ✅ Error handling fails safely (save proceeds with console warning)
+10. ✅ All TypeScript compilation passes with no errors
+11. ✅ All unit and integration tests pass
+12. ✅ Manual QA scenarios complete successfully
+13. ✅ Translation keys exist for all 6 supported languages
+14. ✅ API endpoints accept and process `skipRetranslation` and `forceRetranslation` flags
 
 ---
 
-**Document Last Modified**: 2026-01-22 23:54
-
----
-
-**END OF DOCUMENT**
+**Document Status**: PENDING
+**Last Updated**: 2026-01-23 11:15
+**Author**: Senior Developer (Task Breakdown Agent)
+**Review Status**: Awaiting Implementation

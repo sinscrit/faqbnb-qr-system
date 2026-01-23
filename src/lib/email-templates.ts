@@ -1,5 +1,7 @@
 import { AccessRequest, EmailTemplate, AccessRequestSource } from '@/types/admin';
 import { getServerBaseUrl } from './config';
+import { getEmailTranslation } from '@/lib/email-translations';
+import { SupportedLanguage } from '@/types';
 
 const formatRequestDate = (dateString: string | null) =>
   dateString ? new Date(dateString).toLocaleDateString() : 'N/A';
@@ -11,67 +13,85 @@ const formatRequestDate = (dateString: string | null) =>
 
 /**
  * Generate access approval email template
+ * Uses translations from emails.accessApproval namespace
+ * Supports all 6 languages: en, fr, es, de, nl, it
+ *
  * @param request - Access request data
  * @param accessCode - Generated access code
- * @param accountName - Optional account name
+ * @param accountName - Optional account name (defaults to 'Account')
  * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
+ * @param language - Language for email content (defaults to 'en')
+ * @returns Email template with subject and body using translations
+ *
+ * @see Task 2I.1 - Translation namespace structure
+ * @see Task 2I.2 - getEmailTranslation utility
  */
 export function generateAccessApprovalEmail(
   request: AccessRequest,
   accessCode: string,
   accountName?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  language: SupportedLanguage = 'en'
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const isBetaRequest = request.source === AccessRequestSource.BETA_WAITLIST;
 
   // Handle beta requests differently
   if (isBetaRequest) {
-    return generateBetaAccessApprovalEmail(request, accessCode, accountName, baseUrl);
+    return generateBetaAccessApprovalEmail(request, accessCode, accountName, baseUrl, language);
   }
 
   const accountDisplayName = accountName || 'Account';
   const registrationLink = createRegistrationLink(baseUrl);
   const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
 
+  // Helper to translate email content with accessApproval namespace
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    getEmailTranslation(`accessApproval.${key}`, language, vars);
+
+  // Helper to translate common email content
+  const tc = (key: string) =>
+    getEmailTranslation(`common.${key}`, language);
+
   return {
-    subject: `Access Granted: ${accountDisplayName} - Your Access Code`,
-    body: `Hello ${requesterName},
+    subject: t('subject', { accountName: accountDisplayName }),
+    body: `${t('greeting', { name: requesterName })}
 
-Great news! Your access request for "${accountDisplayName}" has been approved.
+${t('intro', { accountName: accountDisplayName })}
 
-Your Access Details:
-• Account: ${accountDisplayName}
-• Access Code: ${accessCode}
-• Requested on: ${formatRequestDate(request.request_date)}
+${t('accessDetails')}
+• ${t('account', { accountName: accountDisplayName })}
+• ${t('accessCode', { accessCode })}
+• ${t('requestedOn', { date: formatRequestDate(request.request_date) })}
 
-To complete your access setup:
-1. Click this direct registration link: ${directRegistrationLink}
-   (This link pre-fills your access code and email for convenience)
-2. Complete your account registration
-3. Start exploring the items and resources
+${t('instructions')}
+1. ${t('step1', { link: directRegistrationLink })}
+   ${t('step1Note')}
+2. ${t('step2')}
+3. ${t('step3')}
 
-Your access code: ${accessCode}
-Direct registration link: ${directRegistrationLink}
+${t('accessCodeLabel', { accessCode })}
+${t('directLinkLabel', { link: directRegistrationLink })}
 
-Important Notes:
-- Keep your access code secure and don't share it with others
-- Your access code will remain valid until you complete registration
-- If you have any questions, please contact the account owner
+${t('notes')}
+- ${t('note1')}
+- ${t('note2')}
+- ${t('note3')}
 
-Best regards,
-The FAQBNB Team
+${tc('regards')}
+${tc('team')}
 
 ---
-This is an automated message. Please do not reply to this email.
-If you need assistance, please contact support through the FAQBNB platform.`,
+${tc('footer')}
+${tc('footerSupport')}`,
     variables: {
       requesterName,
       accountName: accountDisplayName,
       accessCode,
       requestDate: formatRequestDate(request.request_date),
       registrationLink,
-      directRegistrationLink
+      directRegistrationLink,
+      language
     }
   };
 }
@@ -79,65 +99,82 @@ If you need assistance, please contact support through the FAQBNB platform.`,
 /**
  * Generate beta access approval email template
  * For users who signed up through the beta waitlist
+ * Uses translations from emails.betaAccess namespace
+ * Supports all 6 languages: en, fr, es, de, nl, it
+ *
  * @param request - Access request data
  * @param accessCode - Generated access code
- * @param accountName - Optional account name
+ * @param accountName - Optional account name (defaults to 'the FAQBNB platform')
  * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
+ * @param language - Language for email content (defaults to 'en')
+ * @returns Email template with subject and body using translations
+ *
+ * @see Task 2I.1 - Translation namespace structure
+ * @see Task 2I.2 - getEmailTranslation utility
+ * @see Task 2I.3 - Pattern established for email translation
  */
 export function generateBetaAccessApprovalEmail(
   request: AccessRequest,
   accessCode: string,
   accountName?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  language: SupportedLanguage = 'en'
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const accountDisplayName = accountName || 'the FAQBNB platform';
   const registrationLink = createRegistrationLink(baseUrl);
   const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
 
+  // Helper to translate email content with betaAccess namespace
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    getEmailTranslation(`betaAccess.${key}`, language, vars);
+
+  // Helper to translate common email content (only for regards)
+  const tc = (key: string) =>
+    getEmailTranslation(`common.${key}`, language);
+
   return {
-    subject: `🚀 Welcome to FAQBNB Beta - Access Granted!`,
-    body: `Hello ${requesterName},
+    subject: t('subject'),
+    body: `${t('greeting', { name: requesterName })}
 
-🎉 Congratulations! Your beta waitlist request has been approved, and you now have exclusive early access to FAQBNB!
+${t('congratulations')}
 
-Your Beta Access Details:
-• Platform: ${accountDisplayName}
-• Access Code: ${accessCode}
-• Beta Access Granted: ${new Date().toLocaleDateString()}
-• Original Request: ${formatRequestDate(request.request_date)}
+${t('accessDetails')}
+• ${t('platform', { accountName: accountDisplayName })}
+• ${t('accessCode', { accessCode })}
+• ${t('betaAccessGranted', { approvalDate: new Date().toLocaleDateString() })}
+• ${t('originalRequest', { requestDate: formatRequestDate(request.request_date) })}
 
-Getting Started with Your Beta Access:
-1. Click this direct registration link: ${directRegistrationLink}
-   (This link pre-fills your access code and email for convenience)
-2. Complete your account registration
-3. Start exploring the platform features and capabilities
+${t('gettingStarted')}
+1. ${t('step1', { link: directRegistrationLink })}
+   ${t('step1Note')}
+2. ${t('step2')}
+3. ${t('step3')}
 
-Your beta access code: ${accessCode}
-Direct registration link: ${directRegistrationLink}
+${t('accessCodeLabel', { accessCode })}
+${t('directLinkLabel', { link: directRegistrationLink })}
 
-What to Expect:
-✨ Early access to all FAQBNB features
-📱 QR code generation and management tools
-📊 Analytics and insights dashboard
-🛠️ Priority support during the beta period
-💌 Direct feedback channel to influence product development
+${t('whatToExpect')}
+${t('feature1')}
+${t('feature2')}
+${t('feature3')}
+${t('feature4')}
+${t('feature5')}
 
-Important Beta Program Notes:
-- Your access code provides full platform access during the beta period
-- As a beta user, your feedback is invaluable to us
-- Some features may be evolving - please share your experience!
-- Keep your access code secure and don't share it with others
-- Beta users will receive priority updates on new features
+${t('betaNotes')}
+- ${t('note1')}
+- ${t('note2')}
+- ${t('note3')}
+- ${t('note4')}
+- ${t('note5')}
 
-We're excited to have you as part of our exclusive beta community!
+${t('excited')}
 
-Best regards,
-The FAQBNB Beta Team
+${tc('regards')}
+${t('team')}
 
 ---
-🚀 You're part of something special! Thank you for joining our beta program.
-For beta support or feedback, please contact us through the platform or reply to this email.`,
+${t('footer')}`,
     variables: {
       requesterName,
       accountName: accountDisplayName,
@@ -146,7 +183,8 @@ For beta support or feedback, please contact us through the platform or reply to
       approvalDate: new Date().toLocaleDateString(),
       registrationLink,
       directRegistrationLink,
-      userEmail: request.requester_email
+      userEmail: request.requester_email,
+      language
     }
   };
 }
@@ -304,96 +342,136 @@ export function renderEmailHTML(template: EmailTemplate): string {
 
 /**
  * Generate access denial email template
+ * Uses translations from emails.accessDenial namespace
+ * Supports all 6 languages: en, fr, es, de, nl, it
+ *
+ * @param request - Access request data
+ * @param reason - Optional denial reason to include in email
+ * @param accountName - Optional account name (defaults to 'Account')
+ * @param language - Language for email content (defaults to 'en')
+ * @returns Email template with subject and body using translations
+ *
+ * @see Task 2I.1 - Translation namespace structure
+ * @see Task 2I.2 - getEmailTranslation utility
+ * @see Task 2I.3 - Pattern established for email translation
  */
 export function generateAccessDenialEmail(
   request: AccessRequest,
   reason?: string,
-  accountName?: string
+  accountName?: string,
+  language: SupportedLanguage = 'en'
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const accountDisplayName = accountName || 'Account';
-  
+
+  // Helper to translate email content with accessDenial namespace
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    getEmailTranslation(`accessDenial.${key}`, language, vars);
+
+  // Helper to translate common email content
+  const tc = (key: string) =>
+    getEmailTranslation(`common.${key}`, language);
+
   return {
-    subject: `Access Request Update: ${accountDisplayName}`,
-    body: `Hello ${requesterName},
+    subject: t('subject', { accountName: accountDisplayName }),
+    body: `${t('greeting', { name: requesterName })}
 
-Thank you for your interest in accessing "${accountDisplayName}".
+${t('intro', { accountName: accountDisplayName })}
 
-Unfortunately, we're unable to approve your access request at this time.
+${t('message')}
 
-${reason ? `Reason: ${reason}` : ''}
+${reason ? t('reason', { reason }) : ''}
 
-Request Details:
-• Account: ${accountDisplayName}
-• Requested on: ${formatRequestDate(request.request_date)}
+${t('requestDetails')}
+• ${t('account', { accountName: accountDisplayName })}
+• ${t('requestedOn', { date: formatRequestDate(request.request_date) })}
 
-If you believe this is an error or have questions about this decision, please contact the account owner directly.
+${t('contact')}
 
-Best regards,
-The FAQBNB Team
+${tc('regards')}
+${tc('team')}
 
 ---
-This is an automated message. Please do not reply to this email.`,
+${tc('footer')}`,
     variables: {
       requesterName,
       accountName: accountDisplayName,
       reason: reason || '',
-      requestDate: formatRequestDate(request.request_date)
+      requestDate: formatRequestDate(request.request_date),
+      language
     }
   };
 }
 
 /**
  * Generate reminder email for pending registration
+ * Uses translations from emails.registrationReminder namespace
+ * Supports all 6 languages: en, fr, es, de, nl, it
+ *
  * @param request - Access request data
  * @param accessCode - Generated access code
  * @param daysSinceApproval - Number of days since approval
- * @param accountName - Optional account name
+ * @param accountName - Optional account name (defaults to 'Account')
  * @param baseUrl - Optional base URL for links (defaults to getServerBaseUrl())
+ * @param language - Language for email content (defaults to 'en')
+ * @returns Email template with subject and body using translations
+ *
+ * @see Task 2I.1 - Translation namespace structure
+ * @see Task 2I.2 - getEmailTranslation utility
  */
 export function generateRegistrationReminderEmail(
   request: AccessRequest,
   accessCode: string,
   daysSinceApproval: number,
   accountName?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  language: SupportedLanguage = 'en'
 ): EmailTemplate {
   const requesterName = request.requester_name || 'there';
   const accountDisplayName = accountName || 'Account';
   const registrationLink = createRegistrationLink(baseUrl);
   const directRegistrationLink = createRegistrationLinkWithCode(accessCode, request.requester_email, baseUrl);
 
+  // Helper to translate email content with registrationReminder namespace
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    getEmailTranslation(`registrationReminder.${key}`, language, vars);
+
+  // Helper to translate common email content
+  const tc = (key: string) =>
+    getEmailTranslation(`common.${key}`, language);
+
   return {
-    subject: `Reminder: Complete Your ${accountDisplayName} Access Setup`,
-    body: `Hello ${requesterName},
+    subject: t('subject', { accountName: accountDisplayName }),
+    body: `${t('greeting', { name: requesterName })}
 
-This is a friendly reminder that your access to "${accountDisplayName}" was approved ${daysSinceApproval} days ago, but you haven't completed your registration yet.
+${t('message', { accountName: accountDisplayName, days: daysSinceApproval })}
 
-Your Access Code: ${accessCode}
+${t('accessCodeLabel', { accessCode })}
 
-To complete your access setup:
-1. Click this direct registration link: ${directRegistrationLink}
-   (This link pre-fills your access code and email for convenience)
-2. Complete your account registration
+${t('instructions')}
+1. ${t('step1', { link: directRegistrationLink })}
+   ${t('step1Note')}
+2. ${t('step2')}
 
-Alternative: Visit ${registrationLink} and enter your access code: ${accessCode}
+${t('alternative', { registrationLink, accessCode })}
 
-Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.
+${t('closing')}
 
-If you no longer need access or have any questions, please let us know.
+${t('questions')}
 
-Best regards,
-The FAQBNB Team
+${tc('regards')}
+${tc('team')}
 
 ---
-This is an automated message. Please do not reply to this email.`,
+${tc('footer')}`,
     variables: {
       requesterName,
       accountName: accountDisplayName,
       accessCode,
       daysSinceApproval: daysSinceApproval.toString(),
       registrationLink,
-      directRegistrationLink
+      directRegistrationLink,
+      language
     }
   };
 }

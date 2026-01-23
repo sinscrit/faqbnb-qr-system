@@ -3,10 +3,10 @@
   "version": "1.0",
   "mode": "per_request",
   "created_at": "2026-01-19T23:23:05.822337",
-  "updated_at": "2026-01-22T23:53:35.413341",
-  "status": "running",
+  "updated_at": "2026-01-23T02:30:04.735622",
+  "status": "paused",
   "current_stage": "request",
-  "current_task_index": 22,
+  "current_task_index": 0,
   "source_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md",
   "source_hash": "6323f936f5732d58f9f324225a7c9a5c",
   "tasks": [
@@ -17,7 +17,7 @@
       "title": "Create translation status API endpoint",
       "description": "File: `/src/app/api/translations/status/route.ts`\nGET with filters: entityType, entityId, status, propertyId\nReturns summary counts and item-level status\nInclude account access validation",
       "raw_match": "\n- [ ] **Task 1.1:** Create translation status API endpoint",
-      "status": "completed",
+      "status": "processing",
       "request_id": "REQ-E05-001",
       "error": null,
       "processed_at": "2026-01-22T22:25:55.939233",
@@ -871,10 +871,11 @@
       "status": "completed",
       "request_id": "REQ-E05-024",
       "error": null,
-      "processed_at": "2026-01-22T20:20:34.198729",
+      "processed_at": "2026-01-23T00:07:42.687685",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-024",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-024-integrate-warning-into-content-save-flow-detailed.md"
       },
       "stages": {
         "request": {
@@ -894,7 +895,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.1",
@@ -906,10 +908,11 @@
       "status": "completed",
       "request_id": "REQ-E05-025",
       "error": null,
-      "processed_at": "2026-01-22T20:24:26.209002",
+      "processed_at": "2026-01-23T00:10:39.931766",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-025",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-025-create-languagepreferencesection-component-detailed.md"
       },
       "stages": {
         "request": {
@@ -929,7 +932,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.2",
@@ -941,10 +945,11 @@
       "status": "completed",
       "request_id": "REQ-E05-026",
       "error": null,
-      "processed_at": "2026-01-22T20:28:28.392549",
+      "processed_at": "2026-01-23T00:14:06.856630",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-026",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-026-create-account-preference-api-endpoint-detailed.md"
       },
       "stages": {
         "request": {
@@ -964,7 +969,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "6.3",
@@ -976,10 +982,11 @@
       "status": "completed",
       "request_id": "REQ-E05-027",
       "error": null,
-      "processed_at": "2026-01-22T20:32:07.296466",
+      "processed_at": "2026-01-23T00:17:53.555714",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-027",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-027-integrate-into-account-settings-or-profile-detailed.md"
       },
       "stages": {
         "request": {
@@ -999,7 +1006,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.1",
@@ -1011,10 +1019,11 @@
       "status": "completed",
       "request_id": "REQ-E05-028",
       "error": null,
-      "processed_at": "2026-01-22T20:40:40.841360",
+      "processed_at": "2026-01-23T00:22:36.195249",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-028",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-028-integrate-preview-panel-into-article-editor-detailed.md"
       },
       "stages": {
         "request": {
@@ -1034,7 +1043,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.2",
@@ -1046,10 +1056,11 @@
       "status": "completed",
       "request_id": "REQ-E05-029",
       "error": null,
-      "processed_at": "2026-01-22T20:44:08.833652",
+      "processed_at": "2026-01-23T00:27:27.933384",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-029",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-029-integrate-preview-panel-into-item-editor-detailed.md"
       },
       "stages": {
         "request": {
@@ -1069,7 +1080,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.3",
@@ -1081,10 +1093,11 @@
       "status": "completed",
       "request_id": "REQ-E05-030",
       "error": null,
-      "processed_at": "2026-01-22T20:49:19.364300",
+      "processed_at": "2026-01-23T00:31:37.272831",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-030",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-030-add-loading-states-and-error-handling-detailed.md"
       },
       "stages": {
         "request": {
@@ -1104,7 +1117,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.4",
@@ -1116,10 +1130,11 @@
       "status": "completed",
       "request_id": "REQ-E05-032",
       "error": null,
-      "processed_at": "2026-01-22T20:54:00.800855",
+      "processed_at": "2026-01-23T00:35:54.227225",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-032",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-add-accessibility-features-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-add-accessibility-features-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-032-add-accessibility-features-detailed.md"
       },
       "stages": {
         "request": {
@@ -1139,7 +1154,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.5",
@@ -1151,10 +1167,11 @@
       "status": "completed",
       "request_id": "REQ-E05-033",
       "error": null,
-      "processed_at": "2026-01-22T20:58:14.658191",
+      "processed_at": "2026-01-23T00:40:34.434903",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-033",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-033-write-unit-tests-for-hooks-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-033-write-unit-tests-for-hooks-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-033-write-unit-tests-for-hooks-detailed.md"
       },
       "stages": {
         "request": {
@@ -1174,7 +1191,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     },
     {
       "id": "7.6",
@@ -1186,10 +1204,11 @@
       "status": "completed",
       "request_id": "REQ-E05-034",
       "error": null,
-      "processed_at": "2026-01-22T21:06:18.784088",
+      "processed_at": "2026-01-23T00:45:08.293980",
       "files": {
         "request": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/gen_requests_epic5.md#REQ-E05-034",
-        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-overview.md"
+        "overview": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-overview.md",
+        "details": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/../docs/REQ-E05-034-write-component-tests-detailed.md"
       },
       "stages": {
         "request": {
@@ -1209,7 +1228,8 @@
         }
       },
       "request_completed": true,
-      "overview_completed": true
+      "overview_completed": true,
+      "details_completed": true
     }
   ],
   "stages": {
@@ -1252,15 +1272,39 @@
   },
   "errors": [],
   "metadata": {
-    "total_requests_generated": 23,
+    "total_requests_generated": 33,
     "last_request_id": "REQ-E05-034",
     "first_request_id": "REQ-E05-001",
     "config_file": "/Users/shinyqk/Documents/mastuff/proj/ai_stuff/aibnb/faqbnb_manus/pipelines-execution/parallel-pipeline-l10n-epic5-owner-management.yaml"
   },
   "recent_errors": [],
   "session_id_overview": "ecaa0a48-ebd5-4381-bacd-d29023d7dab5",
-  "session_id_implementation": null,
+  "session_id_implementation": "2769bb30-ca9a-4459-a066-767efd54594d",
   "session_id_qa_validation": null,
   "session_id_request": "7e1facab-4ada-4962-b1cd-83c4b3963fd2",
-  "session_id_details": "05f83ef7-cce0-44f6-bc04-4268a997ffa7"
+  "session_id_details": "8a00ae29-f845-4447-bf3a-415bc8b202bd",
+  "precheck": {
+    "status": "failed",
+    "completed_at": "2026-01-23T02:30:04.735041",
+    "typescript": {
+      "passed": true,
+      "error_count": 0,
+      "notes": "No type errors found"
+    },
+    "tools": {
+      "dev_server": {
+        "available": true,
+        "notes": "Dev server healthy (HTTP 200)"
+      },
+      "playwright_mcp": {
+        "available": true,
+        "notes": "Chrome CDP port 9223 is listening"
+      },
+      "supabase_mcp": {
+        "available": false,
+        "notes": "Supabase MCP did not respond"
+      }
+    },
+    "next_cache_cleared": false
+  }
 }

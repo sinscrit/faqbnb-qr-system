@@ -79,6 +79,7 @@ export type EmailTranslationVariables = Record<string, string | number>;
  */
 type TranslationCache = {
   [lang in SupportedLanguage]?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emails: Record<string, any>;
   };
 };
@@ -98,6 +99,7 @@ type TranslationCache = {
  * @returns The resolved string value, or null if not found or invalid
  */
 function resolveTranslationKey(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   translations: Record<string, any>,
   key: string
 ): string | null {
@@ -110,6 +112,7 @@ function resolveTranslationKey(
   const parts = key.split('.');
 
   // Initialize current pointer to translations root
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = translations;
 
   // Navigate through each part of the key path
@@ -196,6 +199,7 @@ const translationCache: TranslationCache = {};
  * @param language - The language code to load translations for
  * @returns The emails namespace translations, or null if loading failed
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadTranslations(language: SupportedLanguage): Record<string, any> | null {
   // Check if language is already cached
   if (translationCache[language]) {
@@ -205,6 +209,7 @@ function loadTranslations(language: SupportedLanguage): Record<string, any> | nu
   try {
     // Load translation file using require (synchronous)
     // Use relative path to handle both runtime and test environments
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const messages = require(`../../messages/${language}.json`);
 
     // Extract and cache only the emails namespace

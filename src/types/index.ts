@@ -862,6 +862,20 @@ export type {
 
 export { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/contexts/LocaleContext';
 
+// Guest-facing localization types (Epic 4 - Guest Experience)
+export type {
+  LanguageInfo,
+  TranslatedContent,
+  TranslatedItem,
+  TranslatedArticle,
+  TranslatedLink,
+  TranslatedTag,
+  GuestContentResponse,
+  LanguageAvailabilityResponse,
+} from './l10n';
+
+export { SUPPORTED_LANGUAGES } from './l10n';
+
 // Translation function types (Epic 2 - Static UI Translation)
 export type {
   TranslationFn,

@@ -919,6 +919,7 @@
       "properties": "Propriétés",
       "propertiesMobile": "Prop.",
       "propertiesDescription": "Gestion des propriétés",
+      "translations": "Traductions",
       "rooms": "Pièces",
       "tags": "Étiquettes",
       "instructions": "Instructions",
@@ -938,7 +939,8 @@
         "dashboard": "T/B",
         "items": "Articles",
         "guides": "Guide",
-        "properties": "Prop."
+        "properties": "Prop.",
+        "translations": "Trad."
       }
     },
     "header": {
@@ -4182,7 +4184,10 @@
       "notes": "Important Notes:",
       "note1": "Keep your access code secure and don't share it with others",
       "note2": "Your access code will remain valid until you complete registration",
-      "note3": "If you have any questions, please contact the account owner"
+      "note3": "If you have any questions, please contact the account owner",
+      "step1Note": "(Ce lien pré-remplit votre code d'accès et votre email pour votre commodité)",
+      "accessCodeLabel": "Votre code d'accès: {accessCode}",
+      "directLinkLabel": "Lien d'inscription direct: {link}"
     },
     "accessDenial": {
       "subject": "Access Request Update: {accountName}",
@@ -4206,6 +4211,7 @@
       "originalRequest": "Original Request: {requestDate}",
       "gettingStarted": "Getting Started with Your Beta Access:",
       "step1": "Click this direct registration link: {link}",
+      "step1Note": "(This link pre-fills your access code and email for convenience)",
       "step2": "Complete your account registration",
       "step3": "Start exploring the platform features and capabilities",
       "accessCodeLabel": "Your beta access code: {accessCode}",
@@ -4233,6 +4239,7 @@
       "accessCodeLabel": "Your Access Code: {accessCode}",
       "instructions": "To complete your access setup:",
       "step1": "Click this direct registration link: {link}",
+      "step1Note": "(Ce lien pré-remplit votre code d'accès et votre email pour votre commodité)",
       "step2": "Complete your account registration",
       "alternative": "Alternative: Visit {registrationLink} and enter your access code: {accessCode}",
       "closing": "Your access code will remain valid, but completing your registration will allow you to start exploring the account's items and resources.",
@@ -4244,7 +4251,8 @@
       "footer": "This is an automated message. Please do not reply to this email.",
       "accountLabel": "Account: {accountName}",
       "accessCodeLabel": "Access Code: {accessCode}",
-      "requestedOnLabel": "Requested on: {date}"
+      "requestedOnLabel": "Requested on: {date}",
+      "footerSupport": "Si vous avez besoin d'assistance, veuillez contacter le support via la plateforme FAQBNB."
     }
   }
 }

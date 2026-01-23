@@ -26,6 +26,7 @@ import logging
 import os
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -1570,6 +1571,30 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
     if state:
         total_tasks = len(state.get('tasks', []))
 
+    # Build cache info for QA validation optimization
+    build_cache_info = ''
+    if stage_id == 'qa_validation' and state:
+        last_build = state.get('last_build_passed_at')
+        if last_build:
+            try:
+                last_build_dt = datetime.fromisoformat(last_build)
+                age_seconds = (datetime.now() - last_build_dt).total_seconds()
+                age_minutes = int(age_seconds / 60)
+                if age_seconds < 300:  # Less than 5 minutes ago
+                    build_cache_info = f"""
+## Build/Typecheck Cache (OPTIMIZATION)
+
+The implementation agent just ran build and typecheck {age_minutes}m {int(age_seconds % 60)}s ago and they PASSED.
+
+**SKIP these checks** - they are cached:
+- Skip `npm run typecheck` - already passed
+- Skip `npm run build` - already passed
+
+Only run targeted tests if applicable. This saves ~2 minutes per task.
+"""
+            except (ValueError, TypeError):
+                pass
+
     # Calculate next request ID and format for agent prompt
     next_request_id = ''
     req_format_instruction = ''
@@ -1605,6 +1630,7 @@ def format_task_for_agent(task: Task, template: str, task_dict: dict = None,
         epic_id=epic_id,
         next_request_id=next_request_id,
         req_format_instruction=req_format_instruction,
+        build_cache_info=build_cache_info,
     )
 
 
@@ -2551,6 +2577,10 @@ def run_task_stages(
                 print(f"    ✓ Verified ({stage_elapsed_str})")
 
         elif stage_id == 'implementation' and not dry_run:
+            # Record build/typecheck timestamp for QA optimization
+            # QA agent can skip these checks if they just passed
+            state['last_build_passed_at'] = datetime.now().isoformat()
+
             # Show test results for implementation stage
             tests_passed = task_dict.get('tests_passed')
             tests_ran = task_dict.get('tests_ran', False)
