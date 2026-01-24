@@ -9,7 +9,8 @@
  * @module TranslationManagement/TranslationPreviewPanel/TranslationStatusItem
  * @see docs/prd/Plan-111-L10N-Epic5-Owner-Translation-Management.md
  * @created 2026-01-24
- * @requestReference REQ-E05-008
+ * @lastModified 2026-01-24 (REQ-E05-023)
+ * @requestReference REQ-E05-008, REQ-E05-023
  *
  * @example
  * // Basic usage with required props
@@ -54,6 +55,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isTranslationStale } from '@/lib/translation-utils';
 import type { SupportedLanguage } from '@/components/TranslationManagement/TranslationManagement.types';
 
 // =============================================================================
@@ -93,6 +95,27 @@ export interface TranslationStatusItemProps {
   onSelectionChange?: (language: SupportedLanguage, selected: boolean) => void;
   /** Additional CSS classes */
   className?: string;
+
+  // REQ-E05-023: Stale translation detection props
+  /**
+   * Timestamp when the translation was based on source content.
+   * Used to detect if translation is stale (source has changed since).
+   */
+  sourceVersionAt?: Date | string | null;
+  /**
+   * Current timestamp of the source content.
+   * When this is newer than sourceVersionAt, the translation is stale.
+   */
+  sourceUpdatedAt?: Date | string | null;
+  /**
+   * Callback when Update Translation button is clicked.
+   * Only shown for stale manual translations.
+   */
+  onUpdateTranslation?: (language: SupportedLanguage) => void;
+  /**
+   * Whether translation is currently being updated (shows loading state).
+   */
+  isUpdating?: boolean;
 }
 
 // =============================================================================
@@ -233,15 +256,20 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
     onPreview,
     onSelectionChange,
     className,
+    // REQ-E05-023: Stale detection props
+    sourceVersionAt,
+    sourceUpdatedAt,
+    onUpdateTranslation,
+    isUpdating = false,
   } = props;
 
   // Translation hooks
   const t = useTranslations('translation.statusItem');
   const tLang = useTranslations('languages');
 
-  // Get status configuration
-  const statusConfig = STATUS_CONFIG[status] || STATUS_CONFIG.missing;
-  const StatusIcon = statusConfig.icon;
+  // Get status configuration (will be updated below after stale detection)
+  // This is a placeholder that gets resolved after we compute effectiveStatus
+  const getStatusConfig = (s: string) => STATUS_CONFIG[s] || STATUS_CONFIG.missing;
 
   // Get flag emoji
   const flagEmoji = FLAG_EMOJIS[language] || '🏳️';
@@ -249,8 +277,21 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
   // Get localized language name
   const languageName = tLang(language);
 
-  // Compute action buttons based on status
-  const actionButtons = useMemo(() => getActionButtons(status), [status]);
+  // REQ-E05-023: Detect stale status for manual translations
+  // Only manual translations show stale warnings
+  const isStale = useMemo(() => {
+    return status === 'manual' && isTranslationStale(sourceVersionAt, sourceUpdatedAt);
+  }, [status, sourceVersionAt, sourceUpdatedAt]);
+
+  // Resolve effective status - stale overrides manual
+  const effectiveStatus = isStale ? 'stale' : status;
+
+  // Get status configuration using effective status
+  const statusConfig = getStatusConfig(effectiveStatus);
+  const StatusIcon = statusConfig.icon;
+
+  // Compute action buttons based on effective status
+  const actionButtons = useMemo(() => getActionButtons(effectiveStatus), [effectiveStatus]);
 
   // Compute truncated preview
   const truncatedPreview = useMemo(() => truncatePreview(previewText, 30), [previewText]);
@@ -310,6 +351,17 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
     onRetry?.(language);
   };
 
+  /**
+   * Handles Update Translation button click (REQ-E05-023).
+   * Used for stale manual translations.
+   * Stops propagation to prevent row click.
+   */
+  const handleUpdateTranslationClick = (e: React.MouseEvent) => {
+    if (disabled || isUpdating) return;
+    e.stopPropagation();
+    onUpdateTranslation?.(language);
+  };
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
@@ -320,12 +372,15 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
         'flex items-center gap-3 p-3 rounded-lg border transition-all duration-200',
         !disabled && onPreview && 'hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer',
         disabled && 'opacity-60 cursor-not-allowed',
-        'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900',
+        // REQ-E05-023: Amber styling for stale translations
+        isStale
+          ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700'
+          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900',
         className
       )}
       onClick={handleRowClick}
       role="listitem"
-      aria-label={t('rowLabel', { language: languageName, status: t(`status.${status}`) })}
+      aria-label={t('rowLabel', { language: languageName, status: t(`status.${effectiveStatus}`) })}
       aria-disabled={disabled}
       data-testid={`translation-status-${language}`}
     >
@@ -368,7 +423,7 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
           aria-hidden="true"
         />
       </div>
-      <span className="sr-only">{t(`status.${status}`)}</span>
+      <span className="sr-only">{t(`status.${effectiveStatus}`)}</span>
 
       {/* Preview Text */}
       <div className="flex-1 min-w-0">
@@ -438,6 +493,35 @@ export function TranslationStatusItem(props: TranslationStatusItemProps) {
             aria-label={t('translate', { language: languageName })}
           >
             {t('translate')}
+          </button>
+        )}
+
+        {/* REQ-E05-023: Update Translation Button (for stale manual translations) */}
+        {isStale && onUpdateTranslation && (
+          <button
+            onClick={handleUpdateTranslationClick}
+            disabled={disabled || isUpdating}
+            className={cn(
+              'inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200',
+              'bg-amber-100 text-amber-700 hover:bg-amber-200',
+              'dark:bg-amber-900 dark:text-amber-100 dark:hover:bg-amber-800',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2',
+              'disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+            aria-label={t('updateTranslationAriaLabel', { language: languageName })}
+            title={t('staleTooltip')}
+          >
+            {isUpdating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <span className="hidden sm:inline">{t('updating')}</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">{t('updateTranslation')}</span>
+              </>
+            )}
           </button>
         )}
       </div>

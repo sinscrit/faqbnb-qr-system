@@ -4333,6 +4333,11 @@
       "retranslate": "Ritradurre",
       "retry": "Riprova",
       "translate": "Traduci",
+      "staleTooltip": "Il contenuto di origine è cambiato dall'ultimo aggiornamento di questa traduzione",
+      "staleAriaLabel": "La traduzione è obsoleta",
+      "updateTranslation": "Aggiorna traduzione",
+      "updateTranslationAriaLabel": "Aggiorna traduzione {language}",
+      "updating": "Aggiornamento...",
       "status": {
         "pending": "In attesa",
         "processing": "Elaborazione",

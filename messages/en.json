@@ -4428,6 +4428,11 @@
       "retranslate": "Re-translate",
       "retry": "Retry",
       "translate": "Translate",
+      "staleTooltip": "Source content has changed since this translation was last updated",
+      "staleAriaLabel": "Translation is outdated",
+      "updateTranslation": "Update Translation",
+      "updateTranslationAriaLabel": "Update {language} translation",
+      "updating": "Updating...",
       "status": {
         "pending": "Pending",
         "processing": "Processing",

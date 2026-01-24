@@ -5,7 +5,8 @@
  *
  * @module TranslationManagement/TranslationPreviewPanel
  * @created 2026-01-24
- * @requestReference REQ-E05-007
+ * @lastModified 2026-01-24 (REQ-E05-023)
+ * @requestReference REQ-E05-007, REQ-E05-023
  */
 
 export { TranslationPreviewPanel } from './TranslationPreviewPanel';

@@ -4347,6 +4347,11 @@
       "retranslate": "Opnieuw vertalen",
       "retry": "Opnieuw proberen",
       "translate": "Vertalen",
+      "staleTooltip": "De broninhoud is gewijzigd sinds deze vertaling voor het laatst is bijgewerkt",
+      "staleAriaLabel": "De vertaling is verouderd",
+      "updateTranslation": "Vertaling bijwerken",
+      "updateTranslationAriaLabel": "Vertaling {language} bijwerken",
+      "updating": "Bijwerken...",
       "status": {
         "pending": "In afwachting",
         "processing": "Bezig",

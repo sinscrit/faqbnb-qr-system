@@ -4347,6 +4347,11 @@
       "retranslate": "Retraducir",
       "retry": "Reintentar",
       "translate": "Traducir",
+      "staleTooltip": "El contenido de origen ha cambiado desde la última actualización de esta traducción",
+      "staleAriaLabel": "La traducción está desactualizada",
+      "updateTranslation": "Actualizar traducción",
+      "updateTranslationAriaLabel": "Actualizar traducción de {language}",
+      "updating": "Actualizando...",
       "status": {
         "pending": "Pendiente",
         "processing": "Procesando",
