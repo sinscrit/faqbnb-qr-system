@@ -4379,6 +4379,15 @@
       "saveFailed": "Kan vertaling niet opslaan. Probeer het opnieuw.",
       "unsavedChangesPrompt": "Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je wilt sluiten?",
       "close": "Sluiten"
+    },
+    "languageSelector": {
+      "title": "Talen selecteren",
+      "description": "Kies doeltalen voor vertaling",
+      "selectAll": "Alles selecteren",
+      "deselectAll": "Alles deselecteren",
+      "confirmWithCount": "Bevestigen ({count} geselecteerd)",
+      "selectedCount": "{count, plural, one {# taal geselecteerd} other {# talen geselecteerd}}",
+      "noLanguagesSelected": "Geen talen geselecteerd"
     }
   },
   "languages": {

@@ -4460,6 +4460,15 @@
       "saveFailed": "Failed to save translation. Please try again.",
       "unsavedChangesPrompt": "You have unsaved changes. Are you sure you want to close?",
       "close": "Close"
+    },
+    "languageSelector": {
+      "title": "Select Languages",
+      "description": "Choose target languages for translation",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "confirmWithCount": "Confirm ({count} selected)",
+      "selectedCount": "{count, plural, one {# language selected} other {# languages selected}}",
+      "noLanguagesSelected": "No languages selected"
     }
   },
   "languages": {

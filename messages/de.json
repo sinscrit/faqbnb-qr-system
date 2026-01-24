@@ -4379,6 +4379,15 @@
       "saveFailed": "Fehler beim Speichern der Übersetzung. Bitte versuchen Sie es erneut.",
       "unsavedChangesPrompt": "Sie haben nicht gespeicherte Änderungen. Möchten Sie wirklich schließen?",
       "close": "Schließen"
+    },
+    "languageSelector": {
+      "title": "Sprachen auswählen",
+      "description": "Wählen Sie Zielsprachen für die Übersetzung",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Alle abwählen",
+      "confirmWithCount": "Bestätigen ({count} ausgewählt)",
+      "selectedCount": "{count, plural, one {# Sprache ausgewählt} other {# Sprachen ausgewählt}}",
+      "noLanguagesSelected": "Keine Sprachen ausgewählt"
     }
   },
   "languages": {

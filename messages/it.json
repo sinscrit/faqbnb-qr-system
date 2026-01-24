@@ -4365,6 +4365,15 @@
       "saveFailed": "Impossibile salvare la traduzione. Riprova.",
       "unsavedChangesPrompt": "Hai modifiche non salvate. Sei sicuro di voler chiudere?",
       "close": "Chiudi"
+    },
+    "languageSelector": {
+      "title": "Seleziona lingue",
+      "description": "Scegli le lingue di destinazione per la traduzione",
+      "selectAll": "Seleziona tutto",
+      "deselectAll": "Deseleziona tutto",
+      "confirmWithCount": "Conferma ({count} selezionate)",
+      "selectedCount": "{count, plural, one {# lingua selezionata} other {# lingue selezionate}}",
+      "noLanguagesSelected": "Nessuna lingua selezionata"
     }
   },
   "languages": {

@@ -4379,6 +4379,15 @@
       "saveFailed": "Error al guardar la traducción. Inténtalo de nuevo.",
       "unsavedChangesPrompt": "Tienes cambios sin guardar. ¿Estás seguro de que quieres cerrar?",
       "close": "Cerrar"
+    },
+    "languageSelector": {
+      "title": "Seleccionar idiomas",
+      "description": "Elige los idiomas de destino para la traducción",
+      "selectAll": "Seleccionar todo",
+      "deselectAll": "Deseleccionar todo",
+      "confirmWithCount": "Confirmar ({count} seleccionados)",
+      "selectedCount": "{count, plural, one {# idioma seleccionado} other {# idiomas seleccionados}}",
+      "noLanguagesSelected": "Ningún idioma seleccionado"
     }
   },
   "languages": {
